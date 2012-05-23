@@ -60,6 +60,8 @@ import static org.jetbrains.jet.plugin.project.JsModuleDetector.isJsProject;
 
 public class ConfigureKotlinLibraryNotificationProvider implements EditorNotifications.Provider<EditorNotificationPanel> {
     private static final Key<EditorNotificationPanel> KEY = Key.create("configure.kotlin.library");
+    public static final String LIBRARY_NAME = "KotlinRuntime";
+    public static final String KOTLIN_RUNTIME_JAR = "kotlin-runtime.jar";
     private final Project myProject;
 
     @Override
@@ -103,10 +105,10 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
 
     private Library findOrCreateRuntimeLibrary() {
         LibraryTable table = ProjectLibraryTable.getInstance(myProject);
-        Library kotlinRuntime = table.getLibraryByName("KotlinRuntime");
+        Library kotlinRuntime = table.getLibraryByName(LIBRARY_NAME);
         if (kotlinRuntime != null) {
             for (VirtualFile root : kotlinRuntime.getFiles(OrderRootType.CLASSES)) {
-                if (root.getName().equals("kotlin-runtime.jar")) {
+                if (root.getName().equals(KOTLIN_RUNTIME_JAR)) {
                     return kotlinRuntime;
                 }
             }
