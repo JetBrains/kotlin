@@ -61,6 +61,6 @@ public open class ElementVisitor(val myConverter : Converter) : JavaElementVisit
     }
 
     public override fun visitParameterList(list : PsiParameterList?) : Unit {
-        myResult = ParameterList(myConverter.parametersToParameterList(list!!.getParameters()))
+        myResult = ParameterList(myConverter.parametersToParameterList(list!!.getParameters()).requireNoNulls())
     }
 }

@@ -196,7 +196,7 @@ public class Converter {
     private static List<Parameter> createParametersFromFields(@NotNull List<? extends Field> fields) {
         List<Parameter> result = new LinkedList<Parameter>();
         for (Field f : fields)
-            result.add(new Parameter(new IdentifierImpl("_" + f.getIdentifier().getName()), f.getType()));
+            result.add(new Parameter(new IdentifierImpl("_" + f.getIdentifier().getName()), f.getType(), false));
         return result;
     }
 
@@ -669,7 +669,8 @@ public class Converter {
     public Parameter parameterToParameter(@NotNull PsiParameter parameter) {
         return new Parameter(
                 new IdentifierImpl(parameter.getName()),
-                typeToType(parameter.getType(), ConverterUtil.isAnnotatedAsNotNull(parameter.getModifierList()))
+                typeToType(parameter.getType(), ConverterUtil.isAnnotatedAsNotNull(parameter.getModifierList())),
+                false
         );
     }
 

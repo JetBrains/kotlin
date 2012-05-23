@@ -69,7 +69,7 @@ public class StatementVisitor extends ElementVisitor {
     public void visitBreakStatement(@NotNull PsiBreakStatement statement) {
         super.visitBreakStatement(statement);
         if (statement.getLabelIdentifier() == null) {
-            myResult = new BreakStatement();
+            myResult = new BreakStatement(Identifier.EMPTY_IDENTIFIER);
         }
         else {
             myResult = new BreakStatement(
