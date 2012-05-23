@@ -83,6 +83,26 @@ public inline fun  CharArray?.requireNoNulls() : List<Char> {
 }
 
 /**
+ * Returns a list containing everything but the first *n* elements
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt drop
+ */
+public inline fun CharArray.drop(n: Int): List<Char> {
+    fun countTo(n: Int): (Char) -> Boolean {
+      var count = 0
+      return { ++count; count <= n }
+    }
+    return dropWhile(countTo(n))
+}
+
+/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt dropWhile
+ */
+public inline fun CharArray.dropWhile(predicate: (Char) -> Boolean): List<Char> = dropWhileTo(ArrayList<Char>(), predicate)
+
+/**
  * Returns a list containing the first *n* elements
  *
  * @includeFunctionBody ../../test/CollectionTest.kt take

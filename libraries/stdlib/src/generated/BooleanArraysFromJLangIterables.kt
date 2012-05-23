@@ -175,6 +175,20 @@ public inline fun BooleanArray.makeString(separator: String = ", ", prefix: Stri
     return buffer.toString().sure()
 }
 
+/** Returns a list containing the everything but the first elements that satisfy the given *predicate* */
+public inline fun <L: List<Boolean>> BooleanArray.dropWhileTo(result: L, predicate: (Boolean) -> Boolean) : L {
+    var start = true
+    for (element in this) {
+        if (start && predicate(element)) {
+            // ignore
+        } else {
+            start = false
+            result.add(element)
+        }
+    }
+    return result
+}
+
 /** Returns a list containing the first elements that satisfy the given *predicate* */
 public inline fun <L: List<Boolean>> BooleanArray.takeWhileTo(result: L, predicate: (Boolean) -> Boolean) : L {
     for (element in this) if (predicate(element)) result.add(element) else break

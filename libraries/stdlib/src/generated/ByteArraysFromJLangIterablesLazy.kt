@@ -83,6 +83,26 @@ public inline fun  ByteArray?.requireNoNulls() : List<Byte> {
 }
 
 /**
+ * Returns a list containing everything but the first *n* elements
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt drop
+ */
+public inline fun ByteArray.drop(n: Int): List<Byte> {
+    fun countTo(n: Int): (Byte) -> Boolean {
+      var count = 0
+      return { ++count; count <= n }
+    }
+    return dropWhile(countTo(n))
+}
+
+/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt dropWhile
+ */
+public inline fun ByteArray.dropWhile(predicate: (Byte) -> Boolean): List<Byte> = dropWhileTo(ArrayList<Byte>(), predicate)
+
+/**
  * Returns a list containing the first *n* elements
  *
  * @includeFunctionBody ../../test/CollectionTest.kt take
