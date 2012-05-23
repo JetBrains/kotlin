@@ -43,8 +43,10 @@ import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
 import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 import org.jetbrains.jet.plugin.refactoring.*;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.*;
 
@@ -81,6 +83,8 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
             _expression = (JetExpression)_expression.getParent();
         }
         final JetExpression expression = _expression;
+        boolean noTypeInference = false;
+        boolean needParentheses = false;
         if (expression.getParent() instanceof JetQualifiedExpression) {
             JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression)expression.getParent();
             if (qualifiedExpression.getReceiverExpression() != expression) {
@@ -88,9 +92,17 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                 return;
             }
         }
-        else if (expression.getParent() instanceof JetCallElement || expression instanceof JetStatementExpression) {
+        else if (expression instanceof JetStatementExpression) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.expression"));
             return;
+        } else if (expression.getParent() instanceof JetCallElement) {
+            if (expression instanceof JetFunctionLiteralExpression) {
+                noTypeInference = true;
+                needParentheses = true;
+            } else {
+                showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.expression"));
+                return;
+            }
         }
         else if (expression.getParent() instanceof JetOperationExpression) {
             JetOperationExpression operationExpression = (JetOperationExpression)expression.getParent();
@@ -110,6 +122,10 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.expression.has.unit.type"));
             return;
         }
+        if (expressionType == null && noTypeInference) {
+            showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.expression.should.have.inferred.type"));
+            return;
+        }
         final PsiElement container = getContainer(expression);
         final PsiElement occurrenceContainer = getOccurrenceContainer(expression);
         if (container == null) {
@@ -119,7 +135,9 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
         final boolean isInplaceAvailableOnDataContext =
             editor.getSettings().isVariableInplaceRenameEnabled() &&
             !ApplicationManager.getApplication().isUnitTestMode();
-        final ArrayList<JetExpression> allOccurrences = findOccurrences(occurrenceContainer, expression);
+        final List<JetExpression> allOccurrences = findOccurrences(occurrenceContainer, expression);
+        final boolean finalNoTypeInference = noTypeInference;
+        final boolean finalNeedParentheses = needParentheses;
         Pass<OccurrencesChooser.ReplaceChoice> callback = new Pass<OccurrencesChooser.ReplaceChoice>() {
             @Override
             public void pass(OccurrencesChooser.ReplaceChoice replaceChoice) {
@@ -147,7 +165,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                 final Ref<JetExpression> reference = new Ref<JetExpression>();
                 final Runnable introduceRunnable = introduceVariable(project, expression, suggestedNames, allReplaces, commonContainer,
                                                                      commonParent, replaceOccurrence, propertyRef, references,
-                                                                     reference);
+                                                                     reference, finalNoTypeInference, finalNeedParentheses, expressionType);
                 final boolean finalReplaceOccurrence = replaceOccurrence;
                 CommandProcessor.getInstance().executeCommand(project, new Runnable() {
                     @Override
@@ -166,7 +184,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                                                                      references.toArray(new JetExpression[references.size()]),
                                                                      reference.get(), finalReplaceOccurrence,
                                                                      property, /*todo*/false, /*todo*/false,
-                                                                     expressionType);
+                                                                     expressionType, finalNoTypeInference);
                                 variableIntroducer.performInplaceRefactoring(suggestedNamesSet);
                             }
                         }
@@ -189,11 +207,18 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                                               final PsiElement commonParent, final boolean replaceOccurrence,
                                               final Ref<JetProperty> propertyRef,
                                               final ArrayList<JetExpression> references,
-                                              final Ref<JetExpression> reference) {
+                                              final Ref<JetExpression> reference, 
+                                              final boolean noTypeInference,
+                                              final boolean needParentheses,
+                                              final JetType expressionType) {
         return new Runnable() {
             @Override
             public void run() {
-                String variableText = "val " + suggestedNames[0] + " = ";
+                String variableText = "val " + suggestedNames[0];
+                if (noTypeInference) {
+                    variableText += ": " + DescriptorRenderer.TEXT.renderType(expressionType);
+                }
+                variableText += " = ";
                 if (expression instanceof JetParenthesizedExpression) {
                     JetParenthesizedExpression parenthesizedExpression = (JetParenthesizedExpression)expression;
                     JetExpression innerExpression = parenthesizedExpression.getExpression();
@@ -225,9 +250,15 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                     if (replaceOccurrence && commonContainer != null) {
                         for (JetExpression replace : allReplaces) {
                             boolean isActualExpression = expression == replace;
-                            JetExpression element =
-                                (JetExpression)replace.replace(JetPsiFactory.createExpression(project, suggestedNames[0]));
-                            if (isActualExpression) reference.set(element);
+                            if (!needParentheses && !(replace.getParent() instanceof JetCallExpression)) {
+                                JetExpression element =
+                                        (JetExpression)replace.replace(JetPsiFactory.createExpression(project, suggestedNames[0]));
+                                if (isActualExpression) reference.set(element);
+                            } else {
+                                JetValueArgumentList argumentList = JetPsiFactory.createCallArguments(project, "(" + suggestedNames[0] + ")");
+                                JetValueArgumentList element = (JetValueArgumentList) replace.replace(argumentList);
+                                if (isActualExpression) reference.set(element.getArguments().get(0).getArgumentExpression());
+                            }
                         }
                         PsiElement oldElement = commonContainer;
                         if (commonContainer instanceof JetWhenEntry) {
@@ -322,15 +353,30 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                 for (JetExpression replace : allReplaces) {
                     if (replaceOccurrence && !needBraces) {
                         boolean isActualExpression = expression == replace;
-                        JetExpression element = (JetExpression)replace.replace(JetPsiFactory.createExpression(project, suggestedNames[0]));
-                        references.add(element);
-                        if (isActualExpression) reference.set(element);
+
+                        if (!needParentheses && !(replace.getParent() instanceof JetCallExpression)) {
+                            JetExpression element =
+                                    (JetExpression)replace.replace(JetPsiFactory.createExpression(project, suggestedNames[0]));
+                            references.add(element);
+                            if (isActualExpression) reference.set(element);
+                        } else {
+                            JetValueArgumentList argumentList = JetPsiFactory.createCallArguments(project, "(" + suggestedNames[0] + ")");
+                            JetValueArgumentList element = (JetValueArgumentList) replace.replace(argumentList);
+                            JetExpression argumentExpression = element.getArguments().get(0).getArgumentExpression();
+                            references.add(argumentExpression);
+                            if (isActualExpression) {
+                                reference.set(argumentExpression);
+                            }
+                        }
                     }
                     else if (!needBraces) {
                         replace.delete();
                     }
                 }
                 propertyRef.set(property);
+                if (noTypeInference) {
+                    ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(property));
+                }
             }
         };
     }
