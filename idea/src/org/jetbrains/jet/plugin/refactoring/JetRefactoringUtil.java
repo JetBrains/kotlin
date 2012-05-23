@@ -21,10 +21,10 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.components.JBList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -85,7 +85,8 @@ public class JetRefactoringUtil {
             return;
         }
         ArrayList<JetExpression> expressions = new ArrayList<JetExpression>();
-        while (element != null && !(element instanceof JetBlockExpression) && !(element instanceof JetNamedFunction)
+        while (element != null && !(element instanceof JetBlockExpression && !(element.getParent() instanceof JetFunctionLiteral)) &&
+               !(element instanceof JetNamedFunction)
                && !(element instanceof JetClassBody) && !(element instanceof JetSecondaryConstructor)) {
             if (element instanceof JetExpression && !(element instanceof JetStatementExpression)) {
                 boolean addExpression = true;
@@ -132,7 +133,6 @@ public class JetRefactoringUtil {
             @Override
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 Component rendererComponent = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                StringBuilder buffer = new StringBuilder();
                 JetExpression element = (JetExpression) value;
                 if (element.isValid()) {
                     setText(getExpressionShortText(element));
@@ -179,7 +179,7 @@ public class JetRefactoringUtil {
     }
 
     @Nullable
-    private static JetExpression findExpression(@NotNull Editor editor, @NotNull PsiFile file,
+    public static JetExpression findExpression(@NotNull Editor editor, @NotNull PsiFile file,
                                                int startOffset, int endOffset) throws IntroduceRefactoringException{
         PsiElement element = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, endOffset, JetExpression.class);
         if (element == null || element.getTextRange().getStartOffset() != startOffset ||
@@ -200,6 +200,66 @@ public class JetRefactoringUtil {
             }
         }
         return (JetExpression) element;
+    }
+
+    @NotNull
+    public static PsiElement[] findStatements(@NotNull PsiFile file, int startOffset, int endOffset) {
+        PsiElement element1 = file.findElementAt(startOffset);
+        PsiElement element2 = file.findElementAt(endOffset - 1);
+        if (element1 instanceof PsiWhiteSpace) {
+            startOffset = element1.getTextRange().getEndOffset();
+            element1 = file.findElementAt(startOffset);
+        }
+        if (element2 instanceof PsiWhiteSpace) {
+            endOffset = element2.getTextRange().getStartOffset();
+            element2 = file.findElementAt(endOffset - 1);
+        }
+        if (element1 == null || element2 == null) return PsiElement.EMPTY_ARRAY;
+
+        PsiElement parent = PsiTreeUtil.findCommonParent(element1, element2);
+        if (parent == null) return PsiElement.EMPTY_ARRAY;
+        while (true) {
+            if (parent instanceof JetBlockExpression) break;
+            if (parent == null || parent instanceof JetFile) return PsiElement.EMPTY_ARRAY;
+            parent = parent.getParent();
+        }
+
+        if (!parent.equals(element1)) {
+            while (!parent.equals(element1.getParent())) {
+                element1 = element1.getParent();
+            }
+        }
+        if (startOffset != element1.getTextRange().getStartOffset()) return PsiElement.EMPTY_ARRAY;
+
+        if (!parent.equals(element2)) {
+            while (!parent.equals(element2.getParent())) {
+                element2 = element2.getParent();
+            }
+        }
+        if (endOffset != element2.getTextRange().getEndOffset()) return PsiElement.EMPTY_ARRAY;
+
+        PsiElement[] children = parent.getChildren();
+        ArrayList<PsiElement> array = new ArrayList<PsiElement>();
+        boolean flag = false;
+        for (PsiElement child : children) {
+            if (child.equals(element1)) {
+                flag = true;
+            }
+            if (flag && !(child instanceof PsiWhiteSpace)) {
+                array.add(child);
+            }
+            if (child.equals(element2)) {
+                break;
+            }
+        }
+
+        for (PsiElement element : array) {
+            if (!(element instanceof JetExpression || element instanceof PsiWhiteSpace || element instanceof PsiComment)) {
+                return PsiElement.EMPTY_ARRAY;
+            }
+        }
+
+        return PsiUtilCore.toPsiElementArray(array);
     }
 
     public static class IntroduceRefactoringException extends Exception {
