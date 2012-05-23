@@ -78,4 +78,19 @@ class StringTest {
         assertFalse("".endsWith('a'))
     }
 
+    test fun capitalize() {
+        assertEquals("A", "A".capitalize())
+        assertEquals("A", "a".capitalize())
+        assertEquals("Abcd", "abcd".capitalize())
+        assertEquals("Abcd", "Abcd".capitalize())
+    }
+
+    test fun decapitalize() {
+        assertEquals("a", "A".decapitalize())
+        assertEquals("a", "a".decapitalize())
+        assertEquals("abcd", "abcd".decapitalize())
+        assertEquals("abcd", "Abcd".decapitalize())
+        assertEquals("uRL", "URL".decapitalize())
+    }
+
 }
