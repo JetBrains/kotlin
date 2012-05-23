@@ -37,6 +37,10 @@ public class StubIndexServiceImpl implements StubIndexService {
         if (fqn != null) {
             sink.occurrence(JetIndexKeys.FQN_KEY, fqn);
         }
+
+        for (String superName : stub.getSuperNames()) {
+            sink.occurrence(JetIndexKeys.SUPERCLASS_NAME_KEY, superName);
+        }
     }
 
     @Override

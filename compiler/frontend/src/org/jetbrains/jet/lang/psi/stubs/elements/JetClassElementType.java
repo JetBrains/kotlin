@@ -62,7 +62,8 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
     @Override
     public PsiJetClassStub createStub(@NotNull JetClass psi, StubElement parentStub) {
         FqName fqName = JetPsiUtil.getFQName(psi);
-        return new PsiJetClassStubImpl(JetStubElementTypes.CLASS, parentStub, fqName != null ? fqName.getFqName() : null, psi.getName());
+        return new PsiJetClassStubImpl(JetStubElementTypes.CLASS, parentStub, fqName != null ? fqName.getFqName() : null, psi.getName(),
+                                       psi.getSuperNames());
     }
 
     @Override
@@ -75,9 +76,14 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
     public PsiJetClassStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
         final StringRef name = dataStream.readName();
         final StringRef qualifiedName = dataStream.readName();
-        
+        final int superCount = dataStream.readVarInt();
+        final StringRef[] superNames = StringRef.createArray(superCount);
+        for (int i = 0; i < superCount; i++) {
+            superNames[i] = dataStream.readName();
+        }
+
         final JetClassElementType type = JetStubElementTypes.CLASS;
-        final PsiJetClassStubImpl classStub = new PsiJetClassStubImpl(type, parentStub, qualifiedName, name);
+        final PsiJetClassStubImpl classStub = new PsiJetClassStubImpl(type, parentStub, qualifiedName, name, superNames);
 
         return classStub;
     }

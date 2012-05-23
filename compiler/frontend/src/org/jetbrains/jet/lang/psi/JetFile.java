@@ -61,6 +61,16 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, JetImportDirective.class);
     }
 
+    @Nullable
+    public JetImportDirective findImportByAlias(@NotNull String name) {
+        for (JetImportDirective directive : getImportDirectives()) {
+            if (name.equals(directive.getAliasName())) {
+                return directive;
+            }
+        }
+        return null;
+    }
+
     // scripts has no namespace header
     @Nullable
     public JetNamespaceHeader getNamespaceHeader() {
