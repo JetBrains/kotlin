@@ -38,7 +38,7 @@
 
         <resources>
             <resource>
-                <!-- altHeaders -->
+                <!-- jdkHeaders -->
                 <directory>${kotlin-sdk}/lib/alt</directory>
                 <filtering>false</filtering>
             </resource>

@@ -16,11 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.utils.PathUtil;
@@ -38,15 +34,15 @@ public class CompilerDependencies {
     private final CompilerSpecialMode compilerSpecialMode;
     @Nullable
     private final File jdkJar;
-    @NotNull
-    private final File[] altHeadersClasspath;
+    @Nullable
+    private final File jdkHeadersJar;
     @Nullable
     private final File runtimeJar;
 
-    public CompilerDependencies(@NotNull CompilerSpecialMode compilerSpecialMode, @Nullable File jdkJar, @NotNull File[] altHeadersClasspath, @Nullable File runtimeJar) {
+    public CompilerDependencies(@NotNull CompilerSpecialMode compilerSpecialMode, @Nullable File jdkJar, @Nullable File jdkHeadersJar, @Nullable File runtimeJar) {
         this.compilerSpecialMode = compilerSpecialMode;
         this.jdkJar = jdkJar;
-        this.altHeadersClasspath = altHeadersClasspath;
+        this.jdkHeadersJar = jdkHeadersJar;
         this.runtimeJar = runtimeJar;
 
         if (compilerSpecialMode.includeJdk()) {
@@ -54,15 +50,9 @@ public class CompilerDependencies {
                 throw new IllegalArgumentException("jdk must be included for mode " + compilerSpecialMode);
             }
         }
-        if (compilerSpecialMode.includeAltHeaders()) {
-            if (altHeadersClasspath.length == 0) {
-                throw new IllegalArgumentException("altHeaders must be included for mode " + compilerSpecialMode);
-            }
-            for (int i = 0; i < altHeadersClasspath.length; i++) {
-                File file = altHeadersClasspath[i];
-                if (file == null) {
-                    throw new IllegalArgumentException("altHeaders file " + i + " must not be null for included for mode " + compilerSpecialMode);
-                }
+        if (compilerSpecialMode.includeJdkHeaders()) {
+            if (jdkHeadersJar == null) {
+                throw new IllegalArgumentException("jdkHeaders must be included for mode " + compilerSpecialMode);
             }
         }
         if (compilerSpecialMode.includeKotlinRuntime()) {
@@ -82,9 +72,9 @@ public class CompilerDependencies {
         return jdkJar;
     }
 
-    @NotNull
-    public File[] getAltHeadersClassPath() {
-        return altHeadersClasspath;
+    @Nullable
+    public File getJdkHeadersJar() {
+        return jdkHeadersJar;
     }
 
     @Nullable
@@ -93,25 +83,9 @@ public class CompilerDependencies {
     }
 
     @NotNull
-    public List<VirtualFile> getAltHeaderRoots() {
-        if (compilerSpecialMode.includeAltHeaders()) {
-            return ContainerUtil.map2List(altHeadersClasspath, new Function<File, VirtualFile>() {
-                @Override
-                public VirtualFile fun(File file) {
-                    if (file.exists()) {
-                        if (file.isDirectory()) {
-                            return VirtualFileManager.getInstance()
-                                    .findFileByUrl("file://" + FileUtil.toSystemIndependentName(file.getAbsolutePath()));
-                        }
-                        else {
-                            return PathUtil.jarFileToVirtualFile(file);
-                        }
-                    }
-                    else {
-                        throw new IllegalStateException("Path " + file + " does not exist.");
-                    }
-                }
-            });
+    public List<VirtualFile> getJdkHeaderRoots() {
+        if (compilerSpecialMode.includeJdkHeaders()) {
+            return Collections.singletonList(PathUtil.jarFileToVirtualFile(jdkHeadersJar));
         }
         else {
             return Collections.emptyList();
@@ -133,7 +107,7 @@ public class CompilerDependencies {
         return new CompilerDependencies(
                 compilerSpecialMode,
                 compilerSpecialMode.includeJdk() ? findRtJar() : null,
-                compilerSpecialMode.includeAltHeaders() ? new File[]{PathUtil.getAltHeadersPath()} : new File[0],
+                compilerSpecialMode.includeJdkHeaders() ? PathUtil.getAltHeadersPath() : null,
                 compilerSpecialMode.includeKotlinRuntime() ? PathUtil.getDefaultRuntimePath() : null);
     }
 

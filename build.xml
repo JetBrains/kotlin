@@ -350,7 +350,7 @@
             <arg value="-output"/>
             <arg value="${output}/classes/jdk-headers"/>
             <arg value="-mode"/>
-            <arg value="altHeaders"/>
+            <arg value="jdkHeaders"/>
         </java>
 
         <jar destfile="${kotlin-home}/lib/alt/kotlin-jdk-headers.jar">
