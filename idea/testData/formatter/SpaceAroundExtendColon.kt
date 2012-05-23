@@ -7,3 +7,6 @@ class Some :java.util.ArrayList<Int>() {
     return test
   }
 }
+
+// SET_TRUE: SPACE_BEFORE_EXTEND_COLON
+// SET_FALSE: SPACE_AFTER_EXTEND_COLON

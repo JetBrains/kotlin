@@ -60,6 +60,9 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                         "    val test : Int = 12\n" +
                         "    return test\n" +
                         "  }\n" +
+                        "  private fun <T>foo2():Int where T : List<T> {\n" +
+                        "    return 0\n" +
+                        "  }\n" +
                         "}";
         }
     }
@@ -92,6 +95,14 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                                           CodeStyleSettingsCustomizable.SPACES_OTHER);
 
                 consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_BEFORE_TYPE_COLON", "Space before colon, after declarations' name",
+                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+
+                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_AFTER_EXTEND_COLON",
+                                          "Space after colon in new type definition",
+                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+
+                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_BEFORE_EXTEND_COLON",
+                                          "Space before colon in new type definition",
                                           CodeStyleSettingsCustomizable.SPACES_OTHER);
                 break;
             case WRAPPING_AND_BRACES_SETTINGS:

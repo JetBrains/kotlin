@@ -81,16 +81,21 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .beforeInside(BLOCK, FUN).spaceIf(jetCommonSettings.SPACE_BEFORE_METHOD_LBRACE)
 
                 // TODO: Ask for better API
+                // Type of the declaration colon
                 .beforeInside(COLON, PROPERTY).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
                 .afterInside(COLON, PROPERTY).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
-                .beforeInside(COLON, CLASS).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
-                .afterInside(COLON, CLASS).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
                 .beforeInside(COLON, FUN).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
                 .afterInside(COLON, FUN).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
-                .beforeInside(COLON, TYPE_PARAMETER).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
-                .afterInside(COLON, TYPE_PARAMETER).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
                 .beforeInside(COLON, VALUE_PARAMETER).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
                 .afterInside(COLON, VALUE_PARAMETER).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
+
+                // Extends or constraint colon
+                .beforeInside(COLON, TYPE_CONSTRAINT).spaceIf(jetSettings.SPACE_BEFORE_EXTEND_COLON)
+                .afterInside(COLON, TYPE_CONSTRAINT).spaceIf(jetSettings.SPACE_AFTER_EXTEND_COLON)
+                .beforeInside(COLON, CLASS).spaceIf(jetSettings.SPACE_BEFORE_EXTEND_COLON)
+                .afterInside(COLON, CLASS).spaceIf(jetSettings.SPACE_AFTER_EXTEND_COLON)
+                .beforeInside(COLON, TYPE_PARAMETER).spaceIf(jetSettings.SPACE_BEFORE_EXTEND_COLON)
+                .afterInside(COLON, TYPE_PARAMETER).spaceIf(jetSettings.SPACE_AFTER_EXTEND_COLON)
                 ;
     }
 
