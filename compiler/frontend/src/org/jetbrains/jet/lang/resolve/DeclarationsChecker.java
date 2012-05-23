@@ -256,7 +256,7 @@ public class DeclarationsChecker {
             boolean inAbstractClass = classDescriptor.getModality() == Modality.ABSTRACT;
             if (hasAbstractModifier && !inAbstractClass && !inTrait && !inEnum) {
                 JetClass classElement = (JetClass) BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
-                trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.getName(), classDescriptor));
+                trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.getName().getName(), classDescriptor));
             }
             if (hasAbstractModifier && inTrait) {
                 trace.report(ABSTRACT_MODIFIER_IN_TRAIT.on(function));

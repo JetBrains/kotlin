@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -206,7 +207,7 @@ public class PropertyCodegen {
                     }
                     else {
                         iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.GETSTATIC : Opcodes.GETFIELD,
-                                state.getInjector().getJetTypeMapper().getOwner(propertyDescriptor, kind), propertyDescriptor.getName(),
+                                state.getInjector().getJetTypeMapper().getOwner(propertyDescriptor, kind), propertyDescriptor.getName().getName(),
                                 type.getDescriptor());
                     }
                     iv.areturn(type);
@@ -296,7 +297,7 @@ public class PropertyCodegen {
                     else {
                         iv.load(paramCode, type);
                         iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD,
-                                state.getInjector().getJetTypeMapper().getOwner(propertyDescriptor, kind), propertyDescriptor.getName(),
+                                state.getInjector().getJetTypeMapper().getOwner(propertyDescriptor, kind), propertyDescriptor.getName().getName(),
                                 type.getDescriptor());
                     }
 
@@ -307,12 +308,12 @@ public class PropertyCodegen {
         }
     }
 
-    public static String getterName(String propertyName) {
-        return JvmAbi.GETTER_PREFIX + StringUtil.capitalizeWithJavaBeanConvention(propertyName);
+    public static String getterName(Name propertyName) {
+        return JvmAbi.GETTER_PREFIX + StringUtil.capitalizeWithJavaBeanConvention(propertyName.getName());
     }
 
-    public static String setterName(String propertyName) {
-        return JvmAbi.SETTER_PREFIX + StringUtil.capitalizeWithJavaBeanConvention(propertyName);
+    public static String setterName(Name propertyName) {
+        return JvmAbi.SETTER_PREFIX + StringUtil.capitalizeWithJavaBeanConvention(propertyName.getName());
     }
 
     public void genDelegate(PropertyDescriptor declaration, PropertyDescriptor overriddenDescriptor, StackValue field) {

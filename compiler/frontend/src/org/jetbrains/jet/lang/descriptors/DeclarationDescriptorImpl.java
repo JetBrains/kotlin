@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotatedImpl;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.List;
@@ -29,15 +30,12 @@ import java.util.List;
  */
 public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements Named, DeclarationDescriptor {
 
-    private final String name;
+    @NotNull
+    private final Name name;
     private final DeclarationDescriptor containingDeclaration;
 
-    public DeclarationDescriptorImpl(@Nullable DeclarationDescriptor containingDeclaration, @NotNull List<AnnotationDescriptor> annotations, @NotNull String name) {
+    public DeclarationDescriptorImpl(@Nullable DeclarationDescriptor containingDeclaration, @NotNull List<AnnotationDescriptor> annotations, @NotNull Name name) {
         super(annotations);
-
-        if (name.length() == 0) {
-            throw new IllegalArgumentException("descriptor name cannot be empty string");
-        }
 
         this.name = name;
         this.containingDeclaration = containingDeclaration;
@@ -45,7 +43,7 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
 
     @NotNull
     @Override
-    public String getName() {
+    public Name getName() {
         return name;
     }
 

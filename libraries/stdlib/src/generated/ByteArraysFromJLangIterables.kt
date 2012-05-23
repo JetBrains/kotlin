@@ -175,6 +175,20 @@ public inline fun ByteArray.makeString(separator: String = ", ", prefix: String 
     return buffer.toString().sure()
 }
 
+/** Returns a list containing the everything but the first elements that satisfy the given *predicate* */
+public inline fun <L: List<Byte>> ByteArray.dropWhileTo(result: L, predicate: (Byte) -> Boolean) : L {
+    var start = true
+    for (element in this) {
+        if (start && predicate(element)) {
+            // ignore
+        } else {
+            start = false
+            result.add(element)
+        }
+    }
+    return result
+}
+
 /** Returns a list containing the first elements that satisfy the given *predicate* */
 public inline fun <L: List<Byte>> ByteArray.takeWhileTo(result: L, predicate: (Byte) -> Boolean) : L {
     for (element in this) if (predicate(element)) result.add(element) else break

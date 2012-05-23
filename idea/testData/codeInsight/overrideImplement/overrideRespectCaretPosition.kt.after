@@ -6,8 +6,8 @@ open class A() {
 class C : A() {
     val constant = 42
     // Some comment
-    override val bar : Int = 0
-    override fun foo(value : Int) {
+    override val bar: Int = 0
+    override fun foo(value: Int) {
         super<A>.foo(value)
     }
 

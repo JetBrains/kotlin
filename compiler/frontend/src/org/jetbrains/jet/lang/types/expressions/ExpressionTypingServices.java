@@ -187,7 +187,7 @@ public class ExpressionTypingServices {
     }
 
     @Nullable
-    /*package*/ JetType getBlockReturnedType(@NotNull JetScope outerScope, @NotNull JetBlockExpression expression, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context, BindingTrace trace) {
+    public JetType getBlockReturnedType(@NotNull JetScope outerScope, @NotNull JetBlockExpression expression, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context, BindingTrace trace) {
         List<JetElement> block = expression.getStatements();
         if (block.isEmpty()) {
             return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, context);
@@ -254,7 +254,9 @@ public class ExpressionTypingServices {
         return typeMap;
     }
 
-    /*package*/ JetType getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context, BindingTrace trace) {
+    /*package*/
+    @SuppressWarnings("SuspiciousMethodCalls")
+    JetType getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context, BindingTrace trace) {
         if (block.isEmpty()) {
             return JetStandardClasses.getUnitType();
         }

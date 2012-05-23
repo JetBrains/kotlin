@@ -31,10 +31,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.JavaPsiFacadeKotlinHacks;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.HashSet;
@@ -117,7 +118,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         for (JetFile file : filesInScope) {
             final FqName packageName = JetPsiUtil.getFQName(file);
             if (packageName != null && qualifiedName.getFqName().startsWith(packageName.getFqName())) {
-                if (qualifiedName.equals(QualifiedNamesUtil.combine(packageName, JvmAbi.PACKAGE_CLASS))) {
+                if (qualifiedName.equals(QualifiedNamesUtil.combine(packageName, Name.identifier(JvmAbi.PACKAGE_CLASS)))) {
                     answer.add(new JetLightClass(psiManager, file, qualifiedName));
                 }
                 else {
@@ -134,7 +135,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         if (declaration instanceof JetClassOrObject) {
             String localName = getLocalName(declaration);
             if (localName != null) {
-                FqName fqn = QualifiedNamesUtil.combine(containerFqn, localName);
+                FqName fqn = QualifiedNamesUtil.combine(containerFqn, Name.identifier(localName));
                 if (qualifiedName.equals(fqn)) {
                     answer.add(new JetLightClass(psiManager, file, qualifiedName));
                 }
@@ -227,12 +228,12 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
         for (JetFile file : filesInScope) {
             if (packageFQN.equals(JetPsiUtil.getFQName(file))) {
-                answer.add(new JetLightClass(psiManager, file, QualifiedNamesUtil.combine(packageFQN, JvmAbi.PACKAGE_CLASS)));
+                answer.add(new JetLightClass(psiManager, file, QualifiedNamesUtil.combine(packageFQN, Name.identifier(JvmAbi.PACKAGE_CLASS))));
                 for (JetDeclaration declaration : file.getDeclarations()) {
                     if (declaration instanceof JetClassOrObject) {
                         String localName = getLocalName(declaration);
                         if (localName != null) {
-                            answer.add(new JetLightClass(psiManager, file, QualifiedNamesUtil.combine(packageFQN, localName)));
+                            answer.add(new JetLightClass(psiManager, file, QualifiedNamesUtil.combine(packageFQN, Name.identifier(localName))));
                         }
                     }
                 }

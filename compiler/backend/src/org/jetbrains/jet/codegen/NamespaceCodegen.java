@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
@@ -79,6 +79,9 @@ public class NamespaceCodegen {
             }
             else if (declaration instanceof JetClassOrObject) {
                 state.getInjector().getClassCodegen().generate(context, (JetClassOrObject) declaration);
+            }
+            else if (declaration instanceof JetScript) {
+                state.getInjector().getScriptCodegen().generate(context, (JetScript) declaration);
             }
 //            else if (declaration instanceof JetFile) {
 //                JetFile childNamespace = (JetFile) declaration;
@@ -143,11 +146,6 @@ public class NamespaceCodegen {
             return JvmClassName.byInternalName(JvmAbi.PACKAGE_CLASS);
         }
 
-        String name = fqName.getFqName().replace('.', '/');
-        if (name.startsWith(JavaDescriptorResolver.JAVA_ROOT)) {
-            name = name.substring(JavaDescriptorResolver.JAVA_ROOT.length() + 1, name.length());
-        }
-        name += "/" + JvmAbi.PACKAGE_CLASS;
-        return JvmClassName.byInternalName(name);
+        return JvmClassName.byInternalName(fqName.getFqName().replace('.', '/') + "/" + JvmAbi.PACKAGE_CLASS);
     }
 }

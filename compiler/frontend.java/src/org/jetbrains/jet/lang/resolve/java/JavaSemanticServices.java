@@ -16,14 +16,14 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import javax.inject.Inject;
@@ -88,8 +88,8 @@ public class JavaSemanticServices {
 
     @Nullable
     public ClassDescriptor getKotlinBuiltinClassDescriptor(@NotNull FqName qualifiedName) {
-        if (qualifiedName.getFqName().startsWith("jet.")) {
-            return (ClassDescriptor) JetStandardLibrary.getInstance().getLibraryScope().getClassifier(qualifiedName.getFqName().substring("jet.".length()));
+        if (qualifiedName.firstSegmentIs(Name.identifier("jet")) && qualifiedName.pathSegments().size() == 2) {
+            return (ClassDescriptor) JetStandardLibrary.getInstance().getLibraryScope().getClassifier(qualifiedName.pathSegments().get(1));
         }
         else {
             return null;

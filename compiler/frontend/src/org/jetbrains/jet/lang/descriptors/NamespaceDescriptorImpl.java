@@ -17,10 +17,10 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl imp
 
     public NamespaceDescriptorImpl(@NotNull NamespaceDescriptorParent containingDeclaration,
                                    @NotNull List<AnnotationDescriptor> annotations,
-                                   @NotNull String name) {
+                                   @NotNull Name name) {
         super(containingDeclaration, annotations, name);
     }
 

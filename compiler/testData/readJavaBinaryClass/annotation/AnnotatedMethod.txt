@@ -1,9 +1,9 @@
 namespace test
 
+final annotation class test.Aaa : jet.Any {
+    final /*constructor*/ fun <init>(): test.Aaa
+}
 open class test.HasAnnotatedMethod : java.lang.Object {
     final /*constructor*/ fun <init>(): test.HasAnnotatedMethod
     open test.Aaa() fun f(): jet.Tuple0
-}
-final annotation class test.Aaa : jet.Any {
-    final /*constructor*/ fun <init>(): test.Aaa
 }

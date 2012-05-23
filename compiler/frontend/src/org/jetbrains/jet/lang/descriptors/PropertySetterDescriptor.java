@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -40,7 +41,7 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
             boolean hasBody,
             boolean isDefault,
             Kind kind) {
-        super(modality, visibility, correspondingProperty, annotations, "set-" + correspondingProperty.getName(), hasBody, isDefault, kind);
+        super(modality, visibility, correspondingProperty, annotations, Name.special("<set-" + correspondingProperty.getName() + ">"), hasBody, isDefault, kind);
     }
 
     public void initialize(@NotNull ValueParameterDescriptor parameter) {
@@ -50,7 +51,7 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
 
     public void initializeDefault() {
         assert parameter == null;
-        parameter = new ValueParameterDescriptorImpl(this, 0, Collections.<AnnotationDescriptor>emptyList(), "<>", false, getCorrespondingProperty().getReturnType(), false, null);
+        parameter = new ValueParameterDescriptorImpl(this, 0, Collections.<AnnotationDescriptor>emptyList(), Name.special("<set-?>"), false, getCorrespondingProperty().getReturnType(), false, null);
     }
 
     @NotNull

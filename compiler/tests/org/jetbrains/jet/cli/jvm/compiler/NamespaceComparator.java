@@ -22,6 +22,7 @@ import org.jetbrains.jet.codegen.PropertyCodegen;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.types.JetType;
@@ -71,6 +72,12 @@ class NamespaceComparator {
         }
     }
 
+    private static <T extends Comparable<T>> List<T> sorted(Collection<T> items) {
+        List<T> r = new ArrayList<T>(items);
+        Collections.sort(r);
+        return r;
+    }
+
     private String doCompareNamespaces(@NotNull NamespaceDescriptor nsa, @NotNull NamespaceDescriptor nsb) {
         StringBuilder sb = new StringBuilder();
         Assert.assertEquals(nsa.getName(), nsb.getName());
@@ -79,9 +86,9 @@ class NamespaceComparator {
 
         Assert.assertTrue(!nsa.getMemberScope().getAllDescriptors().isEmpty());
 
-        Set<String> classifierNames = new HashSet<String>();
-        Set<String> propertyNames = new HashSet<String>();
-        Set<String> functionNames = new HashSet<String>();
+        Set<Name> classifierNames = new HashSet<Name>();
+        Set<Name> propertyNames = new HashSet<Name>();
+        Set<Name> functionNames = new HashSet<Name>();
 
         for (DeclarationDescriptor ad : nsa.getMemberScope().getAllDescriptors()) {
             if (ad instanceof ClassifierDescriptor) {
@@ -98,7 +105,7 @@ class NamespaceComparator {
             }
         }
 
-        for (String name : classifierNames) {
+        for (Name name : sorted(classifierNames)) {
             ClassifierDescriptor ca = nsa.getMemberScope().getClassifier(name);
             ClassifierDescriptor cb = nsb.getMemberScope().getClassifier(name);
             Assert.assertTrue(ca != null);
@@ -106,16 +113,16 @@ class NamespaceComparator {
             compareClassifiers(ca, cb, sb);
         }
 
-        for (String name : propertyNames) {
+        for (Name name : sorted(propertyNames)) {
             Set<VariableDescriptor> pa = nsa.getMemberScope().getProperties(name);
             Set<VariableDescriptor> pb = nsb.getMemberScope().getProperties(name);
             compareDeclarationSets(pa, pb, sb);
 
-            Assert.assertTrue(nsb.getMemberScope().getFunctions(PropertyCodegen.getterName(name)).isEmpty());
-            Assert.assertTrue(nsb.getMemberScope().getFunctions(PropertyCodegen.setterName(name)).isEmpty());
+            Assert.assertTrue(nsb.getMemberScope().getFunctions(Name.identifier(PropertyCodegen.getterName(name))).isEmpty());
+            Assert.assertTrue(nsb.getMemberScope().getFunctions(Name.identifier(PropertyCodegen.setterName(name))).isEmpty());
         }
 
-        for (String name : functionNames) {
+        for (Name name : sorted(functionNames)) {
             Set<FunctionDescriptor> fa = nsa.getMemberScope().getFunctions(name);
             Set<FunctionDescriptor> fb = nsb.getMemberScope().getFunctions(name);
             compareDeclarationSets(fa, fb, sb);
@@ -522,7 +529,7 @@ class NamespaceComparator {
             JetScope memberScope = klass.getMemberScope(typeArguments);
             for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
                 if (!includeObject) {
-                    if (member.getName().matches("equals|hashCode|finalize|wait|notify(All)?|toString|clone|getClass")) {
+                    if (member.getName().getName().matches("equals|hashCode|finalize|wait|notify(All)?|toString|clone|getClass")) {
                         continue;
                     }
                 }

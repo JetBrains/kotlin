@@ -53,7 +53,7 @@ public final class DescriptorLookupConverter {
             @NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration) {
 
         LookupElementBuilder element = LookupElementBuilder.create(
-                new JetLookupObject(descriptor, bindingContext, declaration), descriptor.getName());
+                new JetLookupObject(descriptor, bindingContext, declaration), descriptor.getName().getName());
         String typeText = "";
         String tailText = "";
         boolean tailTextGrayed = false;

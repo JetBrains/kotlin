@@ -175,6 +175,20 @@ public inline fun <T> Iterable<T>.makeString(separator: String = ", ", prefix: S
     return buffer.toString().sure()
 }
 
+/** Returns a list containing the everything but the first elements that satisfy the given *predicate* */
+public inline fun <T, L: List<in T>> Iterable<T>.dropWhileTo(result: L, predicate: (T) -> Boolean) : L {
+    var start = true
+    for (element in this) {
+        if (start && predicate(element)) {
+            // ignore
+        } else {
+            start = false
+            result.add(element)
+        }
+    }
+    return result
+}
+
 /** Returns a list containing the first elements that satisfy the given *predicate* */
 public inline fun <T, L: List<in T>> Iterable<T>.takeWhileTo(result: L, predicate: (T) -> Boolean) : L {
     for (element in this) if (predicate(element)) result.add(element) else break

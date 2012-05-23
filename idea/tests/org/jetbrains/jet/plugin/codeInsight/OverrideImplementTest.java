@@ -204,7 +204,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         else {
             CallableMemberDescriptor candidateToOverride = null;
             for (CallableMemberDescriptor callable : descriptors) {
-                if (callable.getName().equals(memberToOverride)) {
+                if (callable.getName().getName().equals(memberToOverride)) {
                     if (candidateToOverride != null) {
                         throw new IllegalStateException("more then one descriptor with name " + memberToOverride);
                     }

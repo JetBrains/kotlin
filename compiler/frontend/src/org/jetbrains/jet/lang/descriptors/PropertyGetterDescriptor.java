@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
@@ -33,7 +34,7 @@ public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
     public PropertyGetterDescriptor(@NotNull PropertyDescriptor correspondingProperty, @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Modality modality, @NotNull Visibility visibility, boolean hasBody, boolean isDefault, Kind kind)
     {
-        super(modality, visibility, correspondingProperty, annotations, "get-" + correspondingProperty.getName(), hasBody, isDefault, kind);
+        super(modality, visibility, correspondingProperty, annotations, Name.special("<get-" + correspondingProperty.getName() + ">"), hasBody, isDefault, kind);
     }
     
     public void initialize(JetType returnType) {

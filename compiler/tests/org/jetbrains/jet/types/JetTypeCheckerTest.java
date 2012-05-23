@@ -31,6 +31,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -652,15 +654,15 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
         public JetScope BASIC_SCOPE = new JetScopeAdapter(library.getLibraryScope()) {
             @Override
-            public ClassifierDescriptor getClassifier(@NotNull String name) {
+            public ClassifierDescriptor getClassifier(@NotNull Name name) {
                 if (CLASSES.isEmpty()) {
                     for (String classDeclaration : CLASS_DECLARATIONS) {
                         JetClass classElement = JetPsiFactory.createClass(getProject(), classDeclaration);
                         ClassDescriptor classDescriptor = resolveClassDescriptor(this, classElement);
-                        CLASSES.put(classDescriptor.getName(), classDescriptor);
+                        CLASSES.put(classDescriptor.getName().getName(), classDescriptor);
                     }
                 }
-                ClassDescriptor classDescriptor = CLASSES.get(name);
+                ClassDescriptor classDescriptor = CLASSES.get(name.getName());
                 if (classDescriptor != null) {
                     return classDescriptor;
                 }
@@ -669,7 +671,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
             @NotNull
             @Override
-            public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+            public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
                 Set<FunctionDescriptor> writableFunctionGroup = Sets.newLinkedHashSet();
                 for (String funDecl : FUNCTION_DECLARATIONS) {
                     FunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(this.getContainingDeclaration(), this, JetPsiFactory.createFunction(getProject(), funDecl), JetTestUtils.DUMMY_TRACE);

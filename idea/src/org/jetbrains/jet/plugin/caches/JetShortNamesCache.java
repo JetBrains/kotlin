@@ -37,6 +37,7 @@ import org.jetbrains.jet.asJava.JavaElementFinder;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
@@ -92,7 +93,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         List<PsiClass> result = new ArrayList<PsiClass>();
 
         for (String fqName : JetFullClassNameIndex.getInstance().getAllKeys(project)) {
-            if (QualifiedNamesUtil.fqnToShortName(new FqName(fqName)).equals(name)) {
+            if (QualifiedNamesUtil.fqnToShortName(new FqName(fqName)).getName().equals(name)) {
                 PsiClass psiClass = javaElementFinder.findClass(fqName, scope);
                 if (psiClass != null) {
                     result.add(psiClass);

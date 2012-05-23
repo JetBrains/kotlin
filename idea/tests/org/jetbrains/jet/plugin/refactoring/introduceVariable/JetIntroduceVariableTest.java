@@ -53,6 +53,14 @@ public class JetIntroduceVariableTest extends LightCodeInsightFixtureTestCase {
         doTest();
     }
 
+    public void testFunctionLiteral() {
+        doTest();
+    }
+
+    public void testFunctionLiteralFromExpected() {
+        doTest();
+    }
+
     public void testIfCondition() {
         doTest();
     }

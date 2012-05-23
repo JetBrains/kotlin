@@ -1,5 +1,5 @@
 class Test {
-    fun someLong(a : Int
+    fun someLong(a: Int
     ) {
     }
 }

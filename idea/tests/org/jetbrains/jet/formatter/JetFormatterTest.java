@@ -76,9 +76,7 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
     }
 
     public void testParameters() throws Exception {
-        getJetSettings().SPACE_AFTER_TYPE_COLON = true;
-        getJetSettings().SPACE_BEFORE_TYPE_COLON = false;
-        doTest();
+        doTestWithInvert();
     }
 
     public void testRemoveSpacesAroundOperations() throws Exception {
@@ -100,10 +98,8 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
         doTestWithInvert();
     }
 
-    public void testSpaceAroundTypeColon() throws Exception {
-        getJetSettings().SPACE_AFTER_TYPE_COLON = false;
-        getJetSettings().SPACE_BEFORE_TYPE_COLON = true;
-        doTest();
+    public void testSpaceAroundExtendColon() throws Exception {
+        doTestWithInvert();
     }
 
     public void testWhen() throws Exception {

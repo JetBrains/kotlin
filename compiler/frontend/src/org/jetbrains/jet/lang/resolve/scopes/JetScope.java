@@ -19,6 +19,8 @@ package org.jetbrains.jet.lang.resolve.scopes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.name.LabelName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
@@ -43,38 +45,38 @@ public interface JetScope {
     };
 
     @Nullable
-    ClassifierDescriptor getClassifier(@NotNull String name);
+    ClassifierDescriptor getClassifier(@NotNull Name name);
     
     @Nullable
-    ClassDescriptor getObjectDescriptor(@NotNull String name);
+    ClassDescriptor getObjectDescriptor(@NotNull Name name);
 
     @NotNull
     Set<ClassDescriptor> getObjectDescriptors();
 
     @Nullable
-    NamespaceDescriptor getNamespace(@NotNull String name);
+    NamespaceDescriptor getNamespace(@NotNull Name name);
 
     @NotNull
-    Set<VariableDescriptor> getProperties(@NotNull String name);
+    Set<VariableDescriptor> getProperties(@NotNull Name name);
 
     @Nullable
-    VariableDescriptor getLocalVariable(@NotNull String name);
+    VariableDescriptor getLocalVariable(@NotNull Name name);
 
     @NotNull
-    Set<FunctionDescriptor> getFunctions(@NotNull String name);
+    Set<FunctionDescriptor> getFunctions(@NotNull Name name);
 
     @NotNull
     DeclarationDescriptor getContainingDeclaration();
 
     @NotNull
-    Collection<DeclarationDescriptor> getDeclarationsByLabel(String labelName);
+    Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName);
 
     /**
      * @param fieldName includes the "$"
      * @return the property declaring this field, if any
      */
     @Nullable
-    PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName);
+    PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName);
 
     /**
      * All visible descriptors from current scope.

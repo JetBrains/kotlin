@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
@@ -63,7 +64,7 @@ public final class JsDescriptorUtils {
 
     @NotNull
     public static FunctionDescriptor getFunctionByName(@NotNull JetScope scope,
-                                                       @NotNull String name) {
+                                                       @NotNull Name name) {
         Set<FunctionDescriptor> functionDescriptors = scope.getFunctions(name);
         assert functionDescriptors.size() == 1 :
             "In scope " + scope + " supposed to be exactly one " + name + " function.\n" +
@@ -80,7 +81,7 @@ public final class JsDescriptorUtils {
     //TODO: inspect
     @NotNull
     public static PropertyDescriptor getPropertyByName(@NotNull JetScope scope,
-                                                       @NotNull String name) {
+                                                       @NotNull Name name) {
         Set<VariableDescriptor> variables = scope.getProperties(name);
         assert variables.size() == 1 : "Actual size: " + variables.size();
         VariableDescriptor variable = variables.iterator().next();
@@ -144,7 +145,7 @@ public final class JsDescriptorUtils {
             return Namer.getRootNamespaceName();
         }
         else {
-            return descriptor.getName();
+            return descriptor.getName().getName();
         }
     }
 

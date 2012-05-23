@@ -27,6 +27,9 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -78,7 +81,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
         }
 
         for (JetSimpleNameExpression nameExpression : namespaceHeader.getParentNamespaceNames()) {
-            String namespaceName = JetPsiUtil.safeName(nameExpression.getReferencedName());
+            Name namespaceName = JetPsiUtil.safeName(nameExpression.getReferencedName());
 
             NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorIfNeeded(
                     null, currentOwner, namespaceName, nameExpression, handler);
@@ -91,14 +94,14 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
         }
 
         NamespaceDescriptorImpl namespaceDescriptor;
-        String name;
+        Name name;
         if (namespaceHeader.isRoot()) {
             // previous call to createRootNamespaceDescriptorIfNeeded couldn't store occurrence for current file.
             namespaceDescriptor = moduleDescriptor.getRootNs();
             storeBindingForFileAndExpression(file, null, namespaceDescriptor);
         }
         else {
-            name = namespaceHeader.getName();
+            name = namespaceHeader.getNameAsName();
             namespaceDescriptor = createNamespaceDescriptorIfNeeded(
                     file, currentOwner, name, namespaceHeader.getLastPartExpression(), handler);
 
@@ -154,7 +157,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
     @NotNull
     private NamespaceDescriptorImpl createNamespaceDescriptorIfNeeded(@Nullable JetFile file,
                                                                       @NotNull NamespaceDescriptorImpl owner,
-                                                                      @NotNull String name,
+                                                                      @NotNull Name name,
                                                                       @Nullable JetReferenceExpression expression,
                                                                       @NotNull RedeclarationHandler handler) {
         FqName ownerFqName = DescriptorUtils.getFQName(owner).toSafe();
@@ -172,7 +175,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
     }
 
     private NamespaceDescriptorImpl createNewNamespaceDescriptor(NamespaceDescriptorParent owner,
-                                                                 String name,
+                                                                 Name name,
                                                                  PsiElement expression,
                                                                  RedeclarationHandler handler,
                                                                  FqName fqName) {

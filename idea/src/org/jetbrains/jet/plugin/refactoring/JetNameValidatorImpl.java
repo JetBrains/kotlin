@@ -108,7 +108,7 @@ public class JetNameValidatorImpl implements JetNameValidator {
                 Collection<DeclarationDescriptor> variants =
                         TipsManager.getVariantsNoReceiver(expression, myBindingContext);
                 for (DeclarationDescriptor variant : variants) {
-                    if (variant.getName().equals(name) && variant instanceof VariableDescriptor) {
+                    if (variant.getName().getName().equals(name) && variant instanceof VariableDescriptor) {
                         result.set(false);
                         return;
                     }

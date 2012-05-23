@@ -150,7 +150,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             // TODO: cache internal names
             String outerClassInernalName = typeMapper.mapType(descriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName();
             String innerClassInternalName = typeMapper.mapType(innerClass.getDefaultType(), MapTypeMode.IMPL).getInternalName();
-            v.visitInnerClass(innerClassInternalName, outerClassInernalName, innerClass.getName(), innerClassAccess);
+            v.visitInnerClass(innerClassInternalName, outerClassInernalName, innerClass.getName().getName(), innerClassAccess);
         }
 
         if (descriptor.getClassObjectDescriptor() != null) {
@@ -298,7 +298,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             Method originalMethod = typeMapper.mapSignature(original.getName(), original).getAsmMethod();
             Type[] argTypes = method.getArgumentTypes();
 
-            MethodVisitor mv = v.newMethod(null, ACC_PUBLIC| ACC_BRIDGE| ACC_FINAL, bridge.getName(), method.getDescriptor(), null, null);
+            MethodVisitor mv = v.newMethod(null, ACC_PUBLIC| ACC_BRIDGE| ACC_FINAL, bridge.getName().getName(), method.getDescriptor(), null, null);
             if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                 StubCodegen.generateStubCode(mv);
             }
@@ -340,7 +340,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                     iv.load(0, JetTypeMapper.TYPE_OBJECT);
                     if(original.getVisibility() == Visibilities.PRIVATE)
-                        iv.getfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), original.getName(), originalMethod.getReturnType().getDescriptor());
+                        iv.getfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), original.getName().getName(), originalMethod.getReturnType().getDescriptor());
                     else
                         iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
 
@@ -373,7 +373,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         reg += argType.getSize();
                     }
                     if(original.getVisibility() == Visibilities.PRIVATE && original.getModality() == Modality.FINAL)
-                        iv.putfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), original.getName(), originalMethod.getArgumentTypes()[0].getDescriptor());
+                        iv.putfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), original.getName().getName(), originalMethod.getArgumentTypes()[0].getDescriptor());
                     else
                         iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
 
@@ -484,7 +484,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if(closure != null) {
             if(closure.captureThis != null) {
                 if(!hasThis0)
-                    consArgTypes.add(insert, new JvmMethodParameterSignature(Type.getObjectType(context.getThisDescriptor().getName()), "", JvmMethodParameterKind.THIS0));
+                    consArgTypes.add(insert, new JvmMethodParameterSignature(Type.getObjectType(context.getThisDescriptor().getName().getName()), "", JvmMethodParameterKind.THIS0));
                 insert++;
             }
             else {
@@ -553,7 +553,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
             for (ValueParameterDescriptor valueParameter : constructorDescriptor.getValueParameters()) {
                 JetValueParameterAnnotationWriter jetValueParameterAnnotation = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i);
-                jetValueParameterAnnotation.writeName(valueParameter.getName());
+                jetValueParameterAnnotation.writeName(valueParameter.getName().getName());
                 jetValueParameterAnnotation.writeHasDefaultValue(valueParameter.declaresDefaultValue());
                 jetValueParameterAnnotation.writeType(constructorMethod.getKotlinParameterType(i));
                 jetValueParameterAnnotation.visitEnd();
@@ -689,7 +689,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 Type type = typeMapper.mapType(descriptor.getType(), MapTypeMode.VALUE);
                 iv.load(0, classType);
                 iv.load(frameMap.getIndex(descriptor), type);
-                iv.putfield(classname, descriptor.getName(), type.getDescriptor());
+                iv.putfield(classname, descriptor.getName().getName(), type.getDescriptor());
             }
             curParam++;
         }
@@ -954,7 +954,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         codegen.gen(initializer, type);
                         // @todo write directly to the field. Fix test excloset.jet::test6
                         String owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.IMPLEMENTATION);
-                        StackValue.property(propertyDescriptor.getName(), owner, owner,
+                        StackValue.property(propertyDescriptor.getName().getName(), owner, owner,
                                 typeMapper.mapType(propertyDescriptor.getType(), MapTypeMode.VALUE), false, false, false, null, null, 0).store(iv);
                     }
 

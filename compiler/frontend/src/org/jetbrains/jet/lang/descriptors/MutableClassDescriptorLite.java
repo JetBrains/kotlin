@@ -107,7 +107,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor
                 this,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO : pass annotations from the class?
                 !modality.isOverridable(),
-                getName(),
+                getName().getName(),
                 typeParameters,
                 supertypes);
         for (FunctionDescriptor functionDescriptor : constructors) {

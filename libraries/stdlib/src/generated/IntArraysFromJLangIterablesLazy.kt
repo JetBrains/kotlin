@@ -83,6 +83,26 @@ public inline fun  IntArray?.requireNoNulls() : List<Int> {
 }
 
 /**
+ * Returns a list containing everything but the first *n* elements
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt drop
+ */
+public inline fun IntArray.drop(n: Int): List<Int> {
+    fun countTo(n: Int): (Int) -> Boolean {
+      var count = 0
+      return { ++count; count <= n }
+    }
+    return dropWhile(countTo(n))
+}
+
+/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt dropWhile
+ */
+public inline fun IntArray.dropWhile(predicate: (Int) -> Boolean): List<Int> = dropWhileTo(ArrayList<Int>(), predicate)
+
+/**
  * Returns a list containing the first *n* elements
  *
  * @includeFunctionBody ../../test/CollectionTest.kt take

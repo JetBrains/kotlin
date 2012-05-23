@@ -175,6 +175,20 @@ public inline fun CharArray.makeString(separator: String = ", ", prefix: String 
     return buffer.toString().sure()
 }
 
+/** Returns a list containing the everything but the first elements that satisfy the given *predicate* */
+public inline fun <L: List<Char>> CharArray.dropWhileTo(result: L, predicate: (Char) -> Boolean) : L {
+    var start = true
+    for (element in this) {
+        if (start && predicate(element)) {
+            // ignore
+        } else {
+            start = false
+            result.add(element)
+        }
+    }
+    return result
+}
+
 /** Returns a list containing the first elements that satisfy the given *predicate* */
 public inline fun <L: List<Char>> CharArray.takeWhileTo(result: L, predicate: (Char) -> Boolean) : L {
     for (element in this) if (predicate(element)) result.add(element) else break

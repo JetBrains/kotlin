@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.AbstractScopeAdapter;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -47,7 +48,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     private WritableScope scopeForInitializers = null; //contains members + primary constructor value parameters + map for backing fields
 
     public MutableClassDescriptor(@NotNull DeclarationDescriptor containingDeclaration,
-                                  @NotNull JetScope outerScope, ClassKind kind, String name) {
+                                  @NotNull JetScope outerScope, ClassKind kind, Name name) {
         super(containingDeclaration, kind);
 
         RedeclarationHandler redeclarationHandler = RedeclarationHandler.DO_NOTHING;
@@ -118,7 +119,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void setName(@NotNull String name) {
+    public void setName(@NotNull Name name) {
         super.setName(name);
         scopeForMemberResolution.addLabeledDeclaration(this);
     }

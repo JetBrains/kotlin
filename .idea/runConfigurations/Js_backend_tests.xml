@@ -26,8 +26,6 @@
     <RunnerSettings RunnerId="Run" />
     <ConfigurationWrapper RunnerId="Debug" />
     <ConfigurationWrapper RunnerId="Run" />
-    <method>
-      <option name="AntTarget" enabled="false" antfile="file://$PROJECT_DIR$/js_backend_tests.xml" target="copy_lib" />
-    </method>
+    <method />
   </configuration>
 </component>

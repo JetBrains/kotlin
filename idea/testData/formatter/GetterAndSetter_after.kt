@@ -1,5 +1,5 @@
 class Test {
-    var test : Int
+    var test: Int
         get () {
             return 0
         }

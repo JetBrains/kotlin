@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
@@ -97,8 +98,7 @@ public abstract class CodegenContext {
     }
 
     protected StackValue getOuterExpression(@Nullable StackValue prefix) {
-        if(outerExpression == null)
-            throw new UnsupportedOperationException();
+        if (outerExpression == null) { throw new UnsupportedOperationException(); }
 
         outerWasUsed = outerExpression.type;
         return prefix != null ? StackValue.composed(prefix, outerExpression) : outerExpression;
@@ -173,8 +173,7 @@ public abstract class CodegenContext {
         final ObjectOrClosureCodegen top = closure;
         if (top != null) {
             final StackValue answer = top.lookupInContext(d, result);
-            if (answer != null)
-                return result == null ? answer : StackValue.composed(result, answer);
+            if (answer != null) { return result == null ? answer : StackValue.composed(result, answer); }
 
             StackValue outer = getOuterExpression(null);
             result = result == null ? outer : StackValue.composed(result, outer);
@@ -185,15 +184,13 @@ public abstract class CodegenContext {
 
     public Type enclosingClassType(JetTypeMapper typeMapper) {
         CodegenContext cur = getParentContext();
-        while(cur != null && !(cur.getContextDescriptor() instanceof ClassDescriptor))
-            cur = cur.getParentContext();
+        while (cur != null && !(cur.getContextDescriptor() instanceof ClassDescriptor)) { cur = cur.getParentContext(); }
 
         return cur == null ? null : typeMapper.mapType(((ClassDescriptor) cur.getContextDescriptor()).getDefaultType(), MapTypeMode.IMPL);
     }
     
     public int getTypeInfoConstantIndex(JetType type) {
-        if(parentContext != STATIC)
-            return parentContext.getTypeInfoConstantIndex(type);
+        if (parentContext != STATIC) { return parentContext.getTypeInfoConstantIndex(type); }
         
         if(typeInfoConstants == null) {
             typeInfoConstants = new LinkedHashMap<JetType, Integer>();
@@ -215,13 +212,12 @@ public abstract class CodegenContext {
         }
         descriptor = descriptor.getOriginal();
         DeclarationDescriptor accessor = accessors.get(descriptor);
-        if(accessor != null)
-            return accessor;
+        if (accessor != null) { return accessor; }
 
         if(descriptor instanceof SimpleFunctionDescriptor) {
             SimpleFunctionDescriptorImpl myAccessor = new SimpleFunctionDescriptorImpl(contextType,
                     Collections.<AnnotationDescriptor>emptyList(),
-                    descriptor.getName() + "$bridge$" + accessors.size(),
+                    Name.identifier(descriptor.getName() + "$bridge$" + accessors.size()), // TODO: evil
                     CallableMemberDescriptor.Kind.DECLARATION);
             FunctionDescriptor fd = (SimpleFunctionDescriptor) descriptor;
             myAccessor.initialize(fd.getReceiverParameter().exists() ? fd.getReceiverParameter().getType() : null,
@@ -242,7 +238,7 @@ public abstract class CodegenContext {
                     pd.getVisibility(),
                     pd.isVar(),
                     pd.isObjectDeclaration(),
-                    pd.getName()  + "$bridge$" + accessors.size(),
+                    Name.identifier(pd.getName()  + "$bridge$" + accessors.size()), // TODO: evil
                     CallableMemberDescriptor.Kind.DECLARATION
             );
             JetType receiverType = pd.getReceiverParameter().exists() ? pd.getReceiverParameter().getType() : null;

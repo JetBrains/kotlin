@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.Collection;
@@ -80,7 +81,7 @@ public class QualifiedExpressionResolver {
             return Collections.emptyList();
         }
 
-        String aliasName = JetPsiUtil.getAliasName(importDirective);
+        Name aliasName = JetPsiUtil.getAliasName(importDirective);
         if (aliasName == null) {
             return Collections.emptyList();
         }
@@ -220,7 +221,7 @@ public class QualifiedExpressionResolver {
     private LookupResult lookupSimpleNameReference(@NotNull JetSimpleNameExpression referenceExpression,
             @NotNull JetScope outerScope, boolean onlyClasses, boolean namespaceLevel) {
 
-        String referencedName = referenceExpression.getReferencedName();
+        Name referencedName = referenceExpression.getReferencedNameAsName();
         if (referencedName == null) {
             //to store a scope where we tried to resolve this reference
             return new SuccessfulLookupResult(Collections.<DeclarationDescriptor>emptyList(), outerScope, namespaceLevel);

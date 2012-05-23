@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,8 +28,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
@@ -224,10 +223,6 @@ public class JetTypeMapper {
                     r.append("$");
                 }
             }
-            if (ns.getName().length() == 0) {
-                throw new IllegalStateException(
-                        "name must not be empty at this point when generating for " + namespace);
-            }
             r.append(ns.getName());
         }
 
@@ -318,14 +313,17 @@ public class JetTypeMapper {
         }
 
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
-        String name = descriptor.getName();
+        Name name = descriptor.getName();
         if(JetPsiUtil.NO_NAME_PROVIDED.equals(name)) {
             return closureAnnotator
                     .classNameForAnonymousClass((JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor))
                     .getInternalName();
         }
-        if(name.contains("/"))
-            return name;
+
+        // This is the worst code in the project
+        if(name.getName().contains("/"))
+            return name.getName();
+
         if (container != null) {
             String baseName = getFQName(container);
             if (!baseName.isEmpty()) { 
@@ -333,7 +331,7 @@ public class JetTypeMapper {
             }
         }
 
-        return name;
+        return name.getName();
     }
 
     private static ClassDescriptor getContainingClass(DeclarationDescriptor descriptor) {
@@ -669,7 +667,7 @@ public class JetTypeMapper {
             mapReturnType(f.getReturnType(), signatureVisitor);
             signatureVisitor.writeReturnTypeEnd();
         }
-        return signatureVisitor.makeJvmMethodSignature(f.getName());
+        return signatureVisitor.makeJvmMethodSignature(f.getName().getName());
     }
 
 
@@ -686,7 +684,7 @@ public class JetTypeMapper {
     }
 
     private void writeFormalTypeParameter(TypeParameterDescriptor typeParameterDescriptor, BothSignatureWriter signatureVisitor) {
-        signatureVisitor.writeFormalTypeParameter(typeParameterDescriptor.getName(), typeParameterDescriptor.getVariance(), typeParameterDescriptor.isReified());
+        signatureVisitor.writeFormalTypeParameter(typeParameterDescriptor.getName().getName(), typeParameterDescriptor.getVariance(), typeParameterDescriptor.isReified());
 
         classBound:
         {
@@ -727,7 +725,7 @@ public class JetTypeMapper {
 
     }
 
-    public JvmMethodSignature mapSignature(String name, FunctionDescriptor f) {
+    public JvmMethodSignature mapSignature(Name name, FunctionDescriptor f) {
         final ReceiverDescriptor receiver = f.getReceiverParameter();
         
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, false);
@@ -754,7 +752,7 @@ public class JetTypeMapper {
         mapReturnType(f.getReturnType(), signatureWriter);
         signatureWriter.writeReturnTypeEnd();
         
-        return signatureWriter.makeJvmMethodSignature(name);
+        return signatureWriter.makeJvmMethodSignature(name.getName());
     }
 
     

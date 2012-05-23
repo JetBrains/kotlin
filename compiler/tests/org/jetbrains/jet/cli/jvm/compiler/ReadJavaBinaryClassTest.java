@@ -30,11 +30,12 @@ import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.junit.Assert;
 
@@ -77,7 +78,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
 
     @NotNull
     private NamespaceDescriptor compileKotlin() throws Exception {
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.ALT_HEADERS);
+        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
 
         String text = FileUtil.loadFile(ktFile);
 
@@ -89,7 +90,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
                 psiFile, JetControlFlowDataTraceFactory.EMPTY,
                 jetCoreEnvironment.getCompilerDependencies())
                     .getBindingContext();
-        return bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, FqName.topLevel("test"));
+        return bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, FqName.topLevel(Name.identifier("test")));
     }
 
     private NamespaceDescriptor compileJava() throws Exception {
@@ -109,7 +110,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
             fileManager.close();
         }
 
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.ALT_HEADERS);
+        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
 
         jetCoreEnvironment.addToClasspath(tmpdir);
         jetCoreEnvironment.addToClasspath(new File("out/production/runtime"));
@@ -117,7 +118,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
                 jetCoreEnvironment.getCompilerDependencies(), jetCoreEnvironment.getProject());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        return javaDescriptorResolver.resolveNamespace(FqName.topLevel("test"), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
+        return javaDescriptorResolver.resolveNamespace(FqName.topLevel(Name.identifier("test")), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
     }
 
     public static Test suite() {

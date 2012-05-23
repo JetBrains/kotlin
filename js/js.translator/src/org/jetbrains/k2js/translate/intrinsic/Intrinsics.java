@@ -21,6 +21,7 @@ import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
@@ -82,25 +83,25 @@ public final class Intrinsics {
         declareTuplesIntrinsics();
         declareArrayIntrinsics();
         declareBooleanIntrinsics();
-        FunctionDescriptor intToDouble = getFunctionByName(library.getInt().getDefaultType().getMemberScope(), "toDouble");
+        FunctionDescriptor intToDouble = getFunctionByName(library.getInt().getDefaultType().getMemberScope(), Name.identifier("toDouble"));
         functionIntrinsics.put(intToDouble, ReturnReceiverIntrinsic.INSTANCE);
-        FunctionDescriptor doubleToInt = getFunctionByName(library.getDouble().getDefaultType().getMemberScope(), "toInt");
+        FunctionDescriptor doubleToInt = getFunctionByName(library.getDouble().getDefaultType().getMemberScope(), Name.identifier("toInt"));
         functionIntrinsics.put(doubleToInt, new CallStandardMethodIntrinsic("Math.floor", true, 0));
-        FunctionDescriptor toStringFunction = getFunctionByName(library.getLibraryScope(), "toString");
+        FunctionDescriptor toStringFunction = getFunctionByName(library.getLibraryScope(), Name.identifier("toString"));
         functionIntrinsics.put(toStringFunction, new BuiltInFunctionIntrinsic("toString"));
     }
 
     private void declareBooleanIntrinsics() {
-        FunctionDescriptor andFunction = getFunctionByName(library.getBoolean().getDefaultType().getMemberScope(), "and");
+        FunctionDescriptor andFunction = getFunctionByName(library.getBoolean().getDefaultType().getMemberScope(), Name.identifier("and"));
         functionIntrinsics.put(andFunction, PrimitiveBinaryOperationIntrinsic.newInstance(JetTokens.ANDAND));
 
-        FunctionDescriptor orFunction = getFunctionByName(library.getBoolean().getDefaultType().getMemberScope(), "or");
+        FunctionDescriptor orFunction = getFunctionByName(library.getBoolean().getDefaultType().getMemberScope(), Name.identifier("or"));
         functionIntrinsics.put(orFunction, PrimitiveBinaryOperationIntrinsic.newInstance(JetTokens.OROR));
 
-        FunctionDescriptor notFunction = getFunctionByName(library.getBoolean().getDefaultType().getMemberScope(), "not");
+        FunctionDescriptor notFunction = getFunctionByName(library.getBoolean().getDefaultType().getMemberScope(), Name.identifier("not"));
         functionIntrinsics.put(notFunction, PrimitiveUnaryOperationIntrinsic.newInstance(JetTokens.EXCL));
 
-        FunctionDescriptor xorFunction = getFunctionByName(library.getBoolean().getDefaultType().getMemberScope(), "xor");
+        FunctionDescriptor xorFunction = getFunctionByName(library.getBoolean().getDefaultType().getMemberScope(), Name.identifier("xor"));
         functionIntrinsics.put(xorFunction, PrimitiveBinaryOperationIntrinsic.newInstance(JsBinaryOperator.BIT_XOR));
     }
 
@@ -127,23 +128,23 @@ public final class Intrinsics {
     }
 
     private void declareNullConstructorIntrinsic() {
-        FunctionDescriptor nullArrayConstructor = library.getLibraryScope().getFunctions("arrayOfNulls").iterator().next();
+        FunctionDescriptor nullArrayConstructor = library.getLibraryScope().getFunctions(Name.identifier("arrayOfNulls")).iterator().next();
         functionIntrinsics.put(nullArrayConstructor, new CallStandardMethodIntrinsic("Kotlin.nullArray", false, 1));
     }
 
     //TODO: some dangerous operation unchecked here
     private void declareIntrinsicsForArrayType(@NotNull JetType arrayType) {
         JetScope arrayMemberScope = arrayType.getMemberScope();
-        FunctionDescriptor setFunction = getFunctionByName(arrayMemberScope, "set");
+        FunctionDescriptor setFunction = getFunctionByName(arrayMemberScope, Name.identifier("set"));
         functionIntrinsics.put(setFunction, ArraySetIntrinsic.INSTANCE);
-        FunctionDescriptor getFunction = getFunctionByName(arrayMemberScope, "get");
+        FunctionDescriptor getFunction = getFunctionByName(arrayMemberScope, Name.identifier("get"));
         functionIntrinsics.put(getFunction, ArrayGetIntrinsic.INSTANCE);
-        PropertyDescriptor sizeProperty = getPropertyByName(arrayMemberScope, "size");
+        PropertyDescriptor sizeProperty = getPropertyByName(arrayMemberScope, Name.identifier("size"));
         functionIntrinsics.put(sizeProperty.getGetter(), lengthPropertyIntrinsic);
         //TODO: excessive object creation
-        PropertyDescriptor indicesProperty = getPropertyByName(arrayMemberScope, "indices");
+        PropertyDescriptor indicesProperty = getPropertyByName(arrayMemberScope, Name.identifier("indices"));
         functionIntrinsics.put(indicesProperty.getGetter(), new CallStandardMethodIntrinsic("Kotlin.arrayIndices", true, 0));
-        FunctionDescriptor iteratorFunction = getFunctionByName(arrayMemberScope, "iterator");
+        FunctionDescriptor iteratorFunction = getFunctionByName(arrayMemberScope, Name.identifier("iterator"));
         functionIntrinsics.put(iteratorFunction, new CallStandardMethodIntrinsic("Kotlin.arrayIterator", true, 0));
         ConstructorDescriptor arrayConstructor =
             ((ClassDescriptor)arrayMemberScope.getContainingDeclaration()).getConstructors().iterator().next();
@@ -162,7 +163,7 @@ public final class Intrinsics {
     private void declareTupleIntrinsics(int tupleSize) {
         JetScope libraryScope = library.getLibraryScope();
         assert libraryScope != null;
-        ClassifierDescriptor tupleDescriptor = libraryScope.getClassifier("Tuple" + tupleSize);
+        ClassifierDescriptor tupleDescriptor = libraryScope.getClassifier(Name.identifier("Tuple" + tupleSize));
         assert tupleDescriptor != null;
         declareTupleIntrinsicAccessors(tupleDescriptor, tupleSize);
     }
@@ -170,20 +171,20 @@ public final class Intrinsics {
     private void declareStringIntrinsics() {
         //TODO: same intrinsic for 2 different methods
         PropertyDescriptor stringLengthProperty =
-            getPropertyByName(library.getString().getDefaultType().getMemberScope(), "length");
+            getPropertyByName(library.getString().getDefaultType().getMemberScope(), Name.identifier("length"));
         functionIntrinsics.put(stringLengthProperty.getGetter(), lengthPropertyIntrinsic);
         PropertyDescriptor charSequenceLengthProperty =
-            getPropertyByName(library.getCharSequence().getDefaultType().getMemberScope(), "length");
+            getPropertyByName(library.getCharSequence().getDefaultType().getMemberScope(), Name.identifier("length"));
         functionIntrinsics.put(charSequenceLengthProperty.getGetter(), lengthPropertyIntrinsic);
         FunctionDescriptor getFunction =
-            getFunctionByName(library.getString().getDefaultType().getMemberScope(), "get");
+            getFunctionByName(library.getString().getDefaultType().getMemberScope(), Name.identifier("get"));
         functionIntrinsics.put(getFunction, CharAtIntrinsic.INSTANCE);
     }
 
     private void declareTupleIntrinsicAccessors(@NotNull ClassifierDescriptor tupleDescriptor,
                                                 int tupleSize) {
         for (int elementIndex = 0; elementIndex < tupleSize; ++elementIndex) {
-            String accessorName = "_" + (elementIndex + 1);
+            Name accessorName = Name.identifier("_" + (elementIndex + 1));
             PropertyDescriptor propertyDescriptor =
                 getPropertyByName(tupleDescriptor.getDefaultType().getMemberScope(), accessorName);
             functionIntrinsics.put(propertyDescriptor.getGetter(), new TupleAccessIntrinsic(elementIndex));
@@ -253,20 +254,20 @@ public final class Intrinsics {
         }
 
         private void tryResolveAsEqualsCompareToOrRangeToIntrinsic(@NotNull FunctionDescriptor descriptor) {
-            String functionName = descriptor.getName();
+            Name functionName = descriptor.getName();
             if (functionName.equals(COMPARE_TO)) {
                 compareToIntrinsics.put(descriptor, PrimitiveCompareToIntrinsic.newInstance());
             }
             if (functionName.equals(EQUALS)) {
                 equalsIntrinsics.put(descriptor, PrimitiveEqualsIntrinsic.newInstance());
             }
-            if (functionName.equals("rangeTo")) {
+            if (functionName.equals(Name.identifier("rangeTo"))) {
                 functionIntrinsics.put(descriptor, PrimitiveRangeToIntrinsic.newInstance());
             }
         }
 
         private void tryResolveAsUnaryIntrinsics(@NotNull FunctionDescriptor descriptor) {
-            String functionName = descriptor.getName();
+            Name functionName = descriptor.getName();
             JetToken token = UNARY_OPERATION_NAMES.inverse().get(functionName);
 
             if (token == null) return;
@@ -276,7 +277,7 @@ public final class Intrinsics {
         }
 
         private void tryResolveAsBinaryIntrinsics(@NotNull FunctionDescriptor descriptor) {
-            String functionName = descriptor.getName();
+            Name functionName = descriptor.getName();
 
             if (isUnaryOperation(descriptor)) return;
 

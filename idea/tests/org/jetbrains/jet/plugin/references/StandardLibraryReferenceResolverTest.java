@@ -71,7 +71,7 @@ public class StandardLibraryReferenceResolverTest extends ResolveTestCase {
     public void testAllReferencesResolved() {
         StandardLibraryReferenceResolver referenceResolver = getProject().getComponent(StandardLibraryReferenceResolver.class);
         for (DeclarationDescriptor descriptor : getAllStandardDescriptors(JetStandardClasses.STANDARD_CLASSES_NAMESPACE)) {
-            if (descriptor instanceof NamespaceDescriptor && "jet".equals(descriptor.getName())) continue;
+            if (descriptor instanceof NamespaceDescriptor && "jet".equals(descriptor.getName().getName())) continue;
             assertNotNull("Can't resolve " + descriptor, referenceResolver.resolveStandardLibrarySymbol(descriptor));
         }
     }

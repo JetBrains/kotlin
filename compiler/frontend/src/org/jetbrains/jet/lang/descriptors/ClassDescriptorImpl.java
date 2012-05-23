@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
@@ -42,7 +43,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     public ClassDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull String name) {
+            @NotNull Name name) {
         super(containingDeclaration, annotations, name);
     }
 
@@ -62,7 +63,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
                                                 @NotNull Set<ConstructorDescriptor> constructors,
                                                 @Nullable ConstructorDescriptor primaryConstructor,
                                                 @Nullable JetType superclassType) {
-        this.typeConstructor = new TypeConstructorImpl(this, getAnnotations(), sealed, getName(), typeParameters, supertypes);
+        this.typeConstructor = new TypeConstructorImpl(this, getAnnotations(), sealed, getName().getName(), typeParameters, supertypes);
         this.memberDeclarations = memberDeclarations;
         this.constructors = constructors;
         this.primaryConstructor = primaryConstructor;

@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.calls;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -28,11 +29,11 @@ import java.util.Collection;
  */
 public interface CallableDescriptorCollector<D extends CallableDescriptor> {
     @NotNull
-    Collection<D> getNonExtensionsByName(JetScope scope, String name);
+    Collection<D> getNonExtensionsByName(JetScope scope, Name name);
 
     @NotNull
-    Collection<D> getMembersByName(@NotNull JetType receiver, String name);
+    Collection<D> getMembersByName(@NotNull JetType receiver, Name name);
 
     @NotNull
-    Collection<D> getNonMembersByName(JetScope scope, String name);
+    Collection<D> getNonMembersByName(JetScope scope, Name name);
 }

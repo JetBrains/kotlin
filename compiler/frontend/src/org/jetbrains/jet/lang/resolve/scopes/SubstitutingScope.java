@@ -21,6 +21,8 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.name.LabelName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -81,22 +83,22 @@ public class SubstitutingScope implements JetScope {
 
     @NotNull
     @Override
-    public Set<VariableDescriptor> getProperties(@NotNull String name) {
+    public Set<VariableDescriptor> getProperties(@NotNull Name name) {
         return substitute(workerScope.getProperties(name));
     }
 
     @Override
-    public VariableDescriptor getLocalVariable(@NotNull String name) {
+    public VariableDescriptor getLocalVariable(@NotNull Name name) {
         return substitute(workerScope.getLocalVariable(name));
     }
 
     @Override
-    public ClassifierDescriptor getClassifier(@NotNull String name) {
+    public ClassifierDescriptor getClassifier(@NotNull Name name) {
         return substitute(workerScope.getClassifier(name));
     }
 
     @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull String name) {
+    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
         return substitute(workerScope.getObjectDescriptor(name));
     }
 
@@ -108,12 +110,12 @@ public class SubstitutingScope implements JetScope {
 
     @NotNull
     @Override
-    public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+    public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
         return substitute(workerScope.getFunctions(name));
     }
 
     @Override
-    public NamespaceDescriptor getNamespace(@NotNull String name) {
+    public NamespaceDescriptor getNamespace(@NotNull Name name) {
         return workerScope.getNamespace(name); // TODO
     }
 
@@ -136,12 +138,12 @@ public class SubstitutingScope implements JetScope {
 
     @NotNull
     @Override
-    public Collection<DeclarationDescriptor> getDeclarationsByLabel(String labelName) {
+    public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
         throw new UnsupportedOperationException(); // TODO
     }
 
     @Override
-    public PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName) {
+    public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
         throw new UnsupportedOperationException(); // TODO
     }
 

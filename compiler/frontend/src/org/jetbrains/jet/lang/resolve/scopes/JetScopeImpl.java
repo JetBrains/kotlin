@@ -18,6 +18,8 @@ package org.jetbrains.jet.lang.resolve.scopes;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.name.LabelName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
@@ -30,12 +32,12 @@ import java.util.Set;
 */
 public abstract class JetScopeImpl implements JetScope {
     @Override
-    public ClassifierDescriptor getClassifier(@NotNull String name) {
+    public ClassifierDescriptor getClassifier(@NotNull Name name) {
         return null;
     }
 
     @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull String name) {
+    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
         return null;
     }
 
@@ -47,17 +49,17 @@ public abstract class JetScopeImpl implements JetScope {
 
     @NotNull
     @Override
-    public Set<VariableDescriptor> getProperties(@NotNull String name) {
+    public Set<VariableDescriptor> getProperties(@NotNull Name name) {
         return Collections.emptySet();
     }
 
     @Override
-    public VariableDescriptor getLocalVariable(@NotNull String name) {
+    public VariableDescriptor getLocalVariable(@NotNull Name name) {
         return null;
     }
 
     @Override
-    public NamespaceDescriptor getNamespace(@NotNull String name) {
+    public NamespaceDescriptor getNamespace(@NotNull Name name) {
         return null;
     }
 
@@ -69,18 +71,18 @@ public abstract class JetScopeImpl implements JetScope {
 
     @NotNull
     @Override
-    public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+    public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
         return Collections.emptySet();
     }
 
     @NotNull
     @Override
-    public Collection<DeclarationDescriptor> getDeclarationsByLabel(String labelName) {
+    public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
         return Collections.emptyList();
     }
 
     @Override
-    public PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName) {
+    public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
         return null;
     }
 

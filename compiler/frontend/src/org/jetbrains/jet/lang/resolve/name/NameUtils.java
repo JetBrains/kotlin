@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve;
+package org.jetbrains.jet.lang.resolve.name;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 public class NameUtils {
 
     public static boolean isValidIdentified(@NotNull String name) {
-        return name.length() > 0 && !name.startsWith("<");
+        return name.length() > 0 && !name.startsWith("<") && !name.contains(".");
     }
 
     public static void requireIdentifier(@NotNull String name) {

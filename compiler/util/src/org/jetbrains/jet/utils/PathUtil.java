@@ -104,25 +104,19 @@ public class PathUtil {
         return new File(resourceRoot).getAbsoluteFile().getAbsolutePath();
     }
 
-    public static List<VirtualFile> getAltHeadersRoots() {
-        List<VirtualFile> roots = new ArrayList<VirtualFile>();
-
-        File alts = getAltHeadersPath();
-
-        if (alts != null) {
-            for (File root : alts.listFiles()) {
-                VirtualFile jarRoot = jarFileToVirtualFile(root);
-                roots.add(jarRoot);
+    @NotNull
+    public static VirtualFile jarFileOrDirectoryToVirtualFile(@NotNull File file) {
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                return VirtualFileManager.getInstance()
+                        .findFileByUrl("file://" + FileUtil.toSystemIndependentName(file.getAbsolutePath()));
+            }
+            else {
+                return VirtualFileManager.getInstance().findFileByUrl("jar://" + FileUtil.toSystemIndependentName(file.getAbsolutePath()) + "!/");
             }
         }
-        return roots;
-    }
-
-    @NotNull
-    public static VirtualFile jarFileToVirtualFile(@NotNull File file) {
-        if (!file.exists() || !file.isFile()) {
-            throw new IllegalStateException("file must exist and be regular to be converted to virtual file: " + file);
+        else {
+            throw new IllegalStateException("Path " + file + " does not exist.");
         }
-        return VirtualFileManager.getInstance().findFileByUrl("jar://" + FileUtil.toSystemIndependentName(file.getAbsolutePath()) + "!/");
     }
 }

@@ -16,6 +16,9 @@
 
 package org.jetbrains.jet.lang.types.lang;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.name.Name;
+
 /**
  * @author Stepan Koltsov
  */
@@ -31,19 +34,21 @@ public enum PrimitiveType {
     DOUBLE("Double"),
     ;
     
-    private final String typeName;
-    private final String arrayTypeName;
+    private final Name typeName;
+    private final Name arrayTypeName;
 
     private PrimitiveType(String typeName) {
-        this.typeName = typeName;
-        this.arrayTypeName = typeName + "Array";
+        this.typeName = Name.identifier(typeName);
+        this.arrayTypeName = Name.identifier(typeName + "Array");
     }
 
-    public String getTypeName() {
+    @NotNull
+    public Name getTypeName() {
         return typeName;
     }
 
-    public String getArrayTypeName() {
+    @NotNull
+    public Name getArrayTypeName() {
         return arrayTypeName;
     }
 }

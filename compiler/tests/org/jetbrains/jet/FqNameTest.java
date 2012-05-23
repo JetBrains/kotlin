@@ -17,11 +17,13 @@
 package org.jetbrains.jet;
 
 import com.google.common.collect.Lists;
-import org.jetbrains.jet.lang.resolve.FqName;
-import org.jetbrains.jet.lang.resolve.FqNameUnsafe;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,7 +45,7 @@ public class FqNameTest {
         Assert.assertEquals(2, path.size());
         Assert.assertEquals("", path.get(0).getFqName());
         Assert.assertEquals("com", path.get(1).getFqName());
-        Assert.assertEquals("com", path.get(1).shortName());
+        Assert.assertEquals("com", path.get(1).shortName().getName());
         Assert.assertEquals("", path.get(1).parent().getFqName());
     }
 
@@ -53,10 +55,10 @@ public class FqNameTest {
         Assert.assertEquals(3, path.size());
         Assert.assertEquals("", path.get(0).getFqName());
         Assert.assertEquals("com", path.get(1).getFqName());
-        Assert.assertEquals("com", path.get(1).shortName());
+        Assert.assertEquals("com", path.get(1).shortName().getName());
         Assert.assertEquals("", path.get(1).parent().getFqName());
         Assert.assertEquals("com.jetbrains", path.get(2).getFqName());
-        Assert.assertEquals("jetbrains", path.get(2).shortName());
+        Assert.assertEquals("jetbrains", path.get(2).shortName().getName());
         Assert.assertEquals("com", path.get(2).parent().getFqName());
     }
 
@@ -66,13 +68,13 @@ public class FqNameTest {
         Assert.assertEquals(4, path.size());
         Assert.assertEquals("", path.get(0).getFqName());
         Assert.assertEquals("com", path.get(1).getFqName());
-        Assert.assertEquals("com", path.get(1).shortName());
+        Assert.assertEquals("com", path.get(1).shortName().getName());
         Assert.assertEquals("", path.get(1).parent().getFqName());
         Assert.assertEquals("com.jetbrains", path.get(2).getFqName());
-        Assert.assertEquals("jetbrains", path.get(2).shortName());
+        Assert.assertEquals("jetbrains", path.get(2).shortName().getName());
         Assert.assertEquals("com", path.get(2).parent().getFqName());
         Assert.assertEquals("com.jetbrains.jet", path.get(3).getFqName());
-        Assert.assertEquals("jet", path.get(3).shortName());
+        Assert.assertEquals("jet", path.get(3).shortName().getName());
         Assert.assertEquals("com.jetbrains", path.get(3).parent().getFqName());
     }
 
@@ -81,8 +83,12 @@ public class FqNameTest {
         Assert.assertEquals(Lists.newArrayList(), new FqName("").pathSegments());
 
         for (String name : new String[] { "com", "com.jetbrains", "com.jetbrains.jet" }) {
-            List<String> segments = new FqName(name).pathSegments();
-            Assert.assertEquals(Arrays.asList(name.split("\\.")), segments);
+            List<Name> segments = new FqName(name).pathSegments();
+            List<String> segmentsStrings = new ArrayList<String>();
+            for (Name segment : segments) {
+                segmentsStrings.add(segment.getName());
+            }
+            Assert.assertEquals(Arrays.asList(name.split("\\.")), segmentsStrings);
         }
     }
 

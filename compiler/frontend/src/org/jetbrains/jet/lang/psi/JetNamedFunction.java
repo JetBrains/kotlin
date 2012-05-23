@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
-import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
@@ -83,9 +83,13 @@ public class JetNamedFunction extends JetFunction implements StubBasedPsiElement
 
         PsiElement parent = getParent();
         if (parent instanceof JetFile) {
+            // fqname is different in scripts
+            if (((JetFile) parent).getNamespaceHeader() == null) {
+                return null;
+            }
             JetFile jetFile = (JetFile) parent;
             final FqName fileFQN = JetPsiUtil.getFQName(jetFile);
-            return fileFQN.child(getName());
+            return fileFQN.child(getNameAsName());
         }
 
         return null;

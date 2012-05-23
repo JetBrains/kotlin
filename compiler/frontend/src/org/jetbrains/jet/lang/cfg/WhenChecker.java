@@ -34,7 +34,7 @@ import java.util.Set;
  * @author svtk
  */
 public class WhenChecker {
-    public static boolean isWhenExhaust(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
+    public static boolean isWhenExhaustive(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
         JetExpression subjectExpression = expression.getSubjectExpression();
         if (subjectExpression == null) return false;
         JetType type = trace.get(BindingContext.EXPRESSION_TYPE, subjectExpression);

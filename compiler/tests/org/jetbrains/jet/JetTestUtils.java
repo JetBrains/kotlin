@@ -19,9 +19,17 @@ package org.jetbrains.jet;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.impl.PsiFileFactoryImpl;
+import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.TestCase;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
@@ -35,6 +43,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.SlicedMap;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -236,6 +245,22 @@ public class JetTestUtils {
     public static JetCoreEnvironment createEnvironmentWithFullJdk(Disposable disposable) {
         return new JetCoreEnvironment(disposable,
                 CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, false));
+    }
+
+    public static PsiFile createFile(@NonNls String name, String text, @NotNull Project project) {
+        LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);
+        virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
+        return ((PsiFileFactoryImpl) PsiFileFactory.getInstance(project)).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
+    }
+
+    public static String doLoadFile(String myFullDataPath, String name) throws IOException {
+        String fullName = myFullDataPath + File.separatorChar + name;
+        return doLoadFile(new File(fullName));
+    }
+
+    public static String doLoadFile(@NotNull File file) throws IOException {
+        String text = FileUtil.loadFile(file, CharsetToolkit.UTF8).trim();
+        return StringUtil.convertLineSeparators(text);
     }
 
     public interface TestFileFactory<F> {

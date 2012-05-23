@@ -21,8 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.rendering.Renderer;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.FqName;
-import org.jetbrains.jet.lang.resolve.FqNameUnsafe;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -134,7 +134,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
     private static List<String> getOuterClassesNames(ClassDescriptor cd) {
         ArrayList<String> result = new ArrayList<String>();
         while (cd.getContainingDeclaration() instanceof ClassifierDescriptor) {
-            result.add(cd.getName());
+            result.add(cd.getName().getName());
             cd = (ClassDescriptor)cd.getContainingDeclaration();
         }
         return result;
@@ -539,7 +539,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
 
         protected void renderName(DeclarationDescriptor descriptor, StringBuilder stringBuilder) {
-            stringBuilder.append(escape(descriptor.getName()));
+            stringBuilder.append(escape(descriptor.getName().getName()));
         }
 
         protected void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder, boolean topLevel) {

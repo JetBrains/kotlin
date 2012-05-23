@@ -24,6 +24,9 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.psi.JetSecondaryConstructor;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
@@ -189,10 +192,10 @@ public class DescriptorUtils {
         if (containingDeclaration == null) {
             if (descriptor instanceof NamespaceDescriptor) {
                 // TODO: namespace must always have parent
-                if (descriptor.getName().equals("jet")) {
-                    return FqNameUnsafe.topLevel("jet");
+                if (descriptor.getName().equals(Name.identifier("jet"))) {
+                    return FqNameUnsafe.topLevel(Name.identifier("jet"));
                 }
-                if (descriptor.getName().equals("<java_root>")) {
+                if (descriptor.getName().equals(Name.special("<java_root>"))) {
                     return FqName.ROOT.toUnsafe();
                 }
             }

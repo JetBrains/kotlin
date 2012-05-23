@@ -20,6 +20,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.extapi.psi.PsiFileBase;
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElementVisitor;
@@ -27,6 +28,7 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubTree;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetLanguage;
@@ -59,9 +61,20 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, JetImportDirective.class);
     }
 
-    @NotNull
+    // scripts has no namespace header
+    @Nullable
     public JetNamespaceHeader getNamespaceHeader() {
-        return (JetNamespaceHeader) getNode().findChildByType(JetNodeTypes.NAMESPACE_HEADER).getPsi();
+        ASTNode ast = getNode().findChildByType(JetNodeTypes.NAMESPACE_HEADER);
+        return ast != null ? (JetNamespaceHeader) ast.getPsi() : null;
+    }
+
+    @Nullable
+    public JetScript getScript() {
+        return PsiTreeUtil.getChildOfType(this, JetScript.class);
+    }
+
+    public boolean isScript() {
+        return getScript() != null;
     }
 
     @NotNull

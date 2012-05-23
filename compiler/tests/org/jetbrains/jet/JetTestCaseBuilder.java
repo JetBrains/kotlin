@@ -20,6 +20,7 @@ import com.intellij.openapi.application.PathManager;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.parsing.JetParser;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -67,7 +68,7 @@ public abstract class JetTestCaseBuilder {
     public static FilenameFilter kotlinFilter = new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
-            return name.endsWith(".kt") || name.endsWith("jet");
+            return name.endsWith(".kt") || name.endsWith("jet") || name.endsWith("." + JetParser.KTSCRIPT_FILE_SUFFIX);
         }
     };
 

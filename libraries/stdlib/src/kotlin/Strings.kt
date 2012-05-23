@@ -35,6 +35,24 @@ public inline fun String.trimLeading(prefix: String): String {
     return answer
 }
 
+/**
+ * Returns a copy of this string capitalised if it is not empty or already starting with an uppper case letter, otherwise returns this
+ *
+ * @includeFunctionBody ../../test/StringTest.kt capitalize
+ */
+public inline fun String.capitalize(): String {
+    return if (notEmpty() && charAt(0).isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this
+}
+
+/**
+ * Returns a copy of this string with the first letter lower case if it is not empty or already starting with a lower case letter, otherwise returns this
+ *
+ * @includeFunctionBody ../../test/StringTest.kt decapitalize
+ */
+public inline fun String.decapitalize(): String {
+    return if (notEmpty() && charAt(0).isUpperCase()) substring(0, 1).toLowerCase() + substring(1) else this
+}
+
 /** Returns the string with the trailing postfix of this string removed */
 public inline fun String.trimTrailing(postfix: String): String {
     var answer = this

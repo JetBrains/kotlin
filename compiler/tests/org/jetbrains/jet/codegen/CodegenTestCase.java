@@ -16,20 +16,25 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
+import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetLiteFixture;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -37,14 +42,39 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author yole
  */
-public abstract class CodegenTestCase extends JetLiteFixture {
+public abstract class CodegenTestCase extends UsefulTestCase {
 
     // for environment and classloader
+    protected JetCoreEnvironment myEnvironment;
     private List<File> extraClasspath = Lists.newArrayList();
+    protected JetFile myFile;
+
+    protected void createEnvironmentWithMockJdkAndIdeaAnnotations() {
+        if (myEnvironment != null) {
+            throw new IllegalStateException("must not set up myEnvironemnt twice");
+        }
+        myEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable());
+    }
+
+    protected void createEnvironmentWithMockJdkAndIdeaAnnotations(@NotNull CompilerSpecialMode compilerSpecialMode) {
+        if (myEnvironment != null) {
+            throw new IllegalStateException("must not set up myEnvironemnt twice");
+        }
+        myEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(), compilerSpecialMode);
+    }
+
+    protected void createEnvironmentWithFullJdk() {
+        if (myEnvironment != null) {
+            throw new IllegalStateException("must not set up myEnvironemnt twice");
+        }
+        myEnvironment = JetTestUtils.createEnvironmentWithFullJdk(getTestRootDisposable());
+    }
 
     protected void addToClasspath(@NotNull File file) {
         myEnvironment.addToClasspath(file);
@@ -70,18 +100,18 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     @Override
     protected void tearDown() throws Exception {
         myFile = null;
+        myEnvironment = null;
         super.tearDown();
     }
 
     protected void loadText(final String text) {
-        myFile = (JetFile) createFile("a.jet", text);
+        myFile = (JetFile) JetTestUtils.createFile("a.jet", text, myEnvironment.getProject());
     }
 
-    @Override
     protected String loadFile(final String name) {
         try {
-            final String content = doLoadFile(JetParsingTest.getTestDataDir() + "/codegen/", name);
-            myFile = (JetFile) createFile(name, content);
+            final String content = JetTestUtils.doLoadFile(JetParsingTest.getTestDataDir() + "/codegen/", name);
+            myFile = (JetFile) JetTestUtils.createFile(name, content, myEnvironment.getProject());
             return content;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -97,8 +127,10 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     }
 
     protected void blackBoxFile(String filename) {
-        loadFile(filename);
-        String actual;
+        String content = loadFile(filename);
+        Matcher matcher = Pattern.compile("// expected: (.*)").matcher(content);
+        String expectedValue = matcher.find() ? matcher.group(1) : "OK";
+        Object actual;
         try {
             actual = blackBox();
         } catch (NoClassDefFoundError e) {
@@ -108,21 +140,32 @@ public abstract class CodegenTestCase extends JetLiteFixture {
             System.out.println(generateToText());
             throw new RuntimeException(e);
         }
-        if (!"OK".equals(actual)) {
+        if (!Objects.equal(expectedValue, actual)) {
             System.out.println(generateToText());
         }
-        assertEquals("OK", actual);
+        assertEquals(expectedValue, actual);
     }
 
+    @NotNull
     protected String blackBox() throws Exception {
         ClassFileFactory codegens = generateClassesInFile();
         GeneratedClassLoader loader = createClassLoader(codegens);
 
         try {
-            String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFile)).getFqName().getFqName();
-            Class<?> namespaceClass = loader.loadClass(fqName);
-            Method method = namespaceClass.getMethod("box");
-            return (String) method.invoke(null);
+            if (myFile.isScript()) {
+                Class<?> scriptClass = loader.loadClass("Script");
+                Object scriptInstance = scriptClass.newInstance();
+                Field field = scriptClass.getDeclaredField("rv");
+                field.setAccessible(true);
+                Object result = field.get(scriptInstance);
+                return result != null ? result.toString() : "null";
+            }
+            else {
+                String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFile)).getFqName().getFqName();
+                Class<?> namespaceClass = loader.loadClass(fqName);
+                Method method = namespaceClass.getMethod("box");
+                return (String) method.invoke(null);
+            }
         } finally {
            loader.dispose();
         }
@@ -147,7 +190,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
                 myEnvironment.getCompilerDependencies());
         analyzeExhaust.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
-        GenerationState state = new GenerationState(getProject(), classBuilderFactory, analyzeExhaust, Collections.singletonList(myFile));
+        GenerationState state = new GenerationState(myEnvironment.getProject(), classBuilderFactory, analyzeExhaust, Collections.singletonList(myFile));
         state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         return state;
     }

@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
@@ -251,8 +252,8 @@ public class DeclarationResolver {
 
     private void checkRedeclarationsInNamespaces() {
         for (NamespaceDescriptorImpl descriptor : context.getNamespaceDescriptors().values()) {
-            Multimap<String, DeclarationDescriptor> simpleNameDescriptors = descriptor.getMemberScope().getDeclaredDescriptorsAccessibleBySimpleName();
-            for (String name : simpleNameDescriptors.keySet()) {
+            Multimap<Name, DeclarationDescriptor> simpleNameDescriptors = descriptor.getMemberScope().getDeclaredDescriptorsAccessibleBySimpleName();
+            for (Name name : simpleNameDescriptors.keySet()) {
                 // Keep only properties with no receiver
                 Collection<DeclarationDescriptor> descriptors = Collections2.filter(simpleNameDescriptors.get(name), new Predicate<DeclarationDescriptor>() {
                     @Override
@@ -268,7 +269,7 @@ public class DeclarationResolver {
                     for (DeclarationDescriptor declarationDescriptor : descriptors) {
                         for (PsiElement declaration : getDeclarationsByDescriptor(declarationDescriptor)) {
                             assert declaration != null;
-                            trace.report(REDECLARATION.on(declaration, declarationDescriptor.getName()));
+                            trace.report(REDECLARATION.on(declaration, declarationDescriptor.getName().getName()));
                         }
                     }
                 }

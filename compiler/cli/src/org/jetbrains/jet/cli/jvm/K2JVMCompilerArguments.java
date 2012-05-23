@@ -54,10 +54,10 @@ public class K2JVMCompilerArguments extends CompilerArguments {
     @Argument(value = "stdlib", description = "Path to the stdlib.jar")
     public String stdlib;
 
-    @Argument(value = "altHeaders", description = "Path to the alternative library headers paths")
-    public String altHeaders;
+    @Argument(value = "jdkHeaders", description = "Path to the kotlin-jdk-headers.jar")
+    public String jdkHeaders;
 
-    @Argument(value = "mode", description = "Special compiler modes: stubs or altHeaders")
+    @Argument(value = "mode", description = "Special compiler modes: stubs or jdkHeaders")
     public String mode;
 
     @Argument(value = "output", description = "output directory")
@@ -65,6 +65,9 @@ public class K2JVMCompilerArguments extends CompilerArguments {
 
     @Argument(value = "module", description = "module to compile")
     public String module;
+
+    @Argument(value = "script", description = "evaluate script")
+    public boolean script;
 
     @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")
     public boolean tags;

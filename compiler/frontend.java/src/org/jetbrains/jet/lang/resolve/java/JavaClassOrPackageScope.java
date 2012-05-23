@@ -21,14 +21,13 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
 import java.util.Collection;
@@ -62,13 +61,13 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
 
     @NotNull
     @Override
-    public Set<VariableDescriptor> getProperties(@NotNull String name) {
+    public Set<VariableDescriptor> getProperties(@NotNull Name name) {
         return semanticServices.getDescriptorResolver().resolveFieldGroupByName(name, resolverScopeData);
     }
 
     @NotNull
     @Override
-    public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+    public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
         return semanticServices.getDescriptorResolver().resolveFunctionGroup(name, resolverScopeData);
     }
 

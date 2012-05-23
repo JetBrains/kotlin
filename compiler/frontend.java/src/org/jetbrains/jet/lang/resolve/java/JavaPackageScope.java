@@ -16,20 +16,13 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.google.common.collect.Sets;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiModifier;
-import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.FqName;
-
-import java.util.Collection;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 /**
  * @author abreslav
@@ -52,7 +45,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
     }
 
     @Override
-    public ClassifierDescriptor getClassifier(@NotNull String name) {
+    public ClassifierDescriptor getClassifier(@NotNull Name name) {
         ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
         if (classDescriptor == null || DescriptorUtils.isObject(classDescriptor)) {
             // TODO: this is a big hack against several things that I barely understand myself and cannot explain
@@ -64,13 +57,13 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
     }
 
     @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull String name) {
+    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
         // TODO
         return null;
     }
 
     @Override
-    public NamespaceDescriptor getNamespace(@NotNull String name) {
+    public NamespaceDescriptor getNamespace(@NotNull Name name) {
         return semanticServices.getDescriptorResolver().resolveNamespace(packageFQN.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
     }
 }

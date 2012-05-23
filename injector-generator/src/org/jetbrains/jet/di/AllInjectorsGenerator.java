@@ -23,6 +23,7 @@ import org.jetbrains.jet.codegen.ClassCodegen;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
+import org.jetbrains.jet.codegen.ScriptCodegen;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
@@ -134,7 +135,7 @@ public class AllInjectorsGenerator {
         generator.addField(JavaBridgeConfiguration.class);
         generator.addPublicField(PsiClassFinderForJvm.class);
         generator.addField(false, ModuleDescriptor.class, null,
-                new GivenExpression("new org.jetbrains.jet.lang.descriptors.ModuleDescriptor(\"<dummy>\")"));
+                new GivenExpression("new org.jetbrains.jet.lang.descriptors.ModuleDescriptor(org.jetbrains.jet.lang.resolve.name.Name.special(\"<dummy>\"))"));
         generator.addParameter(CompilerDependencies.class);
         generator.addField(false, CompilerSpecialMode.class, null, new GivenExpression("compilerDependencies.getCompilerSpecialMode()"));
 
@@ -156,6 +157,7 @@ public class AllInjectorsGenerator {
         generator.addParameter(ClassBuilderFactory.class);
         generator.addPublicField(JetTypeMapper.class);
         generator.addPublicField(ClassCodegen.class);
+        generator.addPublicField(ScriptCodegen.class);
         generator.addField(true, IntrinsicMethods.class, "intrinsics", null);
         generator.addPublicField(ClassFileFactory.class);
         generator.generate("compiler/backend/src", "org.jetbrains.jet.di", "InjectorForJvmCodegen");

@@ -17,12 +17,13 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 /**
  * @author abreslav
  */
 public abstract class MutableDeclarationDescriptor implements DeclarationDescriptor {
-    private String name;
+    private Name name;
     private final DeclarationDescriptor containingDeclaration;
 
     public MutableDeclarationDescriptor(@NotNull DeclarationDescriptor containingDeclaration) {
@@ -31,11 +32,11 @@ public abstract class MutableDeclarationDescriptor implements DeclarationDescrip
 
     @NotNull
     @Override
-    public String getName() {
+    public Name getName() {
         return name;
     }
 
-    public void setName(@NotNull String name) {
+    public void setName(@NotNull Name name) {
         assert this.name == null : this.name;
         this.name = name;
     }

@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.List;
@@ -82,7 +83,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
 
         List<ValueParameterDescriptor> valueParameters = candidate.getValueParameters();
 
-        Map<String, ValueParameterDescriptor> parameterByName = Maps.newHashMap();
+        Map<Name, ValueParameterDescriptor> parameterByName = Maps.newHashMap();
         for (ValueParameterDescriptor valueParameter : valueParameters) {
             parameterByName.put(valueParameter.getName(), valueParameter);
         }
@@ -97,7 +98,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             if (valueArgument.isNamed()) {
                 someNamed = true;
                 JetSimpleNameExpression nameReference = valueArgument.getArgumentName().getReferenceExpression();
-                ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(nameReference.getReferencedName());
+                ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(nameReference.getReferencedNameAsName());
                 if (valueParameterDescriptor == null) {
                     temporaryTrace.report(NAMED_PARAMETER_NOT_FOUND.on(nameReference));
                     unmappedArguments.add(valueArgument);

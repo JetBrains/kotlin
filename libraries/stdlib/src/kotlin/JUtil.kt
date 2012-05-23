@@ -152,17 +152,40 @@ public inline fun <in T> List<T>.sort(transform: fun(T) : java.lang.Comparable<*
 }
 */
 
-val <T> List<T>.head : T?
-    get() = this.get(0)
-
+/**
+ * Returns the first item in the list
+ *
+ * @includeFunctionBody ../../test/ListTest.kt first
+ */
 val <T> List<T>.first : T?
     get() = this.head
 
-val <T> List<T>.tail : T?
+
+/**
+ * Returns the last item in the list
+ *
+ * @includeFunctionBody ../../test/ListTest.kt last
+ */
+val <T> List<T>.last : T?
     get() {
       val s = this.size
       return if (s > 0) this.get(s - 1) else null
     }
 
-val <T> List<T>.last : T?
-    get() = this.tail
+/**
+ * Returns the first item in the list
+ *
+ * @includeFunctionBody ../../test/ListTest.kt head
+ */
+val <T> List<T>.head : T?
+    get() = this.get(0)
+
+/**
+ * Returns all elements in this collection apart from the first one
+ *
+ * @includeFunctionBody ../../test/ListTest.kt tail
+ */
+val <T> List<T>.tail : List<T>
+    get() {
+        return drop(1)
+    }

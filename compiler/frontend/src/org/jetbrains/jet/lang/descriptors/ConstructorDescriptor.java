@@ -17,8 +17,8 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.List;
 
@@ -49,7 +49,7 @@ public interface ConstructorDescriptor extends FunctionDescriptor {
      */
     @NotNull
     @Override
-    String getName();
+    Name getName();
 
     boolean isPrimary();
 }

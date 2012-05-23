@@ -1,3 +1,3 @@
-fun foo(x : Int) {
+fun foo(x: Int) {
     <caret>
 }

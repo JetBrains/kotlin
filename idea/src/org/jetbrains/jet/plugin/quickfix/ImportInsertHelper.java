@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -155,7 +156,7 @@ public class ImportInsertHelper {
     }
 
     public static boolean doNeedImport(@NotNull ImportPath importPath, @Nullable String aliasName, @NotNull JetFile file) {
-        if (QualifiedNamesUtil.getFirstSegment(importPath.fqnPart().getFqName()).equals(JavaDescriptorResolver.JAVA_ROOT)) {
+        if (QualifiedNamesUtil.getFirstSegment(importPath.fqnPart().getFqName()).equals(JavaDescriptorResolver.JAVA_ROOT.getName())) {
             FqName withoutJavaRoot = QualifiedNamesUtil.withoutFirstSegment(importPath.fqnPart());
             importPath = new ImportPath(withoutJavaRoot, importPath.isAllUnder());
         }

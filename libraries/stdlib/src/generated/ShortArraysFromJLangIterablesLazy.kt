@@ -83,6 +83,26 @@ public inline fun  ShortArray?.requireNoNulls() : List<Short> {
 }
 
 /**
+ * Returns a list containing everything but the first *n* elements
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt drop
+ */
+public inline fun ShortArray.drop(n: Int): List<Short> {
+    fun countTo(n: Int): (Short) -> Boolean {
+      var count = 0
+      return { ++count; count <= n }
+    }
+    return dropWhile(countTo(n))
+}
+
+/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt dropWhile
+ */
+public inline fun ShortArray.dropWhile(predicate: (Short) -> Boolean): List<Short> = dropWhileTo(ArrayList<Short>(), predicate)
+
+/**
  * Returns a list containing the first *n* elements
  *
  * @includeFunctionBody ../../test/CollectionTest.kt take

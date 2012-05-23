@@ -23,6 +23,7 @@ import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.java.JetSignatureUtils;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
@@ -264,9 +265,9 @@ public class BothSignatureWriter {
         pop();
     }
 
-    public void writeTypeVariable(final String name, boolean nullable, Type asmType) {
-        signatureVisitor().visitTypeVariable(name);
-        jetSignatureWriter.visitTypeVariable(name, nullable);
+    public void writeTypeVariable(final Name name, boolean nullable, Type asmType) {
+        signatureVisitor().visitTypeVariable(name.getName());
+        jetSignatureWriter.visitTypeVariable(name.getName(), nullable);
         generic = true;
         writeAsmType0(asmType);
     }

@@ -26,9 +26,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.SubstitutionUtils;
@@ -148,6 +151,7 @@ public class TypeHierarchyResolver {
      * @param owner
      * @return
      */
+    @SuppressWarnings("SuspiciousMethodCalls")
     @NotNull
     private JetScope getStaticScope(PsiElement declarationElement, @NotNull NamespaceLikeBuilder owner) {
         DeclarationDescriptor ownerDescriptor = owner.getOwnerForChildren();
@@ -186,6 +190,12 @@ public class TypeHierarchyResolver {
             declaration.accept(new JetVisitorVoid() {
                 @Override
                 public void visitJetFile(JetFile file) {
+                    if (file.isScript()) {
+                        JetScript script = file.getScript();
+                        processScript(script);
+                        return;
+                    }
+
                     NamespaceDescriptorImpl namespaceDescriptor = namespaceFactory.createNamespaceDescriptorPathIfNeeded(
                             file, outerScope, RedeclarationHandler.DO_NOTHING);
                     context.getNamespaceDescriptors().put(file, namespaceDescriptor);
@@ -196,6 +206,18 @@ public class TypeHierarchyResolver {
                     context.getNamespaceScopes().put(file, namespaceScope);
 
                     prepareForDeferredCall(namespaceScope, namespaceDescriptor, file);
+                }
+
+                private void processScript(JetScript script) {
+                    NamespaceDescriptorImpl ns = namespaceFactory.createNamespaceDescriptorPathIfNeeded(FqName.ROOT);
+                    ScriptDescriptor scriptDescriptor = new ScriptDescriptor(ns);
+                    //WriteThroughScope scriptScope = new WriteThroughScope(
+                    //        outerScope, ns.getMemberScope(), new TraceBasedRedeclarationHandler(trace));
+                    WritableScopeImpl scriptScope = new WritableScopeImpl(outerScope, scriptDescriptor, RedeclarationHandler.DO_NOTHING);
+                    scriptScope.changeLockLevel(WritableScope.LockLevel.BOTH);
+                    context.getScriptScopes().put(script, scriptScope);
+                    context.getScripts().put(script, scriptDescriptor);
+                    trace.record(BindingContext.SCRIPT, script, scriptDescriptor);
                 }
 
                 @Override
@@ -274,7 +296,7 @@ public class TypeHierarchyResolver {
                 private void createClassObjectForEnumClass(JetClass klass, MutableClassDescriptor mutableClassDescriptor) {
                     if (klass.hasModifier(JetTokens.ENUM_KEYWORD)) {
                         MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(
-                                mutableClassDescriptor, outerScope, ClassKind.OBJECT, "class-object-for-" + klass.getName());
+                                mutableClassDescriptor, outerScope, ClassKind.OBJECT, Name.special("<class-object-for-" + klass.getName() + ">"));
                         classObjectDescriptor.setModality(Modality.FINAL);
                         classObjectDescriptor.setVisibility(DescriptorResolver.resolveVisibilityFromModifiers(klass.getModifierList()));
                         classObjectDescriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));

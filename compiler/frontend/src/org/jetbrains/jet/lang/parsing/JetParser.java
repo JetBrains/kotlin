@@ -22,14 +22,30 @@ package org.jetbrains.jet.lang.parsing;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
 public class JetParser implements PsiParser {
+    public static final String KTSCRIPT_FILE_SUFFIX = "ktscript";
+
     @Override
     @NotNull
     public ASTNode parse(IElementType iElementType, PsiBuilder psiBuilder) {
-        JetParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder)).parseFile();
+        throw new IllegalStateException("use another parse");
+    }
+
+    // we need this method because we need psiFile
+    @NotNull
+    public ASTNode parse(IElementType iElementType, PsiBuilder psiBuilder, PsiFile psiFile) {
+        JetParsing jetParsing = JetParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
+        if (psiFile.getName().endsWith("." + KTSCRIPT_FILE_SUFFIX)) {
+            jetParsing.parseScript();
+        }
+        else {
+            jetParsing.parseFile();
+        }
         return psiBuilder.getTreeBuilt();
     }
+
 }

@@ -26,6 +26,7 @@ import org.jetbrains.jet.j2k.ast.Class;
 import org.jetbrains.jet.j2k.ast.Enum;
 import org.jetbrains.jet.j2k.util.AstUtil;
 import org.jetbrains.jet.j2k.visitors.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 
 import java.util.*;
@@ -781,7 +782,7 @@ public class Converter {
 
     @NotNull
     private static String getPrimitiveTypeConversion(@NotNull String type) {
-        Map<String, String> conversions = new HashMap<String, String>();
+        Map<String, Name> conversions = new HashMap<String, Name>();
         conversions.put("byte", BYTE);
         conversions.put("short", SHORT);
         conversions.put("int", INT);

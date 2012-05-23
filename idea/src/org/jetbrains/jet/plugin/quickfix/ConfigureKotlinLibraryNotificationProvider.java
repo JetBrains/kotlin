@@ -60,6 +60,8 @@ import static org.jetbrains.jet.plugin.project.JsModuleDetector.isJsProject;
 
 public class ConfigureKotlinLibraryNotificationProvider implements EditorNotifications.Provider<EditorNotificationPanel> {
     private static final Key<EditorNotificationPanel> KEY = Key.create("configure.kotlin.library");
+    public static final String LIBRARY_NAME = "KotlinRuntime";
+    public static final String KOTLIN_RUNTIME_JAR = "kotlin-runtime.jar";
     private final Project myProject;
 
     @Override
@@ -101,12 +103,12 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
         return null;
     }
 
-    private Library findOrCreateRuntimeLibrary(final Module module) {
+    private Library findOrCreateRuntimeLibrary() {
         LibraryTable table = ProjectLibraryTable.getInstance(myProject);
-        Library kotlinRuntime = table.getLibraryByName("KotlinRuntime");
+        Library kotlinRuntime = table.getLibraryByName(LIBRARY_NAME);
         if (kotlinRuntime != null) {
             for (VirtualFile root : kotlinRuntime.getFiles(OrderRootType.CLASSES)) {
-                if (root.getName().equals("kotlin-runtime.jar")) {
+                if (root.getName().equals(KOTLIN_RUNTIME_JAR)) {
                     return kotlinRuntime;
                 }
             }
@@ -181,7 +183,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                Library library = findOrCreateRuntimeLibrary(module);
+                Library library = findOrCreateRuntimeLibrary();
                 if (library != null) {
                     ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
                     if (model.findLibraryOrderEntry(library) == null) {

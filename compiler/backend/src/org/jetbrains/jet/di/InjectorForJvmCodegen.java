@@ -28,6 +28,7 @@ import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.ClassCodegen;
+import org.jetbrains.jet.codegen.ScriptCodegen;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.ClosureAnnotator;
@@ -56,6 +57,7 @@ public class InjectorForJvmCodegen {
     private final ClassBuilderFactory classBuilderFactory;
     private JetTypeMapper jetTypeMapper;
     private ClassCodegen classCodegen;
+    private ScriptCodegen scriptCodegen;
     private IntrinsicMethods intrinsics;
     private ClassFileFactory classFileFactory;
     private ClosureAnnotator closureAnnotator;
@@ -80,6 +82,7 @@ public class InjectorForJvmCodegen {
         this.classBuilderFactory = classBuilderFactory;
         this.jetTypeMapper = new JetTypeMapper();
         this.classCodegen = new ClassCodegen();
+        this.scriptCodegen = new ScriptCodegen();
         this.intrinsics = new IntrinsicMethods();
         this.classFileFactory = new ClassFileFactory();
         this.closureAnnotator = new ClosureAnnotator();
@@ -92,6 +95,10 @@ public class InjectorForJvmCodegen {
 
         this.classCodegen.setJetTypeMapper(jetTypeMapper);
         this.classCodegen.setState(generationState);
+
+        this.scriptCodegen.setClassFileFactory(classFileFactory);
+        this.scriptCodegen.setJetTypeMapper(jetTypeMapper);
+        this.scriptCodegen.setState(generationState);
 
         this.intrinsics.setMyProject(project);
         this.intrinsics.setMyStdLib(jetStandardLibrary);
@@ -128,6 +135,10 @@ public class InjectorForJvmCodegen {
 
     public ClassCodegen getClassCodegen() {
         return this.classCodegen;
+    }
+
+    public ScriptCodegen getScriptCodegen() {
+        return this.scriptCodegen;
     }
 
     public IntrinsicMethods getIntrinsics() {

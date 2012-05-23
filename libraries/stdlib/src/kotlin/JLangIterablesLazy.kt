@@ -80,6 +80,26 @@ public inline fun <in T> java.lang.Iterable<T?>?.requireNoNulls() : List<T> {
 }
 
 /**
+ * Returns a list containing everything but the first *n* elements
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt drop
+ */
+public inline fun <T> java.lang.Iterable<T>.drop(n: Int): List<T> {
+    fun countTo(n: Int): (T) -> Boolean {
+      var count = 0
+      return { ++count; count <= n }
+    }
+    return dropWhile(countTo(n))
+}
+
+/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt dropWhile
+ */
+public inline fun <T> java.lang.Iterable<T>.dropWhile(predicate: (T) -> Boolean): List<T> = dropWhileTo(ArrayList<T>(), predicate)
+
+/**
  * Returns a list containing the first *n* elements
  *
  * @includeFunctionBody ../../test/CollectionTest.kt take

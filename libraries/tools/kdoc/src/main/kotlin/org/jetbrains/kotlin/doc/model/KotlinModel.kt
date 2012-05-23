@@ -67,7 +67,7 @@ fun qualifiedName(descriptor: DeclarationDescriptor?): String {
         return ""
     } else {
         val parent = containerName(descriptor)
-        var name = descriptor.getName() ?: ""
+        var name = descriptor.getName()?.getName() ?: ""
         if (name.startsWith("<")) {
             name = ""
         }
@@ -356,7 +356,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             val descriptors = scope.getAllDescriptors()
             for (descriptor in descriptors) {
                 if (descriptor is PropertyDescriptor) {
-                    val name = descriptor.getName()
+                    val name = descriptor.getName()?.getName()
                     val returnType = getType(descriptor.getReturnType())
                     if (returnType != null) {
                         val receiver = descriptor.getReceiverParameter()
@@ -384,7 +384,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
     protected fun createFunction(owner: KClassOrPackage, descriptor: CallableDescriptor): KFunction? {
         val returnType = getType(descriptor.getReturnType())
         if (returnType != null) {
-            val name = descriptor.getName() ?: "null"
+            val name = descriptor.getName()?.getName() ?: "null"
             val parameters = ArrayList<KParameter>()
             val params = descriptor.getValueParameters()
             for (param in params) {
@@ -421,7 +421,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
     }
 
     protected fun createTypeParameter(descriptor: TypeParameterDescriptor): KTypeParameter? {
-        val name = descriptor.getName()
+        val name = descriptor.getName()?.getName()
         val answer = KTypeParameter(name, descriptor, this)
         configureComments(answer, descriptor)
         return answer
@@ -430,7 +430,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
     protected fun createParameter(descriptor: ValueParameterDescriptor): KParameter? {
         val returnType = getType(descriptor.getReturnType())
         if (returnType != null) {
-            val name = descriptor.getName()
+            val name = descriptor.getName()?.getName()
             val answer = KParameter(descriptor, name, returnType)
             configureComments(answer, descriptor)
             return answer
@@ -681,7 +681,7 @@ $highlight"""
     }
 
     fun getClass(classElement: ClassDescriptor): KClass? {
-        val name = classElement.getName()
+        val name = classElement.getName()?.getName()
         if (name != null) {
             var dec: DeclarationDescriptor? = classElement.getContainingDeclaration()
             while (dec != null) {

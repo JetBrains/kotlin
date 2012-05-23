@@ -225,7 +225,7 @@ public class JetControlFlowProcessor {
             }
         }
 
-        @Override
+        @SuppressWarnings("SuspiciousMethodCalls") @Override
         public void visitBinaryExpression(JetBinaryExpression expression) {
             IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
             JetExpression right = expression.getRight();
@@ -825,7 +825,7 @@ public class JetControlFlowProcessor {
                 }
             }
             builder.bindLabel(doneLabel);
-            boolean isWhenExhaust = WhenChecker.isWhenExhaust(expression, trace);
+            boolean isWhenExhaust = WhenChecker.isWhenExhaustive(expression, trace);
             if (!hasElseOrIrrefutableBranch && !isWhenExhaust) {
                 trace.report(NO_ELSE_IN_WHEN.on(expression));
             }

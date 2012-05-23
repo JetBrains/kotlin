@@ -23,9 +23,10 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
@@ -74,7 +75,7 @@ public class ClosureAnnotator {
                     funDescriptor,
                     Collections.<AnnotationDescriptor>emptyList(),
                     // TODO: internal name used as identifier
-                    name.getInternalName()); // TODO:
+                    Name.identifier(name.getInternalName())); // TODO:
             classDescriptor.initialize(
                     false,
                     Collections.<TypeParameterDescriptor>emptyList(),
@@ -86,8 +87,13 @@ public class ClosureAnnotator {
 
     private void mapFilesToNamespaces(Collection<JetFile> files) {
         for (JetFile file : files) {
-            FqName fqName = JetPsiUtil.getFQName(file);
-            namespaceName2Files.putValue(fqName, file);
+            if (file.isScript()) {
+                namespaceName2Files.putValue(FqName.ROOT, file);
+            }
+            else {
+                FqName fqName = JetPsiUtil.getFQName(file);
+                namespaceName2Files.putValue(fqName, file);
+            }
         }
     }
 
@@ -121,8 +127,7 @@ public class ClosureAnnotator {
     }
 
     public boolean hasThis0(ClassDescriptor classDescriptor) {
-        if(DescriptorUtils.isClassObject(classDescriptor))
-            return false;
+        if (DescriptorUtils.isClassObject(classDescriptor)) { return false; }
 
         ClassDescriptor other = enclosing.get(classDescriptor);
         return other != null;
@@ -203,11 +208,10 @@ public class ClosureAnnotator {
                 recordEnclosing(classDescriptor);
                 classStack.push(classDescriptor);
                 String base = nameStack.peek();
-                if(classDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
-                    nameStack.push(base.isEmpty() ? classDescriptor.getName() : base + '/' + classDescriptor.getName());
+                if (classDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
+                    nameStack.push(base.isEmpty() ? classDescriptor.getName().getName() : base + '/' + classDescriptor.getName());
                 }
-                else
-                    nameStack.push(base + '$' + classDescriptor.getName());
+                else { nameStack.push(base + '$' + classDescriptor.getName()); }
                 super.visitObjectDeclaration(declaration);
                 nameStack.pop();
                 classStack.pop();
@@ -222,11 +226,10 @@ public class ClosureAnnotator {
             recordEnclosing(classDescriptor);
             classStack.push(classDescriptor);
             String base = nameStack.peek();
-            if(classDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
-                nameStack.push(base.isEmpty() ? classDescriptor.getName() : base + '/' + classDescriptor.getName());
+            if (classDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
+                nameStack.push(base.isEmpty() ? classDescriptor.getName().getName() : base + '/' + classDescriptor.getName());
             }
-            else
-                nameStack.push(base + '$' + classDescriptor.getName());
+            else { nameStack.push(base + '$' + classDescriptor.getName()); }
             super.visitClass(klass);
             nameStack.pop();
             classStack.pop();
@@ -293,10 +296,8 @@ public class ClosureAnnotator {
             }
             else if (containingDeclaration instanceof NamespaceDescriptor) {
                 String peek = nameStack.peek();
-                if(peek.isEmpty())
-                    peek = "namespace";
-                else
-                    peek = peek + "/namespace";
+                if (peek.isEmpty()) { peek = "namespace"; }
+                else { peek = peek + "/namespace"; }
                 nameStack.push(peek + '$' + function.getName());
                 super.visitNamedFunction(function);
                 nameStack.pop();

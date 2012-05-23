@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.ArrayList;
@@ -124,7 +125,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
     @NotNull
     @Override
-    public Set<VariableDescriptor> getProperties(@NotNull String name) {
+    public Set<VariableDescriptor> getProperties(@NotNull Name name) {
         checkMayRead();
 
         Set<VariableDescriptor> properties = Sets.newLinkedHashSet();
@@ -135,7 +136,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     }
 
     @Override
-    public VariableDescriptor getLocalVariable(@NotNull String name) {
+    public VariableDescriptor getLocalVariable(@NotNull Name name) {
         checkMayRead();
 
         // Meaningful lookup goes here
@@ -150,7 +151,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
     @NotNull
     @Override
-    public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+    public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
         checkMayRead();
 
         if (getImports().isEmpty()) {
@@ -164,7 +165,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     }
 
     @Override
-    public ClassifierDescriptor getClassifier(@NotNull String name) {
+    public ClassifierDescriptor getClassifier(@NotNull Name name) {
         checkMayRead();
 
         for (JetScope imported : getImports()) {
@@ -177,7 +178,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     }
 
     @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull String name) {
+    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
         checkMayRead();
 
         for (JetScope imported : getImports()) {
@@ -190,7 +191,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     }
 
     @Override
-    public NamespaceDescriptor getNamespace(@NotNull String name) {
+    public NamespaceDescriptor getNamespace(@NotNull Name name) {
         checkMayRead();
 
         for (JetScope imported : getImports()) {
@@ -213,7 +214,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     }
 
     @Override
-    public void importClassifierAlias(@NotNull String importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor) {
+    public void importClassifierAlias(@NotNull Name importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor) {
         checkMayWrite();
 
         getCurrentIndividualImportScope().addClassifierAlias(importedClassifierName, classifierDescriptor);
@@ -221,21 +222,21 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     
     
     @Override
-    public void importNamespaceAlias(@NotNull String aliasName, @NotNull NamespaceDescriptor namespaceDescriptor) {
+    public void importNamespaceAlias(@NotNull Name aliasName, @NotNull NamespaceDescriptor namespaceDescriptor) {
         checkMayWrite();
 
         getCurrentIndividualImportScope().addNamespaceAlias(aliasName, namespaceDescriptor);
     }
 
     @Override
-    public void importFunctionAlias(@NotNull String aliasName, @NotNull FunctionDescriptor functionDescriptor) {
+    public void importFunctionAlias(@NotNull Name aliasName, @NotNull FunctionDescriptor functionDescriptor) {
         checkMayWrite();
 
         getCurrentIndividualImportScope().addFunctionAlias(aliasName, functionDescriptor);
     }
 
     @Override
-    public void importVariableAlias(@NotNull String aliasName, @NotNull VariableDescriptor variableDescriptor) {
+    public void importVariableAlias(@NotNull Name aliasName, @NotNull VariableDescriptor variableDescriptor) {
         checkMayWrite();
 
         getCurrentIndividualImportScope().addVariableAlias(aliasName, variableDescriptor);

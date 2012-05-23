@@ -50,6 +50,13 @@ public class JetPsiFactory {
         return property.getInitializer();
     }
 
+    public static JetValueArgumentList createCallArguments(Project project, String text) {
+        JetProperty property = createProperty(project, "val x = foo" + text);
+        JetExpression initializer = property.getInitializer();
+        JetCallExpression callExpression = (JetCallExpression) initializer;
+        return callExpression.getValueArgumentList();
+    }
+
     public static JetTypeReference createType(Project project, String type) {
         JetProperty property = createProperty(project, "val x : " + type);
         return property.getPropertyTypeRef();

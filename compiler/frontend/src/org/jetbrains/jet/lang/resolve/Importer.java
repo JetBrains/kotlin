@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import java.util.List;
@@ -31,7 +32,7 @@ import java.util.List;
 
     void addAllUnderImport(@NotNull DeclarationDescriptor descriptor);
 
-    void addAliasImport(@NotNull DeclarationDescriptor descriptor, @NotNull String aliasName);
+    void addAliasImport(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName);
 
     Importer DO_NOTHING = new Importer() {
         @Override
@@ -39,7 +40,7 @@ import java.util.List;
         }
 
         @Override
-        public void addAliasImport(@NotNull DeclarationDescriptor descriptor, @NotNull String aliasName) {
+        public void addAliasImport(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName) {
         }
     };
 
@@ -56,7 +57,7 @@ import java.util.List;
         }
 
         @Override
-        public void addAliasImport(@NotNull DeclarationDescriptor descriptor, @NotNull String aliasName) {
+        public void addAliasImport(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName) {
             importDeclarationAlias(descriptor, aliasName);
         }
 
@@ -74,7 +75,7 @@ import java.util.List;
             }
         }
 
-        protected void importDeclarationAlias(@NotNull DeclarationDescriptor descriptor, @NotNull String aliasName) {
+        protected void importDeclarationAlias(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName) {
             if (descriptor instanceof ClassifierDescriptor) {
                 namespaceScope.importClassifierAlias(aliasName, (ClassifierDescriptor) descriptor);
             }
@@ -92,7 +93,7 @@ import java.util.List;
     }
 
     class DelayedImporter extends StandardImporter {
-        private final List<Pair<DeclarationDescriptor, String>> imports = Lists.newArrayList();
+        private final List<Pair<DeclarationDescriptor, Name>> imports = Lists.newArrayList();
 
         public DelayedImporter(@NotNull WritableScope namespaceScope) {
             super(namespaceScope);
@@ -100,18 +101,18 @@ import java.util.List;
 
         @Override
         public void addAllUnderImport(@NotNull DeclarationDescriptor descriptor) {
-            imports.add(Pair.<DeclarationDescriptor, String>create(descriptor, null));
+            imports.add(Pair.<DeclarationDescriptor, Name>create(descriptor, null));
         }
 
         @Override
-        public void addAliasImport(@NotNull DeclarationDescriptor descriptor, @NotNull String aliasName) {
+        public void addAliasImport(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName) {
             imports.add(Pair.create(descriptor, aliasName));
         }
 
         public void processImports() {
-            for (Pair<DeclarationDescriptor, String> anImport : imports) {
+            for (Pair<DeclarationDescriptor, Name> anImport : imports) {
                 DeclarationDescriptor descriptor = anImport.getFirst();
-                String aliasName = anImport.getSecond();
+                Name aliasName = anImport.getSecond();
                 boolean allUnderImport = aliasName == null;
                 if (allUnderImport) {
                     importAllUnderDeclaration(descriptor);

@@ -20,9 +20,6 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
@@ -59,26 +56,17 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
     protected ExitCode doExecute(K2JVMCompilerArguments arguments, PrintingMessageCollector messageCollector, Disposable rootDisposable) {
 
         CompilerSpecialMode mode = parseCompilerSpecialMode(arguments);
-        File[] altHeadersClasspath;
-        if (mode.includeAltHeaders()) {
-            File path = PathUtil.getAltHeadersPath();
-            File[] defaultAltHeadersPathArray;
-            if (path != null) {
-                defaultAltHeadersPathArray = new File[] {path};
-            } else {
-                // TODO should we throw an exception here instead?
-                defaultAltHeadersPathArray = new File[0];
-            }
-            if (arguments.altHeaders != null) {
-                File[] files = pathsToFiles(arguments.altHeaders);
-                altHeadersClasspath = ArrayUtil.mergeArrays(files, defaultAltHeadersPathArray);
+        File jdkHeadersJar;
+        if (mode.includeJdkHeaders()) {
+            if (arguments.jdkHeaders != null) {
+                jdkHeadersJar = new File(arguments.jdkHeaders);
             }
             else {
-                altHeadersClasspath = defaultAltHeadersPathArray;
+                jdkHeadersJar = PathUtil.getAltHeadersPath();
             }
         }
         else {
-            altHeadersClasspath = new File[0];
+            jdkHeadersJar = null;
         }
         File runtimeJar;
 
@@ -94,7 +82,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
             runtimeJar = null;
         }
 
-        CompilerDependencies dependencies = new CompilerDependencies(mode, CompilerDependencies.findRtJar(), altHeadersClasspath, runtimeJar);
+        CompilerDependencies dependencies = new CompilerDependencies(mode, CompilerDependencies.findRtJar(), jdkHeadersJar, runtimeJar);
         JetCoreEnvironment environment = JetCoreEnvironment.getCoreEnvironmentForJVM(rootDisposable, dependencies);
         K2JVMCompileEnvironmentConfiguration configuration =
                 new K2JVMCompileEnvironmentConfiguration(environment, messageCollector);
@@ -120,9 +108,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
                 // TODO ideally we'd unify to just having a single field that supports multiple files/dirs
                 if (arguments.getSourceDirs() != null) {
                     noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSourceDirectories(configuration,
-                                                                                           arguments.getSourceDirs(), arguments.jar,
-                                                                                           arguments.outputDir,
-                                                                                           arguments.includeRuntime);
+                            arguments.getSourceDirs(), arguments.jar, arguments.outputDir, arguments.script, arguments.includeRuntime);
                 }
                 else {
                     List<String> sources = Lists.newArrayList();
@@ -131,8 +117,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
                     }
                     sources.addAll(arguments.freeArgs);
                     noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSources(configuration,
-                                                                                 sources, arguments.jar, arguments.outputDir,
-                                                                                 arguments.includeRuntime);
+                            sources, arguments.jar, arguments.outputDir, arguments.script, arguments.includeRuntime);
                 }
             }
             return noErrors ? OK : COMPILATION_ERROR;
@@ -156,7 +141,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
         }
         else {
             for (CompilerSpecialMode variant : CompilerSpecialMode.values()) {
-                if (arguments.mode.equalsIgnoreCase(variant.name().replace("_", ""))) {
+                if (arguments.mode.equalsIgnoreCase(variant.name().replaceAll("_", ""))) {
                     return variant;
                 }
             }
@@ -198,15 +183,5 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
             Iterable<String> classpath = Splitter.on(File.pathSeparatorChar).split(arguments.classpath);
             CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(), Iterables.toArray(classpath, String.class));
         }
-    }
-
-    private static File[] pathsToFiles(String paths) {
-        return ContainerUtil.map(Iterables.toArray(Splitter.on(File.pathSeparatorChar).split(paths), String.class),
-                                 new Function<String, File>() {
-                                     @Override
-                                     public File fun(String s) {
-                                         return new File(s);
-                                     }
-                                 }, new File[0]);
     }
 }

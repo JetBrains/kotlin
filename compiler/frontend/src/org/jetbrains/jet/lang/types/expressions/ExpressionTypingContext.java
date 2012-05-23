@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
@@ -149,12 +150,12 @@ public class ExpressionTypingContext {
     }
 
     @NotNull
-    public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull String name) {
+    public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull Name name) {
         return expressionTypingServices.getCallResolver().resolveCallWithGivenName(makeResolutionContext(call), functionReference, name);
     }
 
     @NotNull
-    public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenNameToDescriptor(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull String name) {
+    public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenNameToDescriptor(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull Name name) {
         return resolveCallWithGivenName(call, functionReference, name);
 //        return results == null ? null : results.getResultingDescriptor();
     }
@@ -172,7 +173,7 @@ public class ExpressionTypingContext {
     }
 
     @NotNull
-    public OverloadResolutionResults<FunctionDescriptor> resolveExactSignature(@NotNull ReceiverDescriptor receiver, @NotNull String name, @NotNull List<JetType> parameterTypes) {
+    public OverloadResolutionResults<FunctionDescriptor> resolveExactSignature(@NotNull ReceiverDescriptor receiver, @NotNull Name name, @NotNull List<JetType> parameterTypes) {
         return expressionTypingServices.getCallResolver().resolveExactSignature(scope, receiver, name, parameterTypes);
     }
 

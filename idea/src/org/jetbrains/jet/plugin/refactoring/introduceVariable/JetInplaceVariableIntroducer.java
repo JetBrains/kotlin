@@ -61,6 +61,7 @@ public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetE
     private final boolean isVar;
     private final boolean myDoNotChangeVar;
     @Nullable private final JetType myExprType;
+    private final boolean noTypeInference;
     private JCheckBox myVarCheckbox;
     private JCheckBox myExprTypeCheckbox;
 
@@ -68,13 +69,14 @@ public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetE
                                         String title, JetExpression[] occurrences,
                                         @Nullable JetExpression expr, boolean replaceOccurrence,
                                         JetProperty property, boolean isVar, boolean doNotChangeVar,
-                                        @Nullable JetType exprType) {
+                                        @Nullable JetType exprType, boolean noTypeInference) {
         super(elementToRename, editor, project, title, occurrences, expr);
         this.myReplaceOccurrence = replaceOccurrence;
         myProperty = property;
         this.isVar = isVar;
         myDoNotChangeVar = doNotChangeVar;
         myExprType = exprType;
+        this.noTypeInference = noTypeInference;
     }
 
     @Override
@@ -99,7 +101,7 @@ public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetE
             });
         }
 
-        if (myExprType != null) {
+        if (myExprType != null && !noTypeInference) {
             myExprTypeCheckbox = new NonFocusableCheckBox("Specify type explicitly");
             myExprTypeCheckbox.setSelected(false);
             myExprTypeCheckbox.setMnemonic('t');

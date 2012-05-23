@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -141,7 +142,7 @@ public class FunctionDescriptorUtil {
 
         ClassifierDescriptor classDescriptorForFunction = functionType.getConstructor().getDeclarationDescriptor();
         assert classDescriptorForFunction instanceof ClassDescriptor;
-        Set<FunctionDescriptor> invokeFunctions = ((ClassDescriptor) classDescriptorForFunction).getMemberScope(functionType.getArguments()).getFunctions("invoke");
+        Set<FunctionDescriptor> invokeFunctions = ((ClassDescriptor) classDescriptorForFunction).getMemberScope(functionType.getArguments()).getFunctions(Name.identifier("invoke"));
         assert invokeFunctions.size() == 1;
         return invokeFunctions.iterator().next();
     }

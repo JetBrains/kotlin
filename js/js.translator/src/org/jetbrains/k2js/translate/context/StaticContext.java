@@ -180,7 +180,7 @@ public final class StaticContext {
                 @Nullable
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
                     NamingScope namingScope = getEnclosingScope(descriptor);
-                    return namingScope.declareObfuscatableName(descriptor.getName());
+                    return namingScope.declareObfuscatableName(descriptor.getName().getName());
                 }
             };
             Rule<JsName> constructorHasTheSameNameAsTheClass = new Rule<JsName>() {
@@ -218,7 +218,7 @@ public final class StaticContext {
                             continue;
                         }
                         String name = getNameForAnnotatedObject(descriptor, annotation);
-                        name = (name != null) ? name : descriptor.getName();
+                        name = (name != null) ? name : descriptor.getName().getName();
                         return getEnclosingScope(descriptor).declareUnobfuscatableName(name);
                     }
                     return null;
@@ -234,7 +234,7 @@ public final class StaticContext {
                     //TODO: move somewhere
                     NamingScope enclosingScope = getEnclosingScope(descriptor);
                     if (isEcma5()) {
-                        String name = descriptor.getName();
+                        String name = descriptor.getName().getName();
                         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
                         if (!JsDescriptorUtils.isDefaultAccessor(propertyDescriptor.getGetter()) || !JsDescriptorUtils.isDefaultAccessor(propertyDescriptor.getSetter())) {
                             // _ is more preferable than $ should be discussed later
@@ -244,7 +244,7 @@ public final class StaticContext {
                         return enclosingScope.declareUnobfuscatableName(name);
                     }
                     else {
-                        return enclosingScope.declareObfuscatableName(Namer.getKotlinBackingFieldName(descriptor.getName()));
+                        return enclosingScope.declareObfuscatableName(Namer.getKotlinBackingFieldName(descriptor.getName().getName()));
                     }
                 }
             };
@@ -255,7 +255,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof FunctionDescriptor)) {
                         return null;
                     }
-                    if (!descriptor.getName().equals("toString")) {
+                    if (!descriptor.getName().getName().equals("toString")) {
                         return null;
                     }
                     if (((FunctionDescriptor) descriptor).getValueParameters().isEmpty()) {

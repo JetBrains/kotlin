@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.jet.lang.types.*;
@@ -41,7 +42,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
             @NotNull List<AnnotationDescriptor> annotations,
             boolean reified,
             @NotNull Variance variance,
-            @NotNull String name,
+            @NotNull Name name,
             int index) {
         TypeParameterDescriptor typeParameterDescriptor = createForFurtherModification(containingDeclaration, annotations, reified, variance, name, index);
         typeParameterDescriptor.addUpperBound(JetStandardClasses.getDefaultBound());
@@ -54,7 +55,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
             @NotNull List<AnnotationDescriptor> annotations,
             boolean reified,
             @NotNull Variance variance,
-            @NotNull String name,
+            @NotNull Name name,
             int index) {
         return new TypeParameterDescriptor(containingDeclaration, annotations, reified, variance, name, index);
     }
@@ -78,7 +79,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
             @NotNull List<AnnotationDescriptor> annotations,
             boolean reified,
             @NotNull Variance variance,
-            @NotNull String name,
+            @NotNull Name name,
             int index) {
         super(containingDeclaration, annotations, name);
         this.index = index;
@@ -90,7 +91,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
                 this,
                 annotations,
                 false,
-                name,
+                name.getName(),
                 Collections.<TypeParameterDescriptor>emptyList(),
                 upperBounds);
     }

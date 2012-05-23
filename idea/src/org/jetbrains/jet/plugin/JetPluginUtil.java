@@ -19,12 +19,9 @@ package org.jetbrains.jet.plugin;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
@@ -46,11 +43,11 @@ public class JetPluginUtil {
 
         LinkedList<String> fullName = Lists.newLinkedList();
         while (declarationDescriptor != null && !(declarationDescriptor instanceof ModuleDescriptor)) {
-            fullName.addFirst(declarationDescriptor.getName());
+            fullName.addFirst(declarationDescriptor.getName().getName());
             declarationDescriptor = declarationDescriptor.getContainingDeclaration();
         }
         assert fullName.size() > 0;
-        if (JavaDescriptorResolver.JAVA_ROOT.equals(fullName.getFirst())) {
+        if (JavaDescriptorResolver.JAVA_ROOT.getName().equals(fullName.getFirst())) {
             fullName.removeFirst();
         }
         return fullName;

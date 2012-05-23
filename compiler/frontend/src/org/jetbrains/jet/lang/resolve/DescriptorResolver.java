@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -272,7 +273,9 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public MutableValueParameterDescriptor resolveValueParameterDescriptor(JetScope scope, DeclarationDescriptor declarationDescriptor, JetParameter valueParameter, int index, JetType type, BindingTrace trace) {
+    public MutableValueParameterDescriptor resolveValueParameterDescriptor(
+            JetScope scope, DeclarationDescriptor declarationDescriptor,
+            JetParameter valueParameter, int index, JetType type, BindingTrace trace) {
         JetType varargElementType = null;
         JetType variableType = type;
         if (valueParameter.hasModifier(JetTokens.VARARG_KEYWORD)) {
@@ -347,7 +350,7 @@ public class DescriptorResolver {
         List<UpperBoundCheckerTask> deferredUpperBoundCheckerTasks = Lists.newArrayList();
 
         List<JetTypeParameter> typeParameters = declaration.getTypeParameters();
-        Map<String, TypeParameterDescriptor> parameterByName = Maps.newHashMap();
+        Map<Name, TypeParameterDescriptor> parameterByName = Maps.newHashMap();
         for (int i = 0; i < typeParameters.size(); i++) {
             JetTypeParameter jetTypeParameter = typeParameters.get(i);
             TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
@@ -366,7 +369,7 @@ public class DescriptorResolver {
             if (subjectTypeParameterName == null) {
                 continue;
             }
-            String referencedName = subjectTypeParameterName.getReferencedName();
+            Name referencedName = subjectTypeParameterName.getReferencedNameAsName();
             if (referencedName == null) {
                 continue;
             }
@@ -875,7 +878,7 @@ public class DescriptorResolver {
             @NotNull JetScope scope,
             @NotNull JetParameter parameter, BindingTrace trace) {
         JetType type = resolveParameterType(scope, parameter, trace);
-        String name = parameter.getName();
+        Name name = parameter.getNameAsName();
         boolean isMutable = parameter.isMutable();
         JetModifierList modifierList = parameter.getModifierList();
 
@@ -893,7 +896,7 @@ public class DescriptorResolver {
                 resolveVisibilityFromModifiers(parameter.getModifierList()),
                 isMutable,
                 false,
-                name == null ? "<no name>" : name,
+                name == null ? Name.special("<no name>") : name,
                 CallableMemberDescriptor.Kind.DECLARATION
         );
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(), DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor), ReceiverDescriptor.NO_RECEIVER);
