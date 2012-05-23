@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetClassStubImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Nikolay Krasko
@@ -70,6 +71,11 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
     public void serialize(PsiJetClassStub stub, StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
         dataStream.writeName(stub.getQualifiedName());
+        final List<String> superNames = stub.getSuperNames();
+        dataStream.writeVarInt(superNames.size());
+        for (String name : superNames) {
+            dataStream.writeName(name);
+        }
     }
 
     @Override
