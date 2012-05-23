@@ -207,20 +207,15 @@ public class JetClass extends JetTypeParameterListOwner
      */
     @NotNull
     public List<String> getSuperNames() {
-        final JetDelegationSpecifierList delegationSpecifierList = getDelegationSpecifierList();
-        if (delegationSpecifierList == null) return Collections.emptyList();
-        final List<JetDelegationSpecifier> specifiers = delegationSpecifierList.getDelegationSpecifiers();
+        final List<JetDelegationSpecifier> specifiers = getDelegationSpecifiers();
         if (specifiers.size() == 0) return Collections.emptyList();
         List<String> result = new ArrayList<String>();
         for (JetDelegationSpecifier specifier : specifiers) {
-            final JetTypeReference typeReference = specifier.getTypeReference();
-            if (typeReference != null) {
-                final JetTypeElement typeElement = typeReference.getTypeElement();
-                if (typeElement instanceof JetUserType) {
-                    final String referencedName = ((JetUserType) typeElement).getReferencedName();
-                    if (referencedName != null) {
-                        addSuperName(result, referencedName);
-                    }
+            final JetUserType superType = specifier.getTypeAsUserType();
+            if (superType != null) {
+                final String referencedName = superType.getReferencedName();
+                if (referencedName != null) {
+                    addSuperName(result, referencedName);
                 }
             }
         }

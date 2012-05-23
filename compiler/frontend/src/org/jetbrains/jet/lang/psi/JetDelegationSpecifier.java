@@ -43,4 +43,16 @@ public class JetDelegationSpecifier extends JetElement{
     public JetTypeReference getTypeReference() {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }
+
+    @Nullable
+    public JetUserType getTypeAsUserType() {
+        final JetTypeReference reference = getTypeReference();
+        if (reference != null) {
+            final JetTypeElement element = reference.getTypeElement();
+            if (element instanceof JetUserType) {
+                return ((JetUserType) element);
+            }
+        }
+        return null;
+    }
 }
