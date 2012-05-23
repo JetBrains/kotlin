@@ -1,5 +1,5 @@
 package d
 
-fun foo(<!UNUSED_PARAMETER!>a<!> : IntArray) {
-    if (null == <!UNRESOLVED_REFERENCE!>a<!>()<!SYNTAX!><!>
+fun foo(a : IntArray) {
+    if (null == <!FUNCTION_EXPECTED!>a<!>()<!SYNTAX!><!>
 <!SYNTAX!><!>}

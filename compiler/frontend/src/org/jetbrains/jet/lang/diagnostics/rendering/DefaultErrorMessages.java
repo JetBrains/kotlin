@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetTypeConstraint;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -363,6 +364,22 @@ public class DefaultErrorMessages {
                 RENDER_CLASS_OR_OBJECT, DescriptorRenderer.TEXT);
 
         MAP.put(CONFLICTING_OVERLOADS, "{1} is already defined in ''{0}''", DescriptorRenderer.TEXT, TO_STRING);
+
+        MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function", ELEMENT_TEXT, new Renderer<JetType>() {
+            @NotNull
+            @Override
+            public String render(@NotNull JetType type) {
+                if (ErrorUtils.isErrorType(type)) return "";
+                return " of type '" + type.toString() + "'";
+            }
+        });
+        MAP.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", ELEMENT_TEXT,new Renderer<Boolean>() {
+            @NotNull
+            @Override
+            public String render(@NotNull Boolean hasValueParameters) {
+                return hasValueParameters ? "..." : "";
+            }
+        });
 
 
         MAP.put(RESULT_TYPE_MISMATCH, "{0} must return {1} but returns {2}", TO_STRING, RENDER_TYPE, RENDER_TYPE);
