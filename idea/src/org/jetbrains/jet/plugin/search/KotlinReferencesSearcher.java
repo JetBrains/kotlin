@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.references;
+package org.jetbrains.jet.plugin.search;
 
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.psi.PsiElement;

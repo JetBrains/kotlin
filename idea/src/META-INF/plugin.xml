@@ -185,8 +185,9 @@
 
       <psi.treeChangePreprocessor implementation="org.jetbrains.jet.asJava.JetCodeBlockModificationListener"/>
 
-      <referencesSearch implementation="org.jetbrains.jet.plugin.references.KotlinReferencesSearcher"/>
-      <directClassInheritorsSearch implementation="org.jetbrains.jet.plugin.references.KotlinDirectInheritorsSearcher"/>
+      <referencesSearch implementation="org.jetbrains.jet.plugin.search.KotlinReferencesSearcher"/>
+      <directClassInheritorsSearch implementation="org.jetbrains.jet.plugin.search.KotlinDirectInheritorsSearcher"/>
+      <definitionsSearch implementation="org.jetbrains.jet.plugin.search.KotlinDefinitionsSearcher"/>
 
       <toolWindow id="Kotlin"
                   factoryClass="org.jetbrains.jet.plugin.internal.KotlinInternalToolWindowFactory"
