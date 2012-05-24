@@ -56,7 +56,7 @@ public class KotlinDirectInheritorsSearcher extends QueryExecutorBase<PsiClass, 
                     if (referenceExpression != null) {
                         final PsiReference reference = referenceExpression.getReference();
                         final PsiElement resolved = reference != null ? reference.resolve() : null;
-                        if (resolved instanceof PsiClass && resolved.isEquivalentTo(clazz)) {
+                        if ((resolved instanceof PsiClass || resolved instanceof JetClass) && resolved.isEquivalentTo(clazz)) {
                             consumer.process(JetLightClass.wrapDelegate((JetClass) candidate));
                         }
                     }
