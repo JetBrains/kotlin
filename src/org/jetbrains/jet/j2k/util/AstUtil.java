@@ -81,16 +81,6 @@ public class AstUtil {
     }
 
     @NotNull
-    public static List<String> applyConversions(@NotNull List<String> first, @NotNull List<String> second) {
-        List<String> result = new LinkedList<String>();
-        assert first.size() == second.size() : "Lists must have the same size.";
-        for (int i = 0; i < first.size(); i++) {
-            result.add(applyConversionForOneItem(first.get(i), second.get(i)));
-        }
-        return result;
-    }
-
-    @NotNull
     public static String applyConversionForOneItem(@NotNull String f, @NotNull String s) {
         if (s.isEmpty()) {
             return f;

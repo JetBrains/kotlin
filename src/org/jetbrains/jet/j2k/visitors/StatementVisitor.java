@@ -105,7 +105,7 @@ public class StatementVisitor extends ElementVisitor {
         PsiExpression condition = statement.getCondition();
         @SuppressWarnings("ConstantConditions")
         Expression expression = condition != null && condition.getType() != null ?
-                                getConverter().createSureCallOnlyForChain(condition, condition.getType()) :
+                this.getConverter().expressionToExpression(condition, condition.getType()) :
                                 getConverter().expressionToExpression(condition);
         myResult = new DoWhileStatement(
                 expression,
@@ -207,7 +207,7 @@ public class StatementVisitor extends ElementVisitor {
         PsiExpression condition = statement.getCondition();
         @SuppressWarnings("ConstantConditions")
         Expression expression = condition != null && condition.getType() != null ?
-                                getConverter().createSureCallOnlyForChain(condition, condition.getType()) :
+                this.getConverter().expressionToExpression(condition, condition.getType()) :
                                 getConverter().expressionToExpression(condition);
         myResult = new IfStatement(
                 expression,
@@ -373,7 +373,7 @@ public class StatementVisitor extends ElementVisitor {
         PsiExpression condition = statement.getCondition();
         @SuppressWarnings("ConstantConditions")
         Expression expression = condition != null && condition.getType() != null ?
-                                getConverter().createSureCallOnlyForChain(condition, condition.getType()) :
+                this.getConverter().expressionToExpression(condition, condition.getType()) :
                                 getConverter().expressionToExpression(condition);
         myResult = new WhileStatement(
                 expression,
@@ -387,7 +387,7 @@ public class StatementVisitor extends ElementVisitor {
         PsiExpression returnValue = statement.getReturnValue();
         PsiType methodReturnType = getConverter().getMethodReturnType();
         Expression expression = returnValue != null && methodReturnType != null ?
-                                getConverter().createSureCallOnlyForChain(returnValue, methodReturnType) :
+                this.getConverter().expressionToExpression(returnValue, methodReturnType) :
                                 getConverter().expressionToExpression(returnValue);
         myResult = new ReturnStatement(
                 expression

@@ -3,7 +3,7 @@ import java.io.Serializable
 public open class Language(code : String?) : Serializable {
 protected var code : String? = null
 public open fun equals(other : Language?) : Boolean {
-return other?.toString()?.equals(this.toString()).sure()
+return other?.toString()?.equals(this.toString())!!
 }
 {
 this.code = code

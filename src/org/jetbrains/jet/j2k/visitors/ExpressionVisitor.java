@@ -170,7 +170,7 @@ public class ExpressionVisitor extends StatementVisitor {
         PsiExpression condition = expression.getCondition();
         PsiType type = condition.getType();
         Expression e = type != null ?
-                       getConverter().createSureCallOnlyForChain(condition, type) :
+                this.getConverter().expressionToExpression(condition, type) :
                        getConverter().expressionToExpression(condition);
         myResult = new ParenthesizedExpression(
                 new IfStatement(
@@ -208,6 +208,9 @@ public class ExpressionVisitor extends StatementVisitor {
             String canonicalTypeStr = type.getCanonicalText();
             if (canonicalTypeStr.equals("double") || canonicalTypeStr.equals(JAVA_LANG_DOUBLE)) {
                 text = text.replace("D", "").replace("d", "");
+                if (!text.contains(".")) {
+                    text += ".0";
+                }
             }
             if (canonicalTypeStr.equals("float") || canonicalTypeStr.equals(JAVA_LANG_FLOAT)) {
                 text = text.replace("F", "").replace("f", "") + "." + OperatorConventions.FLOAT + "()";

@@ -24,7 +24,7 @@ public open class ElementVisitor(val myConverter : Converter) : JavaElementVisit
         myResult = LocalVariable(IdentifierImpl(theVariable.getName()),
                 modifiersListToModifiersSet(theVariable.getModifierList()),
                 myConverter.typeToType(theVariable.getType(), isAnnotatedAsNotNull(theVariable.getModifierList())),
-                myConverter.createSureCallOnlyForChain(theVariable.getInitializer(), theVariable.getType()))
+                myConverter.expressionToExpression(theVariable.getInitializer(), theVariable.getType()))
     }
 
     public override fun visitExpressionList(list : PsiExpressionList?) : Unit {

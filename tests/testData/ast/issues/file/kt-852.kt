@@ -6,7 +6,7 @@ var s2 : String? = ""
 var s3 : String? = ""
 if (s1?.isEmpty()!! && s2?.isEmpty()!!)
 return "OK"
-if ((s1?.isEmpty()).sure() && (s2?.isEmpty()).sure() && (s3?.isEmpty()).sure())
+if (s1?.isEmpty()!! && s2?.isEmpty()!! && s3?.isEmpty()!!)
 return "OOOK"
 return ""
 }

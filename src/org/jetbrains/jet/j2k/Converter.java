@@ -381,7 +381,7 @@ public class Converter {
                 new IdentifierImpl(field.getName()), // TODO
                 modifiers,
                 typeToType(field.getType()),
-                createSureCallOnlyForChain(field.getInitializer(), field.getType()), // TODO: add modifiers
+                expressionToExpression(field.getInitializer(), field.getType()), // TODO: add modifiers
                 countWritingAccesses(field, psiClass)
         );
     }
@@ -741,6 +741,7 @@ public class Converter {
     }
 
     public Expression expressionToExpression(PsiExpression argument, PsiType expectedType) {
+        if (argument == null) return (IdentifierImpl) Identifier.EMPTY_IDENTIFIER;
         Expression expression = expressionToExpression(argument);
         PsiType actualType = argument.getType();
         boolean isPrimitiveTypeOrNull = actualType == null || actualType instanceof PsiPrimitiveType;
@@ -751,7 +752,7 @@ public class Converter {
         }
 
         if (actualType != null) {
-            if (isConversionNeeded(actualType, expectedType)) {
+            if (isConversionNeeded(actualType, expectedType) && !(expression instanceof LiteralExpression)) {
                 String conversion = PRIMITIVE_TYPE_CONVERSIONS.get(expectedType.getCanonicalText());
                 if (conversion != null) {
                     expression = new DummyMethodCallExpression(expression, conversion, (IdentifierImpl) Identifier.EMPTY_IDENTIFIER);
@@ -759,28 +760,6 @@ public class Converter {
             }
         }
         return expression;
-    }
-
-    @NotNull
-    private String createConversionForExpression(@Nullable PsiExpression expression, @NotNull PsiType expectedType) {
-        String conversion = "";
-        if (expression != null) {
-            PsiType actualType = expression.getType();
-            boolean isPrimitiveTypeOrNull = actualType == null || Node.PRIMITIVE_TYPES.contains(actualType.getCanonicalText());
-            boolean isRef = (expression instanceof PsiReferenceExpression && ((PsiReferenceExpression) expression).isQualified() || expression instanceof PsiMethodCallExpression);
-            boolean containsQuestDot = expressionToExpression(expression).toKotlin().contains("?.");
-
-            if (isPrimitiveTypeOrNull && isRef && containsQuestDot) {
-                conversion += ".sure()";
-            }
-
-            if (actualType != null) {
-                if (isConversionNeeded(actualType, expectedType)) {
-                    conversion += getPrimitiveTypeConversion(expectedType.getCanonicalText());
-                }
-            }
-        }
-        return conversion;
     }
 
     private static boolean isConversionNeeded(@Nullable final PsiType actual, @Nullable final PsiType expected) {
@@ -802,28 +781,11 @@ public class Converter {
         return !actualStr.equals(expectedStr) && (!(o1 ^ o2));
     }
 
-    @NotNull
-    private static String getPrimitiveTypeConversion(@NotNull String type) {
-        if (PRIMITIVE_TYPE_CONVERSIONS.containsKey(type)) {
-            return "." + PRIMITIVE_TYPE_CONVERSIONS.get(type) + "()";
-        }
-        return "";
-    }
-
-//  @NotNull
+    //  @NotNull
 //  private static String applyConversion(Expression expression, String conversion) {
 //    if (conversion.isEmpty())
 //      return expression.toKotlin();
 //    return "(" + expression.toKotlin() + ")" + conversion;
 //  }
-
-    @NotNull
-    public SureCallChainExpression createSureCallOnlyForChain(@Nullable PsiExpression expression, @NotNull PsiType type) {
-        String conversion = (expression != null && (expression instanceof PsiReferenceExpression || expression instanceof PsiMethodCallExpression))
-                            ?
-                            createConversionForExpression(expression, type)
-                            : "";
-        return new SureCallChainExpression(expressionToExpression(expression), conversion);
-    }
 
 }
