@@ -39,7 +39,12 @@
     Kotlin.defs = {};
     Kotlin.Exceptions = {};
     Kotlin.Exception = Kotlin.$createClass();
-    Kotlin.Exceptions.IndexOutOfBounds = {};
+    Kotlin.Exceptions.IndexOutOfBounds = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.Exceptions.NullPointerException = Kotlin.$createClass(Kotlin.Exception);
+
+    Kotlin.throwNPE = function() {
+        throw Kotlin.$new(Kotlin.Exceptions.NullPointerException)();
+    };
 
     Kotlin.ArrayList = Kotlin.$createClass({
         initialize:function () {

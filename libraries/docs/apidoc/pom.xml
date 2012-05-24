@@ -60,6 +60,7 @@
                     <packageSummaryText>
                         <kotlin>Core API</kotlin>
                         <kotlin.beans>Functions for working with Java Beans</kotlin.beans>
+                        <kotlin.browser>API to access the web browser DOM and windows</kotlin.browser>
                         <kotlin.concurrent>Concurrent programing API</kotlin.concurrent>
                         <kotlin.dom>Functions for working with the W3C DOM</kotlin.dom>
                         <kotlin.io>IO API for working with files and streams</kotlin.io>

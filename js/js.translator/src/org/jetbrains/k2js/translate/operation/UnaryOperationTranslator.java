@@ -16,9 +16,12 @@
 
 package org.jetbrains.k2js.translate.operation;
 
+import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
+import com.google.dart.compiler.backend.js.ast.JsConditional;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
 import org.jetbrains.k2js.translate.reference.CallType;
@@ -26,7 +29,11 @@ import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.Collections;
 
+import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.getBaseExpression;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.notNullCheck;
 
 /**
  * @author Pavel Talanov
@@ -40,10 +47,24 @@ public final class UnaryOperationTranslator {
     @NotNull
     public static JsExpression translate(@NotNull JetUnaryExpression expression,
                                          @NotNull TranslationContext context) {
+        if (isExclExcl(expression)) {
+            return translateExclExclOperator(expression, context);
+        }
         if (IncrementTranslator.isIncrement(expression)) {
             return IncrementTranslator.translate(expression, context);
         }
         return translateAsCall(expression, context);
+    }
+
+    private static boolean isExclExcl(@NotNull JetUnaryExpression expression) {
+        return getOperationToken(expression).equals(JetTokens.EXCLEXCL);
+    }
+
+    @NotNull
+    private static JsExpression translateExclExclOperator(@NotNull JetUnaryExpression expression, @NotNull TranslationContext context) {
+        JsExpression translatedExpression = translateAsExpression(getBaseExpression(expression), context);
+        JsBinaryOperation notNullCheck = notNullCheck(context, translatedExpression);
+        return new JsConditional(notNullCheck, translatedExpression, context.namer().throwNPEFunctionCall());
     }
 
     @NotNull

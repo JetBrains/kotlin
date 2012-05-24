@@ -16,11 +16,11 @@
 
 package org.jetbrains.k2js.translate.context;
 
-import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.backend.js.ast.JsScope;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 
 /**
  * @author Pavel Talanov
@@ -42,6 +42,7 @@ public final class Namer {
     private static final String ROOT_NAMESPACE = "Root";
     private static final String RECEIVER_PARAMETER_NAME = "receiver";
     private static final String CLASSES_OBJECT_NAME = "classes";
+    private static final String THROW_NPE_FUN_NAME = "throwNPE";
 
     @NotNull
     public static String getReceiverParameterName() {
@@ -130,39 +131,52 @@ public final class Namer {
     }
 
     @NotNull
-    public JsNameRef classCreationMethodReference() {
+    public JsExpression classCreationMethodReference() {
         return kotlin(className);
     }
 
     @NotNull
-    public JsNameRef traitCreationMethodReference() {
+    public JsExpression traitCreationMethodReference() {
         return kotlin(traitName);
     }
 
     @NotNull
-    public JsNameRef namespaceCreationMethodReference() {
+    public JsExpression namespaceCreationMethodReference() {
         return kotlin(namespaceName);
     }
 
     @NotNull
-    public JsNameRef objectCreationMethodReference() {
+    public JsExpression objectCreationMethodReference() {
         return kotlin(objectName);
     }
 
     @NotNull
-    private JsNameRef kotlin(@NotNull JsName name) {
+    public JsExpression throwNPEFunctionCall() {
+        JsNameRef reference = AstUtil.newQualifiedNameRef(THROW_NPE_FUN_NAME);
+        JsInvocation invocation = AstUtil.newInvocation(reference);
+        return kotlin(invocation);
+    }
+
+    @NotNull
+    private JsExpression kotlin(@NotNull JsName name) {
         JsNameRef reference = name.makeRef();
         reference.setQualifier(kotlinName.makeRef());
         return reference;
     }
 
     @NotNull
-    public JsNameRef kotlinObject() {
+    private JsExpression kotlin(@NotNull JsExpression reference) {
+        setQualifier(reference, kotlinName.makeRef());
+        return reference;
+    }
+
+    @NotNull
+    public JsExpression kotlinObject() {
         return kotlinName.makeRef();
     }
 
     @NotNull
-    public JsNameRef isOperationReference() {
+    public JsExpression isOperationReference() {
         return kotlin(isTypeName);
     }
 

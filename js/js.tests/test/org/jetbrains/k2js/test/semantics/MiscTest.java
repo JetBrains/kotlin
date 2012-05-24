@@ -23,8 +23,7 @@ import org.mozilla.javascript.JavaScriptException;
 /**
  * @author Pavel Talanov
  *         <p/>
- *         This class contains tests that do not fall in any particular category
- *         most probably because that functionality has very little support
+ *         A messy class where all new tests go before they are sorted which never happens.
  */
 public final class MiscTest extends AbstractExpressionTest {
 
@@ -138,5 +137,20 @@ public final class MiscTest extends AbstractExpressionTest {
 
     public void testPropertiesWithExplicitlyDefinedAccessorsWithoutBodies() throws Exception {
         fooBoxTest();
+    }
+
+
+    public void testExclExcl() throws Exception {
+        fooBoxTest();
+    }
+
+
+    public void testExclExclThrows() throws Exception {
+        try {
+            fooBoxTest();
+            fail();
+        }
+        catch (JavaScriptException e) {
+        }
     }
 }

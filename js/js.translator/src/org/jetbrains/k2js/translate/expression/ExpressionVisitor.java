@@ -31,7 +31,6 @@ import org.jetbrains.k2js.translate.expression.foreach.ForTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
 import org.jetbrains.k2js.translate.operation.BinaryOperationTranslator;
-import org.jetbrains.k2js.translate.operation.IncrementTranslator;
 import org.jetbrains.k2js.translate.operation.UnaryOperationTranslator;
 import org.jetbrains.k2js.translate.reference.*;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
@@ -285,7 +284,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitPostfixExpression(@NotNull JetPostfixExpression expression,
                                          @NotNull TranslationContext context) {
-        return IncrementTranslator.translate(expression, context);
+        return UnaryOperationTranslator.translate(expression, context);
     }
 
     @Override
