@@ -25,6 +25,7 @@ import org.jetbrains.jet.j2k.ast.*;
 import org.jetbrains.jet.j2k.ast.types.Type;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -493,11 +494,13 @@ public class ExpressionVisitor extends StatementVisitor {
 
     @Override
     public void visitPolyadicExpression(@NotNull PsiPolyadicExpression expression) {
-        super.visitPolyadicExpression(expression);
+        List<Expression> parameters = new ArrayList<Expression>();
+        for (PsiExpression operand : expression.getOperands()) {
+            parameters.add(getConverter().expressionToExpression(operand, expression.getType()));
+        }
         myResult = new PolyadicExpression(
-                getConverter().expressionsToExpressionList(expression.getOperands()),
-                getOperatorString(expression.getOperationTokenType()),
-                getConverter().createConversions(expression, PsiType.BOOLEAN)
+                parameters,
+                getOperatorString(expression.getOperationTokenType())
         );
     }
 }
