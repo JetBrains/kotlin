@@ -171,7 +171,7 @@ public final class Namer {
     }
 
     @NotNull
-    public JsExpression kotlinObject() {
+    public JsNameRef kotlinObject() {
         return kotlinName.makeRef();
     }
 
