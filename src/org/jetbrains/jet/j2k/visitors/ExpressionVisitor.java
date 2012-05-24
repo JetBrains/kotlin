@@ -236,8 +236,7 @@ public class ExpressionVisitor extends StatementVisitor {
             myResult = // TODO: not resolved
                     new MethodCallExpression(
                             getConverter().expressionToExpression(expression.getMethodExpression()),
-                            getConverter().expressionsToExpressionList(expression.getArgumentList().getExpressions()),
-                            getConverter().createConversions(expression),
+                            getConverter().argumentsToExpressionList(expression),
                             getConverter().typesToTypeList(expression.getTypeArguments()), getConverter().typeToType(expression.getType()).getNullable()
                     );
         }
@@ -289,7 +288,7 @@ public class ExpressionVisitor extends StatementVisitor {
                 new MethodCallExpression(
                         new IdentifierImpl("init"),
                         getConverter().expressionsToExpressionList(arguments),
-                        typeParameters));
+                        typeParameters, false));
     }
 
     @NotNull

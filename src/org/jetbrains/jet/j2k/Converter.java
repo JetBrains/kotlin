@@ -762,35 +762,6 @@ public class Converter {
     }
 
     @NotNull
-    public List<String> createConversions(@NotNull PsiCallExpression expression) {
-        PsiExpressionList argumentList = expression.getArgumentList();
-        PsiExpression[] arguments = argumentList != null ? argumentList.getExpressions() : new PsiExpression[]{};
-        List<String> conversions = new LinkedList<String>();
-        //noinspection UnusedDeclaration
-        for (final PsiExpression a : arguments) {
-            conversions.add("");
-        }
-
-        PsiMethod resolve = expression.resolveMethod();
-        if (resolve != null) {
-            List<PsiType> expectedTypes = new LinkedList<PsiType>();
-            List<PsiType> actualTypes = new LinkedList<PsiType>();
-
-            for (PsiParameter p : resolve.getParameterList().getParameters())
-                expectedTypes.add(p.getType());
-
-            for (PsiExpression e : arguments)
-                actualTypes.add(e.getType());
-
-            if (conversions.size() == actualTypes.size() && actualTypes.size() == expectedTypes.size()) {
-                for (int i = 0; i < actualTypes.size(); i++)
-                    conversions.set(i, createConversionForExpression(arguments[i], expectedTypes.get(i)));
-            }
-        }
-        return conversions;
-    }
-
-    @NotNull
     public List<String> createConversions(@NotNull PsiPolyadicExpression expression, PsiType expectedType) {
         PsiExpression[] arguments = expression.getOperands();
         int length = arguments.length;
