@@ -73,36 +73,10 @@ public class AstUtil {
     }
 
     @NotNull
-    public static <T> List<String> createListWithEmptyString(@NotNull final List<T> arguments) {
-        final List<String> conversions = new LinkedList<String>();
-        //noinspection UnusedDeclaration
-        for (T argument : arguments) conversions.add("");
-        return conversions;
-    }
-
-    @NotNull
-    public static String applyConversionForOneItem(@NotNull String f, @NotNull String s) {
-        if (s.isEmpty()) {
-            return f;
-        }
-        else {
-            return "(" + f + ")" + s;
-        }
-    }
-
-    @NotNull
     public static <T> T getOrElse(@NotNull Map<T, T> map, @NotNull T e, @NotNull T orElse) {
         if (map.containsKey(e)) {
             return map.get(e);
         }
         return orElse;
-    }
-
-    @NotNull
-    public static String replaceLastQuest(@NotNull String str) {
-        if (str.endsWith("?")) {
-            return str.substring(0, str.length() - 1);
-        }
-        return str;
     }
 }
