@@ -150,10 +150,9 @@ public class ExpressionVisitor extends StatementVisitor {
         else {
             myResult =
                     new BinaryExpression(
-                            getConverter().expressionToExpression(expression.getLOperand()),
-                            getConverter().expressionToExpression(expression.getROperand()),
-                            getOperatorString(expression.getOperationSign().getTokenType()),
-                            getConverter().createConversions(expression, PsiType.BOOLEAN)
+                            getConverter().expressionToExpression(expression.getLOperand(), expression.getType()),
+                            getConverter().expressionToExpression(expression.getROperand(), expression.getType()),
+                            getOperatorString(expression.getOperationSign().getTokenType())
                     );
         }
     }

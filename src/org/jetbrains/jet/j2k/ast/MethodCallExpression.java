@@ -46,7 +46,7 @@ public class MethodCallExpression extends Expression {
 
     @Override
     public boolean isNullable() {
-        return myIsResultNullable;
+        return myMethodCall.isNullable() || myIsResultNullable;
     }
 
     @NotNull
