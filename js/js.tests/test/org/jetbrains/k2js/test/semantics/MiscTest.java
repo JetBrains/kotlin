@@ -141,4 +141,11 @@ public final class MiscTest extends AbstractExpressionTest {
     public void testPropertiesWithExplicitlyDefinedAccessorsWithoutBodies() throws Exception {
         fooBoxTest();
     }
+
+
+    public void testExclExcl() throws Exception {
+        fooBoxTest();
+    }
+
+
 }
