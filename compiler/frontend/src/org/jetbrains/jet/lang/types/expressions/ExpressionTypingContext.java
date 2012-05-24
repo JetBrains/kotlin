@@ -19,10 +19,13 @@ package org.jetbrains.jet.lang.types.expressions;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.BasicResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
@@ -34,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -57,17 +61,6 @@ public class ExpressionTypingContext {
                                            labelResolver, trace, scope, dataFlowInfo, expectedType, namespacesAllowed);
     }
 
-//    @NotNull
-//    public static ExpressionTypingContext newRootContext(
-//            @NotNull JetSemanticServices semanticServices,
-//            @NotNull BindingTrace trace,
-//            @NotNull JetScope scope,
-//            @NotNull DataFlowInfo dataFlowInfo,
-//            @NotNull JetType expectedType,
-//            @NotNull JetType expectedReturnType) {
-//        return newContext(semanticServices, new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(), trace, scope, dataFlowInfo, expectedType, expectedReturnType);
-//    }
-//
     public final ExpressionTypingServices expressionTypingServices;
     public final BindingTrace trace;
     public final JetScope scope;
@@ -155,15 +148,8 @@ public class ExpressionTypingContext {
     }
 
     @NotNull
-    public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenNameToDescriptor(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull Name name) {
-        return resolveCallWithGivenName(call, functionReference, name);
-//        return results == null ? null : results.getResultingDescriptor();
-    }
-
-    @Nullable
-    public FunctionDescriptor resolveCall(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetCallExpression callExpression) {
-        OverloadResolutionResults<FunctionDescriptor> results = expressionTypingServices.getCallResolver().resolveFunctionCall(trace, scope, CallMaker.makeCall(receiver, callOperationNode, callExpression), expectedType, dataFlowInfo);
-        return results.isSingleResult() ? results.getResultingDescriptor() : null;
+    public OverloadResolutionResults<FunctionDescriptor> resolveFunctionCall(@NotNull Call call) {
+        return expressionTypingServices.getCallResolver().resolveFunctionCall(makeResolutionContext(call));
     }
 
     @NotNull
@@ -176,5 +162,4 @@ public class ExpressionTypingContext {
     public OverloadResolutionResults<FunctionDescriptor> resolveExactSignature(@NotNull ReceiverDescriptor receiver, @NotNull Name name, @NotNull List<JetType> parameterTypes) {
         return expressionTypingServices.getCallResolver().resolveExactSignature(scope, receiver, name, parameterTypes);
     }
-
 }

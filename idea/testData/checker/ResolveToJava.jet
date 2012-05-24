@@ -16,8 +16,8 @@ fun test(<warning>l</warning> : java.util.List<Int>) {
 
   val <warning>f</warning> : java.io.File? = null
 
-  Collections.<error>emptyList</error>
-  Collections.emptyList<Int>
+  Collections.<error><error>emptyList</error></error>
+  Collections.<error>emptyList<Int></error>
   Collections.emptyList<Int>()
   Collections.<error>emptyList()</error>
 

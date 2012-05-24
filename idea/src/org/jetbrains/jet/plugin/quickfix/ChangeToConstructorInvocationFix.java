@@ -33,9 +33,9 @@ import java.util.List;
 /**
  * @author svtk
  */
-public class ChangeToInvocationFix extends JetIntentionAction<JetDelegatorToSuperClass> {
+public class ChangeToConstructorInvocationFix extends JetIntentionAction<JetDelegatorToSuperClass> {
 
-    public ChangeToInvocationFix(@NotNull JetDelegatorToSuperClass element) {
+    public ChangeToConstructorInvocationFix(@NotNull JetDelegatorToSuperClass element) {
         super(element);
     }
 
@@ -66,7 +66,7 @@ public class ChangeToInvocationFix extends JetIntentionAction<JetDelegatorToSupe
             @Override
             public JetIntentionAction<JetDelegatorToSuperClass> createAction(Diagnostic diagnostic) {
                 if (diagnostic.getPsiElement() instanceof JetDelegatorToSuperClass) {
-                    return new ChangeToInvocationFix((JetDelegatorToSuperClass) diagnostic.getPsiElement());
+                    return new ChangeToConstructorInvocationFix((JetDelegatorToSuperClass) diagnostic.getPsiElement());
                 }
                 return null;
             }

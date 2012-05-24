@@ -4,12 +4,12 @@ package kotlin1
 import java.util.*
 
 fun main(args : Array<String>) {
-    val al : ArrayList<Int> = ArrayList<Int>
+    val al : ArrayList<Int> = ArrayList<Int>()
     val al1 = ArrayList<Int>(1)
 //    for (x in al1) {
 //
 //    }
-    val <!UNUSED_VARIABLE!>al2<!> = ArrayList<Int>(ArrayList<Int>)
+    val <!UNUSED_VARIABLE!>al2<!> = ArrayList<Int>(ArrayList<Int>())
     al : RandomAccess
     al.clear() : Unit
     al.add(1) : Boolean

@@ -6,7 +6,7 @@ abstract class Item(val room: Object) {
    abstract val name : String
 }
 
-val items: ArrayList<Item> = ArrayList<Item>
+val items: ArrayList<Item> = ArrayList<Item>()
 
 fun test(room : Object) {
   for(val item: Item in items) {
