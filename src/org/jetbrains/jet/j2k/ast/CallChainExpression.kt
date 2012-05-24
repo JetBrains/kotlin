@@ -8,7 +8,10 @@ public open class CallChainExpression(val expression : Expression, val identifie
         return INode.Kind.CALL_CHAIN
     }
 
-    public override fun isNullable() : Boolean = identifier.isNullable()
+    public override fun isNullable() : Boolean {
+        if (!expression.isEmpty() && expression.isNullable()) return true
+        return identifier.isNullable()
+    }
 
     public override fun toKotlin() : String {
         if (!expression.isEmpty()) {

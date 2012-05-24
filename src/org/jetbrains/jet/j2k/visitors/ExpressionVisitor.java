@@ -276,8 +276,7 @@ public class ExpressionVisitor extends StatementVisitor {
             return new NewClassExpression(
                     getConverter().expressionToExpression(expression.getQualifier()),
                     getConverter().elementToElement(classReference),
-                    getConverter().expressionsToExpressionList(arguments),
-                    getConverter().createConversions(expression),
+                    getConverter().argumentsToExpressionList(expression),
                     anonymousClass != null ? getConverter().anonymousClassToAnonymousClass(anonymousClass) : null
             );
         }

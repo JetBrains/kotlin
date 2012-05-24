@@ -14,6 +14,6 @@ open fun putInt(i : Int) : Unit {
 }
 open fun test() : Unit {
 putInt((One.myContainer?.myInt).sure())
-IntContainer((One.myContainer?.myInt).sure())
+IntContainer(One.myContainer?.myInt!!)
 }
 }

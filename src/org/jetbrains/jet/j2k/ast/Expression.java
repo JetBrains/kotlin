@@ -41,7 +41,7 @@ public abstract class Expression extends Statement {
         }
     }
 
-    boolean isNullable() {
+    public boolean isNullable() {
         return false;
     }
 }

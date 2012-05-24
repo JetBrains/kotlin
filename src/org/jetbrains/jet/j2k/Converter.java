@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.j2k;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.intellij.psi.*;
@@ -48,6 +49,24 @@ public class Converter {
         "com.sun.istack.internal.NotNull",
         "javax.annotation.Nonnull"
     );
+
+    private static final Map<String, String> PRIMITIVE_TYPE_CONVERSIONS = ImmutableMap.<String, String>builder()
+            .put("byte", BYTE)
+            .put("short", SHORT)
+            .put("int", INT)
+            .put("long", LONG)
+            .put("float", FLOAT)
+            .put("double", DOUBLE)
+            .put("char", CHAR)
+
+            .put(JAVA_LANG_BYTE, BYTE)
+            .put(JAVA_LANG_SHORT, SHORT)
+            .put(JAVA_LANG_INTEGER, INT)
+            .put(JAVA_LANG_LONG, LONG)
+            .put(JAVA_LANG_FLOAT, FLOAT)
+            .put(JAVA_LANG_DOUBLE, DOUBLE)
+            .put(JAVA_LANG_CHARACTER, CHAR)
+            .build();
 
     @NotNull
     private Set<String> classIdentifiers = Sets.newHashSet();
@@ -695,6 +714,53 @@ public class Converter {
         return modifiersSet;
     }
 
+    public List<Expression> argumentsToExpressionList(@NotNull PsiCallExpression expression) {
+        PsiExpressionList argumentList = expression.getArgumentList();
+        PsiExpression[] arguments = argumentList != null ? argumentList.getExpressions() : PsiExpression.EMPTY_ARRAY;
+        List<Expression> result = new ArrayList<Expression>();
+
+        PsiMethod resolved = expression.resolveMethod();
+        List<PsiType> expectedTypes = new ArrayList<PsiType>();
+        if (resolved != null) {
+            for (PsiParameter p : resolved.getParameterList().getParameters())
+                expectedTypes.add(p.getType());
+        }
+
+        // TODO handle varargs correctly
+        if (arguments.length == expectedTypes.size()) {
+            for (int i = 0; i < expectedTypes.size(); i++)
+                result.add(expressionToExpression(arguments[i], expectedTypes.get(i)));
+        }
+        else {
+            for (PsiExpression argument : arguments) {
+                result.add(expressionToExpression(argument));
+            }
+        }
+
+        return result;
+    }
+
+    public Expression expressionToExpression(PsiExpression argument, PsiType expectedType) {
+        Expression expression = expressionToExpression(argument);
+        PsiType actualType = argument.getType();
+        boolean isPrimitiveTypeOrNull = actualType == null || actualType instanceof PsiPrimitiveType;
+        boolean isRef = (argument instanceof PsiReferenceExpression && ((PsiReferenceExpression) argument).isQualified() || argument instanceof PsiMethodCallExpression);
+
+        if (isPrimitiveTypeOrNull && isRef && expression.isNullable()) {
+            expression = new BangBangExpression(expression);
+        }
+
+        if (actualType != null) {
+            if (isConversionNeeded(actualType, expectedType)) {
+                String conversion = PRIMITIVE_TYPE_CONVERSIONS.get(expectedType.getCanonicalText());
+                if (conversion != null) {
+                    expression = new DummyMethodCallExpression(expression, conversion, (IdentifierImpl) Identifier.EMPTY_IDENTIFIER);
+                }
+            }
+        }
+        return expression;
+    }
+
     @NotNull
     public List<String> createConversions(@NotNull PsiCallExpression expression) {
         PsiExpressionList argumentList = expression.getArgumentList();
@@ -787,25 +853,8 @@ public class Converter {
 
     @NotNull
     private static String getPrimitiveTypeConversion(@NotNull String type) {
-        Map<String, String> conversions = new HashMap<String, String>();
-        conversions.put("byte", BYTE);
-        conversions.put("short", SHORT);
-        conversions.put("int", INT);
-        conversions.put("long", LONG);
-        conversions.put("float", FLOAT);
-        conversions.put("double", DOUBLE);
-        conversions.put("char", CHAR);
-
-        conversions.put(JAVA_LANG_BYTE, BYTE);
-        conversions.put(JAVA_LANG_SHORT, SHORT);
-        conversions.put(JAVA_LANG_INTEGER, INT);
-        conversions.put(JAVA_LANG_LONG, LONG);
-        conversions.put(JAVA_LANG_FLOAT, FLOAT);
-        conversions.put(JAVA_LANG_DOUBLE, DOUBLE);
-        conversions.put(JAVA_LANG_CHARACTER, CHAR);
-
-        if (conversions.containsKey(type)) {
-            return "." + conversions.get(type) + "()";
+        if (PRIMITIVE_TYPE_CONVERSIONS.containsKey(type)) {
+            return "." + PRIMITIVE_TYPE_CONVERSIONS.get(type) + "()";
         }
         return "";
     }
