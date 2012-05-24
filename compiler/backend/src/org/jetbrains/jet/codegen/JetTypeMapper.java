@@ -376,7 +376,15 @@ public class JetTypeMapper {
             }
         }
 
+        final TypeConstructor constructor = jetType.getConstructor();
+        if (constructor instanceof IntersectionTypeConstructor) {
+            jetType = CommonSupertypes.commonSupertype(new ArrayList<JetType>(constructor.getSupertypes()));
+        }
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
+
+        if (descriptor == null) {
+            throw new UnsupportedOperationException("no descriptor for type constructor of " + jetType);
+        }
 
         if (ErrorUtils.isError(descriptor)) {
             if (classBuilderMode != ClassBuilderMode.SIGNATURES) {
