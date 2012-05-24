@@ -16,9 +16,7 @@
 
 package org.jetbrains.k2js.translate.context;
 
-import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.backend.js.ast.JsScope;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,6 +42,7 @@ public final class Namer {
     private static final String ROOT_NAMESPACE = "Root";
     private static final String RECEIVER_PARAMETER_NAME = "receiver";
     private static final String CLASSES_OBJECT_NAME = "classes";
+    private static final String THROW_NPE_FUN_NAME = "throwNPE";
 
     @NotNull
     public static String getReceiverParameterName() {
@@ -123,23 +122,30 @@ public final class Namer {
     }
 
     @NotNull
-    public JsNameRef classCreationMethodReference() {
+    public JsExpression classCreationMethodReference() {
         return kotlin(createMethodReference(className));
     }
 
     @NotNull
-    public JsNameRef traitCreationMethodReference() {
+    public JsExpression traitCreationMethodReference() {
         return kotlin(createMethodReference(traitName));
     }
 
     @NotNull
-    public JsNameRef namespaceCreationMethodReference() {
+    public JsExpression namespaceCreationMethodReference() {
         return kotlin(createMethodReference(namespaceName));
     }
 
     @NotNull
-    public JsNameRef objectCreationMethodReference() {
+    public JsExpression objectCreationMethodReference() {
         return kotlin(createMethodReference(objectName));
+    }
+
+    @NotNull
+    public JsExpression throwNPEFunctionCall() {
+        JsNameRef reference = AstUtil.newQualifiedNameRef(THROW_NPE_FUN_NAME);
+        JsInvocation invocation = AstUtil.newInvocation(reference);
+        return kotlin(invocation);
     }
 
     @NotNull
@@ -151,7 +157,7 @@ public final class Namer {
     }
 
     @NotNull
-    private JsNameRef kotlin(@NotNull JsNameRef reference) {
+    private JsExpression kotlin(@NotNull JsExpression reference) {
         JsNameRef kotlinReference = kotlinName.makeRef();
         setQualifier(reference, kotlinReference);
         return reference;
@@ -163,7 +169,7 @@ public final class Namer {
     }
 
     @NotNull
-    public JsNameRef isOperationReference() {
+    public JsExpression isOperationReference() {
         return kotlin(AstUtil.newQualifiedNameRef("isType"));
     }
 

@@ -64,7 +64,7 @@ public final class UnaryOperationTranslator {
     private static JsExpression translateExclExclOperator(@NotNull JetUnaryExpression expression, @NotNull TranslationContext context) {
         JsExpression translatedExpression = translateAsExpression(getBaseExpression(expression), context);
         JsBinaryOperation notNullCheck = notNullCheck(context, translatedExpression);
-        return new JsConditional(notNullCheck, translatedExpression, translatedExpression);
+        return new JsConditional(notNullCheck, translatedExpression, context.namer().throwNPEFunctionCall());
     }
 
     @NotNull

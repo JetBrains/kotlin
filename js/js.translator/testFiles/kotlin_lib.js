@@ -286,7 +286,12 @@ var Kotlin;
 
     Kotlin.Exceptions = {};
     Kotlin.Exception = Kotlin.Class.create();
-    Kotlin.Exceptions.IndexOutOfBounds = {};
+    Kotlin.Exceptions.IndexOutOfBounds = Kotlin.Class.create(Kotlin.Exception);
+    Kotlin.Exceptions.NullPointerException = Kotlin.Class.create(Kotlin.Exception);
+
+    Kotlin.throwNPE = function() {
+        throw new Kotlin.Exceptions.NullPointerException();
+    };
 
 
     Kotlin.ArrayList = Class.create({
