@@ -1,3 +1,6 @@
+// Be aware — Google Chrome has serious issue — you can rewrite READ-ONLY property (if it is defined in prototype). Firefox and Safari work correct.
+// Always test property access issues in Firefox, but not in Chrome.
+
 var Kotlin = {};
 
 (function () {
@@ -149,7 +152,8 @@ var Kotlin = {};
                     descriptors[name] = {value: value};
                 }
                 else {
-                    descriptors[name] = {value: value};
+                    // we assume all our std lib functions are open
+                    descriptors[name] = {value: value, writable: true};
                 }
             }
         }

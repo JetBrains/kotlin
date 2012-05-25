@@ -181,18 +181,15 @@
     });
 
     Kotlin.ArrayIterator = Kotlin.$createClass(Kotlin.Iterator, {
-        initialize:function (array) {
+        initialize: function (array) {
             this.array = array;
             this.index = 0;
         },
-        next:function () {
+        next: function () {
             return this.array.get(this.index++);
         },
-        hasNext:function () {
-            return (this.array.size() > this.index);
-        },
-        get_hasNext:function () {
-            return (this.array.size() > this.index);
+        get_hasNext: function () {
+            return this.array.size() > this.index;
         }
     });
 
@@ -256,20 +253,18 @@
     });
 
     Kotlin.Comparator = Kotlin.$createClass(
-            {
-                initialize:function () {
-                },
-                compare:function (el1, el2) {
-                    throw Kotlin.$new(Kotlin.AbstractFunctionInvocationError)();
-                }
+        {
+            initialize: function () {
+            },
+            compare: function (el1, el2) {
+                throw Kotlin.$new(Kotlin.AbstractFunctionInvocationError)();
             }
+        }
     );
 
     Kotlin.comparator = function (f) {
         var result = Kotlin.$new(Kotlin.Comparator)();
-        result.compare = function (el1, el2) {
-            return f(el1, el2);
-        };
+        result.compare = f;
         return result;
     };
 
@@ -330,23 +325,20 @@
     };
 
     var intrinsicArrayIterator = Kotlin.$createClass(
-            Kotlin.Iterator,
-            {
-                initialize:function (arr) {
-                    this.arr = arr;
-                    this.len = arr.length;
-                    this.i = 0;
-                },
-                hasNext:function () {
-                    return (this.i < this.len);
-                },
-                next:function () {
-                    return this.arr[this.i++];
-                },
-                get_hasNext:function () {
-                    return (this.i < this.len);
-                }
+        Kotlin.Iterator,
+        {
+            initialize: function (arr) {
+                this.arr = arr;
+                this.len = arr.length;
+                this.i = 0;
+            },
+            next: function () {
+                return this.arr[this.i++];
+            },
+            get_hasNext: function () {
+                return this.i < this.len;
             }
+        }
     );
 
     Kotlin.arrayIterator = function (arr) {
@@ -858,12 +850,8 @@
             };
         }
 
-        Kotlin.HashSet = Kotlin.$createClass(
-                {
-                    initialize:function () {
-                        HashSet.call(this);
-                    }
-                }
-        );
+        Kotlin.HashSet = Kotlin.$createClass({initialize: function () {
+            HashSet.call(this);
+        }});
     }());
 })();

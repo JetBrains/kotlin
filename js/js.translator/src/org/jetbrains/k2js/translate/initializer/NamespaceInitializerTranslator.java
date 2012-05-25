@@ -47,7 +47,7 @@ public final class NamespaceInitializerTranslator {
         TranslationContext namespaceInitializerContext
                 = namespaceContext.innerContextWithGivenScopeAndBlock(result.getScope(), result.getBody());
 
-        List<JsStatement> initializerStatements = (new InitializerVisitor()).traverseNamespace(namespace, namespaceInitializerContext);
+        List<JsStatement> initializerStatements = new InitializerVisitor().traverseNamespace(namespace, namespaceInitializerContext);
         result.getBody().getStatements().addAll(initializerStatements);
         return result;
     }
