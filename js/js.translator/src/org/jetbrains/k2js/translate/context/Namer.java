@@ -70,8 +70,8 @@ public final class Namer {
     }
 
     @NotNull
-    public static String getNameForAccessor(@NotNull String propertyName, boolean isGetter, boolean isEcma5) {
-        if (isEcma5) {
+    public static String getNameForAccessor(@NotNull String propertyName, boolean isGetter, boolean useNativeAccessor) {
+        if (useNativeAccessor) {
             return propertyName;
         }
 

@@ -16,10 +16,7 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
-
-import java.util.EnumSet;
 
 /**
  * @author Pavel Talanov
@@ -35,7 +32,7 @@ public final class ExtensionPropertyTest extends SingleFileTranslationTest {
     }
 
     public void testPropertyWithGetterAndSetter() throws Exception {
-        fooBoxTest(EnumSet.of(EcmaVersion.v3));
+        fooBoxTest();
     }
 
     public void testAbsExtension() throws Exception {

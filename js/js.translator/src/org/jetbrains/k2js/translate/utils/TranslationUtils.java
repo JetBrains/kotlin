@@ -46,21 +46,21 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsPropertyInitializer createJsDescriptor(@NotNull FunctionDescriptor descriptor,
-            @NotNull TranslationContext context,
-            @NotNull JsFunction function) {
-        final JsExpression labelExpr;
-        if (descriptor instanceof PropertyGetterDescriptor) {
-            // so, will have param
-            labelExpr = descriptor.getReceiverParameter().exists()
-                        ? context.program().getStringLiteral("value")
-                        : context.program().getStringLiteral("get");
+    public static JsPropertyInitializer translateFunctionAsEcma5PropertyDescriptor(@NotNull JsFunction function,
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull TranslationContext context) {
+        if (descriptor.getReceiverParameter().exists()) {
+            JsObjectLiteral meta = new JsObjectLiteral();
+            meta.getPropertyInitializers().add(new JsPropertyInitializer(context.program().getStringLiteral("value"), function));
+            if (descriptor.getModality().isOverridable()) {
+                meta.getPropertyInitializers().add(context.namer().writablePropertyDescriptorField());
+            }
+            return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), meta);
         }
         else {
-            labelExpr = context.program().getStringLiteral("set");
+            return new JsPropertyInitializer(
+                    context.program().getStringLiteral(descriptor instanceof PropertyGetterDescriptor ? "get" : "set"), function);
         }
-
-        return new JsPropertyInitializer(labelExpr, function);
     }
 
     @NotNull

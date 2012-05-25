@@ -201,8 +201,9 @@ public final class StaticContext {
                         return null;
                     }
                     boolean isGetter = descriptor instanceof PropertyGetterDescriptor;
-                    String propertyName = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty().getName().getName();
-                    String accessorName = Namer.getNameForAccessor(propertyName, isGetter, isEcma5());
+                    final PropertyAccessorDescriptor accessorDescriptor = (PropertyAccessorDescriptor) descriptor;
+                    String propertyName = accessorDescriptor.getCorrespondingProperty().getName().getName();
+                    String accessorName = Namer.getNameForAccessor(propertyName, isGetter, !accessorDescriptor.getReceiverParameter().exists() && isEcma5());
                     NamingScope enclosingScope = getEnclosingScope(descriptor);
                     return isEcma5()
                            ? enclosingScope.declareUnobfuscatableName(accessorName)
@@ -235,9 +236,7 @@ public final class StaticContext {
                     NamingScope enclosingScope = getEnclosingScope(descriptor);
                     if (isEcma5()) {
                         String name = descriptor.getName().getName();
-                        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-                        if (!JsDescriptorUtils.isDefaultAccessor(propertyDescriptor.getGetter()) || !JsDescriptorUtils.isDefaultAccessor(propertyDescriptor.getSetter())) {
-                            // _ is more preferable than $ should be discussed later
+                        if (JsDescriptorUtils.isAsPrivate((PropertyDescriptor) descriptor)) {
                             name = '_' + name;
                         }
 

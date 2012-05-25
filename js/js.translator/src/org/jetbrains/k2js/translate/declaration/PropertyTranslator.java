@@ -58,13 +58,13 @@ public final class PropertyTranslator extends AbstractTranslator {
 
     static public List<JsPropertyInitializer> translateAccessors(@NotNull PropertyDescriptor descriptor,
             @NotNull TranslationContext context) {
-        if (context.isEcma5() && !JsDescriptorUtils.hasNonDefaultAccessors(descriptor)) {
+        if (context.isEcma5() && !JsDescriptorUtils.isAsPrivate(descriptor)) {
             return Collections.emptyList();
         }
 
         PropertyTranslator propertyTranslator = new PropertyTranslator(descriptor, context);
         List<JsPropertyInitializer> propertyInitializers = propertyTranslator.translate();
-        if (context.isEcma5()) {
+        if (context.isEcma5() && !descriptor.getReceiverParameter().exists()) {
             JsObjectLiteral objectLiteral = new JsObjectLiteral();
             objectLiteral.getPropertyInitializers().addAll(propertyInitializers);
             return Collections.singletonList(
@@ -165,7 +165,7 @@ public final class PropertyTranslator extends AbstractTranslator {
 
     private JsPropertyInitializer generateDefaultAccessor(PropertyAccessorDescriptor accessorDescriptor, JsFunction function) {
         if (context().isEcma5()) {
-            return TranslationUtils.createJsDescriptor(accessorDescriptor, context(), function);
+            return TranslationUtils.translateFunctionAsEcma5PropertyDescriptor(function, accessorDescriptor, context());
         }
         else {
             return newNamedMethod(context().getNameForDescriptor(accessorDescriptor), function);
@@ -180,6 +180,6 @@ public final class PropertyTranslator extends AbstractTranslator {
     @NotNull
     private JsPropertyInitializer translateCustomAccessor(@NotNull JetPropertyAccessor expression) {
         FunctionTranslator translator = Translation.functionTranslator(expression, context());
-        return context().isEcma5() ? translator.translateAsEcma5Accessor() : translator.translateAsMethod();
+        return context().isEcma5() ? translator.translateAsEcma5PropertyDescriptor() : translator.translateAsMethod();
     }
 }

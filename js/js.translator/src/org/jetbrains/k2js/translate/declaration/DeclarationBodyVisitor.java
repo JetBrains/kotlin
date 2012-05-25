@@ -18,6 +18,7 @@ package org.jetbrains.k2js.translate.declaration;
 
 import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -32,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDeclarationsForNamespace;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForObjectDeclaration;
 
 /**
@@ -70,7 +72,8 @@ public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPrope
                                                           @NotNull TranslationContext context) {
         JsPropertyInitializer o = Translation.functionTranslator(expression, context).translateAsMethod();
         if (context.isEcma5()) {
-            o.setValueExpr(JsAstUtils.createPropertyDataDescriptor(false, o.getValueExpr(), context));
+            final FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
+            o.setValueExpr(JsAstUtils.createPropertyDataDescriptor(descriptor.getModality().isOverridable(), o.getValueExpr(), context));
         }
         return Collections.singletonList(o);
     }
