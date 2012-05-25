@@ -65,7 +65,9 @@ public abstract class Config {
             "/html5/canvas.kt",
             "/html5/files.kt",
             "/html5/image.kt",
-            "/stdlib/JUMaps.kt"
+            "/stdlib/JUMaps.kt",
+            "/stdlib/browser.kt",
+            "/core/dom.kt"
     );
 
     protected static final String LIBRARIES_LOCATION = "js/js.libraries/src";

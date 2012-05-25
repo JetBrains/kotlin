@@ -21,7 +21,6 @@ import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
@@ -38,29 +37,16 @@ public final class StdLibTest extends SingleFileTranslationTest {
     public void testDummy() {
     }
 
-    public void TODO_testBrowserDocumentAccess() throws Exception {
-        runFunctionOutputTest("browserDocumentAccess.kt", "test.browser", "foo", "Hello World!");
+    public void testBrowserDocumentAccessCompiles() throws Exception {
+        generateJavaScriptFiles("browserDocumentAccess.kt", MainCallParameters.noCall(), EcmaVersion.all());
     }
 
     @Override
     protected void generateJavaScriptFiles(@NotNull String kotlinFilename,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull EnumSet<EcmaVersion> ecmaVersions) throws Exception {
-
-        String stdlibdir = pathToTestFiles() + "../../../../libraries/stdlib/src/";
-        String jscoredir = pathToTestFiles() + "../../../js.libraries/src/core/";
-
-        String dom = jscoredir + "dom.kt";
-        String jsbrowser = jscoredir + "../stdlib/browser.kt";
-        String stdlibBrowser = stdlibdir + "kotlin/browser/Properties.kt";
-
-        List<String> files = Arrays.asList(getInputFilePath(kotlinFilename), dom, jsbrowser);
+        List<String> files = Arrays.asList(getInputFilePath(kotlinFilename));
 
         generateJavaScriptFiles(files, kotlinFilename, mainCallParameters, ecmaVersions);
-    }
-
-    @Override
-    protected boolean shouldCreateOut() {
-        return false;
     }
 }
