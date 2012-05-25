@@ -23,7 +23,6 @@ import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -49,12 +48,13 @@ public final class StdLibTest extends SingleFileTranslationTest {
             @NotNull EnumSet<EcmaVersion> ecmaVersions) throws Exception {
 
         String stdlibdir = pathToTestFiles() + "../../../../libraries/stdlib/src/";
-                                               String browser = stdlibdir + "kotlin/browser/Properties.kt";
+        String jscoredir = pathToTestFiles() + "../../../js.libraries/src/core/";
 
-        File file = new File(browser);
-        assertTrue("Could not find file: " + browser, file.exists());
+        String dom = jscoredir + "dom.kt";
+        String jsbrowser = jscoredir + "../stdlib/browser.kt";
+        String stdlibBrowser = stdlibdir + "kotlin/browser/Properties.kt";
 
-        List<String> files = Arrays.asList(getInputFilePath(kotlinFilename), browser);
+        List<String> files = Arrays.asList(getInputFilePath(kotlinFilename), dom, jsbrowser);
 
         generateJavaScriptFiles(files, kotlinFilename, mainCallParameters, ecmaVersions);
     }
@@ -63,5 +63,4 @@ public final class StdLibTest extends SingleFileTranslationTest {
     protected boolean shouldCreateOut() {
         return false;
     }
-
 }
