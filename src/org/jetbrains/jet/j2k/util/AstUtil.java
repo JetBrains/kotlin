@@ -18,7 +18,7 @@ package org.jetbrains.jet.j2k.util;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.j2k.ast.INode;
+import org.jetbrains.jet.j2k.ast.Node;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -46,7 +46,7 @@ public class AstUtil {
         return buffer.toString();
     }
 
-    public static String joinNodes(@NotNull final List<? extends INode> nodes, final String delimiter) {
+    public static String joinNodes(@NotNull final List<? extends Node> nodes, final String delimiter) {
         return join(nodesToKotlin(nodes), delimiter);
     }
 
@@ -55,9 +55,9 @@ public class AstUtil {
     }
 
     @NotNull
-    public static List<String> nodesToKotlin(@NotNull List<? extends INode> nodes) {
+    public static List<String> nodesToKotlin(@NotNull List<? extends Node> nodes) {
         List<String> result = new LinkedList<String>();
-        for (INode n : nodes)
+        for (Node n : nodes)
             result.add(n.toKotlin());
         return result;
     }

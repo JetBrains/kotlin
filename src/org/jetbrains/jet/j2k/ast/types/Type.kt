@@ -1,7 +1,6 @@
 package org.jetbrains.jet.j2k.ast.types
 
 import org.jetbrains.jet.j2k.ast.Element
-import org.jetbrains.jet.j2k.ast.INode
 
 public abstract class Type(val nullable: Boolean) : Element() {
     public open fun convertedToNotNull() : Type {

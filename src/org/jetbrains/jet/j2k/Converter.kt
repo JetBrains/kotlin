@@ -108,7 +108,7 @@ public open class Converter() {
         val typeParameters: List<Element> = elementsToElementList(psiClass.getTypeParameters())
         val implementsTypes: List<Type> = typesToNotNullableTypeList(psiClass.getImplementsListTypes())
         val extendsTypes: List<Type> = typesToNotNullableTypeList(psiClass.getExtendsListTypes())
-        val name: IdentifierImpl = IdentifierImpl(psiClass.getName())
+        val name: Identifier = Identifier(psiClass.getName())
         val baseClassParams: List<Expression> = arrayList()
         val members: List<Member> = getMembers(psiClass)
         val visitor: SuperVisitor = SuperVisitor()
@@ -188,10 +188,10 @@ public open class Converter() {
     private fun fieldToField(field: PsiField, psiClass: PsiClass?): Field {
         val modifiers: Set<String> = modifiersListToModifiersSet(field.getModifierList())
         if (field is PsiEnumConstant?) {
-            return EnumConstant(IdentifierImpl(field.getName()), modifiers, typeToType(field.getType()), elementToElement(field.getArgumentList()))
+            return EnumConstant(Identifier(field.getName()), modifiers, typeToType(field.getType()), elementToElement(field.getArgumentList()))
         }
 
-        return Field(IdentifierImpl(field.getName()),
+        return Field(Identifier(field.getName()),
                 modifiers,
                 typeToType(field.getType()),
                 expressionToExpression(field.getInitializer(), field.getType()),
@@ -210,7 +210,7 @@ public open class Converter() {
             dispatcher.expressionVisitor = ExpressionVisitor(this)
         }
         methodReturnType = method.getReturnType()
-        val identifier: IdentifierImpl = IdentifierImpl(method.getName())
+        val identifier: Identifier = Identifier(method.getName())
         val returnType: Type = typeToType(method.getReturnType(), ConverterUtil.isAnnotatedAsNotNull(method.getModifierList()))
         val body: Block = (if (hasFlag(J2KConverterFlags.SKIP_BODIES))
             Block.EMPTY_BLOCK
@@ -245,7 +245,7 @@ public open class Converter() {
         val result: List<Parameter> = arrayList()
         for (parameter : PsiParameter? in method.getParameterList().getParameters())
         {
-            result.add(Parameter(IdentifierImpl(parameter?.getName()),
+            result.add(Parameter(Identifier(parameter?.getName()),
                     typeToType(parameter?.getType(),
                             ConverterUtil.isAnnotatedAsNotNull(parameter?.getModifierList())),
                     ConverterUtil.isReadOnly(parameter, method.getBody())))
@@ -377,7 +377,7 @@ public open class Converter() {
     }
 
     public open fun parameterToParameter(parameter: PsiParameter): Parameter {
-        return Parameter(IdentifierImpl(parameter.getName()),
+        return Parameter(Identifier(parameter.getName()),
                 typeToType(parameter.getType(),
                         ConverterUtil.isAnnotatedAsNotNull(parameter.getModifierList())), true)
     }
@@ -409,7 +409,7 @@ public open class Converter() {
 
     public open fun expressionToExpression(argument: PsiExpression?, expectedType: PsiType?): Expression {
         if (argument == null)
-            return (Identifier.EMPTY_IDENTIFIER as IdentifierImpl)
+            return Identifier.EMPTY_IDENTIFIER
 
         var expression: Expression = expressionToExpression(argument)
         val actualType: PsiType? = argument.getType()
@@ -424,7 +424,7 @@ public open class Converter() {
                 var conversion: String? = PRIMITIVE_TYPE_CONVERSIONS.get(expectedType?.getCanonicalText())
                 if (conversion != null)
                 {
-                    expression = DummyMethodCallExpression(expression, conversion, (Identifier.EMPTY_IDENTIFIER as IdentifierImpl?))
+                    expression = DummyMethodCallExpression(expression, conversion, Identifier.EMPTY_IDENTIFIER)
                 }
 
             }
@@ -454,7 +454,7 @@ public open class Converter() {
                 ?.build()!!
 
         private fun quoteKeywords(packageName: String): String {
-            return packageName.split("\\.").map { IdentifierImpl(it).toKotlin() }.makeString(".")
+            return packageName.split("\\.").map { Identifier(it).toKotlin() }.makeString(".")
         }
 
         private fun getFinalOrWithEmptyInitializer(fields: List<out Field>): List<Field> {
@@ -468,7 +468,7 @@ public open class Converter() {
         }
 
         private fun createParametersFromFields(fields: List<Field>): List<Parameter> {
-            return fields.map { Parameter(IdentifierImpl("_" + it.identifier.getName()), it.`type`, true) }
+            return fields.map { Parameter(Identifier("_" + it.identifier.getName()), it.`type`, true) }
         }
 
         private fun createInitStatementsFromFields(fields: List<out Field>): List<Statement> {
@@ -628,7 +628,7 @@ public open class Converter() {
             if (identifier == null)
                 return Identifier.EMPTY_IDENTIFIER
 
-            return IdentifierImpl(identifier?.getText())
+            return Identifier(identifier?.getText())
         }
 
         public open fun modifiersListToModifiersSet(modifierList: PsiModifierList?): Set<String> {

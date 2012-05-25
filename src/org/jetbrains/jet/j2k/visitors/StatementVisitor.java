@@ -164,10 +164,10 @@ public class StatementVisitor extends ElementVisitor {
                 ) {
             final Expression end = getConverter().expressionToExpression(((PsiBinaryExpression) condition).getROperand());
             final Expression endExpression = operationTokenType == JavaTokenType.LT ?
-                                             new BinaryExpression(end, new IdentifierImpl("1"), "-") :
+                                             new BinaryExpression(end, new Identifier("1"), "-") :
                                              end;
             myResult = new ForeachWithRangeStatement(
-                    new IdentifierImpl(firstChild.getName()),
+                    new org.jetbrains.jet.j2k.ast.Identifier(firstChild.getName()),
                     getConverter().expressionToExpression(firstChild.getInitializer()),
                     endExpression,
                     getConverter().statementToStatement(body)

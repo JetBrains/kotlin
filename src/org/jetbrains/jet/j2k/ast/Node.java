@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast;
 
+import org.eclipse.jdt.internal.core.search.StringOperation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -25,7 +26,7 @@ import java.util.Set;
 /**
  * @author ignatov
  */
-public abstract class Node implements INode {
+public abstract class Node {
     @NotNull
     final static Set<String> ONLY_KOTLIN_KEYWORDS = new HashSet<String>(Arrays.asList(
             "package", "as", "type", "val", "var", "fun", "is", "in", "object", "when", "trait", "This"
@@ -65,4 +66,7 @@ public abstract class Node implements INode {
     static final String STAR = "*";
     @NotNull
     protected static final String ZERO = "0";
+
+    @NotNull
+    public abstract String toKotlin();
 }

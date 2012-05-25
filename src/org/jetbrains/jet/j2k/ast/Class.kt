@@ -66,12 +66,12 @@ public open class Class(converter : Converter,
         val modifiers : Set<String> = HashSet<String>(f.getModifiers())
         modifiers.add(Modifier.STATIC)
         val statements : List<Statement> = f.block?.statements ?: arrayList()
-        statements.add(ReturnStatement(IdentifierImpl("__")))
+        statements.add(ReturnStatement(Identifier("__")))
         val block : Block = Block(statements)
         val constructorTypeParameters : List<Element> = arrayList()
         constructorTypeParameters.addAll(typeParameters)
         constructorTypeParameters.addAll(f.typeParameters)
-        return Function(IdentifierImpl("init"), modifiers, ClassType(name, constructorTypeParameters, false),
+        return Function(Identifier("init"), modifiers, ClassType(name, constructorTypeParameters, false),
                 constructorTypeParameters, f.params, block)
     }
 

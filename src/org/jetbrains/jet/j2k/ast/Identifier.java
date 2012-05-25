@@ -21,11 +21,57 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author ignatov
  */
-public interface Identifier extends INode {
+public class Identifier extends Expression  {
     @NotNull
-    Identifier EMPTY_IDENTIFIER = new IdentifierImpl("");
+    public static Identifier EMPTY_IDENTIFIER = new Identifier("");
 
-    boolean isEmpty();
+    private final String myName;
+    private boolean myIsNullable = true;
+    private boolean myQuotingNeeded = true;
 
-    String getName();
+    public Identifier(String name) {
+        myName = name;
+    }
+
+    public Identifier(String name, boolean isNullable) {
+        myName = name;
+        myIsNullable = isNullable;
+    }
+
+    public Identifier(String name, boolean isNullable, boolean quotingNeeded) {
+        myName = name;
+        myIsNullable = isNullable;
+        myQuotingNeeded = quotingNeeded;
+    }
+
+    public boolean isEmpty() {
+        return myName.length() == 0;
+    }
+
+    public String getName() {
+        return myName;
+    }
+
+    @NotNull
+    private static String quote(String str) {
+        return BACKTICK + str + BACKTICK;
+    }
+
+    @Override
+    public boolean isNullable() {
+        return myIsNullable;
+    }
+
+    private String ifNeedQuote() {
+        if (myQuotingNeeded && (ONLY_KOTLIN_KEYWORDS.contains(myName) || myName.contains("$"))) {
+            return quote(myName);
+        }
+        return myName;
+    }
+
+    @NotNull
+    @Override
+    public String toKotlin() {
+        return ifNeedQuote();
+    }
 }

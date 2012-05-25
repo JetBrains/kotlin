@@ -231,7 +231,7 @@ public class ExpressionVisitor extends StatementVisitor {
                 isQuotingNeeded = false;
             }
         }
-        myResult = new LiteralExpression(new IdentifierImpl(text, false, isQuotingNeeded));
+        myResult = new LiteralExpression(new Identifier(text, false, isQuotingNeeded));
     }
 
     @Override
@@ -289,9 +289,9 @@ public class ExpressionVisitor extends StatementVisitor {
                                           ? getConverter().typesToTypeList(reference.getTypeParameters())
                                           : Collections.<Type>emptyList();
         return new CallChainExpression(
-                new IdentifierImpl(constructor.getName(), false),
+                new Identifier(constructor.getName(), false),
                 new MethodCallExpression(
-                        new IdentifierImpl("init"),
+                        new Identifier("init"),
                         getConverter().expressionsToExpressionList(arguments),
                         typeParameters, false));
     }
@@ -353,14 +353,14 @@ public class ExpressionVisitor extends StatementVisitor {
         final boolean isNullable = getConverter().typeToType(expression.getType()).getNullable();
         final String className = getClassNameWithConstructor(expression);
 
-        Expression identifier = new IdentifierImpl(expression.getReferenceName(), isNullable);
+        Expression identifier = new Identifier(expression.getReferenceName(), isNullable);
 
         final String __ = "__";
         if (hasReceiver) {
-            identifier = new CallChainExpression(new IdentifierImpl(__, false), new IdentifierImpl(expression.getReferenceName(), isNullable));
+            identifier = new CallChainExpression(new Identifier(__, false), new Identifier(expression.getReferenceName(), isNullable));
         }
         else if (insideSecondaryConstructor && isThis) {
-            identifier = new IdentifierImpl("val __ = " + className); // TODO: hack
+            identifier = new Identifier("val __ = " + className); // TODO: hack
         }
 
         myResult = new CallChainExpression(
@@ -467,7 +467,7 @@ public class ExpressionVisitor extends StatementVisitor {
         final PsiJavaCodeReferenceElement qualifier = expression.getQualifier();
         myResult = new SuperExpression(
                 qualifier != null ?
-                new IdentifierImpl(qualifier.getQualifiedName()) :
+                new Identifier(qualifier.getQualifiedName()) :
                 Identifier.EMPTY_IDENTIFIER
         );
     }
@@ -478,7 +478,7 @@ public class ExpressionVisitor extends StatementVisitor {
         final PsiJavaCodeReferenceElement qualifier = expression.getQualifier();
         myResult = new ThisExpression(
                 qualifier != null ?
-                new IdentifierImpl(qualifier.getQualifiedName()) :
+                new Identifier(qualifier.getQualifiedName()) :
                 Identifier.EMPTY_IDENTIFIER
         );
     }

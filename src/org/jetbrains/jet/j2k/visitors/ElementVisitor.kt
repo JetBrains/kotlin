@@ -20,7 +20,7 @@ public open class ElementVisitor(val myConverter : Converter) : JavaElementVisit
 
     public override fun visitLocalVariable(variable : PsiLocalVariable?) : Unit {
         val theVariable = variable!!
-        myResult = LocalVariable(IdentifierImpl(theVariable.getName()),
+        myResult = LocalVariable(Identifier(theVariable.getName()),
                 Converter.modifiersListToModifiersSet(theVariable.getModifierList()),
                 myConverter.typeToType(theVariable.getType(), isAnnotatedAsNotNull(theVariable.getModifierList())),
                 myConverter.expressionToExpression(theVariable.getInitializer(), theVariable.getType()))
@@ -34,18 +34,18 @@ public open class ElementVisitor(val myConverter : Converter) : JavaElementVisit
         val theReference = reference!!
         val types : List<Type> = myConverter.typesToTypeList(theReference.getTypeParameters()).requireNoNulls()
         if (!theReference.isQualified()) {
-            myResult = ReferenceElement(IdentifierImpl(theReference.getReferenceName()), types)
+            myResult = ReferenceElement(Identifier(theReference.getReferenceName()), types)
         }
         else {
-            var result : String = IdentifierImpl(reference?.getReferenceName()).toKotlin()
+            var result : String = Identifier(reference?.getReferenceName()).toKotlin()
             var qualifier : PsiElement? = theReference.getQualifier()
             while (qualifier != null)
             {
                 val p : PsiJavaCodeReferenceElement = (qualifier as PsiJavaCodeReferenceElement)
-                result = IdentifierImpl(p.getReferenceName()).toKotlin() + "." + result
+                result = Identifier(p.getReferenceName()).toKotlin() + "." + result
                 qualifier = p.getQualifier()
             }
-            myResult = ReferenceElement(IdentifierImpl(result), types)
+            myResult = ReferenceElement(Identifier(result), types)
         }
     }
 
@@ -54,7 +54,7 @@ public open class ElementVisitor(val myConverter : Converter) : JavaElementVisit
     }
 
     public override fun visitTypeParameter(classParameter : PsiTypeParameter?) : Unit {
-        myResult = TypeParameter(IdentifierImpl(classParameter!!.getName()),
+        myResult = TypeParameter(Identifier(classParameter!!.getName()),
                                  classParameter!!.getExtendsListTypes().map { myConverter.typeToType(it) } )
     }
 
