@@ -26,8 +26,6 @@ import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.jetbrains.jet.j2k.Converter.NOT_NULL_ANNOTATIONS;
-
 /**
  * @author ignatov
  */
@@ -101,7 +99,7 @@ public class ConverterUtil {
         return counter;
     }
 
-    static boolean isReadOnly(PsiElement element, PsiElement container) {
+    public static boolean isReadOnly(PsiElement element, PsiElement container) {
         return countWritingAccesses(element, container) == 0;
     }
 
@@ -110,7 +108,7 @@ public class ConverterUtil {
             PsiAnnotation[] annotations = modifierList.getAnnotations();
             for (PsiAnnotation a : annotations) {
                 String qualifiedName = a.getQualifiedName();
-                if (qualifiedName != null && NOT_NULL_ANNOTATIONS.contains(qualifiedName)) {
+                if (qualifiedName != null && Converter.$classobj.NOT_NULL_ANNOTATIONS.contains(qualifiedName)) {
                     return true;
                 }
             }

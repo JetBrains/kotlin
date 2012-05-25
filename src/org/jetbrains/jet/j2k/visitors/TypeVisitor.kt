@@ -10,13 +10,13 @@ import org.jetbrains.jet.j2k.util.AstUtil
 import java.util.LinkedList
 import java.util.List
 
-public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisitor<Type?>(), J2KVisitor {
+public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisitor<Type>(), J2KVisitor {
     private var myResult : Type = EmptyType()
     public open fun getResult() : Type {
         return myResult
     }
 
-    public override fun visitPrimitiveType(primitiveType: PsiPrimitiveType?) : Type? {
+    public override fun visitPrimitiveType(primitiveType: PsiPrimitiveType?) : Type {
         val name : String = primitiveType?.getCanonicalText()!!
         val identifier : IdentifierImpl = IdentifierImpl(name)
         if (name == "void") {
@@ -28,19 +28,19 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
         else {
             myResult = PrimitiveType(identifier)
         }
-        return null
+        return myResult
     }
 
-    public override fun visitArrayType(arrayType: PsiArrayType?) : Type? {
+    public override fun visitArrayType(arrayType: PsiArrayType?) : Type {
         if (myResult is EmptyType) {
             myResult = ArrayType(myConverter.typeToType(arrayType?.getComponentType()), true)
         }
 
-        return null
+        return myResult
     }
 
-    public override fun visitClassType(classType : PsiClassType?) : Type? {
-        if (classType == null) return null
+    public override fun visitClassType(classType : PsiClassType?) : Type {
+        if (classType == null) return myResult
         val identifier : IdentifierImpl = constructClassTypeIdentifier(classType)
         val resolvedClassTypeParams : List<Type> = createRawTypesForResolvedReference(classType)
         if (classType.getParameterCount() == 0 && resolvedClassTypeParams.size() > 0) {
@@ -49,7 +49,7 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
         else {
             myResult = ClassType(identifier, myConverter.typesToTypeList(classType.getParameters()).requireNoNulls(), true)
         }
-        return null
+        return myResult
     }
 
     private fun constructClassTypeIdentifier(classType : PsiClassType) : IdentifierImpl {
@@ -102,7 +102,7 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
         return typeParams
     }
 
-    public override fun visitWildcardType(wildcardType : PsiWildcardType?) : Type? {
+    public override fun visitWildcardType(wildcardType : PsiWildcardType?) : Type {
         if (wildcardType!!.isExtends()) {
             myResult = OutProjectionType(myConverter.typeToType(wildcardType!!.getExtendsBound()))
         }
@@ -113,12 +113,12 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
             else {
                 myResult = StarProjectionType()
             }
-        return null
+        return myResult
     }
 
-    public override fun visitEllipsisType(ellipsisType : PsiEllipsisType?) : Type? {
+    public override fun visitEllipsisType(ellipsisType : PsiEllipsisType?) : Type {
         myResult = VarArg(myConverter.typeToType(ellipsisType?.getComponentType()))
-        return null
+        return myResult
     }
 
     public override fun getConverter() : Converter = myConverter

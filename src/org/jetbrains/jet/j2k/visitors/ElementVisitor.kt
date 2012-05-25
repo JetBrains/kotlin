@@ -5,7 +5,6 @@ import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.List
-import org.jetbrains.jet.j2k.Converter.modifiersListToModifiersSet
 import org.jetbrains.jet.j2k.ConverterUtil.isAnnotatedAsNotNull
 
 public open class ElementVisitor(val myConverter : Converter) : JavaElementVisitor(), J2KVisitor {
@@ -22,14 +21,13 @@ public open class ElementVisitor(val myConverter : Converter) : JavaElementVisit
     public override fun visitLocalVariable(variable : PsiLocalVariable?) : Unit {
         val theVariable = variable!!
         myResult = LocalVariable(IdentifierImpl(theVariable.getName()),
-                modifiersListToModifiersSet(theVariable.getModifierList()),
+                Converter.modifiersListToModifiersSet(theVariable.getModifierList()),
                 myConverter.typeToType(theVariable.getType(), isAnnotatedAsNotNull(theVariable.getModifierList())),
                 myConverter.expressionToExpression(theVariable.getInitializer(), theVariable.getType()))
     }
 
     public override fun visitExpressionList(list : PsiExpressionList?) : Unit {
-        myResult = ExpressionList(myConverter.expressionsToExpressionList(list!!.getExpressions()),
-                myConverter.typesToTypeList(list!!.getExpressionTypes()))
+        myResult = ExpressionList(myConverter.expressionsToExpressionList(list!!.getExpressions()))
     }
 
     public override fun visitReferenceElement(reference : PsiJavaCodeReferenceElement?) : Unit {

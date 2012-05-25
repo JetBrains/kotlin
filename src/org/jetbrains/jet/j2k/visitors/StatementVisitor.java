@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.jetbrains.jet.j2k.Converter.identifierToIdentifier;
 import static org.jetbrains.jet.j2k.ConverterUtil.countWritingAccesses;
 
 /**
@@ -73,7 +72,7 @@ public class StatementVisitor extends ElementVisitor {
         }
         else {
             myResult = new BreakStatement(
-                    identifierToIdentifier(statement.getLabelIdentifier())
+                    Converter.$classobj.identifierToIdentifier(statement.getLabelIdentifier())
             );
         }
     }
@@ -86,7 +85,7 @@ public class StatementVisitor extends ElementVisitor {
         }
         else {
             myResult = new ContinueStatement(
-                    identifierToIdentifier(statement.getLabelIdentifier())
+                    Converter.$classobj.identifierToIdentifier(statement.getLabelIdentifier())
             );
         }
     }
@@ -181,8 +180,8 @@ public class StatementVisitor extends ElementVisitor {
                     getConverter().expressionToExpression(condition),
                     new Block(
                             Arrays.asList(getConverter().statementToStatement(body),
-                                          new Block(Arrays.asList(getConverter().statementToStatement(update)))))));
-            myResult = new Block(forStatements);
+                                          new Block(Arrays.asList(getConverter().statementToStatement(update)), false)), false)));
+            myResult = new Block(forStatements, false);
         }
     }
 
@@ -220,7 +219,7 @@ public class StatementVisitor extends ElementVisitor {
     public void visitLabeledStatement(@NotNull PsiLabeledStatement statement) {
         super.visitLabeledStatement(statement);
         myResult = new LabelStatement(
-                identifierToIdentifier(statement.getLabelIdentifier()),
+                Converter.$classobj.identifierToIdentifier(statement.getLabelIdentifier()),
                 getConverter().statementToStatement(statement.getStatement())
         );
     }

@@ -5,7 +5,7 @@ import org.jetbrains.jet.j2k.util.AstUtil
 import java.util.LinkedList
 import java.util.List
 import java.util.Set
-import org.jetbrains.jet.j2k.Converter.getDefaultInitializer
+import org.jetbrains.jet.j2k.Converter
 
 public open class Field(val identifier : Identifier,
                         modifiers : Set<String>,
@@ -43,7 +43,7 @@ public open class Field(val identifier : Identifier,
             return declaration + ((if (isVal() && !isStatic() && writingAccesses == 1)
                 ""
             else
-                " = " + getDefaultInitializer(this)))
+                " = " + Converter.getDefaultInitializer(this)))
         }
 
         return declaration + " = " + initializer.toKotlin()

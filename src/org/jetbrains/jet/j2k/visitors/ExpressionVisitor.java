@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.j2k.Converter.isConstructorPrimary;
 import static com.intellij.psi.CommonClassNames.*;
 
 /**
@@ -236,7 +235,7 @@ public class ExpressionVisitor extends StatementVisitor {
     @Override
     public void visitMethodCallExpression(@NotNull PsiMethodCallExpression expression) {
         super.visitMethodCallExpression(expression);
-        if (!SuperVisitor.isSuper(expression.getMethodExpression()) || !isInsidePrimaryConstructor(expression)) {
+        if (!SuperVisitor.$classobj.isSuper(expression.getMethodExpression()) || !isInsidePrimaryConstructor(expression)) {
             myResult = // TODO: not resolved
                     new MethodCallExpression(
                             getConverter().expressionToExpression(expression.getMethodExpression()),
@@ -274,7 +273,7 @@ public class ExpressionVisitor extends StatementVisitor {
         final boolean isNotConvertedClass = classReference != null && !getConverter().getClassIdentifiers().contains(classReference.getQualifiedName());
         PsiExpressionList argumentList = expression.getArgumentList();
         PsiExpression[] arguments = argumentList != null ? argumentList.getExpressions() : new PsiExpression[]{};
-        if (constructor == null || isConstructorPrimary(constructor) || isNotConvertedClass) {
+        if (constructor == null || Converter.$classobj.isConstructorPrimary(constructor) || isNotConvertedClass) {
             return new NewClassExpression(
                     getConverter().expressionToExpression(expression.getQualifier()),
                     getConverter().elementToElement(classReference),
@@ -419,7 +418,7 @@ public class ExpressionVisitor extends StatementVisitor {
         PsiElement context = expression.getContext();
         while (context != null) {
             if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor()) {
-                return !isConstructorPrimary((PsiMethod) context);
+                return !Converter.$classobj.isConstructorPrimary((PsiMethod) context);
             }
             context = context.getContext();
         }
@@ -430,7 +429,7 @@ public class ExpressionVisitor extends StatementVisitor {
         PsiElement context = expression.getContext();
         while (context != null) {
             if (context instanceof PsiMethod && ((PsiMethod) context).isConstructor()) {
-                return isConstructorPrimary((PsiMethod) context);
+                return Converter.$classobj.isConstructorPrimary((PsiMethod) context);
             }
             context = context.getContext();
         }

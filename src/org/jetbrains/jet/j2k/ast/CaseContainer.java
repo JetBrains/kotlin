@@ -36,7 +36,7 @@ public class CaseContainer extends Statement {
             if (s.getKind() != Kind.BREAK && s.getKind() != Kind.CONTINUE) {
                 newStatements.add(s);
             }
-        myBlock = new Block(newStatements);
+        myBlock = new Block(newStatements, false);
     }
 
     @NotNull
