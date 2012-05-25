@@ -29,6 +29,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
 import static org.jetbrains.k2js.test.utils.JsTestUtils.convertFileNameToDotJsFile;
@@ -107,8 +108,12 @@ public abstract class BasicTest extends TestWithEnvironment {
 
     protected void runRhinoTests(@NotNull List<String> outputFilePaths, @NotNull RhinoResultChecker checker) throws Exception {
         for (String outputFilePath : outputFilePaths) {
-            runRhinoTest(withAdditionalFiles(outputFilePath), checker);
+            runRhinoTest(withAdditionalFiles(outputFilePath), checker, getRhinoTestVariables());
         }
+    }
+
+    protected Map<String,Object> getRhinoTestVariables() throws Exception {
+        return null;
     }
 
 

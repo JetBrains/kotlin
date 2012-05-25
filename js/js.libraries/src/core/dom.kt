@@ -18,6 +18,7 @@ native public trait DOMImplementation {}
 native public trait DocumentType : Node {}
 native public trait Element : Node {
     fun appendChild(child : Node) : Unit = js.noImpl
+    fun getTextContent() : String = js.noImpl
 }
 native public trait Entity : Node {}
 native public trait EntityReference : Node {}

@@ -20,12 +20,13 @@ import org.jetbrains.annotations.Nullable;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
  * @author Pavel Talanov
  */
-public final class RhinoFunctionResultChecker implements RhinoResultChecker {
+public class RhinoFunctionResultChecker implements RhinoResultChecker {
 
     private final String namespaceName;
     private final String functionName;
@@ -44,8 +45,11 @@ public final class RhinoFunctionResultChecker implements RhinoResultChecker {
     @Override
     public void runChecks(Context context, Scriptable scope) throws Exception {
         Object result = evaluateFunction(context, scope);
-        assertTrue("Result is not what expected! Expected: " + expectedResult + " Evaluated : " + result,
-                   result.equals(expectedResult));
+        assertResultValid(result);
+    }
+
+    protected void assertResultValid(Object result) {
+        assertEquals("Result of " + namespaceName + "." + functionName + "() is not what expected!", expectedResult, result);
         String report = namespaceName + "." + functionName + "() = " + Context.toString(result);
         System.out.println(report);
     }
