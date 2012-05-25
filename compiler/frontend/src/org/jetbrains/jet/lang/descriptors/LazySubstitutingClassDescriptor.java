@@ -127,11 +127,6 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
-    public boolean hasConstructors() {
-        return original.hasConstructors();
-    }
-
-    @Override
     public List<AnnotationDescriptor> getAnnotations() {
         return original.getAnnotations();
     }

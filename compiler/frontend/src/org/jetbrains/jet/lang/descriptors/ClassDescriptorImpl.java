@@ -153,11 +153,6 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     }
 
     @Override
-    public boolean hasConstructors() {
-        return !constructors.isEmpty();
-    }
-
-    @Override
     @NotNull
     public Modality getModality() {
         return Modality.FINAL;

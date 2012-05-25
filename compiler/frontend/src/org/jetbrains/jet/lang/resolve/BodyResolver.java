@@ -211,7 +211,7 @@ public class BodyResolver {
                 if (supertype == null) return;
                 ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                 if (classDescriptor == null) return;
-                if (descriptor.getKind() != ClassKind.TRAIT && classDescriptor.hasConstructors() &&
+                if (descriptor.getKind() != ClassKind.TRAIT && !classDescriptor.getConstructors().isEmpty() &&
                     !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && classDescriptor.getKind() != ClassKind.TRAIT) {
                     boolean hasConstructorWithoutParams = false;
                     for (ConstructorDescriptor constructor : classDescriptor.getConstructors()) {

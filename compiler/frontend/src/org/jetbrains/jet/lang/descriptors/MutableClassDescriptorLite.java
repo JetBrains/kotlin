@@ -46,14 +46,11 @@ public class MutableClassDescriptorLite extends ClassDescriptorBase
     private List<TypeParameterDescriptor> typeParameters;
     private Collection<JetType> supertypes = Lists.newArrayList();
 
-    private TypeConstructor typeConstructor;
-
     private Modality modality;
     private Visibility visibility;
 
     private MutableClassDescriptorLite classObjectDescriptor;
     private JetType classObjectType;
-    private JetType defaultType;
     private final ClassKind kind;
 
     private JetScope scopeForMemberLookup;
@@ -116,12 +113,6 @@ public class MutableClassDescriptorLite extends ClassDescriptorBase
         }
     }
 
-    @NotNull
-    @Override
-    public TypeConstructor getTypeConstructor() {
-        return typeConstructor;
-    }
-
     public void setScopeForMemberLookup(JetScope scopeForMemberLookup) {
         this.scopeForMemberLookup = scopeForMemberLookup;
         this.innerClassesScope = new InnerClassesScopeWrapper(scopeForMemberLookup);
@@ -132,7 +123,7 @@ public class MutableClassDescriptorLite extends ClassDescriptorBase
         this.typeConstructor = new TypeConstructorImpl(
                 this,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO : pass annotations from the class?
-                !modality.isOverridable(),
+                !getModality().isOverridable(),
                 getName().getName(),
                 typeParameters,
                 supertypes);
@@ -171,11 +162,6 @@ public class MutableClassDescriptorLite extends ClassDescriptorBase
         return true;
     }
 
-
-    @Override
-    public boolean hasConstructors() {
-        return !constructors.isEmpty();
-    }
 
     @NotNull
     @Override
@@ -230,15 +216,6 @@ public class MutableClassDescriptorLite extends ClassDescriptorBase
         if (defaultType != null) {
             ((ConstructorDescriptorImpl) constructorDescriptor).setReturnType(getDefaultType());
         }
-    }
-
-    @NotNull
-    @Override
-    public JetType getDefaultType() {
-        if (defaultType == null) {
-            defaultType = TypeUtils.makeUnsubstitutedType(this, scopeForMemberLookup);
-        }
-        return defaultType;
     }
 
     @Override
@@ -297,16 +274,6 @@ public class MutableClassDescriptorLite extends ClassDescriptorBase
         } catch (Throwable e) {
             return super.toString();
         }
-    }
-
-    @Override
-    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
-        return visitor.visitClassDescriptor(this, data);
-    }
-
-    @Override
-    public void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor) {
-        visitor.visitClassDescriptor(this, null);
     }
 
     @Override

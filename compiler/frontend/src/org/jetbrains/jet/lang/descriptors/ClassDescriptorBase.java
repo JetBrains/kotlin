@@ -29,6 +29,9 @@ import java.util.Map;
  */
 public abstract class ClassDescriptorBase implements ClassDescriptor {
 
+    protected TypeConstructor typeConstructor;
+    protected JetType defaultType;
+
     protected abstract JetScope getScopeForMemberLookup();
 
     @NotNull
@@ -54,5 +57,30 @@ public abstract class ClassDescriptorBase implements ClassDescriptor {
             return this;
         }
         return new LazySubstitutingClassDescriptor(this, substitutor);
+    }
+
+    @NotNull
+    @Override
+    public TypeConstructor getTypeConstructor() {
+        return typeConstructor;
+    }
+
+    @NotNull
+    @Override
+    public JetType getDefaultType() {
+        if (defaultType == null) {
+            defaultType = TypeUtils.makeUnsubstitutedType(this, getScopeForMemberLookup());
+        }
+        return defaultType;
+    }
+
+    @Override
+    public void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor) {
+        visitor.visitClassDescriptor(this, null);
+    }
+
+    @Override
+    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
+        return visitor.visitClassDescriptor(this, data);
     }
 }
