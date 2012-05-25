@@ -52,6 +52,11 @@ public abstract class JetNamedDeclaration extends JetDeclaration implements PsiN
         return name != null ? Name.identifier(name) : null;
     }
 
+    @NotNull
+    public Name getNameAsSafeName() {
+        return JetPsiUtil.safeName(getName());
+    }
+
     @Override
     public PsiElement getNameIdentifier() {
         return findChildByType(JetTokens.IDENTIFIER);
