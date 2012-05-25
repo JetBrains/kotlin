@@ -21,24 +21,31 @@ import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
+import com.intellij.codeInsight.daemon.impl.MarkerType;
 import com.intellij.codeInsight.hint.HintUtil;
 import com.intellij.codeInsight.navigation.NavigationUtil;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.Function;
 import com.intellij.util.PsiNavigateUtil;
+import org.jetbrains.jet.asJava.JetLightClass;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
+import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.JetFunctionPsiElementCellRenderer;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -55,6 +62,38 @@ import java.util.Set;
 public class JetLineMarkerProvider implements LineMarkerProvider {
     public static final Icon OVERRIDING_MARK = IconLoader.getIcon("/gutter/overridingMethod.png");
     public static final Icon IMPLEMENTING_MARK = IconLoader.getIcon("/gutter/implementingMethod.png");
+    protected static final Icon OVERRIDDEN_MARK = IconLoader.getIcon("/gutter/overridenMethod.png");
+
+    private static final Function<PsiElement, String> SUBCLASSED_CLASS_TOOLTIP_ADAPTER = new Function<PsiElement, String>() {
+        @Override
+        public String fun(PsiElement element) {
+            PsiElement child = getPsiClassFirstChild(element);
+            // Java puts its marker on a child of the PsiClass, so we must find a child of our own class too
+            return child != null ? MarkerType.SUBCLASSED_CLASS.getTooltip().fun(child) : null;
+        }
+    };
+
+    private static PsiElement getPsiClassFirstChild(PsiElement element) {
+        if (!(element instanceof JetClass)) {
+            element = element.getParent();
+            if (!(element instanceof JetClass)) {
+                return null;
+            }
+        }
+        final PsiClass lightClass = JetLightClass.wrapDelegate((JetClass) element).getDelegate();
+        final PsiElement[] children = lightClass.getChildren();
+        return children.length > 0 ? children[0] : null;
+    }
+
+    private static final GutterIconNavigationHandler<PsiElement> SUBCLASSED_CLASS_NAVIGATION_HANDLER = new GutterIconNavigationHandler<PsiElement>() {
+        @Override
+        public void navigate(MouseEvent e, PsiElement elt) {
+            PsiElement child = getPsiClassFirstChild(elt);
+            if (child != null) {
+                MarkerType.SUBCLASSED_CLASS.getNavigationHandler().navigate(e, child);
+            }
+        }
+    };
 
     @Override
     public LineMarkerInfo getLineMarkerInfo(final PsiElement element) {
@@ -141,5 +180,26 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
     @Override
     public void collectSlowLineMarkers(List<PsiElement> elements, Collection<LineMarkerInfo> result) {
+        if (elements.isEmpty() || DumbService.getInstance(elements.get(0).getProject()).isDumb()) {
+          return;
+        }
+        for (PsiElement element : elements) {
+            if (element instanceof JetClass) {
+                collectInheritingClasses((JetClass)element, result);
+            }
+        }
+    }
+
+    private static void collectInheritingClasses(JetClass element, Collection<LineMarkerInfo> result) {
+        if (!element.hasModifier(JetTokens.OPEN_KEYWORD)) {
+            return;
+        }
+        PsiClass inheritor = ClassInheritorsSearch.search(JetLightClass.wrapDelegate(element), false).findFirst();
+        if (inheritor != null) {
+            final PsiElement nameIdentifier = element.getNameIdentifier();
+            PsiElement anchor = nameIdentifier != null ? nameIdentifier : element;
+            result.add(new LineMarkerInfo<PsiElement>(anchor, anchor.getTextOffset(), OVERRIDDEN_MARK, Pass.UPDATE_OVERRIDEN_MARKERS,
+                                                      SUBCLASSED_CLASS_TOOLTIP_ADAPTER, SUBCLASSED_CLASS_NAVIGATION_HANDLER));
+        }
     }
 }

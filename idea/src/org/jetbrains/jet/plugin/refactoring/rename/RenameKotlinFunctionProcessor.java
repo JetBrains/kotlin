@@ -52,16 +52,4 @@ public class RenameKotlinFunctionProcessor extends RenamePsiElementProcessor {
         }
         return super.substituteElementToRename(element, editor);
     }
-
-    @NotNull
-    @Override
-    public Collection<PsiReference> findReferences(PsiElement element) {
-        if (element instanceof JetFunction) {
-            List<PsiReference> references = new ArrayList<PsiReference>();
-            references.addAll(ReferencesSearch.search(element).findAll());
-            references.addAll(ReferencesSearch.search(JetLightClass.wrapMethod((JetFunction) element)).findAll());
-            return references;
-        }
-        return super.findReferences(element);
-    }
 }

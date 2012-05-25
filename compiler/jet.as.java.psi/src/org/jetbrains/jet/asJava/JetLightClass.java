@@ -194,14 +194,10 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
                 fakeFile.setPhysical(false);
                 answer.setPsi(fakeFile);
 
-                try {
-                    super.generateNamespace(namespace);
-                }
-                finally {
-                    final StubElement pop = stubStack.pop();
-                    if (pop != answer) {
-                        LOG.error("Unbalanced stack operations: " + pop);
-                    }
+                super.generateNamespace(namespace);
+                final StubElement pop = stubStack.pop();
+                if (pop != answer) {
+                    LOG.error("Unbalanced stack operations: " + pop);
                 }
             }
         };

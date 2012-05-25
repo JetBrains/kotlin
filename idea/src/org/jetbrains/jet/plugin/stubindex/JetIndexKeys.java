@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
  */
 public interface JetIndexKeys {
     StubIndexKey<String, JetClassOrObject> SHORT_NAME_KEY = StubIndexKey.createIndexKey("jet.class.shortName");
+    StubIndexKey<String, JetClassOrObject> SUPERCLASS_NAME_KEY = StubIndexKey.createIndexKey("jet.class.superClassName");
     StubIndexKey<String, JetClassOrObject> FQN_KEY = StubIndexKey.createIndexKey("jet.fqn");
 
     StubIndexKey<String, JetNamedFunction> TOP_LEVEL_FUNCTION_SHORT_NAME_KEY = StubIndexKey.createIndexKey("jet.top.level.function.short.name");

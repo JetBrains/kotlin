@@ -175,6 +175,7 @@
       <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetShortFunctionNameIndex"/>
       <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetExtensionFunctionNameIndex"/>
       <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetAllShortFunctionNameIndex"/>
+      <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetSuperClassIndex"/>
 
       <contentBasedClassFileProcessor implementation="org.jetbrains.jet.plugin.libraries.JetContentBasedFileSubstitutor" />
       <psi.clsCustomNavigationPolicy implementation="org.jetbrains.jet.plugin.libraries.JetClsNavigationPolicy" />
@@ -183,6 +184,10 @@
       <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.ConfigureKotlinLibraryNotificationProvider"/>
 
       <psi.treeChangePreprocessor implementation="org.jetbrains.jet.asJava.JetCodeBlockModificationListener"/>
+
+      <referencesSearch implementation="org.jetbrains.jet.plugin.search.KotlinReferencesSearcher"/>
+      <directClassInheritorsSearch implementation="org.jetbrains.jet.plugin.search.KotlinDirectInheritorsSearcher"/>
+      <definitionsSearch implementation="org.jetbrains.jet.plugin.search.KotlinDefinitionsSearcher"/>
 
       <toolWindow id="Kotlin"
                   factoryClass="org.jetbrains.jet.plugin.internal.KotlinInternalToolWindowFactory"

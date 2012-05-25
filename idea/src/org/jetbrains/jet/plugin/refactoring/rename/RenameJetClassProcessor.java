@@ -18,18 +18,11 @@ package org.jetbrains.jet.plugin.refactoring.rename;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.refactoring.rename.RenamePsiElementProcessor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.JetLightClass;
-import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,18 +33,6 @@ public class RenameJetClassProcessor extends RenamePsiElementProcessor {
     @Override
     public boolean canProcessElement(@NotNull PsiElement element) {
         return element instanceof JetClassOrObject;
-    }
-
-    @NotNull
-    @Override
-    public Collection<PsiReference> findReferences(PsiElement element) {
-        if (element instanceof JetClass) {
-            List<PsiReference> references = new ArrayList<PsiReference>();
-            references.addAll(ReferencesSearch.search(element).findAll());
-            references.addAll(ReferencesSearch.search(JetLightClass.wrapDelegate((JetClass) element)).findAll());
-            return references;
-        }
-        return super.findReferences(element);
     }
 
     @Override

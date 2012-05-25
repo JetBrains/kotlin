@@ -39,7 +39,7 @@ import java.util.List;
  * @author max
  */
 public class JetClass extends JetTypeParameterListOwner
-        implements JetClassOrObject, JetModifierListOwner, StubBasedPsiElement<PsiJetClassStub<?>> {
+        implements JetClassOrObject, JetModifierListOwner, StubBasedPsiElement<PsiJetClassStub> {
 
     private PsiJetClassStub stub;
 
@@ -158,7 +158,7 @@ public class JetClass extends JetTypeParameterListOwner
     }
 
     @Override
-    public PsiJetClassStub<?> getStub() {
+    public PsiJetClassStub getStub() {
         // TODO (stubs)
         return null;
     }
@@ -197,5 +197,44 @@ public class JetClass extends JetTypeParameterListOwner
         }
         Collections.reverse(parts);
         return StringUtil.join(parts, ".");
+    }
+
+    /**
+     * Returns the list of unqualified names that are indexed as the superclass names of this class. For the names that might be imported
+     * via an aliased import, includes both the original and the aliased name (reference resolution during inheritor search will sort this out).
+     *
+     * @return the list of possible superclass names
+     */
+    @NotNull
+    public List<String> getSuperNames() {
+        final List<JetDelegationSpecifier> specifiers = getDelegationSpecifiers();
+        if (specifiers.size() == 0) return Collections.emptyList();
+        List<String> result = new ArrayList<String>();
+        for (JetDelegationSpecifier specifier : specifiers) {
+            final JetUserType superType = specifier.getTypeAsUserType();
+            if (superType != null) {
+                final String referencedName = superType.getReferencedName();
+                if (referencedName != null) {
+                    addSuperName(result, referencedName);
+                }
+            }
+        }
+        return result;
+    }
+
+    private void addSuperName(List<String> result, String referencedName) {
+        result.add(referencedName);
+        if (getContainingFile() instanceof JetFile) {
+            final JetImportDirective directive = ((JetFile) getContainingFile()).findImportByAlias(referencedName);
+            if (directive != null) {
+                JetExpression reference = directive.getImportedReference();
+                while (reference instanceof JetDotQualifiedExpression) {
+                    reference = ((JetDotQualifiedExpression) reference).getSelectorExpression();
+                }
+                if (reference instanceof JetSimpleNameExpression) {
+                    result.add(((JetSimpleNameExpression) reference).getReferencedName());
+                }
+            }
+        }
     }
 }

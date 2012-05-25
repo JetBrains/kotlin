@@ -19,8 +19,6 @@ package org.jetbrains.jet.plugin.findUsages;
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.JetLightClass;
-import org.jetbrains.jet.lang.psi.JetClass;
 
 /**
  * @author yole
@@ -28,11 +26,5 @@ import org.jetbrains.jet.lang.psi.JetClass;
 public class KotlinFindClassUsagesHandler extends FindUsagesHandler {
     public KotlinFindClassUsagesHandler(@NotNull PsiElement psiElement) {
         super(psiElement);
-    }
-
-    @NotNull
-    @Override
-    public PsiElement[] getSecondaryElements() {
-        return new PsiElement[] {JetLightClass.wrapDelegate((JetClass) getPsiElement()) };
     }
 }

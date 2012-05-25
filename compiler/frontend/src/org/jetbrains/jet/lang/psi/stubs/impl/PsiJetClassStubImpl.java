@@ -19,37 +19,53 @@ package org.jetbrains.jet.lang.psi.stubs.impl;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetClassElementType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Nikolay Krasko
  */
-public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetClassStub<JetClass> {
+public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetClassStub {
 
     private final StringRef qualifiedName;
     private final StringRef name;
+    private final StringRef[] superNames;
 
     public PsiJetClassStubImpl(
             JetClassElementType type,
             final StubElement parent,
             @Nullable final String qualifiedName,
-            final String name) {
+            final String name,
+            final List<String> superNames) {
 
-        this(type, parent, StringRef.fromString(qualifiedName), StringRef.fromString(name));
+        this(type, parent, StringRef.fromString(qualifiedName), StringRef.fromString(name), wrapStrings(superNames));
+    }
+
+    private static StringRef[] wrapStrings(List<String> names) {
+        StringRef[] refs = new StringRef[names.size()];
+        for (int i = 0; i < names.size(); i++) {
+            refs[i] = StringRef.fromString(names.get(i));
+        }
+        return refs;
     }
 
     public PsiJetClassStubImpl(
             JetClassElementType type,
             final StubElement parent,
             final StringRef qualifiedName,
-            final StringRef name) {
+            final StringRef name,
+            final StringRef[] superNames) {
 
         super(parent, type);
         this.qualifiedName = qualifiedName;
         this.name = name;
+        this.superNames = superNames;
     }
 
     @Override
@@ -70,5 +86,15 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     @Override
     public String getName() {
         return StringRef.toString(name);
+    }
+
+    @NotNull
+    @Override
+    public List<String> getSuperNames() {
+        List<String> result = new ArrayList<String>();
+        for (StringRef ref : superNames) {
+            result.add(ref.toString());
+        }
+        return result;
     }
 }

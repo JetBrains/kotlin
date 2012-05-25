@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetClassStubImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Nikolay Krasko
@@ -62,22 +63,33 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
     @Override
     public PsiJetClassStub createStub(@NotNull JetClass psi, StubElement parentStub) {
         FqName fqName = JetPsiUtil.getFQName(psi);
-        return new PsiJetClassStubImpl(JetStubElementTypes.CLASS, parentStub, fqName != null ? fqName.getFqName() : null, psi.getName());
+        return new PsiJetClassStubImpl(JetStubElementTypes.CLASS, parentStub, fqName != null ? fqName.getFqName() : null, psi.getName(),
+                                       psi.getSuperNames());
     }
 
     @Override
     public void serialize(PsiJetClassStub stub, StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
         dataStream.writeName(stub.getQualifiedName());
+        final List<String> superNames = stub.getSuperNames();
+        dataStream.writeVarInt(superNames.size());
+        for (String name : superNames) {
+            dataStream.writeName(name);
+        }
     }
 
     @Override
     public PsiJetClassStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
         final StringRef name = dataStream.readName();
         final StringRef qualifiedName = dataStream.readName();
-        
+        final int superCount = dataStream.readVarInt();
+        final StringRef[] superNames = StringRef.createArray(superCount);
+        for (int i = 0; i < superCount; i++) {
+            superNames[i] = dataStream.readName();
+        }
+
         final JetClassElementType type = JetStubElementTypes.CLASS;
-        final PsiJetClassStubImpl classStub = new PsiJetClassStubImpl(type, parentStub, qualifiedName, name);
+        final PsiJetClassStubImpl classStub = new PsiJetClassStubImpl(type, parentStub, qualifiedName, name, superNames);
 
         return classStub;
     }
