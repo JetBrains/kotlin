@@ -211,7 +211,13 @@ public class DeclarationsChecker {
         JetPropertyAccessor setter = property.getSetter();
         boolean hasAccessorImplementation = (getter != null && getter.getBodyExpression() != null) ||
                                             (setter != null && setter.getBodyExpression() != null);
-        if (propertyDescriptor.getModality() == Modality.ABSTRACT) return;
+
+        if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
+            if (property.getInitializer() == null && property.getPropertyTypeRef() == null) {
+                trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
+            }
+            return;
+        }
 
         boolean inTrait = classDescriptor != null && classDescriptor.getKind() == ClassKind.TRAIT;
         JetExpression initializer = property.getInitializer();
