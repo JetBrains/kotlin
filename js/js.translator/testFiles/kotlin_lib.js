@@ -221,10 +221,9 @@
                 this.set_i(this.get_i() + 1);
                 return this.get_i() - 1;
             }
-        }, hasNext:function () {
+        },
+        get_hasNext: function () {
             return this.get_count() > 0;
-        }, get_hasNext:function () {
-            return this.hasNext();
         }
     });
 
