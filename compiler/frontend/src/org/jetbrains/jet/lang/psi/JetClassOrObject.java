@@ -40,6 +40,7 @@ public interface JetClassOrObject extends PsiElement, PsiNameIdentifierOwner, Je
     boolean hasPrimaryConstructor();
 
     @Nullable
+    @Override
     String getName();
 
     @Nullable
