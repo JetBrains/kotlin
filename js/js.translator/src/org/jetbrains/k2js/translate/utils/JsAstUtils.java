@@ -30,17 +30,12 @@ import java.util.*;
  * @author Pavel Talanov
  */
 public final class JsAstUtils {
-    private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(new JsNameRef("writable"), null);
-    private static final JsNameRef DEFINE_PROPERTIES = new JsNameRef("defineProperties");
     private static final JsNameRef DEFINE_PROPERTY = new JsNameRef("defineProperty");
-    private static final JsNameRef CREATE = new JsNameRef("create");
     private static final JsNameRef EMPTY_REF = new JsNameRef("");
 
     static {
         JsNameRef globalObjectReference = new JsNameRef("Object");
-        DEFINE_PROPERTIES.setQualifier(globalObjectReference);
         DEFINE_PROPERTY.setQualifier(globalObjectReference);
-        CREATE.setQualifier(globalObjectReference);
     }
 
     private JsAstUtils() {
@@ -305,17 +300,9 @@ public final class JsAstUtils {
         List<JsPropertyInitializer> meta = jsPropertyDescriptor.getPropertyInitializers();
         meta.add(new JsPropertyInitializer(context.program().getStringLiteral("value"), value));
         if (writable) {
-            meta.add(getWritable(context));
+            meta.add(context.namer().writablePropertyDescriptorField());
         }
         return jsPropertyDescriptor;
-    }
-
-    @NotNull
-    private static JsPropertyInitializer getWritable(@NotNull TranslationContext context) {
-        if (WRITABLE.getValueExpr() == null) {
-            WRITABLE.setValueExpr(context.program().getTrueLiteral());
-        }
-        return WRITABLE;
     }
 
     @NotNull
@@ -328,8 +315,7 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsFunction createPackage(List<JsStatement> to, JsScope scope) {
-        JsFunction packageBlockFunction = new JsFunction(scope);
-        packageBlockFunction.setBody(new JsBlock());
+        JsFunction packageBlockFunction = createFunctionWithEmptyBody(scope);
 
         JsInvocation packageBlockFunctionInvocation = encloseFunction(packageBlockFunction);
         JsInvocation packageBlock = new JsInvocation();
@@ -337,12 +323,5 @@ public final class JsAstUtils {
         to.add(packageBlock.makeStmt());
 
         return packageBlockFunction;
-    }
-
-    @NotNull
-    public static JsInvocation objectCreate() {
-        JsInvocation invocation = new JsInvocation();
-        invocation.setQualifier(CREATE);
-        return invocation;
     }
 }

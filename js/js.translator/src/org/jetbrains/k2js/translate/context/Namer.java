@@ -119,6 +119,9 @@ public final class Namer {
     @NotNull
     private final JsName isTypeName;
 
+    @NotNull
+    private final JsPropertyInitializer writablePropertyDescriptorField;
+
     private Namer(@NotNull JsScope rootScope) {
         kotlinName = rootScope.declareName(KOTLIN_OBJECT_NAME);
         kotlinScope = new JsScope(rootScope, "Kotlin standard object");
@@ -128,6 +131,8 @@ public final class Namer {
         objectName = kotlinScope.declareName(OBJECT_OBJECT_NAME);
 
         isTypeName = kotlinScope.declareName("isType");
+
+        writablePropertyDescriptorField = new JsPropertyInitializer(new JsNameRef("writable"), rootScope.getProgram().getTrueLiteral());
     }
 
     @NotNull
@@ -178,6 +183,11 @@ public final class Namer {
     @NotNull
     public JsExpression isOperationReference() {
         return kotlin(isTypeName);
+    }
+
+    @NotNull
+    public JsPropertyInitializer writablePropertyDescriptorField() {
+        return writablePropertyDescriptorField;
     }
 
     @NotNull
