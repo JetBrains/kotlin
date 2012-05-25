@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -36,8 +35,8 @@ import java.util.*;
 /**
  * @author Stepan Koltsov
  */
-public class MutableClassDescriptorLite extends MutableDeclarationDescriptor
-        implements ClassDescriptor, WithDeferredResolve {
+public class MutableClassDescriptorLite extends ClassDescriptorBase
+        implements WithDeferredResolve {
     private ConstructorDescriptor primaryConstructor;
     private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
 
@@ -120,22 +119,6 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor
         return (WritableScope) scopeForMemberLookup;
     }
 
-    @NotNull
-    @Override
-    public JetScope getMemberScope(List<TypeProjection> typeArguments) {
-        assert typeArguments.size() == typeConstructor.getParameters().size();
-        if (typeArguments.isEmpty()) return scopeForMemberLookup;
-
-        List<TypeParameterDescriptor> typeParameters = getTypeConstructor().getParameters();
-        Map<TypeConstructor, TypeProjection> substitutionContext = SubstitutionUtils.buildSubstitutionContext(typeParameters, typeArguments);
-
-        // Unsafe substitutor is OK, because no recursion can hurt us upon a trivial substitution:
-        // all the types are written explicitly in the code already, they can not get infinite.
-        // One exception is *-projections, but they need to be handled separately anyways.
-        TypeSubstitutor substitutor = TypeSubstitutor.createUnsafe(substitutionContext);
-        return new SubstitutingScope(scopeForMemberLookup, substitutor);
-    }
-
 
     @NotNull
     @Override
@@ -146,15 +129,6 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor
     @NotNull
     public JetScope getScopeForMemberLookup() {
         return scopeForMemberLookup;
-    }
-
-    @NotNull
-    @Override
-    public ClassDescriptor substitute(TypeSubstitutor substitutor) {
-        if (substitutor.isEmpty()) {
-            return this;
-        }
-        return new LazySubstitutingClassDescriptor(this, substitutor);
     }
 
     @Override
