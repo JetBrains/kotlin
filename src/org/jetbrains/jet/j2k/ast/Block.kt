@@ -11,7 +11,7 @@ public open class Block(val statements: List<Statement>, val notEmpty: Boolean =
 
     public override fun toKotlin(): String {
         if (!isEmpty()) {
-            return "{\n" + AstUtil.joinNodes(statements, "\n") + "\n}"
+            return "{\n" + statements.toKotlin("\n") + "\n}"
         }
 
         return ""
