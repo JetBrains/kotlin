@@ -33,10 +33,8 @@ public open class ArrayInitializerExpression(val `type` : Type, val initializers
         val afterReplace : String = innerTypeStr().replace(">", "").replace("<", "").replace("?", "")
         if (doubleOrFloatTypes.contains(afterReplace))
         {
-            if (i.getKind() == INode.Kind.LITERAL)
-            {
-                if (i.toKotlin().contains("."))
-                {
+            if (i is LiteralExpression) {
+                if (i.toKotlin().contains(".")) {
                     return i.toKotlin()
                 }
 

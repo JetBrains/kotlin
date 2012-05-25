@@ -134,10 +134,11 @@ public open class Converter() {
                         for (s : Statement? in m.block!!.statements) {
                             var isRemoved: Boolean = false
                             if (s is AssignmentExpression) {
-                                if (s.left.getKind() == INode.Kind.CALL_CHAIN) {
+                                val assignee = s.left
+                                if (assignee is CallChainExpression) {
                                     for (fo : Field in finalOrWithEmptyInitializer) {
                                         val id: String = fo.identifier.toKotlin()
-                                        if ((s.left as CallChainExpression).identifier.toKotlin().endsWith("." + id)) {
+                                        if (assignee.identifier.toKotlin().endsWith("." + id)) {
                                             initializers.put(id, s.right.toKotlin())
                                             isRemoved = true
                                         }

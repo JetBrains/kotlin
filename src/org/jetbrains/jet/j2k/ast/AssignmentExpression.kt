@@ -5,8 +5,4 @@ public open class AssignmentExpression(val left : Expression, val right : Expres
     public override fun toKotlin() : String {
         return left.toKotlin() + " "+ op + " "+ right.toKotlin()
     }
-
-    public override fun getKind() : INode.Kind {
-        return INode.Kind.ASSIGNMENT_EXPRESSION
-    }
 }

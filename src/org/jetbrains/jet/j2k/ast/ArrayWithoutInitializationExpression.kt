@@ -7,9 +7,8 @@ import org.jetbrains.jet.j2k.ast.types.Type
 
 public open class ArrayWithoutInitializationExpression(val `type` : Type, val expressions : List<Expression>) : Expression() {
     public override fun toKotlin() : String {
-        if (`type`.getKind() == INode.Kind.ARRAY_TYPE)
-        {
-            return constructInnerType(`type` as ArrayType, expressions)
+        if (`type` is ArrayType) {
+            return constructInnerType(`type`, expressions)
         }
 
         return getConstructorName(`type`)
@@ -22,9 +21,9 @@ public open class ArrayWithoutInitializationExpression(val `type` : Type, val ex
         }
 
         val innerType = hostType.elementType
-        if (expressions.size() > 1 && innerType.getKind() == INode.Kind.ARRAY_TYPE)
+        if (expressions.size() > 1 && innerType is ArrayType)
         {
-            return oneDim(hostType, expressions[0], "{" + constructInnerType(innerType as ArrayType, expressions.subList(1, expressions.size())) + "}")
+            return oneDim(hostType, expressions[0], "{" + constructInnerType(innerType, expressions.subList(1, expressions.size())) + "}")
         }
 
         return getConstructorName(hostType)

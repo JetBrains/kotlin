@@ -81,7 +81,7 @@ public class StatementVisitor extends ElementVisitor {
     public void visitContinueStatement(@NotNull PsiContinueStatement statement) {
         super.visitContinueStatement(statement);
         if (statement.getLabelIdentifier() == null) {
-            myResult = new ContinueStatement();
+            myResult = new ContinueStatement(Identifier.EMPTY_IDENTIFIER);
         }
         else {
             myResult = new ContinueStatement(

@@ -4,8 +4,6 @@ import org.jetbrains.jet.j2k.ast.Element
 import org.jetbrains.jet.j2k.ast.INode
 
 public abstract class Type(val nullable: Boolean) : Element() {
-    public override fun getKind() : INode.Kind = INode.Kind.TYPE
-
     public open fun convertedToNotNull() : Type {
         if (nullable) throw UnsupportedOperationException("convertedToNotNull must be defined")
         return this

@@ -24,11 +24,4 @@ import org.jetbrains.annotations.NotNull;
 public interface INode {
     @NotNull
     String toKotlin();
-
-    @NotNull
-    Kind getKind();
-
-    enum Kind {
-        UNDEFINED, TYPE, CONSTRUCTOR, BREAK, CONTINUE, VARARG, TRAIT, ASSIGNMENT_EXPRESSION, CALL_CHAIN, LITERAL, ARRAY_TYPE,
-    }
 }

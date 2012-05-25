@@ -27,12 +27,6 @@ import java.util.Set;
  */
 public abstract class Node implements INode {
     @NotNull
-    @Override
-    public Kind getKind() {
-        return Kind.UNDEFINED;
-    }
-
-    @NotNull
     final static Set<String> ONLY_KOTLIN_KEYWORDS = new HashSet<String>(Arrays.asList(
             "package", "as", "type", "val", "var", "fun", "is", "in", "object", "when", "trait", "This"
     ));
