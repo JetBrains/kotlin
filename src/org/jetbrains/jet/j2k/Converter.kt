@@ -414,15 +414,14 @@ public open class Converter() {
         var expression: Expression = expressionToExpression(argument)
         val actualType: PsiType? = argument.getType()
         val isPrimitiveTypeOrNull: Boolean = actualType == null || actualType is PsiPrimitiveType
-        var isRef: Boolean = ((argument is PsiReferenceExpression && argument.isQualified()) || argument is PsiMethodCallExpression)
-        if (isPrimitiveTypeOrNull && isRef && expression.isNullable()) {
+        if (isPrimitiveTypeOrNull && expression.isNullable()) {
             expression = BangBangExpression(expression)
         }
 
         if (actualType != null) {
             if (isConversionNeeded(actualType, expectedType) && !(expression is LiteralExpression))
             {
-                var conversion: String? = PRIMITIVE_TYPE_CONVERSIONS?.get(expectedType?.getCanonicalText())
+                var conversion: String? = PRIMITIVE_TYPE_CONVERSIONS.get(expectedType?.getCanonicalText())
                 if (conversion != null)
                 {
                     expression = DummyMethodCallExpression(expression, conversion, (Identifier.EMPTY_IDENTIFIER as IdentifierImpl?))

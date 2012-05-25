@@ -205,9 +205,7 @@ public class StatementVisitor extends ElementVisitor {
         super.visitIfStatement(statement);
         PsiExpression condition = statement.getCondition();
         @SuppressWarnings("ConstantConditions")
-        Expression expression = condition != null && condition.getType() != null ?
-                this.getConverter().expressionToExpression(condition, condition.getType()) :
-                                getConverter().expressionToExpression(condition);
+        Expression expression = getConverter().expressionToExpression(condition, PsiType.BOOLEAN);
         myResult = new IfStatement(
                 expression,
                 getConverter().statementToStatement(statement.getThenBranch()),
