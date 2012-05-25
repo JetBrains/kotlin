@@ -17,16 +17,14 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.Label;
 import org.jetbrains.jet.lang.psi.JetElement;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
 * @author abreslav
@@ -93,6 +91,17 @@ public class Pseudocode {
 
     public JetElement getCorrespondingElement() {
         return correspondingElement;
+    }
+
+    public Set<Pseudocode> getLocalDeclarations() {
+        Set<Pseudocode> localDeclarations = Sets.newLinkedHashSet();
+        //todo look recursively inside local declarations
+        for (Instruction instruction : instructions) {
+            if (instruction instanceof LocalDeclarationInstruction) {
+                localDeclarations.add(((LocalDeclarationInstruction) instruction).getBody());
+            }
+        }
+        return localDeclarations;
     }
 
     public PseudocodeLabel createLabel(String name) {
@@ -190,10 +199,11 @@ public class Pseudocode {
     public void postProcess() {
         if (postPrecessed) return;
         postPrecessed = true;
+        errorInstruction.setSink(getSinkInstruction());
+        exitInstruction.setSink(getSinkInstruction());
         for (int i = 0, instructionsSize = mutableInstructionList.size(); i < instructionsSize; i++) {
             processInstruction(mutableInstructionList.get(i), i);
         }
-        getExitInstruction().setSink(getSinkInstruction());
         Set<Instruction> reachableInstructions = collectReachableInstructions();
         for (Instruction instruction : mutableInstructionList) {
             if (reachableInstructions.contains(instruction)) {

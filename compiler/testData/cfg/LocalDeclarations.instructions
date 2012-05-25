@@ -25,9 +25,9 @@ l0:
 l1:
     <END>                NEXT:[<SINK>]               PREV:[w(a)]
 error:
-    <ERROR>              NEXT:[]                     PREV:[]
+    <ERROR>              NEXT:[<SINK>]               PREV:[]
 sink:
-    <SINK>               NEXT:[]                     PREV:[<END>]
+    <SINK>               NEXT:[]                     PREV:[<ERROR>, <END>]
 =====================
 == O ==
 object O {
@@ -45,9 +45,9 @@ l0:
 l1:
     <END>             NEXT:[<SINK>]            PREV:[w($x)]
 error:
-    <ERROR>           NEXT:[]                  PREV:[]
+    <ERROR>           NEXT:[<SINK>]            PREV:[]
 sink:
-    <SINK>            NEXT:[]                  PREV:[<END>]
+    <SINK>            NEXT:[]                  PREV:[<ERROR>, <END>]
 =====================
 == null ==
 object {
@@ -72,9 +72,9 @@ l0:
 l1:
     <END>             NEXT:[<SINK>]            PREV:[w($x)]
 error:
-    <ERROR>           NEXT:[]                  PREV:[]
+    <ERROR>           NEXT:[<SINK>]            PREV:[]
 sink:
-    <SINK>            NEXT:[]                  PREV:[<END>]
+    <SINK>            NEXT:[]                  PREV:[<ERROR>, <END>]
 =====================
 == doSmth ==
 fun doSmth(i: Int) {}
@@ -87,9 +87,9 @@ l0:
 l1:
     <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
 error:
-    <ERROR>        NEXT:[]               PREV:[]
+    <ERROR>        NEXT:[<SINK>]         PREV:[]
 sink:
-    <SINK>         NEXT:[]               PREV:[<END>]
+    <SINK>         NEXT:[]               PREV:[<ERROR>, <END>]
 =====================
 == test1 ==
 fun test1() {
@@ -122,9 +122,9 @@ l0:
 l1:
     <END>                  NEXT:[<SINK>]                             PREV:[w(a)]
 error:
-    <ERROR>                NEXT:[]                                   PREV:[]
+    <ERROR>                NEXT:[<SINK>]                             PREV:[]
 sink:
-    <SINK>                 NEXT:[]                                   PREV:[<END>]
+    <SINK>                 NEXT:[]                                   PREV:[<ERROR>, <END>]
 =====================
 == test2 ==
 fun test2() {
@@ -152,9 +152,9 @@ l0:
 l1:
     <END>                 NEXT:[<SINK>]                             PREV:[w(a)]
 error:
-    <ERROR>               NEXT:[]                                   PREV:[]
+    <ERROR>               NEXT:[<SINK>]                             PREV:[]
 sink:
-    <SINK>                NEXT:[]                                   PREV:[<END>]
+    <SINK>                NEXT:[]                                   PREV:[<ERROR>, <END>]
 =====================
 == inner_bar ==
 fun inner_bar() {
@@ -168,9 +168,9 @@ l3:
 l4:
     <END>      NEXT:[<SINK>]    PREV:[w(y)]
 error:
-    <ERROR>    NEXT:[]          PREV:[]
+    <ERROR>    NEXT:[<SINK>]    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<END>]
+    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
 =====================
 == test3 ==
 fun test3() {
@@ -206,9 +206,9 @@ l2:
 l1:
     <END>                        NEXT:[<SINK>]                                                             PREV:[w(a)]
 error:
-    <ERROR>                      NEXT:[]                                                                   PREV:[]
+    <ERROR>                      NEXT:[<SINK>]                                                             PREV:[]
 sink:
-    <SINK>                       NEXT:[]                                                                   PREV:[d(fun inner_bar() { y = 10 }) , <END>]
+    <SINK>                       NEXT:[]                                                                   PREV:[<ERROR>, <END>, d(fun inner_bar() { y = 10 }) ]
 l3:
     <START>    NEXT:[r(10)]     PREV:[]
     r(10)      NEXT:[w(y)]      PREV:[<START>]
@@ -216,9 +216,9 @@ l3:
 l4:
     <END>      NEXT:[<SINK>]    PREV:[w(y)]
 error:
-    <ERROR>    NEXT:[]          PREV:[]
+    <ERROR>    NEXT:[<SINK>]    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<END>]
+    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
 =====================
 == ggg ==
 fun ggg() {
@@ -232,9 +232,9 @@ l3:
 l4:
     <END>      NEXT:[<SINK>]    PREV:[w(y)]
 error:
-    <ERROR>    NEXT:[]          PREV:[]
+    <ERROR>    NEXT:[<SINK>]    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<END>]
+    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
 =====================
 == test4 ==
 fun test4() {
@@ -285,9 +285,9 @@ l2:
 l1:
     <END>                  NEXT:[<SINK>]                                                       PREV:[w(a)]
 error:
-    <ERROR>                NEXT:[]                                                             PREV:[]
+    <ERROR>                NEXT:[<SINK>]                                                       PREV:[]
 sink:
-    <SINK>                 NEXT:[]                                                             PREV:[d(fun ggg() { y = 10 }) , <END>]
+    <SINK>                 NEXT:[]                                                             PREV:[<ERROR>, <END>, d(fun ggg() { y = 10 }) ]
 l3:
     <START>    NEXT:[r(10)]     PREV:[]
     r(10)      NEXT:[w(y)]      PREV:[<START>]
@@ -295,9 +295,9 @@ l3:
 l4:
     <END>      NEXT:[<SINK>]    PREV:[w(y)]
 error:
-    <ERROR>    NEXT:[]          PREV:[]
+    <ERROR>    NEXT:[<SINK>]    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<END>]
+    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
 =====================
 == foo ==
 fun foo() {
@@ -311,9 +311,9 @@ l3:
 l4:
     <END>      NEXT:[<SINK>]    PREV:[w(x)]
 error:
-    <ERROR>    NEXT:[]          PREV:[]
+    <ERROR>    NEXT:[<SINK>]    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<END>]
+    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
 =====================
 == bar ==
 fun bar() {
@@ -327,9 +327,9 @@ l6:
 l7:
     <END>      NEXT:[<SINK>]    PREV:[w(x)]
 error:
-    <ERROR>    NEXT:[]          PREV:[]
+    <ERROR>    NEXT:[<SINK>]    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<END>]
+    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
 =====================
 == test5 ==
 fun test5() {
@@ -392,9 +392,9 @@ l5:
 l1:
     <END>                  NEXT:[<SINK>]                                                      PREV:[w(a)]
 error:
-    <ERROR>                NEXT:[]                                                            PREV:[]
+    <ERROR>                NEXT:[<SINK>]                                                      PREV:[]
 sink:
-    <SINK>                 NEXT:[]                                                            PREV:[d(fun foo() { x = 3 }) , d(fun bar() { x = 4 }) , <END>]
+    <SINK>                 NEXT:[]                                                            PREV:[<ERROR>, <END>, d(fun foo() { x = 3 }) , d(fun bar() { x = 4 }) ]
 l3:
     <START>    NEXT:[r(3)]      PREV:[]
     r(3)       NEXT:[w(x)]      PREV:[<START>]
@@ -402,9 +402,9 @@ l3:
 l4:
     <END>      NEXT:[<SINK>]    PREV:[w(x)]
 error:
-    <ERROR>    NEXT:[]          PREV:[]
+    <ERROR>    NEXT:[<SINK>]    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<END>]
+    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
 l6:
     <START>    NEXT:[r(4)]      PREV:[]
     r(4)       NEXT:[w(x)]      PREV:[<START>]
@@ -412,9 +412,9 @@ l6:
 l7:
     <END>      NEXT:[<SINK>]    PREV:[w(x)]
 error:
-    <ERROR>    NEXT:[]          PREV:[]
+    <ERROR>    NEXT:[<SINK>]    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<END>]
+    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
 =====================
 == foo ==
 fun foo() {
@@ -433,7 +433,7 @@ l0:
 l1:
     <END>                 NEXT:[<SINK>]                PREV:[r(doSmth(b))]
 error:
-    <ERROR>               NEXT:[]                      PREV:[]
+    <ERROR>               NEXT:[<SINK>]                PREV:[]
 sink:
-    <SINK>                NEXT:[]                      PREV:[<END>]
+    <SINK>                NEXT:[]                      PREV:[<ERROR>, <END>]
 =====================

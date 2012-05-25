@@ -7,9 +7,9 @@ l3:
 l4:
     <END>      NEXT:[<SINK>]    PREV:[r(1)]
 error:
-    <ERROR>    NEXT:[]          PREV:[]
+    <ERROR>    NEXT:[<SINK>]    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<END>]
+    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
 =====================
 == f ==
 fun f(a : Boolean) : Unit {
@@ -78,18 +78,18 @@ l6:
 l1:
     <END>               NEXT:[<SINK>]                     PREV:[r(a || false)]
 error:
-    <ERROR>             NEXT:[]                           PREV:[]
+    <ERROR>             NEXT:[<SINK>]                     PREV:[]
 sink:
-    <SINK>              NEXT:[]                           PREV:[d({1}), <END>]
+    <SINK>              NEXT:[]                           PREV:[<ERROR>, <END>, d({1})]
 l3:
     <START>    NEXT:[r(1)]      PREV:[]
     r(1)       NEXT:[<END>]     PREV:[<START>]
 l4:
     <END>      NEXT:[<SINK>]    PREV:[r(1)]
 error:
-    <ERROR>    NEXT:[]          PREV:[]
+    <ERROR>    NEXT:[<SINK>]    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<END>]
+    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
 =====================
 == foo ==
 fun foo(a : Boolean, b : Int) : Unit {}
@@ -104,9 +104,9 @@ l0:
 l1:
     <END>             NEXT:[<SINK>]            PREV:[read (Unit)]
 error:
-    <ERROR>           NEXT:[]                  PREV:[]
+    <ERROR>           NEXT:[<SINK>]            PREV:[]
 sink:
-    <SINK>            NEXT:[]                  PREV:[<END>]
+    <SINK>            NEXT:[]                  PREV:[<ERROR>, <END>]
 =====================
 == genfun ==
 fun genfun<T>() : Unit {}
@@ -117,9 +117,9 @@ l0:
 l1:
     <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
 error:
-    <ERROR>        NEXT:[]               PREV:[]
+    <ERROR>        NEXT:[<SINK>]         PREV:[]
 sink:
-    <SINK>         NEXT:[]               PREV:[<END>]
+    <SINK>         NEXT:[]               PREV:[<ERROR>, <END>]
 =====================
 == flfun ==
 fun flfun(f : () -> Any) : Unit {}
@@ -132,7 +132,7 @@ l0:
 l1:
     <END>               NEXT:[<SINK>]              PREV:[read (Unit)]
 error:
-    <ERROR>             NEXT:[]                    PREV:[]
+    <ERROR>             NEXT:[<SINK>]              PREV:[]
 sink:
-    <SINK>              NEXT:[]                    PREV:[<END>]
+    <SINK>              NEXT:[]                    PREV:[<ERROR>, <END>]
 =====================

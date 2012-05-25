@@ -9,9 +9,9 @@ l0:
 l1:
     <END>              NEXT:[<SINK>]             PREV:[v(var x : Int;)]
 error:
-    <ERROR>            NEXT:[]                   PREV:[]
+    <ERROR>            NEXT:[<SINK>]             PREV:[]
 sink:
-    <SINK>             NEXT:[]                   PREV:[<END>]
+    <SINK>             NEXT:[]                   PREV:[<ERROR>, <END>]
 =====================
 == assignments ==
 fun assignments() : Unit {
@@ -72,7 +72,7 @@ l5:
 l1:
     <END>                       NEXT:[<SINK>]                        PREV:[w(t.x)]
 error:
-    <ERROR>                     NEXT:[]                              PREV:[]
+    <ERROR>                     NEXT:[<SINK>]                        PREV:[]
 sink:
-    <SINK>                      NEXT:[]                              PREV:[<END>]
+    <SINK>                      NEXT:[]                              PREV:[<ERROR>, <END>]
 =====================
