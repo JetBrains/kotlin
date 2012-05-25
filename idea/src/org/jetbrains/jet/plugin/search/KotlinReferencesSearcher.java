@@ -16,7 +16,9 @@
 
 package org.jetbrains.jet.plugin.search;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
@@ -46,7 +48,12 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
             final JetFunction function = (JetFunction) element;
             final String name = function.getName();
             if (function.getParent() instanceof JetClassBody && name != null) {
-                final PsiMethod method = JetLightClass.wrapMethod(function);
+                final PsiMethod method = ApplicationManager.getApplication().runReadAction(new Computable<PsiMethod>() {
+                    @Override
+                    public PsiMethod compute() {
+                        return JetLightClass.wrapMethod(function);
+                    }
+                });
                 if (method != null) {
                     queryParameters.getOptimizer().searchWord(name, queryParameters.getScope(),
                                                               true, JetLightClass.wrapMethod((JetFunction) element));
