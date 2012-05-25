@@ -368,7 +368,11 @@ public class OverrideResolver {
             @NotNull Multimap<CallableDescriptor, CallableDescriptor> invisibleOverriddenDescriptors) {
         JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
         if (member == null) {
-            assert trace.get(DELEGATED, declared);
+            Boolean delegated = trace.get(DELEGATED, declared);
+            if (delegated == null || !delegated)
+                throw new IllegalStateException(
+                        "decriptor is not resolved to declaration" +
+                        " and it is not delegate: " + declared + ", DELEGATED: " + delegated);
             return;
         }
 
