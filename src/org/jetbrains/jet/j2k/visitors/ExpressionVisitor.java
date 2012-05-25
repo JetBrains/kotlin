@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
+import org.jetbrains.jet.j2k.ast.types.EmptyType;
 import org.jetbrains.jet.j2k.ast.types.Type;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 
@@ -189,9 +190,10 @@ public class ExpressionVisitor extends StatementVisitor {
     @Override
     public void visitInstanceOfExpression(@NotNull PsiInstanceOfExpression expression) {
         super.visitInstanceOfExpression(expression);
+        PsiTypeElement checkType = expression.getCheckType();
         myResult = new IsOperator(
                 getConverter().expressionToExpression(expression.getOperand()),
-                getConverter().elementToElement(expression.getCheckType()));
+                new TypeElement(checkType == null ? new EmptyType() : myConverter.typeToType(checkType.getType())));
     }
 
     @Override
