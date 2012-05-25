@@ -134,6 +134,29 @@ var Kotlin = {};
         return true;
     };
 
+    Kotlin.createTrait = (function () {
+        function add(object, source) {
+            var properties = Object.keys(source);
+            for (var i = 0, length = properties.length; i < length; i++) {
+                var property = properties[i];
+                object[property] = source[property];
+            }
+            return this;
+        }
+
+        return function () {
+            var result = {};
+            for (var i = 0, length = arguments.length; i < length; i++) {
+                add(result, arguments[i]);
+            }
+            return result;
+        }
+    })();
+
+    Kotlin.createNamespace = function () {
+        return Kotlin.createTrait.apply(null, arguments);
+    };
+
     Kotlin.createClass = (function () {
         var METHODS = {addMethods: addMethods};
 

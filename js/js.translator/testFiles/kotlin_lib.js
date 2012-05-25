@@ -1,32 +1,6 @@
 (function () {
     "use strict";
 
-    Kotlin.createTrait = (function () {
-        function add(object, source) {
-            var properties = Object.keys(source);
-            for (var i = 0, length = properties.length; i < length; i++) {
-                var property = properties[i];
-                var value = source[property];
-                object[property] = value;
-            }
-            return this;
-        }
-
-        return function () {
-            var result = {};
-            for (var i = 0, length = arguments.length; i < length; i++) {
-                add(result, arguments[i]);
-            }
-            return result;
-        }
-    })();
-
-    if (!Kotlin.createNamespace) {
-        Kotlin.createNamespace = function () {
-            return Kotlin.createTrait.apply(null, arguments);
-        };
-    }
-
     Kotlin.equals = function (obj1, obj2) {
         if (typeof obj1 == "object") {
             if (obj1.equals !== undefined) {
