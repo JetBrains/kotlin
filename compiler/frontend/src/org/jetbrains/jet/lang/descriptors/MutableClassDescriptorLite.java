@@ -46,6 +46,8 @@ public class MutableClassDescriptorLite extends ClassDescriptorBase
     private List<TypeParameterDescriptor> typeParameters;
     private Collection<JetType> supertypes = Lists.newArrayList();
 
+    private TypeConstructor typeConstructor;
+
     private Modality modality;
     private Visibility visibility;
 
@@ -111,6 +113,12 @@ public class MutableClassDescriptorLite extends ClassDescriptorBase
         else {
             return false;
         }
+    }
+
+    @NotNull
+    @Override
+    public TypeConstructor getTypeConstructor() {
+        return typeConstructor;
     }
 
     public void setScopeForMemberLookup(JetScope scopeForMemberLookup) {

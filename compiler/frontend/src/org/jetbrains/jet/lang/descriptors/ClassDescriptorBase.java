@@ -29,7 +29,6 @@ import java.util.Map;
  */
 public abstract class ClassDescriptorBase implements ClassDescriptor {
 
-    protected TypeConstructor typeConstructor;
     protected JetType defaultType;
 
     protected abstract JetScope getScopeForMemberLookup();
@@ -57,12 +56,6 @@ public abstract class ClassDescriptorBase implements ClassDescriptor {
             return this;
         }
         return new LazySubstitutingClassDescriptor(this, substitutor);
-    }
-
-    @NotNull
-    @Override
-    public TypeConstructor getTypeConstructor() {
-        return typeConstructor;
     }
 
     @NotNull
