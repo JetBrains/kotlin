@@ -27,10 +27,7 @@ import java.util.Map;
 /**
  * @author abreslav
  */
-public abstract class ClassDescriptorBase extends MutableDeclarationDescriptor implements ClassDescriptor {
-    public ClassDescriptorBase(DeclarationDescriptor containingDeclaration) {
-        super(containingDeclaration);
-    }
+public abstract class ClassDescriptorBase implements ClassDescriptor {
 
     protected abstract JetScope getScopeForMemberLookup();
 

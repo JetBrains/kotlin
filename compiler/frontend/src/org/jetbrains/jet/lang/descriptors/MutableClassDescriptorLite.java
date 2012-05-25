@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -60,9 +61,12 @@ public class MutableClassDescriptorLite extends ClassDescriptorBase
 
     private ClassReceiver implicitReceiver;
 
+    private Name name;
+    private final DeclarationDescriptor containingDeclaration;
+
     public MutableClassDescriptorLite(@NotNull DeclarationDescriptor containingDeclaration,
                                       @NotNull ClassKind kind) {
-        super(containingDeclaration);
+        this.containingDeclaration = containingDeclaration;
         this.kind = kind;
     }
 
@@ -74,6 +78,29 @@ public class MutableClassDescriptorLite extends ClassDescriptorBase
     @Override
     public boolean isAlreadyResolved() {
         return false;
+    }
+
+    @NotNull
+    @Override
+    public DeclarationDescriptor getContainingDeclaration() {
+        return containingDeclaration;
+    }
+
+    @NotNull
+    @Override
+    public Name getName() {
+        return name;
+    }
+
+    public void setName(@NotNull Name name) {
+        assert this.name == null : this.name;
+        this.name = name;
+    }
+
+    @NotNull
+    @Override
+    public DeclarationDescriptor getOriginal() {
+        return this;
     }
 
     private static boolean isStatic(DeclarationDescriptor declarationDescriptor) {
@@ -275,6 +302,11 @@ public class MutableClassDescriptorLite extends ClassDescriptorBase
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitClassDescriptor(this, data);
+    }
+
+    @Override
+    public void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor) {
+        visitor.visitClassDescriptor(this, null);
     }
 
     @Override
