@@ -779,13 +779,7 @@
             };
 
             this.iterator = function () {
-                var list = Kotlin.$new(Kotlin.ArrayList)();
-                var values = this.values();
-                var i = values.length;
-                while (i--) {
-                    list.add(values[i]);
-                }
-                return list.iterator();
+                return Kotlin.arrayIterator(this.values());
             };
 
             this.remove = function (o) {
