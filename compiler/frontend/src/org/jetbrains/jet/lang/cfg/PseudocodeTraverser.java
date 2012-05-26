@@ -21,7 +21,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.cfg.data.Edges;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 
 import java.util.Collection;
@@ -134,11 +133,7 @@ public class PseudocodeTraverser {
             @NotNull Pseudocode pseudocode,
             boolean directOrder,
             SimpleInstructionDataAnalyzeStrategy instructionDataAnalyzeStrategy) {
-        List<Instruction> instructions = pseudocode.getInstructions();
-        if (!directOrder) {
-            instructions = Lists.newArrayList(instructions);
-            Collections.reverse(instructions);
-        }
+        List<Instruction> instructions = directOrder ? pseudocode.getInstructions() : pseudocode.getReversedInstructions();
         for (Instruction instruction : instructions) {
             if (instruction instanceof LocalDeclarationInstruction) {
                 traverseAndAnalyzeInstructionGraph(((LocalDeclarationInstruction) instruction).getBody(), directOrder, instructionDataAnalyzeStrategy);
@@ -153,11 +148,7 @@ public class PseudocodeTraverser {
             @NotNull Map<Instruction, Edges<D>> dataMap,
             boolean directOrder,
             @NotNull InstructionDataAnalyzeStrategy<D> instructionDataAnalyzeStrategy) {
-        List<Instruction> instructions = pseudocode.getInstructions();
-        if (!directOrder) {
-            instructions = Lists.newArrayList(instructions);
-            Collections.reverse(instructions);
-        }
+        List<Instruction> instructions = directOrder ? pseudocode.getInstructions() : pseudocode.getReversedInstructions();
         for (Instruction instruction : instructions) {
             if (lookInside && instruction instanceof LocalDeclarationInstruction) {
                 traverseAndAnalyzeInstructionGraph(lookInside, ((LocalDeclarationInstruction) instruction).getBody(), dataMap, directOrder, instructionDataAnalyzeStrategy);
@@ -177,5 +168,49 @@ public class PseudocodeTraverser {
 
     public interface SimpleInstructionDataAnalyzeStrategy {
         void execute(@NotNull Instruction instruction);
+    }
+
+    public static class Edges<T> {
+        public final T in;
+        public final T out;
+
+        Edges(@NotNull T in, @NotNull T out) {
+            this.in = in;
+            this.out = out;
+        }
+
+        public static <T> Edges<T> create(@NotNull T in, @NotNull T out) {
+            return new Edges<T>(in, out);
+        }
+
+        @NotNull
+        public T getIn() {
+            return in;
+        }
+
+        @NotNull
+        public T getOut() {
+            return out;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Edges)) return false;
+
+            Edges edges = (Edges) o;
+
+            if (in != null ? !in.equals(edges.in) : edges.in != null) return false;
+            if (out != null ? !out.equals(edges.out) : edges.out != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = in != null ? in.hashCode() : 0;
+            result = 31 * result + (out != null ? out.hashCode() : 0);
+            return result;
+        }
     }
 }

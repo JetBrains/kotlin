@@ -17,10 +17,14 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.JetControlFlowProcessor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -65,4 +69,18 @@ public class PseudocodeUtil {
         return new JetControlFlowProcessor(mockTrace).generatePseudocode(declaration);
     }
 
+    @Nullable
+    public static VariableDescriptor extractVariableDescriptorIfAny(@NotNull Instruction instruction, boolean onlyReference, @NotNull BindingContext bindingContext) {
+        JetElement element = null;
+        if (instruction instanceof ReadValueInstruction) {
+            element = ((ReadValueInstruction) instruction).getElement();
+        }
+        else if (instruction instanceof WriteValueInstruction) {
+            element = ((WriteValueInstruction) instruction).getlValue();
+        }
+        else if (instruction instanceof VariableDeclarationInstruction) {
+            element = ((VariableDeclarationInstruction) instruction).getVariableDeclarationElement();
+        }
+        return BindingContextUtils.extractVariableDescriptorIfAny(bindingContext, element, onlyReference);
+    }
 }

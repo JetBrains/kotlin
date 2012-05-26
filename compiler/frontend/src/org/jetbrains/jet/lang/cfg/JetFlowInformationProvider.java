@@ -23,8 +23,10 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.cfg.data.*;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
+import org.jetbrains.jet.lang.cfg.PseudocodeTraverser.Edges;
+import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableInitializers;
+import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseStatus;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -37,10 +39,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetMainDetector;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CAPTURED_IN_CLOSURE;
@@ -53,7 +52,7 @@ public class JetFlowInformationProvider {
 
     private final JetDeclaration subroutine;
     private final Pseudocode pseudocode;
-    private final PseudocodeData pseudocodeData;
+    private final PseudocodeVariablesData pseudocodeData;
     private BindingTrace trace;
 
     public JetFlowInformationProvider(
@@ -63,7 +62,7 @@ public class JetFlowInformationProvider {
         subroutine = declaration;
         this.trace = trace;
         pseudocode = new JetControlFlowProcessor(trace).generatePseudocode(declaration);
-        pseudocodeData = new PseudocodeData(pseudocode, trace.getBindingContext());
+        pseudocodeData = new PseudocodeVariablesData(pseudocode, trace.getBindingContext());
     }
 
     private void collectReturnExpressions(@NotNull final Collection<JetElement> returnedExpressions) {
@@ -120,15 +119,14 @@ public class JetFlowInformationProvider {
             });
         }
     }
-    
+
     public void checkDefiniteReturn(final @NotNull JetType expectedReturnType) {
         assert subroutine instanceof JetDeclarationWithBody;
         JetDeclarationWithBody function = (JetDeclarationWithBody) subroutine;
-        assert function instanceof JetDeclaration;
 
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
-        
+
         List<JetElement> returnedExpressions = Lists.newArrayList();
         collectReturnExpressions(returnedExpressions);
 
@@ -140,7 +138,7 @@ public class JetFlowInformationProvider {
             trace.report(RETURN_TYPE_MISMATCH.on(bodyExpression, expectedReturnType));
         }
         final boolean blockBody = function.hasBlockBody();
-        
+
         final Set<JetElement> rootUnreachableElements = collectUnreachableCode();
         for (JetElement element : rootUnreachableElements) {
             trace.report(UNREACHABLE_CODE.on(element));
@@ -189,49 +187,53 @@ public class JetFlowInformationProvider {
         final Collection<VariableDescriptor> varWithValReassignErrorGenerated = Sets.newHashSet();
         final boolean processClassOrObject = subroutine instanceof JetClassOrObject;
 
-        pseudocodeData.traverseInstructionsGraph(true, true, new PseudocodeData.TraverseInstructionGraphStrategy() {
+        Map<Instruction, Edges<Map<VariableDescriptor,VariableInitializers>>> initializers = pseudocodeData.getVariableInitializers();
+        final Set<VariableDescriptor> declaredVariables = pseudocodeData.getDeclaredVariables(pseudocode);
+        PseudocodeTraverser.traverseAndAnalyzeInstructionGraph(true, pseudocode, initializers, true, new PseudocodeTraverser.InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableInitializers>>() {
             @Override
-            public void execute(@NotNull Instruction instruction, @NotNull DeclarationData declarationData, @NotNull InstructionData instructionData) {
-                //todo move to util
-                VariableDescriptor variableDescriptor = pseudocodeData.extractVariableDescriptorIfAny(instruction, true);
+            public void execute(@NotNull Instruction instruction,
+                    @Nullable Map<VariableDescriptor, VariableInitializers> in,
+                    @Nullable Map<VariableDescriptor, VariableInitializers> out) {
+                assert in != null && out != null;
+                VariableDescriptor variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, true,
+                                                                                                      trace.getBindingContext());
                 if (variableDescriptor == null) return;
                 if (!(instruction instanceof ReadValueInstruction) && !(instruction instanceof WriteValueInstruction)) return;
-                Edges<VariableInitializers> variableInitializers = instructionData.getInitializersMap().get(
-                        variableDescriptor);
-                if (variableInitializers == null) return;
+                VariableInitializers outInitializers = out.get(variableDescriptor);
                 if (instruction instanceof ReadValueInstruction) {
                     JetElement element = ((ReadValueInstruction) instruction).getElement();
                     boolean error = checkBackingField(variableDescriptor, element);
-                    if (!error && declarationData.declaredVariables.contains(variableDescriptor)) {
-                        checkIsInitialized(variableDescriptor, element, variableInitializers.getOut(), varWithUninitializedErrorGenerated);
+                    if (!error && declaredVariables.contains(variableDescriptor)) {
+                        checkIsInitialized(variableDescriptor, element, outInitializers, varWithUninitializedErrorGenerated);
                     }
                     return;
                 }
                 JetElement element = ((WriteValueInstruction) instruction).getlValue();
                 boolean error = checkBackingField(variableDescriptor, element);
                 if (!(element instanceof JetExpression)) return;
+                VariableInitializers inInitializers = in.get(variableDescriptor);
                 if (!error && !processLocalDeclaration) { // error has been generated before, while processing outer function of this local declaration
-                    error = checkValReassignment(variableDescriptor, (JetExpression) element, variableInitializers.getIn(), varWithValReassignErrorGenerated);
+                    error = checkValReassignment(variableDescriptor, (JetExpression) element, inInitializers, varWithValReassignErrorGenerated);
                 }
                 if (!error && processClassOrObject) {
-                    error = checkAssignmentBeforeDeclaration(variableDescriptor, (JetExpression) element, variableInitializers.getIn(), variableInitializers.getOut());
+                    error = checkAssignmentBeforeDeclaration(variableDescriptor, (JetExpression) element, inInitializers, outInitializers);
                 }
                 if (!error && processClassOrObject) {
-                    checkInitializationUsingBackingField(variableDescriptor, (JetExpression) element, variableInitializers.getIn(), variableInitializers.getOut());
+                    checkInitializationUsingBackingField(variableDescriptor, (JetExpression) element, inInitializers, outInitializers);
                 }
             }
         });
 
         Pseudocode pseudocode = pseudocodeData.getPseudocode();
-        recordInitializedVariables(pseudocodeData.getDeclarationData(pseudocode), pseudocodeData.getResultInfo(pseudocode));
+        recordInitializedVariables(pseudocode, initializers);
         for (LocalDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
-            recordInitializedVariables(pseudocodeData.getDeclarationData(instruction.getBody()), pseudocodeData.getResultInfo(instruction.getBody()));
+            recordInitializedVariables(instruction.getBody(), initializers);
         }
     }
 
-    private void checkIsInitialized(@NotNull VariableDescriptor variableDescriptor, 
-                                    @NotNull JetElement element, 
-                                    @NotNull VariableInitializers variableInitializers, 
+    private void checkIsInitialized(@NotNull VariableDescriptor variableDescriptor,
+                                    @NotNull JetElement element,
+                                    @NotNull VariableInitializers variableInitializers,
                                     @NotNull Collection<VariableDescriptor> varWithUninitializedErrorGenerated) {
         if (!(element instanceof JetSimpleNameExpression)) return;
 
@@ -244,7 +246,8 @@ public class JetFlowInformationProvider {
         if (!isInitialized && !varWithUninitializedErrorGenerated.contains(variableDescriptor)) {
             varWithUninitializedErrorGenerated.add(variableDescriptor);
             if (variableDescriptor instanceof ValueParameterDescriptor) {
-                trace.report(Errors.UNINITIALIZED_PARAMETER.on((JetSimpleNameExpression) element, (ValueParameterDescriptor) variableDescriptor));
+                trace.report(Errors.UNINITIALIZED_PARAMETER.on((JetSimpleNameExpression) element,
+                                                               (ValueParameterDescriptor) variableDescriptor));
             }
             else {
                 trace.report(Errors.UNINITIALIZED_VARIABLE.on((JetSimpleNameExpression) element, variableDescriptor));
@@ -252,9 +255,9 @@ public class JetFlowInformationProvider {
         }
     }
 
-    private boolean checkValReassignment(@NotNull VariableDescriptor variableDescriptor, 
-                                         @NotNull JetExpression expression, 
-                                         @NotNull VariableInitializers enterInitializers, 
+    private boolean checkValReassignment(@NotNull VariableDescriptor variableDescriptor,
+                                         @NotNull JetExpression expression,
+                                         @NotNull VariableInitializers enterInitializers,
                                          @NotNull Collection<VariableDescriptor> varWithValReassignErrorGenerated) {
         boolean isInitializedNotHere = enterInitializers.isInitialized();
         Set<JetElement> possibleLocalInitializers = enterInitializers.getPossibleLocalInitializers();
@@ -304,7 +307,7 @@ public class JetFlowInformationProvider {
         }
         return false;
     }
-    
+
     private boolean checkAssignmentBeforeDeclaration(@NotNull VariableDescriptor variableDescriptor, @NotNull JetExpression expression, @NotNull VariableInitializers enterInitializers, @NotNull VariableInitializers exitInitializers) {
         if (!enterInitializers.isDeclared() && !exitInitializers.isDeclared() && !enterInitializers.isInitialized() && exitInitializers.isInitialized()) {
             trace.report(Errors.INITIALIZATION_BEFORE_DECLARATION.on(expression, variableDescriptor));
@@ -312,7 +315,7 @@ public class JetFlowInformationProvider {
         }
         return false;
     }
-    
+
     private boolean checkInitializationUsingBackingField(@NotNull VariableDescriptor variableDescriptor, @NotNull JetExpression expression, @NotNull VariableInitializers enterInitializers, @NotNull VariableInitializers exitInitializers) {
         if (variableDescriptor instanceof PropertyDescriptor && !enterInitializers.isInitialized() && exitInitializers.isInitialized()) {
             if (!variableDescriptor.isVar()) return false;
@@ -392,12 +395,15 @@ public class JetFlowInformationProvider {
         return false;
     }
 
-    private void recordInitializedVariables(DeclarationData declarationData, InstructionData instructionData) {
-        for (VariableDescriptor variable : declarationData.usedVariables) {
-            if (variable instanceof PropertyDescriptor && declarationData.declaredVariables.contains(variable)) {
-                Edges<VariableInitializers> variableInitializers = instructionData.getInitializersMap().get(variable);
+    private void recordInitializedVariables(@NotNull Pseudocode pseudocode, @NotNull Map<Instruction, Edges<Map<VariableDescriptor,VariableInitializers>>> initializersMap) {
+        Edges<Map<VariableDescriptor, VariableInitializers>> initializers = initializersMap.get(pseudocode.getExitInstruction());
+        Set<VariableDescriptor> usedVariables = pseudocodeData.getUsedVariables(pseudocode);
+        Set<VariableDescriptor> declaredVariables = pseudocodeData.getDeclaredVariables(pseudocode);
+        for (VariableDescriptor variable : usedVariables) {
+            if (variable instanceof PropertyDescriptor && declaredVariables.contains(variable)) {
+                VariableInitializers variableInitializers = initializers.in.get(variable);
                 if (variableInitializers == null) return;
-                trace.record(BindingContext.IS_INITIALIZED, (PropertyDescriptor) variable, variableInitializers.getIn().isInitialized());
+                trace.record(BindingContext.IS_INITIALIZED, (PropertyDescriptor) variable, variableInitializers.isInitialized());
             }
         }
     }
@@ -406,14 +412,20 @@ public class JetFlowInformationProvider {
 //  "Unused variable" & "unused value" analyses
 
     public void markUnusedVariables() {
-        pseudocodeData.traverseInstructionsGraph(true, false, new PseudocodeData.TraverseInstructionGraphStrategy() {
+        Map<Instruction, Edges<Map<VariableDescriptor, VariableUseStatus>>> variableStatusData = pseudocodeData.getVariableStatusData();
+        PseudocodeTraverser.traverseAndAnalyzeInstructionGraph(true, pseudocode, variableStatusData, false, new PseudocodeTraverser.InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableUseStatus>>() {
             @Override
-            public void execute(@NotNull Instruction instruction, @NotNull DeclarationData declarationData, @NotNull InstructionData instructionData) {
-                VariableDescriptor variableDescriptor = pseudocodeData.extractVariableDescriptorIfAny(instruction, false);
-                if (variableDescriptor == null || !declarationData.declaredVariables.contains(variableDescriptor) ||
+            public void execute(@NotNull Instruction instruction,
+                    @Nullable Map<VariableDescriptor, VariableUseStatus> in,
+                    @Nullable Map<VariableDescriptor, VariableUseStatus> out) {
+
+                assert in != null && out != null;
+                Set<VariableDescriptor> declaredVariables = pseudocodeData.getDeclaredVariables(instruction.getOwner());
+                VariableDescriptor variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false,
+                                                                                                      trace.getBindingContext());
+                if (variableDescriptor == null || !declaredVariables.contains(variableDescriptor) ||
                     !DescriptorUtils.isLocal(variableDescriptor.getContainingDeclaration(), variableDescriptor)) return;
-                Edges<VariableUseStatus> statusEdgesData = instructionData.getUseStatusMap().get(variableDescriptor);
-                VariableUseStatus variableUseStatus = statusEdgesData != null ? statusEdgesData.getIn() : null;
+                VariableUseStatus variableUseStatus = in.get(variableDescriptor);
                 if (instruction instanceof WriteValueInstruction) {
                     if (trace.get(CAPTURED_IN_CLOSURE, variableDescriptor)) return;
                     JetElement element = ((WriteValueInstruction) instruction).getElement();
@@ -480,19 +492,20 @@ public class JetFlowInformationProvider {
 
             }
         });
-
     }
 
 ////////////////////////////////////////////////////////////////////////////////
 //  "Unused literals" in block
-    
+
     public void markUnusedLiteralsInBlock() {
         assert pseudocode != null;
-        PseudocodeTraverser.traverseAndAnalyzeInstructionGraph(pseudocode, true, new PseudocodeTraverser.SimpleInstructionDataAnalyzeStrategy() {
+        PseudocodeTraverser.traverseAndAnalyzeInstructionGraph(
+                pseudocode, true, new PseudocodeTraverser.SimpleInstructionDataAnalyzeStrategy() {
             @Override
             public void execute(@NotNull Instruction instruction) {
                 if (!(instruction instanceof ReadValueInstruction)) return;
-                JetElement element = ((ReadValueInstruction) instruction).getElement();
+                JetElement element =
+                        ((ReadValueInstruction) instruction).getElement();
                 if (!(element instanceof JetFunctionLiteralExpression
                       || element instanceof JetConstantExpression
                       || element instanceof JetStringTemplateExpression
@@ -503,7 +516,8 @@ public class JetFlowInformationProvider {
                 if (parent instanceof JetBlockExpression) {
                     if (!JetPsiUtil.isImplicitlyUsed(element)) {
                         if (element instanceof JetFunctionLiteralExpression) {
-                            trace.report(Errors.UNUSED_FUNCTION_LITERAL.on((JetFunctionLiteralExpression) element));
+                            trace.report(Errors.UNUSED_FUNCTION_LITERAL
+                                                 .on((JetFunctionLiteralExpression) element));
                         }
                         else {
                             trace.report(Errors.UNUSED_EXPRESSION.on(element));
