@@ -29,15 +29,10 @@ import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.lang.cfg.JetControlFlowProcessor;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
-import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -80,41 +75,12 @@ public class JetControlFlowTest extends JetLiteFixture {
         final Map<JetElement, Pseudocode> data = new LinkedHashMap<JetElement, Pseudocode>();
         AnalyzeExhaust analyzeExhaust = JetTestUtils.analyzeFile(file);
         List<JetDeclaration> declarations = file.getDeclarations();
-        final BindingContext bindingContext = analyzeExhaust.getBindingContext();
-
-        BindingTrace mockTrace = new BindingTrace() {
-            @Override
-            public BindingContext getBindingContext() {
-                return bindingContext;
-            }
-
-            @Override
-            public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
-            }
-
-            @Override
-            public <K> void record(WritableSlice<K, Boolean> slice, K key) {
-            }
-
-            @Override
-            public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-                return bindingContext.get(slice, key);
-            }
-
-            @NotNull
-            @Override
-            public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
-                return bindingContext.getKeys(slice);
-            }
-
-            @Override
-            public void report(@NotNull Diagnostic diagnostic) {
-            }
-        };
+        BindingContext bindingContext = analyzeExhaust.getBindingContext();
         for (JetDeclaration declaration : declarations) {
-            Pseudocode pseudocode = new JetControlFlowProcessor(mockTrace).generatePseudocode(declaration);
+            Pseudocode pseudocode = PseudocodeUtil.generatePseudocode(declaration, bindingContext);
             data.put(declaration, pseudocode);
-            for (Pseudocode localPseudocode : pseudocode.getLocalDeclarations()) {
+            for (LocalDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
+                Pseudocode localPseudocode = instruction.getBody();
                 data.put(localPseudocode.getCorrespondingElement(), localPseudocode);
             }
         }
@@ -166,7 +132,7 @@ public class JetControlFlowTest extends JetLiteFixture {
             instructionDump.append("=====================\n");
             
             //check edges directions
-            Collection<Instruction> instructions = ((PseudocodeImpl)pseudocode).getMutableInstructionList();
+            Collection<Instruction> instructions = ((PseudocodeImpl)pseudocode).getAllInstructions();
             for (Instruction instruction : instructions) {
                 if (!((InstructionImpl)instruction).isDead()) {
                     for (Instruction nextInstruction : instruction.getNextInstructions()) {
@@ -198,7 +164,7 @@ public class JetControlFlowTest extends JetLiteFixture {
     }
 
     public void dfsDump(PseudocodeImpl pseudocode, StringBuilder nodes, StringBuilder edges, Map<Instruction, String> nodeNames) {
-        dfsDump(nodes, edges, pseudocode.getMutableInstructionList().get(0), nodeNames);
+        dfsDump(nodes, edges, pseudocode.getAllInstructions().get(0), nodeNames);
     }
 
     private void dfsDump(StringBuilder nodes, StringBuilder edges, Instruction instruction, Map<Instruction, String> nodeNames) {
@@ -260,7 +226,7 @@ public class JetControlFlowTest extends JetLiteFixture {
     }
 
     public void dumpInstructions(PseudocodeImpl pseudocode, @NotNull StringBuilder out) {
-        List<Instruction> instructions = pseudocode.getMutableInstructionList();
+        List<Instruction> instructions = pseudocode.getAllInstructions();
         Set<Instruction> remainedAfterPostProcessInstructions = Sets.newHashSet(pseudocode.getInstructions());
         List<PseudocodeImpl.PseudocodeLabel> labels = pseudocode.getLabels();
         List<PseudocodeImpl> locals = new ArrayList<PseudocodeImpl>();
@@ -316,7 +282,7 @@ public class JetControlFlowTest extends JetLiteFixture {
                 public void visitLocalDeclarationInstruction(LocalDeclarationInstruction instruction) {
                     int index = count[0];
 //                    instruction.getBody().dumpSubgraph(out, "subgraph cluster_" + index, count, "color=blue;\nlabel = \"f" + index + "\";", nodeToName);
-                    printEdge(out, nodeToName.get(instruction), nodeToName.get(((PseudocodeImpl)instruction.getBody()).getMutableInstructionList().get(0)), null);
+                    printEdge(out, nodeToName.get(instruction), nodeToName.get(((PseudocodeImpl)instruction.getBody()).getAllInstructions().get(0)), null);
                     visitInstructionWithNext(instruction);
                 }
 
@@ -431,7 +397,7 @@ public class JetControlFlowTest extends JetLiteFixture {
         int[] count = new int[1];
         Map<Instruction, String> nodeToName = new HashMap<Instruction, String>();
         for (Pseudocode pseudocode : pseudocodes) {
-            dumpNodes(((PseudocodeImpl)pseudocode).getMutableInstructionList(), out, count, nodeToName, Sets.newHashSet(pseudocode.getInstructions()));
+            dumpNodes(((PseudocodeImpl)pseudocode).getAllInstructions(), out, count, nodeToName, Sets.newHashSet(pseudocode.getInstructions()));
         }
         int i = 0;
         for (Pseudocode pseudocode : pseudocodes) {
@@ -447,7 +413,7 @@ public class JetControlFlowTest extends JetLiteFixture {
             out.println("subgraph cluster_" + i + " {\n" +
                         "label=\"" + label + "\";\n" +
                         "color=blue;\n");
-            dumpEdges(((PseudocodeImpl)pseudocode).getMutableInstructionList(), out, count, nodeToName);
+            dumpEdges(((PseudocodeImpl)pseudocode).getAllInstructions(), out, count, nodeToName);
             out.println("}");
             i++;
         }
