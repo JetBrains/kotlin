@@ -65,5 +65,4 @@ public class PseudocodeUtil {
         return new JetControlFlowProcessor(mockTrace).generatePseudocode(declaration);
     }
 
-
 }

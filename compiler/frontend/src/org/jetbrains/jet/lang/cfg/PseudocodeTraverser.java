@@ -19,79 +19,71 @@ package org.jetbrains.jet.lang.cfg;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.cfg.data.Edges;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author svtk
  */
-public class JetControlFlowGraphTraverser<D> {
-    private final Pseudocode pseudocode;
-    private final boolean lookInside;
-    private final boolean directOrder;
-    private final Map<Instruction, Pair<D, D>> dataMap = Maps.newLinkedHashMap();
-
-    public static <D> JetControlFlowGraphTraverser<D> create(@NotNull Pseudocode pseudocode, boolean lookInside, boolean straightDirection) {
-        return new JetControlFlowGraphTraverser<D>(pseudocode, lookInside, straightDirection);
-    }
-
-    private JetControlFlowGraphTraverser(@NotNull Pseudocode pseudocode, boolean lookInside, boolean directOrder) {
-        this.pseudocode = pseudocode;
-        this.lookInside = lookInside;
-        this.directOrder = directOrder;
-    }
-
+public class PseudocodeTraverser {
     @NotNull
-    private Instruction getStartInstruction(@NotNull Pseudocode pseudocode) {
+    private static Instruction getStartInstruction(@NotNull Pseudocode pseudocode, boolean directOrder) {
         return directOrder ? pseudocode.getEnterInstruction() : pseudocode.getSinkInstruction();
     }
 
-    @NotNull
-    public Map<Instruction, Pair<D, D>> getDataMap() {
-        return dataMap;
-    }
-
-    public void collectInformationFromInstructionGraph(
+    public static <D> Map<Instruction, Edges<D>> collectInformationFromInstructionGraph(
+            boolean lookInside,
+            boolean directOrder,
+            @NotNull Pseudocode pseudocode,
             @NotNull D initialDataValue,
             @NotNull D initialDataValueForEnterInstruction,
             @NotNull InstructionDataMergeStrategy<D> instructionDataMergeStrategy) {
-        initializeDataMap(pseudocode, initialDataValue);
-        dataMap.put(getStartInstruction(pseudocode),
-                    Pair.create(initialDataValueForEnterInstruction, initialDataValueForEnterInstruction));
+        Map<Instruction, Edges<D>> dataMap = Maps.newLinkedHashMap();
+        initializeDataMap(lookInside, dataMap, pseudocode, initialDataValue);
+        dataMap.put(getStartInstruction(pseudocode, directOrder),
+                    Edges.create(initialDataValueForEnterInstruction, initialDataValueForEnterInstruction));
 
         boolean[] changed = new boolean[1];
         changed[0] = true;
         while (changed[0]) {
             changed[0] = false;
-            traverseSubGraph(pseudocode, instructionDataMergeStrategy, Collections.<Instruction>emptyList(), changed, false);
+            traverseSubGraph(lookInside, pseudocode, dataMap, instructionDataMergeStrategy, Collections.<Instruction>emptyList(), directOrder, changed, false);
         }
+        return dataMap;
     }
 
-    private void initializeDataMap(
-            @NotNull Pseudocode pseudocode,
+    private static <D> void initializeDataMap(
+            boolean lookInside,
+            @NotNull Map<Instruction, Edges<D>> dataMap, @NotNull Pseudocode pseudocode,
             @NotNull D initialDataValue) {
         List<Instruction> instructions = pseudocode.getInstructions();
-        Pair<D, D> initialPair = Pair.create(initialDataValue, initialDataValue);
+        Edges<D> initialEdge = Edges.create(initialDataValue, initialDataValue);
         for (Instruction instruction : instructions) {
-            dataMap.put(instruction, initialPair);
+            dataMap.put(instruction, initialEdge);
             if (lookInside && instruction instanceof LocalDeclarationInstruction) {
-                initializeDataMap(((LocalDeclarationInstruction) instruction).getBody(), initialDataValue);
+                initializeDataMap(lookInside, dataMap, ((LocalDeclarationInstruction) instruction).getBody(), initialDataValue);
             }
         }
     }
 
-    private void traverseSubGraph(
+    private static <D> void traverseSubGraph(
+            boolean lookInside,
             @NotNull Pseudocode pseudocode,
+            @NotNull Map<Instruction, Edges<D>> dataMap,
             @NotNull InstructionDataMergeStrategy<D> instructionDataMergeStrategy,
             @NotNull Collection<Instruction> previousSubGraphInstructions,
+            boolean directOrder,
             boolean[] changed,
             boolean isLocal) {
         List<Instruction> instructions = directOrder ? pseudocode.getInstructions() : pseudocode.getReversedInstructions();
-        Instruction startInstruction = getStartInstruction(pseudocode);
+        Instruction startInstruction = getStartInstruction(pseudocode, directOrder);
 
         for (Instruction instruction : instructions) {
             boolean isStart = directOrder ? instruction instanceof SubroutineEnterInstruction : instruction instanceof SubroutineSinkInstruction;
@@ -110,27 +102,27 @@ public class JetControlFlowGraphTraverser<D> {
 
             if (lookInside && instruction instanceof LocalDeclarationInstruction) {
                 Pseudocode subroutinePseudocode = ((LocalDeclarationInstruction) instruction).getBody();
-                traverseSubGraph(subroutinePseudocode, instructionDataMergeStrategy, previousInstructions, changed, true);
+                traverseSubGraph(lookInside, subroutinePseudocode, dataMap ,instructionDataMergeStrategy, previousInstructions, directOrder, changed, true);
                 Instruction lastInstruction = directOrder ? subroutinePseudocode.getSinkInstruction() : subroutinePseudocode.getEnterInstruction();
-                Pair<D, D> previousValue = dataMap.get(instruction);
-                Pair<D, D> newValue = dataMap.get(lastInstruction);
+                Edges<D> previousValue = dataMap.get(instruction);
+                Edges<D> newValue = dataMap.get(lastInstruction);
                 if (!previousValue.equals(newValue)) {
                     changed[0] = true;
                     dataMap.put(instruction, newValue);
                 }
                 continue;
             }
-            Pair<D, D> previousDataValue = dataMap.get(instruction);
+            Edges<D> previousDataValue = dataMap.get(instruction);
 
             Collection<D> incomingEdgesData = Sets.newHashSet();
 
             for (Instruction previousInstruction : allPreviousInstructions) {
-                Pair<D, D> previousData = dataMap.get(previousInstruction);
+                Edges<D> previousData = dataMap.get(previousInstruction);
                 if (previousData != null) {
-                    incomingEdgesData.add(previousData.getSecond());
+                    incomingEdgesData.add(previousData.out);
                 }
             }
-            Pair<D, D> mergedData = instructionDataMergeStrategy.execute(instruction, incomingEdgesData);
+            Edges<D> mergedData = instructionDataMergeStrategy.execute(instruction, incomingEdgesData);
             if (!mergedData.equals(previousDataValue)) {
                 changed[0] = true;
                 dataMap.put(instruction, mergedData);
@@ -138,13 +130,28 @@ public class JetControlFlowGraphTraverser<D> {
         }
     }
 
-    public void traverseAndAnalyzeInstructionGraph(
-            @NotNull InstructionDataAnalyzeStrategy<D> instructionDataAnalyzeStrategy) {
-        traverseAndAnalyzeInstructionGraph(pseudocode, instructionDataAnalyzeStrategy);
-    }
-    
-    private void traverseAndAnalyzeInstructionGraph(
+    public static void traverseAndAnalyzeInstructionGraph(
             @NotNull Pseudocode pseudocode,
+            boolean directOrder,
+            SimpleInstructionDataAnalyzeStrategy instructionDataAnalyzeStrategy) {
+        List<Instruction> instructions = pseudocode.getInstructions();
+        if (!directOrder) {
+            instructions = Lists.newArrayList(instructions);
+            Collections.reverse(instructions);
+        }
+        for (Instruction instruction : instructions) {
+            if (instruction instanceof LocalDeclarationInstruction) {
+                traverseAndAnalyzeInstructionGraph(((LocalDeclarationInstruction) instruction).getBody(), directOrder, instructionDataAnalyzeStrategy);
+            }
+            instructionDataAnalyzeStrategy.execute(instruction);
+        }
+    }
+
+    public static <D> void traverseAndAnalyzeInstructionGraph(
+            boolean lookInside,
+            @NotNull Pseudocode pseudocode,
+            @NotNull Map<Instruction, Edges<D>> dataMap,
+            boolean directOrder,
             @NotNull InstructionDataAnalyzeStrategy<D> instructionDataAnalyzeStrategy) {
         List<Instruction> instructions = pseudocode.getInstructions();
         if (!directOrder) {
@@ -153,24 +160,22 @@ public class JetControlFlowGraphTraverser<D> {
         }
         for (Instruction instruction : instructions) {
             if (lookInside && instruction instanceof LocalDeclarationInstruction) {
-                traverseAndAnalyzeInstructionGraph(((LocalDeclarationInstruction) instruction).getBody(), instructionDataAnalyzeStrategy);
+                traverseAndAnalyzeInstructionGraph(lookInside, ((LocalDeclarationInstruction) instruction).getBody(), dataMap, directOrder, instructionDataAnalyzeStrategy);
             }
-            Pair<D, D> pair = dataMap.get(instruction);
-            instructionDataAnalyzeStrategy.execute(instruction,
-                                                   pair != null ? pair.getFirst() : null,
-                                                   pair != null ? pair.getSecond() : null);
+            Edges<D> edges = dataMap.get(instruction);
+            instructionDataAnalyzeStrategy.execute(instruction, edges != null ? edges.in : null, edges != null ? edges.out : null);
         }
     }
 
-    public D getResultInfo() {
-        return dataMap.get(pseudocode.getExitInstruction()).getFirst();
-    }
-    
     public interface InstructionDataMergeStrategy<D> {
-        Pair<D, D> execute(@NotNull Instruction instruction, @NotNull Collection<D> incomingEdgesData);
+        Edges<D> execute(@NotNull Instruction instruction, @NotNull Collection<D> incomingEdgesData);
     }
 
     public interface InstructionDataAnalyzeStrategy<D> {
         void execute(@NotNull Instruction instruction, @Nullable D enterData, @Nullable D exitData);
+    }
+
+    public interface SimpleInstructionDataAnalyzeStrategy {
+        void execute(@NotNull Instruction instruction);
     }
 }

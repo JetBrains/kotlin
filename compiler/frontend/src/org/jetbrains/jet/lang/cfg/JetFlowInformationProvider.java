@@ -38,6 +38,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetMainDetector;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -62,7 +63,7 @@ public class JetFlowInformationProvider {
         subroutine = declaration;
         this.trace = trace;
         pseudocode = new JetControlFlowProcessor(trace).generatePseudocode(declaration);
-        pseudocodeData = new PseudocodeData(pseudocode, trace);
+        pseudocodeData = new PseudocodeData(pseudocode, trace.getBindingContext());
     }
 
     private void collectReturnExpressions(@NotNull final Collection<JetElement> returnedExpressions) {
@@ -195,7 +196,7 @@ public class JetFlowInformationProvider {
                 VariableDescriptor variableDescriptor = pseudocodeData.extractVariableDescriptorIfAny(instruction, true);
                 if (variableDescriptor == null) return;
                 if (!(instruction instanceof ReadValueInstruction) && !(instruction instanceof WriteValueInstruction)) return;
-                InstructionData.EdgesData<VariableInitializers> variableInitializers = instructionData.getInitializersMap().get(
+                Edges<VariableInitializers> variableInitializers = instructionData.getInitializersMap().get(
                         variableDescriptor);
                 if (variableInitializers == null) return;
                 if (instruction instanceof ReadValueInstruction) {
@@ -394,7 +395,7 @@ public class JetFlowInformationProvider {
     private void recordInitializedVariables(DeclarationData declarationData, InstructionData instructionData) {
         for (VariableDescriptor variable : declarationData.usedVariables) {
             if (variable instanceof PropertyDescriptor && declarationData.declaredVariables.contains(variable)) {
-                InstructionData.EdgesData<VariableInitializers> variableInitializers = instructionData.getInitializersMap().get(variable);
+                Edges<VariableInitializers> variableInitializers = instructionData.getInitializersMap().get(variable);
                 if (variableInitializers == null) return;
                 trace.record(BindingContext.IS_INITIALIZED, (PropertyDescriptor) variable, variableInitializers.getIn().isInitialized());
             }
@@ -411,7 +412,7 @@ public class JetFlowInformationProvider {
                 VariableDescriptor variableDescriptor = pseudocodeData.extractVariableDescriptorIfAny(instruction, false);
                 if (variableDescriptor == null || !declarationData.declaredVariables.contains(variableDescriptor) ||
                     !DescriptorUtils.isLocal(variableDescriptor.getContainingDeclaration(), variableDescriptor)) return;
-                InstructionData.EdgesData<VariableUseStatus> statusEdgesData = instructionData.getUseStatusMap().get(variableDescriptor);
+                Edges<VariableUseStatus> statusEdgesData = instructionData.getUseStatusMap().get(variableDescriptor);
                 VariableUseStatus variableUseStatus = statusEdgesData != null ? statusEdgesData.getIn() : null;
                 if (instruction instanceof WriteValueInstruction) {
                     if (trace.get(CAPTURED_IN_CLOSURE, variableDescriptor)) return;
@@ -487,10 +488,9 @@ public class JetFlowInformationProvider {
     
     public void markUnusedLiteralsInBlock() {
         assert pseudocode != null;
-        JetControlFlowGraphTraverser<Void> traverser = JetControlFlowGraphTraverser.create(pseudocode, true, true);
-        traverser.traverseAndAnalyzeInstructionGraph(new JetControlFlowGraphTraverser.InstructionDataAnalyzeStrategy<Void>() {
+        PseudocodeTraverser.traverseAndAnalyzeInstructionGraph(pseudocode, true, new PseudocodeTraverser.SimpleInstructionDataAnalyzeStrategy() {
             @Override
-            public void execute(@NotNull Instruction instruction, @Nullable Void enterData, @Nullable Void exitData) {
+            public void execute(@NotNull Instruction instruction) {
                 if (!(instruction instanceof ReadValueInstruction)) return;
                 JetElement element = ((ReadValueInstruction) instruction).getElement();
                 if (!(element instanceof JetFunctionLiteralExpression

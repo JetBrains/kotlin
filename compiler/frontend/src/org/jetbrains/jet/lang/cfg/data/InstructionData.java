@@ -31,62 +31,38 @@ public class InstructionData {
     public final Instruction instruction;
     public final PseudocodeData pseudocodeData;
 
-    private final Map<VariableDescriptor, EdgesData<VariableInitializers>> initializersMap = Maps.newHashMap();
-    private final Map<VariableDescriptor, EdgesData<VariableUseStatus>> useStatusMap = Maps.newHashMap();
+    private final Map<VariableDescriptor, Edges<VariableInitializers>> initializersMap = Maps.newHashMap();
+    private final Map<VariableDescriptor, Edges<VariableUseStatus>> useStatusMap = Maps.newHashMap();
 
     public InstructionData(@NotNull PseudocodeData data, @NotNull Instruction instruction,
-            @NotNull Pair<Map<VariableDescriptor, VariableInitializers>, Map<VariableDescriptor, VariableInitializers>> pairOfVariableInitializersMap,
-            @NotNull Pair<Map<VariableDescriptor, VariableUseStatus>, Map<VariableDescriptor, VariableUseStatus>> pairOfVariableStatusMap) {
+            @NotNull Edges<Map<VariableDescriptor, VariableInitializers>> pairOfVariableInitializersMap,
+            @NotNull Edges<Map<VariableDescriptor, VariableUseStatus>> pairOfVariableStatusMap) {
         pseudocodeData = data;
         this.instruction = instruction;
 
-        for (Map.Entry<VariableDescriptor, VariableInitializers> entry : pairOfVariableInitializersMap.second.entrySet()) {
+        for (Map.Entry<VariableDescriptor, VariableInitializers> entry : pairOfVariableInitializersMap.out.entrySet()) {
             VariableDescriptor variableDescriptor = entry.getKey();
-            VariableInitializers in = pairOfVariableInitializersMap.first.get(variableDescriptor);
+            VariableInitializers in = pairOfVariableInitializersMap.in.get(variableDescriptor);
             VariableInitializers out = entry.getValue();
-            initializersMap.put(variableDescriptor, EdgesData.create(in, out));
+            initializersMap.put(variableDescriptor, Edges.create(in, out));
         }
 
-        for (Map.Entry<VariableDescriptor, VariableUseStatus> entry : pairOfVariableStatusMap.second.entrySet()) {
+        for (Map.Entry<VariableDescriptor, VariableUseStatus> entry : pairOfVariableStatusMap.out.entrySet()) {
             VariableDescriptor variableDescriptor = entry.getKey();
-            VariableUseStatus in = pairOfVariableStatusMap.first.get(variableDescriptor);
+            VariableUseStatus in = pairOfVariableStatusMap.in.get(variableDescriptor);
             VariableUseStatus out = entry.getValue();
             if (in == null || out == null) continue;
-            useStatusMap.put(variableDescriptor, EdgesData.create(in, out));
+            useStatusMap.put(variableDescriptor, Edges.create(in, out));
         }
     }
 
     @NotNull
-    public Map<VariableDescriptor, EdgesData<VariableInitializers>> getInitializersMap() {
+    public Map<VariableDescriptor, Edges<VariableInitializers>> getInitializersMap() {
         return initializersMap;
     }
 
     @NotNull
-    public Map<VariableDescriptor, EdgesData<VariableUseStatus>> getUseStatusMap() {
+    public Map<VariableDescriptor, Edges<VariableUseStatus>> getUseStatusMap() {
         return useStatusMap;
-    }
-
-    public static class EdgesData<T> {
-        private final T in;
-        private final T out;
-
-        private EdgesData(@NotNull T in, @NotNull T out) {
-            this.in = in;
-            this.out = out;
-        }
-
-        private static <T> EdgesData<T> create(@NotNull T in, @NotNull T out) {
-            return new EdgesData<T>(in, out);
-        }
-
-        @NotNull
-        public T getIn() {
-            return in;
-        }
-
-        @NotNull
-        public T getOut() {
-            return out;
-        }
     }
 }
