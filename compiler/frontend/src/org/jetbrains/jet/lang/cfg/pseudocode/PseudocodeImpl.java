@@ -22,14 +22,17 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.Label;
+import org.jetbrains.jet.lang.cfg.LoopInfo;
 import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.*;
 
 /**
 * @author abreslav
+* @author svtk
 */
-public class Pseudocode {
+public class PseudocodeImpl implements IPseudocode {
 
     public class PseudocodeLabel implements Label {
         private final String name;
@@ -74,6 +77,9 @@ public class Pseudocode {
     private final List<Instruction> mutableInstructionList = new ArrayList<Instruction>();
     private final List<Instruction> instructions = new ArrayList<Instruction>();
     private List<Instruction> deadInstructions;
+
+    final Map<JetElement, Instruction> representativeInstructions = new HashMap<JetElement, Instruction>();
+    final Map<JetExpression, LoopInfo> loopInfo = Maps.newHashMap();
     
     private final List<PseudocodeLabel> labels = new ArrayList<PseudocodeLabel>();
     private final List<PseudocodeLabel> allowedDeadLabels = new ArrayList<PseudocodeLabel>();
@@ -85,16 +91,20 @@ public class Pseudocode {
     private SubroutineExitInstruction errorInstruction;
     private boolean postPrecessed = false;
 
-    public Pseudocode(JetElement correspondingElement) {
+    public PseudocodeImpl(JetElement correspondingElement) {
         this.correspondingElement = correspondingElement;
     }
 
+    @NotNull
+    @Override
     public JetElement getCorrespondingElement() {
         return correspondingElement;
     }
 
-    public Set<Pseudocode> getLocalDeclarations() {
-        Set<Pseudocode> localDeclarations = Sets.newLinkedHashSet();
+    @NotNull
+    @Override
+    public Set<IPseudocode> getLocalDeclarations() {
+        Set<IPseudocode> localDeclarations = Sets.newLinkedHashSet();
         //todo look recursively inside local declarations
         for (Instruction instruction : instructions) {
             if (instruction instanceof LocalDeclarationInstruction) {
@@ -118,6 +128,7 @@ public class Pseudocode {
         stopAllowDeadLabels.add((PseudocodeLabel) label);
     }
 
+    @Override
     @NotNull
     public List<Instruction> getInstructions() {
         return instructions;
@@ -128,7 +139,8 @@ public class Pseudocode {
     public List<Instruction> getMutableInstructionList() {
         return mutableInstructionList;
     }
-    
+
+    @Override
     @NotNull
     public List<Instruction> getDeadInstructions() {
         if (deadInstructions != null) {
@@ -174,19 +186,30 @@ public class Pseudocode {
     public void addInstruction(Instruction instruction) {
         mutableInstructionList.add(instruction);
         instruction.setOwner(this);
+
+        if (instruction instanceof JetElementInstruction) {
+            JetElementInstruction elementInstruction = (JetElementInstruction) instruction;
+            representativeInstructions.put(elementInstruction.getElement(), instruction);
+        }
     }
 
+    public void recordLoopInfo(JetExpression expression, LoopInfo blockInfo) {
+        loopInfo.put(expression, blockInfo);
+    }
+
+    @Override
     @NotNull
     public SubroutineExitInstruction getExitInstruction() {
         return exitInstruction;
     }
 
+    @Override
     @NotNull
     public SubroutineSinkInstruction getSinkInstruction() {
         return sinkInstruction;
     }
 
-
+    @Override
     @NotNull
     public SubroutineEnterInstruction getEnterInstruction() {
         return (SubroutineEnterInstruction) mutableInstructionList.get(0);
@@ -251,7 +274,7 @@ public class Pseudocode {
 
             @Override
             public void visitLocalDeclarationInstruction(LocalDeclarationInstruction instruction) {
-                instruction.getBody().postProcess();
+                ((PseudocodeImpl)instruction.getBody()).postProcess();
                 instruction.setNext(getSinkInstruction());
             }
 
