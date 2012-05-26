@@ -32,7 +32,7 @@ import java.util.*;
 * @author abreslav
 * @author svtk
 */
-public class PseudocodeImpl implements IPseudocode {
+public class PseudocodeImpl implements Pseudocode {
 
     public class PseudocodeLabel implements Label {
         private final String name;
@@ -103,8 +103,8 @@ public class PseudocodeImpl implements IPseudocode {
 
     @NotNull
     @Override
-    public Set<IPseudocode> getLocalDeclarations() {
-        Set<IPseudocode> localDeclarations = Sets.newLinkedHashSet();
+    public Set<Pseudocode> getLocalDeclarations() {
+        Set<Pseudocode> localDeclarations = Sets.newLinkedHashSet();
         //todo look recursively inside local declarations
         for (Instruction instruction : instructions) {
             if (instruction instanceof LocalDeclarationInstruction) {

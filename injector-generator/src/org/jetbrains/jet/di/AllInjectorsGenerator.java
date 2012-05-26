@@ -26,7 +26,6 @@ import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.ScriptCodegen;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
@@ -93,7 +92,6 @@ public class AllInjectorsGenerator {
         generator.addPublicParameter(TopDownAnalysisParameters.class);
         generator.addPublicParameter(ObservableBindingTrace.class);
         generator.addParameter(ModuleDescriptor.class);
-        generator.addParameter(JetControlFlowDataTraceFactory.class, false);
     }
 
     private static void generateMacroInjector() throws IOException {

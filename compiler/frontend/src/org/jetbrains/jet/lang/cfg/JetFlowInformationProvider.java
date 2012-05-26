@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.cfg;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -33,12 +32,14 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetMainDetector;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CAPTURED_IN_CLOSURE;
@@ -49,67 +50,22 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
  */
 public class JetFlowInformationProvider {
 
-    private final Map<JetElement, Pseudocode> pseudocodeMap;
-    private final Map<JetElement, PseudocodeData> pseudocodeDataMap;
+    private final JetDeclaration subroutine;
+    private final Pseudocode pseudocode;
+    private final PseudocodeData pseudocodeData;
     private BindingTrace trace;
 
-    public JetFlowInformationProvider(@NotNull JetDeclaration declaration, @NotNull final JetExpression bodyExpression, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory, @NotNull BindingTrace trace) {
+    public JetFlowInformationProvider(
+            @NotNull JetDeclaration declaration,
+            @NotNull BindingTrace trace) {
+
+        subroutine = declaration;
         this.trace = trace;
-        final JetPseudocodeTrace pseudocodeTrace = flowDataTraceFactory.createTrace(declaration);
-        pseudocodeMap = new LinkedHashMap<JetElement, Pseudocode>();
-        pseudocodeDataMap = new HashMap<JetElement, PseudocodeData>();
-        final Map<JetElement, Instruction> representativeInstructions = new HashMap<JetElement, Instruction>();
-        final Map<JetExpression, LoopInfo> loopInfo = Maps.newHashMap();
-        JetPseudocodeTrace wrappedTrace = new JetPseudocodeTrace() {
-            @Override
-            public void recordControlFlowData(@NotNull JetElement element, @NotNull Pseudocode pseudocode) {
-                pseudocodeTrace.recordControlFlowData(element, pseudocode);
-                pseudocodeMap.put(element, pseudocode);
-            }
-
-            @Override
-            public void recordRepresentativeInstruction(@NotNull JetElement element, @NotNull Instruction instruction) {
-                Instruction oldValue = representativeInstructions.put(element, instruction);
-//                assert oldValue == null : element.getText();
-                pseudocodeTrace.recordRepresentativeInstruction(element, instruction);
-            }
-
-            @Override
-            public void recordLoopInfo(JetExpression expression, LoopInfo blockInfo) {
-                loopInfo.put(expression, blockInfo);
-                pseudocodeTrace.recordLoopInfo(expression, blockInfo);
-            }
-
-            @Override
-            public void close() {
-                pseudocodeTrace.close();
-                List<Pseudocode> values = Lists.newArrayList(pseudocodeMap.values());
-                Collections.reverse(values);
-                for (Pseudocode pseudocode : values) {
-                    pseudocode.postProcess();
-                }
-            }
-        };
-        JetControlFlowInstructionsGenerator instructionsGenerator = new JetControlFlowInstructionsGenerator(wrappedTrace);
-        new JetControlFlowProcessor(trace, instructionsGenerator).generate(declaration);
-        wrappedTrace.close();
+        pseudocode = new JetControlFlowProcessor(trace).generatePseudocode(declaration);
+        pseudocodeData = new PseudocodeData(pseudocode, trace);
     }
 
-    private PseudocodeData getPseudocodeData(@NotNull JetElement element) {
-        PseudocodeData pseudocodeData = pseudocodeDataMap.get(element);
-        if (pseudocodeData == null) {
-            Pseudocode pseudocode = pseudocodeMap.get(element);
-            assert pseudocode != null;
-            pseudocodeData = new PseudocodeData(pseudocode, trace);
-            pseudocodeDataMap.put(element, pseudocodeData);
-        }
-        return pseudocodeData;
-    }
-
-    private void collectReturnExpressions(@NotNull JetElement subroutine, @NotNull final Collection<JetElement> returnedExpressions) {
-        Pseudocode pseudocode = pseudocodeMap.get(subroutine);
-        assert pseudocode != null;
-
+    private void collectReturnExpressions(@NotNull final Collection<JetElement> returnedExpressions) {
         final Set<Instruction> instructions = Sets.newHashSet(pseudocode.getInstructions());
         SubroutineExitInstruction exitInstruction = pseudocode.getExitInstruction();
         for (Instruction previousInstruction : exitInstruction.getPreviousInstructions()) {
@@ -164,14 +120,16 @@ public class JetFlowInformationProvider {
         }
     }
     
-    public void checkDefiniteReturn(@NotNull final JetDeclarationWithBody function, final @NotNull JetType expectedReturnType) {
+    public void checkDefiniteReturn(final @NotNull JetType expectedReturnType) {
+        assert subroutine instanceof JetDeclarationWithBody;
+        JetDeclarationWithBody function = (JetDeclarationWithBody) subroutine;
         assert function instanceof JetDeclaration;
 
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
         
         List<JetElement> returnedExpressions = Lists.newArrayList();
-        collectReturnExpressions(function.asElement(), returnedExpressions);
+        collectReturnExpressions(returnedExpressions);
 
         boolean nothingReturned = returnedExpressions.isEmpty();
 
@@ -211,9 +169,6 @@ public class JetFlowInformationProvider {
     }
 
     private Set<JetElement> collectUnreachableCode(@NotNull JetElement subroutine) {
-        Pseudocode pseudocode = pseudocodeMap.get(subroutine);
-        assert pseudocode != null;
-
         Collection<JetElement> unreachableElements = Lists.newArrayList();
         for (Instruction deadInstruction : pseudocode.getDeadInstructions()) {
             if (deadInstruction instanceof JetElementInstruction &&
@@ -228,12 +183,11 @@ public class JetFlowInformationProvider {
 ////////////////////////////////////////////////////////////////////////////////
 //  Uninitialized variables analysis
 
-    public void markUninitializedVariables(@NotNull JetElement subroutine, final boolean processLocalDeclaration) {
+    public void markUninitializedVariables(final boolean processLocalDeclaration) {
         final Collection<VariableDescriptor> varWithUninitializedErrorGenerated = Sets.newHashSet();
         final Collection<VariableDescriptor> varWithValReassignErrorGenerated = Sets.newHashSet();
         final boolean processClassOrObject = subroutine instanceof JetClassOrObject;
 
-        final PseudocodeData pseudocodeData = getPseudocodeData(subroutine);
         pseudocodeData.traverseInstructionsGraph(true, true, new PseudocodeData.TraverseInstructionGraphStrategy() {
             @Override
             public void execute(@NotNull Instruction instruction, @NotNull DeclarationData declarationData, @NotNull InstructionData instructionData) {
@@ -447,20 +401,10 @@ public class JetFlowInformationProvider {
         }
     }
 
-    private void analyzeLocalDeclarations(Pseudocode pseudocode, boolean processLocalDeclaration) {
-        for (Instruction instruction : pseudocode.getInstructions()) {
-            if (instruction instanceof LocalDeclarationInstruction) {
-                JetElement element = ((LocalDeclarationInstruction) instruction).getElement();
-                markUninitializedVariables(element, processLocalDeclaration);
-            }
-        }
-    }
-
 ////////////////////////////////////////////////////////////////////////////////
 //  "Unused variable" & "unused value" analyses
 
-    public void markUnusedVariables(@NotNull JetElement subroutine) {
-        final PseudocodeData pseudocodeData = getPseudocodeData(subroutine);
+    public void markUnusedVariables() {
         pseudocodeData.traverseInstructionsGraph(true, false, new PseudocodeData.TraverseInstructionGraphStrategy() {
             @Override
             public void execute(@NotNull Instruction instruction, @NotNull DeclarationData declarationData, @NotNull InstructionData instructionData) {
@@ -541,8 +485,7 @@ public class JetFlowInformationProvider {
 ////////////////////////////////////////////////////////////////////////////////
 //  "Unused literals" in block
     
-    public void markUnusedLiteralsInBlock(@NotNull JetElement subroutine) {
-        Pseudocode pseudocode = pseudocodeMap.get(subroutine);
+    public void markUnusedLiteralsInBlock() {
         assert pseudocode != null;
         JetControlFlowGraphTraverser<Void> traverser = JetControlFlowGraphTraverser.create(pseudocode, true, true);
         traverser.traverseAndAnalyzeInstructionGraph(new JetControlFlowGraphTraverser.InstructionDataAnalyzeStrategy<Void>() {

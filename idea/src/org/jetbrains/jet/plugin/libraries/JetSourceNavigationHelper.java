@@ -33,7 +33,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import jet.Tuple2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -74,8 +73,7 @@ public class JetSourceNavigationHelper {
         BindingContext bindingContext = AnalyzerFacadeProvider.getAnalyzerFacadeForProject(project).analyzeFiles(
                 project,
                 libraryFiles,
-                Predicates.<PsiFile>alwaysTrue(),
-                JetControlFlowDataTraceFactory.EMPTY).getBindingContext();
+                Predicates.<PsiFile>alwaysTrue()).getBindingContext();
         D descriptor = bindingContext.get(slice, fqName);
         if (descriptor != null) {
             return new Tuple2<BindingContext, D>(bindingContext, descriptor);

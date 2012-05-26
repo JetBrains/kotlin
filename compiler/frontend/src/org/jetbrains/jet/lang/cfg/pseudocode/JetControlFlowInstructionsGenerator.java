@@ -35,12 +35,6 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
     private final Stack<BlockInfo> allBlocks = new Stack<BlockInfo>();
 
-    private final JetPseudocodeTrace trace;
-
-    public JetControlFlowInstructionsGenerator(JetPseudocodeTrace trace) {
-        this.trace = trace;
-    }
-
     private void pushBuilder(JetElement scopingElement, JetElement subroutine) {
         JetControlFlowInstructionsGeneratorWorker worker = new JetControlFlowInstructionsGeneratorWorker(scopingElement, subroutine);
         builders.push(worker);
@@ -49,7 +43,6 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
     private JetControlFlowInstructionsGeneratorWorker popBuilder(@NotNull JetElement element) {
         JetControlFlowInstructionsGeneratorWorker worker = builders.pop();
-        trace.recordControlFlowData(element, worker.getPseudocode());
         if (!builders.isEmpty()) {
             builder = builders.peek();
         }
@@ -72,7 +65,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
     }
 
     @Override
-    public void exitSubroutine(@NotNull JetDeclaration subroutine) {
+    public Pseudocode exitSubroutine(@NotNull JetDeclaration subroutine) {
         super.exitSubroutine(subroutine);
         JetControlFlowInstructionsGeneratorWorker worker = popBuilder(subroutine);
         if (!builders.empty()) {
@@ -80,32 +73,29 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             LocalDeclarationInstruction instruction = new LocalDeclarationInstruction(subroutine, worker.getPseudocode());
             builder.add(instruction);
         }
+        return worker.getPseudocode();
     }
 
     private class JetControlFlowInstructionsGeneratorWorker implements JetControlFlowBuilder {
 
-        private final Pseudocode pseudocode;
+        private final PseudocodeImpl pseudocode;
         private final Label error;
         private final Label sink;
         private final JetElement returnSubroutine;
 
         private JetControlFlowInstructionsGeneratorWorker(@NotNull JetElement scopingElement, @NotNull JetElement returnSubroutine) {
-            this.pseudocode = new Pseudocode(scopingElement);
+            this.pseudocode = new PseudocodeImpl(scopingElement);
             this.error = pseudocode.createLabel("error");
             this.sink = pseudocode.createLabel("sink");
             this.returnSubroutine = returnSubroutine;
         }
 
-        public Pseudocode getPseudocode() {
+        public PseudocodeImpl getPseudocode() {
             return pseudocode;
         }
 
         private void add(@NotNull Instruction instruction) {
             pseudocode.addInstruction(instruction);
-            if (instruction instanceof JetElementInstruction) {
-                JetElementInstruction elementInstruction = (JetElementInstruction) instruction;
-                trace.recordRepresentativeInstruction(elementInstruction.getElement(), instruction);
-            }
         }
 
         @NotNull
@@ -127,7 +117,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             loopInfo.push(blockInfo);
             elementToBlockInfo.put(expression, blockInfo);
             allBlocks.push(blockInfo);
-            trace.recordLoopInfo(expression, blockInfo);
+            pseudocode.recordLoopInfo(expression, blockInfo);
             return blockInfo;
         }
 
@@ -202,7 +192,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void exitSubroutine(@NotNull JetDeclaration subroutine) {
+        public Pseudocode exitSubroutine(@NotNull JetDeclaration subroutine) {
             bindLabel(getExitPoint(subroutine));
             pseudocode.addExitInstruction(new SubroutineExitInstruction(subroutine, "<END>"));
             bindLabel(error);
@@ -211,6 +201,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             pseudocode.addSinkInstruction(new SubroutineSinkInstruction(subroutine, "<SINK>"));
             elementToBlockInfo.remove(subroutine);
             allBlocks.pop();
+            return null;
         }
 
         @Override
