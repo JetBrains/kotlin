@@ -76,10 +76,13 @@ public class PseudocodeImpl implements Pseudocode {
 
     private final List<Instruction> mutableInstructionList = new ArrayList<Instruction>();
     private final List<Instruction> instructions = new ArrayList<Instruction>();
+    private List<Instruction> reversedInstructions = null;
     private List<Instruction> deadInstructions;
 
-    final Map<JetElement, Instruction> representativeInstructions = new HashMap<JetElement, Instruction>();
-    final Map<JetExpression, LoopInfo> loopInfo = Maps.newHashMap();
+    private Set<LocalDeclarationInstruction> localDeclarations = null;
+    //todo getters
+    private final Map<JetElement, Instruction> representativeInstructions = new HashMap<JetElement, Instruction>();
+    private final Map<JetExpression, LoopInfo> loopInfo = Maps.newHashMap();
     
     private final List<PseudocodeLabel> labels = new ArrayList<PseudocodeLabel>();
     private final List<PseudocodeLabel> allowedDeadLabels = new ArrayList<PseudocodeLabel>();
@@ -103,28 +106,30 @@ public class PseudocodeImpl implements Pseudocode {
 
     @NotNull
     @Override
-    public Set<Pseudocode> getLocalDeclarations() {
-        Set<Pseudocode> localDeclarations = Sets.newLinkedHashSet();
-        //todo look recursively inside local declarations
-        for (Instruction instruction : instructions) {
-            if (instruction instanceof LocalDeclarationInstruction) {
-                localDeclarations.add(((LocalDeclarationInstruction) instruction).getBody());
+    public Set<LocalDeclarationInstruction> getLocalDeclarations() {
+        if (localDeclarations == null) {
+            localDeclarations = Sets.newLinkedHashSet();
+            //todo look recursively inside local declarations
+            for (Instruction instruction : instructions) {
+                if (instruction instanceof LocalDeclarationInstruction) {
+                    localDeclarations.add((LocalDeclarationInstruction) instruction);
+                }
             }
         }
         return localDeclarations;
     }
 
-    public PseudocodeLabel createLabel(String name) {
+    /*package*/ PseudocodeLabel createLabel(String name) {
         PseudocodeLabel label = new PseudocodeLabel(name);
         labels.add(label);
         return label;
     }
     
-    public void allowDead(Label label) {
+    /*package*/ void allowDead(Label label) {
         allowedDeadLabels.add((PseudocodeLabel) label);
     }
     
-    public void stopAllowDead(Label label) {
+    /*package*/ void stopAllowDead(Label label) {
         stopAllowDeadLabels.add((PseudocodeLabel) label);
     }
 
@@ -134,9 +139,30 @@ public class PseudocodeImpl implements Pseudocode {
         return instructions;
     }
 
-    @Deprecated //for tests only
     @NotNull
-    public List<Instruction> getMutableInstructionList() {
+    @Override
+    public List<Instruction> getReversedInstructions() {
+        if (reversedInstructions == null) {
+            LinkedHashSet<Instruction> traversedInstructions = Sets.newLinkedHashSet();
+            traverseInstructionsInReverseOrder(sinkInstruction, traversedInstructions);
+            reversedInstructions = Lists.newArrayList(traversedInstructions);
+        }
+        return reversedInstructions;
+    }
+
+    private static void traverseInstructionsInReverseOrder(@NotNull Instruction instruction,
+            @NotNull LinkedHashSet<Instruction> instructions) {
+        if (instructions.contains(instruction)) return;
+        instructions.add(instruction);
+        for (Instruction previousInstruction : instruction.getPreviousInstructions()) {
+            traverseInstructionsInReverseOrder(previousInstruction, instructions);
+        }
+    }
+
+
+    //for tests only
+    @NotNull
+    public List<Instruction> getAllInstructions() {
         return mutableInstructionList;
     }
 
@@ -159,31 +185,31 @@ public class PseudocodeImpl implements Pseudocode {
         return deadInstructions;
     }
 
-    @Deprecated //for tests only
+    //for tests only
     @NotNull
     public List<PseudocodeLabel> getLabels() {
         return labels;
     }
 
-    public void addExitInstruction(SubroutineExitInstruction exitInstruction) {
+    /*package*/ void addExitInstruction(SubroutineExitInstruction exitInstruction) {
         addInstruction(exitInstruction);
         assert this.exitInstruction == null;
         this.exitInstruction = exitInstruction;
     }
     
-    public void addSinkInstruction(SubroutineSinkInstruction sinkInstruction) {
+    /*package*/ void addSinkInstruction(SubroutineSinkInstruction sinkInstruction) {
         addInstruction(sinkInstruction);
         assert this.sinkInstruction == null;
         this.sinkInstruction = sinkInstruction;
     }
 
-    public void addErrorInstruction(SubroutineExitInstruction errorInstruction) {
+    /*package*/ void addErrorInstruction(SubroutineExitInstruction errorInstruction) {
         addInstruction(errorInstruction);
         assert this.errorInstruction == null;
         this.errorInstruction = errorInstruction;
     }
 
-    public void addInstruction(Instruction instruction) {
+    /*package*/ void addInstruction(Instruction instruction) {
         mutableInstructionList.add(instruction);
         instruction.setOwner(this);
 
@@ -193,7 +219,7 @@ public class PseudocodeImpl implements Pseudocode {
         }
     }
 
-    public void recordLoopInfo(JetExpression expression, LoopInfo blockInfo) {
+    /*package*/ void recordLoopInfo(JetExpression expression, LoopInfo blockInfo) {
         loopInfo.put(expression, blockInfo);
     }
 
@@ -215,7 +241,7 @@ public class PseudocodeImpl implements Pseudocode {
         return (SubroutineEnterInstruction) mutableInstructionList.get(0);
     }
 
-    public void bindLabel(Label label) {
+    /*package*/ void bindLabel(Label label) {
         ((PseudocodeLabel) label).setTargetInstructionIndex(mutableInstructionList.size());
     }
 

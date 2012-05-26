@@ -140,7 +140,7 @@ public class JetFlowInformationProvider {
         }
         final boolean blockBody = function.hasBlockBody();
         
-        final Set<JetElement> rootUnreachableElements = collectUnreachableCode(function.asElement());
+        final Set<JetElement> rootUnreachableElements = collectUnreachableCode();
         for (JetElement element : rootUnreachableElements) {
             trace.report(UNREACHABLE_CODE.on(element));
         }
@@ -168,7 +168,7 @@ public class JetFlowInformationProvider {
         }
     }
 
-    private Set<JetElement> collectUnreachableCode(@NotNull JetElement subroutine) {
+    private Set<JetElement> collectUnreachableCode() {
         Collection<JetElement> unreachableElements = Lists.newArrayList();
         for (Instruction deadInstruction : pseudocode.getDeadInstructions()) {
             if (deadInstruction instanceof JetElementInstruction &&
@@ -223,8 +223,8 @@ public class JetFlowInformationProvider {
 
         Pseudocode pseudocode = pseudocodeData.getPseudocode();
         recordInitializedVariables(pseudocodeData.getDeclarationData(pseudocode), pseudocodeData.getResultInfo(pseudocode));
-        for (Pseudocode localPseudocode : pseudocode.getLocalDeclarations()) {
-            recordInitializedVariables(pseudocodeData.getDeclarationData(localPseudocode), pseudocodeData.getResultInfo(localPseudocode));
+        for (LocalDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
+            recordInitializedVariables(pseudocodeData.getDeclarationData(instruction.getBody()), pseudocodeData.getResultInfo(instruction.getBody()));
         }
     }
 

@@ -32,22 +32,22 @@ import java.util.*;
 public class JetControlFlowGraphTraverser<D> {
     private final Pseudocode pseudocode;
     private final boolean lookInside;
-    private final boolean straightDirection;
+    private final boolean directOrder;
     private final Map<Instruction, Pair<D, D>> dataMap = Maps.newLinkedHashMap();
 
     public static <D> JetControlFlowGraphTraverser<D> create(@NotNull Pseudocode pseudocode, boolean lookInside, boolean straightDirection) {
         return new JetControlFlowGraphTraverser<D>(pseudocode, lookInside, straightDirection);
     }
 
-    private JetControlFlowGraphTraverser(@NotNull Pseudocode pseudocode, boolean lookInside, boolean straightDirection) {
+    private JetControlFlowGraphTraverser(@NotNull Pseudocode pseudocode, boolean lookInside, boolean directOrder) {
         this.pseudocode = pseudocode;
         this.lookInside = lookInside;
-        this.straightDirection = straightDirection;
+        this.directOrder = directOrder;
     }
 
     @NotNull
     private Instruction getStartInstruction(@NotNull Pseudocode pseudocode) {
-        return straightDirection ? pseudocode.getEnterInstruction() : pseudocode.getSinkInstruction();
+        return directOrder ? pseudocode.getEnterInstruction() : pseudocode.getSinkInstruction();
     }
 
     @NotNull
@@ -84,42 +84,21 @@ public class JetControlFlowGraphTraverser<D> {
         }
     }
 
-    private static List<Instruction> reverseInstructions(@NotNull Pseudocode pseudocode) {
-        LinkedHashSet<Instruction> traversedInstructions = Sets.newLinkedHashSet();
-        Instruction sinkInstruction = pseudocode.getSinkInstruction();
-        traverseInstructions(sinkInstruction, traversedInstructions);
-        return Lists.newArrayList(traversedInstructions);
-    }
-
-    private static void traverseInstructions(@NotNull Instruction instruction, @NotNull LinkedHashSet<Instruction> instructions) {
-        if (((InstructionImpl)instruction).isDead()) return;
-        if (instructions.contains(instruction)) return;
-        instructions.add(instruction);
-        for (Instruction previousInstruction : instruction.getPreviousInstructions()) {
-            traverseInstructions(previousInstruction, instructions);
-        }
-    }
-
     private void traverseSubGraph(
             @NotNull Pseudocode pseudocode,
             @NotNull InstructionDataMergeStrategy<D> instructionDataMergeStrategy,
             @NotNull Collection<Instruction> previousSubGraphInstructions,
             boolean[] changed,
             boolean isLocal) {
-        List<Instruction> instructions = pseudocode.getInstructions();
+        List<Instruction> instructions = directOrder ? pseudocode.getInstructions() : pseudocode.getReversedInstructions();
         Instruction startInstruction = getStartInstruction(pseudocode);
 
-        if (!straightDirection) {
-            instructions = reverseInstructions(pseudocode);
-        }
         for (Instruction instruction : instructions) {
-            boolean isStart = straightDirection ? instruction instanceof SubroutineEnterInstruction : instruction instanceof SubroutineSinkInstruction;
+            boolean isStart = directOrder ? instruction instanceof SubroutineEnterInstruction : instruction instanceof SubroutineSinkInstruction;
             if (!isLocal && isStart) continue;
 
             Collection<Instruction> allPreviousInstructions;
-            Collection<Instruction> previousInstructions = straightDirection
-                                                           ? instruction.getPreviousInstructions()
-                                                           : instruction.getNextInstructions();
+            Collection<Instruction> previousInstructions = directOrder ? instruction.getPreviousInstructions() : instruction.getNextInstructions();
 
             if (instruction == startInstruction && !previousSubGraphInstructions.isEmpty()) {
                 allPreviousInstructions = Lists.newArrayList(previousInstructions);
@@ -132,7 +111,7 @@ public class JetControlFlowGraphTraverser<D> {
             if (lookInside && instruction instanceof LocalDeclarationInstruction) {
                 Pseudocode subroutinePseudocode = ((LocalDeclarationInstruction) instruction).getBody();
                 traverseSubGraph(subroutinePseudocode, instructionDataMergeStrategy, previousInstructions, changed, true);
-                Instruction lastInstruction = straightDirection ? subroutinePseudocode.getSinkInstruction() : subroutinePseudocode.getEnterInstruction();
+                Instruction lastInstruction = directOrder ? subroutinePseudocode.getSinkInstruction() : subroutinePseudocode.getEnterInstruction();
                 Pair<D, D> previousValue = dataMap.get(instruction);
                 Pair<D, D> newValue = dataMap.get(lastInstruction);
                 if (!previousValue.equals(newValue)) {
@@ -168,7 +147,7 @@ public class JetControlFlowGraphTraverser<D> {
             @NotNull Pseudocode pseudocode,
             @NotNull InstructionDataAnalyzeStrategy<D> instructionDataAnalyzeStrategy) {
         List<Instruction> instructions = pseudocode.getInstructions();
-        if (!straightDirection) {
+        if (!directOrder) {
             instructions = Lists.newArrayList(instructions);
             Collections.reverse(instructions);
         }

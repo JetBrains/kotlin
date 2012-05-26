@@ -119,8 +119,8 @@ public class PseudocodeData {
         DeclarationData declarationData = new DeclarationData(pseudocode.getCorrespondingElement(), this, collectDeclaredVariables(pseudocode), collectUsedVariables(pseudocode));
         declarationDataMap.put(pseudocode, declarationData);
 
-        for (Pseudocode localPseudocode : pseudocode.getLocalDeclarations()) {
-            collectDeclarationData(localPseudocode);
+        for (LocalDeclarationInstruction localDeclarationInstruction : pseudocode.getLocalDeclarations()) {
+            collectDeclarationData(localDeclarationInstruction.getBody());
         }
     }
 
@@ -180,7 +180,9 @@ public class PseudocodeData {
 
         Map<Instruction, Pair<Map<VariableDescriptor, VariableInitializers>, Map<VariableDescriptor, VariableInitializers>>> result =
                 traverser.getDataMap();
-        for (Pseudocode localPseudocode : pseudocode.getLocalDeclarations()) {
+
+        for (LocalDeclarationInstruction localDeclarationInstruction : pseudocode.getLocalDeclarations()) {
+            Pseudocode localPseudocode = localDeclarationInstruction.getBody();
             Map<Instruction, Pair<Map<VariableDescriptor, VariableInitializers>, Map<VariableDescriptor, VariableInitializers>>> initializersForLocalDeclaration =
                     collectVariableInitializers(localPseudocode, declarationDataMap.get(localPseudocode));
 

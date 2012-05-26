@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.cfg.pseudocode.LocalDeclarationInstruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
@@ -57,8 +58,8 @@ public class JetControlFlowProcessor {
     public Pseudocode generatePseudocode(@NotNull JetDeclaration subroutine) {
         Pseudocode pseudocode = generate(subroutine);
         ((PseudocodeImpl)pseudocode).postProcess();
-        for (Pseudocode localPseudocode : pseudocode.getLocalDeclarations()) {
-            ((PseudocodeImpl)localPseudocode).postProcess();
+        for (LocalDeclarationInstruction localDeclarationInstruction : pseudocode.getLocalDeclarations()) {
+            ((PseudocodeImpl)localDeclarationInstruction.getBody()).postProcess();
         }
         return pseudocode;
     }

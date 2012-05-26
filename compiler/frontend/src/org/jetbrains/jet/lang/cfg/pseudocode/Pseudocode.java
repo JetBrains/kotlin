@@ -30,10 +30,13 @@ public interface Pseudocode {
     JetElement getCorrespondingElement();
 
     @NotNull
-    Set<Pseudocode> getLocalDeclarations();
+    Set<LocalDeclarationInstruction> getLocalDeclarations();
 
     @NotNull
     List<Instruction> getInstructions();
+
+    @NotNull
+    List<Instruction> getReversedInstructions();
 
     @NotNull
     List<Instruction> getDeadInstructions();
