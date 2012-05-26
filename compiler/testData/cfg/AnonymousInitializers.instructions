@@ -1,16 +1,3 @@
-== get_j ==
-get() = 20
----------------------
-l0:
-    <START>    NEXT:[r(20)]     PREV:[]
-    r(20)      NEXT:[<END>]     PREV:[<START>]
-l1:
-    <END>      NEXT:[<SINK>]    PREV:[r(20)]
-error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
-sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
-=====================
 == AnonymousInitializers ==
 class AnonymousInitializers() {
     val k = 34
@@ -49,6 +36,19 @@ error:
     <ERROR>               NEXT:[<SINK>]                       PREV:[]
 sink:
     <SINK>                NEXT:[]                             PREV:[<ERROR>, <END>, d(get() = 20)]
+l3:
+    <START>    NEXT:[r(20)]     PREV:[]
+    r(20)      NEXT:[<END>]     PREV:[<START>]
+l4:
+    <END>      NEXT:[<SINK>]    PREV:[r(20)]
+error:
+    <ERROR>    NEXT:[<SINK>]    PREV:[]
+sink:
+    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+=====================
+== get_j ==
+get() = 20
+---------------------
 l3:
     <START>    NEXT:[r(20)]     PREV:[]
     r(20)      NEXT:[<END>]     PREV:[<START>]

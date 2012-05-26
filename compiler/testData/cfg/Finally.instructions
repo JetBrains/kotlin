@@ -69,33 +69,6 @@ error:
 sink:
     <SINK>              NEXT:[]                                   PREV:[<ERROR>, <END>]
 =====================
-== anonymous_0 ==
-{ () =>
-        if (2 > 3) {
-          return@
-        }
-    }
----------------------
-l3:
-    <START>        NEXT:[r(())]                  PREV:[]
-    r(())          NEXT:[r(2)]                   PREV:[<START>]
-    r(2)           NEXT:[r(3)]                   PREV:[r(())]
-    r(3)           NEXT:[r(>)]                   PREV:[r(2)]
-    r(>)           NEXT:[r(2 > 3)]               PREV:[r(3)]
-    r(2 > 3)       NEXT:[jf(l5)]                 PREV:[r(>)]
-    jf(l5)         NEXT:[read (Unit), ret l4]    PREV:[r(2 > 3)]
-    ret l4         NEXT:[<END>]                  PREV:[jf(l5)]
--   jmp(l6)        NEXT:[<END>]                  PREV:[]
-l5:
-    read (Unit)    NEXT:[<END>]                  PREV:[jf(l5)]
-l4:
-l6:
-    <END>          NEXT:[<SINK>]                 PREV:[ret l4, read (Unit)]
-error:
-    <ERROR>        NEXT:[<SINK>]                 PREV:[]
-sink:
-    <SINK>         NEXT:[]                       PREV:[<ERROR>, <END>]
-=====================
 == t3 ==
 fun t3() {
   try {
@@ -164,50 +137,32 @@ error:
 sink:
     <SINK>         NEXT:[]                       PREV:[<ERROR>, <END>]
 =====================
-== anonymous_1 ==
+== anonymous_0 ==
 { () =>
-    try {
-      1
-      if (2 > 3) {
-        return@
-      }
-    } finally {
-      2
+        if (2 > 3) {
+          return@
+        }
     }
-  }
 ---------------------
 l3:
-    <START>               NEXT:[r(())]                              PREV:[]
-    r(())                 NEXT:[r(try { 1 if (2 > 3) { retur..)]    PREV:[<START>]
-    r(try {           
-          1           
-          if (2 > 3) {
-            return@   
-          }           
-        } finally {   
-          2           
-        })                NEXT:[r(1)]                               PREV:[r(())]
-    r(1)                  NEXT:[r(2)]                               PREV:[r(try { 1 if (2 > 3) { retur..)]
-    r(2)                  NEXT:[r(3)]                               PREV:[r(1)]
-    r(3)                  NEXT:[r(>)]                               PREV:[r(2)]
-    r(>)                  NEXT:[r(2 > 3)]                           PREV:[r(3)]
-    r(2 > 3)              NEXT:[jf(l5)]                             PREV:[r(>)]
-    jf(l5)                NEXT:[read (Unit), r(2)]                  PREV:[r(2 > 3)]
-    r(2)                  NEXT:[ret l4]                             PREV:[jf(l5)]
-    ret l4                NEXT:[<END>]                              PREV:[r(2)]
--   jmp(l6)               NEXT:[r(2)]                               PREV:[]
+    <START>        NEXT:[r(())]                  PREV:[]
+    r(())          NEXT:[r(2)]                   PREV:[<START>]
+    r(2)           NEXT:[r(3)]                   PREV:[r(())]
+    r(3)           NEXT:[r(>)]                   PREV:[r(2)]
+    r(>)           NEXT:[r(2 > 3)]               PREV:[r(3)]
+    r(2 > 3)       NEXT:[jf(l5)]                 PREV:[r(>)]
+    jf(l5)         NEXT:[read (Unit), ret l4]    PREV:[r(2 > 3)]
+    ret l4         NEXT:[<END>]                  PREV:[jf(l5)]
+-   jmp(l6)        NEXT:[<END>]                  PREV:[]
 l5:
-    read (Unit)           NEXT:[r(2)]                               PREV:[jf(l5)]
-l6:
-l7:
-    r(2)                  NEXT:[<END>]                              PREV:[read (Unit)]
+    read (Unit)    NEXT:[<END>]                  PREV:[jf(l5)]
 l4:
-l8:
-    <END>                 NEXT:[<SINK>]                             PREV:[ret l4, r(2)]
+l6:
+    <END>          NEXT:[<SINK>]                 PREV:[ret l4, read (Unit)]
 error:
-    <ERROR>               NEXT:[<SINK>]                             PREV:[]
+    <ERROR>        NEXT:[<SINK>]                 PREV:[]
 sink:
-    <SINK>                NEXT:[]                                   PREV:[<ERROR>, <END>]
+    <SINK>         NEXT:[]                       PREV:[<ERROR>, <END>]
 =====================
 == t4 ==
 fun t4() {
@@ -253,6 +208,51 @@ error:
     <ERROR>               NEXT:[<SINK>]                                                              PREV:[]
 sink:
     <SINK>                NEXT:[]                                                                    PREV:[<ERROR>, <END>, d({ () => try { 1 if (2 > 3)..)]
+l3:
+    <START>               NEXT:[r(())]                              PREV:[]
+    r(())                 NEXT:[r(try { 1 if (2 > 3) { retur..)]    PREV:[<START>]
+    r(try {           
+          1           
+          if (2 > 3) {
+            return@   
+          }           
+        } finally {   
+          2           
+        })                NEXT:[r(1)]                               PREV:[r(())]
+    r(1)                  NEXT:[r(2)]                               PREV:[r(try { 1 if (2 > 3) { retur..)]
+    r(2)                  NEXT:[r(3)]                               PREV:[r(1)]
+    r(3)                  NEXT:[r(>)]                               PREV:[r(2)]
+    r(>)                  NEXT:[r(2 > 3)]                           PREV:[r(3)]
+    r(2 > 3)              NEXT:[jf(l5)]                             PREV:[r(>)]
+    jf(l5)                NEXT:[read (Unit), r(2)]                  PREV:[r(2 > 3)]
+    r(2)                  NEXT:[ret l4]                             PREV:[jf(l5)]
+    ret l4                NEXT:[<END>]                              PREV:[r(2)]
+-   jmp(l6)               NEXT:[r(2)]                               PREV:[]
+l5:
+    read (Unit)           NEXT:[r(2)]                               PREV:[jf(l5)]
+l6:
+l7:
+    r(2)                  NEXT:[<END>]                              PREV:[read (Unit)]
+l4:
+l8:
+    <END>                 NEXT:[<SINK>]                             PREV:[ret l4, r(2)]
+error:
+    <ERROR>               NEXT:[<SINK>]                             PREV:[]
+sink:
+    <SINK>                NEXT:[]                                   PREV:[<ERROR>, <END>]
+=====================
+== anonymous_1 ==
+{ () =>
+    try {
+      1
+      if (2 > 3) {
+        return@
+      }
+    } finally {
+      2
+    }
+  }
+---------------------
 l3:
     <START>               NEXT:[r(())]                              PREV:[]
     r(())                 NEXT:[r(try { 1 if (2 > 3) { retur..)]    PREV:[<START>]

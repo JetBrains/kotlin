@@ -1,16 +1,3 @@
-== anonymous_0 ==
-{1}
----------------------
-l3:
-    <START>    NEXT:[r(1)]      PREV:[]
-    r(1)       NEXT:[<END>]     PREV:[<START>]
-l4:
-    <END>      NEXT:[<SINK>]    PREV:[r(1)]
-error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
-sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
-=====================
 == f ==
 fun f(a : Boolean) : Unit {
     1
@@ -81,6 +68,19 @@ error:
     <ERROR>             NEXT:[<SINK>]                     PREV:[]
 sink:
     <SINK>              NEXT:[]                           PREV:[<ERROR>, <END>, d({1})]
+l3:
+    <START>    NEXT:[r(1)]      PREV:[]
+    r(1)       NEXT:[<END>]     PREV:[<START>]
+l4:
+    <END>      NEXT:[<SINK>]    PREV:[r(1)]
+error:
+    <ERROR>    NEXT:[<SINK>]    PREV:[]
+sink:
+    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+=====================
+== anonymous_0 ==
+{1}
+---------------------
 l3:
     <START>    NEXT:[r(1)]      PREV:[]
     r(1)       NEXT:[<END>]     PREV:[<START>]
