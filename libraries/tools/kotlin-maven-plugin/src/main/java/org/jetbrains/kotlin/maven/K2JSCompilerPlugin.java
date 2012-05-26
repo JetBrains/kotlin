@@ -24,10 +24,12 @@ import org.jetbrains.jet.internal.com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.config.Config;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.jetbrains.k2js.facade.MainCallParameters;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +38,12 @@ import java.util.List;
  * Compiles Kotlin code to JavaScript
  */
 public class K2JSCompilerPlugin implements CompilerPlugin {
+    private final String jsLibrarySourceDir;
     private String outFile = "target/js/program.js";
+
+    public K2JSCompilerPlugin(String jsLibrarySourceDir) {
+        this.jsLibrarySourceDir = jsLibrarySourceDir;
+    }
 
     @Override
     public void processFiles(@NotNull CompilerPluginContext context) {
@@ -45,7 +52,21 @@ public class K2JSCompilerPlugin implements CompilerPlugin {
         List<JetFile> sources = context.getFiles();
 
         if (bindingContext != null && sources != null && project != null) {
-            Config config = Config.getEmptyConfig(project);
+            Config config;
+            if (jsLibrarySourceDir != null) {
+                config = new JsLibrarySourceConfig(project, EcmaVersion.defaultVersion(), jsLibrarySourceDir);
+
+                // lets copy the kotlin library into the output directory
+                try {
+                    File parentFile = new File(outFile).getParentFile();
+                    parentFile.mkdirs();
+                    Files.copy(new File(jsLibrarySourceDir, "../../js.translator/testFiles/kotlin_lib.js"), new File(parentFile, "kotlin-lib.js"));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                config = Config.getEmptyConfig(project);
+            }
 
             try {
 

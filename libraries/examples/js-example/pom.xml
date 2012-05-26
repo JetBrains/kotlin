@@ -31,6 +31,9 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${project.version}</version>
+                <configuration>
+                    <jsLibrarySourceDir>${kotlin-js-lib-srcdir}</jsLibrarySourceDir>
+                </configuration>
                 <executions>
                     <execution>
                         <id>js</id>
