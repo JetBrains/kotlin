@@ -1,4 +1,4 @@
-package sample.browser
+package sample
 
 import kotlin.browser.document
 
