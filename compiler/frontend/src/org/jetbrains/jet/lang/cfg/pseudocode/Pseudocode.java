@@ -25,12 +25,12 @@ import java.util.Set;
 /**
  * @author svtk
  */
-public interface IPseudocode {
+public interface Pseudocode {
     @NotNull
     JetElement getCorrespondingElement();
 
     @NotNull
-    Set<IPseudocode> getLocalDeclarations();
+    Set<Pseudocode> getLocalDeclarations();
 
     @NotNull
     List<Instruction> getInstructions();
