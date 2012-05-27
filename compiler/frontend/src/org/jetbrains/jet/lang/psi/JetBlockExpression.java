@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.lang.psi;
 
-import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiModifiableCodeBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -30,9 +30,14 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetBlockExpression extends JetExpression implements JetStatementExpression {
+public class JetBlockExpression extends JetExpression implements JetStatementExpression, PsiModifiableCodeBlock {
     public JetBlockExpression(@NotNull ASTNode node) {
         super(node);
+    }
+
+    @Override
+    public boolean shouldChangeModificationCount(PsiElement place) {
+        return JetModifiableBlockHelper.shouldChangeModificationCount(place);
     }
 
     @Override

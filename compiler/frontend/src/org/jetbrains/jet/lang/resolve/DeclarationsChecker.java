@@ -45,59 +45,49 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
  */
 public class DeclarationsChecker {
     @NotNull
-    private TopDownAnalysisContext context;
-    @NotNull
     private BindingTrace trace;
-
-
-    @Inject
-    public void setContext(@NotNull TopDownAnalysisContext context) {
-        this.context = context;
-    }
 
     @Inject
     public void setTrace(@NotNull BindingTrace trace) {
         this.trace = trace;
     }
 
-
-
-    public void process() {
-        Map<JetClass, MutableClassDescriptor> classes = context.getClasses();
+    public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
+        Map<JetClass, MutableClassDescriptor> classes = bodiesResolveContext.getClasses();
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
             JetClass aClass = entry.getKey();
             MutableClassDescriptor classDescriptor = entry.getValue();
-            if (!context.completeAnalysisNeeded(aClass)) continue;
+            if (!bodiesResolveContext.completeAnalysisNeeded(aClass)) continue;
 
             checkClass(aClass, classDescriptor);
             checkModifiers(aClass.getModifierList(), classDescriptor);
         }
 
-        Map<JetObjectDeclaration, MutableClassDescriptor> objects = context.getObjects();
+        Map<JetObjectDeclaration, MutableClassDescriptor> objects = bodiesResolveContext.getObjects();
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : objects.entrySet()) {
             JetObjectDeclaration objectDeclaration = entry.getKey();
             MutableClassDescriptor objectDescriptor = entry.getValue();
 
-            if (!context.completeAnalysisNeeded(objectDeclaration)) continue;
+            if (!bodiesResolveContext.completeAnalysisNeeded(objectDeclaration)) continue;
             checkObject(objectDeclaration, objectDescriptor);
         }
 
-        Map<JetNamedFunction, SimpleFunctionDescriptor> functions = context.getFunctions();
+        Map<JetNamedFunction, SimpleFunctionDescriptor> functions = bodiesResolveContext.getFunctions();
         for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : functions.entrySet()) {
             JetNamedFunction function = entry.getKey();
             SimpleFunctionDescriptor functionDescriptor = entry.getValue();
 
-            if (!context.completeAnalysisNeeded(function)) continue;
+            if (!bodiesResolveContext.completeAnalysisNeeded(function)) continue;
             checkFunction(function, functionDescriptor);
             checkModifiers(function.getModifierList(), functionDescriptor);
         }
 
-        Map<JetProperty, PropertyDescriptor> properties = context.getProperties();
+        Map<JetProperty, PropertyDescriptor> properties = bodiesResolveContext.getProperties();
         for (Map.Entry<JetProperty, PropertyDescriptor> entry : properties.entrySet()) {
             JetProperty property = entry.getKey();
             PropertyDescriptor propertyDescriptor = entry.getValue();
 
-            if (!context.completeAnalysisNeeded(property)) continue;
+            if (!bodiesResolveContext.completeAnalysisNeeded(property)) continue;
             checkProperty(property, propertyDescriptor);
             checkModifiers(property.getModifierList(), propertyDescriptor);
         }

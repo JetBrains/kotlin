@@ -31,8 +31,6 @@ import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.PrintingMessageCollector;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
@@ -110,9 +108,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
         analyzerWithCompilerReport.analyzeAndReport(new Function0<AnalyzeExhaust>() {
             @Override
             public AnalyzeExhaust invoke() {
-                BindingContext context = AnalyzerFacadeForJS
-                        .analyzeFiles(sources, Predicates.<PsiFile>alwaysTrue(), config);
-                return AnalyzeExhaust.success(context, JetStandardLibrary.getInstance());
+                return AnalyzerFacadeForJS.analyzeFiles(sources, Predicates.<PsiFile>alwaysTrue(), config);
             }
         }, sources);
         return analyzerWithCompilerReport.hasErrors();

@@ -136,7 +136,6 @@ public class TopDownAnalyzer {
         this.declarationsChecker = declarationsChecker;
     }
 
-
     public void doProcess(
             JetScope outerScope,
             NamespaceLikeBuilder owner,
@@ -154,15 +153,18 @@ public class TopDownAnalyzer {
         overloadResolver.process();
 
         if (!topDownAnalysisParameters.isAnalyzingBootstrapLibrary()) {
-            bodyResolver.resolveBehaviorDeclarationBodies();
-            controlFlowAnalyzer.process();
-            declarationsChecker.process();
+            doProcessForBodies(context);
         }
 
         context.debug("Exit");
         context.printDebugOutput(System.out);
     }
 
+    public void doProcessForBodies(BodiesResolveContext bodiesResolveContext) {
+        bodyResolver.resolveBehaviorDeclarationBodies(bodiesResolveContext);
+        controlFlowAnalyzer.process(bodiesResolveContext);
+        declarationsChecker.process(bodiesResolveContext);
+    }
 
     private void lockScopes() {
         for (MutableClassDescriptor mutableClassDescriptor : context.getClasses().values()) {

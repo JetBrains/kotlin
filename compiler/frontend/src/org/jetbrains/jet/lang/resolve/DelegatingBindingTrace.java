@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.util.slicedmap.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,9 @@ public class DelegatingBindingTrace implements BindingTrace {
     private final BindingContext bindingContext = new BindingContext() {
         @Override
         public Collection<Diagnostic> getDiagnostics() {
-            return diagnostics;
+            ArrayList<Diagnostic> mergedDiagnostics = new ArrayList<Diagnostic>(diagnostics);
+            mergedDiagnostics.addAll(parentContext.getDiagnostics());
+            return mergedDiagnostics;
         }
 
         @Override
@@ -79,9 +82,10 @@ public class DelegatingBindingTrace implements BindingTrace {
             assert value != null;
             if (value.equals(true)) return value;
         }
-        else {
-            if (value != null) return value;
+        else if (value != null) {
+            return value;
         }
+
         return parentContext.get(slice, key);
     }
 

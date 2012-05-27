@@ -33,6 +33,8 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
+import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -44,7 +46,9 @@ public final class AnalyzerFacadeWithCache {
 
     private static final Logger LOG = Logger.getInstance("org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache");
 
-    private final static Key<CachedValue<AnalyzeExhaust>> ANALYZE_EXHAUST = Key.create("ANALYZE_EXHAUST");
+    private final static Key<CachedValue<AnalyzeExhaust>> ANALYZE_EXHAUST_HEADERS = Key.create("ANALYZE_EXHAUST_HEADERS");
+    private final static Key<CachedValue<AnalyzeExhaust>> ANALYZE_EXHAUST_FULL = Key.create("ANALYZE_EXHAUST_FULL");
+
     private static final Object lock = new Object();
     public static final Function<JetFile, Collection<JetFile>> SINGLE_DECLARATION_PROVIDER = new Function<JetFile, Collection<JetFile>>() {
         @Override
@@ -64,46 +68,85 @@ public final class AnalyzerFacadeWithCache {
      * @param declarationProvider
      * @return
      */
+    // TODO: Also need to pass several files when user have multi-file environment
     @NotNull
     public static AnalyzeExhaust analyzeFileWithCache(@NotNull final JetFile file,
                                                       @NotNull final Function<JetFile, Collection<JetFile>> declarationProvider) {
         // Need lock for getValue(), because parallel threads can start evaluation of compute() simultaneously
         synchronized (lock) {
-            CachedValue<AnalyzeExhaust> bindingContextCachedValue = file.getUserData(ANALYZE_EXHAUST);
+            CachedValue<AnalyzeExhaust> bindingContextCachedValue = file.getUserData(ANALYZE_EXHAUST_FULL);
             if (bindingContextCachedValue == null) {
                 bindingContextCachedValue =
-                    CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<AnalyzeExhaust>() {
-                        @Override
-                        public Result<AnalyzeExhaust> compute() {
-                            try {
-                                AnalyzeExhaust exhaust = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file)
-                                    .analyzeFiles(file.getProject(),
-                                                  declarationProvider.fun(file),
-                                                  Predicates.<PsiFile>equalTo(file),
-                                                  JetControlFlowDataTraceFactory.EMPTY);
-                                return new Result<AnalyzeExhaust>(exhaust, PsiModificationTracker.MODIFICATION_COUNT);
-                            }
-                            catch (ProcessCanceledException e) {
-                                throw e;
-                            }
-                            catch (Throwable e) {
-                                handleError(e);
-                                return emptyExhaustWithDiagnosticOnFile(e);
-                            }
-                        }
+                        CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<AnalyzeExhaust>() {
+                            @Override
+                            public Result<AnalyzeExhaust> compute() {
+                                try {
+                                    // System.out.println("===============ReCache - In-Block==============");
 
-                        @NotNull
-                        private Result<AnalyzeExhaust> emptyExhaustWithDiagnosticOnFile(Throwable e) {
-                            BindingTraceContext bindingTraceContext = new BindingTraceContext();
-                            bindingTraceContext.report(Errors.EXCEPTION_WHILE_ANALYZING.on(file, e));
-                            AnalyzeExhaust analyzeExhaust = AnalyzeExhaust.error(bindingTraceContext.getBindingContext(), e);
-                            return new Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
-                        }
-                    }, false);
-                file.putUserData(ANALYZE_EXHAUST, bindingContextCachedValue);
+                                    // Collect context for headers first
+                                    Collection<JetFile> allFilesToAnalyze = declarationProvider.fun(file);
+                                    AnalyzeExhaust analyzeExhaustHeaders = analyzeHeadersWithCacheOnFile(file, allFilesToAnalyze);
+
+                                    BodiesResolveContext context = analyzeExhaustHeaders.getBodiesResolveContext();
+                                    assert context != null : "Headers resolver should prepare and stored information for bodies resolve";
+
+                                    // Need to resolve bodies in given file
+                                    AnalyzeExhaust exhaust = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file).analyzeBodiesInFiles(
+                                            file.getProject(),
+                                            Predicates.<PsiFile>equalTo(file),
+                                            JetControlFlowDataTraceFactory.EMPTY,
+                                            new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext()),
+                                            context);
+
+                                    return new Result<AnalyzeExhaust>(exhaust, PsiModificationTracker.MODIFICATION_COUNT);
+                                }
+                                catch (ProcessCanceledException e) {
+                                    throw e;
+                                }
+                                catch (Throwable e) {
+                                    handleError(e);
+                                    return emptyExhaustWithDiagnosticOnFile(e);
+                                }
+                            }
+
+                            @NotNull
+                            private Result<AnalyzeExhaust> emptyExhaustWithDiagnosticOnFile(Throwable e) {
+                                BindingTraceContext bindingTraceContext = new BindingTraceContext();
+                                bindingTraceContext.report(Errors.EXCEPTION_WHILE_ANALYZING.on(file, e));
+                                AnalyzeExhaust analyzeExhaust = AnalyzeExhaust.error(bindingTraceContext.getBindingContext(), e);
+                                return new Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
+                            }
+                        }, false);
+
+                file.putUserData(ANALYZE_EXHAUST_FULL, bindingContextCachedValue);
             }
+
             return bindingContextCachedValue.getValue();
         }
+    }
+
+    private static AnalyzeExhaust analyzeHeadersWithCacheOnFile(@NotNull final JetFile fileToCache,
+                                                                @NotNull final Collection<JetFile> headerFiles) {
+        CachedValue<AnalyzeExhaust> bindingContextCachedValue = fileToCache.getUserData(ANALYZE_EXHAUST_HEADERS);
+        if (bindingContextCachedValue == null) {
+            bindingContextCachedValue =
+                    CachedValuesManager.getManager(fileToCache.getProject()).createCachedValue(new CachedValueProvider<AnalyzeExhaust>() {
+                        @Override
+                        public Result<AnalyzeExhaust> compute() {
+                            // System.out.println("===============ReCache - OUT-OF-BLOCK==============");
+                            AnalyzeExhaust exhaust = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(fileToCache)
+                                    .analyzeFiles(fileToCache.getProject(),
+                                                  headerFiles,
+                                                  Predicates.<PsiFile>alwaysFalse(),
+                                                  JetControlFlowDataTraceFactory.EMPTY);
+
+                            return new Result<AnalyzeExhaust>(exhaust, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+                        }
+                    }, false);
+            fileToCache.putUserData(ANALYZE_EXHAUST_HEADERS, bindingContextCachedValue);
+        }
+
+        return bindingContextCachedValue.getValue();
     }
 
     private static void handleError(@NotNull Throwable e) {
