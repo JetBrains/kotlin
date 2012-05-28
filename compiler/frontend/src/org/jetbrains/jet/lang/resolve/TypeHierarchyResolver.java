@@ -57,6 +57,8 @@ public class TypeHierarchyResolver {
     @NotNull
     private DescriptorResolver descriptorResolver;
     @NotNull
+    private ScriptResolver scriptResolver;
+    @NotNull
     private NamespaceFactoryImpl namespaceFactory;
     @NotNull
     private BindingTrace trace;
@@ -77,6 +79,11 @@ public class TypeHierarchyResolver {
     @Inject
     public void setDescriptorResolver(@NotNull DescriptorResolver descriptorResolver) {
         this.descriptorResolver = descriptorResolver;
+    }
+
+    @Inject
+    public void setScriptResolver(@NotNull ScriptResolver scriptResolver) {
+        this.scriptResolver = scriptResolver;
     }
 
     @Inject
@@ -192,7 +199,7 @@ public class TypeHierarchyResolver {
                 public void visitJetFile(JetFile file) {
                     if (file.isScript()) {
                         JetScript script = file.getScript();
-                        processScript(script);
+                        scriptResolver.processScriptHierarchy(script, outerScope);
                         return;
                     }
 
@@ -206,18 +213,6 @@ public class TypeHierarchyResolver {
                     context.getNamespaceScopes().put(file, namespaceScope);
 
                     prepareForDeferredCall(namespaceScope, namespaceDescriptor, file);
-                }
-
-                private void processScript(JetScript script) {
-                    NamespaceDescriptorImpl ns = namespaceFactory.createNamespaceDescriptorPathIfNeeded(FqName.ROOT);
-                    ScriptDescriptor scriptDescriptor = new ScriptDescriptor(ns);
-                    //WriteThroughScope scriptScope = new WriteThroughScope(
-                    //        outerScope, ns.getMemberScope(), new TraceBasedRedeclarationHandler(trace));
-                    WritableScopeImpl scriptScope = new WritableScopeImpl(outerScope, scriptDescriptor, RedeclarationHandler.DO_NOTHING);
-                    scriptScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-                    context.getScriptScopes().put(script, scriptScope);
-                    context.getScripts().put(script, scriptDescriptor);
-                    trace.record(BindingContext.SCRIPT, script, scriptDescriptor);
                 }
 
                 @Override

@@ -1,0 +1,5 @@
+// expected: sky color is blue
+// param: what: jet.String: sky
+// param: color: jet.String: blue
+
+"$what color is $color"

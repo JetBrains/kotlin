@@ -400,6 +400,25 @@ public class TypeUtils {
         return null;
     }
 
+    @NotNull
+    public static JetType substituteParameters(@NotNull ClassDescriptor clazz, @NotNull List<JetType> actualTypeParameters) {
+        List<TypeParameterDescriptor> clazzTypeParameters = clazz.getTypeConstructor().getParameters();
+
+        if (clazzTypeParameters.size() != actualTypeParameters.size()) {
+            throw new IllegalArgumentException("type parameter counts do not match: " + clazz + ", " + actualTypeParameters);
+        }
+        
+        Map<TypeConstructor, TypeProjection> substitutions = Maps.newHashMap();
+        
+        for (int i = 0; i < clazzTypeParameters.size(); ++i) {
+            TypeConstructor typeConstructor = clazzTypeParameters.get(i).getTypeConstructor();
+            TypeProjection typeProjection = new TypeProjection(actualTypeParameters.get(i));
+            substitutions.put(typeConstructor, typeProjection);
+        }
+        
+        return TypeSubstitutor.create(substitutions).substitute(clazz.getDefaultType(), Variance.INVARIANT);
+    }
+
     private static void addAllClassDescriptors(@NotNull JetType type, @NotNull Set<ClassDescriptor> set) {
         ClassDescriptor cd = getClassDescriptor(type);
         if (cd != null) {

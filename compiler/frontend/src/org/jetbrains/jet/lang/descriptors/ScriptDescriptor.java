@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Stepan Koltsov
@@ -32,18 +33,25 @@ public class ScriptDescriptor extends DeclarationDescriptorImpl {
     private static final Name NAME = Name.special("<script>");
 
     private JetType returnType;
+    private List<ValueParameterDescriptor> valueParameters;
 
     public ScriptDescriptor(@Nullable DeclarationDescriptor containingDeclaration) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), NAME);
     }
 
-    public void initialize(@NotNull JetType returnType) {
+    public void initialize(@NotNull JetType returnType, @NotNull List<ValueParameterDescriptor> valueParameters) {
         this.returnType = returnType;
+        this.valueParameters = valueParameters;
     }
 
     @NotNull
     public JetType getReturnType() {
         return returnType;
+    }
+
+    @NotNull
+    public List<ValueParameterDescriptor> getValueParameters() {
+        return valueParameters;
     }
 
     @Override

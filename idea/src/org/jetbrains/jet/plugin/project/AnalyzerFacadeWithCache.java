@@ -31,6 +31,7 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
@@ -92,6 +93,7 @@ public final class AnalyzerFacadeWithCache {
                                     // Need to resolve bodies in given file
                                     AnalyzeExhaust exhaust = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file).analyzeBodiesInFiles(
                                             file.getProject(),
+                                            Collections.<AnalyzerScriptParameter>emptyList(),
                                             Predicates.<PsiFile>equalTo(file),
                                             new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext()),
                                             context);
@@ -135,6 +137,7 @@ public final class AnalyzerFacadeWithCache {
                             AnalyzeExhaust exhaust = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(fileToCache)
                                     .analyzeFiles(fileToCache.getProject(),
                                                   headerFiles,
+                                                  Collections.<AnalyzerScriptParameter>emptyList(),
                                                   Predicates.<PsiFile>alwaysFalse());
 
                             return new Result<AnalyzeExhaust>(exhaust, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);

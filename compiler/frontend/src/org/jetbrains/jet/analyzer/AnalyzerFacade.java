@@ -21,10 +21,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Pavel Talanov
@@ -34,10 +36,12 @@ public interface AnalyzerFacade {
     @NotNull
     AnalyzeExhaust analyzeFiles(@NotNull Project project,
                                 @NotNull Collection<JetFile> files,
+                                @NotNull List<AnalyzerScriptParameter> scriptParameters,
                                 @NotNull Predicate<PsiFile> filesToAnalyzeCompletely);
 
     @NotNull
     AnalyzeExhaust analyzeBodiesInFiles(@NotNull Project project,
+                                        @NotNull List<AnalyzerScriptParameter> scriptParameters,
                                         @NotNull Predicate<PsiFile> filesForBodiesResolve,
                                         @NotNull BindingTrace traceContext,
                                         @NotNull BodiesResolveContext bodiesResolveContext);

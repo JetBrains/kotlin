@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
@@ -32,7 +33,11 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.ref.JetTypeName;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -65,6 +70,8 @@ public class TopDownAnalyzer {
     private ModuleDescriptor moduleDescriptor;
     @NotNull
     private NamespaceFactoryImpl namespaceFactory;
+    @NotNull
+    private DependencyClassByQualifiedNameResolver dependencyClassByQualifiedNameResolver;
 
     private BodyResolver bodyResolver;
     private ControlFlowAnalyzer controlFlowAnalyzer;
@@ -135,6 +142,12 @@ public class TopDownAnalyzer {
         this.declarationsChecker = declarationsChecker;
     }
 
+    @Inject
+    public void setDependencyClassByQualifiedNameResolver(@NotNull DependencyClassByQualifiedNameResolver dependencyClassByQualifiedNameResolver) {
+        this.dependencyClassByQualifiedNameResolver = dependencyClassByQualifiedNameResolver;
+    }
+
+
     public void doProcess(
             JetScope outerScope,
             NamespaceLikeBuilder owner,
@@ -184,7 +197,8 @@ public class TopDownAnalyzer {
             @NotNull NamespaceDescriptorImpl standardLibraryNamespace,
             @NotNull List<JetFile> files) {
 
-        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(Predicates.<PsiFile>alwaysFalse(), true, false);
+        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
+                Predicates.<PsiFile>alwaysFalse(), true, false, Collections.<AnalyzerScriptParameter>emptyList());
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
                 project, topDownAnalysisParameters, new ObservableBindingTrace(trace),       
                 JetStandardClasses.FAKE_STANDARD_CLASSES_MODULE, ModuleConfiguration.EMPTY);
@@ -215,7 +229,8 @@ public class TopDownAnalyzer {
         ModuleDescriptor moduleDescriptor = new ModuleDescriptor(Name.special("<dummy for object>"));
 
         TopDownAnalysisParameters topDownAnalysisParameters =
-                new TopDownAnalysisParameters(Predicates.equalTo(object.getContainingFile()), false, true);
+                new TopDownAnalysisParameters(Predicates.equalTo(object.getContainingFile()),
+                false, true, Collections.<AnalyzerScriptParameter>emptyList());
 
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
                 project, topDownAnalysisParameters, new ObservableBindingTrace(trace), moduleDescriptor,
@@ -256,11 +271,13 @@ public class TopDownAnalyzer {
         }, Collections.<PsiElement>singletonList(object));
     }
 
-
-    public void analyzeFiles(Collection<JetFile> files) {
+    public void analyzeFiles(
+            @NotNull Collection<JetFile> files,
+            @NotNull List<AnalyzerScriptParameter> scriptParameters) {
         final WritableScope scope = new WritableScopeImpl(
                 JetScope.EMPTY, moduleDescriptor,
                 new TraceBasedRedeclarationHandler(trace)).setDebugName("Root scope in analyzeNamespace");
+
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
         NamespaceDescriptorImpl rootNs = namespaceFactory.createNamespaceDescriptorPathIfNeeded(FqName.ROOT);

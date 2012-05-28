@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.config.Config;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -87,12 +88,13 @@ public final class AnalyzerFacadeForJS {
 
         Predicate<PsiFile> completely = Predicates.and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
 
-        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(completely, false, false);
+        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
+                completely, false, false, Collections.<AnalyzerScriptParameter>emptyList());
 
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
                 project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner, JsConfiguration.jsLibConfiguration(project));
         try {
-            injector.getTopDownAnalyzer().analyzeFiles(withJsLibAdded(files, config));
+            injector.getTopDownAnalyzer().analyzeFiles(withJsLibAdded(files, config), Collections.<AnalyzerScriptParameter>emptyList());
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
                                                         new CachedBodiesResolveContext(injector.getTopDownAnalysisContext()) :
                                                         null;
@@ -112,7 +114,7 @@ public final class AnalyzerFacadeForJS {
         final ModuleDescriptor owner = new ModuleDescriptor(Name.special("<module>"));
         Predicate<PsiFile> completely = Predicates.and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
 
-        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(completely, false, false);
+        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(completely, false, false, Collections.<AnalyzerScriptParameter>emptyList());
 
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
                 project, topDownAnalysisParameters, new ObservableBindingTrace(traceContext), owner, JsConfiguration.jsLibConfiguration(project));

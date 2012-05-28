@@ -37,6 +37,7 @@ import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -49,6 +50,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -159,7 +161,7 @@ public class KotlinToJVMBytecodeCompiler {
                             },
                             AllModules.class.getClassLoader()));
                     Class<?> scriptClass = classLoader.loadClass("Script");
-                    scriptClass.newInstance();
+                    scriptClass.getConstructor(String[].class).newInstance(new Object[]{ configuration.getScriptArgs().toArray(new String[0]) });
                 } catch (Exception e) {
                     throw new RuntimeException("Failed to evaluate script: " + e, e);
                 }
@@ -219,7 +221,7 @@ public class KotlinToJVMBytecodeCompiler {
             K2JVMCompileEnvironmentConfiguration configuration,
             boolean stubs
     ) {
-        AnalyzeExhaust exhaust = analyze(configuration, stubs);
+        AnalyzeExhaust exhaust = analyze(configuration, configuration.isScript(), stubs);
 
         if (exhaust == null) {
             return null;
@@ -233,18 +235,23 @@ public class KotlinToJVMBytecodeCompiler {
     @Nullable
     private static AnalyzeExhaust analyze(
             final K2JVMCompileEnvironmentConfiguration configuration,
-            boolean stubs) {
+            boolean script, boolean stubs) {
         final JetCoreEnvironment environment = configuration.getEnvironment();
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(configuration.getMessageCollector());
         final Predicate<PsiFile> filesToAnalyzeCompletely =
                 stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
+        final List<AnalyzerScriptParameter> scriptParameters =
+                script ? CommandLineScriptUtils.scriptParameters() : Collections.<AnalyzerScriptParameter>emptyList();
         analyzerWithCompilerReport.analyzeAndReport(
                 new Function0<AnalyzeExhaust>() {
                     @NotNull
                     @Override
                     public AnalyzeExhaust invoke() {
                         return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                                environment.getProject(), environment.getSourceFiles(), filesToAnalyzeCompletely,
+                                environment.getProject(),
+                                environment.getSourceFiles(),
+                                scriptParameters,
+                                filesToAnalyzeCompletely,
                                 configuration.getEnvironment().getCompilerDependencies());
                     }
                 }, environment.getSourceFiles()

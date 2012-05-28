@@ -125,6 +125,10 @@ public abstract class CodegenContext {
         return new CodegenContexts.ConstructorContext(descriptor, getContextKind(), this, typeMapper);
     }
 
+    public CodegenContext intoScript(ScriptDescriptor script) {
+        return new CodegenContexts.ScriptContext(script, OwnerKind.IMPLEMENTATION, this, closure);
+    }
+
     public CodegenContexts.ClosureContext intoClosure(FunctionDescriptor funDescriptor, ClassDescriptor classDescriptor, String internalClassName, ClosureCodegen closureCodegen, JetTypeMapper typeMapper) {
         return new CodegenContexts.ClosureContext(funDescriptor, classDescriptor, this, closureCodegen, internalClassName, typeMapper);
     }

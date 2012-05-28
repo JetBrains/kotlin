@@ -22,6 +22,7 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -32,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -65,6 +67,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
             JetDeclaration aClass = declarations.get(0);
             assert aClass instanceof JetClass;
             AnalyzeExhaust bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(file,
+                    Collections.<AnalyzerScriptParameter>emptyList(),
                                                 myEnvironment.getCompilerDependencies());
             DeclarationDescriptor classDescriptor = bindingContext.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
             WritableScopeImpl scope = new WritableScopeImpl(libraryScope, root, RedeclarationHandler.DO_NOTHING);

@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -73,6 +74,7 @@ public class JetSourceNavigationHelper {
         BindingContext bindingContext = AnalyzerFacadeProvider.getAnalyzerFacadeForProject(project).analyzeFiles(
                 project,
                 libraryFiles,
+                Collections.<AnalyzerScriptParameter>emptyList(),
                 Predicates.<PsiFile>alwaysTrue()).getBindingContext();
         D descriptor = bindingContext.get(slice, fqName);
         if (descriptor != null) {

@@ -118,6 +118,27 @@ public class CodegenContexts {
         }
     }
 
+    public static class ScriptContext extends CodegenContext {
+
+        public ScriptContext(
+                @NotNull DeclarationDescriptor contextType,
+                @NotNull OwnerKind contextKind,
+                @Nullable CodegenContext parentContext,
+                @Nullable ObjectOrClosureCodegen closureCodegen) {
+            super(contextType, contextKind, parentContext, closureCodegen);
+        }
+
+        @Override
+        protected ClassDescriptor getThisDescriptor() {
+            return null;
+        }
+
+        @Override
+        public boolean isStatic() {
+            throw new IllegalStateException();
+        }
+    }
+
     public static class ClassContext extends CodegenContext {
         public ClassContext(ClassDescriptor contextType, OwnerKind contextKind, CodegenContext parentContext, JetTypeMapper typeMapper) {
             super(contextType, contextKind, parentContext, null);

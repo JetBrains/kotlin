@@ -871,6 +871,27 @@ public class JetTypeMapper {
         return signatureWriter.makeJvmMethodSignature("<init>");
     }
 
+    @NotNull
+    public JvmMethodSignature mapScriptSignature(@NotNull ScriptDescriptor script) {
+        BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, false);
+
+        writeFormalTypeParameters(Collections.<TypeParameterDescriptor>emptyList(), signatureWriter);
+
+        signatureWriter.writeParametersStart();
+
+        for (ValueParameterDescriptor valueParameter : script.getValueParameters()) {
+            signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
+            mapType(valueParameter.getType(), signatureWriter, MapTypeMode.VALUE);
+            signatureWriter.writeParameterTypeEnd();
+        }
+
+        signatureWriter.writeParametersEnd();
+
+        signatureWriter.writeVoidReturn();
+
+        return signatureWriter.makeJvmMethodSignature("<init>");
+    }
+
     public CallableMethod mapToCallableMethod(ConstructorDescriptor descriptor, OwnerKind kind, boolean hasThis0) {
         final JvmMethodSignature method = mapConstructorSignature(descriptor, hasThis0);
         MapTypeMode mapTypeMode = ownerKindToMapTypeMode(kind);
@@ -882,6 +903,7 @@ public class JetTypeMapper {
         String owner = mapped.getInternalName();
         return new CallableMethod(owner, owner, owner, method, INVOKESPECIAL);
     }
+
 
     public static int getAccessModifiers(MemberDescriptor p, int defaultFlags) {
         DeclarationDescriptor declaration = p.getContainingDeclaration();

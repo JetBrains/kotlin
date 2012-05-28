@@ -53,6 +53,6 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
 
     @Test
     public void script() throws Exception {
-        runCompiler("script", "-script", "hello.ktscript");
+        runCompiler("script", "-script", "hello.ktscript", "hi", "there");
     }
 }

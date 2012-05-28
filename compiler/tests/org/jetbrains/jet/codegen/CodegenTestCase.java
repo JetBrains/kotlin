@@ -26,13 +26,19 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.ref.JetTypeName;
 import org.jetbrains.jet.parsing.JetParsingTest;
+import org.objectweb.asm.Type;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -144,14 +150,55 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     @NotNull
+    private Class<?> loadClassFromType(@NotNull Type type) {
+        try {
+            switch (type.getSort()) {
+                case Type.OBJECT:
+                    return Class.forName(type.getClassName());
+                case Type.INT:
+                    return int.class;
+                case Type.LONG:
+                    return long.class;
+                default:
+                    // AFAIK there is no way to create array class from class
+                    if (type.getDescriptor().equals("[Ljava/lang/String;")) {
+                        return String[].class;
+                    }
+                    throw new IllegalStateException("not implemented: " + type.getDescriptor());
+            }
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Constructor getConstructor(@NotNull Class<?> clazz, org.objectweb.asm.commons.Method method) {
+        if (!method.getName().equals("<init>")) {
+            throw new IllegalArgumentException("not constructor: " + method);
+        }
+        Class[] classes = new Class[method.getArgumentTypes().length];
+        for (int i = 0; i < classes.length; ++i) {
+            classes[i] = loadClassFromType(method.getArgumentTypes()[i]);
+        }
+        try {
+            return clazz.getConstructor(classes);
+        }
+        catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @NotNull
     protected String blackBox() throws Exception {
-        ClassFileFactory codegens = generateClassesInFile();
-        GeneratedClassLoader loader = createClassLoader(codegens);
+        GenerationState state = generateClassesInFileGetState();
+        GeneratedClassLoader loader = createClassLoader(state.getFactory());
 
         try {
             if (myFile.getPsiFile().isScript()) {
                 Class<?> scriptClass = loader.loadClass("Script");
-                Object scriptInstance = scriptClass.newInstance();
+
+                Constructor constructor = getConstructor(scriptClass, state.getScriptConstructorMethod());
+                Object scriptInstance = constructor.newInstance(myFile.getScriptParameterValues().toArray());
                 Field field = scriptClass.getDeclaredField("rv");
                 field.setAccessible(true);
                 Object result = field.get(scriptInstance);
@@ -183,7 +230,8 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     private GenerationState generateCommon(ClassBuilderFactory classBuilderFactory) {
         final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
-                myFile.getPsiFile(), myEnvironment.getCompilerDependencies());
+                myFile.getPsiFile(), myFile.getScriptParameterTypes(),
+                myEnvironment.getCompilerDependencies());
         analyzeExhaust.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
         GenerationState state = new GenerationState(myEnvironment.getProject(), classBuilderFactory, analyzeExhaust, Collections.singletonList(myFile.getPsiFile()));
@@ -226,14 +274,22 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     @NotNull
     protected ClassFileFactory generateClassesInFile() {
+        GenerationState generationState = generateClassesInFileGetState();
+        return generationState.getFactory();
+    }
+
+    @NotNull
+    private GenerationState generateClassesInFileGetState() {
+        GenerationState generationState;
         try {
             ClassBuilderFactory classBuilderFactory = ClassBuilderFactories.binaries(false);
 
-            return generateCommon(classBuilderFactory).getFactory();
+            generationState = generateCommon(classBuilderFactory);
         } catch (RuntimeException e) {
             System.out.println(generateToText());
             throw e;
         }
+        return generationState;
     }
 
     protected Method generateFunction() {
