@@ -28,7 +28,6 @@ import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -94,7 +93,6 @@ public final class AnalyzerFacadeWithCache {
                                     AnalyzeExhaust exhaust = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file).analyzeBodiesInFiles(
                                             file.getProject(),
                                             Predicates.<PsiFile>equalTo(file),
-                                            JetControlFlowDataTraceFactory.EMPTY,
                                             new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext()),
                                             context);
 
@@ -137,8 +135,7 @@ public final class AnalyzerFacadeWithCache {
                             AnalyzeExhaust exhaust = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(fileToCache)
                                     .analyzeFiles(fileToCache.getProject(),
                                                   headerFiles,
-                                                  Predicates.<PsiFile>alwaysFalse(),
-                                                  JetControlFlowDataTraceFactory.EMPTY);
+                                                  Predicates.<PsiFile>alwaysFalse());
 
                             return new Result<AnalyzeExhaust>(exhaust, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
                         }

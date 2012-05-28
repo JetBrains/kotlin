@@ -22,7 +22,6 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
@@ -44,8 +43,7 @@ public enum JSAnalyzerFacadeForIDEA implements AnalyzerFacade {
     @Override
     public AnalyzeExhaust analyzeFiles(@NotNull Project project,
                                        @NotNull Collection<JetFile> files,
-                                       @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
-                                       @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
+                                       @NotNull Predicate<PsiFile> filesToAnalyzeCompletely) {
         return AnalyzerFacadeForJS.analyzeFiles(files, filesToAnalyzeCompletely, new IDEAConfig(project), true);
     }
 
@@ -53,7 +51,6 @@ public enum JSAnalyzerFacadeForIDEA implements AnalyzerFacade {
     @Override
     public AnalyzeExhaust analyzeBodiesInFiles(@NotNull Project project,
                                                @NotNull Predicate<PsiFile> filesForBodiesResolve,
-                                               @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
                                                @NotNull BindingTrace traceContext,
                                                @NotNull BodiesResolveContext bodiesResolveContext) {
         return AnalyzerFacadeForJS.analyzeBodiesInFiles(filesForBodiesResolve, new IDEAConfig(project), traceContext, bodiesResolveContext);
