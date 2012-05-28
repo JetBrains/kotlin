@@ -118,7 +118,7 @@ public class PseudocodeVariablesData {
         final Map<VariableDescriptor, VariableInitializers> initialMapForStartInstruction = prepareInitializersMapForStartInstruction(
                 usedVariables, declaredVariables);
 
-        Map<Instruction, Edges<Map<VariableDescriptor, VariableInitializers>>> variableInitializersMap = PseudocodeTraverser.collectInformation(
+        Map<Instruction, Edges<Map<VariableDescriptor, VariableInitializers>>> variableInitializersMap = PseudocodeTraverser.collectData(
                 pseudocode, /* directOrder = */ true, /* lookInside = */ false,
                 initialMap, initialMapForStartInstruction, new PseudocodeTraverser.InstructionDataMergeStrategy<Map<VariableDescriptor, VariableInitializers>>() {
             @Override
@@ -275,8 +275,9 @@ public class PseudocodeVariablesData {
                     return Edges.create(enterResult, exitResult);
                 }
             };
-            variableStatusMap = PseudocodeTraverser.collectInformation(pseudocode, false, true,
-                Collections.<VariableDescriptor, VariableUseStatus>emptyMap(), sinkInstructionData, collectVariableUseStatusStrategy);
+            variableStatusMap = PseudocodeTraverser.collectData(pseudocode, false, true,
+                                                                Collections.<VariableDescriptor, VariableUseStatus>emptyMap(),
+                                                                sinkInstructionData, collectVariableUseStatusStrategy);
         }
         return variableStatusMap;
     }

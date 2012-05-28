@@ -52,7 +52,7 @@ public class JetFlowInformationProvider {
 
     private final JetDeclaration subroutine;
     private final Pseudocode pseudocode;
-    private final PseudocodeVariablesData pseudocodeData;
+    private final PseudocodeVariablesData pseudocodeVariablesData;
     private BindingTrace trace;
 
     public JetFlowInformationProvider(
@@ -62,7 +62,7 @@ public class JetFlowInformationProvider {
         subroutine = declaration;
         this.trace = trace;
         pseudocode = new JetControlFlowProcessor(trace).generatePseudocode(declaration);
-        pseudocodeData = new PseudocodeVariablesData(pseudocode, trace.getBindingContext());
+        pseudocodeVariablesData = new PseudocodeVariablesData(pseudocode, trace.getBindingContext());
     }
 
     private void collectReturnExpressions(@NotNull final Collection<JetElement> returnedExpressions) {
@@ -187,16 +187,15 @@ public class JetFlowInformationProvider {
         final Collection<VariableDescriptor> varWithValReassignErrorGenerated = Sets.newHashSet();
         final boolean processClassOrObject = subroutine instanceof JetClassOrObject;
 
-        Map<Instruction, Edges<Map<VariableDescriptor,VariableInitializers>>> initializers = pseudocodeData.getVariableInitializers();
-        final Set<VariableDescriptor> declaredVariables = pseudocodeData.getDeclaredVariables(pseudocode);
+        Map<Instruction, Edges<Map<VariableDescriptor,VariableInitializers>>> initializers = pseudocodeVariablesData.getVariableInitializers();
+        final Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode);
         PseudocodeTraverser.traverse(pseudocode, true, true, initializers, new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableInitializers>>() {
             @Override
             public void execute(@NotNull Instruction instruction,
                     @Nullable Map<VariableDescriptor, VariableInitializers> in,
                     @Nullable Map<VariableDescriptor, VariableInitializers> out) {
                 assert in != null && out != null;
-                VariableDescriptor variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, true,
-                                                                      trace.getBindingContext());
+                VariableDescriptor variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, true, trace.getBindingContext());
                 if (variableDescriptor == null) return;
                 if (!(instruction instanceof ReadValueInstruction) && !(instruction instanceof WriteValueInstruction)) return;
                 VariableInitializers outInitializers = out.get(variableDescriptor);
@@ -224,7 +223,7 @@ public class JetFlowInformationProvider {
             }
         });
 
-        Pseudocode pseudocode = pseudocodeData.getPseudocode();
+        Pseudocode pseudocode = pseudocodeVariablesData.getPseudocode();
         recordInitializedVariables(pseudocode, initializers);
         for (LocalDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
             recordInitializedVariables(instruction.getBody(), initializers);
@@ -399,8 +398,8 @@ public class JetFlowInformationProvider {
 
     private void recordInitializedVariables(@NotNull Pseudocode pseudocode, @NotNull Map<Instruction, Edges<Map<VariableDescriptor,VariableInitializers>>> initializersMap) {
         Edges<Map<VariableDescriptor, VariableInitializers>> initializers = initializersMap.get(pseudocode.getExitInstruction());
-        Set<VariableDescriptor> usedVariables = pseudocodeData.getUsedVariables(pseudocode);
-        Set<VariableDescriptor> declaredVariables = pseudocodeData.getDeclaredVariables(pseudocode);
+        Set<VariableDescriptor> usedVariables = pseudocodeVariablesData.getUsedVariables(pseudocode);
+        Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode);
         for (VariableDescriptor variable : usedVariables) {
             if (variable instanceof PropertyDescriptor && declaredVariables.contains(variable)) {
                 VariableInitializers variableInitializers = initializers.in.get(variable);
@@ -414,7 +413,7 @@ public class JetFlowInformationProvider {
 //  "Unused variable" & "unused value" analyses
 
     public void markUnusedVariables() {
-        Map<Instruction, Edges<Map<VariableDescriptor, VariableUseStatus>>> variableStatusData = pseudocodeData.getVariableUseStatusData();
+        Map<Instruction, Edges<Map<VariableDescriptor, VariableUseStatus>>> variableStatusData = pseudocodeVariablesData.getVariableUseStatusData();
         InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableUseStatus>> variableStatusAnalyzeStrategy =
                 new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableUseStatus>>() {
             @Override
@@ -423,7 +422,7 @@ public class JetFlowInformationProvider {
                     @Nullable Map<VariableDescriptor, VariableUseStatus> out) {
 
                 assert in != null && out != null;
-                Set<VariableDescriptor> declaredVariables = pseudocodeData.getDeclaredVariables(instruction.getOwner());
+                Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(instruction.getOwner());
                 VariableDescriptor variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false,
                                                                       trace.getBindingContext());
                 if (variableDescriptor == null || !declaredVariables.contains(variableDescriptor) ||

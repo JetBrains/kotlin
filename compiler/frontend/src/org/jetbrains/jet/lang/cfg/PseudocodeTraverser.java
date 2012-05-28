@@ -37,7 +37,7 @@ public class PseudocodeTraverser {
         return directOrder ? pseudocode.getEnterInstruction() : pseudocode.getSinkInstruction();
     }
 
-    public static <D> Map<Instruction, Edges<D>> collectInformation(
+    public static <D> Map<Instruction, Edges<D>> collectData(
             @NotNull Pseudocode pseudocode, boolean directOrder, boolean lookInside,
             @NotNull D initialDataValue, @NotNull D initialDataValueForEnterInstruction,
             @NotNull InstructionDataMergeStrategy<D> instructionDataMergeStrategy) {
@@ -50,8 +50,8 @@ public class PseudocodeTraverser {
         changed[0] = true;
         while (changed[0]) {
             changed[0] = false;
-            collectInformationFromSubgraph(pseudocode, directOrder, lookInside, edgesMap, instructionDataMergeStrategy,
-                Collections.<Instruction>emptyList(), changed, false);
+            collectDataFromSubgraph(pseudocode, directOrder, lookInside, edgesMap, instructionDataMergeStrategy,
+                                    Collections.<Instruction>emptyList(), changed, false);
         }
         return edgesMap;
     }
@@ -70,7 +70,7 @@ public class PseudocodeTraverser {
         }
     }
 
-    private static <D> void collectInformationFromSubgraph(
+    private static <D> void collectDataFromSubgraph(
             @NotNull Pseudocode pseudocode, boolean directOrder, boolean lookInside,
             @NotNull Map<Instruction, Edges<D>> edgesMap,
             @NotNull InstructionDataMergeStrategy<D> instructionDataMergeStrategy,
@@ -97,9 +97,9 @@ public class PseudocodeTraverser {
 
             if (lookInside && instruction instanceof LocalDeclarationInstruction) {
                 Pseudocode subroutinePseudocode = ((LocalDeclarationInstruction) instruction).getBody();
-                collectInformationFromSubgraph(subroutinePseudocode, directOrder, lookInside, edgesMap, instructionDataMergeStrategy,
-                                               previousInstructions,
-                                               changed, true);
+                collectDataFromSubgraph(subroutinePseudocode, directOrder, lookInside, edgesMap, instructionDataMergeStrategy,
+                                        previousInstructions,
+                                        changed, true);
                 Instruction lastInstruction = directOrder ? subroutinePseudocode.getSinkInstruction() : subroutinePseudocode.getEnterInstruction();
                 Edges<D> previousValue = edgesMap.get(instruction);
                 Edges<D> newValue = edgesMap.get(lastInstruction);
