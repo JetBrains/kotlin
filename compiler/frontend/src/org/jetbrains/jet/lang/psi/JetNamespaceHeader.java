@@ -79,10 +79,10 @@ public class JetNamespaceHeader extends JetReferenceExpression {
         return nameIdentifier == null ? "" : nameIdentifier.getText();
     }
 
-    @Nullable
+    @NotNull
     public Name getNameAsName() {
         PsiElement nameIdentifier = getNameIdentifier();
-        return nameIdentifier == null ? null : Name.identifier(nameIdentifier.getText());
+        return nameIdentifier == null ? JetPsiUtil.ROOT_NAMESPACE_NAME : Name.identifier(nameIdentifier.getText());
     }
 
     public boolean isRoot() {

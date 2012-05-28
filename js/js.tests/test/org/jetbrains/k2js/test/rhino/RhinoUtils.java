@@ -22,6 +22,8 @@ import org.mozilla.javascript.Scriptable;
 
 import java.io.FileReader;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Pavel Talanov
@@ -45,10 +47,25 @@ public final class RhinoUtils {
 
     public static void runRhinoTest(@NotNull List<String> fileNames,
                                     @NotNull RhinoResultChecker checker) throws Exception {
+
+        runRhinoTest(fileNames, checker, null);
+    }
+
+    public static void runRhinoTest(@NotNull List<String> fileNames,
+                                    @NotNull RhinoResultChecker checker,
+                                    Map<String,Object> variables) throws Exception {
         Context context = Context.enter();
         context.setLanguageVersion(Context.VERSION_1_8);
 
         Scriptable scope = context.initStandardObjects();
+        if (variables != null) {
+            Set<Map.Entry<String,Object>> entries = variables.entrySet();
+            for (Map.Entry<String, Object> entry : entries) {
+                String name = entry.getKey();
+                Object value = entry.getValue();
+                scope.put(name, scope, value);
+            }
+        }
         for (String filename : fileNames) {
             runFileWithRhino(filename, context, scope);
         }

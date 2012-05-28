@@ -28,9 +28,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.lang.cfg.LoopInfo;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 import java.io.File;
@@ -72,37 +73,17 @@ public class JetControlFlowTest extends JetLiteFixture {
         JetFile file = loadPsiFile(myName + ".jet");
 
         final Map<JetElement, Pseudocode> data = new LinkedHashMap<JetElement, Pseudocode>();
-        final JetPseudocodeTrace pseudocodeTrace = new JetPseudocodeTrace() {
-
-            @Override
-            public void recordControlFlowData(@NotNull JetElement element, @NotNull Pseudocode pseudocode) {
-                data.put(element, pseudocode);
+        AnalyzeExhaust analyzeExhaust = JetTestUtils.analyzeFile(file);
+        List<JetDeclaration> declarations = file.getDeclarations();
+        BindingContext bindingContext = analyzeExhaust.getBindingContext();
+        for (JetDeclaration declaration : declarations) {
+            Pseudocode pseudocode = PseudocodeUtil.generatePseudocode(declaration, bindingContext);
+            data.put(declaration, pseudocode);
+            for (LocalDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
+                Pseudocode localPseudocode = instruction.getBody();
+                data.put(localPseudocode.getCorrespondingElement(), localPseudocode);
             }
-
-            @Override
-            public void close() {
-                for (Pseudocode pseudocode : data.values()) {
-                    pseudocode.postProcess();
-                }
-            }
-
-            @Override
-            public void recordLoopInfo(JetExpression expression, LoopInfo blockInfo) {
-            }
-
-            @Override
-            public void recordRepresentativeInstruction(@NotNull JetElement element, @NotNull Instruction instruction) {
-            }
-
-        };
-
-        JetTestUtils.analyzeFile(file, new JetControlFlowDataTraceFactory() {
-            @NotNull
-            @Override
-            public JetPseudocodeTrace createTrace(JetElement element) {
-                return pseudocodeTrace;
-            }
-        });
+        }
 
         try {
             processCFData(myName, data);
@@ -123,6 +104,7 @@ public class JetControlFlowTest extends JetLiteFixture {
         StringBuilder instructionDump = new StringBuilder();
         int i = 0;
         for (Pseudocode pseudocode : pseudocodes) {
+
             JetElement correspondingElement = pseudocode.getCorrespondingElement();
             String label = "";
             assert (correspondingElement instanceof JetNamedDeclaration || correspondingElement instanceof JetSecondaryConstructor || correspondingElement instanceof JetPropertyAccessor) :
@@ -146,11 +128,11 @@ public class JetControlFlowTest extends JetLiteFixture {
 
             instructionDump.append(correspondingElement.getText());
             instructionDump.append("\n---------------------\n");
-            dumpInstructions(pseudocode, instructionDump);
+            dumpInstructions((PseudocodeImpl) pseudocode, instructionDump);
             instructionDump.append("=====================\n");
             
             //check edges directions
-            Collection<Instruction> instructions = pseudocode.getMutableInstructionList();
+            Collection<Instruction> instructions = ((PseudocodeImpl)pseudocode).getAllInstructions();
             for (Instruction instruction : instructions) {
                 if (!((InstructionImpl)instruction).isDead()) {
                     for (Instruction nextInstruction : instruction.getNextInstructions()) {
@@ -181,8 +163,8 @@ public class JetControlFlowTest extends JetLiteFixture {
 //                        }
     }
 
-    public void dfsDump(Pseudocode pseudocode, StringBuilder nodes, StringBuilder edges, Map<Instruction, String> nodeNames) {
-        dfsDump(nodes, edges, pseudocode.getMutableInstructionList().get(0), nodeNames);
+    public void dfsDump(PseudocodeImpl pseudocode, StringBuilder nodes, StringBuilder edges, Map<Instruction, String> nodeNames) {
+        dfsDump(nodes, edges, pseudocode.getAllInstructions().get(0), nodeNames);
     }
 
     private void dfsDump(StringBuilder nodes, StringBuilder edges, Instruction instruction, Map<Instruction, String> nodeNames) {
@@ -243,11 +225,11 @@ public class JetControlFlowTest extends JetLiteFixture {
         return sb.toString();
     }
 
-    public void dumpInstructions(Pseudocode pseudocode, @NotNull StringBuilder out) {
-        List<Instruction> instructions = pseudocode.getMutableInstructionList();
+    public void dumpInstructions(PseudocodeImpl pseudocode, @NotNull StringBuilder out) {
+        List<Instruction> instructions = pseudocode.getAllInstructions();
         Set<Instruction> remainedAfterPostProcessInstructions = Sets.newHashSet(pseudocode.getInstructions());
-        List<Pseudocode.PseudocodeLabel> labels = pseudocode.getLabels();
-        List<Pseudocode> locals = new ArrayList<Pseudocode>();
+        List<PseudocodeImpl.PseudocodeLabel> labels = pseudocode.getLabels();
+        List<PseudocodeImpl> locals = new ArrayList<PseudocodeImpl>();
         int maxLength = 0;
         int maxNextLength = 0;
         for (Instruction instruction : instructions) {
@@ -276,9 +258,9 @@ public class JetControlFlowTest extends JetLiteFixture {
             Instruction instruction = instructions.get(i);
             if (instruction instanceof LocalDeclarationInstruction) {
                 LocalDeclarationInstruction localDeclarationInstruction = (LocalDeclarationInstruction) instruction;
-                locals.add(localDeclarationInstruction.getBody());
+                locals.add((PseudocodeImpl) localDeclarationInstruction.getBody());
             }
-            for (Pseudocode.PseudocodeLabel label: labels) {
+            for (PseudocodeImpl.PseudocodeLabel label: labels) {
                 if (label.getTargetInstructionIndex() == i) {
                     out.append(label.getName()).append(":\n");
                 }
@@ -288,7 +270,7 @@ public class JetControlFlowTest extends JetLiteFixture {
                     append("    NEXT:").append(String.format("%1$-" + maxNextLength + "s", formatInstructionList(instruction.getNextInstructions()))).
                     append("    PREV:").append(formatInstructionList(instruction.getPreviousInstructions())).append("\n");
         }
-        for (Pseudocode local : locals) {
+        for (PseudocodeImpl local : locals) {
             dumpInstructions(local, out);
         }
     }
@@ -300,7 +282,7 @@ public class JetControlFlowTest extends JetLiteFixture {
                 public void visitLocalDeclarationInstruction(LocalDeclarationInstruction instruction) {
                     int index = count[0];
 //                    instruction.getBody().dumpSubgraph(out, "subgraph cluster_" + index, count, "color=blue;\nlabel = \"f" + index + "\";", nodeToName);
-                    printEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getBody().getMutableInstructionList().get(0)), null);
+                    printEdge(out, nodeToName.get(instruction), nodeToName.get(((PseudocodeImpl)instruction.getBody()).getAllInstructions().get(0)), null);
                     visitInstructionWithNext(instruction);
                 }
 
@@ -415,7 +397,7 @@ public class JetControlFlowTest extends JetLiteFixture {
         int[] count = new int[1];
         Map<Instruction, String> nodeToName = new HashMap<Instruction, String>();
         for (Pseudocode pseudocode : pseudocodes) {
-            dumpNodes(pseudocode.getMutableInstructionList(), out, count, nodeToName, Sets.newHashSet(pseudocode.getInstructions()));
+            dumpNodes(((PseudocodeImpl)pseudocode).getAllInstructions(), out, count, nodeToName, Sets.newHashSet(pseudocode.getInstructions()));
         }
         int i = 0;
         for (Pseudocode pseudocode : pseudocodes) {
@@ -431,7 +413,7 @@ public class JetControlFlowTest extends JetLiteFixture {
             out.println("subgraph cluster_" + i + " {\n" +
                         "label=\"" + label + "\";\n" +
                         "color=blue;\n");
-            dumpEdges(pseudocode.getMutableInstructionList(), out, count, nodeToName);
+            dumpEdges(((PseudocodeImpl)pseudocode).getAllInstructions(), out, count, nodeToName);
             out.println("}");
             i++;
         }

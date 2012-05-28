@@ -27,7 +27,6 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
@@ -52,7 +51,6 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
@@ -70,7 +68,6 @@ public class InjectorForTopDownAnalyzerForJvm {
     private final TopDownAnalysisParameters topDownAnalysisParameters;
     private final ObservableBindingTrace observableBindingTrace;
     private final ModuleDescriptor moduleDescriptor;
-    private final JetControlFlowDataTraceFactory jetControlFlowDataTraceFactory;
     private final CompilerDependencies compilerDependencies;
     private CompilerSpecialMode compilerSpecialMode;
     private JavaBridgeConfiguration javaBridgeConfiguration;
@@ -97,7 +94,6 @@ public class InjectorForTopDownAnalyzerForJvm {
         @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
         @NotNull ObservableBindingTrace observableBindingTrace,
         @NotNull ModuleDescriptor moduleDescriptor,
-        JetControlFlowDataTraceFactory jetControlFlowDataTraceFactory,
         @NotNull CompilerDependencies compilerDependencies
     ) {
         this.topDownAnalyzer = new TopDownAnalyzer();
@@ -110,7 +106,6 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.topDownAnalysisParameters = topDownAnalysisParameters;
         this.observableBindingTrace = observableBindingTrace;
         this.moduleDescriptor = moduleDescriptor;
-        this.jetControlFlowDataTraceFactory = jetControlFlowDataTraceFactory;
         this.compilerDependencies = compilerDependencies;
         this.compilerSpecialMode = compilerDependencies.getCompilerSpecialMode();
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
@@ -149,18 +144,14 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.topDownAnalysisContext.setTopDownAnalysisParameters(topDownAnalysisParameters);
 
         this.bodyResolver.setCallResolver(callResolver);
-        this.bodyResolver.setContext(topDownAnalysisContext);
         this.bodyResolver.setDescriptorResolver(descriptorResolver);
         this.bodyResolver.setExpressionTypingServices(expressionTypingServices);
         this.bodyResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         this.bodyResolver.setTrace(observableBindingTrace);
 
-        this.controlFlowAnalyzer.setContext(topDownAnalysisContext);
-        this.controlFlowAnalyzer.setFlowDataTraceFactory(jetControlFlowDataTraceFactory);
         this.controlFlowAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
         this.controlFlowAnalyzer.setTrace(observableBindingTrace);
 
-        this.declarationsChecker.setContext(topDownAnalysisContext);
         this.declarationsChecker.setTrace(observableBindingTrace);
 
         this.descriptorResolver.setAnnotationResolver(annotationResolver);

@@ -46,10 +46,8 @@ public class SubroutineExitInstruction extends InstructionImpl {
     @NotNull
     @Override
     public Collection<Instruction> getNextInstructions() {
-        if (sinkInstruction != null) {
-            return Collections.<Instruction>singleton(sinkInstruction);
-        }
-        return Collections.emptyList();
+        assert sinkInstruction != null;
+        return Collections.<Instruction>singleton(sinkInstruction);
     }
 
     @Override

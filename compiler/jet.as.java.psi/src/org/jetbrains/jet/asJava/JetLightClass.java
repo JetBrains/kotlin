@@ -125,6 +125,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
             answer = CachedValuesManager.getManager(getProject()).createCachedValue(new CachedValueProvider<PsiJavaFileStub>() {
                 @Override
                 public Result<PsiJavaFileStub> compute() {
+                    //System.out.println("Calculating Java stub for " + file.getName() + ", OOCB modcount " + PsiModificationTracker.SERVICE.getInstance(getProject()).getOutOfCodeBlockModificationCount());
                     return Result.create(calcStub(), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
                 }
             }, false);

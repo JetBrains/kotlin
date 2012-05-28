@@ -1,13 +1,13 @@
 <project name="Kotlin" default="dist">
 
     <!-- Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build -->
-    <property name="shrink" value="true"/>
+    <property name="shrink" value="false"/>
     <!-- Set to false to disable compiler's javadoc generation. Speeds up the build -->
-    <property name="generate.javadoc" value="true"/>
+    <property name="generate.javadoc" value="false"/>
 
     <property name="output" value="${basedir}/dist"/>
     <property name="kotlin-home" value="${output}/kotlinc"/>
-    <property name="build.number" value="snapshot"/>
+    <property name="build.number" value="0.1.2402"/>
     <property name="output.name" value="kotlin-${build.number}"/>
     <property name="idea.sdk" value="${basedir}/ideaSDK"/>
 

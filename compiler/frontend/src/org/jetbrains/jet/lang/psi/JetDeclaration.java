@@ -30,13 +30,15 @@ public abstract class JetDeclaration extends JetExpression implements JetModifie
         super(node);
     }
 
+    @Override
     @Nullable
     public JetModifierList getModifierList() {
         return (JetModifierList) findChildByType(JetNodeTypes.MODIFIER_LIST);
     }
 
+    @Override
     public boolean hasModifier(JetToken modifier) {
         JetModifierList modifierList = getModifierList();
-        return modifierList == null ? false : modifierList.hasModifier(modifier);
+        return modifierList != null && modifierList.hasModifier(modifier);
     }
 }

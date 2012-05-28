@@ -55,7 +55,7 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 */
 public class BodyResolver {
     @NotNull
-    private TopDownAnalysisContext context;
+    private BodiesResolveContext context;
     @NotNull
     private TopDownAnalysisParameters topDownAnalysisParameters;
     @NotNull
@@ -66,12 +66,6 @@ public class BodyResolver {
     private CallResolver callResolver;
     @NotNull
     private ObservableBindingTrace trace;
-
-
-    @Inject
-    public void setContext(@NotNull TopDownAnalysisContext context) {
-        this.context = context;
-    }
 
     @Inject
     public void setTopDownAnalysisParameters(@NotNull TopDownAnalysisParameters topDownAnalysisParameters) {
@@ -98,9 +92,9 @@ public class BodyResolver {
         this.trace = trace;
     }
 
-
-
-    public void resolveBehaviorDeclarationBodies() {
+    public void resolveBehaviorDeclarationBodies(@NotNull BodiesResolveContext bodiesResolveContext) {
+        // Initialize context
+        context = bodiesResolveContext;
 
         resolveDelegationSpecifierLists();
         resolveClassAnnotations();
@@ -211,7 +205,7 @@ public class BodyResolver {
                 if (supertype == null) return;
                 ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                 if (classDescriptor == null) return;
-                if (descriptor.getKind() != ClassKind.TRAIT && classDescriptor.hasConstructors() &&
+                if (descriptor.getKind() != ClassKind.TRAIT && !classDescriptor.getConstructors().isEmpty() &&
                     !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && classDescriptor.getKind() != ClassKind.TRAIT) {
                     boolean hasConstructorWithoutParams = false;
                     for (ConstructorDescriptor constructor : classDescriptor.getConstructors()) {

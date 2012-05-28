@@ -25,9 +25,9 @@ l3:
 l1:
     <END>               NEXT:[<SINK>]                    PREV:[read (Unit)]
 error:
-    <ERROR>             NEXT:[]                          PREV:[]
+    <ERROR>             NEXT:[<SINK>]                    PREV:[]
 sink:
-    <SINK>              NEXT:[]                          PREV:[<END>]
+    <SINK>              NEXT:[]                          PREV:[<ERROR>, <END>]
 =====================
 == dowhile ==
 fun dowhile() {
@@ -53,7 +53,7 @@ l3:
 l1:
     <END>                NEXT:[<SINK>]                          PREV:[ret l1]
 error:
-    <ERROR>              NEXT:[]                                PREV:[]
+    <ERROR>              NEXT:[<SINK>]                          PREV:[]
 sink:
-    <SINK>               NEXT:[]                                PREV:[<END>]
+    <SINK>               NEXT:[]                                PREV:[<ERROR>, <END>]
 =====================

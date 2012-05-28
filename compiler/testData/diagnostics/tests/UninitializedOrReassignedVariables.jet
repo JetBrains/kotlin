@@ -101,7 +101,7 @@ fun t5() {
     for (i in 0..2) {
         <!VAL_REASSIGNMENT!>i<!> += 1
         fun t5() {
-            <!VAL_REASSIGNMENT!>i<!> += 3
+            i += 3
         }
     }
 }
@@ -297,8 +297,8 @@ class TestObjectExpression() {
                 <!VAL_REASSIGNMENT!>a<!> = 231
             }
             fun inner2() {
-                <!VAL_REASSIGNMENT!>y<!> = 101
-                <!VAL_REASSIGNMENT!>a<!> = 231
+                y = 101
+                a = 231
             }
         }
     }

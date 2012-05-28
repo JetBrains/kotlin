@@ -15,7 +15,7 @@ l2:
 l1:
     <END>                         NEXT:[<SINK>]                                           PREV:[ret(*) l1, r(false || (return false))]
 error:
-    <ERROR>                       NEXT:[]                                                 PREV:[]
+    <ERROR>                       NEXT:[<SINK>]                                           PREV:[]
 sink:
-    <SINK>                        NEXT:[]                                                 PREV:[<END>]
+    <SINK>                        NEXT:[]                                                 PREV:[<ERROR>, <END>]
 =====================

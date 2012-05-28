@@ -24,13 +24,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
-import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
@@ -53,18 +49,28 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     @NotNull
     public AnalyzeExhaust analyzeFiles(@NotNull Project project,
             @NotNull Collection<JetFile> files,
-            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
-            @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
-        return analyzeFilesWithJavaIntegration(project, files, filesToAnalyzeCompletely, flowDataTraceFactory,
-                                               compilerDependenciesForProduction(CompilerSpecialMode.REGULAR));
+            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely) {
+        return analyzeFilesWithJavaIntegration(project, files, filesToAnalyzeCompletely,
+                                               compilerDependenciesForProduction(CompilerSpecialMode.REGULAR), true);
+    }
+
+    @NotNull
+    @Override
+    public AnalyzeExhaust analyzeBodiesInFiles(@NotNull Project project,
+                                               @NotNull Predicate<PsiFile> filesForBodiesResolve,
+                                               @NotNull BindingTrace headersTraceContext,
+                                               @NotNull BodiesResolveContext bodiesResolveContext
+    ) {
+        return analyzeBodiesInFilesWithJavaIntegration(
+                project, filesForBodiesResolve, compilerDependenciesForProduction(CompilerSpecialMode.REGULAR),
+                headersTraceContext, bodiesResolveContext);
     }
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(
-            JetFile file, JetControlFlowDataTraceFactory flowDataTraceFactory,
-            @NotNull CompilerDependencies compilerDependencies) {
+            JetFile file, @NotNull CompilerDependencies compilerDependencies) {
         AnalyzingUtils.checkForSyntacticErrors(file);
 
-        AnalyzeExhaust analyzeExhaust = analyzeOneFileWithJavaIntegration(file, flowDataTraceFactory, compilerDependencies);
+        AnalyzeExhaust analyzeExhaust = analyzeOneFileWithJavaIntegration(file, compilerDependencies);
 
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
 
@@ -72,16 +78,22 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     }
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegration(
-            JetFile file, JetControlFlowDataTraceFactory flowDataTraceFactory,
-            @NotNull CompilerDependencies compilerDependencies) {
+            JetFile file, @NotNull CompilerDependencies compilerDependencies) {
         return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file),
-                                               Predicates.<PsiFile>alwaysTrue(), flowDataTraceFactory, compilerDependencies);
+                                               Predicates.<PsiFile>alwaysTrue(), compilerDependencies);
     }
 
     public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
             Project project, Collection<JetFile> files, Predicate<PsiFile> filesToAnalyzeCompletely,
-            JetControlFlowDataTraceFactory flowDataTraceFactory,
             @NotNull CompilerDependencies compilerDependencies) {
+        return analyzeFilesWithJavaIntegration(
+                project, files, filesToAnalyzeCompletely, compilerDependencies, false);
+    }
+
+    public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
+            Project project, Collection<JetFile> files, Predicate<PsiFile> filesToAnalyzeCompletely,
+            @NotNull CompilerDependencies compilerDependencies,
+            boolean storeContextForBodiesResolve) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
 
         final ModuleDescriptor owner = new ModuleDescriptor(Name.special("<module>"));
@@ -89,17 +101,39 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 filesToAnalyzeCompletely, false, false);
 
+        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
+                project, topDownAnalysisParameters,
+                new ObservableBindingTrace(bindingTraceContext), owner, compilerDependencies);
+        try {
+            injector.getTopDownAnalyzer().analyzeFiles(files);
+            BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
+                                                        new CachedBodiesResolveContext(injector.getTopDownAnalysisContext()) :
+                                                        null;
+            return AnalyzeExhaust.success(bindingTraceContext.getBindingContext(), JetStandardLibrary.getInstance(), bodiesResolveContext);
+        } finally {
+            injector.destroy();
+        }
+    }
+
+    public static AnalyzeExhaust analyzeBodiesInFilesWithJavaIntegration(
+            Project project, Predicate<PsiFile> filesToAnalyzeCompletely,
+            @NotNull CompilerDependencies compilerDependencies,
+            @NotNull BindingTrace traceContext,
+            @NotNull BodiesResolveContext bodiesResolveContext) {
+        final ModuleDescriptor owner = new ModuleDescriptor(Name.special("<module>"));
+
+        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
+                filesToAnalyzeCompletely, false, false);
+
+        bodiesResolveContext.setTopDownAnalysisParameters(topDownAnalysisParameters);
 
         InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
                 project, topDownAnalysisParameters,
-                new ObservableBindingTrace(bindingTraceContext), owner, flowDataTraceFactory,
-                compilerDependencies);
-
+                new ObservableBindingTrace(traceContext), owner, compilerDependencies);
 
         try {
-            injector.getTopDownAnalyzer().analyzeFiles(files);
-
-            return AnalyzeExhaust.success(bindingTraceContext.getBindingContext(), JetStandardLibrary.getInstance());
+            injector.getTopDownAnalyzer().doProcessForBodies(bodiesResolveContext);
+            return AnalyzeExhaust.success(traceContext.getBindingContext(), JetStandardLibrary.getInstance());
         } finally {
             injector.destroy();
         }
@@ -111,7 +145,6 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
         Project project = files.iterator().next().getProject();
 
-        return analyzeFilesWithJavaIntegration(project, files, Predicates.<PsiFile>alwaysFalse(),
-                                               JetControlFlowDataTraceFactory.EMPTY, compilerDependencies);
+        return analyzeFilesWithJavaIntegration(project, files, Predicates.<PsiFile>alwaysFalse(), compilerDependencies);
     }
 }

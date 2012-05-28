@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -93,8 +94,12 @@ public abstract class ClassBodyCodegen {
             catch (CompilationException e) {
                 throw e;
             }
+            catch (ProcessCanceledException e) {
+                throw e;
+            }
             catch (RuntimeException e) {
-                throw new RuntimeException("Error generating method " + myClass.getName() + "." + declaration.getName() + " in " + context, e);
+                throw new RuntimeException("Error generating method " + myClass.getName() + "." + declaration.getName() + " in " + context,
+                                           e);
             }
         }
     }

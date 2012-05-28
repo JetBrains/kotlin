@@ -42,7 +42,7 @@ public class JetElement extends ASTWrapperPsiElement {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.METHOD})
-    public static @interface IfNotParsed {}
+    public @interface IfNotParsed {}
 
     @NotNull
     @Override

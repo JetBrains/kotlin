@@ -19,6 +19,7 @@ package org.jetbrains.jet.analyzer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 /**
@@ -30,19 +31,33 @@ public class AnalyzeExhaust {
     private final JetStandardLibrary standardLibrary;
     private final Throwable error;
 
+    @Nullable
+    private final BodiesResolveContext bodiesResolveContext;
+
     private AnalyzeExhaust(@NotNull BindingContext bindingContext,
-            @Nullable JetStandardLibrary standardLibrary, @Nullable Throwable error) {
+            @Nullable JetStandardLibrary standardLibrary, @Nullable BodiesResolveContext bodiesResolveContext, @Nullable Throwable error) {
         this.bindingContext = bindingContext;
         this.standardLibrary = standardLibrary;
         this.error = error;
+        this.bodiesResolveContext = bodiesResolveContext;
     }
 
     public static AnalyzeExhaust success(@NotNull BindingContext bindingContext, @NotNull JetStandardLibrary standardLibrary) {
-        return new AnalyzeExhaust(bindingContext, standardLibrary, null);
+        return new AnalyzeExhaust(bindingContext, standardLibrary, null, null);
+    }
+
+    public static AnalyzeExhaust success(@NotNull BindingContext bindingContext, @NotNull JetStandardLibrary standardLibrary,
+                                         BodiesResolveContext bodiesResolveContext) {
+        return new AnalyzeExhaust(bindingContext, standardLibrary, bodiesResolveContext, null);
     }
 
     public static AnalyzeExhaust error(@NotNull BindingContext bindingContext, @NotNull Throwable error) {
-        return new AnalyzeExhaust(bindingContext, null, error);
+        return new AnalyzeExhaust(bindingContext, null, null, error);
+    }
+
+    @Nullable
+    public BodiesResolveContext getBodiesResolveContext() {
+        return bodiesResolveContext;
     }
 
     @NotNull

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -272,6 +273,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             generatePrimaryConstructor();
         }
         catch (CompilationException e) {
+            throw e;
+        }
+        catch(ProcessCanceledException e) {
             throw e;
         }
         catch(RuntimeException e) {

@@ -27,10 +27,9 @@ import java.util.Map;
 /**
  * @author abreslav
  */
-public abstract class ClassDescriptorBase extends MutableDeclarationDescriptor implements ClassDescriptor {
-    public ClassDescriptorBase(DeclarationDescriptor containingDeclaration) {
-        super(containingDeclaration);
-    }
+public abstract class ClassDescriptorBase implements ClassDescriptor {
+
+    protected JetType defaultType;
 
     protected abstract JetScope getScopeForMemberLookup();
 
@@ -57,5 +56,24 @@ public abstract class ClassDescriptorBase extends MutableDeclarationDescriptor i
             return this;
         }
         return new LazySubstitutingClassDescriptor(this, substitutor);
+    }
+
+    @NotNull
+    @Override
+    public JetType getDefaultType() {
+        if (defaultType == null) {
+            defaultType = TypeUtils.makeUnsubstitutedType(this, getScopeForMemberLookup());
+        }
+        return defaultType;
+    }
+
+    @Override
+    public void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor) {
+        visitor.visitClassDescriptor(this, null);
+    }
+
+    @Override
+    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
+        return visitor.visitClassDescriptor(this, data);
     }
 }

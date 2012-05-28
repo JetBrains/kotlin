@@ -34,7 +34,6 @@ import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -246,7 +245,6 @@ public class KotlinToJVMBytecodeCompiler {
                     public AnalyzeExhaust invoke() {
                         return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                                 environment.getProject(), environment.getSourceFiles(), filesToAnalyzeCompletely,
-                                JetControlFlowDataTraceFactory.EMPTY,
                                 configuration.getEnvironment().getCompilerDependencies());
                     }
                 }, environment.getSourceFiles()

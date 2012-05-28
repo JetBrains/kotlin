@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -186,8 +185,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     private GenerationState generateCommon(ClassBuilderFactory classBuilderFactory) {
         final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
-                myFile, JetControlFlowDataTraceFactory.EMPTY,
-                myEnvironment.getCompilerDependencies());
+                myFile, myEnvironment.getCompilerDependencies());
         analyzeExhaust.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
         GenerationState state = new GenerationState(myEnvironment.getProject(), classBuilderFactory, analyzeExhaust, Collections.singletonList(myFile));

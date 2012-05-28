@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
@@ -36,10 +35,7 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
  */
 public class ControlFlowAnalyzer {
     private TopDownAnalysisParameters topDownAnalysisParameters;
-    private TopDownAnalysisContext context;
     private BindingTrace trace;
-    private JetControlFlowDataTraceFactory flowDataTraceFactory;
-
 
     @Inject
     public void setTopDownAnalysisParameters(TopDownAnalysisParameters topDownAnalysisParameters) {
@@ -47,57 +43,46 @@ public class ControlFlowAnalyzer {
     }
 
     @Inject
-    public void setContext(TopDownAnalysisContext context) {
-        this.context = context;
-    }
-
-    @Inject
     public void setTrace(BindingTrace trace) {
         this.trace = trace;
     }
 
-    @Inject
-    public void setFlowDataTraceFactory(JetControlFlowDataTraceFactory flowDataTraceFactory) {
-        this.flowDataTraceFactory = flowDataTraceFactory;
-    }
-
-
-    public void process() {
-        for (JetClass aClass : context.getClasses().keySet()) {
-            if (!context.completeAnalysisNeeded(aClass)) continue;
+    public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
+        for (JetClass aClass : bodiesResolveContext.getClasses().keySet()) {
+            if (!bodiesResolveContext.completeAnalysisNeeded(aClass)) continue;
             checkClassOrObject(aClass);
         }
-        for (JetObjectDeclaration objectDeclaration : context.getObjects().keySet()) {
-            if (!context.completeAnalysisNeeded(objectDeclaration)) continue;
+        for (JetObjectDeclaration objectDeclaration : bodiesResolveContext.getObjects().keySet()) {
+            if (!bodiesResolveContext.completeAnalysisNeeded(objectDeclaration)) continue;
             checkClassOrObject(objectDeclaration);
         }
-        for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : context.getFunctions().entrySet()) {
+        for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : bodiesResolveContext.getFunctions().entrySet()) {
             JetNamedFunction function = entry.getKey();
             SimpleFunctionDescriptor functionDescriptor = entry.getValue();
-            if (!context.completeAnalysisNeeded(function)) continue;
+            if (!bodiesResolveContext.completeAnalysisNeeded(function)) continue;
             final JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
                                                ? NO_EXPECTED_TYPE
                                                : functionDescriptor.getReturnType();
             checkFunction(function, expectedReturnType);
         }
-        for (JetSecondaryConstructor constructor : this.context.getConstructors().keySet()) {
-            if (!context.completeAnalysisNeeded(constructor)) continue;
+        for (JetSecondaryConstructor constructor : bodiesResolveContext.getConstructors().keySet()) {
+            if (!bodiesResolveContext.completeAnalysisNeeded(constructor)) continue;
             checkFunction(constructor, JetStandardClasses.getUnitType());
         }
-        for (Map.Entry<JetProperty, PropertyDescriptor> entry : context.getProperties().entrySet()) {
+        for (Map.Entry<JetProperty, PropertyDescriptor> entry : bodiesResolveContext.getProperties().entrySet()) {
             JetProperty property = entry.getKey();
-            if (!context.completeAnalysisNeeded(property)) continue;
+            if (!bodiesResolveContext.completeAnalysisNeeded(property)) continue;
             PropertyDescriptor propertyDescriptor = entry.getValue();
             checkProperty(property, propertyDescriptor);
         }
     }
-    
+
     private void checkClassOrObject(JetClassOrObject klass) {
         // A pseudocode of class initialization corresponds to a class
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) klass, (JetExpression) klass, flowDataTraceFactory, trace);
-        flowInformationProvider.markUninitializedVariables((JetElement) klass, topDownAnalysisParameters.isDeclaredLocally());
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) klass, trace);
+        flowInformationProvider.markUninitializedVariables(topDownAnalysisParameters.isDeclaredLocally());
     }
-    
+
     private void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor) {
         for (JetPropertyAccessor accessor : property.getAccessors()) {
             PropertyAccessorDescriptor accessorDescriptor = accessor.isGetter()
@@ -113,16 +98,16 @@ public class ControlFlowAnalyzer {
 
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) function, bodyExpression, flowDataTraceFactory, trace);
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) function, trace);
 
-        flowInformationProvider.checkDefiniteReturn(function, expectedReturnType);
+        flowInformationProvider.checkDefiniteReturn(expectedReturnType);
 
         // Property accessor is checked through initialization of a class check (at 'checkClassOrObject')
         boolean isPropertyAccessor = function instanceof JetPropertyAccessor;
-        flowInformationProvider.markUninitializedVariables(function.asElement(), topDownAnalysisParameters.isDeclaredLocally() || isPropertyAccessor);
+        flowInformationProvider.markUninitializedVariables(topDownAnalysisParameters.isDeclaredLocally() || isPropertyAccessor);
 
-        flowInformationProvider.markUnusedVariables(function.asElement());
+        flowInformationProvider.markUnusedVariables();
 
-        flowInformationProvider.markUnusedLiteralsInBlock(function.asElement());
+        flowInformationProvider.markUnusedLiteralsInBlock();
     }
 }

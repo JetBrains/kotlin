@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +32,7 @@ import java.util.Map;
 /**
  * @author abreslav
  */
-public class TopDownAnalysisContext {
+public class TopDownAnalysisContext implements BodiesResolveContext {
 
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects = Maps.newLinkedHashMap();
@@ -62,13 +61,15 @@ public class TopDownAnalysisContext {
 
     private TopDownAnalysisParameters topDownAnalysisParameters;
 
+    @Override
     @Inject
     public void setTopDownAnalysisParameters(TopDownAnalysisParameters topDownAnalysisParameters) {
         this.topDownAnalysisParameters = topDownAnalysisParameters;
     }
 
-
-
+    public TopDownAnalysisParameters getTopDownAnalysisParameters() {
+        return topDownAnalysisParameters;
+    }
 
     public void debug(Object message) {
         if (debugOutput != null) {
@@ -76,6 +77,7 @@ public class TopDownAnalysisContext {
         }
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     /*package*/ void enableDebugOutput() {
         if (debugOutput == null) {
             debugOutput = new StringBuilder();
@@ -88,6 +90,7 @@ public class TopDownAnalysisContext {
         }
     }
 
+    @Override
     public boolean completeAnalysisNeeded(@NotNull PsiElement element) {
         PsiFile containingFile = element.getContainingFile();
         boolean result = containingFile != null && topDownAnalysisParameters.getAnalyzeCompletely().apply(containingFile);
@@ -97,10 +100,12 @@ public class TopDownAnalysisContext {
         return result;
     }
 
+    @Override
     public Map<JetClass, MutableClassDescriptor> getClasses() {
         return classes;
     }
 
+    @Override
     public Map<JetObjectDeclaration, MutableClassDescriptor> getObjects() {
         return objects;
     }
@@ -123,11 +128,13 @@ public class TopDownAnalysisContext {
         return namespaceDescriptors;
     }
 
+    @Override
     @NotNull
     public Map<JetScript, ScriptDescriptor> getScripts() {
         return scripts;
     }
 
+    @Override
     @NotNull
     public Map<JetScript, WritableScope> getScriptScopes() {
         return scriptScopes;
@@ -137,18 +144,22 @@ public class TopDownAnalysisContext {
         return primaryConstructorParameterProperties;
     }
 
+    @Override
     public Map<JetSecondaryConstructor, ConstructorDescriptor> getConstructors() {
         return constructors;
     }
 
+    @Override
     public Map<JetProperty, PropertyDescriptor> getProperties() {
         return properties;
     }
 
+    @Override
     public Map<JetDeclaration, JetScope> getDeclaringScopes() {
         return declaringScopes;
     }
 
+    @Override
     public Map<JetNamedFunction, SimpleFunctionDescriptor> getFunctions() {
         return functions;
     }

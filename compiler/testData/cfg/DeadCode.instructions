@@ -1,0 +1,20 @@
+== test ==
+fun test() {
+    throw Exception()
+    test()
+}
+---------------------
+l0:
+    <START>           NEXT:[r(Exception)]      PREV:[]
+    r(Exception)      NEXT:[r(Exception())]    PREV:[<START>]
+    r(Exception())    NEXT:[jmp(error)]        PREV:[r(Exception)]
+    jmp(error)        NEXT:[<ERROR>]           PREV:[r(Exception())]
+-   r(test)           NEXT:[r(test())]         PREV:[]
+-   r(test())         NEXT:[<END>]             PREV:[]
+l1:
+    <END>             NEXT:[<SINK>]            PREV:[]
+error:
+    <ERROR>           NEXT:[<SINK>]            PREV:[jmp(error)]
+sink:
+    <SINK>            NEXT:[]                  PREV:[<ERROR>, <END>]
+=====================

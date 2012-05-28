@@ -20,10 +20,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
+import org.jetbrains.k2js.test.rhino.RhinoFunctionNativeObjectResultChecker;
+import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.util.*;
 
 /**
  * @author Pavel Talanov
@@ -32,9 +35,6 @@ public final class StdLibTest extends SingleFileTranslationTest {
 
     public StdLibTest() {
         super("stdlib/");
-    }
-
-    public void testDummy() {
     }
 
     public void testBrowserDocumentAccessCompiles() throws Exception {
@@ -48,5 +48,25 @@ public final class StdLibTest extends SingleFileTranslationTest {
         List<String> files = Arrays.asList(getInputFilePath(kotlinFilename));
 
         generateJavaScriptFiles(files, kotlinFilename, mainCallParameters, ecmaVersions);
+        runRhinoTests(getOutputFilePaths(kotlinFilename, ecmaVersions),
+                      new RhinoFunctionNativeObjectResultChecker("test.browser", "foo", "Some Dynamically Created Content!!!"));
+    }
+
+    @Override
+    protected Map<String, Object> getRhinoTestVariables() throws Exception {
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+        Element root = document.createElement("root");
+        //root.setIdAttribute("foo", true);
+        root.setAttribute("id", "foo");
+        root.setIdAttribute("id", true);
+        document.appendChild(root);
+
+        // lets test it actually works
+        Element foo = document.getElementById("foo");
+        assertNotNull(foo);
+
+        Map<String, Object> answer = new HashMap<String, Object>();
+        answer.put("document", document);
+        return answer;
     }
 }

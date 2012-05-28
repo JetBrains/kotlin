@@ -15,7 +15,7 @@ l0:
 l1:
     <END>                              NEXT:[<SINK>]                             PREV:[]
 error:
-    <ERROR>                            NEXT:[]                                   PREV:[jmp(error)]
+    <ERROR>                            NEXT:[<SINK>]                             PREV:[jmp(error)]
 sink:
-    <SINK>                             NEXT:[]                                   PREV:[<END>]
+    <SINK>                             NEXT:[]                                   PREV:[<ERROR>, <END>]
 =====================

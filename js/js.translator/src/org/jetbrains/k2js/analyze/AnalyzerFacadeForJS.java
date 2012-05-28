@@ -24,10 +24,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.config.Config;
 
 import java.util.Collection;
@@ -54,7 +55,7 @@ public final class AnalyzerFacadeForJS {
     @NotNull
     public static BindingContext analyzeFilesAndCheckErrors(@NotNull List<JetFile> files,
             @NotNull Config config) {
-        BindingContext bindingContext = analyzeFiles(files, Predicates.<PsiFile>alwaysTrue(), config);
+        BindingContext bindingContext = analyzeFiles(files, Predicates.<PsiFile>alwaysTrue(), config).getBindingContext();
         checkForErrors(withJsLibAdded(files, config), bindingContext);
         return bindingContext;
     }
@@ -64,12 +65,21 @@ public final class AnalyzerFacadeForJS {
     @SuppressWarnings("UnusedDeclaration")
     @NotNull
     public static BindingContext analyzeFiles(@NotNull Collection<JetFile> files, @NotNull Config config) {
-        return analyzeFiles(files, Predicates.<PsiFile>alwaysTrue(), config);
+        return analyzeFiles(files, Predicates.<PsiFile>alwaysTrue(), config).getBindingContext();
     }
 
     @NotNull
-    public static BindingContext analyzeFiles(@NotNull Collection<JetFile> files,
+    public static AnalyzeExhaust analyzeFiles(
+            @NotNull Collection<JetFile> files,
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely, @NotNull Config config) {
+        return analyzeFiles(files, filesToAnalyzeCompletely, config, false);
+    }
+
+    @NotNull
+    public static AnalyzeExhaust analyzeFiles(
+            @NotNull Collection<JetFile> files,
+            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely, @NotNull Config config,
+            boolean storeContextForBodiesResolve) {
         Project project = config.getProject();
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
 
@@ -80,11 +90,41 @@ public final class AnalyzerFacadeForJS {
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(completely, false, false);
 
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
-                project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
-                JetControlFlowDataTraceFactory.EMPTY, JsConfiguration.jsLibConfiguration(project));
+                project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner, JsConfiguration.jsLibConfiguration(project));
+        try {
+            injector.getTopDownAnalyzer().analyzeFiles(withJsLibAdded(files, config));
+            BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
+                                                        new CachedBodiesResolveContext(injector.getTopDownAnalysisContext()) :
+                                                        null;
+            return AnalyzeExhaust.success(bindingTraceContext.getBindingContext(), JetStandardLibrary.getInstance(), bodiesResolveContext);
+        } finally {
+            injector.destroy();
+        }
+    }
 
-        injector.getTopDownAnalyzer().analyzeFiles(withJsLibAdded(files, config));
-        return bindingTraceContext.getBindingContext();
+    public static AnalyzeExhaust analyzeBodiesInFiles(
+            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
+            @NotNull Config config,
+            @NotNull BindingTrace traceContext,
+            @NotNull BodiesResolveContext bodiesResolveContext
+    ) {
+        Project project = config.getProject();
+        final ModuleDescriptor owner = new ModuleDescriptor(Name.special("<module>"));
+        Predicate<PsiFile> completely = Predicates.and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
+
+        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(completely, false, false);
+
+        InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
+                project, topDownAnalysisParameters, new ObservableBindingTrace(traceContext), owner, JsConfiguration.jsLibConfiguration(project));
+
+        try {
+            bodiesResolveContext.setTopDownAnalysisParameters(topDownAnalysisParameters);
+            injector.getTopDownAnalyzer().doProcessForBodies(bodiesResolveContext);
+            return AnalyzeExhaust.success(traceContext.getBindingContext(), JetStandardLibrary.getInstance());
+        } finally {
+            injector.destroy();
+        }
+
     }
 
     private static void checkForErrors(@NotNull Collection<JetFile> allFiles, @NotNull BindingContext bindingContext) {

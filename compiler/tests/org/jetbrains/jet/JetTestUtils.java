@@ -33,7 +33,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
@@ -170,8 +169,8 @@ public class JetTestUtils {
     private JetTestUtils() {
     }
 
-    public static AnalyzeExhaust analyzeFile(@NotNull JetFile namespace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
-        return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(namespace, flowDataTraceFactory,
+    public static AnalyzeExhaust analyzeFile(@NotNull JetFile namespace) {
+        return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(namespace,
                 CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true));
     }
 

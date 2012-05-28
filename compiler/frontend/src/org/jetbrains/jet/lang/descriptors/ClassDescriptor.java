@@ -44,8 +44,6 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
     @Nullable
     ConstructorDescriptor getUnsubstitutedPrimaryConstructor();
 
-    boolean hasConstructors();
-
     @Override
     @NotNull
     DeclarationDescriptor getContainingDeclaration();
