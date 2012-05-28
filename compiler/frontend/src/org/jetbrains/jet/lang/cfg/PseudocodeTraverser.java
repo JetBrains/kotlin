@@ -181,16 +181,6 @@ public class PseudocodeTraverser {
             return new Edges<T>(in, out);
         }
 
-        @NotNull
-        public T getIn() {
-            return in;
-        }
-
-        @NotNull
-        public T getOut() {
-            return out;
-        }
-
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
