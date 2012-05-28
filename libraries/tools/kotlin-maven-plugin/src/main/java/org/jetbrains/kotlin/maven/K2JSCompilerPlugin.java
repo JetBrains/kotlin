@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.maven;
 
 import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.CompilerPluginContext;
@@ -30,19 +31,18 @@ import org.jetbrains.k2js.facade.MainCallParameters;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Compiles Kotlin code to JavaScript
  */
 public class K2JSCompilerPlugin implements CompilerPlugin {
-    private final String jsLibrarySourceDir;
+    public static final String KOTLIN_JS_LIB = "kotlin-lib.js";
     private String outFile = "target/js/program.js";
 
-    public K2JSCompilerPlugin(String jsLibrarySourceDir) {
-        this.jsLibrarySourceDir = jsLibrarySourceDir;
+    public K2JSCompilerPlugin() {
     }
 
     @Override
@@ -52,24 +52,28 @@ public class K2JSCompilerPlugin implements CompilerPlugin {
         List<JetFile> sources = context.getFiles();
 
         if (bindingContext != null && sources != null && project != null) {
-            Config config;
-            if (jsLibrarySourceDir != null) {
-                config = new JsLibrarySourceConfig(project, EcmaVersion.defaultVersion(), jsLibrarySourceDir);
+            Config config = new JsLibrarySourceConfig(project, EcmaVersion.defaultVersion());
 
-                // lets copy the kotlin library into the output directory
-                try {
-                    File parentFile = new File(outFile).getParentFile();
-                    parentFile.mkdirs();
-                    Files.copy(new File(jsLibrarySourceDir, "../../js.translator/testFiles/kotlin_lib.js"), new File(parentFile, "kotlin-lib.js"));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+            // lets copy the kotlin library into the output directory
+            try {
+                File parentFile = new File(outFile).getParentFile();
+                parentFile.mkdirs();
+                final InputStream inputStream = JsLibrarySourceConfig.loadClasspathResource(KOTLIN_JS_LIB);
+                if (inputStream == null) {
+                    System.out.println("WARNING: Could not find " + KOTLIN_JS_LIB + " on the classpath!");
+                } else {
+                    Files.copy(new InputSupplier<InputStream>() {
+                        @Override
+                        public InputStream getInput() throws IOException {
+                            return inputStream;
+                        }
+                    }, new File(parentFile, "kotlin-lib.js"));
                 }
-            } else {
-                config = Config.getEmptyConfig(project);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
 
             try {
-
                 K2JSTranslator translator = new K2JSTranslator(config);
 
                 final String code = translator.generateProgramCode(sources, MainCallParameters.noCall());
@@ -77,8 +81,7 @@ public class K2JSCompilerPlugin implements CompilerPlugin {
                 File file = new File(outFile);
                 Files.createParentDirs(file);
                 Files.write(code, file, Charset.forName("UTF-8"));
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }

@@ -51,6 +51,7 @@
         <module>tools/kotlin-install</module>
         <module>tools/runtime</module>
         <module>tools/kotlin-maven-plugin</module>
+        <module>tools/kotlin-js-library</module>
         <module>tools/kdoc</module>
         <module>tools/kdoc-maven-plugin</module>
 
@@ -63,12 +64,8 @@
         <module>docs/website</module>
 
         <module>examples/kotlin-java-example</module>
-<!--
-        TODO - lets comment out for now until we've found a simpler way
-        of finding the JS ilbrary source to compile
-
         <module>examples/js-example</module>
--->
+        <module>examples/browser-example</module>
     </modules>
 
     <dependencies>

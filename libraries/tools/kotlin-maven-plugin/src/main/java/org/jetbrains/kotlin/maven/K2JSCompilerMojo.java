@@ -35,19 +35,11 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
      */
     private String outFile;
 
-    /**
-     * The Kotlin JavaScript library source code
-     *
-     * @required
-     * @parameter expression="${jsLibrarySourceDir}"
-     */
-    private String jsLibrarySourceDir;
-
     @Override
     protected void configureCompilerArguments(K2JVMCompilerArguments arguments) throws MojoExecutionException {
         super.configureCompilerArguments(arguments);
 
-        K2JSCompilerPlugin plugin = new K2JSCompilerPlugin(jsLibrarySourceDir);
+        K2JSCompilerPlugin plugin = new K2JSCompilerPlugin();
         plugin.setOutFile(outFile);
         arguments.getCompilerPlugins().add(plugin);
 

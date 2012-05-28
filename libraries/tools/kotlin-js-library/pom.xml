@@ -12,42 +12,28 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>browser-example</artifactId>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
+    <artifactId>kotlin-js-library</artifactId>
+    <packaging>jar</packaging>
 
     <build>
-        <sourceDirectory>src/main/kotlin</sourceDirectory>
-        <testSourceDirectory>src/test/kotlin</testSourceDirectory>
-
         <plugins>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${project.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <artifactId>kotlin-js-library</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                </dependencies>
+                <configuration>
+                    <librarySourceDir>${kotlin-js-lib-srcdir}</librarySourceDir>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>js</id>
+                        <id>jslib</id>
                         <goals>
-                            <goal>js</goal>
+                            <goal>jslib</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
-
 </project>
