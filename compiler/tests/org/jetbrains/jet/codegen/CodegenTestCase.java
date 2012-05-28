@@ -52,7 +52,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     // for environment and classloader
     protected JetCoreEnvironment myEnvironment;
     private List<File> extraClasspath = Lists.newArrayList();
-    protected JetFile myFile;
+    protected CodegenTestFile myFile;
 
     protected void createEnvironmentWithMockJdkAndIdeaAnnotations() {
         if (myEnvironment != null) {
@@ -104,13 +104,13 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     protected void loadText(final String text) {
-        myFile = (JetFile) JetTestUtils.createFile("a.jet", text, myEnvironment.getProject());
+        myFile = CodegenTestFile.create("a.jet", text, myEnvironment.getProject());
     }
 
     protected String loadFile(final String name) {
         try {
             final String content = JetTestUtils.doLoadFile(JetParsingTest.getTestDataDir() + "/codegen/", name);
-            myFile = (JetFile) JetTestUtils.createFile(name, content, myEnvironment.getProject());
+            myFile = CodegenTestFile.create(name, content, myEnvironment.getProject());
             return content;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -126,9 +126,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     protected void blackBoxFile(String filename) {
-        String content = loadFile(filename);
-        Matcher matcher = Pattern.compile("// expected: (.*)").matcher(content);
-        String expectedValue = matcher.find() ? matcher.group(1) : "OK";
+        loadFile(filename);
         Object actual;
         try {
             actual = blackBox();
@@ -139,10 +137,10 @@ public abstract class CodegenTestCase extends UsefulTestCase {
             System.out.println(generateToText());
             throw new RuntimeException(e);
         }
-        if (!Objects.equal(expectedValue, actual)) {
+        if (!Objects.equal(myFile.getExpectedValue(), actual)) {
             System.out.println(generateToText());
         }
-        assertEquals(expectedValue, actual);
+        assertEquals(myFile.getExpectedValue(), actual);
     }
 
     @NotNull
@@ -151,7 +149,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         GeneratedClassLoader loader = createClassLoader(codegens);
 
         try {
-            if (myFile.isScript()) {
+            if (myFile.getPsiFile().isScript()) {
                 Class<?> scriptClass = loader.loadClass("Script");
                 Object scriptInstance = scriptClass.newInstance();
                 Field field = scriptClass.getDeclaredField("rv");
@@ -160,7 +158,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 return result != null ? result.toString() : "null";
             }
             else {
-                String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFile)).getFqName().getFqName();
+                String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFile.getPsiFile())).getFqName().getFqName();
                 Class<?> namespaceClass = loader.loadClass(fqName);
                 Method method = namespaceClass.getMethod("box");
                 return (String) method.invoke(null);
@@ -185,10 +183,10 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     private GenerationState generateCommon(ClassBuilderFactory classBuilderFactory) {
         final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
-                myFile, myEnvironment.getCompilerDependencies());
+                myFile.getPsiFile(), myEnvironment.getCompilerDependencies());
         analyzeExhaust.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
-        GenerationState state = new GenerationState(myEnvironment.getProject(), classBuilderFactory, analyzeExhaust, Collections.singletonList(myFile));
+        GenerationState state = new GenerationState(myEnvironment.getProject(), classBuilderFactory, analyzeExhaust, Collections.singletonList(myFile.getPsiFile()));
         state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         return state;
     }
@@ -204,7 +202,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     protected Class loadRootNamespaceClass(@NotNull ClassFileFactory state) {
-        String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFile)).getFqName().getFqName();
+        String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFile.getPsiFile())).getFqName().getFqName();
         try {
             return createClassLoader(state).loadClass(fqName);
         } catch (ClassNotFoundException e) {
