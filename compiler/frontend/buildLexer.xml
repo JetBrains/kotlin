@@ -24,7 +24,10 @@
               jvmargs="-Xmx512M"
               fork="true"
               failonerror="true">
+          <arg value="-charat"/>
+          <!-- generates invalid code when %line option is on
           <arg value="-sliceandcharat"/>
+          -->
           <arg value="-skel"/>
           <arg value="@{skeleton}"/>
           <arg value="-d"/>

@@ -1,0 +1,35 @@
+JetFile: ShebangIncorrect.ktscript
+  SCRIPT
+    BLOCK
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('println')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+          PsiElement(RPAR)(')')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace(' ')
+      BINARY_EXPRESSION
+        TUPLE
+          PsiElement(HASH)('#')
+          PsiElement(EXCL)('!')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+        OPERATION_REFERENCE
+          PsiElement(DIV)('/')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('usr')
+      PsiWhiteSpace('\n\n')
+      BINARY_EXPRESSION
+        TUPLE
+          PsiElement(HASH)('#')
+          PsiElement(EXCL)('!')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+        OPERATION_REFERENCE
+          PsiElement(DIV)('/')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('hi')
