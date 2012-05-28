@@ -69,7 +69,7 @@ public class FunctionCodegen {
             JvmMethodSignature jvmMethod, boolean needJetAnnotations,
             @Nullable String propertyTypeSignature, FunctionDescriptor functionDescriptor) {
 
-        CodegenContext.MethodContext funContext = owner.intoFunction(functionDescriptor);
+        CodegenContexts.MethodContext funContext = owner.intoFunction(functionDescriptor);
 
         final JetExpression bodyExpression = f.getBodyExpression();
         generatedMethod(bodyExpression, jvmMethod, needJetAnnotations, propertyTypeSignature, funContext, functionDescriptor, f);
@@ -78,7 +78,7 @@ public class FunctionCodegen {
     private void generatedMethod(JetExpression bodyExpressions,
             JvmMethodSignature jvmSignature,
             boolean needJetAnnotations, @Nullable String propertyTypeSignature,
-            CodegenContext.MethodContext context,
+            CodegenContexts.MethodContext context,
             FunctionDescriptor functionDescriptor,
             JetDeclarationWithBody fun
     )
@@ -301,7 +301,7 @@ public class FunctionCodegen {
         }
     }
 
-    static void generateDefaultIfNeeded(CodegenContext.MethodContext owner, GenerationState state, ClassBuilder v, Method jvmSignature, @Nullable FunctionDescriptor functionDescriptor, OwnerKind kind) {
+    static void generateDefaultIfNeeded(CodegenContexts.MethodContext owner, GenerationState state, ClassBuilder v, Method jvmSignature, @Nullable FunctionDescriptor functionDescriptor, OwnerKind kind) {
         DeclarationDescriptor contextClass = owner.getContextDescriptor().getContainingDeclaration();
 
         if(kind != OwnerKind.TRAIT_IMPL) {

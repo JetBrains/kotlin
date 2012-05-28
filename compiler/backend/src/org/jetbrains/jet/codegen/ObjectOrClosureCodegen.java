@@ -106,9 +106,9 @@ public class ObjectOrClosureCodegen {
             FunctionDescriptor fd = (FunctionDescriptor) d;
 
             // we generate method
-            assert context instanceof CodegenContext.ReceiverContext;
+            assert context instanceof CodegenContexts.ReceiverContext;
 
-            CodegenContext.ReceiverContext fcontext = (CodegenContext.ReceiverContext) context;
+            CodegenContexts.ReceiverContext fcontext = (CodegenContexts.ReceiverContext) context;
 
             if(fcontext.getReceiverDescriptor() != fd)
                 return null;
