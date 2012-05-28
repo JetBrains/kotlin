@@ -287,12 +287,6 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         return new PsiMethod[0];
     }
 
-    @NotNull
-    @Override
-    public PsiField[] getFieldsByNameIfNotMoreThan(@NonNls @NotNull String s, @NotNull GlobalSearchScope scope, int i) {
-        return getFieldsByName(s, scope);
-    }
-
     @Override
     public boolean processMethodsWithName(@NonNls @NotNull String name, @NotNull GlobalSearchScope scope, @NotNull Processor<PsiMethod> processor) {
         return false;
