@@ -449,7 +449,7 @@ public class JetFlowInformationProvider {
                     if (element instanceof JetNamedDeclaration) {
                         PsiElement nameIdentifier = ((JetNamedDeclaration) element).getNameIdentifier();
                         if (nameIdentifier == null) return;
-                        if (variableUseState == null || variableUseState == UNUSED) {
+                        if (!VariableUseState.isUsed(variableUseState)) {
                             if (element instanceof JetProperty) {
                                 trace.report(Errors.UNUSED_VARIABLE.on((JetProperty) element, variableDescriptor));
                             }
@@ -467,7 +467,7 @@ public class JetFlowInformationProvider {
                                 }
                             }
                         }
-                        else if (variableUseState == ONLY_WRITTEN_NEVER_READ &&element instanceof JetProperty) {
+                        else if (variableUseState == ONLY_WRITTEN_NEVER_READ && element instanceof JetProperty) {
                             trace.report(Errors.ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE.on((JetNamedDeclaration) element, variableDescriptor));
                         }
                         else if (variableUseState == LAST_WRITTEN && element instanceof JetProperty) {
