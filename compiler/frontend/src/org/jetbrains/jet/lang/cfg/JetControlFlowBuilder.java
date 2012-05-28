@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.cfg;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.psi.*;
 
 import java.util.List;
@@ -64,7 +65,7 @@ public interface JetControlFlowBuilder {
     // Subroutines
     void enterSubroutine(@NotNull JetDeclaration subroutine);
 
-    void exitSubroutine(@NotNull JetDeclaration subroutine);
+    Pseudocode exitSubroutine(@NotNull JetDeclaration subroutine);
 
     @NotNull
     JetElement getCurrentSubroutine();

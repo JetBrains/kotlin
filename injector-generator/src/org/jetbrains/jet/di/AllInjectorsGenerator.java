@@ -26,12 +26,13 @@ import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.ScriptCodegen;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
+import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
@@ -66,6 +67,7 @@ public class AllInjectorsGenerator {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
         generateInjectorForTopDownAnalyzerCommon(generator);
         generator.addParameter(ModuleConfiguration.class);
+        generator.addField(DependencyClassByQualifiedNameResolverDummyImpl.class);
         generator.generate("js/js.translator/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJs");
     }
 
@@ -93,7 +95,6 @@ public class AllInjectorsGenerator {
         generator.addPublicParameter(TopDownAnalysisParameters.class);
         generator.addPublicParameter(ObservableBindingTrace.class);
         generator.addParameter(ModuleDescriptor.class);
-        generator.addParameter(JetControlFlowDataTraceFactory.class, false);
     }
 
     private static void generateMacroInjector() throws IOException {

@@ -463,7 +463,7 @@ public class JetTypeMapper {
             return asmType;
         }
 
-        if (descriptor instanceof TypeParameterDescriptor) {
+        if (descriptor instanceof TypeParameterDescriptorImpl) {
 
             Type type = mapType(((TypeParameterDescriptor) descriptor).getUpperBoundsAsType(), kind);
             if (signatureVisitor != null) {
@@ -722,7 +722,7 @@ public class JetTypeMapper {
                     signatureVisitor.writeInterfaceBoundEnd();
                 }
             }
-            if (jetType.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
+            if (jetType.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptorImpl) {
                 signatureVisitor.writeInterfaceBound();
                 mapType(jetType, signatureVisitor, MapTypeMode.TYPE_PARAMETER);
                 signatureVisitor.writeInterfaceBoundEnd();
@@ -966,7 +966,7 @@ public class JetTypeMapper {
 
     public boolean isGenericsArray(JetType type) {
         DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
-        if(declarationDescriptor instanceof TypeParameterDescriptor)
+        if(declarationDescriptor instanceof TypeParameterDescriptorImpl)
             return true;
 
         if(standardLibrary.getArray().equals(declarationDescriptor))

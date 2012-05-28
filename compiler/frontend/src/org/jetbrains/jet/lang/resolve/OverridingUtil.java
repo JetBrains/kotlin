@@ -212,7 +212,7 @@ public class OverridingUtil {
         if (type.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
             return type;
         }
-        else if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
+        else if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptorImpl) {
             return ((TypeParameterDescriptor) type.getConstructor().getDeclarationDescriptor()).getUpperBoundsAsType();
         }
         else {

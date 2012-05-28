@@ -35,25 +35,6 @@ import java.util.LinkedHashMap;
  * @author alex.tkachman
  */
 public abstract class CodegenContext {
-    public static final CodegenContext STATIC = new CodegenContext(null, OwnerKind.NAMESPACE, null, null) {
-        @Override
-        protected ClassDescriptor getThisDescriptor() {
-            return null;
-        }
-
-        @Override
-        public boolean isStatic() {
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return "ROOT";
-        }
-    };
-
-    protected static final StackValue local0 = StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
-    protected static final StackValue local1 = StackValue.local(1, JetTypeMapper.TYPE_OBJECT);
 
     private final DeclarationDescriptor contextType;
 
@@ -121,31 +102,31 @@ public abstract class CodegenContext {
     }
 
     public CodegenContext intoNamespace(NamespaceDescriptor descriptor) {
-        return new NamespaceContext(descriptor, this);
+        return new CodegenContexts.NamespaceContext(descriptor, this);
     }
 
     public CodegenContext intoClass(ClassDescriptor descriptor, OwnerKind kind, JetTypeMapper typeMapper) {
-        return new ClassContext(descriptor, kind, this, typeMapper);
+        return new CodegenContexts.ClassContext(descriptor, kind, this, typeMapper);
     }
 
     public CodegenContext intoAnonymousClass(@NotNull ObjectOrClosureCodegen closure, ClassDescriptor descriptor, OwnerKind kind, JetTypeMapper typeMapper) {
-        return new AnonymousClassContext(descriptor, kind, this, closure, typeMapper);
+        return new CodegenContexts.AnonymousClassContext(descriptor, kind, this, closure, typeMapper);
     }
 
-    public MethodContext intoFunction(FunctionDescriptor descriptor) {
-        return new MethodContext(descriptor, getContextKind(), this);
+    public CodegenContexts.MethodContext intoFunction(FunctionDescriptor descriptor) {
+        return new CodegenContexts.MethodContext(descriptor, getContextKind(), this);
     }
 
-    public ConstructorContext intoConstructor(ConstructorDescriptor descriptor, JetTypeMapper typeMapper) {
+    public CodegenContexts.ConstructorContext intoConstructor(ConstructorDescriptor descriptor, JetTypeMapper typeMapper) {
         if(descriptor == null) {
             descriptor = new ConstructorDescriptorImpl(getThisDescriptor(), Collections.<AnnotationDescriptor>emptyList(), true)
                     .initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(), Visibilities.PUBLIC);
         }
-        return new ConstructorContext(descriptor, getContextKind(), this, typeMapper);
+        return new CodegenContexts.ConstructorContext(descriptor, getContextKind(), this, typeMapper);
     }
 
-    public ClosureContext intoClosure(FunctionDescriptor funDescriptor, ClassDescriptor classDescriptor, String internalClassName, ClosureCodegen closureCodegen, JetTypeMapper typeMapper) {
-        return new ClosureContext(funDescriptor, classDescriptor, this, closureCodegen, internalClassName, typeMapper);
+    public CodegenContexts.ClosureContext intoClosure(FunctionDescriptor funDescriptor, ClassDescriptor classDescriptor, String internalClassName, ClosureCodegen closureCodegen, JetTypeMapper typeMapper) {
+        return new CodegenContexts.ClosureContext(funDescriptor, classDescriptor, this, closureCodegen, internalClassName, typeMapper);
     }
 
     public FrameMap prepareFrame(JetTypeMapper mapper) {
@@ -190,7 +171,7 @@ public abstract class CodegenContext {
     }
     
     public int getTypeInfoConstantIndex(JetType type) {
-        if (parentContext != STATIC) { return parentContext.getTypeInfoConstantIndex(type); }
+        if (parentContext != CodegenContexts.STATIC) { return parentContext.getTypeInfoConstantIndex(type); }
         
         if(typeInfoConstants == null) {
             typeInfoConstants = new LinkedHashMap<JetType, Integer>();
@@ -242,7 +223,7 @@ public abstract class CodegenContext {
                     CallableMemberDescriptor.Kind.DECLARATION
             );
             JetType receiverType = pd.getReceiverParameter().exists() ? pd.getReceiverParameter().getType() : null;
-            myAccessor.setType(pd.getType(), Collections.<TypeParameterDescriptor>emptyList(), pd.getExpectedThisObject(), receiverType);
+            myAccessor.setType(pd.getType(), Collections.<TypeParameterDescriptorImpl>emptyList(), pd.getExpectedThisObject(), receiverType);
 
             PropertyGetterDescriptor pgd = new PropertyGetterDescriptor(
                         myAccessor, Collections.<AnnotationDescriptor>emptyList(), myAccessor.getModality(),
@@ -278,176 +259,6 @@ public abstract class CodegenContext {
                 this.accessors = new HashMap<DeclarationDescriptor,DeclarationDescriptor>();
             }
             this.accessors.putAll(accessors);
-        }
-    }
-
-    public abstract static class ReceiverContext extends CodegenContext {
-        final CallableDescriptor receiverDescriptor;
-
-        public ReceiverContext(CallableDescriptor contextType, OwnerKind contextKind, CodegenContext parentContext, @Nullable ObjectOrClosureCodegen closureCodegen) {
-            super(contextType, contextKind, parentContext, closureCodegen);
-            receiverDescriptor = contextType.getReceiverParameter().exists() ? contextType : null;
-        }
-
-        @Override
-        protected CallableDescriptor getReceiverDescriptor() {
-            return receiverDescriptor;
-        }
-    }
-
-    public static class MethodContext  extends ReceiverContext {
-        public MethodContext(FunctionDescriptor contextType, OwnerKind contextKind, CodegenContext parentContext) {
-            super(contextType instanceof PropertyAccessorDescriptor ? ((PropertyAccessorDescriptor)contextType).getCorrespondingProperty() : contextType, contextKind, parentContext, null);
-        }
-
-        @Override
-        protected ClassDescriptor getThisDescriptor() {
-            return getParentContext().getThisDescriptor();
-        }
-
-        public StackValue lookupInContext(DeclarationDescriptor d, InstructionAdapter v, StackValue result) {
-            return getParentContext().lookupInContext(d, v, result);
-        }
-
-        public Type enclosingClassType(JetTypeMapper typeMapper) {
-            return getParentContext().enclosingClassType(typeMapper);
-        }
-
-        @Override
-        public boolean isStatic() {
-            return getParentContext().isStatic();
-        }
-
-        protected StackValue getOuterExpression(StackValue prefix) {
-            return getParentContext().getOuterExpression(prefix);
-        }
-
-        @Override
-        public String toString() {
-            return "Method: " + getContextDescriptor();
-        }
-    }
-
-    public static class ConstructorContext extends MethodContext {
-        public ConstructorContext(ConstructorDescriptor contextType, OwnerKind kind, CodegenContext parent, JetTypeMapper typeMapper) {
-            super(contextType, kind, parent);
-
-            final Type type = enclosingClassType(typeMapper);
-            outerExpression = type != null
-                        ? local1
-                        : null;
-        }
-
-        protected StackValue getOuterExpression(StackValue prefix) {
-            return outerExpression;
-        }
-
-        @Override
-        public String toString() {
-            return "Constructor: " + getContextDescriptor().getName();
-        }
-    }
-
-    public static class ClassContext extends CodegenContext {
-        public ClassContext(ClassDescriptor contextType, OwnerKind contextKind, CodegenContext parentContext, JetTypeMapper typeMapper) {
-            super(contextType, contextKind, parentContext, null);
-
-            final Type type = enclosingClassType(typeMapper);
-            outerExpression = type != null
-                        ? StackValue.field(type, typeMapper.getFQName(contextType), "this$0", false)
-                        : null;
-        }
-
-        @Override
-        protected ClassDescriptor getThisDescriptor() {
-            return (ClassDescriptor) getContextDescriptor();
-        }
-
-        @Override
-        public boolean isStatic() {
-            return false;
-        }
-    }
-
-    public static class AnonymousClassContext extends CodegenContext {
-        public AnonymousClassContext(ClassDescriptor contextType, OwnerKind contextKind, CodegenContext parentContext, @NotNull ObjectOrClosureCodegen closure, JetTypeMapper typeMapper) {
-            super(contextType, contextKind, parentContext, closure);
-            
-            final Type type = enclosingClassType(typeMapper);
-            Type owner = closure.state.getInjector().getJetTypeMapper().mapType(contextType.getDefaultType(), MapTypeMode.IMPL);
-            outerExpression = type != null
-                        ? StackValue.field(type, owner.getInternalName(), "this$0", false)
-                        : null;
-        }
-
-        @Override
-        protected ClassDescriptor getThisDescriptor() {
-            return (ClassDescriptor) getContextDescriptor();
-        }
-
-        @Override
-        public boolean isStatic() {
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            return "Anonymous: " + getThisDescriptor();
-        }
-    }
-
-    public static class ClosureContext extends ReceiverContext {
-        private ClassDescriptor classDescriptor;
-
-        public ClosureContext(FunctionDescriptor contextType, ClassDescriptor classDescriptor, CodegenContext parentContext, @NotNull ObjectOrClosureCodegen closureCodegen, String internalClassName, JetTypeMapper typeMapper) {
-            super(contextType, OwnerKind.IMPLEMENTATION, parentContext, closureCodegen);
-            this.classDescriptor = classDescriptor;
-
-            final Type type = enclosingClassType(typeMapper);
-            outerExpression = type != null
-                        ? StackValue.field(type, internalClassName, "this$0", false)
-                        : null;
-        }
-
-        @Override
-        protected ClassDescriptor getThisDescriptor() {
-            return classDescriptor;
-        }
-
-        @Override
-        public DeclarationDescriptor getContextDescriptor() {
-            return classDescriptor;
-        }
-
-        @Override
-        public boolean isStatic() {
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            return "Closure: " + classDescriptor;
-        }
-    }
-
-    public static class NamespaceContext extends CodegenContext {
-        public NamespaceContext(NamespaceDescriptor contextType, CodegenContext parent) {
-            super(contextType, OwnerKind.NAMESPACE, parent, null);
-        }
-
-        @Override
-        protected ClassDescriptor getThisDescriptor() {
-            return null;
-        }
-
-        @Override
-        public boolean isStatic() {
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return "Namespace: " + getContextDescriptor().getName();
         }
     }
 }

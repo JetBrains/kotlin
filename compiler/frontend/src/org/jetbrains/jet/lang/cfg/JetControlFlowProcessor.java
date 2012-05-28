@@ -21,6 +21,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.cfg.pseudocode.LocalDeclarationInstruction;
+import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator;
+import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -45,12 +49,21 @@ public class JetControlFlowProcessor {
     private final JetControlFlowBuilder builder;
     private final BindingTrace trace;
 
-    public JetControlFlowProcessor(BindingTrace trace, JetControlFlowBuilder builder) {
-        this.builder = builder;
+    public JetControlFlowProcessor(BindingTrace trace) {
+        this.builder = new JetControlFlowInstructionsGenerator();
         this.trace = trace;
     }
 
-    public void generate(@NotNull JetDeclaration subroutine) {
+    public Pseudocode generatePseudocode(@NotNull JetDeclaration subroutine) {
+        Pseudocode pseudocode = generate(subroutine);
+        ((PseudocodeImpl)pseudocode).postProcess();
+        for (LocalDeclarationInstruction localDeclarationInstruction : pseudocode.getLocalDeclarations()) {
+            ((PseudocodeImpl)localDeclarationInstruction.getBody()).postProcess();
+        }
+        return pseudocode;
+    }
+
+    private Pseudocode generate(@NotNull JetDeclaration subroutine) {
         builder.enterSubroutine(subroutine);
         if (subroutine instanceof JetDeclarationWithBody) {
             JetDeclarationWithBody declarationWithBody = (JetDeclarationWithBody) subroutine;
@@ -67,7 +80,7 @@ public class JetControlFlowProcessor {
         else {
             subroutine.accept(new CFPVisitor(false));
         }
-        builder.exitSubroutine(subroutine);
+        return builder.exitSubroutine(subroutine);
     }
 
     private void processLocalDeclaration(@NotNull JetDeclaration subroutine) {

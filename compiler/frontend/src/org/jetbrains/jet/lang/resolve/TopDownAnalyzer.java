@@ -23,7 +23,6 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -188,7 +187,7 @@ public class TopDownAnalyzer {
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(Predicates.<PsiFile>alwaysFalse(), true, false);
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
                 project, topDownAnalysisParameters, new ObservableBindingTrace(trace),       
-                JetStandardClasses.FAKE_STANDARD_CLASSES_MODULE, null,  ModuleConfiguration.EMPTY);
+                JetStandardClasses.FAKE_STANDARD_CLASSES_MODULE, ModuleConfiguration.EMPTY);
 
         injector.getTopDownAnalyzer().doProcessStandardLibraryNamespace(outerScope, standardLibraryNamespace, files);
     }
@@ -220,7 +219,7 @@ public class TopDownAnalyzer {
 
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
                 project, topDownAnalysisParameters, new ObservableBindingTrace(trace), moduleDescriptor,
-                JetControlFlowDataTraceFactory.EMPTY, ModuleConfiguration.EMPTY);
+                ModuleConfiguration.EMPTY);
 
         injector.getTopDownAnalyzer().doProcess(outerScope, new NamespaceLikeBuilder() {
 

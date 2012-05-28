@@ -79,7 +79,7 @@ public class DescriptorResolver {
         List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
         int index = 0;
         for (JetTypeParameter typeParameter : classElement.getTypeParameters()) {
-            TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
+            TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                     descriptor,
                     annotationResolver.createAnnotationStubs(typeParameter.getModifierList(), trace),
                     !typeParameter.hasModifier(JetTokens.ERASED_KEYWORD),
@@ -175,7 +175,7 @@ public class DescriptorResolver {
         WritableScope innerScope = new WritableScopeImpl(scope, functionDescriptor, new TraceBasedRedeclarationHandler(trace)).setDebugName("Function descriptor header scope");
         innerScope.addLabeledDeclaration(functionDescriptor);
 
-        List<TypeParameterDescriptor> typeParameterDescriptors = resolveTypeParameters(functionDescriptor, innerScope, function.getTypeParameters(), trace);
+        List<TypeParameterDescriptorImpl> typeParameterDescriptors = resolveTypeParameters(functionDescriptor, innerScope, function.getTypeParameters(), trace);
         innerScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         resolveGenericBounds(function, innerScope, typeParameterDescriptors, trace);
 
@@ -307,8 +307,8 @@ public class DescriptorResolver {
         }
     }
 
-    public List<TypeParameterDescriptor> resolveTypeParameters(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, List<JetTypeParameter> typeParameters, BindingTrace trace) {
-        List<TypeParameterDescriptor> result = new ArrayList<TypeParameterDescriptor>();
+    public List<TypeParameterDescriptorImpl> resolveTypeParameters(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, List<JetTypeParameter> typeParameters, BindingTrace trace) {
+        List<TypeParameterDescriptorImpl> result = new ArrayList<TypeParameterDescriptorImpl>();
         for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
             JetTypeParameter typeParameter = typeParameters.get(i);
             result.add(resolveTypeParameter(containingDescriptor, extensibleScope, typeParameter, i, trace));
@@ -316,12 +316,12 @@ public class DescriptorResolver {
         return result;
     }
 
-    private TypeParameterDescriptor resolveTypeParameter(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, JetTypeParameter typeParameter, int index, BindingTrace trace) {
+    private TypeParameterDescriptorImpl resolveTypeParameter(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, JetTypeParameter typeParameter, int index, BindingTrace trace) {
 //        JetTypeReference extendsBound = typeParameter.getExtendsBound();
 //        JetType bound = extendsBound == null
 //                ? JetStandardClasses.getDefaultBound()
 //                : typeResolver.resolveType(extensibleScope, extendsBound);
-        TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
+        TypeParameterDescriptorImpl typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                 containingDescriptor,
                 annotationResolver.createAnnotationStubs(typeParameter.getModifierList(), trace),
                 !typeParameter.hasModifier(JetTokens.ERASED_KEYWORD),
@@ -346,14 +346,15 @@ public class DescriptorResolver {
             isClassObjectConstraint = classObjectConstraint;
         }
     }
-    public void resolveGenericBounds(@NotNull JetTypeParameterListOwner declaration, JetScope scope, List<TypeParameterDescriptor> parameters, BindingTrace trace) {
+
+    public void resolveGenericBounds(@NotNull JetTypeParameterListOwner declaration, JetScope scope, List<TypeParameterDescriptorImpl> parameters, BindingTrace trace) {
         List<UpperBoundCheckerTask> deferredUpperBoundCheckerTasks = Lists.newArrayList();
 
         List<JetTypeParameter> typeParameters = declaration.getTypeParameters();
-        Map<Name, TypeParameterDescriptor> parameterByName = Maps.newHashMap();
+        Map<Name, TypeParameterDescriptorImpl> parameterByName = Maps.newHashMap();
         for (int i = 0; i < typeParameters.size(); i++) {
             JetTypeParameter jetTypeParameter = typeParameters.get(i);
-            TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
+            TypeParameterDescriptorImpl typeParameterDescriptor = parameters.get(i);
 
             parameterByName.put(typeParameterDescriptor.getName(), typeParameterDescriptor);
 
@@ -373,7 +374,7 @@ public class DescriptorResolver {
             if (referencedName == null) {
                 continue;
             }
-            TypeParameterDescriptor typeParameterDescriptor = parameterByName.get(referencedName);
+            TypeParameterDescriptorImpl typeParameterDescriptor = parameterByName.get(referencedName);
             JetTypeReference boundTypeReference = constraint.getBoundTypeReference();
             JetType bound = null;
             if (boundTypeReference != null) {
@@ -405,7 +406,7 @@ public class DescriptorResolver {
             }
         }
 
-        for (TypeParameterDescriptor parameter : parameters) {
+        for (TypeParameterDescriptorImpl parameter : parameters) {
             parameter.addDefaultUpperBound();
 
             parameter.setInitialized();
@@ -551,7 +552,7 @@ public class DescriptorResolver {
         return variableDescriptor;
     }
 
-    public JetScope getPropertyDeclarationInnerScope(@NotNull JetScope outerScope, @NotNull List<TypeParameterDescriptor> typeParameters,
+    public JetScope getPropertyDeclarationInnerScope(@NotNull JetScope outerScope, @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @NotNull ReceiverDescriptor receiver, BindingTrace trace) {
         WritableScopeImpl result = new WritableScopeImpl(outerScope, outerScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(trace)).setDebugName("Property declaration inner scope");
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
@@ -583,7 +584,7 @@ public class DescriptorResolver {
                 CallableMemberDescriptor.Kind.DECLARATION
         );
 
-        List<TypeParameterDescriptor> typeParameterDescriptors;
+        List<TypeParameterDescriptorImpl> typeParameterDescriptors;
         JetScope scopeWithTypeParameters;
         JetType receiverType = null;
 

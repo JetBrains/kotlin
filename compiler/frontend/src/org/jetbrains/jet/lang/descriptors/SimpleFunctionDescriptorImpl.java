@@ -54,7 +54,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
     public SimpleFunctionDescriptorImpl initialize(
             @Nullable JetType receiverType,
             @NotNull ReceiverDescriptor expectedThisObject,
-            @NotNull List<TypeParameterDescriptor> typeParameters,
+            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
             @Nullable Modality modality,

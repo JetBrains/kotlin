@@ -95,7 +95,7 @@ public class TypeResolver {
                         return;
                     }
 
-                    if (classifierDescriptor instanceof TypeParameterDescriptor) {
+                    if (classifierDescriptor instanceof TypeParameterDescriptorImpl) {
                         TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) classifierDescriptor;
 
                         trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, typeParameterDescriptor);

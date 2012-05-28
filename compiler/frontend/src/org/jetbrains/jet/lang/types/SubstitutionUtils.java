@@ -21,6 +21,7 @@ import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.util.CommonSuppliers;
 
@@ -95,6 +96,9 @@ public class SubstitutionUtils {
     }
 
     private static void fillInSubstitutionContext(List<TypeParameterDescriptor> parameters, List<TypeProjection> contextArguments, Map<TypeConstructor, TypeProjection> parameterValues) {
+        if (parameters.size() != contextArguments.size()) {
+            throw new IllegalArgumentException("type parameter count != context arguments");
+        }
         for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
             TypeParameterDescriptor parameter = parameters.get(i);
             TypeProjection value = contextArguments.get(i);
@@ -108,7 +112,7 @@ public class SubstitutionUtils {
     }
 
     public static boolean hasUnsubstitutedTypeParameters(JetType type) {
-        if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
+        if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptorImpl) {
             return true;
         }
 

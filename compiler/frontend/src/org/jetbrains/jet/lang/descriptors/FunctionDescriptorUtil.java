@@ -126,7 +126,7 @@ public class FunctionDescriptorUtil {
         assert JetStandardClasses.isFunctionType(functionType);
         functionDescriptor.initialize(JetStandardClasses.getReceiverType(functionType),
                                       expectedThisObject,
-                                      Collections.<TypeParameterDescriptor>emptyList(),
+                                      Collections.<TypeParameterDescriptorImpl>emptyList(),
                                       JetStandardClasses.getValueParameters(functionDescriptor, functionType),
                                       JetStandardClasses.getReturnTypeFromFunctionType(functionType),
                                       modality,

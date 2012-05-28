@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
@@ -37,7 +36,6 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 public class ControlFlowAnalyzer {
     private TopDownAnalysisParameters topDownAnalysisParameters;
     private BindingTrace trace;
-    private JetControlFlowDataTraceFactory flowDataTraceFactory;
 
     @Inject
     public void setTopDownAnalysisParameters(TopDownAnalysisParameters topDownAnalysisParameters) {
@@ -47,11 +45,6 @@ public class ControlFlowAnalyzer {
     @Inject
     public void setTrace(BindingTrace trace) {
         this.trace = trace;
-    }
-
-    @Inject
-    public void setFlowDataTraceFactory(JetControlFlowDataTraceFactory flowDataTraceFactory) {
-        this.flowDataTraceFactory = flowDataTraceFactory;
     }
 
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
@@ -86,8 +79,8 @@ public class ControlFlowAnalyzer {
 
     private void checkClassOrObject(JetClassOrObject klass) {
         // A pseudocode of class initialization corresponds to a class
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) klass, (JetExpression) klass, flowDataTraceFactory, trace);
-        flowInformationProvider.markUninitializedVariables((JetElement) klass, topDownAnalysisParameters.isDeclaredLocally());
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) klass, trace);
+        flowInformationProvider.markUninitializedVariables(topDownAnalysisParameters.isDeclaredLocally());
     }
 
     private void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor) {
@@ -105,16 +98,16 @@ public class ControlFlowAnalyzer {
 
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) function, bodyExpression, flowDataTraceFactory, trace);
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) function, trace);
 
-        flowInformationProvider.checkDefiniteReturn(function, expectedReturnType);
+        flowInformationProvider.checkDefiniteReturn(expectedReturnType);
 
         // Property accessor is checked through initialization of a class check (at 'checkClassOrObject')
         boolean isPropertyAccessor = function instanceof JetPropertyAccessor;
-        flowInformationProvider.markUninitializedVariables(function.asElement(), topDownAnalysisParameters.isDeclaredLocally() || isPropertyAccessor);
+        flowInformationProvider.markUninitializedVariables(topDownAnalysisParameters.isDeclaredLocally() || isPropertyAccessor);
 
-        flowInformationProvider.markUnusedVariables(function.asElement());
+        flowInformationProvider.markUnusedVariables();
 
-        flowInformationProvider.markUnusedLiteralsInBlock(function.asElement());
+        flowInformationProvider.markUnusedLiteralsInBlock();
     }
 }

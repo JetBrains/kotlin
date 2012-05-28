@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -172,9 +171,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
         }
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                getProject(), jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY,
-                myEnvironment.getCompilerDependencies())
-                    .getBindingContext();
+                getProject(), jetFiles, Predicates.<PsiFile>alwaysTrue(), myEnvironment.getCompilerDependencies()).getBindingContext();
 
         boolean ok = true;
 

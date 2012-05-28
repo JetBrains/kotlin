@@ -72,7 +72,7 @@ l13:
 l1:
     <END>             NEXT:[<SINK>]                PREV:[r(14)]
 error:
-    <ERROR>           NEXT:[]                      PREV:[]
+    <ERROR>           NEXT:[<SINK>]                PREV:[]
 sink:
-    <SINK>            NEXT:[]                      PREV:[<END>]
+    <SINK>            NEXT:[]                      PREV:[<ERROR>, <END>]
 =====================

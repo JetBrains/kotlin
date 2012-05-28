@@ -28,7 +28,6 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -91,8 +90,7 @@ public final class AnalyzerFacadeForJS {
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(completely, false, false);
 
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
-                project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
-                JetControlFlowDataTraceFactory.EMPTY, JsConfiguration.jsLibConfiguration(project));
+                project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner, JsConfiguration.jsLibConfiguration(project));
         try {
             injector.getTopDownAnalyzer().analyzeFiles(withJsLibAdded(files, config));
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
@@ -117,8 +115,7 @@ public final class AnalyzerFacadeForJS {
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(completely, false, false);
 
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
-                project, topDownAnalysisParameters, new ObservableBindingTrace(traceContext), owner,
-                JetControlFlowDataTraceFactory.EMPTY, JsConfiguration.jsLibConfiguration(project));
+                project, topDownAnalysisParameters, new ObservableBindingTrace(traceContext), owner, JsConfiguration.jsLibConfiguration(project));
 
         try {
             bodiesResolveContext.setTopDownAnalysisParameters(topDownAnalysisParameters);

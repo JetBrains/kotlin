@@ -110,7 +110,7 @@ public final class JetDescriptorIconProvider {
             return ((PropertyDescriptor)descriptor).isVar() ? JetIcons.FIELD_VAR : JetIcons.FIELD_VAL;
         }
 
-        if (descriptor instanceof TypeParameterDescriptor) {
+        if (descriptor instanceof TypeParameterDescriptorImpl) {
             return PlatformIcons.CLASS_ICON;
         }
 

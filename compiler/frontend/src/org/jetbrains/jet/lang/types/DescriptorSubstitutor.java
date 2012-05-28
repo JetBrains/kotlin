@@ -20,6 +20,7 @@ import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptorImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,7 @@ public class DescriptorSubstitutor {
         });
 
         for (TypeParameterDescriptor descriptor : typeParameters) {
-            TypeParameterDescriptor substituted = TypeParameterDescriptor.createForFurtherModification(
+            TypeParameterDescriptorImpl substituted = TypeParameterDescriptorImpl.createForFurtherModification(
                     newContainingDeclaration,
                     descriptor.getAnnotations(),
                     descriptor.isReified(),

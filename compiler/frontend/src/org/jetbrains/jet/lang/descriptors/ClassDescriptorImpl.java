@@ -48,7 +48,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     }
 
     public final ClassDescriptorImpl initialize(boolean sealed,
-                                            @NotNull List<TypeParameterDescriptor> typeParameters,
+                                            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
                                             @NotNull Collection<JetType> supertypes,
                                             @NotNull JetScope memberDeclarations,
                                             @NotNull Set<ConstructorDescriptor> constructors,
@@ -57,7 +57,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     }
 
     public final ClassDescriptorImpl initialize(boolean sealed,
-                                                @NotNull List<TypeParameterDescriptor> typeParameters,
+                                                @NotNull List<? extends TypeParameterDescriptor> typeParameters,
                                                 @NotNull Collection<JetType> supertypes,
                                                 @NotNull JetScope memberDeclarations,
                                                 @NotNull Set<ConstructorDescriptor> constructors,

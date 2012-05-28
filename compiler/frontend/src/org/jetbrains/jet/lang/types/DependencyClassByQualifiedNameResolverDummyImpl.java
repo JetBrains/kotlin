@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode;
+package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 /**
- * @author abreslav
+ * @author Stepan Koltsov
  */
-public interface JetControlFlowDataTraceFactory {
-    JetControlFlowDataTraceFactory EMPTY = new JetControlFlowDataTraceFactory() {
-        @NotNull
-        @Override
-        public JetPseudocodeTrace createTrace(JetElement element) {
-            return JetPseudocodeTrace.EMPTY;
-        }
-    };
+public class DependencyClassByQualifiedNameResolverDummyImpl implements DependencyClassByQualifiedNameResolver {
+    @Override
+    public ClassDescriptor resolveClass(@NotNull FqName qualifiedName) {
+        return null;
+    }
 
-    @NotNull
-    JetPseudocodeTrace createTrace(JetElement element);
+    @Override
+    public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName) {
+        return null;
+    }
 }

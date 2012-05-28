@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.objectweb.asm.MethodVisitor;
@@ -57,7 +56,7 @@ public class NamespaceCodegen {
 
     public void generate(JetFile file) {
         NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
-        final CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
+        final CodegenContext context = CodegenContexts.STATIC.intoNamespace(descriptor);
 
         final FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen, state);
@@ -100,7 +99,7 @@ public class NamespaceCodegen {
             mv.visitCode();
 
             FrameMap frameMap = new FrameMap();
-            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, CodegenContext.STATIC, state);
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, CodegenContexts.STATIC, state);
 
             for (JetDeclaration declaration : namespace.getDeclarations()) {
                 if (declaration instanceof JetProperty) {

@@ -198,7 +198,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
     private Type generateBody(FunctionDescriptor funDescriptor, ClassBuilder cv, JetDeclarationWithBody body) {
         ClassDescriptor function = state.getInjector().getJetTypeMapper().getClosureAnnotator().classDescriptorForFunctionDescriptor(funDescriptor, name);
 
-        final CodegenContext.ClosureContext closureContext = context.intoClosure(
+        final CodegenContexts.ClosureContext closureContext = context.intoClosure(
                 funDescriptor, function, name.getInternalName(), this, state.getInjector().getJetTypeMapper());
         FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
         JvmMethodSignature jvmMethodSignature = invokeSignature(funDescriptor);

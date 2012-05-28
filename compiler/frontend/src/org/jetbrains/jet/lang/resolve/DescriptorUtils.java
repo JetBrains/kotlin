@@ -275,7 +275,7 @@ public class DescriptorUtils {
             ClassDescriptor clazz = (ClassDescriptor) classifier;
             return clazz.getKind() == ClassKind.OBJECT || clazz.getKind() == ClassKind.ENUM_ENTRY;
         }
-        else if (classifier instanceof TypeParameterDescriptor) {
+        else if (classifier instanceof TypeParameterDescriptorImpl) {
             return false;
         }
         else {

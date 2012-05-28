@@ -1093,7 +1093,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             }
         }
 
-        if (descriptor instanceof TypeParameterDescriptor) {
+        if (descriptor instanceof TypeParameterDescriptorImpl) {
             TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
             v.invokevirtual("jet/TypeInfo", "getClassObject", "()Ljava/lang/Object;");
             v.checkcast(asmType(typeParameterDescriptor.getClassObjectType()));
@@ -1162,7 +1162,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptor;
         propertyDescriptor = propertyDescriptor.getOriginal();
         boolean isInsideClass = ((containingDeclaration == context.getThisDescriptor()) ||
-                                 (context.getParentContext() instanceof CodegenContext.NamespaceContext) && context.getParentContext().getContextDescriptor() == containingDeclaration)
+                                 (context.getParentContext() instanceof CodegenContexts.NamespaceContext) && context.getParentContext().getContextDescriptor() == containingDeclaration)
                                 && contextKind() != OwnerKind.TRAIT_IMPL;
         Method getter;
         Method setter;
@@ -1438,8 +1438,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private StackValue generateReceiver(DeclarationDescriptor provided) {
-        assert context instanceof CodegenContext.ReceiverContext;
-        CodegenContext.ReceiverContext cur = (CodegenContext.ReceiverContext) context;
+        assert context instanceof CodegenContexts.ReceiverContext;
+        CodegenContexts.ReceiverContext cur = (CodegenContexts.ReceiverContext) context;
         if (cur.getReceiverDescriptor() == provided) {
             StackValue result = cur.getReceiverExpression(typeMapper);
             return castToRequiredTypeOfInterfaceIfNeeded(result, provided, null);
@@ -1458,7 +1458,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         cur = context;
         StackValue result = StackValue.local(0, TYPE_OBJECT);
         while (cur != null) {
-            if(cur instanceof CodegenContext.MethodContext && !(cur instanceof CodegenContext.ConstructorContext))
+            if(cur instanceof CodegenContexts.MethodContext && !(cur instanceof CodegenContexts.ConstructorContext))
                 cur = cur.getParentContext();
 
             if (DescriptorUtils.isSubclass(cur.getThisDescriptor(), calleeContainingClass)) {
@@ -1474,7 +1474,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
             result = cur.getOuterExpression(result);
 
-            if(cur instanceof CodegenContext.ConstructorContext) {
+            if(cur instanceof CodegenContexts.ConstructorContext) {
                 cur = cur.getParentContext();
             }
             cur = cur.getParentContext();
@@ -2614,7 +2614,7 @@ If finally block is present, its last expression is the value of try expression.
             JetExpression left = expression.getLeft();
             JetType leftType = bindingContext.get(BindingContext.EXPRESSION_TYPE, left);
             DeclarationDescriptor descriptor = rightType.getConstructor().getDeclarationDescriptor();
-            if (descriptor instanceof ClassDescriptor || descriptor instanceof TypeParameterDescriptor) {
+            if (descriptor instanceof ClassDescriptor || descriptor instanceof TypeParameterDescriptorImpl) {
                 StackValue value = genQualified(receiver, left);
                 value.put(JetTypeMapper.boxType(value.type), v);
                 assert leftType != null;
