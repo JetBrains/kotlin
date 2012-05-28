@@ -54,7 +54,6 @@ public class JetControlFlowProcessor {
         this.trace = trace;
     }
 
-    //todo
     public Pseudocode generatePseudocode(@NotNull JetDeclaration subroutine) {
         Pseudocode pseudocode = generate(subroutine);
         ((PseudocodeImpl)pseudocode).postProcess();
@@ -64,7 +63,7 @@ public class JetControlFlowProcessor {
         return pseudocode;
     }
 
-    public Pseudocode generate(@NotNull JetDeclaration subroutine) {
+    private Pseudocode generate(@NotNull JetDeclaration subroutine) {
         builder.enterSubroutine(subroutine);
         if (subroutine instanceof JetDeclarationWithBody) {
             JetDeclarationWithBody declarationWithBody = (JetDeclarationWithBody) subroutine;

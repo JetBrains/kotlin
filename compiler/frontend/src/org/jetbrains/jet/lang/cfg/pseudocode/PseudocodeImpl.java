@@ -108,12 +108,18 @@ public class PseudocodeImpl implements Pseudocode {
     @Override
     public Set<LocalDeclarationInstruction> getLocalDeclarations() {
         if (localDeclarations == null) {
-            localDeclarations = Sets.newLinkedHashSet();
-            //todo look recursively inside local declarations
-            for (Instruction instruction : instructions) {
-                if (instruction instanceof LocalDeclarationInstruction) {
-                    localDeclarations.add((LocalDeclarationInstruction) instruction);
-                }
+            localDeclarations = getLocalDeclarations(this);
+        }
+        return localDeclarations;
+    }
+
+    @NotNull
+    private static Set<LocalDeclarationInstruction> getLocalDeclarations(@NotNull Pseudocode pseudocode) {
+        Set<LocalDeclarationInstruction> localDeclarations = Sets.newHashSet();
+        for (Instruction instruction : pseudocode.getInstructions()) {
+            if (instruction instanceof LocalDeclarationInstruction) {
+                localDeclarations.add((LocalDeclarationInstruction) instruction);
+                localDeclarations.addAll(getLocalDeclarations(((LocalDeclarationInstruction)instruction).getBody()));
             }
         }
         return localDeclarations;
