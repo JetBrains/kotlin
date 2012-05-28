@@ -49,7 +49,7 @@ import java.util.*;
 /**
  * @author abreslav
  */
-public class JavaDescriptorResolver {
+public class JavaDescriptorResolver implements DependencyClassByQualifiedNameResolver {
     
     public static final Name JAVA_ROOT = Name.special("<java_root>");
 
@@ -305,6 +305,11 @@ public class JavaDescriptorResolver {
             task.run();
         }
         return clazz;
+    }
+
+    @Override
+    public ClassDescriptor resolveClass(@NotNull FqName qualifiedName) {
+        return resolveClass(qualifiedName, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
     }
 
     private ClassDescriptor resolveClass(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule, @NotNull List<Runnable> tasks) {
@@ -945,6 +950,11 @@ public class JavaDescriptorResolver {
         ns.setMemberScope(scopeData.memberScope);
 
         return scopeData.namespaceDescriptor;
+    }
+
+    @Override
+    public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName) {
+        return resolveNamespace(qualifiedName, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
     }
 
     private NamespaceDescriptorParent resolveParentNamespace(FqName fqName) {

@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -63,6 +64,7 @@ public class InjectorForTopDownAnalyzerForJs {
     private final ObservableBindingTrace observableBindingTrace;
     private final ModuleDescriptor moduleDescriptor;
     private final ModuleConfiguration moduleConfiguration;
+    private DependencyClassByQualifiedNameResolverDummyImpl dependencyClassByQualifiedNameResolverDummyImpl;
     private DeclarationResolver declarationResolver;
     private AnnotationResolver annotationResolver;
     private CallResolver callResolver;
@@ -95,6 +97,7 @@ public class InjectorForTopDownAnalyzerForJs {
         this.observableBindingTrace = observableBindingTrace;
         this.moduleDescriptor = moduleDescriptor;
         this.moduleConfiguration = moduleConfiguration;
+        this.dependencyClassByQualifiedNameResolverDummyImpl = new DependencyClassByQualifiedNameResolverDummyImpl();
         this.declarationResolver = new DeclarationResolver();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
