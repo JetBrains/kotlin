@@ -72,7 +72,7 @@ public class JSSourceJarMojo extends AbstractMojo {
                         String fullPath = file.getCanonicalPath();
                         if (fullPath.startsWith(rootPath)) {
                             String relativePath = fullPath.substring(rootPath.length());
-                            if (relativePath.startsWith("/") || relativePath.startsWith(File.pathSeparator)) {
+                            if (relativePath.startsWith("/") || relativePath.startsWith(File.separator)) {
                                 relativePath = relativePath.substring(1);
                             }
                             writer.println(relativePath);
