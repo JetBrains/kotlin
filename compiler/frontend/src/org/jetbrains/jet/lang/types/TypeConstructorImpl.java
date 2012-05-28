@@ -45,7 +45,7 @@ public class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructo
             @NotNull List<AnnotationDescriptor> annotations,
             boolean sealed,
             @NotNull String debugName,
-            @NotNull List<TypeParameterDescriptor> parameters,
+            @NotNull List<? extends TypeParameterDescriptor> parameters,
             @NotNull Collection<JetType> supertypes) {
         super(annotations);
         this.classifierDescriptor = classifierDescriptor;

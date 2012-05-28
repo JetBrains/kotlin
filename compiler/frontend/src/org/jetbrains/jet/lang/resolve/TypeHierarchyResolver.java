@@ -395,7 +395,7 @@ public class TypeHierarchyResolver {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
             descriptorResolver.resolveGenericBounds(jetClass, descriptor.getScopeForSupertypeResolution(),
-                                                    descriptor.getTypeConstructor().getParameters(), trace);
+                                                    (List) descriptor.getTypeConstructor().getParameters(), trace);
             descriptorResolver.resolveSupertypes(jetClass, descriptor, trace);
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
@@ -528,7 +528,7 @@ public class TypeHierarchyResolver {
                 if (projections.size() > 1) {
                     TypeConstructor typeConstructor = entry.getKey();
                     DeclarationDescriptor declarationDescriptor = typeConstructor.getDeclarationDescriptor();
-                    assert declarationDescriptor instanceof TypeParameterDescriptor : declarationDescriptor;
+                    assert declarationDescriptor instanceof TypeParameterDescriptorImpl : declarationDescriptor;
                     TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) declarationDescriptor;
 
                     // Immediate arguments of supertypes cannot be projected

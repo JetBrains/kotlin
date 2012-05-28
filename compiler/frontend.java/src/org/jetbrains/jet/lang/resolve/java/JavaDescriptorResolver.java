@@ -107,14 +107,14 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         @NotNull
         private final TypeParameterDescriptorOrigin origin;
         @NotNull
-        final TypeParameterDescriptor descriptor;
+        final TypeParameterDescriptorImpl descriptor;
         final PsiTypeParameter psiTypeParameter;
         @Nullable
         private final List<JetType> upperBoundsForKotlin;
         @Nullable
         private final List<JetType> lowerBoundsForKotlin;
 
-        private TypeParameterDescriptorInitialization(@NotNull TypeParameterDescriptor descriptor, @NotNull PsiTypeParameter psiTypeParameter) {
+        private TypeParameterDescriptorInitialization(@NotNull TypeParameterDescriptorImpl descriptor, @NotNull PsiTypeParameter psiTypeParameter) {
             this.origin = TypeParameterDescriptorOrigin.JAVA;
             this.descriptor = descriptor;
             this.psiTypeParameter = psiTypeParameter;
@@ -122,7 +122,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             this.lowerBoundsForKotlin = null;
         }
 
-        private TypeParameterDescriptorInitialization(@NotNull TypeParameterDescriptor descriptor, @NotNull PsiTypeParameter psiTypeParameter,
+        private TypeParameterDescriptorInitialization(@NotNull TypeParameterDescriptorImpl descriptor, @NotNull PsiTypeParameter psiTypeParameter,
                 List<JetType> upperBoundsForKotlin, List<JetType> lowerBoundsForKotlin) {
             this.origin = TypeParameterDescriptorOrigin.KOTLIN;
             this.descriptor = descriptor;
@@ -608,10 +608,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         @NotNull
         private final TypeVariableResolver typeVariableResolver;
         @NotNull
-        private final TypeParameterDescriptor typeParameterDescriptor;
+        private final TypeParameterDescriptorImpl typeParameterDescriptor;
 
         protected JetSignatureTypeParameterVisitor(PsiTypeParameterListOwner psiOwner,
-                String name, TypeVariableResolver typeVariableResolver, TypeParameterDescriptor typeParameterDescriptor)
+                String name, TypeVariableResolver typeVariableResolver, TypeParameterDescriptorImpl typeParameterDescriptor)
         {
             if (name.isEmpty()) {
                 throw new IllegalStateException();
@@ -687,7 +687,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
         @Override
         public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance, boolean reified) {
-            TypeParameterDescriptor typeParameter = TypeParameterDescriptor.createForFurtherModification(
+            TypeParameterDescriptorImpl typeParameter = TypeParameterDescriptorImpl.createForFurtherModification(
                     containingDeclaration,
                     Collections.<AnnotationDescriptor>emptyList(), // TODO: wrong
                     reified,
@@ -762,7 +762,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     @NotNull
     private TypeParameterDescriptorInitialization makeUninitializedTypeParameter(@NotNull DeclarationDescriptor containingDeclaration, @NotNull PsiTypeParameter psiTypeParameter) {
-        TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
+        TypeParameterDescriptorImpl typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                 containingDeclaration,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 false,
@@ -774,7 +774,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     private void initializeTypeParameter(TypeParameterDescriptorInitialization typeParameter, TypeVariableResolver typeVariableByPsiResolver) {
-        TypeParameterDescriptor typeParameterDescriptor = typeParameter.descriptor;
+        TypeParameterDescriptorImpl typeParameterDescriptor = typeParameter.descriptor;
         if (typeParameter.origin == TypeParameterDescriptorOrigin.KOTLIN) {
             List<?> upperBounds = typeParameter.upperBoundsForKotlin;
             if (upperBounds.size() == 0){

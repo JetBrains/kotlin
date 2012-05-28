@@ -170,7 +170,7 @@ public class ErrorUtils {
         function.initialize(
                 null,
                 ReceiverDescriptor.NO_RECEIVER,
-                Collections.<TypeParameterDescriptor>emptyList(), // TODO
+                Collections.<TypeParameterDescriptorImpl>emptyList(), // TODO
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
                 createErrorType("<ERROR FUNCTION RETURN TYPE>"),
                 Modality.OPEN,
@@ -223,7 +223,7 @@ public class ErrorUtils {
     }
 
     private static JetType createErrorTypeWithCustomDebugName(JetScope memberScope, String debugName) {
-        return new ErrorTypeImpl(new TypeConstructorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false, debugName, Collections.<TypeParameterDescriptor>emptyList(), Collections.singleton(JetStandardClasses.getAnyType())), memberScope);
+        return new ErrorTypeImpl(new TypeConstructorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false, debugName, Collections.<TypeParameterDescriptorImpl>emptyList(), Collections.singleton(JetStandardClasses.getAnyType())), memberScope);
     }
 
     public static JetType createWrongVarianceErrorType(TypeProjection value) {

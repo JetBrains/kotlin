@@ -223,7 +223,7 @@ public abstract class CodegenContext {
                     CallableMemberDescriptor.Kind.DECLARATION
             );
             JetType receiverType = pd.getReceiverParameter().exists() ? pd.getReceiverParameter().getType() : null;
-            myAccessor.setType(pd.getType(), Collections.<TypeParameterDescriptor>emptyList(), pd.getExpectedThisObject(), receiverType);
+            myAccessor.setType(pd.getType(), Collections.<TypeParameterDescriptorImpl>emptyList(), pd.getExpectedThisObject(), receiverType);
 
             PropertyGetterDescriptor pgd = new PropertyGetterDescriptor(
                         myAccessor, Collections.<AnnotationDescriptor>emptyList(), myAccessor.getModality(),

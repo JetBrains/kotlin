@@ -698,7 +698,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
             parameterScope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
             // This call has side-effects on the parameterScope (fills it in)
-            List<TypeParameterDescriptor> typeParameters
+            List<TypeParameterDescriptorImpl> typeParameters
                     = descriptorResolver.resolveTypeParameters(classDescriptor, parameterScope, classElement.getTypeParameters(), JetTestUtils.DUMMY_TRACE);
             descriptorResolver.resolveGenericBounds(classElement, parameterScope, typeParameters, JetTestUtils.DUMMY_TRACE);
 
