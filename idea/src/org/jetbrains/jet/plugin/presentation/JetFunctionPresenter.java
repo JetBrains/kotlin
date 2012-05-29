@@ -22,6 +22,8 @@ import com.intellij.navigation.ItemPresentationProvider;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.psi.JetTypeReference;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetIconProvider;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
@@ -46,7 +48,14 @@ public class JetFunctionPresenter implements ItemPresentationProvider<JetNamedFu
 
             @Override
             public String getLocationString() {
-                return String.format("(in %s)", QualifiedNamesUtil.withoutLastSegment(JetPsiUtil.getFQName(function)));
+                FqName name = JetPsiUtil.getFQName(function);
+                if (name != null) {
+                    JetTypeReference typeRef = function.getReturnTypeRef();
+                    String extensionLocation = typeRef != null ? "for " + typeRef.getText() + " " : "";
+                    return String.format("(%sin %s)", extensionLocation, QualifiedNamesUtil.withoutLastSegment(name));
+                }
+
+                return "";
             }
 
             @Override
