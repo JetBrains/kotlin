@@ -1,9 +1,25 @@
-package org.jetbrains.kotlin.maven;
+/*
+ * Copyright 2010-2012 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+package org.jetbrains.k2js.config;
+
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.internal.com.intellij.openapi.project.Project;
-import org.jetbrains.jet.internal.com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
@@ -19,13 +35,13 @@ import java.util.*;
 /**
  * A Config implementation which is configured with a directory to find the standard library names from
  */
-public class JsLibrarySourceConfig extends Config {
+public class ClassPathLibrarySourcesConfig extends Config {
 
     public static final String LIBRARY_SOURCES_FILES = "META-INF/services/org.jetbrains.kotlin.js.librarySource";
     @Nullable
     private /*var*/ List<JetFile> jsLibFiles = null;
 
-    public JsLibrarySourceConfig(@NotNull Project project, @NotNull EcmaVersion version) {
+    public ClassPathLibrarySourcesConfig(@NotNull Project project, @NotNull EcmaVersion version) {
         super(project, version);
     }
 
@@ -86,7 +102,7 @@ public class JsLibrarySourceConfig extends Config {
      * Tries to load the given resource name on the classpath
      */
     public static InputStream loadClasspathResource(String resourceName) {
-        InputStream answer = JsLibrarySourceConfig.class.getClassLoader().getResourceAsStream(resourceName);
+        InputStream answer = ClassPathLibrarySourcesConfig.class.getClassLoader().getResourceAsStream(resourceName);
         if (answer == null) {
             answer = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceName);
         }

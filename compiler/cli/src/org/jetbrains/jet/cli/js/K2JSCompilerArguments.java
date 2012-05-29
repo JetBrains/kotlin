@@ -72,4 +72,9 @@ public class K2JSCompilerArguments extends CompilerArguments {
     public boolean isVerbose() {
         return verbose;
     }
+
+    @Override
+    public String getSrc() {
+        return srcdir;
+    }
 }

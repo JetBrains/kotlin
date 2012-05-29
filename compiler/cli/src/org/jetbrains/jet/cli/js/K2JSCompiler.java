@@ -32,6 +32,7 @@ import org.jetbrains.jet.cli.common.messages.PrintingMessageCollector;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
+import org.jetbrains.k2js.config.ClassPathLibrarySourcesConfig;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.ZippedLibrarySourcesConfig;
@@ -85,6 +86,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
     private static JetCoreEnvironment getEnvironment(K2JSCompilerArguments arguments, Disposable rootDisposable) {
         final JetCoreEnvironment environmentForJS = JetCoreEnvironment.getCoreEnvironmentForJS(rootDisposable);
         environmentForJS.addSources(arguments.srcdir);
+        System.out.println("Compiling source files: " + environmentForJS.getSourceFiles());
         return environmentForJS;
     }
 
@@ -97,6 +99,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
         catch (Exception e) {
             messageCollector.report(CompilerMessageSeverity.ERROR, "Exception while translating:\n" + e.getMessage(),
                                     CompilerMessageLocation.NO_LOCATION);
+            // TODO we should report the exception nicely to the collector so it can report
+            // for example inside a mvn plugin we need to see the stack trace
+            e.printStackTrace();
             return ExitCode.INTERNAL_ERROR;
         }
         return ExitCode.OK;
@@ -118,7 +123,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
     private static Config getConfig(@NotNull K2JSCompilerArguments arguments, @NotNull Project project) {
         EcmaVersion ecmaVersion = EcmaVersion.fromString(arguments.target);
         if (arguments.libzip == null) {
-            return Config.getEmptyConfig(project, ecmaVersion);
+            // lets discover the JS library source on the classpath
+            return new ClassPathLibrarySourcesConfig(project, ecmaVersion);
+            //return Config.getEmptyConfig(project, ecmaVersion);
         }
         return new ZippedLibrarySourcesConfig(project, arguments.libzip, ecmaVersion);
     }
