@@ -18,11 +18,47 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>copy-sources</id>
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <target>
+                                <delete dir="${basedir}/target/generated-js-library" failonerror="false" />
+                                <mkdir dir="${basedir}/target/generated-js-library"/>
+                                <copy todir="${basedir}/target/generated-js-library">
+                                    <fileset dir="${kotlin-js-lib-srcdir}"/>
+                                </copy>
+                                <copy todir="${basedir}/target/generated-js-library/kotlin">
+                                    <fileset dir="${basedir}/../../stdlib/src/kotlin/dom">
+                                        <include name="**/*.kt"/>
+                                        <exclude name="**/*JVM.kt"/>
+                                    </fileset>
+                                    <fileset dir="${basedir}/../../stdlib/src/kotlin/support">
+                                        <include name="**/*.kt"/>
+                                        <exclude name="**/*JVM.kt"/>
+                                    </fileset>
+                                </copy>
+                                <copy tofile="${basedir}/target/generated-js-library/kotlin-lib.js"
+                                      file="${kotlin-js-lib-srcdir}/../../js.translator/testFiles/kotlin_lib.js"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <configuration>
-                    <librarySourceDir>${kotlin-js-lib-srcdir}</librarySourceDir>
+                    <librarySourceDir>${basedir}/target/generated-js-library</librarySourceDir>
                 </configuration>
                 <executions>
                     <execution>

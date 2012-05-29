@@ -46,9 +46,6 @@ public class JSSourceJarMojo extends AbstractMojo {
 
                 FileUtils.copyDirectoryStructure(librarySourceDir, outputDir);
 
-                // lets copy the standard JS library source too
-                FileUtils.copyFile(new File(librarySourceDir, "../../js.translator/testFiles/kotlin_lib.js"), new File(outputDir, "kotlin-lib.js"));
-
                 // now lets generate the META-INF/services/org.jetbrains.kotlin.js.librarySource file
                 PrintWriter writer = new PrintWriter(new FileWriter(metaInfFile));
                 appendSourceFiles(writer, outputDir.getCanonicalPath(), outputDir);
