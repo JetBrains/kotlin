@@ -16,7 +16,7 @@ public fun comparator<T>(f : (T, T) -> Int) : Comparator<T> = js.noImpl
 
 
 library
-public open class Iterator<T>() {
+public trait Iterator<T> {
     open fun next() : T = js.noImpl
     open fun hasNext() : Boolean = js.noImpl
     open fun remove() : Unit = js.noImpl
@@ -65,6 +65,14 @@ public trait Collection<erased E> : java.lang.Iterable<E> {
     //open fun removeAll(c : java.util.Collection<*>) : Boolean
     //open fun retainAll(c : java.util.Collection<*>) : Boolean
     open fun clear() : Unit
+}
+
+library
+public abstract open class AbstractCollection<erased E> : Collection<E> {
+}
+
+library
+public abstract open class AbstractList<erased E> : AbstractCollection<E>, List<E> {
 }
 
 library

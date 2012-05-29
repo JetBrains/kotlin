@@ -286,13 +286,15 @@ var Kotlin;
 
     Kotlin.Exceptions = {};
     Kotlin.Exception = Kotlin.Class.create();
+    Kotlin.RuntimeException = Kotlin.Class.create(Kotlin.Exception);
     Kotlin.Exceptions.IndexOutOfBounds = Kotlin.Class.create(Kotlin.Exception);
     Kotlin.Exceptions.NullPointerException = Kotlin.Class.create(Kotlin.Exception);
+    Kotlin.Exceptions.UnsupportedOperationException = Kotlin.Class.create(Kotlin.Exception);
+    Kotlin.Exceptions.NoSuchElementException = Kotlin.Class.create(Kotlin.Exception);
 
     Kotlin.throwNPE = function() {
         throw new Kotlin.Exceptions.NullPointerException();
     };
-
 
     Kotlin.ArrayList = Class.create({
         initialize:function () {
@@ -346,6 +348,50 @@ var Kotlin;
         clear:function () {
             this.array = [];
             this.$size = 0;
+        },
+        contains:function (obj) {
+            for (var i = 0; i < this.$size; ++i) {
+                if (Kotlin.equals(this.array[i], obj)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    });
+
+
+    Kotlin.AbstractList = Class.create({
+        set:function (index, value) {
+            throw new Kotlin.Exceptions.UnsupportedOperationException();
+        },
+        iterator:function () {
+            return new Kotlin.ArrayIterator(this);
+        },
+        isEmpty:function () {
+            return (this.size() === 0);
+        },
+        add:function (element) {
+            throw new Kotlin.Exceptions.UnsupportedOperationException();
+        },
+        addAll:function (collection) {
+            var it = collection.iterator();
+            while (it.hasNext()) {
+                this.add(it.next());
+            }
+        },
+        remove:function(value) {
+            for (var i = 0; i < this.$size; ++i) {
+                if (this.array[i] == value) {
+                    this.removeByIndex(i);
+                    return;
+                }
+            }
+        },
+        removeByIndex:function (index) {
+            throw new Kotlin.Exceptions.UnsupportedOperationException();
+        },
+        clear:function () {
+            throw new Kotlin.Exceptions.UnsupportedOperationException();
         },
         contains:function (obj) {
             for (var i = 0; i < this.$size; ++i) {
@@ -443,6 +489,7 @@ var Kotlin;
             return this.hasNext();
         }
     });
+
 
     Kotlin.RangeIterator = Kotlin.Class.create(Kotlin.Iterator, {
         initialize:function (start, count, reversed) {
