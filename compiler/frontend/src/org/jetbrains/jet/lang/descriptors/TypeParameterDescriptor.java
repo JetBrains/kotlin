@@ -54,7 +54,4 @@ public interface TypeParameterDescriptor extends ClassifierDescriptor {
     TypeParameterDescriptor substitute(TypeSubstitutor substitutor);
 
     int getIndex();
-
-    @NotNull
-    TypeParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner);
 }

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.descriptors;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -202,7 +201,7 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorImpl imple
 
     @NotNull
     @Override
-    @Deprecated // Use the static method TypeParameterDescriptor.substitute()
+    @Deprecated
     public TypeParameterDescriptor substitute(TypeSubstitutor substitutor) {
         throw new UnsupportedOperationException();
     }
@@ -261,15 +260,5 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorImpl imple
     public int getIndex() {
         checkInitialized();
         return index;
-    }
-    
-    @Override
-    @NotNull
-    public TypeParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner) {
-        TypeParameterDescriptorImpl
-                copy = new TypeParameterDescriptorImpl(newOwner, Lists.newArrayList(getAnnotations()), reified, variance, getName(), index);
-        copy.upperBounds.addAll(this.upperBounds);
-        copy.initialized = this.initialized;
-        return copy;
     }
 }

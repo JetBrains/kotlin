@@ -41,32 +41,9 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
  * @author abreslav
  */
 public class DescriptorUtils {
-    public static boolean definesItsOwnThis(@NotNull DeclarationDescriptor descriptor) {
-        return descriptor.accept(new DeclarationDescriptorVisitor<Boolean, Void>() {
-            @Override
-            public Boolean visitDeclarationDescriptor(DeclarationDescriptor descriptor, Void data) {
-                return false;
-            }
-
-            @Override
-            public Boolean visitFunctionDescriptor(FunctionDescriptor descriptor, Void data) {
-                return descriptor.getReceiverParameter().exists();
-            }
-
-            @Override
-            public Boolean visitClassDescriptor(ClassDescriptor descriptor, Void data) {
-                return true;
-            }
-
-            @Override
-            public Boolean visitPropertyDescriptor(PropertyDescriptor descriptor, Void data) {
-                return descriptor.getReceiverParameter().exists();
-            }
-        }, null);
-    }
 
     @NotNull
-    public static <Descriptor extends CallableDescriptor> Descriptor substituteBounds(@NotNull Descriptor functionDescriptor) {
+    public static <D extends CallableDescriptor> D substituteBounds(@NotNull D functionDescriptor) {
         final List<TypeParameterDescriptor> typeParameters = functionDescriptor.getTypeParameters();
         if (typeParameters.isEmpty()) return functionDescriptor;
         final Map<TypeConstructor, TypeParameterDescriptor> typeConstructors = Maps.newHashMap();
@@ -74,7 +51,7 @@ public class DescriptorUtils {
             typeConstructors.put(typeParameter.getTypeConstructor(), typeParameter);
         }
         //noinspection unchecked
-        return (Descriptor) functionDescriptor.substitute(new TypeSubstitutor(TypeSubstitution.EMPTY) {
+        return (D) functionDescriptor.substitute(new TypeSubstitutor(TypeSubstitution.EMPTY) {
             @Override
             public boolean inRange(@NotNull TypeConstructor typeConstructor) {
                 return typeConstructors.containsKey(typeConstructor);
@@ -118,22 +95,6 @@ public class DescriptorUtils {
                 return super.substitute(type, howThisTypeIsUsed);
             }
         });
-    }
-    
-    public static List<ValueParameterDescriptor> copyValueParameters(DeclarationDescriptor newOwner, List<ValueParameterDescriptor> parameters) {
-        List<ValueParameterDescriptor> result = Lists.newArrayList();
-        for (ValueParameterDescriptor parameter : parameters) {
-            result.add(parameter.copy(newOwner));
-        }
-        return result;
-    }
-
-    public static List<TypeParameterDescriptor> copyTypeParameters(DeclarationDescriptor newOwner, List<TypeParameterDescriptor> parameters) {
-        List<TypeParameterDescriptor> result = Lists.newArrayList();
-        for (TypeParameterDescriptor parameter : parameters) {
-            result.add(parameter.copy(newOwner));
-        }
-        return result;
     }
     
     public static Modality convertModality(Modality modality, boolean makeNonAbstract) {
