@@ -16,11 +16,15 @@
 
 package org.jetbrains.jet.plugin.presentation;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.intellij.navigation.ColoredItemPresentation;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProvider;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -28,6 +32,7 @@ import org.jetbrains.jet.plugin.JetIconProvider;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import javax.swing.*;
+import java.util.Collection;
 
 /**
  * @author Nikolay Krasko
@@ -43,15 +48,35 @@ public class JetFunctionPresenter implements ItemPresentationProvider<JetNamedFu
 
             @Override
             public String getPresentableText() {
-                return function.getName();
+                StringBuilder presentation = new StringBuilder(function.getName());
+
+                Collection<String> paramsStrings = Collections2.transform(function.getValueParameters(), new Function<JetParameter, String>() {
+                    @Override
+                    public String apply(JetParameter parameter) {
+                        if (parameter != null) {
+                            JetTypeReference reference = parameter.getTypeReference();
+                            if (reference != null) {
+                                String text = reference.getText();
+                                if (text != null) {
+                                    return text;
+                                }
+                            }
+                        }
+
+                        return "?";
+                    }
+                });
+
+                presentation.append("(").append(StringUtils.join(paramsStrings, ",")).append(")");
+                return presentation.toString();
             }
 
             @Override
             public String getLocationString() {
                 FqName name = JetPsiUtil.getFQName(function);
                 if (name != null) {
-                    JetTypeReference typeRef = function.getReturnTypeRef();
-                    String extensionLocation = typeRef != null ? "for " + typeRef.getText() + " " : "";
+                    JetTypeReference receiverTypeRef = function.getReceiverTypeRef();
+                    String extensionLocation = receiverTypeRef != null ? "for " + receiverTypeRef.getText() + " " : "";
                     return String.format("(%sin %s)", extensionLocation, QualifiedNamesUtil.withoutLastSegment(name));
                 }
 

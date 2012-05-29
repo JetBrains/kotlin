@@ -42,6 +42,7 @@ abstract public class JetFunction extends JetTypeParameterListOwner
         return (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);
     }
 
+    @Override
     @NotNull
     public List<JetParameter> getValueParameters() {
         JetParameterList list = getValueParameterList();

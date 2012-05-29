@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.plugin.caches;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 import com.intellij.navigation.ChooseByNameContributor;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.project.Project;
@@ -48,7 +50,7 @@ public class GotoSymbolContributor implements ChooseByNameContributor {
         final Collection<? extends NavigationItem> functions = StubIndex.getInstance().get(
                 JetIndexKeys.FUNCTIONS_SHORT_NAME_KEY, name, project, scope);
 
-        final List<NavigationItem> items = new ArrayList<NavigationItem>(functions);
+        final List<NavigationItem> items = new ArrayList<NavigationItem>(Collections2.filter(functions, Predicates.notNull()));
         return ArrayUtil.toObjectArray(items, NavigationItem.class);
     }
 }
