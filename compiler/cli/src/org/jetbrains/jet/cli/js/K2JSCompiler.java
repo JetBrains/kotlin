@@ -86,7 +86,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
     private static JetCoreEnvironment getEnvironment(K2JSCompilerArguments arguments, Disposable rootDisposable) {
         final JetCoreEnvironment environmentForJS = JetCoreEnvironment.getCoreEnvironmentForJS(rootDisposable);
         environmentForJS.addSources(arguments.srcdir);
-        System.out.println("Compiling source files: " + environmentForJS.getSourceFiles());
+        if (arguments.isVerbose()) {
+            System.out.println("Compiling source files: " + environmentForJS.getSourceFiles());
+        }
         return environmentForJS;
     }
 
