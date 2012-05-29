@@ -190,5 +190,7 @@
         <category>Kotlin</category>
       </intentionAction>
 
+      <project.converterProvider implementation="org.jetbrains.jet.plugin.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
+
   </extensions>
 </idea-plugin>

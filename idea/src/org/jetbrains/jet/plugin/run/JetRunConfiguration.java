@@ -27,7 +27,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.util.*;
-import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -82,18 +81,6 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
 
         readModule(element);
         EnvironmentVariablesComponent.readExternal(element, getEnvs());
-
-        //TODO remove the following code (left for backward compatibility)
-        Element settingsElement = element.getChild(JetRunConfigurationSettings.class.getSimpleName());
-        if (settingsElement != null) {
-            JetRunConfigurationSettings settings = XmlSerializer.deserialize(settingsElement, JetRunConfigurationSettings.class);
-            if (settings != null) {
-                MAIN_CLASS_NAME = settings.getMainClassName();
-                VM_PARAMETERS = settings.getVmParameters();
-                PROGRAM_PARAMETERS = settings.getProgramParameters();
-                WORKING_DIRECTORY = settings.getWorkingDirectory();
-            }
-        }
     }
 
     @Override
