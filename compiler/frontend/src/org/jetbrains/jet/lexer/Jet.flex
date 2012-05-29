@@ -12,8 +12,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 %unicode
 %class _JetLexer
 %implements FlexLexer
-%column
-%line
 
 %{
     private static final class State {
@@ -34,9 +32,6 @@ import org.jetbrains.jet.lexer.JetTokens;
     private final Stack<State> states = new Stack<State>();
     private int lBraceCount;
     
-    private int yyline;
-    private int yycolumn;
-
     private int commentStart;
     private int commentDepth;
 
@@ -219,7 +214,7 @@ LONG_TEMPLATE_ENTRY_END=\}
 
 {EOL_COMMENT} { return JetTokens.EOL_COMMENT; }
 {SHEBANG_COMMENT} {
-            if (yyline == 0 && yycolumn == 0) {
+            if (zzCurrentPos == 0) {
                 return JetTokens.SHEBANG_COMMENT;
             }
             else {
