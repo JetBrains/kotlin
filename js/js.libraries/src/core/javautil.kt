@@ -19,6 +19,7 @@ library
 public open class Iterator<T>() {
     open fun next() : T = js.noImpl
     open fun hasNext() : Boolean = js.noImpl
+    open fun remove() : Unit = js.noImpl
 }
 
 library
@@ -174,3 +175,7 @@ public class StringBuilder() {
     public fun append(obj : Any) : StringBuilder = js.noImpl
     public fun toString() : String = js.noImpl
 }
+
+library
+class NoSuchElementException() : Exception() {}
+
