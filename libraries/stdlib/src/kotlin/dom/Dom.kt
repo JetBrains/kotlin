@@ -2,7 +2,6 @@ package kotlin.dom
 
 import kotlin.*
 import kotlin.support.*
-import kotlin.util.*
 import java.util.*
 import org.w3c.dom.*
 
@@ -297,64 +296,6 @@ get() {
 
 val NodeList?.last : Node?
 get() = this.tail
-
-
-inline fun NodeList?.toList(): List<Node> {
-    return if (this == null) {
-        Collections.EMPTY_LIST as List<Node>
-    }
-    else {
-        NodeListAsList(this)
-    }
-}
-
-inline fun NodeList?.toElementList(): List<Element> {
-    return if (this == null) {
-        Collections.EMPTY_LIST as List<Element>
-    }
-    else {
-        ElementListAsList(this)
-    }
-}
-
-/** Converts the node list to an XML String */
-fun NodeList?.toXmlString(xmlDeclaration: Boolean = false): String {
-    return if (this == null)
-        "" else {
-        nodesToXmlString(this.toList(), xmlDeclaration)
-    }
-}
-
-class NodeListAsList(val nodeList: NodeList): AbstractList<Node>() {
-    override fun get(index: Int): Node {
-        val node = nodeList.item(index)
-        if (node == null) {
-            throw IndexOutOfBoundsException("NodeList does not contain a node at index: " + index)
-        } else {
-            return node
-        }
-    }
-
-    override fun size(): Int = nodeList.getLength()
-}
-
-class ElementListAsList(val nodeList: NodeList): AbstractList<Element>() {
-    override fun get(index: Int): Element {
-        val node = nodeList.item(index)
-        if (node is Element) {
-            return node
-        } else {
-            if (node == null) {
-                throw IndexOutOfBoundsException("NodeList does not contain a node at index: " + index)
-            } else {
-                throw IllegalArgumentException("Node is not an Element as expected but is $node")
-            }
-        }
-    }
-
-    override fun size(): Int = nodeList.getLength()
-
-}
 
 
 // Syntax sugar
