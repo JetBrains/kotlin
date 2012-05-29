@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.diagnostics;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 
 import java.util.List;
 
@@ -37,7 +38,8 @@ public interface DiagnosticHolder {
             if (diagnostic.getSeverity() == Severity.ERROR) {
                 PsiFile psiFile = diagnostic.getPsiFile();
                 List<TextRange> textRanges = diagnostic.getTextRanges();
-                throw new IllegalStateException(diagnostic.getFactory().getName() + " " + psiFile.getName() + " " + DiagnosticUtils.atLocation(psiFile, textRanges.get(0)));
+                String diagnosticText = DefaultErrorMessages.RENDERER.render(diagnostic);
+                throw new IllegalStateException(diagnostic.getFactory().getName() + ": " + diagnosticText + " " + psiFile.getName() + " " + DiagnosticUtils.atLocation(psiFile, textRanges.get(0)));
             }
         }
     };
