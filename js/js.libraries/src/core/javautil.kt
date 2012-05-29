@@ -73,6 +73,22 @@ public abstract open class AbstractCollection<erased E> : Collection<E> {
 
 library
 public abstract open class AbstractList<erased E> : AbstractCollection<E>, List<E> {
+    public override fun isEmpty() : Boolean = js.noImpl
+    public override fun contains(o : Any?) : Boolean = js.noImpl
+    public override fun iterator() : Iterator<E> = js.noImpl
+   // public override fun indexOf(o : Any?) : Int = js.noImpl
+  //  public override fun lastIndexOf(o : Any?) : Int = js.noImpl
+  //  public override fun toArray() : Array<Any?> = js.noImpl
+  //  public override fun toArray<erased T>(a : Array<out T>) : Array<T> = js.noImpl
+    public override fun set(index : Int, element : E) : E = js.noImpl
+    public override fun add(e : E) : Boolean = js.noImpl
+    public override fun add(index : Int, element : E) : Unit = js.noImpl
+    library("removeByIndex")
+    public override fun remove(index : Int) : E = js.noImpl
+    public override fun remove(o : Any?) : Boolean = js.noImpl
+    public override fun clear() : Unit = js.noImpl
+    public override fun addAll(c : java.util.Collection<out E>) : Boolean = js.noImpl
+  //  public override fun addAll(index : Int, c : java.util.Collection<out E>) : Boolean = js.noImpl
 }
 
 library

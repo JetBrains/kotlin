@@ -41,6 +41,9 @@
                                         <include name="**/*.kt"/>
                                         <exclude name="**/*JVM.kt"/>
                                     </fileset>
+                                    <fileset file="${basedir}/../../stdlib/src/kotlin">
+                                        <include name="Preconditions.kt"/>
+                                    </fileset>
                                 </copy>
                                 <copy tofile="${basedir}/target/generated-js-library/kotlin-lib.js"
                                       file="${kotlin-js-lib-srcdir}/../../js.translator/testFiles/kotlin_lib.js"/>

@@ -289,8 +289,11 @@ var Kotlin;
     Kotlin.RuntimeException = Kotlin.Class.create(Kotlin.Exception);
     Kotlin.Exceptions.IndexOutOfBounds = Kotlin.Class.create(Kotlin.Exception);
     Kotlin.Exceptions.NullPointerException = Kotlin.Class.create(Kotlin.Exception);
-    Kotlin.Exceptions.UnsupportedOperationException = Kotlin.Class.create(Kotlin.Exception);
     Kotlin.Exceptions.NoSuchElementException = Kotlin.Class.create(Kotlin.Exception);
+    Kotlin.Exceptions.IllegalArgumentException = Kotlin.Class.create(Kotlin.Exception);
+    Kotlin.Exceptions.IllegalStateException = Kotlin.Class.create(Kotlin.Exception);
+    Kotlin.Exceptions.IndexOutOfBoundsException = Kotlin.Class.create(Kotlin.Exception);
+    Kotlin.Exceptions.UnsupportedOperationException = Kotlin.Class.create(Kotlin.Exception);
 
     Kotlin.throwNPE = function() {
         throw new Kotlin.Exceptions.NullPointerException();

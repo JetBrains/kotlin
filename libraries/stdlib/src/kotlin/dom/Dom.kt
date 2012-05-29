@@ -5,6 +5,9 @@ import kotlin.support.*
 import java.util.*
 import org.w3c.dom.*
 
+// TODO should not need this - its here for the JS stuff
+import java.lang.IllegalArgumentException
+import java.lang.IndexOutOfBoundsException
 
 // Properties
 
@@ -75,6 +78,66 @@ get() = this.getAttribute("class")?: ""
 set(value) {
     this.setAttribute("class", value)
 }
+
+/** Returns the children of the element as a list */
+inline fun Element?.children(): List<Node> {
+    return this?.getChildNodes().toList()
+}
+
+/** The child elements of this document */
+val Document?.elements : List<Element>
+get() = this?.getElementsByTagName("*").toElementList()
+
+/** The child elements of this elements */
+val Element?.elements : List<Element>
+get() = this?.getElementsByTagName("*").toElementList()
+
+
+/** Returns all the child elements given the local element name */
+inline fun Element?.elements(localName: String): List<Element> {
+    return this?.getElementsByTagName(localName).toElementList()
+}
+
+/** Returns all the elements given the local element name */
+inline fun Document?.elements(localName: String): List<Element> {
+    return this?.getElementsByTagName(localName).toElementList()
+}
+
+/** Returns all the child elements given the namespace URI and local element name */
+inline fun Element?.elements(namespaceUri: String, localName: String): List<Element> {
+    return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
+}
+
+/** Returns all the elements given the namespace URI and local element name */
+inline fun Document?.elements(namespaceUri: String, localName: String): List<Element> {
+    return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
+}
+
+inline fun NodeList?.toList(): List<Node> {
+    return if (this == null) {
+        // TODO the following is easier to convert to JS
+        //Collections.EMPTY_LIST as List<Node>
+        ArrayList<Node>()
+    }
+    else {
+        NodeListAsList(this)
+    }
+}
+
+inline fun NodeList?.toElementList(): List<Element> {
+    return if (this == null) {
+        // TODO the following is easier to convert to JS
+        //Collections.EMPTY_LIST as List<Element>
+        ArrayList<Element>()
+    }
+    else {
+        ElementListAsList(this)
+    }
+}
+
+
+
+
 
 // Helper methods
 

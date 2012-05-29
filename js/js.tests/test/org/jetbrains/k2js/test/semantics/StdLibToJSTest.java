@@ -44,12 +44,10 @@ public final class StdLibToJSTest extends SingleFileTranslationTest {
         super("stdlib/");
     }
 
-    public void testDummy() {
-    }
-
-    public void TODO_testCompileStandardLibraryFiles() throws Exception {
+    public void testCompileStandardLibraryFiles() throws Exception {
 
         generateJavaScriptFiles(MainCallParameters.noCall(), EcmaVersion.all(),
+                                "kotlin/Preconditions.kt",
                                 "kotlin/dom/Dom.kt",
                                 "kotlin/support/AbstractIterator.kt"
         );

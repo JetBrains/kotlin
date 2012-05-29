@@ -19,12 +19,6 @@ import javax.xml.transform.stream.StreamResult
 import org.w3c.dom.*
 import org.xml.sax.InputSource
 
-/** Returns the children of the element as a list */
-inline fun Element?.children(): List<Node> {
-    return this?.getChildNodes().toList()
-}
-
-
 /** Returns an [[Iterator]] of all the next [[Element]] siblings */
 fun Node.nextElements(): Iterator<Element> = nextSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
 
@@ -73,36 +67,6 @@ fun Element.get(selector: String): List<Element> {
         elements(selector)
     }
 }
-
-/** The child elements of this document */
-val Document?.elements : List<Element>
-get() = this?.getElementsByTagName("*").toElementList()
-
-/** The child elements of this elements */
-val Element?.elements : List<Element>
-get() = this?.getElementsByTagName("*").toElementList()
-
-
-/** Returns all the child elements given the local element name */
-inline fun Element?.elements(localName: String?): List<Element> {
-    return this?.getElementsByTagName(localName).toElementList()
-}
-
-/** Returns all the elements given the local element name */
-inline fun Document?.elements(localName: String?): List<Element> {
-    return this?.getElementsByTagName(localName).toElementList()
-}
-
-/** Returns all the child elements given the namespace URI and local element name */
-inline fun Element?.elements(namespaceUri: String?, localName: String?): List<Element> {
-    return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
-}
-
-/** Returns all the elements given the namespace URI and local element name */
-inline fun Document?.elements(namespaceUri: String?, localName: String?): List<Element> {
-    return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
-}
-
 
 var Element.classSet : Set<String>
 get() {
@@ -153,24 +117,6 @@ fun NodeList?.toXmlString(xmlDeclaration: Boolean = false): String {
     return if (this == null)
         "" else {
         nodesToXmlString(this.toList(), xmlDeclaration)
-    }
-}
-
-inline fun NodeList?.toList(): List<Node> {
-    return if (this == null) {
-        Collections.EMPTY_LIST as List<Node>
-    }
-    else {
-        NodeListAsList(this)
-    }
-}
-
-inline fun NodeList?.toElementList(): List<Element> {
-    return if (this == null) {
-        Collections.EMPTY_LIST as List<Element>
-    }
-    else {
-        ElementListAsList(this)
     }
 }
 

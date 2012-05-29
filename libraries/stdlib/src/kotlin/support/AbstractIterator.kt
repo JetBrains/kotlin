@@ -2,6 +2,9 @@ package kotlin.support
 
 import java.util.NoSuchElementException
 
+// TODO should not need this - its here for the JS stuff
+import java.lang.UnsupportedOperationException
+
 enum class State {
     Ready
     NotReady
