@@ -367,10 +367,6 @@ public class OverrideResolver {
 
     private void checkOverrideForMember(@NotNull CallableMemberDescriptor declared,
             @NotNull Multimap<CallableDescriptor, CallableDescriptor> invisibleOverriddenDescriptors) {
-        if (ErrorUtils.isError(declared)) {
-            return;
-        }
-
         JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
         if (member == null) {
             Boolean delegated = trace.get(DELEGATED, declared);
@@ -441,10 +437,6 @@ public class OverrideResolver {
     }
 
     private void checkOverridesForParameters(CallableMemberDescriptor declared) {
-        if (ErrorUtils.isError(declared)) {
-            return;
-        }
-
         boolean fakeOverride = declared.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
         if (!fakeOverride) {
             // No check if the function is not marked as 'override'

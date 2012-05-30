@@ -898,6 +898,9 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             }
             
             JetType transform = semanticServices.getTypeTransformer().transformToType(type, JavaTypeTransformer.TypeUsage.SUPERTYPE, typeVariableResolver);
+            if (ErrorUtils.isErrorType(transform)) {
+                continue;
+            }
 
             result.add(TypeUtils.makeNotNullable(transform));
         }
