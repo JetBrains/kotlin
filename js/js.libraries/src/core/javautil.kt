@@ -68,11 +68,11 @@ public trait Collection<erased E> : java.lang.Iterable<E> {
 }
 
 library
-public abstract open class AbstractCollection<erased E> : Collection<E> {
+public abstract open class AbstractCollection<erased E>() : Collection<E> {
 }
 
 library
-public abstract open class AbstractList<erased E> : AbstractCollection<E>, List<E> {
+public abstract open class AbstractList<erased E>() : AbstractCollection<E>(), List<E> {
     public override fun isEmpty() : Boolean = js.noImpl
     public override fun contains(o : Any?) : Boolean = js.noImpl
     public override fun iterator() : Iterator<E> = js.noImpl
