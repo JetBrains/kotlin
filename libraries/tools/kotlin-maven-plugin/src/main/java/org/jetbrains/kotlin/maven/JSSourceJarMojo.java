@@ -23,7 +23,6 @@ public class JSSourceJarMojo extends AbstractMojo {
     /**
      * The Kotlin JavaScript library source code; the library code to be compiled to JavaScript
      *
-     * @required
      * @parameter expression="${jsLibrarySourceDir}"
      */
     private File librarySourceDir;
@@ -31,7 +30,6 @@ public class JSSourceJarMojo extends AbstractMojo {
     /**
      * The Kotlin JavaScript definition source code; the kotlin code used to define APIs available in the kotlin-lib.js file
      *
-     * @required
      * @parameter expression="${jsDefinitionSourceDir}"
      */
     private File definitionSourceDir;
