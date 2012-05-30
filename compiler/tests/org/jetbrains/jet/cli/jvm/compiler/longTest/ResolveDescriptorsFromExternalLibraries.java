@@ -128,7 +128,7 @@ public class ResolveDescriptorsFromExternalLibraries {
             ZipInputStream zip = new ZipInputStream(is);
 
             while (zip.available() > 0) {
-                hasErrors |= parseLibraryFileChunk(jar, libDescription, zip);
+                hasErrors |= parseLibraryFileChunk(jar, libDescription, zip, classesPerChunk);
             }
         } finally {
             try {
