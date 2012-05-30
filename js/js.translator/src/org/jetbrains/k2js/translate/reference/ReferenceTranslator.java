@@ -16,6 +16,7 @@
 
 package org.jetbrains.k2js.translate.reference;
 
+import com.google.common.base.Preconditions;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import org.jetbrains.annotations.NotNull;
@@ -57,6 +58,7 @@ public final class ReferenceTranslator {
     public static JsExpression translateAsLocalNameReference(@NotNull DeclarationDescriptor referencedDescriptor,
             @NotNull TranslationContext context) {
         DeclarationDescriptor effectiveDescriptor = getReferencedDescriptor(referencedDescriptor, context);
+        Preconditions.checkNotNull(effectiveDescriptor, "Could not find DeclarationDescriptor for %s", referencedDescriptor);
         return context.getNameForDescriptor(effectiveDescriptor).makeRef();
     }
 
@@ -68,9 +70,11 @@ public final class ReferenceTranslator {
         DeclarationDescriptor effectiveDescriptor;
         if (context.isEcma5() && referencedDescriptor instanceof PropertyAccessorDescriptor) {
             effectiveDescriptor = ((PropertyAccessorDescriptor) referencedDescriptor).getCorrespondingProperty();
+            Preconditions.checkNotNull(effectiveDescriptor, "No correspondingProperty available for descriptor %s", referencedDescriptor);
         }
         else {
             effectiveDescriptor = referencedDescriptor;
+            Preconditions.checkNotNull(effectiveDescriptor, "No referencedDescriptor available");
         }
         return effectiveDescriptor;
     }
