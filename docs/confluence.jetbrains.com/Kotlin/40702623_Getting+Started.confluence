@@ -1,0 +1,68 @@
+h2. Setting up IntelliJ IDEA
+
+First, you need to install IntelliJ IDEA 11.1 or higher (the free Community Edition can be downloaded from [here|http://www.jetbrains.com/idea/]).
+Once you've installed that, you'll need the Kotlin IDEA Plugin.
+
+h3. Milestone versions
+
+A stable milestone version of Kotlin can be obtained from JetBrains' [Plugin Repository|http://www.jetbrains.com/idea/plugins/index.html].
+
+In IDEA navigate to: Settings \-> Plugins \-> Browse Repositories
+
+Select the Kotlin plugin and then Download and Install. 
+
+h3. Using the Kotlin integration builds repository
+
+In IDEA navigate to: Preferences \-> Plugins \-> Browse Repositories. Enter
+
+* [http://www.jetbrains.com/kotlin/eap-plugin-repository/updatePlugins.xml]
+
+Then you should be able to select the Kotlin plugin and Download and Install. The repository above contains reasonable stable builds published approximately every week.
+
+{note:title=If you want to retrieve nightly builds through a plugin repository, use}[http://teamcity.jetbrains.com/guestAuth/repository/download/bt345/.lastSuccessful/updatePlugins.xml]{note}
+
+h3. Download the Kotlin plugin manually
+
+Alternatively, you can download the nightly builds of the IDEA Plugin from [our build server|http://teamcity.jetbrains.com/viewType.html?tab=buildTypeStatusDiv&buildTypeId=bt345&guest=1], look under "Artifacts".
+
+Then navigate to Preferences \-> Plugins \-> Install plugin from disk...
+
+h2. Creating a project
+
+* Now in IDEA you can select File \-> New Project.
+* Create a new project as usual with a src directory.
+* Right click on src and select New \-> Kotlin file
+* Enter some name, say 'Foo'
+* The IDE will prompt you at the top right of your editor to select the Kotlin Runtime
+* You'll need to point the IDE to some download of the Kotlin runtime (see below)
+* Enter some code like this
+
+{jet}
+fun main(args: Array<String>): Unit {
+    println("Hello world!")
+}
+{jet}
+
+* Now thats done you should be able to right click on the Foo class and select Run
+* Enjoy\!
+
+h2. Working with the Kotlin project at github
+
+Please note that the [root project at github|https://github.com/JetBrains/kotlin] is a Java based project for creating the compiler and IDEA plugin. It *should not* be opened in IDEA with the Kotlin plugin installed\!
+
+However the [kotlin libraries project|https://github.com/JetBrains/kotlin/tree/master/libraries] is all Kotlin code and used to create the standard library, tests and associated tools. That project opens fine in IDEA with Kotlin plugin installed. You just may have to specify which KotlinRuntime to choose.
+
+h2. Downloading the Kotlin Runtime
+
+The IDEA plugin already includes a Kotlin runtime. If you want to use Kotlin yourself from the command line or Ant you may need this too (unless you use other build tools like the [Kotlin Maven Plugin|Kotlin Build Tools#Maven]).
+
+Download it from the [build server|http://teamcity.jetbrains.com/viewType.html?tab=buildTypeStatusDiv&buildTypeId=bt345&guest=1], look under "Artifacts".
+
+h2. Common Issues
+
+Sometimes you open a Kotlin file and things go all red. This may mean that the IDEA plugin cannot find your Kotlin Runtime.
+
+* Go to File \-> Project Structure...
+* Select Libraries tab
+* Do you see KotlinRuntime? Is it pointing to a valid kotlin-runtime.jar?
+* If not remove it and add a new one
