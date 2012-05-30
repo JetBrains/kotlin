@@ -18,6 +18,7 @@ package org.jetbrains.k2js.test.semantics;
 
 import closurecompiler.internal.com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.mozilla.javascript.EcmaError;
 
@@ -70,8 +71,8 @@ public final class WebDemoCanvasExamplesTest extends SingleFileTranslationTest {
     }
 
     @Override
-    protected List<String> additionalJSFiles() {
-        ArrayList<String> result = Lists.newArrayList(super.additionalJSFiles());
+    protected List<String> additionalJSFiles(EcmaVersion ecmaVersion) {
+        ArrayList<String> result = Lists.newArrayList(super.additionalJSFiles(ecmaVersion));
         result.add(CANVAS_HELPER);
         return result;
     }
