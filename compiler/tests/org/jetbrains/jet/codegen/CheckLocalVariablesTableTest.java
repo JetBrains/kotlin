@@ -51,12 +51,12 @@ import java.util.regex.Pattern;
  * @author Natalia.Ukhorskaya
  */
 
-public class WriteThisForClosureTest extends TestCaseWithTmpdir {
+public class CheckLocalVariablesTableTest extends TestCaseWithTmpdir {
 
     private final File ktFile;
     private JetCoreEnvironment jetCoreEnvironment;
 
-    public WriteThisForClosureTest(File ktFile) {
+    public CheckLocalVariablesTableTest(File ktFile) {
         this.ktFile = ktFile;
     }
 
@@ -93,9 +93,9 @@ public class WriteThisForClosureTest extends TestCaseWithTmpdir {
                 int index = 0;
                 for (LocalVariable expectedVariable : expectedLocalVariables) {
                     LocalVariable actualVariable = actualLocalVariables.get(index);
-                    assertEquals("Indexes are different", expectedVariable.index, actualVariable.index);
                     assertEquals("Names are different", expectedVariable.name, actualVariable.name);
                     assertEquals("Types are different", expectedVariable.type, actualVariable.type);
+                    assertEquals("Indexes are different", expectedVariable.index, actualVariable.index);
                     index++;
                 }
             }
@@ -106,20 +106,19 @@ public class WriteThisForClosureTest extends TestCaseWithTmpdir {
         }
 
 
-
         Disposer.dispose(myTestRootDisposable);
     }
 
 
     public static Test suite() {
-        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/writeThisInLocalVariableTable", true,
+        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/checkLocalVariablesTable", true,
                                                     new JetTestCaseBuilder.NamedTestFactory() {
                                                         @NotNull
                                                         @Override
                                                         public Test createTest(@NotNull String dataPath,
                                                                 @NotNull String name,
                                                                 @NotNull File file) {
-                                                            return new WriteThisForClosureTest(file);
+                                                            return new CheckLocalVariablesTableTest(file);
                                                         }
                                                     });
     }
@@ -129,9 +128,11 @@ public class WriteThisForClosureTest extends TestCaseWithTmpdir {
         private final String type;
         private final int index;
 
-        private LocalVariable(int index,
+        private LocalVariable(
                 @NotNull String name,
-                @NotNull String type) {
+                @NotNull String type,
+                int index
+        ) {
             this.name = name;
             this.type = type;
             this.index = index;
@@ -141,29 +142,29 @@ public class WriteThisForClosureTest extends TestCaseWithTmpdir {
     @NotNull
     private static final Pattern methodPattern = Pattern.compile("^// METHOD : *(.*)");
 
-    private static final Pattern namePattern = Pattern.compile("^// VARIABLE : INDEX=*(.*) NAME=.* TYPE=.*");
-    private static final Pattern typePattern = Pattern.compile("^// VARIABLE : INDEX=.* NAME=*(.*) TYPE=.*");
-    private static final Pattern indexPattern = Pattern.compile("^// VARIABLE : INDEX=.* NAME=.* TYPE=*(.*)");
+    private static final Pattern namePattern = Pattern.compile("^// VARIABLE : NAME=*(.*) TYPE=.* INDEX=.*");
+    private static final Pattern typePattern = Pattern.compile("^// VARIABLE : NAME=.* TYPE=*(.*) INDEX=.*");
+    private static final Pattern indexPattern = Pattern.compile("^// VARIABLE : NAME=.* TYPE=.* INDEX=*(.*)");
 
 
     private List<LocalVariable> parseExpectations() throws IOException {
         List<String> lines = Files.readLines(ktFile, Charset.forName("utf-8"));
         List<LocalVariable> expectedLocalVariables = new ArrayList<LocalVariable>();
         for (int i = lines.size() - 3; i < lines.size(); ++i) {
-            Matcher indexMatcher = namePattern.matcher(lines.get(i));
-            if (indexMatcher.matches()) {
-                Matcher nameMatcher = typePattern.matcher(lines.get(i));
-                Matcher typeMatcher = indexPattern.matcher(lines.get(i));
+            Matcher nameMatcher = namePattern.matcher(lines.get(i));
+            if (nameMatcher.matches()) {
+                Matcher typeMatcher = typePattern.matcher(lines.get(i));
+                Matcher indexMatcher = indexPattern.matcher(lines.get(i));
 
-                if (!nameMatcher.matches()
-                    || !typeMatcher.matches()) {
+                if (!typeMatcher.matches()
+                    || !indexMatcher.matches()) {
                     throw new AssertionError("Incorrect test instructions format");
                 }
 
 
-                expectedLocalVariables.add(new LocalVariable(Integer.parseInt(indexMatcher.group(1)),
-                                                             nameMatcher.group(1),
-                                                             typeMatcher.group(1)));
+                expectedLocalVariables.add(new LocalVariable(nameMatcher.group(1),
+                                                             typeMatcher.group(1),
+                                                             Integer.parseInt(indexMatcher.group(1))));
             }
         }
         if (expectedLocalVariables.size() == 0) {
@@ -176,7 +177,7 @@ public class WriteThisForClosureTest extends TestCaseWithTmpdir {
 
     private String parseMethodName() throws IOException {
         List<String> lines = Files.readLines(ktFile, Charset.forName("utf-8"));
-        for (int i = lines.size() - 3; i < lines.size(); ++i) {
+        for (int i = 0; i < lines.size(); ++i) {
             Matcher methodMatcher = methodPattern.matcher(lines.get(i));
             if (methodMatcher.matches()) {
                 return methodMatcher.group(1);
@@ -198,8 +199,9 @@ public class WriteThisForClosureTest extends TestCaseWithTmpdir {
                     return new EmptyVisitor() {
                         @Override
                         public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
-                            readVariables.add(new LocalVariable(index, name, desc));
+                            readVariables.add(new LocalVariable(name, desc, index));
                         }
+
                     };
                 }
                 else {
