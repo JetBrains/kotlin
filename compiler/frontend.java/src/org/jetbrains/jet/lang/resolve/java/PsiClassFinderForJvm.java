@@ -75,8 +75,13 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
     public PsiClass findPsiClass(@NotNull FqName qualifiedName, @NotNull RuntimeClassesHandleMode runtimeClassesHandleMode) {
         PsiClass original = javaFacade.findClass(qualifiedName.getFqName(), javaSearchScope);
         PsiClass altClass = altClassFinder.findClass(qualifiedName);
+
         PsiClass result = original;
         if (altClass != null) {
+            if (original == null) {
+                return null;
+            }
+
             if (altClass instanceof ClsClassImpl) {
                 altClass.putUserData(ClsClassImpl.DELEGATE_KEY, original);
             }

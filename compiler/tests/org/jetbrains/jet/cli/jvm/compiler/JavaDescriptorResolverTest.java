@@ -18,10 +18,12 @@ package org.jetbrains.jet.cli.jvm.compiler;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileJdkHeaders;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
@@ -72,5 +74,15 @@ public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
                 jetCoreEnvironment.getCompilerDependencies(), jetCoreEnvironment.getProject());
         return injector.getJavaDescriptorResolver();
+    }
+
+    public void testResolveJdkHeaderClassWithoutJdk() {
+        JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(myTestRootDisposable, new CompilerDependencies(CompilerSpecialMode.IDEA, null, ForTestCompileJdkHeaders.jdkHeadersForTests(), null));
+
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
+                jetCoreEnvironment.getCompilerDependencies(), jetCoreEnvironment.getProject());
+
+        // java.lang.Iterable must exist in jdk-headers otherwize this test is meaningless, resolveClass always returns null
+        injector.getJavaDescriptorResolver().resolveClass(new FqName("java.lang.Iterable"));
     }
 }
