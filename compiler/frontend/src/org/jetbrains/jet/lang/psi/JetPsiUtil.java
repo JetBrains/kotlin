@@ -17,14 +17,15 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.CheckUtil;
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -309,7 +310,9 @@ public class JetPsiUtil {
         if (aliasName == null) {
             aliasName = referenceExpression != null ? referenceExpression.getReferencedName() : null;
         }
-        return aliasName != null ? Name.identifier(aliasName) : null;
+
+        //noinspection ConstantConditions
+        return StringUtil.isNotEmpty(aliasName) ? Name.identifier(aliasName) : null;
     }
 
     @Nullable
