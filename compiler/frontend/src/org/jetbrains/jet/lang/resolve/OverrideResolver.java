@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -366,6 +367,10 @@ public class OverrideResolver {
 
     private void checkOverrideForMember(@NotNull CallableMemberDescriptor declared,
             @NotNull Multimap<CallableDescriptor, CallableDescriptor> invisibleOverriddenDescriptors) {
+        if (ErrorUtils.isError(declared)) {
+            return;
+        }
+
         JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
         if (member == null) {
             Boolean delegated = trace.get(DELEGATED, declared);
