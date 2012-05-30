@@ -36,10 +36,7 @@ import org.jetbrains.jet.cli.common.messages.PrintingMessageCollector;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
-import org.jetbrains.k2js.config.ClassPathLibrarySourcesConfig;
-import org.jetbrains.k2js.config.Config;
-import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.config.ZippedLibrarySourcesConfig;
+import org.jetbrains.k2js.config.*;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.jetbrains.k2js.facade.MainCallParameters;
 
@@ -72,10 +69,33 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
             return ExitCode.INTERNAL_ERROR;
         }
 
-        JetCoreEnvironment environmentForJS = getEnvironment(arguments, rootDisposable);
-        Config config = getConfig(arguments, environmentForJS.getProject());
+        JetCoreEnvironment environmentForJS = JetCoreEnvironment.getCoreEnvironmentForJS(rootDisposable);
+        Project project = environmentForJS.getProject();
+        Config config = getConfig(arguments, project);
         if (analyzeAndReportErrors(messageCollector, environmentForJS.getSourceFiles(), config)) {
             return ExitCode.COMPILATION_ERROR;
+        }
+
+        if (arguments.srcdir != null) {
+            environmentForJS.addSources(arguments.srcdir);
+        }
+        if (arguments.sourceFiles != null) {
+            for (String sourceFile : arguments.sourceFiles) {
+                environmentForJS.addSources(sourceFile);
+            }
+        }
+        ClassPathLibrarySourcesLoader sourceLoader = new ClassPathLibrarySourcesLoader(project);
+        List<JetFile> sourceFiles = sourceLoader.findSourceFiles();
+        environmentForJS.getSourceFiles().addAll(sourceFiles);
+
+        if (arguments.isVerbose()) {
+            Iterable<String> fileNames = Iterables.transform(environmentForJS.getSourceFiles(), new Function<JetFile, String>() {
+                @Override
+                public String apply(@Nullable JetFile file) {
+                    return file.getName();
+                }
+            });
+            System.out.println("Compiling source files: " + Joiner.on(", ").join(fileNames));
         }
 
         String outputFile = arguments.outputFile;
@@ -87,29 +107,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
 
         MainCallParameters mainCallParameters = arguments.createMainCallParameters();
         return translateAndGenerateOutputFile(mainCallParameters, messageCollector, environmentForJS, config, outputFile);
-    }
-
-    @NotNull
-    private static JetCoreEnvironment getEnvironment(K2JSCompilerArguments arguments, Disposable rootDisposable) {
-        final JetCoreEnvironment environmentForJS = JetCoreEnvironment.getCoreEnvironmentForJS(rootDisposable);
-        if (arguments.srcdir != null) {
-            environmentForJS.addSources(arguments.srcdir);
-        }
-        if (arguments.sourceFiles != null) {
-            for (String sourceFile : arguments.sourceFiles) {
-                environmentForJS.addSources(sourceFile);
-            }
-        }
-        if (arguments.isVerbose()) {
-            Iterable<String> fileNames = Iterables.transform(environmentForJS.getSourceFiles(), new Function<JetFile, String>() {
-                @Override
-                public String apply(@Nullable JetFile file) {
-                    return file.getName();
-                }
-            });
-            System.out.println("Compiling source files: " + Joiner.on(", ").join(fileNames));
-        }
-        return environmentForJS;
     }
 
     @NotNull
@@ -146,9 +143,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
     private static Config getConfig(@NotNull K2JSCompilerArguments arguments, @NotNull Project project) {
         EcmaVersion ecmaVersion = EcmaVersion.fromString(arguments.target);
         if (arguments.libzip == null) {
-            // lets discover the JS library source on the classpath
-            return new ClassPathLibrarySourcesConfig(project, ecmaVersion);
-            //return Config.getEmptyConfig(project, ecmaVersion);
+            // lets discover the JS library definitions on the classpath
+            return new ClassPathLibraryDefintionsConfig(project, ecmaVersion);
         }
         return new ZippedLibrarySourcesConfig(project, arguments.libzip, ecmaVersion);
     }

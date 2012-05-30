@@ -65,11 +65,8 @@
 
         <module>examples/kotlin-java-example</module>
 
-        <!--
-        TODO temporary disabled until we can get the kotlin/dom code compiled as JS
-        <module>examples/browser-example</module>
-        -->
         <module>examples/js-example</module>
+        <module>examples/browser-example</module>
     </modules>
 
     <dependencies>

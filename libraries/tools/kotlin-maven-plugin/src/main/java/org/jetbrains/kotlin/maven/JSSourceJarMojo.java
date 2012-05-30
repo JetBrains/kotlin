@@ -5,6 +5,8 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.FileUtils;
+import org.jetbrains.k2js.config.ClassPathLibraryDefintionsConfig;
+import org.jetbrains.k2js.config.ClassPathLibrarySourcesLoader;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -19,12 +21,20 @@ import java.io.PrintWriter;
  */
 public class JSSourceJarMojo extends AbstractMojo {
     /**
-     * The Kotlin JavaScript library source code
+     * The Kotlin JavaScript library source code; the library code to be compiled to JavaScript
      *
      * @required
      * @parameter expression="${jsLibrarySourceDir}"
      */
     private File librarySourceDir;
+
+    /**
+     * The Kotlin JavaScript definition source code; the kotlin code used to define APIs available in the kotlin-lib.js file
+     *
+     * @required
+     * @parameter expression="${jsDefinitionSourceDir}"
+     */
+    private File definitionSourceDir;
 
     /**
      * The directory for the copied code
@@ -41,7 +51,7 @@ public class JSSourceJarMojo extends AbstractMojo {
             getLog().warn("Source directory does not exist: " + librarySourceDir);
         } else {
             try {
-                File metaInfFile = new File(outputDir, "META-INF/services/org.jetbrains.kotlin.js.librarySource");
+                File metaInfFile = new File(outputDir, ClassPathLibrarySourcesLoader.META_INF_SERVICES_FILE);
                 metaInfFile.getParentFile().mkdirs();
 
                 FileUtils.copyDirectoryStructure(librarySourceDir, outputDir);
@@ -49,6 +59,21 @@ public class JSSourceJarMojo extends AbstractMojo {
                 // now lets generate the META-INF/services/org.jetbrains.kotlin.js.librarySource file
                 PrintWriter writer = new PrintWriter(new FileWriter(metaInfFile));
                 appendSourceFiles(writer, outputDir.getCanonicalPath(), outputDir);
+                writer.close();
+            } catch (IOException e) {
+                throw new MojoFailureException(e.getMessage(), e);
+            }
+        }
+        if (definitionSourceDir.exists()) {
+            try {
+                File metaInfFile = new File(outputDir, ClassPathLibraryDefintionsConfig.META_INF_SERVICES_FILE);
+                metaInfFile.getParentFile().mkdirs();
+
+                FileUtils.copyDirectoryStructure(definitionSourceDir, outputDir);
+
+                // now lets generate the META-INF/services/org.jetbrains.kotlin.js.libraryDefinitions file
+                PrintWriter writer = new PrintWriter(new FileWriter(metaInfFile));
+                appendSourceFiles(writer, definitionSourceDir.getCanonicalPath(), definitionSourceDir);
                 writer.close();
             } catch (IOException e) {
                 throw new MojoFailureException(e.getMessage(), e);

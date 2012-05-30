@@ -16,13 +16,9 @@
 
 package org.jetbrains.k2js.config;
 
-import com.intellij.openapi.util.io.FileUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.k2js.config.Config;
-import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
 import java.io.BufferedReader;
@@ -33,34 +29,24 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * A Config implementation which is configured with a directory to find the standard library names from
+ * A helper class to discover a META-INF/services file on the classpath and load the files referenced inside it
  */
-public class ClassPathLibrarySourcesConfig extends Config {
-
-    public static final String LIBRARY_SOURCES_FILES = "META-INF/services/org.jetbrains.kotlin.js.librarySource";
-    @Nullable
-    private /*var*/ List<JetFile> jsLibFiles = null;
-
-    public ClassPathLibrarySourcesConfig(@NotNull Project project, @NotNull EcmaVersion version) {
-        super(project, version);
-    }
-
-    @NotNull
-    private List<JetFile> initLibFiles(@NotNull Project project) {
+public class MetaInfServices {
+    public static List<JetFile> loadServicesFiles(String metaInfServicesFile, Project project) {
         List<JetFile> libFiles = new ArrayList<JetFile>();
         Set<URL> urlsLoaded = new HashSet<URL>();
         try {
-            Enumeration<URL> resources = getClass().getClassLoader().getResources(LIBRARY_SOURCES_FILES);
-            loadLibFiles(resources, project, urlsLoaded, libFiles);
-            resources = Thread.currentThread().getContextClassLoader().getResources(LIBRARY_SOURCES_FILES);
-            loadLibFiles(resources, project, urlsLoaded, libFiles);
+            Enumeration<URL> resources = MetaInfServices.class.getClassLoader().getResources(metaInfServicesFile);
+            loadLibFiles(resources, urlsLoaded, libFiles, project);
+            resources = Thread.currentThread().getContextClassLoader().getResources(metaInfServicesFile);
+            loadLibFiles(resources, urlsLoaded, libFiles, project);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
         return libFiles;
     }
 
-    private void loadLibFiles(Enumeration<URL> resources, @NotNull Project project, Set<URL> urlsLoaded, List<JetFile> libFiles) throws IOException {
+    protected static void loadLibFiles(Enumeration<URL> resources, Set<URL> urlsLoaded, List<JetFile> libFiles, Project project) throws IOException {
         while (resources != null && resources.hasMoreElements()) {
             URL url = resources.nextElement();
             if (url != null) {
@@ -84,6 +70,7 @@ public class ClassPathLibrarySourcesConfig extends Config {
                                     String text = FileUtil.loadTextAndClose(stream);
                                     JetFile file = JetFileUtils.createPsiFile(line, text, project);
                                     if (file != null) {
+                                        //System.out.println("Parsing file: " + text);
                                         libFiles.add(file);
                                     }
                                 }
@@ -102,19 +89,10 @@ public class ClassPathLibrarySourcesConfig extends Config {
      * Tries to load the given resource name on the classpath
      */
     public static InputStream loadClasspathResource(String resourceName) {
-        InputStream answer = ClassPathLibrarySourcesConfig.class.getClassLoader().getResourceAsStream(resourceName);
+        InputStream answer = ClassPathLibraryDefintionsConfig.class.getClassLoader().getResourceAsStream(resourceName);
         if (answer == null) {
             answer = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceName);
         }
         return answer;
-    }
-
-    @Override
-    @NotNull
-    public List<JetFile> generateLibFiles() {
-        if (jsLibFiles == null) {
-            jsLibFiles = initLibFiles(getProject());
-        }
-        return jsLibFiles;
     }
 }

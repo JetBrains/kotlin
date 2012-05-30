@@ -189,7 +189,6 @@ public final class BindingUtils {
     public static DeclarationDescriptor getDescriptorForReferenceExpression(@NotNull BindingContext context,
             @NotNull JetReferenceExpression reference) {
         DeclarationDescriptor referencedDescriptor = getNullableDescriptorForReferenceExpression(context, reference);
-        assert referencedDescriptor != null : "Reference expression must reference a descriptor.";
         Preconditions.checkNotNull(referencedDescriptor, "Reference expression must reference a descriptor for reference %s at %s", reference.getText(),
                                    DiagnosticUtils.atLocation(reference));
         return referencedDescriptor;
