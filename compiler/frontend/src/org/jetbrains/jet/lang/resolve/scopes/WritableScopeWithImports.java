@@ -52,7 +52,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     @Override
     public WritableScope changeLockLevel(LockLevel lockLevel) {
         if (lockLevel.ordinal() < this.lockLevel.ordinal()) {
-            throw new IllegalStateException("cannot lower lock level from " + this.lockLevel + " to " + lockLevel + " at " + debugName);
+            throw new IllegalStateException("cannot lower lock level from " + this.lockLevel + " to " + lockLevel + " at " + toString());
         }
         this.lockLevel = lockLevel;
         return this;
@@ -60,19 +60,19 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
     protected void checkMayRead() {
         if (lockLevel != LockLevel.READING && lockLevel != LockLevel.BOTH) {
-            throw new IllegalStateException("cannot read with lock level " + lockLevel + " at " + debugName);
+            throw new IllegalStateException("cannot read with lock level " + lockLevel + " at " + toString());
         }
     }
 
     protected void checkMayWrite() {
         if (lockLevel != LockLevel.WRITING && lockLevel != LockLevel.BOTH) {
-            throw new IllegalStateException("cannot write with lock level " + lockLevel + " at " + debugName);
+            throw new IllegalStateException("cannot write with lock level " + lockLevel + " at " + toString());
         }
     }
     
     protected void checkMayNotWrite() {
         if (lockLevel == LockLevel.WRITING || lockLevel == LockLevel.BOTH) {
-            throw new IllegalStateException("cannot write with lock level " + lockLevel + " at " + debugName);
+            throw new IllegalStateException("cannot write with lock level " + lockLevel + " at " + toString());
         }
     }
 
