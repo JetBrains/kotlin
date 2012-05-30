@@ -463,7 +463,7 @@ public class JetTypeMapper {
             return asmType;
         }
 
-        if (descriptor instanceof TypeParameterDescriptor) {
+        if (descriptor instanceof TypeParameterDescriptorImpl) {
 
             Type type = mapType(((TypeParameterDescriptor) descriptor).getUpperBoundsAsType(), kind);
             if (signatureVisitor != null) {
@@ -722,7 +722,7 @@ public class JetTypeMapper {
                     signatureVisitor.writeInterfaceBoundEnd();
                 }
             }
-            if (jetType.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
+            if (jetType.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptorImpl) {
                 signatureVisitor.writeInterfaceBound();
                 mapType(jetType, signatureVisitor, MapTypeMode.TYPE_PARAMETER);
                 signatureVisitor.writeInterfaceBoundEnd();
@@ -871,6 +871,27 @@ public class JetTypeMapper {
         return signatureWriter.makeJvmMethodSignature("<init>");
     }
 
+    @NotNull
+    public JvmMethodSignature mapScriptSignature(@NotNull ScriptDescriptor script) {
+        BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, false);
+
+        writeFormalTypeParameters(Collections.<TypeParameterDescriptor>emptyList(), signatureWriter);
+
+        signatureWriter.writeParametersStart();
+
+        for (ValueParameterDescriptor valueParameter : script.getValueParameters()) {
+            signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
+            mapType(valueParameter.getType(), signatureWriter, MapTypeMode.VALUE);
+            signatureWriter.writeParameterTypeEnd();
+        }
+
+        signatureWriter.writeParametersEnd();
+
+        signatureWriter.writeVoidReturn();
+
+        return signatureWriter.makeJvmMethodSignature("<init>");
+    }
+
     public CallableMethod mapToCallableMethod(ConstructorDescriptor descriptor, OwnerKind kind, boolean hasThis0) {
         final JvmMethodSignature method = mapConstructorSignature(descriptor, hasThis0);
         MapTypeMode mapTypeMode = ownerKindToMapTypeMode(kind);
@@ -882,6 +903,7 @@ public class JetTypeMapper {
         String owner = mapped.getInternalName();
         return new CallableMethod(owner, owner, owner, method, INVOKESPECIAL);
     }
+
 
     public static int getAccessModifiers(MemberDescriptor p, int defaultFlags) {
         DeclarationDescriptor declaration = p.getContainingDeclaration();
@@ -966,7 +988,7 @@ public class JetTypeMapper {
 
     public boolean isGenericsArray(JetType type) {
         DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
-        if(declarationDescriptor instanceof TypeParameterDescriptor)
+        if(declarationDescriptor instanceof TypeParameterDescriptorImpl)
             return true;
 
         if(standardLibrary.getArray().equals(declarationDescriptor))

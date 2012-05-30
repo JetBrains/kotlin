@@ -54,7 +54,7 @@ public class BytecodeCompiler {
         CompilerDependencies dependencies = CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR);
         JetCoreEnvironment environment = new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), dependencies);
         K2JVMCompileEnvironmentConfiguration
-                env = new K2JVMCompileEnvironmentConfiguration(environment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
+                env = new K2JVMCompileEnvironmentConfiguration(environment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, false, Collections.<String>emptyList());
 
         if (( stdlib != null ) && ( stdlib.trim().length() > 0 )) {
             File file = new File(stdlib);

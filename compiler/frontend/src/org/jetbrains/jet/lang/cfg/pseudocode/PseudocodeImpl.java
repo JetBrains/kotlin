@@ -115,7 +115,7 @@ public class PseudocodeImpl implements Pseudocode {
 
     @NotNull
     private static Set<LocalDeclarationInstruction> getLocalDeclarations(@NotNull Pseudocode pseudocode) {
-        Set<LocalDeclarationInstruction> localDeclarations = Sets.newHashSet();
+        Set<LocalDeclarationInstruction> localDeclarations = Sets.newLinkedHashSet();
         for (Instruction instruction : pseudocode.getInstructions()) {
             if (instruction instanceof LocalDeclarationInstruction) {
                 localDeclarations.add((LocalDeclarationInstruction) instruction);

@@ -28,6 +28,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -86,7 +87,8 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
         JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
-                psiFile, jetCoreEnvironment.getCompilerDependencies())
+                psiFile, Collections.<AnalyzerScriptParameter>emptyList(),
+                jetCoreEnvironment.getCompilerDependencies())
                     .getBindingContext();
         return bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, FqName.topLevel(Name.identifier("test")));
     }

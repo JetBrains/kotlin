@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnosticFactory;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -44,6 +45,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -152,8 +154,9 @@ public abstract class ExpectedResolveData {
         Project project = files.iterator().next().getProject();
         JetStandardLibrary lib = JetStandardLibrary.getInstance();
 
-        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files,
-                Predicates.<PsiFile>alwaysTrue(), jetCoreEnvironment.getCompilerDependencies());
+        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files, Collections.<AnalyzerScriptParameter>emptyList(),
+                Predicates.<PsiFile>alwaysTrue(),
+                jetCoreEnvironment.getCompilerDependencies());
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             if (diagnostic.getFactory() instanceof UnresolvedReferenceDiagnosticFactory) {

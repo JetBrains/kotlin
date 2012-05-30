@@ -50,6 +50,10 @@ public class JetIconProvider extends IconProvider {
             return (flags & Iconable.ICON_FLAG_OPEN) != 0 ? PlatformIcons.PACKAGE_OPEN_ICON : PlatformIcons.PACKAGE_ICON;
         }
         if (psiElement instanceof JetNamedFunction) {
+            if (((JetFunction) psiElement).getReceiverTypeRef() != null) {
+                return JetIcons.EXTENSION_FUNCTION;
+            }
+
             return PsiTreeUtil.getParentOfType(psiElement, JetNamedDeclaration.class) instanceof JetClass
                    ? PlatformIcons.METHOD_ICON
                    : JetIcons.FUNCTION;

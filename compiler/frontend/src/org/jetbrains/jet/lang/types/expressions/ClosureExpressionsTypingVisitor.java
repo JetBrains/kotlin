@@ -149,7 +149,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         }
         functionDescriptor.initialize(effectiveReceiverType,
                                       NO_RECEIVER,
-                                      Collections.<TypeParameterDescriptor>emptyList(),
+                                      Collections.<TypeParameterDescriptorImpl>emptyList(),
                                       valueParameterDescriptors,
                                       /*unsubstitutedReturnType = */ null,
                                       Modality.FINAL,

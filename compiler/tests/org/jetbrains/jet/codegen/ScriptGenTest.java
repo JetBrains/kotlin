@@ -42,4 +42,16 @@ public class ScriptGenTest extends CodegenTestCase {
         // TODO: check function is visible as instance field (it is currently not)
     }
 
+    public void testScriptParameter() {
+        blackBoxFile("script/parameter.ktscript");
+    }
+
+    public void testScriptParameterLong() {
+        blackBoxFile("script/parameterLong.ktscript");
+    }
+
+    public void testScriptParameterArray() {
+        blackBoxFile("script/parameterArray.ktscript");
+    }
+
 }

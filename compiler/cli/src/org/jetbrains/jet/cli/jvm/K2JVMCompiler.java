@@ -36,6 +36,7 @@ import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.cli.common.ExitCode.*;
@@ -84,8 +85,8 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
 
         CompilerDependencies dependencies = new CompilerDependencies(mode, CompilerDependencies.findRtJar(), jdkHeadersJar, runtimeJar);
         JetCoreEnvironment environment = JetCoreEnvironment.getCoreEnvironmentForJVM(rootDisposable, dependencies);
-        K2JVMCompileEnvironmentConfiguration configuration =
-                new K2JVMCompileEnvironmentConfiguration(environment, messageCollector);
+        List<String> scriptArgs = arguments.script ? arguments.freeArgs.subList(1, arguments.freeArgs.size()) : Collections.<String>emptyList();
+        K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(environment, messageCollector, arguments.script, scriptArgs);
 
         messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
                                 CompilerMessageLocation.NO_LOCATION);
@@ -115,7 +116,12 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
                     if (arguments.src != null) {
                         sources.add(arguments.src);
                     }
-                    sources.addAll(arguments.freeArgs);
+                    if (arguments.script) {
+                        sources.add(arguments.freeArgs.get(0));
+                    }
+                    else {
+                        sources.addAll(arguments.freeArgs);
+                    }
                     noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSources(configuration,
                             sources, arguments.jar, arguments.outputDir, arguments.script, arguments.includeRuntime);
                 }

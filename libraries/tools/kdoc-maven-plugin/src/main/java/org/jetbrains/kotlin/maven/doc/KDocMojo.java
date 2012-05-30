@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.maven.doc;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.jetbrains.jet.cli.common.CompilerArguments;
 import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.doc.KDocArguments;
@@ -174,8 +175,10 @@ public class KDocMojo extends KotlinCompileMojoBase {
     }
 
     @Override
-    protected void configureCompilerArguments(K2JVMCompilerArguments arguments) throws MojoExecutionException {
-        configureBaseCompilerArguments(getLog(), arguments, docModule, sources, classpath, output);
+    protected void configureCompilerArguments(CompilerArguments arguments) throws MojoExecutionException {
+        if (arguments instanceof K2JVMCompilerArguments) {
+            configureBaseCompilerArguments(getLog(), (K2JVMCompilerArguments) arguments, docModule, sources, classpath, output);
+        }
 
         if (arguments instanceof KDocArguments) {
             KDocArguments kdoc = (KDocArguments) arguments;

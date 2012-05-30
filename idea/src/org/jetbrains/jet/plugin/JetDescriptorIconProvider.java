@@ -76,6 +76,11 @@ public final class JetDescriptorIconProvider {
             return PlatformIcons.PACKAGE_OPEN_ICON;
         }
         if (descriptor instanceof FunctionDescriptor) {
+            FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+            if (functionDescriptor.getReceiverParameter().exists()) {
+                return JetIcons.EXTENSION_FUNCTION;
+            }
+
             return descriptor.getContainingDeclaration() instanceof ClassDescriptor ?
                    PlatformIcons.METHOD_ICON : JetIcons.FUNCTION;
         }
@@ -103,14 +108,14 @@ public final class JetDescriptorIconProvider {
         }
 
         if (descriptor instanceof LocalVariableDescriptor) {
-            return ((LocalVariableDescriptor)descriptor).isVar() ? JetIcons.VAR : JetIcons.VAL;
+            return ((VariableDescriptor) descriptor).isVar() ? JetIcons.VAR : JetIcons.VAL;
         }
 
         if (descriptor instanceof PropertyDescriptor) {
-            return ((PropertyDescriptor)descriptor).isVar() ? JetIcons.FIELD_VAR : JetIcons.FIELD_VAL;
+            return ((VariableDescriptor) descriptor).isVar() ? JetIcons.FIELD_VAR : JetIcons.FIELD_VAL;
         }
 
-        if (descriptor instanceof TypeParameterDescriptor) {
+        if (descriptor instanceof TypeParameterDescriptorImpl) {
             return PlatformIcons.CLASS_ICON;
         }
 

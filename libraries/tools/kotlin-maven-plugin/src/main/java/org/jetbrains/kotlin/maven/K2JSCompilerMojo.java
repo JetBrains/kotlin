@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.maven;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments;
+import org.jetbrains.jet.cli.common.CLICompiler;
+import org.jetbrains.jet.cli.common.CompilerArguments;
+import org.jetbrains.jet.cli.js.K2JSCompiler;
+import org.jetbrains.jet.cli.js.K2JSCompilerArguments;
 
 /**
  * Converts Kotlin to JavaScript code
@@ -35,22 +38,28 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
      */
     private String outFile;
 
-    /**
-     * The Kotlin JavaScript library source code
-     *
-     * @required
-     * @parameter expression="${jsLibrarySourceDir}"
-     */
-    private String jsLibrarySourceDir;
-
     @Override
-    protected void configureCompilerArguments(K2JVMCompilerArguments arguments) throws MojoExecutionException {
+    protected void configureCompilerArguments(CompilerArguments arguments) throws MojoExecutionException {
         super.configureCompilerArguments(arguments);
 
-        K2JSCompilerPlugin plugin = new K2JSCompilerPlugin(jsLibrarySourceDir);
-        plugin.setOutFile(outFile);
-        arguments.getCompilerPlugins().add(plugin);
-
+        if (arguments instanceof K2JSCompilerArguments) {
+            K2JSCompilerArguments k2jsArgs = (K2JSCompilerArguments)arguments;
+            k2jsArgs.outputFile = outFile;
+            if (sources.size() > 0) {
+                // TODO K2JSCompilerArguments should allow more than one path/file
+                k2jsArgs.srcdir = sources.get(0);
+            }
+        }
         getLog().info("Compiling Kotlin src from " + arguments.getSrc() + " to JavaScript at: " + outFile);
+    }
+
+    @Override
+    protected CompilerArguments createCompilerArguments() {
+        return new K2JSCompilerArguments();
+    }
+
+    @Override
+    protected CLICompiler createCompiler() {
+        return new K2JSCompiler();
     }
 }

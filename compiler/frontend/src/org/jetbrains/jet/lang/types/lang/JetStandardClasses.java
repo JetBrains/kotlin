@@ -157,13 +157,13 @@ public class JetStandardClasses {
                     Name.identifier("Tuple" + i));
             WritableScopeImpl writableScope = new WritableScopeImpl(JetScope.EMPTY, classDescriptor, RedeclarationHandler.THROW_EXCEPTION);
             for (int j = 0; j < i; j++) {
-                TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createWithDefaultBound(
+                TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptorImpl.createWithDefaultBound(
                         classDescriptor,
                         Collections.<AnnotationDescriptor>emptyList(),
                         true, Variance.OUT_VARIANCE, Name.identifier("T" + (j + 1)), j);
                 parameters.add(typeParameterDescriptor);
                 PropertyDescriptor propertyDescriptor = new PropertyDescriptor(classDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.PUBLIC, false, false, Name.identifier("_" + (j + 1)), CallableMemberDescriptor.Kind.DECLARATION);
-                propertyDescriptor.setType(typeParameterDescriptor.getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(), classDescriptor.getImplicitReceiver(), ReceiverDescriptor.NO_RECEIVER);
+                propertyDescriptor.setType(typeParameterDescriptor.getDefaultType(), Collections.<TypeParameterDescriptorImpl>emptyList(), classDescriptor.getImplicitReceiver(), ReceiverDescriptor.NO_RECEIVER);
                 PropertyGetterDescriptor getterDescriptor = new PropertyGetterDescriptor(propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.PUBLIC, false, true, CallableMemberDescriptor.Kind.DECLARATION);
                 getterDescriptor.initialize(typeParameterDescriptor.getDefaultType());
                 propertyDescriptor.initialize(getterDescriptor, null);
@@ -215,7 +215,7 @@ public class JetStandardClasses {
             SimpleFunctionDescriptorImpl invokeWithReceiver = new SimpleFunctionDescriptorImpl(receiverFunction, Collections.<AnnotationDescriptor>emptyList(), Name.identifier("invoke"), CallableMemberDescriptor.Kind.DECLARATION);
             WritableScope scopeForInvokeWithReceiver = createScopeForInvokeFunction(receiverFunction, invokeWithReceiver);
             List<TypeParameterDescriptor> parameters = createTypeParameters(i, receiverFunction);
-            parameters.add(0, TypeParameterDescriptor.createWithDefaultBound(
+            parameters.add(0, TypeParameterDescriptorImpl.createWithDefaultBound(
                     receiverFunction,
                     Collections.<AnnotationDescriptor>emptyList(),
                     true, Variance.IN_VARIANCE, Name.identifier("T"), 0));
@@ -238,12 +238,12 @@ public class JetStandardClasses {
     private static List<TypeParameterDescriptor> createTypeParameters(int parameterCount, ClassDescriptorImpl function) {
         List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
         for (int j = 1; j <= parameterCount; j++) {
-            parameters.add(TypeParameterDescriptor.createWithDefaultBound(
+            parameters.add(TypeParameterDescriptorImpl.createWithDefaultBound(
                     function,
                     Collections.<AnnotationDescriptor>emptyList(),
                     true, Variance.IN_VARIANCE, Name.identifier("P" + j), j));
         }
-        parameters.add(TypeParameterDescriptor.createWithDefaultBound(
+        parameters.add(TypeParameterDescriptorImpl.createWithDefaultBound(
                 function,
                 Collections.<AnnotationDescriptor>emptyList(),
                 true, Variance.OUT_VARIANCE, Name.identifier("R"), parameterCount + 1));

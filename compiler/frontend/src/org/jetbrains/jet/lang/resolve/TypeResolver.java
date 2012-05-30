@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.ref.JetTypeName;
 import org.jetbrains.jet.util.lazy.LazyValue;
 
 import javax.inject.Inject;
@@ -95,7 +96,7 @@ public class TypeResolver {
                         return;
                     }
 
-                    if (classifierDescriptor instanceof TypeParameterDescriptor) {
+                    if (classifierDescriptor instanceof TypeParameterDescriptorImpl) {
                         TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) classifierDescriptor;
 
                         trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, typeParameterDescriptor);

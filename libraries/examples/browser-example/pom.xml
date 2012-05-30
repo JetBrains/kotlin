@@ -23,6 +23,7 @@
     </dependencies>
 
     <build>
+        <defaultGoal>install</defaultGoal>
         <sourceDirectory>src/main/kotlin</sourceDirectory>
         <testSourceDirectory>src/test/kotlin</testSourceDirectory>
 
@@ -31,9 +32,13 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${project.version}</version>
-                <configuration>
-                    <jsLibrarySourceDir>${kotlin-js-lib-srcdir}</jsLibrarySourceDir>
-                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-js-library</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <id>js</id>
@@ -45,5 +50,61 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- runs the JavaFX UI - Requires Java7 update 4 or later -->
+        <profile>
+            <id>javafx</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.koolapp</groupId>
+                    <artifactId>koolapp-javafx</artifactId>
+                    <version>1.0-SNAPSHOT</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                          <execution>
+                            <id>run</id>
+                            <phase>test</phase>
+                            <configuration>
+                              <target>
+                                <java fork="true" classpathref="maven.test.classpath" classname="org.koolapp.javafx.namespace">
+                                    <arg value="file://sample-javafx.html"/>
+                                </java>
+                              </target>
+                            </configuration>
+                            <goals>
+                              <goal>run</goal>
+                            </goals>
+                          </execution>
+                        </executions>
+                      </plugin>
+                </plugins>
+            </build>
+            <repositories>
+                <repository>
+                  <id>snapshots.fusesource.org</id>
+                  <name>FuseSource Snapshots Repository</name>
+                  <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
+                  <snapshots>
+                    <enabled>false</enabled>
+                  </snapshots>
+                  <releases>
+                    <enabled>true</enabled>
+                  </releases>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
 
 </project>

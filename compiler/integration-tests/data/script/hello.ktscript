@@ -1,1 +1,3 @@
-println("hello world")
+for (arg in args) {
+    println(arg)
+}

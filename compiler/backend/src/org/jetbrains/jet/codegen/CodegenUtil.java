@@ -54,7 +54,7 @@ public class CodegenUtil {
 
         invokeDescriptor.initialize(fd.getReceiverParameter().exists() ? fd.getReceiverParameter().getType() : null,
                                    fd.getExpectedThisObject(),
-                                   Collections.<TypeParameterDescriptor>emptyList(),
+                                   Collections.<TypeParameterDescriptorImpl>emptyList(),
                                    fd.getValueParameters(),
                                    fd.getReturnType(),
                                    Modality.FINAL,

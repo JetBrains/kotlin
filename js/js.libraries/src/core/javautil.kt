@@ -16,9 +16,10 @@ public fun comparator<T>(f : (T, T) -> Int) : Comparator<T> = js.noImpl
 
 
 library
-public open class Iterator<T>() {
+public trait Iterator<T> {
     open fun next() : T = js.noImpl
     open val hasNext : Boolean = js.noImpl
+    open fun remove() : Unit = js.noImpl
 }
 
 library
@@ -139,7 +140,7 @@ library
 public open class HashMap<erased K, erased V>() : java.util.Map<K, V> {
     public override fun size() : Int = js.noImpl
     public override fun isEmpty() : Boolean = js.noImpl
-    public override fun get(key : Any?) : V? = js.noImpl
+    public override fun get(key : Any?) : V = js.noImpl
     public override fun containsKey(key : Any?) : Boolean = js.noImpl
     public override fun put(key : K, value : V) : V = js.noImpl
     public override fun putAll(m : java.util.Map<out K, out V>) : Unit = js.noImpl

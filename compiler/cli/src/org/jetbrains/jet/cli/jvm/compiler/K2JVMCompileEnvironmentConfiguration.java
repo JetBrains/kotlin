@@ -21,11 +21,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CompileEnvironmentConfiguration;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 
+import java.util.List;
+
 /**
  * @author abreslav
  */
 public class K2JVMCompileEnvironmentConfiguration extends CompileEnvironmentConfiguration {
     private final JetCoreEnvironment environment;
+    private final boolean script;
+    private final List<String> scriptArgs;
 
     /**
      * NOTE: It's very important to call dispose for every object of this class or there will be memory leaks.
@@ -33,12 +37,22 @@ public class K2JVMCompileEnvironmentConfiguration extends CompileEnvironmentConf
      * @see Disposer
      */
     public K2JVMCompileEnvironmentConfiguration(@NotNull JetCoreEnvironment environment,
-            @NotNull MessageCollector messageCollector) {
+            @NotNull MessageCollector messageCollector, boolean script, List<String> scriptArgs) {
         super(messageCollector);
         this.environment = environment;
+        this.script = script;
+        this.scriptArgs = scriptArgs;
     }
 
     public JetCoreEnvironment getEnvironment() {
         return environment;
+    }
+
+    public boolean isScript() {
+        return script;
+    }
+
+    public List<String> getScriptArgs() {
+        return scriptArgs;
     }
 }

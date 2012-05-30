@@ -77,12 +77,12 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
     protected FunctionDescriptorImpl initialize(
             @Nullable JetType receiverType,
             @NotNull ReceiverDescriptor expectedThisObject,
-            @NotNull List<TypeParameterDescriptor> typeParameters,
+            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
             @Nullable Modality modality,
             @NotNull Visibility visibility) {
-        this.typeParameters = typeParameters;
+        this.typeParameters = Lists.newArrayList(typeParameters);
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         this.modality = modality;

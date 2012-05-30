@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.utils.Progress;
+import org.objectweb.asm.commons.Method;
 
 import java.util.List;
 
@@ -52,6 +53,10 @@ public class GenerationState {
     private final InjectorForJvmCodegen injector;
     @NotNull
     private final ClassBuilderMode classBuilderMode;
+
+
+    // out parameter
+    private Method scriptConstructorMethod;
 
 
     public GenerationState(Project project, ClassBuilderFactory builderFactory, AnalyzeExhaust analyzeExhaust, List<JetFile> files) {
@@ -90,6 +95,14 @@ public class GenerationState {
     @NotNull
     public ClassBuilderMode getClassBuilderMode() {
         return classBuilderMode;
+    }
+
+    public void setScriptConstructorMethod(@NotNull Method scriptConstructorMethod) {
+        this.scriptConstructorMethod = scriptConstructorMethod;
+    }
+
+    public Method getScriptConstructorMethod() {
+        return scriptConstructorMethod;
     }
 
     public ClassBuilder forClassImplementation(ClassDescriptor aClass) {

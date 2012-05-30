@@ -1,0 +1,4 @@
+// param: args: jet.Array<jet.String>: three little words
+// expected: little
+
+args[1]

@@ -4,6 +4,8 @@ This (really simple ;) application shows how to use Kotlin and the maven plugin 
 
 The source [Hello.kt](https://github.com/JetBrains/kotlin/blob/master/libraries/examples/browser-example/src/main/kotlin/sample/Hello.kt) uses the [kotlin.browser](http://jetbrains.github.com/kotlin/versions/snapshot/apidocs/kotlin/browser/package-summary.html) API to access the *document* property to modify the HTML.
 
+### Running the sample in a web browser
+
 To run the example try:
 
     cd libraries/examples/browser-example
@@ -11,3 +13,30 @@ To run the example try:
     open sample.html
 
 This should open a browser which then shows some simple HTML which then includes some dynamically generated content.
+
+## Running the sample on Java 7 with JavaFX and KoolApp's browser
+
+You can also run the sample as Java code on a JVM using JavaFX (which includes its own webkit rendering engine for HTML / CSS / JS support) using the [KoolApp JavaFX browser](https://github.com/koolapp/koolapp/blob/master/koolapp-javafx/ReadMe.md).
+
+First you need to install [Java 7 update 4](http://www.oracle.com/technetwork/java/javase/overview/index.html) or later which ships with JavaFX.
+
+You will need to setup **JAVA_HOME** and **PATH** environment variables to point to the latest JDK. If you install Java 7 and use a Mac you might want to run this first...
+
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home
+    export PATH=$JAVA_HOME/bin:$PATH
+
+You can check you have JavaFX in your JDK install via
+
+    ls -l $JAVA_HOME/lib/javafx-mx.jar
+
+which should find the javafx jar.
+
+### Running the sample in JavaFX
+
+To run the sample try...
+
+    mvn -Pjavafx
+
+Assuming you've Java 7 enabled and JAVA_HOME points to the JRE/JDK for Java 7 or later.
+
+This should popup a JVM process with an embedded webkit based browser running the application; using the compiled bytecode on the JVM rather than JavaScript.

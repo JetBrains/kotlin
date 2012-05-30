@@ -21,8 +21,41 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Queue;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassKind;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptorUtil;
+import org.jetbrains.jet.lang.descriptors.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetClassInitializer;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
+import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
+import org.jetbrains.jet.lang.psi.JetDelegatorByExpressionSpecifier;
+import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
+import org.jetbrains.jet.lang.psi.JetDelegatorToSuperClass;
+import org.jetbrains.jet.lang.psi.JetDelegatorToThisCall;
+import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetEnumEntry;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
+import org.jetbrains.jet.lang.psi.JetParameter;
+import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
+import org.jetbrains.jet.lang.psi.JetReferenceExpression;
+import org.jetbrains.jet.lang.psi.JetSecondaryConstructor;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.JetTypeReference;
+import org.jetbrains.jet.lang.psi.JetValueArgumentList;
+import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
@@ -31,12 +64,13 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.DeferredType;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.expressions.CoercionStrategy;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
-import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.Box;
@@ -44,9 +78,29 @@ import org.jetbrains.jet.util.lazy.ReenteringLazyValueComputationException;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.diagnostics.Errors.ANONYMOUS_INITIALIZER_WITHOUT_CONSTRUCTOR;
+import static org.jetbrains.jet.lang.diagnostics.Errors.BY_IN_SECONDARY_CONSTRUCTOR;
+import static org.jetbrains.jet.lang.diagnostics.Errors.CONSTRUCTOR_IN_TRAIT;
+import static org.jetbrains.jet.lang.diagnostics.Errors.DELEGATION_IN_TRAIT;
+import static org.jetbrains.jet.lang.diagnostics.Errors.DELEGATION_NOT_TO_TRAIT;
+import static org.jetbrains.jet.lang.diagnostics.Errors.FINAL_SUPERTYPE;
+import static org.jetbrains.jet.lang.diagnostics.Errors.INITIALIZER_WITH_NO_ARGUMENTS;
+import static org.jetbrains.jet.lang.diagnostics.Errors.MANY_CALLS_TO_THIS;
+import static org.jetbrains.jet.lang.diagnostics.Errors.MANY_CLASSES_IN_SUPERTYPE_LIST;
+import static org.jetbrains.jet.lang.diagnostics.Errors.SECONDARY_CONSTRUCTOR_BUT_NO_PRIMARY;
+import static org.jetbrains.jet.lang.diagnostics.Errors.SECONDARY_CONSTRUCTOR_NO_INITIALIZER_LIST;
+import static org.jetbrains.jet.lang.diagnostics.Errors.SUPERTYPE_APPEARS_TWICE;
+import static org.jetbrains.jet.lang.diagnostics.Errors.SUPERTYPE_INITIALIZED_IN_TRAIT;
+import static org.jetbrains.jet.lang.diagnostics.Errors.SUPERTYPE_NOT_A_CLASS_OR_TRAIT;
+import static org.jetbrains.jet.lang.diagnostics.Errors.SUPERTYPE_NOT_INITIALIZED;
+import static org.jetbrains.jet.lang.diagnostics.Errors.SUPERTYPE_NOT_INITIALIZED_DEFAULT;
+import static org.jetbrains.jet.lang.diagnostics.Errors.TYPE_MISMATCH;
 import static org.jetbrains.jet.lang.resolve.BindingContext.DEFERRED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
@@ -60,6 +114,8 @@ public class BodyResolver {
     private TopDownAnalysisParameters topDownAnalysisParameters;
     @NotNull
     private DescriptorResolver descriptorResolver;
+    @NotNull
+    private ScriptResolver scriptResolver;
     @NotNull
     private ExpressionTypingServices expressionTypingServices;
     @NotNull
@@ -75,6 +131,11 @@ public class BodyResolver {
     @Inject
     public void setDescriptorResolver(@NotNull DescriptorResolver descriptorResolver) {
         this.descriptorResolver = descriptorResolver;
+    }
+
+    @Inject
+    public void setScriptResolver(@NotNull ScriptResolver scriptResolver) {
+        this.scriptResolver = scriptResolver;
     }
 
     @Inject
@@ -106,7 +167,7 @@ public class BodyResolver {
         resolveSecondaryConstructorBodies();
         resolveFunctionBodies();
 
-        resolveScripts();
+        scriptResolver.resolveScripts();
 
         if (!topDownAnalysisParameters.isDeclaredLocally()) {
             computeDeferredTypes();
@@ -613,23 +674,4 @@ public class BodyResolver {
         }
     }
 
-    private void resolveScripts() {
-        for (Map.Entry<JetScript, ScriptDescriptor> e : context.getScripts().entrySet()) {
-            JetScript declaration = e.getKey();
-            ScriptDescriptor descriptor = e.getValue();
-            JetScope scope = context.getScriptScopes().get(declaration);
-            ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                    expressionTypingServices,
-                    Maps.<JetPattern, DataFlowInfo>newHashMap(),
-                    Maps.<JetPattern, List<VariableDescriptor>>newHashMap(),
-                    new LabelResolver(),
-                    trace,
-                    scope,
-                    DataFlowInfo.EMPTY,
-                    NO_EXPECTED_TYPE,
-                    false);
-            JetType returnType = expressionTypingServices.getBlockReturnedType(scope, declaration.getBlockExpression(), CoercionStrategy.NO_COERCION, context, trace);
-            descriptor.initialize(returnType);
-        }
-    }
 }

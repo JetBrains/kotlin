@@ -10,3 +10,15 @@ trait Iterable<T> {
 
 library("splitString")
 public fun String.split(regex : String) : Array<String> = js.noImpl
+
+library
+class IllegalArgumentException(message: String = "") : Exception() {}
+
+library
+class IllegalStateException(message: String = "") : Exception() {}
+
+library
+class IndexOutOfBoundsException(message: String = "") : Exception() {}
+
+library
+class UnsupportedOperationException(message: String = "") : Exception() {}

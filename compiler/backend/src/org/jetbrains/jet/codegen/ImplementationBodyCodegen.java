@@ -449,7 +449,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ConstructorDescriptor constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, myClass);
 
-        CodegenContext.ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor, typeMapper);
+        CodegenContexts.ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor, typeMapper);
 
         JvmMethodSignature constructorMethod;
         CallableMethod callableMethod;

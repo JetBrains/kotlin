@@ -47,4 +47,6 @@ public abstract class CompilerArguments {
     public abstract boolean isTags();
     public abstract boolean isVersion();
     public abstract boolean isVerbose();
+
+    public abstract String getSrc();
 }

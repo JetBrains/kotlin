@@ -2,10 +2,12 @@ package kotlin.dom
 
 import kotlin.*
 import kotlin.support.*
-import kotlin.util.*
 import java.util.*
 import org.w3c.dom.*
 
+// TODO should not need this - its here for the JS stuff
+import java.lang.IllegalArgumentException
+import java.lang.IndexOutOfBoundsException
 
 // Properties
 
@@ -77,51 +79,67 @@ set(value) {
     this.setAttribute("class", value)
 }
 
-var Element.classSet : Set<String>
-get() {
-    val answer = LinkedHashSet<String>()
-    val array = this.classes.split("""\s""")
-    for (s in array) {
-        if (s != null && s.size > 0) {
-            answer.add(s)
-        }
+/** Returns the children of the element as a list */
+inline fun Element?.children(): List<Node> {
+    return this?.getChildNodes().toList()
+}
+
+/** The child elements of this document */
+val Document?.elements : List<Element>
+get() = this?.getElementsByTagName("*").toElementList()
+
+/** The child elements of this elements */
+val Element?.elements : List<Element>
+get() = this?.getElementsByTagName("*").toElementList()
+
+
+/** Returns all the child elements given the local element name */
+inline fun Element?.elements(localName: String): List<Element> {
+    return this?.getElementsByTagName(localName).toElementList()
+}
+
+/** Returns all the elements given the local element name */
+inline fun Document?.elements(localName: String): List<Element> {
+    return this?.getElementsByTagName(localName).toElementList()
+}
+
+/** Returns all the child elements given the namespace URI and local element name */
+inline fun Element?.elements(namespaceUri: String, localName: String): List<Element> {
+    return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
+}
+
+/** Returns all the elements given the namespace URI and local element name */
+inline fun Document?.elements(namespaceUri: String, localName: String): List<Element> {
+    return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
+}
+
+inline fun NodeList?.toList(): List<Node> {
+    return if (this == null) {
+        // TODO the following is easier to convert to JS
+        //Collections.EMPTY_LIST as List<Node>
+        ArrayList<Node>()
     }
-    return answer
+    else {
+        NodeListAsList(this)
+    }
 }
-set(value) {
-    this.classes = value.makeString(" ")
+
+inline fun NodeList?.toElementList(): List<Element> {
+    return if (this == null) {
+        // TODO the following is easier to convert to JS
+        //Collections.EMPTY_LIST as List<Element>
+        ArrayList<Element>()
+    }
+    else {
+        ElementListAsList(this)
+    }
 }
+
+
+
 
 
 // Helper methods
-
-/** Returns true if the element has the given CSS class style in its 'class' attribute */
-fun Element.hasClass(cssClass: String): Boolean {
-    val c = this.classes
-    return if (c != null)
-        c.matches("""(^|.*\s+)$cssClass($|\s+.*)""")
-    else false
-}
-
-/** Adds the given CSS class to this element's 'class' attribute */
-fun Element.addClass(cssClass: String): Boolean {
-    val classSet = this.classSet
-    val answer = classSet.add(cssClass)
-    if (answer) {
-        this.classSet = classSet
-    }
-    return answer
-}
-
-/** Removes the given CSS class to this element's 'class' attribute */
-fun Element.removeClass(cssClass: String): Boolean {
-    val classSet = this.classSet
-    val answer = classSet.remove(cssClass)
-    if (answer) {
-        this.classSet = classSet
-    }
-    return answer
-}
 
 /** TODO this approach generates compiler errors...
 
@@ -154,47 +172,38 @@ fun Element.removeClass(varargs cssClasses: Array<String>): Boolean {
 }
 */
 
-/** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
-fun Document?.get(selector: String): List<Element> {
-    val root = this?.getDocumentElement()
-    return if (root != null) {
-        if (selector == "*") {
-            elements
-        } else if (selector.startsWith(".")) {
-            elements.filter{ it.hasClass(selector.substring(1)) }.toList()
-        } else if (selector.startsWith("#")) {
-            val id = selector.substring(1)
-            val element = this?.getElementById(id)
-            return if (element != null)
-                Collections.singletonList(element).sure() as List<Element>
-            else
-                Collections.EMPTY_LIST.sure() as List<Element>
+class NodeListAsList(val nodeList: NodeList): AbstractList<Node>() {
+    override fun get(index: Int): Node {
+        val node = nodeList.item(index)
+        if (node == null) {
+            throw IndexOutOfBoundsException("NodeList does not contain a node at index: " + index)
         } else {
-            //  assume its a vanilla element name
-            elements(selector)
+            return node
         }
-    } else {
-        Collections.EMPTY_LIST as List<Element>
     }
+
+    override fun size(): Int = nodeList.getLength()
 }
 
-/** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
-fun Element.get(selector: String): List<Element> {
-    return if (selector == "*") {
-        elements
-    } else if (selector.startsWith(".")) {
-        elements.filter{ it.hasClass(selector.substring(1)) }.toList()
-    } else if (selector.startsWith("#")) {
-        val element = this.getOwnerDocument()?.getElementById(selector.substring(1))
-        return if (element != null)
-            Collections.singletonList(element).sure() as List<Element>
-        else
-            Collections.EMPTY_LIST.sure() as List<Element>
-    } else {
-        //  assume its a vanilla element name
-        elements(selector)
+class ElementListAsList(val nodeList: NodeList): AbstractList<Element>() {
+    override fun get(index: Int): Element {
+        val node = nodeList.item(index)
+        if (node is Element) {
+            return node
+        } else {
+            if (node == null) {
+                throw IndexOutOfBoundsException("NodeList does not contain a node at index: " + index)
+            } else {
+                throw IllegalArgumentException("Node is not an Element as expected but is $node")
+            }
+        }
     }
+
+    override fun size(): Int = nodeList.getLength()
+
 }
+
+
 
 /** Returns an [[Iterator]] over the next siblings of this node */
 fun Node.nextSiblings() : Iterator<Node> = NextSiblingIterator(this)
@@ -230,53 +239,18 @@ class PreviousSiblingIterator(var node: Node) : AbstractIterator<Node>() {
 
 /** Returns true if this node is a Text node or a CDATA node */
 fun Node.isText(): Boolean {
+    /*
+    This code is easier to convert to JS
     val nodeType = getNodeType()
     return nodeType == Node.TEXT_NODE || nodeType == Node.CDATA_SECTION_NODE
+    */
+    return this is Text || this is CDATASection
+
 }
-
-/** Returns an [[Iterator]] of all the next [[Element]] siblings */
-fun Node.nextElements(): Iterator<Element> = nextSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
-
-/** Returns an [[Iterator]] of all the previous [[Element]] siblings */
-fun Node.previousElements(): Iterator<Element> = previousSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
 
 /** Returns the attribute value or empty string if its not present */
 inline fun Element.attribute(name: String): String {
     return this.getAttribute(name) ?: ""
-}
-
-/** Returns the children of the element as a list */
-inline fun Element?.children(): List<Node> {
-    return this?.getChildNodes().toList()
-}
-
-/** The child elements of this document */
-val Document?.elements : List<Element>
-get() = this?.getElementsByTagName("*").toElementList()
-
-/** The child elements of this elements */
-val Element?.elements : List<Element>
-get() = this?.getElementsByTagName("*").toElementList()
-
-
-/** Returns all the child elements given the local element name */
-inline fun Element?.elements(localName: String?): List<Element> {
-    return this?.getElementsByTagName(localName).toElementList()
-}
-
-/** Returns all the elements given the local element name */
-inline fun Document?.elements(localName: String?): List<Element> {
-    return this?.getElementsByTagName(localName).toElementList()
-}
-
-/** Returns all the child elements given the namespace URI and local element name */
-inline fun Element?.elements(namespaceUri: String?, localName: String?): List<Element> {
-    return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
-}
-
-/** Returns all the elements given the namespace URI and local element name */
-inline fun Document?.elements(namespaceUri: String?, localName: String?): List<Element> {
-    return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
 }
 
 val NodeList?.head : Node?
@@ -297,64 +271,6 @@ get() {
 
 val NodeList?.last : Node?
 get() = this.tail
-
-
-inline fun NodeList?.toList(): List<Node> {
-    return if (this == null) {
-        Collections.EMPTY_LIST as List<Node>
-    }
-    else {
-        NodeListAsList(this)
-    }
-}
-
-inline fun NodeList?.toElementList(): List<Element> {
-    return if (this == null) {
-        Collections.EMPTY_LIST as List<Element>
-    }
-    else {
-        ElementListAsList(this)
-    }
-}
-
-/** Converts the node list to an XML String */
-fun NodeList?.toXmlString(xmlDeclaration: Boolean = false): String {
-    return if (this == null)
-        "" else {
-        nodesToXmlString(this.toList(), xmlDeclaration)
-    }
-}
-
-class NodeListAsList(val nodeList: NodeList): AbstractList<Node>() {
-    override fun get(index: Int): Node {
-        val node = nodeList.item(index)
-        if (node == null) {
-            throw IndexOutOfBoundsException("NodeList does not contain a node at index: " + index)
-        } else {
-            return node
-        }
-    }
-
-    override fun size(): Int = nodeList.getLength()
-}
-
-class ElementListAsList(val nodeList: NodeList): AbstractList<Element>() {
-    override fun get(index: Int): Element {
-        val node = nodeList.item(index)
-        if (node is Element) {
-            return node
-        } else {
-            if (node == null) {
-                throw IndexOutOfBoundsException("NodeList does not contain a node at index: " + index)
-            } else {
-                throw IllegalArgumentException("Node is not an Element as expected but is $node")
-            }
-        }
-    }
-
-    override fun size(): Int = nodeList.getLength()
-
-}
 
 
 // Syntax sugar

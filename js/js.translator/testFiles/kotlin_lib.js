@@ -13,12 +13,61 @@
     Kotlin.defs = {};
     Kotlin.Exceptions = {};
     Kotlin.Exception = Kotlin.$createClass();
+    Kotlin.RuntimeException = Kotlin.$createClass(Kotlin.Exception);
     Kotlin.Exceptions.IndexOutOfBounds = Kotlin.$createClass(Kotlin.Exception);
     Kotlin.Exceptions.NullPointerException = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.Exceptions.NoSuchElementException = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.Exceptions.IllegalArgumentException = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.Exceptions.IllegalStateException = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.Exceptions.IndexOutOfBoundsException = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.Exceptions.UnsupportedOperationException = Kotlin.$createClass(Kotlin.Exception);
 
     Kotlin.throwNPE = function() {
         throw Kotlin.$new(Kotlin.Exceptions.NullPointerException)();
     };
+
+    Kotlin.AbstractList = Kotlin.$createClass({
+            set:function (index, value) {
+                throw Kotlin.$new(Kotlin.Exceptions.UnsupportedOperationException)();
+            },
+            iterator:function () {
+                return Kotlin.$new(Kotlin.ArrayIterator)(this);
+            },
+            isEmpty:function () {
+                return (this.size() === 0);
+            },
+            add:function (element) {
+                throw Kotlin.$new(Kotlin.Exceptions.UnsupportedOperationException)();
+            },
+            addAll:function (collection) {
+                var it = collection.iterator();
+                while (it.get_hasNext()) {
+                    this.add(it.next());
+                }
+            },
+            remove:function(value) {
+                for (var i = 0; i < this.$size; ++i) {
+                    if (this.array[i] == value) {
+                        this.removeByIndex(i);
+                        return;
+                    }
+                }
+            },
+            removeByIndex:function (index) {
+                throw Kotlin.$new(Kotlin.Exceptions.UnsupportedOperationException)();
+            },
+            clear:function () {
+                throw Kotlin.$new(Kotlin.Exceptions.UnsupportedOperationException)();
+            },
+            contains:function (obj) {
+                for (var i = 0; i < this.$size; ++i) {
+                    if (Kotlin.equals(this.array[i], obj)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
 
     Kotlin.ArrayList = Kotlin.$createClass({
         initialize:function () {

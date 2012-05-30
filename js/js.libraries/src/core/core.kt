@@ -25,6 +25,8 @@ fun safeParseDouble(s : String) : Double? = js.noImpl
 library
 open class Exception() : Throwable() {}
 library
+open class RuntimeException() : Exception() {}
+library
 class NumberFormatException() : Exception() {}
 
 native

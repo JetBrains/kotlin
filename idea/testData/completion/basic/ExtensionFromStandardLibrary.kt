@@ -9,6 +9,6 @@ fun firstFun() {
 
 // RUNTIME: 1
 // TIME: 1
-// EXIST: toLinkedList~() in kotlin
-// EXIST: toLinkedList~() in kotlin.nullable
+// EXIST: toLinkedList@toLinkedList()~for java.lang.Iterable<T> in kotlin
+// EXIST: toLinkedList@toLinkedList()~for T? in kotlin.nullable
 // NUMBER: 2

@@ -22,10 +22,7 @@ import com.google.common.collect.Sets;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintResolutionListener;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemSolution;
@@ -222,7 +219,7 @@ public class TypeUtils {
 
         private static void processAllTypeParameters(JetType type, Variance howThiTypeIsUsed, Processor<TypeParameterUsage> result) {
             ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-            if (descriptor instanceof TypeParameterDescriptor) {
+            if (descriptor instanceof TypeParameterDescriptorImpl) {
                 result.process(new TypeParameterUsage((TypeParameterDescriptor)descriptor, howThiTypeIsUsed));
             }
             for (TypeProjection projection : type.getArguments()) {
@@ -401,6 +398,25 @@ public class TypeUtils {
             return (ClassDescriptor) declarationDescriptor;
         }
         return null;
+    }
+
+    @NotNull
+    public static JetType substituteParameters(@NotNull ClassDescriptor clazz, @NotNull List<JetType> actualTypeParameters) {
+        List<TypeParameterDescriptor> clazzTypeParameters = clazz.getTypeConstructor().getParameters();
+
+        if (clazzTypeParameters.size() != actualTypeParameters.size()) {
+            throw new IllegalArgumentException("type parameter counts do not match: " + clazz + ", " + actualTypeParameters);
+        }
+        
+        Map<TypeConstructor, TypeProjection> substitutions = Maps.newHashMap();
+        
+        for (int i = 0; i < clazzTypeParameters.size(); ++i) {
+            TypeConstructor typeConstructor = clazzTypeParameters.get(i).getTypeConstructor();
+            TypeProjection typeProjection = new TypeProjection(actualTypeParameters.get(i));
+            substitutions.put(typeConstructor, typeProjection);
+        }
+        
+        return TypeSubstitutor.create(substitutions).substitute(clazz.getDefaultType(), Variance.INVARIANT);
     }
 
     private static void addAllClassDescriptors(@NotNull JetType type, @NotNull Set<ClassDescriptor> set) {

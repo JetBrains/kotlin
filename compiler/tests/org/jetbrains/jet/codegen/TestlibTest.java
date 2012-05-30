@@ -39,6 +39,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -87,7 +88,7 @@ public class TestlibTest extends CodegenTestCase {
             myEnvironment.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/kunit/src"));
 
             GenerationState generationState = KotlinToJVMBytecodeCompiler
-                    .analyzeAndGenerate(new K2JVMCompileEnvironmentConfiguration(myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR), false);
+                    .analyzeAndGenerate(new K2JVMCompileEnvironmentConfiguration(myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, false, Collections.<String>emptyList()), false);
 
             if (generationState == null) {
                 throw new RuntimeException("There were compilation errors");

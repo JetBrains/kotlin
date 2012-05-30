@@ -57,6 +57,8 @@ public class TypeHierarchyResolver {
     @NotNull
     private DescriptorResolver descriptorResolver;
     @NotNull
+    private ScriptResolver scriptResolver;
+    @NotNull
     private NamespaceFactoryImpl namespaceFactory;
     @NotNull
     private BindingTrace trace;
@@ -77,6 +79,11 @@ public class TypeHierarchyResolver {
     @Inject
     public void setDescriptorResolver(@NotNull DescriptorResolver descriptorResolver) {
         this.descriptorResolver = descriptorResolver;
+    }
+
+    @Inject
+    public void setScriptResolver(@NotNull ScriptResolver scriptResolver) {
+        this.scriptResolver = scriptResolver;
     }
 
     @Inject
@@ -192,7 +199,7 @@ public class TypeHierarchyResolver {
                 public void visitJetFile(JetFile file) {
                     if (file.isScript()) {
                         JetScript script = file.getScript();
-                        processScript(script);
+                        scriptResolver.processScriptHierarchy(script, outerScope);
                         return;
                     }
 
@@ -206,18 +213,6 @@ public class TypeHierarchyResolver {
                     context.getNamespaceScopes().put(file, namespaceScope);
 
                     prepareForDeferredCall(namespaceScope, namespaceDescriptor, file);
-                }
-
-                private void processScript(JetScript script) {
-                    NamespaceDescriptorImpl ns = namespaceFactory.createNamespaceDescriptorPathIfNeeded(FqName.ROOT);
-                    ScriptDescriptor scriptDescriptor = new ScriptDescriptor(ns);
-                    //WriteThroughScope scriptScope = new WriteThroughScope(
-                    //        outerScope, ns.getMemberScope(), new TraceBasedRedeclarationHandler(trace));
-                    WritableScopeImpl scriptScope = new WritableScopeImpl(outerScope, scriptDescriptor, RedeclarationHandler.DO_NOTHING);
-                    scriptScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-                    context.getScriptScopes().put(script, scriptScope);
-                    context.getScripts().put(script, scriptDescriptor);
-                    trace.record(BindingContext.SCRIPT, script, scriptDescriptor);
                 }
 
                 @Override
@@ -395,7 +390,7 @@ public class TypeHierarchyResolver {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
             descriptorResolver.resolveGenericBounds(jetClass, descriptor.getScopeForSupertypeResolution(),
-                                                    descriptor.getTypeConstructor().getParameters(), trace);
+                                                    (List) descriptor.getTypeConstructor().getParameters(), trace);
             descriptorResolver.resolveSupertypes(jetClass, descriptor, trace);
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
@@ -528,7 +523,7 @@ public class TypeHierarchyResolver {
                 if (projections.size() > 1) {
                     TypeConstructor typeConstructor = entry.getKey();
                     DeclarationDescriptor declarationDescriptor = typeConstructor.getDeclarationDescriptor();
-                    assert declarationDescriptor instanceof TypeParameterDescriptor : declarationDescriptor;
+                    assert declarationDescriptor instanceof TypeParameterDescriptorImpl : declarationDescriptor;
                     TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) declarationDescriptor;
 
                     // Immediate arguments of supertypes cannot be projected

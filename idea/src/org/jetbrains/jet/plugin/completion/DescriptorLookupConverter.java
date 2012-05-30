@@ -54,19 +54,22 @@ public final class DescriptorLookupConverter {
 
         LookupElementBuilder element = LookupElementBuilder.create(
                 new JetLookupObject(descriptor, bindingContext, declaration), descriptor.getName().getName());
+
+        String presentableText = descriptor.getName().getName();
         String typeText = "";
         String tailText = "";
-        boolean tailTextGrayed = false;
+        boolean tailTextGrayed = true;
 
         if (descriptor instanceof FunctionDescriptor) {
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
             JetType returnType = functionDescriptor.getReturnType();
             typeText = DescriptorRenderer.TEXT.renderType(returnType);
-            tailText = DescriptorRenderer.TEXT.renderFunctionParameters(functionDescriptor);
+            presentableText += DescriptorRenderer.TEXT.renderFunctionParameters(functionDescriptor);
 
             boolean extensionFunction = functionDescriptor.getReceiverParameter().exists();
             DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-            if (extensionFunction && containingDeclaration != null) {
+            if (containingDeclaration != null && extensionFunction) {
+                tailText += " for " + DescriptorRenderer.TEXT.renderType(functionDescriptor.getReceiverParameter().getType());
                 tailText += " in " + DescriptorUtils.getFQName(containingDeclaration);
             }
 
@@ -94,7 +97,7 @@ public final class DescriptorLookupConverter {
             typeText = DescriptorRenderer.TEXT.render(descriptor);
         }
 
-        element = element.setTailText(tailText, tailTextGrayed).setTypeText(typeText);
+        element = element.setTailText(tailText, tailTextGrayed).setTypeText(typeText).setPresentableText(presentableText);
         element = element.setIcon(JetDescriptorIconProvider.getIcon(descriptor, Iconable.ICON_FLAG_VISIBILITY));
 
         return element;

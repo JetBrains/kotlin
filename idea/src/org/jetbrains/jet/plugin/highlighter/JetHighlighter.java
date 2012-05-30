@@ -82,6 +82,7 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         keys.put(JetTokens.CHARACTER_LITERAL, JetHighlightingColors.STRING);
 
         keys.put(JetTokens.EOL_COMMENT, JetHighlightingColors.LINE_COMMENT);
+        keys.put(JetTokens.SHEBANG_COMMENT, JetHighlightingColors.LINE_COMMENT);
         keys.put(JetTokens.BLOCK_COMMENT, JetHighlightingColors.BLOCK_COMMENT);
         keys.put(JetTokens.DOC_COMMENT, JetHighlightingColors.DOC_COMMENT);
 

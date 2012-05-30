@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin;
 
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.util.PlatformIcons;
 
 import javax.swing.*;
 
@@ -31,6 +32,7 @@ public interface JetIcons {
     Icon OBJECT = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/object.png");
     Icon TRAIT = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/trait.png");
     Icon FUNCTION = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/function.png");
+    Icon EXTENSION_FUNCTION = PlatformIcons.FUNCTION_ICON;
     Icon LAMBDA = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/lambda.png");
     Icon VAR = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/variable.png");
     Icon VAL = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/value.png");

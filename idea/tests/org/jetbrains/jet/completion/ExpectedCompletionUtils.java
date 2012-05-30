@@ -29,6 +29,8 @@ import org.jetbrains.jet.testing.InTextDirectivesUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Extract a number of statements about completion from the given text. Those statements
@@ -39,13 +41,21 @@ import java.util.List;
 public class ExpectedCompletionUtils {
 
     public static class CompletionProposal {
+        public static final Pattern PATTERN = Pattern.compile("([^~@]*)(@([^~]*))?(~(.*))?");
+        public static final int LOOKUP_STRING_GROUP_INDEX = 1;
+        public static final int PRESENTABLE_STRING_GROUP_INDEX = 3;
+        public static final int TAIL_TEXT_STRING_GROUP_INDEX = 5;
+
         public static final String TAIL_FLAG = "~";
+        public static final String PRESENTABLE_FLAG = "@";
 
         private final String lookupString;
+        private final String presenterText;
         private final String tailString;
 
-        public CompletionProposal(@NotNull String lookupString, @Nullable String tailString) {
+        public CompletionProposal(@NotNull String lookupString, @Nullable String presenterText, @Nullable String tailString) {
             this.lookupString = lookupString;
+            this.presenterText = presenterText != null ? presenterText.trim() : null;
             this.tailString = tailString != null ? tailString.trim() : null;
         }
 
@@ -56,16 +66,27 @@ public class ExpectedCompletionUtils {
                 }
             }
 
+            if (proposal.presenterText != null) {
+                if (!proposal.presenterText.equals(presenterText)) {
+                    return false;
+                }
+            }
+
             return lookupString.equals(proposal.lookupString);
         }
 
         @Override
         public String toString() {
-            if (tailString != null) {
-                return lookupString + TAIL_FLAG + tailString;
+            StringBuilder result = new StringBuilder(lookupString);
+            if (presenterText != null) {
+                result.append(PRESENTABLE_FLAG).append(presenterText);
             }
 
-            return lookupString;
+            if (tailString != null) {
+                result.append(TAIL_FLAG).append(tailString);
+            }
+
+            return result.toString();
         }
     }
     
@@ -103,15 +124,11 @@ public class ExpectedCompletionUtils {
     public static CompletionProposal[] processProposalAssertions(String prefix, String fileText) {
         List<CompletionProposal> proposals = new ArrayList<CompletionProposal>();
         for (String proposalStr : InTextDirectivesUtils.findListWithPrefix(prefix, fileText)) {
-            int tailChar = proposalStr.indexOf(CompletionProposal.TAIL_FLAG);
-
-            if (tailChar > 0) {
-                proposals.add(new CompletionProposal(proposalStr.substring(0, tailChar),
-                                                     proposalStr.substring(tailChar + 1, proposalStr.length())));
-            }
-            else {
-                proposals.add(new CompletionProposal(proposalStr, null));
-            }
+            Matcher matcher = CompletionProposal.PATTERN.matcher(proposalStr);
+            matcher.find();
+            proposals.add(new CompletionProposal(matcher.group(CompletionProposal.LOOKUP_STRING_GROUP_INDEX),
+                                                 matcher.group(CompletionProposal.PRESENTABLE_STRING_GROUP_INDEX),
+                                                 matcher.group(CompletionProposal.TAIL_TEXT_STRING_GROUP_INDEX)));
         }
 
         return ArrayUtil.toObjectArray(proposals, CompletionProposal.class);
@@ -162,7 +179,7 @@ public class ExpectedCompletionUtils {
         if (items != null) {
             for (LookupElement item : items) {
                 item.renderElement(presentation);
-                result.add(new ExpectedCompletionUtils.CompletionProposal(item.getLookupString(), presentation.getTailText()));
+                result.add(new ExpectedCompletionUtils.CompletionProposal(item.getLookupString(), presentation.getItemText(), presentation.getTailText()));
             }
         }
 

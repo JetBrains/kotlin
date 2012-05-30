@@ -121,7 +121,7 @@ public final class JsModuleSetUp {
     }
 
     public static void notifyFailure(@NotNull String message) {
-        Notifications.Bus.notify(new Notification("Set Up Kotlin to JavaScript Module", "Fail",
+        Notifications.Bus.notify(new Notification("Set Up Kotlin to JavaScript Module", "Failure",
                                                   message,
                                                   NotificationType.ERROR));
     }
