@@ -30,11 +30,14 @@ library
 class NumberFormatException() : Exception() {}
 
 native
-fun setTimeout(callback : ()-> Unit) {}
+fun setTimeout(callback:()->Unit, delay:Int, vararg p:Any?):Int = noImpl
 native
-fun setTimeout(callback : ()-> Unit, ms : Int) {}
+fun setTimeout(callback:()->Unit):Int = noImpl
 native
-fun setInterval(callback : ()-> Unit, ms : Int) {}
+fun clearTimeout(timeoutId:Int):Unit = noImpl
+
+native
+fun setInterval(callback : ()-> Unit, delay : Int) {}
 native
 fun setInterval(callback : ()-> Unit) {}
 
