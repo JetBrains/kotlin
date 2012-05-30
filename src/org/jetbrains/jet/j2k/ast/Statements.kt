@@ -28,6 +28,17 @@ public open class ReturnStatement(val expression: Expression): Statement() {
     public override fun toKotlin() = "return " + expression.toKotlin()
 }
 
+public open class IfStatement(val condition: Expression, val thenStatement: Statement, val elseStatement: Statement): Expression() {
+    public override fun toKotlin(): String {
+        val result: String = "if (" + condition.toKotlin() + ")\n" + thenStatement.toKotlin() + "\n"
+        if (elseStatement != Statement.EMPTY_STATEMENT) {
+            return result + "else\n" + elseStatement.toKotlin()
+        }
+
+        return result
+    }
+}
+
 // Loops --------------------------------------------------------------------------------------------------
 
 public open class WhileStatement(val condition: Expression, val statement: Statement): Statement() {
@@ -36,6 +47,21 @@ public open class WhileStatement(val condition: Expression, val statement: State
 
 public open class DoWhileStatement(condition: Expression, statement: Statement): WhileStatement(condition, statement) {
     public override fun toKotlin() = "do\n" + statement.toKotlin() + "\nwhile (" + condition.toKotlin() + ")"
+}
+
+public open class ForeachStatement(val variable: Parameter,
+                                   val expression: Expression,
+                                   val statement: Statement): Statement() {
+    public override fun toKotlin() = "for (" + variable.toKotlin() + " in " +
+        expression.toKotlin() + ")\n" + statement.toKotlin()
+}
+
+public open class ForeachWithRangeStatement(val identifier: Identifier,
+                                            val start: Expression,
+                                            val end: Expression,
+                                            val body: Statement): Statement() {
+    public override fun toKotlin() = "for (" + identifier.toKotlin() + " in " +
+        start.toKotlin() + ".." + end.toKotlin() + ") " + body.toKotlin()
 }
 
 public open class BreakStatement(val label: Identifier = Identifier.EMPTY_IDENTIFIER) : Statement() {
