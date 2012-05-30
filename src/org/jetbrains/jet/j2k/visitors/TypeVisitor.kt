@@ -46,7 +46,7 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
             myResult = ClassType(identifier, resolvedClassTypeParams, true)
         }
         else {
-            myResult = ClassType(identifier, myConverter.typesToTypeList(classType.getParameters()).requireNoNulls(), true)
+            myResult = ClassType(identifier, myConverter.typesToTypeList(classType.getParameters()), true)
         }
         return myResult
     }
@@ -89,7 +89,7 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
                     val superTypes = p!!.getSuperTypes()
                     val boundType : Type = (if (superTypes.size > 0)
                         ClassType(Identifier(getClassTypeName(superTypes[0]!!)),
-                                  myConverter.typesToTypeList(superTypes[0]!!.getParameters()).requireNoNulls(),
+                                  myConverter.typesToTypeList(superTypes[0]!!.getParameters()),
                                   true)
                     else
                         StarProjectionType())

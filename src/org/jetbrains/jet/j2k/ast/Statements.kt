@@ -115,3 +115,9 @@ public open class SwitchLabelStatement(val expression: Expression): Statement() 
 public open class DefaultSwitchLabelStatement(): Statement() {
     public override fun toKotlin() = "else"
 }
+
+// Other ------------------------------------------------------------------------------------------------------
+
+public open class SynchronizedStatement(val expression: Expression, val block: Block): Statement() {
+    public override fun toKotlin() = "synchronized (" + expression?.toKotlin() + ") "+ block.toKotlin()
+}

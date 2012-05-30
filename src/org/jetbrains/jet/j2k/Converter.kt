@@ -351,7 +351,7 @@ public open class Converter() {
         return typeVisitor.getResult()
     }
 
-    public open fun typesToTypeList(types: Array<PsiType?>): List<Type?> {
+    public open fun typesToTypeList(types: Array<PsiType?>): List<Type> {
         return types.map { typeToType(it) }
     }
 

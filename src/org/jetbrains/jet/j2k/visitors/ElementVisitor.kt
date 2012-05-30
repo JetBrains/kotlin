@@ -32,7 +32,7 @@ public open class ElementVisitor(val myConverter : Converter) : JavaElementVisit
 
     public override fun visitReferenceElement(reference : PsiJavaCodeReferenceElement?) : Unit {
         val theReference = reference!!
-        val types : List<Type> = myConverter.typesToTypeList(theReference.getTypeParameters()).requireNoNulls()
+        val types : List<Type> = myConverter.typesToTypeList(theReference.getTypeParameters())
         if (!theReference.isQualified()) {
             myResult = ReferenceElement(Identifier(theReference.getReferenceName()), types)
         }
