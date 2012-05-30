@@ -95,7 +95,7 @@ public class JetNamespaceHeader extends JetReferenceExpression {
             if (builder.length() > 0) {
                 builder.append(".");
             }
-            builder.append(e.getName());
+            builder.append(e.getReferencedName());
         }
         return builder.toString();
     }
