@@ -260,6 +260,10 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
     }
 
     private void appendDefinedIn(DeclarationDescriptor declarationDescriptor, StringBuilder stringBuilder) {
+        if (declarationDescriptor instanceof ModuleDescriptor) {
+            stringBuilder.append(" is a module");
+            return;
+        }
         stringBuilder.append(" ").append(renderMessage("defined in")).append(" ");
 
         final DeclarationDescriptor containingDeclaration = declarationDescriptor.getContainingDeclaration();
@@ -472,6 +476,12 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         public Void visitNamespaceDescriptor(NamespaceDescriptor namespaceDescriptor, StringBuilder builder) {
             builder.append(renderKeyword(JetTokens.PACKAGE_KEYWORD.getValue())).append(" ");
             renderName(namespaceDescriptor, builder);
+            return null;
+        }
+
+        @Override
+        public Void visitModuleDeclaration(ModuleDescriptor descriptor, StringBuilder builder) {
+            renderName(descriptor, builder);
             return null;
         }
 
