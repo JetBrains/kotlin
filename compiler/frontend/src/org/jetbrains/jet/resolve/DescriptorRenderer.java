@@ -146,7 +146,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
         Object typeNameObject;
 
-        if (cd == null || cd instanceof TypeParameterDescriptorImpl) {
+        if (cd == null || cd instanceof TypeParameterDescriptor) {
             typeNameObject = type.getConstructor();
         }
         else {

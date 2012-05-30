@@ -21,7 +21,6 @@ import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.util.CommonSuppliers;
 
@@ -112,7 +111,7 @@ public class SubstitutionUtils {
     }
 
     public static boolean hasUnsubstitutedTypeParameters(JetType type) {
-        if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptorImpl) {
+        if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
             return true;
         }
 
