@@ -22,14 +22,13 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
  * @author max
  */
-public abstract class JetNamedDeclaration extends JetDeclaration implements PsiNameIdentifierOwner, JetStatementExpression {
+public abstract class JetNamedDeclaration extends JetDeclaration implements PsiNameIdentifierOwner, JetStatementExpression, JetNamed {
     public JetNamedDeclaration(@NotNull ASTNode node) {
         super(node);
     }
@@ -46,7 +45,7 @@ public abstract class JetNamedDeclaration extends JetDeclaration implements PsiN
         }
     }
 
-    @Nullable
+    @Override
     public Name getNameAsName() {
         String name = getName();
         return name != null ? Name.identifier(name) : null;
