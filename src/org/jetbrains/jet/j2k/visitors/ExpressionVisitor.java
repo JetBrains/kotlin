@@ -277,9 +277,7 @@ public class ExpressionVisitor extends StatementVisitor {
         PsiExpression[] arguments = argumentList != null ? argumentList.getExpressions() : new PsiExpression[]{};
         if (constructor == null || Converter.$classobj.isConstructorPrimary(constructor) || isNotConvertedClass) {
             return new NewClassExpression(
-                    getConverter().expressionToExpression(expression.getQualifier()),
-                    getConverter().elementToElement(classReference),
-                    getConverter().argumentsToExpressionList(expression),
+                    getConverter().elementToElement(classReference), getConverter().argumentsToExpressionList(expression), getConverter().expressionToExpression(expression.getQualifier()),
                     anonymousClass != null ? getConverter().anonymousClassToAnonymousClass(anonymousClass) : null
             );
         }

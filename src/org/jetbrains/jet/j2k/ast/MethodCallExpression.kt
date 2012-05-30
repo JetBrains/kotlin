@@ -11,10 +11,7 @@ public open class MethodCallExpression(val methodCall: Expression,
     public override fun isNullable(): Boolean = methodCall.isNullable() || resultIsNullable
 
     public override fun toKotlin(): String {
-        val typeParamsToKotlin: String? = (if (typeParameters.size() > 0)
-            "<" + AstUtil.joinNodes(typeParameters, ", ") + ">"
-        else
-            "")
+        val typeParamsToKotlin: String = typeParameters.toKotlin(", ", "<", ">")
         val argumentsMapped = arguments.map { it.toKotlin() }
         return methodCall.toKotlin() + typeParamsToKotlin + "(" + argumentsMapped.makeString(", ") + ")"
     }

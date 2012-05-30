@@ -38,7 +38,7 @@ public class NewClassExpression extends Expression {
         myArguments = arguments;
     }
 
-    public NewClassExpression(@NotNull Expression qualifier, @NotNull Element name, @NotNull List<Expression> arguments,
+    public NewClassExpression(@NotNull Element name, @NotNull List<Expression> arguments, @NotNull Expression qualifier,
                               @Nullable AnonymousClass anonymousClass) {
         this(name, arguments);
         myQualifier = qualifier;

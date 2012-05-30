@@ -28,7 +28,7 @@ public open class Enum(converter : Converter,
             primaryConstructorSignatureToKotlin() +
             typeParametersToKotlin() +
             implementTypesToKotlin() +
-            " {\n" + AstUtil.joinNodes(membersExceptConstructors(), "\n") + "\n" +
+            " {\n" + membersExceptConstructors().toKotlin("\n") + "\n" +
             primaryConstructorBodyToKotlin() +
             "\npublic fun name()  : String { return \"\" }\npublic fun order() : Int { return 0 }\n}"
     }
