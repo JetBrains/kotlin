@@ -82,6 +82,7 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
 
 
     private ClassDescriptor classDescriptor;
+    private JetType errorType;
     private boolean nullable;
     private List<TypeProjection> typeArguments;
 
@@ -122,7 +123,8 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
         }
 
         if (this.classDescriptor == null) {
-            throw new IllegalStateException("class not found by name: " + ourName); // TODO: wrong exception
+            // TODO: report in to trace
+            this.errorType = ErrorUtils.createErrorType("class not found by name: " + ourName);
         }
         this.nullable = nullable;
         this.typeArguments = new ArrayList<TypeProjection>();
@@ -180,12 +182,21 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
 
     @Override
     public void visitEnd() {
-        JetType jetType = new JetTypeImpl(
-                Collections.<AnnotationDescriptor>emptyList(),
-                classDescriptor.getTypeConstructor(),
-                nullable,
-                typeArguments,
-                classDescriptor.getMemberScope(typeArguments));
+        if ((errorType != null) == (classDescriptor != null)) {
+            throw new IllegalStateException("must initialize either errorType or classDescriptor");
+        }
+        JetType jetType;
+        if (errorType != null) {
+            jetType = errorType;
+        }
+        else {
+            jetType = new JetTypeImpl(
+                    Collections.<AnnotationDescriptor>emptyList(),
+                    classDescriptor.getTypeConstructor(),
+                    nullable,
+                    typeArguments,
+                    classDescriptor.getMemberScope(typeArguments));
+        }
         done(jetType);
     }
     
