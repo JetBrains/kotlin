@@ -42,6 +42,10 @@ public class ScriptGenTest extends CodegenTestCase {
         // TODO: check function is visible as instance field (it is currently not)
     }
 
+    public void testTopLevelFunctionClosure() {
+        blackBoxFile("script/topLevelFunctionClosure.ktscript");
+    }
+
     public void testScriptParameter() {
         blackBoxFile("script/parameter.ktscript");
     }
