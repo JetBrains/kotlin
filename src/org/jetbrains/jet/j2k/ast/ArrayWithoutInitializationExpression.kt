@@ -15,14 +15,12 @@ public open class ArrayWithoutInitializationExpression(val `type` : Type, val ex
     }
 
     private fun constructInnerType(hostType : ArrayType, expressions: List<Expression>) : String {
-        if (expressions.size() == 1)
-        {
+        if (expressions.size() == 1) {
             return oneDim(hostType, expressions[0])
         }
 
         val innerType = hostType.elementType
-        if (expressions.size() > 1 && innerType is ArrayType)
-        {
+        if (expressions.size() > 1 && innerType is ArrayType) {
             return oneDim(hostType, expressions[0], "{" + constructInnerType(innerType, expressions.subList(1, expressions.size())) + "}")
         }
 
@@ -35,11 +33,7 @@ public open class ArrayWithoutInitializationExpression(val `type` : Type, val ex
         }
 
         private open fun oneDim(`type` : Type, size : Expression, init : String) : String {
-            val commaWithInit = (if (init.isEmpty())
-                ""
-            else
-                ", " + init)
-            return getConstructorName(`type`) + "(" + size.toKotlin() + commaWithInit + ")"
+            return getConstructorName(`type`) + "(" + size.toKotlin() + init.withPrefix(", ") + ")"
         }
 
         private open fun getConstructorName(`type` : Type) : String = `type`.convertedToNotNull().toKotlin()
