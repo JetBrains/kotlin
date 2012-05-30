@@ -441,6 +441,10 @@ public class OverrideResolver {
     }
 
     private void checkOverridesForParameters(CallableMemberDescriptor declared) {
+        if (ErrorUtils.isError(declared)) {
+            return;
+        }
+
         boolean fakeOverride = declared.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
         if (!fakeOverride) {
             // No check if the function is not marked as 'override'
