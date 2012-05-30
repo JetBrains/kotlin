@@ -16,12 +16,16 @@
 
 package org.jetbrains.jet.cli.js;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import jet.Function0;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.ExitCode;
@@ -37,6 +41,7 @@ import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.ZippedLibrarySourcesConfig;
 import org.jetbrains.k2js.facade.K2JSTranslator;
+import org.jetbrains.k2js.facade.MainCallParameters;
 
 import java.util.List;
 
@@ -62,7 +67,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
     @Override
     protected ExitCode doExecute(K2JSCompilerArguments arguments, PrintingMessageCollector messageCollector, Disposable rootDisposable) {
 
-        if (arguments.srcdir == null) {
+        if (arguments.srcdir == null && arguments.sourceFiles == null) {
             messageCollector.report(CompilerMessageSeverity.ERROR, "Specify sources location via -srcdir", NO_LOCATION);
             return ExitCode.INTERNAL_ERROR;
         }
@@ -79,24 +84,40 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
             return ExitCode.INTERNAL_ERROR;
         }
 
-        return translateAndGenerateOutputFile(messageCollector, environmentForJS, config, outputFile);
+
+        MainCallParameters mainCallParameters = arguments.createMainCallParameters();
+        return translateAndGenerateOutputFile(mainCallParameters, messageCollector, environmentForJS, config, outputFile);
     }
 
     @NotNull
     private static JetCoreEnvironment getEnvironment(K2JSCompilerArguments arguments, Disposable rootDisposable) {
         final JetCoreEnvironment environmentForJS = JetCoreEnvironment.getCoreEnvironmentForJS(rootDisposable);
-        environmentForJS.addSources(arguments.srcdir);
+        if (arguments.srcdir != null) {
+            environmentForJS.addSources(arguments.srcdir);
+        }
+        if (arguments.sourceFiles != null) {
+            for (String sourceFile : arguments.sourceFiles) {
+                environmentForJS.addSources(sourceFile);
+            }
+        }
         if (arguments.isVerbose()) {
-            System.out.println("Compiling source files: " + environmentForJS.getSourceFiles());
+            Iterable<String> fileNames = Iterables.transform(environmentForJS.getSourceFiles(), new Function<JetFile, String>() {
+                @Override
+                public String apply(@Nullable JetFile file) {
+                    return file.getName();
+                }
+            });
+            System.out.println("Compiling source files: " + Joiner.on(", ").join(fileNames));
         }
         return environmentForJS;
     }
 
     @NotNull
-    private static ExitCode translateAndGenerateOutputFile(@NotNull PrintingMessageCollector messageCollector,
+    private static ExitCode translateAndGenerateOutputFile(@NotNull MainCallParameters mainCall,
+            @NotNull PrintingMessageCollector messageCollector,
             @NotNull JetCoreEnvironment environmentForJS, @NotNull Config config, @NotNull String outputFile) {
         try {
-            K2JSTranslator.translateWithCallToMainAndSaveToFile(environmentForJS.getSourceFiles(), outputFile, config);
+            K2JSTranslator.translateWithMainCallParametersAndSaveToFile(mainCall, environmentForJS.getSourceFiles(), outputFile, config);
         }
         catch (Exception e) {
             messageCollector.report(CompilerMessageSeverity.ERROR, "Exception while translating:\n" + e.getMessage(),

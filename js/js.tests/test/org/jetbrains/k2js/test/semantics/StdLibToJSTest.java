@@ -19,6 +19,8 @@ package org.jetbrains.k2js.test.semantics;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cli.js.K2JSCompiler;
+import org.jetbrains.jet.cli.js.K2JSCompilerArguments;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
@@ -58,12 +60,6 @@ public final class StdLibToJSTest extends SingleFileTranslationTest {
             String... stdLibFiles) throws Exception {
         List<String> files = Lists.newArrayList();
 
-        // lets add the standard JS library files
-        /*
-        for (String libFileName : Config.LIB_FILE_NAMES) {
-            files.add(Config.LIBRARIES_LOCATION + libFileName);
-        }
-        */
 
         File stdlibDir = new File("libraries/stdlib/src");
         assertTrue("Cannot find stdlib source: " + stdlibDir, stdlibDir.exists());
@@ -76,5 +72,20 @@ public final class StdLibToJSTest extends SingleFileTranslationTest {
         runRhinoTests(getOutputFilePaths(kotlinFilename, ecmaVersions),
                       new RhinoFunctionNativeObjectResultChecker("test.browser", "foo", "Some Dynamically Created Content!!!"));
         */
+
+        // lets add the standard JS library files
+        for (String libFileName : Config.LIB_FILE_NAMES) {
+            files.add(Config.LIBRARIES_LOCATION + libFileName);
+        }
+        // now lets try invoke the compiler
+        for (EcmaVersion version : ecmaVersions) {
+            System.out.println("Compiling with version: " + version);
+            K2JSCompiler compiler = new K2JSCompiler();
+            K2JSCompilerArguments arguments = new K2JSCompilerArguments();
+            arguments.outputFile = getOutputFilePath(getTestName(false) + ".compiler.kt", version);
+            arguments.sourceFiles = files;
+            arguments.verbose = true;
+            compiler.exec(System.out, arguments);
+        }
     }
 }

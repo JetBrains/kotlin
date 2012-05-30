@@ -38,6 +38,14 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
      */
     private String outFile;
 
+    /**
+     * Whether verbose logging is enabled or not.
+     *
+     * @parameter default-value="false"
+     * @parameter expression="${verbose}"
+     */
+    private Boolean verbose;
+
     @Override
     protected void configureCompilerArguments(CompilerArguments arguments) throws MojoExecutionException {
         super.configureCompilerArguments(arguments);
@@ -45,9 +53,11 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
         if (arguments instanceof K2JSCompilerArguments) {
             K2JSCompilerArguments k2jsArgs = (K2JSCompilerArguments)arguments;
             k2jsArgs.outputFile = outFile;
+            if (verbose != null) {
+                k2jsArgs.verbose = verbose;
+            }
             if (sources.size() > 0) {
-                // TODO K2JSCompilerArguments should allow more than one path/file
-                k2jsArgs.srcdir = sources.get(0);
+                k2jsArgs.sourceFiles = sources;
             }
         }
         getLog().info("Compiling Kotlin src from " + arguments.getSrc() + " to JavaScript at: " + outFile);
