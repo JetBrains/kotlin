@@ -152,14 +152,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends R
 
         @Override
         public void noReceiverAllowed(@NotNull BindingTrace trace) {
-            if (reference instanceof JetSimpleNameExpression) {
-                //todo temporary hack
-                //should be stored that the reference is unresolved (and not trace the candidate descriptor)
-                trace.report(UNRESOLVED_REFERENCE.on(reference));
-            }
-            else {
-                trace.report(NO_RECEIVER_ADMITTED.on(reference));
-            }
+            trace.report(NO_RECEIVER_ADMITTED.on(reference));
         }
 
         @Override

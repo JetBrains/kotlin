@@ -613,10 +613,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     private JetType getVariableType(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverDescriptor receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context, @NotNull boolean[] result) {
 
-        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
-        OverloadResolutionResults<VariableDescriptor> resolutionResult = context.replaceBindingTrace(temporaryTrace).resolveSimpleProperty(receiver, callOperationNode, nameExpression);
+        TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(context.trace);
+        OverloadResolutionResults<VariableDescriptor> resolutionResult = context.replaceBindingTrace(traceForVariable).resolveSimpleProperty(receiver, callOperationNode, nameExpression);
         if (!resolutionResult.isNothing()) {
-            temporaryTrace.commit();
+            traceForVariable.commit();
             checkSuper(receiver, resolutionResult, context.trace, nameExpression);
             result[0] = true;
             return resolutionResult.isSingleResult() ? resolutionResult.getResultingDescriptor().getReturnType() : null;
@@ -625,8 +625,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         ExpressionTypingContext newContext = receiver.exists()
                                              ? context.replaceScope(receiver.getType().getMemberScope())
                                              : context;
-        JetType jetType = lookupNamespaceOrClassObject(nameExpression, nameExpression.getReferencedNameAsName(), newContext);
+        TemporaryBindingTrace traceForNamespaceOrClassObject = TemporaryBindingTrace.create(context.trace);
+        JetType jetType = lookupNamespaceOrClassObject(nameExpression, nameExpression.getReferencedNameAsName(), newContext.replaceBindingTrace(traceForNamespaceOrClassObject));
         if (jetType != null) {
+            traceForNamespaceOrClassObject.commit();
 
             // Uncommitted changes in temp context
             context.trace.record(RESOLUTION_SCOPE, nameExpression, context.scope);

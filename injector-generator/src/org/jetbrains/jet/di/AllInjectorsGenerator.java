@@ -25,6 +25,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -53,9 +55,12 @@ public class AllInjectorsGenerator {
     private static void generateInjectorForLazyResolve() throws IOException {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
         generator.addParameter(Project.class);
+        generator.addParameter(ResolveSession.class);
+        generator.addParameter(BindingTrace.class);
         generator.addPublicField(DescriptorResolver.class);
         generator.addPublicField(ExpressionTypingServices.class);
         generator.addPublicField(TypeResolver.class);
+        generator.addPublicField(ScopeProvider.class);
         generator.generate("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForLazyResolve");
     }
 

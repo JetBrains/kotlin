@@ -94,10 +94,13 @@ public class OverridingUtil {
     @NotNull
     public static OverrideCompatibilityInfo isOverridableBy(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
         if (superDescriptor instanceof FunctionDescriptor) {
-            if (subDescriptor instanceof PropertyDescriptor) return OverrideCompatibilityInfo.memberKindMismatch();
+            if (!(subDescriptor instanceof FunctionDescriptor)) return OverrideCompatibilityInfo.memberKindMismatch();
         }
-        if (superDescriptor instanceof PropertyDescriptor) {
-            if (subDescriptor instanceof FunctionDescriptor) return OverrideCompatibilityInfo.memberKindMismatch();
+        else if (superDescriptor instanceof PropertyDescriptor) {
+            if (!(subDescriptor instanceof PropertyDescriptor)) return OverrideCompatibilityInfo.memberKindMismatch();
+        }
+        else {
+            throw new IllegalArgumentException("This type of CallableDescriptor cannot be checked for overridability: " + superDescriptor);
         }
 
         // TODO: check outside of this method

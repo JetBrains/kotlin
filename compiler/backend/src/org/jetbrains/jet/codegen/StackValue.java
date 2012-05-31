@@ -72,17 +72,13 @@ public abstract class StackValue {
     }
 
     public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
-        if (this.type == Type.BOOLEAN_TYPE) {
-            put(Type.BOOLEAN_TYPE, v);
-            if (jumpIfFalse) {
-                v.ifeq(label);
-            }
-            else {
-                v.ifne(label);
-            }
+        put(this.type, v);
+        coerce(Type.BOOLEAN_TYPE, v);
+        if (jumpIfFalse) {
+            v.ifeq(label);
         }
         else {
-            throw new UnsupportedOperationException("can't generate a cond jump for a non-boolean value");
+            v.ifne(label);
         }
     }
 

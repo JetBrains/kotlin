@@ -15,9 +15,9 @@ native public trait Attr: Node {
     fun getName(): String = js.noImpl
     fun getValue(): String = js.noImpl
     fun setValue(arg1: String): Unit = js.noImpl
+    fun getSchemaTypeInfo(): TypeInfo = js.noImpl
     fun getSpecified(): Boolean = js.noImpl
     fun getOwnerElement(): Element = js.noImpl
-    fun getSchemaTypeInfo(): TypeInfo = js.noImpl
     fun isId(): Boolean = js.noImpl
 }
 
@@ -44,6 +44,8 @@ native public trait Document: Node {
     fun getXmlEncoding(): String = js.noImpl
     fun createElement(arg1: String): Element = js.noImpl
     fun createComment(arg1: String): Comment = js.noImpl
+    fun getElementsByTagName(arg1: String): NodeList = js.noImpl
+    fun getElementsByTagNameNS(arg1: String, arg2: String): NodeList = js.noImpl
     fun getDoctype(): DocumentType = js.noImpl
     fun getDocumentElement(): Element = js.noImpl
     fun createDocumentFragment(): DocumentFragment = js.noImpl
@@ -52,11 +54,9 @@ native public trait Document: Node {
     fun createProcessingInstruction(arg1: String, arg2: String): ProcessingInstruction = js.noImpl
     fun createAttribute(arg1: String): Attr = js.noImpl
     fun createEntityReference(arg1: String): EntityReference = js.noImpl
-    fun getElementsByTagName(arg1: String): NodeList = js.noImpl
     fun importNode(arg1: Node, arg2: Boolean): Node = js.noImpl
     fun createElementNS(arg1: String, arg2: String): Element = js.noImpl
     fun createAttributeNS(arg1: String, arg2: String): Attr = js.noImpl
-    fun getElementsByTagNameNS(arg1: String, arg2: String): NodeList = js.noImpl
     fun getElementById(arg1: String): Element = js.noImpl
     fun getXmlStandalone(): Boolean = js.noImpl
     fun setXmlStandalone(arg1: Boolean): Unit = js.noImpl
@@ -98,6 +98,9 @@ native public trait DOMError {
     fun getSeverity(): Short = js.noImpl
     fun getRelatedException(): Any = js.noImpl
     fun getRelatedData(): Any = js.noImpl
+    public val SEVERITY_WARNING: Short
+    public val SEVERITY_ERROR: Short
+    public val SEVERITY_FATAL_ERROR: Short
 }
 
 native public trait DOMErrorHandler {
@@ -129,21 +132,21 @@ native public trait DOMStringList {
 native public trait Element: Node {
     fun getAttribute(arg1: String): String = js.noImpl
     fun setAttribute(arg1: String, arg2: String): Unit = js.noImpl
-    fun getSchemaTypeInfo(): TypeInfo = js.noImpl
-    fun getElementsByTagName(arg1: String): NodeList = js.noImpl
-    fun getElementsByTagNameNS(arg1: String, arg2: String): NodeList = js.noImpl
     fun getTagName(): String = js.noImpl
     fun removeAttribute(arg1: String): Unit = js.noImpl
     fun getAttributeNode(arg1: String): Attr = js.noImpl
     fun setAttributeNode(arg1: Attr): Attr = js.noImpl
     fun removeAttributeNode(arg1: Attr): Attr = js.noImpl
+    fun getElementsByTagName(arg1: String): NodeList = js.noImpl
     fun getAttributeNS(arg1: String, arg2: String): String = js.noImpl
     fun setAttributeNS(arg1: String, arg2: String, arg3: String): Unit = js.noImpl
     fun removeAttributeNS(arg1: String, arg2: String): Unit = js.noImpl
     fun getAttributeNodeNS(arg1: String, arg2: String): Attr = js.noImpl
     fun setAttributeNodeNS(arg1: Attr): Attr = js.noImpl
+    fun getElementsByTagNameNS(arg1: String, arg2: String): NodeList = js.noImpl
     fun hasAttribute(arg1: String): Boolean = js.noImpl
     fun hasAttributeNS(arg1: String, arg2: String): Boolean = js.noImpl
+    fun getSchemaTypeInfo(): TypeInfo = js.noImpl
     fun setIdAttribute(arg1: String, arg2: Boolean): Unit = js.noImpl
     fun setIdAttributeNS(arg1: String, arg2: String, arg3: Boolean): Unit = js.noImpl
     fun setIdAttributeNode(arg1: Attr, arg2: Boolean): Unit = js.noImpl
@@ -218,6 +221,24 @@ native public trait Node {
     fun isDefaultNamespace(arg1: String): Boolean = js.noImpl
     fun lookupNamespaceURI(arg1: String): String = js.noImpl
     fun isEqualNode(arg1: Node): Boolean = js.noImpl
+    public val ELEMENT_NODE: Short
+    public val ATTRIBUTE_NODE: Short
+    public val TEXT_NODE: Short
+    public val CDATA_SECTION_NODE: Short
+    public val ENTITY_REFERENCE_NODE: Short
+    public val ENTITY_NODE: Short
+    public val PROCESSING_INSTRUCTION_NODE: Short
+    public val COMMENT_NODE: Short
+    public val DOCUMENT_NODE: Short
+    public val DOCUMENT_TYPE_NODE: Short
+    public val DOCUMENT_FRAGMENT_NODE: Short
+    public val NOTATION_NODE: Short
+    public val DOCUMENT_POSITION_DISCONNECTED: Short
+    public val DOCUMENT_POSITION_PRECEDING: Short
+    public val DOCUMENT_POSITION_FOLLOWING: Short
+    public val DOCUMENT_POSITION_CONTAINS: Short
+    public val DOCUMENT_POSITION_CONTAINED_BY: Short
+    public val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
 }
 
 native public trait NodeList {
@@ -247,9 +268,18 @@ native public trait TypeInfo {
     fun getTypeName(): String = js.noImpl
     fun getTypeNamespace(): String = js.noImpl
     fun isDerivedFrom(arg1: String, arg2: String, arg3: Int): Boolean = js.noImpl
+    public val DERIVATION_RESTRICTION: Int
+    public val DERIVATION_EXTENSION: Int
+    public val DERIVATION_UNION: Int
+    public val DERIVATION_LIST: Int
 }
 
 native public trait UserDataHandler {
     fun handle(arg1: Short, arg2: String, arg3: Any, arg4: Node, arg5: Node): Unit = js.noImpl
+    public val NODE_CLONED: Short
+    public val NODE_IMPORTED: Short
+    public val NODE_DELETED: Short
+    public val NODE_RENAMED: Short
+    public val NODE_ADOPTED: Short
 }
 

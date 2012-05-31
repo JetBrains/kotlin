@@ -45,36 +45,42 @@ public class JSSourceJarMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (!librarySourceDir.exists()) {
-            getLog().warn("Source directory does not exist: " + librarySourceDir);
-        } else {
-            try {
-                File metaInfFile = new File(outputDir, ClassPathLibrarySourcesLoader.META_INF_SERVICES_FILE);
-                metaInfFile.getParentFile().mkdirs();
+        if (librarySourceDir != null) {
+            if (!librarySourceDir.exists()) {
+                getLog().warn("Source directory does not exist: " + librarySourceDir);
+            } else {
+                try {
+                    File metaInfFile = new File(outputDir, ClassPathLibrarySourcesLoader.META_INF_SERVICES_FILE);
+                    metaInfFile.getParentFile().mkdirs();
 
-                FileUtils.copyDirectoryStructure(librarySourceDir, outputDir);
+                    FileUtils.copyDirectoryStructure(librarySourceDir, outputDir);
 
-                // now lets generate the META-INF/services/org.jetbrains.kotlin.js.librarySource file
-                PrintWriter writer = new PrintWriter(new FileWriter(metaInfFile));
-                appendSourceFiles(writer, outputDir.getCanonicalPath(), outputDir);
-                writer.close();
-            } catch (IOException e) {
-                throw new MojoFailureException(e.getMessage(), e);
+                    // now lets generate the META-INF/services/org.jetbrains.kotlin.js.librarySource file
+                    PrintWriter writer = new PrintWriter(new FileWriter(metaInfFile));
+                    appendSourceFiles(writer, outputDir.getCanonicalPath(), outputDir);
+                    writer.close();
+                } catch (IOException e) {
+                    throw new MojoFailureException(e.getMessage(), e);
+                }
             }
         }
-        if (definitionSourceDir.exists()) {
-            try {
-                File metaInfFile = new File(outputDir, ClassPathLibraryDefintionsConfig.META_INF_SERVICES_FILE);
-                metaInfFile.getParentFile().mkdirs();
+        if (definitionSourceDir != null) {
+            if (!librarySourceDir.exists()) {
+                getLog().warn("Definition directory does not exist: " + definitionSourceDir);
+            } else {
+                try {
+                    File metaInfFile = new File(outputDir, ClassPathLibraryDefintionsConfig.META_INF_SERVICES_FILE);
+                    metaInfFile.getParentFile().mkdirs();
 
-                FileUtils.copyDirectoryStructure(definitionSourceDir, outputDir);
+                    FileUtils.copyDirectoryStructure(definitionSourceDir, outputDir);
 
-                // now lets generate the META-INF/services/org.jetbrains.kotlin.js.libraryDefinitions file
-                PrintWriter writer = new PrintWriter(new FileWriter(metaInfFile));
-                appendSourceFiles(writer, definitionSourceDir.getCanonicalPath(), definitionSourceDir);
-                writer.close();
-            } catch (IOException e) {
-                throw new MojoFailureException(e.getMessage(), e);
+                    // now lets generate the META-INF/services/org.jetbrains.kotlin.js.libraryDefinitions file
+                    PrintWriter writer = new PrintWriter(new FileWriter(metaInfFile));
+                    appendSourceFiles(writer, definitionSourceDir.getCanonicalPath(), definitionSourceDir);
+                    writer.close();
+                } catch (IOException e) {
+                    throw new MojoFailureException(e.getMessage(), e);
+                }
             }
         }
     }

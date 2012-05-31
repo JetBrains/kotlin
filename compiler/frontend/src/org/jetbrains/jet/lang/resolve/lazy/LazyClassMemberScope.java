@@ -16,15 +16,21 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.JetType;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -47,10 +53,33 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     }
 
     @Override
-    protected void getNonDeclaredFunctions(@NotNull Name name, @NotNull Set<FunctionDescriptor> result) {
-        JetClassOrObject owner = declarationProvider.getOwnerClassOrObject();
-        //throw new UnsupportedOperationException(); // TODO
-        System.err.println("getNonDeclaredFunctions() should generate fake overrides for a class");
+    protected void getNonDeclaredFunctions(@NotNull Name name, @NotNull final Set<FunctionDescriptor> result) {
+        Collection<FunctionDescriptor> fromSupertypes = Lists.newArrayList();
+        for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
+            fromSupertypes.addAll(supertype.getMemberScope().getFunctions(name));
+        }
+        OverrideResolver.generateOverridesInFunctionGroup(
+                name,
+                fromSupertypes,
+                Lists.newArrayList(result),
+                thisDescriptor,
+                new OverrideResolver.DescriptorSink() {
+                    @Override
+                    public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
+                        assert fakeOverride instanceof FunctionDescriptor : "A non-function overrides a function";
+                        result.add((FunctionDescriptor) fakeOverride);
+                    }
+
+                    @Override
+                    public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
+                        BindingTrace trace = resolveSession.getTrace();
+                        JetDeclaration declaration = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(),
+                                                                                                                  fromCurrent);
+                        assert declaration != null : "fromCurrent can not be a fake override";
+                        trace.report(Errors.CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().getName()));
+                    }
+                }
+        );
     }
 
     @Override

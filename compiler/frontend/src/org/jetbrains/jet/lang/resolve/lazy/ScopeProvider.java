@@ -46,7 +46,6 @@ public class ScopeProvider {
     @NotNull
     public JetScope getFileScopeForDeclarationResolution(JetFile file) {
         // package
-        // + imported classes
         JetNamespaceHeader header = file.getNamespaceHeader();
         if (header == null) {
             throw new IllegalArgumentException("Scripts are not supported: " + file.getName());
@@ -61,6 +60,8 @@ public class ScopeProvider {
 
         WritableScope writableScope = new WritableScopeImpl(JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING);
         writableScope.importScope(packageDescriptor.getMemberScope());
+
+        // TODO: imports
 
         writableScope.changeLockLevel(WritableScope.LockLevel.READING);
         // TODO: Cache

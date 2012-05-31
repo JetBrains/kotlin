@@ -65,7 +65,8 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDes
     @NotNull
     @Override
     protected JetScope getScopeForMemberDeclarationResolution(JetDeclaration declaration) {
-        return resolveSession.getScopeProvider().getFileScopeForDeclarationResolution((JetFile) declaration.getContainingFile());
+        return resolveSession.getInjector().getScopeProvider()
+                .getFileScopeForDeclarationResolution((JetFile) declaration.getContainingFile());
     }
 
     @NotNull

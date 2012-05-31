@@ -26,7 +26,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -42,7 +44,6 @@ import java.util.Set;
 public class ResolveSession {
     private final ModuleDescriptor module;
     private final LazyPackageDescriptor rootPackage;
-    private final ScopeProvider scopeProvider;
 
     private final BindingTrace trace = new BindingTraceContext();
     private final DeclarationProviderFactory declarationProviderFactory;
@@ -55,44 +56,31 @@ public class ResolveSession {
             @NotNull ModuleDescriptor rootDescriptor,
             @NotNull DeclarationProviderFactory declarationProviderFactory
     ) {
-        this.injector = new InjectorForLazyResolve(project);
+        this.injector = new InjectorForLazyResolve(project, this, trace);
         this.module = rootDescriptor;
         DeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(FqName.ROOT);
         assert provider != null : "No declaration provider for root package in " + rootDescriptor;
         this.rootPackage = new LazyPackageDescriptor(rootDescriptor, JetPsiUtil.ROOT_NAMESPACE_NAME, this, provider);
         rootDescriptor.setRootNs(rootPackage);
 
-        this.scopeProvider = new ScopeProvider(this);
         this.declarationProviderFactory = declarationProviderFactory;
     }
 
     @NotNull
-    public DescriptorResolver getDescriptorResolver() {
-        return injector.getDescriptorResolver();
-    }
-
-    public TypeResolver getTypeResolver() {
-        return injector.getTypeResolver();
+    public InjectorForLazyResolve getInjector() {
+        return injector;
     }
 
     @Nullable
     public NamespaceDescriptor getPackageDescriptor(@NotNull Name shortName) {
         return rootPackage.getMemberScope().getNamespace(shortName);
-        //NamespaceDescriptor namespaceDescriptor = packageDescriptors.get(shortName);
-        //if (namespaceDescriptor == null) {
-        //    DeclarationProvider declarationProvider = declarationProviderFactory.getPackageMemberDeclarationProvider(
-        //            FqName.topLevel(shortName));
-        //    if (declarationProvider == null) return null;
-        //
-        //    namespaceDescriptor = new LazyPackageDescriptor(module.getRootNs(), shortName, this, declarationProvider);
-        //
-        //    packageDescriptors.put(shortName, namespaceDescriptor);
-        //}
-        //return namespaceDescriptor;
     }
 
     @Nullable
     public NamespaceDescriptor getPackageDescriptorByFqName(FqName fqName) {
+        if (fqName.isRoot()) {
+            return rootPackage;
+        }
         List<Name> names = fqName.pathSegments();
         NamespaceDescriptor current = getPackageDescriptor(names.get(0));
         if (current == null) return null;
@@ -106,11 +94,6 @@ public class ResolveSession {
     @NotNull
     public ClassDescriptor getClassDescriptor(JetClassOrObject classOrObject) {
         throw new UnsupportedOperationException(); // TODO
-    }
-
-    @NotNull
-    public ScopeProvider getScopeProvider() {
-        return scopeProvider;
     }
 
     public Collection<DeclarationDescriptor> getDescriptorsForDeclarations(Collection<PsiElement> declarationsOrFiles) {
@@ -135,7 +118,7 @@ public class ResolveSession {
 
                 @Override
                 public void visitDeclaration(JetDeclaration dcl) {
-                    JetScope scope = scopeProvider.getResolutionScopeForDeclaration(dcl);
+                    JetScope scope = injector.getScopeProvider().getResolutionScopeForDeclaration(dcl);
                     collectDescriptors(scope, dcl);
                 }
 
@@ -185,7 +168,7 @@ public class ResolveSession {
         PsiElement parent = element.getParent();
         if (parent instanceof JetFile) {
             JetFile file = (JetFile) parent;
-            return getScopeProvider().getFileScopeForDeclarationResolution(file);
+            return getInjector().getScopeProvider().getFileScopeForDeclarationResolution(file);
         }
 
         if (parent instanceof JetClassBody) {

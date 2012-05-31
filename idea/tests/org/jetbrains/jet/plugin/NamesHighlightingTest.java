@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin;
 
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
+import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.jet.plugin.highlighter.JetPsiChecker;
 
 /**
@@ -38,6 +39,15 @@ public class NamesHighlightingTest extends LightDaemonAnalyzerTestCase {
 
     public void testVariablesAsFunctions() throws Exception {
         doTest();
+    }
+
+    public void testJavaTypes() throws Exception {
+        doTest();
+    }
+
+    @Override
+    protected Sdk getProjectJDK() {
+        return PluginTestCaseBase.jdkFromIdeaHome();
     }
 
     private void doTest() throws Exception {

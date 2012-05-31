@@ -99,8 +99,9 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         List<JetNamedFunction> declarations = declarationProvider.getFunctionDeclarations(name);
         for (JetNamedFunction functionDeclaration : declarations) {
             JetScope resolutionScope = getScopeForMemberDeclarationResolution(functionDeclaration);
-            result.add(resolveSession.getDescriptorResolver().resolveFunctionDescriptor(thisDescriptor, resolutionScope,
-                                                                                        functionDeclaration, resolveSession.getTrace()));
+            result.add(resolveSession.getInjector().getDescriptorResolver().resolveFunctionDescriptor(thisDescriptor, resolutionScope,
+                                                                                                      functionDeclaration,
+                                                                                                      resolveSession.getTrace()));
         }
 
         getNonDeclaredFunctions(name, result);
@@ -130,8 +131,9 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         List<JetProperty> declarations = declarationProvider.getPropertyDeclarations(name);
         for (JetProperty propertyDeclaration : declarations) {
             JetScope resolutionScope = getScopeForMemberDeclarationResolution(propertyDeclaration);
-            result.add(resolveSession.getDescriptorResolver().resolvePropertyDescriptor(thisDescriptor, resolutionScope,
-                                                                                        propertyDeclaration, resolveSession.getTrace()));
+            result.add(resolveSession.getInjector().getDescriptorResolver().resolvePropertyDescriptor(thisDescriptor, resolutionScope,
+                                                                                                      propertyDeclaration,
+                                                                                                      resolveSession.getTrace()));
         }
 
         getNonDeclaredProperties(name, result);

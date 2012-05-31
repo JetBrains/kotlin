@@ -42,7 +42,12 @@ class ConstructorCall implements Expression {
         StringBuilder builder = new StringBuilder("new " + constructor.getDeclaringClass().getSimpleName() + "(");
         for (Iterator<Field> iterator = constructorArguments.iterator(); iterator.hasNext(); ) {
             Field argument = iterator.next();
-            builder.append(argument.getGetterName() + "()");
+            if (argument.isPublic()) {
+                builder.append(argument.getGetterName()).append("()");
+            }
+            else {
+                builder.append(argument.getName());
+            }
             if (iterator.hasNext()) {
                 builder.append(", ");
             }

@@ -37,21 +37,22 @@ import java.util.*;
 public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDescriptor {
 
     private final ResolveSession resolveSession;
+    private final ClassMemberDeclarationProvider declarationProvider;
 
     private final Name name;
     private final DeclarationDescriptor containingDeclaration;
     private final TypeConstructor typeConstructor;
-    private final ClassMemberDeclarationProvider declarationProvider;
-
-    private final LazyClassMemberScope unsubstitutedMemberScope;
-    private final JetScope unsubstitutedInnerClassesScope;
-    private ClassReceiver implicitReceiver;
-    private JetScope scopeForClassHeaderResolution;
-    private JetScope scopeForMemberDeclarationResolution;
-
     private final Modality modality;
     private final Visibility visibility;
     private final ClassKind kind;
+
+    private ClassReceiver implicitReceiver;
+
+    private final LazyClassMemberScope unsubstitutedMemberScope;
+    private final JetScope unsubstitutedInnerClassesScope;
+
+    private JetScope scopeForClassHeaderResolution;
+    private JetScope scopeForMemberDeclarationResolution;
 
 
     public LazyClassDescriptor(
@@ -103,17 +104,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         return unsubstitutedInnerClassesScope;
     }
 
-    public JetScope getScopeForMemberDeclarationResolution() {
-        if (scopeForMemberDeclarationResolution == null) {
-            WritableScopeImpl scope = new WritableScopeImpl(getScopeForClassHeaderResolution(), this, RedeclarationHandler.DO_NOTHING)
-                    .setDebugName("Member Declaration Resolution");
-
-            scope.changeLockLevel(WritableScope.LockLevel.READING);
-            scopeForMemberDeclarationResolution = scope;
-        }
-        return scopeForMemberDeclarationResolution;
-    }
-
     @NotNull
     public JetScope getScopeForClassHeaderResolution() {
         if (scopeForClassHeaderResolution == null) {
@@ -126,6 +116,19 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             scopeForClassHeaderResolution = scope;
         }
         return scopeForClassHeaderResolution;
+    }
+
+    public JetScope getScopeForMemberDeclarationResolution() {
+        if (scopeForMemberDeclarationResolution == null) {
+            WritableScopeImpl scope = new WritableScopeImpl(getScopeForClassHeaderResolution(), this, RedeclarationHandler.DO_NOTHING)
+                    .setDebugName("Member Declaration Resolution");
+
+            // TODO : supertypes etc
+
+            scope.changeLockLevel(WritableScope.LockLevel.READING);
+            scopeForMemberDeclarationResolution = scope;
+        }
+        return scopeForMemberDeclarationResolution;
     }
 
     @NotNull
@@ -247,10 +250,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         public Collection<? extends JetType> getSupertypes() {
             if (supertypes == null) {
                 JetClassOrObject declaration = declarationProvider.getOwnerClassOrObject();
-                this.supertypes = resolveSession.getDescriptorResolver()
+                this.supertypes = resolveSession.getInjector().getDescriptorResolver()
                         .resolveSupertypes(getScopeForClassHeaderResolution(),
-                                                     declaration,
-                                                     resolveSession.getTrace());
+                                           declaration,
+                                           resolveSession.getTrace());
             }
             return supertypes;
         }

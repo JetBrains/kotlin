@@ -70,11 +70,6 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         }
     }
 
-    @Override
-    public void visitJetElement(@NotNull JetElement element) {
-        element.acceptChildren(this);
-    }
-
     private void highlightProperty(@NotNull PsiElement elementToHighlight,
             @NotNull PropertyDescriptor descriptor,
             boolean withBackingField) {
