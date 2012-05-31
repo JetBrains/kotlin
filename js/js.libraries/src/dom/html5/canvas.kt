@@ -5,10 +5,6 @@ import js.noImpl
 import js.dom.html.HTMLElement
 import js.dom.core.Element
 
-public native trait HTMLImageElement {
-    public native var crossOrigin: String = js.noImpl
-}
-
 public native trait HTMLCanvasElement : HTMLElement {
     public native var width: Double = js.noImpl
     public native var height: Double = js.noImpl
@@ -29,8 +25,8 @@ public native trait CanvasContext {
     public native fun setTransform(m11: Number, m12: Number, m21: Number, m22: Number, dx: Number, dy: Number): Unit = js.noImpl
     public native var globalAlpha: Double = js.noImpl
     public native var globalCompositeOperation: String = js.noImpl
-    public native var fillStyle: String = js.noImpl
-    public native var strokeStyle: String = js.noImpl
+    public native var fillStyle: Any = js.noImpl
+    public native var strokeStyle: Any = js.noImpl
     public native fun createLinearGradient(x0: Number, y0: Number, x1: Number, y1: Number): CanvasGradient? = js.noImpl
     public native fun createRadialGradient(x0: Number, y0: Number, r0: Number, x1: Number, y1: Number, r1: Number): CanvasGradient? = js.noImpl
     public native var lineWidth: Double = js.noImpl

@@ -213,7 +213,7 @@ public native trait HTMLElement : Element {
     public native var offsetHeight: Double = js.noImpl
     public native var offsetTop: Double = js.noImpl
     public native var offsetLeft: Double = js.noImpl
-    public native var offsetParent: Double = js.noImpl
+    public native var offsetParent: HTMLElement? = js.noImpl
     public native var scrollWidth: Double = js.noImpl
     public native var scrollHeight: Double = js.noImpl
     public native var scrollTop: Double = js.noImpl
