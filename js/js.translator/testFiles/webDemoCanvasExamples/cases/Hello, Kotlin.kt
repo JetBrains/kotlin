@@ -98,7 +98,7 @@ fun main(args: Array<String>) {
             HelloKotlin()
         }
 
-        setInterval({
+        window.setInterval({
             renderBackground()
             for (logo in logos) {
                 logo.draw()

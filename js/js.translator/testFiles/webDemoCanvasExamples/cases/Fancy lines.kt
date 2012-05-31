@@ -29,15 +29,15 @@ class FancyLines() {
     var hue = 0;
 
     fun line() {
-        context.save()
+        context.save();
 
-        context.beginPath()
+        context.beginPath();
 
-        context.lineWidth = 20.0 * Math.random()
+        context.lineWidth = 20.0 * Math.random();
         context.moveTo(x.toInt(), y.toInt());
 
         x = width * Math.random();
-        y = height * Math.random()
+        y = height * Math.random();
 
         context.bezierCurveTo(width * Math.random(), height * Math.random(),
                 width * Math.random(), height * Math.random(), x, y);
@@ -60,7 +60,7 @@ class FancyLines() {
     }
 
     fun run() {
-        setInterval({line()}, 40);
-        setInterval({blank()}, 100);
+        window.setInterval({line()}, 40);
+        window.setInterval({blank()}, 100);
     }
 }

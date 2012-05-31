@@ -74,6 +74,7 @@ class Logo(override var pos: Vector): Shape()
 
     fun drawLogo(state: CanvasState) {
         size = imageSize * (state.size.x / imageSize.x) * relSize
+        // getKotlinLogo() is a 'magic' function here defined only for purposes of demonstration but in fact it just find an element containing the logo
         state.context.drawImage(getImage("http://kotlin-demo.jetbrains.com/static/images/kotlinlogowobackground.png"), 0, 0,
                 imageSize.x.toInt(), imageSize.y.toInt(),
                 position.x.toInt(), position.y.toInt(),
@@ -245,7 +246,7 @@ class CanvasState(val canvas: HTMLCanvasElement) {
             valid = false
         }
 
-        setInterval({
+        window.setInterval({
             draw()
         }, interval)
     }
@@ -339,9 +340,9 @@ fun main(args: Array<String>) {
         state.addShape(Kotlin)
         state.addShape(Creature(state.size * 0.25, state))
         state.addShape(Creature(state.size * 0.75, state))
-        setTimeout({
+        window.setTimeout({
             state.valid = false
-        })
+        }, 1000)
     }
 }
 

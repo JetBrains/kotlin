@@ -40,11 +40,11 @@ public final class WebDemoCanvasExamplesTest extends SingleFileTranslationTest {
     }
 
     public void testCreatures() throws Exception {
-        doTest("Creatures.kt", "document");
+        doTest("Creatures.kt", "$");
     }
 
     public void testHelloKotlin() throws Exception {
-        doTest("Hello, Kotlin.kt", "document");
+        doTest("Hello, Kotlin.kt", "$");
     }
 
     public void testFancyLines() throws Exception {
@@ -52,7 +52,7 @@ public final class WebDemoCanvasExamplesTest extends SingleFileTranslationTest {
     }
 
     public void testTrafficLight() throws Exception {
-        doTest("Traffic light.kt", "document");
+        doTest("Traffic light.kt", "window");
     }
 
     private void doTest(@NotNull String filename, @NotNull String firstUnknownSymbolEncountered) throws Exception {

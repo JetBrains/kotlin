@@ -28,12 +28,3 @@ library
 open class RuntimeException() : Exception() {}
 library
 class NumberFormatException() : Exception() {}
-
-native
-fun setTimeout(callback : ()-> Unit) {}
-native
-fun setTimeout(callback : ()-> Unit, ms : Int) {}
-native
-fun setInterval(callback : ()-> Unit, ms : Int) {}
-native
-fun setInterval(callback : ()-> Unit) {}
