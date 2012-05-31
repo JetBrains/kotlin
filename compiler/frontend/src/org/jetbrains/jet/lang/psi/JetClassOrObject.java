@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.List;
 
@@ -40,8 +41,7 @@ public interface JetClassOrObject extends PsiElement, PsiNameIdentifierOwner, Je
     boolean hasPrimaryConstructor();
 
     @Nullable
-    @Override
-    String getName();
+    Name getNameAsName();
 
     @Nullable
     JetModifierList getModifierList();
