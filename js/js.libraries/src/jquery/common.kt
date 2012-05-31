@@ -1,4 +1,4 @@
-package jquery;
+package js.jquery;
 
 import js.*;
 import js.DomElement
