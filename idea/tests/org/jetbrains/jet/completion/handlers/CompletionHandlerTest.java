@@ -17,9 +17,14 @@
 package org.jetbrains.jet.completion.handlers;
 
 import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.completion.JavaLookupElementBuilder;
 import com.intellij.codeInsight.completion.LightCompletionTestCase;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
@@ -31,7 +36,14 @@ import java.io.File;
 public class CompletionHandlerTest extends LightCompletionTestCase {
 
     public void testClassCompletionImport() {
-        doTest(CompletionType.CLASS_NAME, 1, "SortedSet");
+        doTest(CompletionType.CLASS_NAME, 1, LookupElementBuilder.create("SortedSet"));
+    }
+
+    public void testNonStandardArray() {
+        PsiClass reflectArrayClass = JavaPsiFacade.getInstance(getProject()).findClass(
+                "java.lang.reflect.Array", GlobalSearchScope.allScope(getProject()));
+        assert reflectArrayClass != null;
+        doTest(CompletionType.CLASS_NAME, 1, JavaLookupElementBuilder.forClass(reflectArrayClass));
     }
 
     public void testNoParamsFunction() {
@@ -68,7 +80,7 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
         doTest(CompletionType.BASIC, 2, null);
     }
 
-    public void doTest(CompletionType type, int time, @Nullable String completeItem) {
+    public void doTest(CompletionType type, int time, @Nullable LookupElement completeItem) {
         try {
             configureByFileNoComplete(getBeforeFileName());
             setType(type);
@@ -76,7 +88,7 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
             complete(time);
 
             if (completeItem != null) {
-                selectItem(LookupElementBuilder.create(completeItem), '\t');
+                selectItem(completeItem, '\t');
             }
 
             checkResultByFile(getAfterFileName());

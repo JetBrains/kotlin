@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
+import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -83,41 +84,64 @@ public class ResolveDescriptorsFromExternalLibraries {
     private boolean run() throws Exception {
         boolean hasErrors = false;
 
-        hasErrors |= testLibraryFile(null, "rt.jar");
+        hasErrors |= testLibrary("org.scala-lang", "scala-library", "2.9.2", 1);
+
+        hasErrors |= testLibraryFile(null, "rt.jar", 1000);
 
         for (File jar : findJarsInDirectory(new File("ideaSDK"))) {
-            hasErrors |= testLibraryFile(jar, jar.getPath());
+            hasErrors |= testLibraryFile(jar, jar.getPath(), 1000);
         }
 
-        hasErrors |= testLibrary("com.google.guava", "guava", "12.0-rc2");
-        hasErrors |= testLibrary("org.springframework", "spring-core", "3.1.1.RELEASE");
-        hasErrors |= testLibrary("com.vaadin", "vaadin", "6.6.8");
-        hasErrors |= testLibraryFromUrl("http://mcvaadin.googlecode.com/files/mcvaadin.jar");
+        hasErrors |= testLibrary("com.google.guava", "guava", "12.0-rc2", 1000);
+        hasErrors |= testLibrary("org.springframework", "spring-core", "3.1.1.RELEASE", 1000);
+        hasErrors |= testLibrary("com.vaadin", "vaadin", "6.6.8", 1000);
+        hasErrors |= testLibraryFromUrl("http://mcvaadin.googlecode.com/files/mcvaadin.jar", 1000);
         return hasErrors;
     }
 
-    private boolean testLibraryFromUrl(@NotNull String urlJar) throws Exception {
-        return testLibraryFile(getLibraryFromUrl(urlJar), urlJar);
+    private boolean testLibraryFromUrl(@NotNull String urlJar, int classesPerChunk) throws Exception {
+        return testLibraryFile(getLibraryFromUrl(urlJar), urlJar, classesPerChunk);
     }
 
-    private boolean testLibrary(@NotNull String org, @NotNull String module, @NotNull String rev) throws Exception {
+    private boolean testLibrary(@NotNull String org, @NotNull String module, @NotNull String rev, int classesPerChunk) throws Exception {
         LibFromMaven lib = new LibFromMaven(org, module, rev);
         File jar = getLibraryFromMaven(lib);
 
-        return testLibraryFile(jar, lib.toString());
+        return testLibraryFile(jar, lib.toString(), classesPerChunk);
     }
 
-    private boolean testLibraryFile(@Nullable File jar, @NotNull String libDescription) throws IOException {
+    private boolean testLibraryFile(@Nullable File jar, @NotNull String libDescription, int classesPerChunk) throws IOException {
         System.out.println("Testing library " + libDescription + "...");
         if (jar != null) {
             System.out.println("Using file " + jar);
         }
         else {
-            System.out.println("Using rt.jar");
+            jar = CompilerDependencies.findRtJar();
+            System.out.println("Using rt.jar: " + jar);
         }
 
         long start = System.currentTimeMillis();
 
+        FileInputStream is = new FileInputStream(jar);
+        boolean hasErrors = false;
+        try {
+            ZipInputStream zip = new ZipInputStream(is);
+
+            while (zip.available() > 0) {
+                hasErrors |= parseLibraryFileChunk(jar, libDescription, zip, classesPerChunk);
+            }
+        } finally {
+            try {
+                is.close();
+            } catch (Throwable e) {}
+        }
+
+        System.out.println("Testing library " + libDescription + " done in " + TimeUtils.millisecondsToSecondsString(System.currentTimeMillis() - start) + "s " + (hasErrors ? "with" : "without") + " errors");
+
+        return hasErrors;
+    }
+
+    private boolean parseLibraryFileChunk(File jar, String libDescription, ZipInputStream zip, int classesPerChunk) throws IOException {
         Disposable junk = new Disposable() {
             @Override
             public void dispose() { }
@@ -131,24 +155,31 @@ public class ResolveDescriptorsFromExternalLibraries {
         else {
             CompilerDependencies compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.STDLIB, false);
             jetCoreEnvironment = JetCoreEnvironment.getCoreEnvironmentForJVM(junk, compilerDependencies);
-            jar = compilerDependencies.getJdkJar();
+            if (!compilerDependencies.getJdkJar().equals(jar)) {
+                throw new RuntimeException("rt.jar mismatch: " + jar + ", " + compilerDependencies.getJdkJar());
+            }
         }
 
 
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(jetCoreEnvironment.getCompilerDependencies(), jetCoreEnvironment.getProject());
 
-        FileInputStream is = new FileInputStream(jar);
         boolean hasErrors;
         try {
-            ZipInputStream zip = new ZipInputStream(is);
 
             hasErrors = false;
 
-            for (; ; ) {
+            for (int count = 0; count < classesPerChunk; ) {
                 ZipEntry entry = zip.getNextEntry();
                 if (entry == null) {
                     break;
                 }
+
+                if (count == 0) {
+                    System.err.println("chunk from " + entry.getName());
+                }
+
+                System.err.println(entry.getName());
+
                 String entryName = entry.getName();
                 if (!entryName.endsWith(".class")) {
                     continue;
@@ -174,19 +205,13 @@ public class ResolveDescriptorsFromExternalLibraries {
                     //throw new RuntimeException("failed to resolve " + className + ": " + e, e);
                     hasErrors = true;
                 }
+
+                ++count;
             }
         }
         finally {
-            try {
-                is.close();
-            }
-            catch (Throwable e) {}
-
             Disposer.dispose(junk);
         }
-
-        System.out.println("Testing library " + libDescription + " done in " + TimeUtils.millisecondsToSecondsString(System.currentTimeMillis() - start) + "s " + (hasErrors ? "with" : "without") + " errors");
-
         return hasErrors;
     }
 

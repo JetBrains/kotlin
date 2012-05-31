@@ -51,7 +51,7 @@ public abstract class Config {
     }
 
     @NotNull
-    protected static final List<String> LIB_FILE_NAMES = Arrays.asList(
+    public static final List<String> LIB_FILE_NAMES = Arrays.asList(
             "/core/annotations.kt",
             "/jquery/common.kt",
             "/jquery/ui.kt",
@@ -67,11 +67,12 @@ public abstract class Config {
             "/html5/image.kt",
             "/stdlib/JUMaps.kt",
             "/stdlib/browser.kt",
-            "/core/dom.kt",
-            "/core/dom/core.kt"
+            "/core/dom.kt"
+            // TODO
+            // "/core/dom/core.kt"
     );
 
-    protected static final String LIBRARIES_LOCATION = "js/js.libraries/src";
+    public static final String LIBRARIES_LOCATION = "js/js.libraries/src";
 
     @NotNull
     private final Project project;

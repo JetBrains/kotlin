@@ -32,7 +32,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author max
  */
-public class JetNamedFunction extends JetFunction implements StubBasedPsiElement<PsiJetFunctionStub<?>> {
+public class JetNamedFunction extends JetFunction implements StubBasedPsiElement<PsiJetFunctionStub<?>>, JetNamed {
     public JetNamedFunction(@NotNull ASTNode node) {
         super(node);
     }

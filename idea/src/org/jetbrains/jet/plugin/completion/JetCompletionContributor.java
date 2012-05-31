@@ -185,7 +185,7 @@ public class JetCompletionContributor extends CompletionContributor {
                 DeclarationDescriptor descriptor = ((JetLookupObject)object).getDescriptor();
                 return (descriptor instanceof ClassDescriptor) ||
                        (descriptor instanceof NamespaceDescriptor) ||
-                       (descriptor instanceof TypeParameterDescriptorImpl);
+                       (descriptor instanceof TypeParameterDescriptor);
             }
         }
 

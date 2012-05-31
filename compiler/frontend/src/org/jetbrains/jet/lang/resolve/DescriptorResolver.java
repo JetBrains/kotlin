@@ -99,21 +99,32 @@ public class DescriptorResolver {
         trace.record(BindingContext.CLASS, classElement, descriptor);
     }
 
-    public void resolveSupertypes(@NotNull JetClassOrObject jetClass, @NotNull MutableClassDescriptor descriptor, BindingTrace trace) {
+    public void resolveSupertypesForMutableClassDescriptor(
+            @NotNull JetClassOrObject jetClass,
+            @NotNull MutableClassDescriptor descriptor,
+            BindingTrace trace
+    ) {
+        for (JetType supertype : resolveSupertypes(descriptor.getScopeForSupertypeResolution(), jetClass, trace)) {
+            descriptor.addSupertype(supertype);
+        }
+    }
+
+    public List<JetType> resolveSupertypes(@NotNull JetScope scope, @NotNull JetClassOrObject jetClass, BindingTrace trace) {
+        List<JetType> result = Lists.newArrayList();
         List<JetDelegationSpecifier> delegationSpecifiers = jetClass.getDelegationSpecifiers();
         if (delegationSpecifiers.isEmpty()) {
-            descriptor.addSupertype(getDefaultSupertype(jetClass, trace));
+            result.add(getDefaultSupertype(jetClass, trace));
         }
         else {
             Collection<JetType> supertypes = resolveDelegationSpecifiers(
-                    descriptor.getScopeForSupertypeResolution(),
+                    scope,
                     delegationSpecifiers,
                     typeResolver, trace, false);
             for (JetType supertype : supertypes) {
-                descriptor.addSupertype(supertype);
+                result.add(supertype);
             }
         }
-
+        return result;
     }
 
     private JetType getDefaultSupertype(JetClassOrObject jetClass, BindingTrace trace) {
@@ -235,7 +246,7 @@ public class DescriptorResolver {
         return functionDescriptor;
     }
 
-    private Modality getDefaultModality(DeclarationDescriptor containingDescriptor, boolean isBodyPresent) {
+    public static Modality getDefaultModality(DeclarationDescriptor containingDescriptor, boolean isBodyPresent) {
         Modality defaultModality;
         if (containingDescriptor instanceof ClassDescriptor) {
             boolean isTrait = ((ClassDescriptor) containingDescriptor).getKind() == ClassKind.TRAIT;
@@ -674,7 +685,7 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    /*package*/ static Modality resolveModalityFromModifiers(@Nullable JetModifierList modifierList, @NotNull Modality defaultModality) {
+    public static Modality resolveModalityFromModifiers(@Nullable JetModifierList modifierList, @NotNull Modality defaultModality) {
         if (modifierList == null) return defaultModality;
         boolean hasAbstractModifier = modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD);
         boolean hasOverrideModifier = modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD);
@@ -699,7 +710,7 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    /*package*/ static Visibility resolveVisibilityFromModifiers(@Nullable JetModifierList modifierList) {
+    public static Visibility resolveVisibilityFromModifiers(@Nullable JetModifierList modifierList) {
         Visibility defaultVisibility = modifierList != null && modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD) ? Visibilities.INHERITED : Visibilities.INTERNAL;
         return resolveVisibilityFromModifiers(modifierList, defaultVisibility);
     }

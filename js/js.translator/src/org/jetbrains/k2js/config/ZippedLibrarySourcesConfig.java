@@ -48,6 +48,7 @@ public class ZippedLibrarySourcesConfig extends Config {
     @NotNull
     @Override
     public List<JetFile> generateLibFiles() {
+        System.out.println("Parsing JS library source zip: " + pathToLibZip);
         if (pathToLibZip == null) {
             return Collections.emptyList();
         }
@@ -62,6 +63,8 @@ public class ZippedLibrarySourcesConfig extends Config {
             }
         }
         catch (IOException e) {
+            System.out.println("Failed to process " + pathToLibZip + ". Reason: " + e);
+            e.printStackTrace();
             return Collections.emptyList();
         }
     }
@@ -76,6 +79,7 @@ public class ZippedLibrarySourcesConfig extends Config {
                 InputStream stream = file.getInputStream(entry);
                 String text = FileUtil.loadTextAndClose(stream);
                 JetFile jetFile = JetFileUtils.createPsiFile(entry.getName(), text, getProject());
+                System.out.println("Parsing file: " + entry.getName());
                 result.add(jetFile);
             }
         }

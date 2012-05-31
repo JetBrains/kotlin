@@ -1093,7 +1093,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             }
         }
 
-        if (descriptor instanceof TypeParameterDescriptorImpl) {
+        if (descriptor instanceof TypeParameterDescriptor) {
             TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
             v.invokevirtual("jet/TypeInfo", "getClassObject", "()Ljava/lang/Object;");
             v.checkcast(asmType(typeParameterDescriptor.getClassObjectType()));
@@ -2614,7 +2614,7 @@ If finally block is present, its last expression is the value of try expression.
             JetExpression left = expression.getLeft();
             JetType leftType = bindingContext.get(BindingContext.EXPRESSION_TYPE, left);
             DeclarationDescriptor descriptor = rightType.getConstructor().getDeclarationDescriptor();
-            if (descriptor instanceof ClassDescriptor || descriptor instanceof TypeParameterDescriptorImpl) {
+            if (descriptor instanceof ClassDescriptor || descriptor instanceof TypeParameterDescriptor) {
                 StackValue value = genQualified(receiver, left);
                 value.put(JetTypeMapper.boxType(value.type), v);
                 assert leftType != null;

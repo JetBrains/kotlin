@@ -63,8 +63,9 @@
     <unzip src="${basedir}/plugin/Kotlin/lib/kotlin-plugin.jar" dest="${basedir}/plugin/jar"/>
     <move file="${basedir}/plugin/jar/META-INF/plugin.xml" tofile="${basedir}/plugin/jar/META-INF/plugin.xml.src"/>
     <xslt in="${basedir}/plugin/jar/META-INF/plugin.xml.src" out="${basedir}/plugin/jar/META-INF/plugin.xml"
-          style="${basedir}/add-since-tag.xsl">
-      <param name="ideaversion" expression="${idea.version}"/>
+          style="${basedir}/idea-version-tag.xsl">
+      <param name="idea-since-version" expression="${idea.version}"/>
+      <param name="idea-until-version" expression="IC-117.9999" /> <!-- TODO: Change to valid dynamic value -->
     </xslt>
     <zip destfile="${basedir}/plugin/Kotlin/lib/kotlin-plugin.jar" update="true" basedir="${basedir}/plugin/jar" includes="META-INF/plugin.xml" />
     <delete file="${plugin.path}"/>

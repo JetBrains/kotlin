@@ -27,18 +27,14 @@
                         <phase>process-sources</phase>
                         <configuration>
                             <target>
-                                <delete dir="${basedir}/target/generated-js-library" failonerror="false" />
                                 <mkdir dir="${basedir}/target/generated-js-library"/>
-                                <copy todir="${basedir}/target/generated-js-library">
+                                <mkdir dir="${basedir}/target/generated-js-definitions"/>
+                                <copy todir="${basedir}/target/generated-js-definitions">
                                     <fileset dir="${kotlin-js-lib-srcdir}">
                                         <exclude name="core/dom/core.kt"/>
+                                        <exclude name="html5/localstorage.kt"/>
                                     </fileset>
                                 </copy>
-                                <!--
-
-                                TODO this should compile soon hopefully :)
-                                disabled for now as it crashes the mvn plugin for JS goal
-
                                 <copy todir="${basedir}/target/generated-js-library/kotlin">
                                     <fileset dir="${basedir}/../../stdlib/src/kotlin/dom">
                                         <include name="**/*.kt"/>
@@ -52,7 +48,6 @@
                                         <include name="Preconditions.kt"/>
                                     </fileset>
                                 </copy>
-                                -->
                                 <copy tofile="${basedir}/target/generated-js-library/kotlin-lib.js"
                                       file="${kotlin-js-lib-srcdir}/../../js.translator/testFiles/kotlin_lib.js"/>
                             </target>
@@ -70,6 +65,7 @@
                 <version>${project.version}</version>
                 <configuration>
                     <librarySourceDir>${basedir}/target/generated-js-library</librarySourceDir>
+                    <definitionSourceDir>${basedir}/target/generated-js-definitions</definitionSourceDir>
                 </configuration>
                 <executions>
                     <execution>

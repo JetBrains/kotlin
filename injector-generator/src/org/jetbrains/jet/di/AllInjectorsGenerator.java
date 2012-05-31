@@ -17,13 +17,7 @@
 package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.codegen.ClassBuilderFactory;
-import org.jetbrains.jet.codegen.ClassBuilderMode;
-import org.jetbrains.jet.codegen.ClassCodegen;
-import org.jetbrains.jet.codegen.ClassFileFactory;
-import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.codegen.JetTypeMapper;
-import org.jetbrains.jet.codegen.ScriptCodegen;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -31,7 +25,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -54,6 +47,16 @@ public class AllInjectorsGenerator {
         generateInjectorForJavaSemanticServices();
         generateInjectorForJvmCodegen();
         generateInjectorForJetTypeMapper();
+        generateInjectorForLazyResolve();
+    }
+
+    private static void generateInjectorForLazyResolve() throws IOException {
+        DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        generator.addParameter(Project.class);
+        generator.addPublicField(DescriptorResolver.class);
+        generator.addPublicField(ExpressionTypingServices.class);
+        generator.addPublicField(TypeResolver.class);
+        generator.generate("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForLazyResolve");
     }
 
     private static void generateInjectorForTopDownAnalyzerBasic() throws IOException {

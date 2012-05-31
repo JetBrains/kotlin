@@ -219,7 +219,7 @@ public class TypeUtils {
 
         private static void processAllTypeParameters(JetType type, Variance howThiTypeIsUsed, Processor<TypeParameterUsage> result) {
             ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-            if (descriptor instanceof TypeParameterDescriptorImpl) {
+            if (descriptor instanceof TypeParameterDescriptor) {
                 result.process(new TypeParameterUsage((TypeParameterDescriptor)descriptor, howThiTypeIsUsed));
             }
             for (TypeProjection projection : type.getArguments()) {

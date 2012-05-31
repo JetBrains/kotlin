@@ -18,6 +18,10 @@ package org.jetbrains.jet.cli.js;
 
 import com.sampullara.cli.Argument;
 import org.jetbrains.jet.cli.common.CompilerArguments;
+import org.jetbrains.k2js.facade.MainCallParameters;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Pavel Talanov
@@ -50,8 +54,13 @@ public class K2JSCompilerArguments extends CompilerArguments {
     @Argument(value = "version", description = "Display compiler version")
     public boolean version;
 
+    @Argument(value = "mainCall", description = "Whether a main function should be invoked; either 'main' or 'mainWithArgs'")
+    public String mainCall;
+
     @Argument(value = "help", alias = "h", description = "Show help")
     public boolean help;
+
+    public List<String> sourceFiles;
 
     @Override
     public boolean isHelp() {
@@ -75,6 +84,22 @@ public class K2JSCompilerArguments extends CompilerArguments {
 
     @Override
     public String getSrc() {
+        if (sourceFiles != null) {
+            return sourceFiles.toString();
+        }
         return srcdir;
+    }
+
+    public MainCallParameters createMainCallParameters() {
+        if (mainCall != null) {
+            if (mainCall.equals("main")) {
+                return MainCallParameters.mainWithoutArguments();
+            }
+            if (mainCall.equals("mainWithArgs")) {
+                // TODO should we pass the arguments to the compiler?
+                return MainCallParameters.mainWithArguments(new ArrayList<String>());
+            }
+        }
+        return MainCallParameters.noCall();
     }
 }

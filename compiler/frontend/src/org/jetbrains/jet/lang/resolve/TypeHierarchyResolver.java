@@ -26,12 +26,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.SubstitutionUtils;
@@ -391,12 +389,12 @@ public class TypeHierarchyResolver {
             MutableClassDescriptor descriptor = entry.getValue();
             descriptorResolver.resolveGenericBounds(jetClass, descriptor.getScopeForSupertypeResolution(),
                                                     (List) descriptor.getTypeConstructor().getParameters(), trace);
-            descriptorResolver.resolveSupertypes(jetClass, descriptor, trace);
+            descriptorResolver.resolveSupertypesForMutableClassDescriptor(jetClass, descriptor, trace);
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
             JetClassOrObject jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
-            descriptorResolver.resolveSupertypes(jetClass, descriptor, trace);
+            descriptorResolver.resolveSupertypesForMutableClassDescriptor(jetClass, descriptor, trace);
         }
     }
 
@@ -523,7 +521,7 @@ public class TypeHierarchyResolver {
                 if (projections.size() > 1) {
                     TypeConstructor typeConstructor = entry.getKey();
                     DeclarationDescriptor declarationDescriptor = typeConstructor.getDeclarationDescriptor();
-                    assert declarationDescriptor instanceof TypeParameterDescriptorImpl : declarationDescriptor;
+                    assert declarationDescriptor instanceof TypeParameterDescriptor : declarationDescriptor;
                     TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) declarationDescriptor;
 
                     // Immediate arguments of supertypes cannot be projected

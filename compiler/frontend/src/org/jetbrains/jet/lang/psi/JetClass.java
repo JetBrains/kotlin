@@ -178,7 +178,7 @@ public class JetClass extends JetTypeParameterListOwner
             String fq2 = ((JetClass) another).getQualifiedName();
             return fq1 != null && fq2 != null && fq1.equals(fq2);
         }
-        return true;
+        return false;
     }
 
     @Nullable

@@ -30,6 +30,7 @@ import org.jetbrains.k2js.generate.CodeGenerator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -47,8 +48,15 @@ public final class K2JSTranslator {
     public static void translateWithCallToMainAndSaveToFile(@NotNull List<JetFile> files,
             @NotNull String outputPath,
             @NotNull Config config) throws Exception {
+        translateWithMainCallParametersAndSaveToFile(MainCallParameters.mainWithoutArguments(), files, outputPath, config);
+    }
+
+    public static void translateWithMainCallParametersAndSaveToFile(MainCallParameters mainCall,
+            List<JetFile> files,
+            String outputPath,
+            Config config) throws TranslationException, IOException {
         K2JSTranslator translator = new K2JSTranslator(config);
-        String programCode = translator.generateProgramCode(files, MainCallParameters.mainWithoutArguments()) + "\n";
+        String programCode = translator.generateProgramCode(files, mainCall) + "\n";
         writeCodeToFile(outputPath, programCode);
     }
 

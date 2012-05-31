@@ -21,7 +21,6 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
@@ -89,7 +88,7 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
     @NotNull
     private TypeValue getTypeValueFor(@NotNull JetType type) {
         DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
-        if (declarationDescriptor instanceof TypeParameterDescriptorImpl) {
+        if (declarationDescriptor instanceof TypeParameterDescriptor) {
             TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) declarationDescriptor;
             // Checking that this is not a T?, but exactly T
             if (typeParameterDescriptor.getDefaultType().isNullable() == type.isNullable()) {
@@ -489,7 +488,7 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
             @Override
             public TypeProjection get(TypeConstructor key) {
                 DeclarationDescriptor declarationDescriptor = key.getDeclarationDescriptor();
-                if (declarationDescriptor instanceof TypeParameterDescriptorImpl) {
+                if (declarationDescriptor instanceof TypeParameterDescriptor) {
                     TypeParameterDescriptor descriptor = (TypeParameterDescriptor) declarationDescriptor;
 
                     if (!unknownTypes.containsKey(descriptor)) return null;

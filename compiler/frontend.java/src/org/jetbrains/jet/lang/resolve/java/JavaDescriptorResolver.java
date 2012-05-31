@@ -893,11 +893,14 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             if (resolved != null && resolved.getQualifiedName().equals(JvmStdlibNames.JET_OBJECT.getFqName().getFqName())) {
                 continue;
             }
-            if (annotation && resolved.getQualifiedName().equals("java.lang.annotation.Annotation")) {
+            if (resolved != null && annotation && resolved.getQualifiedName().equals("java.lang.annotation.Annotation")) {
                 continue;
             }
             
             JetType transform = semanticServices.getTypeTransformer().transformToType(type, JavaTypeTransformer.TypeUsage.SUPERTYPE, typeVariableResolver);
+            if (ErrorUtils.isErrorType(transform)) {
+                continue;
+            }
 
             result.add(TypeUtils.makeNotNullable(transform));
         }
