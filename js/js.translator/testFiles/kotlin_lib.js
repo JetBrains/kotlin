@@ -122,6 +122,9 @@ var Kotlin;
     })());
 
     var isType = function (object, klass) {
+        if (object === null) {
+            return false;
+        }
         var current = object.get_class();
         while (current !== klass) {
             if (current === null) {

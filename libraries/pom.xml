@@ -65,8 +65,12 @@
 
         <module>examples/kotlin-java-example</module>
 
+<!--
+        TODO - disabled until the JS compiler can handle "Node.ELEMENT_NODE" expressions in DOM
+
         <module>examples/js-example</module>
         <module>examples/browser-example</module>
+-->
     </modules>
 
     <dependencies>

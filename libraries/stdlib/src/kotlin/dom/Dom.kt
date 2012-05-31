@@ -17,47 +17,40 @@ get() = if (this != null) this.getDocumentElement() else null
 
 var Node.text : String
 get() {
-    if (this is Element) {
-        return this.text
+    if (this.getNodeType() == Node.ELEMENT_NODE) {
+        val buffer = StringBuilder()
+        val nodeList = this.getChildNodes()
+        if (nodeList != null) {
+            var i = 0
+            val size = nodeList.getLength()
+            while (i < size) {
+                val node = nodeList.item(i)
+                if (node != null) {
+                    if (node.isText()) {
+                        buffer.append(node.getNodeValue())
+                    }
+                }
+                i++
+            }
+        }
+        return buffer.toString().sure()
     } else {
         return this.getNodeValue() ?: ""
     }
 }
 set(value) {
-    if (this is Element) {
-        this.text = value
+    if (this.getNodeType() == Node.ELEMENT_NODE) {
+        val element = this as Element
+        // lets remove all the previous text nodes first
+        for (node in element.children()) {
+            if (node.isText()) {
+                removeChild(node)
+            }
+        }
+        element.addText(value)
     } else {
         this.setNodeValue(value)
     }
-}
-
-var Element.text : String
-get() {
-    val buffer = StringBuilder()
-    val nodeList = this.getChildNodes()
-    if (nodeList != null) {
-        var i = 0
-        val size = nodeList.getLength()
-        while (i < size) {
-            val node = nodeList.item(i)
-            if (node != null) {
-                if (node.isText()) {
-                    buffer.append(node.getNodeValue())
-                }
-            }
-            i++
-        }
-    }
-    return buffer.toString().sure()
-}
-set(value) {
-    // lets remove all the previous text nodes first
-    for (node in children()) {
-        if (node.isText()) {
-            removeChild(node)
-        }
-    }
-    addText(value)
 }
 
 var Element.id : String
@@ -188,14 +181,12 @@ class NodeListAsList(val nodeList: NodeList): AbstractList<Node>() {
 class ElementListAsList(val nodeList: NodeList): AbstractList<Element>() {
     override fun get(index: Int): Element {
         val node = nodeList.item(index)
-        if (node is Element) {
-            return node
+        if (node == null) {
+            throw IndexOutOfBoundsException("NodeList does not contain a node at index: " + index)
+        } else if (node.getNodeType() == Node.ELEMENT_NODE) {
+            return node as Element
         } else {
-            if (node == null) {
-                throw IndexOutOfBoundsException("NodeList does not contain a node at index: " + index)
-            } else {
-                throw IllegalArgumentException("Node is not an Element as expected but is $node")
-            }
+            throw IllegalArgumentException("Node is not an Element as expected but is $node")
         }
     }
 
@@ -239,13 +230,8 @@ class PreviousSiblingIterator(var node: Node) : AbstractIterator<Node>() {
 
 /** Returns true if this node is a Text node or a CDATA node */
 fun Node.isText(): Boolean {
-    /*
-    This code is easier to convert to JS
     val nodeType = getNodeType()
     return nodeType == Node.TEXT_NODE || nodeType == Node.CDATA_SECTION_NODE
-    */
-    return this is Text || this is CDATASection
-
 }
 
 /** Returns the attribute value or empty string if its not present */
@@ -309,7 +295,7 @@ fun Element.createElement(name: String, doc: Document? = null, init: Element.()-
 
 /** Returns the owner document of the element or uses the provided document */
 fun Node.ownerDocument(doc: Document? = null): Document {
-    val answer = if (this is Document) this as Document
+    val answer = if (this != null && this.getNodeType() == Node.DOCUMENT_NODE) this as Document
     else if (doc == null) this.getOwnerDocument()
     else doc
 

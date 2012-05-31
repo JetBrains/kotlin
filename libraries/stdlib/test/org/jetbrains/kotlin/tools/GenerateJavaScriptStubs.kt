@@ -4,6 +4,7 @@ import java.io.File
 import java.io.FileWriter
 import java.io.PrintWriter
 import org.w3c.dom.*
+import java.lang.reflect.Modifier
 
 /**
 * This tool generates JavaScript stubs for classes available in the JDK which are already available in the browser environment
@@ -64,6 +65,26 @@ import js.noImpl
                         val parameters = parameterTypes.map<Class<out Any?>?, String>{ "arg${++counter}: ${simpleTypeName(it)}" }.makeString(", ")
                         val returnType = simpleTypeName(method.getReturnType())
                         println("    fun ${method.getName()}($parameters): $returnType = js.noImpl")
+                    }
+                }
+            }
+            val fields = klass.getDeclaredFields()
+            if (fields != null) {
+                for (field in fields) {
+                    if (field != null) {
+                        val modifiers = field.getModifiers()
+                        if (Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers)) {
+                            try {
+                                val value = field.get(null)
+                                if (value != null) {
+                                    val fieldType = simpleTypeName(field.getType())
+                                    println("    public val ${field.getName()}: $fieldType = $value")
+                                }
+                            } catch (e: Exception) {
+                                println("Caught: $e")
+                                e.printStackTrace()
+                            }
+                        }
                     }
                 }
             }
