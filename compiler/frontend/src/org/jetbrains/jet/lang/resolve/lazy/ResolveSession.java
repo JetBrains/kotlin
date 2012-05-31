@@ -16,24 +16,27 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -53,14 +56,7 @@ public class ResolveSession {
             @NotNull ModuleDescriptor rootDescriptor,
             @NotNull DeclarationProviderFactory declarationProviderFactory
     ) {
-        TopDownAnalysisParameters mockParameters = new TopDownAnalysisParameters(new Predicate<PsiFile>() {
-            @Override
-            public boolean apply(@Nullable PsiFile file) {
-                throw new UnsupportedOperationException("This shouldn't be called from within lazy resolve");
-            }
-        }, false, false, Collections.<AnalyzerScriptParameter>emptyList());
-
-        this.injector = new InjectorForLazyResolve(project, this, mockParameters, trace);
+        this.injector = new InjectorForLazyResolve(project, this, trace);
         this.module = rootDescriptor;
         DeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(FqName.ROOT);
         assert provider != null : "No declaration provider for root package in " + rootDescriptor;
