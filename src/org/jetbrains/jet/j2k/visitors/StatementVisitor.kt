@@ -23,7 +23,8 @@ public open class StatementVisitor(converter: Converter): ElementVisitor(convert
     }
 
     public override fun visitBlockStatement(statement: PsiBlockStatement?): Unit {
-        myResult = Block(getConverter().statementsToStatementList(statement?.getCodeBlock()?.getStatements().requireNoNulls()), true)
+        val statements: Array<PsiStatement?> = statement?.getCodeBlock()?.getStatements()!!
+        myResult = Block(getConverter().statementsToStatementList(statements), true)
     }
 
     public override fun visitBreakStatement(statement: PsiBreakStatement?): Unit {
