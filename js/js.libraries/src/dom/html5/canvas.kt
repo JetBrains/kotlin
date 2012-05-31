@@ -14,6 +14,8 @@ public native trait HTMLCanvasElement : HTMLElement {
     public native var height: Double = js.noImpl
     public native fun getContext(context: String): CanvasContext? = js.noImpl
     public native fun toDataURL(string: String, args: Any): String = js.noImpl
+    public native fun toDataURL(): String = js.noImpl
+    public native fun toDataURL(string: String): String = js.noImpl
 }
 
 public native trait CanvasContext {
@@ -56,17 +58,32 @@ public native trait CanvasContext {
     public native fun clip(): Unit = js.noImpl
     public native fun isPointInPath(x: Number, y: Number): Boolean = js.noImpl
     public native fun drawFocusRing(element: Element, xCaret: Number, yCaret: Number, canDrawCustom: Boolean): Unit = js.noImpl
+    public native fun drawFocusRing(element: Element, xCaret: Number, yCaret: Number): Unit = js.noImpl
     public native var font: String = js.noImpl
     public native var textAlign: String = js.noImpl
     public native var textBaseline: String = js.noImpl
     public native fun fillText(text: String, x: Number, y: Number, maxWidth: Number): Unit = js.noImpl
+    public native fun fillText(text: String, x: Number, y: Number): Unit = js.noImpl
     public native fun strokeText(text: String, x: Number, y: Number, maxWidth: Number): Unit = js.noImpl
+    public native fun strokeText(text: String, x: Number, y: Number): Unit = js.noImpl
     public native fun measureText(text: String): TextMetrics? = js.noImpl
     public native fun drawImage(img_elem: HTMLElement, dx_or_sx: Number, dy_or_sy: Number, dw_or_sw: Number, dh_or_sh: Number, dx: Number, dy: Number, dw: Number, dh: Number): Unit = js.noImpl
+    public native fun drawImage(img_elem: HTMLElement, dx_or_sx: Number, dy_or_sy: Number): Unit = js.noImpl
+    public native fun drawImage(img_elem: HTMLElement, dx_or_sx: Number, dy_or_sy: Number, dw_or_sw: Number): Unit = js.noImpl
+    public native fun drawImage(img_elem: HTMLElement, dx_or_sx: Number, dy_or_sy: Number, dw_or_sw: Number, dh_or_sh: Number): Unit = js.noImpl
+    public native fun drawImage(img_elem: HTMLElement, dx_or_sx: Number, dy_or_sy: Number, dw_or_sw: Number, dh_or_sh: Number, dx: Number): Unit = js.noImpl
+    public native fun drawImage(img_elem: HTMLElement, dx_or_sx: Number, dy_or_sy: Number, dw_or_sw: Number, dh_or_sh: Number, dx: Number, dy: Number): Unit = js.noImpl
+    public native fun drawImage(img_elem: HTMLElement, dx_or_sx: Number, dy_or_sy: Number, dw_or_sw: Number, dh_or_sh: Number, dx: Number, dy: Number, dw: Number): Unit = js.noImpl
     public native fun createImageData(imagedata: ImageData, sh: Number): ImageData? = js.noImpl
+    public native fun createImageData(imagedata: ImageData): ImageData? = js.noImpl
     public native fun createImageData(sw: Number, sh: Number): ImageData? = js.noImpl
+    public native fun createImageData(sw: Number): ImageData? = js.noImpl
     public native fun getImageData(sx: Number, sy: Number, sw: Number, sh: Number): ImageData? = js.noImpl
     public native fun putImageData(image_data: ImageData, dx: Number, dy: Number, dirtyX: Number, dirtyY: Number, dirtyWidth: Number, dirtyHeight: Number): Unit = js.noImpl
+    public native fun putImageData(image_data: ImageData, dx: Number, dy: Number): Unit = js.noImpl
+    public native fun putImageData(image_data: ImageData, dx: Number, dy: Number, dirtyX: Number): Unit = js.noImpl
+    public native fun putImageData(image_data: ImageData, dx: Number, dy: Number, dirtyX: Number, dirtyY: Number): Unit = js.noImpl
+    public native fun putImageData(image_data: ImageData, dx: Number, dy: Number, dirtyX: Number, dirtyY: Number, dirtyWidth: Number): Unit = js.noImpl
 }
 
 public native trait CanvasGradient {

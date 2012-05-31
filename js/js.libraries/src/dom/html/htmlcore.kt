@@ -25,6 +25,7 @@ public native trait Navigator {
     public native fun taintEnabled(): Boolean = js.noImpl
     public native fun javaEnabled(): Boolean = js.noImpl
     public native fun preference(prefName: String, prefValue: String): String = js.noImpl
+    public native fun preference(prefName: String): String = js.noImpl
 }
 
 public native trait Screen {
@@ -134,6 +135,9 @@ public native trait Window {
     public native var directories: Any = js.noImpl
     public native var history: History = js.noImpl
     public native fun open(strUrl: String, strWindowName: String, strWindowFeatures: String): Window? = js.noImpl
+    public native fun open(): Window? = js.noImpl
+    public native fun open(strUrl: String): Window? = js.noImpl
+    public native fun open(strUrl: String, strWindowName: String): Window? = js.noImpl
     public native fun print(): Unit = js.noImpl
     public native fun clearInterval(intervalId: Number): Unit = js.noImpl
     public native fun clearTimeout(intervalId: Number): Unit = js.noImpl
@@ -154,7 +158,9 @@ public native trait Window {
 public native trait Global {
     public native val window: Window = js.noImpl
     public native fun escape(str: String): Unit = js.noImpl
+    public native fun escape(): Unit = js.noImpl
     public native fun unescape(str: String): Unit = js.noImpl
+    public native fun unescape(): Unit = js.noImpl
 }
 
 public native trait HTMLCollection {
