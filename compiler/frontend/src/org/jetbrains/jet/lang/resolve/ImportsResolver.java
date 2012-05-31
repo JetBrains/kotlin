@@ -46,7 +46,7 @@ public class ImportsResolver {
     @NotNull
     private QualifiedExpressionResolver qualifiedExpressionResolver;
     @NotNull
-    private ObservableBindingTrace trace;
+    private BindingTrace trace;
 
     @Inject
     public void setContext(@NotNull TopDownAnalysisContext context) {
@@ -59,7 +59,7 @@ public class ImportsResolver {
     }
 
     @Inject
-    public void setTrace(@NotNull ObservableBindingTrace trace) {
+    public void setTrace(@NotNull BindingTrace trace) {
         this.trace = trace;
     }
 

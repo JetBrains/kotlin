@@ -90,7 +90,7 @@ public class TypeHierarchyResolver {
     }
 
     @Inject
-    public void setTrace(@NotNull ObservableBindingTrace trace) {
+    public void setTrace(@NotNull BindingTrace trace) {
         this.trace = trace;
     }
 

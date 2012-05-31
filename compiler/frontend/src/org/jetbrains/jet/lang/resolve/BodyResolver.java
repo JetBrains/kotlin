@@ -149,8 +149,8 @@ public class BodyResolver {
     }
 
     @Inject
-    public void setTrace(@NotNull ObservableBindingTrace trace) {
-        this.trace = trace;
+    public void setTrace(@NotNull BindingTrace trace) {
+        this.trace = new ObservableBindingTrace(trace);
     }
 
     public void resolveBehaviorDeclarationBodies(@NotNull BodiesResolveContext bodiesResolveContext) {

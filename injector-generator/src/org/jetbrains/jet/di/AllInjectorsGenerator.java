@@ -103,7 +103,7 @@ public class AllInjectorsGenerator {
         // Parameters
         generator.addPublicParameter(Project.class);
         generator.addPublicParameter(TopDownAnalysisParameters.class);
-        generator.addPublicParameter(ObservableBindingTrace.class);
+        generator.addPublicParameter(BindingTrace.class);
         generator.addParameter(ModuleDescriptor.class);
     }
 
