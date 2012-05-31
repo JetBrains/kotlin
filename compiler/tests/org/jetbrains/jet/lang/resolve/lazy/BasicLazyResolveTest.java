@@ -14,19 +14,15 @@ package org.jetbrains.jet.lang.resolve.lazy;/*
  * limitations under the License.
  */
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
@@ -34,7 +30,6 @@ import org.junit.After;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -65,130 +60,14 @@ public class BasicLazyResolveTest {
         ModuleDescriptor root = new ModuleDescriptor(Name.special("<root>"));
 
         Project project = jetCoreEnvironment.getProject();
-        final JetClass jetClass = JetPsiFactory.createClass(project, "package p; class C {fun f() {}}");
-        final JetClass genericJetClass = JetPsiFactory.createClass(project, "package p; open class G<T> {open fun f(): T {} fun a() {}}");
-        final JetClass genericJetClass2 = JetPsiFactory.createClass(project, "package p; class G2<E> : G<E> { fun g() : E {} override fun f() : T {}}");
-        final JetNamedFunction fooFunction1 = JetPsiFactory.createFunction(project, "package p; fun foo() {}");
-        final JetNamedFunction fooFunction2 = JetPsiFactory.createFunction(project, "package p; fun foo(a: C) {}");
 
-        ResolveSession session = new ResolveSession(project, root, new DeclarationProviderFactory() {
-            @Override
-            public DeclarationProvider getPackageMemberDeclarationProvider(@NotNull FqName packageFqName) {
-                if (packageFqName.equals(FqName.ROOT)) {
-                    return new DeclarationProvider() {
-                        @Override
-                        public List<JetDeclaration> getAllDeclarations() {
-                            return Collections.emptyList();
-                        }
-
-                        @NotNull
-                        @Override
-                        public List<JetNamedFunction> getFunctionDeclarations(@NotNull Name name) {
-                            return Collections.emptyList();
-                        }
-
-                        @NotNull
-                        @Override
-                        public List<JetProperty> getPropertyDeclarations(@NotNull Name name) {
-                            return Collections.emptyList();
-                        }
-
-                        @Override
-                        public JetClassOrObject getClassOrObjectDeclaration(@NotNull Name name) {
-                            return null;
-                        }
-
-                        @Override
-                        public boolean isPackageDeclared(@NotNull Name name) {
-                            return name.equals(Name.identifier("p"));
-                        }
-                    };
-                }
-                if (!packageFqName.equals(FqName.topLevel(Name.identifier("p")))) return null;
-                return new DeclarationProvider() {
-                    @Override
-                    public List<JetDeclaration> getAllDeclarations() {
-                        return Arrays.<JetDeclaration>asList(jetClass, genericJetClass, genericJetClass2, fooFunction1, fooFunction2);
-                    }
-
-                    @NotNull
-                    @Override
-                    public List<JetNamedFunction> getFunctionDeclarations(@NotNull Name name) {
-                        if (!FOO.equals(name)) return Collections.emptyList();
-                        return Arrays.asList(fooFunction1, fooFunction2);
-                    }
-
-                    @NotNull
-                    @Override
-                    public List<JetProperty> getPropertyDeclarations(@NotNull Name name) {
-                        return Collections.emptyList();
-                    }
-
-                    @Override
-                    public JetClassOrObject getClassOrObjectDeclaration(@NotNull Name name) {
-                        if (name.equals(Name.identifier("C"))) return jetClass;
-                        if (name.equals(Name.identifier("G"))) return genericJetClass;
-                        if (name.equals(Name.identifier("G2"))) return genericJetClass2;
-                        return null;
-                    }
-
-                    @Override
-                    public boolean isPackageDeclared(@NotNull Name name) {
-                        return false;
-                    }
-                };
-            }
-
-            @NotNull
-            @Override
-            public ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull JetClassOrObject jetClassOrObject) {
-                final JetClass jetClass = (JetClass) jetClassOrObject;
-                return new ClassMemberDeclarationProvider() {
-                    @NotNull
-                    @Override
-                    public JetClassOrObject getOwnerClassOrObject() {
-                        return jetClass;
-                    }
-
-                    @Override
-                    public List<JetDeclaration> getAllDeclarations() {
-                        return jetClass.getDeclarations();
-                    }
-
-                    private <D, T extends JetNamed> List<T> filter(List<D> list, final Class<T> t, final Name name) {
-                        //noinspection unchecked
-                        return (List) Lists.newArrayList(Collections2.filter(list, new Predicate<D>() {
-                            @Override
-                            public boolean apply(D d) {
-                                return t.isInstance(d) && ((JetNamed) d).getNameAsName().equals(name);
-                            }
-                        }));
-                    }
-
-                    @NotNull
-                    @Override
-                    public List<JetNamedFunction> getFunctionDeclarations(@NotNull final Name name) {
-                        return filter(jetClass.getDeclarations(), JetNamedFunction.class, name);
-                    }
-
-                    @NotNull
-                    @Override
-                    public List<JetProperty> getPropertyDeclarations(@NotNull Name name) {
-                        return filter(jetClass.getDeclarations(), JetProperty.class, name);
-                    }
-
-                    @Override
-                    public JetClassOrObject getClassOrObjectDeclaration(@NotNull Name name) {
-                        return null;
-                    }
-
-                    @Override
-                    public boolean isPackageDeclared(@NotNull Name name) {
-                        return false;
-                    }
-                };
-            }
-        });
+        ResolveSession session = new ResolveSession(project, root, new FileBasedDeclarationProviderFactory(Arrays.asList(
+                JetPsiFactory.createFile(project, "package p; class C {fun f() {}}"),
+                JetPsiFactory.createFile(project, "package p; open class G<T> {open fun f(): T {} fun a() {}}"),
+                JetPsiFactory.createFile(project, "package p; class G2<E> : G<E> { fun g() : E {} override fun f() : T {}}"),
+                JetPsiFactory.createFile(project, "package p; fun foo() {}"),
+                JetPsiFactory.createFile(project, "package p; fun foo(a: C) {}")
+        )));
 
         NamespaceDescriptor packageDescriptor = session.getPackageDescriptor(Name.identifier("p"));
         assertNotNull(packageDescriptor);
