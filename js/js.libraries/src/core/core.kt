@@ -37,11 +37,3 @@ native
 fun setInterval(callback : ()-> Unit, ms : Int) {}
 native
 fun setInterval(callback : ()-> Unit) {}
-
-
-native
-open class DomElement() {
-    val offsetLeft = 0.0;
-    val offsetTop = 0.0;
-    val offsetParent : DomElement? = DomElement();
-}
