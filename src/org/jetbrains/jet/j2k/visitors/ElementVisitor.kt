@@ -7,10 +7,10 @@ import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.List
 import org.jetbrains.jet.j2k.ConverterUtil.isAnnotatedAsNotNull
 
-public open class ElementVisitor(val myConverter : Converter) : JavaElementVisitor(), J2KVisitor {
+public open class ElementVisitor(val myConverter : Converter) : JavaElementVisitor() {
     private var myResult : Element = Element.EMPTY_ELEMENT
 
-    public override fun getConverter() : Converter {
+    public fun getConverter() : Converter {
         return myConverter
     }
 

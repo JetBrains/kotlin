@@ -10,7 +10,7 @@ import org.jetbrains.jet.j2k.util.AstUtil
 import java.util.LinkedList
 import java.util.List
 
-public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisitor<Type>(), J2KVisitor {
+public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisitor<Type>() {
     private var myResult : Type = EmptyType()
     public open fun getResult() : Type {
         return myResult
@@ -119,8 +119,6 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
         myResult = VarArg(myConverter.typeToType(ellipsisType?.getComponentType()))
         return myResult
     }
-
-    public override fun getConverter() : Converter = myConverter
 
     class object {
         private fun createQualifiedName(classType : PsiClassType) : String {
