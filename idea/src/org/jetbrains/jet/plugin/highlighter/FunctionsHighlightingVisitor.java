@@ -33,11 +33,6 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
     }
 
     @Override
-    public void visitJetElement(JetElement element) {
-        element.acceptChildren(this);
-    }
-
-    @Override
     public void visitNamedFunction(JetNamedFunction function) {
         PsiElement nameIdentifier = function.getNameIdentifier();
         if (nameIdentifier != null) {

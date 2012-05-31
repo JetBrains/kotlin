@@ -33,11 +33,6 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     @Override
-    public void visitJetElement(@NotNull JetElement element) {
-        element.acceptChildren(this);
-    }
-
-    @Override
     public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
         DeclarationDescriptor target = bindingContext.get(REFERENCE_TARGET, expression);
         if (target == null) {
