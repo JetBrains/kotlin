@@ -1427,7 +1427,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         if (owner instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) owner;
 
-            OverrideResolver.generateOverridesInFunctionGroup(propertyName, null, propertiesFromSupertypes, propertiesFromCurrent, classDescriptor,
+            OverrideResolver.generateOverridesInFunctionGroup(propertyName, propertiesFromSupertypes, propertiesFromCurrent, classDescriptor,
                                                               new OverrideResolver.DescriptorSink() {
                 @Override
                 public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
@@ -1467,7 +1467,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
             Set<SimpleFunctionDescriptor> functionsFromSupertypes = getFunctionsFromSupertypes(scopeData, methodName);
 
-            OverrideResolver.generateOverridesInFunctionGroup(methodName, null, functionsFromSupertypes, functionsFromCurrent, classDescriptor,
+            OverrideResolver.generateOverridesInFunctionGroup(methodName, functionsFromSupertypes, functionsFromCurrent, classDescriptor,
                                                               new OverrideResolver.DescriptorSink() {
                 @Override
                 public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
