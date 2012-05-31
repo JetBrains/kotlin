@@ -70,9 +70,8 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
             }
         }
 
-        val classTypeName : String? = createQualifiedName(classType)
-        if (classTypeName?.isEmpty().sure())
-        {
+        val classTypeName = createQualifiedName(classType)
+        if (classTypeName.isEmpty()) {
             return Identifier(getClassTypeName(classType))
         }
 
@@ -125,14 +124,13 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
             if (classType is PsiClassReferenceType)
             {
                 val reference : PsiJavaCodeReferenceElement? = (classType as PsiClassReferenceType).getReference()
-                if (reference != null && reference.isQualified())
-                {
-                    var result : String = Identifier(reference.getReferenceName()).toKotlin()
+                if (reference != null && reference.isQualified()) {
+                    var result : String = Identifier(reference.getReferenceName()!!).toKotlin()
                     var qualifier : PsiElement? = reference.getQualifier()
                     while (qualifier != null)
                     {
                         val p : PsiJavaCodeReferenceElement = (qualifier as PsiJavaCodeReferenceElement)
-                        result = Identifier(p.getReferenceName()).toKotlin() + "." + result
+                        result = Identifier(p.getReferenceName()!!).toKotlin() + "." + result
                         qualifier = p.getQualifier()
                     }
                     return result

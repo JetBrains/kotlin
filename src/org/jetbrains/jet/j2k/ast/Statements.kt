@@ -4,7 +4,7 @@ import java.util.List
 
 public abstract class Statement(): Element() {
     class object {
-        public val EMPTY_STATEMENT = object : Statement {
+        public val EMPTY_STATEMENT: Statement = object : Statement() {
             public override fun toKotlin() = ""
         }
     }
@@ -39,7 +39,7 @@ public open class ReturnStatement(val expression: Expression): Statement() {
 public open class IfStatement(val condition: Expression, val thenStatement: Statement, val elseStatement: Statement): Expression() {
     public override fun toKotlin(): String {
         val result: String = "if (" + condition.toKotlin() + ")\n" + thenStatement.toKotlin() + "\n"
-        if (elseStatement !is EmptyStatement) {
+        if (elseStatement != Statement.EMPTY_STATEMENT) {
             return result + "else\n" + elseStatement.toKotlin()
         }
 

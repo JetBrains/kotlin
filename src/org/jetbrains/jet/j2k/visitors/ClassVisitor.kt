@@ -7,12 +7,16 @@ import java.util.Set
 
 public open class ClassVisitor(): JavaRecursiveElementVisitor() {
     private val myClassIdentifiers: Set<String> = HashSet<String>()
+
     public open fun getClassIdentifiers(): Set<String> {
         return HashSet<String>(myClassIdentifiers)
     }
 
     public override fun visitClass(aClass: PsiClass?): Unit {
-        myClassIdentifiers.add(aClass?.getQualifiedName()!!)
+        val qName = aClass?.getQualifiedName()
+        if (qName != null) {
+            myClassIdentifiers.add(qName)
+        }
         super.visitClass(aClass)
     }
 }

@@ -17,7 +17,8 @@ public open class ExpressionVisitorForDirectObjectInheritors(converter: Converte
             myResult = DummyMethodCallExpression(Identifier("this"), "identityEquals", getConverter().elementToElement(expression?.getArgumentList()))
         }
         else if (superMethodInvocation(methodExpression, "toString")) {
-            myResult = DummyStringExpression(String.format("getJavaClass<%s>.getName() + '@' + Integer.toHexString(hashCode())", ExpressionVisitor.getClassName(methodExpression)))
+            myResult = DummyStringExpression(String.format("getJavaClass<%s>.getName() + '@' + Integer.toHexString(hashCode())",
+                    ExpressionVisitor.getClassName(methodExpression))!!)
         }
         else {
             convertMethodCallExpression(expression!!)

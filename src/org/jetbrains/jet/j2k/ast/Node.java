@@ -27,10 +27,6 @@ import java.util.Set;
  * @author ignatov
  */
 public abstract class Node {
-    @NotNull
-    final static Set<String> ONLY_KOTLIN_KEYWORDS = new HashSet<String>(Arrays.asList(
-            "package", "as", "type", "val", "var", "fun", "is", "in", "object", "when", "trait", "This"
-    ));
 
     @NotNull
     public final static Set<String> PRIMITIVE_TYPES = new HashSet<String>(Arrays.asList(

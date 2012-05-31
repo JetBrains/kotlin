@@ -12,7 +12,8 @@ import java.util.List
 import org.jetbrains.jet.j2k.ConverterUtil.countWritingAccesses
 
 public open class StatementVisitor(converter: Converter): ElementVisitor(converter) {
-    private var myResult: Statement =
+    private var myResult: Statement = Statement.EMPTY_STATEMENT
+
     public override fun getResult(): Statement {
         return myResult
     }
@@ -97,7 +98,7 @@ public open class StatementVisitor(converter: Converter): ElementVisitor(convert
                 BinaryExpression(end, Identifier("1"), "-")
             else
                 end)
-            myResult = ForeachWithRangeStatement(Identifier(firstChild.getName()),
+            myResult = ForeachWithRangeStatement(Identifier(firstChild.getName()!!),
                     getConverter().expressionToExpression(firstChild.getInitializer()),
                     endExpression,
                     getConverter().statementToStatement(body))

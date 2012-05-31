@@ -107,7 +107,7 @@ public open class Converter() {
         val typeParameters: List<Element> = elementsToElementList(psiClass.getTypeParameters())
         val implementsTypes: List<Type> = typesToNotNullableTypeList(psiClass.getImplementsListTypes())
         val extendsTypes: List<Type> = typesToNotNullableTypeList(psiClass.getExtendsListTypes())
-        val name: Identifier = Identifier(psiClass.getName())
+        val name: Identifier = Identifier(psiClass.getName()!!)
         val baseClassParams: List<Expression> = arrayList()
         val members: List<Member> = getMembers(psiClass)
         val visitor: SuperVisitor = SuperVisitor()
@@ -187,10 +187,13 @@ public open class Converter() {
     private fun fieldToField(field: PsiField, psiClass: PsiClass?): Field {
         val modifiers: Set<String> = modifiersListToModifiersSet(field.getModifierList())
         if (field is PsiEnumConstant?) {
-            return EnumConstant(Identifier(field.getName()), modifiers, typeToType(field.getType()), elementToElement(field.getArgumentList()))
+            return EnumConstant(Identifier(field.getName()!!),
+                    modifiers,
+                    typeToType(field.getType()),
+                    elementToElement(field.getArgumentList()))
         }
 
-        return Field(Identifier(field.getName()),
+        return Field(Identifier(field.getName()!!),
                 modifiers,
                 typeToType(field.getType()),
                 expressionToExpression(field.getInitializer(), field.getType()),
@@ -242,9 +245,8 @@ public open class Converter() {
 
     private fun createFunctionParameters(method: PsiMethod): ParameterList {
         val result: List<Parameter> = arrayList()
-        for (parameter : PsiParameter? in method.getParameterList().getParameters())
-        {
-            result.add(Parameter(Identifier(parameter?.getName()),
+        for (parameter : PsiParameter? in method.getParameterList().getParameters()) {
+            result.add(Parameter(Identifier(parameter?.getName()!!),
                     typeToType(parameter?.getType(),
                             ConverterUtil.isAnnotatedAsNotNull(parameter?.getModifierList())),
                     ConverterUtil.isReadOnly(parameter, method.getBody())))
@@ -376,7 +378,7 @@ public open class Converter() {
     }
 
     public open fun parameterToParameter(parameter: PsiParameter): Parameter {
-        return Parameter(Identifier(parameter.getName()),
+        return Parameter(Identifier(parameter.getName()!!),
                 typeToType(parameter.getType(),
                         ConverterUtil.isAnnotatedAsNotNull(parameter.getModifierList())), true)
     }
@@ -420,12 +422,10 @@ public open class Converter() {
         if (actualType != null) {
             if (isConversionNeeded(actualType, expectedType) && !(expression is LiteralExpression))
             {
-                var conversion: String? = PRIMITIVE_TYPE_CONVERSIONS.get(expectedType?.getCanonicalText())
-                if (conversion != null)
-                {
+                val conversion: String? = PRIMITIVE_TYPE_CONVERSIONS.get(expectedType?.getCanonicalText())
+                if (conversion != null) {
                     expression = DummyMethodCallExpression(expression, conversion, Identifier.EMPTY_IDENTIFIER)
                 }
-
             }
 
         }
@@ -467,7 +467,7 @@ public open class Converter() {
         }
 
         private fun createParametersFromFields(fields: List<Field>): List<Parameter> {
-            return fields.map { Parameter(Identifier("_" + it.identifier.getName()), it.`type`, true) }
+            return fields.map { Parameter(Identifier("_" + it.identifier.name), it.`type`, true) }
         }
 
         private fun createInitStatementsFromFields(fields: List<out Field>): List<Statement> {
@@ -529,7 +529,7 @@ public open class Converter() {
             return false
         }
         private fun removeEmpty(statements: List<Statement>): List<Statement> {
-            return statements.filterNot { it is EmptyStatement || it == Expression.EMPTY_EXPRESSION }
+            return statements.filterNot { it == Statement.EMPTY_STATEMENT || it == Expression.EMPTY_EXPRESSION }
         }
 
         private fun isNotOpenMethod(method: PsiMethod): Boolean {
@@ -547,7 +547,7 @@ public open class Converter() {
 
         private fun normalCase(method: PsiMethod): Boolean {
             var counter: Int = 0
-            for (s : HierarchicalMethodSignature? in method.getHierarchicalMethodSignature()?.getSuperSignatures())
+            for (s : HierarchicalMethodSignature? in method.getHierarchicalMethodSignature().getSuperSignatures())
             {
                 var containingClass: PsiClass? = s?.getMethod()?.getContainingClass()
                 var qualifiedName: String? = (if (containingClass != null)
@@ -580,16 +580,15 @@ public open class Converter() {
         }
 
         private fun isOverrideObjectDirect(method: PsiMethod): Boolean {
-            var superSignatures: List<HierarchicalMethodSignature?>? = method?.getHierarchicalMethodSignature()?.getSuperSignatures()
+            var superSignatures: List<HierarchicalMethodSignature?>? = method.getHierarchicalMethodSignature().getSuperSignatures()
             if (superSignatures?.size()!! == 1)
             {
                 val containingClass: PsiClass? = superSignatures?.get(0)?.getMethod()?.getContainingClass()
                 val qualifiedName: String? = (if (containingClass != null)
-                    containingClass?.getQualifiedName()
+                    containingClass.getQualifiedName()
                 else
                     "")
-                if (qualifiedName != null && qualifiedName?.equals(JAVA_LANG_OBJECT)!!)
-                {
+                if (qualifiedName == JAVA_LANG_OBJECT) {
                     return true
                 }
 
@@ -627,7 +626,7 @@ public open class Converter() {
             if (identifier == null)
                 return Identifier.EMPTY_IDENTIFIER
 
-            return Identifier(identifier?.getText())
+            return Identifier(identifier.getText()!!)
         }
 
         public open fun modifiersListToModifiersSet(modifierList: PsiModifierList?): Set<String> {
