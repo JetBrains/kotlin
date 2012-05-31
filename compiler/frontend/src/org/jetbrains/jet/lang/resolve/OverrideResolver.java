@@ -112,7 +112,11 @@ public class OverrideResolver {
             }
         }
 
-        List<CallableMemberDescriptor> functionsFromSupertypes = getDescriptorsFromSupertypes(classDescriptor);
+        doGenerateOverridesInAClass(classDescriptor);
+    }
+
+    private void doGenerateOverridesInAClass(final MutableClassDescriptor classDescriptor) {
+        List<CallableMemberDescriptor> functionsFromSupertypes = getCallableMembersFromSupertypes(classDescriptor);
 
         MultiMap<Name, CallableMemberDescriptor> functionsFromSupertypesByName = groupDescriptorsByName(functionsFromSupertypes);
 
@@ -122,11 +126,12 @@ public class OverrideResolver {
         functionNames.addAll(functionsFromSupertypesByName.keySet());
         functionNames.addAll(functionsFromCurrentByName.keySet());
 
-        Set<CallableMemberDescriptor> fakeOverrides = Sets.newHashSet();
         for (Name functionName : functionNames) {
-            generateOverridesInFunctionGroup(functionName, fakeOverrides,
-                    functionsFromSupertypesByName.get(functionName),
-                    functionsFromCurrentByName.get(functionName),
+            Collection<CallableMemberDescriptor> fromSupertypes = functionsFromSupertypesByName.get(functionName);
+            Collection<CallableMemberDescriptor> fromCurrent = functionsFromCurrentByName.get(functionName);
+            generateOverridesInFunctionGroup(functionName,
+                                             fromSupertypes,
+                                             fromCurrent,
                     classDescriptor,
                     new DescriptorSink() {
                         @Override
@@ -144,7 +149,8 @@ public class OverrideResolver {
 
                         @Override
                         public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
-                            JetDeclaration jetProperty = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), fromCurrent);
+                            JetDeclaration jetProperty = (JetDeclaration) BindingContextUtils
+                                    .descriptorToDeclaration(trace.getBindingContext(), fromCurrent);
                             trace.report(Errors.CONFLICTING_OVERLOADS.on(jetProperty, fromCurrent, fromCurrent.getContainingDeclaration().getName().getName()));
                         }
                     });
@@ -160,7 +166,7 @@ public class OverrideResolver {
             resolveUnknownVisibilityForMember(declaration, memberDescriptor);
         }
     }
-    
+
     public interface DescriptorSink {
         void addToScope(@NotNull CallableMemberDescriptor fakeOverride);
         
@@ -169,7 +175,6 @@ public class OverrideResolver {
     
     public static void generateOverridesInFunctionGroup(
             @NotNull Name name,
-            @Nullable Set<CallableMemberDescriptor> fakeOverrides,
             @NotNull Collection<? extends CallableMemberDescriptor> functionsFromSupertypes,
             @NotNull Collection<? extends CallableMemberDescriptor> functionsFromCurrent,
             @NotNull ClassDescriptor current,
@@ -207,9 +212,6 @@ public class OverrideResolver {
                 CallableMemberDescriptor fakeOverride = functionFromSupertype.copy(current, false, !isVisible, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
                 OverridingUtil.bindOverride(fakeOverride, functionFromSupertype);
                 fakeOverrideList.add(fakeOverride);
-                if (fakeOverrides != null) {
-                    fakeOverrides.add(fakeOverride);
-                }
                 sink.addToScope(fakeOverride);
             }
         }
@@ -224,16 +226,15 @@ public class OverrideResolver {
     }
 
 
-    private static List<CallableMemberDescriptor> getDescriptorsFromSupertypes(ClassDescriptor classDescriptor) {
+    private static List<CallableMemberDescriptor> getCallableMembersFromSupertypes(ClassDescriptor classDescriptor) {
         Set<CallableMemberDescriptor> r = Sets.newLinkedHashSet();
         for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
-            r.addAll(getDescriptorsOfType(supertype.getMemberScope()));
+            r.addAll(getCallableMembersFromType(supertype.getMemberScope()));
         }
         return new ArrayList<CallableMemberDescriptor>(r);
     }
 
-    private static <T extends DeclarationDescriptor> List<CallableMemberDescriptor> getDescriptorsOfType(
-            JetScope scope) {
+    private static List<CallableMemberDescriptor> getCallableMembersFromType(JetScope scope) {
         List<CallableMemberDescriptor> r = Lists.newArrayList();
         for (DeclarationDescriptor decl : scope.getAllDescriptors()) {
             if (decl instanceof PropertyDescriptor || decl instanceof SimpleFunctionDescriptor) {
