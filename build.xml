@@ -141,7 +141,7 @@
       <jar jarfile="${kotlin-home}/lib/kotlin-jslib.jar">
         <fileset dir = "${basedir}/js/js.libraries/src"/>
       </jar>
-      <copyfile src="${basedir}/js/js.translator/testFiles/kotlin_lib.js" dest="${kotlin-home}/lib/kotlinLib.js"/>
+      <copy file="${basedir}/js/js.translator/testFiles/kotlin_lib.js" tofile="${kotlin-home}/lib/kotlinLib.js"/>
     </target>
 
     <target name="compiler">
