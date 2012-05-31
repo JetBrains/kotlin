@@ -99,7 +99,6 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
     public override fun visitLiteralExpression(expression: PsiLiteralExpression?): Unit {
         val value: Any? = expression?.getValue()
         var text: String = expression?.getText()!!
-        var isQuotingNeeded: Boolean = true
         val `type`: PsiType? = expression?.getType()
         if (`type` != null) {
             val canonicalTypeStr: String? = `type`.getCanonicalText()
