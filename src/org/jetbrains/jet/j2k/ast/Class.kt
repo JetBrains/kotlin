@@ -5,12 +5,10 @@ import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.J2KConverterFlags
 import org.jetbrains.jet.j2k.ast.types.ClassType
 import org.jetbrains.jet.j2k.ast.types.Type
-import org.jetbrains.jet.j2k.util.AstUtil
 import java.util.HashSet
 import java.util.LinkedList
 import java.util.List
 import java.util.Set
-import org.jetbrains.jet.j2k.util.AstUtil.*
 import java.util.ArrayList
 
 public open class Class(converter : Converter,

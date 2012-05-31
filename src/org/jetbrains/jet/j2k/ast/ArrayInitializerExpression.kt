@@ -1,9 +1,9 @@
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.util.AstUtil
 import org.jetbrains.jet.j2k.ast.types.Type
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import java.util.*
+import com.intellij.openapi.util.text.StringUtil
 
 public open class ArrayInitializerExpression(val `type` : Type, val initializers : List<Expression>) : Expression() {
     public override fun toKotlin() : String {
@@ -16,12 +16,11 @@ public open class ArrayInitializerExpression(val `type` : Type, val initializers
 
     private fun createArrayFunction() : String {
         var sType : String? = innerTypeStr()
-        if (Node.PRIMITIVE_TYPES.contains(sType))
-        {
+        if (Node.PRIMITIVE_TYPES.contains(sType)) {
             return sType + "Array"
         }
 
-        return AstUtil.lowerFirstCharacter(`type`.convertedToNotNull().toKotlin())
+        return StringUtil.decapitalize(`type`.convertedToNotNull().toKotlin())!!
     }
 
     private fun innerTypeStr() : String {

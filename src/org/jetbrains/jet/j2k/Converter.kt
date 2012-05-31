@@ -11,7 +11,6 @@ import org.jetbrains.jet.j2k.ast.Enum
 import org.jetbrains.jet.j2k.ast.types.ClassType
 import org.jetbrains.jet.j2k.ast.types.EmptyType
 import org.jetbrains.jet.j2k.ast.types.Type
-import org.jetbrains.jet.j2k.util.AstUtil
 import org.jetbrains.jet.j2k.visitors.*
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import java.util.*
@@ -663,18 +662,18 @@ public open class Converter() {
                 return false
             }
 
-            var typeMap: Map<String?, String?> = HashMap<String?, String?>()
-            typeMap?.put(JAVA_LANG_BYTE, "byte")
-            typeMap?.put(JAVA_LANG_SHORT, "short")
-            typeMap?.put(JAVA_LANG_INTEGER, "int")
-            typeMap?.put(JAVA_LANG_LONG, "long")
-            typeMap?.put(JAVA_LANG_FLOAT, "float")
-            typeMap?.put(JAVA_LANG_DOUBLE, "double")
-            typeMap?.put(JAVA_LANG_CHARACTER, "char")
-            var expectedStr: String? = expected.getCanonicalText()
-            var actualStr: String? = actual.getCanonicalText()
-            var o1: Boolean = AstUtil.getOrElse(typeMap, actualStr, "")?.equals(expectedStr)!!
-            var o2: Boolean = AstUtil.getOrElse(typeMap, expectedStr, "")?.equals(actualStr)!!
+            val typeMap: Map<String, String> = HashMap<String, String>()
+            typeMap.put(JAVA_LANG_BYTE, "byte")
+            typeMap.put(JAVA_LANG_SHORT, "short")
+            typeMap.put(JAVA_LANG_INTEGER, "int")
+            typeMap.put(JAVA_LANG_LONG, "long")
+            typeMap.put(JAVA_LANG_FLOAT, "float")
+            typeMap.put(JAVA_LANG_DOUBLE, "double")
+            typeMap.put(JAVA_LANG_CHARACTER, "char")
+            val expectedStr: String? = expected.getCanonicalText()
+            val actualStr: String? = actual.getCanonicalText()
+            val o1: Boolean = expectedStr == typeMap[actualStr]
+            val o2: Boolean = actualStr == typeMap[expectedStr]
             return actualStr != expectedStr && (!(o1 xor o2))
         }
     }

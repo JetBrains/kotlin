@@ -2,7 +2,6 @@ package org.jetbrains.jet.j2k.ast.types
 
 import org.jetbrains.jet.j2k.ast.Element
 import org.jetbrains.jet.j2k.ast.Identifier
-import org.jetbrains.jet.j2k.util.AstUtil
 import java.util.Collections
 import java.util.List
 

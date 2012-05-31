@@ -6,9 +6,9 @@ import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.J2KConverterFlags
 import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.j2k.ast.types.*
-import org.jetbrains.jet.j2k.util.AstUtil
 import java.util.LinkedList
 import java.util.List
+import com.intellij.openapi.util.text.StringUtil
 
 public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisitor<Type>() {
     private var myResult : Type = EmptyType()
@@ -22,7 +22,7 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
             myResult = PrimitiveType(Identifier("Unit"))
         }
         else if (Node.PRIMITIVE_TYPES.contains(name)) {
-            myResult = PrimitiveType(Identifier(AstUtil.upperFirstCharacter(name)))
+            myResult = PrimitiveType(Identifier(StringUtil.capitalize(name)))
         }
         else {
             myResult = PrimitiveType(Identifier(name))

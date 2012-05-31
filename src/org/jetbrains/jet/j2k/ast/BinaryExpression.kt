@@ -1,6 +1,5 @@
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.util.AstUtil
 import java.util.Arrays
 import java.util.List
 
