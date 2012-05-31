@@ -1,4 +1,4 @@
-package js.dom
+package js.dom.core
 
 import js.native
 import js.noImpl
@@ -9,17 +9,17 @@ public native trait DOMImplementationRegistry {
 }
 
 public native trait DOMException {
-    public native var code: Number = js.noImpl
+    public native var code: Double = js.noImpl
 }
 
 public native trait DOMStringList {
-    public native val length: Number = js.noImpl
+    public native val length: Double = js.noImpl
     public native fun item(index: Number): String = js.noImpl
     public native fun contains(str: String): Boolean = js.noImpl
 }
 
 public native trait NameList {
-    public native val length: Number = js.noImpl
+    public native val length: Double = js.noImpl
     public native fun getName(index: Number): String = js.noImpl
     public native fun getNamespaceURI(index: Number): String = js.noImpl
     public native fun contains(str: String): Boolean = js.noImpl
@@ -27,7 +27,7 @@ public native trait NameList {
 }
 
 public native trait DOMImplementationList {
-    public native val length: Number = js.noImpl
+    public native val length: Double = js.noImpl
     public native fun item(index: Number): DOMImplementation? = js.noImpl
 }
 
@@ -66,11 +66,11 @@ public native trait Document : Node {
     public native fun createProcessingInstruction(target: String, data: String): ProcessingInstruction? = js.noImpl
     public native fun createAttribute(name: String): Attr? = js.noImpl
     public native fun createEntityReference(name: String): EntityReference? = js.noImpl
-    public native fun getElementsByTagName(tagname: String): NodeList? = js.noImpl
+    public native fun getElementsByTagName(tagname: String): NodeList = js.noImpl
     public native fun importNode(importedNode: Node, deep: Boolean): Node? = js.noImpl
     public native fun createElementNS(namespaceURI: String, qualifiedName: String): Element? = js.noImpl
     public native fun createAttributeNS(namespaceURI: String, qualifiedName: String): Attr? = js.noImpl
-    public native fun getElementsByTagNameNS(namespaceURI: String, localName: String): NodeList? = js.noImpl
+    public native fun getElementsByTagNameNS(namespaceURI: String, localName: String): NodeList = js.noImpl
     public native fun getElementById(elementId: String): Element? = js.noImpl
     public native fun adoptNode(source: Node): Node? = js.noImpl
     public native fun normalizeDocument(): Unit = js.noImpl
@@ -80,7 +80,7 @@ public native trait Document : Node {
 public native trait Node {
     public native val nodeName: String = js.noImpl
     public native var nodeValue: String = js.noImpl
-    public native val nodeType: Number = js.noImpl
+    public native val nodeType: Double = js.noImpl
     public native val parentNode: Node = js.noImpl
     public native val childNodes: NodeList = js.noImpl
     public native val firstChild: Node = js.noImpl
@@ -115,12 +115,12 @@ public native trait Node {
 }
 
 public native trait NodeList {
-    public native val length: Number = js.noImpl
+    public native val length: Double = js.noImpl
     public native fun item(index: Number): Node? = js.noImpl
 }
 
 public native trait NamedNodeMap {
-    public native val length: Number = js.noImpl
+    public native val length: Double = js.noImpl
     public native fun getNamedItem(name: String): Node? = js.noImpl
     public native fun setNamedItem(arg: Node): Node? = js.noImpl
     public native fun removeNamedItem(name: String): Node? = js.noImpl
@@ -132,7 +132,7 @@ public native trait NamedNodeMap {
 
 public native trait CharacterData : Node {
     public native var data: String = js.noImpl
-    public native val length: Number = js.noImpl
+    public native val length: Double = js.noImpl
     public native fun substringData(offset: Number, count: Number): String = js.noImpl
     public native fun appendData(arg: String): Unit = js.noImpl
     public native fun insertData(offset: Number, arg: String): Unit = js.noImpl
@@ -158,13 +158,13 @@ public native trait Element : Node {
     public native fun getAttributeNode(name: String): Attr? = js.noImpl
     public native fun setAttributeNode(newAttr: Attr): Attr? = js.noImpl
     public native fun removeAttributeNode(oldAttr: Attr): Attr? = js.noImpl
-    public native fun getElementsByTagName(name: String): NodeList? = js.noImpl
+    public native fun getElementsByTagName(name: String): NodeList = js.noImpl
     public native fun getAttributeNS(namespaceURI: String, localName: String): String = js.noImpl
     public native fun setAttributeNS(namespaceURI: String, qualifiedName: String, value: String): Unit = js.noImpl
     public native fun removeAttributeNS(namespaceURI: String, localName: String): Unit = js.noImpl
     public native fun getAttributeNodeNS(namespaceURI: String, localName: String): Unit = js.noImpl
     public native fun setAttributeNodeNS(newAttr: Attr): Unit = js.noImpl
-    public native fun getElementsByTagNameNS(namespaceURI: String, localName: String): NodeList? = js.noImpl
+    public native fun getElementsByTagNameNS(namespaceURI: String, localName: String): NodeList = js.noImpl
     public native fun hasAttribute(name: String): Boolean = js.noImpl
     public native fun hasAttributeNS(namespaceURI: String, localName: String): Boolean = js.noImpl
     public native fun setIdAttribute(name: String, isId: Boolean): Unit = js.noImpl
@@ -194,7 +194,7 @@ public native trait UserDataHandler {
 }
 
 public native trait DOMError {
-    public native var severity: Number = js.noImpl
+    public native var severity: Double = js.noImpl
     public native var message: String = js.noImpl
     public native var `type`: String = js.noImpl
     public native var relatedException: Any = js.noImpl
@@ -207,10 +207,10 @@ public native trait DOMErrorHandler {
 }
 
 public native trait DOMLocator {
-    public native var lineNumber: Number = js.noImpl
-    public native var columnNumber: Number = js.noImpl
-    public native var byteOffset: Number = js.noImpl
-    public native var utf16Offset: Number = js.noImpl
+    public native var lineNumber: Double = js.noImpl
+    public native var columnNumber: Double = js.noImpl
+    public native var byteOffset: Double = js.noImpl
+    public native var utf16Offset: Double = js.noImpl
     public native var relatedNode: Node = js.noImpl
     public native var uri: String = js.noImpl
 }

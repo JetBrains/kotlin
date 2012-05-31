@@ -62,14 +62,13 @@ public abstract class Config {
             "/core/math.kt",
             "/core/json.kt",
             "/raphael/raphael.kt",
-            "/html5/canvas.kt",
-            "/html5/files.kt",
-            "/html5/image.kt",
             "/stdlib/JUMaps.kt",
             "/stdlib/browser.kt",
-            "/core/dom.kt"
-            // TODO
-            // "/core/dom/core.kt"
+            "/core/dom.kt",
+            "/dom/domcore.kt",
+            "/dom/html/htmlcore.kt",
+            "/dom/html/window.kt",
+            "/dom/html5/canvas.kt"
     );
 
     public static final String LIBRARIES_LOCATION = "js/js.libraries/src";
