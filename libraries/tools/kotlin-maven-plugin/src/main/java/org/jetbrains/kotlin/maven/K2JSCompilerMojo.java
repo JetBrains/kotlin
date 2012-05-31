@@ -84,7 +84,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         super.execute();
-        if (copyLibraryJS) {
+        if (copyLibraryJS != null && copyLibraryJS.booleanValue()) {
             getLog().info("Copying kotlin JS library to " + outputKotlinJSFile);
 
             // lets copy the kotlin library into the output directory
@@ -107,7 +107,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
                 throw new MojoExecutionException(e.getMessage(), e);
             }
         }
-        if (appendLibraryJS) {
+        if (appendLibraryJS != null && appendLibraryJS.booleanValue()) {
             getLog().info("Appending Kotlin Library JS to the generated file " + outputFile);
 
             // lets copy the kotlin library into the output directory
