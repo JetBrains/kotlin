@@ -139,7 +139,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor {
     }
 
     private JetType resolveBoundType(@NotNull JetTypeReference boundTypeReference) {
-        return resolveSession.getTypeResolver()
+        return resolveSession.getInjector().getTypeResolver()
                     .resolveType(containingDeclaration.getScopeForClassHeaderResolution(), boundTypeReference,
                                  resolveSession.getTrace(), false);
     }

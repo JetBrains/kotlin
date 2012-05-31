@@ -247,10 +247,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         public Collection<? extends JetType> getSupertypes() {
             if (supertypes == null) {
                 JetClassOrObject declaration = declarationProvider.getOwnerClassOrObject();
-                this.supertypes = resolveSession.getDescriptorResolver()
+                this.supertypes = resolveSession.getInjector().getDescriptorResolver()
                         .resolveSupertypes(getScopeForClassHeaderResolution(),
-                                                     declaration,
-                                                     resolveSession.getTrace());
+                                           declaration,
+                                           resolveSession.getTrace());
             }
             return supertypes;
         }

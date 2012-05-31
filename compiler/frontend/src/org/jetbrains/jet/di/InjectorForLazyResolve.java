@@ -18,14 +18,19 @@
 package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
+import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadingConflictResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -33,21 +38,29 @@ import javax.annotation.PreDestroy;
 public class InjectorForLazyResolve {
 
     private final Project project;
+    private final ResolveSession resolveSession;
+    private final BindingTrace bindingTrace;
     private DescriptorResolver descriptorResolver;
     private ExpressionTypingServices expressionTypingServices;
     private TypeResolver typeResolver;
+    private ScopeProvider scopeProvider;
     private AnnotationResolver annotationResolver;
     private CallResolver callResolver;
     private OverloadingConflictResolver overloadingConflictResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
 
     public InjectorForLazyResolve(
-        @NotNull Project project
+        @NotNull Project project,
+        @NotNull ResolveSession resolveSession,
+        @NotNull BindingTrace bindingTrace
     ) {
         this.project = project;
+        this.resolveSession = resolveSession;
+        this.bindingTrace = bindingTrace;
         this.descriptorResolver = new DescriptorResolver();
         this.expressionTypingServices = new ExpressionTypingServices();
         this.typeResolver = new TypeResolver();
+        this.scopeProvider = new ScopeProvider(resolveSession);
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.overloadingConflictResolver = new OverloadingConflictResolver();
@@ -90,6 +103,10 @@ public class InjectorForLazyResolve {
 
     public TypeResolver getTypeResolver() {
         return this.typeResolver;
+    }
+
+    public ScopeProvider getScopeProvider() {
+        return this.scopeProvider;
     }
 
 }

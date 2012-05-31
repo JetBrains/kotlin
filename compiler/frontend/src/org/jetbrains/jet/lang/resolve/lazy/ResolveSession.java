@@ -16,10 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,10 +33,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -42,7 +41,6 @@ import java.util.Set;
 public class ResolveSession {
     private final ModuleDescriptor module;
     private final LazyPackageDescriptor rootPackage;
-    private final ScopeProvider scopeProvider;
 
     private final BindingTrace trace = new BindingTraceContext();
     private final DeclarationProviderFactory declarationProviderFactory;
@@ -55,24 +53,26 @@ public class ResolveSession {
             @NotNull ModuleDescriptor rootDescriptor,
             @NotNull DeclarationProviderFactory declarationProviderFactory
     ) {
-        this.injector = new InjectorForLazyResolve(project);
+        TopDownAnalysisParameters mockParameters = new TopDownAnalysisParameters(new Predicate<PsiFile>() {
+            @Override
+            public boolean apply(@Nullable PsiFile file) {
+                throw new UnsupportedOperationException("This shouldn't be called from within lazy resolve");
+            }
+        }, false, false, Collections.<AnalyzerScriptParameter>emptyList());
+
+        this.injector = new InjectorForLazyResolve(project, this, mockParameters, trace);
         this.module = rootDescriptor;
         DeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(FqName.ROOT);
         assert provider != null : "No declaration provider for root package in " + rootDescriptor;
         this.rootPackage = new LazyPackageDescriptor(rootDescriptor, JetPsiUtil.ROOT_NAMESPACE_NAME, this, provider);
         rootDescriptor.setRootNs(rootPackage);
 
-        this.scopeProvider = new ScopeProvider(this);
         this.declarationProviderFactory = declarationProviderFactory;
     }
 
     @NotNull
-    public DescriptorResolver getDescriptorResolver() {
-        return injector.getDescriptorResolver();
-    }
-
-    public TypeResolver getTypeResolver() {
-        return injector.getTypeResolver();
+    public InjectorForLazyResolve getInjector() {
+        return injector;
     }
 
     @Nullable
@@ -108,11 +108,6 @@ public class ResolveSession {
         throw new UnsupportedOperationException(); // TODO
     }
 
-    @NotNull
-    public ScopeProvider getScopeProvider() {
-        return scopeProvider;
-    }
-
     public Collection<DeclarationDescriptor> getDescriptorsForDeclarations(Collection<PsiElement> declarationsOrFiles) {
         final List<DeclarationDescriptor> descriptors = Lists.newArrayList();
         for (PsiElement declarationOrFile : declarationsOrFiles) {
@@ -135,7 +130,7 @@ public class ResolveSession {
 
                 @Override
                 public void visitDeclaration(JetDeclaration dcl) {
-                    JetScope scope = scopeProvider.getResolutionScopeForDeclaration(dcl);
+                    JetScope scope = injector.getScopeProvider().getResolutionScopeForDeclaration(dcl);
                     collectDescriptors(scope, dcl);
                 }
 
@@ -185,7 +180,7 @@ public class ResolveSession {
         PsiElement parent = element.getParent();
         if (parent instanceof JetFile) {
             JetFile file = (JetFile) parent;
-            return getScopeProvider().getFileScopeForDeclarationResolution(file);
+            return getInjector().getScopeProvider().getFileScopeForDeclarationResolution(file);
         }
 
         if (parent instanceof JetClassBody) {

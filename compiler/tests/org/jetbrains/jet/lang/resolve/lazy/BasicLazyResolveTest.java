@@ -14,7 +14,7 @@ package org.jetbrains.jet.lang.resolve.lazy;/*
  * limitations under the License.
  */
 
-import com.google.common.base.Predicates;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
@@ -66,8 +66,8 @@ public class BasicLazyResolveTest {
 
         Project project = jetCoreEnvironment.getProject();
         final JetClass jetClass = JetPsiFactory.createClass(project, "package p; class C {fun f() {}}");
-        final JetClass genericJetClass = JetPsiFactory.createClass(project, "package p; open class G<T> {fun f(): T {}}");
-        final JetClass genericJetClass2 = JetPsiFactory.createClass(project, "package p; class G2<E> : G<E> {}");
+        final JetClass genericJetClass = JetPsiFactory.createClass(project, "package p; open class G<T> {open fun f(): T {} fun a() {}}");
+        final JetClass genericJetClass2 = JetPsiFactory.createClass(project, "package p; class G2<E> : G<E> { fun g() : E {} override fun f() : T {}}");
         final JetNamedFunction fooFunction1 = JetPsiFactory.createFunction(project, "package p; fun foo() {}");
         final JetNamedFunction fooFunction2 = JetPsiFactory.createFunction(project, "package p; fun foo(a: C) {}");
 
@@ -155,21 +155,26 @@ public class BasicLazyResolveTest {
                         return jetClass.getDeclarations();
                     }
 
-                    private <D, T> List<T> filter(List<D> list, Class<T> t) {
+                    private <D, T extends JetNamed> List<T> filter(List<D> list, final Class<T> t, final Name name) {
                         //noinspection unchecked
-                        return (List) Lists.newArrayList(Collections2.filter(list, Predicates.instanceOf(t)));
+                        return (List) Lists.newArrayList(Collections2.filter(list, new Predicate<D>() {
+                            @Override
+                            public boolean apply(D d) {
+                                return t.isInstance(d) && ((JetNamed) d).getNameAsName().equals(name);
+                            }
+                        }));
                     }
 
                     @NotNull
                     @Override
-                    public List<JetNamedFunction> getFunctionDeclarations(@NotNull Name name) {
-                        return filter(jetClass.getDeclarations(), JetNamedFunction.class);
+                    public List<JetNamedFunction> getFunctionDeclarations(@NotNull final Name name) {
+                        return filter(jetClass.getDeclarations(), JetNamedFunction.class, name);
                     }
 
                     @NotNull
                     @Override
                     public List<JetProperty> getPropertyDeclarations(@NotNull Name name) {
-                        return filter(jetClass.getDeclarations(), JetProperty.class);
+                        return filter(jetClass.getDeclarations(), JetProperty.class, name);
                     }
 
                     @Override
@@ -215,18 +220,23 @@ public class BasicLazyResolveTest {
         assertEquals(classDescriptor, foo2.getValueParameters().get(0).getType().getConstructor().getDeclarationDescriptor());
         assertEquals(packageDescriptor, foo2.getContainingDeclaration());
 
-        ClassifierDescriptor genericClassifier2 = packageDescriptor.getMemberScope().getClassifier(Name.identifier("G2"));
-        assertNotNull(genericClassifier2);
-        assertEquals(1, genericClassifier2.getTypeConstructor().getSupertypes().size());
-        assertEquals("G<E>", genericClassifier2.getTypeConstructor().getSupertypes().iterator().next().toString());
-
         ClassifierDescriptor genericClassifier = packageDescriptor.getMemberScope().getClassifier(Name.identifier("G"));
         assertNotNull(genericClassifier);
+        ClassDescriptor genericClass = (ClassDescriptor) genericClassifier;
+        assertEquals(Modality.OPEN, genericClass.getModality());
         assertEquals(1, genericClassifier.getTypeConstructor().getParameters().size());
         TypeParameterDescriptor typeParameterDescriptor_T = genericClassifier.getTypeConstructor().getParameters().get(0);
         assertEquals(JetStandardClasses.getNullableAnyType(),
                      typeParameterDescriptor_T.getUpperBoundsAsType());
         assertEquals("G<T>", genericClassifier.getDefaultType().toString());
         assertEquals(typeParameterDescriptor_T.getDefaultType(), genericClassifier.getDefaultType().getMemberScope().getFunctions(Name.identifier("f")).iterator().next().getReturnType());
+
+        ClassifierDescriptor genericClassifier2 = packageDescriptor.getMemberScope().getClassifier(Name.identifier("G2"));
+        assertNotNull(genericClassifier2);
+        assertEquals(1, genericClassifier2.getTypeConstructor().getSupertypes().size());
+        assertEquals("G<E>", genericClassifier2.getTypeConstructor().getSupertypes().iterator().next().toString());
+        assertEquals(1, genericClassifier2.getDefaultType().getMemberScope().getFunctions(Name.identifier("g")).size());
+        assertEquals(1, genericClassifier2.getDefaultType().getMemberScope().getFunctions(Name.identifier("a")).size());
+        assertEquals(1, genericClassifier2.getDefaultType().getMemberScope().getFunctions(Name.identifier("f")).iterator().next().getOverriddenDescriptors().size());
     }
 }
