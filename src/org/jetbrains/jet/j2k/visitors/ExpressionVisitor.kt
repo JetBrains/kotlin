@@ -138,14 +138,16 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
     }
 
     public override fun visitMethodCallExpression(expression: PsiMethodCallExpression?): Unit {
-        if (!SuperVisitor.isSuper(expression!!.getMethodExpression()) || !isInsidePrimaryConstructor(expression!!))
-        {
-            myResult = MethodCallExpression(getConverter().expressionToExpression(expression?.getMethodExpression()),
-                    getConverter().argumentsToExpressionList(expression!!),
-                    getConverter().typesToTypeList(expression?.getTypeArguments()!!),
-                    getConverter().typeToType(expression?.getType()).nullable)
-        }
+        convertMethodCallExpression(expression!!)
+    }
 
+    protected fun convertMethodCallExpression(expression: PsiMethodCallExpression) {
+        if (!SuperVisitor.isSuper(expression.getMethodExpression()) || !isInsidePrimaryConstructor(expression)) {
+            myResult = MethodCallExpression(getConverter().expressionToExpression(expression.getMethodExpression()),
+                    getConverter().argumentsToExpressionList(expression),
+                    getConverter().typesToTypeList(expression.getTypeArguments()),
+                    getConverter().typeToType(expression.getType()).nullable)
+        }
     }
 
     public override fun visitNewExpression(expression: PsiNewExpression?): Unit {
