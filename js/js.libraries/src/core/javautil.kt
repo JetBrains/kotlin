@@ -18,7 +18,7 @@ public fun comparator<T>(f : (T, T) -> Int) : Comparator<T> = js.noImpl
 library
 public trait Iterator<T> {
     open fun next() : T = js.noImpl
-    open val hasNext : Boolean = js.noImpl
+    open fun hasNext() : Boolean = js.noImpl
     open fun remove() : Unit = js.noImpl
 }
 

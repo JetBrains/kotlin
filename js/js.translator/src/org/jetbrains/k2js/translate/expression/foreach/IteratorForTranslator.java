@@ -21,6 +21,7 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetForExpression;
@@ -84,7 +85,7 @@ public final class IteratorForTranslator extends ForTranslator {
     @NotNull
     private JsExpression hasNextMethodInvocation() {
         CallableDescriptor hasNextFunction = getHasNextCallable(bindingContext(), getLoopRange(expression));
-        if (hasNextFunction instanceof FunctionDescriptor) {
+        if (hasNextFunction instanceof FunctionDescriptor && !isJavaUtilIterator(hasNextFunction)) {
             return translateMethodInvocation(iterator.reference(), hasNextFunction);
         }
 
@@ -99,6 +100,12 @@ public final class IteratorForTranslator extends ForTranslator {
             invocation.setQualifier(hasNext);
             return invocation;
         }
+    }
+
+    // kotlin iterator define hasNext as property, but java util as function, our js side expects as property
+    private static boolean isJavaUtilIterator(CallableDescriptor descriptor) {
+        final DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
+        return declaration != null && declaration.getName().getName().equals("Iterator");
     }
 
     @NotNull
