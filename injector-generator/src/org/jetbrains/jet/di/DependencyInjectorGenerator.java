@@ -449,7 +449,7 @@ public class DependencyInjectorGenerator {
             dependency = fields.iterator().next();
         }
         else {
-            throw new IllegalArgumentException("Ambiguous dependency: " + errorMessage);
+            throw new IllegalArgumentException("Ambiguous dependency: " + errorMessage + " needed for " + neededFor);
         }
         return dependency;
     }
