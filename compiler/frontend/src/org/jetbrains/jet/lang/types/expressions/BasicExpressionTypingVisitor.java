@@ -105,7 +105,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         // To report NO_CLASS_OBJECT when no namespace found
         if (classifier != null) {
-            context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
+            // TODO is this really required? seems to break "Node.ELEMENT_NODE" expressions
+            // context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
             context.trace.record(REFERENCE_TARGET, expression, classifier);
             return classifier.getDefaultType();
         }

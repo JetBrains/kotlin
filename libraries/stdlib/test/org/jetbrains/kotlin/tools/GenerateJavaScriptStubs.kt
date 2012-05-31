@@ -74,16 +74,8 @@ import js.noImpl
                     if (field != null) {
                         val modifiers = field.getModifiers()
                         if (Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers)) {
-                            try {
-                                val value = field.get(null)
-                                if (value != null) {
-                                    val fieldType = simpleTypeName(field.getType())
-                                    println("    public val ${field.getName()}: $fieldType = $value")
-                                }
-                            } catch (e: Exception) {
-                                println("Caught: $e")
-                                e.printStackTrace()
-                            }
+                            val fieldType = simpleTypeName(field.getType())
+                            println("    public val ${field.getName()}: $fieldType")
                         }
                     }
                 }

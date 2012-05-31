@@ -98,9 +98,9 @@ native public trait DOMError {
     fun getSeverity(): Short = js.noImpl
     fun getRelatedException(): Any = js.noImpl
     fun getRelatedData(): Any = js.noImpl
-    public val SEVERITY_WARNING: Short = 1
-    public val SEVERITY_ERROR: Short = 2
-    public val SEVERITY_FATAL_ERROR: Short = 3
+    public val SEVERITY_WARNING: Short
+    public val SEVERITY_ERROR: Short
+    public val SEVERITY_FATAL_ERROR: Short
 }
 
 native public trait DOMErrorHandler {
@@ -221,24 +221,24 @@ native public trait Node {
     fun isDefaultNamespace(arg1: String): Boolean = js.noImpl
     fun lookupNamespaceURI(arg1: String): String = js.noImpl
     fun isEqualNode(arg1: Node): Boolean = js.noImpl
-    public val ELEMENT_NODE: Short = 1
-    public val ATTRIBUTE_NODE: Short = 2
-    public val TEXT_NODE: Short = 3
-    public val CDATA_SECTION_NODE: Short = 4
-    public val ENTITY_REFERENCE_NODE: Short = 5
-    public val ENTITY_NODE: Short = 6
-    public val PROCESSING_INSTRUCTION_NODE: Short = 7
-    public val COMMENT_NODE: Short = 8
-    public val DOCUMENT_NODE: Short = 9
-    public val DOCUMENT_TYPE_NODE: Short = 10
-    public val DOCUMENT_FRAGMENT_NODE: Short = 11
-    public val NOTATION_NODE: Short = 12
-    public val DOCUMENT_POSITION_DISCONNECTED: Short = 1
-    public val DOCUMENT_POSITION_PRECEDING: Short = 2
-    public val DOCUMENT_POSITION_FOLLOWING: Short = 4
-    public val DOCUMENT_POSITION_CONTAINS: Short = 8
-    public val DOCUMENT_POSITION_CONTAINED_BY: Short = 16
-    public val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short = 32
+    public val ELEMENT_NODE: Short
+    public val ATTRIBUTE_NODE: Short
+    public val TEXT_NODE: Short
+    public val CDATA_SECTION_NODE: Short
+    public val ENTITY_REFERENCE_NODE: Short
+    public val ENTITY_NODE: Short
+    public val PROCESSING_INSTRUCTION_NODE: Short
+    public val COMMENT_NODE: Short
+    public val DOCUMENT_NODE: Short
+    public val DOCUMENT_TYPE_NODE: Short
+    public val DOCUMENT_FRAGMENT_NODE: Short
+    public val NOTATION_NODE: Short
+    public val DOCUMENT_POSITION_DISCONNECTED: Short
+    public val DOCUMENT_POSITION_PRECEDING: Short
+    public val DOCUMENT_POSITION_FOLLOWING: Short
+    public val DOCUMENT_POSITION_CONTAINS: Short
+    public val DOCUMENT_POSITION_CONTAINED_BY: Short
+    public val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
 }
 
 native public trait NodeList {
@@ -268,18 +268,18 @@ native public trait TypeInfo {
     fun getTypeName(): String = js.noImpl
     fun getTypeNamespace(): String = js.noImpl
     fun isDerivedFrom(arg1: String, arg2: String, arg3: Int): Boolean = js.noImpl
-    public val DERIVATION_RESTRICTION: Int = 1
-    public val DERIVATION_EXTENSION: Int = 2
-    public val DERIVATION_UNION: Int = 4
-    public val DERIVATION_LIST: Int = 8
+    public val DERIVATION_RESTRICTION: Int
+    public val DERIVATION_EXTENSION: Int
+    public val DERIVATION_UNION: Int
+    public val DERIVATION_LIST: Int
 }
 
 native public trait UserDataHandler {
     fun handle(arg1: Short, arg2: String, arg3: Any, arg4: Node, arg5: Node): Unit = js.noImpl
-    public val NODE_CLONED: Short = 1
-    public val NODE_IMPORTED: Short = 2
-    public val NODE_DELETED: Short = 3
-    public val NODE_RENAMED: Short = 4
-    public val NODE_ADOPTED: Short = 5
+    public val NODE_CLONED: Short
+    public val NODE_IMPORTED: Short
+    public val NODE_DELETED: Short
+    public val NODE_RENAMED: Short
+    public val NODE_ADOPTED: Short
 }
 
