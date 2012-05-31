@@ -93,7 +93,7 @@ public class OverrideResolver {
         }
     }
 
-    public void generateOverridesInAClass(@NotNull final MutableClassDescriptor classDescriptor,
+    private void generateOverridesInAClass(@NotNull final MutableClassDescriptor classDescriptor,
             @NotNull Set<ClassifierDescriptor> processed,
             @NotNull Set<MutableClassDescriptor> ourClasses) {
         if (!processed.add(classDescriptor)) {
@@ -116,22 +116,24 @@ public class OverrideResolver {
     }
 
     private void doGenerateOverridesInAClass(final MutableClassDescriptor classDescriptor) {
-        List<CallableMemberDescriptor> functionsFromSupertypes = getCallableMembersFromSupertypes(classDescriptor);
+        List<CallableMemberDescriptor> membersFromSupertypes = getCallableMembersFromSupertypes(classDescriptor);
 
-        MultiMap<Name, CallableMemberDescriptor> functionsFromSupertypesByName = groupDescriptorsByName(functionsFromSupertypes);
+        MultiMap<Name, CallableMemberDescriptor> membersFromSupertypesByName = groupDescriptorsByName(membersFromSupertypes);
 
-        MultiMap<Name, CallableMemberDescriptor> functionsFromCurrentByName = groupDescriptorsByName(classDescriptor.getDeclaredCallableMembers());
+        MultiMap<Name, CallableMemberDescriptor> membersFromCurrentByName = groupDescriptorsByName(classDescriptor.getDeclaredCallableMembers());
 
-        Set<Name> functionNames = new LinkedHashSet<Name>();
-        functionNames.addAll(functionsFromSupertypesByName.keySet());
-        functionNames.addAll(functionsFromCurrentByName.keySet());
+        Set<Name> memberNames = new LinkedHashSet<Name>();
+        memberNames.addAll(membersFromSupertypesByName.keySet());
+        memberNames.addAll(membersFromCurrentByName.keySet());
 
-        for (Name functionName : functionNames) {
-            Collection<CallableMemberDescriptor> fromSupertypes = functionsFromSupertypesByName.get(functionName);
-            Collection<CallableMemberDescriptor> fromCurrent = functionsFromCurrentByName.get(functionName);
-            generateOverridesInFunctionGroup(functionName,
-                                             fromSupertypes,
-                                             fromCurrent,
+        for (Name memberName : memberNames) {
+            Collection<CallableMemberDescriptor> fromSupertypes = membersFromSupertypesByName.get(memberName);
+            Collection<CallableMemberDescriptor> fromCurrent = membersFromCurrentByName.get(memberName);
+
+            generateOverridesInFunctionGroup(
+                    memberName,
+                    fromSupertypes,
+                    fromCurrent,
                     classDescriptor,
                     new DescriptorSink() {
                         @Override
@@ -149,9 +151,9 @@ public class OverrideResolver {
 
                         @Override
                         public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
-                            JetDeclaration jetProperty = (JetDeclaration) BindingContextUtils
+                            JetDeclaration declaration = (JetDeclaration) BindingContextUtils
                                     .descriptorToDeclaration(trace.getBindingContext(), fromCurrent);
-                            trace.report(Errors.CONFLICTING_OVERLOADS.on(jetProperty, fromCurrent, fromCurrent.getContainingDeclaration().getName().getName()));
+                            trace.report(Errors.CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().getName()));
                         }
                     });
         }
