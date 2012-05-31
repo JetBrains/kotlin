@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.testing.InTextDirectivesUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -94,21 +95,25 @@ public class ExpectedCompletionUtils {
     public static final String ABSENT_LINE_PREFIX = "// ABSENT:";
     public static final String NUMBER_LINE_PREFIX = "// NUMBER:";
     public static final String EXECUTION_TIME_PREFIX = "// TIME:";
+    public static final String WITH_ORDER_PREFIX = "// WITH_ORDER:";
 
     private final String existLinePrefix;
     private final String absentLinePrefix;
     private final String numberLinePrefix;
     private final String executionTimePrefix;
+    private final String withOrderPrefix;
 
     public ExpectedCompletionUtils() {
-        this(EXIST_LINE_PREFIX, ABSENT_LINE_PREFIX, NUMBER_LINE_PREFIX, EXECUTION_TIME_PREFIX);
+        this(EXIST_LINE_PREFIX, ABSENT_LINE_PREFIX, NUMBER_LINE_PREFIX, EXECUTION_TIME_PREFIX, WITH_ORDER_PREFIX);
     }
     
-    public ExpectedCompletionUtils(String existLinePrefix, String absentLinePrefix, String numberLinePrefix, String execitionTimePrefix) {
+    public ExpectedCompletionUtils(String existLinePrefix, String absentLinePrefix,
+            String numberLinePrefix, String executionTimePrefix, String withOrderPrefix) {
         this.existLinePrefix = existLinePrefix;
         this.absentLinePrefix = absentLinePrefix;
         this.numberLinePrefix = numberLinePrefix;
-        this.executionTimePrefix = execitionTimePrefix;
+        this.executionTimePrefix = executionTimePrefix;
+        this.withOrderPrefix = withOrderPrefix;
     }
 
     @NotNull
@@ -122,7 +127,7 @@ public class ExpectedCompletionUtils {
     }
 
     public static CompletionProposal[] processProposalAssertions(String prefix, String fileText) {
-        List<CompletionProposal> proposals = new ArrayList<CompletionProposal>();
+        Collection<CompletionProposal> proposals = new ArrayList<CompletionProposal>();
         for (String proposalStr : InTextDirectivesUtils.findListWithPrefix(prefix, fileText)) {
             Matcher matcher = CompletionProposal.PATTERN.matcher(proposalStr);
             matcher.find();
@@ -144,15 +149,28 @@ public class ExpectedCompletionUtils {
         return InTextDirectivesUtils.getPrefixedInt(fileText, executionTimePrefix);
     }
 
-    protected static void assertContainsRenderedItems(CompletionProposal[] expected, LookupElement[] items) {
+    public boolean isWithOrder(String fileText) {
+        return InTextDirectivesUtils.getPrefixedInt(fileText, withOrderPrefix) != null;
+    }
+
+    protected static void assertContainsRenderedItems(CompletionProposal[] expected, LookupElement[] items, boolean checkOrder) {
         List<CompletionProposal> itemsInformation = getItemsInformation(items);
+
+        int indexOfPrevious = Integer.MIN_VALUE;
 
         for (CompletionProposal expectedProposal : expected) {
             boolean isFound = false;
 
-            for (CompletionProposal proposal : itemsInformation) {
+            for (int index = 0; index < itemsInformation.size(); index++) {
+                CompletionProposal proposal = itemsInformation.get(index);
+
                 if (proposal.isSuitable(expectedProposal)) {
                     isFound = true;
+
+                    Assert.assertTrue("Invalid order of existent elements in " + listToString(itemsInformation),
+                                      !checkOrder || index > indexOfPrevious);
+                    indexOfPrevious = index;
+
                     break;
                 }
             }
@@ -186,7 +204,7 @@ public class ExpectedCompletionUtils {
         return result;
     }
 
-    protected static String listToString(List<ExpectedCompletionUtils.CompletionProposal> items) {
+    protected static String listToString(Collection<CompletionProposal> items) {
         return StringUtil.join(
             Collections2.transform(items, new Function<CompletionProposal, String>() {
                 @Override
