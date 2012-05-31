@@ -31,6 +31,7 @@ import org.jetbrains.jet.codegen.ClassCodegen;
 import org.jetbrains.jet.codegen.ScriptCodegen;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.codegen.ClassFileFactory;
+import org.jetbrains.jet.codegen.MemberCodegen;
 import org.jetbrains.jet.codegen.ClosureAnnotator;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -60,6 +61,7 @@ public class InjectorForJvmCodegen {
     private ScriptCodegen scriptCodegen;
     private IntrinsicMethods intrinsics;
     private ClassFileFactory classFileFactory;
+    private MemberCodegen memberCodegen;
     private ClosureAnnotator closureAnnotator;
 
     public InjectorForJvmCodegen(
@@ -85,6 +87,7 @@ public class InjectorForJvmCodegen {
         this.scriptCodegen = new ScriptCodegen();
         this.intrinsics = new IntrinsicMethods();
         this.classFileFactory = new ClassFileFactory();
+        this.memberCodegen = new MemberCodegen();
         this.closureAnnotator = new ClosureAnnotator();
 
         this.jetTypeMapper.setBindingContext(bindingContext);
@@ -105,6 +108,8 @@ public class InjectorForJvmCodegen {
 
         this.classFileFactory.setBuilderFactory(classBuilderFactory);
         this.classFileFactory.setState(generationState);
+
+        this.memberCodegen.setState(generationState);
 
         closureAnnotator.setBindingContext(bindingContext);
         closureAnnotator.setFiles(listOfJetFile);
@@ -147,6 +152,10 @@ public class InjectorForJvmCodegen {
 
     public ClassFileFactory getClassFileFactory() {
         return this.classFileFactory;
+    }
+
+    public MemberCodegen getMemberCodegen() {
+        return this.memberCodegen;
     }
 
 }

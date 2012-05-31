@@ -171,6 +171,7 @@ public class AllInjectorsGenerator {
         generator.addPublicField(ScriptCodegen.class);
         generator.addField(true, IntrinsicMethods.class, "intrinsics", null);
         generator.addPublicField(ClassFileFactory.class);
+        generator.addPublicField(MemberCodegen.class);
         generator.generate("compiler/backend/src", "org.jetbrains.jet.di", "InjectorForJvmCodegen");
     }
 
