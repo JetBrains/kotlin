@@ -1,5 +1,8 @@
 package test
 import java.io.File
+/**
+* User: ignatov
+*/
 public open class Test() {
 class object {
 public open fun isDir(parent : File?) : Boolean {

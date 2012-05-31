@@ -1,8 +1,5 @@
 package org.jetbrains.jet.j2k.ast
 
-import org.eclipse.jdt.internal.core.search.StringOperation
-import java.util.Arrays
-import java.util.HashSet
 import java.util.Set
 
 public abstract class Node() {

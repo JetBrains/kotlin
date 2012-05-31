@@ -7,19 +7,21 @@ import java.util.Set
 
 public open class Enum(converter : Converter,
                        name : Identifier,
+                       docComments: List<Node>,
                        modifiers : Set<String>,
                        typeParameters : List<Element>,
                        extendsTypes : List<Type>,
                        baseClassParams : List<Expression>,
                        implementsTypes : List<Type>,
-                       members : List<Member>) : Class(converter, name, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, members) {
+                       members : List<Node>) : Class(converter, name, docComments, modifiers, typeParameters,
+                                                    extendsTypes, baseClassParams, implementsTypes, members) {
 
     override fun primaryConstructorSignatureToKotlin() : String {
         val s : String = super.primaryConstructorSignatureToKotlin()
         return if (s.equals("()")) "" else s
     }
 
-    override fun needOpenModifier() : Boolean = false
+    override fun needOpenModifier() = false
 
     public override fun toKotlin() : String {
         return modifiersToKotlin() +

@@ -7,12 +7,14 @@ import java.util.Set
 
 public open class Trait(converter : Converter,
                         name : Identifier,
+                        docComments: List<Node>,
                         modifiers : Set<String>,
                         typeParameters : List<Element>,
                         extendsTypes : List<Type>,
                         baseClassParams : List<Expression>,
                         implementsTypes : List<Type>,
-                        members : List<Member>) : Class(converter, name, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, members) {
+                        members : List<Node>) : Class(converter, name, docComments, modifiers, typeParameters,
+                                                      extendsTypes, baseClassParams, implementsTypes, members) {
 
     override val TYPE: String
         get() = "trait"

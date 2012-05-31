@@ -47,16 +47,20 @@ public open class Converter() {
         classIdentifiers.clear()
     }
 
-    public open fun elementToKotlin(element: PsiElement): String =
-    when(element) {
-        is PsiJavaFile -> fileToFile(element).toKotlin()
-        is PsiClass -> classToClass(element).toKotlin()
-        is PsiMethod -> methodToFunction(element).toKotlin()
-        is PsiField -> fieldToField(element, element.getContainingClass()).toKotlin()
-        is PsiStatement -> statementToStatement(element).toKotlin()
-        is PsiExpression -> expressionToExpression(element).toKotlin()
-        else -> ""
+    public open fun elementToKotlin(element: PsiElement): String {
+        val kElement = topElementToElement(element)
+        return kElement?.toKotlin() ?: ""
+    }
 
+    public open fun topElementToElement(element: PsiElement?): Node? = when(element) {
+        is PsiJavaFile -> fileToFile(element)
+        is PsiClass -> classToClass(element)
+        is PsiMethod -> methodToFunction(element)
+        is PsiField -> fieldToField(element, element.getContainingClass())
+        is PsiStatement -> statementToStatement(element)
+        is PsiExpression -> expressionToExpression(element)
+        is PsiComment -> Comment(element.getText()!!)
+        else -> null
     }
 
     public open fun fileToFile(javaFile: PsiJavaFile): File {
@@ -75,29 +79,41 @@ public open class Converter() {
             importsToImportList(importList.getAllImportStatements()))
         for (i : String in additionalImports)
             imports.add(Import(i))
-        return File(quoteKeywords(javaFile.getPackageName()), imports, classesToClassList(javaFile.getClasses()), createMainFunction(javaFile))
-    }
 
-    private fun classesToClassList(classes: Array<PsiClass?>): List<Class> = classes.map { classToClass(it!!) }
+        val body: ArrayList<Node> = arrayList()
+        for(element in javaFile.getChildren()) {
+            if (element !is PsiImportStatementBase) {
+                val node = topElementToElement(element)
+                if (node != null) {
+                    body.add(node)
+                }
+            }
+        }
+        return File(quoteKeywords(javaFile.getPackageName()), imports, body, createMainFunction(javaFile))
+    }
 
     public open fun anonymousClassToAnonymousClass(anonymousClass: PsiAnonymousClass): AnonymousClass {
-        return AnonymousClass(this, getMembers(anonymousClass))
+        return AnonymousClass(this, getMembers(anonymousClass, false))
     }
 
-    private fun getMembers(psiClass: PsiClass): List<Member> {
-        val members: List<Member> = arrayList()
+    private fun getMembers(psiClass: PsiClass, takeDocComments: Boolean): List<Node> {
+        val members: List<Node> = arrayList()
+        val lbraceOffset = psiClass.getLBrace()?.getTextRange()?.getStartOffset() ?: 0
         for (e : PsiElement? in psiClass.getChildren()) {
+            val isDocComment = e?.getTextRange()?.getStartOffset() ?: 0 < lbraceOffset
+            if (isDocComment != takeDocComments) continue
             val converted = memberToMember(e, psiClass)
             if (converted != null) members.add(converted)
         }
         return members
     }
 
-    private fun memberToMember(e: PsiElement?, containingClass: PsiClass): Member? = when(e) {
+    private fun memberToMember(e: PsiElement?, containingClass: PsiClass): Node? = when(e) {
         is PsiMethod -> methodToFunction(e, true)
         is PsiField -> fieldToField(e, containingClass)
         is PsiClass -> classToClass(e)
         is PsiClassInitializer -> initializerToInitializer(e)
+        is PsiComment -> Comment(e.getText()!!)
         else -> null
     }
 
@@ -109,7 +125,8 @@ public open class Converter() {
         val extendsTypes: List<Type> = typesToNotNullableTypeList(psiClass.getExtendsListTypes())
         val name: Identifier = Identifier(psiClass.getName()!!)
         val baseClassParams: List<Expression> = arrayList()
-        val members: List<Member> = getMembers(psiClass)
+        val members: List<Node> = getMembers(psiClass, false)
+        val docComments = getMembers(psiClass, true)
         val visitor: SuperVisitor = SuperVisitor()
         psiClass.accept(visitor)
         val resolvedSuperCallParameters = visitor.resolvedSuperCallParameters
@@ -166,14 +183,14 @@ public open class Converter() {
         }
 
         if (psiClass.isInterface()) {
-            return Trait(this, name, modifiers, typeParameters, extendsTypes, Collections.emptyList<Expression>()!!, implementsTypes, members)
+            return Trait(this, name, docComments, modifiers, typeParameters, extendsTypes, Collections.emptyList<Expression>()!!, implementsTypes, members)
         }
 
         if (psiClass.isEnum()) {
-            return Enum(this, name, modifiers, typeParameters, Collections.emptyList<Type>()!!, Collections.emptyList<Expression>()!!, implementsTypes, members)
+            return Enum(this, name, docComments, modifiers, typeParameters, Collections.emptyList<Type>()!!, Collections.emptyList<Expression>()!!, implementsTypes, members)
         }
 
-        return Class(this, name, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, members)
+        return Class(this, name, docComments, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, members)
     }
 
     private fun initializerToInitializer(i: PsiClassInitializer): Initializer {

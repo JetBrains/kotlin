@@ -13,12 +13,13 @@ import java.util.ArrayList
 
 public open class Class(converter : Converter,
                         val name : Identifier,
+                        val docComments: List<Node>,
                         modifiers : Set<String>,
                         val typeParameters : List<Element>,
                         val extendsTypes : List<Type>,
                         val baseClassParams : List<Expression>,
                         val implementsTypes : List<Type>,
-                        members : List<Member>) : Member(modifiers) {
+                        members : List<Node>) : Member(modifiers) {
     val members = getMembers(members, converter)
 
     open val TYPE: String
@@ -52,7 +53,7 @@ public open class Class(converter : Converter,
         return ""
     }
 
-    open fun membersExceptConstructors() : List<Member> = members.filterNot { it is Constructor }
+    open fun membersExceptConstructors() : List<Node> = members.filterNot { it is Constructor }
 
     open fun secondaryConstructorsAsStaticInitFunction() : List<Function> {
         return members.filter { it is Constructor && !it.isPrimary }.map { constructorToInit(it as Function) }
@@ -118,13 +119,14 @@ public open class Class(converter : Converter,
     }
 
     private fun classObjectToKotlin() : String {
-        val staticMembers : List<Member> = arrayList()
+        val staticMembers : List<Node> = arrayList()
         staticMembers.addAll(secondaryConstructorsAsStaticInitFunction())
         staticMembers.addAll(getStatic(membersExceptConstructors()))
         return staticMembers.toKotlin("\n", "class object {\n", "\n}")
     }
 
     public override fun toKotlin() : String =
+        docComments.toKotlin("\n", "", "\n") +
         modifiersToKotlin() +
         TYPE + " " + name.toKotlin() +
         typeParametersToKotlin() +
@@ -134,31 +136,21 @@ public open class Class(converter : Converter,
         bodyToKotlin()
 
     class object {
-        open fun getMembers(members : List<Member>, converter : Converter) : List<Member> {
+        open fun getMembers(members : List<Node>, converter : Converter) : List<Node> {
             if (converter.hasFlag(J2KConverterFlags.SKIP_NON_PUBLIC_MEMBERS)) {
-                return members.filter { it.accessModifier() == "public" || it.accessModifier() == "protected" }
+                return members.filter { it is Comment ||
+                                        (it as Member).accessModifier() == "public" ||
+                                        (it as Member).accessModifier() == "protected" }
             }
             return members
         }
 
-        private fun getStatic(members : List<out Member>) : List<Member> {
-            val result : List<Member> = arrayList()
-            for (m in members)
-                if (m.isStatic())
-                    result.add(m)
-
-            return result
+        private fun getStatic(members : List<Node>) : List<Node> {
+            return members.filter { it is Member && it.isStatic() }
         }
 
-        private fun getNonStatic(members : List<out Member>) : List<Member> {
-            val result : List<Member> = arrayList()
-            for (m in members)
-                if (!m.isStatic())
-                {
-                    result.add(m)
-                }
-
-            return result
+        private fun getNonStatic(members : List<Node>) : List<Node> {
+            return members.filterNot { it is Member && it.isStatic() }
         }
     }
 }
