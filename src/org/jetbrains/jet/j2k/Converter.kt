@@ -529,7 +529,7 @@ public open class Converter() {
             return false
         }
         private fun removeEmpty(statements: List<Statement>): List<Statement> {
-            return statements.filterNot { it == Statement.EMPTY_STATEMENT || it == Expression.EMPTY_EXPRESSION }
+            return statements.filterNot { it is EmptyStatement || it == Expression.EMPTY_EXPRESSION }
         }
 
         private fun isNotOpenMethod(method: PsiMethod): Boolean {

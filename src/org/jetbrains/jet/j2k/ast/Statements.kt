@@ -2,6 +2,14 @@ package org.jetbrains.jet.j2k.ast
 
 import java.util.List
 
+public abstract class Statement(): Element() {
+    class object {
+        public val EMPTY_STATEMENT = object : Statement {
+            public override fun toKotlin() = ""
+        }
+    }
+}
+
 public open class DeclarationStatement(val elements: List<Element>): Statement() {
     public override fun toKotlin(): String {
         return elements.filter { it is LocalVariable }.map { convertDeclaration(it as LocalVariable) }.makeString("\n")
@@ -31,7 +39,7 @@ public open class ReturnStatement(val expression: Expression): Statement() {
 public open class IfStatement(val condition: Expression, val thenStatement: Statement, val elseStatement: Statement): Expression() {
     public override fun toKotlin(): String {
         val result: String = "if (" + condition.toKotlin() + ")\n" + thenStatement.toKotlin() + "\n"
-        if (elseStatement != Statement.EMPTY_STATEMENT) {
+        if (elseStatement !is EmptyStatement) {
             return result + "else\n" + elseStatement.toKotlin()
         }
 

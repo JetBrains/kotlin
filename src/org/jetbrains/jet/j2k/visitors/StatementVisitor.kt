@@ -12,7 +12,7 @@ import java.util.List
 import org.jetbrains.jet.j2k.ConverterUtil.countWritingAccesses
 
 public open class StatementVisitor(converter: Converter): ElementVisitor(converter) {
-    private var myResult: Statement = Statement.EMPTY_STATEMENT
+    private var myResult: Statement =
     public override fun getResult(): Statement {
         return myResult
     }
