@@ -74,21 +74,13 @@ public class ResolveSession {
     @Nullable
     public NamespaceDescriptor getPackageDescriptor(@NotNull Name shortName) {
         return rootPackage.getMemberScope().getNamespace(shortName);
-        //NamespaceDescriptor namespaceDescriptor = packageDescriptors.get(shortName);
-        //if (namespaceDescriptor == null) {
-        //    DeclarationProvider declarationProvider = declarationProviderFactory.getPackageMemberDeclarationProvider(
-        //            FqName.topLevel(shortName));
-        //    if (declarationProvider == null) return null;
-        //
-        //    namespaceDescriptor = new LazyPackageDescriptor(module.getRootNs(), shortName, this, declarationProvider);
-        //
-        //    packageDescriptors.put(shortName, namespaceDescriptor);
-        //}
-        //return namespaceDescriptor;
     }
 
     @Nullable
     public NamespaceDescriptor getPackageDescriptorByFqName(FqName fqName) {
+        if (fqName.isRoot()) {
+            return rootPackage;
+        }
         List<Name> names = fqName.pathSegments();
         NamespaceDescriptor current = getPackageDescriptor(names.get(0));
         if (current == null) return null;

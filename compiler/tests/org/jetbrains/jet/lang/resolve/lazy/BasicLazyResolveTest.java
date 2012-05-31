@@ -23,16 +23,21 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author abreslav
@@ -46,6 +51,11 @@ public class BasicLazyResolveTest {
         public void dispose() {
         }
     };
+
+    @Before
+    public void setUp() throws Exception {
+        System.setProperty("java.awt.headless", "true");
+    }
 
     @After
     public void tearDown() throws Exception {
@@ -62,12 +72,17 @@ public class BasicLazyResolveTest {
         Project project = jetCoreEnvironment.getProject();
 
         ResolveSession session = new ResolveSession(project, root, new FileBasedDeclarationProviderFactory(Arrays.asList(
+                JetPsiFactory.createFile(project, "class A {}"),
                 JetPsiFactory.createFile(project, "package p; class C {fun f() {}}"),
                 JetPsiFactory.createFile(project, "package p; open class G<T> {open fun f(): T {} fun a() {}}"),
                 JetPsiFactory.createFile(project, "package p; class G2<E> : G<E> { fun g() : E {} override fun f() : T {}}"),
                 JetPsiFactory.createFile(project, "package p; fun foo() {}"),
                 JetPsiFactory.createFile(project, "package p; fun foo(a: C) {}")
         )));
+
+        NamespaceDescriptor rootPackage = session.getPackageDescriptorByFqName(new FqName(""));
+        assertNotNull(rootPackage);
+        assertNotNull(rootPackage.getMemberScope().getClassifier(Name.identifier("A")));
 
         NamespaceDescriptor packageDescriptor = session.getPackageDescriptor(Name.identifier("p"));
         assertNotNull(packageDescriptor);
@@ -87,6 +102,12 @@ public class BasicLazyResolveTest {
         assertEquals("[Any]", typeConstructor.getSupertypes().toString());
 
         List<FunctionDescriptor> fooFunctions = Lists.newArrayList(packageDescriptor.getMemberScope().getFunctions(FOO));
+        Collections.sort(fooFunctions, new Comparator<FunctionDescriptor>() {
+            @Override
+            public int compare(FunctionDescriptor o1, FunctionDescriptor o2) {
+                return o1.getValueParameters().size() - o2.getValueParameters().size();
+            }
+        });
         assertEquals(2, fooFunctions.size());
         FunctionDescriptor foo1 = fooFunctions.get(0);
         assertEquals(FOO, foo1.getName());
