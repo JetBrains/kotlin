@@ -16,13 +16,9 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import closurecompiler.internal.com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.mozilla.javascript.EcmaError;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Pavel Talanov
@@ -32,8 +28,6 @@ import java.util.List;
 * running them produce expected error.
 * */
 public final class WebDemoCanvasExamplesTest extends SingleFileTranslationTest {
-
-    private static final String CANVAS_HELPER = pathToTestFilesRoot() + "canvas_helper.js";
 
     public WebDemoCanvasExamplesTest() {
         super("webDemoCanvasExamples/");
@@ -67,12 +61,5 @@ public final class WebDemoCanvasExamplesTest extends SingleFileTranslationTest {
                        "Actual: " + e.getMessage(),
                        e.getMessage().startsWith(expectedErrorMessage));
         }
-    }
-
-    @Override
-    protected List<String> additionalJSFiles() {
-        ArrayList<String> result = Lists.newArrayList(super.additionalJSFiles());
-        result.add(CANVAS_HELPER);
-        return result;
     }
 }
