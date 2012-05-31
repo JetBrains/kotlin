@@ -288,7 +288,7 @@ public class CallResolver {
 
                 return results;
             }
-            if (traceForFirstNonemptyCandidateSet == null && !task.getCandidates().isEmpty()) {
+            if (traceForFirstNonemptyCandidateSet == null && !task.getCandidates().isEmpty() && !results.isNothing()) {
                 traceForFirstNonemptyCandidateSet = temporaryTrace;
                 resultsForFirstNonemptyCandidateSet = results;
             }
@@ -380,7 +380,9 @@ public class CallResolver {
             }
             else {
                 assert status != UNKNOWN_STATUS : "No resolution for " + candidateCall.getCandidateDescriptor();
-                failedCandidates.add(candidateCall);
+                if (candidateCall.getStatus() != STRONG_ERROR) {
+                    failedCandidates.add(candidateCall);
+                }
             }
         }
         
@@ -414,8 +416,13 @@ public class CallResolver {
                 argumentMappingStatus = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(context.call, context.tracing,
                                                                                                         candidateCall, unmappedArguments);
         if (!argumentMappingStatus.isSuccess()) {
-            candidateCall.addStatus(OTHER_ERROR);
-            if (argumentMappingStatus == ValueArgumentsToParametersMapper.Status.ERROR) {
+            if (argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR) {
+                candidateCall.addStatus(STRONG_ERROR);
+            }
+            else {
+                candidateCall.addStatus(OTHER_ERROR);
+            }
+            if (argumentMappingStatus != ValueArgumentsToParametersMapper.Status.WEAK_ERROR) {
                 checkTypesWithNoCallee(context.toBasic());
                 return;
             }

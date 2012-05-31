@@ -34,6 +34,8 @@ import java.util.Set;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMapper.Status.*;
+import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMapper.Status.ERROR;
+import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMapper.Status.STRONG_ERROR;
 
 /**
  * @author abreslav
@@ -41,6 +43,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
 /*package*/ class ValueArgumentsToParametersMapper {
 
     public enum Status {
+        STRONG_ERROR(false),
         ERROR(false),
         WEAK_ERROR(false),
         OK(true);
@@ -56,16 +59,10 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
         }
 
         public Status compose(Status other) {
-            switch (other) {
-                case ERROR:
-                    return ERROR;
-                case WEAK_ERROR:
-                    if (this != ERROR) {
-                        return WEAK_ERROR;
-                    }
-                default:
-                    return this;
-            }
+            if (this == STRONG_ERROR || other == STRONG_ERROR) return STRONG_ERROR;
+            if (this == ERROR || other == ERROR) return ERROR;
+            if (this == WEAK_ERROR || other == WEAK_ERROR) return WEAK_ERROR;
+            return this;
         }
     }
 
@@ -220,7 +217,12 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
         }
         if (!receiverParameter.exists() && receiverArgument.exists()) {
             tracing.noReceiverAllowed(temporaryTrace);
-            status = ERROR;
+            if (call.getCalleeExpression() instanceof JetSimpleNameExpression) {
+                status = STRONG_ERROR;
+            }
+            else {
+                status = ERROR;
+            }
         }
 
         assert (candidateCall.getThisObject().exists() == candidateCall.getResultingDescriptor().getExpectedThisObject().exists()) : "Shouldn't happen because of TaskPrioritizer: " + candidateCall.getCandidateDescriptor();
