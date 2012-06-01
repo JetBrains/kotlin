@@ -204,7 +204,7 @@ public abstract class CodegenContext {
         if(descriptor instanceof SimpleFunctionDescriptor) {
             SimpleFunctionDescriptorImpl myAccessor = new SimpleFunctionDescriptorImpl(contextType,
                     Collections.<AnnotationDescriptor>emptyList(),
-                    Name.identifier(descriptor.getName() + "$bridge$" + accessors.size()), // TODO: evil
+                    Name.identifier(descriptor.getName() + "$bridge$" + accessors.size()),
                     CallableMemberDescriptor.Kind.DECLARATION);
             FunctionDescriptor fd = (SimpleFunctionDescriptor) descriptor;
             myAccessor.initialize(fd.getReceiverParameter().exists() ? fd.getReceiverParameter().getType() : null,
@@ -225,7 +225,7 @@ public abstract class CodegenContext {
                     pd.getVisibility(),
                     pd.isVar(),
                     pd.isObjectDeclaration(),
-                    Name.identifier(pd.getName()  + "$bridge$" + accessors.size()), // TODO: evil
+                    Name.identifier(pd.getName()  + "$bridge$" + accessors.size()),
                     CallableMemberDescriptor.Kind.DECLARATION
             );
             JetType receiverType = pd.getReceiverParameter().exists() ? pd.getReceiverParameter().getType() : null;
