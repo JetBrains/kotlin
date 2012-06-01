@@ -190,7 +190,7 @@ public class CodegenContexts {
 
             final Type type = enclosingClassType(typeMapper);
             outerExpression = type != null
-                        ? StackValue.field(type, JvmClassName.byInternalName(typeMapper.getFQName(contextType)), "this$0", false)
+                        ? StackValue.field(type, typeMapper.getClassFQName(contextType), "this$0", false)
                         : null;
         }
 

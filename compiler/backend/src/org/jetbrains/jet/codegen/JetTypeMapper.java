@@ -269,9 +269,9 @@ public class JetTypeMapper {
         String local = getLocalNameForObject(object);
         if (local == null) return null;
 
-        DeclarationDescriptor containingClass = getContainingClass(descriptor);
+        ClassDescriptor containingClass = getContainingClass(descriptor);
         if (containingClass != null) {
-            return getFQName(containingClass) + "$" + local;
+            return getClassFQName(containingClass).getInternalName() + "$" + local;
         }
         else {
             return getFQName(getContainingNamespace(descriptor)) + "/" + local;
@@ -296,11 +296,12 @@ public class JetTypeMapper {
      *
      * @see DescriptorUtils#getFQName(DeclarationDescriptor)
      */
-    public String getFQName(DeclarationDescriptor descriptor) {
+    @NotNull
+    private String getFQName(@NotNull DeclarationDescriptor descriptor) {
         descriptor = descriptor.getOriginal();
 
-        if(descriptor instanceof FunctionDescriptor) {
-            return getFQName(descriptor.getContainingDeclaration());
+        if (descriptor instanceof FunctionDescriptor) {
+            throw new IllegalStateException("requested fq name for function: " + descriptor);
         }
 
         if (descriptor.getContainingDeclaration() instanceof ModuleDescriptor || descriptor instanceof ScriptDescriptor) {
@@ -327,26 +328,22 @@ public class JetTypeMapper {
         }
 
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
+
+        if (container == null) {
+            throw new IllegalStateException("descriptor has no container: " + descriptor);
+        }
+
         Name name = descriptor.getName();
-        if(JetPsiUtil.NO_NAME_PROVIDED.equals(name)) {
-            return closureAnnotator
-                    .classNameForAnonymousClass((JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor))
-                    .getInternalName();
-        }
 
-        if (descriptor instanceof ClassDescriptor) {
+        if (descriptor instanceof ClassDescriptor && name.isSpecial()) {
             ClassDescriptor clazz = (ClassDescriptor) descriptor;
-            JvmClassName className = closureAnnotator.classNameForClassDescriptorIfDefined(clazz);
-            if (className != null) {
-                return className.getInternalName();
-            }
+            JvmClassName className = closureAnnotator.classNameForClassDescriptor(clazz);
+            return className.getInternalName();
         }
 
-        if (container != null) {
-            String baseName = getFQName(container);
-            if (!baseName.isEmpty()) { 
-                return baseName + (container instanceof NamespaceDescriptor ? "/" : "$") + name.getIdentifier();
-            }
+        String baseName = getFQName(container);
+        if (!baseName.isEmpty()) {
+            return baseName + (container instanceof NamespaceDescriptor ? "/" : "$") + name.getIdentifier();
         }
 
         return name.getIdentifier();
