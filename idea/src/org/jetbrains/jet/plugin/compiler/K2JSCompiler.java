@@ -134,7 +134,7 @@ public final class K2JSCompiler implements TranslatingCompiler {
 
     @NotNull
     private static String[] constructArguments(@NotNull Project project, @Nullable String outFile, @NotNull VirtualFile srcDir) {
-        ArrayList<String> args = Lists.newArrayList("-tags", "-verbose", "-version");
+        ArrayList<String> args = Lists.newArrayList("-tags", "-verbose", "-version", "-mainCall=mainWithArgs");
         addPathToSourcesDir(args, srcDir);
         addOutputPath(outFile, args);
         addLibLocationAndTarget(project, args);
