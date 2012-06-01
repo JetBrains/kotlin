@@ -465,7 +465,7 @@ public open class Converter() {
             {
                 val conversion: String? = PRIMITIVE_TYPE_CONVERSIONS.get(expectedType?.getCanonicalText())
                 if (conversion != null) {
-                    expression = DummyMethodCallExpression(expression, conversion, Identifier.EMPTY_IDENTIFIER)
+                    expression = MethodCallExpression.build(expression, conversion)
                 }
             }
 
@@ -476,7 +476,7 @@ public open class Converter() {
 
     class object {
         public val NOT_NULL_ANNOTATIONS: Set<String> = ImmutableSet.of<String>("org.jetbrains.annotations.NotNull", "com.sun.istack.internal.NotNull", "javax.annotation.Nonnull")!!
-        private val PRIMITIVE_TYPE_CONVERSIONS: Map<String, String> = ImmutableMap.builder<String, String>()
+        public val PRIMITIVE_TYPE_CONVERSIONS: Map<String, String> = ImmutableMap.builder<String, String>()
                 ?.put("byte", BYTE.getName())
                 ?.put("short", SHORT.getName())
                 ?.put("int", INT.getName())

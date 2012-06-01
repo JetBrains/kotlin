@@ -14,4 +14,12 @@ public open class MethodCallExpression(val methodCall: Expression,
         val argumentsMapped = arguments.map { it.toKotlin() }
         return methodCall.toKotlin() + typeParamsToKotlin + "(" + argumentsMapped.makeString(", ") + ")"
     }
+
+    class object {
+        fun build(receiver: Expression, methodName: String, arguments: List<Expression> = arrayList()): MethodCallExpression {
+            return MethodCallExpression(CallChainExpression(receiver, Identifier(methodName, false)),
+                    arguments,
+                    arrayList(), false)
+        }
+    }
 }

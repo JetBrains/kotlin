@@ -2,19 +2,19 @@ package org.jetbrains.jet.j2k.visitors
 
 import com.intellij.psi.*
 import org.jetbrains.jet.j2k.Converter
-import org.jetbrains.jet.j2k.ast.DummyMethodCallExpression
 import org.jetbrains.jet.j2k.ast.DummyStringExpression
 import org.jetbrains.jet.j2k.ast.Identifier
 import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT
+import org.jetbrains.jet.j2k.ast.MethodCallExpression
 
 public open class ExpressionVisitorForDirectObjectInheritors(converter: Converter): ExpressionVisitor(converter) {
     public override fun visitMethodCallExpression(expression: PsiMethodCallExpression?): Unit {
         val methodExpression = expression?.getMethodExpression()!!
         if (superMethodInvocation(methodExpression, "hashCode")) {
-            myResult = DummyMethodCallExpression(Identifier("System"), "identityHashCode", Identifier("this"))
+            myResult = MethodCallExpression.build(Identifier("System", false), "identityHashCode", arrayList(Identifier("this")))
         }
         else if (superMethodInvocation(methodExpression, "equals")) {
-            myResult = DummyMethodCallExpression(Identifier("this"), "identityEquals", getConverter().elementToElement(expression?.getArgumentList()))
+            myResult = MethodCallExpression.build(Identifier("this", false), "identityEquals", getConverter().argumentsToExpressionList(expression!!))
         }
         else if (superMethodInvocation(methodExpression, "toString")) {
             myResult = DummyStringExpression(String.format("getJavaClass<%s>.getName() + '@' + Integer.toHexString(hashCode())",

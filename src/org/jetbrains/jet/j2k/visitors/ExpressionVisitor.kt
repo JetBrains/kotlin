@@ -59,7 +59,7 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
         val lhs = getConverter().expressionToExpression(expression?.getLOperand()!!, expression?.getType())
         val rhs = getConverter().expressionToExpression(expression?.getROperand(), expression?.getType())
         if (expression?.getOperationSign()?.getTokenType() == JavaTokenType.GTGTGT) {
-            myResult = DummyMethodCallExpression(lhs, "ushr", rhs)
+            myResult = MethodCallExpression.build(lhs, "ushr", arrayList(rhs))
         }
         else {
             myResult = BinaryExpression(lhs, rhs,
@@ -204,7 +204,7 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
         val operand = getConverter().expressionToExpression(expression?.getOperand(), expression?.getOperand()!!.getType())
         val token = expression?.getOperationTokenType()!!
         if (token == JavaTokenType.TILDE) {
-            myResult = DummyMethodCallExpression(ParenthesizedExpression(operand), "inv", Expression.EMPTY_EXPRESSION)
+            myResult = MethodCallExpression.build(ParenthesizedExpression(operand), "inv", arrayList())
         }
         else {
             myResult = PrefixOperator(getOperatorString(token), operand)
