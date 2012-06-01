@@ -102,7 +102,7 @@ public abstract class BasicTest extends TestWithEnvironment {
             @NotNull MainCallParameters mainCallParameters, @NotNull EnumSet<EcmaVersion> ecmaVersions)
             throws Exception {
         for (EcmaVersion version : ecmaVersions) {
-            TranslationUtils.translateFiles(getProject(), files, getOutputFilePath(testName, version), mainCallParameters, version, null);
+            TranslationUtils.translateFiles(getProject(), files, getOutputFilePath(testName, version), mainCallParameters, version);
         }
     }
 

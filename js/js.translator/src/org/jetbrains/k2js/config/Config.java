@@ -68,8 +68,7 @@ public abstract class Config {
             "/dom/domcore.kt",
             "/dom/html/htmlcore.kt",
             "/dom/html5/canvas.kt",
-            "/dom/html/window.kt",
-            "/junit/core.kt"
+            "/dom/html/window.kt"
     );
 
     public static final String LIBRARIES_LOCATION = "js/js.libraries/src";
