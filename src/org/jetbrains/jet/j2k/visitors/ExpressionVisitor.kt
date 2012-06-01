@@ -24,8 +24,11 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
     }
 
     public override fun visitArrayAccessExpression(expression: PsiArrayAccessExpression?): Unit {
+        val assignment = PsiTreeUtil.getParentOfType(expression, javaClass<PsiAssignmentExpression>())
+        val lvalue = assignment != null && expression == assignment.getLExpression();
         myResult = ArrayAccessExpression(getConverter().expressionToExpression(expression?.getArrayExpression()),
-                getConverter().expressionToExpression(expression?.getIndexExpression()))
+                getConverter().expressionToExpression(expression?.getIndexExpression()),
+                lvalue)
     }
 
     public override fun visitArrayInitializerExpression(expression: PsiArrayInitializerExpression?): Unit {

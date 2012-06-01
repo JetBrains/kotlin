@@ -2,9 +2,9 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ast.types.Type
 
-public open class ArrayAccessExpression(val expression : Expression, val index : Expression) : Expression() {
+public open class ArrayAccessExpression(val expression: Expression, val index: Expression, val lvalue: Boolean) : Expression() {
     override fun toKotlin() = expression.toKotlin() +
-        (if (expression.isNullable()) "!!" else "") +
+        (if (!lvalue && expression.isNullable()) "!!" else "") +
         "[" + index.toKotlin() + "]"
 }
 
