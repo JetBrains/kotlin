@@ -325,7 +325,7 @@ public open class Converter() {
         if (block == null)
             return Block.EMPTY_BLOCK
 
-        return Block(statementsToStatementList(block.getChildren()), notEmpty)
+        return Block(removeEmpty(statementsToStatementList(block.getChildren())), notEmpty)
     }
 
     public open fun blockToBlock(block: PsiCodeBlock?): Block {
