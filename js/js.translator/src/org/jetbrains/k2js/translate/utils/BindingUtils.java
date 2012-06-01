@@ -16,7 +16,6 @@
 
 package org.jetbrains.k2js.translate.utils;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -189,12 +188,11 @@ public final class BindingUtils {
     public static DeclarationDescriptor getDescriptorForReferenceExpression(@NotNull BindingContext context,
             @NotNull JetReferenceExpression reference) {
         DeclarationDescriptor referencedDescriptor = getNullableDescriptorForReferenceExpression(context, reference);
-        Preconditions.checkNotNull(referencedDescriptor, "Reference expression must reference a descriptor for reference %s at %s", reference.getText(),
-                                   DiagnosticUtils.atLocation(reference));
+        assert referencedDescriptor != null : "Reference expression must reference a descriptor for reference " + reference.getText() +
+                                              " at " + DiagnosticUtils.atLocation(reference);
         return referencedDescriptor;
     }
 
-    //TODO: remove?
     @Nullable
     public static DeclarationDescriptor getNullableDescriptorForReferenceExpression(@NotNull BindingContext context,
             @NotNull JetReferenceExpression reference) {
