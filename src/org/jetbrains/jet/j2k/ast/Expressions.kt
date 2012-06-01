@@ -3,8 +3,9 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.ast.types.Type
 
 public open class ArrayAccessExpression(val expression : Expression, val index : Expression) : Expression() {
-    override fun toKotlin() = expression.toKotlin() + "[" + index.toKotlin() + "]"
-    override fun isNullable() = expression.isNullable()
+    override fun toKotlin() = expression.toKotlin() +
+        (if (expression.isNullable()) "!!" else "") +
+        "[" + index.toKotlin() + "]"
 }
 
 public open class AssignmentExpression(val left : Expression, val right : Expression, val op : String) : Expression() {
