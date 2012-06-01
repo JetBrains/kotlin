@@ -46,7 +46,7 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
         }
 
         val lhs = getConverter().expressionToExpression(expression?.getLExpression()!!)
-        val rhs = getConverter().expressionToExpression(expression?.getRExpression()!!)
+        val rhs = getConverter().expressionToExpression(expression?.getRExpression()!!, expression?.getRExpression()?.getType())
         if (!secondOp.isEmpty()) {
             myResult = AssignmentExpression(lhs, BinaryExpression(lhs, rhs, secondOp), "=")
         }
