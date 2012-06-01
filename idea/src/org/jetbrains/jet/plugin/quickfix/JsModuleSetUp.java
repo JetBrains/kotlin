@@ -62,6 +62,10 @@ public final class JsModuleSetUp {
         File file = new File(rootDir, JsModuleDetector.INDICATION_FILE_NAME);
         if (file.exists()) {
             notifyInfo("File " + file.getName() + " already exists.");
+            // If the notification in the editor did not disappear due to
+            // slow file system events, this will remove the notification
+            // when the user clicks for the second time
+            refreshRootDir(project, continuation);
             return;
         }
 
