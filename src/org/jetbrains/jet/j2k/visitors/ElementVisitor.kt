@@ -6,6 +6,7 @@ import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.List
 import org.jetbrains.jet.j2k.isAnnotatedAsNotNull
+import org.jetbrains.jet.j2k.isDefinitelyNotNull
 
 public open class ElementVisitor(val myConverter : Converter) : JavaElementVisitor() {
     protected var myResult : Element = Element.EMPTY_ELEMENT
@@ -20,9 +21,13 @@ public open class ElementVisitor(val myConverter : Converter) : JavaElementVisit
 
     public override fun visitLocalVariable(variable : PsiLocalVariable?) : Unit {
         val theVariable = variable!!
+        var kType = myConverter.typeToType(theVariable.getType(), isAnnotatedAsNotNull(theVariable.getModifierList()))
+        if (theVariable.hasModifierProperty(PsiModifier.FINAL) && isDefinitelyNotNull(theVariable.getInitializer())) {
+            kType = kType.convertedToNotNull();
+        }
         myResult = LocalVariable(Identifier(theVariable.getName()!!),
                 Converter.modifiersListToModifiersSet(theVariable.getModifierList()),
-                myConverter.typeToType(theVariable.getType(), isAnnotatedAsNotNull(theVariable.getModifierList())),
+                kType,
                 myConverter.expressionToExpression(theVariable.getInitializer(), theVariable.getType()))
     }
 

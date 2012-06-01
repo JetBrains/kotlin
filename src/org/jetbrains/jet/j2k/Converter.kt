@@ -224,10 +224,15 @@ public open class Converter() {
                     elementToElement(field.getArgumentList()))
         }
 
+        var kType = typeToType(field.getType())
+        if (field.hasModifierProperty(PsiModifier.FINAL) && isDefinitelyNotNull(field.getInitializer())) {
+            kType = kType.convertedToNotNull();
+        }
+
         return Field(Identifier(field.getName()!!),
                 docComments,
                 modifiers,
-                typeToType(field.getType()),
+                kType,
                 expressionToExpression(field.getInitializer(), field.getType()),
                 countWritingAccesses(field, psiClass))
     }
@@ -833,4 +838,10 @@ public open fun isAnnotatedAsNotNull(modifierList: PsiModifierList?): Boolean {
         }
     }
     return false
+}
+
+public fun isDefinitelyNotNull(element: PsiElement?): Boolean = when(element) {
+    is PsiLiteralExpression -> element.getValue() != null
+    is PsiNewExpression -> true
+    else -> false
 }

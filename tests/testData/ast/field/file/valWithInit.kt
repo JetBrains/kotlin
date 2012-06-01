@@ -1,3 +1,3 @@
 open class C() {
-val f : Foo? = Foo(1, 2)
+val f : Foo = Foo(1, 2)
 }
