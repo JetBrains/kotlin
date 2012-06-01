@@ -18,6 +18,7 @@ package org.jetbrains.k2js.test.semantics;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.js.K2JSCompiler;
 import org.jetbrains.jet.cli.js.K2JSCompilerArguments;
 import org.jetbrains.k2js.config.Config;
@@ -71,7 +72,8 @@ public final class StdLibToJSTest extends SingleFileTranslationTest {
             arguments.outputFile = getOutputFilePath(getTestName(false) + ".compiler.kt", version);
             arguments.sourceFiles = files;
             arguments.verbose = true;
-            compiler.exec(System.out, arguments);
+            ExitCode answer = compiler.exec(System.out, arguments);
+            assertEquals("Compile failed", ExitCode.OK, answer);
         }
     }
 }

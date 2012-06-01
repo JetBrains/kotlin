@@ -19,6 +19,79 @@ import javax.xml.transform.stream.StreamResult
 import org.w3c.dom.*
 import org.xml.sax.InputSource
 
+val Node.nodeName: String
+get() = getNodeName() ?: ""
+
+val Node.nodeValue: String
+get() = getNodeValue() ?: ""
+
+val Node.nodeType: Short
+get() = getNodeType()
+
+val Node.parentNode: Node?
+get() = getParentNode()
+
+val Node.childNodes: NodeList
+get() = getChildNodes()!!
+
+val Node.firstChild: Node?
+get() = getFirstChild()
+
+val Node.lastChild: Node?
+get() = getLastChild()
+
+val Node.nextSibling: Node?
+get() = getNextSibling()
+
+val Node.previousSibling: Node?
+get() = getPreviousSibling()
+
+val Node.attributes: NamedNodeMap?
+get() = getAttributes()
+
+val Node.ownerDocument: Document?
+get() = getOwnerDocument()
+
+val Document.documentElement: Element?
+get() = if (this != null) this.getDocumentElement() else null
+
+val Node.namespaceURI: String
+get() = getNamespaceURI() ?: ""
+
+val Node.prefix: String
+get() = getPrefix() ?: ""
+
+val Node.localName: String
+get() = getLocalName() ?: ""
+
+val Node.baseURI: String
+get() = getBaseURI() ?: ""
+
+var Node.textContent: String
+get() = getTextContent() ?: ""
+set(value) {
+    setTextContent(value)
+}
+
+val DOMStringList.length: Int
+get() = this.getLength()
+
+val NameList.length: Int
+get() = this.getLength()
+
+val DOMImplementationList.length: Int
+get() = this.getLength()
+
+val NodeList.length: Int
+get() = this.getLength()
+
+val CharacterData.length: Int
+get() = this.getLength()
+
+val NamedNodeMap.length: Int
+get() = this.getLength()
+
+
 /** Returns an [[Iterator]] of all the next [[Element]] siblings */
 fun Node.nextElements(): Iterator<Element> = nextSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
 

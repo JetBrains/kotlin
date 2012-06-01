@@ -11,23 +11,20 @@ import java.lang.IndexOutOfBoundsException
 
 // Properties
 
-val Document?.rootElement : Element?
-get() = if (this != null) this.getDocumentElement() else null
-
 
 var Node.text : String
 get() {
-    if (this.getNodeType() == Node.ELEMENT_NODE) {
+    if (this.nodeType == Node.ELEMENT_NODE) {
         val buffer = StringBuilder()
-        val nodeList = this.getChildNodes()
+        val nodeList = this.childNodes
         if (nodeList != null) {
             var i = 0
-            val size = nodeList.getLength()
+            val size = nodeList.length
             while (i < size) {
                 val node = nodeList.item(i)
                 if (node != null) {
                     if (node.isText()) {
-                        buffer.append(node.getNodeValue())
+                        buffer.append(node.nodeValue)
                     }
                 }
                 i++
@@ -35,11 +32,11 @@ get() {
         }
         return buffer.toString().sure()
     } else {
-        return this.getNodeValue() ?: ""
+        return this.nodeValue
     }
 }
 set(value) {
-    if (this.getNodeType() == Node.ELEMENT_NODE) {
+    if (this.nodeType == Node.ELEMENT_NODE) {
         val element = this as Element
         // lets remove all the previous text nodes first
         for (node in element.children()) {
@@ -74,7 +71,7 @@ set(value) {
 
 /** Returns the children of the element as a list */
 inline fun Element?.children(): List<Node> {
-    return this?.getChildNodes().toList()
+    return this?.childNodes.toList()
 }
 
 /** The child elements of this document */
@@ -175,7 +172,7 @@ class NodeListAsList(val nodeList: NodeList): AbstractList<Node>() {
         }
     }
 
-    override fun size(): Int = nodeList.getLength()
+    override fun size(): Int = nodeList.length
 }
 
 class ElementListAsList(val nodeList: NodeList): AbstractList<Element>() {
@@ -183,14 +180,14 @@ class ElementListAsList(val nodeList: NodeList): AbstractList<Element>() {
         val node = nodeList.item(index)
         if (node == null) {
             throw IndexOutOfBoundsException("NodeList does not contain a node at index: " + index)
-        } else if (node.getNodeType() == Node.ELEMENT_NODE) {
+        } else if (node.nodeType == Node.ELEMENT_NODE) {
             return node as Element
         } else {
             throw IllegalArgumentException("Node is not an Element as expected but is $node")
         }
     }
 
-    override fun size(): Int = nodeList.getLength()
+    override fun size(): Int = nodeList.length
 
 }
 
@@ -202,7 +199,7 @@ fun Node.nextSiblings() : Iterator<Node> = NextSiblingIterator(this)
 class NextSiblingIterator(var node: Node) : AbstractIterator<Node>() {
 
     override fun computeNext(): Unit {
-        val nextValue = node.getNextSibling()
+        val nextValue = node.nextSibling
         if (nextValue != null) {
             setNext(nextValue)
             node = nextValue
@@ -218,7 +215,7 @@ fun Node.previousSiblings() : Iterator<Node> = PreviousSiblingIterator(this)
 class PreviousSiblingIterator(var node: Node) : AbstractIterator<Node>() {
 
     override fun computeNext(): Unit {
-        val nextValue = node.getPreviousSibling()
+        val nextValue = node.previousSibling
         if (nextValue != null) {
             setNext(nextValue)
             node = nextValue
@@ -230,8 +227,8 @@ class PreviousSiblingIterator(var node: Node) : AbstractIterator<Node>() {
 
 /** Returns true if this node is a Text node or a CDATA node */
 fun Node.isText(): Boolean {
-    val nodeType = getNodeType()
-    return nodeType == Node.TEXT_NODE || nodeType == Node.CDATA_SECTION_NODE
+    val nt = nodeType
+    return nt == Node.TEXT_NODE || nt == Node.CDATA_SECTION_NODE
 }
 
 /** Returns the attribute value or empty string if its not present */
@@ -240,7 +237,7 @@ inline fun Element.attribute(name: String): String {
 }
 
 val NodeList?.head : Node?
-get() = if (this != null && this.getLength() > 0) this.item(0) else null
+get() = if (this != null && this.length > 0) this.item(0) else null
 
 val NodeList?.first : Node?
 get() = this.head
@@ -250,7 +247,7 @@ get() {
     if (this == null) {
         return null
     } else {
-        val s = this.getLength()
+        val s = this.length
         return if (s > 0) this.item(s - 1) else null
     }
 }
@@ -295,8 +292,8 @@ fun Element.createElement(name: String, doc: Document? = null, init: Element.()-
 
 /** Returns the owner document of the element or uses the provided document */
 fun Node.ownerDocument(doc: Document? = null): Document {
-    val answer = if (this != null && this.getNodeType() == Node.DOCUMENT_NODE) this as Document
-    else if (doc == null) this.getOwnerDocument()
+    val answer = if (this != null && this.nodeType == Node.DOCUMENT_NODE) this as Document
+    else if (doc == null) this.ownerDocument
     else doc
 
     if (answer == null) {
