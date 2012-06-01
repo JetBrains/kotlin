@@ -70,11 +70,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
         }
 
         JetCoreEnvironment environmentForJS = JetCoreEnvironment.getCoreEnvironmentForJS(rootDisposable);
-        Project project = environmentForJS.getProject();
-        Config config = getConfig(arguments, project);
-        if (analyzeAndReportErrors(messageCollector, environmentForJS.getSourceFiles(), config)) {
-            return ExitCode.COMPILATION_ERROR;
-        }
 
         if (arguments.srcdir != null) {
             environmentForJS.addSources(arguments.srcdir);
@@ -84,12 +79,20 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
                 environmentForJS.addSources(sourceFile);
             }
         }
+
+        Project project = environmentForJS.getProject();
+
         ClassPathLibrarySourcesLoader sourceLoader = new ClassPathLibrarySourcesLoader(project);
         List<JetFile> sourceFiles = sourceLoader.findSourceFiles();
         environmentForJS.getSourceFiles().addAll(sourceFiles);
 
         if (arguments.isVerbose()) {
             reportCompiledSourcesList(messageCollector, environmentForJS);
+        }
+
+        Config config = getConfig(arguments, project);
+        if (analyzeAndReportErrors(messageCollector, environmentForJS.getSourceFiles(), config)) {
+            return ExitCode.COMPILATION_ERROR;
         }
 
         String outputFile = arguments.outputFile;
