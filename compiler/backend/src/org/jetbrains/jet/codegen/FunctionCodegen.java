@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -37,8 +38,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -203,6 +203,8 @@ public class FunctionCodegen {
                     throw new IllegalStateException("mismatching kind in " + functionDescriptor);
                 }
 
+                Map<Name, Label> mapLabelsToDivideLocalVarVisibilityForSharedVar = new HashMap<Name, Label>();
+
                 if (kind instanceof OwnerKind.DelegateKind) {
                     OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
                     InstructionAdapter iv = new InstructionAdapter(mv);
@@ -227,6 +229,11 @@ public class FunctionCodegen {
                             mv.visitMethodInsn(INVOKESPECIAL, sharedVarType.getInternalName(), "<init>", "()V");
                             mv.visitVarInsn(localVarType.getOpcode(ILOAD), index);
                             mv.visitFieldInsn(PUTFIELD, sharedVarType.getInternalName(), "ref", StackValue.refType(localVarType).getDescriptor());
+
+                            Label labelToDivideLocalVarForSharedVarVisibility = new Label();
+                            mv.visitLabel(labelToDivideLocalVarForSharedVarVisibility);
+                            mapLabelsToDivideLocalVarVisibilityForSharedVar.put(parameter.getName(), labelToDivideLocalVarForSharedVarVisibility);
+
                             mv.visitVarInsn(sharedVarType.getOpcode(ISTORE), index);
                         }
                     }
@@ -236,6 +243,12 @@ public class FunctionCodegen {
                 
                 Label methodEnd = new Label();
                 mv.visitLabel(methodEnd);
+
+                Collection<String> localVariableNames = new HashSet<String>();
+                localVariableNames.addAll(codegen.getLocalVariableNamesForExpression());
+                for (ValueParameterDescriptor parameterDescriptor : paramDescrs) {
+                    localVariableNames.add(parameterDescriptor.getName().getName());
+                }
 
                 int k = 0;
 
@@ -260,8 +273,22 @@ public class FunctionCodegen {
                 for (ValueParameterDescriptor parameter : paramDescrs) {
                     Type type = state.getInjector().getJetTypeMapper().mapType(parameter.getType(), MapTypeMode.VALUE);
                     // TODO: specify signature
-                    mv.visitLocalVariable(parameter.getName().getName(), type.getDescriptor(), null, methodBegin, methodEnd, k);
-                    k += type.getSize();
+
+                    Label divideLabel = mapLabelsToDivideLocalVarVisibilityForSharedVar.get(parameter.getName());
+                    String parameterName = parameter.getName().getName();
+                    if(divideLabel != null) {
+                        Type sharedVarType = state.getInjector().getJetTypeMapper().getSharedVarType(parameter);
+                        mv.visitLocalVariable(parameterName, type.getDescriptor(), null, methodBegin, divideLabel, k);
+
+                        String nameForSharedVar = CodegenUtil.generateTmpVariableName(localVariableNames);
+                        localVariableNames.add(nameForSharedVar);
+
+                        mv.visitLocalVariable(nameForSharedVar, sharedVarType.getDescriptor(), null, divideLabel, methodEnd, k);
+                        k += Math.max(type.getSize(), sharedVarType.getSize());
+                    }   else {
+                        mv.visitLocalVariable(parameter.getName().getName(), type.getDescriptor(), null, methodBegin, methodEnd, k);
+                        k += type.getSize();
+                    }
                 }
 
                 endVisit(mv, null, fun);
