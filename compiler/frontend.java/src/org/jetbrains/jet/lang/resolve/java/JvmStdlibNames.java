@@ -16,15 +16,16 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import jet.runtime.typeinfo.JetConstructor;
-import jet.runtime.typeinfo.KotlinSignature;
+import jet.JetObject;
+import jet.runtime.typeinfo.*;
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 /**
  * @author Stepan Koltsov
  */
 public class JvmStdlibNames {
 
-    public static final JvmClassName JET_VALUE_PARAMETER = new JvmClassName("jet.runtime.typeinfo.JetValueParameter");
+    public static final JvmClassName JET_VALUE_PARAMETER = new JvmClassName(JetValueParameter.class);
 
     public static final String JET_VALUE_PARAMETER_NAME_FIELD = "name";
     public static final String JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD = "hasDefaultValue";
@@ -33,12 +34,12 @@ public class JvmStdlibNames {
     public static final String JET_VALUE_PARAMETER_RECEIVER_FIELD = "receiver";
 
 
-    public static final JvmClassName JET_TYPE_PARAMETER = new JvmClassName("jet.runtime.typeinfo.JetTypeParameter");
+    public static final JvmClassName JET_TYPE_PARAMETER = new JvmClassName(JetTypeParameter.class);
 
     public static final String JET_TYPE_PARAMETER_NAME_FIELD = "name";
 
 
-    public static final JvmClassName JET_METHOD = new JvmClassName("jet.runtime.typeinfo.JetMethod");
+    public static final JvmClassName JET_METHOD = new JvmClassName(JetMethod.class);
 
     public static final String JET_METHOD_KIND_FIELD = "kind";
     public static final String JET_METHOD_NULLABLE_RETURN_TYPE_FIELD = "nullableReturnType";
@@ -50,7 +51,7 @@ public class JvmStdlibNames {
     public static final int JET_METHOD_KIND_PROPERTY = 1;
     public static final int JET_METHOD_KIND_DEFAULT = JET_METHOD_KIND_REGULAR;
 
-    public static final JvmClassName JET_CONSTRUCTOR = new JvmClassName("jet.runtime.typeinfo.JetConstructor");
+    public static final JvmClassName JET_CONSTRUCTOR = new JvmClassName(JetConstructor.class);
 
     /**
      * @deprecated
@@ -59,17 +60,17 @@ public class JvmStdlibNames {
     public static final String JET_CONSTRUCTOR_HIDDEN_FIELD = "hidden";
     
 
-    public static final JvmClassName JET_CLASS = new JvmClassName("jet.runtime.typeinfo.JetClass");
+    public static final JvmClassName JET_CLASS = new JvmClassName(JetClass.class);
     
     public static final String JET_CLASS_SIGNATURE = "signature";
     
 
-    public static final JvmClassName JET_OBJECT = new JvmClassName("jet.JetObject");
+    public static final JvmClassName JET_OBJECT = new JvmClassName(JetObject.class);
 
 
-    public static final JvmClassName ASSERT_INVISIBLE_IN_RESOLVER = new JvmClassName("org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver");
+    public static final JvmClassName ASSERT_INVISIBLE_IN_RESOLVER = new JvmClassName(AssertInvisibleInResolver.class);
 
-    public static final JvmClassName KOTLIN_SIGNATURE = new JvmClassName(KotlinSignature.class.getName());
+    public static final JvmClassName KOTLIN_SIGNATURE = new JvmClassName(KotlinSignature.class);
     public static final String KOTLIN_SIGNATURE_VALUE_METHOD = "value";
 
     private JvmStdlibNames() {

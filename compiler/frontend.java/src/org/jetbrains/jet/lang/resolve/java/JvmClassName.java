@@ -28,6 +28,10 @@ public class JvmClassName {
     @NotNull
     private final FqName fqName;
 
+    public JvmClassName(@NotNull Class<?> klass) {
+        this(klass.getName());
+    }
+
     public JvmClassName(@NotNull String fqName) {
         this(new FqName(fqName));
     }

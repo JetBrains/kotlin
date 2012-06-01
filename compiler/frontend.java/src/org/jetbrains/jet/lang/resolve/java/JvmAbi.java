@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author Stepan Koltsov
  */
@@ -28,5 +30,5 @@ public class JvmAbi {
     public static final String CLASS_OBJECT_SUFFIX = "$ClassObject$";
     public static final String CLASS_OBJECT_CLASS_NAME = "ClassObject$";
 
-    public static final JvmClassName JETBRAINS_NOT_NULL_ANNOTATION = new JvmClassName("org.jetbrains.annotations.NotNull");
+    public static final JvmClassName JETBRAINS_NOT_NULL_ANNOTATION = new JvmClassName(NotNull.class);
 }
