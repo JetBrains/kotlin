@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.project;
 
-import com.intellij.openapi.diagnostic.Log;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Pair;
@@ -61,8 +61,9 @@ public final class JsModuleDetector {
     @NotNull
     public static Pair<String, String> getLibLocationAndTargetForProject(@NotNull Project project) {
         VirtualFile indicationFile = findIndicationFileInContentRoots(project);
+        Logger logger = Logger.getInstance(JsModuleDetector.class);
         if (indicationFile == null) {
-            Log.print("Indication file not found for project " + project.getName());
+            logger.error("Indication file not found for project " + project.getName());
             return Pair.empty();
         }
 
@@ -70,11 +71,12 @@ public final class JsModuleDetector {
             InputStream stream = indicationFile.getInputStream();
             String text = FileUtil.loadTextAndClose(stream);
             if (text.isEmpty()) {
-                Log.print("Indication file not found for project " + project.getName());
+                logger.error("Indication file is corrupted for project " + project.getName());
+                return Pair.empty();
             }
             String[] lines = text.split("\n");
             if (lines.length == 0) {
-                Log.print("Indication file " + indicationFile.getPath() + "is empty");
+                logger.error("Indication file " + indicationFile.getPath() + "is empty");
                 return Pair.empty();
             }
             String pathToLibFile = lines[0];
@@ -83,7 +85,7 @@ public final class JsModuleDetector {
             return new Pair<String, String>(pathToIndicationFileLocation + "/" + pathToLibFile, version);
         }
         catch (IOException e) {
-            Log.print("Could not open file " + indicationFile.getPath());
+            logger.error("Could not open file " + indicationFile.getPath());
             return Pair.empty();
         }
     }
