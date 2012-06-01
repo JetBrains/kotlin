@@ -601,13 +601,10 @@ public class JetTypeMapper {
             throw new UnsupportedOperationException("unknown function parent");
         }
 
-        final CallableMethod result = new CallableMethod(owner, ownerForDefaultImpl, ownerForDefaultParam, descriptor, invokeOpcode);
-        result.setNeedsThis(thisClass);
-        if(functionDescriptor.getReceiverParameter().exists()) {
-            result.setNeedsReceiver(functionDescriptor);
-        }
 
-        return result;
+        return new CallableMethod(
+                owner, ownerForDefaultImpl, ownerForDefaultParam, descriptor, invokeOpcode,
+                thisClass, functionDescriptor.getReceiverParameter().exists() ? functionDescriptor.getOriginal() : null, null);
     }
     
     @NotNull
@@ -900,7 +897,7 @@ public class JetTypeMapper {
             throw new IllegalStateException("type must have been mapped to object: " + defaultType + ", actual: " + mapped);
         }
         JvmClassName owner = JvmClassName.byType(mapped);
-        return new CallableMethod(owner, owner, owner, method, INVOKESPECIAL);
+        return new CallableMethod(owner, owner, owner, method, INVOKESPECIAL, null, null, null);
     }
 
 

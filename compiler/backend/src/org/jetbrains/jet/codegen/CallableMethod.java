@@ -43,18 +43,26 @@ public class CallableMethod implements Callable {
     private final JvmClassName defaultImplParam;
     private final JvmMethodSignature signature;
     private final int invokeOpcode;
-    private ClassDescriptor thisClass = null;
+    private final ClassDescriptor thisClass;
 
-    private CallableDescriptor receiverFunction = null;
-    private Type generateCalleeType = null;
+    private final CallableDescriptor receiverFunction;
+    private final Type generateCalleeType;
 
     public CallableMethod(@NotNull JvmClassName owner, @Nullable JvmClassName defaultImplOwner, @Nullable JvmClassName defaultImplParam,
-            JvmMethodSignature signature, int invokeOpcode) {
+            JvmMethodSignature signature, int invokeOpcode,
+            @Nullable ClassDescriptor thisClass, @Nullable CallableDescriptor receiverFunction, @Nullable Type generateCalleeType) {
         this.owner = owner;
         this.defaultImplOwner = defaultImplOwner;
         this.defaultImplParam = defaultImplParam;
         this.signature = signature;
         this.invokeOpcode = invokeOpcode;
+        this.thisClass = thisClass;
+        this.receiverFunction = receiverFunction;
+        this.generateCalleeType = generateCalleeType;
+
+        if (receiverFunction != null && receiverFunction.getOriginal() != receiverFunction) {
+            throw new IllegalArgumentException("receiver function parameter must be original: " + receiverFunction);
+        }
     }
 
     @NotNull
@@ -79,10 +87,6 @@ public class CallableMethod implements Callable {
         return signature.getValueParameterTypes();
     }
 
-    public void setNeedsReceiver(@Nullable CallableDescriptor receiverClass) {
-        this.receiverFunction = receiverClass.getOriginal();
-    }
-
     public JetType getThisType() {
         return thisClass.getDefaultType();
     }
@@ -91,16 +95,8 @@ public class CallableMethod implements Callable {
         return receiverFunction.getReceiverParameter().getType();
     }
 
-    public void setNeedsThis(@Nullable ClassDescriptor receiverClass) {
-        this.thisClass = receiverClass;
-    }
-
     void invoke(InstructionAdapter v) {
         v.visitMethodInsn(getInvokeOpcode(), owner.getInternalName(), getSignature().getAsmMethod().getName(), getSignature().getAsmMethod().getDescriptor());
-    }
-
-    public void requestGenerateCallee(Type objectType) {
-        generateCalleeType = objectType;
     }
 
     public Type getGenerateCalleeType() {
