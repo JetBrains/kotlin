@@ -1,3 +1,6 @@
+package org.jetbrains.jet.j2k
+
+
 /*
  * Copyright 2010-2012 JetBrains s.r.o.
  *
@@ -13,13 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.jetbrains.jet.j2k;
-
 /**
  * @author ignatov
  */
-public class SetupJavaCoreEnvironmentException extends RuntimeException {
-    public SetupJavaCoreEnvironmentException(String s) {
-    }
+public open class SetupJavaCoreEnvironmentException(s: String?): RuntimeException() {
 }
