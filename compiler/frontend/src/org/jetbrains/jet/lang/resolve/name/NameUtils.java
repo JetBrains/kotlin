@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 public class NameUtils {
 
     public static boolean isValidIdentified(@NotNull String name) {
-        return name.length() > 0 && !name.startsWith("<") && !name.contains(".");
+        return name.length() > 0 && !name.startsWith("<") && !name.contains(".") && !name.contains("/");
     }
 
     public static void requireIdentifier(@NotNull String name) {

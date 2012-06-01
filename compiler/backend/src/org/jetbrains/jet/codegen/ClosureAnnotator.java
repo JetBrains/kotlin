@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -74,8 +75,8 @@ public class ClosureAnnotator {
             classDescriptor = new ClassDescriptorImpl(
                     funDescriptor,
                     Collections.<AnnotationDescriptor>emptyList(),
-                    // TODO: internal name used as identifier
-                    Name.identifier(name.getInternalName())); // TODO:
+                    Name.special("<closure>"));
+            recordName(classDescriptor, name);
             classDescriptor.initialize(
                     false,
                     Collections.<TypeParameterDescriptor>emptyList(),
@@ -264,18 +265,6 @@ public class ClosureAnnotator {
             classStack.pop();
         }
 
-        // TODO: please insert either @NotNull or @Nullable here
-        // stepan.koltsov@ 2012-04-08
-        private void recordName(ClassDescriptor classDescriptor, @NotNull JvmClassName name) {
-            JvmClassName old = classNamesForClassDescriptor.put(classDescriptor, name);
-            if (old == null) {
-                // TODO: fix this assertion
-                // previosly here was incorrect assert that was ignored without -ea
-                // stepan.koltsov@ 2012-04-08
-                //throw new IllegalStateException("rewrite at key " + classDescriptor);
-            }
-        }
-
         @Override
         public void visitProperty(JetProperty property) {
             nameStack.push(nameStack.peek() + '$' + property.getName());
@@ -316,9 +305,25 @@ public class ClosureAnnotator {
         }
     }
 
-    public JvmClassName classNameForClassDescriptor(ClassDescriptor classDescriptor) {
-        JvmClassName name = classNamesForClassDescriptor.get(classDescriptor);
-        assert name != null;
-        return name;
+    // TODO: please insert either @NotNull or @Nullable here
+    // stepan.koltsov@ 2012-04-08
+    private void recordName(ClassDescriptor classDescriptor, @NotNull JvmClassName name) {
+        JvmClassName old = classNamesForClassDescriptor.put(classDescriptor, name);
+        if (old == null) {
+            // TODO: fix this assertion
+            // previosly here was incorrect assert that was ignored without -ea
+            // stepan.koltsov@ 2012-04-08
+            //throw new IllegalStateException("rewrite at key " + classDescriptor);
+        }
+    }
+
+    @NotNull
+    public JvmClassName classNameForClassDescriptor(@NotNull ClassDescriptor classDescriptor) {
+        return classNamesForClassDescriptor.get(classDescriptor);
+    }
+
+    @Nullable
+    public JvmClassName classNameForClassDescriptorIfDefined(@NotNull ClassDescriptor classDescriptor) {
+        return classNamesForClassDescriptor.get(classDescriptor);
     }
 }

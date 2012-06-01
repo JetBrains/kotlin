@@ -41,7 +41,7 @@ public class Name implements Comparable<Name> {
         if (special) {
             throw new IllegalStateException("not identifier: " + this);
         }
-        return name;
+        return getName();
     }
 
     public boolean isSpecial() {

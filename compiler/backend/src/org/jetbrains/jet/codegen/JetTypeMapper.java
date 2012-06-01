@@ -334,9 +334,13 @@ public class JetTypeMapper {
                     .getInternalName();
         }
 
-        // This is the worst code in the project
-        if(name.getName().contains("/"))
-            return name.getName();
+        if (descriptor instanceof ClassDescriptor) {
+            ClassDescriptor clazz = (ClassDescriptor) descriptor;
+            JvmClassName className = closureAnnotator.classNameForClassDescriptorIfDefined(clazz);
+            if (className != null) {
+                return className.getInternalName();
+            }
+        }
 
         if (container != null) {
             String baseName = getFQName(container);
