@@ -7,5 +7,5 @@ fun foo(): String {
     if (element != null) {
         element.appendChild(document.createTextNode("Some Dynamically Created Content!!!"))
     }
-    return element.getTextContent()
+    return element.textContent
 }
