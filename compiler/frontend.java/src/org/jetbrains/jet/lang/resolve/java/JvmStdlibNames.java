@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import jet.runtime.typeinfo.JetConstructor;
+import jet.runtime.typeinfo.KotlinSignature;
 
 /**
  * @author Stepan Koltsov
@@ -68,7 +69,9 @@ public class JvmStdlibNames {
 
     public static final JvmClassName ASSERT_INVISIBLE_IN_RESOLVER = new JvmClassName("org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver");
 
-    
+    public static final JvmClassName KOTLIN_SIGNATURE = new JvmClassName(KotlinSignature.class.getName());
+    public static final String KOTLIN_SIGNATURE_VALUE_METHOD = "value";
+
     private JvmStdlibNames() {
     }
 }
