@@ -269,8 +269,17 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
     public override fun visitTypeCastExpression(expression: PsiTypeCastExpression?): Unit {
         val castType: PsiTypeElement? = expression?.getCastType()
         if (castType != null) {
-            myResult = TypeCastExpression(getConverter().typeToType(castType.getType()),
-                    getConverter().expressionToExpression(expression?.getOperand()))
+            val operand = expression?.getOperand()
+            val operandType = operand?.getType()
+            val typeText = castType.getType().getCanonicalText()
+            val typeConversion = Converter.PRIMITIVE_TYPE_CONVERSIONS[typeText]
+            if (operandType is PsiPrimitiveType && typeConversion != null) {
+                myResult = MethodCallExpression.build(getConverter().expressionToExpression(operand), typeConversion)
+            }
+            else {
+                myResult = TypeCastExpression(getConverter().typeToType(castType.getType()),
+                        getConverter().expressionToExpression(operand))
+            }
         }
     }
 
