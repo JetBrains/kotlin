@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.project;
 
+import com.intellij.openapi.diagnostic.Log;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Pair;
@@ -24,12 +25,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * @author Pavel Talanov
@@ -65,30 +62,28 @@ public final class JsModuleDetector {
     public static Pair<String, String> getLibLocationAndTargetForProject(@NotNull Project project) {
         VirtualFile indicationFile = findIndicationFileInContentRoots(project);
         if (indicationFile == null) {
+            Log.print("Indication file not found for project " + project.getName());
             return Pair.empty();
         }
 
         try {
             InputStream stream = indicationFile.getInputStream();
-            BufferedReader reader = new BufferedReader(new StringReader(FileUtil.loadTextAndClose(stream)));
-            try {
-                String pathToLibFile = reader.readLine();
-                if (pathToLibFile == null) {
-                    return Pair.empty();
-                }
-
-                URI pathToLibFileUri = new URI(pathToLibFile);
-                URI pathToIndicationFileUri = new URI(indicationFile.getPath());
-                return new Pair<String, String>(pathToIndicationFileUri.resolve(pathToLibFileUri).toString(), reader.readLine());
+            String text = FileUtil.loadTextAndClose(stream);
+            if (text.isEmpty()) {
+                Log.print("Indication file not found for project " + project.getName());
             }
-            catch (URISyntaxException e) {
+            String[] lines = text.split("\n");
+            if (lines.length == 0) {
+                Log.print("Indication file " + indicationFile.getPath() + "is empty");
                 return Pair.empty();
             }
-            finally {
-                reader.close();
-            }
+            String pathToLibFile = lines[0];
+            String version = lines.length >= 2 ? lines[1] : null;
+            String pathToIndicationFileLocation = indicationFile.getParent().getPath();
+            return new Pair<String, String>(pathToIndicationFileLocation + "/" + pathToLibFile, version);
         }
         catch (IOException e) {
+            Log.print("Could not open file " + indicationFile.getPath());
             return Pair.empty();
         }
     }
