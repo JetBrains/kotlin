@@ -11,9 +11,10 @@ import java.lang.IndexOutOfBoundsException
 
 // Properties
 
-
 var Node.text : String
 get() {
+    return textContent
+/*
     if (this.nodeType == Node.ELEMENT_NODE) {
         val buffer = StringBuilder()
         val nodeList = this.childNodes
@@ -34,9 +35,12 @@ get() {
     } else {
         return this.nodeValue
     }
+*/
 }
 set(value) {
-    if (this.nodeType == Node.ELEMENT_NODE) {
+    textContent = value
+    /*
+    if (nodeType == Node.ELEMENT_NODE) {
         val element = this as Element
         // lets remove all the previous text nodes first
         for (node in element.children()) {
@@ -46,8 +50,9 @@ set(value) {
         }
         element.addText(value)
     } else {
-        this.setNodeValue(value)
+        nodeValue = value
     }
+    */
 }
 
 var Element.id : String
