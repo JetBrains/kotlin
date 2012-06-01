@@ -311,6 +311,21 @@ public class JetTypeMapper {
             throw new IllegalStateException("missed something");
         }
 
+        if (descriptor instanceof ClassDescriptor) {
+            ClassDescriptor klass = (ClassDescriptor) descriptor;
+            if (klass.getKind() == ClassKind.OBJECT) {
+                if (klass.getContainingDeclaration() instanceof ClassDescriptor) {
+                    ClassDescriptor containingKlass = (ClassDescriptor) klass.getContainingDeclaration();
+                    if (containingKlass.getKind() == ClassKind.ENUM_CLASS) {
+                        return getFQName(containingKlass);
+                    }
+                }
+            }
+            else if (klass.getKind() == ClassKind.ENUM_ENTRY) {
+                return getFQName(klass.getContainingDeclaration());
+            }
+        }
+
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         Name name = descriptor.getName();
         if(JetPsiUtil.NO_NAME_PROVIDED.equals(name)) {

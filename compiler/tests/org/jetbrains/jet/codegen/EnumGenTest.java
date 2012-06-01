@@ -34,4 +34,9 @@ public class EnumGenTest extends CodegenTestCase {
         blackBoxFile("enum/simple.kt");
     }
 
+    public void testAsReturnExpression() {
+        blackBoxFile("enum/asReturnExpression.kt");
+    }
+
+
 }
