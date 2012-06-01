@@ -238,7 +238,8 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
             val resolved = expression?.getReference()?.resolve()
             if (resolved is PsiMember && resolved.hasModifierProperty(PsiModifier.STATIC) &&
                 resolved.getContainingClass() != null &&
-                 PsiTreeUtil.getParentOfType(expression, javaClass<PsiClass>()) != resolved.getContainingClass()) {
+                 PsiTreeUtil.getParentOfType(expression, javaClass<PsiClass>()) != resolved.getContainingClass() &&
+                 !isStaticallyImported(resolved, expression!!)) {
                 var member = resolved as PsiMember
                 var result = Identifier(referencedName).toKotlin()
                 while(member.getContainingClass() != null) {
@@ -467,4 +468,24 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
             return false
         }
     }
+}
+
+private fun isStaticallyImported(member: PsiMember, context: PsiElement): Boolean {
+    val containingFile = context.getContainingFile()
+    val targetContainingClass = member.getContainingClass()
+    if (containingFile is PsiJavaFile && targetContainingClass != null) {
+        val importList = containingFile.getImportList();
+        if (importList != null) {
+            val importStatics = importList.getImportStaticStatements();
+            return importStatics.any { importResolvesTo(it, member) }
+        }
+    }
+    return false
+}
+
+private fun importResolvesTo(stmt: PsiImportStaticStatement?, member: PsiMember): Boolean {
+    val targetContainingClass = member.getContainingClass()
+    var importedClass = stmt?.resolveTargetClass()
+    return importedClass == targetContainingClass && (stmt?.isOnDemand() ?: false ||
+        stmt?.getReferenceName() == member.getName())
 }
