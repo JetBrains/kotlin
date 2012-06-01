@@ -303,7 +303,7 @@ public class JetTypeMapper {
             return getFQName(descriptor.getContainingDeclaration());
         }
 
-        if (descriptor.getContainingDeclaration() instanceof ModuleDescriptor) {
+        if (descriptor.getContainingDeclaration() instanceof ModuleDescriptor || descriptor instanceof ScriptDescriptor) {
             return "";
         }
 
@@ -341,11 +341,11 @@ public class JetTypeMapper {
         if (container != null) {
             String baseName = getFQName(container);
             if (!baseName.isEmpty()) { 
-                return baseName + (container instanceof NamespaceDescriptor ? "/" : "$") + name;
+                return baseName + (container instanceof NamespaceDescriptor ? "/" : "$") + name.getIdentifier();
             }
         }
 
-        return name.getName();
+        return name.getIdentifier();
     }
 
     private static ClassDescriptor getContainingClass(DeclarationDescriptor descriptor) {
