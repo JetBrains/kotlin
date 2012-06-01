@@ -12,6 +12,7 @@ import java.util.ArrayList
 import java.util.Collections
 import java.util.List
 import com.intellij.psi.CommonClassNames.*
+import com.intellij.psi.util.PsiTreeUtil
 
 public open class ExpressionVisitor(converter: Converter): StatementVisitor(converter) {
     {
@@ -231,6 +232,21 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
         }
         else if (qualifier != null && qualifier.getType() is PsiArrayType && referencedName == "length") {
             identifier = Identifier("size", isNullable)
+        }
+        else if (qualifier == null) {
+            val resolved = expression?.getReference()?.resolve()
+            if (resolved is PsiMember && resolved.hasModifierProperty(PsiModifier.STATIC) &&
+                resolved.getContainingClass() != null &&
+                 PsiTreeUtil.getParentOfType(expression, javaClass<PsiClass>()) != resolved.getContainingClass()) {
+                var member = resolved as PsiMember
+                var result = Identifier(referencedName).toKotlin()
+                while(member.getContainingClass() != null) {
+                    result = Identifier(member.getContainingClass()!!.getName()!!).toKotlin() + "." + result
+                    member = member.getContainingClass()!!
+                }
+                myResult = Identifier(result, false, false)
+                return
+            }
         }
 
         myResult = CallChainExpression(getConverter().expressionToExpression(qualifier), identifier)
