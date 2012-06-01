@@ -1,6 +1,6 @@
 package js.jquery;
 
-import org.w3c.dom.Element
+import js.dom.core.Element
 
 native
 class JQuery() {
