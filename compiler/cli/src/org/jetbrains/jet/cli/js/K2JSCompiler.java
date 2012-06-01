@@ -89,13 +89,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
         environmentForJS.getSourceFiles().addAll(sourceFiles);
 
         if (arguments.isVerbose()) {
-            Iterable<String> fileNames = Iterables.transform(environmentForJS.getSourceFiles(), new Function<JetFile, String>() {
-                @Override
-                public String apply(@Nullable JetFile file) {
-                    return file.getName();
-                }
-            });
-            System.out.println("Compiling source files: " + Joiner.on(", ").join(fileNames));
+            reportCompiledSourcesList(messageCollector, environmentForJS);
         }
 
         String outputFile = arguments.outputFile;
@@ -107,6 +101,19 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
 
         MainCallParameters mainCallParameters = arguments.createMainCallParameters();
         return translateAndGenerateOutputFile(mainCallParameters, messageCollector, environmentForJS, config, outputFile);
+    }
+
+    private static void reportCompiledSourcesList(@NotNull PrintingMessageCollector messageCollector,
+            @NotNull JetCoreEnvironment environmentForJS) {
+        Iterable<String> fileNames = Iterables.transform(environmentForJS.getSourceFiles(), new Function<JetFile, String>() {
+            @Override
+            public String apply(@Nullable JetFile file) {
+                assert file != null;
+                return file.getName();
+            }
+        });
+        messageCollector.report(CompilerMessageSeverity.LOGGING, "Compiling source files: " + Joiner.on(", ").join(fileNames),
+                                CompilerMessageLocation.NO_LOCATION);
     }
 
     @NotNull
@@ -121,7 +128,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
                                     CompilerMessageLocation.NO_LOCATION);
             // TODO we should report the exception nicely to the collector so it can report
             // for example inside a mvn plugin we need to see the stack trace
-            e.printStackTrace();
             return ExitCode.INTERNAL_ERROR;
         }
         return ExitCode.OK;
