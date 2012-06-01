@@ -28,23 +28,3 @@ library
 open class RuntimeException() : Exception() {}
 library
 class NumberFormatException() : Exception() {}
-
-native
-fun setTimeout(callback:()->Unit, delay:Int, vararg p:Any?):Int = noImpl
-native
-fun setTimeout(callback:()->Unit):Int = noImpl
-native
-fun clearTimeout(timeoutId:Int):Unit = noImpl
-
-native
-fun setInterval(callback : ()-> Unit, delay : Int) {}
-native
-fun setInterval(callback : ()-> Unit) {}
-
-
-native
-open class DomElement() {
-    val offsetLeft = 0.0;
-    val offsetTop = 0.0;
-    val offsetParent : DomElement? = DomElement();
-}

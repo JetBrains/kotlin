@@ -84,28 +84,10 @@ public abstract class ClassBodyCodegen {
     }
 
     protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration, FunctionCodegen functionCodegen) {
-        if (declaration instanceof JetProperty) {
-            propertyCodegen.gen((JetProperty) declaration);
+        if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
+            state.getInjector().getMemberCodegen().generateFunctionOrProperty(
+                    (JetTypeParameterListOwner) declaration, context, v);
         }
-        else if (declaration instanceof JetNamedFunction) {
-            try {
-                genNamedFunction((JetNamedFunction) declaration, functionCodegen);
-            }
-            catch (CompilationException e) {
-                throw e;
-            }
-            catch (ProcessCanceledException e) {
-                throw e;
-            }
-            catch (RuntimeException e) {
-                throw new RuntimeException("Error generating method " + myClass.getName() + "." + declaration.getName() + " in " + context,
-                                           e);
-            }
-        }
-    }
-
-    protected void genNamedFunction(JetNamedFunction declaration, FunctionCodegen functionCodegen) {
-        functionCodegen.gen(declaration);
     }
 
     private void generatePrimaryConstructorProperties(PropertyCodegen propertyCodegen, JetClassOrObject origin) {

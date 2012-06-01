@@ -21,11 +21,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
@@ -82,8 +78,16 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
 
                 allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(resolverScopeData));
 
-                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
-                        resolverScopeData.classOrNamespaceDescriptor, resolverScopeData.psiClass, resolverScopeData.staticMembers));
+                // TODO: Trying to hack the situation when we produce namespace descriptor for java class and still want to see inner classes
+                if (getContainingDeclaration() instanceof JavaNamespaceDescriptor) {
+                    allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
+                            resolverScopeData.classOrNamespaceDescriptor, resolverScopeData.psiClass, false));
+                }
+                else  {
+                    allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
+                            resolverScopeData.classOrNamespaceDescriptor, resolverScopeData.psiClass,
+                            resolverScopeData.staticMembers));
+                }
             }
 
             if (resolverScopeData.psiPackage != null) {

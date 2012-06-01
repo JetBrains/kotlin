@@ -31,7 +31,10 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -140,18 +143,28 @@ public class ImportInsertHelper {
             return true;
         }
 
-        for (ImportPath defaultJetImport : DefaultModuleConfiguration.DEFAULT_JET_IMPORTS) {
-            if (QualifiedNamesUtil.isImported(defaultJetImport, importPath)) {
-                return true;
-            }
-        }
+        if (isImportedWithKotlinDefault(importPath)) return true;
 
+        if (isImportedWithJavaDefault(importPath)) return true;
+
+        return false;
+    }
+
+    public static boolean isImportedWithJavaDefault(ImportPath importPath) {
         for (ImportPath defaultJavaImport : JavaBridgeConfiguration.DEFAULT_JAVA_IMPORTS) {
             if (QualifiedNamesUtil.isImported(defaultJavaImport, importPath)) {
                 return true;
             }
         }
+        return false;
+    }
 
+    public static boolean isImportedWithKotlinDefault(ImportPath importPath) {
+        for (ImportPath defaultJetImport : DefaultModuleConfiguration.DEFAULT_JET_IMPORTS) {
+            if (QualifiedNamesUtil.isImported(defaultJetImport, importPath)) {
+                return true;
+            }
+        }
         return false;
     }
 

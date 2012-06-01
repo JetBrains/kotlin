@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.DeclarationsChecker;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
-import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
@@ -50,7 +50,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
-import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.annotations.NotNull;
@@ -67,7 +67,7 @@ public class InjectorForTopDownAnalyzerForJvm {
     private DescriptorResolver descriptorResolver;
     private final Project project;
     private final TopDownAnalysisParameters topDownAnalysisParameters;
-    private final ObservableBindingTrace observableBindingTrace;
+    private final BindingTrace bindingTrace;
     private final ModuleDescriptor moduleDescriptor;
     private final CompilerDependencies compilerDependencies;
     private CompilerSpecialMode compilerSpecialMode;
@@ -94,7 +94,7 @@ public class InjectorForTopDownAnalyzerForJvm {
     public InjectorForTopDownAnalyzerForJvm(
         @NotNull Project project,
         @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
-        @NotNull ObservableBindingTrace observableBindingTrace,
+        @NotNull BindingTrace bindingTrace,
         @NotNull ModuleDescriptor moduleDescriptor,
         @NotNull CompilerDependencies compilerDependencies
     ) {
@@ -106,7 +106,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.descriptorResolver = new DescriptorResolver();
         this.project = project;
         this.topDownAnalysisParameters = topDownAnalysisParameters;
-        this.observableBindingTrace = observableBindingTrace;
+        this.bindingTrace = bindingTrace;
         this.moduleDescriptor = moduleDescriptor;
         this.compilerDependencies = compilerDependencies;
         this.compilerSpecialMode = compilerDependencies.getCompilerSpecialMode();
@@ -142,7 +142,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.topDownAnalyzer.setOverloadResolver(overloadResolver);
         this.topDownAnalyzer.setOverrideResolver(overrideResolver);
         this.topDownAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
-        this.topDownAnalyzer.setTrace(observableBindingTrace);
+        this.topDownAnalyzer.setTrace(bindingTrace);
         this.topDownAnalyzer.setTypeHierarchyResolver(typeHierarchyResolver);
 
         this.topDownAnalysisContext.setTopDownAnalysisParameters(topDownAnalysisParameters);
@@ -152,12 +152,12 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.bodyResolver.setExpressionTypingServices(expressionTypingServices);
         this.bodyResolver.setScriptResolver(scriptResolver);
         this.bodyResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
-        this.bodyResolver.setTrace(observableBindingTrace);
+        this.bodyResolver.setTrace(bindingTrace);
 
         this.controlFlowAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
-        this.controlFlowAnalyzer.setTrace(observableBindingTrace);
+        this.controlFlowAnalyzer.setTrace(bindingTrace);
 
-        this.declarationsChecker.setTrace(observableBindingTrace);
+        this.declarationsChecker.setTrace(bindingTrace);
 
         this.descriptorResolver.setAnnotationResolver(annotationResolver);
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
@@ -171,7 +171,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         javaDescriptorResolver.setProject(project);
         javaDescriptorResolver.setPsiClassFinder(psiClassFinderForJvm);
         javaDescriptorResolver.setSemanticServices(javaSemanticServices);
-        javaDescriptorResolver.setTrace(observableBindingTrace);
+        javaDescriptorResolver.setTrace(bindingTrace);
 
         psiClassFinderForJvm.setCompilerDependencies(compilerDependencies);
         psiClassFinderForJvm.setProject(project);
@@ -180,7 +180,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         declarationResolver.setContext(topDownAnalysisContext);
         declarationResolver.setDescriptorResolver(descriptorResolver);
         declarationResolver.setImportsResolver(importsResolver);
-        declarationResolver.setTrace(observableBindingTrace);
+        declarationResolver.setTrace(bindingTrace);
 
         annotationResolver.setCallResolver(callResolver);
         annotationResolver.setExpressionTypingServices(expressionTypingServices);
@@ -202,28 +202,28 @@ public class InjectorForTopDownAnalyzerForJvm {
         importsResolver.setConfiguration(javaBridgeConfiguration);
         importsResolver.setContext(topDownAnalysisContext);
         importsResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
-        importsResolver.setTrace(observableBindingTrace);
+        importsResolver.setTrace(bindingTrace);
 
         delegationResolver.setContext(topDownAnalysisContext);
-        delegationResolver.setTrace(observableBindingTrace);
+        delegationResolver.setTrace(bindingTrace);
 
         namespaceFactoryImpl.setConfiguration(javaBridgeConfiguration);
         namespaceFactoryImpl.setModuleDescriptor(moduleDescriptor);
-        namespaceFactoryImpl.setTrace(observableBindingTrace);
+        namespaceFactoryImpl.setTrace(bindingTrace);
 
         overloadResolver.setContext(topDownAnalysisContext);
-        overloadResolver.setTrace(observableBindingTrace);
+        overloadResolver.setTrace(bindingTrace);
 
         overrideResolver.setContext(topDownAnalysisContext);
         overrideResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
-        overrideResolver.setTrace(observableBindingTrace);
+        overrideResolver.setTrace(bindingTrace);
 
         typeHierarchyResolver.setContext(topDownAnalysisContext);
         typeHierarchyResolver.setDescriptorResolver(descriptorResolver);
         typeHierarchyResolver.setImportsResolver(importsResolver);
         typeHierarchyResolver.setNamespaceFactory(namespaceFactoryImpl);
         typeHierarchyResolver.setScriptResolver(scriptResolver);
-        typeHierarchyResolver.setTrace(observableBindingTrace);
+        typeHierarchyResolver.setTrace(bindingTrace);
 
         scriptResolver.setContext(topDownAnalysisContext);
         scriptResolver.setDependencyClassByQualifiedNameResolver(javaDescriptorResolver);
@@ -231,11 +231,11 @@ public class InjectorForTopDownAnalyzerForJvm {
         scriptResolver.setModuleDescriptor(moduleDescriptor);
         scriptResolver.setNamespaceFactory(namespaceFactoryImpl);
         scriptResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
-        scriptResolver.setTrace(observableBindingTrace);
+        scriptResolver.setTrace(bindingTrace);
 
         javaSemanticServices.setDescriptorResolver(javaDescriptorResolver);
         javaSemanticServices.setPsiClassFinder(psiClassFinderForJvm);
-        javaSemanticServices.setTrace(observableBindingTrace);
+        javaSemanticServices.setTrace(bindingTrace);
         javaSemanticServices.setTypeTransformer(javaTypeTransformer);
 
         javaTypeTransformer.setJavaSemanticServices(javaSemanticServices);
@@ -283,8 +283,8 @@ public class InjectorForTopDownAnalyzerForJvm {
         return this.topDownAnalysisParameters;
     }
 
-    public ObservableBindingTrace getObservableBindingTrace() {
-        return this.observableBindingTrace;
+    public BindingTrace getBindingTrace() {
+        return this.bindingTrace;
     }
 
     public JavaBridgeConfiguration getJavaBridgeConfiguration() {

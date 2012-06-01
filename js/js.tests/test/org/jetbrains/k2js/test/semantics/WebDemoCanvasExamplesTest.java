@@ -16,14 +16,10 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import closurecompiler.internal.com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.mozilla.javascript.EcmaError;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Pavel Talanov
@@ -34,26 +30,24 @@ import java.util.List;
 * */
 public final class WebDemoCanvasExamplesTest extends SingleFileTranslationTest {
 
-    private static final String CANVAS_HELPER = pathToTestFilesRoot() + "canvas_helper.js";
-
     public WebDemoCanvasExamplesTest() {
         super("webDemoCanvasExamples/");
     }
 
     public void testCreatures() throws Exception {
-        doTest("Creatures.kt", "document");
+        doTest("Creatures.kt", "$");
     }
 
     public void testHelloKotlin() throws Exception {
-        doTest("Hello, Kotlin.kt", "document");
+        doTest("Hello, Kotlin.kt", "$");
     }
 
     public void testFancyLines() throws Exception {
-        doTest("Fancy lines.kt", "$");
+        doTest("Fancy lines.kt", "window");
     }
 
     public void testTrafficLight() throws Exception {
-        doTest("Traffic light.kt", "document");
+        doTest("Traffic light.kt", "window");
     }
 
     private void doTest(@NotNull String filename, @NotNull String firstUnknownSymbolEncountered) throws Exception {
@@ -68,12 +62,5 @@ public final class WebDemoCanvasExamplesTest extends SingleFileTranslationTest {
                        "Actual: " + e.getMessage(),
                        e.getMessage().startsWith(expectedErrorMessage));
         }
-    }
-
-    @Override
-    protected List<String> additionalJSFiles(EcmaVersion ecmaVersion) {
-        ArrayList<String> result = Lists.newArrayList(super.additionalJSFiles(ecmaVersion));
-        result.add(CANVAS_HELPER);
-        return result;
     }
 }

@@ -58,23 +58,10 @@ public class NamespaceCodegen {
         NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
         final CodegenContext context = CodegenContexts.STATIC.intoNamespace(descriptor);
 
-        final FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
-        final PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen, state);
-
         for (JetDeclaration declaration : file.getDeclarations()) {
-            if (declaration instanceof JetProperty) {
-                propertyCodegen.gen((JetProperty) declaration);
-            }
-            else if (declaration instanceof JetNamedFunction) {
-                try {
-                    functionCodegen.gen((JetNamedFunction) declaration);
-                }
-                catch (CompilationException e) {
-                    throw e;
-                }
-                catch (Exception e) {
-                    throw new CompilationException("Failed to generate function " + declaration.getName(), e, declaration);
-                }
+            if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
+                state.getInjector().getMemberCodegen().generateFunctionOrProperty(
+                        (JetTypeParameterListOwner) declaration, context, v);
             }
             else if (declaration instanceof JetClassOrObject) {
                 state.getInjector().getClassCodegen().generate(context, (JetClassOrObject) declaration);

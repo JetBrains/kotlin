@@ -103,7 +103,7 @@ public class AllInjectorsGenerator {
         // Parameters
         generator.addPublicParameter(Project.class);
         generator.addPublicParameter(TopDownAnalysisParameters.class);
-        generator.addPublicParameter(ObservableBindingTrace.class);
+        generator.addPublicParameter(BindingTrace.class);
         generator.addParameter(ModuleDescriptor.class);
     }
 
@@ -171,6 +171,7 @@ public class AllInjectorsGenerator {
         generator.addPublicField(ScriptCodegen.class);
         generator.addField(true, IntrinsicMethods.class, "intrinsics", null);
         generator.addPublicField(ClassFileFactory.class);
+        generator.addPublicField(MemberCodegen.class);
         generator.generate("compiler/backend/src", "org.jetbrains.jet.di", "InjectorForJvmCodegen");
     }
 

@@ -19,14 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.LocalVariableDescriptor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetPattern;
 import org.jetbrains.jet.lang.psi.JetScript;
@@ -70,7 +63,7 @@ public class ScriptResolver {
     @NotNull
     private ExpressionTypingServices expressionTypingServices;
     @NotNull
-    private ObservableBindingTrace trace;
+    private BindingTrace trace;
     @NotNull
     private TopDownAnalysisParameters topDownAnalysisParameters;
 
@@ -100,7 +93,7 @@ public class ScriptResolver {
     }
 
     @Inject
-    public void setTrace(@NotNull ObservableBindingTrace trace) {
+    public void setTrace(@NotNull BindingTrace trace) {
         this.trace = trace;
     }
 

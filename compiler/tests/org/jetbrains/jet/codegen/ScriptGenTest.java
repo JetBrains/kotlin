@@ -46,6 +46,14 @@ public class ScriptGenTest extends CodegenTestCase {
         blackBoxFile("script/topLevelFunctionClosure.ktscript");
     }
 
+    public void testSecondLevelFunction() {
+        blackBoxFile("script/secondLevelFunction.ktscript");
+    }
+
+    public void testSecondLevelFunctionClosure() {
+        blackBoxFile("script/secondLevelFunctionClosure.ktscript");
+    }
+
     public void testScriptParameter() {
         blackBoxFile("script/parameter.ktscript");
     }

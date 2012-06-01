@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.completion.weigher;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionSorter;
+import org.jetbrains.jet.lang.psi.JetFile;
 
 /**
  * @author Nikolay Krasko
@@ -29,7 +30,9 @@ public final class JetCompletionSorting {
 
     public static CompletionResultSet addJetSorting(CompletionParameters parameters, CompletionResultSet result) {
         CompletionSorter sorter = CompletionSorter.defaultSorter(parameters, result.getPrefixMatcher());
-        sorter = sorter.weighAfter("negativeStats", new JetLocalPreferableWeigher());
+        sorter = sorter.weighAfter("negativeStats",
+                                   new JetLocalPreferableWeigher(),
+                                   new JetExplicitlyImportedWeigher((JetFile)parameters.getOriginalFile()));
         return result.withRelevanceSorter(sorter);
     }
 }

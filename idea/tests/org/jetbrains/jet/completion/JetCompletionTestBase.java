@@ -19,9 +19,9 @@ package org.jetbrains.jet.completion;
 import com.intellij.codeInsight.completion.CodeCompletionHandlerBase;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.completion.LightCompletionTestCase;
+import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupManager;
-import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import org.apache.commons.lang.SystemUtils;
@@ -71,7 +71,7 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
                     myItems = new LookupElement[0];
                 }
 
-                ExpectedCompletionUtils.assertContainsRenderedItems(expected, myItems);
+                ExpectedCompletionUtils.assertContainsRenderedItems(expected, myItems, completionUtils.isWithOrder(fileText));
                 ExpectedCompletionUtils.assertNotContainsRenderedItems(unexpected, myItems);
 
                 if (itemsNumber != null) {
@@ -110,7 +110,7 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
     protected void complete(final int time) {
         new CodeCompletionHandlerBase(type, false, false, true).invokeCompletion(getProject(), getEditor(), time, false);
 
-        LookupImpl lookup = (LookupImpl)LookupManager.getActiveLookup(myEditor);
+        Lookup lookup = LookupManager.getActiveLookup(myEditor);
         myItems = lookup == null ? null : lookup.getItems().toArray(LookupElement.EMPTY_ARRAY);
         myPrefix = lookup == null ? null : lookup.itemPattern(lookup.getItems().get(0));
     }
