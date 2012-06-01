@@ -22,18 +22,62 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
+
+import java.util.List;
 
 /**
  * @author Stepan Koltsov
  */
 public class CodegenContexts {
-    public static final CodegenContext STATIC = new CodegenContext(null, OwnerKind.NAMESPACE, null, null) {
+    private static class FakeDescriptorForStaticContext implements DeclarationDescriptor {
+
+        @NotNull
+        @Override
+        public DeclarationDescriptor getOriginal() {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public DeclarationDescriptor getContainingDeclaration() {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public DeclarationDescriptor substitute(TypeSubstitutor substitutor) {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor) {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public List<AnnotationDescriptor> getAnnotations() {
+            throw new IllegalStateException();
+        }
+
+        @NotNull @Override public Name getName() {
+            return null;
+        }
+    }
+
+    public static final CodegenContext STATIC = new CodegenContext(new FakeDescriptorForStaticContext(), OwnerKind.NAMESPACE, null, null) {
         @Override
         protected ClassDescriptor getThisDescriptor() {
             return null;

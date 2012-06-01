@@ -62,8 +62,12 @@ public class ScriptCodegen {
 
 
 
-    public void generate(CodegenContext outerContext, JetScript scriptDeclaration) {
+    public void generate(JetScript scriptDeclaration) {
+
         ScriptDescriptor scriptDescriptor = (ScriptDescriptor) state.getBindingContext().get(BindingContext.SCRIPT, scriptDeclaration);
+
+        CodegenContext context = CodegenContexts.STATIC.intoScript(scriptDescriptor);
+
         ClassBuilder classBuilder = classFileFactory.newVisitor("Script.class");
         classBuilder.defineClass(scriptDeclaration,
                 Opcodes.V1_6,
@@ -73,7 +77,7 @@ public class ScriptCodegen {
                 JdkNames.JL_OBJECT.getInternalName(),
                 new String[0]);
 
-        genConstructor(scriptDeclaration, scriptDescriptor, classBuilder, outerContext);
+        genConstructor(scriptDeclaration, scriptDescriptor, classBuilder, context);
         classBuilder.done();
     }
 

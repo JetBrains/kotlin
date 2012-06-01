@@ -37,6 +37,7 @@ import java.util.LinkedHashMap;
  */
 public abstract class CodegenContext {
 
+    @NotNull
     private final DeclarationDescriptor contextType;
 
     private final OwnerKind contextKind;
@@ -53,7 +54,7 @@ public abstract class CodegenContext {
 
     protected Type outerWasUsed ;
 
-    public CodegenContext(DeclarationDescriptor contextType, OwnerKind contextKind, @Nullable CodegenContext parentContext, @Nullable ObjectOrClosureCodegen closureCodegen) {
+    public CodegenContext(@NotNull DeclarationDescriptor contextType, OwnerKind contextKind, @Nullable CodegenContext parentContext, @Nullable ObjectOrClosureCodegen closureCodegen) {
         this.contextType = contextType;
         this.contextKind = contextKind;
         this.parentContext = parentContext;
