@@ -303,9 +303,9 @@ public open class Converter() {
     }
 
     private fun caseForObject(method: PsiMethod): Boolean {
-        var containing: PsiClass? = method.getContainingClass()
+        val containing: PsiClass? = method.getContainingClass()
         if (containing != null) {
-            for (s : PsiClassType? in containing?.getSuperTypes()) {
+            for (s : PsiClassType? in containing.getSuperTypes()) {
                 val canonicalText: String? = s?.getCanonicalText()
                 if (canonicalText != JAVA_LANG_OBJECT && !getClassIdentifiers().contains(canonicalText)) {
                     return true
@@ -319,7 +319,7 @@ public open class Converter() {
         if (block == null)
             return Block.EMPTY_BLOCK
 
-        return Block(block.getChildren().map { statementToStatement(it) }, notEmpty)
+        return Block(statementsToStatementList(block.getChildren()), notEmpty)
     }
 
     public open fun blockToBlock(block: PsiCodeBlock?): Block {
@@ -327,11 +327,11 @@ public open class Converter() {
     }
 
     public open fun statementsToStatementList(statements: Array<PsiElement?>): List<Element> {
-        return statements.map { statementToStatement(it) }
+        return statements.filterNot { it is PsiWhiteSpace }.map { statementToStatement(it) }
     }
 
     public open fun statementsToStatementList(statements: List<PsiElement?>): List<Element> {
-        return statements.map { statementToStatement(it) }
+        return statements.filterNot { it is PsiWhiteSpace }.map { statementToStatement(it) }
     }
 
     public open fun statementToStatement(s: PsiElement?): Element {
