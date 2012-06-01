@@ -219,17 +219,21 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
         val isThis: Boolean = isThisExpression(expression!!)
         val isNullable: Boolean = getConverter().typeToType(expression?.getType()).nullable
         val className: String = getClassNameWithConstructor(expression!!)
-        var identifier: Expression = Identifier(expression?.getReferenceName()!!, isNullable)
+        val referencedName = expression?.getReferenceName()!!
+        var identifier: Expression = Identifier(referencedName, isNullable)
         val __: String = "__"
+        val qualifier = expression?.getQualifierExpression()
         if (hasReceiver){
-            identifier = CallChainExpression(Identifier(__, false), Identifier(expression?.getReferenceName()!!, isNullable))
+            identifier = CallChainExpression(Identifier(__, false), Identifier(referencedName, isNullable))
         }
-        else
-            if (insideSecondaryConstructor && isThis) {
-                identifier = Identifier("val __ = " + className)
-            }
+        else if (insideSecondaryConstructor && isThis) {
+            identifier = Identifier("val __ = " + className)
+        }
+        else if (qualifier != null && qualifier.getType() is PsiArrayType && referencedName == "length") {
+            identifier = Identifier("size", isNullable)
+        }
 
-        myResult = CallChainExpression(getConverter().expressionToExpression(expression?.getQualifierExpression()), identifier)
+        myResult = CallChainExpression(getConverter().expressionToExpression(qualifier), identifier)
     }
 
     public override fun visitSuperExpression(expression: PsiSuperExpression?): Unit {
