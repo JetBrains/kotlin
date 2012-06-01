@@ -3,8 +3,11 @@ package org.jetbrains.kotlin.tools
 import java.io.File
 import java.io.FileWriter
 import java.io.PrintWriter
-import org.w3c.dom.*
+import java.lang.reflect.Method
 import java.lang.reflect.Modifier
+import java.util.ArrayList
+import java.util.TreeMap
+import org.w3c.dom.*
 
 /**
 * This tool generates JavaScript stubs for classes available in the JDK which are already available in the browser environment
@@ -29,10 +32,10 @@ import js.noImpl
 
         val classes = arrayList(javaClass<Attr>(), javaClass<CDATASection>(),
                 javaClass<CharacterData>(), javaClass<Comment>(),
-                javaClass<Document>(),javaClass<DocumentFragment>(),javaClass<DocumentType>(),
+                javaClass<Document>(), javaClass<DocumentFragment>(), javaClass<DocumentType>(),
                 javaClass<DOMConfiguration>(),
                 javaClass<DOMError>(), javaClass<DOMErrorHandler>(),
-                javaClass<DOMImplementation>(),
+                javaClass<DOMImplementation>(), javaClass<DOMImplementationList>(),
                 javaClass<DOMLocator>(),
                 javaClass<DOMStringList>(),
                 javaClass<Element>(),
@@ -53,31 +56,78 @@ import js.noImpl
 
             println("native public trait ${klass.getSimpleName()}$extends {")
 
-            // lets iterate through each method
             val methods = klass.getDeclaredMethods()
             if (methods != null) {
+                // lets figure out the properties versus methods
+                val validMethods = ArrayList<Method>()
+                val properties = TreeMap<String, String>()
                 for (method in methods) {
                     if (method != null) {
-                        val parameterTypes = method.getParameterTypes()!!
+                        val name = method.getName() ?: ""
+                        fun propertyName(): String {
+                            val answer = name.substring(3).decapitalize()
+                            return if (answer == "type") {
+                                "`type`"
+                            } else answer
+                        }
+                        fun propertyType() = simpleTypeName(method.getReturnType())
 
-                        // TODO in java 7 its not easy with reflection to get the parameter argument name...
-                        var counter = 0
-                        val parameters = parameterTypes.map<Class<out Any?>?, String>{ "arg${++counter}: ${simpleTypeName(it)}" }.makeString(", ")
-                        val returnType = simpleTypeName(method.getReturnType())
-                        println("    fun ${method.getName()}($parameters): $returnType = js.noImpl")
+                        val params = method.getParameterTypes()
+                        val paramSize = params?.size ?: 0
+                        if (name.size > 3) {
+                            if (name.startsWith("get") && paramSize == 0) {
+                                val propName = propertyName()
+                                if (!properties.containsKey(propName)) {
+                                    properties.put(propName, "public val $propName: ${propertyType()}")
+                                }
+                            } else if (name.startsWith("set") && paramSize == 0) {
+                                val propName = propertyName()
+                                properties.put(propName, "public var $propName: ${propertyType()}")
+                            } else {
+                                validMethods.add(method)
+                            }
+                        } else {
+                            validMethods.add(method)
+                        }
                     }
+                }
+                for (statement in properties.values()) {
+                    println("    $statement")
+                }
+                for (method in validMethods) {
+                    val parameterTypes = method.getParameterTypes()!!
+
+                    // TODO in java 7 its not easy with reflection to get the parameter argument name...
+                    var counter = 0
+                    val parameters = parameterTypes.map<Class<out Any?>?, String>{ "arg${++counter}: ${simpleTypeName(it)}" }.makeString(", ")
+                    val returnType = simpleTypeName(method.getReturnType())
+                    println("    public fun ${method.getName()}($parameters): $returnType = js.noImpl")
                 }
             }
             val fields = klass.getDeclaredFields()
             if (fields != null) {
-                for (field in fields) {
-                    if (field != null) {
-                        val modifiers = field.getModifiers()
-                        if (Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers)) {
-                            val fieldType = simpleTypeName(field.getType())
-                            println("    public val ${field.getName()}: $fieldType")
+                if (fields.notEmpty()) {
+                    println("")
+                    println("    class object {")
+                    for (field in fields) {
+                        if (field != null) {
+                            val modifiers = field.getModifiers()
+                            if (Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers)) {
+                                val fieldType = simpleTypeName(field.getType())
+                                try {
+                                    val value = field.get(null)
+                                    if (value != null) {
+                                        val fieldType = simpleTypeName(field.getType())
+                                        println("        public val ${field.getName()}: $fieldType = $value")
+                                    }
+                                } catch (e: Exception) {
+                                    println("Caught: $e")
+                                    e.printStackTrace()
+                                }
+                            }
                         }
                     }
+                    println("    }")
                 }
             }
             println("}")
