@@ -418,10 +418,10 @@ public open class Converter() {
         return parameters.map { parameterToParameter(it!!) }
     }
 
-    public open fun parameterToParameter(parameter: PsiParameter): Parameter {
+    public open fun parameterToParameter(parameter: PsiParameter, forceNotNull: Boolean = false): Parameter {
         return Parameter(Identifier(parameter.getName()!!),
                 typeToType(parameter.getType(),
-                        isAnnotatedAsNotNull(parameter.getModifierList())), true)
+                        forceNotNull || isAnnotatedAsNotNull(parameter.getModifierList())), true)
     }
 
     public open fun argumentsToExpressionList(expression: PsiCallExpression): List<Expression> {

@@ -188,7 +188,7 @@ public open class StatementVisitor(converter: Converter): ElementVisitor(convert
         val catchBlocks = statement?.getCatchBlocks()!!
         val catchBlockParameters = statement?.getCatchBlockParameters()!!
         for (i in 0..catchBlocks.size - 1) {
-            catches.add(CatchStatement(getConverter().parameterToParameter(catchBlockParameters[i]!!),
+            catches.add(CatchStatement(getConverter().parameterToParameter(catchBlockParameters[i]!!, true),
                     getConverter().blockToBlock(catchBlocks[i], true)))
         }
         myResult = TryStatement(getConverter().blockToBlock(statement?.getTryBlock(), true),

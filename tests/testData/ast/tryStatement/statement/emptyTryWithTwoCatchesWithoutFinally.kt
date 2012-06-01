@@ -1,9 +1,9 @@
 try
 {
 }
-catch (e : Exception?) {
+catch (e : Exception) {
 println(1)
 }
-catch (e : IOException?) {
+catch (e : IOException) {
 println(0)
 }
