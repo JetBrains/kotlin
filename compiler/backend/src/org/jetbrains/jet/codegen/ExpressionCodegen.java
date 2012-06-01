@@ -1357,7 +1357,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         //}
         if (fd instanceof ExpressionAsFunctionDescriptor || (fd instanceof SimpleFunctionDescriptor && (fd.getContainingDeclaration() instanceof FunctionDescriptor || fd.getContainingDeclaration() instanceof ScriptDescriptor))) {
             SimpleFunctionDescriptor invoke = CodegenUtil.createInvoke((FunctionDescriptor) fd);
-            callableMethod = ClosureCodegen.asCallableMethod(invoke);
+            callableMethod = ClosureCodegen.asCallableMethod(invoke, typeMapper);
         }
         else if (fd instanceof FunctionDescriptor) {
             callableMethod = typeMapper.mapToCallableMethod((FunctionDescriptor) fd, superCall, OwnerKind.IMPLEMENTATION);

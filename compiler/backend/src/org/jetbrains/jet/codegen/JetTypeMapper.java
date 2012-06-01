@@ -545,7 +545,7 @@ public class JetTypeMapper {
         JvmClassName ownerForDefaultImpl;
         JvmClassName ownerForDefaultParam;
         int invokeOpcode;
-        ClassDescriptor thisClass;
+        JvmClassName thisClass;
         if (functionParent instanceof NamespaceDescriptor) {
             assert !superCall;
             owner = jvmClassNameForNamespace((NamespaceDescriptor) functionParent);
@@ -595,16 +595,23 @@ public class JetTypeMapper {
                 descriptor = mapSignature(functionDescriptor, false, OwnerKind.TRAIT_IMPL);
                 owner = JvmClassName.byInternalName(owner.getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
             }
-            thisClass = receiver;
+            thisClass = JvmClassName.byType(mapType(receiver.getDefaultType(), MapTypeMode.VALUE));
         }
         else {
             throw new UnsupportedOperationException("unknown function parent");
         }
 
 
+        Type receiverParameterType;
+        if (functionDescriptor.getReceiverParameter().exists()) {
+            receiverParameterType = mapType(functionDescriptor.getOriginal().getReceiverParameter().getType(), MapTypeMode.VALUE);
+        }
+        else {
+            receiverParameterType = null;
+        }
         return new CallableMethod(
                 owner, ownerForDefaultImpl, ownerForDefaultParam, descriptor, invokeOpcode,
-                thisClass, functionDescriptor.getReceiverParameter().exists() ? functionDescriptor.getOriginal() : null, null);
+                thisClass, receiverParameterType, null);
     }
     
     @NotNull

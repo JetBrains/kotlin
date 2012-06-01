@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.types.JetType;
@@ -43,26 +42,24 @@ public class CallableMethod implements Callable {
     private final JvmClassName defaultImplParam;
     private final JvmMethodSignature signature;
     private final int invokeOpcode;
-    private final ClassDescriptor thisClass;
-
-    private final CallableDescriptor receiverFunction;
+    @Nullable
+    private final JvmClassName thisClass;
+    @Nullable
+    private final Type receiverParameterType;
+    @Nullable
     private final Type generateCalleeType;
 
     public CallableMethod(@NotNull JvmClassName owner, @Nullable JvmClassName defaultImplOwner, @Nullable JvmClassName defaultImplParam,
             JvmMethodSignature signature, int invokeOpcode,
-            @Nullable ClassDescriptor thisClass, @Nullable CallableDescriptor receiverFunction, @Nullable Type generateCalleeType) {
+            @Nullable JvmClassName thisClass, @Nullable Type receiverParameterType, @Nullable Type generateCalleeType) {
         this.owner = owner;
         this.defaultImplOwner = defaultImplOwner;
         this.defaultImplParam = defaultImplParam;
         this.signature = signature;
         this.invokeOpcode = invokeOpcode;
         this.thisClass = thisClass;
-        this.receiverFunction = receiverFunction;
+        this.receiverParameterType = receiverParameterType;
         this.generateCalleeType = generateCalleeType;
-
-        if (receiverFunction != null && receiverFunction.getOriginal() != receiverFunction) {
-            throw new IllegalArgumentException("receiver function parameter must be original: " + receiverFunction);
-        }
     }
 
     @NotNull
@@ -87,12 +84,12 @@ public class CallableMethod implements Callable {
         return signature.getValueParameterTypes();
     }
 
-    public JetType getThisType() {
-        return thisClass.getDefaultType();
+    public JvmClassName getThisType() {
+        return thisClass;
     }
 
-    public JetType getReceiverClass() {
-        return receiverFunction.getReceiverParameter().getType();
+    public Type getReceiverClass() {
+        return receiverParameterType;
     }
 
     void invoke(InstructionAdapter v) {
@@ -126,6 +123,6 @@ public class CallableMethod implements Callable {
     }
 
     public boolean isNeedsReceiver() {
-        return receiverFunction != null;
+        return receiverParameterType != null;
     }
 }

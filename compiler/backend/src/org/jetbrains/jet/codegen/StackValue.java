@@ -1083,10 +1083,10 @@ public abstract class StackValue {
             if (thisObject.exists()) {
                 if(callableMethod != null) {
                     if(receiverArgument.exists()) {
-                        return codegen.typeMapper.mapType(callableMethod.getReceiverClass(), MapTypeMode.VALUE);
+                        return callableMethod.getReceiverClass();
                     }
                     else {
-                        return codegen.typeMapper.mapType(callableMethod.getThisType(), MapTypeMode.VALUE);
+                        return callableMethod.getThisType().getAsmType();
                     }
                 }
                 else {
@@ -1101,7 +1101,7 @@ public abstract class StackValue {
             else {
                 if (receiverArgument.exists()) {
                     if(callableMethod != null)
-                        return codegen.typeMapper.mapType(callableMethod.getReceiverClass(), MapTypeMode.VALUE);
+                        return callableMethod.getReceiverClass();
                     else
                         return codegen.typeMapper.mapType(descriptor.getReceiverParameter().getType(), MapTypeMode.VALUE);
                 }

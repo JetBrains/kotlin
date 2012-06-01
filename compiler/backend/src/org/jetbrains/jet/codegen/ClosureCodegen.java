@@ -88,12 +88,19 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         return signatureWriter.makeJvmMethodSignature("invoke");
     }
 
-    public static CallableMethod asCallableMethod(FunctionDescriptor fd) {
+    public static CallableMethod asCallableMethod(FunctionDescriptor fd, @NotNull JetTypeMapper typeMapper) {
         JvmMethodSignature descriptor = erasedInvokeSignature(fd);
         JvmClassName owner = getInternalClassName(fd);
+        Type receiverParameterType;
+        if (fd.getReceiverParameter().exists()) {
+            receiverParameterType = typeMapper.mapType(fd.getOriginal().getReceiverParameter().getType(), MapTypeMode.VALUE);
+        }
+        else {
+            receiverParameterType = null;
+        }
         final CallableMethod result = new CallableMethod(
                 owner, null, null, descriptor, INVOKEVIRTUAL,
-                getInternalType(fd), fd.getReceiverParameter().exists() ? fd.getOriginal() : null, getInternalClassName(fd).getAsmType());
+                getInternalClassName(fd), receiverParameterType, getInternalClassName(fd).getAsmType());
         return result;
     }
 
