@@ -26,15 +26,12 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.jgoodies.looks.Fonts;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
@@ -114,7 +111,7 @@ public final class K2JSRunConfigurationEditor extends SettingsEditor<K2JSRunConf
 
             private void onChange() {
                 File file = new File(generatedChooseFile.getText());
-                if (!file.isFile()) {
+                if (!file.isDirectory()) {
                     textField.setForeground(Color.RED);
                 } else {
                     textField.setForeground(Color.BLACK);
