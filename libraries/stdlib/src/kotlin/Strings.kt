@@ -10,6 +10,8 @@ public inline fun String.lastIndexOf(ch: Char) : Int = (this as java.lang.String
 
 public inline fun String.equalsIgnoreCase(anotherString: String) : Boolean = (this as java.lang.String).equalsIgnoreCase(anotherString)
 
+public inline fun String.hashCode() : Int = (this as java.lang.String).hashCode()
+
 public inline fun String.indexOf(str : String) : Int = (this as java.lang.String).indexOf(str)
 
 public inline fun String.indexOf(str : String, fromIndex : Int) : Int = (this as java.lang.String).indexOf(str, fromIndex)
