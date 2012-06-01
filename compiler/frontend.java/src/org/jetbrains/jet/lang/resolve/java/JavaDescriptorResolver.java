@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
@@ -1570,6 +1570,64 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return new ValueParameterDescriptors(receiverType, result);
     }
 
+    private static JetType computeAlternativeTypeFromAnnotation(JetTypeElement alternativeTypeElement, final JetType autoType) {
+        return alternativeTypeElement.accept(new JetVisitor<JetType, Void>() {
+            @Override
+            public JetType visitNullableType(JetNullableType nullableType, Void data) {
+                return TypeUtils.makeNullable(computeAlternativeTypeFromAnnotation(nullableType.getInnerType(), autoType));
+            }
+
+            @Override
+            public JetType visitFunctionType(JetFunctionType type, Void data) {
+                return autoType;    //TODO
+            }
+
+            @Override
+            public JetType visitTupleType(JetTupleType type, Void data) {
+                return autoType;    //TODO
+            }
+
+            @Override
+            public JetType visitUserType(JetUserType type, Void data) {
+                List<TypeProjection> arguments = autoType.getArguments();
+                List<TypeProjection> altArguments = new ArrayList<TypeProjection>();
+                for (int i = 0, size = arguments.size(); i < size; i++) {
+                    JetTypeElement argumentAlternativeTypeElement = type.getTypeArgumentsAsTypes().get(i).getTypeElement();
+                    TypeProjection argument = arguments.get(i);
+                    JetType alternativeType = computeAlternativeTypeFromAnnotation(argumentAlternativeTypeElement, argument.getType());
+                    altArguments.add(new TypeProjection(argument.getProjectionKind(), alternativeType));
+                }
+                return new JetTypeImpl(autoType.getAnnotations(), autoType.getConstructor(), false,
+                                       altArguments, autoType.getMemberScope());
+            }
+
+            @Override
+            public JetType visitSelfType(JetSelfType type, Void data) {
+                throw new UnsupportedOperationException("Self-types are not supported yet");
+            }
+        }, null);
+    }
+
+    private static ValueParameterDescriptors computeAlternativeValueParameters(ValueParameterDescriptors valueParameterDescriptors,
+            JetNamedFunction altFunDeclaration) {
+        List<ValueParameterDescriptor> parameterDescriptors = valueParameterDescriptors.descriptors;
+        List<ValueParameterDescriptor> altParamDescriptors = new ArrayList<ValueParameterDescriptor>();
+        for (int i = 0, size = parameterDescriptors.size(); i < size; i++) {
+            ValueParameterDescriptor pd = parameterDescriptors.get(i);
+            JetTypeElement alternativeTypeElement = altFunDeclaration.getValueParameters().get(i).getTypeReference().getTypeElement();
+            JetType alternativeType = computeAlternativeTypeFromAnnotation(alternativeTypeElement, pd.getType());
+            // TODO vararg
+            altParamDescriptors.add(new ValueParameterDescriptorImpl(pd.getContainingDeclaration(), pd.getIndex(), pd.getAnnotations(),
+                                                                     pd.getName(), pd.isVar(), alternativeType, pd.declaresDefaultValue(),
+                                                                     pd.getVarargElementType()));
+        }
+        JetType altReceiverType = null;
+        if (valueParameterDescriptors.receiverType != null) {
+            altReceiverType = computeAlternativeTypeFromAnnotation(altFunDeclaration.getReceiverTypeRef().getTypeElement(), valueParameterDescriptors.receiverType);
+        }
+        return new ValueParameterDescriptors(altReceiverType, altParamDescriptors);
+    }
+
     @Nullable
     private FunctionDescriptorImpl resolveMethodToFunctionDescriptor(
             @NotNull final PsiClass psiClass, final PsiMethodWrapper method,
@@ -1577,8 +1635,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
         getResolverScopeData(scopeData);
 
-        PsiType returnType = method.getReturnType();
-        if (returnType == null) {
+        PsiType returnPsiType = method.getReturnType();
+        if (returnPsiType == null) {
             return null;
         }
 
@@ -1610,12 +1668,22 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
 
         ValueParameterDescriptors valueParameterDescriptors = resolveParameterDescriptors(functionDescriptorImpl, method.getParameters(), methodTypeVariableResolver);
+        JetType returnType = makeReturnType(returnPsiType, method, methodTypeVariableResolver);
+
+        // TODO consider better place for this check
+        String signature = method.getSignatureAnnotation().signature();
+        if (!signature.isEmpty()) {
+            JetNamedFunction altFunDeclaration = JetPsiFactory.createFunction(project, signature);
+            valueParameterDescriptors = computeAlternativeValueParameters(valueParameterDescriptors, altFunDeclaration);
+            returnType = computeAlternativeTypeFromAnnotation(altFunDeclaration.getReturnTypeRef().getTypeElement(), returnType);
+        }
+
         functionDescriptorImpl.initialize(
                 valueParameterDescriptors.receiverType,
                 DescriptorUtils.getExpectedThisObjectIfNeeded(scopeData.classOrNamespaceDescriptor),
                 methodTypeParameters,
                 valueParameterDescriptors.descriptors,
-                makeReturnType(returnType, method, methodTypeVariableResolver),
+                returnType,
                 Modality.convertFromFlags(method.getPsiMethod().hasModifierProperty(PsiModifier.ABSTRACT), !method.isFinal()),
                 resolveVisibilityFromPsiModifiers(method.getPsiMethod()),
                 /*isInline = */ false
