@@ -69,6 +69,14 @@ public class CodegenUtil {
                 !(myClass.getParent() instanceof JetClassObject);
     }
 
+    public static boolean isLocalFun(DeclarationDescriptor fd, BindingContext bindingContext) {
+        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, fd);
+        if(psiElement instanceof JetNamedFunction && psiElement.getParent() instanceof JetBlockExpression) {
+            return true;
+        }
+        return false;
+    }
+
 
     public static boolean isNamedFun(DeclarationDescriptor fd, BindingContext bindingContext) {
         PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, fd);

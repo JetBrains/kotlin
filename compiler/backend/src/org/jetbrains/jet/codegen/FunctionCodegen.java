@@ -244,8 +244,7 @@ public class FunctionCodegen {
                     // TODO: specify signature
                     mv.visitLocalVariable("this", type.getDescriptor(), null, methodBegin, methodEnd, k++);
                 }
-
-                if (fun instanceof JetFunctionLiteralExpression) {
+                else if (fun instanceof JetFunctionLiteralExpression || CodegenUtil.isLocalFun(functionDescriptor, state.getBindingContext())) {
                     Type type = state.getInjector().getJetTypeMapper().mapType(
                             context.getThisDescriptor().getDefaultType(), MapTypeMode.VALUE);
                     mv.visitLocalVariable("this", type.getDescriptor(), null, methodBegin, methodEnd, k++);
