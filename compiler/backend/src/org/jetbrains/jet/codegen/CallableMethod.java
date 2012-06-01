@@ -22,6 +22,7 @@ import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -35,11 +36,11 @@ import java.util.List;
  */
 public class CallableMethod implements Callable {
     @NotNull
-    private final String owner;
-    @NotNull
-    private final String defaultImplOwner;
-    @NotNull
-    private final String defaultImplParam;
+    private final JvmClassName owner;
+    @Nullable
+    private final JvmClassName defaultImplOwner;
+    @Nullable
+    private final JvmClassName defaultImplParam;
     private final JvmMethodSignature signature;
     private final int invokeOpcode;
     private ClassDescriptor thisClass = null;
@@ -47,7 +48,7 @@ public class CallableMethod implements Callable {
     private CallableDescriptor receiverFunction = null;
     private Type generateCalleeType = null;
 
-    public CallableMethod(@NotNull String owner, @NotNull String defaultImplOwner, @NotNull String defaultImplParam,
+    public CallableMethod(@NotNull JvmClassName owner, @Nullable JvmClassName defaultImplOwner, @Nullable JvmClassName defaultImplParam,
             JvmMethodSignature signature, int invokeOpcode) {
         this.owner = owner;
         this.defaultImplOwner = defaultImplOwner;
@@ -57,12 +58,12 @@ public class CallableMethod implements Callable {
     }
 
     @NotNull
-    public String getOwner() {
+    public JvmClassName getOwner() {
         return owner;
     }
 
     @NotNull
-    public String getDefaultImplParam() {
+    public JvmClassName getDefaultImplParam() {
         return defaultImplParam;
     }
 
@@ -95,7 +96,7 @@ public class CallableMethod implements Callable {
     }
 
     void invoke(InstructionAdapter v) {
-        v.visitMethodInsn(getInvokeOpcode(), owner, getSignature().getAsmMethod().getName(), getSignature().getAsmMethod().getDescriptor());
+        v.visitMethodInsn(getInvokeOpcode(), owner.getInternalName(), getSignature().getAsmMethod().getName(), getSignature().getAsmMethod().getDescriptor());
     }
 
     public void requestGenerateCallee(Type objectType) {
@@ -107,19 +108,19 @@ public class CallableMethod implements Callable {
     }
 
     public void invokeWithDefault(InstructionAdapter v, int mask) {
-        if (defaultImplOwner.length() == 0 || defaultImplParam.length() == 0) {
+        if (defaultImplOwner == null || defaultImplParam == null) {
             throw new IllegalStateException();
         }
 
         v.iconst(mask);
         String desc = getSignature().getAsmMethod().getDescriptor().replace(")", "I)");
         if("<init>".equals(getSignature().getAsmMethod().getName())) {
-            v.visitMethodInsn(Opcodes.INVOKESPECIAL, defaultImplOwner, "<init>", desc);
+            v.visitMethodInsn(Opcodes.INVOKESPECIAL, defaultImplOwner.getInternalName(), "<init>", desc);
         }
         else {
             if(getInvokeOpcode() != Opcodes.INVOKESTATIC)
-                desc = desc.replace("(", "(L" + defaultImplParam + ";");
-            v.visitMethodInsn(Opcodes.INVOKESTATIC, defaultImplOwner,
+                desc = desc.replace("(", "(" + defaultImplParam.getDescriptor());
+            v.visitMethodInsn(Opcodes.INVOKESTATIC, defaultImplOwner.getInternalName(),
                     getSignature().getAsmMethod().getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, desc);
         }
     }

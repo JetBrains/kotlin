@@ -541,14 +541,14 @@ public class JetTypeMapper {
         }
 
         JvmMethodSignature descriptor = mapSignature(functionDescriptor.getOriginal(), true, kind);
-        String owner;
-        String ownerForDefaultImpl;
-        String ownerForDefaultParam;
+        JvmClassName owner;
+        JvmClassName ownerForDefaultImpl;
+        JvmClassName ownerForDefaultParam;
         int invokeOpcode;
         ClassDescriptor thisClass;
         if (functionParent instanceof NamespaceDescriptor) {
             assert !superCall;
-            owner = jvmClassNameForNamespace((NamespaceDescriptor) functionParent).getInternalName();
+            owner = jvmClassNameForNamespace((NamespaceDescriptor) functionParent);
             ownerForDefaultImpl = ownerForDefaultParam = owner;
             invokeOpcode = INVOKESTATIC;
             thisClass = null;
@@ -556,7 +556,7 @@ public class JetTypeMapper {
         else if (functionDescriptor instanceof ConstructorDescriptor) {
             assert !superCall;
             ClassDescriptor containingClass = (ClassDescriptor) functionParent;
-            owner = mapType(containingClass.getDefaultType(), MapTypeMode.IMPL).getInternalName();
+            owner = JvmClassName.byType(mapType(containingClass.getDefaultType(), MapTypeMode.IMPL));
             ownerForDefaultImpl = ownerForDefaultParam = owner;
             invokeOpcode = INVOKESPECIAL;
             thisClass = null;
@@ -583,17 +583,17 @@ public class JetTypeMapper {
 
             boolean isInterface = originalIsInterface && currentIsInterface;
             Type type = mapType(receiver.getDefaultType(), MapTypeMode.TYPE_PARAMETER);
-            owner = type.getInternalName();
-            ownerForDefaultParam = mapType(declarationOwner.getDefaultType(), MapTypeMode.TYPE_PARAMETER).getInternalName();
-            ownerForDefaultImpl = ownerForDefaultParam
-                    + (originalIsInterface ? JvmAbi.TRAIT_IMPL_SUFFIX : "");
+            owner = JvmClassName.byType(type);
+            ownerForDefaultParam = JvmClassName.byType(mapType(declarationOwner.getDefaultType(), MapTypeMode.TYPE_PARAMETER));
+            ownerForDefaultImpl = JvmClassName.byInternalName(
+                    ownerForDefaultParam.getInternalName() + (originalIsInterface ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
 
             invokeOpcode = isInterface
                     ? (superCall ? Opcodes.INVOKESTATIC : Opcodes.INVOKEINTERFACE)
                     : (superCall ? Opcodes.INVOKESPECIAL : Opcodes.INVOKEVIRTUAL);
             if(isInterface && superCall) {
                 descriptor = mapSignature(functionDescriptor, false, OwnerKind.TRAIT_IMPL);
-                owner += JvmAbi.TRAIT_IMPL_SUFFIX;
+                owner = JvmClassName.byInternalName(owner.getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
             }
             thisClass = receiver;
         }
@@ -899,7 +899,7 @@ public class JetTypeMapper {
         if (mapped.getSort() != Type.OBJECT) {
             throw new IllegalStateException("type must have been mapped to object: " + defaultType + ", actual: " + mapped);
         }
-        String owner = mapped.getInternalName();
+        JvmClassName owner = JvmClassName.byType(mapped);
         return new CallableMethod(owner, owner, owner, method, INVOKESPECIAL);
     }
 

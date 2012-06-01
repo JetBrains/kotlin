@@ -1120,7 +1120,7 @@ public abstract class StackValue {
             if (thisObject.exists()) {
                 if(receiverArgument.exists()) {
                     if (callableMethod != null) {
-                        codegen.generateFromResolvedCall(thisObject, Type.getObjectType(callableMethod.getOwner()));
+                        codegen.generateFromResolvedCall(thisObject, callableMethod.getOwner().getAsmType());
                     }
                     else {
                         codegen.generateFromResolvedCall(thisObject, codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType(), MapTypeMode.VALUE));

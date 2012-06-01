@@ -1249,8 +1249,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             // TODO ugly
             CallableMethod callableMethod = typeMapper.mapToCallableMethod(propertyDescriptor.getGetter(), isSuper, contextKind());
             invokeOpcode = callableMethod.getInvokeOpcode();
-            owner = JvmClassName.byInternalName(callableMethod.getOwner());
-            ownerParam = JvmClassName.byInternalName(callableMethod.getDefaultImplParam());
+            owner = callableMethod.getOwner();
+            ownerParam = callableMethod.getDefaultImplParam();
         }
 
         return StackValue.property(propertyDescriptor.getName().getName(), owner, ownerParam, asmType(propertyDescriptor.getType()), isStatic, isInterface, isSuper, getter, setter, invokeOpcode);

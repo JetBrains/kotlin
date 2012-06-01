@@ -474,7 +474,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             signatureWriter.writeVoidReturn();
 
             constructorMethod = signatureWriter.makeJvmMethodSignature("<init>");
-            callableMethod = new CallableMethod("", "", "", constructorMethod, INVOKESPECIAL);
+            callableMethod = new CallableMethod(JvmClassName.byInternalName("Ignored"), null, null, constructorMethod, INVOKESPECIAL);
         }
         else {
             callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor, kind, typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));

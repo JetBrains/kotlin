@@ -22,6 +22,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
@@ -89,13 +90,13 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
     public static CallableMethod asCallableMethod(FunctionDescriptor fd) {
         JvmMethodSignature descriptor = erasedInvokeSignature(fd);
-        String owner = getInternalClassName(fd);
-        final CallableMethod result = new CallableMethod(owner, "", "", descriptor, INVOKEVIRTUAL);
+        JvmClassName owner = getInternalClassName(fd);
+        final CallableMethod result = new CallableMethod(owner, null, null, descriptor, INVOKEVIRTUAL);
         if (fd.getReceiverParameter().exists()) {
             result.setNeedsReceiver(fd);
         }
         result.setNeedsThis(getInternalType(fd));
-        result.requestGenerateCallee(Type.getObjectType(getInternalClassName(fd)));
+        result.requestGenerateCallee(getInternalClassName(fd).getAsmType());
         return result;
     }
 
@@ -114,8 +115,8 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         SignatureWriter signatureWriter = new SignatureWriter();
 
         final List<ValueParameterDescriptor> parameters = funDescriptor.getValueParameters();
-        final String funClass = getInternalClassName(funDescriptor);
-        signatureWriter.visitClassType(funClass);
+        final JvmClassName funClass = getInternalClassName(funDescriptor);
+        signatureWriter.visitClassType(funClass.getInternalName());
         for (ValueParameterDescriptor parameter : parameters) {
             appendType(signatureWriter, parameter.getType(), '=');
         }
@@ -128,7 +129,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                        ACC_PUBLIC/*|ACC_SUPER*/,
                        name.getInternalName(),
                        null,
-                       funClass,
+                       funClass.getInternalName(),
                        new String[0]
         );
         cv.visitSource(fun.getContainingFile().getName(), null);
@@ -248,7 +249,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         }
     }
 
-    private Method generateConstructor(String funClass, PsiElement fun) {
+    private Method generateConstructor(JvmClassName funClass, PsiElement fun) {
         int argCount = captureThis != null ? 1 : 0;
         argCount += (captureReceiver != null ? 1 : 0);
 
@@ -306,8 +307,8 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
 
-            iv.load(0, Type.getObjectType(funClass));
-            iv.invokespecial(funClass, "<init>", "()V");
+            iv.load(0, funClass.getAsmType());
+            iv.invokespecial(funClass.getInternalName(), "<init>", "()V");
 
             i = 1;
             for (Type type : argTypes) {
@@ -338,13 +339,14 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         return constructor;
     }
 
-    public static String getInternalClassName(FunctionDescriptor descriptor) {
+    @NotNull
+    public static JvmClassName getInternalClassName(FunctionDescriptor descriptor) {
         final int paramCount = descriptor.getValueParameters().size();
         if (descriptor.getReceiverParameter().exists()) {
-            return "jet/ExtensionFunction" + paramCount;
+            return JvmClassName.byInternalName("jet/ExtensionFunction" + paramCount);
         }
         else {
-            return "jet/Function" + paramCount;
+            return JvmClassName.byInternalName("jet/Function" + paramCount);
         }
     }
 
