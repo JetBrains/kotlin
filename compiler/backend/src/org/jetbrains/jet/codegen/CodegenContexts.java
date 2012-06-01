@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 
@@ -145,7 +146,7 @@ public class CodegenContexts {
 
             final Type type = enclosingClassType(typeMapper);
             outerExpression = type != null
-                        ? StackValue.field(type, typeMapper.getFQName(contextType), "this$0", false)
+                        ? StackValue.field(type, JvmClassName.byInternalName(typeMapper.getFQName(contextType)), "this$0", false)
                         : null;
         }
 
@@ -167,7 +168,7 @@ public class CodegenContexts {
             final Type type = enclosingClassType(typeMapper);
             Type owner = closure.state.getInjector().getJetTypeMapper().mapType(contextType.getDefaultType(), MapTypeMode.IMPL);
             outerExpression = type != null
-                        ? StackValue.field(type, owner.getInternalName(), "this$0", false)
+                        ? StackValue.field(type, JvmClassName.byType(owner), "this$0", false)
                         : null;
         }
 
@@ -190,7 +191,7 @@ public class CodegenContexts {
     public static class ClosureContext extends ReceiverContext {
         private ClassDescriptor classDescriptor;
 
-        public ClosureContext(FunctionDescriptor contextType, ClassDescriptor classDescriptor, CodegenContext parentContext, @NotNull ObjectOrClosureCodegen closureCodegen, String internalClassName, JetTypeMapper typeMapper) {
+        public ClosureContext(FunctionDescriptor contextType, ClassDescriptor classDescriptor, CodegenContext parentContext, @NotNull ObjectOrClosureCodegen closureCodegen, JvmClassName internalClassName, JetTypeMapper typeMapper) {
             super(contextType, OwnerKind.IMPLEMENTATION, parentContext, closureCodegen);
             this.classDescriptor = classDescriptor;
 

@@ -206,8 +206,10 @@ public class PropertyCodegen {
                         iv.invokeinterface(dk.getOwnerClass(), getterName, descriptor);
                     }
                     else {
-                        iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.GETSTATIC : Opcodes.GETFIELD,
-                                state.getInjector().getJetTypeMapper().getOwner(propertyDescriptor, kind), propertyDescriptor.getName().getName(),
+                        iv.visitFieldInsn(
+                                kind == OwnerKind.NAMESPACE ? Opcodes.GETSTATIC : Opcodes.GETFIELD,
+                                state.getInjector().getJetTypeMapper().getOwner(propertyDescriptor, kind).getInternalName(),
+                                propertyDescriptor.getName().getName(),
                                 type.getDescriptor());
                     }
                     iv.areturn(type);
@@ -297,7 +299,7 @@ public class PropertyCodegen {
                     else {
                         iv.load(paramCode, type);
                         iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD,
-                                state.getInjector().getJetTypeMapper().getOwner(propertyDescriptor, kind), propertyDescriptor.getName().getName(),
+                                state.getInjector().getJetTypeMapper().getOwner(propertyDescriptor, kind).getInternalName(), propertyDescriptor.getName().getName(),
                                 type.getDescriptor());
                     }
 

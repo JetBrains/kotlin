@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.Type;
@@ -129,7 +130,7 @@ public abstract class CodegenContext {
         return new CodegenContexts.ScriptContext(script, OwnerKind.IMPLEMENTATION, this, closure);
     }
 
-    public CodegenContexts.ClosureContext intoClosure(FunctionDescriptor funDescriptor, ClassDescriptor classDescriptor, String internalClassName, ClosureCodegen closureCodegen, JetTypeMapper typeMapper) {
+    public CodegenContexts.ClosureContext intoClosure(FunctionDescriptor funDescriptor, ClassDescriptor classDescriptor, JvmClassName internalClassName, ClosureCodegen closureCodegen, JetTypeMapper typeMapper) {
         return new CodegenContexts.ClosureContext(funDescriptor, classDescriptor, this, closureCodegen, internalClassName, typeMapper);
     }
 

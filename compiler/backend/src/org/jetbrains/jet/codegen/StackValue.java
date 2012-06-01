@@ -23,6 +23,7 @@ import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -114,11 +115,11 @@ public abstract class StackValue {
         return new CollectionElement(type, getter, setter, codegen, state);
     }
 
-    public static StackValue field(Type type, String owner, String name, boolean isStatic) {
+    public static StackValue field(Type type, JvmClassName owner, String name, boolean isStatic) {
         return new Field(type, owner, name, isStatic);
     }
 
-    public static Property property(String name, String methodOwner, String methodOwnerParam, Type type, boolean isStatic, boolean isInterface, boolean isSuper, Method getter, Method setter, int invokeOpcode) {
+    public static Property property(String name, JvmClassName methodOwner, JvmClassName methodOwnerParam, Type type, boolean isStatic, boolean isInterface, boolean isSuper, Method getter, Method setter, int invokeOpcode) {
         return new Property(name, methodOwner, methodOwnerParam, getter, setter, isStatic, isInterface, isSuper, type, invokeOpcode);
     }
 
@@ -257,7 +258,7 @@ public abstract class StackValue {
         return None.INSTANCE;
     }
 
-    public static StackValue fieldForSharedVar(Type type, String name, String fieldName) {
+    public static StackValue fieldForSharedVar(Type type, JvmClassName name, String fieldName) {
         return new FieldForSharedVar(type, name, fieldName);
     }
 
@@ -745,11 +746,11 @@ public abstract class StackValue {
 
 
     static class Field extends StackValue {
-        final String owner;
+        final JvmClassName owner;
         final String name;
         private final boolean isStatic;
 
-        public Field(Type type, String owner, String name, boolean isStatic) {
+        public Field(Type type, JvmClassName owner, String name, boolean isStatic) {
             super(type);
             this.owner = owner;
             this.name = name;
@@ -758,7 +759,7 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, owner, name, this.type.getDescriptor());
+            v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, owner.getInternalName(), name, this.type.getDescriptor());
             coerce(type, v);
         }
 
@@ -775,7 +776,7 @@ public abstract class StackValue {
 
         @Override
         public void store(InstructionAdapter v) {
-            v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, owner, name, this.type.getDescriptor());
+            v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, owner.getInternalName(), name, this.type.getDescriptor());
         }
     }
 
@@ -787,15 +788,16 @@ public abstract class StackValue {
         @Nullable
         private final Method setter;
         @NotNull
-        public final String methodOwner;
+        public final JvmClassName methodOwner;
         @NotNull
-        private final String methodOwnerParam;
+        private final JvmClassName methodOwnerParam;
         private final boolean isStatic;
         private final boolean isInterface;
         private final boolean isSuper;
         private final int invokeOpcode;
 
-        public Property(@NotNull String name, @NotNull String methodOwner, @NotNull String methodOwnerParam, Method getter, Method setter, boolean aStatic, boolean isInterface, boolean isSuper, Type type, int invokeOpcode) {
+        public Property(@NotNull String name, @NotNull JvmClassName methodOwner, @NotNull JvmClassName methodOwnerParam,
+                Method getter, Method setter, boolean aStatic, boolean isInterface, boolean isSuper, Type type, int invokeOpcode) {
             super(type);
             this.name = name;
             this.methodOwner = methodOwner;
@@ -816,14 +818,14 @@ public abstract class StackValue {
         @Override
         public void put(Type type, InstructionAdapter v) {
             if(isSuper && isInterface) {
-                v.visitMethodInsn(Opcodes.INVOKESTATIC, methodOwner, getter.getName(), getter.getDescriptor().replace("(", "(L" + methodOwnerParam + ";"));
+                v.visitMethodInsn(Opcodes.INVOKESTATIC, methodOwner.getInternalName(), getter.getName(), getter.getDescriptor().replace("(", "(" + methodOwnerParam.getDescriptor()));
             }
             else {
             if (getter == null) {
-                v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, methodOwner, name, this.type.getDescriptor());
+                v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, methodOwner.getInternalName(), name, this.type.getDescriptor());
             }
             else {
-                v.visitMethodInsn(invokeOpcode, methodOwner, getter.getName(), getter.getDescriptor());
+                v.visitMethodInsn(invokeOpcode, methodOwner.getInternalName(), getter.getName(), getter.getDescriptor());
             }
             }
             coerce(type, v);
@@ -832,14 +834,14 @@ public abstract class StackValue {
         @Override
         public void store(InstructionAdapter v) {
             if(isSuper && isInterface) {
-                v.visitMethodInsn(Opcodes.INVOKESTATIC, methodOwner, setter.getName(), setter.getDescriptor().replace("(", "(L" + methodOwnerParam + ";"));
+                v.visitMethodInsn(Opcodes.INVOKESTATIC, methodOwner.getInternalName(), setter.getName(), setter.getDescriptor().replace("(", "(" + methodOwnerParam.getDescriptor()));
             }
             else {
             if (setter == null) {
-                v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, methodOwner, name, this.type.getDescriptor());
+                v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, methodOwner.getInternalName(), name, this.type.getDescriptor());
             }
             else {
-                v.visitMethodInsn(invokeOpcode, methodOwner, setter.getName(), setter.getDescriptor());
+                v.visitMethodInsn(invokeOpcode, methodOwner.getInternalName(), setter.getName(), setter.getDescriptor());
                 }
             }
         }
@@ -943,10 +945,10 @@ public abstract class StackValue {
     }
 
     static class FieldForSharedVar extends StackValue {
-        final String owner;
+        final JvmClassName owner;
         final String name;
 
-        public FieldForSharedVar(Type type, String owner, String name) {
+        public FieldForSharedVar(Type type, JvmClassName owner, String name) {
             super(type);
             this.owner = owner;
             this.name = name;

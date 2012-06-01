@@ -68,8 +68,8 @@ public class ObjectOrClosureCodegen {
             StackValue outerValue = StackValue.local(idx, type);
             final String fieldName = "$" + vd.getName();
             StackValue innerValue = sharedVarType != null
-                    ? StackValue.fieldForSharedVar(localType, name.getInternalName(), fieldName)
-                    : StackValue.field(type, name.getInternalName(), fieldName, false);
+                    ? StackValue.fieldForSharedVar(localType, name, fieldName)
+                    : StackValue.field(type, name, fieldName, false);
 
             cv.newField(null, Opcodes.ACC_PUBLIC, fieldName, type.getDescriptor(), null, null);
 
@@ -91,7 +91,7 @@ public class ObjectOrClosureCodegen {
 
             StackValue outerValue = StackValue.local(idx, localType);
             final String fieldName = "$" + vd.getName();
-            StackValue innerValue = StackValue.field(localType, name.getInternalName(), fieldName, false);
+            StackValue innerValue = StackValue.field(localType, name, fieldName, false);
 
             cv.newField(null, Opcodes.ACC_PUBLIC, fieldName, localType.getDescriptor(), null, null);
 
@@ -117,7 +117,7 @@ public class ObjectOrClosureCodegen {
             boolean isStatic = fcontext.getContextDescriptor().getContainingDeclaration() instanceof NamespaceDescriptor;
             StackValue outerValue = StackValue.local(isStatic ? 0 : 1, type);
             final String fieldName = "receiver$0";
-            StackValue innerValue = StackValue.field(type, name.getInternalName(), fieldName, false);
+            StackValue innerValue = StackValue.field(type, name, fieldName, false);
 
             cv.newField(null, Opcodes.ACC_PUBLIC, fieldName, type.getDescriptor(), null, null);
 

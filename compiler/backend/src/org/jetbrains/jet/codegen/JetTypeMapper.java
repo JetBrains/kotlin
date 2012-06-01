@@ -142,13 +142,13 @@ public class JetTypeMapper {
         return Type.getType(internalName.substring(1));
     }
 
-    public String getOwner(DeclarationDescriptor descriptor, OwnerKind kind) {
+    @NotNull
+    public JvmClassName getOwner(DeclarationDescriptor descriptor, OwnerKind kind) {
         MapTypeMode mapTypeMode = ownerKindToMapTypeMode(kind);
 
-        String owner;
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration instanceof NamespaceDescriptor) {
-            owner = jvmClassNameForNamespace((NamespaceDescriptor) containingDeclaration).getInternalName();
+            return jvmClassNameForNamespace((NamespaceDescriptor) containingDeclaration);
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
@@ -164,12 +164,11 @@ public class JetTypeMapper {
             if (asmType.getSort() != Type.OBJECT) {
                 throw new IllegalStateException();
             }
-            owner = asmType.getInternalName();
+            return JvmClassName.byType(asmType);
         }
         else {
             throw new UnsupportedOperationException("don't know how to generate owner for parent " + containingDeclaration);
         }
-        return owner;
     }
 
     public static MapTypeMode ownerKindToMapTypeMode(OwnerKind kind) {
