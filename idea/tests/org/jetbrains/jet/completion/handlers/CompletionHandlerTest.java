@@ -17,14 +17,13 @@
 package org.jetbrains.jet.completion.handlers;
 
 import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.completion.JavaLookupElementBuilder;
 import com.intellij.codeInsight.completion.LightCompletionTestCase;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.codeInsight.lookup.LookupElementPresentation;
+import com.intellij.codeInsight.lookup.LookupManager;
+import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.search.GlobalSearchScope;
+import junit.framework.Assert;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
@@ -36,14 +35,11 @@ import java.io.File;
 public class CompletionHandlerTest extends LightCompletionTestCase {
 
     public void testClassCompletionImport() {
-        doTest(CompletionType.CLASS_NAME, 1, LookupElementBuilder.create("SortedSet"));
+        doTest(CompletionType.CLASS_NAME, 1, "SortedSet", null);
     }
 
     public void testNonStandardArray() {
-        PsiClass reflectArrayClass = JavaPsiFacade.getInstance(getProject()).findClass(
-                "java.lang.reflect.Array", GlobalSearchScope.allScope(getProject()));
-        assert reflectArrayClass != null;
-        doTest(CompletionType.CLASS_NAME, 1, JavaLookupElementBuilder.forClass(reflectArrayClass));
+        doTest(CompletionType.CLASS_NAME, 1, "Array", "java.lang.reflect");
     }
 
     public void testNoParamsFunction() {
@@ -77,24 +73,67 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
     }
 
     public void doTest() {
-        doTest(CompletionType.BASIC, 2, null);
+        doTest(CompletionType.BASIC, 2, null, null);
     }
 
-    public void doTest(CompletionType type, int time, @Nullable LookupElement completeItem) {
+    public void doTest(CompletionType type, int time, @Nullable String lookupString, @Nullable String tailText) {
         try {
             configureByFileNoComplete(getBeforeFileName());
             setType(type);
 
             complete(time);
 
-            if (completeItem != null) {
-                selectItem(completeItem, '\t');
+            if (lookupString != null || tailText != null) {
+                selectItem(getExistentLookupElement(lookupString, tailText), '\t');
             }
 
             checkResultByFile(getAfterFileName());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new AssertionError(e);
         }
+    }
+
+    public static LookupElement getExistentLookupElement(@Nullable String lookupString, @Nullable String tailText) {
+        final LookupImpl lookup = (LookupImpl) LookupManager.getInstance(getProject()).getActiveLookup();
+        LookupElement foundElement = null;
+
+        if (lookup != null) {
+            final LookupElementPresentation presentation = new LookupElementPresentation();
+
+            for (LookupElement lookupElement : lookup.getItems()) {
+                boolean lookupOk;
+
+                if (lookupString != null) {
+                    lookupOk = (lookupElement.getLookupString().contains(lookupString));
+                }
+                else {
+                    lookupOk = true;
+                }
+
+                boolean tailOk;
+
+                if (tailText != null) {
+                    lookupElement.renderElement(presentation);
+                    String itemTailText = presentation.getTailText();
+                    tailOk = itemTailText != null && itemTailText.contains(tailText);
+                }
+                else {
+                    tailOk = true;
+                }
+
+
+                if (lookupOk && tailOk) {
+                    if (foundElement != null) {
+                        Assert.fail("Several elements satisfy to completion restrictions");
+                    }
+                    foundElement = lookupElement;
+                }
+            }
+        }
+
+        Assert.assertNotNull("No element found for given constraints",foundElement);
+        return foundElement;
     }
 
     protected String getBeforeFileName() {
