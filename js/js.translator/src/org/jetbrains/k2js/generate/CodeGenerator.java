@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Pavel.Talanov
@@ -43,8 +44,8 @@ public final class CodeGenerator {
     }
 
     @NotNull
-    public static String toString(@NotNull JsProgram program) {
-        return (new CodeGenerator()).generateToString(program);
+    public static String toString(@NotNull JsProgram program, List<String> rawStatements) {
+        return (new CodeGenerator()).generateToString(program, rawStatements);
     }
 
     public void generateToFile(@NotNull JsProgram program, @NotNull File file) throws IOException {
@@ -58,8 +59,12 @@ public final class CodeGenerator {
     }
 
     @NotNull
-    public String generateToString(@NotNull JsProgram program) {
+    public String generateToString(@NotNull JsProgram program, List<String> rawStatements) {
         generateCode(program);
+        for (String statement : rawStatements) {
+            output.print(statement);
+            output.newline();
+        }
         return output.toString();
     }
 
