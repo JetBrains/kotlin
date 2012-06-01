@@ -14,7 +14,7 @@ import java.util.ArrayList
 public open class Class(converter : Converter,
                         val name : Identifier,
                         val docComments: List<Node>,
-                        modifiers : Set<String>,
+                        modifiers : Set<Modifier>,
                         val typeParameters : List<Element>,
                         val extendsTypes : List<Type>,
                         val baseClassParams : List<Expression>,
@@ -60,7 +60,7 @@ public open class Class(converter : Converter,
     }
 
     private fun constructorToInit(f: Function): Function {
-        val modifiers : Set<String> = HashSet<String>(f.getModifiers())
+        val modifiers : Set<Modifier> = HashSet<Modifier>(f.modifiers)
         modifiers.add(Modifier.STATIC)
         val statements : List<Element> = f.block?.statements ?: arrayList()
         statements.add(ReturnStatement(Identifier("__")))
@@ -93,8 +93,11 @@ public open class Class(converter : Converter,
     }
 
     open fun modifiersToKotlin() : String {
-        val modifierList : List<String> = arrayList()
-        modifierList.add(accessModifier())
+        val modifierList : List<Modifier> = arrayList()
+        val modifier = accessModifier()
+        if (modifier != null) {
+            modifierList.add(modifier)
+        }
         if (needAbstractModifier()) {
             modifierList.add(Modifier.ABSTRACT)
         }
@@ -102,15 +105,10 @@ public open class Class(converter : Converter,
         if (needOpenModifier()) {
             modifierList.add(Modifier.OPEN)
         }
-
-        if (modifierList.size() > 0) {
-            return modifierList.makeString(" ") + " "
-        }
-
-        return ""
+        return modifierList.toKotlin()
     }
 
-    open fun needOpenModifier() = !myModifiers.contains(Modifier.FINAL) && !myModifiers.contains(Modifier.ABSTRACT)
+    open fun needOpenModifier() = !modifiers.contains(Modifier.FINAL) && !modifiers.contains(Modifier.ABSTRACT)
 
     open fun needAbstractModifier() = isAbstract()
 
@@ -139,8 +137,8 @@ public open class Class(converter : Converter,
         open fun getMembers(members : List<Node>, converter : Converter) : List<Node> {
             if (converter.hasFlag(J2KConverterFlags.SKIP_NON_PUBLIC_MEMBERS)) {
                 return members.filter { it is Comment ||
-                                        (it as Member).accessModifier() == "public" ||
-                                        (it as Member).accessModifier() == "protected" }
+                                        (it as Member).accessModifier() == Modifier.PUBLIC ||
+                                        (it as Member).accessModifier() == Modifier.PROTECTED }
             }
             return members
         }

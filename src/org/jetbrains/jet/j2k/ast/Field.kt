@@ -8,34 +8,27 @@ import org.jetbrains.jet.j2k.Converter
 
 public open class Field(val identifier : Identifier,
                         val docComments: List<Node>,
-                        modifiers : Set<String>,
+                        modifiers : Set<Modifier>,
                         val `type` : Type,
                         val initializer : Element,
                         val writingAccesses : Int) : Member(modifiers) {
 
     open fun modifiersToKotlin() : String {
-        val modifierList : List<String> = arrayList()
+        val modifierList : List<Modifier> = arrayList()
         if (isAbstract()) {
             modifierList.add(Modifier.ABSTRACT)
         }
 
-        modifierList.add(accessModifier())
-        modifierList.add(if (isVal()) "val" else "var")
-        if (modifierList.size() > 0)
-        {
-            return modifierList.makeString(" ") + " "
+        val modifier = accessModifier()
+        if (modifier != null) {
+          modifierList.add(modifier)
         }
 
-        return ""
+        return modifierList.toKotlin() + (if (isVal()) "val " else "var ")
     }
 
-    public open fun isVal() : Boolean {
-        return myModifiers.contains(Modifier.FINAL)
-    }
-
-    public override fun isStatic() : Boolean {
-        return myModifiers.contains(Modifier.STATIC)
-    }
+    public open fun isVal() : Boolean = modifiers.contains(Modifier.FINAL)
+    public override fun isStatic() : Boolean = modifiers.contains(Modifier.STATIC)
 
     public override fun toKotlin() : String {
         val declaration : String = docComments.toKotlin("\n", "", "\n") +

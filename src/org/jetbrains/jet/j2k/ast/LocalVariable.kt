@@ -4,13 +4,11 @@ import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.Set
 
 public open class LocalVariable(val identifier: Identifier,
-                                val modifiersSet: Set<String>,
+                                val modifiersSet: Set<Modifier>,
                                 val `type`: Type,
                                 val initializer: Expression): Expression() {
 
-    public open fun hasModifier(modifier: String): Boolean {
-        return modifiersSet.contains(modifier)
-    }
+    public open fun hasModifier(modifier: Modifier): Boolean = modifiersSet.contains(modifier)
 
     public override fun toKotlin(): String {
         if (initializer.isEmpty()) {

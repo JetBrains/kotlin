@@ -130,7 +130,7 @@ public open class Converter() {
     }
 
     private fun classToClass(psiClass: PsiClass): Class {
-        val modifiers: Set<String> = modifiersListToModifiersSet(psiClass.getModifierList())
+        val modifiers: Set<Modifier> = modifiersListToModifiersSet(psiClass.getModifierList())
         val fields: List<Field> = fieldsToFieldList(psiClass.getFields(), psiClass)
         val typeParameters: List<Element> = elementsToElementList(psiClass.getTypeParameters())
         val implementsTypes: List<Type> = typesToNotNullableTypeList(psiClass.getImplementsListTypes())
@@ -186,7 +186,7 @@ public open class Converter() {
                     }
                 }
             }
-            members.add(Constructor(Identifier.EMPTY_IDENTIFIER, arrayList(), Collections.emptySet<String>()!!,
+            members.add(Constructor(Identifier.EMPTY_IDENTIFIER, arrayList(), Collections.emptySet<Modifier>()!!,
                     ClassType(name, Collections.emptyList<Element>()!!, false),
                     Collections.emptyList<Element>()!!,
                     ParameterList(createParametersFromFields(finalOrWithEmptyInitializer)),
@@ -214,7 +214,7 @@ public open class Converter() {
     }
 
     private fun fieldToField(field: PsiField, psiClass: PsiClass?): Field {
-        val modifiers: Set<String> = modifiersListToModifiersSet(field.getModifierList())
+        val modifiers = modifiersListToModifiersSet(field.getModifierList())
         val docComments = getDocComments(field)
         if (field is PsiEnumConstant) {
             return EnumConstant(Identifier(field.getName()!!),
@@ -584,7 +584,7 @@ public open class Converter() {
             val parent = method.getParent()
             if (parent is PsiClass) {
                 val parentModifierList: PsiModifierList? = parent.getModifierList()
-                if ((parentModifierList != null && parentModifierList.hasExplicitModifier(Modifier.FINAL)) || parent.isEnum()) {
+                if ((parentModifierList != null && parentModifierList.hasExplicitModifier(PsiModifier.FINAL)) || parent.isEnum()) {
                     return true
                 }
 
@@ -677,8 +677,8 @@ public open class Converter() {
             return Identifier(identifier.getText()!!)
         }
 
-        public open fun modifiersListToModifiersSet(modifierList: PsiModifierList?): Set<String> {
-            val modifiersSet: HashSet<String> = hashSet()
+        public open fun modifiersListToModifiersSet(modifierList: PsiModifierList?): Set<Modifier> {
+            val modifiersSet: HashSet<Modifier> = hashSet()
             if (modifierList != null) {
                 if (modifierList.hasExplicitModifier(PsiModifier.ABSTRACT))
                     modifiersSet.add(Modifier.ABSTRACT)
@@ -704,6 +704,7 @@ public open class Converter() {
 
             return modifiersSet
         }
+
         private fun isConversionNeeded(actual: PsiType?, expected: PsiType?): Boolean {
             if (actual == null || expected == null) {
                 return false

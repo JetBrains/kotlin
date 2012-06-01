@@ -8,7 +8,7 @@ import java.util.Set
 public open class Enum(converter : Converter,
                        name : Identifier,
                        docComments: List<Node>,
-                       modifiers : Set<String>,
+                       modifiers : Set<Modifier>,
                        typeParameters : List<Element>,
                        extendsTypes : List<Type>,
                        baseClassParams : List<Expression>,

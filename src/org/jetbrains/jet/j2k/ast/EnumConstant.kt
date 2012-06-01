@@ -6,7 +6,7 @@ import java.util.List
 
 public open class EnumConstant(identifier : Identifier,
                                docComments: List<Node>,
-                               modifiers : Set<String>,
+                               modifiers : Set<Modifier>,
                                `type` : Type,
                                params : Element) : Field(identifier, docComments, modifiers, `type`.convertedToNotNull(), params, 0) {
 

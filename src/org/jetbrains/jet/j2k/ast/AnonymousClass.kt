@@ -9,7 +9,7 @@ public open class AnonymousClass(converter : Converter, members : List<Node>)
                                  : Class(converter,
                                          Identifier("anonClass"),
                                          arrayList(),
-                                         Collections.emptySet<String>()!!,
+                                         Collections.emptySet<Modifier>()!!,
                                          Collections.emptyList<Element>()!!,
                                          Collections.emptyList<Type>()!!,
                                          Collections.emptyList<Expression>()!!,

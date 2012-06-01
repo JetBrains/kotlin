@@ -6,7 +6,7 @@ import org.jetbrains.jet.j2k.ast.types.Type
 
 public open class Constructor(identifier : Identifier,
                               docComments: List<Node>,
-                              modifiers : Set<String>,
+                              modifiers : Set<Modifier>,
                               `type` : Type,
                               typeParameters : List<Element>,
                               params : Element,

@@ -7,7 +7,7 @@ import org.jetbrains.jet.j2k.ast.types.Type
 
 public open class Function(val name : Identifier,
                            val docComments: List<Node>,
-                           modifiers : Set<String>,
+                           modifiers : Set<Modifier>,
                            val `type` : Type,
                            val typeParameters : List<Element>,
                            val params : Element,
@@ -32,9 +32,9 @@ public open class Function(val name : Identifier,
     }
 
     open fun modifiersToKotlin() : String {
-        val modifierList: List<String> = arrayList()
-        val accessModifier : String = accessModifier()
-        if (!accessModifier.isEmpty()) {
+        val modifierList: List<Modifier> = arrayList()
+        val accessModifier = accessModifier()
+        if (accessModifier != null) {
             modifierList.add(accessModifier)
         }
 
@@ -42,27 +42,22 @@ public open class Function(val name : Identifier,
             modifierList.add(Modifier.ABSTRACT)
         }
 
-        if (myModifiers.contains(Modifier.OVERRIDE)) {
+        if (modifiers.contains(Modifier.OVERRIDE)) {
             modifierList.add(Modifier.OVERRIDE)
         }
 
-        if (!myModifiers.contains(Modifier.ABSTRACT) &&
-            !myModifiers.contains(Modifier.OVERRIDE) &&
-            !myModifiers.contains(Modifier.FINAL) &&
-            !myModifiers.contains(Modifier.PRIVATE))
-        {
+        if (!modifiers.contains(Modifier.ABSTRACT) &&
+            !modifiers.contains(Modifier.OVERRIDE) &&
+            !modifiers.contains(Modifier.FINAL) &&
+            !modifiers.contains(Modifier.PRIVATE)) {
             modifierList.add(Modifier.OPEN)
         }
 
-        if (myModifiers.contains(Modifier.NOT_OPEN)) {
+        if (modifiers.contains(Modifier.NOT_OPEN)) {
             modifierList.remove(Modifier.OPEN)
         }
 
-        if (modifierList.size() > 0) {
-            return modifierList.makeString(" ") + " "
-        }
-
-        return ""
+        return modifierList.toKotlin()
     }
 
     public override fun toKotlin() : String {
