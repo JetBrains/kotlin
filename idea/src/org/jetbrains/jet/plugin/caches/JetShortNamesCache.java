@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.caches;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
@@ -36,7 +35,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JavaElementFinder;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -48,7 +50,6 @@ import org.jetbrains.jet.plugin.stubindex.JetExtensionFunctionNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetShortClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetShortFunctionNameIndex;
-import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.*;
 
@@ -93,7 +94,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         List<PsiClass> result = new ArrayList<PsiClass>();
 
         for (String fqName : JetFullClassNameIndex.getInstance().getAllKeys(project)) {
-            if (QualifiedNamesUtil.fqnToShortName(new FqName(fqName)).getName().equals(name)) {
+            if ((new FqName(fqName)).shortName().getName().equals(name)) {
                 PsiClass psiClass = javaElementFinder.findClass(fqName, scope);
                 if (psiClass != null) {
                     result.add(psiClass);
@@ -127,17 +128,6 @@ public class JetShortNamesCache extends PsiShortNamesCache {
                                        }));
 
         return standardTypes;
-    }
-
-    @NotNull
-    public Collection<FqName> getFQNamesByName(@NotNull final String name, JetFile file, @NotNull GlobalSearchScope scope) {
-        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
-        return Collections2.filter(context.getKeys(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR), new Predicate<FqName>() {
-            @Override
-            public boolean apply(@Nullable FqName fqName) {
-                return fqName != null && QualifiedNamesUtil.isShortNameForFQN(name, fqName);
-            }
-        });
     }
 
     /**
