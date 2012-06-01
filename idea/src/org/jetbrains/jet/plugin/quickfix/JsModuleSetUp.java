@@ -45,7 +45,7 @@ public final class JsModuleSetUp {
     private JsModuleSetUp() {
     }
 
-    public static void doSetUpModule(@Nullable Project project) {
+    public static void doSetUpModule(@Nullable Project project, @NotNull Runnable continuation) {
         if (project == null) {
             notifyFailure("Internal error: Project not found.");
             return;
@@ -67,7 +67,7 @@ public final class JsModuleSetUp {
 
         createIndicationFile(file);
 
-        refreshRootDir(project);
+        refreshRootDir(project, continuation);
     }
 
     private static boolean copyJsLibFiles(@NotNull File rootDir) {
@@ -81,8 +81,8 @@ public final class JsModuleSetUp {
         return doCopyJsLibFiles(Arrays.asList(jsLibJarPath, jsLibJsPath), rootDir);
     }
 
-    private static void refreshRootDir(@NotNull Project project) {
-        getContentRoot(project).refresh(false, true);
+    private static void refreshRootDir(@NotNull Project project, @NotNull Runnable continuation) {
+        getContentRoot(project).refresh(true, true, continuation);
     }
 
     private static void createIndicationFile(@NotNull File file) {

@@ -92,10 +92,11 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
             if (JavaPsiFacade.getInstance(myProject).findClass("jet.JetObject", scope) == null) {
                 return createNotificationPanel(module);
             }
-
-        } catch (ProcessCanceledException e) {
+        }
+        catch (ProcessCanceledException e) {
             // Ignore
-        } catch (IndexNotReadyException e) {
+        }
+        catch (IndexNotReadyException e) {
             // Ignore
         }
 
@@ -116,7 +117,8 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
 
         File runtimePath = PathUtil.getDefaultRuntimePath();
         if (runtimePath == null) {
-            Messages.showErrorDialog(myProject, "kotlin-runtime.jar is not found. Make sure plugin is properly installed.", "No Runtime Found");
+            Messages.showErrorDialog(myProject, "kotlin-runtime.jar is not found. Make sure plugin is properly installed.",
+                                     "No Runtime Found");
             return null;
         }
 
@@ -131,7 +133,8 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
             if (jarVfs != null) {
                 jarVfs.refresh(false, false);
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             Messages.showErrorDialog(myProject, "Error copying jar: " + e.getLocalizedMessage(), "Error Copying File");
             return null;
         }
@@ -175,8 +178,12 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
     }
 
     private void setUpJSModule(@NotNull Module module) {
-        JsModuleSetUp.doSetUpModule(module.getProject());
-        updateNotifications();
+        JsModuleSetUp.doSetUpModule(module.getProject(), new Runnable() {
+            @Override
+            public void run() {
+                updateNotifications();
+            }
+        });
     }
 
     private void setUpKotlinRuntime(@NotNull final Module module) {
