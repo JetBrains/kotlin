@@ -377,6 +377,13 @@ public open class Converter() {
         return result
     }
 
+    public open fun typeElementToTypeElement(element: PsiTypeElement?): TypeElement {
+        return TypeElement(if (element == null)
+            EmptyType()
+        else
+            typeToType(element.getType()))
+    }
+
     public open fun typeToType(`type`: PsiType?): Type {
         if (`type` == null)
             return EmptyType()

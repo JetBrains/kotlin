@@ -68,7 +68,7 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
     }
 
     public override fun visitClassObjectAccessExpression(expression: PsiClassObjectAccessExpression?): Unit {
-        myResult = ClassObjectAccessExpression(getConverter().elementToElement(expression?.getOperand()))
+        myResult = ClassObjectAccessExpression(getConverter().typeElementToTypeElement(expression?.getOperand()))
     }
 
     public override fun visitConditionalExpression(expression: PsiConditionalExpression?): Unit {
@@ -89,10 +89,8 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
 
     public override fun visitInstanceOfExpression(expression: PsiInstanceOfExpression?): Unit {
         val checkType: PsiTypeElement? = expression?.getCheckType()
-        myResult = IsOperator(getConverter().expressionToExpression(expression?.getOperand()), TypeElement(if (checkType == null)
-            EmptyType()
-        else
-            myConverter.typeToType(checkType.getType())))
+        myResult = IsOperator(getConverter().expressionToExpression(expression?.getOperand()),
+                              myConverter.typeElementToTypeElement(checkType))
     }
 
     public override fun visitLiteralExpression(expression: PsiLiteralExpression?): Unit {

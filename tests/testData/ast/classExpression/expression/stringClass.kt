@@ -1,1 +1,1 @@
-getJavaClass<String?>
+javaClass<String>()
