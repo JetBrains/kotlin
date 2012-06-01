@@ -76,6 +76,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     private final CodegenContext context;
 
     private final Stack<BlockStackElement> blockStackElements = new Stack<BlockStackElement>();
+    private final Collection<String> localVariableNames = new HashSet<String>();
 
     static class BlockStackElement {
     }
@@ -110,7 +111,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         this.typeMapper = state.getInjector().getJetTypeMapper();
         this.returnType = returnType;
         this.state = state;
-        this.v = new InstructionAdapter(v);
+        this.v = new InstructionAdapter(v) {
+            @Override
+            public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
+                super.visitLocalVariable(name, desc, signature, start, end,
+                                         index);
+                localVariableNames.add(name);
+            }
+        };
         this.bindingContext = state.getBindingContext();
         this.context = context;
     }
@@ -137,6 +145,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     public BindingContext getBindingContext() {
         return bindingContext;
+    }
+
+    public Collection<String> getLocalVariableNamesForExpression() {
+        return localVariableNames;
     }
 
     public void addTypeParameter(TypeParameterDescriptor typeParameter, StackValue expression) {

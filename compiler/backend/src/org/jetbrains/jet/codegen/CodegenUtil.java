@@ -27,6 +27,8 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
+import java.util.Collection;
+import java.util.Random;
 
 /**
  * @author abreslav
@@ -35,6 +37,8 @@ import java.util.Collections;
 public class CodegenUtil {
     private CodegenUtil() {
     }
+
+    private static final Random RANDOM = new Random(55L);
 
     public static boolean isInterface(DeclarationDescriptor descriptor) {
         return descriptor instanceof ClassDescriptor && ((ClassDescriptor)descriptor).getKind() == ClassKind.TRAIT;
@@ -69,6 +73,14 @@ public class CodegenUtil {
                 !(myClass.getParent() instanceof JetClassObject);
     }
 
+    public static boolean isLocalFun(DeclarationDescriptor fd, BindingContext bindingContext) {
+        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, fd);
+        if(psiElement instanceof JetNamedFunction && psiElement.getParent() instanceof JetBlockExpression) {
+            return true;
+        }
+        return false;
+    }
+
 
     public static boolean isNamedFun(DeclarationDescriptor fd, BindingContext bindingContext) {
         PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, fd);
@@ -77,4 +89,16 @@ public class CodegenUtil {
         }
         return false;
     }
+
+    public static String generateTmpVariableName(Collection<String> existingNames) {
+        String prefix = "tmp";
+        int i = RANDOM.nextInt(Integer.MAX_VALUE);
+        String name = prefix + i;
+        while (existingNames.contains(name)) {
+            i++;
+            name = prefix + i;
+        }
+        return name;
+    }
+
 }
