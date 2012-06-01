@@ -305,9 +305,7 @@ public class ClosureAnnotator {
         }
     }
 
-    // TODO: please insert either @NotNull or @Nullable here
-    // stepan.koltsov@ 2012-04-08
-    private void recordName(ClassDescriptor classDescriptor, @NotNull JvmClassName name) {
+    private void recordName(@NotNull ClassDescriptor classDescriptor, @NotNull JvmClassName name) {
         JvmClassName old = classNamesForClassDescriptor.put(classDescriptor, name);
         if (old == null) {
             // TODO: fix this assertion
