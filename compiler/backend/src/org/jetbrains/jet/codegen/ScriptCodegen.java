@@ -73,6 +73,14 @@ public class ScriptCodegen {
                 JdkNames.JL_OBJECT.getInternalName(),
                 new String[0]);
 
+        genConstructor(scriptDeclaration, scriptDescriptor, classBuilder, outerContext);
+        classBuilder.done();
+    }
+
+    private void genConstructor(
+            @NotNull JetScript scriptDeclaration, @NotNull ScriptDescriptor scriptDescriptor,
+            @NotNull ClassBuilder classBuilder, @NotNull CodegenContext outerContext) {
+
         Type blockType = jetTypeMapper.mapType(scriptDescriptor.getReturnType(), MapTypeMode.VALUE);
 
         classBuilder.newField(null, Opcodes.ACC_PUBLIC, LAST_EXPRESSION_VALUE_FIELD_NAME, blockType.getDescriptor(), null, null);
@@ -115,7 +123,5 @@ public class ScriptCodegen {
         instructionAdapter.areturn(Type.VOID_TYPE);
         mv.visitMaxs(-1, -1);
         mv.visitEnd();
-
-        classBuilder.done();
     }
 }
