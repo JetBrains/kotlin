@@ -29,10 +29,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetMainDetector;
+import org.jetbrains.jet.plugin.project.JsModuleDetector;
 
 /**
  * @author yole
@@ -55,6 +56,10 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
     protected RunnerAndConfigurationSettings createConfigurationByElement(@NotNull Location location, ConfigurationContext configurationContext) {
         final Module module = location.getModule();
         if (module == null) {
+            return null;
+        }
+
+        if (JsModuleDetector.isJsProject(module.getProject())) {
             return null;
         }
 
