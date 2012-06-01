@@ -9,7 +9,7 @@ import java.util.Arrays
 import java.util.Collections
 import java.util.LinkedList
 import java.util.List
-import org.jetbrains.jet.j2k.ConverterUtil.countWritingAccesses
+import org.jetbrains.jet.j2k.countWritingAccesses
 
 public open class StatementVisitor(converter: Converter): ElementVisitor(converter) {
     public override fun visitAssertStatement(statement: PsiAssertStatement?): Unit {

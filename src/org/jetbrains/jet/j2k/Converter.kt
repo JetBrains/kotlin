@@ -14,10 +14,11 @@ import org.jetbrains.jet.j2k.ast.types.Type
 import org.jetbrains.jet.j2k.visitors.*
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import java.util.*
-import org.jetbrains.jet.j2k.ConverterUtil.countWritingAccesses
-import org.jetbrains.jet.j2k.ConverterUtil.createMainFunction
 import com.intellij.psi.CommonClassNames.*
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions.*
+import com.intellij.openapi.util.Pair
+import java.text.MessageFormat
+import com.intellij.psi.util.PsiUtil
 
 public open class Converter() {
     private var classIdentifiers: Set<String> = hashSet()
@@ -244,7 +245,7 @@ public open class Converter() {
         }
         methodReturnType = method.getReturnType()
         val identifier: Identifier = Identifier(method.getName())
-        val returnType: Type = typeToType(method.getReturnType(), ConverterUtil.isAnnotatedAsNotNull(method.getModifierList()))
+        val returnType: Type = typeToType(method.getReturnType(), isAnnotatedAsNotNull(method.getModifierList()))
         val body: Block = (if (hasFlag(J2KConverterFlags.SKIP_BODIES))
             Block.EMPTY_BLOCK
         else
@@ -281,8 +282,8 @@ public open class Converter() {
         for (parameter : PsiParameter? in method.getParameterList().getParameters()) {
             result.add(Parameter(Identifier(parameter?.getName()!!),
                     typeToType(parameter?.getType(),
-                            ConverterUtil.isAnnotatedAsNotNull(parameter?.getModifierList())),
-                    ConverterUtil.isReadOnly(parameter, method.getBody())))
+                            isAnnotatedAsNotNull(parameter?.getModifierList())),
+                    isReadOnly(parameter, method.getBody())))
         }
         return ParameterList(result)
     }
@@ -413,7 +414,7 @@ public open class Converter() {
     public open fun parameterToParameter(parameter: PsiParameter): Parameter {
         return Parameter(Identifier(parameter.getName()!!),
                 typeToType(parameter.getType(),
-                        ConverterUtil.isAnnotatedAsNotNull(parameter.getModifierList())), true)
+                        isAnnotatedAsNotNull(parameter.getModifierList())), true)
     }
 
     public open fun argumentsToExpressionList(expression: PsiCallExpression): List<Expression> {
@@ -711,4 +712,118 @@ public open class Converter() {
             return actualStr != expectedStr && (!(o1 xor o2))
         }
     }
+}
+
+public open fun createMainFunction(file: PsiFile): String {
+    val classNamesWithMains: List<Pair<String?, PsiMethod?>?> = arrayList()
+    for (c : PsiClass? in (file as PsiJavaFile).getClasses()) {
+        var main: PsiMethod? = findMainMethod(c)
+        if (main != null) {
+            classNamesWithMains.add(Pair<String?, PsiMethod?>(c?.getName(), main))
+        }
+    }
+
+    if (classNamesWithMains.size() > 0) {
+        var className: String? = classNamesWithMains.get(0)?.getFirst()
+        return MessageFormat.format("fun main(args : Array<String?>?) = {0}.main(args)", className)!!
+    }
+
+    return ""
+
+}
+
+private fun findMainMethod(aClass: PsiClass?): PsiMethod? {
+    if (isMainClass(aClass)) {
+        val mainMethods: Array<PsiMethod?>? = aClass?.findMethodsByName("main", false)
+        if (mainMethods != null) {
+            return findMainMethod(mainMethods)
+        }
+    }
+    return null
+}
+
+private fun isMainClass(psiClass: PsiClass?): Boolean {
+    if (psiClass == null || psiClass is PsiAnonymousClass)
+        return false
+
+    if (psiClass.isInterface())
+        return false
+
+    return psiClass.getContainingClass() == null || psiClass.hasModifierProperty(PsiModifier.STATIC)
+
+}
+
+private fun findMainMethod(mainMethods: Array<PsiMethod?>): PsiMethod? {
+    return mainMethods.find { isMainMethod(it) }
+}
+
+public open fun isMainMethod(method: PsiMethod?): Boolean {
+    if (method == null || method.getContainingClass() == null)
+        return false
+
+    if (PsiType.VOID != method.getReturnType())
+        return false
+
+    if (!method.hasModifierProperty(PsiModifier.STATIC))
+        return false
+
+    if (!method.hasModifierProperty(PsiModifier.PUBLIC))
+        return false
+
+    val parameters: Array<PsiParameter?>? = method.getParameterList().getParameters()
+    if (parameters?.size!! != 1)
+        return false
+
+    val `type`: PsiType? = parameters!![0]?.getType()
+    if (`type` !is PsiArrayType)
+        return false
+
+    val componentType: PsiType? = `type`.getComponentType()
+    return componentType?.equalsToText("java.lang.String")!!
+}
+
+public open fun countWritingAccesses(element: PsiElement?, container: PsiElement?): Int {
+    var counter: Int = 0
+    if (container != null) {
+        val visitor: ReferenceCollector = ReferenceCollector()
+        container.accept(visitor)
+        for (e : PsiReferenceExpression? in visitor.getCollectedReferences())
+            if (e?.isReferenceTo(element)!! && PsiUtil.isAccessedForWriting(e)) {
+                counter++
+            }
+    }
+
+    return counter
+}
+
+open class ReferenceCollector(): JavaRecursiveElementVisitor() {
+    private val myCollectedReferences: List<PsiReferenceExpression> = arrayList()
+
+    public open fun getCollectedReferences(): List<PsiReferenceExpression> {
+        return myCollectedReferences
+    }
+
+    public override fun visitReferenceExpression(expression: PsiReferenceExpression?): Unit {
+        super.visitReferenceExpression(expression)
+        if (expression != null) {
+            myCollectedReferences.add(expression)
+        }
+    }
+}
+
+public open fun isReadOnly(element: PsiElement?, container: PsiElement?): Boolean {
+    return countWritingAccesses(element, container) == 0
+}
+
+public open fun isAnnotatedAsNotNull(modifierList: PsiModifierList?): Boolean {
+    if (modifierList != null) {
+        val annotations: Array<PsiAnnotation?>? = modifierList.getAnnotations()
+        for (a : PsiAnnotation? in annotations) {
+            val qualifiedName: String? = a?.getQualifiedName()
+            if (qualifiedName != null && Converter.NOT_NULL_ANNOTATIONS.contains(qualifiedName)) {
+                return true
+            }
+        }
+    }
+    return false
 }

@@ -5,7 +5,7 @@ import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.List
-import org.jetbrains.jet.j2k.ConverterUtil.isAnnotatedAsNotNull
+import org.jetbrains.jet.j2k.isAnnotatedAsNotNull
 
 public open class ElementVisitor(val myConverter : Converter) : JavaElementVisitor() {
     protected var myResult : Element = Element.EMPTY_ELEMENT
