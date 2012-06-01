@@ -256,7 +256,6 @@ public class ClosureAnnotator {
             // working around a problem with shallow analysis
             if (declarationDescriptor == null) return;
             ClassDescriptor classDescriptor = classDescriptorForFunctionDescriptor(declarationDescriptor, name);
-            recordName(classDescriptor, name);
             recordEnclosing(classDescriptor);
             classStack.push(classDescriptor);
             nameStack.push(classNameForClassDescriptor(classDescriptor).getInternalName());
@@ -294,7 +293,6 @@ public class ClosureAnnotator {
             else {
                 JvmClassName name = recordAnonymousClass(function);
                 ClassDescriptor classDescriptor = classDescriptorForFunctionDescriptor(functionDescriptor, name);
-                recordName(classDescriptor, name);
                 recordEnclosing(classDescriptor);
                 classStack.push(classDescriptor);
                 nameStack.push(name.getInternalName());
@@ -307,11 +305,8 @@ public class ClosureAnnotator {
 
     private void recordName(@NotNull ClassDescriptor classDescriptor, @NotNull JvmClassName name) {
         JvmClassName old = classNamesForClassDescriptor.put(classDescriptor, name);
-        if (old == null) {
-            // TODO: fix this assertion
-            // previosly here was incorrect assert that was ignored without -ea
-            // stepan.koltsov@ 2012-04-08
-            //throw new IllegalStateException("rewrite at key " + classDescriptor);
+        if (old != null) {
+            throw new IllegalStateException("rewrite at key " + classDescriptor);
         }
     }
 
