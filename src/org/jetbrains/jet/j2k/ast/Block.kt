@@ -3,7 +3,7 @@ package org.jetbrains.jet.j2k.ast
 import java.util.LinkedList
 import java.util.List
 
-public open class Block(val statements: List<Statement>, val notEmpty: Boolean = false): Statement() {
+public open class Block(val statements: List<Element>, val notEmpty: Boolean = false): Statement() {
     public override fun isEmpty(): Boolean {
         return !notEmpty && statements.size() == 0
     }

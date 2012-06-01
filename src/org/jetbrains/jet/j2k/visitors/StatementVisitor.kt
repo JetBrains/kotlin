@@ -12,20 +12,13 @@ import java.util.List
 import org.jetbrains.jet.j2k.ConverterUtil.countWritingAccesses
 
 public open class StatementVisitor(converter: Converter): ElementVisitor(converter) {
-    private var myResult: Statement = Statement.EMPTY_STATEMENT
-
-    public override fun getResult(): Statement {
-        return myResult
-    }
-
     public override fun visitAssertStatement(statement: PsiAssertStatement?): Unit {
         myResult = AssertStatement(getConverter().expressionToExpression(statement?.getAssertCondition()),
                 getConverter().expressionToExpression(statement?.getAssertDescription()))
     }
 
     public override fun visitBlockStatement(statement: PsiBlockStatement?): Unit {
-        val statements: Array<PsiStatement?> = statement?.getCodeBlock()?.getStatements()!!
-        myResult = Block(getConverter().statementsToStatementList(statements), true)
+        myResult = myConverter.blockToBlock(statement?.getCodeBlock(), true)
     }
 
     public override fun visitBreakStatement(statement: PsiBreakStatement?): Unit {
@@ -104,7 +97,7 @@ public open class StatementVisitor(converter: Converter): ElementVisitor(convert
                     getConverter().statementToStatement(body))
         }
         else {
-            var forStatements: List<Statement> = arrayList()
+            var forStatements: List<Element> = arrayList()
             forStatements.add(getConverter().statementToStatement(initialization))
             forStatements.add(WhileStatement(getConverter().expressionToExpression(condition),
                     Block(arrayList(getConverter().statementToStatement(body),
@@ -145,23 +138,23 @@ public open class StatementVisitor(converter: Converter): ElementVisitor(convert
     }
 
     private open fun switchBodyToCases(body: PsiCodeBlock?): List<CaseContainer> {
-        val cases: List<List<PsiStatement?>> = splitToCases(body)
-        val allSwitchStatements: List<PsiStatement?> = arrayList()
+        val cases: List<List<PsiElement?>> = splitToCases(body)
+        val allSwitchStatements: List<PsiElement?> = arrayList()
         if (body != null) {
             // TODO Arrays.asList()
             for(s in body.getStatements()) allSwitchStatements.add(s)
         }
         val result: List<CaseContainer> = arrayList()
-        var pendingLabels: List<Statement> = arrayList()
+        var pendingLabels: List<Element> = arrayList()
         var i: Int = 0
-        for (ls : List<PsiStatement?> in cases) {
+        for (ls in cases) {
             // TODO assert {(ls?.size()).sure() > 0}
-            var label: PsiStatement? = ls[0]
+            var label = ls[0]
             // TODO assert {(label is PsiSwitchLabelStatement?)}
             // TODO assert("not a right index") {allSwitchStatements?.get(i) == label}
             if (ls.size() > 1) {
                 pendingLabels.add(getConverter().statementToStatement(label))
-                val slice: List<PsiStatement?> = ls.subList(1, (ls.size()))
+                val slice: List<PsiElement?> = ls.subList(1, (ls.size()))
                 if (!containsBreak(slice)) {
                     val statements = getConverter().statementsToStatementList(slice)
                     statements.addAll(getConverter().statementsToStatementList(getAllToNextBreak(allSwitchStatements, i + ls.size())))
@@ -227,20 +220,12 @@ public open class StatementVisitor(converter: Converter): ElementVisitor(convert
             (psiElement is PsiPrefixExpression && psiElement.getOperationTokenType() == JavaTokenType.PLUSPLUS)
         }
 
-        private open fun containsBreak(slice: List<PsiStatement?>): Boolean {
-            for (s : PsiStatement? in slice)
-                if ((s is PsiBreakStatement?))
-                {
-                    return true
-                }
+        private fun containsBreak(slice: List<PsiElement?>) = slice.any { it is PsiBreakStatement }
 
-            return false
-        }
-
-        private open fun getAllToNextBreak(allStatements: List<PsiStatement?>, start: Int): List<PsiStatement?> {
-            var result: List<PsiStatement?> = LinkedList<PsiStatement?>()
+        private open fun getAllToNextBreak(allStatements: List<PsiElement?>, start: Int): List<PsiElement?> {
+            val result: List<PsiElement?> = arrayList()
             for (i in start..allStatements.size() - 1) {
-                var s: PsiStatement? = allStatements.get(i)
+                val s = allStatements.get(i)
                 if (s is PsiBreakStatement || s is PsiReturnStatement) {
                     return result
                 }
@@ -253,19 +238,20 @@ public open class StatementVisitor(converter: Converter): ElementVisitor(convert
             return result
         }
 
-        private open fun splitToCases(body: PsiCodeBlock?): List<List<PsiStatement?>> {
-            val cases: List<List<PsiStatement?>> = arrayList()
-            var currentCaseStatements: List<PsiStatement?> = arrayList()
+        private open fun splitToCases(body: PsiCodeBlock?): List<List<PsiElement?>> {
+            val cases: List<List<PsiElement?>> = arrayList()
+            var currentCaseStatements: List<PsiElement?> = arrayList()
             var isFirst: Boolean = true
             if (body != null) {
-                for (s : PsiStatement? in body.getStatements()) {
-                    if ((s is PsiSwitchLabelStatement?)) {
+                for (s in body.getChildren()) {
+                    if (s !is PsiStatement && s !is PsiComment) continue
+                    if (s is PsiSwitchLabelStatement) {
                         if (isFirst) {
                             isFirst = false
                         }
                         else {
                             cases.add(currentCaseStatements)
-                            currentCaseStatements = LinkedList<PsiStatement?>()
+                            currentCaseStatements = arrayList()
                         }
                     }
 

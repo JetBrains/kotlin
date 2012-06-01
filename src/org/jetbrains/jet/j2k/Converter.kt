@@ -93,19 +93,30 @@ public open class Converter() {
     }
 
     public open fun anonymousClassToAnonymousClass(anonymousClass: PsiAnonymousClass): AnonymousClass {
-        return AnonymousClass(this, getMembers(anonymousClass, false))
+        return AnonymousClass(this, getMembers(anonymousClass))
     }
 
-    private fun getMembers(psiClass: PsiClass, takeDocComments: Boolean): List<Node> {
+    private fun getMembers(psiClass: PsiClass): List<Node> {
         val members: List<Node> = arrayList()
         val lbraceOffset = psiClass.getLBrace()?.getTextRange()?.getStartOffset() ?: 0
         for (e : PsiElement? in psiClass.getChildren()) {
             val isDocComment = e?.getTextRange()?.getStartOffset() ?: 0 < lbraceOffset
-            if (isDocComment != takeDocComments) continue
+            if (isDocComment) continue
             val converted = memberToMember(e, psiClass)
             if (converted != null) members.add(converted)
         }
         return members
+    }
+
+    private fun getDocComments(element: PsiElement): List<Node> {
+        val comments: List<Node> = arrayList()
+        val textOffset = element.getTextOffset()
+        for (e : PsiElement? in element.getChildren()) {
+            if (e is PsiComment && e.getTextRange()?.getStartOffset() ?: 0 < textOffset) {
+                comments.add(Comment(e.getText()!!));
+            }
+        }
+        return comments
     }
 
     private fun memberToMember(e: PsiElement?, containingClass: PsiClass): Node? = when(e) {
@@ -125,8 +136,8 @@ public open class Converter() {
         val extendsTypes: List<Type> = typesToNotNullableTypeList(psiClass.getExtendsListTypes())
         val name: Identifier = Identifier(psiClass.getName()!!)
         val baseClassParams: List<Expression> = arrayList()
-        val members: List<Node> = getMembers(psiClass, false)
-        val docComments = getMembers(psiClass, true)
+        val members: List<Node> = getMembers(psiClass)
+        val docComments = getDocComments(psiClass)
         val visitor: SuperVisitor = SuperVisitor()
         psiClass.accept(visitor)
         val resolvedSuperCallParameters = visitor.resolvedSuperCallParameters
@@ -146,8 +157,8 @@ public open class Converter() {
                             val init: String = getDefaultInitializer(fo)
                             initializers.put(fo.identifier.toKotlin(), init)
                         }
-                        val newStatements: List<Statement> = arrayList()
-                        for (s : Statement? in m.block!!.statements) {
+                        val newStatements: List<Element> = arrayList()
+                        for (s in m.block!!.statements) {
                             var isRemoved: Boolean = false
                             if (s is AssignmentExpression) {
                                 val assignee = s.left
@@ -165,7 +176,7 @@ public open class Converter() {
                             }
 
                             if (!isRemoved) {
-                                newStatements.add(s!!)
+                                newStatements.add(s)
                             }
 
                         }
@@ -174,7 +185,7 @@ public open class Converter() {
                     }
                 }
             }
-            members.add(Constructor(Identifier.EMPTY_IDENTIFIER, Collections.emptySet<String>()!!,
+            members.add(Constructor(Identifier.EMPTY_IDENTIFIER, arrayList(), Collections.emptySet<String>()!!,
                     ClassType(name, Collections.emptyList<Element>()!!, false),
                     Collections.emptyList<Element>()!!,
                     ParameterList(createParametersFromFields(finalOrWithEmptyInitializer)),
@@ -203,14 +214,17 @@ public open class Converter() {
 
     private fun fieldToField(field: PsiField, psiClass: PsiClass?): Field {
         val modifiers: Set<String> = modifiersListToModifiersSet(field.getModifierList())
-        if (field is PsiEnumConstant?) {
+        val docComments = getDocComments(field)
+        if (field is PsiEnumConstant) {
             return EnumConstant(Identifier(field.getName()!!),
+                    docComments,
                     modifiers,
                     typeToType(field.getType()),
                     elementToElement(field.getArgumentList()))
         }
 
         return Field(Identifier(field.getName()!!),
+                docComments,
                 modifiers,
                 typeToType(field.getType()),
                 expressionToExpression(field.getInitializer(), field.getType()),
@@ -237,8 +251,9 @@ public open class Converter() {
             blockToBlock(method.getBody(), notEmpty))
 
         val params: Element = createFunctionParameters(method)
-        val typeParameters: List<Element> = elementsToElementList(method.getTypeParameters())
-        val modifiers: Set<String> = modifiersListToModifiersSet(method.getModifierList())
+        val typeParameters = elementsToElementList(method.getTypeParameters())
+        val modifiers = modifiersListToModifiersSet(method.getModifierList())
+        val docComments = getDocComments(method)
         if (isOverrideAnyMethodExceptMethodsFromObject(method)) {
             modifiers.add(Modifier.OVERRIDE)
         }
@@ -254,10 +269,11 @@ public open class Converter() {
 
         if (method.isConstructor()) {
             val isPrimary: Boolean = isConstructorPrimary(method)
-            return Constructor(identifier, modifiers, returnType, typeParameters, params, Block(removeEmpty(body.statements), false), isPrimary)
+            return Constructor(identifier, docComments, modifiers, returnType, typeParameters, params,
+                    Block(removeEmpty(body.statements), false), isPrimary)
         }
 
-        return Function(identifier, modifiers, returnType, typeParameters, params, body)
+        return Function(identifier, docComments, modifiers, returnType, typeParameters, params, body)
     }
 
     private fun createFunctionParameters(method: PsiMethod): ParameterList {
@@ -303,22 +319,22 @@ public open class Converter() {
         if (block == null)
             return Block.EMPTY_BLOCK
 
-        return Block(statementsToStatementList(block.getStatements()), notEmpty)
+        return Block(block.getChildren().map { statementToStatement(it) }, notEmpty)
     }
 
     public open fun blockToBlock(block: PsiCodeBlock?): Block {
         return blockToBlock(block, true)
     }
 
-    public open fun statementsToStatementList(statements: Array<PsiStatement?>): List<Statement> {
+    public open fun statementsToStatementList(statements: Array<PsiElement?>): List<Element> {
         return statements.map { statementToStatement(it) }
     }
 
-    public open fun statementsToStatementList(statements: List<PsiStatement?>): List<Statement> {
+    public open fun statementsToStatementList(statements: List<PsiElement?>): List<Element> {
         return statements.map { statementToStatement(it) }
     }
 
-    public open fun statementToStatement(s: PsiStatement?): Statement {
+    public open fun statementToStatement(s: PsiElement?): Element {
         if (s == null)
             return Statement.EMPTY_STATEMENT
 
@@ -487,8 +503,8 @@ public open class Converter() {
             return fields.map { Parameter(Identifier("_" + it.identifier.name), it.`type`, true) }
         }
 
-        private fun createInitStatementsFromFields(fields: List<out Field>): List<Statement> {
-            val result: List<Statement> = arrayList()
+        private fun createInitStatementsFromFields(fields: List<out Field>): List<Element> {
+            val result: List<Element> = arrayList()
             for (f : Field in fields) {
                 val identifierToKotlin: String? = f.identifier.toKotlin()
                 result.add(DummyStringExpression(identifierToKotlin + " = " + "_" + identifierToKotlin))
@@ -545,8 +561,10 @@ public open class Converter() {
 
             return false
         }
-        private fun removeEmpty(statements: List<Statement>): List<Statement> {
-            return statements.filterNot { it == Statement.EMPTY_STATEMENT || it == Expression.EMPTY_EXPRESSION }
+        private fun removeEmpty(statements: List<Element>): List<Element> {
+            return statements.filterNot { it == Statement.EMPTY_STATEMENT ||
+                                          it == Expression.EMPTY_EXPRESSION ||
+                                          it == Element.EMPTY_ELEMENT }
         }
 
         private fun isNotOpenMethod(method: PsiMethod): Boolean {

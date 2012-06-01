@@ -14,14 +14,12 @@ import java.util.List
 import com.intellij.psi.CommonClassNames.*
 
 public open class ExpressionVisitor(converter: Converter): StatementVisitor(converter) {
-    var myResult: Expression = Expression.EMPTY_EXPRESSION
-
-    public override fun visitExpression(expression: PsiExpression?): Unit {
+    {
         myResult = Expression.EMPTY_EXPRESSION
     }
 
     public override fun getResult(): Expression {
-        return myResult
+        return myResult as Expression
     }
 
     public override fun visitArrayAccessExpression(expression: PsiArrayAccessExpression?): Unit {

@@ -7,6 +7,7 @@ import java.util.Set
 import org.jetbrains.jet.j2k.Converter
 
 public open class Field(val identifier : Identifier,
+                        val docComments: List<Node>,
                         modifiers : Set<String>,
                         val `type` : Type,
                         val initializer : Element,
@@ -37,7 +38,8 @@ public open class Field(val identifier : Identifier,
     }
 
     public override fun toKotlin() : String {
-        val declaration : String? = modifiersToKotlin() + identifier.toKotlin() + " : " + `type`.toKotlin()
+        val declaration : String = docComments.toKotlin("\n", "", "\n") +
+                                   modifiersToKotlin() + identifier.toKotlin() + " : " + `type`.toKotlin()
         if (initializer.isEmpty()) {
             return declaration + ((if (isVal() && !isStatic() && writingAccesses == 1)
                 ""

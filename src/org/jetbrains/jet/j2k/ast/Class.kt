@@ -62,13 +62,13 @@ public open class Class(converter : Converter,
     private fun constructorToInit(f: Function): Function {
         val modifiers : Set<String> = HashSet<String>(f.getModifiers())
         modifiers.add(Modifier.STATIC)
-        val statements : List<Statement> = f.block?.statements ?: arrayList()
+        val statements : List<Element> = f.block?.statements ?: arrayList()
         statements.add(ReturnStatement(Identifier("__")))
-        val block : Block = Block(statements)
+        val block = Block(statements)
         val constructorTypeParameters : List<Element> = arrayList()
         constructorTypeParameters.addAll(typeParameters)
         constructorTypeParameters.addAll(f.typeParameters)
-        return Function(Identifier("init"), modifiers, ClassType(name, constructorTypeParameters, false),
+        return Function(Identifier("init"), arrayList(), modifiers, ClassType(name, constructorTypeParameters, false),
                 constructorTypeParameters, f.params, block)
     }
 
@@ -83,7 +83,7 @@ public open class Class(converter : Converter,
     }
 
     open fun implementTypesToKotlin() : String {
-        val allTypes : List<String?> = arrayList()
+        val allTypes : List<String> = arrayList()
         allTypes.addAll(baseClassSignatureWithParams())
         allTypes.addAll(implementsTypes.map { it.toKotlin() })
         return if (allTypes.size() == 0)

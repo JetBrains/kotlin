@@ -8,7 +8,7 @@ import java.util.List
 import org.jetbrains.jet.j2k.ConverterUtil.isAnnotatedAsNotNull
 
 public open class ElementVisitor(val myConverter : Converter) : JavaElementVisitor() {
-    private var myResult : Element = Element.EMPTY_ELEMENT
+    protected var myResult : Element = Element.EMPTY_ELEMENT
 
     public fun getConverter() : Converter {
         return myConverter

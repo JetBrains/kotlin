@@ -6,6 +6,7 @@ import java.util.Set
 import org.jetbrains.jet.j2k.ast.types.Type
 
 public open class Function(val name : Identifier,
+                           val docComments: List<Node>,
                            modifiers : Set<String>,
                            val `type` : Type,
                            val typeParameters : List<Element>,
@@ -33,18 +34,15 @@ public open class Function(val name : Identifier,
     open fun modifiersToKotlin() : String {
         val modifierList: List<String> = arrayList()
         val accessModifier : String = accessModifier()
-        if (!accessModifier.isEmpty())
-        {
+        if (!accessModifier.isEmpty()) {
             modifierList.add(accessModifier)
         }
 
-        if (isAbstract())
-        {
+        if (isAbstract()) {
             modifierList.add(Modifier.ABSTRACT)
         }
 
-        if (myModifiers.contains(Modifier.OVERRIDE))
-        {
+        if (myModifiers.contains(Modifier.OVERRIDE)) {
             modifierList.add(Modifier.OVERRIDE)
         }
 
@@ -56,13 +54,11 @@ public open class Function(val name : Identifier,
             modifierList.add(Modifier.OPEN)
         }
 
-        if (myModifiers.contains(Modifier.NOT_OPEN))
-        {
+        if (myModifiers.contains(Modifier.NOT_OPEN)) {
             modifierList.remove(Modifier.OPEN)
         }
 
-        if (modifierList.size() > 0)
-        {
+        if (modifierList.size() > 0) {
             return modifierList.makeString(" ") + " "
         }
 
@@ -70,7 +66,12 @@ public open class Function(val name : Identifier,
     }
 
     public override fun toKotlin() : String {
-        return modifiersToKotlin() + "fun " + name.toKotlin() + typeParametersToKotlin() + "(" + params.toKotlin() + ") : " + `type`.toKotlin() + " "+ typeParameterWhereToKotlin() + block?.toKotlin()
+        return docComments.toKotlin("\n", "", "\n") +
+               modifiersToKotlin() +
+               "fun " + name.toKotlin() +
+               typeParametersToKotlin() +
+               "(" + params.toKotlin() + ") : " +
+               `type`.toKotlin() + " "+ typeParameterWhereToKotlin() +
+               block?.toKotlin()
     }
-
 }
