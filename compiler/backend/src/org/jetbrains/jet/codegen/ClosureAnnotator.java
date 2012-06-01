@@ -240,6 +240,10 @@ public class ClosureAnnotator {
         public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
             JvmClassName name = recordAnonymousClass(expression.getObjectDeclaration());
             ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, expression.getObjectDeclaration());
+            if (classDescriptor == null) {
+                super.visitObjectLiteralExpression(expression);
+                return;
+            }
             recordName(classDescriptor, name);
             recordEnclosing(classDescriptor);
             classStack.push(classDescriptor);
