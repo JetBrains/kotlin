@@ -2265,7 +2265,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, property);
         int index = lookupLocal(variableDescriptor);
 
-        assert index >= 0;
+        if (index < 0) {
+            throw new IllegalStateException("Local variable not found for " + variableDescriptor);
+        }
 
         final Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
         assert variableDescriptor != null;
