@@ -49,7 +49,7 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl i
             @NotNull Name name
     )
     {
-        super(containingDeclaration, annotations, name);
+        this(containingDeclaration, annotations, name, null);
     }
 
     @NotNull
