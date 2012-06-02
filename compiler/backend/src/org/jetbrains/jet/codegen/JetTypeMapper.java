@@ -142,13 +142,13 @@ public class JetTypeMapper {
         return Type.getType(internalName.substring(1));
     }
 
-    public String getOwner(DeclarationDescriptor descriptor, OwnerKind kind) {
+    @NotNull
+    public JvmClassName getOwner(DeclarationDescriptor descriptor, OwnerKind kind) {
         MapTypeMode mapTypeMode = ownerKindToMapTypeMode(kind);
 
-        String owner;
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration instanceof NamespaceDescriptor) {
-            owner = jvmClassNameForNamespace((NamespaceDescriptor) containingDeclaration).getInternalName();
+            return jvmClassNameForNamespace((NamespaceDescriptor) containingDeclaration);
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
@@ -164,12 +164,11 @@ public class JetTypeMapper {
             if (asmType.getSort() != Type.OBJECT) {
                 throw new IllegalStateException();
             }
-            owner = asmType.getInternalName();
+            return JvmClassName.byType(asmType);
         }
         else {
             throw new UnsupportedOperationException("don't know how to generate owner for parent " + containingDeclaration);
         }
-        return owner;
     }
 
     public static MapTypeMode ownerKindToMapTypeMode(OwnerKind kind) {
@@ -270,9 +269,9 @@ public class JetTypeMapper {
         String local = getLocalNameForObject(object);
         if (local == null) return null;
 
-        DeclarationDescriptor containingClass = getContainingClass(descriptor);
+        ClassDescriptor containingClass = getContainingClass(descriptor);
         if (containingClass != null) {
-            return getFQName(containingClass) + "$" + local;
+            return getClassFQName(containingClass).getInternalName() + "$" + local;
         }
         else {
             return getFQName(getContainingNamespace(descriptor)) + "/" + local;
@@ -297,14 +296,15 @@ public class JetTypeMapper {
      *
      * @see DescriptorUtils#getFQName(DeclarationDescriptor)
      */
-    public String getFQName(DeclarationDescriptor descriptor) {
+    @NotNull
+    private String getFQName(@NotNull DeclarationDescriptor descriptor) {
         descriptor = descriptor.getOriginal();
 
-        if(descriptor instanceof FunctionDescriptor) {
-            return getFQName(descriptor.getContainingDeclaration());
+        if (descriptor instanceof FunctionDescriptor) {
+            throw new IllegalStateException("requested fq name for function: " + descriptor);
         }
 
-        if (descriptor.getContainingDeclaration() instanceof ModuleDescriptor) {
+        if (descriptor.getContainingDeclaration() instanceof ModuleDescriptor || descriptor instanceof ScriptDescriptor) {
             return "";
         }
 
@@ -312,26 +312,41 @@ public class JetTypeMapper {
             throw new IllegalStateException("missed something");
         }
 
-        DeclarationDescriptor container = descriptor.getContainingDeclaration();
-        Name name = descriptor.getName();
-        if(JetPsiUtil.NO_NAME_PROVIDED.equals(name)) {
-            return closureAnnotator
-                    .classNameForAnonymousClass((JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor))
-                    .getInternalName();
-        }
-
-        // This is the worst code in the project
-        if(name.getName().contains("/"))
-            return name.getName();
-
-        if (container != null) {
-            String baseName = getFQName(container);
-            if (!baseName.isEmpty()) { 
-                return baseName + (container instanceof NamespaceDescriptor ? "/" : "$") + name;
+        if (descriptor instanceof ClassDescriptor) {
+            ClassDescriptor klass = (ClassDescriptor) descriptor;
+            if (klass.getKind() == ClassKind.OBJECT) {
+                if (klass.getContainingDeclaration() instanceof ClassDescriptor) {
+                    ClassDescriptor containingKlass = (ClassDescriptor) klass.getContainingDeclaration();
+                    if (containingKlass.getKind() == ClassKind.ENUM_CLASS) {
+                        return getFQName(containingKlass);
+                    }
+                }
+            }
+            else if (klass.getKind() == ClassKind.ENUM_ENTRY) {
+                return getFQName(klass.getContainingDeclaration());
             }
         }
 
-        return name.getName();
+        DeclarationDescriptor container = descriptor.getContainingDeclaration();
+
+        if (container == null) {
+            throw new IllegalStateException("descriptor has no container: " + descriptor);
+        }
+
+        Name name = descriptor.getName();
+
+        if (descriptor instanceof ClassDescriptor && name.isSpecial()) {
+            ClassDescriptor clazz = (ClassDescriptor) descriptor;
+            JvmClassName className = closureAnnotator.classNameForClassDescriptor(clazz);
+            return className.getInternalName();
+        }
+
+        String baseName = getFQName(container);
+        if (!baseName.isEmpty()) {
+            return baseName + (container instanceof NamespaceDescriptor ? "/" : "$") + name.getIdentifier();
+        }
+
+        return name.getIdentifier();
     }
 
     private static ClassDescriptor getContainingClass(DeclarationDescriptor descriptor) {
@@ -542,14 +557,14 @@ public class JetTypeMapper {
         }
 
         JvmMethodSignature descriptor = mapSignature(functionDescriptor.getOriginal(), true, kind);
-        String owner;
-        String ownerForDefaultImpl;
-        String ownerForDefaultParam;
+        JvmClassName owner;
+        JvmClassName ownerForDefaultImpl;
+        JvmClassName ownerForDefaultParam;
         int invokeOpcode;
-        ClassDescriptor thisClass;
+        JvmClassName thisClass;
         if (functionParent instanceof NamespaceDescriptor) {
             assert !superCall;
-            owner = jvmClassNameForNamespace((NamespaceDescriptor) functionParent).getInternalName();
+            owner = jvmClassNameForNamespace((NamespaceDescriptor) functionParent);
             ownerForDefaultImpl = ownerForDefaultParam = owner;
             invokeOpcode = INVOKESTATIC;
             thisClass = null;
@@ -557,7 +572,7 @@ public class JetTypeMapper {
         else if (functionDescriptor instanceof ConstructorDescriptor) {
             assert !superCall;
             ClassDescriptor containingClass = (ClassDescriptor) functionParent;
-            owner = mapType(containingClass.getDefaultType(), MapTypeMode.IMPL).getInternalName();
+            owner = JvmClassName.byType(mapType(containingClass.getDefaultType(), MapTypeMode.IMPL));
             ownerForDefaultImpl = ownerForDefaultParam = owner;
             invokeOpcode = INVOKESPECIAL;
             thisClass = null;
@@ -584,31 +599,35 @@ public class JetTypeMapper {
 
             boolean isInterface = originalIsInterface && currentIsInterface;
             Type type = mapType(receiver.getDefaultType(), MapTypeMode.TYPE_PARAMETER);
-            owner = type.getInternalName();
-            ownerForDefaultParam = mapType(declarationOwner.getDefaultType(), MapTypeMode.TYPE_PARAMETER).getInternalName();
-            ownerForDefaultImpl = ownerForDefaultParam
-                    + (originalIsInterface ? JvmAbi.TRAIT_IMPL_SUFFIX : "");
+            owner = JvmClassName.byType(type);
+            ownerForDefaultParam = JvmClassName.byType(mapType(declarationOwner.getDefaultType(), MapTypeMode.TYPE_PARAMETER));
+            ownerForDefaultImpl = JvmClassName.byInternalName(
+                    ownerForDefaultParam.getInternalName() + (originalIsInterface ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
 
             invokeOpcode = isInterface
                     ? (superCall ? Opcodes.INVOKESTATIC : Opcodes.INVOKEINTERFACE)
                     : (superCall ? Opcodes.INVOKESPECIAL : Opcodes.INVOKEVIRTUAL);
             if(isInterface && superCall) {
                 descriptor = mapSignature(functionDescriptor, false, OwnerKind.TRAIT_IMPL);
-                owner += JvmAbi.TRAIT_IMPL_SUFFIX;
+                owner = JvmClassName.byInternalName(owner.getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
             }
-            thisClass = receiver;
+            thisClass = JvmClassName.byType(mapType(receiver.getDefaultType(), MapTypeMode.VALUE));
         }
         else {
             throw new UnsupportedOperationException("unknown function parent");
         }
 
-        final CallableMethod result = new CallableMethod(owner, ownerForDefaultImpl, ownerForDefaultParam, descriptor, invokeOpcode);
-        result.setNeedsThis(thisClass);
-        if(functionDescriptor.getReceiverParameter().exists()) {
-            result.setNeedsReceiver(functionDescriptor);
-        }
 
-        return result;
+        Type receiverParameterType;
+        if (functionDescriptor.getReceiverParameter().exists()) {
+            receiverParameterType = mapType(functionDescriptor.getOriginal().getReceiverParameter().getType(), MapTypeMode.VALUE);
+        }
+        else {
+            receiverParameterType = null;
+        }
+        return new CallableMethod(
+                owner, ownerForDefaultImpl, ownerForDefaultParam, descriptor, invokeOpcode,
+                thisClass, receiverParameterType, null);
     }
     
     @NotNull
@@ -900,8 +919,8 @@ public class JetTypeMapper {
         if (mapped.getSort() != Type.OBJECT) {
             throw new IllegalStateException("type must have been mapped to object: " + defaultType + ", actual: " + mapped);
         }
-        String owner = mapped.getInternalName();
-        return new CallableMethod(owner, owner, owner, method, INVOKESPECIAL);
+        JvmClassName owner = JvmClassName.byType(mapped);
+        return new CallableMethod(owner, owner, owner, method, INVOKESPECIAL, null, null, null);
     }
 
 

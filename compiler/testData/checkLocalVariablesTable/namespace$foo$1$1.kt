@@ -7,5 +7,5 @@ fun foo() {
 }
 
 // METHOD : invoke(I)V
-// VARIABLE : INDEX=0 NAME=this TYPE=Lnamespace$foo$1$1;
-// VARIABLE : INDEX=1 NAME=it TYPE=I
+// VARIABLE : NAME=this TYPE=Lnamespace$foo$1$1; INDEX=0
+// VARIABLE : NAME=it TYPE=I INDEX=1

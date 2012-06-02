@@ -45,16 +45,10 @@ import static org.jetbrains.k2js.facade.FacadeUtils.writeCodeToFile;
  */
 public final class K2JSTranslator {
 
-    public static void translateWithCallToMainAndSaveToFile(@NotNull List<JetFile> files,
+    public static void translateWithMainCallParametersAndSaveToFile(@NotNull MainCallParameters mainCall,
+            @NotNull List<JetFile> files,
             @NotNull String outputPath,
-            @NotNull Config config) throws Exception {
-        translateWithMainCallParametersAndSaveToFile(MainCallParameters.mainWithoutArguments(), files, outputPath, config);
-    }
-
-    public static void translateWithMainCallParametersAndSaveToFile(MainCallParameters mainCall,
-            List<JetFile> files,
-            String outputPath,
-            Config config) throws TranslationException, IOException {
+            @NotNull Config config) throws TranslationException, IOException {
         K2JSTranslator translator = new K2JSTranslator(config);
         String programCode = translator.generateProgramCode(files, mainCall) + "\n";
         writeCodeToFile(outputPath, programCode);

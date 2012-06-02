@@ -70,11 +70,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
         }
 
         JetCoreEnvironment environmentForJS = JetCoreEnvironment.getCoreEnvironmentForJS(rootDisposable);
-        Project project = environmentForJS.getProject();
-        Config config = getConfig(arguments, project);
-        if (analyzeAndReportErrors(messageCollector, environmentForJS.getSourceFiles(), config)) {
-            return ExitCode.COMPILATION_ERROR;
-        }
 
         if (arguments.srcdir != null) {
             environmentForJS.addSources(arguments.srcdir);
@@ -84,18 +79,20 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
                 environmentForJS.addSources(sourceFile);
             }
         }
+
+        Project project = environmentForJS.getProject();
+
         ClassPathLibrarySourcesLoader sourceLoader = new ClassPathLibrarySourcesLoader(project);
         List<JetFile> sourceFiles = sourceLoader.findSourceFiles();
         environmentForJS.getSourceFiles().addAll(sourceFiles);
 
         if (arguments.isVerbose()) {
-            Iterable<String> fileNames = Iterables.transform(environmentForJS.getSourceFiles(), new Function<JetFile, String>() {
-                @Override
-                public String apply(@Nullable JetFile file) {
-                    return file.getName();
-                }
-            });
-            System.out.println("Compiling source files: " + Joiner.on(", ").join(fileNames));
+            reportCompiledSourcesList(messageCollector, environmentForJS);
+        }
+
+        Config config = getConfig(arguments, project);
+        if (analyzeAndReportErrors(messageCollector, environmentForJS.getSourceFiles(), config)) {
+            return ExitCode.COMPILATION_ERROR;
         }
 
         String outputFile = arguments.outputFile;
@@ -107,6 +104,19 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
 
         MainCallParameters mainCallParameters = arguments.createMainCallParameters();
         return translateAndGenerateOutputFile(mainCallParameters, messageCollector, environmentForJS, config, outputFile);
+    }
+
+    private static void reportCompiledSourcesList(@NotNull PrintingMessageCollector messageCollector,
+            @NotNull JetCoreEnvironment environmentForJS) {
+        Iterable<String> fileNames = Iterables.transform(environmentForJS.getSourceFiles(), new Function<JetFile, String>() {
+            @Override
+            public String apply(@Nullable JetFile file) {
+                assert file != null;
+                return file.getName();
+            }
+        });
+        messageCollector.report(CompilerMessageSeverity.LOGGING, "Compiling source files: " + Joiner.on(", ").join(fileNames),
+                                CompilerMessageLocation.NO_LOCATION);
     }
 
     @NotNull
@@ -121,7 +131,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
                                     CompilerMessageLocation.NO_LOCATION);
             // TODO we should report the exception nicely to the collector so it can report
             // for example inside a mvn plugin we need to see the stack trace
-            e.printStackTrace();
             return ExitCode.INTERNAL_ERROR;
         }
         return ExitCode.OK;

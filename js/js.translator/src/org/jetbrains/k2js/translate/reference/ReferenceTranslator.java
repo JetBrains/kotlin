@@ -16,7 +16,6 @@
 
 package org.jetbrains.k2js.translate.reference;
 
-import com.google.common.base.Preconditions;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +55,7 @@ public final class ReferenceTranslator {
     @NotNull
     public static JsExpression translateAsLocalNameReference(@NotNull DeclarationDescriptor referencedDescriptor,
             @NotNull TranslationContext context) {
-        Preconditions.checkNotNull(referencedDescriptor, "No referencedDescriptor available");
+        //Preconditions.checkNotNull(referencedDescriptor, "No referencedDescriptor available");
         return context.getNameForDescriptor(referencedDescriptor).makeRef();
     }
 

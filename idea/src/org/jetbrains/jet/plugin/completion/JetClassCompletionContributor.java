@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler;
+import org.jetbrains.jet.plugin.completion.weigher.JetCompletionSorting;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
@@ -47,6 +48,7 @@ public class JetClassCompletionContributor extends CompletionContributor {
                    @Override
                    protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
                                                  final @NotNull CompletionResultSet result) {
+                       final CompletionResultSet jetResult = JetCompletionSorting.addJetSorting(parameters, result);
 
                        final PsiElement position = parameters.getPosition();
                        if (!(position.getContainingFile() instanceof JetFile)) {
@@ -58,7 +60,7 @@ public class JetClassCompletionContributor extends CompletionContributor {
                            addClasses(parameters, result, new Consumer<LookupElement>() {
                                @Override
                                public void consume(LookupElement lookupElement) {
-                                   result.addElement(lookupElement);
+                                   jetResult.addElement(lookupElement);
                                }
                            });
                            result.stopHere();

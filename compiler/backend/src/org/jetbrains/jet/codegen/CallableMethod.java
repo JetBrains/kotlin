@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -35,34 +35,40 @@ import java.util.List;
  */
 public class CallableMethod implements Callable {
     @NotNull
-    private final String owner;
-    @NotNull
-    private final String defaultImplOwner;
-    @NotNull
-    private final String defaultImplParam;
+    private final JvmClassName owner;
+    @Nullable
+    private final JvmClassName defaultImplOwner;
+    @Nullable
+    private final JvmClassName defaultImplParam;
     private final JvmMethodSignature signature;
     private final int invokeOpcode;
-    private ClassDescriptor thisClass = null;
+    @Nullable
+    private final JvmClassName thisClass;
+    @Nullable
+    private final Type receiverParameterType;
+    @Nullable
+    private final Type generateCalleeType;
 
-    private CallableDescriptor receiverFunction = null;
-    private Type generateCalleeType = null;
-
-    public CallableMethod(@NotNull String owner, @NotNull String defaultImplOwner, @NotNull String defaultImplParam,
-            JvmMethodSignature signature, int invokeOpcode) {
+    public CallableMethod(@NotNull JvmClassName owner, @Nullable JvmClassName defaultImplOwner, @Nullable JvmClassName defaultImplParam,
+            JvmMethodSignature signature, int invokeOpcode,
+            @Nullable JvmClassName thisClass, @Nullable Type receiverParameterType, @Nullable Type generateCalleeType) {
         this.owner = owner;
         this.defaultImplOwner = defaultImplOwner;
         this.defaultImplParam = defaultImplParam;
         this.signature = signature;
         this.invokeOpcode = invokeOpcode;
+        this.thisClass = thisClass;
+        this.receiverParameterType = receiverParameterType;
+        this.generateCalleeType = generateCalleeType;
     }
 
     @NotNull
-    public String getOwner() {
+    public JvmClassName getOwner() {
         return owner;
     }
 
     @NotNull
-    public String getDefaultImplParam() {
+    public JvmClassName getDefaultImplParam() {
         return defaultImplParam;
     }
 
@@ -78,28 +84,16 @@ public class CallableMethod implements Callable {
         return signature.getValueParameterTypes();
     }
 
-    public void setNeedsReceiver(@Nullable CallableDescriptor receiverClass) {
-        this.receiverFunction = receiverClass.getOriginal();
+    public JvmClassName getThisType() {
+        return thisClass;
     }
 
-    public JetType getThisType() {
-        return thisClass.getDefaultType();
-    }
-
-    public JetType getReceiverClass() {
-        return receiverFunction.getReceiverParameter().getType();
-    }
-
-    public void setNeedsThis(@Nullable ClassDescriptor receiverClass) {
-        this.thisClass = receiverClass;
+    public Type getReceiverClass() {
+        return receiverParameterType;
     }
 
     void invoke(InstructionAdapter v) {
-        v.visitMethodInsn(getInvokeOpcode(), owner, getSignature().getAsmMethod().getName(), getSignature().getAsmMethod().getDescriptor());
-    }
-
-    public void requestGenerateCallee(Type objectType) {
-        generateCalleeType = objectType;
+        v.visitMethodInsn(getInvokeOpcode(), owner.getInternalName(), getSignature().getAsmMethod().getName(), getSignature().getAsmMethod().getDescriptor());
     }
 
     public Type getGenerateCalleeType() {
@@ -107,19 +101,19 @@ public class CallableMethod implements Callable {
     }
 
     public void invokeWithDefault(InstructionAdapter v, int mask) {
-        if (defaultImplOwner.length() == 0 || defaultImplParam.length() == 0) {
+        if (defaultImplOwner == null || defaultImplParam == null) {
             throw new IllegalStateException();
         }
 
         v.iconst(mask);
         String desc = getSignature().getAsmMethod().getDescriptor().replace(")", "I)");
         if("<init>".equals(getSignature().getAsmMethod().getName())) {
-            v.visitMethodInsn(Opcodes.INVOKESPECIAL, defaultImplOwner, "<init>", desc);
+            v.visitMethodInsn(Opcodes.INVOKESPECIAL, defaultImplOwner.getInternalName(), "<init>", desc);
         }
         else {
             if(getInvokeOpcode() != Opcodes.INVOKESTATIC)
-                desc = desc.replace("(", "(L" + defaultImplParam + ";");
-            v.visitMethodInsn(Opcodes.INVOKESTATIC, defaultImplOwner,
+                desc = desc.replace("(", "(" + defaultImplParam.getDescriptor());
+            v.visitMethodInsn(Opcodes.INVOKESTATIC, defaultImplOwner.getInternalName(),
                     getSignature().getAsmMethod().getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, desc);
         }
     }
@@ -129,6 +123,6 @@ public class CallableMethod implements Callable {
     }
 
     public boolean isNeedsReceiver() {
-        return receiverFunction != null;
+        return receiverParameterType != null;
     }
 }

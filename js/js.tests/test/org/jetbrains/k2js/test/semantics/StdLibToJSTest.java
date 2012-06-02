@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.test.semantics;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.js.K2JSCompiler;
@@ -29,6 +30,7 @@ import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import java.io.File;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  */
@@ -58,10 +60,20 @@ public final class StdLibToJSTest extends SingleFileTranslationTest {
             files.add(new File(stdlibDir, file).getPath());
         }
 
+        Set<String> ignoreFiles = Sets.newHashSet(
+                "/jquery/common.kt",
+                "/jquery/ui.kt",
+                "/dom/domcore.kt",
+                "/dom/html/htmlcore.kt",
+                "/dom/html5/canvas.kt",
+                "/dom/html/window.kt");
+
         // lets add the standard JS library files
         for (String libFileName : Config.LIB_FILE_NAMES) {
-            System.out.println("Compiling " + libFileName);
-            files.add(Config.LIBRARIES_LOCATION + libFileName);
+            if (!ignoreFiles.contains(libFileName)) {
+                System.out.println("Compiling " + libFileName);
+                files.add(Config.LIBRARIES_LOCATION + libFileName);
+            }
         }
 
         // now lets try invoke the compiler

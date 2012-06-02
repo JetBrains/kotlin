@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -318,7 +319,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     //noinspection AssignmentToForLoopParameter
                     reg += argType.getSize();
                 }
-                iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
+                iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION).getInternalName(), originalMethod.getName(), originalMethod.getDescriptor());
 
                 iv.areturn(method.getReturnType());
                 FunctionCodegen.endVisit(iv, "accessor", null);
@@ -344,9 +345,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                     iv.load(0, JetTypeMapper.TYPE_OBJECT);
                     if(original.getVisibility() == Visibilities.PRIVATE)
-                        iv.getfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), original.getName().getName(), originalMethod.getReturnType().getDescriptor());
+                        iv.getfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION).getInternalName(), original.getName().getName(), originalMethod.getReturnType().getDescriptor());
                     else
-                        iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
+                        iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION).getInternalName(), originalMethod.getName(), originalMethod.getDescriptor());
 
                     iv.areturn(method.getReturnType());
                     FunctionCodegen.endVisit(iv, "accessor", null);
@@ -377,9 +378,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         reg += argType.getSize();
                     }
                     if(original.getVisibility() == Visibilities.PRIVATE && original.getModality() == Modality.FINAL)
-                        iv.putfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), original.getName().getName(), originalMethod.getArgumentTypes()[0].getDescriptor());
+                        iv.putfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION).getInternalName(), original.getName().getName(), originalMethod.getArgumentTypes()[0].getDescriptor());
                     else
-                        iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
+                        iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION).getInternalName(), originalMethod.getName(), originalMethod.getDescriptor());
 
                     iv.areturn(method.getReturnType());
                     FunctionCodegen.endVisit(iv, "accessor", null);
@@ -473,7 +474,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             signatureWriter.writeVoidReturn();
 
             constructorMethod = signatureWriter.makeJvmMethodSignature("<init>");
-            callableMethod = new CallableMethod("", "", "", constructorMethod, INVOKESPECIAL);
+            callableMethod = new CallableMethod(JvmClassName.byInternalName("Ignored"), null, null, constructorMethod, INVOKESPECIAL, null, null, null);
         }
         else {
             callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor, kind, typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
@@ -588,8 +589,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 //                codegen.addTypeParameter(descriptor.getTypeConstructor().getParameters().get(slot), StackValue.local(frameMap.getFirstTypeParameter() + slot, JetTypeMapper.TYPE_TYPEINFO));
 //        }
 
-        String classname = typeMapper.mapType(descriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName();
-        final Type classType = Type.getType("L" + classname + ";");
+        Type classType = typeMapper.mapType(descriptor.getDefaultType(), MapTypeMode.IMPL);
+        JvmClassName classname = JvmClassName.byType(classType);
 
         HashSet<FunctionDescriptor> overridden = new HashSet<FunctionDescriptor>();
         for (JetDeclaration declaration : myClass.getDeclarations()) {
@@ -657,7 +658,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             v.newField(myClass, ACC_FINAL, fieldName, interfaceDesc, null, null);
             iv.load(0, classType);
             iv.load(frameMap.getOuterThisIndex(), type);
-            iv.putfield(classname, fieldName, interfaceDesc);
+            iv.putfield(classname.getInternalName(), fieldName, interfaceDesc);
         }
 
         if(closure != null) {
@@ -693,7 +694,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 Type type = typeMapper.mapType(descriptor.getType(), MapTypeMode.VALUE);
                 iv.load(0, classType);
                 iv.load(frameMap.getIndex(descriptor), type);
-                iv.putfield(classname, descriptor.getName().getName(), type.getDescriptor());
+                iv.putfield(classname.getInternalName(), descriptor.getName().getName(), type.getDescriptor());
             }
             curParam++;
         }
@@ -957,7 +958,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                             type = JetTypeMapper.boxType(type);
                         codegen.gen(initializer, type);
                         // @todo write directly to the field. Fix test excloset.jet::test6
-                        String owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.IMPLEMENTATION);
+                        JvmClassName owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.IMPLEMENTATION);
                         StackValue.property(propertyDescriptor.getName().getName(), owner, owner,
                                 typeMapper.mapType(propertyDescriptor.getType(), MapTypeMode.VALUE), false, false, false, null, null, 0).store(iv);
                     }

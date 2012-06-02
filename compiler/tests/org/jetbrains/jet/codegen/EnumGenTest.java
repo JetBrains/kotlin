@@ -14,23 +14,29 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.name;
+package org.jetbrains.jet.codegen;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 /**
  * @author Stepan Koltsov
  */
-public class NameUtils {
+public class EnumGenTest extends CodegenTestCase {
 
-    public static boolean isValidIdentified(@NotNull String name) {
-        return name.length() > 0 && !name.startsWith("<") && !name.contains(".") && !name.contains("/");
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
     }
 
-    public static void requireIdentifier(@NotNull String name) {
-        if (!isValidIdentified(name)) {
-            throw new IllegalArgumentException("invalid identifier: " + name);
-        }
+
+    public void testSimple() {
+        blackBoxFile("enum/simple.kt");
     }
+
+    public void testAsReturnExpression() {
+        blackBoxFile("enum/asReturnExpression.kt");
+    }
+
 
 }

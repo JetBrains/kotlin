@@ -18,6 +18,7 @@ package org.jetbrains.k2js.config;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
@@ -31,8 +32,11 @@ import java.util.*;
 /**
  * A helper class to discover a META-INF/services file on the classpath and load the files referenced inside it
  */
-public class MetaInfServices {
-    public static List<JetFile> loadServicesFiles(String metaInfServicesFile, Project project) {
+public final class MetaInfServices {
+    private MetaInfServices() {
+    }
+
+    public static List<JetFile> loadServicesFiles(@NotNull String metaInfServicesFile, @NotNull Project project) {
         List<JetFile> libFiles = new ArrayList<JetFile>();
         Set<URL> urlsLoaded = new HashSet<URL>();
         try {
@@ -40,49 +44,48 @@ public class MetaInfServices {
             loadLibFiles(resources, urlsLoaded, libFiles, project);
             resources = Thread.currentThread().getContextClassLoader().getResources(metaInfServicesFile);
             loadLibFiles(resources, urlsLoaded, libFiles, project);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new IllegalStateException(e);
         }
         return libFiles;
     }
 
-    protected static void loadLibFiles(Enumeration<URL> resources, Set<URL> urlsLoaded, List<JetFile> libFiles, Project project) throws IOException {
-        while (resources != null && resources.hasMoreElements()) {
+    private static void loadLibFiles(@NotNull Enumeration<URL> resources,
+            @NotNull Set<URL> urlsLoaded,
+            @NotNull List<JetFile> libFiles,
+            @NotNull Project project)
+            throws IOException {
+        while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
             if (url != null) {
                 if (urlsLoaded.add(url)) {
-                    System.out.println("Loading Kotlin JS library file: " + url);
                     BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
                     try {
                         while (true) {
                             String line = reader.readLine();
                             if (line == null) {
                                 break;
-                            } else {
+                            }
+                            else {
                                 line = line.trim();
                                 if (line.length() == 0 || line.startsWith("#")) continue;
                                 // lets try to discover the file
                                 InputStream stream = loadClasspathResource(line);
-                                if (stream == null) {
-                                    System.out.println("WARNING: failed to find JS source file: " + line + " on the classpath");
-                                } else {
-                                    //System.out.println("Loading JS library file: " + line);
+                                if (stream != null) {
                                     String text = FileUtil.loadTextAndClose(stream);
                                     JetFile file = JetFileUtils.createPsiFile(line, text, project);
-                                    if (file != null) {
-                                        //System.out.println("Parsing file: " + text);
-                                        libFiles.add(file);
-                                    }
+                                    libFiles.add(file);
                                 }
                             }
                         }
-                    } finally {
+                    }
+                    finally {
                         reader.close();
                     }
                 }
             }
         }
-
     }
 
     /**

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.Type;
@@ -36,6 +37,7 @@ import java.util.LinkedHashMap;
  */
 public abstract class CodegenContext {
 
+    @NotNull
     private final DeclarationDescriptor contextType;
 
     private final OwnerKind contextKind;
@@ -52,7 +54,7 @@ public abstract class CodegenContext {
 
     protected Type outerWasUsed ;
 
-    public CodegenContext(DeclarationDescriptor contextType, OwnerKind contextKind, @Nullable CodegenContext parentContext, @Nullable ObjectOrClosureCodegen closureCodegen) {
+    public CodegenContext(@NotNull DeclarationDescriptor contextType, OwnerKind contextKind, @Nullable CodegenContext parentContext, @Nullable ObjectOrClosureCodegen closureCodegen) {
         this.contextType = contextType;
         this.contextKind = contextKind;
         this.parentContext = parentContext;
@@ -129,7 +131,7 @@ public abstract class CodegenContext {
         return new CodegenContexts.ScriptContext(script, OwnerKind.IMPLEMENTATION, this, closure);
     }
 
-    public CodegenContexts.ClosureContext intoClosure(FunctionDescriptor funDescriptor, ClassDescriptor classDescriptor, String internalClassName, ClosureCodegen closureCodegen, JetTypeMapper typeMapper) {
+    public CodegenContexts.ClosureContext intoClosure(FunctionDescriptor funDescriptor, ClassDescriptor classDescriptor, JvmClassName internalClassName, ClosureCodegen closureCodegen, JetTypeMapper typeMapper) {
         return new CodegenContexts.ClosureContext(funDescriptor, classDescriptor, this, closureCodegen, internalClassName, typeMapper);
     }
 
@@ -202,7 +204,7 @@ public abstract class CodegenContext {
         if(descriptor instanceof SimpleFunctionDescriptor) {
             SimpleFunctionDescriptorImpl myAccessor = new SimpleFunctionDescriptorImpl(contextType,
                     Collections.<AnnotationDescriptor>emptyList(),
-                    Name.identifier(descriptor.getName() + "$bridge$" + accessors.size()), // TODO: evil
+                    Name.identifier(descriptor.getName() + "$bridge$" + accessors.size()),
                     CallableMemberDescriptor.Kind.DECLARATION);
             FunctionDescriptor fd = (SimpleFunctionDescriptor) descriptor;
             myAccessor.initialize(fd.getReceiverParameter().exists() ? fd.getReceiverParameter().getType() : null,
@@ -223,7 +225,7 @@ public abstract class CodegenContext {
                     pd.getVisibility(),
                     pd.isVar(),
                     pd.isObjectDeclaration(),
-                    Name.identifier(pd.getName()  + "$bridge$" + accessors.size()), // TODO: evil
+                    Name.identifier(pd.getName()  + "$bridge$" + accessors.size()),
                     CallableMemberDescriptor.Kind.DECLARATION
             );
             JetType receiverType = pd.getReceiverParameter().exists() ? pd.getReceiverParameter().getType() : null;

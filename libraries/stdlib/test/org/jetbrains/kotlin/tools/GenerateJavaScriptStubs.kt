@@ -60,7 +60,7 @@ import js.noImpl
             if (methods != null) {
                 // lets figure out the properties versus methods
                 val validMethods = ArrayList<Method>()
-                val properties = TreeMap<String, String>()
+                val properties = TreeMap<String, PropertyKind>()
                 for (method in methods) {
                     if (method != null) {
                         val name = method.getName() ?: ""
@@ -71,18 +71,18 @@ import js.noImpl
                             } else answer
                         }
                         fun propertyType() = simpleTypeName(method.getReturnType())
+                        fun propertyKind(method: Method): PropertyKind {
+                            val propName = propertyName()
+                            return properties.getOrPut(propName) { PropertyKind(propName, "val", method) }
+                        }
 
-                        val params = method.getParameterTypes()
-                        val paramSize = params?.size ?: 0
+                        val params = method.getParameterTypes()!!
+                        val paramSize = params.size
                         if (name.size > 3) {
                             if (name.startsWith("get") && paramSize == 0) {
-                                val propName = propertyName()
-                                if (!properties.containsKey(propName)) {
-                                    properties.put(propName, "public val $propName: ${propertyType()}")
-                                }
-                            } else if (name.startsWith("set") && paramSize == 0) {
-                                val propName = propertyName()
-                                properties.put(propName, "public var $propName: ${propertyType()}")
+                                propertyKind(method).typeName = propertyType()
+                            } else if (name.startsWith("set") && paramSize == 1) {
+                                propertyKind(method).kind = "var"
                             } else {
                                 validMethods.add(method)
                             }
@@ -91,8 +91,17 @@ import js.noImpl
                         }
                     }
                 }
-                for (statement in properties.values()) {
-                    println("    $statement")
+                
+                for (pk in properties.values()) {
+                    // some properties might not have a getter defined
+                    // so lets ignore those
+
+                    val typeName = pk.typeName
+                    if (typeName == null) {
+                        validMethods.add(pk.method)
+                    } else {
+                        println("    public ${pk.kind} ${pk.name}: ${typeName}")
+                    }
                 }
                 for (method in validMethods) {
                     val parameterTypes = method.getParameterTypes()!!
@@ -135,6 +144,8 @@ import js.noImpl
         }
     }
 }
+
+class PropertyKind(val name: String, var kind: String, val method: Method, var typeName: String? = null)
 
 fun write(file: File, block: PrintWriter.() -> Unit): Unit {
     println("Generating file: ${file.getCanonicalPath()}")

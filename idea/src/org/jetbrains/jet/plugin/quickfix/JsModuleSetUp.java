@@ -45,7 +45,7 @@ public final class JsModuleSetUp {
     private JsModuleSetUp() {
     }
 
-    public static void doSetUpModule(@Nullable Project project) {
+    public static void doSetUpModule(@Nullable Project project, @NotNull Runnable continuation) {
         if (project == null) {
             notifyFailure("Internal error: Project not found.");
             return;
@@ -62,12 +62,16 @@ public final class JsModuleSetUp {
         File file = new File(rootDir, JsModuleDetector.INDICATION_FILE_NAME);
         if (file.exists()) {
             notifyInfo("File " + file.getName() + " already exists.");
+            // If the notification in the editor did not disappear due to
+            // slow file system events, this will remove the notification
+            // when the user clicks for the second time
+            refreshRootDir(project, continuation);
             return;
         }
 
         createIndicationFile(file);
 
-        refreshRootDir(project);
+        refreshRootDir(project, continuation);
     }
 
     private static boolean copyJsLibFiles(@NotNull File rootDir) {
@@ -81,8 +85,8 @@ public final class JsModuleSetUp {
         return doCopyJsLibFiles(Arrays.asList(jsLibJarPath, jsLibJsPath), rootDir);
     }
 
-    private static void refreshRootDir(@NotNull Project project) {
-        getContentRoot(project).refresh(false, true);
+    private static void refreshRootDir(@NotNull Project project, @NotNull Runnable continuation) {
+        getContentRoot(project).refresh(true, true, continuation);
     }
 
     private static void createIndicationFile(@NotNull File file) {

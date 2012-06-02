@@ -149,6 +149,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testStandardJetDoubleFirst() {
+        doTest();
+    }
+
     public void testSubpackageInFun() {
         doTest();
     }

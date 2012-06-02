@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
@@ -75,6 +76,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     private final CodegenContext context;
 
     private final Stack<BlockStackElement> blockStackElements = new Stack<BlockStackElement>();
+    private final Collection<String> localVariableNames = new HashSet<String>();
 
     static class BlockStackElement {
     }
@@ -109,7 +111,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         this.typeMapper = state.getInjector().getJetTypeMapper();
         this.returnType = returnType;
         this.state = state;
-        this.v = new InstructionAdapter(v);
+        this.v = new InstructionAdapter(v) {
+            @Override
+            public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
+                super.visitLocalVariable(name, desc, signature, start, end,
+                                         index);
+                localVariableNames.add(name);
+            }
+        };
         this.bindingContext = state.getBindingContext();
         this.context = context;
     }
@@ -136,6 +145,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     public BindingContext getBindingContext() {
         return bindingContext;
+    }
+
+    public Collection<String> getLocalVariableNamesForExpression() {
+        return localVariableNames;
     }
 
     public void addTypeParameter(TypeParameterDescriptor typeParameter, StackValue expression) {
@@ -1010,7 +1023,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 if(classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
                     ClassDescriptor containing = (ClassDescriptor) classDescriptor.getContainingDeclaration().getContainingDeclaration();
                     Type type = typeMapper.mapType(containing.getDefaultType(), MapTypeMode.VALUE);
-                    StackValue.field(type, type.getInternalName(), classDescriptor.getName().getName(), true).put(TYPE_OBJECT, v);
+                    StackValue.field(type, JvmClassName.byType(type), classDescriptor.getName().getName(), true).put(TYPE_OBJECT, v);
 
                     // todo: for now we don't generate classes for enum entries, so we need this hack
                     type = typeMapper.mapType(classDescriptor.getDefaultType(), MapTypeMode.VALUE);
@@ -1018,7 +1031,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 }
                 else {
                     Type type = typeMapper.mapType(classDescriptor.getDefaultType(), MapTypeMode.VALUE);
-                    return StackValue.field(type, type.getInternalName(), "$instance", true);
+                    return StackValue.field(type, JvmClassName.byType(type), "$instance", true);
                 }
             }
 
@@ -1043,7 +1056,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             if(!directToField && resolvedCall != null && !isSuper) {
                 receiver.put(propertyDescriptor.getReceiverParameter().exists() || isStatic
                              ? receiver.type
-                             : Type.getObjectType(iValue.methodOwner), v);
+                             : iValue.methodOwner.getAsmType(), v);
             }
             else {
                 if (!isStatic) {
@@ -1083,9 +1096,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 assert descriptor1 != null;
                 final Type type = typeMapper.mapType(descriptor1.getDefaultType(), MapTypeMode.VALUE);
                 return StackValue.field(type,
-                                        typeMapper.mapType(((ClassDescriptor) descriptor).getDefaultType(), MapTypeMode.IMPL).getInternalName(),
-                                              "$classobj",
-                                              true);
+                        JvmClassName.byType(typeMapper.mapType(((ClassDescriptor) descriptor).getDefaultType(), MapTypeMode.IMPL)),
+                        "$classobj",
+                        true);
             }
             else {
                 // todo ?
@@ -1115,7 +1128,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if(value instanceof StackValue.FieldForSharedVar) {
             StackValue.FieldForSharedVar fieldForSharedVar = (StackValue.FieldForSharedVar) value;
             Type sharedType = StackValue.sharedTypeForType(value.type);
-            v.visitFieldInsn(Opcodes.GETFIELD, fieldForSharedVar.owner, fieldForSharedVar.name, sharedType.getDescriptor());
+            v.visitFieldInsn(Opcodes.GETFIELD, fieldForSharedVar.owner.getInternalName(), fieldForSharedVar.name, sharedType.getDescriptor());
         }
 
         return value;
@@ -1129,7 +1142,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         DeclarationDescriptor containingDeclaration = functionDescriptor.getOriginal().getContainingDeclaration();
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptor;
         functionDescriptor = functionDescriptor.getOriginal();
-        String owner;
+        JvmClassName owner;
 
         IntrinsicMethod intrinsic = state.getInjector().getIntrinsics().getIntrinsic(functionDescriptor);
         if(intrinsic != null) {
@@ -1148,7 +1161,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             isInterface = CodegenUtil.isInterface(containingDeclaration);
         }
 
-        v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, functionDescriptor.getName().getName(), typeMapper.mapSignature(functionDescriptor.getName(),functionDescriptor).getAsmMethod().getDescriptor());
+        int opcode = isStatic ? Opcodes.INVOKESTATIC : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL;
+        v.visitMethodInsn(opcode, owner.getInternalName(), functionDescriptor.getName().getName(),
+                typeMapper.mapSignature(functionDescriptor.getName(),functionDescriptor).getAsmMethod().getDescriptor());
         StackValue.onStack(asmType(functionDescriptor.getReturnType())).coerce(type, v);
     }
 
@@ -1221,8 +1236,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         int invokeOpcode;
 
-        String owner;
-        String ownerParam;
+        JvmClassName owner;
+        JvmClassName ownerParam;
         boolean isInterface;
         if (isInsideClass || isStatic || propertyDescriptor.getGetter() == null) {
             owner = ownerParam = typeMapper.getOwner(propertyDescriptor, contextKind());
@@ -1342,7 +1357,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         //}
         if (fd instanceof ExpressionAsFunctionDescriptor || (fd instanceof SimpleFunctionDescriptor && (fd.getContainingDeclaration() instanceof FunctionDescriptor || fd.getContainingDeclaration() instanceof ScriptDescriptor))) {
             SimpleFunctionDescriptor invoke = CodegenUtil.createInvoke((FunctionDescriptor) fd);
-            callableMethod = ClosureCodegen.asCallableMethod(invoke);
+            callableMethod = ClosureCodegen.asCallableMethod(invoke, typeMapper);
         }
         else if (fd instanceof FunctionDescriptor) {
             callableMethod = typeMapper.mapToCallableMethod((FunctionDescriptor) fd, superCall, OwnerKind.IMPLEMENTATION);
@@ -2265,7 +2280,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, property);
         int index = lookupLocal(variableDescriptor);
 
-        assert index >= 0;
+        if (index < 0) {
+            throw new IllegalStateException("Local variable not found for " + variableDescriptor);
+        }
 
         final Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
         assert variableDescriptor != null;
@@ -2713,8 +2730,8 @@ If finally block is present, its last expression is the value of try expression.
         expressionToMatch.dupReceiver(v);
         expressionToMatch.put(TYPE_OBJECT, v);
         v.dup();
-        final String tupleClassName = "jet/Tuple" + entries.size();
-        Type tupleType = Type.getObjectType(tupleClassName);
+        final JvmClassName tupleClassName = JvmClassName.byInternalName("jet/Tuple" + entries.size());
+        Type tupleType = tupleClassName.getAsmType();
         v.instanceOf(tupleType);
         Label lblCheck = new Label();
         v.ifne(lblCheck);

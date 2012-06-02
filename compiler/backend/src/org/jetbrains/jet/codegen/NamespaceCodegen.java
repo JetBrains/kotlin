@@ -55,19 +55,21 @@ public class NamespaceCodegen {
     }
 
     public void generate(JetFile file) {
-        NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
-        final CodegenContext context = CodegenContexts.STATIC.intoNamespace(descriptor);
 
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
+                NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
+                final CodegenContext context = CodegenContexts.STATIC.intoNamespace(descriptor);
                 state.getInjector().getMemberCodegen().generateFunctionOrProperty(
                         (JetTypeParameterListOwner) declaration, context, v);
             }
             else if (declaration instanceof JetClassOrObject) {
+                NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
+                final CodegenContext context = CodegenContexts.STATIC.intoNamespace(descriptor);
                 state.getInjector().getClassCodegen().generate(context, (JetClassOrObject) declaration);
             }
             else if (declaration instanceof JetScript) {
-                state.getInjector().getScriptCodegen().generate(context, (JetScript) declaration);
+                state.getInjector().getScriptCodegen().generate((JetScript) declaration);
             }
 //            else if (declaration instanceof JetFile) {
 //                JetFile childNamespace = (JetFile) declaration;

@@ -62,8 +62,12 @@ public class ScriptCodegen {
 
 
 
-    public void generate(CodegenContext outerContext, JetScript scriptDeclaration) {
+    public void generate(JetScript scriptDeclaration) {
+
         ScriptDescriptor scriptDescriptor = (ScriptDescriptor) state.getBindingContext().get(BindingContext.SCRIPT, scriptDeclaration);
+
+        CodegenContext context = CodegenContexts.STATIC.intoScript(scriptDescriptor);
+
         ClassBuilder classBuilder = classFileFactory.newVisitor("Script.class");
         classBuilder.defineClass(scriptDeclaration,
                 Opcodes.V1_6,
@@ -72,6 +76,14 @@ public class ScriptCodegen {
                 null,
                 JdkNames.JL_OBJECT.getInternalName(),
                 new String[0]);
+
+        genConstructor(scriptDeclaration, scriptDescriptor, classBuilder, context);
+        classBuilder.done();
+    }
+
+    private void genConstructor(
+            @NotNull JetScript scriptDeclaration, @NotNull ScriptDescriptor scriptDescriptor,
+            @NotNull ClassBuilder classBuilder, @NotNull CodegenContext outerContext) {
 
         Type blockType = jetTypeMapper.mapType(scriptDescriptor.getReturnType(), MapTypeMode.VALUE);
 
@@ -115,7 +127,5 @@ public class ScriptCodegen {
         instructionAdapter.areturn(Type.VOID_TYPE);
         mv.visitMaxs(-1, -1);
         mv.visitEnd();
-
-        classBuilder.done();
     }
 }

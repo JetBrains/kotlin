@@ -64,12 +64,11 @@ public abstract class Config {
             "/raphael/raphael.kt",
             "/stdlib/JUMaps.kt",
             "/stdlib/browser.kt",
-            "/core/dom.kt"
-            // TODO doesn't compile yet
-            // "/dom/domcore.kt",
-            // "/dom/html/htmlcore.kt",
-            //"/dom/html5/canvas.kt"
-            //"/dom/html/window.kt"
+            "/core/dom.kt",
+            "/dom/domcore.kt",
+            "/dom/html/htmlcore.kt",
+            "/dom/html5/canvas.kt",
+            "/dom/html/window.kt"
     );
 
     public static final String LIBRARIES_LOCATION = "js/js.libraries/src";
