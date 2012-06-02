@@ -511,6 +511,10 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
+            if (type == Type.VOID_TYPE) {
+                myOperand.put(type, v);    // the operand will remove itself from the stack if needed
+                return;
+            }
             if (type != Type.BOOLEAN_TYPE) {
                 throw new UnsupportedOperationException("don't know how to put a compare as a non-boolean type");
             }
