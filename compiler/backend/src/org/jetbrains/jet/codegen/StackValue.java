@@ -845,13 +845,11 @@ public abstract class StackValue {
             if(isSuper && isInterface) {
                 v.visitMethodInsn(Opcodes.INVOKESTATIC, methodOwner.getInternalName(), setter.getName(), setter.getDescriptor().replace("(", "(" + methodOwnerParam.getDescriptor()));
             }
-            else {
-            if (setter == null) {
+            else if (setter == null) {
                 v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, methodOwner.getInternalName(), name, this.type.getDescriptor());
             }
             else {
                 v.visitMethodInsn(invokeOpcode, methodOwner.getInternalName(), setter.getName(), setter.getDescriptor());
-                }
             }
         }
 
