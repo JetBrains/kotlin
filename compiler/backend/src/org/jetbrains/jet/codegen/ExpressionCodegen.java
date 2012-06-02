@@ -2922,7 +2922,7 @@ If finally block is present, its last expression is the value of try expression.
         }
         if(entries.size() == 0) {
             v.visitFieldInsn(Opcodes.GETSTATIC, "jet/Tuple0", "INSTANCE", "Ljet/Tuple0;");
-            return StackValue.onStack(Type.getObjectType("jet/Tuple0"));
+            return StackValue.onStack(TUPLE0_TYPE);
         }
 
         final String className = "jet/Tuple" + entries.size();

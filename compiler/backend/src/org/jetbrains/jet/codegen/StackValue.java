@@ -203,8 +203,9 @@ public abstract class StackValue {
                 v.pop2();
         }
         else if (type.getSort() != Type.VOID && this.type.getSort() == Type.VOID) {
-            if(type.getSort() == Type.OBJECT)
-                v.visitFieldInsn(Opcodes.GETSTATIC, "jet/Tuple0", "INSTANCE", "Ljet/Tuple0;");
+            if(type.getSort() == Type.OBJECT) {
+                putTuple0Instance(v);
+            }
             else if(type == Type.LONG_TYPE)
                 v.lconst(0);
             else if(type == Type.FLOAT_TYPE)
@@ -241,6 +242,10 @@ public abstract class StackValue {
         else {
             v.cast(this.type, type);
         }
+    }
+
+    protected static void putTuple0Instance(InstructionAdapter v) {
+        v.visitFieldInsn(Opcodes.GETSTATIC, "jet/Tuple0", "INSTANCE", "Ljet/Tuple0;");
     }
 
     protected void putAsBoolean(InstructionAdapter v) {
@@ -391,6 +396,10 @@ public abstract class StackValue {
         @Override
         public void put(Type type, InstructionAdapter v) {
             if (type == Type.VOID_TYPE) {
+                return;
+            }
+            if (type.equals(JetTypeMapper.TUPLE0_TYPE)) {
+                putTuple0Instance(v);
                 return;
             }
             if (type != Type.BOOLEAN_TYPE) {

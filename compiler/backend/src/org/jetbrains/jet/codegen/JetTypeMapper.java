@@ -61,6 +61,7 @@ public class JetTypeMapper {
     public static final Type JL_CLASS_TYPE = Type.getObjectType("java/lang/Class");
 
     public static final Type ARRAY_GENERIC_TYPE = Type.getType(Object[].class);
+    public static final Type TUPLE0_TYPE = Type.getObjectType("jet/Tuple0");
 
     private JetStandardLibrary standardLibrary;
     public BindingContext bindingContext;
