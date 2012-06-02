@@ -1635,6 +1635,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     public int indexOfLocal(JetReferenceExpression lhs) {
         final DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, lhs);
+        if (typeMapper.isVarCapturedInClosure(declarationDescriptor)) {
+             return -1;
+        }
         return lookupLocal(declarationDescriptor);
     }
     
