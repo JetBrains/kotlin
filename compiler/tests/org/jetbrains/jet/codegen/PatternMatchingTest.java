@@ -154,4 +154,8 @@ public class PatternMatchingTest extends CodegenTestCase {
         assertEquals("bit", foo.invoke(null, 1));
         assertEquals("something", foo.invoke(null, 2));
     }
+
+    public void testNullableWhen() throws Exception {  // KT-2148
+        blackBoxFile("patternMatching/nullableWhen.kt");
+    }
 }
