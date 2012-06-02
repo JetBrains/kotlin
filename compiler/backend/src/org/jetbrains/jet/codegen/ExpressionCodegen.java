@@ -2868,6 +2868,9 @@ If finally block is present, its last expression is the value of try expression.
         if (condition instanceof JetWhenConditionInRange) {
             JetWhenConditionInRange conditionInRange = (JetWhenConditionInRange) condition;
             JetExpression rangeExpression = conditionInRange.getRangeExpression();
+            while (rangeExpression instanceof JetParenthesizedExpression) {
+                rangeExpression = ((JetParenthesizedExpression)rangeExpression).getExpression();
+            }
             if(isIntRangeExpr(rangeExpression)) {
                 getInIntRange(new StackValue.Local(subjectLocal, subjectType), (JetBinaryExpression) rangeExpression, conditionInRange.getOperationReference().getReferencedNameElementType() == JetTokens.NOT_IN);
             }
