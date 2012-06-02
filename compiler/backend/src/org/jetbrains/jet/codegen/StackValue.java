@@ -61,6 +61,18 @@ public abstract class StackValue {
 
     public abstract void put(Type type, InstructionAdapter v);
 
+    /**
+     * This method is called to put the value on the top of the JVM stack if <code>depth</code> other values have been put on the
+     * JVM stack after this value was generated.
+     *
+     * @param type the type as which the value should be put
+     * @param v the visitor used to generate the instructions
+     * @param depth the number of new values put onto the stack
+     */
+    public void moveToTopOfStack(Type type, InstructionAdapter v, int depth) {
+        put(type, v);
+    }
+
     public void store(InstructionAdapter v) {
         throw new UnsupportedOperationException("cannot store to value " + this);
     }
@@ -339,6 +351,22 @@ public abstract class StackValue {
             }
             else {
                 coerce(type, v);
+            }
+        }
+
+        @Override
+        public void moveToTopOfStack(Type type, InstructionAdapter v, int depth) {
+            if (depth == 0) {
+                put(type, v);
+            }
+            else if (depth == 1) {
+                if (type.getSize() != 1) {
+                    throw new UnsupportedOperationException("don't know how to move type " + type + " to top of stack");
+                }
+                v.swap();
+            }
+            else {
+                throw new UnsupportedOperationException("unsupported move-to-top depth " + depth);
             }
         }
     }
@@ -1132,20 +1160,21 @@ public abstract class StackValue {
                     else {
                         codegen.generateFromResolvedCall(thisObject, codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType(), MapTypeMode.VALUE));
                     }
-                    genReceiver(v, receiverArgument, type, descriptor.getReceiverParameter());
+                    genReceiver(v, receiverArgument, type, descriptor.getReceiverParameter(), 1);
                 }
                 else {
-                    genReceiver(v, thisObject, type, null);
+                    genReceiver(v, thisObject, type, null, 0);
                 }
             }
             else {
                 if (receiverArgument.exists()) {
-                    genReceiver(v, receiverArgument, type, descriptor.getReceiverParameter());
+                    genReceiver(v, receiverArgument, type, descriptor.getReceiverParameter(), 0);
                 }
             }
         }
 
-        private void genReceiver(InstructionAdapter v, ReceiverDescriptor receiverArgument, Type type, ReceiverDescriptor receiverParameter) {
+        private void genReceiver(InstructionAdapter v, ReceiverDescriptor receiverArgument, Type type,
+                @Nullable ReceiverDescriptor receiverParameter, int depth) {
             if(receiver == StackValue.none()) {
                 if(receiverParameter != null) {
                     Type receiverType = codegen.typeMapper.mapType(receiverParameter.getType(), MapTypeMode.VALUE);
@@ -1157,7 +1186,7 @@ public abstract class StackValue {
                 }
             }
             else {
-                receiver.put(type, v);
+                receiver.moveToTopOfStack(type, v, depth);
             }
         }
     }
