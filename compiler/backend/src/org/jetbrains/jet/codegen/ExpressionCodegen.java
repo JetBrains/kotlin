@@ -1355,7 +1355,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         //    assert !superCall;
         //    callableMethod = ClosureCodegen.asCallableMethod((FunctionDescriptor) fd);
         //}
-        if (fd instanceof ExpressionAsFunctionDescriptor || (fd instanceof SimpleFunctionDescriptor && (fd.getContainingDeclaration() instanceof FunctionDescriptor || fd.getContainingDeclaration() instanceof ScriptDescriptor))) {
+        if (isCallAsFunctionObject(fd)) {
             SimpleFunctionDescriptor invoke = CodegenUtil.createInvoke(fd);
             callableMethod = ClosureCodegen.asCallableMethod(invoke, typeMapper);
         }
@@ -1363,6 +1363,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             callableMethod = typeMapper.mapToCallableMethod(fd, superCall, OwnerKind.IMPLEMENTATION);
         }
         return callableMethod;
+    }
+
+    private boolean isCallAsFunctionObject(FunctionDescriptor fd) {
+        return fd instanceof ExpressionAsFunctionDescriptor
+                || (fd instanceof SimpleFunctionDescriptor && (fd.getContainingDeclaration() instanceof FunctionDescriptor || fd.getContainingDeclaration() instanceof ScriptDescriptor));
     }
 
     public void invokeMethodWithArguments(CallableMethod callableMethod, JetCallElement expression, StackValue receiver) {
