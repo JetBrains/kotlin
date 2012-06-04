@@ -56,12 +56,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     }
 
     @NotNull
-    private static ReceiverDescriptor getExpectedThisObject(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof ConstructorDescriptor) {
-            ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) descriptor;
-            ClassDescriptor classDescriptor = constructorDescriptor.getContainingDeclaration();
-            return getExpectedThisObject(classDescriptor);
-        }
+    private static ReceiverDescriptor getExpectedThisObject(@NotNull ClassDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         return DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration);
     }
