@@ -18,8 +18,6 @@ package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
-import static org.jetbrains.k2js.test.utils.JsTestUtils.failsOnEcmaV5;
-
 /**
  * @author Pavel Talanov
  */
@@ -60,7 +58,7 @@ public final class OperatorOverloadingTest extends SingleFileTranslationTest {
 
 
     public void testOperatorOverloadOnPropertyCallGetterAndSetterOnlyOnce() throws Exception {
-        fooBoxTest(failsOnEcmaV5());
+        fooBoxTest();
     }
 
 

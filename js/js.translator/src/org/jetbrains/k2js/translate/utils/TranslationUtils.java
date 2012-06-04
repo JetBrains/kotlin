@@ -46,6 +46,24 @@ public final class TranslationUtils {
     }
 
     @NotNull
+    public static JsPropertyInitializer translateFunctionAsEcma5PropertyDescriptor(@NotNull JsFunction function,
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull TranslationContext context) {
+        if (descriptor.getReceiverParameter().exists()) {
+            JsObjectLiteral meta = new JsObjectLiteral();
+            meta.getPropertyInitializers().add(new JsPropertyInitializer(context.program().getStringLiteral("value"), function));
+            if (descriptor.getModality().isOverridable()) {
+                meta.getPropertyInitializers().add(context.namer().writablePropertyDescriptorField());
+            }
+            return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), meta);
+        }
+        else {
+            return new JsPropertyInitializer(
+                    context.program().getStringLiteral(descriptor instanceof PropertyGetterDescriptor ? "get" : "set"), function);
+        }
+    }
+
+    @NotNull
     public static JsBinaryOperation notNullCheck(@NotNull TranslationContext context,
                                                  @NotNull JsExpression expressionToCheck) {
         JsNullLiteral nullLiteral = context.program().getNullLiteral();

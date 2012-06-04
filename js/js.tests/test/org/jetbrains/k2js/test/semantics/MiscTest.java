@@ -20,8 +20,6 @@ import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.mozilla.javascript.JavaScriptException;
 
-import static org.jetbrains.k2js.test.utils.JsTestUtils.failsOnEcmaV5;
-
 /**
  * @author Pavel Talanov
  *         <p/>
@@ -38,7 +36,7 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testIntRange() throws Exception {
-        fooBoxTest(failsOnEcmaV5());
+        fooBoxTest();
     }
 
 
@@ -47,7 +45,7 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testClassWithoutNamespace() throws Exception {
-        runFunctionOutputTest(failsOnEcmaV5(), "classWithoutNamespace.kt", Namer.getRootNamespaceName(), "box", true);
+        runFunctionOutputTest("classWithoutNamespace.kt", Namer.getRootNamespaceName(), "box", true);
     }
 
     public void testIfElseAsExpressionWithThrow() throws Exception {
@@ -73,7 +71,7 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testKt740_2() throws Exception {
-        checkFooBoxIsOk(failsOnEcmaV5(), "KT-740-2.kt");
+        checkFooBoxIsOk("KT-740-2.kt");
     }
 
     public void testKt1361_1() throws Exception {
@@ -89,7 +87,7 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testKt740_3() throws Exception {
-        checkFooBoxIsOk(failsOnEcmaV5(), "KT-740-3.kt");
+        checkFooBoxIsOk("KT-740-3.kt");
     }
 
     public void testFunInConstructor() throws Exception {
@@ -109,11 +107,11 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testExtensionLiteralCreatedAtNamespaceLevel() throws Exception {
-        fooBoxTest(failsOnEcmaV5());
+        fooBoxTest();
     }
 
     public void testTemporaryVariableCreatedInNamespaceInitializer() throws Exception {
-        fooBoxTest(failsOnEcmaV5());
+        fooBoxTest();
     }
 
     public void testWhenReturnedWithoutBlock() throws Exception {

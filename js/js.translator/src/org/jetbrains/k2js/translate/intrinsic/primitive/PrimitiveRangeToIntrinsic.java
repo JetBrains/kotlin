@@ -16,10 +16,7 @@
 
 package org.jetbrains.k2js.translate.intrinsic.primitive;
 
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
-import com.google.dart.compiler.backend.js.ast.JsBooleanLiteral;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNew;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,10 +50,11 @@ public final class PrimitiveRangeToIntrinsic implements Intrinsic {
         JsBinaryOperation rangeSize = sum(subtract(rangeEnd, rangeStart),
                                           context.program().getNumberLiteral(1));
         //TODO: provide a way not to hard code this value
-        JsNew numberRangeConstructorInvocation = new JsNew(AstUtil.newQualifiedNameRef("Kotlin.NumberRange"));
+        JsNameRef expr = AstUtil.newQualifiedNameRef("Kotlin.NumberRange");
+        HasArguments numberRangeConstructorInvocation = context.isEcma5() ? AstUtil.newInvocation(expr) : new JsNew(expr);
         //TODO: add tests and correct expression for reversed ranges.
         JsBooleanLiteral isRangeReversed = context.program().getFalseLiteral();
         setArguments(numberRangeConstructorInvocation, rangeStart, rangeSize, isRangeReversed);
-        return numberRangeConstructorInvocation;
+        return (JsExpression) numberRangeConstructorInvocation;
     }
 }

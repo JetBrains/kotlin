@@ -16,11 +16,11 @@
 
 foo = {};
 (function(foo){
-  foo.Test = Kotlin.Trait.create({addFoo:function(s){
+  foo.Test = Kotlin.createTrait({addFoo:function(s){
     return s + 'FOO';
   }
   });
-  foo.ExtendedTest = Kotlin.Trait.create(foo.Test, {hooray:function(){
+  foo.ExtendedTest = Kotlin.createTrait(foo.Test, {hooray:function(){
     return 'hooray';
   }
   });

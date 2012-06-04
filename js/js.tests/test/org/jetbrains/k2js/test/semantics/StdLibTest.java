@@ -21,7 +21,6 @@ import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionNativeObjectResultChecker;
-import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -44,11 +43,11 @@ public final class StdLibTest extends SingleFileTranslationTest {
     @Override
     protected void generateJavaScriptFiles(@NotNull String kotlinFilename,
             @NotNull MainCallParameters mainCallParameters,
-            @NotNull EnumSet<EcmaVersion> ecmaVersions) throws Exception {
+            @NotNull Iterable<EcmaVersion> ecmaVersions) throws Exception {
         List<String> files = Arrays.asList(getInputFilePath(kotlinFilename));
 
         generateJavaScriptFiles(files, kotlinFilename, mainCallParameters, ecmaVersions);
-        runRhinoTests(getOutputFilePaths(kotlinFilename, ecmaVersions),
+        runRhinoTests(kotlinFilename, ecmaVersions,
                       new RhinoFunctionNativeObjectResultChecker("test.browser", "foo", "Some Dynamically Created Content!!!"));
     }
 

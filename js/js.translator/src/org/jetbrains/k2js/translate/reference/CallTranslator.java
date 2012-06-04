@@ -17,10 +17,7 @@
 package org.jetbrains.k2js.translate.reference;
 
 import com.google.common.collect.Lists;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.backend.js.ast.JsNew;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -138,8 +135,14 @@ public final class CallTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression constructorCall() {
         JsExpression constructorReference = translateAsFunctionWithNoThisObject(descriptor);
-        JsNew constructorCall = new JsNew(constructorReference);
-        setArguments(constructorCall, arguments);
+        JsExpression constructorCall;
+        if (context().isEcma5() && !AnnotationsUtils.isNativeObject(resolvedCall.getCandidateDescriptor())) {
+            constructorCall = AstUtil.newInvocation(constructorReference);
+        }
+        else {
+            constructorCall = new JsNew(constructorReference);
+        }
+        ((HasArguments) constructorCall).getArguments().addAll(arguments);
         return constructorCall;
     }
 

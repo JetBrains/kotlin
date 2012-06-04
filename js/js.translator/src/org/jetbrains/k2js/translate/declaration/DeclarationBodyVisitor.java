@@ -18,6 +18,7 @@ package org.jetbrains.k2js.translate.declaration;
 
 import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -25,20 +26,20 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDeclarationsForNamespace;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForObjectDeclaration;
 
 /**
  * @author Pavel Talanov
  */
 public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPropertyInitializer>> {
-
-
     @NotNull
     public List<JsPropertyInitializer> traverseClass(@NotNull JetClassOrObject jetClass,
                                                      @NotNull TranslationContext context) {
@@ -69,7 +70,12 @@ public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPrope
     @NotNull
     public List<JsPropertyInitializer> visitNamedFunction(@NotNull JetNamedFunction expression,
                                                           @NotNull TranslationContext context) {
-        return Collections.singletonList(Translation.functionTranslator(expression, context).translateAsMethod());
+        JsPropertyInitializer o = Translation.functionTranslator(expression, context).translateAsMethod();
+        if (context.isEcma5()) {
+            final FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
+            o.setValueExpr(JsAstUtils.createPropertyDataDescriptor(descriptor.getModality().isOverridable(), o.getValueExpr(), context));
+        }
+        return Collections.singletonList(o);
     }
 
     @Override
@@ -92,6 +98,10 @@ public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPrope
     @NotNull
     public List<JsPropertyInitializer> visitObjectDeclarationName(@NotNull JetObjectDeclarationName expression,
                                                                   @NotNull TranslationContext context) {
+        if (context.isEcma5()) {
+            return Collections.emptyList();
+        }
+
         PropertyDescriptor propertyDescriptor =
                 getPropertyDescriptorForObjectDeclaration(context.bindingContext(), expression);
         return PropertyTranslator.translateAccessors(propertyDescriptor, context);

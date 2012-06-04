@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
 import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
@@ -35,7 +36,7 @@ public final class KotlinLibTest extends SingleFileTranslationTest {
     }
 
     public void testKotlinJsLibRunsWithRhino() throws Exception {
-        runRhinoTest(additionalJSFiles(), new RhinoResultChecker() {
+        runRhinoTest(additionalJSFiles(EcmaVersion.v3), new RhinoResultChecker() {
             @Override
             public void runChecks(Context context, Scriptable scope) throws Exception {
                 //do nothing
@@ -83,7 +84,7 @@ public final class KotlinLibTest extends SingleFileTranslationTest {
 
 
     private void runJavascriptTest(@NotNull String filename) throws Exception {
-        runRhinoTest(withAdditionalFiles(cases(filename)),
+        runRhinoTest(withAdditionalFiles(cases(filename), EcmaVersion.v3),
                      new RhinoFunctionResultChecker("test", true));
     }
 

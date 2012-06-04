@@ -281,4 +281,14 @@ public final class JsDescriptorUtils {
         }
         return null;
     }
+
+    private static boolean isDefaultAccessor(@Nullable PropertyAccessorDescriptor accessorDescriptor) {
+        return accessorDescriptor == null || accessorDescriptor.isDefault();
+    }
+
+    public static boolean isAsPrivate(@NotNull PropertyDescriptor propertyDescriptor) {
+        return propertyDescriptor.getReceiverParameter().exists() ||
+               !isDefaultAccessor(propertyDescriptor.getGetter()) ||
+               !isDefaultAccessor(propertyDescriptor.getSetter());
+    }
 }

@@ -21,7 +21,6 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Pavel Talanov
@@ -61,7 +60,7 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
     private String functionCallString() {
         String result = functionName + "()";
         if (namespaceName != null) {
-            result = namespaceName + "." + result;
+            result = "Kotlin.defs." + namespaceName + "." + result;
         }
         return result;
     }
