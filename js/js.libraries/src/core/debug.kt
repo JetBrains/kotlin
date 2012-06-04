@@ -2,10 +2,15 @@ package js.debug
 
 import js.*
 
+// https://developer.mozilla.org/en/DOM/console
 native
-val console : consoleClass = js.noImpl
+class Console() {
+  fun dir(o:Any) = {}
+  fun error(vararg o:Any?) = {}
+  fun info(vararg o:Any?) = {}
+  fun log(vararg o:Any?) = {}
+  fun warn(vararg o:Any?) = {}
+}
 
 native
-class consoleClass() {
-    fun log(message : Any?) : Unit = js.noImpl
-}
+val console = Console()

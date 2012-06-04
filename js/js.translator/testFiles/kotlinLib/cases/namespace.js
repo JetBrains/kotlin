@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-foo = Kotlin.Namespace.create({initialize:function(){
+foo = Kotlin.createNamespace({initialize:function(){
 }
 , box:function(){
   return !false;

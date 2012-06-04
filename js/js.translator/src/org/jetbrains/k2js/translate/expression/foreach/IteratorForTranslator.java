@@ -21,15 +21,19 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetForExpression;
+import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getHasNextCallable;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getIteratorFunction;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getNextFunction;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToBlock;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.newVar;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopBody;
@@ -81,7 +85,27 @@ public final class IteratorForTranslator extends ForTranslator {
     @NotNull
     private JsExpression hasNextMethodInvocation() {
         CallableDescriptor hasNextFunction = getHasNextCallable(bindingContext(), getLoopRange(expression));
-        return translateMethodInvocation(iterator.reference(), hasNextFunction);
+        if (hasNextFunction instanceof FunctionDescriptor && !isJavaUtilIterator(hasNextFunction)) {
+            return translateMethodInvocation(iterator.reference(), hasNextFunction);
+        }
+
+        // develar: I don't know, why hasNext called as function for PropertyDescriptor, our JS side define it as property and all other code translate it as property
+        JsNameRef hasNext = new JsNameRef(Namer.getNameForAccessor("hasNext", true, context().isEcma5()));
+        hasNext.setQualifier(iterator.reference());
+        if (context().isEcma5()) {
+            return hasNext;
+        }
+        else {
+            JsInvocation invocation = new JsInvocation();
+            invocation.setQualifier(hasNext);
+            return invocation;
+        }
+    }
+
+    // kotlin iterator define hasNext as property, but java util as function, our js side expects as property
+    private static boolean isJavaUtilIterator(CallableDescriptor descriptor) {
+        final DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
+        return declaration != null && declaration.getName().getName().equals("Iterator");
     }
 
     @NotNull

@@ -21,7 +21,6 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Pavel Talanov
@@ -46,6 +45,8 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
     public void runChecks(Context context, Scriptable scope) throws Exception {
         Object result = evaluateFunction(context, scope);
         assertResultValid(result);
+
+        context.evaluateString(scope, functionCallString(), "function call", 0, null);
     }
 
     protected void assertResultValid(Object result) {
@@ -61,7 +62,7 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
     private String functionCallString() {
         String result = functionName + "()";
         if (namespaceName != null) {
-            result = namespaceName + "." + result;
+            result = "Kotlin.defs." + namespaceName + "." + result;
         }
         return result;
     }

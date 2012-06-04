@@ -128,7 +128,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     @NotNull
     private JsStatement generateDeclaration(@NotNull JetClass declaration) {
         JsName localClassName = generateLocalAlias(declaration);
-        JsInvocation classDeclarationExpression =
+        JsExpression classDeclarationExpression =
             Translation.translateClassDeclaration(declaration, localToGlobalClassName.inverse(), context());
         return newVar(localClassName, classDeclarationExpression);
     }

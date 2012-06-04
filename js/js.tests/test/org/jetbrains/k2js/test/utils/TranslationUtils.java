@@ -57,7 +57,6 @@ public final class TranslationUtils {
         JsProgram program = getTranslator(project, version).generateProgram(psiFiles, mainCallParameters);
         FileWriter writer = new FileWriter(new File(outputFile));
         try {
-            writer.write("\"use strict\";\n");
             writer.write(CodeGenerator.toString(program));
         }
         finally {

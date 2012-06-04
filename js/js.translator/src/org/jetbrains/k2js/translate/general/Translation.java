@@ -78,7 +78,7 @@ public final class Translation {
     }
 
     @NotNull
-    public static JsInvocation translateClassDeclaration(@NotNull JetClass classDeclaration,
+    public static JsExpression translateClassDeclaration(@NotNull JetClass classDeclaration,
             @NotNull Map<JsName, JsName> aliasingMap,
             @NotNull TranslationContext context) {
         return ClassTranslator.generateClassCreationExpression(classDeclaration, aliasingMap, context);
@@ -128,14 +128,14 @@ public final class Translation {
 
     //TODO: see if generate*Initializer methods fit somewhere else
     @NotNull
-    public static JsPropertyInitializer generateClassInitializerMethod(@NotNull JetClassOrObject classDeclaration,
+    public static JsFunction generateClassInitializerMethod(@NotNull JetClassOrObject classDeclaration,
             @NotNull TranslationContext context) {
         final ClassInitializerTranslator classInitializerTranslator = new ClassInitializerTranslator(classDeclaration, context);
         return classInitializerTranslator.generateInitializeMethod();
     }
 
     @NotNull
-    public static JsPropertyInitializer generateNamespaceInitializerMethod(@NotNull NamespaceDescriptor namespace,
+    public static JsFunction generateNamespaceInitializerMethod(@NotNull NamespaceDescriptor namespace,
             @NotNull TranslationContext context) {
         final NamespaceInitializerTranslator namespaceInitializerTranslator = new NamespaceInitializerTranslator(namespace, context);
         return namespaceInitializerTranslator.generateInitializeMethod();
@@ -164,11 +164,17 @@ public final class Translation {
         //TODO: move some of the code somewhere
         JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
         StaticContext staticContext = StaticContext.generateStaticContext(standardLibrary, bindingContext, ecmaVersion);
-        JsBlock block = staticContext.getProgram().getFragmentBlock(0);
+        JsProgram program = staticContext.getProgram();
+        JsBlock block = program.getGlobalBlock();
+
+        JsFunction rootFunction = JsAstUtils.createPackage(block.getStatements(), program.getScope());
+        List<JsStatement> statements = rootFunction.getBody().getStatements();
+        statements.add(program.getStringLiteral("use strict").makeStmt());
+
         TranslationContext context = TranslationContext.rootContext(staticContext);
-        block.getStatements().addAll(translateFiles(files, context));
+        statements.addAll(translateFiles(files, context));
         if (mainCallParameters.shouldBeGenerated()) {
-            block.getStatements().add(generateCallToMain(context, files, mainCallParameters.arguments()));
+            statements.add(generateCallToMain(context, files, mainCallParameters.arguments()));
         }
         JsNamer namer = new JsPrettyNamer();
         namer.exec(context.program());

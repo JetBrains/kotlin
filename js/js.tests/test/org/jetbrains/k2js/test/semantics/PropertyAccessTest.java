@@ -16,9 +16,10 @@
 
 package org.jetbrains.k2js.test.semantics;
 
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
-import static org.jetbrains.k2js.test.utils.JsTestUtils.failsOnEcmaV5;
+import java.util.EnumSet;
 
 /**
  * @author Pavel Talanov
@@ -45,12 +46,12 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
 
 
     public void testCustomGetter() throws Exception {
-        fooBoxTest(failsOnEcmaV5());
+        fooBoxTest();
     }
 
 
     public void testCustomSetter() throws Exception {
-        fooBoxTest(failsOnEcmaV5());
+        fooBoxTest();
     }
 
     public void testNamespacePropertyInitializer() throws Exception {
@@ -63,7 +64,7 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
     }
 
     public void testNamespaceCustomAccessors() throws Exception {
-        fooBoxTest(failsOnEcmaV5());
+        fooBoxTest();
     }
 
 
@@ -73,5 +74,9 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
 
     public void testExtensionLiteralSafeCall() throws Exception {
         fooBoxTest();
+    }
+
+    public void testInitInstanceProperties() throws Exception {
+        fooBoxTest(EnumSet.of(EcmaVersion.v5));
     }
 }
