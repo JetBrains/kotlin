@@ -1675,7 +1675,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         if (!signature.isEmpty()) {
             JetNamedFunction altFunDeclaration = JetPsiFactory.createFunction(project, signature);
             valueParameterDescriptors = computeAlternativeValueParameters(valueParameterDescriptors, altFunDeclaration);
-            returnType = computeAlternativeTypeFromAnnotation(altFunDeclaration.getReturnTypeRef().getTypeElement(), returnType);
+            JetTypeReference returnTypeRef = altFunDeclaration.getReturnTypeRef();
+            if (returnTypeRef != null) {
+                returnType = computeAlternativeTypeFromAnnotation(returnTypeRef.getTypeElement(), returnType);
+            }
         }
 
         functionDescriptorImpl.initialize(
