@@ -98,7 +98,7 @@ public final class TipsManager {
                 return excludeNonPackageDescriptors(resolutionScope.getAllDescriptors());
             }
             else {
-                HashSet<DeclarationDescriptor> descriptorsSet = Sets.newHashSet();
+                Collection<DeclarationDescriptor> descriptorsSet = Sets.newHashSet();
 
                 ArrayList<ReceiverDescriptor> result = new ArrayList<ReceiverDescriptor>();
                 resolutionScope.getImplicitReceiversHierarchy(result);
