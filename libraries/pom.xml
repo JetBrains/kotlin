@@ -48,7 +48,7 @@
     </distributionManagement>
 
     <modules>
-        <module>tools/kotlin-install</module>
+        <module>tools/kotlin-compiler</module>
         <module>tools/runtime</module>
         <module>tools/kotlin-maven-plugin</module>
         <module>tools/kotlin-js-library</module>
