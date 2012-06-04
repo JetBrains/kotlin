@@ -105,7 +105,7 @@ var Kotlin = {};
         return create;
     })();
 
-    Kotlin.createObject = function (ignoredParent, initializer, properties) {
+    Kotlin.createObject = function (initializer, properties) {
         var o = Object.create(null, properties || undefined);
         initializer.call(o);
         return o;

@@ -125,7 +125,9 @@ public final class ClassTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression translateClassOrObjectCreation() {
         JsInvocation jsClassDeclaration = classCreateMethodInvocation();
-        addSuperclassReferences(jsClassDeclaration);
+        if (!isObject()) {
+            addSuperclassReferences(jsClassDeclaration);
+        }
         addClassOwnDeclarations(jsClassDeclaration);
         return jsClassDeclaration;
     }
@@ -158,7 +160,7 @@ public final class ClassTranslator extends AbstractTranslator {
         if (!isTrait()) {
             JsFunction initializer = Translation.generateClassInitializerMethod(classDeclaration, classDeclarationContext);
             if (context().isEcma5()) {
-                jsClassDeclaration.getArguments().add(JsAstUtils.encloseFunction(initializer));
+                jsClassDeclaration.getArguments().add(isObject() ? initializer : JsAstUtils.encloseFunction(initializer));
             }
             else {
                 propertyList.add(InitializerUtils.generateInitializeMethod(initializer));
