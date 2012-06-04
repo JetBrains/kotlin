@@ -45,6 +45,7 @@ public abstract class BasicTest extends TestWithEnvironment {
     private static final String CASES = "cases/";
     private static final String OUT = "out/";
     private static final String KOTLIN_JS_LIB = pathToTestFilesRoot() + "kotlin_lib.js";
+    public static final String JSLINT_LIB = pathToTestFilesRoot() + "jslint.js";
     private static final String KOTLIN_JS_LIB_ECMA_3 = pathToTestFilesRoot() + "kotlin_lib_ecma3.js";
     private static final String KOTLIN_JS_LIB_ECMA_5 = pathToTestFilesRoot() + "kotlin_lib_ecma5.js";
     private static final String EXPECTED = "expected/";
@@ -105,7 +106,7 @@ public abstract class BasicTest extends TestWithEnvironment {
     }
 
     protected void generateJavaScriptFiles(@NotNull List<String> files, @NotNull String testName,
-            @NotNull MainCallParameters mainCallParameters, @NotNull EnumSet<EcmaVersion> ecmaVersions)
+            @NotNull MainCallParameters mainCallParameters, @NotNull Iterable<EcmaVersion> ecmaVersions)
             throws Exception {
         for (EcmaVersion version : ecmaVersions) {
             TranslationUtils.translateFiles(getProject(), files, getOutputFilePath(testName, version), mainCallParameters, version);
