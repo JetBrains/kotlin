@@ -69,6 +69,7 @@ public final class K2JSRunnerUtils {
 
     @NotNull
     public static Module getJsModule(@NotNull Project project) {
+        //TODO Should not be there, we should know what module we are in
         Module[] modules = ModuleManager.getInstance(project).getModules();
         if (modules.length != 1) {
             throw new UnsupportedOperationException("Kotlin to JavaScript translator temporarily does not support multiple modules.");

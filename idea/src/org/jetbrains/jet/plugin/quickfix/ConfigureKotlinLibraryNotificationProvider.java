@@ -56,7 +56,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 
-import static org.jetbrains.jet.plugin.project.JsModuleDetector.isJsProject;
+import static org.jetbrains.jet.plugin.project.JsModuleDetector.isJsModule;
 
 public class ConfigureKotlinLibraryNotificationProvider implements EditorNotifications.Provider<EditorNotificationPanel> {
     private static final Key<EditorNotificationPanel> KEY = Key.create("configure.kotlin.library");
@@ -86,7 +86,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
 
             if (isMavenModule(module)) return null;
 
-            if (isJsProject(myProject)) return null;
+            if (isJsModule(module)) return null;
 
             GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
             if (JavaPsiFacade.getInstance(myProject).findClass("jet.JetObject", scope) == null) {
@@ -178,7 +178,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
     }
 
     private void setUpJSModule(@NotNull Module module) {
-        JsModuleSetUp.doSetUpModule(module.getProject(), new Runnable() {
+        JsModuleSetUp.doSetUpModule(module, new Runnable() {
             @Override
             public void run() {
                 updateNotifications();

@@ -29,6 +29,12 @@
       </component>
   </project-components>
 
+  <module-components>
+    <component>
+      <implementation-class>org.jetbrains.jet.plugin.project.K2JSModuleComponent</implementation-class>
+    </component>
+  </module-components>
+
   <actions>
      <action id="Kotlin.NewFile" class="org.jetbrains.jet.plugin.actions.NewKotlinFileAction">
         <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>

@@ -71,7 +71,7 @@ public class JetSourceNavigationHelper {
         }
         final Project project = declaration.getProject();
         final List<JetFile> libraryFiles = findAllSourceFilesWhichContainIdentifier(declaration);
-        BindingContext bindingContext = AnalyzerFacadeProvider.getAnalyzerFacadeForProject(project).analyzeFiles(
+        BindingContext bindingContext = AnalyzerFacadeProvider.getAnalyzerFacadeForProject().analyzeFiles(
                 project,
                 libraryFiles,
                 Collections.<AnalyzerScriptParameter>emptyList(),

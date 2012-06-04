@@ -51,11 +51,11 @@ public final class K2JSCompiler implements TranslatingCompiler {
         if (!(file.getFileType() instanceof JetFileType)) {
             return false;
         }
-        Project project = context.getProject();
-        if (project == null) {
+        Module module = context.getModuleByFile(file);
+        if (module == null) {
             return false;
         }
-        return JsModuleDetector.isJsProject(project);
+        return JsModuleDetector.isJsModule(module);
     }
 
     @Override
@@ -142,14 +142,14 @@ public final class K2JSCompiler implements TranslatingCompiler {
     }
 
     private static void addLibLocationAndTarget(@NotNull Project project, @NotNull ArrayList<String> args) {
-        Pair<String, String> data = JsModuleDetector.getLibLocationAndTargetForProject(project);
-        if (data.first != null) {
+        Pair<String, String> libLocationAndTarget = JsModuleDetector.getLibLocationAndTargetForProject(project);
+        if (libLocationAndTarget.first != null) {
             args.add("-libzip");
-            args.add(data.first);
+            args.add(libLocationAndTarget.first);
         }
-        if (data.second != null) {
+        if (libLocationAndTarget.second != null) {
             args.add("-target");
-            args.add(data.second);
+            args.add(libLocationAndTarget.second);
         }
     }
 

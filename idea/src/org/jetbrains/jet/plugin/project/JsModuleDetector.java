@@ -16,17 +16,13 @@
 
 package org.jetbrains.jet.plugin.project;
 
-import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * @author Pavel Talanov
@@ -34,59 +30,33 @@ import java.io.InputStream;
  *         This class has utility functions to determine whether the project (or module) is js project.
  */
 public final class JsModuleDetector {
-
-    public static final String INDICATION_FILE_NAME = ".kotlin-js";
-
     private JsModuleDetector() {
     }
 
-    public static boolean isJsProject(@NotNull Project project) {
-        return findIndicationFileInContentRoots(project) != null;
+    public static boolean isJsModule(@NotNull Module module) {
+        return K2JSModuleComponent.getInstance(module).isJavaScriptModule();
+    }
+
+    @NotNull
+    public static Pair<String, String> getLibLocationAndTargetForProject(@NotNull Project project) {
+        Module module = getJSModule(project);
+        if (module == null) {
+            return Pair.empty();
+        }
+        K2JSModuleComponent jsModuleComponent = K2JSModuleComponent.getInstance(module);
+        String pathToJavaScriptLibrary = jsModuleComponent.getPathToJavaScriptLibrary();
+        String basePath = ModuleRootManager.getInstance(module).getContentRoots()[0].getPath();
+        return Pair.create(basePath + pathToJavaScriptLibrary, jsModuleComponent.getEcmaVersion().toString());
     }
 
     @Nullable
-    public static VirtualFile findIndicationFileInContentRoots(@NotNull Project project) {
-        VirtualFile[] roots = ProjectRootManager.getInstance(project).getContentRoots();
-        for (VirtualFile root : roots) {
-            for (VirtualFile child : root.getChildren()) {
-                if (child.getName().equals(INDICATION_FILE_NAME)) {
-                    return child;
-                }
+    private static Module getJSModule(@NotNull Project project) {
+        Module[] modules = ModuleManager.getInstance(project).getModules();
+        for (Module module : modules) {
+            if (isJsModule(module)) {
+                return module;
             }
         }
         return null;
-    }
-
-    //TODO: refactor
-    @NotNull
-    public static Pair<String, String> getLibLocationAndTargetForProject(@NotNull Project project) {
-        VirtualFile indicationFile = findIndicationFileInContentRoots(project);
-        Logger logger = Logger.getInstance(JsModuleDetector.class);
-        if (indicationFile == null) {
-            logger.error("Indication file not found for project " + project.getName());
-            return Pair.empty();
-        }
-
-        try {
-            InputStream stream = indicationFile.getInputStream();
-            String text = FileUtil.loadTextAndClose(stream);
-            if (text.isEmpty()) {
-                logger.error("Indication file is corrupted for project " + project.getName());
-                return Pair.empty();
-            }
-            String[] lines = text.split("\n");
-            if (lines.length == 0) {
-                logger.error("Indication file " + indicationFile.getPath() + "is empty");
-                return Pair.empty();
-            }
-            String pathToLibFile = lines[0];
-            String version = lines.length >= 2 ? lines[1] : null;
-            String pathToIndicationFileLocation = indicationFile.getParent().getPath();
-            return new Pair<String, String>(pathToIndicationFileLocation + "/" + pathToLibFile, version);
-        }
-        catch (IOException e) {
-            logger.error("Could not open file " + indicationFile.getPath());
-            return Pair.empty();
-        }
     }
 }

@@ -20,14 +20,11 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.k2jsrun.K2JSRunnerUtils;
-import org.jetbrains.jet.plugin.project.JsModuleDetector;
+import org.jetbrains.jet.plugin.project.K2JSModuleComponent;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
@@ -45,13 +42,13 @@ public final class JsModuleSetUp {
     private JsModuleSetUp() {
     }
 
-    public static void doSetUpModule(@Nullable Project project, @NotNull Runnable continuation) {
-        if (project == null) {
-            notifyFailure("Internal error: Project not found.");
+    public static void doSetUpModule(@Nullable Module module, @NotNull Runnable continuation) {
+        if (module == null) {
+            notifyFailure("Internal error: Module not found.");
             return;
         }
 
-        File rootDir = getRootDir(project);
+        File rootDir = getRootDir(module);
         if (!rootDir.isDirectory()) {
             notifyFailure("Internal error: Broken content root.");
             return;
@@ -59,19 +56,11 @@ public final class JsModuleSetUp {
 
         if (!copyJsLibFiles(rootDir)) return;
 
-        File file = new File(rootDir, JsModuleDetector.INDICATION_FILE_NAME);
-        if (file.exists()) {
-            notifyInfo("File " + file.getName() + " already exists.");
-            // If the notification in the editor did not disappear due to
-            // slow file system events, this will remove the notification
-            // when the user clicks for the second time
-            refreshRootDir(project, continuation);
-            return;
-        }
+        K2JSModuleComponent jsModuleComponent = K2JSModuleComponent.getInstance(module);
+        jsModuleComponent.setJavaScriptModule(true);
+        jsModuleComponent.setPathToJavaScriptLibrary("/lib/" + PathUtil.JS_LIB_JAR_NAME);
 
-        createIndicationFile(file);
-
-        refreshRootDir(project, continuation);
+        refreshRootDir(module, continuation);
     }
 
     private static boolean copyJsLibFiles(@NotNull File rootDir) {
@@ -85,17 +74,8 @@ public final class JsModuleSetUp {
         return doCopyJsLibFiles(Arrays.asList(jsLibJarPath, jsLibJsPath), rootDir);
     }
 
-    private static void refreshRootDir(@NotNull Project project, @NotNull Runnable continuation) {
+    private static void refreshRootDir(@NotNull Module project, @NotNull Runnable continuation) {
         getContentRoot(project).refresh(true, true, continuation);
-    }
-
-    private static void createIndicationFile(@NotNull File file) {
-        try {
-            FileUtil.writeToFile(file, "lib/" + PathUtil.JS_LIB_JAR_NAME);
-        }
-        catch (IOException e) {
-            notifyFailure("Failed to write file " + file.getName());
-        }
     }
 
     private static boolean doCopyJsLibFiles(@NotNull List<File> files, @NotNull File rootDir) {
@@ -113,14 +93,13 @@ public final class JsModuleSetUp {
     }
 
     @NotNull
-    private static File getRootDir(@NotNull Project project) {
-        VirtualFile contentRoot = getContentRoot(project);
+    private static File getRootDir(@NotNull Module module) {
+        VirtualFile contentRoot = getContentRoot(module);
         return new File(contentRoot.getPath());
     }
 
     @NotNull
-    private static VirtualFile getContentRoot(@NotNull Project project) {
-        Module module = K2JSRunnerUtils.getJsModule(project);
+    private static VirtualFile getContentRoot(@NotNull Module module) {
         return ModuleRootManager.getInstance(module).getContentRoots()[0];
     }
 
@@ -128,11 +107,5 @@ public final class JsModuleSetUp {
         Notifications.Bus.notify(new Notification("Set Up Kotlin to JavaScript Module", "Failure",
                                                   message,
                                                   NotificationType.ERROR));
-    }
-
-    public static void notifyInfo(@NotNull String message) {
-        Notifications.Bus.notify(new Notification("Set Up Kotlin to JavaScript Module", "Information",
-                                                  message,
-                                                  NotificationType.INFORMATION));
     }
 }

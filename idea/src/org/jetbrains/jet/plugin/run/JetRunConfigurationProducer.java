@@ -59,7 +59,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
             return null;
         }
 
-        if (JsModuleDetector.isJsProject(module.getProject())) {
+        if (JsModuleDetector.isJsModule(module)) {
             return null;
         }
 

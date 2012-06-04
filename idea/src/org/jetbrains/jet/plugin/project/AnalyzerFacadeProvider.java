@@ -16,31 +16,64 @@
 
 package org.jetbrains.jet.plugin.project;
 
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 
 /**
  * @author Pavel Talanov
  */
 public final class AnalyzerFacadeProvider {
 
+    private final static Logger LOG = Logger.getInstance(AnalyzerFacade.class);
+
     private AnalyzerFacadeProvider() {
     }
 
     @NotNull
     public static AnalyzerFacade getAnalyzerFacadeForFile(@NotNull JetFile file) {
-        return getAnalyzerFacadeForProject(file.getProject());
+        VirtualFile virtualFile = file.getVirtualFile();
+        if (virtualFile == null) {
+            logErrorIfNotTests("No virtual file for " + file.getName() + " with text:\n" + file.getText());
+            return getDefaultAnalyzerFacade();
+        }
+        Module moduleForFile = ProjectFileIndex.SERVICE.getInstance(file.getProject()).getModuleForFile(virtualFile);
+        if (moduleForFile == null) {
+            logErrorIfNotTests("File " + virtualFile.getPath() + " is not under any module. Cannot determine which facade to use.");
+            return getDefaultAnalyzerFacade();
+        }
+        return getAnalyzerFacadeForModule(moduleForFile);
+    }
+
+    private static void logErrorIfNotTests(@NotNull String message) {
+        if (!ApplicationManager.getApplication().isUnitTestMode()) {
+            LOG.error(message);
+        }
     }
 
     @NotNull
-    public static AnalyzerFacade getAnalyzerFacadeForProject(@NotNull Project project) {
-        if (JsModuleDetector.isJsProject(project)) {
+    private static AnalyzerFacade getDefaultAnalyzerFacade() {
+        LOG.info("Using default analyzer facade");
+        return AnalyzerFacadeForJVM.INSTANCE;
+    }
+
+    @NotNull
+    private static AnalyzerFacade getAnalyzerFacadeForModule(@NotNull Module module) {
+        if (JsModuleDetector.isJsModule(module)) {
             return JSAnalyzerFacadeForIDEA.INSTANCE;
         }
+        return AnalyzerFacadeForJVM.INSTANCE;
+    }
+
+    //TODO should remove all calls to this method
+    @NotNull
+    public static AnalyzerFacade getAnalyzerFacadeForProject() {
         return AnalyzerFacadeForJVM.INSTANCE;
     }
 }

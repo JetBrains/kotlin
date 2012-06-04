@@ -26,7 +26,6 @@ import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.compiler.ex.CompileContextEx;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.JavaSdkType;
 import com.intellij.openapi.projectRoots.JdkUtil;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -61,8 +60,8 @@ public class JetCompiler implements TranslatingCompiler {
         if (!(virtualFile.getFileType() instanceof JetFileType)) {
             return false;
         }
-        Project project = compileContext.getProject();
-        if (project != null && JsModuleDetector.isJsProject(project)) {
+        Module module = compileContext.getModuleByFile(virtualFile);
+        if (module != null && JsModuleDetector.isJsModule(module)) {
             return false;
         }
         return true;
