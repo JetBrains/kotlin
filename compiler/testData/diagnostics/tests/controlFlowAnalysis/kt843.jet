@@ -4,5 +4,5 @@ package kt843
 
 fun main(args : Array<String>) {
     // Integer type
-    val // this word is grey, which looks strange
-<!SYNTAX!>}<!SYNTAX!><!><!>
+    val<!SYNTAX!><!> // this word is grey, which looks strange
+}
