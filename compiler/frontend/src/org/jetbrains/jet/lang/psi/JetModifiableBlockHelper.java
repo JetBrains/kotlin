@@ -27,7 +27,6 @@ public final class JetModifiableBlockHelper {
     }
 
     // TODO: Need tests for this method
-    // TODO: Consider for FUNCTION_LITERALS
     public static boolean shouldChangeModificationCount(PsiElement place) {
         JetDeclaration declaration = PsiTreeUtil.getParentOfType(place, JetDeclaration.class, true);
         if (declaration != null) {
@@ -46,6 +45,9 @@ public final class JetModifiableBlockHelper {
                 }
 
                 return shouldChangeModificationCount(property);
+            }
+            else if (declaration instanceof JetFunctionLiteral) {
+                return shouldChangeModificationCount(declaration);
             }
         }
 
