@@ -1635,6 +1635,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     public int indexOfLocal(JetReferenceExpression lhs) {
         final DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, lhs);
+        if (typeMapper.isVarCapturedInClosure(declarationDescriptor)) {
+             return -1;
+        }
         return lookupLocal(declarationDescriptor);
     }
     
@@ -2669,12 +2672,12 @@ If finally block is present, its last expression is the value of try expression.
     @Override
     public StackValue visitIsExpression(final JetIsExpression expression, StackValue receiver) {
         final StackValue match = StackValue.expression(TYPE_OBJECT, expression.getLeftHandSide(), this);
-        return generatePatternMatch(expression.getPattern(), expression.isNegated(), match, null);
+        return generatePatternMatch(expression.getPattern(), expression.isNegated(), match, false, null);
     }
 
     // on entering the function, expressionToMatch is already placed on stack, and we should consume it
     private StackValue generatePatternMatch(JetPattern pattern, boolean negated, StackValue expressionToMatch,
-                                            @Nullable Label nextEntry) {
+            boolean expressionToMatchIsNullable, @Nullable Label nextEntry) {
         if (pattern instanceof JetTypePattern) {
             JetTypeReference typeReference = ((JetTypePattern) pattern).getTypeReference();
             JetType jetType = bindingContext.get(BindingContext.TYPE, typeReference);
@@ -2692,9 +2695,18 @@ If finally block is present, its last expression is the value of try expression.
                 expressionToMatch.dupReceiver(v);
                 expressionToMatch.put(subjectType, v);
                 JetExpression condExpression = ((JetExpressionPattern) pattern).getExpression();
-                Type condType = isNumberPrimitive(subjectType) ? expressionType(condExpression) : TYPE_OBJECT;
+                boolean patternIsNullable = false;
+                JetType condJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, condExpression);
+                Type condType;
+                if (isNumberPrimitive(subjectType)) {
+                    condType = asmType(condJetType);
+                }
+                else {
+                    condType = TYPE_OBJECT;
+                    patternIsNullable = condJetType != null && condJetType.isNullable();
+                }
                 gen(condExpression, condType);
-                return generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, condType, false, false);
+                return generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, condType, expressionToMatchIsNullable, patternIsNullable);
             }
             else {
                 JetExpression condExpression = ((JetExpressionPattern) pattern).getExpression();
@@ -2714,7 +2726,7 @@ If finally block is present, its last expression is the value of try expression.
             expressionToMatch.put(varType, v);
             final int varIndex = myFrameMap.getIndex(variableDescriptor);
             v.store(varIndex, varType);
-            return generateWhenCondition(varType, varIndex, ((JetBindingPattern) pattern).getCondition(), null);
+            return generateWhenCondition(varType, varIndex, false, ((JetBindingPattern) pattern).getCondition(), null);
         }
         else {
             throw new UnsupportedOperationException("Unsupported pattern type: " + pattern);
@@ -2743,7 +2755,7 @@ If finally block is present, its last expression is the value of try expression.
         v.mark(lblCheck);
         for (int i = 0; i < entries.size(); i++) {
             final StackValue tupleField = StackValue.field(TYPE_OBJECT, tupleClassName, "_" + (i + 1), false);
-            final StackValue stackValue = generatePatternMatch(entries.get(i).getPattern(), false, tupleField, nextEntry);
+            final StackValue stackValue = generatePatternMatch(entries.get(i).getPattern(), false, tupleField, false, nextEntry);
             stackValue.condJump(lblPopAndFail, true, v);
         }
 
@@ -2793,7 +2805,8 @@ If finally block is present, its last expression is the value of try expression.
     @Override
     public StackValue visitWhenExpression(JetWhenExpression expression, StackValue receiver) {
         JetExpression expr = expression.getSubjectExpression();
-        final Type subjectType = expressionType(expr);
+        JetType subjectJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expr);
+        final Type subjectType = subjectJetType == null ? Type.VOID_TYPE : asmType(subjectJetType);
         final Type resultType = expressionType(expression);
         final int subjectLocal = expr != null ? myFrameMap.enterTemp(subjectType.getSize()) : -1;
         if(subjectLocal != -1) {
@@ -2821,7 +2834,9 @@ If finally block is present, its last expression is the value of try expression.
             if (!whenEntry.isElse()) {
                 final JetWhenCondition[] conditions = whenEntry.getConditions();
                 for (int i = 0; i < conditions.length; i++) {
-                    StackValue conditionValue = generateWhenCondition(subjectType, subjectLocal, conditions[i], nextCondition);
+                    StackValue conditionValue = generateWhenCondition(subjectType, subjectLocal,
+                                                                      subjectJetType != null && subjectJetType.isNullable(),
+                                                                      conditions[i], nextCondition);
                     conditionValue.condJump(nextCondition, true, v);
                     if (i < conditions.length - 1) {
                         v.goTo(thisEntry);
@@ -2848,10 +2863,14 @@ If finally block is present, its last expression is the value of try expression.
         return StackValue.onStack(resultType);
     }
 
-    private StackValue generateWhenCondition(Type subjectType, int subjectLocal, JetWhenCondition condition, @Nullable Label nextEntry) {
+    private StackValue generateWhenCondition(Type subjectType, int subjectLocal, boolean subjectIsNullable,
+            JetWhenCondition condition, @Nullable Label nextEntry) {
         if (condition instanceof JetWhenConditionInRange) {
             JetWhenConditionInRange conditionInRange = (JetWhenConditionInRange) condition;
             JetExpression rangeExpression = conditionInRange.getRangeExpression();
+            while (rangeExpression instanceof JetParenthesizedExpression) {
+                rangeExpression = ((JetParenthesizedExpression)rangeExpression).getExpression();
+            }
             if(isIntRangeExpr(rangeExpression)) {
                 getInIntRange(new StackValue.Local(subjectLocal, subjectType), (JetBinaryExpression) rangeExpression, conditionInRange.getOperationReference().getReferencedNameElementType() == JetTokens.NOT_IN);
             }
@@ -2878,7 +2897,8 @@ If finally block is present, its last expression is the value of try expression.
             throw new UnsupportedOperationException("unsupported kind of when condition");
         }
         return generatePatternMatch(pattern, isNegated,
-                                    subjectLocal == -1 ? null : StackValue.local(subjectLocal, subjectType), nextEntry);
+                                    subjectLocal == -1 ? null : StackValue.local(subjectLocal, subjectType),
+                                    subjectIsNullable, nextEntry);
     }
 
     private boolean isIntRangeExpr(JetExpression rangeExpression) {
@@ -2908,7 +2928,7 @@ If finally block is present, its last expression is the value of try expression.
         }
         if(entries.size() == 0) {
             v.visitFieldInsn(Opcodes.GETSTATIC, "jet/Tuple0", "INSTANCE", "Ljet/Tuple0;");
-            return StackValue.onStack(Type.getObjectType("jet/Tuple0"));
+            return StackValue.onStack(TUPLE0_TYPE);
         }
 
         final String className = "jet/Tuple" + entries.size();

@@ -61,6 +61,7 @@ public class JetTypeMapper {
     public static final Type JL_CLASS_TYPE = Type.getObjectType("java/lang/Class");
 
     public static final Type ARRAY_GENERIC_TYPE = Type.getType(Object[].class);
+    public static final Type TUPLE0_TYPE = Type.getObjectType("jet/Tuple0");
 
     private JetStandardLibrary standardLibrary;
     public BindingContext bindingContext;
@@ -1032,17 +1033,17 @@ public class JetTypeMapper {
         else if (descriptor instanceof FunctionDescriptor) {
             return StackValue.sharedTypeForType(mapType(((FunctionDescriptor) descriptor).getReceiverParameter().getType(), MapTypeMode.VALUE));
         }
-        else if (descriptor instanceof VariableDescriptor) {
-            VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
-            Boolean aBoolean = bindingContext.get(BindingContext.CAPTURED_IN_CLOSURE, variableDescriptor);
-            if (aBoolean != null && aBoolean && variableDescriptor.isVar()) {
-                JetType outType = variableDescriptor.getType();
-                return StackValue.sharedTypeForType(mapType(outType, MapTypeMode.VALUE));
-            }
-            else {
-                return null;
-            }
+        else if (descriptor instanceof VariableDescriptor && isVarCapturedInClosure(descriptor)) {
+            JetType outType = ((VariableDescriptor) descriptor).getType();
+            return StackValue.sharedTypeForType(mapType(outType, MapTypeMode.VALUE));
         }
         return null;
+    }
+
+    public boolean isVarCapturedInClosure(DeclarationDescriptor descriptor) {
+        if (!(descriptor instanceof VariableDescriptor) || descriptor instanceof PropertyDescriptor) return false;
+        VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
+        Boolean aBoolean = bindingContext.get(BindingContext.CAPTURED_IN_CLOSURE, variableDescriptor);
+        return aBoolean != null && aBoolean && variableDescriptor.isVar();
     }
 }
