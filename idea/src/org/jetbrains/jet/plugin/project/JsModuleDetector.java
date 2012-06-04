@@ -33,6 +33,10 @@ public final class JsModuleDetector {
     private JsModuleDetector() {
     }
 
+    public static boolean isJsProject(@NotNull Project project) {
+        return getJSModule(project) != null;
+    }
+
     public static boolean isJsModule(@NotNull Module module) {
         return K2JSModuleComponent.getInstance(module).isJavaScriptModule();
     }
