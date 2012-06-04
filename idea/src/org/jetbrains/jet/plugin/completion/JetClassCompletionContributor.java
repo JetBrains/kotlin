@@ -22,6 +22,8 @@ import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
@@ -30,9 +32,11 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler;
 import org.jetbrains.jet.plugin.completion.weigher.JetCompletionSorting;
+import org.jetbrains.jet.plugin.project.JsModuleDetector;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
@@ -90,33 +94,56 @@ public class JetClassCompletionContributor extends CompletionContributor {
             consumer.consume(DescriptorLookupConverter.createLookupElement(bindingContext, jetOnlyClass));
         }
 
-        JavaClassNameCompletionContributor.addAllClasses(
-                parameters,
-                false,
-                JavaCompletionSorting.addJavaSorting(parameters, tempResult).getPrefixMatcher(),
-                new Consumer<LookupElement>() {
-                    @Override
-                    public void consume(LookupElement lookupElement) {
-                        if (lookupElement instanceof JavaPsiClassReferenceElement) {
-                            JavaPsiClassReferenceElement javaPsiReferenceElement = (JavaPsiClassReferenceElement) lookupElement;
+        if (!JsModuleDetector.isJsProject(parameters.getOriginalFile().getProject())) {
+            JavaClassNameCompletionContributor.addAllClasses(
+                    parameters,
+                    false,
+                    JavaCompletionSorting.addJavaSorting(parameters, tempResult).getPrefixMatcher(),
+                    new Consumer<LookupElement>() {
+                        @Override
+                        public void consume(LookupElement lookupElement) {
+                            if (lookupElement instanceof JavaPsiClassReferenceElement) {
+                                JavaPsiClassReferenceElement javaPsiReferenceElement = (JavaPsiClassReferenceElement) lookupElement;
 
-                            PsiClass object = javaPsiReferenceElement.getObject();
-                            if (object instanceof JetLightClass) {
-                                ClassDescriptor descriptor =
-                                        bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, ((JetLightClass)object).getFqName());
-
-                                if (descriptor != null) {
-                                    LookupElement element = DescriptorLookupConverter.createLookupElement(bindingContext, descriptor);
-                                    consumer.consume(element);
+                                PsiClass object = javaPsiReferenceElement.getObject();
+                                if (addAsJetLookupElement(object, bindingContext, consumer)) {
                                     return;
                                 }
-                            }
 
-                            // Redefine standard java insert handler which is going to insert fqn
-                            javaPsiReferenceElement.setInsertHandler(JetJavaClassInsertHandler.JAVA_CLASS_INSERT_HANDLER);
-                            consumer.consume(lookupElement);
+                                // Redefine standard java insert handler which is going to insert fqn
+                                javaPsiReferenceElement.setInsertHandler(JetJavaClassInsertHandler.JAVA_CLASS_INSERT_HANDLER);
+                                consumer.consume(lookupElement);
+                            }
+                        }
+                    });
+        }
+        else {
+            GlobalSearchScope globalSearchScope = GlobalSearchScope.allScope(parameters.getOriginalFile().getProject());
+            PsiShortNamesCache cache = JetCacheManager.getInstance(parameters.getOriginalFile().getProject()).getShortNamesCache();
+            for (String className : cache.getAllClassNames()) {
+                if (result.getPrefixMatcher().prefixMatches(className)) {
+                    for (PsiClass aClass : cache.getClassesByName(className, globalSearchScope)) {
+                        if (!addAsJetLookupElement(aClass, bindingContext, consumer)) {
+                            assert false;
                         }
                     }
-                });
+                }
+            }
+        }
+    }
+
+    private static boolean addAsJetLookupElement(PsiClass aClass, BindingContext bindingContext, Consumer<LookupElement> consumer) {
+        if (aClass instanceof JetLightClass) {
+            ClassDescriptor descriptor = bindingContext.get(
+                    BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, ((JetLightClass)aClass).getFqName());
+
+            if (descriptor != null) {
+                LookupElement element = DescriptorLookupConverter.createLookupElement(bindingContext, descriptor);
+                consumer.consume(element);
+                return true;
+            }
+        }
+
+        return false;
     }
 }

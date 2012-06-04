@@ -164,7 +164,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
     private static Collection<FqName> getJavaClasses(@NotNull final String typeName,
             @NotNull Project project,
             final GlobalSearchScope scope) {
-        PsiShortNamesCache cache = PsiShortNamesCache.getInstance(project);
+        PsiShortNamesCache cache = JetCacheManager.getInstance(project).getShortNamesCache();
 
         PsiClass[] classes = cache.getClassesByName(typeName, scope);
 
