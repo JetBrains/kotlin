@@ -24,6 +24,7 @@ import com.intellij.debugger.requests.ClassPrepareRequestor;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.ProjectScope;
@@ -38,9 +39,10 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.di.InjectorForJetTypeMapper;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 import java.util.*;
@@ -130,17 +132,21 @@ public class JetPositionManager implements PositionManager {
                 final JetFile file = (JetFile)sourcePosition.getFile();
                 JetTypeMapper typeMapper = prepareTypeMapper(file);
 
-                JetClassOrObject jetClass = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class);
-                if (jetClass != null) {
-                    names.addAll(typeMapper.allJvmNames(jetClass));
-                }
-                else {
+                PsiElement psiElement = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class, JetFunctionLiteralExpression.class);
+                if (psiElement == null) {
                     JetFile namespace = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetFile.class);
                     if (namespace != null) {
                         names.add(NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(namespace)).getInternalName());
                     }
                     else {
                         names.add(NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(file)).getInternalName());
+                    }
+                }
+                else {
+                    if(psiElement instanceof JetClassOrObject)
+                        names.addAll(typeMapper.allJvmNames((JetClassOrObject) psiElement));
+                    else {
+                        names.add(typeMapper.getClosureAnnotator().classNameForAnonymousClass((JetElement) psiElement).getInternalName());
                     }
                 }
             }
