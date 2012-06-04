@@ -218,7 +218,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         if(bridge.getAsmMethod().getDescriptor().equals(delegate.getDescriptor()))
             return;
 
-        final MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC, "invoke", bridge.getAsmMethod().getDescriptor(), null, new String[0]);
+        final MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC | ACC_BRIDGE | ACC_VOLATILE, "invoke", bridge.getAsmMethod().getDescriptor(), null, new String[0]);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             StubCodegen.generateStubCode(mv);
         }
@@ -244,7 +244,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                 count++;
             }
 
-            iv.invokespecial(className, "invoke", delegate.getDescriptor());
+            iv.invokevirtual(className, "invoke", delegate.getDescriptor());
             StackValue.onStack(delegate.getReturnType()).put(JetTypeMapper.TYPE_OBJECT, iv);
 
             iv.areturn(JetTypeMapper.TYPE_OBJECT);
