@@ -21,7 +21,6 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import com.google.dart.compiler.backend.js.ast.JsStatement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -29,7 +28,6 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
-import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,11 +40,7 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.getObjectDeclarationFo
 /**
  * @author Pavel Talanov
  */
-public abstract class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
-    static InitializerVisitor create(TranslationContext context) {
-        return context.isEcma5() ? new Ecma5InitializerVisitor() : new Ecma3InitializerVisitor();
-    }
-
+public final class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
     @Override
     @NotNull
     public final List<JsStatement> visitProperty(@NotNull JetProperty property, @NotNull TranslationContext context) {
@@ -54,16 +48,16 @@ public abstract class InitializerVisitor extends TranslatorVisitor<List<JsStatem
         if (initializer == null) {
             return Collections.emptyList();
         }
-        JsExpression initalizerForProperty = generateInitializerForProperty(getPropertyDescriptor(context.bindingContext(), property),
-                                                                            Translation.translateAsExpression(initializer, context),
-                                                                            context);
-        return JsAstUtils.nullableExpressionToStatementList(initalizerForProperty);
+
+        return generateInitializerForProperty(getPropertyDescriptor(context.bindingContext(), property),
+                                              Translation.translateAsExpression(initializer, context), context);
     }
 
-    //TODO: should return JsStatement?
-    @Nullable
-    protected abstract JsExpression generateInitializerForProperty(@NotNull PropertyDescriptor descriptor,
-            @NotNull JsExpression expression, @NotNull TranslationContext context);
+    @NotNull
+    private static List<JsStatement> generateInitializerForProperty(@NotNull PropertyDescriptor descriptor,
+            @NotNull JsExpression value, @NotNull TranslationContext context) {
+        return Collections.singletonList(InitializerUtils.generateInitializerForProperty(context, descriptor, value));
+    }
 
     @Override
     @NotNull
@@ -85,13 +79,12 @@ public abstract class InitializerVisitor extends TranslatorVisitor<List<JsStatem
             @NotNull TranslationContext context) {
         PropertyDescriptor propertyDescriptor = getPropertyDescriptorForObjectDeclaration(context.bindingContext(), objectName);
         JetObjectDeclaration objectDeclaration = getObjectDeclarationForName(objectName);
-        JsInvocation objectValue = ClassTranslator.generateClassCreationExpression(objectDeclaration, context);
-        JsExpression initializerForProperty = generateInitializerForProperty(propertyDescriptor, objectValue, context);
-        return JsAstUtils.nullableExpressionToStatementList(initializerForProperty);
+        JsExpression objectValue = ClassTranslator.generateClassCreationExpression(objectDeclaration, context);
+        return generateInitializerForProperty(propertyDescriptor, objectValue, context);
     }
 
     @NotNull
-    protected List<JsStatement> generateInitializerStatements(@NotNull List<JetDeclaration> declarations,
+    private List<JsStatement> generateInitializerStatements(@NotNull List<JetDeclaration> declarations,
             @NotNull TranslationContext context) {
         List<JsStatement> statements = Lists.newArrayList();
         for (JetDeclaration declaration : declarations) {

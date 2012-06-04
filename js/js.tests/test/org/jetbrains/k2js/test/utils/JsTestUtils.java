@@ -50,7 +50,6 @@ public final class JsTestUtils {
         return failsOn(EcmaVersion.v5);
     }
 
-
     @NotNull
     public static String convertFileNameToDotJsFile(@NotNull String filename, EcmaVersion ecmaVersion) {
         String postFix = "_" + ecmaVersion.toString() + ".js";

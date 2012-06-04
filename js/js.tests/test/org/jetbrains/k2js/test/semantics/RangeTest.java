@@ -18,8 +18,6 @@ package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
-import static org.jetbrains.k2js.test.utils.JsTestUtils.failsOnEcmaV5;
-
 /**
  * @author Pavel Talanov
  */
@@ -30,12 +28,12 @@ public final class RangeTest extends SingleFileTranslationTest {
     }
 
     public void testExplicitRange() throws Exception {
-        fooBoxTest(failsOnEcmaV5());
+        fooBoxTest();
     }
 
 
     public void testRangeSugarSyntax() throws Exception {
-        fooBoxTest(failsOnEcmaV5());
+        fooBoxTest();
     }
 
 

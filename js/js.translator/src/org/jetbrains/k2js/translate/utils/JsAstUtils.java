@@ -30,15 +30,12 @@ import java.util.*;
  * @author Pavel Talanov
  */
 public final class JsAstUtils {
-    private static final JsNameRef VALUE = new JsNameRef("value");
-    private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(new JsNameRef("writable"), null);
-    private static final JsNameRef DEFINE_PROPERTIES = new JsNameRef("defineProperties");
-    private static final JsNameRef CREATE = new JsNameRef("create");
+    private static final JsNameRef DEFINE_PROPERTY = new JsNameRef("defineProperty");
+    private static final JsNameRef EMPTY_REF = new JsNameRef("");
 
     static {
         JsNameRef globalObjectReference = new JsNameRef("Object");
-        DEFINE_PROPERTIES.setQualifier(globalObjectReference);
-        CREATE.setQualifier(globalObjectReference);
+        DEFINE_PROPERTY.setQualifier(globalObjectReference);
     }
 
     private JsAstUtils() {
@@ -227,13 +224,13 @@ public final class JsAstUtils {
         arguments.addAll(newArgs);
     }
 
-    public static void setArguments(@NotNull JsNew invocation, @NotNull List<JsExpression> newArgs) {
+    public static void setArguments(@NotNull HasArguments invocation, @NotNull List<JsExpression> newArgs) {
         List<JsExpression> arguments = invocation.getArguments();
         assert arguments.isEmpty() : "Arguments already set.";
         arguments.addAll(newArgs);
     }
 
-    public static void setArguments(@NotNull JsNew invocation, JsExpression... arguments) {
+    public static void setArguments(@NotNull HasArguments invocation, JsExpression... arguments) {
         setArguments(invocation, Arrays.asList(arguments));
     }
 
@@ -287,36 +284,44 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsStatement defineProperties(@NotNull JsObjectLiteral propertiesDefinition) {
-        return AstUtil.newInvocation(DEFINE_PROPERTIES, new JsThisRef(), propertiesDefinition).makeStmt();
+    public static JsInvocation definePropertyDataDescriptor(@NotNull PropertyDescriptor descriptor,
+            @NotNull JsExpression value,
+            @NotNull TranslationContext context) {
+        return AstUtil.newInvocation(DEFINE_PROPERTY, new JsThisRef(),
+                                     context.program().getStringLiteral(context.getNameForDescriptor(descriptor).getIdent()),
+                                     createPropertyDataDescriptor(descriptor.isVar(), value, context));
     }
 
     @NotNull
-    public static JsPropertyInitializer propertyDescriptor(@NotNull PropertyDescriptor descriptor,
-            @NotNull JsExpression value, @NotNull TranslationContext context) {
+    public static JsObjectLiteral createPropertyDataDescriptor(boolean writable,
+            @NotNull JsExpression value,
+            @NotNull TranslationContext context) {
         JsObjectLiteral jsPropertyDescriptor = new JsObjectLiteral();
         List<JsPropertyInitializer> meta = jsPropertyDescriptor.getPropertyInitializers();
-        meta.add(new JsPropertyInitializer(VALUE, value));
-        if (descriptor.isVar()) {
-            meta.add(getWritable(context));
+        meta.add(new JsPropertyInitializer(context.program().getStringLiteral("value"), value));
+        if (writable) {
+            meta.add(context.namer().writablePropertyDescriptorField());
         }
-        // TODO: accessors
-        return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), jsPropertyDescriptor);
+        return jsPropertyDescriptor;
     }
 
     @NotNull
-    private static JsPropertyInitializer getWritable(@NotNull TranslationContext context) {
-        if (WRITABLE.getValueExpr() == null) {
-            WRITABLE.setValueExpr(context.program().getTrueLiteral());
-        }
-        return WRITABLE;
+    public static JsInvocation encloseFunction(JsFunction function) {
+        JsInvocation blockFunctionInvocation = new JsInvocation();
+        blockFunctionInvocation.setQualifier(EMPTY_REF);
+        blockFunctionInvocation.getArguments().add(function);
+        return blockFunctionInvocation;
     }
 
     @NotNull
-    public static List<JsStatement> nullableExpressionToStatementList(@Nullable JsExpression initalizerForProperty) {
-        if (initalizerForProperty == null) {
-            return Collections.emptyList();
-        }
-        return Collections.<JsStatement>singletonList(initalizerForProperty.makeStmt());
+    public static JsFunction createPackage(List<JsStatement> to, JsScope scope) {
+        JsFunction packageBlockFunction = createFunctionWithEmptyBody(scope);
+
+        JsInvocation packageBlockFunctionInvocation = encloseFunction(packageBlockFunction);
+        JsInvocation packageBlock = new JsInvocation();
+        packageBlock.setQualifier(packageBlockFunctionInvocation);
+        to.add(packageBlock.makeStmt());
+
+        return packageBlockFunction;
     }
 }

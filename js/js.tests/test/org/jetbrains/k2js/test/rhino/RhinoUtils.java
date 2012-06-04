@@ -17,6 +17,8 @@
 package org.jetbrains.k2js.test.rhino;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
@@ -48,13 +50,19 @@ public final class RhinoUtils {
     public static void runRhinoTest(@NotNull List<String> fileNames,
                                     @NotNull RhinoResultChecker checker) throws Exception {
 
-        runRhinoTest(fileNames, checker, null);
+        runRhinoTest(fileNames, checker, null, EcmaVersion.defaultVersion());
     }
 
     public static void runRhinoTest(@NotNull List<String> fileNames,
                                     @NotNull RhinoResultChecker checker,
-                                    Map<String,Object> variables) throws Exception {
+                                    @Nullable Map<String, Object> variables,
+                                    @NotNull EcmaVersion ecmaVersion) throws Exception {
         Context context = Context.enter();
+        if (ecmaVersion == EcmaVersion.v5) {
+            // actually, currently, doesn't matter because dart doesn't produce js 1.8 code (expression closures)
+            context.setLanguageVersion(Context.VERSION_1_8);
+        }
+
         Scriptable scope = context.initStandardObjects();
         if (variables != null) {
             Set<Map.Entry<String,Object>> entries = variables.entrySet();

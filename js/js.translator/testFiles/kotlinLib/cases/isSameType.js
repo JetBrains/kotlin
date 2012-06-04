@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-var A = Kotlin.Class.create();
-var a = new A;
+var A = Kotlin.createClass();
+var a = Kotlin.$new(A)();
 
 test = function() {
     return Kotlin.isType(a, A);

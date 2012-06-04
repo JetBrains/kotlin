@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-var map = new Kotlin.HashMap()
+var map = Kotlin.$new(Kotlin.HashMap)()
 
 map.put(3, 4)
 map.put(6, 3)

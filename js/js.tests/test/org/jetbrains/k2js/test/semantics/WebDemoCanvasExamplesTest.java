@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.mozilla.javascript.EcmaError;
 
