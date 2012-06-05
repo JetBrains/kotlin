@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -38,7 +39,7 @@ public class CodegenTestFile {
     @NotNull
     private final JetFile psiFile;
     @NotNull
-    private final String expectedValue;
+    private final List<Pair<String, String>> expectedValues;
     @NotNull
     private final List<AnalyzerScriptParameter> scriptParameterTypes;
     @NotNull
@@ -46,11 +47,11 @@ public class CodegenTestFile {
 
     private CodegenTestFile(
             @NotNull JetFile psiFile,
-            @NotNull String expectedValue,
+            @NotNull List<Pair<String, String>> expectedValues,
             @NotNull List<AnalyzerScriptParameter> scriptParameterTypes,
             @NotNull List<Object> scriptParameterValues) {
         this.psiFile = psiFile;
-        this.expectedValue = expectedValue;
+        this.expectedValues = expectedValues;
         this.scriptParameterTypes = scriptParameterTypes;
         this.scriptParameterValues = scriptParameterValues;
     }
@@ -61,8 +62,8 @@ public class CodegenTestFile {
     }
 
     @NotNull
-    public String getExpectedValue() {
-        return expectedValue;
+    public List<Pair<String, String>> getExpectedValues() {
+        return expectedValues;
     }
 
     @NotNull
@@ -79,8 +80,14 @@ public class CodegenTestFile {
     public static CodegenTestFile create(@NotNull String fileName, @NotNull String content, @NotNull Project project) {
         JetFile file = (JetFile) JetTestUtils.createFile(fileName, content, project);
 
-        Matcher matcher = Pattern.compile("// expected: (.*)").matcher(content);
-        String expectedValue = matcher.find() ? matcher.group(1) : "OK";
+        List<Pair<String, String>> expectedValues = Lists.newArrayList();
+
+        Matcher matcher = Pattern.compile("// expected: (\\S+): (.*)").matcher(content);
+        while (matcher.find()) {
+            String fieldName = matcher.group(1);
+            String expectedValue = matcher.group(2);
+            expectedValues.add(Pair.create(fieldName, expectedValue));
+        }
 
         List<AnalyzerScriptParameter> scriptParameterTypes = Lists.newArrayList();
         List<Object> scriptParameterValues = Lists.newArrayList();
@@ -116,6 +123,6 @@ public class CodegenTestFile {
             }
         }
 
-        return new CodegenTestFile(file, expectedValue, scriptParameterTypes, scriptParameterValues);
+        return new CodegenTestFile(file, expectedValues, scriptParameterTypes, scriptParameterValues);
     }
 }

@@ -7,4 +7,4 @@ if (true) {
 
 x
 
-// expected: 29
+// expected: rv: 29

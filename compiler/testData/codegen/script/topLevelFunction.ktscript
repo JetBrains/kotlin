@@ -1,4 +1,4 @@
-// expected: 3628800
+// expected: rv: 3628800
 
 fun factorial(n: Int): Int {
     var product = 1

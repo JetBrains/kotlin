@@ -8,4 +8,4 @@ if (true) {
 
 x
 
-// expected: 50
+// expected: rv: 50

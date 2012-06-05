@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.Pair;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -187,16 +188,35 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
                 Constructor constructor = getConstructor(scriptClass, state.getScriptConstructorMethod());
                 Object scriptInstance = constructor.newInstance(myFile.getScriptParameterValues().toArray());
-                Field field = scriptClass.getDeclaredField("rv");
-                field.setAccessible(true);
-                Object result = field.get(scriptInstance);
-                r = result != null ? result.toString() : "null";
+
+                assertFalse("expecting at least one expectation", myFile.getExpectedValues().isEmpty());
+
+                for (Pair<String, String> nameValue : myFile.getExpectedValues()) {
+                    String fieldName = nameValue.first;
+                    String expectedValue = nameValue.second;
+
+                    if (expectedValue.equals("<nofield>")) {
+                        try {
+                            scriptClass.getDeclaredField(fieldName);
+                            fail("must have no field " + fieldName);
+                        } catch (NoSuchFieldException e) {
+                            continue;
+                        }
+                    }
+
+                    Field field = scriptClass.getDeclaredField(fieldName);
+                    field.setAccessible(true);
+                    Object result = field.get(scriptInstance);
+                    String resultString = result != null ? result.toString() : "null";
+                    assertEquals("comparing field " + fieldName, expectedValue, resultString);
+                }
             }
             else {
                 String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFile.getPsiFile())).getFqName().getFqName();
                 Class<?> namespaceClass = loader.loadClass(fqName);
                 Method method = namespaceClass.getMethod("box");
                 r = (String) method.invoke(null);
+                assertEquals("OK", r);
             }
         } catch (NoClassDefFoundError e) {
             System.out.println(generateToText());
@@ -207,11 +227,6 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         } finally {
             loader.dispose();
         }
-
-        if (!Objects.equal(myFile.getExpectedValue(), r)) {
-            System.out.println(generateToText());
-        }
-        assertEquals(myFile.getExpectedValue(), r);
     }
 
     protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens) {
