@@ -1,0 +1,5 @@
+namespace <root>
+
+final class A : jet.Any {
+    final /*constructor*/ fun <init>(): A
+}
