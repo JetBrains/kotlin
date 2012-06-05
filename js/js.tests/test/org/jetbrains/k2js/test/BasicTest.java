@@ -88,6 +88,7 @@ public abstract class BasicTest extends TestWithEnvironment {
         assert success;
     }
 
+    @NotNull
     protected List<String> additionalJSFiles(@NotNull EcmaVersion ecmaVersion) {
         List<String> list = Lists.newArrayList();
         list.add(ecmaVersion == EcmaVersion.v5 ? KOTLIN_JS_LIB_ECMA_5 : KOTLIN_JS_LIB_ECMA_3);
@@ -160,7 +161,7 @@ public abstract class BasicTest extends TestWithEnvironment {
     }
 
     @NotNull
-    protected List<String> withAdditionalFiles(@NotNull String inputFile, EcmaVersion ecmaVersion) {
+    protected List<String> withAdditionalFiles(@NotNull String inputFile, @NotNull EcmaVersion ecmaVersion) {
         List<String> allFiles = Lists.newArrayList(additionalJSFiles(ecmaVersion));
         allFiles.add(inputFile);
         return allFiles;

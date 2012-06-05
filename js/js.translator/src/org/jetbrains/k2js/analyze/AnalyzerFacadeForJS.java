@@ -18,7 +18,6 @@ package org.jetbrains.k2js.analyze;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
@@ -92,14 +91,16 @@ public final class AnalyzerFacadeForJS {
                 completely, false, false, Collections.<AnalyzerScriptParameter>emptyList());
 
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
-                project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner, JsConfiguration.jsLibConfiguration(project));
+                project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
+                JsConfiguration.jsLibConfiguration(project));
         try {
             injector.getTopDownAnalyzer().analyzeFiles(withJsLibAdded(files, config), Collections.<AnalyzerScriptParameter>emptyList());
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
                                                         new CachedBodiesResolveContext(injector.getTopDownAnalysisContext()) :
                                                         null;
             return AnalyzeExhaust.success(bindingTraceContext.getBindingContext(), JetStandardLibrary.getInstance(), bodiesResolveContext);
-        } finally {
+        }
+        finally {
             injector.destroy();
         }
     }
@@ -114,19 +115,21 @@ public final class AnalyzerFacadeForJS {
         final ModuleDescriptor owner = new ModuleDescriptor(Name.special("<module>"));
         Predicate<PsiFile> completely = Predicates.and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
 
-        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(completely, false, false, Collections.<AnalyzerScriptParameter>emptyList());
+        TopDownAnalysisParameters topDownAnalysisParameters =
+                new TopDownAnalysisParameters(completely, false, false, Collections.<AnalyzerScriptParameter>emptyList());
 
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
-                project, topDownAnalysisParameters, new ObservableBindingTrace(traceContext), owner, JsConfiguration.jsLibConfiguration(project));
+                project, topDownAnalysisParameters, new ObservableBindingTrace(traceContext), owner,
+                JsConfiguration.jsLibConfiguration(project));
 
         try {
             bodiesResolveContext.setTopDownAnalysisParameters(topDownAnalysisParameters);
             injector.getTopDownAnalyzer().doProcessForBodies(bodiesResolveContext);
             return AnalyzeExhaust.success(traceContext.getBindingContext(), JetStandardLibrary.getInstance());
-        } finally {
+        }
+        finally {
             injector.destroy();
         }
-
     }
 
     private static void checkForErrors(@NotNull Collection<JetFile> allFiles, @NotNull BindingContext bindingContext) {
@@ -139,8 +142,8 @@ public final class AnalyzerFacadeForJS {
     @NotNull
     public static Collection<JetFile> withJsLibAdded(@NotNull Collection<JetFile> files, @NotNull Config config) {
         Set<JetFile> allFiles = Sets.newHashSet();
-        allFiles.addAll(toOriginal(files));
-        allFiles.addAll(toOriginal(config.getLibFiles()));
+        allFiles.addAll(files);
+        allFiles.addAll(config.getLibFiles());
         return allFiles;
     }
 
@@ -154,15 +157,6 @@ public final class AnalyzerFacadeForJS {
                 return notLibFile;
             }
         };
-    }
-
-    @NotNull
-    private static Collection<JetFile> toOriginal(@NotNull Collection<JetFile> files) {
-        Collection<JetFile> result = Lists.newArrayList();
-        for (JetFile file : files) {
-            result.add(file);
-        }
-        return result;
     }
 
     private static final class JsConfiguration implements ModuleConfiguration {
