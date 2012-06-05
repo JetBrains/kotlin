@@ -44,7 +44,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
     protected List<TypeParameterDescriptor> typeParameters;
     protected List<ValueParameterDescriptor> unsubstitutedValueParameters;
     protected JetType unsubstitutedReturnType;
-    private ReceiverDescriptor receiver;
+    private ReceiverDescriptor receiverParameter;
     protected ReceiverDescriptor expectedThisObject;
 
     protected Modality modality;
@@ -75,7 +75,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
     }
 
     protected FunctionDescriptorImpl initialize(
-            @Nullable JetType receiverType,
+            @Nullable JetType receiverParameterType,
             @NotNull ReceiverDescriptor expectedThisObject,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
@@ -87,7 +87,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         this.modality = modality;
         this.visibility = visibility;
-        this.receiver = receiverType == null ? NO_RECEIVER : new ExtensionReceiver(this, receiverType);
+        this.receiverParameter = receiverParameterType == null ? NO_RECEIVER : new ExtensionReceiver(this, receiverParameterType);
         this.expectedThisObject = expectedThisObject;
         
         for (int i = 0; i < typeParameters.size(); ++i) {
@@ -98,7 +98,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
 
         for (int i = 0; i < unsubstitutedValueParameters.size(); ++i) {
             // TODO fill me
-            int firstValueParameterOffset = 0; // receiver.exists() ? 1 : 0;
+            int firstValueParameterOffset = 0; // receiverParameter.exists() ? 1 : 0;
             ValueParameterDescriptor valueParameterDescriptor = unsubstitutedValueParameters.get(i);
             if (valueParameterDescriptor.getIndex() != i + firstValueParameterOffset) {
                 throw new IllegalStateException(valueParameterDescriptor + "index is " + valueParameterDescriptor.getIndex() + " but position is " + i);
@@ -119,7 +119,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
     @NotNull
     @Override
     public ReceiverDescriptor getReceiverParameter() {
-        return receiver;
+        return receiverParameter;
     }
 
     @NotNull
@@ -194,10 +194,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
         List<TypeParameterDescriptor> substitutedTypeParameters = Lists.newArrayList();
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(getTypeParameters(), originalSubstitutor, substitutedDescriptor, substitutedTypeParameters);
 
-        JetType substitutedReceiverType = null;
-        if (receiver.exists()) {
-            substitutedReceiverType = substitutor.substitute(getReceiverParameter().getType(), Variance.IN_VARIANCE);
-            if (substitutedReceiverType == null) {
+        JetType substitutedReceiverParameterType = null;
+        if (receiverParameter.exists()) {
+            substitutedReceiverParameterType = substitutor.substitute(getReceiverParameter().getType(), Variance.IN_VARIANCE);
+            if (substitutedReceiverParameterType == null) {
                 return null;
             }
         }
@@ -222,7 +222,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
         }
 
         substitutedDescriptor.initialize(
-                substitutedReceiverType,
+                substitutedReceiverParameterType,
                 substitutedExpectedThis,
                 substitutedTypeParameters,
                 substitutedValueParameters,
