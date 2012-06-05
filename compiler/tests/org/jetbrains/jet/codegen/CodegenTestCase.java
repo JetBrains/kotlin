@@ -133,20 +133,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     protected void blackBoxFile(String filename) {
         loadFile(filename);
-        Object actual;
-        try {
-            actual = blackBox();
-        } catch (NoClassDefFoundError e) {
-            System.out.println(generateToText());
-            throw e;
-        } catch (Throwable e) {
-            System.out.println(generateToText());
-            throw new RuntimeException(e);
-        }
-        if (!Objects.equal(myFile.getExpectedValue(), actual)) {
-            System.out.println(generateToText());
-        }
-        assertEquals(myFile.getExpectedValue(), actual);
+        blackBox();
     }
 
     @NotNull
@@ -188,10 +175,11 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         }
     }
 
-    @NotNull
-    protected String blackBox() throws Exception {
+    protected void blackBox() {
         GenerationState state = generateClassesInFileGetState();
         GeneratedClassLoader loader = createClassLoader(state.getFactory());
+
+        String r;
 
         try {
             if (myFile.getPsiFile().isScript()) {
@@ -202,23 +190,38 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 Field field = scriptClass.getDeclaredField("rv");
                 field.setAccessible(true);
                 Object result = field.get(scriptInstance);
-                return result != null ? result.toString() : "null";
+                r = result != null ? result.toString() : "null";
             }
             else {
                 String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFile.getPsiFile())).getFqName().getFqName();
                 Class<?> namespaceClass = loader.loadClass(fqName);
                 Method method = namespaceClass.getMethod("box");
-                return (String) method.invoke(null);
+                r = (String) method.invoke(null);
             }
+        } catch (NoClassDefFoundError e) {
+            System.out.println(generateToText());
+            throw e;
+        } catch (Throwable e) {
+            System.out.println(generateToText());
+            throw new RuntimeException(e);
         } finally {
-           loader.dispose();
+            loader.dispose();
         }
+
+        if (!Objects.equal(myFile.getExpectedValue(), r)) {
+            System.out.println(generateToText());
+        }
+        assertEquals(myFile.getExpectedValue(), r);
     }
 
-    protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens) throws MalformedURLException {
+    protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens) {
         List<URL> urls = Lists.newArrayList();
         for (File file : extraClasspath) {
-            urls.add(file.toURI().toURL());
+            try {
+                urls.add(file.toURI().toURL());
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
         }
         ClassLoader parentClassLoader = new URLClassLoader(urls.toArray(new URL[0]), CodegenTestCase.class.getClassLoader());
         return new GeneratedClassLoader(codegens, parentClassLoader);
@@ -255,8 +258,6 @@ public abstract class CodegenTestCase extends UsefulTestCase {
             return createClassLoader(state).loadClass(fqName);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -265,7 +266,6 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         try {
             return createClassLoader(state).loadClass(fqName);
         } catch (ClassNotFoundException e) {
-        } catch (MalformedURLException e) {
         }
 
         fail("No classfile was generated for: " + fqName);

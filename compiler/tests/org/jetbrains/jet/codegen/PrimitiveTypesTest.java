@@ -337,7 +337,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testKt737() throws Exception {
         loadText("fun box() = if(3.compareTo(2) != 1) \"fail\" else if(5.toByte().compareTo(10.toLong()) >= 0) \"fail\" else \"OK\"");
-        assertEquals("OK", blackBox());
+        blackBox();
     }
 
     public void testKt665() throws Exception {

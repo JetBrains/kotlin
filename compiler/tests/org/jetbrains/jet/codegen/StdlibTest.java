@@ -47,11 +47,15 @@ public class StdlibTest extends CodegenTestCase {
     }
 
     @Override
-    protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens) throws MalformedURLException {
-        return new GeneratedClassLoader(
-                codegens,
-                new URLClassLoader(new URL[]{ForTestCompileRuntime.runtimeJarForTests().toURI().toURL()},
-                                   getClass().getClassLoader()));
+    protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens) {
+        try {
+            return new GeneratedClassLoader(
+                    codegens,
+                    new URLClassLoader(new URL[]{ForTestCompileRuntime.runtimeJarForTests().toURI().toURL()},
+                                       getClass().getClassLoader()));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void testKt533 () {

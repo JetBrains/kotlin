@@ -186,7 +186,7 @@ fun box(): String {
     if (!t8()) return "t8 fail"
     if (!t9(0)) return "t9 fail"
     if (!t10()) return "t10 fail"
-    if (t11(1) != 104) return "t11 fail"
+    if (t11(1) != 101) return "t11 fail"
     if (t12(0) != 100) return "t12 fail"
 
     return "OK"
