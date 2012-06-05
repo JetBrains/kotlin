@@ -49,37 +49,43 @@ public final class TranslationUtils {
     public static JsPropertyInitializer translateFunctionAsEcma5PropertyDescriptor(@NotNull JsFunction function,
             @NotNull FunctionDescriptor descriptor,
             @NotNull TranslationContext context) {
-        if (descriptor.getReceiverParameter().exists()) {
-            JsObjectLiteral meta = new JsObjectLiteral();
-            meta.getPropertyInitializers().add(new JsPropertyInitializer(context.program().getStringLiteral("value"), function));
-            if (descriptor.getModality().isOverridable()) {
-                meta.getPropertyInitializers().add(context.namer().writablePropertyDescriptorField());
-            }
-            return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), meta);
+        if (JsDescriptorUtils.isExtension(descriptor)) {
+            return translateExtensionFunctionAsEcma5PropertyDescriptor(function, descriptor, context);
         }
         else {
-            return new JsPropertyInitializer(
-                    context.program().getStringLiteral(descriptor instanceof PropertyGetterDescriptor ? "get" : "set"), function);
+            JsStringLiteral getOrSet = context.program().getStringLiteral(descriptor instanceof PropertyGetterDescriptor ? "get" : "set");
+            return new JsPropertyInitializer(getOrSet, function);
         }
     }
 
     @NotNull
+    private static JsPropertyInitializer translateExtensionFunctionAsEcma5PropertyDescriptor(@NotNull JsFunction function,
+            @NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context) {
+        JsObjectLiteral meta = new JsObjectLiteral();
+        meta.getPropertyInitializers().add(new JsPropertyInitializer(context.program().getStringLiteral("value"), function));
+        if (descriptor.getModality().isOverridable()) {
+            meta.getPropertyInitializers().add(context.namer().writablePropertyDescriptorField());
+        }
+        return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), meta);
+    }
+
+    @NotNull
     public static JsBinaryOperation notNullCheck(@NotNull TranslationContext context,
-                                                 @NotNull JsExpression expressionToCheck) {
+            @NotNull JsExpression expressionToCheck) {
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
         return inequality(expressionToCheck, nullLiteral);
     }
 
     @NotNull
     public static JsBinaryOperation isNullCheck(@NotNull TranslationContext context,
-                                                @NotNull JsExpression expressionToCheck) {
+            @NotNull JsExpression expressionToCheck) {
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
         return equality(expressionToCheck, nullLiteral);
     }
 
     @NotNull
     public static List<JsExpression> translateArgumentList(@NotNull TranslationContext context,
-                                                           @NotNull List<? extends ValueArgument> jetArguments) {
+            @NotNull List<? extends ValueArgument> jetArguments) {
         List<JsExpression> jsArguments = new ArrayList<JsExpression>();
         for (ValueArgument argument : jetArguments) {
             jsArguments.add(translateArgument(context, argument));
@@ -96,22 +102,22 @@ public final class TranslationUtils {
 
     @NotNull
     public static JsNameRef backingFieldReference(@NotNull TranslationContext context,
-                                                  @NotNull PropertyDescriptor descriptor) {
+            @NotNull PropertyDescriptor descriptor) {
         JsName backingFieldName = context.getNameForDescriptor(descriptor);
         return qualified(backingFieldName, new JsThisRef());
     }
 
     @NotNull
     public static JsExpression assignmentToBackingField(@NotNull TranslationContext context,
-                                                        @NotNull PropertyDescriptor descriptor,
-                                                        @NotNull JsExpression assignTo) {
+            @NotNull PropertyDescriptor descriptor,
+            @NotNull JsExpression assignTo) {
         JsNameRef backingFieldReference = backingFieldReference(context, descriptor);
         return newAssignment(backingFieldReference, assignTo);
     }
 
     @Nullable
     public static JsExpression translateInitializerForProperty(@NotNull JetProperty declaration,
-                                                               @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         JsExpression jsInitExpression = null;
         JetExpression initializer = declaration.getInitializer();
         if (initializer != null) {
@@ -122,7 +128,7 @@ public final class TranslationUtils {
 
     @NotNull
     public static JsNameRef getQualifiedReference(@NotNull TranslationContext context,
-                                                  @NotNull DeclarationDescriptor descriptor) {
+            @NotNull DeclarationDescriptor descriptor) {
         JsName name = context.getNameForDescriptor(descriptor);
         JsNameRef reference = name.makeRef();
         JsNameRef qualifier = context.getQualifierForDescriptor(descriptor);
@@ -135,7 +141,7 @@ public final class TranslationUtils {
     //TODO: refactor
     @NotNull
     public static JsExpression getThisObject(@NotNull TranslationContext context,
-                                             @NotNull DeclarationDescriptor correspondingDeclaration) {
+            @NotNull DeclarationDescriptor correspondingDeclaration) {
         if (correspondingDeclaration instanceof ClassDescriptor) {
             JsName alias = context.aliasingContext().getAliasForThis(correspondingDeclaration);
             if (alias != null) {
@@ -144,7 +150,7 @@ public final class TranslationUtils {
         }
         if (correspondingDeclaration instanceof CallableDescriptor) {
             DeclarationDescriptor receiverDescriptor =
-                getExpectedReceiverDescriptor((CallableDescriptor)correspondingDeclaration);
+                    getExpectedReceiverDescriptor((CallableDescriptor) correspondingDeclaration);
             assert receiverDescriptor != null;
             JsName alias = context.aliasingContext().getAliasForThis(receiverDescriptor);
             if (alias != null) {
@@ -156,7 +162,7 @@ public final class TranslationUtils {
 
     @NotNull
     public static List<JsExpression> translateExpressionList(@NotNull TranslationContext context,
-                                                             @NotNull List<JetExpression> expressions) {
+            @NotNull List<JetExpression> expressions) {
         List<JsExpression> result = new ArrayList<JsExpression>();
         for (JetExpression expression : expressions) {
             result.add(Translation.translateAsExpression(expression, context));
@@ -166,29 +172,29 @@ public final class TranslationUtils {
 
     @NotNull
     public static JsExpression translateBaseExpression(@NotNull TranslationContext context,
-                                                       @NotNull JetUnaryExpression expression) {
+            @NotNull JetUnaryExpression expression) {
         JetExpression baseExpression = PsiUtils.getBaseExpression(expression);
         return Translation.translateAsExpression(baseExpression, context);
     }
 
     @NotNull
     public static JsExpression translateLeftExpression(@NotNull TranslationContext context,
-                                                       @NotNull JetBinaryExpression expression) {
+            @NotNull JetBinaryExpression expression) {
         return Translation.translateAsExpression(expression.getLeft(), context);
     }
 
     @NotNull
     public static JsExpression translateRightExpression(@NotNull TranslationContext context,
-                                                        @NotNull JetBinaryExpression expression) {
+            @NotNull JetBinaryExpression expression) {
         JetExpression rightExpression = expression.getRight();
         assert rightExpression != null : "Binary expression should have a right expression";
         return Translation.translateAsExpression(rightExpression, context);
     }
 
     public static boolean isIntrinsicOperation(@NotNull TranslationContext context,
-                                               @NotNull JetOperationExpression expression) {
+            @NotNull JetOperationExpression expression) {
         FunctionDescriptor operationDescriptor =
-            BindingUtils.getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
+                BindingUtils.getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
 
         if (operationDescriptor == null) return true;
         if (context.intrinsics().isIntrinsic(operationDescriptor)) return true;
@@ -198,9 +204,9 @@ public final class TranslationUtils {
 
     @NotNull
     public static JsNameRef getMethodReferenceForOverloadedOperation(@NotNull TranslationContext context,
-                                                                     @NotNull JetOperationExpression expression) {
+            @NotNull JetOperationExpression expression) {
         FunctionDescriptor overloadedOperationDescriptor = getFunctionDescriptorForOperationExpression
-            (context.bindingContext(), expression);
+                (context.bindingContext(), expression);
         assert overloadedOperationDescriptor != null;
         JsNameRef overloadedOperationReference = context.getNameForDescriptor(overloadedOperationDescriptor).makeRef();
         assert overloadedOperationReference != null;
@@ -214,8 +220,8 @@ public final class TranslationUtils {
 
     @NotNull
     public static JsExpression applyIntrinsicToBinaryExpression(@NotNull TranslationContext context,
-                                                                @NotNull Intrinsic intrinsic,
-                                                                @NotNull JetBinaryExpression binaryExpression) {
+            @NotNull Intrinsic intrinsic,
+            @NotNull JetBinaryExpression binaryExpression) {
         JsExpression left = translateLeftExpression(context, binaryExpression);
         JsExpression right = translateRightExpression(context, binaryExpression);
         return intrinsic.apply(left, Arrays.asList(right), context);
@@ -223,7 +229,7 @@ public final class TranslationUtils {
 
     @Nullable
     public static JsExpression resolveThisObjectForResolvedCall(@NotNull ResolvedCall<?> call,
-                                                                @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         ReceiverDescriptor thisObject = call.getThisObject();
         if (!thisObject.exists()) {
             return null;

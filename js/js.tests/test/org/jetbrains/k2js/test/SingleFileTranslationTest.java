@@ -78,7 +78,7 @@ public abstract class SingleFileTranslationTest extends BasicTest {
 
     protected void checkOutput(@NotNull String kotlinFilename,
             @NotNull String expectedResult,
-            @NotNull EnumSet<EcmaVersion> ecmaVersions,
+            @NotNull Iterable<EcmaVersion> ecmaVersions,
             String... args) throws Exception {
         generateJavaScriptFiles(kotlinFilename, MainCallParameters.mainWithArguments(Lists.newArrayList(args)), ecmaVersions);
         runRhinoTests(kotlinFilename, ecmaVersions, new RhinoSystemOutputChecker(expectedResult));

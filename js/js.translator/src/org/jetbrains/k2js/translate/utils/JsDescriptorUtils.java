@@ -135,7 +135,7 @@ public final class JsDescriptorUtils {
         return containing;
     }
 
-    public static boolean isExtensionFunction(@NotNull CallableDescriptor functionDescriptor) {
+    public static boolean isExtension(@NotNull CallableDescriptor functionDescriptor) {
         return (functionDescriptor.getReceiverParameter().exists());
     }
 
@@ -267,19 +267,6 @@ public final class JsDescriptorUtils {
             }
         }
         return result;
-    }
-
-    @Nullable
-    public static ClassDescriptor getClassDescriptorForMethod(@NotNull SimpleFunctionDescriptor functionDescriptor) {
-        if (!functionDescriptor.getExpectedThisObject().exists()) {
-            return null;
-        }
-        ClassifierDescriptor descriptor =
-            functionDescriptor.getExpectedThisObject().getType().getConstructor().getDeclarationDescriptor();
-        if (descriptor instanceof ClassDescriptor) {
-            return (ClassDescriptor)descriptor.getOriginal();
-        }
-        return null;
     }
 
     private static boolean isDefaultAccessor(@Nullable PropertyAccessorDescriptor accessorDescriptor) {

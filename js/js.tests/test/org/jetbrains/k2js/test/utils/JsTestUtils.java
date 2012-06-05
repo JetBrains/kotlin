@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -36,22 +35,7 @@ public final class JsTestUtils {
     }
 
     @NotNull
-    public static EnumSet<EcmaVersion> failsOn(EcmaVersion... versions) {
-        EnumSet<EcmaVersion> result = EcmaVersion.all();
-        for (EcmaVersion version : versions) {
-            boolean success = result.remove(version);
-            assert success;
-        }
-        return result;
-    }
-
-    @NotNull
-    public static EnumSet<EcmaVersion> failsOnEcmaV5() {
-        return failsOn(EcmaVersion.v5);
-    }
-
-    @NotNull
-    public static String convertFileNameToDotJsFile(@NotNull String filename, EcmaVersion ecmaVersion) {
+    public static String convertFileNameToDotJsFile(@NotNull String filename, @NotNull EcmaVersion ecmaVersion) {
         String postFix = "_" + ecmaVersion.toString() + ".js";
         int index = filename.lastIndexOf('.');
         if (index < 0) {

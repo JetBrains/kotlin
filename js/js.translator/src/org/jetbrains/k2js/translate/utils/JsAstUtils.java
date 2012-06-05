@@ -306,7 +306,7 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsInvocation encloseFunction(JsFunction function) {
+    public static JsInvocation encloseFunction(@NotNull JsFunction function) {
         JsInvocation blockFunctionInvocation = new JsInvocation();
         blockFunctionInvocation.setQualifier(EMPTY_REF);
         blockFunctionInvocation.getArguments().add(function);
@@ -314,7 +314,7 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsFunction createPackage(List<JsStatement> to, JsScope scope) {
+    public static JsFunction createPackage(@NotNull List<JsStatement> to, @NotNull JsScope scope) {
         JsFunction packageBlockFunction = createFunctionWithEmptyBody(scope);
 
         JsInvocation packageBlockFunctionInvocation = encloseFunction(packageBlockFunction);

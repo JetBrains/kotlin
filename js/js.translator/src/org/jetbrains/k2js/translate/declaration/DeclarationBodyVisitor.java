@@ -16,6 +16,7 @@
 
 package org.jetbrains.k2js.translate.declaration;
 
+import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -32,9 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getDeclarationsForNamespace;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForObjectDeclaration;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 
 /**
  * @author Pavel Talanov
@@ -70,12 +69,14 @@ public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPrope
     @NotNull
     public List<JsPropertyInitializer> visitNamedFunction(@NotNull JetNamedFunction expression,
                                                           @NotNull TranslationContext context) {
-        JsPropertyInitializer o = Translation.functionTranslator(expression, context).translateAsMethod();
+        JsPropertyInitializer methodAsPropertyInitializer = Translation.functionTranslator(expression, context).translateAsMethod();
         if (context.isEcma5()) {
             final FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
-            o.setValueExpr(JsAstUtils.createPropertyDataDescriptor(descriptor.getModality().isOverridable(), o.getValueExpr(), context));
+            boolean overridable = descriptor.getModality().isOverridable();
+            JsExpression methodBodyExpression = methodAsPropertyInitializer.getValueExpr();
+            methodAsPropertyInitializer.setValueExpr(JsAstUtils.createPropertyDataDescriptor(overridable, methodBodyExpression, context));
         }
-        return Collections.singletonList(o);
+        return Collections.singletonList(methodAsPropertyInitializer);
     }
 
     @Override

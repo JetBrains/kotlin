@@ -26,7 +26,6 @@ import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 import org.jetbrains.k2js.test.utils.TranslationUtils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -89,8 +88,8 @@ public abstract class BasicTest extends TestWithEnvironment {
         assert success;
     }
 
-    protected List<String> additionalJSFiles(EcmaVersion ecmaVersion) {
-        List<String> list = new ArrayList<String>(2);
+    protected List<String> additionalJSFiles(@NotNull EcmaVersion ecmaVersion) {
+        List<String> list = Lists.newArrayList();
         list.add(ecmaVersion == EcmaVersion.v5 ? KOTLIN_JS_LIB_ECMA_5 : KOTLIN_JS_LIB_ECMA_3);
         list.add(KOTLIN_JS_LIB);
         return list;

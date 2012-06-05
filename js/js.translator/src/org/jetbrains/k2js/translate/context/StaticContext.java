@@ -201,7 +201,7 @@ public final class StaticContext {
                         return null;
                     }
                     boolean isGetter = descriptor instanceof PropertyGetterDescriptor;
-                    final PropertyAccessorDescriptor accessorDescriptor = (PropertyAccessorDescriptor) descriptor;
+                    PropertyAccessorDescriptor accessorDescriptor = (PropertyAccessorDescriptor) descriptor;
                     String propertyName = accessorDescriptor.getCorrespondingProperty().getName().getName();
                     String accessorName = Namer.getNameForAccessor(propertyName, isGetter, !accessorDescriptor.getReceiverParameter().exists() && isEcma5());
                     NamingScope enclosingScope = getEnclosingScope(descriptor);

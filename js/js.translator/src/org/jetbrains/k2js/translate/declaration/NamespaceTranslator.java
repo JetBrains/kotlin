@@ -71,22 +71,36 @@ public final class NamespaceTranslator extends AbstractTranslator {
     @NotNull
     private JsInvocation getNamespaceDeclaration() {
         JsInvocation namespaceDeclaration = namespaceCreateMethodInvocation();
+        addNamespaceInitalizersAndProperties(namespaceDeclaration);
+        namespaceDeclaration.getArguments().add(getClassesAndNestedNamespaces());
+        return namespaceDeclaration;
+    }
 
+    private void addNamespaceInitalizersAndProperties(@NotNull JsInvocation namespaceDeclaration) {
         JsFunction initializer = Translation.generateNamespaceInitializerMethod(descriptor, context());
         List<JsPropertyInitializer> properties = new DeclarationBodyVisitor().traverseNamespace(descriptor, context());
         if (context().isEcma5()) {
-            namespaceDeclaration.getArguments().add(initializer);
-            namespaceDeclaration.getArguments().add(newObjectLiteral(properties));
+            addEcma5InitializersAndProperties(namespaceDeclaration, initializer, properties);
         }
         else {
-            List<JsPropertyInitializer> propertyList = new ArrayList<JsPropertyInitializer>();
-            propertyList.add(InitializerUtils.generateInitializeMethod(initializer));
-            propertyList.addAll(properties);
-            namespaceDeclaration.getArguments().add(newObjectLiteral(propertyList));
+            addEcma3InitializersAndProperties(namespaceDeclaration, initializer, properties);
         }
+    }
 
-        namespaceDeclaration.getArguments().add(getClassesAndNestedNamespaces());
-        return namespaceDeclaration;
+    private static void addEcma3InitializersAndProperties(@NotNull JsInvocation namespaceDeclaration,
+            @NotNull JsFunction initializer,
+            @NotNull List<JsPropertyInitializer> properties) {
+        List<JsPropertyInitializer> propertyList = new ArrayList<JsPropertyInitializer>();
+        propertyList.add(InitializerUtils.generateInitializeMethod(initializer));
+        propertyList.addAll(properties);
+        namespaceDeclaration.getArguments().add(newObjectLiteral(propertyList));
+    }
+
+    private static void addEcma5InitializersAndProperties(@NotNull JsInvocation namespaceDeclaration,
+            @NotNull JsFunction initializer,
+            @NotNull List<JsPropertyInitializer> properties) {
+        namespaceDeclaration.getArguments().add(initializer);
+        namespaceDeclaration.getArguments().add(newObjectLiteral(properties));
     }
 
     @NotNull

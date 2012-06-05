@@ -50,13 +50,7 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.backingFieldRe
 public final class PropertyTranslator extends AbstractTranslator {
 
     @NotNull
-    private final PropertyDescriptor property;
-    @NotNull
-    private final List<JsPropertyInitializer> accessors = new ArrayList<JsPropertyInitializer>();
-    @Nullable
-    private final JetProperty declaration;
-
-    static public List<JsPropertyInitializer> translateAccessors(@NotNull PropertyDescriptor descriptor,
+    public static List<JsPropertyInitializer> translateAccessors(@NotNull PropertyDescriptor descriptor,
             @NotNull TranslationContext context) {
         if (context.isEcma5() && !JsDescriptorUtils.isAsPrivate(descriptor)) {
             return Collections.emptyList();
@@ -64,14 +58,29 @@ public final class PropertyTranslator extends AbstractTranslator {
 
         PropertyTranslator propertyTranslator = new PropertyTranslator(descriptor, context);
         List<JsPropertyInitializer> propertyInitializers = propertyTranslator.translate();
-        if (context.isEcma5() && !descriptor.getReceiverParameter().exists()) {
-            JsObjectLiteral objectLiteral = new JsObjectLiteral();
-            objectLiteral.getPropertyInitializers().addAll(propertyInitializers);
-            return Collections.singletonList(
-                    new JsPropertyInitializer(context.program().getStringLiteral(descriptor.getName().getName()), objectLiteral));
+        if (context.isEcma5() && !JsDescriptorUtils.isExtension(descriptor)) {
+            return translateAsEcma5Accessors(descriptor, propertyInitializers, context);
         }
         return propertyInitializers;
     }
+
+    @NotNull
+    private static List<JsPropertyInitializer> translateAsEcma5Accessors(@NotNull PropertyDescriptor descriptor,
+            @NotNull List<JsPropertyInitializer> propertyInitializers,
+            @NotNull TranslationContext context) {
+        JsObjectLiteral objectLiteral = new JsObjectLiteral();
+        objectLiteral.getPropertyInitializers().addAll(propertyInitializers);
+        JsStringLiteral propertyNameLiteral = context.program().getStringLiteral(descriptor.getName().getName());
+        return Collections.singletonList(new JsPropertyInitializer(propertyNameLiteral, objectLiteral));
+    }
+
+
+    @NotNull
+    private final PropertyDescriptor property;
+    @NotNull
+    private final List<JsPropertyInitializer> accessors = new ArrayList<JsPropertyInitializer>();
+    @Nullable
+    private final JetProperty declaration;
 
     private PropertyTranslator(@NotNull PropertyDescriptor property, @NotNull TranslationContext context) {
         super(context);
@@ -163,7 +172,9 @@ public final class PropertyTranslator extends AbstractTranslator {
         return result;
     }
 
-    private JsPropertyInitializer generateDefaultAccessor(PropertyAccessorDescriptor accessorDescriptor, JsFunction function) {
+    @NotNull
+    private JsPropertyInitializer generateDefaultAccessor(@NotNull PropertyAccessorDescriptor accessorDescriptor,
+            @NotNull JsFunction function) {
         if (context().isEcma5()) {
             return TranslationUtils.translateFunctionAsEcma5PropertyDescriptor(function, accessorDescriptor, context());
         }

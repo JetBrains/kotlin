@@ -135,15 +135,20 @@ public final class CallTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression constructorCall() {
         JsExpression constructorReference = translateAsFunctionWithNoThisObject(descriptor);
-        JsExpression constructorCall;
-        if (context().isEcma5() && !AnnotationsUtils.isNativeObject(resolvedCall.getCandidateDescriptor())) {
-            constructorCall = AstUtil.newInvocation(constructorReference);
-        }
-        else {
-            constructorCall = new JsNew(constructorReference);
-        }
+        JsExpression constructorCall = createConstructorCallExpression(constructorReference);
+        assert constructorCall instanceof HasArguments : "Constructor call should be expression with arguments.";
         ((HasArguments) constructorCall).getArguments().addAll(arguments);
         return constructorCall;
+    }
+
+    @NotNull
+    private JsExpression createConstructorCallExpression(@NotNull JsExpression constructorReference) {
+        if (context().isEcma5() && !AnnotationsUtils.isNativeObject(resolvedCall.getCandidateDescriptor())) {
+            return AstUtil.newInvocation(constructorReference);
+        }
+        else {
+            return new JsNew(constructorReference);
+        }
     }
 
     @NotNull

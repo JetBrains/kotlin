@@ -226,7 +226,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     private boolean isExtensionFunction() {
-        return JsDescriptorUtils.isExtensionFunction(descriptor) && !isLiteral();
+        return JsDescriptorUtils.isExtension(descriptor) && !isLiteral();
     }
 
     private boolean isLiteral() {
