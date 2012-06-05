@@ -28,9 +28,15 @@ val context: CanvasContext
 
 val PATH_TO_IMAGES = "http://kotlin-demo.jetbrains.com/static/images/canvas/"
 
+
+
+var _state: CanvasState? = null
 val state: CanvasState
     get() {
-        return CanvasState(canvas)
+        if (_state == null) {
+            _state = CanvasState(canvas)
+        }
+        return _state!!
     }
 
 val colors: Colors
@@ -430,6 +436,7 @@ class CanvasState(val canvas: HTMLCanvasElement) {
         }
         return Vector(e.pageX, e.pageY) - offset
     }
+
     fun draw() {
         clear()
         for (shape in shapes) {

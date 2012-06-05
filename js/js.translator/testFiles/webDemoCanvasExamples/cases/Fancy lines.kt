@@ -8,9 +8,10 @@ package fancylines
 
 import js.dom.html5.*
 import js.dom.html.window
+import js.jquery.*
 
 fun main(args: Array<String>) {
-    window.onload = {
+    jq {
         FancyLines().run()
     }
 }
