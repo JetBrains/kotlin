@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.JetClassObject;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 
 /**
@@ -25,4 +27,7 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 public interface ClassMemberDeclarationProvider extends DeclarationProvider {
     @NotNull
     JetClassOrObject getOwnerClassOrObject();
+
+    @Nullable
+    JetClassObject getClassObject();
 }

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetClassObject;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -27,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 public class PsiBasedClassMemberDeclarationProvider extends AbstractPsiBasedDeclarationProvider implements ClassMemberDeclarationProvider {
 
     private final JetClassOrObject classOrObject;
+    private JetClassObject jetClassObject;
 
     public PsiBasedClassMemberDeclarationProvider(@NotNull JetClassOrObject classOrObject) {
         this.classOrObject = classOrObject;
@@ -41,8 +43,19 @@ public class PsiBasedClassMemberDeclarationProvider extends AbstractPsiBasedDecl
     @Override
     protected void doCreateIndex() {
         for (JetDeclaration declaration : classOrObject.getDeclarations()) {
-            putToIndex(declaration);
+            if (declaration instanceof JetClassObject) {
+                jetClassObject = (JetClassObject) declaration;
+            }
+            else {
+                putToIndex(declaration);
+            }
         }
+    }
+
+    @Override
+    public JetClassObject getClassObject() {
+        createIndex();
+        return jetClassObject;
     }
 
     @Override

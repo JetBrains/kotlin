@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
@@ -60,7 +61,7 @@ public class ResolveSession {
         this.module = rootDescriptor;
         DeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(FqName.ROOT);
         assert provider != null : "No declaration provider for root package in " + rootDescriptor;
-        this.rootPackage = new LazyPackageDescriptor(rootDescriptor, JetPsiUtil.ROOT_NAMESPACE_NAME, this, provider);
+        this.rootPackage = new LazyPackageDescriptor(rootDescriptor, FqNameUnsafe.ROOT_NAME, this, provider);
         rootDescriptor.setRootNs(rootPackage);
 
         this.declarationProviderFactory = declarationProviderFactory;

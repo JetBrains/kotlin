@@ -41,7 +41,7 @@ public abstract class AbstractPsiBasedDeclarationProvider implements Declaration
 
     private boolean indexCreated = false;
 
-    private void createIndex() {
+    protected final void createIndex() {
         if (indexCreated) return;
         indexCreated = true;
 

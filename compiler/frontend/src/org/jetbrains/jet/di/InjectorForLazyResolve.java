@@ -79,8 +79,8 @@ public class InjectorForLazyResolve {
         this.typeResolver.setDescriptorResolver(descriptorResolver);
         this.typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
-        annotationResolver.setCallResolver(callResolver);
-        annotationResolver.setExpressionTypingServices(expressionTypingServices);
+        this.annotationResolver.setCallResolver(callResolver);
+        this.annotationResolver.setExpressionTypingServices(expressionTypingServices);
 
         callResolver.setDescriptorResolver(descriptorResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
@@ -107,6 +107,10 @@ public class InjectorForLazyResolve {
 
     public ScopeProvider getScopeProvider() {
         return this.scopeProvider;
+    }
+
+    public AnnotationResolver getAnnotationResolver() {
+        return this.annotationResolver;
     }
 
 }
