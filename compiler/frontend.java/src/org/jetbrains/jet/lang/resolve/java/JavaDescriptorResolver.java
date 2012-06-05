@@ -1567,7 +1567,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             }
             else if (meaning.kind == JvmMethodParameterKind.RECEIVER) {
                 if (receiverType != null) {
-                    throw new IllegalStateException("more then one receiver");
+                    throw new IllegalStateException("more than one receiver");
                 }
                 --indexDelta;
                 receiverType = meaning.receiverType;

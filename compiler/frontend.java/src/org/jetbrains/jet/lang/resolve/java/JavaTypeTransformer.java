@@ -167,7 +167,7 @@ public class JavaTypeTransformer {
                     final ClassDescriptor classData =
                             resolver.resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
                     if (classData == null) {
-                        return ErrorUtils.createErrorType("Unresolve java class: " + classType.getPresentableText());
+                        return ErrorUtils.createErrorType("Unresolved java class: " + classType.getPresentableText());
                     }
 
                     List<TypeProjection> arguments = Lists.newArrayList();
