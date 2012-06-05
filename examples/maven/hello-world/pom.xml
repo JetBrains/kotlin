@@ -64,47 +64,16 @@
 
     <repositories>
         <repository>
-            <id>jetbrains-release</id>
-            <url>http://repository.jetbrains.com/releases</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>jetbrains-snapshots</id>
-            <url>http://repository.jetbrains.com/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <id>jetbrains-all</id>
+            <url>http://repository.jetbrains.com/all</url>
         </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
-            <id>jetbrains-release</id>
-            <url>http://repository.jetbrains.com/releases</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>jetbrains-snapshots</id>
-            <url>http://repository.jetbrains.com/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <id>jetbrains-all</id>
+            <url>http://repository.jetbrains.com/all</url>
         </pluginRepository>
     </pluginRepositories>
+
 </project>
