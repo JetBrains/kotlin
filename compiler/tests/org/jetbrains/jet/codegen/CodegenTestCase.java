@@ -61,6 +61,8 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     private List<File> extraClasspath = Lists.newArrayList();
     protected CodegenTestFile myFile;
 
+    protected Object scriptInstance;
+
     protected void createEnvironmentWithMockJdkAndIdeaAnnotations() {
         if (myEnvironment != null) {
             throw new IllegalStateException("must not set up myEnvironemnt twice");
@@ -107,6 +109,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected void tearDown() throws Exception {
         myFile = null;
         myEnvironment = null;
+        scriptInstance = null;
         super.tearDown();
     }
 
@@ -187,7 +190,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 Class<?> scriptClass = loader.loadClass("Script");
 
                 Constructor constructor = getConstructor(scriptClass, state.getScriptConstructorMethod());
-                Object scriptInstance = constructor.newInstance(myFile.getScriptParameterValues().toArray());
+                scriptInstance = constructor.newInstance(myFile.getScriptParameterValues().toArray());
 
                 assertFalse("expecting at least one expectation", myFile.getExpectedValues().isEmpty());
 
