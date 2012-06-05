@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -28,15 +30,21 @@ import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.util.lazy.LazyValue;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 /**
 * @author abreslav
 */
 public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescriptor, ClassMemberDeclarationProvider> {
+
+    private ConstructorDescriptor primaryConstructor;
+    private boolean primaryConstructorResolved = false;
 
     public LazyClassMemberScope(
             @NotNull ResolveSession resolveSession,
@@ -85,6 +93,10 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     @Override
     protected void getNonDeclaredProperties(@NotNull Name name, @NotNull Set<VariableDescriptor> result) {
         System.err.println("getNonDeclaredProperties() should generate fake overrides for a class");
+
+        // Inherited fake overrides
+        // Parameters of the primary constructor
+
         throw new UnsupportedOperationException(); // TODO
     }
 
@@ -101,11 +113,28 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
     @NotNull
     public Set<ConstructorDescriptor> getConstructors() {
-        throw new UnsupportedOperationException(); // TODO
+        return Collections.singleton(getPrimaryConstructor());
     }
 
     @Nullable
     public ConstructorDescriptor getPrimaryConstructor() {
-        throw new UnsupportedOperationException(); // TODO
+        if (!primaryConstructorResolved) {
+            JetClassOrObject classOrObject = declarationProvider.getOwnerClassOrObject();
+            if (classOrObject instanceof JetClass) {
+                JetClass jetClass = (JetClass) classOrObject;
+                ConstructorDescriptorImpl descriptor = resolveSession.getInjector().getDescriptorResolver()
+                        .resolvePrimaryConstructorDescriptor(thisDescriptor.getScopeForClassHeaderResolution(), thisDescriptor, jetClass,
+                                                             resolveSession.getTrace());
+                primaryConstructor = descriptor;
+                ((ConstructorDescriptorImpl) primaryConstructor).setReturnType(DeferredType.create(resolveSession.getTrace(), new LazyValue<JetType>() {
+                    @Override
+                    protected JetType compute() {
+                        return thisDescriptor.getDefaultType();
+                    }
+                }));
+            }
+            primaryConstructorResolved = true;
+        }
+        return primaryConstructor;
     }
 }
