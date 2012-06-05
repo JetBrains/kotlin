@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -32,6 +33,11 @@ import java.util.List;
 public final class JsTestUtils {
 
     private JsTestUtils() {
+    }
+
+    @NotNull
+    public static EnumSet<EcmaVersion> successOnEcmaV5() {
+        return EnumSet.of(EcmaVersion.v5);
     }
 
     @NotNull
