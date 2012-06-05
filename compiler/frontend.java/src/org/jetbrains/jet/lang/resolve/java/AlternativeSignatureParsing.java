@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptorImpl;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeImpl;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -88,5 +90,59 @@ class AlternativeSignatureParsing {
             altReceiverType = computeAlternativeTypeFromAnnotation(altFunDeclaration.getReceiverTypeRef().getTypeElement(), valueParameterDescriptors.receiverType);
         }
         return new JavaDescriptorResolver.ValueParameterDescriptors(altReceiverType, altParamDescriptors);
+    }
+
+    static List<TypeParameterDescriptor> computeAlternativeTypeParameters(List<TypeParameterDescriptor> typeParameterDescriptors,
+            JetNamedFunction altFunDeclaration) {
+        List<TypeParameterDescriptor> altParamDescriptors = new ArrayList<TypeParameterDescriptor>();
+        for (int i = 0, size = typeParameterDescriptors.size(); i < size; i++) {
+            TypeParameterDescriptor pd = typeParameterDescriptors.get(i);
+            DeclarationDescriptor containingDeclaration = pd.getContainingDeclaration();
+            assert containingDeclaration != null;
+            TypeParameterDescriptorImpl altParamDescriptor = TypeParameterDescriptorImpl
+                    .createForFurtherModification(containingDeclaration, pd.getAnnotations(),
+                                                  pd.isReified(), pd.getVariance(), pd.getName(), pd.getIndex());
+            int upperBoundIndex = 0;
+            for (JetType upperBound : pd.getUpperBounds()) {
+                JetTypeElement altTypeElement;
+                JetTypeParameter parameter = altFunDeclaration.getTypeParameters().get(i);
+                if (upperBoundIndex == 0) {
+                    JetTypeReference extendsBound = parameter.getExtendsBound();
+                    if (extendsBound == null) { // default upper bound
+                        assert pd.getUpperBounds().size() == 1;
+                        altParamDescriptor.addDefaultUpperBound();
+                        break;
+                    }
+                    else {
+                        altTypeElement = extendsBound.getTypeElement();
+                    }
+                }
+                else {
+                    altTypeElement = findTypeParameterConstraint(altFunDeclaration, parameter.getNameAsName(), upperBoundIndex).getBoundTypeReference().getTypeElement();
+                }
+                altParamDescriptor.addUpperBound(computeAlternativeTypeFromAnnotation(altTypeElement, upperBound));
+                upperBoundIndex++;
+            }
+
+            altParamDescriptor.setInitialized();
+            altParamDescriptors.add(altParamDescriptor);
+        }
+        return altParamDescriptors;
+    }
+
+    @Nullable
+    private static JetTypeConstraint findTypeParameterConstraint(@NotNull JetFunction function, @NotNull Name typeParameterName, int index) {
+        if (index != 0) {
+            int currentIndex = 0;
+            for (JetTypeConstraint constraint : function.getTypeConstaints()) {
+                if (typeParameterName.equals(constraint.getSubjectTypeParameterName().getReferencedNameAsName())) {
+                    currentIndex++;
+                }
+                if (currentIndex == index) {
+                    return constraint;
+                }
+            }
+        }
+        return null;
     }
 }
