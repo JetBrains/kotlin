@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.cli.jvm.compiler;
 
-import com.google.common.io.Files;
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.PropertyCodegen;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -35,13 +35,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Method;
-import java.nio.charset.Charset;
 import java.util.*;
 
 /**
  * @author Stepan Koltsov
  */
-class NamespaceComparator {
+public class NamespaceComparator {
 
     private final boolean includeObject;
 
@@ -53,21 +52,16 @@ class NamespaceComparator {
             @NotNull File txtFile) {
         String serialized = new NamespaceComparator(includeObject).doCompareNamespaces(nsa, nsb);
         try {
-            while (true) {
-                String expected = Files.toString(txtFile, Charset.forName("utf-8")).replace("\r\n", "\n");
-
-                if (expected.contains("kick me")) {
-                    // for developer
-                    System.err.println("generating " + txtFile);
-                    Files.write(serialized, txtFile, Charset.forName("utf-8"));
-                    continue;
-                }
-
-                // compare with hardcopy: make sure nothing is lost in output
-                Assert.assertEquals(expected, serialized);
-                break;
+            if (!txtFile.exists()) {
+                FileUtil.writeToFile(txtFile, serialized);
+                Assert.fail("Expected data file did not exist. Generating: " + txtFile);
             }
-        } catch (IOException e) {
+            String expected = FileUtil.loadFile(txtFile);
+
+            // compare with hardcopy: make sure nothing is lost in output
+            Assert.assertEquals(expected, serialized);
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
