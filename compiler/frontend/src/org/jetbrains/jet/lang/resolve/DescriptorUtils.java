@@ -108,6 +108,10 @@ public class DescriptorUtils {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
             return classDescriptor.getImplicitReceiver();
         }
+        else if (containingDeclaration instanceof ScriptDescriptor) {
+            ScriptDescriptor scriptDescriptor = (ScriptDescriptor) containingDeclaration;
+            return scriptDescriptor.getImplicitReceiver();
+        }
         return NO_RECEIVER;
     }
 

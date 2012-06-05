@@ -489,11 +489,32 @@ public class DescriptorResolver {
 
     @NotNull
     public VariableDescriptor resolveLocalVariableDescriptor(DeclarationDescriptor containingDeclaration, JetScope scope, JetProperty property, DataFlowInfo dataFlowInfo, BindingTrace trace) {
-        VariableDescriptorImpl variableDescriptor = resolveLocalVariableDescriptorWithType(containingDeclaration, property, null, trace);
+        if (property.isScriptDeclaration()) {
+            PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
+                    containingDeclaration,
+                    annotationResolver.createAnnotationStubs(property.getModifierList(), trace),
+                    Modality.FINAL,
+                    Visibilities.INTERNAL,
+                    property.isVar(),
+                    false,
+                    JetPsiUtil.safeName(property.getName()),
+                    CallableMemberDescriptor.Kind.DECLARATION
+            );
 
-        JetType type = getVariableType(scope, property, dataFlowInfo, false, trace); // For a local variable the type must not be deferred
-        variableDescriptor.setOutType(type);
-        return variableDescriptor;
+            JetType type = getVariableType(scope, property, dataFlowInfo, false, trace); // For a local variable the type must not be deferred
+
+            propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(), scope.getImplicitReceiver(), (JetType) null);
+            trace.record(BindingContext.VARIABLE, property, propertyDescriptor);
+            return propertyDescriptor;
+
+        }
+        else {
+            VariableDescriptorImpl variableDescriptor = resolveLocalVariableDescriptorWithType(containingDeclaration, property, null, trace);
+
+            JetType type = getVariableType(scope, property, dataFlowInfo, false, trace); // For a local variable the type must not be deferred
+            variableDescriptor.setOutType(type);
+            return variableDescriptor;
+        }
     }
 
     @NotNull

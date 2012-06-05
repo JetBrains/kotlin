@@ -20,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ScriptReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -36,6 +38,7 @@ public class ScriptDescriptor extends DeclarationDescriptorImpl {
     private List<ValueParameterDescriptor> valueParameters;
 
     private final ScriptCodeDescriptor scriptCodeDescriptor = new ScriptCodeDescriptor(this);
+    private final ReceiverDescriptor implicitReceiver = new ScriptReceiver(this);
 
     public ScriptDescriptor(@Nullable DeclarationDescriptor containingDeclaration) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), NAME);
@@ -44,6 +47,7 @@ public class ScriptDescriptor extends DeclarationDescriptorImpl {
     public void initialize(@NotNull JetType returnType, @NotNull List<ValueParameterDescriptor> valueParameters) {
         this.returnType = returnType;
         this.valueParameters = valueParameters;
+        scriptCodeDescriptor.initialize(implicitReceiver, valueParameters, returnType);
     }
 
     @NotNull
@@ -59,6 +63,11 @@ public class ScriptDescriptor extends DeclarationDescriptorImpl {
     @NotNull
     public ScriptCodeDescriptor getScriptCodeDescriptor() {
         return scriptCodeDescriptor;
+    }
+
+    @NotNull
+    public ReceiverDescriptor getImplicitReceiver() {
+        return implicitReceiver;
     }
 
     @Override

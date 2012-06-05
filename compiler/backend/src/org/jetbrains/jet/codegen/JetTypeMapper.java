@@ -167,6 +167,9 @@ public class JetTypeMapper {
             }
             return JvmClassName.byType(asmType);
         }
+        else if (containingDeclaration instanceof ScriptDescriptor) {
+            return JvmClassName.byInternalName("Script");
+        }
         else {
             throw new UnsupportedOperationException("don't know how to generate owner for parent " + containingDeclaration);
         }
@@ -577,6 +580,10 @@ public class JetTypeMapper {
             ownerForDefaultImpl = ownerForDefaultParam = owner;
             invokeOpcode = INVOKESPECIAL;
             thisClass = null;
+        }
+        else if (functionParent instanceof ScriptDescriptor) {
+            thisClass = owner = ownerForDefaultParam = ownerForDefaultImpl = JvmClassName.byInternalName("Script");
+            invokeOpcode = INVOKEVIRTUAL;
         }
         else if (functionParent instanceof ClassDescriptor) {
             

@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ScriptReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -741,6 +742,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     @Override
     public StackValue visitNamedFunction(JetNamedFunction function, StackValue data) {
         assert data == StackValue.none();
+
+        if (function.isScriptDeclaration()) {
+            return StackValue.none();
+        }
+
         StackValue closure = genClosure(function);
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
         int index = myFrameMap.getIndex(descriptor);
@@ -844,7 +850,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         v.mark(blockStart);
 
         for (JetElement statement : statements) {
+            if (statement instanceof JetNamedDeclaration) {
+                JetNamedDeclaration declaration = (JetNamedDeclaration) statement;
+                if (declaration.isScriptDeclaration()) {
+                    continue;
+                }
+            }
+
             if (statement instanceof JetProperty) {
+                JetProperty property = (JetProperty) statement;
                 final VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, statement);
                 assert variableDescriptor != null;
 
@@ -877,6 +891,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         v.mark(blockEnd);
 
         for (JetElement statement : Lists.reverse(statements)) {
+            if (statement instanceof JetNamedDeclaration) {
+                JetNamedDeclaration declaration = (JetNamedDeclaration) statement;
+                if (declaration.isScriptDeclaration()) {
+                    continue;
+                }
+            }
+
             if(statement instanceof JetNamedFunction) {
                 DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, statement);
                 myFrameMap.leave(descriptor);
@@ -884,6 +905,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
             if (statement instanceof JetProperty) {
                 JetProperty var = (JetProperty) statement;
+
                 VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, var);
                 assert variableDescriptor != null;
 
@@ -1367,8 +1389,19 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private boolean isCallAsFunctionObject(FunctionDescriptor fd) {
-        return fd instanceof ExpressionAsFunctionDescriptor
-                || (fd instanceof SimpleFunctionDescriptor && (fd.getContainingDeclaration() instanceof FunctionDescriptor || fd.getContainingDeclaration() instanceof ScriptDescriptor));
+        if (fd.getContainingDeclaration() instanceof ScriptDescriptor) {
+            JetNamedFunction psi = (JetNamedFunction) BindingContextUtils.descriptorToDeclaration(bindingContext, fd);
+            return !psi.isScriptDeclaration();
+        }
+        else if (fd instanceof ExpressionAsFunctionDescriptor) {
+            return true;
+        }
+        else if (fd instanceof SimpleFunctionDescriptor && (fd.getContainingDeclaration() instanceof FunctionDescriptor || fd.getContainingDeclaration() instanceof ScriptDescriptor)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     public void invokeMethodWithArguments(CallableMethod callableMethod, JetCallElement expression, StackValue receiver) {
@@ -1420,6 +1453,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             }
             if(type != null)
                 StackValue.onStack(exprType).put(type, v);
+        }
+        else if (descriptor instanceof ScriptReceiver) {
+            ScriptReceiver scriptReceiver = (ScriptReceiver) descriptor;
+            ScriptDescriptor script = (ScriptDescriptor) scriptReceiver.getDeclarationDescriptor();
+            ClassDescriptor classDescriptorForScript = state.getInjector().getClosureAnnotator().classDescriptorForScrpitDescriptor(script);
+            generateThisOrOuter(classDescriptorForScript);
         }
         else if(descriptor instanceof ExtensionReceiver) {
             Type exprType = asmType(descriptor.getType());
@@ -2283,17 +2322,30 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     @Override
     public StackValue visitProperty(JetProperty property, StackValue receiver) {
-        VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, property);
-        int index = lookupLocal(variableDescriptor);
 
-        if (index < 0) {
-            throw new IllegalStateException("Local variable not found for " + variableDescriptor);
+        VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, property);
+
+        Type sharedVarType = null;
+        int index = -1;
+
+        if (property.isScriptDeclaration()) {
+            StackValue field = StackValue.field(typeMapper.mapType(variableDescriptor.getType(), MapTypeMode.VALUE), JvmClassName.byInternalName("Script"), property.getName(), false);
+            return StackValue.none();
+        }
+        else {
+            index = lookupLocal(variableDescriptor);
+
+            if (index < 0) {
+                throw new IllegalStateException("Local variable not found for " + variableDescriptor);
+            }
+
+            sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
+            assert variableDescriptor != null;
+
         }
 
-        final Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
-        assert variableDescriptor != null;
         Type varType = asmType(variableDescriptor.getType());
-        if(sharedVarType != null) {
+        if (sharedVarType != null) {
             v.anew(sharedVarType);
             v.dup();
             v.invokespecial(sharedVarType.getInternalName(), "<init>", "()V");
@@ -2302,7 +2354,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         JetExpression initializer = property.getInitializer();
         if (initializer != null) {
-            if(sharedVarType == null) {
+            if (property.isScriptDeclaration()) {
+                gen(initializer, varType);
+                v.putfield("Script", property.getName(), varType.getDescriptor());
+            }
+            else if (sharedVarType == null) {
                 gen(initializer, varType);
                 v.store(index, varType);
             }

@@ -165,22 +165,27 @@ public class CodegenContexts {
 
     public static class ScriptContext extends CodegenContext {
 
+        @NotNull
+        private final ClassDescriptor classDescriptor;
+
         public ScriptContext(
-                @NotNull DeclarationDescriptor contextDescriptor,
+                @NotNull ClassDescriptor contextDescriptor,
                 @NotNull OwnerKind contextKind,
                 @Nullable CodegenContext parentContext,
                 @Nullable ObjectOrClosureCodegen closureCodegen) {
             super(contextDescriptor, contextKind, parentContext, closureCodegen);
+
+            this.classDescriptor = contextDescriptor;
         }
 
         @Override
         protected ClassDescriptor getThisDescriptor() {
-            return null;
+            return classDescriptor;
         }
 
         @Override
         public boolean isStatic() {
-            throw new IllegalStateException();
+            return true;
         }
     }
 

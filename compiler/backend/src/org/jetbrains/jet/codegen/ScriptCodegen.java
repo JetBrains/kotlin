@@ -18,9 +18,12 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetScript;
+import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JdkNames;
 import org.objectweb.asm.MethodVisitor;
@@ -43,6 +46,12 @@ public class ScriptCodegen {
     private ClassFileFactory classFileFactory;
     @NotNull
     private JetTypeMapper jetTypeMapper;
+    @NotNull
+    private MemberCodegen memberCodegen;
+    @NotNull
+    private ClosureAnnotator closureAnnotator;
+    @NotNull
+    private BindingContext bindingContext;
 
 
     @Inject
@@ -60,13 +69,30 @@ public class ScriptCodegen {
         this.jetTypeMapper = jetTypeMapper;
     }
 
+    @Inject
+    public void setMemberCodegen(@NotNull MemberCodegen memberCodegen) {
+        this.memberCodegen = memberCodegen;
+    }
+
+    @Inject
+    public void setClosureAnnotator(@NotNull ClosureAnnotator closureAnnotator) {
+        this.closureAnnotator = closureAnnotator;
+    }
+
+    @Inject
+    public void setBindingContext(@NotNull BindingContext bindingContext) {
+        this.bindingContext = bindingContext;
+    }
+
 
 
     public void generate(JetScript scriptDeclaration) {
 
         ScriptDescriptor scriptDescriptor = (ScriptDescriptor) state.getBindingContext().get(BindingContext.SCRIPT, scriptDeclaration);
 
-        CodegenContext context = CodegenContexts.STATIC.intoScript(scriptDescriptor);
+        ClassDescriptor classDescriptorForScript = closureAnnotator.classDescriptorForScrpitDescriptor(scriptDescriptor);
+
+        CodegenContexts.ScriptContext context = (CodegenContexts.ScriptContext) CodegenContexts.STATIC.intoScript(scriptDescriptor, classDescriptorForScript);
 
         ClassBuilder classBuilder = classFileFactory.newVisitor("Script.class");
         classBuilder.defineClass(scriptDeclaration,
@@ -77,13 +103,17 @@ public class ScriptCodegen {
                 JdkNames.JL_OBJECT.getInternalName(),
                 new String[0]);
 
-        genConstructor(scriptDeclaration, scriptDescriptor, classBuilder, context);
+        genMembers(scriptDeclaration, context, classBuilder);
+        genConstructor(scriptDeclaration, scriptDescriptor, classDescriptorForScript, classBuilder, context.intoFunction(scriptDescriptor.getScriptCodeDescriptor()));
+
         classBuilder.done();
     }
 
     private void genConstructor(
-            @NotNull JetScript scriptDeclaration, @NotNull ScriptDescriptor scriptDescriptor,
-            @NotNull ClassBuilder classBuilder, @NotNull CodegenContext outerContext) {
+            @NotNull JetScript scriptDeclaration,
+            @NotNull ScriptDescriptor scriptDescriptor,
+            @NotNull ClassDescriptor classDescriptorForScript,
+            @NotNull ClassBuilder classBuilder, @NotNull CodegenContext context) {
 
         Type blockType = jetTypeMapper.mapType(scriptDescriptor.getReturnType(), MapTypeMode.VALUE);
 
@@ -105,8 +135,6 @@ public class ScriptCodegen {
 
         instructionAdapter.load(0, Type.getObjectType("Script"));
 
-        CodegenContext context = outerContext.intoScript(scriptDescriptor);
-
         FrameMap frameMap = context.prepareFrame(jetTypeMapper);
 
         Type[] argTypes = jvmSignature.getAsmMethod().getArgumentTypes();
@@ -117,6 +145,12 @@ public class ScriptCodegen {
             frameMap.enter(parameter, argTypes[i+add].getSize());
         }
 
+        ImplementationBodyCodegen.generateInitializers(
+                new ExpressionCodegen(instructionAdapter, frameMap, Type.VOID_TYPE, context, state),
+                instructionAdapter,
+                scriptDeclaration.getDeclarations(),
+                bindingContext,
+                jetTypeMapper);
 
         StackValue stackValue = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, context, state).gen(scriptDeclaration.getBlockExpression());
         if (stackValue.type != Type.VOID_TYPE) {
@@ -127,5 +161,11 @@ public class ScriptCodegen {
         instructionAdapter.areturn(Type.VOID_TYPE);
         mv.visitMaxs(-1, -1);
         mv.visitEnd();
+    }
+
+    private void genMembers(@NotNull JetScript scriptDeclaration, @NotNull CodegenContext context, @NotNull ClassBuilder classBuilder) {
+        for (JetDeclaration decl : scriptDeclaration.getDeclarations()) {
+            memberCodegen.generateFunctionOrProperty((JetTypeParameterListOwner) decl, context, classBuilder);
+        }
     }
 }

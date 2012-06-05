@@ -71,4 +71,8 @@ public abstract class JetNamedDeclaration extends JetDeclaration implements PsiN
         PsiElement identifier = getNameIdentifier();
         return identifier != null ? identifier.getTextRange().getStartOffset() : getTextRange().getStartOffset();
     }
+
+    public boolean isScriptDeclaration() {
+        return getParent() != null && getParent().getParent() instanceof JetScript;
+    }
 }

@@ -42,7 +42,7 @@ public class ClosureAnnotator {
     private final Map<JetElement, JvmClassName> classNamesForAnonymousClasses = new HashMap<JetElement, JvmClassName>();
     private final Map<ClassDescriptor, JvmClassName> classNamesForClassDescriptor = new HashMap<ClassDescriptor, JvmClassName>();
     private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
-    private final Map<FunctionDescriptor, ClassDescriptorImpl> classesForFunctions = new HashMap<FunctionDescriptor, ClassDescriptorImpl>();
+    private final Map<DeclarationDescriptor, ClassDescriptorImpl> classesForFunctions = new HashMap<DeclarationDescriptor, ClassDescriptorImpl>();
     private final Map<DeclarationDescriptor,ClassDescriptor> enclosing = new HashMap<DeclarationDescriptor, ClassDescriptor>();
 
     private final MultiMap<FqName, JetFile> namespaceName2Files = MultiMap.create();
@@ -82,6 +82,27 @@ public class ClosureAnnotator {
                     Collections.<TypeParameterDescriptor>emptyList(),
                     Collections.singleton((funDescriptor.getReceiverParameter().exists() ? JetStandardClasses.getReceiverFunction(arity) : JetStandardClasses.getFunction(arity)).getDefaultType()), JetScope.EMPTY, Collections.<ConstructorDescriptor>emptySet(), null);
             classesForFunctions.put(funDescriptor, classDescriptor);
+        }
+        return classDescriptor;
+    }
+
+    @NotNull
+    public ClassDescriptor classDescriptorForScrpitDescriptor(@NotNull ScriptDescriptor scriptDescriptor) {
+        ClassDescriptorImpl classDescriptor = classesForFunctions.get(scriptDescriptor);
+        if (classDescriptor == null) {
+            classDescriptor = new ClassDescriptorImpl(
+                    scriptDescriptor,
+                    Collections.<AnnotationDescriptor>emptyList(),
+                    Name.special("<script>"));
+            recordName(classDescriptor, JvmClassName.byInternalName("Script"));
+            classDescriptor.initialize(
+                    false,
+                    Collections.<TypeParameterDescriptor>emptyList(),
+                    Collections.singletonList(JetStandardClasses.getAnyType()),
+                    JetScope.EMPTY,
+                    Collections.<ConstructorDescriptor>emptySet(),
+                    null);
+            classesForFunctions.put(scriptDescriptor, classDescriptor);
         }
         return classDescriptor;
     }

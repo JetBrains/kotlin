@@ -62,6 +62,11 @@ public class AutoCastUtils {
             }
 
             @Override
+            public List<ReceiverDescriptor> visitScriptReceiver(ScriptReceiver receiver, Object data) {
+                return Collections.emptyList();
+            }
+
+            @Override
             public List<ReceiverDescriptor> visitExpressionReceiver(ExpressionReceiver receiver, Object data) {
 //                JetExpression expression = receiver.getExpression();
 //                VariableDescriptor variableDescriptor = DataFlowValueFactory.getVariableDescriptorFromSimpleName(bindingContext, expression);

@@ -99,8 +99,11 @@ public class InjectorForJvmCodegen {
         this.classCodegen.setJetTypeMapper(jetTypeMapper);
         this.classCodegen.setState(generationState);
 
+        this.scriptCodegen.setBindingContext(bindingContext);
         this.scriptCodegen.setClassFileFactory(classFileFactory);
+        this.scriptCodegen.setClosureAnnotator(closureAnnotator);
         this.scriptCodegen.setJetTypeMapper(jetTypeMapper);
+        this.scriptCodegen.setMemberCodegen(memberCodegen);
         this.scriptCodegen.setState(generationState);
 
         this.intrinsics.setMyProject(project);
@@ -111,8 +114,8 @@ public class InjectorForJvmCodegen {
 
         this.memberCodegen.setState(generationState);
 
-        closureAnnotator.setBindingContext(bindingContext);
-        closureAnnotator.setFiles(listOfJetFile);
+        this.closureAnnotator.setBindingContext(bindingContext);
+        this.closureAnnotator.setFiles(listOfJetFile);
 
         jetTypeMapper.init();
 
@@ -156,6 +159,10 @@ public class InjectorForJvmCodegen {
 
     public MemberCodegen getMemberCodegen() {
         return this.memberCodegen;
+    }
+
+    public ClosureAnnotator getClosureAnnotator() {
+        return this.closureAnnotator;
     }
 
 }

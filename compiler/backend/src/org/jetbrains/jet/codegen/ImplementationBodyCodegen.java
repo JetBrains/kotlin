@@ -699,7 +699,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             curParam++;
         }
 
-        generateInitializers(codegen, iv);
+        generateInitializers(codegen, iv, myClass.getDeclarations(), bindingContext, typeMapper);
 
         generateTraitMethods(codegen);
 
@@ -915,8 +915,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    protected void generateInitializers(ExpressionCodegen codegen, InstructionAdapter iv) {
-        for (JetDeclaration declaration : myClass.getDeclarations()) {
+    public static void generateInitializers(@NotNull ExpressionCodegen codegen, @NotNull InstructionAdapter iv, @NotNull List<JetDeclaration> declarations,
+            @NotNull BindingContext bindingContext, @NotNull JetTypeMapper typeMapper) {
+        for (JetDeclaration declaration : declarations) {
             if (declaration instanceof JetProperty) {
                 final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(BindingContext.VARIABLE, declaration);
                 if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {

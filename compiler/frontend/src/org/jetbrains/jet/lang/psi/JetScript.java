@@ -41,6 +41,11 @@ public class JetScript extends JetDeclaration {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, JetImportDirective.class);
     }
 
+    @NotNull
+    public List<JetDeclaration> getDeclarations() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(getBlockExpression(), JetDeclaration.class);
+    }
+
     @Override
     public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitScript(this);

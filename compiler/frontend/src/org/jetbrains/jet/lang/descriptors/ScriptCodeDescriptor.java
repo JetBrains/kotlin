@@ -17,10 +17,14 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Stepan Koltsov
@@ -30,6 +34,13 @@ public class ScriptCodeDescriptor extends FunctionDescriptorImpl {
     public ScriptCodeDescriptor(@NotNull ScriptDescriptor containingDeclaration) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), Name.special("<script-code>"), Kind.DECLARATION);
         setVisibility(Visibilities.LOCAL);
+    }
+
+    public void initialize(
+            @NotNull ReceiverDescriptor expectedThisObject,
+            @NotNull List<ValueParameterDescriptor> valueParameters,
+            @NotNull JetType returnType) {
+        super.initialize(null, expectedThisObject, Collections.<TypeParameterDescriptor>emptyList(), valueParameters, returnType, Modality.FINAL, Visibilities.LOCAL);
     }
 
     @Override

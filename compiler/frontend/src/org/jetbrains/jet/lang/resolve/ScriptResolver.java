@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ScriptReceiver;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -154,6 +155,8 @@ public class ScriptResolver {
             WritableScope scope = context.getScriptScopes().get(declaration);
 
             List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
+
+            scope.setImplicitReceiver(descriptor.getImplicitReceiver());
 
             int index = 0;
             for (AnalyzerScriptParameter scriptParameter : topDownAnalysisParameters.getScriptParameters()) {
