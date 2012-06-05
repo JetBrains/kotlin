@@ -30,7 +30,13 @@ Then, you need to run
 
     ant -f build.xml
     
-which will build the binaries of the comppiler and put them into the 'dist' directory.
+which will build the binaries of the compiler and put them into the 'dist' directory.
+
+Maven distribution is built separately, run
+
+    mvn package
+
+from 'libraries' directory after building the compiler.
 
 ## Working with the project in IDEA
 
