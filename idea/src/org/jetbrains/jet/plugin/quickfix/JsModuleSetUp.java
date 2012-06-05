@@ -16,12 +16,15 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.project.K2JSModuleComponent;
@@ -56,11 +59,22 @@ public final class JsModuleSetUp {
 
         if (!copyJsLibFiles(rootDir)) return;
 
+        setUpK2JSModuleComponent(module);
+
+        restartHighlightingInTheWholeProject(module);
+
+        refreshRootDir(module, continuation);
+    }
+
+    private static void setUpK2JSModuleComponent(@NotNull Module module) {
         K2JSModuleComponent jsModuleComponent = K2JSModuleComponent.getInstance(module);
         jsModuleComponent.setJavaScriptModule(true);
         jsModuleComponent.setPathToJavaScriptLibrary("/lib/" + PathUtil.JS_LIB_JAR_NAME);
+    }
 
-        refreshRootDir(module, continuation);
+    private static void restartHighlightingInTheWholeProject(@NotNull Module module) {
+        ((PsiModificationTrackerImpl) PsiManager.getInstance(module.getProject()).getModificationTracker()).incCounter();
+        DaemonCodeAnalyzer.getInstance(module.getProject()).restart();
     }
 
     private static boolean copyJsLibFiles(@NotNull File rootDir) {
