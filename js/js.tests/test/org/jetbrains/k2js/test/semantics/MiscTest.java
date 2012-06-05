@@ -144,6 +144,9 @@ public final class MiscTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
+    public void testLazyPropertyGetterNotCalledOnStart() throws Exception {
+        checkOutput("lazyProperty.kt", "Hello, world! Gotcha 3");
+    }
 
     public void testExclExclThrows() throws Exception {
         try {
