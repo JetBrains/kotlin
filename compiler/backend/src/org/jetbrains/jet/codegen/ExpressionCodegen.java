@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
@@ -875,7 +876,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         Label blockEnd = new Label();
         v.mark(blockEnd);
 
-        for (JetElement statement : statements) {
+        for (JetElement statement : Lists.reverse(statements)) {
             if(statement instanceof JetNamedFunction) {
                 DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, statement);
                 myFrameMap.leave(descriptor);
