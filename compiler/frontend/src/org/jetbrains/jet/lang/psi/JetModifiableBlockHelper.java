@@ -26,7 +26,9 @@ public final class JetModifiableBlockHelper {
     private JetModifiableBlockHelper() {
     }
 
-    // TODO: Need tests for this method
+    /**
+     * Tested in OutOfBlockModificationTest
+     */
     public static boolean shouldChangeModificationCount(PsiElement place) {
         JetDeclaration declaration = PsiTreeUtil.getParentOfType(place, JetDeclaration.class, true);
         if (declaration != null) {
@@ -38,6 +40,9 @@ public final class JetModifiableBlockHelper {
 
                 return shouldChangeModificationCount(function);
             }
+            else if (declaration instanceof JetPropertyAccessor) {
+                return false;
+            }
             else if (declaration instanceof JetProperty) {
                 JetProperty property = (JetProperty) declaration;
                 if (property.getPropertyTypeRef() != null) {
@@ -47,6 +52,7 @@ public final class JetModifiableBlockHelper {
                 return shouldChangeModificationCount(property);
             }
             else if (declaration instanceof JetFunctionLiteral) {
+                // TODO: Check return type
                 return shouldChangeModificationCount(declaration);
             }
         }
