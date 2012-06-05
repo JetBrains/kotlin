@@ -52,7 +52,7 @@ public class FrameMap {
     }
 
     public int enterTemp() {
-        return myMaxIndex++;
+        return enterTemp(1);
     }
 
     public int enterTemp(int size) {
