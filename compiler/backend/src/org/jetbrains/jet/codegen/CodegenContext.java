@@ -38,7 +38,7 @@ import java.util.LinkedHashMap;
 public abstract class CodegenContext {
 
     @NotNull
-    private final DeclarationDescriptor contextType;
+    private final DeclarationDescriptor contextDescriptor;
 
     private final OwnerKind contextKind;
     @Nullable
@@ -54,8 +54,8 @@ public abstract class CodegenContext {
 
     protected Type outerWasUsed ;
 
-    public CodegenContext(@NotNull DeclarationDescriptor contextType, OwnerKind contextKind, @Nullable CodegenContext parentContext, @Nullable ObjectOrClosureCodegen closureCodegen) {
-        this.contextType = contextType;
+    public CodegenContext(@NotNull DeclarationDescriptor contextDescriptor, OwnerKind contextKind, @Nullable CodegenContext parentContext, @Nullable ObjectOrClosureCodegen closureCodegen) {
+        this.contextDescriptor = contextDescriptor;
         this.contextKind = contextKind;
         this.parentContext = parentContext;
         closure = closureCodegen;
@@ -90,11 +90,11 @@ public abstract class CodegenContext {
     }
 
     public DeclarationDescriptor getContextDescriptor() {
-        return contextType;
+        return contextDescriptor;
     }
 
     public String getNamespaceClassName() {
-        DeclarationDescriptor descriptor = contextType;
+        DeclarationDescriptor descriptor = contextDescriptor;
         while(!(descriptor instanceof NamespaceDescriptor)) {
             descriptor = descriptor.getContainingDeclaration();
         }
@@ -206,7 +206,7 @@ public abstract class CodegenContext {
         if (accessor != null) { return accessor; }
 
         if(descriptor instanceof SimpleFunctionDescriptor) {
-            SimpleFunctionDescriptorImpl myAccessor = new SimpleFunctionDescriptorImpl(contextType,
+            SimpleFunctionDescriptorImpl myAccessor = new SimpleFunctionDescriptorImpl(contextDescriptor,
                     Collections.<AnnotationDescriptor>emptyList(),
                     Name.identifier(descriptor.getName() + "$bridge$" + accessors.size()),
                     CallableMemberDescriptor.Kind.DECLARATION);
@@ -223,7 +223,7 @@ public abstract class CodegenContext {
         }
         else if(descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor pd = (PropertyDescriptor) descriptor;
-            PropertyDescriptor myAccessor = new PropertyDescriptor(contextType,
+            PropertyDescriptor myAccessor = new PropertyDescriptor(contextDescriptor,
                     Collections.<AnnotationDescriptor>emptyList(),
                     pd.getModality(),
                     pd.getVisibility(),
