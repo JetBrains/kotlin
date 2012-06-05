@@ -27,7 +27,7 @@ import java.util.Collections;
  * @author abreslav
  */
 public class ModuleDescriptor extends DeclarationDescriptorImpl implements ClassOrNamespaceDescriptor, NamespaceDescriptorParent {
-    private NamespaceDescriptor rootNs;
+    private NamespaceDescriptor rootNamepsace;
 
     public ModuleDescriptor(Name name) {
         super(null, Collections.<AnnotationDescriptor>emptyList(), name);
@@ -36,15 +36,19 @@ public class ModuleDescriptor extends DeclarationDescriptorImpl implements Class
         }
     }
 
-    public void setRootNs(@NotNull NamespaceDescriptor rootNs) {
-        if (this.rootNs != null) {
-            throw new IllegalStateException();
+    public void setRootNamespace(@NotNull NamespaceDescriptor rootNs) {
+        if (this.rootNamepsace != null) {
+            throw new IllegalStateException("setRootNamespace() is called twice");
         }
-        this.rootNs = rootNs;
+        this.rootNamepsace = rootNs;
     }
 
-    public NamespaceDescriptorImpl getRootNs() {
-        return (NamespaceDescriptorImpl) rootNs;
+    public NamespaceDescriptor getRootNamespace() {
+        return rootNamepsace;
+    }
+
+    public NamespaceDescriptorImpl getRootNamespaceDescriptorImpl() {
+        return (NamespaceDescriptorImpl) rootNamepsace;
     }
 
     @NotNull
@@ -64,7 +68,7 @@ public class ModuleDescriptor extends DeclarationDescriptorImpl implements Class
         if (namespaceDescriptor.getContainingDeclaration() != this) {
             throw new IllegalStateException();
         }
-        setRootNs(namespaceDescriptor);
+        setRootNamespace(namespaceDescriptor);
     }
 
 }

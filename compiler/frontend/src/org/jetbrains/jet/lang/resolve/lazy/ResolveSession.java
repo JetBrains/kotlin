@@ -62,7 +62,7 @@ public class ResolveSession {
         DeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(FqName.ROOT);
         assert provider != null : "No declaration provider for root package in " + rootDescriptor;
         this.rootPackage = new LazyPackageDescriptor(rootDescriptor, FqNameUnsafe.ROOT_NAME, this, provider);
-        rootDescriptor.setRootNs(rootPackage);
+        rootDescriptor.setRootNamespace(rootPackage);
 
         this.declarationProviderFactory = declarationProviderFactory;
     }

@@ -51,7 +51,7 @@ public class JetStandardClasses {
             FAKE_STANDARD_CLASSES_MODULE, Collections.<AnnotationDescriptor>emptyList(), FqNameUnsafe.ROOT_NAME);
 
     static {
-        FAKE_STANDARD_CLASSES_MODULE.setRootNs(STANDARD_CLASSES_FAKE_ROOT_NS);
+        FAKE_STANDARD_CLASSES_MODULE.setRootNamespace(STANDARD_CLASSES_FAKE_ROOT_NS);
         //WritableScopeImpl writableScope =
         //        new WritableScopeImpl(JetScope.EMPTY, FAKE_STANDARD_CLASSES_MODULE, RedeclarationHandler.DO_NOTHING);
         //STANDARD_CLASSES_FAKE_ROOT_NS.initialize(writableScope);

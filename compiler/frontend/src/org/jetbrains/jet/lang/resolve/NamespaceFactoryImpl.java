@@ -71,11 +71,11 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
                                                                          @NotNull RedeclarationHandler handler) {
         JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
 
-        if (moduleDescriptor.getRootNs() == null) {
+        if (moduleDescriptor.getRootNamespaceDescriptorImpl() == null) {
             createRootNamespaceDescriptorIfNeeded(null, moduleDescriptor, null, handler);
         }
 
-        NamespaceDescriptorImpl currentOwner = moduleDescriptor.getRootNs();
+        NamespaceDescriptorImpl currentOwner = moduleDescriptor.getRootNamespaceDescriptorImpl();
         if (currentOwner == null) {
             throw new IllegalStateException("must be initialized 5 lines above");
         }
@@ -97,7 +97,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
         Name name;
         if (namespaceHeader.isRoot()) {
             // previous call to createRootNamespaceDescriptorIfNeeded couldn't store occurrence for current file.
-            namespaceDescriptor = moduleDescriptor.getRootNs();
+            namespaceDescriptor = moduleDescriptor.getRootNamespaceDescriptorImpl();
             storeBindingForFileAndExpression(file, null, namespaceDescriptor);
         }
         else {
@@ -143,7 +143,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
                                                                           @Nullable JetReferenceExpression expression,
                                                                           @NotNull RedeclarationHandler handler) {
         FqName fqName = FqName.ROOT;
-        NamespaceDescriptorImpl namespaceDescriptor = owner.getRootNs();
+        NamespaceDescriptorImpl namespaceDescriptor = owner.getRootNamespaceDescriptorImpl();
 
         if (namespaceDescriptor == null) {
             namespaceDescriptor = createNewNamespaceDescriptor(owner, FqNameUnsafe.ROOT_NAME, expression, handler, fqName);
