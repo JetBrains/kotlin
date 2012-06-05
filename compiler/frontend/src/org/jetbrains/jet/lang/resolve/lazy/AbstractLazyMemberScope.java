@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
@@ -42,6 +43,8 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     private final Map<Name, ClassDescriptor> classDescriptors = Maps.newHashMap();
     private final Map<Name, Set<FunctionDescriptor>> functionDescriptors = Maps.newHashMap();
     private final Map<Name, Set<VariableDescriptor>> propertyDescriptors = Maps.newHashMap();
+
+    private final List<DeclarationDescriptor> allDescriptors = Lists.newArrayList();
 
     protected AbstractLazyMemberScope(
             @NotNull ResolveSession resolveSession,
@@ -70,6 +73,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         ClassDescriptor classDescriptor = new LazyClassDescriptor(resolveSession, thisDescriptor, name, classMemberDeclarationProvider);
 
         classDescriptors.put(name, classDescriptor);
+        allDescriptors.add(classDescriptor);
 
         return classDescriptor;
     }
@@ -108,6 +112,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
         if (!result.isEmpty()) {
             functionDescriptors.put(name, result);
+            allDescriptors.addAll(result);
         }
         return result;
     }
@@ -140,6 +145,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
         if (!result.isEmpty()) {
             propertyDescriptors.put(name, result);
+            allDescriptors.addAll(result);
         }
         return result;
     }
@@ -177,8 +183,25 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
+        for (JetDeclaration declaration : declarationProvider.getAllDeclarations()) {
+            if (declaration instanceof JetClassOrObject) {
+                JetClassOrObject classOrObject = (JetClassOrObject) declaration;
+                getClassifier(classOrObject.getNameAsName());
+            }
+            else if (declaration instanceof JetFunction) {
+                JetFunction function = (JetFunction) declaration;
+                getFunctions(function.getNameAsSafeName());
+            }
+            else if (declaration instanceof JetProperty) {
+                JetProperty property = (JetProperty) declaration;
+                getProperties(property.getNameAsSafeName());
+            }
+            else {
+                throw new IllegalArgumentException("Unsupported declaration kind: " + declaration);
+            }
+        }
         allDescriptorsComputed = true;
-        throw new UnsupportedOperationException(); // TODO
+        return allDescriptors;
     }
 
     @Override
