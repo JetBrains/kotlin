@@ -29,8 +29,8 @@ public inline fun <T> compareValues(a: T?, b: T?): Int {
     if (a === b) return 0
     if (a == null) return - 1
     if (b == null) return 1
-    if (a is Comparable<T>) {
-        return a.compareTo(b)
+    if (a is Comparable<*>) {
+        return (a as Comparable<Any?>).compareTo(b)
     }
     if (a == b) {
         return 0
