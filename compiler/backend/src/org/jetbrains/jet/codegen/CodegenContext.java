@@ -81,7 +81,9 @@ public abstract class CodegenContext {
     }
 
     protected StackValue getOuterExpression(@Nullable StackValue prefix) {
-        if (outerExpression == null) { throw new UnsupportedOperationException(); }
+        if (outerExpression == null) {
+            throw new UnsupportedOperationException();
+        }
 
         outerWasUsed = outerExpression.type;
         return prefix != null ? StackValue.composed(prefix, outerExpression) : outerExpression;
@@ -171,7 +173,9 @@ public abstract class CodegenContext {
 
     public Type enclosingClassType(JetTypeMapper typeMapper) {
         CodegenContext cur = getParentContext();
-        while (cur != null && !(cur.getContextDescriptor() instanceof ClassDescriptor)) { cur = cur.getParentContext(); }
+        while (cur != null && !(cur.getContextDescriptor() instanceof ClassDescriptor)) {
+            cur = cur.getParentContext();
+        }
 
         return cur == null ? null : typeMapper.mapType(((ClassDescriptor) cur.getContextDescriptor()).getDefaultType(), MapTypeMode.IMPL);
     }
