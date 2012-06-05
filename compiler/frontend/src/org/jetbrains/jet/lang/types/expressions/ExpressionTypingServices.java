@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptorUtil;
+import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
@@ -193,6 +194,13 @@ public class ExpressionTypingServices {
         }
 
         DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
+        if (containingDescriptor instanceof ScriptDescriptor) {
+            if (!(expression.getParent() instanceof JetScript)) {
+                // top level script declarations should have ScriptDescriptor parent
+                // and lower level script declarations should be ScriptCodeDescriptor parent
+                containingDescriptor = ((ScriptDescriptor) containingDescriptor).getScriptCodeDescriptor();
+            }
+        }
         WritableScope scope = new WritableScopeImpl(outerScope, containingDescriptor, new TraceBasedRedeclarationHandler(context.trace)).setDebugName("getBlockReturnedType");
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
         return getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context, trace);

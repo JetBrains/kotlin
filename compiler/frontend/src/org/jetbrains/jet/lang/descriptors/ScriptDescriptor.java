@@ -35,6 +35,8 @@ public class ScriptDescriptor extends DeclarationDescriptorImpl {
     private JetType returnType;
     private List<ValueParameterDescriptor> valueParameters;
 
+    private final ScriptCodeDescriptor scriptCodeDescriptor = new ScriptCodeDescriptor(this);
+
     public ScriptDescriptor(@Nullable DeclarationDescriptor containingDeclaration) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), NAME);
     }
@@ -52,6 +54,11 @@ public class ScriptDescriptor extends DeclarationDescriptorImpl {
     @NotNull
     public List<ValueParameterDescriptor> getValueParameters() {
         return valueParameters;
+    }
+
+    @NotNull
+    public ScriptCodeDescriptor getScriptCodeDescriptor() {
+        return scriptCodeDescriptor;
     }
 
     @Override
