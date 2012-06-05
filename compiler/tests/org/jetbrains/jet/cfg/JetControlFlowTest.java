@@ -56,7 +56,7 @@ public class JetControlFlowTest extends JetLiteFixture {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.STDLIB);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class JetControlFlowTest extends JetLiteFixture {
         JetFile file = loadPsiFile(myName + ".jet");
 
         final Map<JetElement, Pseudocode> data = new LinkedHashMap<JetElement, Pseudocode>();
-        AnalyzeExhaust analyzeExhaust = JetTestUtils.analyzeFile(file);
+        AnalyzeExhaust analyzeExhaust = JetTestUtils.analyzeFile(file, CompilerSpecialMode.JDK_HEADERS);
         List<JetDeclaration> declarations = file.getDeclarations();
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
         for (JetDeclaration declaration : declarations) {

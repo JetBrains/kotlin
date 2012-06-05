@@ -170,9 +170,9 @@ public class JetTestUtils {
     private JetTestUtils() {
     }
 
-    public static AnalyzeExhaust analyzeFile(@NotNull JetFile namespace) {
+    public static AnalyzeExhaust analyzeFile(@NotNull JetFile namespace, @NotNull CompilerSpecialMode compilerSpecialMode) {
         return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(namespace, Collections.<AnalyzerScriptParameter>emptyList(),
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true));
+                CompileCompilerDependenciesTest.compilerDependenciesForTests(compilerSpecialMode, true));
     }
 
     public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable) {
