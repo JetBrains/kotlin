@@ -1,6 +1,5 @@
 // Be aware — Google Chrome has serious issue — you can rewrite READ-ONLY property (if it is defined in prototype). Firefox and Safari work correct.
 // Always test property access issues in Firefox, but not in Chrome.
-
 var Kotlin = {};
 
 (function () {
