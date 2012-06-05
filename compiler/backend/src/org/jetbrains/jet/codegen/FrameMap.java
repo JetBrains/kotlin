@@ -16,11 +16,14 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.google.common.collect.Lists;
 import gnu.trove.TObjectIntHashMap;
 import gnu.trove.TObjectIntIterator;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -98,4 +101,53 @@ public class FrameMap {
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        if (myVarIndex.size() != myVarSizes.size()) {
+            return "inconsistent";
+        }
+
+        class Tuple3<A, B, C> {
+            private final A _1;
+            private final B _2;
+            private final C _3;
+
+            Tuple3(A _1, B _2, C _3) {
+                this._1 = _1;
+                this._2 = _2;
+                this._3 = _3;
+            }
+        }
+
+        List<Tuple3<DeclarationDescriptor, Integer, Integer>> descriptors = Lists.newArrayList();
+
+        for (Object descriptor0 : myVarIndex.keys()) {
+            DeclarationDescriptor descriptor = (DeclarationDescriptor) descriptor0;
+            int varIndex = myVarIndex.get(descriptor);
+            int varSize = myVarSizes.get(descriptor);
+            descriptors.add(new Tuple3<DeclarationDescriptor, Integer, Integer>(descriptor, varIndex, varSize));
+        }
+
+        Collections.sort(descriptors, new Comparator<Tuple3<DeclarationDescriptor, Integer, Integer>>() {
+            @Override
+            public int compare(Tuple3<DeclarationDescriptor, Integer, Integer> left, Tuple3<DeclarationDescriptor, Integer, Integer> right) {
+                return left._2 - right._2;
+            }
+        });
+
+        sb.append("size=" + myMaxIndex);
+
+        boolean first = true;
+        for (Tuple3<DeclarationDescriptor, Integer, Integer> t : descriptors) {
+            if (!first) {
+                sb.append(", ");
+            }
+            first = false;
+            sb.append(t._1 + ",i=" + t._2 + ",s=" + t._3);
+        }
+
+        return sb.toString();
+    }
 }
