@@ -43,16 +43,20 @@ class AlternativeSignatureParsing {
 
             @Override
             public JetType visitFunctionType(JetFunctionType type, Void data) {
-                return autoType;    //TODO
+                return visitCommonType(type);
             }
 
             @Override
             public JetType visitTupleType(JetTupleType type, Void data) {
-                return autoType;    //TODO
+                return visitCommonType(type);
             }
 
             @Override
             public JetType visitUserType(JetUserType type, Void data) {
+                return visitCommonType(type);
+            }
+
+            public JetType visitCommonType(JetTypeElement type) {
                 List<TypeProjection> arguments = autoType.getArguments();
                 List<TypeProjection> altArguments = new ArrayList<TypeProjection>();
                 for (int i = 0, size = arguments.size(); i < size; i++) {
