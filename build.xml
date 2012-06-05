@@ -1,9 +1,9 @@
 <project name="Kotlin" default="dist">
 
     <!-- Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build -->
-    <property name="shrink" value="true"/>
+    <property name="shrink" value="false"/>
     <!-- Set to false to disable compiler's javadoc generation. Speeds up the build -->
-    <property name="generate.javadoc" value="true"/>
+    <property name="generate.javadoc" value="false"/>
 
     <property name="output" value="${basedir}/dist"/>
     <property name="kotlin-home" value="${output}/kotlinc"/>
@@ -141,7 +141,7 @@
       <jar jarfile="${kotlin-home}/lib/kotlin-jslib.jar">
         <fileset dir = "${basedir}/js/js.libraries/src"/>
       </jar>
-      <copy file="${basedir}/js/js.translator/testFiles/kotlin_lib.js" tofile="${kotlin-home}/lib/kotlinLib.js"/>
+      <copy file="${basedir}/js/js.translator/testFiles/kotlinFullLib_ecma3.js" tofile="${kotlin-home}/lib/kotlinLib.js"/>
     </target>
 
     <target name="compiler">
