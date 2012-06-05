@@ -38,7 +38,7 @@ public final class AnalyzerFacadeProvider {
 
     @NotNull
     public static AnalyzerFacade getAnalyzerFacadeForFile(@NotNull JetFile file) {
-        VirtualFile virtualFile = file.getVirtualFile();
+        VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();
         if (virtualFile == null) {
             logErrorIfNotTests("No virtual file for " + file.getName() + " with text:\n" + file.getText());
             return getDefaultAnalyzerFacade();
