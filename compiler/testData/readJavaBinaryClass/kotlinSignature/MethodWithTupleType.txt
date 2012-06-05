@@ -1,0 +1,6 @@
+namespace test
+
+open class test.MethodWithTupleType : java.lang.Object {
+    final /*constructor*/ fun <init>(): test.MethodWithTupleType
+    open fun foo(/*0*/ p0: jet.Tuple2<jet.String, jet.String?>): jet.Tuple0
+}

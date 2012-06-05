@@ -1,0 +1,6 @@
+namespace test
+
+open class test.MethodWithFunctionTypes : java.lang.Object {
+    final /*constructor*/ fun <init>(): test.MethodWithFunctionTypes
+    open fun foo(/*0*/ p0: jet.Function1<jet.String?, jet.String>): jet.ExtensionFunction0<jet.String, jet.String?>?
+}
