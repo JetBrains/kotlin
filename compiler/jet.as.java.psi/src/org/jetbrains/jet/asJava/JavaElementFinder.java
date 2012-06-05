@@ -31,10 +31,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.JavaPsiFacadeKotlinHacks;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
@@ -252,7 +252,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         
         if (cachedFiles == null) {
             cachedFiles = JetFilesProvider.getInstance(project).allInScope(scope);
-             jetFiles.put(scope, cachedFiles);
+            jetFiles.put(scope, cachedFiles);
         }
 
         return cachedFiles;

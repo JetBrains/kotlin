@@ -20,9 +20,12 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.JetFile;
 
 /**
  * @author Pavel Talanov
@@ -39,6 +42,18 @@ public final class JsModuleDetector {
 
     public static boolean isJsModule(@NotNull Module module) {
         return K2JSModuleComponent.getInstance(module).isJavaScriptModule();
+    }
+
+    public static boolean isJsModule(@NotNull JetFile file) {
+        VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();
+        if (virtualFile != null) {
+            Module module = ProjectRootManager.getInstance(file.getProject()).getFileIndex().getModuleForFile(virtualFile);
+            if (module != null) {
+                return isJsModule(module);
+            }
+        }
+
+        return false;
     }
 
     @NotNull

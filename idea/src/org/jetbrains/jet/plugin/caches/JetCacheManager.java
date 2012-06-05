@@ -20,6 +20,7 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.PsiShortNamesCache;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 
 /**
@@ -67,8 +68,8 @@ public class JetCacheManager implements ProjectComponent {
         return myCache;
     }
 
-    public PsiShortNamesCache getShortNamesCache() {
-        if (JsModuleDetector.isJsProject(myProject)) {
+    public PsiShortNamesCache getShortNamesCache(@NotNull JetFile jetFile) {
+        if (JsModuleDetector.isJsModule(jetFile)) {
             return myCache;
         }
 

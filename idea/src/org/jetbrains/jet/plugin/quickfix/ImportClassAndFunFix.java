@@ -155,18 +155,16 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
         final GlobalSearchScope scope = GlobalSearchScope.allScope(file.getProject());
         Set<FqName> possibleResolveNames = Sets.newHashSet();
 
-        possibleResolveNames.addAll(getJavaClasses(referenceName, file.getProject(), scope));
+        possibleResolveNames.addAll(getClassesFromCache(referenceName, file));
 
         // TODO: Do appropriate sorting
         return Lists.newArrayList(possibleResolveNames);
     }
 
-    private static Collection<FqName> getJavaClasses(@NotNull final String typeName,
-            @NotNull Project project,
-            final GlobalSearchScope scope) {
-        PsiShortNamesCache cache = JetCacheManager.getInstance(project).getShortNamesCache();
+    private static Collection<FqName> getClassesFromCache(@NotNull final String typeName, @NotNull JetFile file) {
+        PsiShortNamesCache cache = JetCacheManager.getInstance(file.getProject()).getShortNamesCache(file);
 
-        PsiClass[] classes = cache.getClassesByName(typeName, scope);
+        PsiClass[] classes = cache.getClassesByName(typeName, GlobalSearchScope.allScope(file.getProject()));
 
         Collection<PsiClass> accessibleClasses = Collections2.filter(Lists.newArrayList(classes), new Predicate<PsiClass>() {
             @Override
@@ -190,7 +188,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
 
     private static boolean isAccessible(PsiMember member) {
         if (member instanceof JetLightClass) {
-            // TODO: Now light class can't losing accessibility information
+            // TODO: Now light classes losing accessibility information
             JetLightClass lightClass = (JetLightClass) member;
             BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) lightClass.getContainingFile()).getBindingContext();
             ClassDescriptor descriptor = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, lightClass.getFqName());

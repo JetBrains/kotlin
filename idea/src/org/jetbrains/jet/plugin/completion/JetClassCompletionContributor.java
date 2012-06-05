@@ -94,7 +94,7 @@ public class JetClassCompletionContributor extends CompletionContributor {
             consumer.consume(DescriptorLookupConverter.createLookupElement(bindingContext, jetOnlyClass));
         }
 
-        if (!JsModuleDetector.isJsProject(parameters.getOriginalFile().getProject())) {
+        if (!JsModuleDetector.isJsModule((JetFile)parameters.getOriginalFile())) {
             JavaClassNameCompletionContributor.addAllClasses(
                     parameters,
                     false,
@@ -119,12 +119,14 @@ public class JetClassCompletionContributor extends CompletionContributor {
         }
         else {
             GlobalSearchScope globalSearchScope = GlobalSearchScope.allScope(parameters.getOriginalFile().getProject());
-            PsiShortNamesCache cache = JetCacheManager.getInstance(parameters.getOriginalFile().getProject()).getShortNamesCache();
+            PsiShortNamesCache cache = JetCacheManager.getInstance(parameters.getOriginalFile().getProject()).getShortNamesCache(
+                    (JetFile) parameters.getOriginalFile());
+
             for (String className : cache.getAllClassNames()) {
                 if (result.getPrefixMatcher().prefixMatches(className)) {
                     for (PsiClass aClass : cache.getClassesByName(className, globalSearchScope)) {
                         if (!addAsJetLookupElement(aClass, bindingContext, consumer)) {
-                            assert false;
+                            assert false : "All classes should be possible to add as kotlin classes in JS project";
                         }
                     }
                 }
