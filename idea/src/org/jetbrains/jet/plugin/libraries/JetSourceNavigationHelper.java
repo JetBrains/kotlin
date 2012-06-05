@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -71,7 +72,7 @@ public class JetSourceNavigationHelper {
         }
         final Project project = declaration.getProject();
         final List<JetFile> libraryFiles = findAllSourceFilesWhichContainIdentifier(declaration);
-        BindingContext bindingContext = AnalyzerFacadeProvider.getAnalyzerFacadeForProject().analyzeFiles(
+        BindingContext bindingContext = AnalyzerFacadeForJVM.INSTANCE.analyzeFiles(
                 project,
                 libraryFiles,
                 Collections.<AnalyzerScriptParameter>emptyList(),

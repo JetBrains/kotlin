@@ -70,10 +70,4 @@ public final class AnalyzerFacadeProvider {
         }
         return AnalyzerFacadeForJVM.INSTANCE;
     }
-
-    //TODO should remove all calls to this method
-    @NotNull
-    public static AnalyzerFacade getAnalyzerFacadeForProject() {
-        return AnalyzerFacadeForJVM.INSTANCE;
-    }
 }
