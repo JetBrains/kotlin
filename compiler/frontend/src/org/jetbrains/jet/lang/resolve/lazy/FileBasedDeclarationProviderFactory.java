@@ -39,7 +39,7 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
 
     private final Multimap<FqName, JetFile> filesByPackage = HashMultimap.create();
     private final Set<FqName> definedPackages = Sets.newHashSet();
-    private final Map<FqName, DeclarationProvider> packageDeclarationProviders = Maps.newHashMap();
+    private final Map<FqName, PackageMemberDeclarationProvider> packageDeclarationProviders = Maps.newHashMap();
     private final Map<JetClassOrObject, ClassMemberDeclarationProvider> classMemberDeclarationProviders = Maps.newHashMap();
 
     private boolean indexed = false;
@@ -77,10 +77,10 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
     }
 
     @Override
-    public DeclarationProvider getPackageMemberDeclarationProvider(@NotNull FqName packageFqName) {
+    public PackageMemberDeclarationProvider getPackageMemberDeclarationProvider(@NotNull FqName packageFqName) {
         createIndex();
 
-        DeclarationProvider declarationProvider = packageDeclarationProviders.get(packageFqName);
+        PackageMemberDeclarationProvider declarationProvider = packageDeclarationProviders.get(packageFqName);
         if (declarationProvider != null) {
             return declarationProvider;
         }

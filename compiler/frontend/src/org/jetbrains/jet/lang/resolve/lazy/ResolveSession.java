@@ -59,7 +59,7 @@ public class ResolveSession {
     ) {
         this.injector = new InjectorForLazyResolve(project, this, trace);
         this.module = rootDescriptor;
-        DeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(FqName.ROOT);
+        PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(FqName.ROOT);
         assert provider != null : "No declaration provider for root package in " + rootDescriptor;
         this.rootPackage = new LazyPackageDescriptor(rootDescriptor, FqNameUnsafe.ROOT_NAME, this, provider);
         rootDescriptor.setRootNamespace(rootPackage);

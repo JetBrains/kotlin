@@ -40,6 +40,4 @@ public interface DeclarationProvider {
 
     @Nullable
     JetClassOrObject getClassOrObjectDeclaration(@NotNull Name name);
-
-    boolean isPackageDeclared(@NotNull Name name);
 }

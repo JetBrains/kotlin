@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClassObject;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 /**
  * @author abreslav
@@ -56,10 +55,5 @@ public class PsiBasedClassMemberDeclarationProvider extends AbstractPsiBasedDecl
     public JetClassObject getClassObject() {
         createIndex();
         return jetClassObject;
-    }
-
-    @Override
-    public boolean isPackageDeclared(@NotNull Name name) {
-        throw new UnsupportedOperationException("Shouldn't be called on a ClassMemberDeclarationProvider");
     }
 }

@@ -17,17 +17,12 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 /**
  * @author abreslav
  */
-public interface DeclarationProviderFactory {
-    @NotNull
-    ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull JetClassOrObject jetClassOrObject);
+public interface PackageMemberDeclarationProvider extends DeclarationProvider {
 
-    @Nullable
-    PackageMemberDeclarationProvider getPackageMemberDeclarationProvider(@NotNull FqName packageFqName);
+    boolean isPackageDeclared(@NotNull Name name);
 }

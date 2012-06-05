@@ -34,12 +34,12 @@ import java.util.Set;
 /**
 * @author abreslav
 */
-public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDescriptor, DeclarationProvider> {
+public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDescriptor, PackageMemberDeclarationProvider> {
 
     private final Map<Name, NamespaceDescriptor> packageDescriptors = Maps.newHashMap();
 
     public LazyPackageMemberScope(@NotNull ResolveSession resolveSession,
-            @NotNull DeclarationProvider declarationProvider,
+            @NotNull PackageMemberDeclarationProvider declarationProvider,
             @NotNull NamespaceDescriptor thisPackage) {
         super(resolveSession, declarationProvider, thisPackage);
     }
@@ -52,7 +52,7 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDes
 
         if (!declarationProvider.isPackageDeclared(name)) return null;
 
-        DeclarationProvider packageMemberDeclarationProvider = resolveSession.getDeclarationProviderFactory().getPackageMemberDeclarationProvider(
+        PackageMemberDeclarationProvider packageMemberDeclarationProvider = resolveSession.getDeclarationProviderFactory().getPackageMemberDeclarationProvider(
                 DescriptorUtils.getFQName(thisDescriptor).child(name).toSafe());
         assert packageMemberDeclarationProvider != null : "Package is declared, but declaration provider is not found: " + name;
         NamespaceDescriptor namespaceDescriptor = new LazyPackageDescriptor(thisDescriptor, name, resolveSession, packageMemberDeclarationProvider);

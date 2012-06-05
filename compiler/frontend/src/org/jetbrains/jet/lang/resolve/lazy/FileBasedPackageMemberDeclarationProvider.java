@@ -26,7 +26,7 @@ import java.util.Collection;
 /**
  * @author abreslav
  */
-public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedDeclarationProvider {
+public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedDeclarationProvider implements PackageMemberDeclarationProvider {
 
     private final FqName fqName;
     private final FileBasedDeclarationProviderFactory factory;

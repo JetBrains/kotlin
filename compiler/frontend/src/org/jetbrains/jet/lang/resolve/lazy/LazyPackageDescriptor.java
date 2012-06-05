@@ -38,7 +38,7 @@ public class LazyPackageDescriptor extends AbstractNamespaceDescriptorImpl imple
             @NotNull NamespaceDescriptorParent containingDeclaration,
             @NotNull Name name,
             @NotNull ResolveSession resolveSession,
-            @NotNull DeclarationProvider declarationProvider
+            @NotNull PackageMemberDeclarationProvider declarationProvider
     ) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), name);
         this.memberScope = new LazyPackageMemberScope(resolveSession, declarationProvider, this);
