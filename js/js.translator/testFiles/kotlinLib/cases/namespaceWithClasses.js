@@ -16,7 +16,7 @@
 
 {
   classes = function(){
-    var A = Kotlin.Class.create({initialize:function(){
+    var A = Kotlin.createClass({initialize:function(){
       this.$order = '';
       {
         this.set_order(this.get_order() + 'A');
@@ -29,14 +29,14 @@
       return this.$order;
     }
     });
-    var B = Kotlin.Class.create(A, {initialize:function(){
+    var B = Kotlin.createClass(A, {initialize:function(){
       this.super_init();
       {
         this.set_order(this.get_order() + 'B');
       }
     }
     });
-    var C = Kotlin.Class.create(B, {initialize:function(){
+    var C = Kotlin.createClass(B, {initialize:function(){
       this.super_init();
       {
         this.set_order(this.get_order() + 'C');
@@ -46,7 +46,7 @@
     return {A:A, B:B, C:C};
   }
   ();
-  foo = Kotlin.Namespace.create(classes, {initialize:function(){
+  foo = Kotlin.createNamespace(classes, {initialize:function(){
   }
   , box:function(){
     return (new foo.C).get_order() === 'ABC' && (new foo.B).get_order() === 'AB' && (new foo.A).get_order() === 'A';

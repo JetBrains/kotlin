@@ -17,8 +17,7 @@
 package org.jetbrains.k2js.translate.declaration;
 
 import com.google.common.collect.Lists;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.backend.js.ast.JsStatement;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -28,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
@@ -88,7 +88,7 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     private List<JsStatement> namespacesDeclarations() {
         List<JsStatement> result = Lists.newArrayList();
         List<NamespaceTranslator> namespaceTranslators = getTranslatorsForNonEmptyNamespaces();
-        result.addAll(declarationStatements(namespaceTranslators));
+        result.addAll(declarationStatements(namespaceTranslators, context()));
         result.addAll(initializeStatements(namespaceTranslators));
         return result;
     }
@@ -103,10 +103,19 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private static List<JsStatement> declarationStatements(@NotNull List<NamespaceTranslator> namespaceTranslators) {
+    private static List<JsStatement> declarationStatements(@NotNull List<NamespaceTranslator> namespaceTranslators, TranslationContext context) {
         List<JsStatement> result = Lists.newArrayList();
+
+        JsNameRef defs = JsAstUtils.qualified(context.jsScope().declareName("defs"), context.namer().kotlinObject());
         for (NamespaceTranslator translator : namespaceTranslators) {
-            result.add(translator.getDeclarationAsVar());
+            JsVars vars = translator.getDeclarationAsVar();
+
+            JsVars.JsVar var = vars.iterator().next();
+            JsNameRef ref = new JsNameRef(var.getName());
+            ref.setQualifier(defs);
+
+            result.add(vars);
+            result.add(JsAstUtils.assignment(ref, new JsNameRef(var.getName())).makeStmt());
         }
         return result;
     }

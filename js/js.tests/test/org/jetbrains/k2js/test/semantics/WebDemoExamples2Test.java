@@ -18,8 +18,6 @@ package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
-import static org.jetbrains.k2js.test.utils.JsTestUtils.failsOnEcmaV5;
-
 /**
  * @author Pavel Talanov
  */
@@ -35,11 +33,11 @@ public final class WebDemoExamples2Test extends SingleFileTranslationTest {
     }
 
     public void testLife() throws Exception {
-        performTestWithMain(failsOnEcmaV5(), "life", "", "2");
+        performTestWithMain("life", "", "2");
     }
 
     public void testBuilder() throws Exception {
-        performTestWithMain(failsOnEcmaV5(), "builder", "");
-        performTestWithMain(failsOnEcmaV5(), "builder", "1", "over9000");
+        performTestWithMain("builder", "");
+        performTestWithMain("builder", "1", "over9000");
     }
 }
