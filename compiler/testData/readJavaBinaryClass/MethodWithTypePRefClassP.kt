@@ -1,5 +1,5 @@
 package test
 
-open class MethodWithTypePRefClassP<erased P>() : java.lang.Object() {
-    fun <erased Q : P> f() = #()
+open class MethodWithTypePRefClassP<P>() : java.lang.Object() {
+    fun <Q : P> f() = #()
 }

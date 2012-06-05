@@ -1,7 +1,7 @@
 package test
 
-class Outer<erased P>() : java.lang.Object() {
+class Outer<P>() : java.lang.Object() {
     class Inner() : java.lang.Object() {
-        fun f<erased Q : P>() {}
+        fun f<Q : P>() {}
     }
 }

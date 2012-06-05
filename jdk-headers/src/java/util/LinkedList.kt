@@ -1,5 +1,5 @@
 package java.util
-public open class LinkedList<erased E>(c : java.util.Collection<out E>) : java.util.AbstractSequentialList<E>(),
+public open class LinkedList<E>(c : java.util.Collection<out E>) : java.util.AbstractSequentialList<E>(),
                                     java.util.List<E>,
                                     java.util.Deque<E>,
                                     java.lang.Cloneable,
@@ -44,7 +44,7 @@ public open class LinkedList<erased E>(c : java.util.Collection<out E>) : java.u
     public override fun descendingIterator() : java.util.Iterator<E> {}
     public override fun clone() : Any? {}
     public override fun toArray() : Array<Any?> {}
-    public override fun toArray<erased T>(a : Array<out T>) : Array<T> {}
+    public override fun toArray<T>(a : Array<out T>) : Array<T> {}
 //class object {
 //open public fun init<E>(c : java.util.Collection<out E?>?) : LinkedList<E> {
 //return __

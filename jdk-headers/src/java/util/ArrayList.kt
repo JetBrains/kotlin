@@ -1,5 +1,5 @@
 package java.util
-public open class ArrayList<erased E>(c : java.util.Collection<out E>) : java.util.AbstractList<E>(),
+public open class ArrayList<E>(c : java.util.Collection<out E>) : java.util.AbstractList<E>(),
                                                         java.util.List<E>,
                                                         java.util.RandomAccess,
                                                         java.lang.Cloneable,
@@ -15,7 +15,7 @@ public open class ArrayList<erased E>(c : java.util.Collection<out E>) : java.ut
     public override fun lastIndexOf(o : Any?) : Int {}
     public override fun clone() : java.lang.Object {}
     public override fun toArray() : Array<Any?> {}
-    public override fun toArray<erased T>(a : Array<out T>) : Array<T> {}
+    public override fun toArray<T>(a : Array<out T>) : Array<T> {}
     public override fun get(index : Int) : E {}
     public override fun set(index : Int, element : E) : E {}
     public override fun add(e : E) : Boolean {}

@@ -1,5 +1,5 @@
 package java.util
-public open class HashSet<erased E>(c : java.util.Collection<out E>) : java.util.AbstractSet<E>(),
+public open class HashSet<E>(c : java.util.Collection<out E>) : java.util.AbstractSet<E>(),
                                                                        java.util.Set<E>,
                                                                        java.lang.Cloneable,
                                                                        java.io.Serializable {

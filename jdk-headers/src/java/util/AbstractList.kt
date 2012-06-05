@@ -1,5 +1,5 @@
 package java.util
-public abstract class AbstractList<erased E> protected () : java.util.AbstractCollection<E>(), java.util.List<E> {
+public abstract class AbstractList<E> protected () : java.util.AbstractCollection<E>(), java.util.List<E> {
     public override fun add(e : E) : Boolean {}
     public abstract override fun get(index : Int) : E
     public override fun set(index : Int, element : E) : E {}

@@ -1,7 +1,7 @@
 namespace test
 
-open class test.Base</*0,r*/ T : jet.Any?> : jet.Any {
-    final /*constructor*/ fun </*0,r*/ T : jet.Any?><init>(): test.Base<T>
+open class test.Base</*0*/ T : jet.Any?> : jet.Any {
+    final /*constructor*/ fun </*0*/ T : jet.Any?><init>(): test.Base<T>
     final fun foo(): T
 }
 final class test.Inh : test.Base<jet.String> {

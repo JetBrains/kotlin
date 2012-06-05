@@ -1,5 +1,5 @@
 package java.util
-public abstract class AbstractSequentialList<erased E> protected () : java.util.AbstractList<E>() {
+public abstract class AbstractSequentialList<E> protected () : java.util.AbstractList<E>() {
     public override fun get(index : Int) : E {}
     public override fun set(index : Int, element : E) : E {}
     public override fun add(index : Int, element : E) : Unit {}

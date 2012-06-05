@@ -2,7 +2,7 @@ package java.util
 
 import java.util.Map.Entry
 
-public abstract class AbstractMap<erased K, erased V> protected () : java.lang.Object(), java.util.Map<K, V> {
+public abstract class AbstractMap<K, V> protected () : java.lang.Object(), java.util.Map<K, V> {
     public override fun size() : Int {}
     public override fun isEmpty() : Boolean {}
     public override fun containsValue(value : Any?) : Boolean {}

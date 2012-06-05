@@ -1,5 +1,5 @@
 package java.util
-public trait Queue<erased E> : java.util.Collection<E> {
+public trait Queue<E> : java.util.Collection<E> {
     override fun add(e : E) : Boolean
     open fun offer(e : E) : Boolean
     open fun remove() : E

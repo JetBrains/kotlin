@@ -553,14 +553,14 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
 
         protected void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder, boolean topLevel) {
-            if (descriptor.isReified()) {
+            if (!descriptor.isReified()) {
                 String variance = descriptor.getVariance().toString();
                 if (!variance.isEmpty()) {
                     builder.append(renderKeyword(variance)).append(" ");
                 }
             }
             else {
-                builder.append(renderKeyword("erased")).append(" ");
+                builder.append(renderKeyword("reified")).append(" ");
             }
             renderName(descriptor, builder);
             if (descriptor.getUpperBounds().size() == 1) {

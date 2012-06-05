@@ -1,6 +1,6 @@
 package java.util
 
-public trait Map<erased K, erased V> {
+public trait Map<K, V> {
     open fun size() : Int
     open fun isEmpty() : Boolean
     open fun containsKey(key : Any?) : Boolean

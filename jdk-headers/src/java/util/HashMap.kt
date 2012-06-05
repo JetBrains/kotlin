@@ -1,7 +1,7 @@
 package java.util
 import java.io.*
 import java.util.Map.Entry
-public open class HashMap<erased K, erased V>(m : java.util.Map<out K, out V>) : java.util.AbstractMap<K, V>(),
+public open class HashMap<K, V>(m : java.util.Map<out K, out V>) : java.util.AbstractMap<K, V>(),
                                                                                  java.util.Map<K, V>,
                                                                                  java.lang.Cloneable,
                                                                                  java.io.Serializable {

@@ -1,6 +1,6 @@
 namespace test
 
-abstract trait test.Aaa</*0,r*/ P : jet.Any?> : jet.Any {
+abstract trait test.Aaa</*0*/ P : jet.Any?> : jet.Any {
 }
 final class test.Bbb : test.Aaa<java.util.Random> {
     final /*constructor*/ fun <init>(): test.Bbb

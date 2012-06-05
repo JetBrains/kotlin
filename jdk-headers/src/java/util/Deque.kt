@@ -1,5 +1,5 @@
 package java.util
-public trait Deque<erased E> : java.util.Queue<E> {
+public trait Deque<E> : java.util.Queue<E> {
     open fun addFirst(e : E) : Unit
     open fun addLast(e : E) : Unit
     open fun offerFirst(e : E) : Boolean
