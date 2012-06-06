@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.project;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -40,25 +39,18 @@ public final class AnalyzerFacadeProvider {
     public static AnalyzerFacade getAnalyzerFacadeForFile(@NotNull JetFile file) {
         VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();
         if (virtualFile == null) {
-            logErrorIfNotTests("No virtual file for " + file.getName() + " with text:\n" + file.getText());
             return getDefaultAnalyzerFacade();
         }
         Module moduleForFile = ProjectFileIndex.SERVICE.getInstance(file.getProject()).getModuleForFile(virtualFile);
         if (moduleForFile == null) {
-            logErrorIfNotTests("File " + virtualFile.getPath() + " is not under any module. Cannot determine which facade to use.");
             return getDefaultAnalyzerFacade();
         }
         return getAnalyzerFacadeForModule(moduleForFile);
     }
 
-    private static void logErrorIfNotTests(@NotNull String message) {
-        if (!ApplicationManager.getApplication().isUnitTestMode()) {
-            LOG.error(message);
-        }
-    }
-
     @NotNull
     private static AnalyzerFacade getDefaultAnalyzerFacade() {
+        //TODO: should deal with situations when we can't determine whether to use java or js backend more carefully
         LOG.info("Using default analyzer facade");
         return AnalyzerFacadeForJVM.INSTANCE;
     }
