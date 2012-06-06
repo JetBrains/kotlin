@@ -111,8 +111,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @NotNull
     public JetScope getScopeForClassHeaderResolution() {
         if (scopeForClassHeaderResolution == null) {
-            WritableScopeImpl scope = new WritableScopeImpl(resolveSession.getResolutionScope(declarationProvider.getOwnerClassOrObject()), this, RedeclarationHandler.DO_NOTHING)
-                    .setDebugName("Class Header Resolution");
+            WritableScopeImpl scope = new WritableScopeImpl(
+                    resolveSession.getResolutionScope(declarationProvider.getOwnerClassOrObject()), this, RedeclarationHandler.DO_NOTHING, "Class Header Resolution");
             for (TypeParameterDescriptor typeParameterDescriptor : getTypeConstructor().getParameters()) {
                 scope.addClassifierDescriptor(typeParameterDescriptor);
             }
@@ -124,8 +124,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     public JetScope getScopeForMemberDeclarationResolution() {
         if (scopeForMemberDeclarationResolution == null) {
-            WritableScopeImpl scope = new WritableScopeImpl(getScopeForClassHeaderResolution(), this, RedeclarationHandler.DO_NOTHING)
-                    .setDebugName("Member Declaration Resolution");
+            WritableScopeImpl scope = new WritableScopeImpl(
+                    getScopeForClassHeaderResolution(), this, RedeclarationHandler.DO_NOTHING, "Member Declaration Resolution");
 
             // TODO : supertypes etc
 

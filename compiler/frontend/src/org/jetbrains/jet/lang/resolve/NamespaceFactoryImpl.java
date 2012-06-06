@@ -187,7 +187,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
         );
         trace.record(FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName, namespaceDescriptor);
 
-        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, handler).setDebugName("Namespace member scope");
+        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, handler, "Namespace member scope");
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
         namespaceDescriptor.initialize(scope);

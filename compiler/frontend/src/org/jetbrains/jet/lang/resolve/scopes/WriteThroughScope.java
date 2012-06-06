@@ -36,8 +36,9 @@ public class WriteThroughScope extends WritableScopeWithImports {
     private final WritableScope writableWorker;
     private Collection<DeclarationDescriptor> allDescriptors;
 
-    public WriteThroughScope(@NotNull JetScope outerScope, @NotNull WritableScope scope, @NotNull RedeclarationHandler redeclarationHandler) {
-        super(outerScope, redeclarationHandler);
+    public WriteThroughScope(@NotNull JetScope outerScope, @NotNull WritableScope scope,
+            @NotNull RedeclarationHandler redeclarationHandler, @NotNull String debugName) {
+        super(outerScope, redeclarationHandler, debugName);
         this.writableWorker = scope;
     }
 

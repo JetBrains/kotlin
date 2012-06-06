@@ -526,7 +526,8 @@ public class BodyResolver {
 
         JetScope propertyDeclarationInnerScope = descriptorResolver.getPropertyDeclarationInnerScope(
                 declaringScope, propertyDescriptor.getTypeParameters(), propertyDescriptor.getReceiverParameter(), trace);
-        WritableScope accessorScope = new WritableScopeImpl(propertyDeclarationInnerScope, declaringScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(trace)).setDebugName("Accessor scope");
+        WritableScope accessorScope = new WritableScopeImpl(
+                propertyDeclarationInnerScope, declaringScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(trace), "Accessor scope");
         accessorScope.changeLockLevel(WritableScope.LockLevel.READING);
 
         return accessorScope;

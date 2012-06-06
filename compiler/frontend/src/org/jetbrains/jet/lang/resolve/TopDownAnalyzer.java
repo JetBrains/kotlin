@@ -276,7 +276,7 @@ public class TopDownAnalyzer {
             @NotNull List<AnalyzerScriptParameter> scriptParameters) {
         final WritableScope scope = new WritableScopeImpl(
                 JetScope.EMPTY, moduleDescriptor,
-                new TraceBasedRedeclarationHandler(trace)).setDebugName("Root scope in analyzeNamespace");
+                new TraceBasedRedeclarationHandler(trace), "Root scope in analyzeNamespace");
 
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 

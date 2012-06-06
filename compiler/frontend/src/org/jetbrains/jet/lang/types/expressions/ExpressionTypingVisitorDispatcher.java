@@ -115,7 +115,7 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetType, Expre
     }
     
     private ExpressionTypingVisitorForStatements createStatementVisitor(ExpressionTypingContext context) {
-        return new ExpressionTypingVisitorForStatements(this, ExpressionTypingUtils.newWritableScopeImpl(context).setDebugName("statement scope"), basic, controlStructures, patterns);
+        return new ExpressionTypingVisitorForStatements(this, ExpressionTypingUtils.newWritableScopeImpl(context, "statement scope"), basic, controlStructures, patterns);
     }
 
     @Override

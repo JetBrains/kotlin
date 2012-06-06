@@ -58,7 +58,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         JetType knownType = facade.safeGetType(leftHandSide, context.replaceScope(context.scope));
         JetPattern pattern = expression.getPattern();
         if (pattern != null) {
-            WritableScopeImpl scopeToExtend = newWritableScopeImpl(context).setDebugName("Scope extended in 'is'");
+            WritableScopeImpl scopeToExtend = newWritableScopeImpl(context, "Scope extended in 'is'");
             DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(leftHandSide, knownType, context.trace.getBindingContext());
             DataFlowInfo newDataFlowInfo = checkPatternType(pattern, knownType, false, scopeToExtend, context, dataFlowValue);
             context.patternsToDataFlowInfo.put(pattern, newDataFlowInfo);
@@ -90,7 +90,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             DataFlowInfo newDataFlowInfo;
             WritableScope scopeToExtend;
             if (conditions.length == 1) {
-                scopeToExtend = newWritableScopeImpl(context).setDebugName("Scope extended in when entry");
+                scopeToExtend = newWritableScopeImpl(context, "Scope extended in when entry");
                 newDataFlowInfo = context.dataFlowInfo;
                 JetWhenCondition condition = conditions[0];
                 if (condition != null) {
@@ -98,10 +98,12 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 }
             }
             else {
-                scopeToExtend = newWritableScopeImpl(context); // We don't write to this scope
+                scopeToExtend = newWritableScopeImpl(context, "pattern matching"); // We don't write to this scope
                 newDataFlowInfo = null;
                 for (JetWhenCondition condition : conditions) {
-                    DataFlowInfo dataFlowInfo = checkWhenCondition(subjectExpression, subjectExpression == null, subjectType, condition, newWritableScopeImpl(context), context, variableDescriptor);
+                    DataFlowInfo dataFlowInfo = checkWhenCondition(
+                            subjectExpression, subjectExpression == null, subjectType, condition,
+                            newWritableScopeImpl(context, ""), context, variableDescriptor);
                     if (newDataFlowInfo == null) {
                         newDataFlowInfo = dataFlowInfo;
                     }

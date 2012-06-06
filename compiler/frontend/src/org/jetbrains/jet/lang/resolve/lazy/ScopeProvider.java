@@ -58,7 +58,8 @@ public class ScopeProvider {
             throw new IllegalStateException("Package not found: " + fqName + " maybe the file is not in scope of this resolve session: " + file.getName());
         }
 
-        WritableScope writableScope = new WritableScopeImpl(JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING);
+        WritableScope writableScope = new WritableScopeImpl(
+                JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING, "file scope for declaration resollution");
         writableScope.importScope(packageDescriptor.getMemberScope());
 
         // TODO: imports
@@ -75,7 +76,8 @@ public class ScopeProvider {
         JetScope memberScope = classDescriptor.getDefaultType().getMemberScope();
         JetScope outerScope = getResolutionScopeForDeclaration((JetDeclaration) classOrObject);
 
-        WritableScope typeParametersScope = new WritableScopeImpl(JetScope.EMPTY, classDescriptor, RedeclarationHandler.DO_NOTHING);
+        WritableScope typeParametersScope = new WritableScopeImpl(
+                JetScope.EMPTY, classDescriptor, RedeclarationHandler.DO_NOTHING, "scope for class member resolution");
         for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getTypeConstructor().getParameters()) {
             typeParametersScope.addClassifierDescriptor(typeParameterDescriptor);
         }

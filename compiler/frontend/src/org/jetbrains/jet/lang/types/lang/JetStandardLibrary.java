@@ -145,7 +145,9 @@ public class JetStandardLibrary {
             }
 
             BindingTraceContext bindingTraceContext = new BindingTraceContext();
-            WritableScopeImpl writableScope = new WritableScopeImpl(JetStandardClasses.STANDARD_CLASSES, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, RedeclarationHandler.THROW_EXCEPTION).setDebugName("Root bootstrap scope");
+            WritableScopeImpl writableScope = new WritableScopeImpl(
+                    JetStandardClasses.STANDARD_CLASSES, JetStandardClasses.STANDARD_CLASSES_NAMESPACE,
+                    RedeclarationHandler.THROW_EXCEPTION, "Root bootstrap scope");
             writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
             TopDownAnalyzer.processStandardLibraryNamespace(project, bindingTraceContext, writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, files);
 

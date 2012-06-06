@@ -78,8 +78,9 @@ public class ExpressionTypingUtils {
     }
 
     @NotNull
-    public static WritableScopeImpl newWritableScopeImpl(ExpressionTypingContext context) {
-        WritableScopeImpl scope = new WritableScopeImpl(context.scope, context.scope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(context.trace));
+    public static WritableScopeImpl newWritableScopeImpl(ExpressionTypingContext context, @NotNull String scopeDebugName) {
+        WritableScopeImpl scope = new WritableScopeImpl(
+                context.scope, context.scope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(context.trace), scopeDebugName);
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
         return scope;
     }

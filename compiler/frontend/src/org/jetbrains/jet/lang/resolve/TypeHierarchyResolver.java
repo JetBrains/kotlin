@@ -205,7 +205,7 @@ public class TypeHierarchyResolver {
                     context.getNamespaceDescriptors().put(file, namespaceDescriptor);
 
                     WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(),
-                                                                             new TraceBasedRedeclarationHandler(trace));
+                                                                             new TraceBasedRedeclarationHandler(trace), "namespace");
                     namespaceScope.changeLockLevel(WritableScope.LockLevel.BOTH);
                     context.getNamespaceScopes().put(file, namespaceScope);
 

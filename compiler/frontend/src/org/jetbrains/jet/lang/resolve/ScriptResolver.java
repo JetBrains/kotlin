@@ -138,7 +138,7 @@ public class ScriptResolver {
         ScriptDescriptor scriptDescriptor = new ScriptDescriptor(ns);
         //WriteThroughScope scriptScope = new WriteThroughScope(
         //        outerScope, ns.getMemberScope(), new TraceBasedRedeclarationHandler(trace));
-        WritableScopeImpl scriptScope = new WritableScopeImpl(outerScope, scriptDescriptor, RedeclarationHandler.DO_NOTHING);
+        WritableScopeImpl scriptScope = new WritableScopeImpl(outerScope, scriptDescriptor, RedeclarationHandler.DO_NOTHING, "script");
         scriptScope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
         context.getScriptScopes().put(script, scriptScope);

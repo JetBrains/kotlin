@@ -201,7 +201,8 @@ public class ExpressionTypingServices {
                 containingDescriptor = ((ScriptDescriptor) containingDescriptor).getScriptCodeDescriptor();
             }
         }
-        WritableScope scope = new WritableScopeImpl(outerScope, containingDescriptor, new TraceBasedRedeclarationHandler(context.trace)).setDebugName("getBlockReturnedType");
+        WritableScope scope = new WritableScopeImpl(
+                outerScope, containingDescriptor, new TraceBasedRedeclarationHandler(context.trace), "getBlockReturnedType");
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
         return getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context, trace);
     }

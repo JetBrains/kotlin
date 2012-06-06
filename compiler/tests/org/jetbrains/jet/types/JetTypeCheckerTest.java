@@ -590,7 +590,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     private WritableScopeImpl addImports(JetScope scope) {
-        WritableScopeImpl writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING);
+        WritableScopeImpl writableScope = new WritableScopeImpl(
+                scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
         writableScope.importScope(library.getLibraryScope());
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
                 myEnvironment.getCompilerDependencies(), getProject());
@@ -694,7 +695,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
             trace.record(BindingContext.CLASS, classElement, classDescriptor);
 
-            final WritableScope parameterScope = new WritableScopeImpl(scope, classDescriptor, new TraceBasedRedeclarationHandler(trace));
+            final WritableScope parameterScope = new WritableScopeImpl(
+                    scope, classDescriptor, new TraceBasedRedeclarationHandler(trace), "JetTypeCheckerTest.resolveClassDescriptor");
             parameterScope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
             // This call has side-effects on the parameterScope (fills it in)
@@ -714,7 +716,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     //        }
             boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
 
-            final WritableScope memberDeclarations = new WritableScopeImpl(JetScope.EMPTY, classDescriptor, new TraceBasedRedeclarationHandler(trace));
+            final WritableScope memberDeclarations = new WritableScopeImpl(
+                    JetScope.EMPTY, classDescriptor, new TraceBasedRedeclarationHandler(trace), "JetTypeCheckerTest.resolveClassDescriptor");
             memberDeclarations.changeLockLevel(WritableScope.LockLevel.BOTH);
 
             List<JetDeclaration> declarations = classElement.getDeclarations();

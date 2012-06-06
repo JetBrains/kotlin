@@ -66,8 +66,9 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @Nullable
     private ReceiverDescriptor implicitReceiver;
 
-    public WritableScopeImpl(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner, @NotNull RedeclarationHandler redeclarationHandler) {
-        super(scope, redeclarationHandler);
+    public WritableScopeImpl(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner,
+            @NotNull RedeclarationHandler redeclarationHandler, @NotNull String debugName) {
+        super(scope, redeclarationHandler, debugName);
         this.ownerDeclarationDescriptor = owner;
     }
 
@@ -517,14 +518,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     public boolean hasDeclaredItems() {
         return variableClassOrNamespaceDescriptors != null  && !variableClassOrNamespaceDescriptors.isEmpty();
-    }
-
-    @Override
-    public WritableScopeImpl setDebugName(@NotNull String debugName) {
-        checkMayWrite();
-
-        super.setDebugName(debugName);
-        return this;
     }
 
     private void addToDeclared(DeclarationDescriptor descriptor) {

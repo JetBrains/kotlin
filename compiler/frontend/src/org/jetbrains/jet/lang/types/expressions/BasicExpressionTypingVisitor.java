@@ -968,11 +968,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
             else if (operationType == JetTokens.ANDAND || operationType == JetTokens.OROR) {
                 JetType leftType = facade.getType(left, context.replaceScope(context.scope));
-                WritableScopeImpl leftScope = newWritableScopeImpl(context).setDebugName("Left scope of && or ||");
+                WritableScopeImpl leftScope = newWritableScopeImpl(context, "Left scope of && or ||");
                 DataFlowInfo flowInfoLeft = DataFlowUtils.extractDataFlowInfoFromCondition(left, operationType == JetTokens.ANDAND, leftScope, context);  // TODO: This gets computed twice: here and in extractDataFlowInfoFromCondition() for the whole condition
                 WritableScopeImpl rightScope = operationType == JetTokens.ANDAND
                                                ? leftScope
-                                               : newWritableScopeImpl(context).setDebugName("Right scope of && or ||");
+                                               : newWritableScopeImpl(context, "Right scope of && or ||");
                 JetType rightType = right == null
                                     ? null
                                     : facade.getType(right, context.replaceDataFlowInfo(flowInfoLeft).replaceScope(rightScope));

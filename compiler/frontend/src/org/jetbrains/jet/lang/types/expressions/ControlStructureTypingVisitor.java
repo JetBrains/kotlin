@@ -89,8 +89,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetExpression elseBranch = expression.getElse();
         JetExpression thenBranch = expression.getThen();
 
-        WritableScopeImpl thenScope = newWritableScopeImpl(context).setDebugName("Then scope");
-        WritableScopeImpl elseScope = newWritableScopeImpl(context).setDebugName("Else scope");
+        WritableScopeImpl thenScope = newWritableScopeImpl(context, "Then scope");
+        WritableScopeImpl elseScope = newWritableScopeImpl(context, "Else scope");
         DataFlowInfo thenInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, thenScope, context);
         DataFlowInfo elseInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, null, context);
 
@@ -152,7 +152,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         checkCondition(context.scope, condition, context);
         JetExpression body = expression.getBody();
         if (body != null) {
-            WritableScopeImpl scopeToExtend = newWritableScopeImpl(context).setDebugName("Scope extended in while's condition");
+            WritableScopeImpl scopeToExtend = newWritableScopeImpl(context, "Scope extended in while's condition");
             DataFlowInfo conditionInfo = condition == null ? context.dataFlowInfo : DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, scopeToExtend, context);
             context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(scopeToExtend, Collections.singletonList(body), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(conditionInfo), context.trace);
         }
@@ -199,7 +199,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         if (body instanceof JetFunctionLiteralExpression) {
             JetFunctionLiteralExpression function = (JetFunctionLiteralExpression) body;
             if (!function.getFunctionLiteral().hasParameterSpecification()) {
-                WritableScope writableScope = newWritableScopeImpl(context).setDebugName("do..while body scope");
+                WritableScope writableScope = newWritableScopeImpl(context, "do..while body scope");
                 conditionScope = writableScope;
                 context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(writableScope, function.getFunctionLiteral().getBodyExpression().getStatements(), CoercionStrategy.NO_COERCION, context, context.trace);
                 context.trace.record(BindingContext.BLOCK, function);
@@ -209,7 +209,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         else if (body != null) {
-            WritableScope writableScope = newWritableScopeImpl(context).setDebugName("do..while body scope");
+            WritableScope writableScope = newWritableScopeImpl(context, "do..while body scope");
             conditionScope = writableScope;
             List<JetElement> block;
             if (body instanceof JetBlockExpression) {
@@ -247,7 +247,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
         }
 
-        WritableScope loopScope = newWritableScopeImpl(context).setDebugName("Scope with for-loop index");
+        WritableScope loopScope = newWritableScopeImpl(context, "Scope with for-loop index");
 
         if (loopParameter != null) {
             JetTypeReference typeReference = loopParameter.getTypeReference();
@@ -417,7 +417,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 JetType throwableType = JetStandardLibrary.getInstance().getThrowable().getDefaultType();
                 DataFlowUtils.checkType(variableDescriptor.getType(), catchParameter, context.replaceExpectedType(throwableType));
                 if (catchBody != null) {
-                    WritableScope catchScope = newWritableScopeImpl(context).setDebugName("Catch scope");
+                    WritableScope catchScope = newWritableScopeImpl(context, "Catch scope");
                     catchScope.addVariableDescriptor(variableDescriptor);
                     JetType type = facade.getType(catchBody, context.replaceScope(catchScope));
                     if (type != null) {

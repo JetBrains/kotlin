@@ -70,7 +70,8 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
                     Collections.<AnalyzerScriptParameter>emptyList(),
                                                 myEnvironment.getCompilerDependencies());
             DeclarationDescriptor classDescriptor = bindingContext.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
-            WritableScopeImpl scope = new WritableScopeImpl(libraryScope, root, RedeclarationHandler.DO_NOTHING);
+            WritableScopeImpl scope = new WritableScopeImpl(
+                    libraryScope, root, RedeclarationHandler.DO_NOTHING, "JetDefaultModalityModifiersTest");
             assert classDescriptor instanceof ClassifierDescriptor;
             scope.addClassifierDescriptor((ClassifierDescriptor) classDescriptor);
             scope.changeLockLevel(WritableScope.LockLevel.READING);

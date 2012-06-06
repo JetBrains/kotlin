@@ -183,7 +183,7 @@ public class DescriptorResolver {
                 JetPsiUtil.safeName(function.getName()),
                 CallableMemberDescriptor.Kind.DECLARATION
         );
-        WritableScope innerScope = new WritableScopeImpl(scope, functionDescriptor, new TraceBasedRedeclarationHandler(trace)).setDebugName("Function descriptor header scope");
+        WritableScope innerScope = new WritableScopeImpl(scope, functionDescriptor, new TraceBasedRedeclarationHandler(trace), "Function descriptor header scope");
         innerScope.addLabeledDeclaration(functionDescriptor);
 
         List<TypeParameterDescriptorImpl> typeParameterDescriptors = resolveTypeParameters(functionDescriptor, innerScope, function.getTypeParameters(), trace);
@@ -586,7 +586,8 @@ public class DescriptorResolver {
 
     public JetScope getPropertyDeclarationInnerScope(@NotNull JetScope outerScope, @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @NotNull ReceiverDescriptor receiver, BindingTrace trace) {
-        WritableScopeImpl result = new WritableScopeImpl(outerScope, outerScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(trace)).setDebugName("Property declaration inner scope");
+        WritableScopeImpl result = new WritableScopeImpl(
+                outerScope, outerScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(trace), "Property declaration inner scope");
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
             result.addTypeParameterDescriptor(typeParameterDescriptor);
         }
@@ -627,7 +628,8 @@ public class DescriptorResolver {
                 typeParameterDescriptors = Collections.emptyList();
             }
             else {
-                WritableScope writableScope = new WritableScopeImpl(scope, containingDeclaration, new TraceBasedRedeclarationHandler(trace)).setDebugName("Scope with type parameters of a property");
+                WritableScope writableScope = new WritableScopeImpl(
+                        scope, containingDeclaration, new TraceBasedRedeclarationHandler(trace), "Scope with type parameters of a property");
                 typeParameterDescriptors = resolveTypeParameters(containingDeclaration, writableScope, typeParameters, trace);
                 writableScope.changeLockLevel(WritableScope.LockLevel.READING);
                 resolveGenericBounds(property, writableScope, typeParameterDescriptors, trace);
@@ -882,7 +884,8 @@ public class DescriptorResolver {
                 isPrimary
         );
         trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor);
-        WritableScopeImpl parameterScope = new WritableScopeImpl(scope, classDescriptor, new TraceBasedRedeclarationHandler(trace)).setDebugName("Scope with value parameters of a constructor");
+        WritableScopeImpl parameterScope = new WritableScopeImpl(
+                scope, classDescriptor, new TraceBasedRedeclarationHandler(trace), "Scope with value parameters of a constructor");
         parameterScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         return constructorDescriptor.initialize(
                 typeParameters,

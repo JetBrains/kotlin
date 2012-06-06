@@ -155,7 +155,7 @@ public class JetStandardClasses {
                     STANDARD_CLASSES_NAMESPACE,
                     Collections.<AnnotationDescriptor>emptyList(),
                     Name.identifier("Tuple" + i));
-            WritableScopeImpl writableScope = new WritableScopeImpl(JetScope.EMPTY, classDescriptor, RedeclarationHandler.THROW_EXCEPTION);
+            WritableScopeImpl writableScope = new WritableScopeImpl(JetScope.EMPTY, classDescriptor, RedeclarationHandler.THROW_EXCEPTION, "tuples");
             for (int j = 0; j < i; j++) {
                 TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptorImpl.createWithDefaultBound(
                         classDescriptor,
@@ -229,7 +229,7 @@ public class JetStandardClasses {
     }
 
     private static WritableScope createScopeForInvokeFunction(ClassDescriptorImpl function, SimpleFunctionDescriptorImpl invoke) {
-        WritableScope scopeForInvoke = new WritableScopeImpl(STUB, function, RedeclarationHandler.THROW_EXCEPTION).setDebugName("Scope for function type");
+        WritableScope scopeForInvoke = new WritableScopeImpl(STUB, function, RedeclarationHandler.THROW_EXCEPTION, "Scope for function type");
         scopeForInvoke.addFunctionDescriptor(invoke);
         scopeForInvoke.changeLockLevel(WritableScope.LockLevel.READING);
         return scopeForInvoke;
@@ -262,7 +262,7 @@ public class JetStandardClasses {
     public static final Name UNIT_ALIAS = Name.identifier("Unit");
 
     static {
-        WritableScope writableScope = new WritableScopeImpl(JetScope.EMPTY, STANDARD_CLASSES_NAMESPACE, RedeclarationHandler.DO_NOTHING).setDebugName("JetStandardClasses.STANDARD_CLASSES");
+        WritableScope writableScope = new WritableScopeImpl(JetScope.EMPTY, STANDARD_CLASSES_NAMESPACE, RedeclarationHandler.DO_NOTHING, "JetStandardClasses.STANDARD_CLASSES");
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
         STANDARD_CLASSES = writableScope;

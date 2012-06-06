@@ -33,16 +33,18 @@ import java.util.Set;
  */
 public abstract class WritableScopeWithImports extends JetScopeAdapter implements WritableScope {
 
-    private String debugName;
+    @NotNull
+    private final String debugName;
 
     @Nullable
     private List<JetScope> imports;
     private WritableScope currentIndividualImportScope;
     protected final RedeclarationHandler redeclarationHandler;
 
-    public WritableScopeWithImports(@NotNull JetScope scope, @NotNull RedeclarationHandler redeclarationHandler) {
+    public WritableScopeWithImports(@NotNull JetScope scope, @NotNull RedeclarationHandler redeclarationHandler, @NotNull String debugName) {
         super(scope);
         this.redeclarationHandler = redeclarationHandler;
+        this.debugName = debugName;
     }
 
 
@@ -78,14 +80,6 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
 
 
-
-    public WritableScopeWithImports setDebugName(@NotNull String debugName) {
-        checkMayWrite();
-
-        assert this.debugName == null : this.debugName;
-        this.debugName = debugName;
-        return this;
-    }
 
     @NotNull
     protected final List<JetScope> getImports() {
@@ -205,7 +199,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
     private WritableScope getCurrentIndividualImportScope() {
         if (currentIndividualImportScope == null) {
-            WritableScopeImpl writableScope = new WritableScopeImpl(EMPTY, getContainingDeclaration(), RedeclarationHandler.DO_NOTHING).setDebugName("Individual import scope");
+            WritableScopeImpl writableScope = new WritableScopeImpl(EMPTY, getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "Individual import scope");
             writableScope.changeLockLevel(LockLevel.BOTH);
             importScope(writableScope);
             currentIndividualImportScope = writableScope;

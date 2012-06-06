@@ -53,14 +53,11 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
 
         RedeclarationHandler redeclarationHandler = RedeclarationHandler.DO_NOTHING;
 
-        setScopeForMemberLookup(new WritableScopeImpl(JetScope.EMPTY, this, redeclarationHandler)
-                                        .setDebugName("MemberLookup")
+        setScopeForMemberLookup(new WritableScopeImpl(JetScope.EMPTY, this, redeclarationHandler, "MemberLookup")
                                         .changeLockLevel(WritableScope.LockLevel.BOTH));
-        this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, redeclarationHandler)
-                .setDebugName("SupertypeResolution")
+        this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, redeclarationHandler, "SupertypeResolution")
                 .changeLockLevel(WritableScope.LockLevel.BOTH);
-        this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, redeclarationHandler)
-                .setDebugName("MemberResolution")
+        this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, redeclarationHandler, "MemberResolution")
                 .changeLockLevel(WritableScope.LockLevel.BOTH);
         if (getKind() == ClassKind.TRAIT) {
             setUpScopeForInitializers(this);
@@ -153,7 +150,9 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     }
 
     private void setUpScopeForInitializers(@NotNull DeclarationDescriptor containingDeclaration) {
-        this.scopeForInitializers = new WritableScopeImpl(scopeForMemberResolution, containingDeclaration, RedeclarationHandler.DO_NOTHING).setDebugName("Initializers").changeLockLevel(WritableScope.LockLevel.BOTH);
+        this.scopeForInitializers = new WritableScopeImpl(
+                scopeForMemberResolution, containingDeclaration, RedeclarationHandler.DO_NOTHING, "Initializers")
+                    .changeLockLevel(WritableScope.LockLevel.BOTH);
     }
 
     @Override
