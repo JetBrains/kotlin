@@ -298,6 +298,12 @@ public class TopDownAnalyzer {
     }
 
 
+    public void prepareForTheNextReplLine() {
+        context.getScriptScopes().clear();
+        context.getScripts().clear();
+    }
+
+
 }
 
 
