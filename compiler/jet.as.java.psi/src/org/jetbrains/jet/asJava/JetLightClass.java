@@ -52,8 +52,10 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
+import org.jetbrains.jet.utils.Progress;
 
 import javax.swing.*;
+import java.util.Collection;
 import java.util.Collections;
 
 public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMarker {
@@ -178,7 +180,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
 
         final GenerationState state = new GenerationState(project, builderFactory, context, Collections.singletonList(file)) {
             @Override
-            protected void generateNamespace(JetFile namespace) {
+            protected void generateNamespace(FqName fqName, Collection<JetFile> namespace, CompilationErrorHandler errorHandler, Progress progress) {
                 PsiManager manager = PsiManager.getInstance(project);
                 stubStack.push(answer);
 
@@ -195,7 +197,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
                 fakeFile.setPhysical(false);
                 answer.setPsi(fakeFile);
 
-                super.generateNamespace(namespace);
+                super.generateNamespace(fqName, namespace, errorHandler, progress);
                 final StubElement pop = stubStack.pop();
                 if (pop != answer) {
                     LOG.error("Unbalanced stack operations: " + pop);

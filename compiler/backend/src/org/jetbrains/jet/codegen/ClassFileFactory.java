@@ -61,13 +61,12 @@ public class ClassFileFactory {
         return newVisitor(className.getInternalName() + ".class");
     }
 
-    NamespaceCodegen forNamespace(JetFile file) {
+    NamespaceCodegen forNamespace(FqName fqName, Collection<JetFile> files) {
         assert !isDone : "Already done!";
-        FqName fqName = JetPsiUtil.getFQName(file);
         NamespaceCodegen codegen = ns2codegen.get(fqName);
         if (codegen == null) {
             final ClassBuilder builder = newVisitor(NamespaceCodegen.getJVMClassNameForKotlinNs(fqName).getInternalName() + ".class");
-            codegen = new NamespaceCodegen(builder, fqName, state, file.getContainingFile());
+            codegen = new NamespaceCodegen(builder, fqName, state, files);
             ns2codegen.put(fqName, codegen);
         }
 

@@ -119,42 +119,25 @@ public class GenerationState {
         return Pair.create(className, getFactory().forAnonymousSubclass(className));
     }
 
-    public NamespaceCodegen forNamespace(JetFile namespace) {
-        return getFactory().forNamespace(namespace);
+    public NamespaceCodegen forNamespace(FqName fqName, Collection<JetFile> namespace) {
+        return getFactory().forNamespace(fqName, namespace);
     }
 
     public void compileCorrectFiles(@NotNull CompilationErrorHandler errorHandler) {
-        MultiMap<String, JetFile> namespaceGrouping = new MultiMap<String, JetFile>();
+        MultiMap<FqName, JetFile> namespaceGrouping = new MultiMap<FqName, JetFile>();
         for (JetFile file : this.files) {
             if (file == null) throw new IllegalArgumentException("A null file given for compilation");
-            namespaceGrouping.putValue(JetPsiUtil.getFQName(file).getFqName(), file);
+            namespaceGrouping.putValue(JetPsiUtil.getFQName(file), file);
         }
 
-        for (Map.Entry<String, Collection<JetFile>> entry : namespaceGrouping.entrySet()) {
-            for (JetFile file : entry.getValue()) {
-                VirtualFile vFile = file.getVirtualFile();
-                String path = vFile != null ? vFile.getPath() : "no_virtual_file/" + file.getName();
-                progress.log("For source: " + path + "\tFor namespace: " + entry.getKey());
-                try {
-                    generateNamespace(file);
-                }
-                catch (ProcessCanceledException e) {
-                    throw e;
-                }
-                catch (Throwable e) {
-                    errorHandler.reportException(e, vFile == null ? "no file" : vFile.getUrl());
-                    DiagnosticUtils.throwIfRunningOnServer(e);
-                    if (ApplicationManager.getApplication().isInternal()) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+        for (Map.Entry<FqName, Collection<JetFile>> entry : namespaceGrouping.entrySet()) {
+            generateNamespace(entry.getKey(), entry.getValue(), errorHandler, progress);
         }
     }
 
-    protected void generateNamespace(JetFile namespace) {
-        NamespaceCodegen codegen = forNamespace(namespace);
-        codegen.generate(namespace);
+    protected void generateNamespace(FqName fqName, Collection<JetFile> namespace, CompilationErrorHandler errorHandler, Progress progress) {
+        NamespaceCodegen codegen = forNamespace(fqName, namespace);
+        codegen.generate(errorHandler, progress);
     }
 
     public GeneratedAnonymousClassDescriptor generateObjectLiteral(JetObjectLiteralExpression literal, ObjectOrClosureCodegen closure) {

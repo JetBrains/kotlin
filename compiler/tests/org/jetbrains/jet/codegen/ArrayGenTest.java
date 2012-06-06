@@ -78,7 +78,7 @@ public class ArrayGenTest extends CodegenTestCase {
 
     public void testIntGenerics () throws Exception {
         loadText("class L<T>(var a : T) {} fun foo() = L<Int>(5).a");
-//        System.out.println(generateToText());
+        System.out.println(generateToText());
         Method foo = generateFunction();
         Object invoke = foo.invoke(null);
         System.out.println(invoke.getClass());
