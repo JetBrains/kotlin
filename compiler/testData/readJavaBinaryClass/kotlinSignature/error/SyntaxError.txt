@@ -1,0 +1,6 @@
+namespace test
+
+open class test.SyntaxError : java.lang.Object {
+    final /*constructor*/ fun <init>(): test.SyntaxError
+    open fun foo(): jet.Int?
+}
