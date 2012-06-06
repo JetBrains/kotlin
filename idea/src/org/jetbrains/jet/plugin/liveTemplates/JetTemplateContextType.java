@@ -78,7 +78,7 @@ public abstract class JetTemplateContextType extends TemplateContextType {
 
     public static class Generic extends JetTemplateContextType {
         public Generic() {
-            super("KOTLIN", "Kotlin", EverywhereContextType.class);
+            super("KOTLIN", JetLanguage.NAME, EverywhereContextType.class);
         }
 
         @Override

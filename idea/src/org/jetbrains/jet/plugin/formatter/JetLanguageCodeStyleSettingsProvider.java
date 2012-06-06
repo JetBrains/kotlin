@@ -69,7 +69,7 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
 
     @Override
     public String getLanguageName() {
-        return "Kotlin";
+        return JetLanguage.NAME;
     }
 
     @Override

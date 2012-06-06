@@ -43,13 +43,13 @@ public class JetFileType extends LanguageFileType {
     @Override
     @NotNull
     public String getName() {
-        return "Kotlin";
+        return JetLanguage.NAME;
     }
 
     @Override
     @NotNull
     public String getDescription() {
-        return "Kotlin";
+        return getName();
     }
 
     @Override

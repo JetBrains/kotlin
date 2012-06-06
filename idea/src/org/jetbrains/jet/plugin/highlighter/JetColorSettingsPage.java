@@ -25,6 +25,7 @@ import com.intellij.openapi.options.colors.ColorSettingsPage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetIcons;
+import org.jetbrains.jet.plugin.JetLanguage;
 
 import javax.swing.*;
 import java.lang.reflect.Field;
@@ -171,6 +172,6 @@ public class JetColorSettingsPage implements ColorSettingsPage {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "Kotlin";
+        return JetLanguage.NAME;
     }
 }

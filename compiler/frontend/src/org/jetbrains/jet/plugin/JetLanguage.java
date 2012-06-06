@@ -23,8 +23,14 @@ import com.intellij.lang.Language;
 
 public class JetLanguage extends Language {
     public static JetLanguage INSTANCE = new JetLanguage();
+    public static String NAME = "Kotlin";
 
     private JetLanguage() {
         super("jet");
+    }
+
+    @Override
+    public String getDisplayName() {
+        return NAME;
     }
 }
