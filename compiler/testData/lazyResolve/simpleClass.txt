@@ -1,5 +1,26 @@
 namespace <root>
 
+// <namespace name="p">
+namespace p
+
+final class p.C : jet.Any {
+    final /*constructor*/ fun <init>(): p.C
+    final fun f(): jet.Tuple0
+}
+open class p.G</*0*/ T : jet.Any?> : jet.Any {
+    final /*constructor*/ fun </*0*/ T : jet.Any?><init>(): p.G<T>
+    final fun a(): jet.Tuple0
+    open fun f(): T
+}
+final class p.G2</*0*/ E : jet.Any?> : p.G<E> {
+    final /*constructor*/ fun </*0*/ E : jet.Any?><init>(): p.G2<E>
+    final override /*1*/ fun a(): jet.Tuple0
+    open override /*1*/ fun f(): <root>
+    final fun g(): E
+}
+final fun foo(): jet.Tuple0
+final fun foo(/*0*/ a: p.C): jet.Tuple0
+// </namespace name="p">
 final class A : jet.Any {
     final /*constructor*/ fun <init>(): A
 }

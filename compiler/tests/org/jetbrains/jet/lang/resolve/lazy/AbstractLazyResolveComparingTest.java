@@ -20,8 +20,10 @@ import com.google.common.base.Predicates;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.cli.jvm.compiler.NamespaceComparator;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
@@ -29,7 +31,6 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
@@ -37,17 +38,16 @@ import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.junit.After;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import java.io.File;
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * @author abreslav
  */
-public class LazyResolveComparingTest {
+public abstract class AbstractLazyResolveComparingTest {
     private final Disposable rootDisposable = new Disposable() {
         @Override
         public void dispose() {
@@ -58,14 +58,6 @@ public class LazyResolveComparingTest {
             compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true);
     private final JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(rootDisposable, compilerDependencies);
     private final Project project = jetCoreEnvironment.getProject();
-    private final List<JetFile> files = Arrays.asList(
-            JetPsiFactory.createFile(project, "class A {}"),
-            JetPsiFactory.createFile(project, "package p; class C {fun f() {}}"),
-            JetPsiFactory.createFile(project, "package p; open class G<T> {open fun f(): T {} fun a() {}}"),
-            JetPsiFactory.createFile(project, "package p; class G2<E> : G<E> { fun g() : E {} override fun f() : T {}}"),
-            JetPsiFactory.createFile(project, "package p; fun foo() {}"),
-            JetPsiFactory.createFile(project, "package p; fun foo(a: C) {}")
-    );
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -77,36 +69,29 @@ public class LazyResolveComparingTest {
         Disposer.dispose(rootDisposable);
     }
 
-    @Test
-    public void testNamespacesAreEqual() throws Exception {
+    protected void doTest(String testFileName) throws IOException {
         TopDownAnalysisParameters params = new TopDownAnalysisParameters(
                 Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
         ModuleDescriptor module = new ModuleDescriptor(Name.special("<test module>"));
         InjectorForTopDownAnalyzerForJvm
                 injector = new InjectorForTopDownAnalyzerForJvm(project, params, new BindingTraceContext(), module, compilerDependencies);
-        injector.getTopDownAnalyzer().analyzeFiles(files, Collections.<AnalyzerScriptParameter>emptyList());
-        final BindingTrace trace = injector.getBindingTrace();
 
-        //for (JetFile file : files) {
-        //    for (final JetDeclaration declaration : file.getDeclarations()) {
-        //        declaration.accept(new JetTreeVisitor<Void>() {
-        //            @Override
-        //            public Void visitDeclaration(JetDeclaration dcl, Void data) {
-        //                DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, dcl);
-        //                System.out.println(descriptor);
-        //                return super.visitDeclaration(dcl, data);
-        //            }
-        //        }, null);
-        //    }
-        //}
+
+        List<JetFile> files = JetTestUtils
+                .createTestFiles(testFileName, FileUtil.loadFile(new File(testFileName)), new JetTestUtils.TestFileFactory<JetFile>() {
+                    @Override
+                    public JetFile create(String fileName, String text) {
+                        return JetPsiFactory.createFile(project, fileName, text);
+                    }
+                });
+
+        injector.getTopDownAnalyzer().analyzeFiles(files, Collections.<AnalyzerScriptParameter>emptyList());
 
         ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
 
         ResolveSession session = new ResolveSession(project, lazyModule, new FileBasedDeclarationProviderFactory(files));
 
-        NamespaceComparator.compareNamespaces(lazyModule.getRootNamespace(), module.getRootNamespace(), true,
-                                              new File("compiler/testData/lazyResolve/simpleClass.txt"));
-        //NamespaceComparator.compareNamespaces(lazyModule.getRootNamespace().getMemberScope().getNamespace(Name.identifier("p")),
-        //                                      module.getRootNamespace().getMemberScope().getNamespace(Name.identifier("p")), true, new File("log1.txt"));
+        NamespaceComparator.compareNamespaces(module.getRootNamespace(), lazyModule.getRootNamespace(), true,
+                                              new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt"));
     }
 }
