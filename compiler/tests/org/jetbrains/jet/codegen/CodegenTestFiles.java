@@ -23,21 +23,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ref.JetTypeName;
+import org.jetbrains.jet.parsing.JetParsingTest;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * @author Stepan Koltsov
+ * @author alex.tkachman
  */
-public class CodegenTestFile {
+public class CodegenTestFiles {
 
     @NotNull
-    private final JetFile psiFile;
+    private final List<JetFile> psiFiles;
     @NotNull
     private final List<Pair<String, String>> expectedValues;
     @NotNull
@@ -45,12 +47,12 @@ public class CodegenTestFile {
     @NotNull
     private final List<Object> scriptParameterValues;
 
-    private CodegenTestFile(
-            @NotNull JetFile psiFile,
+    private CodegenTestFiles(
+            @NotNull List<JetFile> psiFiles,
             @NotNull List<Pair<String, String>> expectedValues,
             @NotNull List<AnalyzerScriptParameter> scriptParameterTypes,
             @NotNull List<Object> scriptParameterValues) {
-        this.psiFile = psiFile;
+        this.psiFiles = psiFiles;
         this.expectedValues = expectedValues;
         this.scriptParameterTypes = scriptParameterTypes;
         this.scriptParameterValues = scriptParameterValues;
@@ -58,7 +60,8 @@ public class CodegenTestFile {
 
     @NotNull
     public JetFile getPsiFile() {
-        return psiFile;
+        assert psiFiles.size() == 1;
+        return psiFiles.get(0);
     }
 
     @NotNull
@@ -77,7 +80,30 @@ public class CodegenTestFile {
     }
 
     @NotNull
-    public static CodegenTestFile create(@NotNull String fileName, @NotNull String content, @NotNull Project project) {
+    public List<JetFile> getPsiFiles() {
+        return psiFiles;
+    }
+
+    public boolean isScript() {
+        return psiFiles.size() == 1 && psiFiles.get(0).isScript();
+    }
+
+    public static CodegenTestFiles create(Project project, String[] names) {
+        ArrayList<JetFile> files = new ArrayList<JetFile>();
+        for (String name : names) {
+            try {
+                String content = JetTestUtils.doLoadFile(JetParsingTest.getTestDataDir() + "/codegen/", name);
+                JetFile file = (JetFile) JetTestUtils.createFile(name, content, project);
+                files.add(file);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return new CodegenTestFiles(files, Collections.<Pair<String, String>>emptyList(), Collections.<AnalyzerScriptParameter>emptyList(), Collections.emptyList());
+    }
+
+    @NotNull
+    public static CodegenTestFiles create(@NotNull String fileName, @NotNull String content, @NotNull Project project) {
         JetFile file = (JetFile) JetTestUtils.createFile(fileName, content, project);
 
         List<Pair<String, String>> expectedValues = Lists.newArrayList();
@@ -123,6 +149,6 @@ public class CodegenTestFile {
             }
         }
 
-        return new CodegenTestFile(file, expectedValues, scriptParameterTypes, scriptParameterValues);
+        return new CodegenTestFiles(Collections.singletonList(file), expectedValues, scriptParameterTypes, scriptParameterValues);
     }
 }

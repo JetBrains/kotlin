@@ -206,8 +206,8 @@ public class JetDiagnosticsTest extends JetLiteFixture {
 //                String clearText = pattern.matcher(text).replaceAll("");
 //                createAndCheckPsiFile(name, clearText);
 //
-//                BindingContext bindingContext = AnalyzingUtils.getInstance(ImportingStrategy.NONE).analyzeFileWithCache((JetFile) myFile);
-//                String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(myFile, bindingContext).toString();
+//                BindingContext bindingContext = AnalyzingUtils.getInstance(ImportingStrategy.NONE).analyzeFileWithCache((JetFile) myFiles);
+//                String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(myFiles, bindingContext).toString();
 //
 //                File destFile = new File(dest, file.getName());
 //                FileWriter fileWriter = new FileWriter(destFile);

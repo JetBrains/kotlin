@@ -150,7 +150,7 @@ public class StdlibTest extends CodegenTestCase {
         GeneratedClassLoader loader = createClassLoader(codegens);
 
         try {
-            String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFile.getPsiFile())).getFqName().getFqName();
+            String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFiles.getPsiFile())).getFqName().getFqName();
             Class<?> namespaceClass = loader.loadClass(fqName);
             Method method = namespaceClass.getMethod("box", Method.class);
             method.setAccessible(true);

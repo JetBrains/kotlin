@@ -92,6 +92,17 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                                                Predicates.<PsiFile>alwaysTrue(), compilerDependencies);
     }
 
+    public static AnalyzeExhaust analyzeFilesWithJavaIntegrationAndCheckForErrors(
+            Project project, Collection<JetFile> files, List<AnalyzerScriptParameter> scriptParameters, Predicate<PsiFile> filesToAnalyzeCompletely,
+            @NotNull CompilerDependencies compilerDependencies) {
+        AnalyzeExhaust analyzeExhaust = analyzeFilesWithJavaIntegration(
+                project, files, scriptParameters, filesToAnalyzeCompletely, compilerDependencies, false);
+
+        AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
+
+        return analyzeExhaust;
+    }
+
     public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
             Project project, Collection<JetFile> files, List<AnalyzerScriptParameter> scriptParameters, Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull CompilerDependencies compilerDependencies) {
