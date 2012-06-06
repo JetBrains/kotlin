@@ -21,6 +21,7 @@ import gnu.trove.THashSet;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
@@ -55,18 +56,14 @@ public class TestlibTest extends CodegenTestCase {
         try {
             setUp();
             return doBuildSuite();
-        } catch (RuntimeException e) {
-            throw e;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtils.rethrow(e);
         }
         finally {
             try {
                 tearDown();
-            } catch (RuntimeException e) {
-                throw e;
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw ExceptionUtils.rethrow(e);
             }
         }
     }
@@ -155,10 +152,8 @@ public class TestlibTest extends CodegenTestCase {
             }
 
             return suite;
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw ExceptionUtils.rethrow(e);
         }
     }
     

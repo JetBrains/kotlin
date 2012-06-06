@@ -26,6 +26,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
@@ -138,7 +139,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
             Files.write(content, javaFile, Charset.forName("utf-8"));
             hasJavaFiles = true;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtils.rethrow(e);
         }
     }
 
