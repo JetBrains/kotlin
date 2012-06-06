@@ -125,4 +125,8 @@ public class CallableMethod implements Callable {
     public boolean isNeedsReceiver() {
         return receiverParameterType != null;
     }
+
+    public Type getReturnType() {
+        return signature.getAsmMethod().getReturnType();
+    }
 }

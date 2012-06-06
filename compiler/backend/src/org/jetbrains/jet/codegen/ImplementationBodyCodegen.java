@@ -640,7 +640,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 String fieldDesc = fieldType.getDescriptor();
                 v.newField(specifier, ACC_PRIVATE, delegateField, fieldDesc, /*TODO*/null, null);
                 StackValue field = StackValue.field(fieldType, classname, delegateField, false);
-                field.store(iv);
+                field.store(fieldType, iv);
 
                 JetClass superClass = (JetClass) BindingContextUtils.classDescriptorToDeclaration(bindingContext, superClassDescriptor);
                 final CodegenContext delegateContext = context.intoClass(superClassDescriptor,
@@ -960,8 +960,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         codegen.gen(initializer, type);
                         // @todo write directly to the field. Fix test excloset.jet::test6
                         JvmClassName owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.IMPLEMENTATION);
+                        Type propType = typeMapper.mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
                         StackValue.property(propertyDescriptor.getName().getName(), owner, owner,
-                                typeMapper.mapType(propertyDescriptor.getType(), MapTypeMode.VALUE), false, false, false, null, null, 0).store(iv);
+                                            propType, false, false, false, null, null, 0).store(propType, iv);
                     }
 
                 }

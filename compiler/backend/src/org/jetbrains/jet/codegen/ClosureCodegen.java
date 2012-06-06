@@ -333,7 +333,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                 }
                 i += type.getSize();
 
-                StackValue.field(type, name, fieldName, false).store(iv);
+                StackValue.field(type, name, fieldName, false).store(type, iv);
             }
 
             iv.visitInsn(RETURN);

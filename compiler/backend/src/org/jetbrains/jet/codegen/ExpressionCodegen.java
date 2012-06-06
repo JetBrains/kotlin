@@ -1650,7 +1650,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 v.dup();
                 v.iconst(i);
                 gen(arguments.get(i).getArgumentExpression(), elementType);
-                StackValue.arrayElement(elementType, false).store(v);
+                StackValue.arrayElement(elementType, false).store(elementType, v);
             }
         }
     }
@@ -2047,7 +2047,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     private StackValue generateAssignmentExpression(JetBinaryExpression expression) {
         StackValue stackValue = gen(expression.getLeft());
         gen(expression.getRight(), stackValue.type);
-        stackValue.store(v);
+        stackValue.store(stackValue.type, v);
         return StackValue.none();
     }
 
@@ -2072,8 +2072,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 value.put(lhsType, v);                                          // receiver lhs
                 final IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
                 //noinspection NullableProblems
-                intrinsic.generate(this, v, lhsType, expression, Arrays.asList(expression.getRight()), StackValue.onStack(lhsType), state);
-                value.store(v);
+                StackValue stackValue = intrinsic.generate(this, v, lhsType, expression,
+                                                           Arrays.asList(expression.getRight()),
+                                                           StackValue.onStack(lhsType), state);
+                value.store(stackValue.type, v);
             }
             else {
                 callAugAssignMethod(expression, (CallableMethod) callable, lhsType, true);
@@ -2107,7 +2109,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         pushMethodArguments(resolvedCall, callable.getValueParameterTypes());
         callable.invoke(v);
         if (keepReturnValue) {
-            value.store(v);
+            value.store(callable.getReturnType(), v);
         }
     }
 
@@ -2173,8 +2175,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         else {
             DeclarationDescriptor cls = op.getContainingDeclaration();
+            CallableMethod callableMethod = (CallableMethod) callable;
             if (isNumberPrimitive(cls) || !(op.getName().getName().equals("inc") || op.getName().getName().equals("dec")) ) {
-                return invokeOperation(expression, (FunctionDescriptor) op, (CallableMethod) callable);
+                return invokeOperation(expression, (FunctionDescriptor) op, callableMethod);
             }
             else {
                 ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
@@ -2186,8 +2189,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
                 Type type = expressionType(expression.getBaseExpression());
                 value.put(type, v);
-                ((CallableMethod)callable).invoke(v);
-                value.store(v);
+                callableMethod.invoke(v);
+                value.store(callableMethod.getReturnType(), v);
                 value.put(type, v);
                 return StackValue.onStack(type);
             }
@@ -2280,8 +2283,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
                     CallableMethod callableMethod = (CallableMethod) callable;
                     callableMethod.invoke(v);
-                    StackValue.onStack(callableMethod.getSignature().getAsmMethod().getReturnType()).put(value.type, v);
-                    value.store(v);
+                    value.store(callableMethod.getReturnType(), v);
                     return StackValue.onStack(type);
                 }
             }
@@ -2317,7 +2319,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             v.iconst(increment);
         }
         v.add(asmType);
-        value.store(v);
+        value.store(asmType, v);
     }
 
     @Override

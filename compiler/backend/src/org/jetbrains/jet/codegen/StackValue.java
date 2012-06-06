@@ -73,7 +73,7 @@ public abstract class StackValue {
         put(type, v);
     }
 
-    public void store(InstructionAdapter v) {
+    public void store(Type topOfStackType, InstructionAdapter v) {
         throw new UnsupportedOperationException("cannot store to value " + this);
     }
 
@@ -205,54 +205,58 @@ public abstract class StackValue {
         }
     }
 
-    protected void coerce(Type type, InstructionAdapter v) {
-        if (type.equals(this.type)) return;
+    protected void coerce(Type toType, InstructionAdapter v) {
+        coerce(this.type, toType, v);
+    }
 
-        if (type.getSort() == Type.VOID && this.type.getSort() != Type.VOID) {
-            if(this.type.getSize() == 1)
+    protected static void coerce(Type fromType, Type toType, InstructionAdapter v) {
+        if (toType.equals(fromType)) return;
+
+        if (toType.getSort() == Type.VOID && fromType.getSort() != Type.VOID) {
+            if(fromType.getSize() == 1)
                 v.pop();
             else
                 v.pop2();
         }
-        else if (type.getSort() != Type.VOID && this.type.getSort() == Type.VOID) {
-            if(type.getSort() == Type.OBJECT) {
+        else if (toType.getSort() != Type.VOID && fromType.getSort() == Type.VOID) {
+            if(toType.getSort() == Type.OBJECT) {
                 putTuple0Instance(v);
             }
-            else if(type == Type.LONG_TYPE)
+            else if(toType == Type.LONG_TYPE)
                 v.lconst(0);
-            else if(type == Type.FLOAT_TYPE)
+            else if(toType == Type.FLOAT_TYPE)
                 v.fconst(0);
-            else if(type == Type.DOUBLE_TYPE)
+            else if(toType == Type.DOUBLE_TYPE)
                 v.dconst(0);
             else
                 v.iconst(0);
         }
-        else if (type.getSort() == Type.OBJECT && this.type.equals(JetTypeMapper.TYPE_OBJECT) || type.getSort() == Type.ARRAY) {
-                v.checkcast(type);
+        else if (toType.getSort() == Type.OBJECT && fromType.equals(JetTypeMapper.TYPE_OBJECT) || toType.getSort() == Type.ARRAY) {
+                v.checkcast(toType);
         }
-        else if (type.getSort() == Type.OBJECT) {
-            if(this.type.getSort() == Type.OBJECT && !type.equals(JetTypeMapper.TYPE_OBJECT)) {
-                v.checkcast(type);
+        else if (toType.getSort() == Type.OBJECT) {
+            if(fromType.getSort() == Type.OBJECT && !toType.equals(JetTypeMapper.TYPE_OBJECT)) {
+                v.checkcast(toType);
             }
             else
-                box(this.type, type, v);
+                box(fromType, toType, v);
         }
-        else if (this.type.getSort() == Type.OBJECT && type.getSort() <= Type.DOUBLE) {
-            if (this.type.equals(JetTypeMapper.TYPE_OBJECT)) {
-                if (type.getSort() == Type.BOOLEAN) {
+        else if (fromType.getSort() == Type.OBJECT && toType.getSort() <= Type.DOUBLE) {
+            if (fromType.equals(JetTypeMapper.TYPE_OBJECT)) {
+                if (toType.getSort() == Type.BOOLEAN) {
                     v.checkcast(JvmPrimitiveType.BOOLEAN.getWrapper().getAsmType());
                 }
-                else if (type.getSort() == Type.CHAR) {
+                else if (toType.getSort() == Type.CHAR) {
                     v.checkcast(JvmPrimitiveType.CHAR.getWrapper().getAsmType());
                 }
                 else {
                     v.checkcast(JetTypeMapper.JL_NUMBER_TYPE);
                 }
             }
-            unbox(type, v);
+            unbox(toType, v);
         }
         else {
-            v.cast(this.type, type);
+            v.cast(fromType, toType);
         }
     }
 
@@ -329,7 +333,8 @@ public abstract class StackValue {
         }
 
         @Override
-        public void store(InstructionAdapter v) {
+        public void store(Type topOfStackType, InstructionAdapter v) {
+            coerce(topOfStackType, this.type, v);
             v.store(index, this.type);
         }
     }
@@ -542,7 +547,7 @@ public abstract class StackValue {
         }
 
         @Override
-        public void store(InstructionAdapter v) {
+        public void store(Type topOfStackType, InstructionAdapter v) {
             onStack(type).coerce(boxed, v);
             v.astore(boxed);
         }
@@ -594,14 +599,17 @@ public abstract class StackValue {
         }
 
         @Override
-        public void store(InstructionAdapter v) {
+        public void store(Type topOfStackType, InstructionAdapter v) {
             if (setter == null) {
                 throw new UnsupportedOperationException("no setter specified");
             }
             if(setter instanceof CallableMethod) {
                 CallableMethod method = (CallableMethod) setter;
+                Method asmMethod = method.getSignature().getAsmMethod();
+                Type[] argumentTypes = asmMethod.getArgumentTypes();
+                coerce(topOfStackType, argumentTypes[argumentTypes.length-1], v);
                 method.invoke(v);
-                Type returnType = method.getSignature().getAsmMethod().getReturnType();
+                Type returnType = asmMethod.getReturnType();
                 if(returnType != Type.VOID_TYPE) {
                     if(returnType.getSize() == 2)
                         v.pop2();
@@ -816,7 +824,8 @@ public abstract class StackValue {
         }
 
         @Override
-        public void store(InstructionAdapter v) {
+        public void store(Type topOfStackType, InstructionAdapter v) {
+            coerce(topOfStackType, this.type, v);
             v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, owner.getInternalName(), name, this.type.getDescriptor());
         }
     }
@@ -873,7 +882,7 @@ public abstract class StackValue {
         }
 
         @Override
-        public void store(InstructionAdapter v) {
+        public void store(Type topOfStackType, InstructionAdapter v) {
             if(isSuper && isInterface) {
                 v.visitMethodInsn(Opcodes.INVOKESTATIC, methodOwner.getInternalName(), setter.getName(), setter.getDescriptor().replace("(", "(" + methodOwnerParam.getDescriptor()));
             }
@@ -932,7 +941,7 @@ public abstract class StackValue {
         }
 
         @Override
-        public void store(InstructionAdapter v) {
+        public void store(Type topOfStackType, InstructionAdapter v) {
             v.load(index, JetTypeMapper.TYPE_OBJECT);
             v.swap();
             Type refType = refType(this.type);
@@ -1012,7 +1021,8 @@ public abstract class StackValue {
         }
 
         @Override
-        public void store(InstructionAdapter v) {
+        public void store(Type topOfStackType, InstructionAdapter v) {
+            coerce(topOfStackType, v);
             v.visitFieldInsn(Opcodes.PUTFIELD, sharedTypeForType(type).getInternalName(), "ref", refType(type).getDescriptor());
         }
     }
@@ -1034,9 +1044,9 @@ public abstract class StackValue {
         }
 
         @Override
-        public void store(InstructionAdapter v) {
+        public void store(Type topOfStackType, InstructionAdapter v) {
             prefix.put(JetTypeMapper.TYPE_OBJECT, v);
-            suffix.store(v);
+            suffix.store(topOfStackType, v);
         }
     }
 

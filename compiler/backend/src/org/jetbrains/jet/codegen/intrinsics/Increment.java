@@ -63,7 +63,7 @@ public class Increment implements IntrinsicMethod {
 
             value.put(expectedType, v);
             plusMinus(v, expectedType);
-            value.store(v);
+            value.store(expectedType, v);
             value.put(expectedType, v);
         }
         else {

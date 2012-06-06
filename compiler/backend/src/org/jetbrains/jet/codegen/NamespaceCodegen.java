@@ -130,8 +130,8 @@ public class NamespaceCodegen {
                             if(descriptor.getReceiverParameter().exists()) {
                                 continue;
                             }
-                            codegen.genToJVMStack(initializer);
-                            codegen.intermediateValueForProperty(descriptor, true, null).store(new InstructionAdapter(mv));
+                            StackValue.Property propValue = codegen.intermediateValueForProperty(descriptor, true, null);
+                            propValue.store(propValue.type, new InstructionAdapter(mv));
                         }
                     }
                 }
