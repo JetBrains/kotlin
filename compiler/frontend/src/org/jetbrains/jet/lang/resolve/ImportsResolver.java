@@ -68,28 +68,29 @@ public class ImportsResolver {
         this.qualifiedExpressionResolver = qualifiedExpressionResolver;
     }
 
-    public void processTypeImports() {
-        processImports(true);
+    public void processTypeImports(@NotNull JetScope rootScope) {
+        processImports(true, rootScope);
     }
 
-    public void processMembersImports() {
-        processImports(false);
+    public void processMembersImports(@NotNull JetScope rootScope) {
+        processImports(false, rootScope);
     }
 
-    private void processImports(boolean onlyClasses) {
+    private void processImports(boolean onlyClasses, @NotNull JetScope rootScope) {
         for (JetFile file : context.getNamespaceDescriptors().keySet()) {
             WritableScope namespaceScope = context.getNamespaceScopes().get(file);
-            processImportsInFile(onlyClasses, namespaceScope, file.getImportDirectives());
+            processImportsInFile(onlyClasses, namespaceScope, file.getImportDirectives(), rootScope);
         }
         for (JetScript script : context.getScripts().keySet()) {
             WritableScope scriptScope = context.getScriptScopes().get(script);
-            processImportsInFile(onlyClasses, scriptScope, script.getImportDirectives());
+            processImportsInFile(onlyClasses, scriptScope, script.getImportDirectives(), rootScope);
         }
     }
 
-    private void processImportsInFile(boolean onlyClasses, WritableScope namespaceScope, List<JetImportDirective> importDirectives) {
+    private void processImportsInFile(
+            boolean onlyClasses, WritableScope namespaceScope,
+            List<JetImportDirective> importDirectives, @NotNull JetScope rootScope) {
 
-        JetScope rootScope = context.getRootScope();
         Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(namespaceScope);
         if (!onlyClasses) {
             namespaceScope.clearImports();

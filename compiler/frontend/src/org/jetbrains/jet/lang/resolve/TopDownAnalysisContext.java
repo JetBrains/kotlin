@@ -36,7 +36,6 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects = Maps.newLinkedHashMap();
-    private JetScope rootScope;
     protected final Map<JetFile, NamespaceDescriptorImpl> namespaceDescriptors = Maps.newHashMap();
 
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
@@ -112,16 +111,6 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     public Map<JetFile, WritableScope> getNamespaceScopes() {
         return namespaceScopes;
-    }
-
-    public void setRootScope(@NotNull JetScope scope) {
-        assert rootScope == null;
-        rootScope = scope;
-    }
-
-    @NotNull
-    public JetScope getRootScope() {
-        return rootScope;
     }
 
     public Map<JetFile, NamespaceDescriptorImpl> getNamespaceDescriptors() {

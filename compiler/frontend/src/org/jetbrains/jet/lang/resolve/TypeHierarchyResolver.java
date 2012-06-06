@@ -96,7 +96,6 @@ public class TypeHierarchyResolver {
 
     public void process(@NotNull JetScope outerScope, @NotNull NamespaceLikeBuilder owner,
                         @NotNull Collection<? extends PsiElement> declarations) {
-        context.setRootScope(outerScope);
 
         {
             // TODO: Very temp code - main goal is to remove recursion from collectNamespacesAndClassifiers
@@ -131,7 +130,7 @@ public class TypeHierarchyResolver {
             }
         }
 
-        importsResolver.processTypeImports();
+        importsResolver.processTypeImports(outerScope);
 
         createTypeConstructors(); // create type constructors for classes and generic parameters, supertypes are not filled in
         resolveTypesInClassHeaders(); // Generic bounds and types in supertype lists (no expressions or constructor resolution)

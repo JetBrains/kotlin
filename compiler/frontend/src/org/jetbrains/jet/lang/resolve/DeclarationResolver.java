@@ -80,11 +80,11 @@ public class DeclarationResolver {
 
 
 
-    public void process() {
+    public void process(@NotNull JetScope rootScope) {
         resolveConstructorHeaders();
         resolveAnnotationStubsOnClassesAndConstructors();
         resolveFunctionAndPropertyHeaders();
-        importsResolver.processMembersImports();
+        importsResolver.processMembersImports(rootScope);
         checkRedeclarationsInNamespaces();
     }
 
