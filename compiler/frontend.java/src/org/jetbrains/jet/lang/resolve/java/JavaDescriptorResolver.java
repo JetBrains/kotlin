@@ -1622,13 +1622,19 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         String signature = method.getSignatureAnnotation().signature();
         if (!signature.isEmpty()) {
             JetNamedFunction altFunDeclaration = JetPsiFactory.createFunction(project, signature);
-            valueParameterDescriptors = AlternativeSignatureParsing
-                    .computeAlternativeValueParameters(valueParameterDescriptors, altFunDeclaration);
-            JetTypeReference returnTypeRef = altFunDeclaration.getReturnTypeRef();
-            if (returnTypeRef != null) {
-                returnType = AlternativeSignatureParsing.computeAlternativeTypeFromAnnotation(returnTypeRef.getTypeElement(), returnType);
+            List<PsiErrorElement> syntaxErrors = AnalyzingUtils.getSyntaxErrorRanges(altFunDeclaration);
+            if (!syntaxErrors.isEmpty()) {
+                // TODO report syntax error as diagnostic when method is used
             }
-            methodTypeParameters = AlternativeSignatureParsing.computeAlternativeTypeParameters(methodTypeParameters, altFunDeclaration);
+            else {
+                valueParameterDescriptors = AlternativeSignatureParsing
+                        .computeAlternativeValueParameters(valueParameterDescriptors, altFunDeclaration);
+                JetTypeReference returnTypeRef = altFunDeclaration.getReturnTypeRef();
+                if (returnTypeRef != null) {
+                    returnType = AlternativeSignatureParsing.computeAlternativeTypeFromAnnotation(returnTypeRef.getTypeElement(), returnType);
+                }
+                methodTypeParameters = AlternativeSignatureParsing.computeAlternativeTypeParameters(methodTypeParameters, altFunDeclaration);
+            }
         }
 
         functionDescriptorImpl.initialize(
