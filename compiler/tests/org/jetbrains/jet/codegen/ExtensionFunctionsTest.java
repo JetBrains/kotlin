@@ -96,4 +96,14 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.BUILTINS);
         blackBoxFile("regressions/kt1290.kt");
     }
+
+    public void testKt1953() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        blackBoxFile("regressions/kt1953.kt");
+    }
+
+    public void testKt1953Class() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        blackBoxFile("regressions/kt1953_class.kt");
+    }
 }

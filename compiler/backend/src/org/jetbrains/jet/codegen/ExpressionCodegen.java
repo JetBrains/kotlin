@@ -1023,19 +1023,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         int index = lookupLocal(descriptor);
         if (index >= 0) {
-            if(descriptor instanceof VariableDescriptor) {
-                Type sharedVarType = typeMapper.getSharedVarType(descriptor);
-                final JetType outType = ((VariableDescriptor) descriptor).getType();
-                if(sharedVarType != null) {
-                    return StackValue.shared(index, asmType(outType));
-                }
-                else {
-                    return StackValue.local(index, asmType(outType));
-                }
-            }
-            else {
-                return StackValue.local(index, TYPE_OBJECT);
-            }
+            return stackValueForLocal(descriptor, index);
         }
 
         if (descriptor instanceof PropertyDescriptor) {
@@ -1155,6 +1143,22 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         return value;
+    }
+
+    private StackValue stackValueForLocal(DeclarationDescriptor descriptor, int index) {
+        if(descriptor instanceof VariableDescriptor) {
+            Type sharedVarType = typeMapper.getSharedVarType(descriptor);
+            final JetType outType = ((VariableDescriptor) descriptor).getType();
+            if(sharedVarType != null) {
+                return StackValue.shared(index, asmType(outType));
+            }
+            else {
+                return StackValue.local(index, asmType(outType));
+            }
+        }
+        else {
+            return StackValue.local(index, TYPE_OBJECT);
+        }
     }
 
     public int lookupLocal(DeclarationDescriptor descriptor) {
@@ -2198,6 +2202,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private StackValue invokeOperation(JetOperationExpression expression, FunctionDescriptor op, CallableMethod callable) {
+        int functionLocalIndex = myFrameMap.getIndex(op);
+        if (functionLocalIndex >= 0) {
+            stackValueForLocal(op, functionLocalIndex).put(ClosureCodegen.getInternalClassName(op).getAsmType(), v);
+        }
         ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
         assert resolvedCall != null;
         genThisAndReceiverFromResolvedCall(StackValue.none(), resolvedCall, callable);
