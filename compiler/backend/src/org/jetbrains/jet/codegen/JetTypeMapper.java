@@ -176,7 +176,7 @@ public class JetTypeMapper {
     }
 
     public static MapTypeMode ownerKindToMapTypeMode(OwnerKind kind) {
-        if (kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.NAMESPACE) {
+        if (kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.NAMESPACE || kind instanceof OwnerKind.StaticDelegateKind) {
             return MapTypeMode.IMPL;
         }
         else if (kind == OwnerKind.TRAIT_IMPL) {

@@ -106,7 +106,11 @@ public abstract class CodegenContext {
     }
 
     public CodegenContext intoNamespace(NamespaceDescriptor descriptor) {
-        return new CodegenContexts.NamespaceContext(descriptor, this);
+        return new CodegenContexts.NamespaceContext(descriptor, this, null);
+    }
+
+    public CodegenContext intoNamespacePart(String delegateTo, NamespaceDescriptor descriptor) {
+        return new CodegenContexts.NamespaceContext(descriptor, this, new OwnerKind.StaticDelegateKind(StackValue.none(), delegateTo));
     }
 
     public CodegenContext intoClass(ClassDescriptor descriptor, OwnerKind kind, JetTypeMapper typeMapper) {

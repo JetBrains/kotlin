@@ -110,6 +110,10 @@ public class GenerationState {
         return getFactory().newVisitor(getInjector().getJetTypeMapper().mapType(aClass.getDefaultType(), MapTypeMode.IMPL).getInternalName() + ".class");
     }
 
+    public ClassBuilder forNamespacepart(String name, JetFile file) {
+        return getFactory().newVisitor(name + ".class");
+    }
+
     public ClassBuilder forTraitImplementation(ClassDescriptor aClass) {
         return getFactory().newVisitor(getInjector().getJetTypeMapper().mapType(aClass.getDefaultType(), MapTypeMode.TRAIT_IMPL).getInternalName() + ".class");
     }

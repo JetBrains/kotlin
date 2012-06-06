@@ -113,7 +113,7 @@ public class FunctionCodegen {
         ReceiverDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
 
         if (kind != OwnerKind.TRAIT_IMPL || bodyExpressions != null) {
-            boolean isStatic = kind == OwnerKind.NAMESPACE;
+            boolean isStatic = kind == OwnerKind.NAMESPACE || kind instanceof OwnerKind.StaticDelegateKind;
             if (isStatic || kind == OwnerKind.TRAIT_IMPL)
                 flags |= ACC_STATIC;
 
@@ -199,13 +199,24 @@ public class FunctionCodegen {
                     frameMap.enter(parameter, argTypes[i+add].getSize());
                 }
 
-                if ((kind instanceof OwnerKind.DelegateKind) != (functionDescriptor.getKind() == FunctionDescriptor.Kind.DELEGATION)) {
+                if (!isStatic && (kind instanceof OwnerKind.DelegateKind) != (functionDescriptor.getKind() == FunctionDescriptor.Kind.DELEGATION)) {
                     throw new IllegalStateException("mismatching kind in " + functionDescriptor);
                 }
 
                 Map<Name, Label> mapLabelsToDivideLocalVarVisibilityForSharedVar = new HashMap<Name, Label>();
 
-                if (kind instanceof OwnerKind.DelegateKind) {
+                if (kind instanceof OwnerKind.StaticDelegateKind) {
+                    OwnerKind.StaticDelegateKind dk = (OwnerKind.StaticDelegateKind) kind;
+                    InstructionAdapter iv = new InstructionAdapter(mv);
+                    for (int i = 0, k = 0; i < argTypes.length; i++) {
+                        Type argType = argTypes[i];
+                        iv.load(k, argType);
+                        k += argType.getSize();
+                    }
+                    iv.invokestatic(dk.getOwnerClass(), jvmSignature.getAsmMethod().getName(), jvmSignature.getAsmMethod().getDescriptor());
+                    iv.areturn(jvmSignature.getAsmMethod().getReturnType());
+                }
+                else if (kind instanceof OwnerKind.DelegateKind) {
                     OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
                     InstructionAdapter iv = new InstructionAdapter(mv);
                     iv.load(0, JetTypeMapper.TYPE_OBJECT);
@@ -355,7 +366,7 @@ public class FunctionCodegen {
         if(needed) {
             ReceiverDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
             boolean hasReceiver = receiverParameter.exists();
-            boolean isStatic = kind == OwnerKind.NAMESPACE;
+            boolean isStatic = kind == OwnerKind.NAMESPACE || kind instanceof OwnerKind.StaticDelegateKind;
 
             if(kind == OwnerKind.TRAIT_IMPL) {
                 String correctedDescr = "(" + jvmSignature.getDescriptor().substring(jvmSignature.getDescriptor().indexOf(";") + 1);

@@ -1,1 +1,1 @@
-fun ok() = "OK"
+fun ok(res: String = "OK") = res

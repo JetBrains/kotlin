@@ -272,8 +272,8 @@ public class CodegenContexts {
     }
 
     public static class NamespaceContext extends CodegenContext {
-        public NamespaceContext(NamespaceDescriptor contextDescriptor, CodegenContext parent) {
-            super(contextDescriptor, OwnerKind.NAMESPACE, parent, null);
+        public NamespaceContext(NamespaceDescriptor contextDescriptor, CodegenContext parent, OwnerKind kind) {
+            super(contextDescriptor, kind != null ? kind : OwnerKind.NAMESPACE, parent, null);
         }
 
         @Override
