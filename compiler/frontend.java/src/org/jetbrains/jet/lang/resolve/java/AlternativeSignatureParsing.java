@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeImpl;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,11 +84,20 @@ class AlternativeSignatureParsing {
         for (int i = 0, size = parameterDescriptors.size(); i < size; i++) {
             ValueParameterDescriptor pd = parameterDescriptors.get(i);
             JetTypeElement alternativeTypeElement = altFunDeclaration.getValueParameters().get(i).getTypeReference().getTypeElement();
-            JetType alternativeType = computeAlternativeTypeFromAnnotation(alternativeTypeElement, pd.getType());
-            // TODO vararg
+            JetType alternativeType;
+            JetType alternativeVarargElementType;
+            // TODO check that alternative PSI has "vararg" modifier
+            if (pd.getVarargElementType() == null) {
+                alternativeType = computeAlternativeTypeFromAnnotation(alternativeTypeElement, pd.getType());
+                alternativeVarargElementType = null;
+            }
+            else {
+                alternativeVarargElementType = computeAlternativeTypeFromAnnotation(alternativeTypeElement, pd.getVarargElementType());
+                alternativeType = JetStandardLibrary.getInstance().getArrayType(alternativeVarargElementType);
+            }
             altParamDescriptors.add(new ValueParameterDescriptorImpl(pd.getContainingDeclaration(), pd.getIndex(), pd.getAnnotations(),
                                                                      pd.getName(), pd.isVar(), alternativeType, pd.declaresDefaultValue(),
-                                                                     pd.getVarargElementType()));
+                                                                     alternativeVarargElementType));
         }
         JetType altReceiverType = null;
         if (valueParameterDescriptors.receiverType != null) {
