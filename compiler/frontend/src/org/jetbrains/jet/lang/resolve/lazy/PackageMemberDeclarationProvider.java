@@ -17,7 +17,10 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+
+import java.util.Collection;
 
 /**
  * @author abreslav
@@ -25,4 +28,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 public interface PackageMemberDeclarationProvider extends DeclarationProvider {
 
     boolean isPackageDeclared(@NotNull Name name);
+
+    Collection<FqName> getAllDeclaredPackages();
 }

@@ -94,6 +94,19 @@ public class NamespaceComparator {
             else if (ad instanceof FunctionDescriptor) {
                 functionNames.add(ad.getName());
             }
+            else if (ad instanceof NamespaceDescriptor) {
+                NamespaceDescriptor namespaceDescriptorA = (NamespaceDescriptor) ad;
+                NamespaceDescriptor namespaceDescriptorB = nsb.getMemberScope().getNamespace(namespaceDescriptorA.getName());
+                //Assert.assertNotNull("Namespace not found: " + namespaceDescriptorA.getQualifiedName(), namespaceDescriptorB);
+                if (namespaceDescriptorB == null) {
+                    System.err.println("Namespace not found: " + namespaceDescriptorA.getQualifiedName());
+                }
+                else {
+                    sb.append("// <namespace name=\"" + namespaceDescriptorA.getName() + "\">\n");
+                    sb.append(doCompareNamespaces(namespaceDescriptorA, namespaceDescriptorB));
+                    sb.append("// </namespace name=\"" + namespaceDescriptorA.getName() + "\">\n");
+                }
+            }
             else {
                 throw new AssertionError("unknown member: " + ad);
             }

@@ -44,7 +44,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     private final Map<Name, Set<FunctionDescriptor>> functionDescriptors = Maps.newHashMap();
     private final Map<Name, Set<VariableDescriptor>> propertyDescriptors = Maps.newHashMap();
 
-    private final List<DeclarationDescriptor> allDescriptors = Lists.newArrayList();
+    protected final List<DeclarationDescriptor> allDescriptors = Lists.newArrayList();
 
     protected AbstractLazyMemberScope(
             @NotNull ResolveSession resolveSession,
@@ -200,9 +200,12 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                 throw new IllegalArgumentException("Unsupported declaration kind: " + declaration);
             }
         }
+        addExtraDescriptors();
         allDescriptorsComputed = true;
         return allDescriptors;
     }
+
+    protected abstract void addExtraDescriptors();
 
     @Override
     public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {

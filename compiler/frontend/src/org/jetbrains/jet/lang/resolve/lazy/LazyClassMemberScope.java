@@ -75,7 +75,9 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                     @Override
                     public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
                         assert fakeOverride instanceof FunctionDescriptor : "A non-function overrides a function";
-                        result.add((FunctionDescriptor) fakeOverride);
+                        FunctionDescriptor functionDescriptor = (FunctionDescriptor) fakeOverride;
+                        result.add(functionDescriptor);
+                        allDescriptors.add(functionDescriptor);
                     }
 
                     @Override
@@ -98,6 +100,21 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         // Parameters of the primary constructor
 
         throw new UnsupportedOperationException(); // TODO
+    }
+
+    @Override
+    protected void addExtraDescriptors() {
+        for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
+            for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
+                if (descriptor instanceof FunctionDescriptor) {
+                    getFunctions(descriptor.getName());
+                }
+                else if (descriptor instanceof PropertyDescriptor) {
+                    getProperties(descriptor.getName());
+                }
+                // Nothing else is inherited
+            }
+        }
     }
 
     @Override

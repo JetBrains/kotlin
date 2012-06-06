@@ -31,6 +31,7 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
     private final FqName fqName;
     private final FileBasedDeclarationProviderFactory factory;
     private final Collection<JetFile> allFiles;
+    private Collection<FqName> allDeclaredPackages;
 
 
     /*package*/ FileBasedPackageMemberDeclarationProvider(
@@ -55,5 +56,13 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
     @Override
     public boolean isPackageDeclared(@NotNull Name name) {
         return factory.isPackageDeclared(fqName.child(name));
+    }
+
+    @Override
+    public Collection<FqName> getAllDeclaredPackages() {
+        if (allDeclaredPackages == null) {
+            allDeclaredPackages = factory.getAllDeclaredSubPackagesOf(fqName);
+        }
+        return allDeclaredPackages;
     }
 }

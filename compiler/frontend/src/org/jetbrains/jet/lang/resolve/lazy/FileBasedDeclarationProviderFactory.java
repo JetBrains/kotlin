@@ -16,10 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
+import com.google.common.base.Predicate;
+import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -38,7 +36,7 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
     private final Collection<JetFile> allFiles;
 
     private final Multimap<FqName, JetFile> filesByPackage = HashMultimap.create();
-    private final Set<FqName> definedPackages = Sets.newHashSet();
+    private final Set<FqName> declaredPackages = Sets.newHashSet();
     private final Map<FqName, PackageMemberDeclarationProvider> packageDeclarationProviders = Maps.newHashMap();
     private final Map<JetClassOrObject, ClassMemberDeclarationProvider> classMemberDeclarationProviders = Maps.newHashMap();
 
@@ -65,7 +63,7 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
     }
 
     private void addMeAndParentPackages(@NotNull FqName name) {
-        definedPackages.add(name);
+        declaredPackages.add(name);
         if (!name.isRoot()) {
             addMeAndParentPackages(name.parent());
         }
@@ -73,7 +71,16 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
 
     /*package*/ boolean isPackageDeclared(@NotNull FqName packageFqName) {
         createIndex();
-        return definedPackages.contains(packageFqName);
+        return declaredPackages.contains(packageFqName);
+    }
+
+    /*package*/ Collection<FqName> getAllDeclaredSubPackagesOf(@NotNull final FqName parent) {
+        return Collections2.filter(declaredPackages, new Predicate<FqName>() {
+            @Override
+            public boolean apply(FqName fqName) {
+                return !fqName.isRoot() && fqName.parent().equals(parent);
+            }
+        });
     }
 
     @Override

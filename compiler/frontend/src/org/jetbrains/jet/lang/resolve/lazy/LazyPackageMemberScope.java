@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -58,6 +59,7 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDes
         NamespaceDescriptor namespaceDescriptor = new LazyPackageDescriptor(thisDescriptor, name, resolveSession, packageMemberDeclarationProvider);
 
         packageDescriptors.put(name, namespaceDescriptor);
+        allDescriptors.add(namespaceDescriptor);
 
         return namespaceDescriptor;
     }
@@ -83,5 +85,12 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDes
     @Override
     protected void getNonDeclaredProperties(@NotNull Name name, @NotNull Set<VariableDescriptor> result) {
         // No extra properties
+    }
+
+    @Override
+    protected void addExtraDescriptors() {
+        for (FqName packageFqName : declarationProvider.getAllDeclaredPackages()) {
+            getNamespace(packageFqName.shortName());
+        }
     }
 }
