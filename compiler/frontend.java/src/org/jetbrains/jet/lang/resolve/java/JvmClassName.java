@@ -80,8 +80,9 @@ public class JvmClassName {
         return internalName;
     }
     
-    private String descriptor;
+    private transient String descriptor;
 
+    @NotNull
     public String getDescriptor() {
         if (descriptor == null) {
             StringBuilder sb = new StringBuilder(internalName.length() + 2);
@@ -93,8 +94,9 @@ public class JvmClassName {
         return descriptor;
     }
     
-    private Type asmType;
-    
+    private transient Type asmType;
+
+    @NotNull
     public Type getAsmType() {
         if (asmType == null) {
             asmType = Type.getType(getDescriptor());
