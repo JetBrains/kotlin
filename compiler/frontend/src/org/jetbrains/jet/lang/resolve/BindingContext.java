@@ -16,13 +16,16 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.PlusMinus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -34,6 +37,7 @@ import org.jetbrains.jet.util.Box;
 import org.jetbrains.jet.util.slicedmap.*;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import static org.jetbrains.jet.util.slicedmap.RewritePolicy.DO_NOTHING;
 
@@ -41,6 +45,24 @@ import static org.jetbrains.jet.util.slicedmap.RewritePolicy.DO_NOTHING;
  * @author abreslav
  */
 public interface BindingContext {
+    BindingContext EMPTY = new BindingContext() {
+        @Override
+        public Collection<Diagnostic> getDiagnostics() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
+            return Collections.emptyList();
+        }
+    };
+
     WritableSlice<JetAnnotationEntry, AnnotationDescriptor> ANNOTATION = Slices.createSimpleSlice();
 
     WritableSlice<JetExpression, CompileTimeConstant<?>> COMPILE_TIME_VALUE = Slices.createSimpleSlice();
@@ -51,6 +73,10 @@ public interface BindingContext {
     WritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>> RESOLVED_CALL = new BasicWritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>>(DO_NOTHING);
 
     WritableSlice<JetReferenceExpression, Collection<? extends DeclarationDescriptor>> AMBIGUOUS_REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, Collection<? extends DeclarationDescriptor>>(DO_NOTHING);
+
+    WritableSlice<CallKey, OverloadResolutionResults<FunctionDescriptor>> RESOLUTION_RESULTS_FOR_FUNCTION = Slices.createSimpleSlice();
+    WritableSlice<CallKey, OverloadResolutionResults<VariableDescriptor>> RESOLUTION_RESULTS_FOR_PROPERTY = Slices.createSimpleSlice();
+    WritableSlice<JetExpression, DelegatingBindingTrace> TRACE_DELTAS_CACHE = Slices.createSimpleSlice();
 
     WritableSlice<JetExpression, FunctionDescriptor> LOOP_RANGE_ITERATOR = Slices.createSimpleSlice();
     WritableSlice<JetExpression, CallableDescriptor> LOOP_RANGE_HAS_NEXT = Slices.createSimpleSlice();
