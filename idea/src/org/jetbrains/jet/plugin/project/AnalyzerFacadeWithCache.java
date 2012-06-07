@@ -84,8 +84,7 @@ public final class AnalyzerFacadeWithCache {
                                     // System.out.println("===============ReCache - In-Block==============");
 
                                     // Collect context for headers first
-                                    Collection<JetFile> allFilesToAnalyze = declarationProvider.fun(file);
-                                    AnalyzeExhaust analyzeExhaustHeaders = analyzeHeadersWithCacheOnFile(file, allFilesToAnalyze);
+                                    AnalyzeExhaust analyzeExhaustHeaders = analyzeHeadersWithCacheOnFile(file, declarationProvider);
 
                                     BodiesResolveContext context = analyzeExhaustHeaders.getBodiesResolveContext();
                                     assert context != null : "Headers resolver should prepare and stored information for bodies resolve";
@@ -125,8 +124,10 @@ public final class AnalyzerFacadeWithCache {
         }
     }
 
-    private static AnalyzeExhaust analyzeHeadersWithCacheOnFile(@NotNull final JetFile fileToCache,
-                                                                @NotNull final Collection<JetFile> headerFiles) {
+    private static AnalyzeExhaust analyzeHeadersWithCacheOnFile(
+            @NotNull final JetFile fileToCache,
+            @NotNull final Function<JetFile, Collection<JetFile>> declarationProvider
+    ) {
         CachedValue<AnalyzeExhaust> bindingContextCachedValue = fileToCache.getUserData(ANALYZE_EXHAUST_HEADERS);
         if (bindingContextCachedValue == null) {
             bindingContextCachedValue =
@@ -136,7 +137,7 @@ public final class AnalyzerFacadeWithCache {
                             // System.out.println("===============ReCache - OUT-OF-BLOCK==============");
                             AnalyzeExhaust exhaust = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(fileToCache)
                                     .analyzeFiles(fileToCache.getProject(),
-                                                  headerFiles,
+                                                  declarationProvider.fun(fileToCache),
                                                   Collections.<AnalyzerScriptParameter>emptyList(),
                                                   Predicates.<PsiFile>alwaysFalse());
 
