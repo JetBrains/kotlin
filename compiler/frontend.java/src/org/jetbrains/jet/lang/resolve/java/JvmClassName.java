@@ -26,22 +26,18 @@ import org.objectweb.asm.Type;
 public class JvmClassName {
 
     @NotNull
-    private final FqName fqName;
+    private final String internalName;
 
-    public JvmClassName(@NotNull String fqName) {
-        this(new FqName(fqName));
+    private JvmClassName(@NotNull String internalName) {
+        this.internalName = internalName;
     }
 
-    public JvmClassName(@NotNull FqName fqName) {
-        this.fqName = fqName;
-    }
-
+    @NotNull
     public static JvmClassName byInternalName(@NotNull String internalName) {
-        JvmClassName r = new JvmClassName(internalName.replace('/', '.'));
-        r.internalName = internalName;
-        return r;
+        return new JvmClassName(internalName);
     }
 
+    @NotNull
     public static JvmClassName byType(@NotNull Type type) {
         if (type.getSort() != Type.OBJECT) {
             throw new IllegalArgumentException(
@@ -50,20 +46,37 @@ public class JvmClassName {
         return byInternalName(type.getInternalName());
     }
 
+    /**
+     * WARNING: fq name is cannot be uniquely mapped to JVM class name.
+     */
+    @NotNull
+    public static JvmClassName byFqNameWithoutInnerClasses(@NotNull FqName fqName) {
+        JvmClassName r = new JvmClassName(fqName.getFqName().replace('.', '/'));
+        r.fqName = fqName;
+        return r;
+    }
+
+    @NotNull
+    public static JvmClassName byFqNameWithoutInnerClasses(@NotNull String fqName) {
+        return byFqNameWithoutInnerClasses(new FqName(fqName));
+    }
+
+
+
+    private transient FqName fqName;
+
     @NotNull
     public FqName getFqName() {
+        if (fqName == null) {
+            this.fqName = new FqName(internalName.replace('$', '.').replace('/', '.'));
+        }
         return fqName;
     }
 
 
 
-    private String internalName;
-    
+    @NotNull
     public String getInternalName() {
-        if (internalName == null) {
-            String descriptor = getDescriptor();
-            internalName = descriptor.substring(1, descriptor.length() - 1);
-        }
         return internalName;
     }
     
@@ -71,9 +84,9 @@ public class JvmClassName {
 
     public String getDescriptor() {
         if (descriptor == null) {
-            StringBuilder sb = new StringBuilder(fqName.getFqName().length() + 2);
+            StringBuilder sb = new StringBuilder(internalName.length() + 2);
             sb.append('L');
-            sb.append(fqName.getFqName().replace('.', '/'));
+            sb.append(internalName);
             sb.append(';');
             descriptor = sb.toString();
         }
