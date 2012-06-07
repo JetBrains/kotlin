@@ -46,7 +46,7 @@ public class InjectorForJavaSemanticServices {
     private CompilerSpecialMode compilerSpecialMode;
     private final Project project;
     private JavaTypeTransformer javaTypeTransformer;
-    private NamespaceFactoryImpl namespaceFactoryImpl;
+    private NamespaceFactoryImpl namespaceFactory;
 
     public InjectorForJavaSemanticServices(
         @NotNull CompilerDependencies compilerDependencies,
@@ -62,14 +62,14 @@ public class InjectorForJavaSemanticServices {
         this.compilerSpecialMode = compilerDependencies.getCompilerSpecialMode();
         this.project = project;
         this.javaTypeTransformer = new JavaTypeTransformer();
-        this.namespaceFactoryImpl = new NamespaceFactoryImpl();
+        this.namespaceFactory = new NamespaceFactoryImpl();
 
         this.javaSemanticServices.setDescriptorResolver(javaDescriptorResolver);
         this.javaSemanticServices.setPsiClassFinder(psiClassFinderForJvm);
         this.javaSemanticServices.setTrace(bindingTrace);
         this.javaSemanticServices.setTypeTransformer(javaTypeTransformer);
 
-        this.javaDescriptorResolver.setNamespaceFactory(namespaceFactoryImpl);
+        this.javaDescriptorResolver.setNamespaceFactory(namespaceFactory);
         this.javaDescriptorResolver.setProject(project);
         this.javaDescriptorResolver.setPsiClassFinder(psiClassFinderForJvm);
         this.javaDescriptorResolver.setSemanticServices(javaSemanticServices);
@@ -85,9 +85,9 @@ public class InjectorForJavaSemanticServices {
         javaTypeTransformer.setJavaSemanticServices(javaSemanticServices);
         javaTypeTransformer.setResolver(javaDescriptorResolver);
 
-        namespaceFactoryImpl.setConfiguration(javaBridgeConfiguration);
-        namespaceFactoryImpl.setModuleDescriptor(moduleDescriptor);
-        namespaceFactoryImpl.setTrace(bindingTrace);
+        namespaceFactory.setConfiguration(javaBridgeConfiguration);
+        namespaceFactory.setModuleDescriptor(moduleDescriptor);
+        namespaceFactory.setTrace(bindingTrace);
 
         javaBridgeConfiguration.init();
 

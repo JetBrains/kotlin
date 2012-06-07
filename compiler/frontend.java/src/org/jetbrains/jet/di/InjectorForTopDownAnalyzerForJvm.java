@@ -83,7 +83,7 @@ public class InjectorForTopDownAnalyzerForJvm {
     private OverloadingConflictResolver overloadingConflictResolver;
     private ImportsResolver importsResolver;
     private DelegationResolver delegationResolver;
-    private NamespaceFactoryImpl namespaceFactoryImpl;
+    private NamespaceFactoryImpl namespaceFactory;
     private OverloadResolver overloadResolver;
     private OverrideResolver overrideResolver;
     private TypeHierarchyResolver typeHierarchyResolver;
@@ -122,7 +122,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.overloadingConflictResolver = new OverloadingConflictResolver();
         this.importsResolver = new ImportsResolver();
         this.delegationResolver = new DelegationResolver();
-        this.namespaceFactoryImpl = new NamespaceFactoryImpl();
+        this.namespaceFactory = new NamespaceFactoryImpl();
         this.overloadResolver = new OverloadResolver();
         this.overrideResolver = new OverrideResolver();
         this.typeHierarchyResolver = new TypeHierarchyResolver();
@@ -138,7 +138,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.topDownAnalyzer.setDelegationResolver(delegationResolver);
         this.topDownAnalyzer.setDependencyClassByQualifiedNameResolver(javaDescriptorResolver);
         this.topDownAnalyzer.setModuleDescriptor(moduleDescriptor);
-        this.topDownAnalyzer.setNamespaceFactory(namespaceFactoryImpl);
+        this.topDownAnalyzer.setNamespaceFactory(namespaceFactory);
         this.topDownAnalyzer.setOverloadResolver(overloadResolver);
         this.topDownAnalyzer.setOverrideResolver(overrideResolver);
         this.topDownAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
@@ -167,7 +167,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.javaBridgeConfiguration.setMode(compilerSpecialMode);
         this.javaBridgeConfiguration.setProject(project);
 
-        javaDescriptorResolver.setNamespaceFactory(namespaceFactoryImpl);
+        javaDescriptorResolver.setNamespaceFactory(namespaceFactory);
         javaDescriptorResolver.setProject(project);
         javaDescriptorResolver.setPsiClassFinder(psiClassFinderForJvm);
         javaDescriptorResolver.setSemanticServices(javaSemanticServices);
@@ -207,9 +207,9 @@ public class InjectorForTopDownAnalyzerForJvm {
         delegationResolver.setContext(topDownAnalysisContext);
         delegationResolver.setTrace(bindingTrace);
 
-        namespaceFactoryImpl.setConfiguration(javaBridgeConfiguration);
-        namespaceFactoryImpl.setModuleDescriptor(moduleDescriptor);
-        namespaceFactoryImpl.setTrace(bindingTrace);
+        namespaceFactory.setConfiguration(javaBridgeConfiguration);
+        namespaceFactory.setModuleDescriptor(moduleDescriptor);
+        namespaceFactory.setTrace(bindingTrace);
 
         overloadResolver.setContext(topDownAnalysisContext);
         overloadResolver.setTrace(bindingTrace);
@@ -221,7 +221,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         typeHierarchyResolver.setContext(topDownAnalysisContext);
         typeHierarchyResolver.setDescriptorResolver(descriptorResolver);
         typeHierarchyResolver.setImportsResolver(importsResolver);
-        typeHierarchyResolver.setNamespaceFactory(namespaceFactoryImpl);
+        typeHierarchyResolver.setNamespaceFactory(namespaceFactory);
         typeHierarchyResolver.setScriptResolver(scriptResolver);
         typeHierarchyResolver.setTrace(bindingTrace);
 
@@ -229,7 +229,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         scriptResolver.setDependencyClassByQualifiedNameResolver(javaDescriptorResolver);
         scriptResolver.setExpressionTypingServices(expressionTypingServices);
         scriptResolver.setModuleDescriptor(moduleDescriptor);
-        scriptResolver.setNamespaceFactory(namespaceFactoryImpl);
+        scriptResolver.setNamespaceFactory(namespaceFactory);
         scriptResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         scriptResolver.setTrace(bindingTrace);
 
