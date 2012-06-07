@@ -57,7 +57,7 @@ public class NamespaceComparator {
                 FileUtil.writeToFile(txtFile, serialized);
                 Assert.fail("Expected data file did not exist. Generating: " + txtFile);
             }
-            String expected = FileUtil.loadFile(txtFile);
+            String expected = FileUtil.loadFile(txtFile, true);
 
             // compare with hardcopy: make sure nothing is lost in output
             Assert.assertEquals(expected, serialized);
