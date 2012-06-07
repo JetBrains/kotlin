@@ -21,9 +21,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
-import com.intellij.util.Function;
 import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1633,42 +1631,21 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         if (!signature.isEmpty()) {
             try {
                 JetNamedFunction altFunDeclaration = JetPsiFactory.createFunction(project, signature);
-                List<PsiErrorElement> syntaxErrors = AnalyzingUtils.getSyntaxErrorRanges(altFunDeclaration);
-                if (!syntaxErrors.isEmpty()) {
-                    String textSignature = String.format("%s(%s)", method.getName(),
-                            StringUtil.join(method.getPsiMethod().getSignature(PsiSubstitutor.EMPTY).getParameterTypes(),
-                                            new Function<PsiType, String>() {
-                                                @Override
-                                                public String fun(PsiType psiType) {
-                                                    return psiType.getPresentableText();
-                                                }
-                                            }, ", "));
-                    int errorOffset = syntaxErrors.get(0).getTextOffset();
-                    String syntaxErrorDescription = syntaxErrors.get(0).getErrorDescription();
+                AlternativeSignatureParsing.checkForSyntaxErrors(method, altFunDeclaration);
 
-                    String errorText = syntaxErrors.size() == 1
-                            ? String.format("Alternative signature for %s has syntax error at %d: %s", textSignature,
-                                            errorOffset, syntaxErrorDescription)
-                            : String.format("Alternative signature for %s has %d syntax errors, first is at %d: %s", textSignature,
-                                            syntaxErrors.size(), errorOffset, syntaxErrorDescription);
-                    throw new AlternativeSignatureMismatchException(errorText);
-                }
-                else {
-                    ValueParameterDescriptors altValueParameters = AlternativeSignatureParsing
-                            .computeAlternativeValueParameters(valueParameterDescriptors, altFunDeclaration);
-                    JetTypeReference returnTypeRef = altFunDeclaration.getReturnTypeRef();
-                    JetType altReturnType = returnTypeRef != null
-                                            ? AlternativeSignatureParsing.computeAlternativeTypeFromAnnotation(
-                                                returnTypeRef.getTypeElement(), returnType)
-                                            : returnType;
-                    List<TypeParameterDescriptor> altTypeParameters =
-                            AlternativeSignatureParsing.computeAlternativeTypeParameters(methodTypeParameters,
-                                                                                         altFunDeclaration);
-                    // if no exceptions were thrown, save alternative data
-                    valueParameterDescriptors = altValueParameters;
-                    returnType = altReturnType;
-                    methodTypeParameters = altTypeParameters;
-                }
+                ValueParameterDescriptors altValueParameters = AlternativeSignatureParsing
+                        .computeAlternativeValueParameters(valueParameterDescriptors, altFunDeclaration);
+                JetTypeReference returnTypeRef = altFunDeclaration.getReturnTypeRef();
+                JetType altReturnType = returnTypeRef != null
+                                        ? AlternativeSignatureParsing.computeAlternativeTypeFromAnnotation(returnTypeRef.getTypeElement(),
+                                                                                                           returnType)
+                                        : returnType;
+                List<TypeParameterDescriptor> altTypeParameters = AlternativeSignatureParsing
+                        .computeAlternativeTypeParameters(methodTypeParameters, altFunDeclaration);
+                // if no exceptions were thrown, save alternative data
+                valueParameterDescriptors = altValueParameters;
+                returnType = altReturnType;
+                methodTypeParameters = altTypeParameters;
             }
             catch (AlternativeSignatureMismatchException e) {
                 scopeData.addAlternativeSignatureError(e.getMessage());

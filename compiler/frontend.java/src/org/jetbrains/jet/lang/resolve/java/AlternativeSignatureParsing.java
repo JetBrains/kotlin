@@ -17,10 +17,16 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiErrorElement;
+import com.intellij.psi.PsiSubstitutor;
+import com.intellij.psi.PsiType;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeImpl;
@@ -181,5 +187,29 @@ class AlternativeSignatureParsing {
             }
         }
         return null;
+    }
+
+    static void checkForSyntaxErrors(PsiMethodWrapper method, JetNamedFunction altFunDeclaration)
+            throws AlternativeSignatureMismatchException {
+        List<PsiErrorElement> syntaxErrors = AnalyzingUtils.getSyntaxErrorRanges(altFunDeclaration);
+        if (!syntaxErrors.isEmpty()) {
+            String textSignature = String.format("%s(%s)", method.getName(),
+                    StringUtil.join(method.getPsiMethod().getSignature(PsiSubstitutor.EMPTY).getParameterTypes(),
+                                    new Function<PsiType, String>() {
+                                        @Override
+                                        public String fun(PsiType psiType) {
+                                            return psiType.getPresentableText();
+                                        }
+                                    }, ", "));
+            int errorOffset = syntaxErrors.get(0).getTextOffset();
+            String syntaxErrorDescription = syntaxErrors.get(0).getErrorDescription();
+
+            String errorText = syntaxErrors.size() == 1
+                    ? String.format("Alternative signature for %s has syntax error at %d: %s", textSignature,
+                                    errorOffset, syntaxErrorDescription)
+                    : String.format("Alternative signature for %s has %d syntax errors, first is at %d: %s", textSignature,
+                                    syntaxErrors.size(), errorOffset, syntaxErrorDescription);
+            throw new AlternativeSignatureMismatchException(errorText);
+        }
     }
 }
