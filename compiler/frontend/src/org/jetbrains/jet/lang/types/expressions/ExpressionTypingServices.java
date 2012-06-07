@@ -192,7 +192,9 @@ public class ExpressionTypingServices {
         WritableScope scope = new WritableScopeImpl(
                 outerScope, containingDescriptor, new TraceBasedRedeclarationHandler(context.trace), "getBlockReturnedType");
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        return getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context, trace);
+        JetType r = getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context, trace);
+        scope.changeLockLevel(WritableScope.LockLevel.READING);
+        return r;
     }
 
     private Map<JetExpression, JetType> collectReturnedExpressionsWithTypes(
