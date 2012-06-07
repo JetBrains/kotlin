@@ -220,7 +220,7 @@ public class BodyResolver {
                     JetScope scope = scopeForConstructor == null
                                      ? descriptor.getScopeForMemberResolution()
                                      : scopeForConstructor;
-                    JetType type = typeInferrer.getType(scope, delegateExpression, NO_EXPECTED_TYPE, trace);
+                    JetType type = typeInferrer.getType(scope, delegateExpression, NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, trace);
                     if (type != null && supertype != null && !JetTypeChecker.INSTANCE.isSubtypeOf(type, supertype)) {
                         trace.report(TYPE_MISMATCH.on(delegateExpression, supertype, type));
                     }
@@ -361,7 +361,7 @@ public class BodyResolver {
             assert primaryConstructor != null;
             final JetScope scopeForInitializers = classDescriptor.getScopeForInitializers();
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
-                expressionTypingServices.getType(scopeForInitializers, anonymousInitializer.getBody(), NO_EXPECTED_TYPE, trace);
+                expressionTypingServices.getType(scopeForInitializers, anonymousInitializer.getBody(), NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, trace);
             }
         }
         else {
@@ -572,7 +572,7 @@ public class BodyResolver {
         //JetFlowInformationProvider flowInformationProvider = context.getDescriptorResolver().computeFlowData(property, initializer); // TODO : flow JET-15
         JetType expectedTypeForInitializer = property.getPropertyTypeRef() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         JetScope propertyDeclarationInnerScope = descriptorResolver.getPropertyDeclarationInnerScope(scope, propertyDescriptor.getTypeParameters(), ReceiverDescriptor.NO_RECEIVER, trace);
-        JetType type = expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer, trace);
+        JetType type = expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer, DataFlowInfo.EMPTY, trace);
 //
 //        JetType expectedType = propertyDescriptor.getInType();
 //        if (expectedType == null) {
@@ -628,7 +628,7 @@ public class BodyResolver {
                 JetParameter jetParameter = valueParameters.get(i);
                 JetExpression defaultValue = jetParameter.getDefaultValue();
                 if (defaultValue != null) {
-                    expressionTypingServices.getType(declaringScope, defaultValue, valueParameterDescriptor.getType(), trace);
+                    expressionTypingServices.getType(declaringScope, defaultValue, valueParameterDescriptor.getType(), DataFlowInfo.EMPTY, trace);
                 }
             }
         }

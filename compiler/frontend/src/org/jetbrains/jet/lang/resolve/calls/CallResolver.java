@@ -670,7 +670,7 @@ public class CallResolver {
         }
 
         for (JetExpression expression : context.call.getFunctionLiteralArguments()) {
-            expressionTypingServices.getType(context.scope, expression, NO_EXPECTED_TYPE, context.trace);
+            expressionTypingServices.getType(context.scope, expression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
         }
 
         for (JetTypeProjection typeProjection : context.call.getTypeArguments()) {
