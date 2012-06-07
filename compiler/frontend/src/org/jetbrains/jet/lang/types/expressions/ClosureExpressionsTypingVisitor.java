@@ -16,16 +16,15 @@
 
 package org.jetbrains.jet.lang.types.expressions;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
-import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -52,7 +51,14 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetType visitObjectLiteralExpression(final JetObjectLiteralExpression expression, final ExpressionTypingContext context) {
+        DelegatingBindingTrace delegatingBindingTrace = context.trace.get(TRACE_DELTAS_CACHE, expression.getObjectDeclaration());
+        if (delegatingBindingTrace != null) {
+            delegatingBindingTrace.addAllMyDataTo(context.trace);
+            JetType type = context.trace.get(EXPRESSION_TYPE, expression);
+            return DataFlowUtils.checkType(type, expression, context);
+        }
         final JetType[] result = new JetType[1];
+        final TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
         ObservableBindingTrace.RecordHandler<PsiElement, ClassDescriptor> handler = new ObservableBindingTrace.RecordHandler<PsiElement, ClassDescriptor>() {
 
             @Override
@@ -66,15 +72,20 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                     });
                     result[0] = defaultType;
                     if (!context.trace.get(PROCESSED, expression)) {
-                        context.trace.record(EXPRESSION_TYPE, expression, defaultType);
-                        context.trace.record(PROCESSED, expression);
+                        temporaryTrace.record(EXPRESSION_TYPE, expression, defaultType);
+                        temporaryTrace.record(PROCESSED, expression);
                     }
                 }
             }
         };
-        ObservableBindingTrace traceAdapter = new ObservableBindingTrace(context.trace);
+        ObservableBindingTrace traceAdapter = new ObservableBindingTrace(temporaryTrace);
         traceAdapter.addHandler(CLASS, handler);
         TopDownAnalyzer.processObject(context.expressionTypingServices.getProject(), traceAdapter, context.scope, context.scope.getContainingDeclaration(), expression.getObjectDeclaration());
+
+        DelegatingBindingTrace cloneDelta = new DelegatingBindingTrace(new BindingTraceContext().getBindingContext());
+        temporaryTrace.addAllMyDataTo(cloneDelta);
+        context.trace.record(TRACE_DELTAS_CACHE, expression.getObjectDeclaration(), cloneDelta);
+        temporaryTrace.commit();
         return DataFlowUtils.checkType(result[0], expression, context);
     }
 
@@ -100,18 +111,26 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetType returnType = TypeUtils.NO_EXPECTED_TYPE;
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
         JetTypeReference returnTypeRef = functionLiteral.getReturnTypeRef();
+        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
         if (returnTypeRef != null) {
             returnType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, returnTypeRef, context.trace, true);
             context.expressionTypingServices.checkFunctionReturnType(expression, context.replaceScope(functionInnerScope).
-                    replaceExpectedType(returnType).replaceDataFlowInfo(context.dataFlowInfo), context.trace);
+                    replaceExpectedType(returnType).replaceBindingTrace(temporaryTrace), temporaryTrace);
         }
         else {
             if (functionTypeExpected) {
                 returnType = JetStandardClasses.getReturnTypeFromFunctionType(expectedType);
             }
             returnType = context.expressionTypingServices.getBlockReturnedType(functionInnerScope, bodyExpression, CoercionStrategy.COERCION_TO_UNIT,
-                    context.replaceExpectedType(returnType), context.trace);
+                    context.replaceExpectedType(returnType).replaceBindingTrace(temporaryTrace), temporaryTrace);
         }
+        temporaryTrace.commit(new Predicate<WritableSlice>() {
+            @Override
+            public boolean apply(@Nullable WritableSlice slice) {
+                return (slice != BindingContext.RESOLUTION_RESULTS_FOR_FUNCTION && slice != BindingContext.RESOLUTION_RESULTS_FOR_PROPERTY &&
+                        slice != BindingContext.TRACE_DELTAS_CACHE);
+            }
+        }, true);
         JetType safeReturnType = returnType == null ? ErrorUtils.createErrorType("<return type>") : returnType;
         functionDescriptor.setReturnType(safeReturnType);
 
