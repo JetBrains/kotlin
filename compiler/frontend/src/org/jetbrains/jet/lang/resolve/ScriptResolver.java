@@ -17,11 +17,9 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.JetPattern;
 import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -37,7 +35,6 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.expressions.CoercionStrategy;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
-import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 import org.jetbrains.jet.lang.types.ref.JetTypeName;
 
 import javax.inject.Inject;
@@ -170,9 +167,6 @@ public class ScriptResolver {
 
             ExpressionTypingContext context = ExpressionTypingContext.newContext(
                     expressionTypingServices,
-                    Maps.<JetPattern, DataFlowInfo>newHashMap(),
-                    Maps.<JetPattern, List<VariableDescriptor>>newHashMap(),
-                    new LabelResolver(),
                     trace,
                     scope,
                     DataFlowInfo.EMPTY,

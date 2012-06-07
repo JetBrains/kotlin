@@ -26,7 +26,10 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetImportDirective;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
@@ -47,7 +50,6 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.RESULT_TYPE_MISMATCH;
@@ -159,9 +161,6 @@ public class ExpressionTypingUtils {
         ExpressionReceiver expressionReceiver = new ExpressionReceiver(expression, variableDescriptor.getType());
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 expressionTypingServices,
-                new HashMap<JetPattern, DataFlowInfo>(),
-                new HashMap<JetPattern, List<VariableDescriptor>>(),
-                new LabelResolver(),
                 new BindingTraceContext(),
                 scope,
                 DataFlowInfo.EMPTY,
