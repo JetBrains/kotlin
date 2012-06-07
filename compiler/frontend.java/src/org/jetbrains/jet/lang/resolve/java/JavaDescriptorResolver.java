@@ -21,7 +21,9 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
+import com.intellij.util.Function;
 import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -145,6 +147,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         final boolean staticMembers;
         final boolean kotlin;
         final ClassOrNamespaceDescriptor classOrNamespaceDescriptor;
+        private List<String> alternativeSignatureErrors;
 
         protected ResolverScopeData(@Nullable PsiClass psiClass, @Nullable PsiPackage psiPackage, @NotNull FqName fqName, boolean staticMembers, @NotNull ClassOrNamespaceDescriptor descriptor) {
             checkPsiClassIsNotJet(psiClass);
@@ -194,6 +197,13 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
 
         private Map<Name, NamedMembers> namedMembersMap;
+
+        public void addAlternativeSignatureError(@NotNull String errorMessage) {
+            if (alternativeSignatureErrors == null) {
+                alternativeSignatureErrors = new ArrayList<String>();
+            }
+            alternativeSignatureErrors.add(errorMessage);
+        }
         
         @NotNull
         public abstract List<TypeParameterDescriptor> getTypeParameters();
@@ -1621,19 +1631,42 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         // TODO consider better place for this check
         String signature = method.getSignatureAnnotation().signature();
         if (!signature.isEmpty()) {
-            JetNamedFunction altFunDeclaration = JetPsiFactory.createFunction(project, signature);
-            List<PsiErrorElement> syntaxErrors = AnalyzingUtils.getSyntaxErrorRanges(altFunDeclaration);
-            if (!syntaxErrors.isEmpty()) {
-                // TODO report syntax error as diagnostic when method is used
-            }
-            else {
-                valueParameterDescriptors = AlternativeSignatureParsing
-                        .computeAlternativeValueParameters(valueParameterDescriptors, altFunDeclaration);
-                JetTypeReference returnTypeRef = altFunDeclaration.getReturnTypeRef();
-                if (returnTypeRef != null) {
-                    returnType = AlternativeSignatureParsing.computeAlternativeTypeFromAnnotation(returnTypeRef.getTypeElement(), returnType);
+            try {
+                JetNamedFunction altFunDeclaration = JetPsiFactory.createFunction(project, signature);
+                List<PsiErrorElement> syntaxErrors = AnalyzingUtils.getSyntaxErrorRanges(altFunDeclaration);
+                if (!syntaxErrors.isEmpty()) {
+                    String textSignature = String.format("%s(%s)", method.getName(),
+                            StringUtil.join(method.getPsiMethod().getSignature(PsiSubstitutor.EMPTY).getParameterTypes(),
+                                            new Function<PsiType, String>() {
+                                                @Override
+                                                public String fun(PsiType psiType) {
+                                                    return psiType.getPresentableText();
+                                                }
+                                            }, ", "));
+                    int errorOffset = syntaxErrors.get(0).getTextOffset();
+                    String syntaxErrorDescription = syntaxErrors.get(0).getErrorDescription();
+
+                    String errorText = syntaxErrors.size() == 1
+                            ? String.format("Alternative signature for %s has syntax error at %d: %s", textSignature,
+                                            errorOffset, syntaxErrorDescription)
+                            : String.format("Alternative signature for %s has %d syntax errors, first is at %d: %s", textSignature,
+                                            syntaxErrors.size(), errorOffset, syntaxErrorDescription);
+                    throw new AlternativeSignatureMismatchException(errorText);
                 }
-                methodTypeParameters = AlternativeSignatureParsing.computeAlternativeTypeParameters(methodTypeParameters, altFunDeclaration);
+                else {
+                    valueParameterDescriptors = AlternativeSignatureParsing
+                            .computeAlternativeValueParameters(valueParameterDescriptors, altFunDeclaration);
+                    JetTypeReference returnTypeRef = altFunDeclaration.getReturnTypeRef();
+                    if (returnTypeRef != null) {
+                        returnType = AlternativeSignatureParsing.computeAlternativeTypeFromAnnotation(returnTypeRef.getTypeElement(),
+                                                                                                      returnType);
+                    }
+                    methodTypeParameters = AlternativeSignatureParsing.computeAlternativeTypeParameters(methodTypeParameters,
+                                                                                                        altFunDeclaration);
+                }
+            }
+            catch (AlternativeSignatureMismatchException e) {
+                scopeData.addAlternativeSignatureError(e.getMessage());
             }
         }
 
