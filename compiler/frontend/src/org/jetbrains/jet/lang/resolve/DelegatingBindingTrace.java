@@ -16,8 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.util.slicedmap.*;
 
@@ -102,15 +104,24 @@ public class DelegatingBindingTrace implements BindingTrace {
         return result;
     }
 
-    public void addAllMyDataTo(BindingTrace trace) {
+    public void addAllMyDataTo(@NotNull BindingTrace trace) {
+        addAllMyDataTo(trace, null, true);
+    }
+
+    public void addAllMyDataTo(@NotNull BindingTrace trace, @Nullable Predicate<WritableSlice> filter, boolean commitDiagnostics) {
         for (Map.Entry<SlicedMapKey<?, ?>, ?> entry : map) {
             SlicedMapKey slicedMapKey = entry.getKey();
             Object value = entry.getValue();
 
-            //noinspection unchecked
-            trace.record(slicedMapKey.getSlice(), slicedMapKey.getKey(), value);
+            WritableSlice slice = slicedMapKey.getSlice();
+            if (filter == null || filter.apply(slice)) {
+                //noinspection unchecked
+                trace.record(slice, slicedMapKey.getKey(), value);
+            }
         }
-        
+
+        if (!commitDiagnostics) return;
+
         for (Diagnostic diagnostic : diagnostics) {
             trace.report(diagnostic);
         }
