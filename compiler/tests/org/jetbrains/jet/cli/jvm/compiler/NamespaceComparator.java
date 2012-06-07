@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.junit.Assert;
 
 import java.io.BufferedReader;
@@ -513,7 +514,7 @@ public class NamespaceComparator {
                 sb.append(">");
             }
 
-            if (!klass.getTypeConstructor().getSupertypes().isEmpty()) {
+            if (JetStandardClasses.getNothing() != klass && !klass.getTypeConstructor().getSupertypes().isEmpty()) {
                 sb.append(" : ");
                 new TypeSerializer(sb).serializeCommaSeparated(new ArrayList<JetType>(klass.getTypeConstructor().getSupertypes()));
             }
