@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.Variance;
@@ -116,6 +117,9 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
     private String renderType(JetType type, boolean shortNamesOnly) {
         if (type == null) {
             return escape("[NULL]");
+        }
+        else if (ErrorUtils.isErrorType(type)) {
+            return escape(type.toString());
         }
         else if (JetStandardClasses.isUnit(type)) {
             return escape(JetStandardClasses.UNIT_ALIAS + (type.isNullable() ? "?" : ""));
