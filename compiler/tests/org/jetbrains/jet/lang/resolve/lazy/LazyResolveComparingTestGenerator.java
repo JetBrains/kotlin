@@ -16,6 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +26,10 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author abreslav
@@ -32,13 +39,80 @@ public class LazyResolveComparingTestGenerator {
         new LazyResolveComparingTestGenerator().generateAndSave();
     }
 
+    private static class TestDataSource {
+        private final File rootFile;
+        private final boolean recursive;
+        private final FileFilter filter;
+        private final String doTestMethodName;
+
+        public TestDataSource(@NotNull File rootFile, boolean recursive, @NotNull FileFilter filter, String doTestMethodName) {
+            this.rootFile = rootFile;
+            this.recursive = recursive;
+            this.filter = filter;
+            this.doTestMethodName = doTestMethodName;
+        }
+
+        public Collection<TestDataFile> getFiles() {
+            if (!rootFile.isDirectory()) {
+                return Collections.singletonList(new TestDataFile(rootFile, doTestMethodName));
+            }
+            List<File> files = Lists.newArrayList();
+            collectFiles(rootFile, files, recursive);
+            return Collections2.transform(files, new Function<File, TestDataFile>() {
+                @Override
+                public TestDataFile apply(File file) {
+                    return new TestDataFile(file, doTestMethodName);
+                }
+            });
+        }
+
+        private void collectFiles(File current, List<File> result, boolean recursive) {
+            for (File file : current.listFiles(filter)) {
+                if (file.isDirectory() && recursive) {
+                    collectFiles(file, result, recursive);
+                }
+                else {
+                    result.add(file);
+                }
+            }
+        }
+    }
+
+    private static class TestDataFile {
+        private final File file;
+        private final String doTestMethodName;
+
+        public TestDataFile(File file, String doTestMethodName) {
+            this.file = file;
+            this.doTestMethodName = doTestMethodName;
+        }
+
+        public String getTestCall() {
+            return doTestMethodName + "(\"" + file + "\");";
+        }
+
+        public String getTestMethodName() {
+            return "test" + FileUtil.getNameWithoutExtension(StringUtil.capitalize(file.getName()));
+        }
+    }
+
+
+    public static FileFilter filterFilesByExtension(@NotNull final String extension) {
+        return new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return file.isDirectory() || file.getName().endsWith("." + extension);
+            }
+        };
+    }
+
     private final String baseDir;
     private final String testDataFileExtension;
     private final String testClassPackage;
     private final String testClassName;
     private final String baseTestClassPackage;
     private final String baseTestClassName;
-    private final File testDataDir;
+    private final Collection<TestDataSource> testDataSources;
     private final String generatorName;
 
     public LazyResolveComparingTestGenerator() {
@@ -48,7 +122,11 @@ public class LazyResolveComparingTestGenerator {
         testClassName = "LazyResolveComparingTestGenerated";
         baseTestClassPackage = "org.jetbrains.jet.lang.resolve.lazy";
         baseTestClassName = "AbstractLazyResolveComparingTest";
-        testDataDir = new File("compiler/testData/lazyResolve");
+        //testDataDir = new File("compiler/testData/lazyResolve");
+        testDataSources = Arrays.asList(
+            new TestDataSource(new File("compiler/testData/readKotlinBinaryClass"), true, filterFilesByExtension(testDataFileExtension), "doTestSinglePackage"),
+            new TestDataSource(new File("compiler/testData/lazyResolve"), true, filterFilesByExtension(testDataFileExtension), "doTest")
+        );
         generatorName = "LazyResolveComparingTestGenerator";
     }
 
@@ -77,18 +155,17 @@ public class LazyResolveComparingTestGenerator {
         p.println("public class ", testClassName, " extends ", baseTestClassName, " {");
         p.pushIndent();
 
-        File[] ktFiles = testDataDir.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.getName().endsWith("." + testDataFileExtension);
-            }
-        });
-        for (File file : ktFiles) {
+        Collection<TestDataFile> files = Lists.newArrayList();
+        for (TestDataSource testDataSource : testDataSources) {
+            files.addAll(testDataSource.getFiles());
+        }
+
+        for (TestDataFile file : files) {
             p.println("@Test");
-            p.println("public void test", FileUtil.getNameWithoutExtension(StringUtil.capitalize(file.getName())), "() throws Exception {");
+            p.println("public void ", file.getTestMethodName(), "() throws Exception {");
             p.pushIndent();
 
-            p.println("doTest(\"", file.getPath(), "\");");
+            p.println(file.getTestCall());
 
             p.popIndent();
             p.println("}");
@@ -106,15 +183,15 @@ public class LazyResolveComparingTestGenerator {
 
     private void generateAllTestsPresent(Printer p) {
         String methodText =
-                     "@Test\n" +
-                     "    public void allTestsPresent() {\n" +
+                     //"@Test\n" +
+                     "    public void allTestsPresent(String testDataDir) {\n" +
                      "        Set<String> methodNames = new HashSet<String>();\n" +
                      "        for (Method method : " + testClassName + ".class.getDeclaredMethods()) {\n" +
                      "            if (method.isAnnotationPresent(Test.class)) {\n" +
                      "                methodNames.add(method.getName().toLowerCase() + \"." + testDataFileExtension + "\");\n" +
                      "            }\n" +
                      "        }\n" +
-                     "        File[] testDataFiles = new File(\"" + testDataDir + "\").listFiles(new FileFilter() {\n" +
+                     "        File[] testDataFiles = new File(\"testDataDi\").listFiles(new FileFilter() {\n" +
                      "            @Override\n" +
                      "            public boolean accept(File pathname) {\n" +
                      "                return pathname.getName().endsWith(\"." + testDataFileExtension + "\");\n" +

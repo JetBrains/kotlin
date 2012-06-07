@@ -20,14 +20,17 @@ import com.google.common.base.Predicates;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.Function;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.cli.jvm.compiler.NamespaceComparator;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
@@ -69,7 +72,7 @@ public abstract class AbstractLazyResolveComparingTest {
         Disposer.dispose(rootDisposable);
     }
 
-    protected void doTest(String testFileName) throws IOException {
+    protected void doTest(String testFileName, Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>> transform) throws IOException {
         TopDownAnalysisParameters params = new TopDownAnalysisParameters(
                 Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
         ModuleDescriptor module = new ModuleDescriptor(Name.special("<test module>"));
@@ -91,7 +94,36 @@ public abstract class AbstractLazyResolveComparingTest {
 
         ResolveSession session = new ResolveSession(project, lazyModule, new FileBasedDeclarationProviderFactory(files));
 
-        NamespaceComparator.compareNamespaces(module.getRootNamespace(), lazyModule.getRootNamespace(), true,
+        Pair<NamespaceDescriptor, NamespaceDescriptor> namespacesToCompare = transform.fun(Pair.create(module, lazyModule));
+
+        NamespaceComparator.compareNamespaces(namespacesToCompare.first, namespacesToCompare.second,
+                                              true,
                                               new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt"));
+    }
+
+    protected void doTest(String testFileName) throws Exception {
+        doTest(testFileName, new Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>>() {
+            @Override
+            public Pair<NamespaceDescriptor, NamespaceDescriptor> fun(Pair<ModuleDescriptor, ModuleDescriptor> pair) {
+                return Pair.create(pair.first.getRootNamespace(), pair.second.getRootNamespace());
+            }
+        });
+    }
+
+    protected void doTestSinglePackage(String testFileName) throws Exception {
+        doTest(testFileName, new Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>>() {
+            @Override
+            public Pair<NamespaceDescriptor, NamespaceDescriptor> fun(Pair<ModuleDescriptor, ModuleDescriptor> pair) {
+                ModuleDescriptor expectedModule = pair.first;
+                ModuleDescriptor actualModule = pair.second;
+                NamespaceDescriptor actual = theOnlySubPackage(actualModule.getRootNamespace());
+                NamespaceDescriptor expected = expectedModule.getRootNamespace().getMemberScope().getNamespace(actual.getName());
+                return Pair.create(expected, actual);
+            }
+        });
+    }
+
+    private NamespaceDescriptor theOnlySubPackage(NamespaceDescriptor namespace) {
+        return (NamespaceDescriptor) namespace.getMemberScope().getAllDescriptors().iterator().next();
     }
 }
