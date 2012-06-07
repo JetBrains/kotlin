@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.intellij.openapi.util.Ref;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -35,11 +36,19 @@ import java.util.List;
  * @since 6/5/12
  */
 class AlternativeSignatureParsing {
-    static JetType computeAlternativeTypeFromAnnotation(JetTypeElement alternativeTypeElement, final JetType autoType) {
-        return alternativeTypeElement.accept(new JetVisitor<JetType, Void>() {
+    static JetType computeAlternativeTypeFromAnnotation(JetTypeElement alternativeTypeElement, final JetType autoType)
+            throws AlternativeSignatureMismatchException {
+        final Ref<AlternativeSignatureMismatchException> exception = new Ref<AlternativeSignatureMismatchException>();
+        JetType result = alternativeTypeElement.accept(new JetVisitor<JetType, Void>() {
             @Override
             public JetType visitNullableType(JetNullableType nullableType, Void data) {
-                return TypeUtils.makeNullable(computeAlternativeTypeFromAnnotation(nullableType.getInnerType(), autoType));
+                try {
+                    return TypeUtils.makeNullable(computeAlternativeTypeFromAnnotation(nullableType.getInnerType(), autoType));
+                }
+                catch (AlternativeSignatureMismatchException e) {
+                    exception.set(e);
+                    return null;
+                }
             }
 
             @Override
@@ -57,17 +66,24 @@ class AlternativeSignatureParsing {
                 return visitCommonType(type);
             }
 
-            public JetType visitCommonType(JetTypeElement type) {
-                List<TypeProjection> arguments = autoType.getArguments();
-                List<TypeProjection> altArguments = new ArrayList<TypeProjection>();
-                for (int i = 0, size = arguments.size(); i < size; i++) {
-                    JetTypeElement argumentAlternativeTypeElement = type.getTypeArgumentsAsTypes().get(i).getTypeElement();
-                    TypeProjection argument = arguments.get(i);
-                    JetType alternativeType = computeAlternativeTypeFromAnnotation(argumentAlternativeTypeElement, argument.getType());
-                    altArguments.add(new TypeProjection(argument.getProjectionKind(), alternativeType));
+            private JetType visitCommonType(JetTypeElement type) {
+                try {
+                    List<TypeProjection> arguments = autoType.getArguments();
+                    List<TypeProjection> altArguments = new ArrayList<TypeProjection>();
+                    for (int i = 0, size = arguments.size(); i < size; i++) {
+                        JetTypeElement argumentAlternativeTypeElement = type.getTypeArgumentsAsTypes().get(i).getTypeElement();
+                        TypeProjection argument = arguments.get(i);
+                        JetType alternativeType =
+                                computeAlternativeTypeFromAnnotation(argumentAlternativeTypeElement, argument.getType());
+                        altArguments.add(new TypeProjection(argument.getProjectionKind(), alternativeType));
+                    }
+                    return new JetTypeImpl(autoType.getAnnotations(), autoType.getConstructor(), false,
+                                           altArguments, autoType.getMemberScope());
                 }
-                return new JetTypeImpl(autoType.getAnnotations(), autoType.getConstructor(), false,
-                                       altArguments, autoType.getMemberScope());
+                catch (AlternativeSignatureMismatchException e) {
+                    exception.set(e);
+                    return null;
+                }
             }
 
             @Override
@@ -75,10 +91,16 @@ class AlternativeSignatureParsing {
                 throw new UnsupportedOperationException("Self-types are not supported yet");
             }
         }, null);
+        //noinspection ThrowableResultOfMethodCallIgnored
+        if (exception.get() != null) {
+            throw exception.get();
+        }
+        return result;
     }
 
-    static JavaDescriptorResolver.ValueParameterDescriptors computeAlternativeValueParameters(JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors,
-            JetNamedFunction altFunDeclaration) {
+    static JavaDescriptorResolver.ValueParameterDescriptors computeAlternativeValueParameters(
+            JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors,
+            JetNamedFunction altFunDeclaration) throws AlternativeSignatureMismatchException {
         List<ValueParameterDescriptor> parameterDescriptors = valueParameterDescriptors.descriptors;
         List<ValueParameterDescriptor> altParamDescriptors = new ArrayList<ValueParameterDescriptor>();
         for (int i = 0, size = parameterDescriptors.size(); i < size; i++) {
@@ -101,13 +123,14 @@ class AlternativeSignatureParsing {
         }
         JetType altReceiverType = null;
         if (valueParameterDescriptors.receiverType != null) {
-            altReceiverType = computeAlternativeTypeFromAnnotation(altFunDeclaration.getReceiverTypeRef().getTypeElement(), valueParameterDescriptors.receiverType);
+            altReceiverType = computeAlternativeTypeFromAnnotation(altFunDeclaration.getReceiverTypeRef().getTypeElement(),
+                                                                   valueParameterDescriptors.receiverType);
         }
         return new JavaDescriptorResolver.ValueParameterDescriptors(altReceiverType, altParamDescriptors);
     }
 
     static List<TypeParameterDescriptor> computeAlternativeTypeParameters(List<TypeParameterDescriptor> typeParameterDescriptors,
-            JetNamedFunction altFunDeclaration) {
+            JetNamedFunction altFunDeclaration) throws AlternativeSignatureMismatchException {
         List<TypeParameterDescriptor> altParamDescriptors = new ArrayList<TypeParameterDescriptor>();
         for (int i = 0, size = typeParameterDescriptors.size(); i < size; i++) {
             TypeParameterDescriptor pd = typeParameterDescriptors.get(i);

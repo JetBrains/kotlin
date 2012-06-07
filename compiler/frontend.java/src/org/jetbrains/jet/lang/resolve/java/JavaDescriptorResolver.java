@@ -1654,15 +1654,20 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                     throw new AlternativeSignatureMismatchException(errorText);
                 }
                 else {
-                    valueParameterDescriptors = AlternativeSignatureParsing
+                    ValueParameterDescriptors altValueParameters = AlternativeSignatureParsing
                             .computeAlternativeValueParameters(valueParameterDescriptors, altFunDeclaration);
                     JetTypeReference returnTypeRef = altFunDeclaration.getReturnTypeRef();
-                    if (returnTypeRef != null) {
-                        returnType = AlternativeSignatureParsing.computeAlternativeTypeFromAnnotation(returnTypeRef.getTypeElement(),
-                                                                                                      returnType);
-                    }
-                    methodTypeParameters = AlternativeSignatureParsing.computeAlternativeTypeParameters(methodTypeParameters,
-                                                                                                        altFunDeclaration);
+                    JetType altReturnType = returnTypeRef != null
+                                            ? AlternativeSignatureParsing.computeAlternativeTypeFromAnnotation(
+                                                returnTypeRef.getTypeElement(), returnType)
+                                            : returnType;
+                    List<TypeParameterDescriptor> altTypeParameters =
+                            AlternativeSignatureParsing.computeAlternativeTypeParameters(methodTypeParameters,
+                                                                                         altFunDeclaration);
+                    // if no exceptions were thrown, save alternative data
+                    valueParameterDescriptors = altValueParameters;
+                    returnType = altReturnType;
+                    methodTypeParameters = altTypeParameters;
                 }
             }
             catch (AlternativeSignatureMismatchException e) {
