@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="dx-android">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dependencies/dx.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/dependencies/dx-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
