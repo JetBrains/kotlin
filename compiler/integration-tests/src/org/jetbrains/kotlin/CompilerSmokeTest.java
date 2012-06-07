@@ -52,6 +52,13 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
     }
 
     @Test
+    public void syntaxErrors() throws Exception {
+        final String jar = tempDir.getAbsolutePath() + File.separator + "smoke.jar";
+
+        runCompiler("test.compile", "-src", "test.kt", "-jar", jar);
+    }
+
+    @Test
     public void script() throws Exception {
         runCompiler("script", "-script", "hello.ktscript", "hi", "there");
     }

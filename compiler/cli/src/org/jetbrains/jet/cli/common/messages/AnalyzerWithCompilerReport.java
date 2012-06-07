@@ -148,5 +148,10 @@ public final class AnalyzerWithCompilerReport {
             super(psiElement, SYNTAX_ERROR_FACTORY, severity);
             this.message = message;
         }
+
+        @Override
+        public boolean isValid() {
+            return true;
+        }
     }
 }
