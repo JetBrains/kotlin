@@ -68,13 +68,23 @@ public class LazyResolveComparingTestGenerator {
 
         private void collectFiles(File current, List<File> result, boolean recursive) {
             for (File file : current.listFiles(filter)) {
-                if (file.isDirectory() && recursive) {
-                    collectFiles(file, result, recursive);
+                if (file.isDirectory()) {
+                    if (recursive) {
+                        collectFiles(file, result, recursive);
+                    }
                 }
                 else {
                     result.add(file);
                 }
             }
+        }
+
+        public void getAllTestsPresentCheck(@NotNull Printer p) {
+            p.println("allTestsPresent(new File(\"" + rootFile + "\"), " + recursive + ");");
+        }
+
+        public String getAllTestsPresentMethodName() {
+            return "allTestsPresentIn" + StringUtil.capitalize(rootFile.getName());
         }
     }
 
@@ -158,6 +168,16 @@ public class LazyResolveComparingTestGenerator {
         Collection<TestDataFile> files = Lists.newArrayList();
         for (TestDataSource testDataSource : testDataSources) {
             files.addAll(testDataSource.getFiles());
+
+            p.println("@Test");
+            p.println("public void " + testDataSource.getAllTestsPresentMethodName() + "() throws Exception {");
+            p.pushIndent();
+
+            testDataSource.getAllTestsPresentCheck(p);
+
+            p.popIndent();
+            p.println("}");
+            p.println();
         }
 
         for (TestDataFile file : files) {
@@ -182,29 +202,32 @@ public class LazyResolveComparingTestGenerator {
     }
 
     private void generateAllTestsPresent(Printer p) {
-        String methodText =
-                     //"@Test\n" +
-                     "    public void allTestsPresent(String testDataDir) {\n" +
-                     "        Set<String> methodNames = new HashSet<String>();\n" +
-                     "        for (Method method : " + testClassName + ".class.getDeclaredMethods()) {\n" +
-                     "            if (method.isAnnotationPresent(Test.class)) {\n" +
-                     "                methodNames.add(method.getName().toLowerCase() + \"." + testDataFileExtension + "\");\n" +
-                     "            }\n" +
-                     "        }\n" +
-                     "        File[] testDataFiles = new File(\"testDataDi\").listFiles(new FileFilter() {\n" +
-                     "            @Override\n" +
-                     "            public boolean accept(File pathname) {\n" +
-                     "                return pathname.getName().endsWith(\"." + testDataFileExtension + "\");\n" +
-                     "            }\n" +
-                     "        });\n" +
-                     "        for (File testDataFile : testDataFiles) {\n" +
-                     "            if (!methodNames.contains(\"test\" + testDataFile.getName().toLowerCase())) {\n" +
-                     "                Assert.fail(\"Test data file missing from the generated test class: \" + testDataFile + \"\\nPlease re-run the generator: " + testClassName + "\");\n" +
-                     "            }\n" +
-                     "        }\n" +
-                     "    }\n";
+        String[] methodText = new String[] {
+                     "public static void allTestsPresent(File testDataDir, boolean recursive) {",
+                     "    Set<String> methodNames = new HashSet<String>();",
+                     "    for (Method method : " + testClassName + ".class.getDeclaredMethods()) {",
+                     "        if (method.isAnnotationPresent(Test.class)) {",
+                     "            methodNames.add(method.getName().toLowerCase() + \"." + testDataFileExtension + "\");",
+                     "        }",
+                     "    }",
+                     "    for (File file : testDataDir.listFiles()) {",
+                     "        if (file.isDirectory()) {",
+                     "            if (recursive) {",
+                     "                allTestsPresent(file, recursive);",
+                     "            }",
+                     "        }",
+                     "        else {",
+                     "            String name = file.getName();",
+                     "            if (name.endsWith(\"." + testDataFileExtension + "\") && !methodNames.contains(\"test\" + name.toLowerCase())) {",
+                     "                Assert.fail(\"Test data file missing from the generated test class: \" + file + \"\\nPlease re-run the generator: " + testClassName + "\");",
+                     "            }",
+                     "        }",
+                     "    }",
+                     "}"};
 
-        p.println(methodText);
+        for (String s : methodText) {
+            p.println(s);
+        }
     }
 
     private static class Printer {
