@@ -185,10 +185,6 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected void blackBox() {
         GenerationState state = generateClassesInFileGetState();
 
-        if (DxChecker.RUN_DX_CHECKER) {
-            DxChecker.check(state.getFactory());
-        }
-
         GeneratedClassLoader loader = createClassLoader(state.getFactory());
 
         String r;
@@ -274,10 +270,6 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected Class generateNamespaceClass() {
         ClassFileFactory state = generateClassesInFile();
 
-        if (DxChecker.RUN_DX_CHECKER) {
-            DxChecker.check(state);
-        }
-
         return loadRootNamespaceClass(state);
     }
 
@@ -309,11 +301,6 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     @NotNull
     protected ClassFileFactory generateClassesInFile() {
         GenerationState generationState = generateClassesInFileGetState();
-
-        if (DxChecker.RUN_DX_CHECKER) {
-            DxChecker.check(generationState.getFactory());
-        }
-
         return generationState.getFactory();
     }
 
@@ -322,8 +309,12 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         GenerationState generationState;
         try {
             ClassBuilderFactory classBuilderFactory = ClassBuilderFactories.binaries(false);
-
             generationState = generateCommon(classBuilderFactory);
+
+            if (DxChecker.RUN_DX_CHECKER) {
+                DxChecker.check(generationState.getFactory());
+            }
+
         } catch (RuntimeException e) {
             System.out.println(generateToText());
             throw e;
