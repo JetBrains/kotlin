@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.psi.Call.CallType;
 
 import java.util.Collections;
 import java.util.List;
@@ -78,13 +79,20 @@ public class CallMaker {
         private ASTNode callOperationNode;
         private final JetExpression calleeExpression;
         private final List<? extends ValueArgument> valueArguments;
+        private final Call.CallType callType;
 
         protected CallImpl(@Nullable PsiElement callElement, @NotNull ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments) {
+            this(callElement, explicitReceiver, callOperationNode, calleeExpression, valueArguments, CallType.DEFAULT);
+        }
+
+        protected CallImpl(@Nullable PsiElement callElement, @NotNull ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode,
+                @NotNull JetExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments, @NotNull CallType callType) {
             this.callElement = callElement;
             this.explicitReceiver = explicitReceiver;
             this.callOperationNode = callOperationNode;
             this.calleeExpression = calleeExpression;
             this.valueArguments = valueArguments;
+            this.callType = callType;
         }
 
         @Override
@@ -146,20 +154,37 @@ public class CallMaker {
         public String toString() {
             return getCallElement().getText();
         }
+
+        @NotNull
+        @Override
+        public CallType getCallType() {
+            return callType;
+        }
     }
 
     public static Call makeCallWithExpressions(@NotNull JetElement callElement, @NotNull ReceiverDescriptor explicitReceiver,
                                                @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression,
                                                @NotNull List<JetExpression> argumentExpressions) {
+        return makeCallWithExpressions(callElement, explicitReceiver, callOperationNode, calleeExpression, argumentExpressions, CallType.DEFAULT);
+    }
+
+    public static Call makeCallWithExpressions(@NotNull JetElement callElement, @NotNull ReceiverDescriptor explicitReceiver,
+                                               @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression,
+                                               @NotNull List<JetExpression> argumentExpressions, @NotNull CallType callType) {
         List<ValueArgument> arguments = Lists.newArrayList();
         for (JetExpression argumentExpression : argumentExpressions) {
             arguments.add(makeValueArgument(argumentExpression, calleeExpression));
         }
-        return makeCall(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments);
+        return makeCall(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, callType);
     }
 
     public static Call makeCall(JetElement callElement, ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode, JetExpression calleeExpression, List<? extends ValueArgument> arguments) {
-        return new CallImpl(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments);
+        return makeCall(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, CallType.DEFAULT);
+    }
+
+    public static Call makeCall(JetElement callElement, ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode,
+            JetExpression calleeExpression, List<? extends ValueArgument> arguments, CallType callType) {
+        return new CallImpl(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, callType);
     }
 
     public static Call makeCall(@NotNull ReceiverDescriptor leftAsReceiver, JetBinaryExpression expression) {
@@ -170,14 +195,16 @@ public class CallMaker {
         return makeCall(expression, baseAsReceiver, null, expression.getOperationReference(), Collections.<ValueArgument>emptyList());
     }
 
-    public static Call makeArraySetCall(@NotNull ReceiverDescriptor arrayAsReceiver, @NotNull JetArrayAccessExpression arrayAccessExpression, @NotNull JetExpression rightHandSide) {
+    public static Call makeArraySetCall(@NotNull ReceiverDescriptor arrayAsReceiver, @NotNull JetArrayAccessExpression arrayAccessExpression,
+            @NotNull JetExpression rightHandSide, @NotNull CallType callType) {
         List<JetExpression> arguments = Lists.newArrayList(arrayAccessExpression.getIndexExpressions());
         arguments.add(rightHandSide);
-        return makeCallWithExpressions(arrayAccessExpression, arrayAsReceiver, null, arrayAccessExpression, arguments);
+        return makeCallWithExpressions(arrayAccessExpression, arrayAsReceiver, null, arrayAccessExpression, arguments, callType);
     }
 
-    public static Call makeArrayGetCall(@NotNull ReceiverDescriptor arrayAsReceiver, @NotNull JetArrayAccessExpression arrayAccessExpression) {
-        return makeCallWithExpressions(arrayAccessExpression, arrayAsReceiver, null, arrayAccessExpression, arrayAccessExpression.getIndexExpressions());
+    public static Call makeArrayGetCall(@NotNull ReceiverDescriptor arrayAsReceiver, @NotNull JetArrayAccessExpression arrayAccessExpression,
+            @NotNull CallType callType) {
+        return makeCallWithExpressions(arrayAccessExpression, arrayAsReceiver, null, arrayAccessExpression, arrayAccessExpression.getIndexExpressions(), callType);
     }
 
     public static ValueArgument makeValueArgument(@NotNull JetExpression expression) {
@@ -250,6 +277,12 @@ public class CallMaker {
             @Override
             public String toString() {
                 return callElement.getText();
+            }
+
+            @NotNull
+            @Override
+            public CallType getCallType() {
+                return CallType.DEFAULT;
             }
         };
     }

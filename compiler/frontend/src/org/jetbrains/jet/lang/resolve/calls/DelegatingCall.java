@@ -95,4 +95,10 @@ public class DelegatingCall implements Call {
     public PsiElement getCallElement() {
         return delegate.getCallElement();
     }
+
+    @NotNull
+    @Override
+    public CallType getCallType() {
+        return delegate.getCallType();
+    }
 }

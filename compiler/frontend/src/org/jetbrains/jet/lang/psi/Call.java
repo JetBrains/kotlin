@@ -59,4 +59,11 @@ public interface Call {
 
     @NotNull
     PsiElement getCallElement();
+
+    enum CallType {
+        DEFAULT, ARRAY_GET_METHOD, ARRAY_SET_METHOD
+    }
+
+    @NotNull
+    Call.CallType getCallType();
 }

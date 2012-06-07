@@ -1178,8 +1178,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (!isGet) assert rightHandSide != null;
         OverloadResolutionResults<FunctionDescriptor> functionResults = context.resolveCallWithGivenName(
                 isGet
-                ? CallMaker.makeArrayGetCall(receiver, arrayAccessExpression)
-                : CallMaker.makeArraySetCall(receiver, arrayAccessExpression, rightHandSide),
+                ? CallMaker.makeArrayGetCall(receiver, arrayAccessExpression, Call.CallType.ARRAY_GET_METHOD)
+                : CallMaker.makeArraySetCall(receiver, arrayAccessExpression, rightHandSide, Call.CallType.ARRAY_SET_METHOD),
                 arrayAccessExpression,
                 Name.identifier(isGet ? "get" : "set"));
         if (!functionResults.isSuccess()) {
