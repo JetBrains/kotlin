@@ -23,6 +23,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForLazyResolve;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -48,14 +49,17 @@ public class ResolveSession {
     private final DeclarationProviderFactory declarationProviderFactory;
 
     private final InjectorForLazyResolve injector;
+    private final ModuleConfiguration moduleConfiguration;
 
     public ResolveSession(
             @NotNull Project project,
             @NotNull ModuleDescriptor rootDescriptor,
+            @NotNull ModuleConfiguration moduleConfiguration,
             @NotNull DeclarationProviderFactory declarationProviderFactory
     ) {
         this.injector = new InjectorForLazyResolve(project, this, trace);
         this.module = rootDescriptor;
+        this.moduleConfiguration = moduleConfiguration;
         PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(FqName.ROOT);
         assert provider != null : "No declaration provider for root package in " + rootDescriptor;
         this.rootPackage = new LazyPackageDescriptor(rootDescriptor, FqNameUnsafe.ROOT_NAME, this, provider);
@@ -67,6 +71,11 @@ public class ResolveSession {
     @NotNull
     public InjectorForLazyResolve getInjector() {
         return injector;
+    }
+
+    @NotNull
+    public ModuleConfiguration getModuleConfiguration() {
+        return moduleConfiguration;
     }
 
     @Nullable

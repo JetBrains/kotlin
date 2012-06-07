@@ -79,7 +79,6 @@ public abstract class AbstractLazyResolveComparingTest {
         InjectorForTopDownAnalyzerForJvm
                 injector = new InjectorForTopDownAnalyzerForJvm(project, params, new BindingTraceContext(), module, compilerDependencies);
 
-
         List<JetFile> files = JetTestUtils
                 .createTestFiles(testFileName, FileUtil.loadFile(new File(testFileName)), new JetTestUtils.TestFileFactory<JetFile>() {
                     @Override
@@ -88,11 +87,11 @@ public abstract class AbstractLazyResolveComparingTest {
                     }
                 });
 
-        injector.getTopDownAnalyzer().analyzeFiles(files, Collections.<AnalyzerScriptParameter>emptyList());
-
         ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
 
-        ResolveSession session = new ResolveSession(project, lazyModule, new FileBasedDeclarationProviderFactory(files));
+        ResolveSession session = new ResolveSession(project, lazyModule, injector.getJavaBridgeConfiguration(), new FileBasedDeclarationProviderFactory(files));
+
+        injector.getTopDownAnalyzer().analyzeFiles(files, Collections.<AnalyzerScriptParameter>emptyList());
 
         Pair<NamespaceDescriptor, NamespaceDescriptor> namespacesToCompare = transform.fun(Pair.create(module, lazyModule));
 
