@@ -35,4 +35,9 @@ public class BasicResolutionContext extends ResolutionContext {
     private BasicResolutionContext(BindingTrace trace, JetScope scope, Call call, JetType expectedType, DataFlowInfo dataFlowInfo) {
         super(trace, scope, call, expectedType, dataFlowInfo);
     }
+
+    @NotNull
+    public BasicResolutionContext replaceTrace(@NotNull BindingTrace trace) {
+        return create(trace, scope, call, expectedType, dataFlowInfo);
+    }
 }
