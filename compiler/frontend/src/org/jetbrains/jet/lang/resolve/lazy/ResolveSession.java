@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -36,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -49,7 +47,6 @@ public class ResolveSession {
     private final BindingTrace trace = new BindingTraceContext();
     private final DeclarationProviderFactory declarationProviderFactory;
 
-    private final Map<Name, NamespaceDescriptor> packageDescriptors = Maps.newHashMap();
     private final InjectorForLazyResolve injector;
 
     public ResolveSession(
@@ -93,8 +90,10 @@ public class ResolveSession {
     }
 
     @NotNull
-    public ClassDescriptor getClassDescriptor(JetClassOrObject classOrObject) {
-        throw new UnsupportedOperationException(); // TODO
+    public ClassDescriptor getClassDescriptor(@NotNull JetClassOrObject classOrObject) {
+        JetScope resolutionScope = getInjector().getScopeProvider().getResolutionScopeForDeclaration((JetDeclaration) classOrObject);
+        ClassifierDescriptor classifier = resolutionScope.getClassifier(classOrObject.getNameAsName());
+        return (ClassDescriptor) classifier;
     }
 
     public Collection<DeclarationDescriptor> getDescriptorsForDeclarations(Collection<PsiElement> declarationsOrFiles) {
