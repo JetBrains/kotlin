@@ -101,4 +101,9 @@ public class JvmClassName {
         }
         return asmType;
     }
+
+    @Override
+    public String toString() {
+        return getInternalName();
+    }
 }
