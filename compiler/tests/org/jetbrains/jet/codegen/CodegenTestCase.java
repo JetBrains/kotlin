@@ -136,7 +136,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         Object actual;
         try {
             actual = blackBox();
-        } catch (NoClassDefFoundError e) {
+        } catch (Error e) {
             System.out.println(generateToText());
             throw e;
         } catch (Throwable e) {
@@ -191,6 +191,11 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     @NotNull
     protected String blackBox() throws Exception {
         GenerationState state = generateClassesInFileGetState();
+
+        if (DxChecker.RUN_DX_CHECKER) {
+            DxChecker.check(state.getFactory());
+        }
+
         GeneratedClassLoader loader = createClassLoader(state.getFactory());
 
         try {
@@ -241,6 +246,11 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     protected Class generateNamespaceClass() {
         ClassFileFactory state = generateClassesInFile();
+
+        if (DxChecker.RUN_DX_CHECKER) {
+            DxChecker.check(state);
+        }
+
         return loadRootNamespaceClass(state);
     }
 
@@ -275,6 +285,11 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     @NotNull
     protected ClassFileFactory generateClassesInFile() {
         GenerationState generationState = generateClassesInFileGetState();
+
+        if (DxChecker.RUN_DX_CHECKER) {
+            DxChecker.check(generationState.getFactory());
+        }
+
         return generationState.getFactory();
     }
 

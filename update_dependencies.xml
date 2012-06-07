@@ -59,6 +59,10 @@
         <delete dir="dependencies/ant" failonerror="false"/>
         <untar src="dependencies/download/apache-ant-1.7.0-bin.tar.gz" dest="dependencies" compression="gzip" />
         <rename src="dependencies/apache-ant-1.7.0" dest="dependencies/ant" />
+
+        <!-- dx.jar -->
+        <get src="http://search.maven.org/remotecontent?filepath=com/google/android/tools/dx/1.7/dx-1.7.jar" dest="dependencies/dx.jar"/>
+        <get src="http://search.maven.org/remotecontent?filepath=com/google/android/tools/dx/1.7/dx-1.7-sources.jar" dest="dependencies/dx-sources.jar"/>
     </target>
 
     <macrodef name="execute_update">
