@@ -103,6 +103,7 @@
                     <fileset dir="compiler/frontend.java/src"/>
                     <fileset dir="compiler/backend/src"/>
                     <fileset dir="compiler/cli/src"/>
+                    <fileset dir="j2k/src"/>
                     <fileset dir="compiler/util/src"/>
                     <fileset dir="compiler/jet.as.java.psi/src"/>
                     <fileset dir="runtime/src"/>
