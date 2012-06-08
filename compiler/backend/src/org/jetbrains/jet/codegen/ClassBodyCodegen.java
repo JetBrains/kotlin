@@ -97,7 +97,7 @@ public abstract class ClassBodyCodegen {
             if (p.getValOrVarNode() != null) {
                 PropertyDescriptor propertyDescriptor = state.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, p);
                 if (propertyDescriptor != null) {
-                    if(!isAnnotation) {
+                    if (!isAnnotation) {
                         propertyCodegen.generateDefaultGetter(propertyDescriptor, ACC_PUBLIC, p);
                         if (propertyDescriptor.isVar()) {
                             propertyCodegen.generateDefaultSetter(propertyDescriptor, ACC_PUBLIC, origin);
@@ -109,7 +109,7 @@ public abstract class ClassBodyCodegen {
                             if (!propertyDescriptor.isVar()) {
                                 modifiers |= Opcodes.ACC_FINAL;
                             }
-                            if(state.getInjector().getJetStandardLibrary().isVolatile(propertyDescriptor)) {
+                            if (state.getInjector().getJetStandardLibrary().isVolatile(propertyDescriptor)) {
                                 modifiers |= Opcodes.ACC_VOLATILE;
                             }
                             Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);

@@ -38,7 +38,7 @@ public final class DoubleRange implements Range<Double> {
     }
 
     public DoubleIterator step(double step) {
-        if(step < 0)
+        if (step < 0)
             return new MyIterator(getEnd(), -size, -step);
         else
             return new MyIterator(start, size, step);
@@ -78,7 +78,7 @@ public final class DoubleRange implements Range<Double> {
         public MyIterator(double startValue, double size, double step) {
             cur = startValue;
             this.step = step;
-            if(size < 0) {
+            if (size < 0) {
                 reversed = true;
                 end = startValue-size;
                 startValue -= size;
@@ -91,7 +91,7 @@ public final class DoubleRange implements Range<Double> {
 
         @Override
         public boolean getHasNext() {
-            if(reversed)
+            if (reversed)
                 return cur >= end;
             else
                 return cur <= end;
@@ -99,7 +99,7 @@ public final class DoubleRange implements Range<Double> {
 
         @Override
         public double nextDouble() {
-            if(reversed) {
+            if (reversed) {
                 cur -= step;
                 return cur + step;
             }

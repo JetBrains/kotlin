@@ -79,7 +79,7 @@ public class ObjectOrClosureCodegen {
             return innerValue;
         }
 
-        if(CodegenUtil.isNamedFun(d, state.getBindingContext()) && d.getContainingDeclaration() instanceof FunctionDescriptor) {
+        if (CodegenUtil.isNamedFun(d, state.getBindingContext()) && d.getContainingDeclaration() instanceof FunctionDescriptor) {
             FunctionDescriptor vd = (FunctionDescriptor) d;
 
             final int idx = exprContext.lookupLocal(vd);
@@ -101,7 +101,7 @@ public class ObjectOrClosureCodegen {
             return innerValue;
         }
 
-        if(d instanceof FunctionDescriptor) {
+        if (d instanceof FunctionDescriptor) {
             // we are looking for receiver
             FunctionDescriptor fd = (FunctionDescriptor) d;
 
@@ -110,7 +110,7 @@ public class ObjectOrClosureCodegen {
 
             CodegenContexts.ReceiverContext fcontext = (CodegenContexts.ReceiverContext) context;
 
-            if(fcontext.getReceiverDescriptor() != fd)
+            if (fcontext.getReceiverDescriptor() != fd)
                 return null;
 
             Type type = state.getInjector().getJetTypeMapper().mapType(fcontext.getReceiverDescriptor().getReceiverParameter().getType(), MapTypeMode.VALUE);

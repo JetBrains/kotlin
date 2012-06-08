@@ -143,7 +143,7 @@ public class JetPositionManager implements PositionManager {
                     }
                 }
                 else {
-                    if(psiElement instanceof JetClassOrObject)
+                    if (psiElement instanceof JetClassOrObject)
                         names.addAll(typeMapper.allJvmNames((JetClassOrObject) psiElement));
                     else {
                         names.add(typeMapper.getClosureAnnotator().classNameForAnonymousClass((JetElement) psiElement).getInternalName());

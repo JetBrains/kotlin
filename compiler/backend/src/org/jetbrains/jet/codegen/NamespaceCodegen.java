@@ -87,7 +87,7 @@ public class NamespaceCodegen {
                     fileFunctions.add(declaration);
                 }
             }
-            if(fileFunctions.size() > 0)
+            if (fileFunctions.size() > 0)
                 byFile.add(new Pair<JetFile, Collection<JetDeclaration>>(file, fileFunctions));
         }
 
@@ -133,7 +133,7 @@ public class NamespaceCodegen {
                         (JetTypeParameterListOwner) declaration, context, v.getClassBuilder());
             }
             else if (declaration instanceof JetNamedFunction) {
-                if(!multiFile) {
+                if (!multiFile) {
                     NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
                     final CodegenContext context = CodegenContexts.STATIC.intoNamespace(descriptor);
                     state.getInjector().getMemberCodegen().generateFunctionOrProperty(
@@ -150,7 +150,7 @@ public class NamespaceCodegen {
             }
         }
 
-        if(multiFile) {
+        if (multiFile) {
             int k = 0;
             for (JetDeclaration declaration : file.getDeclarations()) {
                 if (declaration instanceof JetNamedFunction) {
@@ -158,7 +158,7 @@ public class NamespaceCodegen {
                 }
             }
 
-            if(k > 0) {
+            if (k > 0) {
                 PsiFile containingFile = file.getContainingFile();
                 String className = name.getFqName().replace('.','/') + "namespace$src$" + (nextMultiFile++);
                 ClassBuilder builder = state.forNamespacepart(className, file);
@@ -212,7 +212,7 @@ public class NamespaceCodegen {
                                 if (initializer != null && !(initializer instanceof JetConstantExpression)) {
                                     final PropertyDescriptor descriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, declaration);
                                     assert descriptor != null;
-                                    if(descriptor.getReceiverParameter().exists()) {
+                                    if (descriptor.getReceiverParameter().exists()) {
                                         continue;
                                     }
                                     codegen.genToJVMStack(initializer);

@@ -71,7 +71,7 @@ public class ClosureAnnotator {
 
     public ClassDescriptor classDescriptorForFunctionDescriptor(FunctionDescriptor funDescriptor, JvmClassName name) {
         ClassDescriptorImpl classDescriptor = classesForFunctions.get(funDescriptor);
-        if(classDescriptor == null) {
+        if (classDescriptor == null) {
             int arity = funDescriptor.getValueParameters().size();
 
             classDescriptor = new ClassDescriptorImpl(
@@ -170,12 +170,12 @@ public class ClosureAnnotator {
     }
 
     public JvmClassName classNameForAnonymousClass(JetElement expression) {
-        if(expression instanceof JetObjectLiteralExpression) {
+        if (expression instanceof JetObjectLiteralExpression) {
             JetObjectLiteralExpression jetObjectLiteralExpression = (JetObjectLiteralExpression) expression;
             expression = jetObjectLiteralExpression.getObjectDeclaration();
         }
 
-        if(expression instanceof JetFunctionLiteralExpression) {
+        if (expression instanceof JetFunctionLiteralExpression) {
             JetFunctionLiteralExpression jetFunctionLiteralExpression = (JetFunctionLiteralExpression) expression;
             expression = jetFunctionLiteralExpression.getFunctionLiteral();
         }
@@ -201,7 +201,7 @@ public class ClosureAnnotator {
         private LinkedList<String> nameStack = new LinkedList<String>();
 
         private void recordEnclosing(ClassDescriptor classDescriptor) {
-            if(classStack.size() > 0) {
+            if (classStack.size() > 0) {
                 ClassDescriptor put = enclosing.put(classDescriptor, classStack.peek());
                 assert put == null;
             }
@@ -213,7 +213,7 @@ public class ClosureAnnotator {
 
             String top = nameStack.peek();
             Integer cnt = anonymousSubclassesCount.get(top);
-            if(cnt == null) {
+            if (cnt == null) {
                 cnt = 0;
             }
             name = JvmClassName.byInternalName(top + "$" + (cnt + 1));
@@ -261,7 +261,7 @@ public class ClosureAnnotator {
 
         @Override
         public void visitObjectDeclaration(JetObjectDeclaration declaration) {
-            if(declaration.getParent() instanceof JetObjectLiteralExpression || declaration.getParent() instanceof JetClassObject) {
+            if (declaration.getParent() instanceof JetObjectLiteralExpression || declaration.getParent() instanceof JetClassObject) {
                 super.visitObjectDeclaration(declaration);
             }
             else {

@@ -216,9 +216,9 @@ public class JavaTypeTransformer {
             @Override
             public JetType visitArrayType(PsiArrayType arrayType) {
                 PsiType componentType = arrayType.getComponentType();
-                if(componentType instanceof PsiPrimitiveType) {
+                if (componentType instanceof PsiPrimitiveType) {
                     JetType jetType = getPrimitiveTypesMap().get("[" + componentType.getCanonicalText());
-                    if(jetType != null)
+                    if (jetType != null)
                         return TypeUtils.makeNullable(jetType);
                 }
 

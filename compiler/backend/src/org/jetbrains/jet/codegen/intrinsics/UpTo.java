@@ -41,7 +41,7 @@ public class UpTo implements IntrinsicMethod {
 
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
-        if(arguments.size()==1) {
+        if (arguments.size()==1) {
             final Type leftType = receiver.type;
             final Type rightType = codegen.expressionType(arguments.get(0));
             receiver.put(Type.INT_TYPE, v);

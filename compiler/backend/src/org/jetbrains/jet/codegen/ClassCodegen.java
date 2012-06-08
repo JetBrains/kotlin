@@ -59,7 +59,7 @@ public class ClassCodegen {
             if (declaration instanceof JetClass && !(declaration instanceof JetEnumEntry)) {
                 generate(contextForInners, (JetClass) declaration);
             }
-            if(declaration instanceof JetClassObject) {
+            if (declaration instanceof JetClassObject) {
                 generate(contextForInners, ((JetClassObject)declaration).getObjectDeclaration());
             }
         }
@@ -77,7 +77,7 @@ public class ClassCodegen {
         classContext.copyAccessors(accessors);
         new ImplementationBodyCodegen(aClass, classContext, classBuilder, state).generate();
 
-        if(aClass instanceof JetClass && ((JetClass)aClass).isTrait()) {
+        if (aClass instanceof JetClass && ((JetClass)aClass).isTrait()) {
             ClassBuilder traitBuilder = state.forTraitImplementation(descriptor);
             new TraitImplBodyCodegen(aClass, context.intoClass(descriptor, OwnerKind.TRAIT_IMPL, jetTypeMapper), traitBuilder, state).generate();
             traitBuilder.done();

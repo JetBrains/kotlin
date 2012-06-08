@@ -103,7 +103,7 @@ public class TestlibTest extends CodegenTestCase {
             try {
                 for(JetFile jetFile : myEnvironment.getSourceFiles()) {
                     for(JetDeclaration decl : jetFile.getDeclarations()) {
-                        if(decl instanceof JetClass) {
+                        if (decl instanceof JetClass) {
                             JetClass jetClass = (JetClass) decl;
 
                             ClassDescriptor descriptor = (ClassDescriptor) generationState.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, jetClass);
@@ -116,11 +116,11 @@ public class TestlibTest extends CodegenTestCase {
                                     String name = typeMapper.mapType(descriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName();
                                     System.out.println(name);
                                     Class<TestCase> aClass = (Class<TestCase>) loader.loadClass(name.replace('/', '.'));
-                                    if((aClass.getModifiers() & Modifier.ABSTRACT) == 0
+                                    if ((aClass.getModifiers() & Modifier.ABSTRACT) == 0
                                      && (aClass.getModifiers() & Modifier.PUBLIC) != 0) {
                                         try {
                                             Constructor<TestCase> constructor = aClass.getConstructor();
-                                            if(constructor != null && (constructor.getModifiers() & Modifier.PUBLIC) != 0) {
+                                            if (constructor != null && (constructor.getModifiers() & Modifier.PUBLIC) != 0) {
                                                 suite.addTestSuite(aClass);
                                             }
                                         }

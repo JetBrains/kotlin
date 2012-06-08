@@ -47,7 +47,7 @@ public class ArrayIterator implements IntrinsicMethod {
         FunctionDescriptor funDescriptor = (FunctionDescriptor) codegen.getBindingContext().get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) call.getCalleeExpression());
         ClassDescriptor containingDeclaration = (ClassDescriptor) funDescriptor.getContainingDeclaration().getOriginal();
         JetStandardLibrary standardLibrary = codegen.getState().getInjector().getJetStandardLibrary();
-        if(containingDeclaration.equals(standardLibrary.getArray())) {
+        if (containingDeclaration.equals(standardLibrary.getArray())) {
             v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Ljava/lang/Object;)Ljet/Iterator;");
             return StackValue.onStack(JetTypeMapper.TYPE_ITERATOR);
         }

@@ -39,7 +39,7 @@ import java.util.List;
 public class IdentityEquals implements IntrinsicMethod {
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
-        if(element instanceof JetCallExpression) {
+        if (element instanceof JetCallExpression) {
             receiver.put(JetTypeMapper.TYPE_OBJECT, v);
             codegen.gen(arguments.get(0)).put(JetTypeMapper.TYPE_OBJECT, v);
         }

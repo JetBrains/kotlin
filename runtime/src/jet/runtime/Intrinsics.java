@@ -64,7 +64,7 @@ public class Intrinsics {
         ArrayList<StackTraceElement> list = new ArrayList<StackTraceElement>();
         boolean skip = true;
         for(StackTraceElement ste : stackTrace) {
-            if(!skip) {
+            if (!skip) {
                 list.add(ste);
             }
             else {
@@ -87,25 +87,25 @@ public class Intrinsics {
 
     public static class SpreadBuilder extends ArrayList {
         public void addSpread(Object array) {
-            if(array != null) {
-                if(array instanceof Object[]) {
+            if (array != null) {
+                if (array instanceof Object[]) {
                     Object[] arr = (Object[]) array;
-                    if(arr.length > 0) {
+                    if (arr.length > 0) {
                         ensureCapacity(size() + arr.length);
                         for (int i = 0; i < arr.length; i++) {
                             add(arr[i]);
                         }
                     }
                 }
-                else if(array instanceof Collection) {
+                else if (array instanceof Collection) {
                     addAll((Collection) array);
                 }
-                else if(array instanceof Iterable) {
+                else if (array instanceof Iterable) {
                     for(Iterator iterator = ((Iterable) array).iterator(); iterator.hasNext(); ) {
                         add(iterator.next());
                     }
                 }
-                else if(array instanceof Iterator) {
+                else if (array instanceof Iterator) {
                     for(Iterator iterator = ((Iterator) array); iterator.hasNext(); ) {
                         add(iterator.next());
                     }

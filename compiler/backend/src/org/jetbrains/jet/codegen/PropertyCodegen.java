@@ -59,7 +59,7 @@ public class PropertyCodegen {
         }
         final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
         if (kind == OwnerKind.NAMESPACE || kind == OwnerKind.IMPLEMENTATION || kind ==OwnerKind.TRAIT_IMPL ) {
-            if(kind != OwnerKind.TRAIT_IMPL)
+            if (kind != OwnerKind.TRAIT_IMPL)
                 generateBackingField(p, propertyDescriptor);
             generateGetter(p, propertyDescriptor);
             generateSetter(p, propertyDescriptor);
@@ -75,7 +75,7 @@ public class PropertyCodegen {
     private void generateBackingField(JetProperty p, PropertyDescriptor propertyDescriptor) {
         if (state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
             DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
-            if(CodegenUtil.isInterface(containingDeclaration))
+            if (CodegenUtil.isInterface(containingDeclaration))
                 return;
 
             Object value = null;
@@ -97,7 +97,7 @@ public class PropertyCodegen {
             if (!propertyDescriptor.isVar()) {
                 modifiers |= Opcodes.ACC_FINAL;
             }
-            if(state.getInjector().getJetStandardLibrary().isVolatile(propertyDescriptor)) {
+            if (state.getInjector().getJetStandardLibrary().isVolatile(propertyDescriptor)) {
                 modifiers |= Opcodes.ACC_VOLATILE;
             }
             Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
@@ -165,7 +165,7 @@ public class PropertyCodegen {
 
         PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), propertyDescriptor.getContainingDeclaration());
         boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
-        if(isTrait && !(kind instanceof OwnerKind.DelegateKind))
+        if (isTrait && !(kind instanceof OwnerKind.DelegateKind))
             flags |= Opcodes.ACC_ABSTRACT;
 
         if (propertyDescriptor.getModality() == Modality.FINAL) {
@@ -178,13 +178,13 @@ public class PropertyCodegen {
         MethodVisitor mv = v.newMethod(origin, flags, getterName, descriptor, null, null);
         generateJetPropertyAnnotation(mv, signature.getPropertyTypeKotlinSignature(), signature.getJvmMethodSignature().getKotlinTypeParameter());
 
-        if(propertyDescriptor.getGetter() != null) {
+        if (propertyDescriptor.getGetter() != null) {
             assert !propertyDescriptor.getGetter().hasBody();
             AnnotationCodegen.forMethod(mv, state.getInjector().getJetTypeMapper()).genAnnotations(propertyDescriptor.getGetter());
         }
 
         if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
-            if(propertyDescriptor.getModality() != Modality.ABSTRACT)  {
+            if (propertyDescriptor.getModality() != Modality.ABSTRACT)  {
                 mv.visitCode();
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                     StubCodegen.generateStubThrow(mv);
@@ -252,7 +252,7 @@ public class PropertyCodegen {
 
         PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), propertyDescriptor.getContainingDeclaration());
         boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
-        if(isTrait && !(kind instanceof OwnerKind.DelegateKind))
+        if (isTrait && !(kind instanceof OwnerKind.DelegateKind))
             flags |= Opcodes.ACC_ABSTRACT;
 
         if (propertyDescriptor.getModality() == Modality.FINAL) {
@@ -264,13 +264,13 @@ public class PropertyCodegen {
         MethodVisitor mv = v.newMethod(origin, flags, setterName(propertyDescriptor.getName()), descriptor, null, null);
         generateJetPropertyAnnotation(mv, signature.getPropertyTypeKotlinSignature(), signature.getJvmMethodSignature().getKotlinTypeParameter());
 
-        if(propertyDescriptor.getSetter() != null) {
+        if (propertyDescriptor.getSetter() != null) {
             assert !propertyDescriptor.getSetter().hasBody();
             AnnotationCodegen.forMethod(mv, state.getInjector().getJetTypeMapper()).genAnnotations(propertyDescriptor.getSetter());
         }
 
         if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
-            if(propertyDescriptor.getModality() != Modality.ABSTRACT)  {
+            if (propertyDescriptor.getModality() != Modality.ABSTRACT)  {
                 mv.visitCode();
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                     StubCodegen.generateStubThrow(mv);
@@ -322,7 +322,7 @@ public class PropertyCodegen {
         JvmPropertyAccessorSignature jvmPropertyAccessorSignature = state.getInjector().getJetTypeMapper().mapGetterSignature(declaration, OwnerKind.IMPLEMENTATION);
         functionCodegen.genDelegate(declaration, overriddenDescriptor, field, jvmPropertyAccessorSignature.getJvmMethodSignature());
 
-        if(declaration.isVar()) {
+        if (declaration.isVar()) {
             jvmPropertyAccessorSignature = state.getInjector().getJetTypeMapper().mapSetterSignature(declaration, OwnerKind.IMPLEMENTATION);
             functionCodegen.genDelegate(declaration, overriddenDescriptor, field, jvmPropertyAccessorSignature.getJvmMethodSignature());
         }

@@ -43,10 +43,10 @@ public class Increment implements IntrinsicMethod {
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
         boolean nullable = expectedType.getSort() == Type.OBJECT;
-        if(nullable) {
+        if (nullable) {
             expectedType = JetTypeMapper.unboxType(expectedType);
         }
-        if(arguments.size() > 0) {
+        if (arguments.size() > 0) {
             JetExpression operand = arguments.get(0);
             while(operand instanceof JetParenthesizedExpression) {
                 operand = ((JetParenthesizedExpression)operand).getExpression();

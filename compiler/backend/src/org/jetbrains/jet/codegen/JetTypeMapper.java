@@ -551,7 +551,7 @@ public class JetTypeMapper {
     }
 
     public CallableMethod mapToCallableMethod(FunctionDescriptor functionDescriptor, boolean superCall, OwnerKind kind) {
-        if(functionDescriptor == null)
+        if (functionDescriptor == null)
             return null;
 
         final DeclarationDescriptor functionParent = functionDescriptor.getOriginal().getContainingDeclaration();
@@ -615,7 +615,7 @@ public class JetTypeMapper {
             invokeOpcode = isInterface
                     ? (superCall ? Opcodes.INVOKESTATIC : Opcodes.INVOKEINTERFACE)
                     : (superCall ? Opcodes.INVOKESPECIAL : Opcodes.INVOKEVIRTUAL);
-            if(isInterface && superCall) {
+            if (isInterface && superCall) {
                 descriptor = mapSignature(functionDescriptor, false, OwnerKind.TRAIT_IMPL);
                 owner = JvmClassName.byInternalName(owner.getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
             }
@@ -666,7 +666,7 @@ public class JetTypeMapper {
 
         signatureVisitor.writeParametersStart();
 
-        if(kind == OwnerKind.TRAIT_IMPL) {
+        if (kind == OwnerKind.TRAIT_IMPL) {
             ClassDescriptor containingDeclaration = (ClassDescriptor) f.getContainingDeclaration();
             JetType jetType = TraitImplBodyCodegen.getSuperClass(containingDeclaration, bindingContext);
             Type type = mapType(jetType, MapTypeMode.VALUE);
@@ -801,7 +801,7 @@ public class JetTypeMapper {
 
         signatureWriter.writeParametersStart();
 
-        if(kind == OwnerKind.TRAIT_IMPL) {
+        if (kind == OwnerKind.TRAIT_IMPL) {
             ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
             assert containingDeclaration != null;
             signatureWriter.writeParameterType(JvmMethodParameterKind.THIS);
@@ -809,7 +809,7 @@ public class JetTypeMapper {
             signatureWriter.writeParameterTypeEnd();
         }
 
-        if(descriptor.getReceiverParameter().exists()) {
+        if (descriptor.getReceiverParameter().exists()) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.RECEIVER);
             mapType(descriptor.getReceiverParameter().getType(), signatureWriter, MapTypeMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
@@ -842,7 +842,7 @@ public class JetTypeMapper {
         signatureWriter.writeParametersStart();
 
         String name = PropertyCodegen.setterName(descriptor.getName());
-        if(kind == OwnerKind.TRAIT_IMPL) {
+        if (kind == OwnerKind.TRAIT_IMPL) {
             ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
             assert containingDeclaration != null;
             signatureWriter.writeParameterType(JvmMethodParameterKind.THIS);
@@ -850,7 +850,7 @@ public class JetTypeMapper {
             signatureWriter.writeParameterTypeEnd();
         }
 
-        if(descriptor.getReceiverParameter().exists()) {
+        if (descriptor.getReceiverParameter().exists()) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.RECEIVER);
             mapType(descriptor.getReceiverParameter().getType(), signatureWriter, MapTypeMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
@@ -940,7 +940,7 @@ public class JetTypeMapper {
 
     public static int getAccessModifiers(MemberDescriptor p, int defaultFlags) {
         DeclarationDescriptor declaration = p.getContainingDeclaration();
-        if(CodegenUtil.isInterface(declaration)) {
+        if (CodegenUtil.isInterface(declaration)) {
             return ACC_PUBLIC;
         }
         if (p.getVisibility() == Visibilities.PUBLIC) {
@@ -950,7 +950,7 @@ public class JetTypeMapper {
             return ACC_PROTECTED;
         }
         else if (p.getVisibility() == Visibilities.PRIVATE) {
-            if(DescriptorUtils.isClassObject(declaration)) {
+            if (DescriptorUtils.isClassObject(declaration)) {
                 return defaultFlags;
             }
             return ACC_PRIVATE;
@@ -1021,10 +1021,10 @@ public class JetTypeMapper {
 
     public boolean isGenericsArray(JetType type) {
         DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
-        if(declarationDescriptor instanceof TypeParameterDescriptor)
+        if (declarationDescriptor instanceof TypeParameterDescriptor)
             return true;
 
-        if(standardLibrary.getArray().equals(declarationDescriptor))
+        if (standardLibrary.getArray().equals(declarationDescriptor))
             return isGenericsArray(type.getArguments().get(0).getType());
 
         return false;
@@ -1036,7 +1036,7 @@ public class JetTypeMapper {
     }
 
     public Type getSharedVarType(DeclarationDescriptor descriptor) {
-        if(descriptor instanceof PropertyDescriptor) {
+        if (descriptor instanceof PropertyDescriptor) {
             return StackValue.sharedTypeForType(mapType(((PropertyDescriptor) descriptor).getReceiverParameter().getType(), MapTypeMode.VALUE));
         }
         else if (descriptor instanceof SimpleFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {

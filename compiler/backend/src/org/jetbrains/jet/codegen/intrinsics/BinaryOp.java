@@ -42,7 +42,7 @@ public class BinaryOp implements IntrinsicMethod {
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
         boolean nullable = expectedType.getSort() == Type.OBJECT;
-        if(nullable) {
+        if (nullable) {
             expectedType = JetTypeMapper.unboxType(expectedType);
         }
         if (arguments.size() == 1) {
@@ -58,7 +58,7 @@ public class BinaryOp implements IntrinsicMethod {
         }
         v.visitInsn(expectedType.getOpcode(opcode));
 
-        if(nullable) {
+        if (nullable) {
             StackValue.onStack(expectedType).put(expectedType = JetTypeMapper.boxType(expectedType), v);
         }
         return StackValue.onStack(expectedType);

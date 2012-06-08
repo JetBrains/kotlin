@@ -270,7 +270,7 @@ public class IntrinsicMethods {
 
     public IntrinsicMethod getIntrinsic(DeclarationDescriptor descriptor) {
         IntrinsicMethod intrinsicMethod = myMethods.get(descriptor.getOriginal());
-        if(intrinsicMethod == null) {
+        if (intrinsicMethod == null) {
             List<AnnotationDescriptor> annotations = descriptor.getAnnotations();
             if (annotations != null) {
                 for (AnnotationDescriptor annotation : annotations) {

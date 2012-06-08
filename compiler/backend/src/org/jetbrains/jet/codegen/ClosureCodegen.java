@@ -152,7 +152,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
             cv.newField(fun, ACC_FINAL, "this$0", enclosingType.getDescriptor(), null, null);
         }
 
-        if(isConst()) {
+        if (isConst()) {
             generateConstInstance(fun);
         }
 
@@ -160,11 +160,11 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
         final GeneratedAnonymousClassDescriptor answer = new GeneratedAnonymousClassDescriptor(name, constructor, captureThis, captureReceiver);
         for (DeclarationDescriptor descriptor : closure.keySet()) {
-            if(descriptor instanceof VariableDescriptor) {
+            if (descriptor instanceof VariableDescriptor) {
                 final EnclosedValueDescriptor valueDescriptor = closure.get(descriptor);
                 answer.addArg(valueDescriptor.getOuterValue());
             }
-            else if(CodegenUtil.isNamedFun(descriptor, state.getBindingContext()) && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
+            else if (CodegenUtil.isNamedFun(descriptor, state.getBindingContext()) && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
                 final EnclosedValueDescriptor valueDescriptor = closure.get(descriptor);
                 answer.addArg(valueDescriptor.getOuterValue());
             }
@@ -215,7 +215,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         final JvmMethodSignature bridge = erasedInvokeSignature(funDescriptor);
         final Method delegate = invokeSignature(funDescriptor).getAsmMethod();
 
-        if(bridge.getAsmMethod().getDescriptor().equals(delegate.getDescriptor()))
+        if (bridge.getAsmMethod().getDescriptor().equals(delegate.getDescriptor()))
             return;
 
         final MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC | ACC_BRIDGE | ACC_VOLATILE, "invoke", bridge.getAsmMethod().getDescriptor(), null, new String[0]);
@@ -260,15 +260,15 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         ArrayList<DeclarationDescriptor> variableDescriptors = new ArrayList<DeclarationDescriptor>();
         
         for (DeclarationDescriptor descriptor : closure.keySet()) {
-            if(descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
+            if (descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
                 argCount++;
                 variableDescriptors.add(descriptor);
             }
-            else if(CodegenUtil.isNamedFun(descriptor, state.getBindingContext()) && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
+            else if (CodegenUtil.isNamedFun(descriptor, state.getBindingContext()) && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
                 argCount++;
                 variableDescriptors.add(descriptor);
             }
-            else if(descriptor instanceof FunctionDescriptor) {
+            else if (descriptor instanceof FunctionDescriptor) {
                 assert captureReceiver != null;
             }
         }
@@ -285,7 +285,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         }
 
         for (DeclarationDescriptor descriptor : closure.keySet()) {
-            if(descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
+            if (descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
                 final Type sharedVarType = state.getInjector().getJetTypeMapper().getSharedVarType(descriptor);
                 final Type type;
                 if (sharedVarType != null) {
@@ -296,7 +296,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                 }
                 argTypes[i++] = type;
             }
-            else if(CodegenUtil.isNamedFun(descriptor, state.getBindingContext()) && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
+            else if (CodegenUtil.isNamedFun(descriptor, state.getBindingContext()) && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
                 final Type type = state.getInjector().getJetTypeMapper().getClosureAnnotator().classNameForAnonymousClass((JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor)).getAsmType();
                 argTypes[i++] = type;
             }

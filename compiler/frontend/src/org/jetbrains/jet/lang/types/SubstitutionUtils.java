@@ -116,7 +116,7 @@ public class SubstitutionUtils {
         }
 
         for(TypeProjection proj : type.getArguments()) {
-            if(hasUnsubstitutedTypeParameters(proj.getType())) {
+            if (hasUnsubstitutedTypeParameters(proj.getType())) {
                 return true;
             }
         }

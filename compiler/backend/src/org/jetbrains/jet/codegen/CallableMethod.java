@@ -111,7 +111,7 @@ public class CallableMethod implements Callable {
             v.visitMethodInsn(Opcodes.INVOKESPECIAL, defaultImplOwner.getInternalName(), "<init>", desc);
         }
         else {
-            if(getInvokeOpcode() != Opcodes.INVOKESTATIC)
+            if (getInvokeOpcode() != Opcodes.INVOKESTATIC)
                 desc = desc.replace("(", "(" + defaultImplParam.getDescriptor());
             v.visitMethodInsn(Opcodes.INVOKESTATIC, defaultImplOwner.getInternalName(),
                     getSignature().getAsmMethod().getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, desc);

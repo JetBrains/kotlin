@@ -166,7 +166,7 @@ public class JetStandardLibrary {
     }
 
     private void initStdClasses() {
-        if(libraryScope == null) {
+        if (libraryScope == null) {
             this.libraryScope = JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getMemberScope();
 
             this.numberClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Number"));
@@ -504,7 +504,7 @@ public class JetStandardLibrary {
 
     public final boolean isVolatile(PropertyDescriptor descriptor) {
         List<AnnotationDescriptor> annotations = descriptor.getOriginal().getAnnotations();
-        if(annotations != null) {
+        if (annotations != null) {
             for(AnnotationDescriptor d: annotations) {
                 if (d.getType().equals(getVolatileType())) { return true; }
             }
