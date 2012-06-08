@@ -489,7 +489,7 @@ public class DependencyInjectorGenerator {
 
     private String var(@NotNull DiType type) {
         StringBuilder sb = new StringBuilder();
-        sb.append(StringUtil.decapitalize(type.getClazz().getSimpleName().replaceFirst("Impl$", "")));
+        sb.append(StringUtil.decapitalize(type.getClazz().getSimpleName().replaceFirst("(?<=.)Impl$", "")));
         if (type.getTypeParameters().size() > 0) {
             sb.append("Of");
         }
