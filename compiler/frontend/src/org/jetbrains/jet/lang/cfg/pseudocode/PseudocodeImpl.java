@@ -151,6 +151,15 @@ public class PseudocodeImpl implements Pseudocode {
         if (reversedInstructions == null) {
             LinkedHashSet<Instruction> traversedInstructions = Sets.newLinkedHashSet();
             traverseInstructionsInReverseOrder(sinkInstruction, traversedInstructions);
+            if (traversedInstructions.size() < instructions.size()) {
+                List<Instruction> simplyReversedInstructions = Lists.newArrayList(instructions);
+                Collections.reverse(simplyReversedInstructions);
+                for (Instruction instruction : simplyReversedInstructions) {
+                    if (!traversedInstructions.contains(instruction)) {
+                        traverseInstructionsInReverseOrder(instruction, traversedInstructions);
+                    }
+                }
+            }
             reversedInstructions = Lists.newArrayList(traversedInstructions);
         }
         return reversedInstructions;
