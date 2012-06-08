@@ -68,6 +68,11 @@
             dest="dependencies/jline-2.6.jar"/>
         <get src="http://repo1.maven.org/maven2/jline/jline/2.6/jline-2.6-sources.jar"
             dest="dependencies/jline-2.6-sources.jar"/>
+
+        <get src="http://repo1.maven.org/maven2/org/fusesource/jansi/jansi/1.9/jansi-1.9.jar"
+            dest="dependencies/jansi-1.9.jar"/>
+        <get src="http://repo1.maven.org/maven2/org/fusesource/jansi/jansi/1.9/jansi-1.9-sources.jar"
+            dest="dependencies/jansi-1.9-sources.jar"/>
     </target>
 
     <macrodef name="execute_update">
