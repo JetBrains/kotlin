@@ -86,7 +86,8 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
 
             ClassDescriptor tuple0 = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, TUPLE0_FQ_NAME);
             assert tuple0 != null;
-            scope = new WritableScopeImpl(scope, jetNamespace, RedeclarationHandler.THROW_EXCEPTION, "Builtin classes scope #2");
+            scope = new WritableScopeImpl(scope, jetNamespace, RedeclarationHandler.THROW_EXCEPTION,
+                                          "Builtin classes scope: needed to analyze builtins which depend on Unit type alias");
             scope.changeLockLevel(WritableScope.LockLevel.BOTH);
             scope.addClassifierAlias(JetStandardClasses.UNIT_ALIAS, tuple0);
             jetNamespace.setMemberScope(scope);
