@@ -87,7 +87,7 @@
     <!-- Make IDEA custom repository xml -->
     <echoxml file="${updatePlugins.xml}">
       <plugins>
-        <plugin id="Kotlin" url="${plugin.repository.url}/${plugin.filename}" version="${plugin.version}"/>
+        <plugin id="org.jetbrains.kotlin" url="${plugin.repository.url}/${plugin.filename}" version="${plugin.version}"/>
       </plugins>
     </echoxml>
 
