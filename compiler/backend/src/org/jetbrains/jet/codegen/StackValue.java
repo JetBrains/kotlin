@@ -260,7 +260,7 @@ public abstract class StackValue {
         }
     }
 
-    protected static void putTuple0Instance(InstructionAdapter v) {
+    public static void putTuple0Instance(InstructionAdapter v) {
         v.visitFieldInsn(Opcodes.GETSTATIC, "jet/Tuple0", "INSTANCE", "Ljet/Tuple0;");
     }
 

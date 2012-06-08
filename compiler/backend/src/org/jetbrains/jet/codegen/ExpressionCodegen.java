@@ -245,7 +245,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         if (isEmptyExpression(thenExpression)) {
             if (isEmptyExpression(elseExpression)) {
-                condition.put(asmType, v);
+                if (!asmType.equals(JetTypeMapper.TUPLE0_TYPE)) {
+                    throw new CompilationException("Completely empty 'if' is expected to have Unit type", null, expression);
+                }
+                StackValue.putTuple0Instance(v);
                 return StackValue.onStack(asmType);
             }
             return generateSingleBranchIf(condition, elseExpression, false);
