@@ -35,6 +35,7 @@ import org.jetbrains.jet.codegen.ClassBuilderFactories;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
 import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.ScriptCodegen;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -109,7 +110,7 @@ public class ReplInterpreter {
         generationState.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
 
         try {
-            Class<?> scriptClass = new GeneratedClassLoader(generationState.getFactory()).loadClass("Script");
+            Class<?> scriptClass = new GeneratedClassLoader(generationState.getFactory()).loadClass(ScriptCodegen.SCRIPT_DEFAULT_CLASS_NAME.getFqName().getFqName());
             Constructor<?> scriptInstanceConstructor = scriptClass.getConstructor(new Class<?>[0]);
             Object scriptInstance = scriptInstanceConstructor.newInstance(new Object[0]);
             Field rvField = scriptClass.getDeclaredField("rv");

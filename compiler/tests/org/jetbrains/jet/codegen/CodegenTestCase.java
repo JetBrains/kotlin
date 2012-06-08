@@ -191,7 +191,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
         try {
             if (myFiles.isScript()) {
-                Class<?> scriptClass = loader.loadClass("Script");
+                Class<?> scriptClass = loader.loadClass(ScriptCodegen.SCRIPT_DEFAULT_CLASS_NAME.getFqName().getFqName());
 
                 Constructor constructor = getConstructor(scriptClass, state.getScriptConstructorMethod());
                 scriptInstance = constructor.newInstance(myFiles.getScriptParameterValues().toArray());

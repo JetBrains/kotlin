@@ -22,6 +22,7 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -73,6 +74,16 @@ public abstract class JetNamedDeclaration extends JetDeclaration implements PsiN
     }
 
     public boolean isScriptDeclaration() {
-        return getParent() != null && getParent().getParent() instanceof JetScript;
+        return getScript() != null;
+    }
+
+    @Nullable
+    public JetScript getScript() {
+        if (getParent() != null && getParent().getParent() instanceof JetScript) {
+            return (JetScript) getParent().getParent();
+        }
+        else {
+            return null;
+        }
     }
 }

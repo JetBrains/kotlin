@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JdkNames;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -37,6 +38,8 @@ import javax.inject.Inject;
  * @author Stepan Koltsov
  */
 public class ScriptCodegen {
+
+    public static final JvmClassName SCRIPT_DEFAULT_CLASS_NAME = JvmClassName.byInternalName("Script");
 
     public static final String LAST_EXPRESSION_VALUE_FIELD_NAME = "rv";
 
@@ -94,11 +97,13 @@ public class ScriptCodegen {
 
         CodegenContexts.ScriptContext context = (CodegenContexts.ScriptContext) CodegenContexts.STATIC.intoScript(scriptDescriptor, classDescriptorForScript);
 
-        ClassBuilder classBuilder = classFileFactory.newVisitor("Script.class");
+        JvmClassName className = closureAnnotator.classNameForClassDescriptor(classDescriptorForScript);
+
+        ClassBuilder classBuilder = classFileFactory.newVisitor(className.getInternalName() + ".class");
         classBuilder.defineClass(scriptDeclaration,
                 Opcodes.V1_6,
                 Opcodes.ACC_PUBLIC,
-                "Script",
+                className.getInternalName(),
                 null,
                 JdkNames.JL_OBJECT.getInternalName(),
                 new String[0]);
@@ -130,10 +135,12 @@ public class ScriptCodegen {
 
         InstructionAdapter instructionAdapter = new InstructionAdapter(mv);
 
-        instructionAdapter.load(0, Type.getObjectType("Script"));
+        JvmClassName className = closureAnnotator.classNameForClassDescriptor(classDescriptorForScript);
+
+        instructionAdapter.load(0, className.getAsmType());
         instructionAdapter.invokespecial(JdkNames.JL_OBJECT.getInternalName(), "<init>", "()V");
 
-        instructionAdapter.load(0, Type.getObjectType("Script"));
+        instructionAdapter.load(0, className.getAsmType());
 
         FrameMap frameMap = context.prepareFrame(jetTypeMapper);
 
@@ -155,7 +162,7 @@ public class ScriptCodegen {
         StackValue stackValue = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, context, state).gen(scriptDeclaration.getBlockExpression());
         if (stackValue.type != Type.VOID_TYPE) {
             stackValue.put(stackValue.type, instructionAdapter);
-            instructionAdapter.putfield("Script", LAST_EXPRESSION_VALUE_FIELD_NAME, blockType.getDescriptor());
+            instructionAdapter.putfield(className.getInternalName(), LAST_EXPRESSION_VALUE_FIELD_NAME, blockType.getDescriptor());
         }
 
         instructionAdapter.areturn(Type.VOID_TYPE);

@@ -128,6 +128,13 @@ public class GenerationState {
     }
 
     public void compileCorrectFiles(@NotNull CompilationErrorHandler errorHandler) {
+
+        for (JetFile file : this.files) {
+            if (file.isScript()) {
+                injector.getClosureAnnotator().registerClassNameForScript(file.getScript(), ScriptCodegen.SCRIPT_DEFAULT_CLASS_NAME);
+            }
+        }
+
         MultiMap<FqName, JetFile> namespaceGrouping = new MultiMap<FqName, JetFile>();
         for (JetFile file : this.files) {
             if (file == null) throw new IllegalArgumentException("A null file given for compilation");

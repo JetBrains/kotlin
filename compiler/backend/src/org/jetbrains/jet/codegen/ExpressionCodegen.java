@@ -2339,7 +2339,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         int index = -1;
 
         if (property.isScriptDeclaration()) {
-            StackValue field = StackValue.field(typeMapper.mapType(variableDescriptor.getType(), MapTypeMode.VALUE), JvmClassName.byInternalName("Script"), property.getName(), false);
+            JetScript scriptPsi = property.getScript();
+            JvmClassName scriptClassName = state.getInjector().getClosureAnnotator().classNameForScriptPsi(scriptPsi);
+            StackValue field = StackValue.field(typeMapper.mapType(variableDescriptor.getType(), MapTypeMode.VALUE), scriptClassName, property.getName(), false);
             return StackValue.none();
         }
         else {
@@ -2366,7 +2368,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if (initializer != null) {
             if (property.isScriptDeclaration()) {
                 gen(initializer, varType);
-                v.putfield("Script", property.getName(), varType.getDescriptor());
+                JetScript scriptPsi = property.getScript();
+                JvmClassName scriptClassName = state.getInjector().getClosureAnnotator().classNameForScriptPsi(scriptPsi);
+                v.putfield(scriptClassName.getInternalName(), property.getName(), varType.getDescriptor());
             }
             else if (sharedVarType == null) {
                 gen(initializer, varType);

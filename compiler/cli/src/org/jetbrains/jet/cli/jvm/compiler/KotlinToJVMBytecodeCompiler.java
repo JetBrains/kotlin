@@ -160,7 +160,7 @@ public class KotlinToJVMBytecodeCompiler {
                                 configuration.getEnvironment().getCompilerDependencies().getRuntimeJar().toURI().toURL()
                             },
                             AllModules.class.getClassLoader()));
-                    Class<?> scriptClass = classLoader.loadClass("Script");
+                    Class<?> scriptClass = classLoader.loadClass(ScriptCodegen.SCRIPT_DEFAULT_CLASS_NAME.getFqName().getFqName());
                     scriptClass.getConstructor(String[].class).newInstance(new Object[]{ configuration.getScriptArgs().toArray(new String[0]) });
                 } catch (Exception e) {
                     throw new RuntimeException("Failed to evaluate script: " + e, e);
