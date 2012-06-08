@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.cfg.pseudocode.LocalDeclarationInstruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator;
@@ -865,9 +866,6 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitObjectDeclaration(JetObjectDeclaration objectDeclaration) {
-//            for (JetDelegationSpecifier delegationSpecifier : objectDeclaration.getDelegationSpecifiers()) {
-//                value(delegationSpecifier, inCondition);
-//            }
             visitClassOrObject(objectDeclaration);
         }
 
@@ -891,7 +889,7 @@ public class JetControlFlowProcessor {
         public void visitAnonymousInitializer(JetClassInitializer classInitializer) {
             value(classInitializer.getBody(), inCondition);
         }
-        
+
         private void visitClassOrObject(JetClassOrObject classOrObject) {
             for (JetDelegationSpecifier specifier : classOrObject.getDelegationSpecifiers()) {
                 value(specifier, inCondition);
@@ -924,6 +922,11 @@ public class JetControlFlowProcessor {
             for (ValueArgument valueArgument : valueArguments) {
                 value(valueArgument.getArgumentExpression(), inCondition);
             }
+        }
+
+        @Override
+        public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
+            value(specifier.getDelegateExpression(), inCondition);
         }
 
         @Override
