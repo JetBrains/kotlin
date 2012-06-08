@@ -44,29 +44,37 @@ import static org.objectweb.asm.Opcodes.*;
  * @author max
  */
 public class NamespaceCodegen {
-    private final ClassBuilder v;
+    @NotNull
+    private final ClassBuilderOnDemand v;
     @NotNull private final FqName name;
     private final GenerationState state;
     private final Collection<JetFile> files;
     private int nextMultiFile = 0;
 
-    public NamespaceCodegen(ClassBuilder v, @NotNull FqName fqName, GenerationState state, Collection<JetFile> files) {
+    public NamespaceCodegen(@NotNull ClassBuilderOnDemand v, @NotNull final FqName fqName, GenerationState state, Collection<JetFile> files) {
         this.v = v;
         name = fqName;
         this.state = state;
         this.files = files;
 
-        PsiFile sourceFile = files.iterator().next().getContainingFile();
-        v.defineClass(sourceFile, V1_6,
-                      ACC_PUBLIC/*|ACC_SUPER*/,
-                      getJVMClassNameForKotlinNs(fqName).getInternalName(),
-                      null,
-                      //"jet/lang/Namespace",
-                      "java/lang/Object",
-                      new String[0]
-        );
-        // TODO figure something out for a namespace that spans multiple files
-        v.visitSource(sourceFile.getName(), null);
+        final PsiFile sourceFile = files.iterator().next().getContainingFile();
+
+        v.addOptionalDeclaration(new ClassBuilderOnDemand.ClassBuilderCallback() {
+            @Override
+            public void doSomething(@NotNull ClassBuilder v) {
+                v.defineClass(sourceFile, V1_6,
+                              ACC_PUBLIC/*|ACC_SUPER*/,
+                              getJVMClassNameForKotlinNs(fqName).getInternalName(),
+                              null,
+                              //"jet/lang/Namespace",
+                              "java/lang/Object",
+                              new String[0]
+                );
+                // TODO figure something out for a namespace that spans multiple files
+                v.visitSource(sourceFile.getName(), null);
+            }
+        });
+
     }
 
     public void generate(CompilationErrorHandler errorHandler, Progress progress) {
@@ -115,14 +123,14 @@ public class NamespaceCodegen {
                 NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
                 final CodegenContext context = CodegenContexts.STATIC.intoNamespace(descriptor);
                 state.getInjector().getMemberCodegen().generateFunctionOrProperty(
-                        (JetTypeParameterListOwner) declaration, context, v);
+                        (JetTypeParameterListOwner) declaration, context, v.getClassBuilder());
             }
             else if (declaration instanceof JetNamedFunction) {
                 if(!multiFile) {
                     NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
                     final CodegenContext context = CodegenContexts.STATIC.intoNamespace(descriptor);
                     state.getInjector().getMemberCodegen().generateFunctionOrProperty(
-                            (JetTypeParameterListOwner) declaration, context, v);
+                            (JetTypeParameterListOwner) declaration, context, v.getClassBuilder());
                 }
             }
             else if (declaration instanceof JetClassOrObject) {
@@ -167,7 +175,7 @@ public class NamespaceCodegen {
                         }
                         {
                             final CodegenContext context = CodegenContexts.STATIC.intoNamespacePart(className, descriptor);
-                            state.getInjector().getMemberCodegen().generateFunctionOrProperty((JetTypeParameterListOwner) declaration, context, v);
+                            state.getInjector().getMemberCodegen().generateFunctionOrProperty((JetTypeParameterListOwner) declaration, context, v.getClassBuilder());
                         }
                     }
                 }
@@ -178,39 +186,44 @@ public class NamespaceCodegen {
     }
 
     private void generateStaticInitializers() {
-        JetFile namespace = files.iterator().next(); // @todo: hack
+        final JetFile namespace = files.iterator().next(); // @todo: hack
 
-        MethodVisitor mv = v.newMethod(namespace, ACC_PUBLIC | ACC_STATIC, "<clinit>", "()V", null, null);
-        for (JetFile file : files) {
-            if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-                mv.visitCode();
+        v.addOptionalDeclaration(new ClassBuilderOnDemand.ClassBuilderCallback() {
+            @Override
+            public void doSomething(@NotNull ClassBuilder v) {
+                MethodVisitor mv = v.newMethod(namespace, ACC_PUBLIC | ACC_STATIC, "<clinit>", "()V", null, null);
+                for (JetFile file : files) {
+                    if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+                        mv.visitCode();
 
-                FrameMap frameMap = new FrameMap();
-                ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, CodegenContexts.STATIC, state);
+                        FrameMap frameMap = new FrameMap();
+                        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, CodegenContexts.STATIC, state);
 
-                for (JetDeclaration declaration : file.getDeclarations()) {
-                    if (declaration instanceof JetProperty) {
-                        final JetExpression initializer = ((JetProperty) declaration).getInitializer();
-                        if (initializer != null && !(initializer instanceof JetConstantExpression)) {
-                            final PropertyDescriptor descriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, declaration);
-                            assert descriptor != null;
-                            if(descriptor.getReceiverParameter().exists()) {
-                                continue;
+                        for (JetDeclaration declaration : file.getDeclarations()) {
+                            if (declaration instanceof JetProperty) {
+                                final JetExpression initializer = ((JetProperty) declaration).getInitializer();
+                                if (initializer != null && !(initializer instanceof JetConstantExpression)) {
+                                    final PropertyDescriptor descriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, declaration);
+                                    assert descriptor != null;
+                                    if(descriptor.getReceiverParameter().exists()) {
+                                        continue;
+                                    }
+                                    codegen.genToJVMStack(initializer);
+                                    StackValue.Property propValue = codegen.intermediateValueForProperty(descriptor, true, null);
+                                    propValue.store(propValue.type, new InstructionAdapter(mv));
+                                }
                             }
-                            codegen.genToJVMStack(initializer);
-                            StackValue.Property propValue = codegen.intermediateValueForProperty(descriptor, true, null);
-                            propValue.store(propValue.type, new InstructionAdapter(mv));
                         }
                     }
                 }
-            }
-        }
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            mv.visitInsn(RETURN);
-            FunctionCodegen.endVisit(mv, "static initializer for namespace", namespace);
-            mv.visitEnd();
-        }
+                if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+                    mv.visitInsn(RETURN);
+                    FunctionCodegen.endVisit(mv, "static initializer for namespace", namespace);
+                    mv.visitEnd();
+                }
+            }
+        });
     }
 
     private boolean hasNonConstantPropertyInitializers() {
