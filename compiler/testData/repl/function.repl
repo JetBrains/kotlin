@@ -1,0 +1,4 @@
+>>> fun foo() = 2
+null
+>>> foo()
+2

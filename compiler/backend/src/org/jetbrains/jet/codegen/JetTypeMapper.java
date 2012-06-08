@@ -899,12 +899,18 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    public JvmMethodSignature mapScriptSignature(@NotNull ScriptDescriptor script) {
+    public JvmMethodSignature mapScriptSignature(@NotNull ScriptDescriptor script, @NotNull List<ScriptDescriptor> importedScripts) {
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, false);
 
         writeFormalTypeParameters(Collections.<TypeParameterDescriptor>emptyList(), signatureWriter);
 
         signatureWriter.writeParametersStart();
+
+        for (ScriptDescriptor importedScript : importedScripts) {
+            signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
+            mapType(closureAnnotator.classDescriptorForScrpitDescriptor(importedScript).getDefaultType(), signatureWriter, MapTypeMode.VALUE);
+            signatureWriter.writeParameterTypeEnd();
+        }
 
         for (ValueParameterDescriptor valueParameter : script.getValueParameters()) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);

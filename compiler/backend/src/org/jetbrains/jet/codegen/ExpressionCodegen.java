@@ -22,6 +22,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.tree.IElementType;
+import com.sun.tools.internal.ws.wsdl.document.schema.SchemaConstants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
@@ -1469,10 +1470,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 StackValue.onStack(exprType).put(type, v);
         }
         else if (descriptor instanceof ScriptReceiver) {
-            ScriptReceiver scriptReceiver = (ScriptReceiver) descriptor;
-            ScriptDescriptor script = (ScriptDescriptor) scriptReceiver.getDeclarationDescriptor();
-            ClassDescriptor classDescriptorForScript = state.getInjector().getClosureAnnotator().classDescriptorForScrpitDescriptor(script);
-            generateThisOrOuter(classDescriptorForScript);
+            generateScript((ScriptReceiver) descriptor);
         }
         else if(descriptor instanceof ExtensionReceiver) {
             Type exprType = asmType(descriptor.getType());
@@ -1519,6 +1517,44 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         StackValue result = context.lookupInContext(provided, v, StackValue.local(0, TYPE_OBJECT));
         return castToRequiredTypeOfInterfaceIfNeeded(result, provided, null);
     }
+
+    private void generateScript(@NotNull ScriptReceiver receiver) {
+        CodegenContext cur = context;
+
+        //PsiElement psiElement = BindingContextUtils.classDescriptorToDeclaration(bindingContext, calleeContainingClass);
+        //boolean isObject = psiElement instanceof JetClassOrObject && CodegenUtil.isNonLiteralObject((JetClassOrObject) psiElement);
+
+        cur = context;
+        StackValue result = StackValue.local(0, TYPE_OBJECT);
+        while (cur != null) {
+            if(cur instanceof CodegenContexts.MethodContext && !(cur instanceof CodegenContexts.ConstructorContext))
+                cur = cur.getParentContext();
+
+            if (cur instanceof CodegenContexts.ScriptContext) {
+                CodegenContexts.ScriptContext scriptContext = (CodegenContexts.ScriptContext) cur;
+
+                JvmClassName currentScriptClassName = state.getInjector().getClosureAnnotator().classNameForScriptDescriptor(scriptContext.getScriptDescriptor());
+                if (scriptContext.getScriptDescriptor() == receiver.getDeclarationDescriptor()) {
+                    result.put(currentScriptClassName.getAsmType(), v);
+                }
+                else {
+                    JvmClassName className = state.getInjector().getClosureAnnotator().classNameForScriptDescriptor(receiver.getDeclarationDescriptor());
+                    String fieldName = state.getInjector().getScriptCodegen().getScriptFieldName(receiver.getDeclarationDescriptor());
+                    result.put(currentScriptClassName.getAsmType(), v);
+                    StackValue.field(className.getAsmType(), currentScriptClassName, fieldName, false).put(className.getAsmType(), v);
+                }
+                return;
+            }
+
+            result = cur.getOuterExpression(result);
+
+            if(cur instanceof CodegenContexts.ConstructorContext) {
+                cur = cur.getParentContext();
+            }
+            cur = cur.getParentContext();
+        }
+
+        throw new UnsupportedOperationException();    }
 
     public StackValue generateThisOrOuter(ClassDescriptor calleeContainingClass) {
         CodegenContext cur = context;

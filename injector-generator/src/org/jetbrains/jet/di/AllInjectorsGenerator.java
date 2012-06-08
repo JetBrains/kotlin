@@ -89,6 +89,7 @@ public class AllInjectorsGenerator {
         generator.addPublicField(JavaBridgeConfiguration.class);
         generator.addField(JavaDescriptorResolver.class);
         generator.addField(PsiClassFinderForJvm.class);
+        generator.addPublicField(NamespaceFactoryImpl.class);
         generator.generate("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJvm");
     }
 

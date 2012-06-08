@@ -194,6 +194,11 @@ public class ExpressionTypingServices {
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
         JetType r = getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context, trace);
         scope.changeLockLevel(WritableScope.LockLevel.READING);
+
+        if (containingDescriptor instanceof ScriptDescriptor) {
+            trace.record(BindingContext.SCRIPT_SCOPE, (ScriptDescriptor) containingDescriptor, scope);
+        }
+
         return r;
     }
 

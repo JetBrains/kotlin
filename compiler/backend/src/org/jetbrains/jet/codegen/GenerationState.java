@@ -30,6 +30,7 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.di.InjectorForJvmCodegen;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -40,6 +41,7 @@ import org.jetbrains.jet.utils.Progress;
 import org.objectweb.asm.commons.Method;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -145,6 +147,8 @@ public class GenerationState {
             }
         }
 
+        injector.getScriptCodegen().registerEarlierScripts(Collections.<Pair<ScriptDescriptor, JvmClassName>>emptyList());
+
         MultiMap<FqName, JetFile> namespaceGrouping = new MultiMap<FqName, JetFile>();
         for (JetFile file : this.files) {
             if (file == null) throw new IllegalArgumentException("A null file given for compilation");
@@ -154,6 +158,24 @@ public class GenerationState {
         for (Map.Entry<FqName, Collection<JetFile>> entry : namespaceGrouping.entrySet()) {
             generateNamespace(entry.getKey(), entry.getValue(), errorHandler, progress);
         }
+    }
+
+    public void compileScript(
+            @NotNull JetScript script,
+            @NotNull JvmClassName className,
+            @NotNull List<Pair<ScriptDescriptor, JvmClassName>> earlierScripts,
+            @NotNull CompilationErrorHandler errorHandler) {
+        poison();
+
+        injector.getScriptCodegen().registerEarlierScripts(earlierScripts);
+
+        injector.getClosureAnnotator().registerClassNameForScript(script, className);
+
+        generateNamespace(
+                JetPsiUtil.getFQName((JetFile) script.getContainingFile()),
+                Collections.singleton((JetFile) script.getContainingFile()),
+                errorHandler,
+                progress);
     }
 
     protected void generateNamespace(FqName fqName, Collection<JetFile> namespace, CompilationErrorHandler errorHandler, Progress progress) {

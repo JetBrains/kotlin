@@ -37,7 +37,7 @@ public class ScriptReceiver implements ThisReceiverDescriptor {
 
     @NotNull
     @Override
-    public DeclarationDescriptor getDeclarationDescriptor() {
+    public ScriptDescriptor getDeclarationDescriptor() {
         return scriptDescriptor;
     }
 

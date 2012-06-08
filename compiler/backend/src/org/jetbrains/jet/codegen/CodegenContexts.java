@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
+import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -111,8 +112,17 @@ public class CodegenContexts {
     }
 
     public static class MethodContext  extends ReceiverContext {
-        public MethodContext(FunctionDescriptor contextType, OwnerKind contextKind, CodegenContext parentContext) {
+        @NotNull
+        private final FunctionDescriptor functionDescriptor;
+
+        public MethodContext(@NotNull FunctionDescriptor contextType, OwnerKind contextKind, CodegenContext parentContext) {
             super(contextType instanceof PropertyAccessorDescriptor ? ((PropertyAccessorDescriptor)contextType).getCorrespondingProperty() : contextType, contextKind, parentContext, null);
+            this.functionDescriptor = contextType;
+        }
+
+        @NotNull
+        public FunctionDescriptor getFunctionDescriptor() {
+            return functionDescriptor;
         }
 
         @Override
@@ -167,8 +177,11 @@ public class CodegenContexts {
 
         @NotNull
         private final ClassDescriptor classDescriptor;
+        @NotNull
+        private final ScriptDescriptor scriptDescriptor;
 
         public ScriptContext(
+                @NotNull ScriptDescriptor scriptDescriptor,
                 @NotNull ClassDescriptor contextDescriptor,
                 @NotNull OwnerKind contextKind,
                 @Nullable CodegenContext parentContext,
@@ -176,11 +189,17 @@ public class CodegenContexts {
             super(contextDescriptor, contextKind, parentContext, closureCodegen);
 
             this.classDescriptor = contextDescriptor;
+            this.scriptDescriptor = scriptDescriptor;
         }
 
         @Override
         protected ClassDescriptor getThisDescriptor() {
             return classDescriptor;
+        }
+
+        @NotNull
+        public ScriptDescriptor getScriptDescriptor() {
+            return scriptDescriptor;
         }
 
         @Override

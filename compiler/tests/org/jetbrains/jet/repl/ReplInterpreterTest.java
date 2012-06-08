@@ -76,4 +76,15 @@ public class ReplInterpreterTest {
         testFile("simple.repl");
     }
 
+    @Test
+    public void function() {
+        testFile("function.repl");
+    }
+
+    @Test
+    public void functionReferencesPrev() {
+        testFile("functionReferencesPrev.repl");
+    }
+
+
 }
