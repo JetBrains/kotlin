@@ -109,6 +109,7 @@ public class ScriptCodegen {
                 new String[0]);
 
         genMembers(scriptDeclaration, context, classBuilder);
+        genFieldsForParameters(scriptDescriptor, classBuilder);
         genConstructor(scriptDeclaration, scriptDescriptor, classDescriptorForScript, classBuilder, context.intoFunction(scriptDescriptor.getScriptCodeDescriptor()));
 
         classBuilder.done();
@@ -159,6 +160,15 @@ public class ScriptCodegen {
                 bindingContext,
                 jetTypeMapper);
 
+        int offset = 1;
+        for (ValueParameterDescriptor parameter : scriptDescriptor.getValueParameters()) {
+            Type parameterType = jetTypeMapper.mapType(parameter.getType(), MapTypeMode.VALUE);
+            instructionAdapter.load(0, className.getAsmType());
+            instructionAdapter.load(offset, parameterType);
+            offset += parameterType.getSize();
+            instructionAdapter.putfield(className.getInternalName(), parameter.getName().getIdentifier(), parameterType.getDescriptor());
+        }
+
         StackValue stackValue = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, context, state).gen(scriptDeclaration.getBlockExpression());
         if (stackValue.type != Type.VOID_TYPE) {
             stackValue.put(stackValue.type, instructionAdapter);
@@ -168,6 +178,14 @@ public class ScriptCodegen {
         instructionAdapter.areturn(Type.VOID_TYPE);
         mv.visitMaxs(-1, -1);
         mv.visitEnd();
+    }
+
+    private void genFieldsForParameters(@NotNull ScriptDescriptor script, @NotNull ClassBuilder classBuilder) {
+        for (ValueParameterDescriptor parameter : script.getValueParameters()) {
+            Type parameterType = jetTypeMapper.mapType(parameter.getType(), MapTypeMode.VALUE);
+            int access = Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL;
+            classBuilder.newField(null, access, parameter.getName().getIdentifier(), parameterType.getDescriptor(), null, null);
+        }
     }
 
     private void genMembers(@NotNull JetScript scriptDeclaration, @NotNull CodegenContext context, @NotNull ClassBuilder classBuilder) {

@@ -78,4 +78,8 @@ public class ScriptGenTest extends CodegenTestCase {
         blackBoxFile("script/parameterArray.ktscript");
     }
 
+    public void testScriptParameterClosure() {
+        blackBoxFile("script/parameterClosure.ktscript");
+    }
+
 }

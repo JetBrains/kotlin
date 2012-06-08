@@ -1126,23 +1126,33 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         StackValue value = context.lookupInContext(descriptor, v, StackValue.local(0, TYPE_OBJECT));
-        if (value == null) {
-            throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
+        if (value != null) {
+
+            if (value instanceof StackValue.Composed) {
+                StackValue.Composed composed = (StackValue.Composed) value;
+                composed.prefix.put(TYPE_OBJECT, v);
+                value = composed.suffix;
+            }
+
+            if (value instanceof StackValue.FieldForSharedVar) {
+                StackValue.FieldForSharedVar fieldForSharedVar = (StackValue.FieldForSharedVar) value;
+                Type sharedType = StackValue.sharedTypeForType(value.type);
+                v.visitFieldInsn(Opcodes.GETFIELD, fieldForSharedVar.owner.getInternalName(), fieldForSharedVar.name, sharedType.getDescriptor());
+            }
+
+            return value;
         }
 
-        if(value instanceof StackValue.Composed) {
-            StackValue.Composed composed = (StackValue.Composed) value;
-            composed.prefix.put(TYPE_OBJECT, v);
-            value = composed.suffix;
+        if (descriptor instanceof ValueParameterDescriptor && descriptor.getContainingDeclaration() instanceof ScriptDescriptor) {
+            ScriptDescriptor scriptDescriptor = (ScriptDescriptor) descriptor.getContainingDeclaration();
+            JvmClassName scriptClassName = state.getInjector().getClosureAnnotator().classNameForScriptDescriptor(scriptDescriptor);
+            ValueParameterDescriptor valueParameterDescriptor = (ValueParameterDescriptor) descriptor;
+            generateThisOrOuter(state.getInjector().getClosureAnnotator().classDescriptorForScrpitDescriptor(scriptDescriptor));
+            Type fieldType = typeMapper.mapType(valueParameterDescriptor.getType(), MapTypeMode.VALUE);
+            return StackValue.field(fieldType, scriptClassName, valueParameterDescriptor.getName().getIdentifier(), false);
         }
 
-        if(value instanceof StackValue.FieldForSharedVar) {
-            StackValue.FieldForSharedVar fieldForSharedVar = (StackValue.FieldForSharedVar) value;
-            Type sharedType = StackValue.sharedTypeForType(value.type);
-            v.visitFieldInsn(Opcodes.GETFIELD, fieldForSharedVar.owner.getInternalName(), fieldForSharedVar.name, sharedType.getDescriptor());
-        }
-
-        return value;
+        throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
     }
 
     private StackValue stackValueForLocal(DeclarationDescriptor descriptor, int index) {
