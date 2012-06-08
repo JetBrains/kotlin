@@ -105,10 +105,10 @@ public class ReplInterpreter {
         try {
             if (compilerDependencies.getRuntimeJar() != null) {
                 classpath.add(compilerDependencies.getRuntimeJar().toURI().toURL());
+            }
 
-                for (File extra : extraClasspath) {
-                    classpath.add(extra.toURI().toURL());
-                }
+            for (File extra : extraClasspath) {
+                classpath.add(extra.toURI().toURL());
             }
         } catch (Exception e) {
             throw ExceptionUtils.rethrow(e);
