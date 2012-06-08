@@ -30,9 +30,13 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.constants.BooleanValue;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Iterator;
@@ -477,7 +481,15 @@ public class JetControlFlowProcessor {
             if (condition != null) {
                 value(condition, true);
             }
-            builder.jumpOnFalse(loopInfo.getExitPoint());
+            boolean conditionIsTrueConstant = false;
+            if (condition instanceof JetConstantExpression && condition.getNode().getElementType() == JetNodeTypes.BOOLEAN_CONSTANT) {
+                if (BooleanValue.TRUE == new CompileTimeConstantResolver().getBooleanValue(condition.getText(), JetStandardLibrary.getInstance().getBooleanType())) {
+                    conditionIsTrueConstant = true;
+                }
+            }
+            if (!conditionIsTrueConstant) {
+                builder.jumpOnFalse(loopInfo.getExitPoint());
+            }
 
             builder.bindLabel(loopInfo.getBodyEntryPoint());
             JetExpression body = expression.getBody();

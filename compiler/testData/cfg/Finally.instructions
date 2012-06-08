@@ -301,7 +301,7 @@ fun t5() {
 }
 ---------------------
 l0:
-    <START>               NEXT:[r(while(true) { try { 1 if (..)]                 PREV:[]
+    <START>               NEXT:[r(while(true) { try { 1 if (..)]    PREV:[]
     r(while(true) {   
         try {         
           1           
@@ -311,11 +311,10 @@ l0:
         } finally {   
           2           
         }             
-      })                  NEXT:[r(true)]                                         PREV:[<START>]
+      })                  NEXT:[r(true)]                            PREV:[<START>]
 l2:
 l5:
-    r(true)               NEXT:[jf(l3)]                                          PREV:[r(while(true) { try { 1 if (..), jmp(l2)]
-    jf(l3)                NEXT:[read (Unit), r(try { 1 if (2 > 3) { break..)]    PREV:[r(true)]
+    r(true)               NEXT:[r(try { 1 if (2 > 3) { break..)]    PREV:[r(while(true) { try { 1 if (..), jmp(l2)]
 l4:
     r(try {           
           1           
@@ -324,31 +323,31 @@ l4:
           }           
         } finally {   
           2           
-        })                NEXT:[r(1)]                                            PREV:[jf(l3)]
-    r(1)                  NEXT:[r(2)]                                            PREV:[r(try { 1 if (2 > 3) { break..)]
-    r(2)                  NEXT:[r(3)]                                            PREV:[r(1)]
-    r(3)                  NEXT:[r(>)]                                            PREV:[r(2)]
-    r(>)                  NEXT:[r(2 > 3)]                                        PREV:[r(3)]
-    r(2 > 3)              NEXT:[jf(l6)]                                          PREV:[r(>)]
-    jf(l6)                NEXT:[read (Unit), r(2)]                               PREV:[r(2 > 3)]
-    r(2)                  NEXT:[jmp(l3)]                                         PREV:[jf(l6)]
-    jmp(l3)               NEXT:[read (Unit)]                                     PREV:[r(2)]
--   jmp(l7)               NEXT:[r(2)]                                            PREV:[]
+        })                NEXT:[r(1)]                               PREV:[r(true)]
+    r(1)                  NEXT:[r(2)]                               PREV:[r(try { 1 if (2 > 3) { break..)]
+    r(2)                  NEXT:[r(3)]                               PREV:[r(1)]
+    r(3)                  NEXT:[r(>)]                               PREV:[r(2)]
+    r(>)                  NEXT:[r(2 > 3)]                           PREV:[r(3)]
+    r(2 > 3)              NEXT:[jf(l6)]                             PREV:[r(>)]
+    jf(l6)                NEXT:[read (Unit), r(2)]                  PREV:[r(2 > 3)]
+    r(2)                  NEXT:[jmp(l3)]                            PREV:[jf(l6)]
+    jmp(l3)               NEXT:[read (Unit)]                        PREV:[r(2)]
+-   jmp(l7)               NEXT:[r(2)]                               PREV:[]
 l6:
-    read (Unit)           NEXT:[r(2)]                                            PREV:[jf(l6)]
+    read (Unit)           NEXT:[r(2)]                               PREV:[jf(l6)]
 l7:
 l8:
-    r(2)                  NEXT:[jmp(l2)]                                         PREV:[read (Unit)]
+    r(2)                  NEXT:[jmp(l2)]                            PREV:[read (Unit)]
 l9:
-    jmp(l2)               NEXT:[r(true)]                                         PREV:[r(2)]
+    jmp(l2)               NEXT:[r(true)]                            PREV:[r(2)]
 l3:
-    read (Unit)           NEXT:[<END>]                                           PREV:[jf(l3), jmp(l3)]
+    read (Unit)           NEXT:[<END>]                              PREV:[jmp(l3)]
 l1:
-    <END>                 NEXT:[<SINK>]                                          PREV:[read (Unit)]
+    <END>                 NEXT:[<SINK>]                             PREV:[read (Unit)]
 error:
-    <ERROR>               NEXT:[<SINK>]                                          PREV:[]
+    <ERROR>               NEXT:[<SINK>]                             PREV:[]
 sink:
-    <SINK>                NEXT:[]                                                PREV:[<ERROR>, <END>]
+    <SINK>                NEXT:[]                                   PREV:[<ERROR>, <END>]
 =====================
 == t6 ==
 fun t6() {
@@ -386,10 +385,9 @@ l0:
           })                NEXT:[r(true)]                            PREV:[r(try { @ while(true) { 1 if..)]
 l2:
 l5:
-    r(true)                 NEXT:[jf(l3)]                             PREV:[r(while(true) { 1 if (2 > 3)..), jmp(l2)]
-    jf(l3)                  NEXT:[read (Unit), r(1)]                  PREV:[r(true)]
+    r(true)                 NEXT:[r(1)]                               PREV:[r(while(true) { 1 if (2 > 3)..), jmp(l2)]
 l4:
-    r(1)                    NEXT:[r(2)]                               PREV:[jf(l3)]
+    r(1)                    NEXT:[r(2)]                               PREV:[r(true)]
     r(2)                    NEXT:[r(3)]                               PREV:[r(1)]
     r(3)                    NEXT:[r(>)]                               PREV:[r(2)]
     r(>)                    NEXT:[r(2 > 3)]                           PREV:[r(3)]
@@ -402,7 +400,7 @@ l6:
 l7:
     jmp(l2)                 NEXT:[r(true)]                            PREV:[read (Unit)]
 l3:
-    read (Unit)             NEXT:[r(5)]                               PREV:[jf(l3), jmp(l3)]
+    read (Unit)             NEXT:[r(5)]                               PREV:[jmp(l3)]
     r(5)                    NEXT:[r(2)]                               PREV:[read (Unit)]
 l8:
     r(2)                    NEXT:[<END>]                              PREV:[r(5)]
@@ -448,10 +446,9 @@ l0:
           })                NEXT:[r(true)]                            PREV:[r(try { @ while(true) { 1 if..)]
 l2:
 l5:
-    r(true)                 NEXT:[jf(l3)]                             PREV:[r(while(true) { 1 if (2 > 3)..), jmp(l2)]
-    jf(l3)                  NEXT:[read (Unit), r(1)]                  PREV:[r(true)]
+    r(true)                 NEXT:[r(1)]                               PREV:[r(while(true) { 1 if (2 > 3)..), jmp(l2)]
 l4:
-    r(1)                    NEXT:[r(2)]                               PREV:[jf(l3)]
+    r(1)                    NEXT:[r(2)]                               PREV:[r(true)]
     r(2)                    NEXT:[r(3)]                               PREV:[r(1)]
     r(3)                    NEXT:[r(>)]                               PREV:[r(2)]
     r(>)                    NEXT:[r(2 > 3)]                           PREV:[r(3)]
@@ -464,7 +461,7 @@ l6:
 l7:
     jmp(l2)                 NEXT:[r(true)]                            PREV:[read (Unit)]
 l3:
-    read (Unit)             NEXT:[r(2)]                               PREV:[jf(l3), jmp(l3)]
+    read (Unit)             NEXT:[r(2)]                               PREV:[jmp(l3)]
 l8:
     r(2)                    NEXT:[<END>]                              PREV:[read (Unit)]
 l1:

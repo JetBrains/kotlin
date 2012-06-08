@@ -38,11 +38,9 @@ public class CompileTimeConstantResolver {
     public static final ErrorValue OUT_OF_RANGE = new ErrorValue("The value is out of range");
 
     private final JetStandardLibrary standardLibrary;
-    private final BindingTrace trace;
 
-    public CompileTimeConstantResolver(@NotNull BindingTrace trace) {
+    public CompileTimeConstantResolver() {
         this.standardLibrary = JetStandardLibrary.getInstance();
-        this.trace = trace;
     }
 
     @NotNull
