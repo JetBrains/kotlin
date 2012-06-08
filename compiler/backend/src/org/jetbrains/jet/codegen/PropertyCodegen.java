@@ -223,9 +223,7 @@ public class PropertyCodegen {
 
     public static void generateJetPropertyAnnotation(MethodVisitor mv, @NotNull String kotlinType, @NotNull String typeParameters) {
         JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
-        BitSet flags = new BitSet();
-        flags.set(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY_BIT);
-        aw.writeFlags(flags);
+        aw.writeFlags(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY_BIT);
         aw.writeTypeParameters(typeParameters);
         aw.writePropertyType(kotlinType);
         aw.visitEnd();
