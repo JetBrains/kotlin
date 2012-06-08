@@ -98,12 +98,16 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends R
 
     public final TracingStrategy tracing = new TracingStrategy() {
         @Override
-        public <D extends CallableDescriptor> void bindResolvedCall(@NotNull BindingTrace trace, @NotNull ResolvedCallWithTrace<D> resolvedCall) {
+        public <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCallWithTrace<D> resolvedCall) {
             CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
             if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
                 descriptor = ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall().getResultingDescriptor();
             }
             trace.record(REFERENCE_TARGET, reference, descriptor);
+        }
+
+        @Override
+        public <D extends CallableDescriptor> void bindResolvedCall(@NotNull BindingTrace trace, @NotNull ResolvedCallWithTrace<D> resolvedCall) {
             trace.record(RESOLVED_CALL, call.getCalleeExpression(), resolvedCall);
         }
 

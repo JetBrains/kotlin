@@ -80,7 +80,7 @@ public class AutoCastUtils {
 //                else if (expression instanceof JetThisExpression) {
 //                    return castThis(dataFlowInfo, receiver);
 //                }
-                DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(receiver.getExpression(),receiver.getType(),
+                DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(receiver.getExpression(), receiver.getType(),
                                                                                                 bindingContext);
                 List<ReceiverDescriptor> result = Lists.newArrayList();
                 for (JetType possibleType : dataFlowInfo.getPossibleTypes(dataFlowValue)) {

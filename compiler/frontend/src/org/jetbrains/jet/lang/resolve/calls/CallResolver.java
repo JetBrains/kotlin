@@ -411,11 +411,21 @@ public class CallResolver {
         for (ResolutionCandidate<D> resolutionCandidate : task.getCandidates()) {
             TemporaryBindingTrace candidateTrace = TemporaryBindingTrace.create(task.trace);
             Collection<CallResolutionContext<D, F>> contexts = callTransformer.createCallContexts(resolutionCandidate, task, candidateTrace);
-            Collection<ResolvedCallWithTrace<F>> calls = Lists.newArrayList();
             for (CallResolutionContext<D, F> context : contexts) {
 
                 performResolutionForCandidateCall(context, task);
-                calls.addAll(callTransformer.transformCall(context, this, task));
+
+                /* important for 'variable as function case': temporary bind reference to descriptor (will be rewritten)
+                to have a binding to variable while 'invoke' call resolve */
+                task.tracing.bindReference(context.candidateCall.getTrace(), context.candidateCall);
+
+                Collection<ResolvedCallWithTrace<F>> calls = callTransformer.transformCall(context, this, task);
+
+                for (ResolvedCallWithTrace<F> call : calls) {
+                    task.tracing.bindReference(call.getTrace(), call);
+                    task.tracing.bindResolvedCall(call.getTrace(), call);
+                    task.getResolvedCalls().add(call);
+                }
 
                 context.candidateCall.getTrace().addAllMyDataTo(traceForResolutionCache, new Predicate<WritableSlice>() {
                     @Override
@@ -424,11 +434,6 @@ public class CallResolver {
                                slice == BindingContext.TRACE_DELTAS_CACHE;
                     }
                 }, false);
-            }
-            for (ResolvedCallWithTrace<F> call : calls) {
-
-                task.tracing.bindResolvedCall(call.getTrace(), call);
-                task.getResolvedCalls().add(call);
             }
         }
 
