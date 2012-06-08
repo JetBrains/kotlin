@@ -77,7 +77,7 @@ public class NamespaceCodegen {
 
     }
 
-    public void generate(CompilationErrorHandler errorHandler, Progress progress) {
+    public void generate(CompilationErrorHandler errorHandler, final Progress progress) {
         ArrayList<Pair<JetFile, Collection<JetDeclaration>>> byFile = new ArrayList<Pair<JetFile, Collection<JetDeclaration>>>();
 
         for (JetFile file : files) {
@@ -96,8 +96,15 @@ public class NamespaceCodegen {
         for (JetFile file : files) {
             VirtualFile vFile = file.getVirtualFile();
             try {
-                String path = vFile != null ? vFile.getPath() : "no_virtual_file/" + file.getName();
-                if(progress != null) progress.log("For source: " + path);
+                final String path = vFile != null ? vFile.getPath() : "no_virtual_file/" + file.getName();
+                if (progress != null) {
+                    v.addOptionalDeclaration(new ClassBuilderOnDemand.ClassBuilderCallback() {
+                        @Override
+                        public void doSomething(@NotNull ClassBuilder classBuilder) {
+                            progress.log("For source: " + path);
+                        }
+                    });
+                }
                 generate(file, multiFile);
             }
             catch (ProcessCanceledException e) {
