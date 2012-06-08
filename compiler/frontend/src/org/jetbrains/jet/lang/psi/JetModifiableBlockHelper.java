@@ -35,18 +35,18 @@ public final class JetModifiableBlockHelper {
             if (declaration instanceof JetNamedFunction) {
                 JetNamedFunction function = (JetNamedFunction) declaration;
                 if (function.hasDeclaredReturnType() || function.hasBlockBody()) {
-                    return false;
+                    return takePartInDeclarationTypeInference(function);
                 }
 
                 return shouldChangeModificationCount(function);
             }
             else if (declaration instanceof JetPropertyAccessor) {
-                return false;
+                return takePartInDeclarationTypeInference(declaration);
             }
             else if (declaration instanceof JetProperty) {
                 JetProperty property = (JetProperty) declaration;
                 if (property.getPropertyTypeRef() != null) {
-                    return false;
+                    return takePartInDeclarationTypeInference(property);
                 }
 
                 return shouldChangeModificationCount(property);
@@ -58,5 +58,27 @@ public final class JetModifiableBlockHelper {
         }
 
         return true;
+    }
+
+    private static boolean takePartInDeclarationTypeInference(PsiElement place) {
+        JetDeclaration declaration = PsiTreeUtil.getParentOfType(place, JetDeclaration.class, true);
+        if (declaration != null) {
+            if (declaration instanceof JetNamedFunction) {
+                JetNamedFunction function = (JetNamedFunction) declaration;
+                if (!function.hasDeclaredReturnType()) {
+                    return true;
+                }
+            }
+            else if (declaration instanceof JetProperty) {
+                JetProperty property = (JetProperty) declaration;
+                if (property.getPropertyTypeRef() == null) {
+                    return true;
+                }
+            }
+
+            return takePartInDeclarationTypeInference(declaration);
+        }
+
+        return false;
     }
 }
