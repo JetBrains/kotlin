@@ -32,6 +32,13 @@ public class ReplClassLoader extends ClassLoader {
 
     private Map<JvmClassName, byte[]> classes = Maps.newLinkedHashMap();
 
+    public ReplClassLoader(@NotNull ClassLoader parent) {
+        super(parent);
+    }
+
+    public ReplClassLoader() {
+    }
+
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         byte[] classBytes = classes.get(JvmClassName.byFqNameWithoutInnerClasses(name));

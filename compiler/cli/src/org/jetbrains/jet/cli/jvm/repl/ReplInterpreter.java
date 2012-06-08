@@ -58,9 +58,12 @@ import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.utils.Progress;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.List;
 
@@ -73,7 +76,7 @@ public class ReplInterpreter {
     @Nullable
     private JetScope lastLineScope;
     private List<EarlierLine> earlierLines = Lists.newArrayList();
-    private final ReplClassLoader classLoader = new ReplClassLoader();
+    private final ReplClassLoader classLoader;
 
     @NotNull
     private final InjectorForTopDownAnalyzerForJvm injector;
@@ -84,7 +87,8 @@ public class ReplInterpreter {
     @NotNull
     private final ModuleDescriptor module;
 
-    public ReplInterpreter(@NotNull Disposable disposable, @NotNull CompilerDependencies compilerDependencies) {
+    public ReplInterpreter(@NotNull Disposable disposable, @NotNull CompilerDependencies compilerDependencies, @NotNull List<File> extraClasspath) {
+        // TODO: add extraClasspath to jetCoreEnvironment
         jetCoreEnvironment = new JetCoreEnvironment(disposable, compilerDependencies);
         Project project = jetCoreEnvironment.getProject();
         trace = new BindingTraceContext();
@@ -95,6 +99,21 @@ public class ReplInterpreter {
                 true,
                 Collections.<AnalyzerScriptParameter>emptyList());
         injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module, compilerDependencies);
+
+        if (extraClasspath.size() > 0) {
+            URL[] urls = new URL[extraClasspath.size()];
+            for (int i = 0; i < extraClasspath.size(); ++i) {
+                try {
+                    urls[i] = extraClasspath.get(i).toURI().toURL();
+                } catch (Exception e) {
+                    throw ExceptionUtils.rethrow(e);
+                }
+            }
+            classLoader = new ReplClassLoader(new URLClassLoader(urls));
+        }
+        else {
+            classLoader = new ReplClassLoader();
+        }
     }
 
     public Object eval(@NotNull String line) {

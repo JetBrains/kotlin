@@ -29,6 +29,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Collections;
 
 /**
  * @author Stepan Koltsov
@@ -52,7 +53,7 @@ public class ReplInterpreterTest {
 
     private void testFile(@NotNull String relativePath) {
         CompilerDependencies compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.JDK_HEADERS, false);
-        ReplInterpreter repl = new ReplInterpreter(disposable, compilerDependencies);
+        ReplInterpreter repl = new ReplInterpreter(disposable, compilerDependencies, Collections.singletonList(new File("out/production/runtime")));
 
         ReplSessionTestFile file = ReplSessionTestFile.load(new File("compiler/testData/repl/" + relativePath));
         for (Pair<String, String> t : file.getLines()) {
@@ -76,7 +77,6 @@ public class ReplInterpreterTest {
         testFile("simple.repl");
     }
 
-    /*
     @Test
     public void function() {
         testFile("function.repl");
@@ -86,7 +86,6 @@ public class ReplInterpreterTest {
     public void functionReferencesPrev() {
         testFile("functionReferencesPrev.repl");
     }
-    */
 
 
 }
