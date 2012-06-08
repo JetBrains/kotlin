@@ -56,6 +56,8 @@ public class GenerationState {
     private final ClassBuilderMode classBuilderMode;
 
 
+    private boolean poisoned = false;
+
     // out parameter
     private Method scriptConstructorMethod;
 
@@ -74,6 +76,13 @@ public class GenerationState {
         this.injector = new InjectorForJvmCodegen(
                 analyzeExhaust.getStandardLibrary(), analyzeExhaust.getBindingContext(),
                 this.files, project, compilerSpecialMode, builderFactory.getClassBuilderMode(), this, builderFactory);
+    }
+
+    private void poison() {
+        if (poisoned) {
+            throw new IllegalStateException("already poisoned");
+        }
+        poisoned = true;
     }
 
     @NotNull
@@ -128,6 +137,7 @@ public class GenerationState {
     }
 
     public void compileCorrectFiles(@NotNull CompilationErrorHandler errorHandler) {
+        poison();
 
         for (JetFile file : this.files) {
             if (file.isScript()) {
