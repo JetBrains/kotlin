@@ -42,7 +42,7 @@ public class JetFullClassNameIndex extends StringStubIndexExtension<JetClassOrOb
     }
 
     @Override
-    public Collection<JetClassOrObject> get(final String integer, final Project project, @NotNull final GlobalSearchScope scope) {
-        return super.get(integer, project, new JetSourceFilterScope(scope));
+    public Collection<JetClassOrObject> get(final String fqName, final Project project, @NotNull final GlobalSearchScope scope) {
+        return super.get(fqName, project, new JetSourceFilterScope(scope));
     }
 }

@@ -18,12 +18,12 @@ package org.jetbrains.jet.plugin.completion;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
@@ -118,18 +118,19 @@ public class JetClassCompletionContributor extends CompletionContributor {
                     });
         }
         else {
-            GlobalSearchScope globalSearchScope = GlobalSearchScope.allScope(parameters.getOriginalFile().getProject());
-            PsiShortNamesCache cache = JetCacheManager.getInstance(parameters.getOriginalFile().getProject()).getShortNamesCache(
+            Project project = parameters.getOriginalFile().getProject();
+            JetShortNamesCache namesCache = JetCacheManager.getInstance(project).getNamesCache();
+            Collection<ClassDescriptor> descriptors = namesCache.getJetClassesDescriptors(
+                    new Condition<String>() {
+                        @Override
+                        public boolean value(String shortName) {
+                            return result.getPrefixMatcher().prefixMatches(shortName);
+                        }
+                    },
                     (JetFile) parameters.getOriginalFile());
 
-            for (String className : cache.getAllClassNames()) {
-                if (result.getPrefixMatcher().prefixMatches(className)) {
-                    for (PsiClass aClass : cache.getClassesByName(className, globalSearchScope)) {
-                        if (!addAsJetLookupElement(aClass, bindingContext, consumer)) {
-                            assert false : "All classes should be possible to add as kotlin classes in JS project";
-                        }
-                    }
-                }
+            for (ClassDescriptor descriptor : descriptors) {
+                consumer.consume(DescriptorLookupConverter.createLookupElement(bindingContext, descriptor));
             }
         }
     }

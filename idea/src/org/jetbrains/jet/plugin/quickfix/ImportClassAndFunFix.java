@@ -55,6 +55,7 @@ import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetAddImportAction;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
+import org.jetbrains.jet.plugin.project.JsModuleDetector;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 import java.util.Collection;
@@ -152,10 +153,14 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
      * Searches for possible class names in kotlin context and java facade.
      */
     public static Collection<FqName> getClassNames(@NotNull String referenceName, @NotNull JetFile file) {
-        final GlobalSearchScope scope = GlobalSearchScope.allScope(file.getProject());
         Set<FqName> possibleResolveNames = Sets.newHashSet();
 
-        possibleResolveNames.addAll(getClassesFromCache(referenceName, file));
+        if (!JsModuleDetector.isJsModule(file)) {
+            possibleResolveNames.addAll(getClassesFromCache(referenceName, file));
+        }
+        else {
+            possibleResolveNames.addAll(getJetClasses(referenceName, file));
+        }
 
         // TODO: Do appropriate sorting
         return Lists.newArrayList(possibleResolveNames);
@@ -182,6 +187,23 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
                 String qualifiedName = javaClass.getQualifiedName();
                 assert qualifiedName != null;
                 return new FqName(qualifiedName);
+            }
+        });
+    }
+
+    private static Collection<FqName> getJetClasses(@NotNull final String typeName, @NotNull JetFile file) {
+        JetShortNamesCache cache = JetCacheManager.getInstance(file.getProject()).getNamesCache();
+        Collection<ClassDescriptor> descriptors = cache.getJetClassesDescriptors(new Condition<String>() {
+            @Override
+            public boolean value(String s) {
+                return typeName.equals(s);
+            }
+        }, file);
+
+        return Collections2.transform(descriptors, new Function<ClassDescriptor, FqName>() {
+            @Override
+            public FqName apply(ClassDescriptor descriptor) {
+                return DescriptorUtils.getFQName(descriptor).toSafe();
             }
         });
     }

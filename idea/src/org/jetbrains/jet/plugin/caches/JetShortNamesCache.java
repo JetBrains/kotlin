@@ -80,7 +80,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     }
 
     /**
-     * Return class names form jet sources in given scope which should be visible as java classes.
+     * Return class names form jet sources in given scope which should be visible as Java classes.
      */
     @NotNull
     @Override
@@ -263,6 +263,26 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         }
 
         return resultDescriptors;
+    }
+
+    public Collection<ClassDescriptor> getJetClassesDescriptors(
+            @NotNull Condition<String> acceptedShortNameCondition,
+            @NotNull JetFile jetFile
+    ) {
+        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile).getBindingContext();
+        Collection<ClassDescriptor> classDescriptors = new ArrayList<ClassDescriptor>();
+
+        for (String fqName : JetFullClassNameIndex.getInstance().getAllKeys(project)) {
+            FqName classFQName = new FqName(fqName);
+            if (acceptedShortNameCondition.value(classFQName.shortName().getName())) {
+                ClassDescriptor descriptor = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, classFQName);
+                if (descriptor != null) {
+                    classDescriptors.add(descriptor);
+                }
+            }
+        }
+
+        return classDescriptors;
     }
 
     @NotNull
