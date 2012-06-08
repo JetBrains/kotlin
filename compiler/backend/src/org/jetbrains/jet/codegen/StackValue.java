@@ -924,10 +924,19 @@ public abstract class StackValue {
 
     public static class Shared extends StackValue {
         private final int index;
+        private boolean isReleaseOnPut = false;
 
         public Shared(int index, Type type) {
             super(type);
             this.index = index;
+        }
+
+        public void releaseOnPut() {
+            isReleaseOnPut = true;
+        }
+
+        public int getIndex() {
+            return index;
         }
 
         @Override
@@ -936,8 +945,12 @@ public abstract class StackValue {
             Type refType = refType(this.type);
             Type sharedType = sharedTypeForType(this.type);
             v.visitFieldInsn(Opcodes.GETFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
-            StackValue.onStack(refType).coerce(this.type, v);
-            StackValue.onStack(this.type).coerce(type, v);
+            coerce(refType, this.type, v);
+            coerce(this.type, type, v);
+            if (isReleaseOnPut) {
+                v.aconst(null);
+                v.store(index, JetTypeMapper.TYPE_OBJECT);
+            }
         }
 
         @Override

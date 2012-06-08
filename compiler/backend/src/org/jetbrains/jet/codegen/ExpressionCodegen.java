@@ -917,8 +917,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 final Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
                 final Type type = sharedVarType != null ? sharedVarType : asmType(variableDescriptor.getType());
                 if(sharedVarType != null) {
-                    v.aconst(null);
-                    v.store(index, TYPE_OBJECT);
+                    if (answer instanceof StackValue.Shared && index == ((StackValue.Shared) answer).getIndex()) {
+                        ((StackValue.Shared) answer).releaseOnPut();
+                    }
+                    else {
+                        v.aconst(null);
+                        v.store(index, TYPE_OBJECT);
+                    }
                 }
 
                 v.visitLocalVariable(var.getName(), type.getDescriptor(), null, blockStart, blockEnd, index);

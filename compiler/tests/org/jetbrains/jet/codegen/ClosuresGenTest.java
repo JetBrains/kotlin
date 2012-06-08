@@ -62,4 +62,8 @@ public class ClosuresGenTest extends CodegenTestCase {
     public void testEnclosingThis() throws Exception {
         blackBoxFile("classes/enclosingThis.jet");
     }
+
+    public void testKt2151() {
+        blackBoxFile("regressions/kt2151.kt");
+    }
 }
