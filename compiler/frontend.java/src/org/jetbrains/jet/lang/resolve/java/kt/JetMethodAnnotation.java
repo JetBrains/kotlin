@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 
+import java.util.BitSet;
+
 /**
  * @author Stepan Koltsov
  */
@@ -31,16 +33,19 @@ public class JetMethodAnnotation extends PsiAnnotationWrapper {
         super(psiAnnotation);
     }
     
-    private int flags;
-    private boolean flagsInitialized;
-    public int flags() {
-        if (!flagsInitialized) {
-            flags = getIntAttribute(JvmStdlibNames.JET_METHOD_FLAGS_FIELD, -1);
-            if (flags == -1) {
+    private BitSet flags = null;
+    public BitSet flags() {
+        if (flags == null) {
+            int flagsValue = getIntAttribute(JvmStdlibNames.JET_METHOD_FLAGS_FIELD, JvmStdlibNames.JET_METHOD_FLAGS_DEFAULT_VALUE);
+            if (flagsValue == JvmStdlibNames.JET_METHOD_FLAGS_DEFAULT_VALUE) {
                 // for compatibility
-                flags = getIntAttribute(JvmStdlibNames.JET_METHOD_KIND_FIELD, JvmStdlibNames.JET_METHOD_FLAGS_DEFAULT);
+                flagsValue = getIntAttribute(JvmStdlibNames.JET_METHOD_KIND_FIELD, JvmStdlibNames.JET_METHOD_FLAGS_DEFAULT_VALUE);
             }
-            flagsInitialized = true;
+
+            flags = new BitSet(JvmStdlibNames.JET_METHOD_FLAGS_BITS);
+            for (int bit = 0; bit < JvmStdlibNames.JET_METHOD_FLAGS_BITS; bit++) {
+                flags.set(bit, (flagsValue & (1 << bit)) != 0);
+            }
         }
         return flags;
     }

@@ -36,6 +36,8 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 
+import java.util.BitSet;
+
 /**
  * @author max
  */
@@ -221,7 +223,9 @@ public class PropertyCodegen {
 
     public static void generateJetPropertyAnnotation(MethodVisitor mv, @NotNull String kotlinType, @NotNull String typeParameters) {
         JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
-        aw.writeFlags(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY);
+        BitSet flags = new BitSet();
+        flags.set(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY_BIT);
+        aw.writeFlags(flags);
         aw.writeTypeParameters(typeParameters);
         aw.writePropertyType(kotlinType);
         aw.visitEnd();

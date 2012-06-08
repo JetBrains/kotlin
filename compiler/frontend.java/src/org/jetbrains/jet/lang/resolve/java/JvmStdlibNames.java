@@ -48,8 +48,9 @@ public class JvmStdlibNames {
     public static final String JET_METHOD_TYPE_PARAMETERS_FIELD = "typeParameters";
     public static final String JET_METHOD_PROPERTY_TYPE_FIELD = "propertyType";
 
-    public static final int JET_METHOD_FLAGS_DEFAULT = 0;
-    public static final int JET_METHOD_FLAG_PROPERTY = 1;
+    public static final int JET_METHOD_FLAGS_DEFAULT_VALUE = 0;
+    public static final int JET_METHOD_FLAGS_BITS = 1;
+    public static final int JET_METHOD_FLAG_PROPERTY_BIT = 0;
 
     public static final JvmClassName JET_CONSTRUCTOR = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetConstructor");
 
