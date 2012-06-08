@@ -63,6 +63,11 @@
         <!-- dx.jar -->
         <get src="http://search.maven.org/remotecontent?filepath=com/google/android/tools/dx/1.7/dx-1.7.jar" dest="dependencies/dx.jar"/>
         <get src="http://search.maven.org/remotecontent?filepath=com/google/android/tools/dx/1.7/dx-1.7-sources.jar" dest="dependencies/dx-sources.jar"/>
+
+        <get src="http://repo1.maven.org/maven2/jline/jline/2.6/jline-2.6.jar"
+            dest="dependencies/jline-2.6.jar"/>
+        <get src="http://repo1.maven.org/maven2/jline/jline/2.6/jline-2.6-sources.jar"
+            dest="dependencies/jline-2.6-sources.jar"/>
     </target>
 
     <macrodef name="execute_update">

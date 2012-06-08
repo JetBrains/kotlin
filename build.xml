@@ -21,6 +21,7 @@
         <pathelement path="${idea.sdk}/lib/resources_en.jar"/>
 
         <fileset dir="${basedir}/lib" includes="**/*.jar"/>
+        <fileset dir="${basedir}/dependencies" includes="jline-*.jar"/>
         <fileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
     </path>
 
@@ -165,6 +166,7 @@
             <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
             <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar"/>
             <zipgroupfileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
+            <zipgroupfileset dir="${basedir}/dependencies" includes="jline-*.jar"/>
 
             <zap pattern="com.thoughtworks.xstream.converters.extended.ISO8601*"/>
             <zap pattern="com.thoughtworks.xstream.converters.reflection.CGLIBEnhancedConverter*"/>

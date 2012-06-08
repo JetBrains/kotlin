@@ -17,14 +17,14 @@
 package org.jetbrains.jet.cli.jvm.repl;
 
 import com.intellij.openapi.Disposable;
+import jline.console.ConsoleReader;
+import jline.console.history.FileHistory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
-import javax.sound.midi.SysexMessage;
-import java.io.Console;
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,6 +36,8 @@ public class ReplFromTerminal {
     private ReplInterpreter replInterpreter;
     private Throwable replInitializationFailed;
     private final Object waitRepl = new Object();
+
+    private final ConsoleReader consoleReader;
 
     public ReplFromTerminal(@NotNull final Disposable disposable, @NotNull final CompilerDependencies compilerDependencies) {
         final List<File> extraClasspath = Collections.<File>emptyList();
@@ -52,6 +54,14 @@ public class ReplFromTerminal {
                 }
             }
         }.start();
+
+        try {
+            consoleReader = new ConsoleReader("kotlin", System.in, System.out, null);
+            consoleReader.setHistoryEnabled(true);
+            consoleReader.setHistory(new FileHistory(new File(new File(System.getProperty("user.home")), ".kotlin_history")));
+        } catch (Exception e) {
+            throw ExceptionUtils.rethrow(e);
+        }
     }
 
     private ReplInterpreter getReplInterpreter() {
@@ -74,24 +84,38 @@ public class ReplFromTerminal {
     }
 
     private void doRun() {
-        System.out.println("Kotlin");
-        while (true) {
-            boolean next = one();
-            if (!next) {
-                break;
+        try {
+            System.out.println("Kotlin");
+            while (true) {
+                boolean next = one();
+                if (!next) {
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            throw ExceptionUtils.rethrow(e);
+        } finally {
+            try {
+                ((FileHistory) consoleReader.getHistory()).flush();
+            } catch (Exception e) {
+                System.err.println("failed to flush history: " + e);
             }
         }
     }
 
     private boolean one() {
-        System.out.print(">>> ");
-        String line = System.console().readLine();
-        if (line == null) {
-            return false;
+        try {
+            String line = consoleReader.readLine(">>> ");
+            if (line == null) {
+                return false;
+            }
+            Object value = getReplInterpreter().eval(line);
+            System.out.println(value);
+            return true;
         }
-        Object value = getReplInterpreter().eval(line);
-        System.out.println(value);
-        return true;
+        catch (Exception e) {
+            throw ExceptionUtils.rethrow(e);
+        }
     }
 
     public static void run(@NotNull Disposable disposable, @NotNull CompilerDependencies compilerDependencies) {
