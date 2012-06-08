@@ -382,42 +382,47 @@ public class ClassGenTest extends CodegenTestCase {
         blackBoxFile("regressions/kt1759.kt");
     }
 
-    public void testResolveOrder() throws Exception {
+    public void testResolveOrder() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("classes/resolveOrder.jet");
     }
 
-    public void testKt1918() throws Exception {
+    public void testKt1918() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt1918.kt");
     }
 
-    public void testKt1247() throws Exception {
+    public void testKt1247() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt1247.kt");
     }
 
-    public void testKt1980() throws Exception {
+    public void testKt1980() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt1980.kt");
     }
 
-    public void testKt1578() throws Exception {
+    public void testKt1578() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt1578.kt");
     }
 
-    public void testKt1726() throws Exception {
+    public void testKt1726() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt1726.kt");
     }
 
-    public void testKt1976() throws Exception {
+    public void testKt1976() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt1976.kt");
     }
 
-    public void testKt1611() throws Exception {
+    public void testKt1439() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        blackBoxFile("regressions/kt1439.kt");
+    }
+
+    public void testKt1611() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt1611.kt");
     }
