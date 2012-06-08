@@ -221,7 +221,7 @@ public class PropertyCodegen {
 
     public static void generateJetPropertyAnnotation(MethodVisitor mv, @NotNull String kotlinType, @NotNull String typeParameters) {
         JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
-        aw.writeKind(JvmStdlibNames.JET_METHOD_KIND_PROPERTY);
+        aw.writeFlags(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY);
         aw.writeTypeParameters(typeParameters);
         aw.writePropertyType(kotlinType);
         aw.visitEnd();

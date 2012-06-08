@@ -125,7 +125,7 @@ class JavaDescriptorResolverHelper {
                     NamedMembers members = getNamedMembers(Name.identifier(propertyName));
 
                     // TODO: some java properties too
-                    if (method.getJetMethod().kind() == JvmStdlibNames.JET_METHOD_KIND_PROPERTY) {
+                    if ((method.getJetMethod().flags() & JvmStdlibNames.JET_METHOD_FLAG_PROPERTY) != 0) {
 
                         int i = 0;
 
@@ -167,7 +167,7 @@ class JavaDescriptorResolverHelper {
                     String propertyName = propertyParseResult.getPropertyName();
                     NamedMembers members = getNamedMembers(Name.identifier(propertyName));
 
-                    if (method.getJetMethod().kind() == JvmStdlibNames.JET_METHOD_KIND_PROPERTY) {
+                    if ((method.getJetMethod().flags() & JvmStdlibNames.JET_METHOD_FLAG_PROPERTY) != 0) {
                         if (method.getParameters().size() == 0) {
                             // TODO: report error properly
                             throw new IllegalStateException();
@@ -204,7 +204,7 @@ class JavaDescriptorResolverHelper {
                     }
                 }
                 
-                if (method.getJetMethod().kind() != JvmStdlibNames.JET_METHOD_KIND_PROPERTY) {
+                if ((method.getJetMethod().flags() & JvmStdlibNames.JET_METHOD_FLAG_PROPERTY) == 0) {
                     NamedMembers namedMembers = getNamedMembers(Name.identifier(method.getName()));
                     namedMembers.addMethod(method);
                 }

@@ -1597,7 +1597,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
 
         // TODO: ugly
-        if (method.getJetMethod().kind() == JvmStdlibNames.JET_METHOD_KIND_PROPERTY) {
+        if ((method.getJetMethod().flags() & JvmStdlibNames.JET_METHOD_FLAG_PROPERTY) != 0) {
             return null;
         }
 

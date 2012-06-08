@@ -31,14 +31,18 @@ public class JetMethodAnnotation extends PsiAnnotationWrapper {
         super(psiAnnotation);
     }
     
-    private int kind;
-    private boolean kindInitialized;
-    public int kind() {
-        if (!kindInitialized) {
-            kind = getIntAttribute(JvmStdlibNames.JET_METHOD_KIND_FIELD, JvmStdlibNames.JET_METHOD_KIND_DEFAULT);
-            kindInitialized = true;
+    private int flags;
+    private boolean flagsInitialized;
+    public int flags() {
+        if (!flagsInitialized) {
+            flags = getIntAttribute(JvmStdlibNames.JET_METHOD_FLAGS_FIELD, -1);
+            if (flags == -1) {
+                // for compatibility
+                flags = getIntAttribute(JvmStdlibNames.JET_METHOD_KIND_FIELD, JvmStdlibNames.JET_METHOD_FLAGS_DEFAULT);
+            }
+            flagsInitialized = true;
         }
-        return kind;
+        return flags;
     }
 
     private String typeParameters;

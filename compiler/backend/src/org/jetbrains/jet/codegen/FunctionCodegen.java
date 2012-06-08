@@ -136,7 +136,7 @@ public class FunctionCodegen {
                             throw new IllegalStateException();
                         }
                         JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
-                        aw.writeKind(JvmStdlibNames.JET_METHOD_KIND_REGULAR);
+                        aw.writeFlags(JvmStdlibNames.JET_METHOD_FLAGS_DEFAULT);
                         aw.writeNullableReturnType(functionDescriptor.getReturnType().isNullable());
                         aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
                         aw.writeReturnType(jvmSignature.getKotlinReturnType());

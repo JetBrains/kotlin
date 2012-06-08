@@ -31,9 +31,9 @@ public class JetMethodAnnotationWriter {
         this.av = av;
     }
     
-    public void writeKind(int kind) {
-        if (kind != JvmStdlibNames.JET_METHOD_KIND_DEFAULT) {
-            av.visit(JvmStdlibNames.JET_METHOD_KIND_FIELD, kind);
+    public void writeFlags(int flags) {
+        if (flags != JvmStdlibNames.JET_METHOD_FLAGS_DEFAULT) {
+            av.visit(JvmStdlibNames.JET_METHOD_FLAGS_FIELD, flags);
         }
     }
     
