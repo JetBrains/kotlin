@@ -204,7 +204,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
     }
 
-    private Type asmType(JetType type) {
+    @NotNull
+    private Type asmType(@NotNull JetType type) {
         return typeMapper.mapType(type, MapTypeMode.VALUE);
     }
 
@@ -1460,7 +1461,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         receiver.put(receiver.type, v);
     }
 
-    public void generateFromResolvedCall(ReceiverDescriptor descriptor, Type type) {
+    public void generateFromResolvedCall(@NotNull ReceiverDescriptor descriptor, @NotNull Type type) {
         if(descriptor instanceof ClassReceiver) {
             Type exprType = asmType(descriptor.getType());
             ClassReceiver classReceiver = (ClassReceiver) descriptor;
@@ -1473,8 +1474,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             else {
                 generateThisOrOuter(classReceiverDeclarationDescriptor).put(exprType, v);
             }
-            if(type != null)
-                StackValue.onStack(exprType).put(type, v);
+            StackValue.onStack(exprType).put(type, v);
         }
         else if (descriptor instanceof ScriptReceiver) {
             generateScript((ScriptReceiver) descriptor);
@@ -1483,16 +1483,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             Type exprType = asmType(descriptor.getType());
             ExtensionReceiver extensionReceiver = (ExtensionReceiver) descriptor;
             generateReceiver(extensionReceiver.getDeclarationDescriptor()).put(exprType, v);
-            if(type != null)
-                StackValue.onStack(exprType).put(type, v);
+            StackValue.onStack(exprType).put(type, v);
         }
         else if(descriptor instanceof ExpressionReceiver) {
             ExpressionReceiver expressionReceiver = (ExpressionReceiver) descriptor;
             JetExpression expr = expressionReceiver.getExpression();
             Type exprType = asmType(expressionReceiver.getType());
             gen(expr, exprType);
-            if(type != null)
-                StackValue.onStack(exprType).put(type, v);
+            StackValue.onStack(exprType).put(type, v);
         }
         else if(descriptor instanceof AutoCastReceiver) {
             AutoCastReceiver autoCastReceiver = (AutoCastReceiver) descriptor;
@@ -1563,7 +1561,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         throw new UnsupportedOperationException();    }
 
-    public StackValue generateThisOrOuter(ClassDescriptor calleeContainingClass) {
+    public StackValue generateThisOrOuter(@NotNull ClassDescriptor calleeContainingClass) {
         CodegenContext cur = context;
 
         PsiElement psiElement = BindingContextUtils.classDescriptorToDeclaration(bindingContext, calleeContainingClass);

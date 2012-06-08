@@ -39,7 +39,7 @@ public class PsiMethodCall implements IntrinsicMethod {
     }
 
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element,
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element,
             List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
         final CallableMethod callableMethod = state.getInjector().getJetTypeMapper().mapToCallableMethod(myMethod, false, OwnerKind.IMPLEMENTATION);
         codegen.invokeMethodWithArguments(callableMethod, (JetCallExpression) element, receiver);

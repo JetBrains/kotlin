@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class CompareTo implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, @Nullable PsiElement element, @Nullable List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, @Nullable PsiElement element, @Nullable List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
         assert arguments != null;
         receiver.put(receiver.type, v);
         codegen.gen(arguments.get(0), receiver.type);

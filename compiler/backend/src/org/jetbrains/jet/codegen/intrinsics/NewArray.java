@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class NewArray implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
         codegen.generateNewArray((JetCallExpression) element, codegen.getBindingContext().get(BindingContext.EXPRESSION_TYPE, (JetExpression) element));
         return StackValue.onStack(expectedType);
     }

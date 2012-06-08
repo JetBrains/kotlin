@@ -43,7 +43,7 @@ public class JavaClassArray implements IntrinsicMethod {
     @Override
     public StackValue generate(ExpressionCodegen codegen,
                                InstructionAdapter v,
-                               Type expectedType,
+                               @NotNull Type expectedType,
                                @Nullable PsiElement element,
                                @Nullable List<JetExpression> arguments,
                                StackValue receiver,

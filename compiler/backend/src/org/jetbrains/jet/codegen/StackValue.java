@@ -40,9 +40,10 @@ import java.util.List;
  * @author alex.tkachman
  */
 public abstract class StackValue {
+    @NotNull
     public final Type type;
 
-    public StackValue(Type type) {
+    public StackValue(@NotNull Type type) {
         this.type = type;
     }
 
@@ -59,6 +60,9 @@ public abstract class StackValue {
         }
     }
 
+    /**
+     * Put this value to the top of the stack.
+     */
     public abstract void put(Type type, InstructionAdapter v);
 
     /**
@@ -73,6 +77,9 @@ public abstract class StackValue {
         put(type, v);
     }
 
+    /**
+     * Set this value from the top of the stack.
+     */
     public void store(Type topOfStackType, InstructionAdapter v) {
         throw new UnsupportedOperationException("cannot store to value " + this);
     }
@@ -107,7 +114,7 @@ public abstract class StackValue {
         return type == Type.VOID_TYPE ? none() : new OnStack(type);
     }
 
-    public static StackValue constant(Object value, Type type) {
+    public static StackValue constant(@Nullable Object value, Type type) {
         return new Constant(value, type);
     }
 
@@ -323,6 +330,10 @@ public abstract class StackValue {
         public Local(int index, Type type) {
             super(type);
             this.index = index;
+
+            if (index < 0) {
+                throw new IllegalStateException("local variable index must be non-negative");
+            }
         }
 
         @Override
@@ -377,9 +388,10 @@ public abstract class StackValue {
     }
 
     public static class Constant extends StackValue {
+        @Nullable
         private final Object value;
 
-        public Constant(Object value, Type type) {
+        public Constant(@Nullable Object value, Type type) {
             super(type);
             this.value = value;
         }
@@ -594,7 +606,7 @@ public abstract class StackValue {
             if(getter instanceof CallableMethod)
                 ((CallableMethod)getter).invoke(v);
             else
-                ((IntrinsicMethod)getter).generate(codegen, v, null, null, null, null, state);
+                ((IntrinsicMethod)getter).generate(codegen, v, type, null, null, null, state);
             coerce(type, v);
         }
 

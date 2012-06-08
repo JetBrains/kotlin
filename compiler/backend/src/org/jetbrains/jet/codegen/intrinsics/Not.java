@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class Not implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
         final StackValue stackValue;
         if (arguments.size() == 1) {
             stackValue = codegen.gen(arguments.get(0));
