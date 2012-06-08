@@ -315,9 +315,9 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 DxChecker.check(generationState.getFactory());
             }
 
-        } catch (RuntimeException e) {
+        } catch (Throwable e) {
             System.out.println(generateToText());
-            throw e;
+            throw ExceptionUtils.rethrow(e);
         }
         return generationState;
     }
