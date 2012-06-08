@@ -1,0 +1,9 @@
+namespace test
+
+abstract trait test.A : jet.Any {
+    open fun f(): jet.String
+}
+final class test.B : test.A {
+    final /*constructor*/ fun <init>(): test.B
+    open override /*1*/ fun f(): jet.String
+}
