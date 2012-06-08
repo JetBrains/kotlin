@@ -29,6 +29,7 @@ import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
+import org.jetbrains.jet.cli.jvm.repl.ReplFromTerminal;
 import org.jetbrains.jet.codegen.CompilationException;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
@@ -84,6 +85,12 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
         }
 
         CompilerDependencies dependencies = new CompilerDependencies(mode, CompilerDependencies.findRtJar(), jdkHeadersJar, runtimeJar);
+
+        if (!arguments.script && arguments.module == null && arguments.src == null && arguments.freeArgs.isEmpty()) {
+            ReplFromTerminal.run(rootDisposable, dependencies);
+            return ExitCode.OK;
+        }
+
         JetCoreEnvironment environment = JetCoreEnvironment.getCoreEnvironmentForJVM(rootDisposable, dependencies);
         List<String> scriptArgs = arguments.script ? arguments.freeArgs.subList(1, arguments.freeArgs.size()) : Collections.<String>emptyList();
         K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(environment, messageCollector, arguments.script, scriptArgs);
