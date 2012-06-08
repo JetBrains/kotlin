@@ -78,7 +78,8 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
             FakeJetNamespaceDescriptor jetNamespace = new FakeJetNamespaceDescriptor();
             context.record(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, JetStandardClasses.STANDARD_CLASSES_FQNAME, jetNamespace);
 
-            WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, jetNamespace, RedeclarationHandler.THROW_EXCEPTION, "Builtin classes scope");
+            WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, jetNamespace, RedeclarationHandler.THROW_EXCEPTION,
+                                                            "Builtin classes scope");
             scope.changeLockLevel(WritableScope.LockLevel.BOTH);
             jetNamespace.setMemberScope(scope);
 
@@ -120,7 +121,8 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
             return bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFQName(originalDescriptor).toSafe());
         }
         else if (originalDescriptor instanceof NamespaceDescriptor) {
-            return bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, DescriptorUtils.getFQName(originalDescriptor).toSafe());
+            return bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
+                                      DescriptorUtils.getFQName(originalDescriptor).toSafe());
         }
         else {
             DeclarationDescriptor parent = originalDescriptor.getContainingDeclaration();
@@ -148,7 +150,8 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
     }
 
     @Nullable
-    public PsiElement resolveStandardLibrarySymbol(@NotNull BindingContext originalContext, @Nullable JetReferenceExpression referenceExpression) {
+    public PsiElement resolveStandardLibrarySymbol(@NotNull BindingContext originalContext,
+            @Nullable JetReferenceExpression referenceExpression) {
         ensureInitialized();
         DeclarationDescriptor declarationDescriptor = originalContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
 
@@ -172,7 +175,8 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
         private WritableScope memberScope;
 
         private FakeJetNamespaceDescriptor() {
-            super(new NamespaceDescriptorImpl(new ModuleDescriptor(Name.special("<fake_module>")), Collections.<AnnotationDescriptor>emptyList(), Name.special("<root>")),
+            super(new NamespaceDescriptorImpl(new ModuleDescriptor(Name.special("<fake_module>")),
+                                              Collections.<AnnotationDescriptor>emptyList(), Name.special("<root>")),
                   Collections.<AnnotationDescriptor>emptyList(),
                   JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getName());
         }
