@@ -104,11 +104,101 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
 
-        final DeclarationDescriptor descriptor =
-            bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
-        if (!(descriptor instanceof CallableMemberDescriptor)) return null;
+        final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+        if (!(descriptor instanceof CallableMemberDescriptor)) {
+            return null;
+        }
+
         final Set<? extends CallableMemberDescriptor> overriddenMembers = ((CallableMemberDescriptor)descriptor).getOverriddenDescriptors();
-        if (overriddenMembers.size() == 0) return null;
+        if (overriddenMembers.size() == 0) {
+            return null;
+        }
+
+        boolean allOverriddenAbstract = true;
+        for (CallableMemberDescriptor function : overriddenMembers) {
+            allOverriddenAbstract &= function.getModality() == Modality.ABSTRACT;
+        }
+
+        // NOTE: Don't store descriptors in line markers because line markers are not deleted while editing other files and this can prevent
+        // clearing the whole BindingTrace.
+        return new LineMarkerInfo<PsiElement>(
+                element,
+                element.getTextOffset(),
+                allOverriddenAbstract ? IMPLEMENTING_MARK : OVERRIDING_MARK,
+                Pass.UPDATE_ALL,
+                new Function<PsiElement, String>() {
+                    @Override
+                    public String fun(PsiElement element) {
+                        return countTooltipString(element);
+                    }
+                },
+                new GutterIconNavigationHandler<PsiElement>() {
+                    @Override
+                    public void navigate(MouseEvent event, PsiElement elt) {
+                        iconNavigatorHandler(event, elt);
+                    }
+                }
+        );
+    }
+
+    private static void iconNavigatorHandler(MouseEvent event, PsiElement elt) {
+        JetFile file = (JetFile)elt.getContainingFile();
+        assert file != null;
+
+        final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
+        final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, elt);
+        if (!(descriptor instanceof CallableMemberDescriptor)) {
+            return;
+        }
+
+        final Set<? extends CallableMemberDescriptor> overriddenMembers = ((CallableMemberDescriptor)descriptor).getOverriddenDescriptors();
+        if (overriddenMembers.size() == 0) {
+            return;
+        }
+
+        if (overriddenMembers.isEmpty()) return;
+        final List<PsiElement> list = Lists.newArrayList();
+        for (CallableMemberDescriptor overriddenMember : overriddenMembers) {
+            PsiElement declarationPsiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, overriddenMember);
+            list.add(declarationPsiElement);
+        }
+        if (list.isEmpty()) {
+            String myEmptyText = "empty text";
+            final JComponent renderer = HintUtil.createErrorLabel(myEmptyText);
+            final JBPopup popup = JBPopupFactory.getInstance().createComponentPopupBuilder(renderer, renderer).createPopup();
+            if (event != null) {
+                popup.show(new RelativePoint(event));
+            }
+            return;
+        }
+        if (list.size() == 1) {
+            PsiNavigateUtil.navigate(list.iterator().next());
+        }
+        else {
+            JBPopup popup = NavigationUtil.getPsiElementPopup(PsiUtilCore.toPsiElementArray(list),
+                                                              new JetFunctionPsiElementCellRenderer(bindingContext),
+                                                              DescriptorRenderer.TEXT.render(descriptor));
+            if (event != null) {
+                popup.show(new RelativePoint(event));
+            }
+        }
+    }
+
+    private static String countTooltipString(PsiElement element) {
+        JetFile file = (JetFile)element.getContainingFile();
+        if (file == null) return "";
+
+        final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
+
+        final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+        if (!(descriptor instanceof CallableMemberDescriptor)) {
+            return "";
+        }
+
+        final Set<? extends CallableMemberDescriptor> overriddenMembers = ((CallableMemberDescriptor)descriptor).getOverriddenDescriptors();
+        if (overriddenMembers.size() == 0) {
+            return "";
+        }
 
         boolean allOverriddenAbstract = true;
         for (CallableMemberDescriptor function : overriddenMembers) {
@@ -118,64 +208,23 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         final String implementsOrOverrides = allOverriddenAbstract ? "implements" : "overrides";
         final String memberKind = element instanceof JetNamedFunction ? "function" : "property";
 
-        return new LineMarkerInfo<PsiElement>(
-                element,
-                element.getTextOffset(),
-                allOverriddenAbstract ? IMPLEMENTING_MARK : OVERRIDING_MARK,
-                Pass.UPDATE_ALL,
-                new Function<PsiElement, String>() {
-                    @Override
-                    public String fun(PsiElement element) {
-                        StringBuilder builder = new StringBuilder();
-                        builder.append(DescriptorRenderer.HTML.render(descriptor));
-                        int overrideCount = overriddenMembers.size();
-                        if (overrideCount >= 1) {
-                            builder.append("\n").append(implementsOrOverrides).append("\n");
-                            builder.append(DescriptorRenderer.HTML.render(overriddenMembers.iterator().next()));
-                        }
-                        if (overrideCount > 1) {
-                            int count = overrideCount - 1;
-                            builder.append("\nand ").append(count).append(" other ").append(memberKind);
-                            if (count > 1) {
-                                builder.append("s");
-                            }
-                        }
 
-                        return builder.toString();
-                    }
-                },
-                new GutterIconNavigationHandler<PsiElement>() {
-                    @Override
-                    public void navigate(MouseEvent event, PsiElement elt) {
-                        if (overriddenMembers.isEmpty()) return;
-                        final List<PsiElement> list = Lists.newArrayList();
-                        for (CallableMemberDescriptor overriddenMember : overriddenMembers) {
-                            PsiElement declarationPsiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, overriddenMember);
-                            list.add(declarationPsiElement);
-                        }
-                        if (list.isEmpty()) {
-                            String myEmptyText = "empty text";
-                            final JComponent renderer = HintUtil.createErrorLabel(myEmptyText);
-                            final JBPopup popup = JBPopupFactory.getInstance().createComponentPopupBuilder(renderer, renderer).createPopup();
-                            if (event != null) {
-                                popup.show(new RelativePoint(event));
-                            }
-                            return;
-                        }
-                        if (list.size() == 1) {
-                            PsiNavigateUtil.navigate(list.iterator().next());
-                        }
-                        else {
-                            JBPopup popup = NavigationUtil.getPsiElementPopup(PsiUtilCore.toPsiElementArray(list),
-                                                                                    new JetFunctionPsiElementCellRenderer(bindingContext),
-                                                                                    DescriptorRenderer.TEXT.render(descriptor));
-                            if (event != null) {
-                                popup.show(new RelativePoint(event));
-                            }
-                        }
-                    }
-                }
-        );
+        StringBuilder builder = new StringBuilder();
+        builder.append(DescriptorRenderer.HTML.render(descriptor));
+        int overrideCount = overriddenMembers.size();
+        if (overrideCount >= 1) {
+            builder.append("\n").append(implementsOrOverrides).append("\n");
+            builder.append(DescriptorRenderer.HTML.render(overriddenMembers.iterator().next()));
+        }
+        if (overrideCount > 1) {
+            int count = overrideCount - 1;
+            builder.append("\nand ").append(count).append(" other ").append(memberKind);
+            if (count > 1) {
+                builder.append("s");
+            }
+        }
+
+        return builder.toString();
     }
 
     @Override
