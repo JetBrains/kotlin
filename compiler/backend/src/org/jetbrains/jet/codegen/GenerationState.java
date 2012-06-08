@@ -19,11 +19,8 @@
  */
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
@@ -31,7 +28,6 @@ import org.jetbrains.jet.di.InjectorForJvmCodegen;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
@@ -58,7 +54,7 @@ public class GenerationState {
     private final ClassBuilderMode classBuilderMode;
 
 
-    private boolean poisoned = false;
+    private boolean used = false;
 
     // out parameter
     private Method scriptConstructorMethod;
@@ -80,11 +76,12 @@ public class GenerationState {
                 this.files, project, compilerSpecialMode, builderFactory.getClassBuilderMode(), this, builderFactory);
     }
 
-    private void poison() {
-        if (poisoned) {
-            throw new IllegalStateException("already poisoned");
+    private void markUsed() {
+        if (used) {
+            throw new IllegalStateException(
+                    GenerationState.class + " cannot be used more than once");
         }
-        poisoned = true;
+        used = true;
     }
 
     @NotNull
@@ -139,7 +136,7 @@ public class GenerationState {
     }
 
     public void compileCorrectFiles(@NotNull CompilationErrorHandler errorHandler) {
-        poison();
+        markUsed();
 
         for (JetFile file : this.files) {
             if (file.isScript()) {
@@ -165,7 +162,7 @@ public class GenerationState {
             @NotNull JvmClassName className,
             @NotNull List<Pair<ScriptDescriptor, JvmClassName>> earlierScripts,
             @NotNull CompilationErrorHandler errorHandler) {
-        poison();
+        markUsed();
 
         injector.getScriptCodegen().registerEarlierScripts(earlierScripts);
 
