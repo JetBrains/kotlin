@@ -24,9 +24,12 @@ public class ExceptionUtils {
     /**
      * Translate exception to unchecked exception.
      */
-    public static RuntimeException rethrow(Exception e) {
+    public static RuntimeException rethrow(Throwable e) {
         if (e instanceof RuntimeException) {
             throw (RuntimeException) e;
+        }
+        else if (e instanceof Error) {
+            throw (Error) e;
         }
         else {
             throw new RuntimeException(e);
