@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.signature.*;
+import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -720,18 +721,24 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         for (Pair<CallableMemberDescriptor, CallableMemberDescriptor> needDelegates : getTraitImplementations(descriptor)) {
             CallableMemberDescriptor callableDescriptor = needDelegates.first;
             if (needDelegates.second instanceof SimpleFunctionDescriptor) {
-                generateDelegationToTraitImpl(codegen, (FunctionDescriptor) needDelegates.second);
+                generateDelegationToTraitImpl(codegen, (FunctionDescriptor) needDelegates.second, (FunctionDescriptor) needDelegates.first);
             }
             else if (needDelegates.second instanceof PropertyDescriptor) {
                 PropertyDescriptor property = (PropertyDescriptor) needDelegates.second;
+                List<PropertyAccessorDescriptor> inheritedAccessors = ((PropertyDescriptor) needDelegates.first).getAccessors();
                 for (PropertyAccessorDescriptor accessor : property.getAccessors()) {
-                    generateDelegationToTraitImpl(codegen, accessor);
+                    for (PropertyAccessorDescriptor inheritedAccessor : inheritedAccessors) {
+                        if (inheritedAccessor.getClass() == accessor.getClass()) { // same accessor kind
+                            generateDelegationToTraitImpl(codegen, accessor, inheritedAccessor);
+                        }
+                    }
                 }
             }
         }
     }
 
-    private void generateDelegationToTraitImpl(ExpressionCodegen codegen, FunctionDescriptor fun) {
+
+    private void generateDelegationToTraitImpl(ExpressionCodegen codegen, FunctionDescriptor fun, @NotNull FunctionDescriptor inheritedFun) {
         DeclarationDescriptor containingDeclaration = fun.getContainingDeclaration();
         if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor declaration = (ClassDescriptor) containingDeclaration;
@@ -745,6 +752,20 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     Method functionOriginal = typeMapper.mapSignature(fun.getName(), fun.getOriginal()).getAsmMethod();
 
                     final MethodVisitor mv = v.newMethod(myClass, flags, function.getName(), function.getDescriptor(), null, null);
+                    AnnotationCodegen.forMethod(mv, state.getInjector().getJetTypeMapper()).genAnnotations(fun);
+
+                    JvmMethodSignature jvmSignature = typeMapper.mapToCallableMethod(inheritedFun, false, OwnerKind.IMPLEMENTATION).getSignature();
+                    JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
+                    if (fun instanceof PropertyAccessorDescriptor) {
+                        aw.writeFlags(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY_BIT);
+                    } else {
+                        aw.writeFlags();
+                    }
+                    aw.writeNullableReturnType(fun.getReturnType().isNullable());
+                    aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
+                    aw.writeReturnType(jvmSignature.getKotlinReturnType());
+                    aw.visitEnd();
+
                     if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                         StubCodegen.generateStubCode(mv);
                     }
