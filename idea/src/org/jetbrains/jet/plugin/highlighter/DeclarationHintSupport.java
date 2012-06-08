@@ -25,6 +25,7 @@ import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.EditorMouseEvent;
 import com.intellij.openapi.editor.event.EditorMouseEventArea;
 import com.intellij.openapi.editor.event.EditorMouseMotionAdapter;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
@@ -66,6 +67,10 @@ public class DeclarationHintSupport extends AbstractProjectComponent {
             Editor editor = e.getEditor();
             PsiFile psiFile = PsiDocumentManager.getInstance(myProject).getPsiFile(editor.getDocument());
             if (psiFile == null || psiFile.getLanguage() != JetLanguage.INSTANCE) return;
+
+            if (DumbService.getInstance(psiFile.getProject()).isDumb()) {
+                return;
+            }
 
             JetFile jetFile = (JetFile) psiFile;
 
