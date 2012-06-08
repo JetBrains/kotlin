@@ -100,20 +100,21 @@ public class ReplInterpreter {
                 Collections.<AnalyzerScriptParameter>emptyList());
         injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module, compilerDependencies);
 
-        if (extraClasspath.size() > 0) {
-            URL[] urls = new URL[extraClasspath.size()];
-            for (int i = 0; i < extraClasspath.size(); ++i) {
-                try {
-                    urls[i] = extraClasspath.get(i).toURI().toURL();
-                } catch (Exception e) {
-                    throw ExceptionUtils.rethrow(e);
+        List<URL> classpath = Lists.newArrayList();
+
+        try {
+            if (compilerDependencies.getRuntimeJar() != null) {
+                classpath.add(compilerDependencies.getRuntimeJar().toURI().toURL());
+
+                for (File extra : extraClasspath) {
+                    classpath.add(extra.toURI().toURL());
                 }
             }
-            classLoader = new ReplClassLoader(new URLClassLoader(urls));
+        } catch (Exception e) {
+            throw ExceptionUtils.rethrow(e);
         }
-        else {
-            classLoader = new ReplClassLoader();
-        }
+
+        classLoader = new ReplClassLoader(new URLClassLoader(classpath.toArray(new URL[0])));
     }
 
     public Object eval(@NotNull String line) {
