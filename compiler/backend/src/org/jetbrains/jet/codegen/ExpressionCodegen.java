@@ -2672,8 +2672,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         /*
 The "returned" value of try expression with no finally is either the last expression in the try block or the last expression in the catch block
 (or blocks).
-
-If finally block is present, its last expression is the value of try expression.
          */
         Label savedContinueLabel = continueLabel;
         continueLabel = null;
@@ -2689,14 +2687,11 @@ If finally block is present, its last expression is the value of try expression.
         Label tryStart = new Label();
         v.mark(tryStart);
         v.nop(); // prevent verify error on empty try
-        if(finallyBlock == null)
-            gen(expression.getTryBlock(), expectedAsmType);
-        else
-            gen(expression.getTryBlock(), Type.VOID_TYPE);
+        gen(expression.getTryBlock(), expectedAsmType);
         Label tryEnd = new Label();
         v.mark(tryEnd);
         if (finallyBlock != null) {
-            gen(finallyBlock.getFinalExpression(), expectedAsmType);
+            gen(finallyBlock.getFinalExpression(), Type.VOID_TYPE);
         }
         Label end = new Label();
         v.goTo(end);         // TODO don't generate goto if there's no code following try/catch
@@ -2711,12 +2706,12 @@ If finally block is present, its last expression is the value of try expression.
             int index = lookupLocal(descriptor);
             v.store(index, descriptorType);
 
-            gen(clause.getCatchBody(), finallyBlock != null ? Type.VOID_TYPE : expectedAsmType);
+            gen(clause.getCatchBody(), expectedAsmType);
 
             myFrameMap.leave(descriptor);
 
             if (finallyBlock != null) {
-                gen(finallyBlock.getFinalExpression(), expectedAsmType);
+                gen(finallyBlock.getFinalExpression(), Type.VOID_TYPE);
             }
 
             v.goTo(end);     // TODO don't generate goto if there's no code following try/catch
