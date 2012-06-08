@@ -178,7 +178,8 @@ public class PropertyCodegen {
         final String descriptor = signature.getJvmMethodSignature().getAsmMethod().getDescriptor();
         String getterName = getterName(propertyDescriptor.getName());
         MethodVisitor mv = v.newMethod(origin, flags, getterName, descriptor, null, null);
-        generateJetPropertyAnnotation(mv, signature.getPropertyTypeKotlinSignature(), signature.getJvmMethodSignature().getKotlinTypeParameter());
+        generateJetPropertyAnnotation(mv, signature.getPropertyTypeKotlinSignature(),
+                                      signature.getJvmMethodSignature().getKotlinTypeParameter(), propertyDescriptor);
 
         if (propertyDescriptor.getGetter() != null) {
             assert !propertyDescriptor.getGetter().hasBody();
@@ -221,9 +222,19 @@ public class PropertyCodegen {
         FunctionCodegen.endVisit(mv, "getter", origin);
     }
 
-    public static void generateJetPropertyAnnotation(MethodVisitor mv, @NotNull String kotlinType, @NotNull String typeParameters) {
+    public static void generateJetPropertyAnnotation(MethodVisitor mv, @NotNull String kotlinType, @NotNull String typeParameters,
+            @NotNull PropertyDescriptor propertyDescriptor) {
         JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
-        aw.writeFlags(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY_BIT);
+        Modality modality = propertyDescriptor.getModality();
+        if (CodegenUtil.isInterface(propertyDescriptor.getContainingDeclaration()) && modality != Modality.ABSTRACT) {
+            aw.writeFlags(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY_BIT,
+                          modality == Modality.FINAL
+                          ? JvmStdlibNames.JET_METHOD_FLAG_FORCE_FINAL_BIT
+                          : JvmStdlibNames.JET_METHOD_FLAG_FORCE_OPEN_BIT);
+        }
+        else {
+            aw.writeFlags(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY_BIT);
+        }
         aw.writeTypeParameters(typeParameters);
         aw.writePropertyType(kotlinType);
         aw.visitEnd();
@@ -264,7 +275,8 @@ public class PropertyCodegen {
         JvmPropertyAccessorSignature signature = state.getInjector().getJetTypeMapper().mapSetterSignature(propertyDescriptor, kind);
         final String descriptor = signature.getJvmMethodSignature().getAsmMethod().getDescriptor();
         MethodVisitor mv = v.newMethod(origin, flags, setterName(propertyDescriptor.getName()), descriptor, null, null);
-        generateJetPropertyAnnotation(mv, signature.getPropertyTypeKotlinSignature(), signature.getJvmMethodSignature().getKotlinTypeParameter());
+        generateJetPropertyAnnotation(mv, signature.getPropertyTypeKotlinSignature(),
+                                      signature.getJvmMethodSignature().getKotlinTypeParameter(), propertyDescriptor);
 
         if (propertyDescriptor.getSetter() != null) {
             assert !propertyDescriptor.getSetter().hasBody();

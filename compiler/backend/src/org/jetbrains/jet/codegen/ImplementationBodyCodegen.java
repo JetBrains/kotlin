@@ -334,7 +334,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 JvmPropertyAccessorSignature originalSignature = typeMapper.mapGetterSignature(original, OwnerKind.IMPLEMENTATION);
                 Method originalMethod = originalSignature.getJvmMethodSignature().getAsmMethod();
                 MethodVisitor mv = v.newMethod(null, ACC_PUBLIC | ACC_BRIDGE | ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
-                PropertyCodegen.generateJetPropertyAnnotation(mv, originalSignature.getPropertyTypeKotlinSignature(), originalSignature.getJvmMethodSignature().getKotlinTypeParameter());
+                PropertyCodegen.generateJetPropertyAnnotation(mv, originalSignature.getPropertyTypeKotlinSignature(),
+                                                              originalSignature.getJvmMethodSignature().getKotlinTypeParameter(),
+                                                              original);
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                     StubCodegen.generateStubCode(mv);
                 }
@@ -360,7 +362,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 JvmPropertyAccessorSignature originalSignature2 = typeMapper.mapSetterSignature(original, OwnerKind.IMPLEMENTATION);
                 Method originalMethod = originalSignature2.getJvmMethodSignature().getAsmMethod();
                 MethodVisitor mv = v.newMethod(null, ACC_PUBLIC | ACC_BRIDGE | ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
-                PropertyCodegen.generateJetPropertyAnnotation(mv, originalSignature2.getPropertyTypeKotlinSignature(), originalSignature2.getJvmMethodSignature().getKotlinTypeParameter());
+                PropertyCodegen.generateJetPropertyAnnotation(mv, originalSignature2.getPropertyTypeKotlinSignature(),
+                                                              originalSignature2.getJvmMethodSignature().getKotlinTypeParameter(),
+                                                              original);
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                     StubCodegen.generateStubCode(mv);
                 }

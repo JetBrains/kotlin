@@ -1340,19 +1340,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                 isVar = members.setter != null;
             }
 
-            Modality modality;
-            if (isFinal) {
-                modality = Modality.FINAL;
-            }
-            else {
-                modality = anyMember.getMember().isAbstract() ? Modality.ABSTRACT : Modality.OPEN;
-            }
-
-
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                     owner,
                     resolveAnnotations(anyMember.getMember().psiMember),
-                    modality,
+                    resolveModality(anyMember.getMember(), isFinal),
                     resolveVisibilityFromPsiModifiers(anyMember.getMember().psiMember),
                     isVar,
                     false,
@@ -1658,7 +1649,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                 methodTypeParameters,
                 valueParameterDescriptors.descriptors,
                 returnType,
-                Modality.convertFromFlags(method.getPsiMethod().hasModifierProperty(PsiModifier.ABSTRACT), !method.isFinal()),
+                resolveModality(method, method.isFinal()),
                 resolveVisibilityFromPsiModifiers(method.getPsiMethod()),
                 /*isInline = */ false
         );
@@ -1843,6 +1834,20 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         else {
             return transformedType;
         }
+    }
+
+    private static Modality resolveModality(PsiMemberWrapper memberWrapper, boolean isFinal) {
+        if (memberWrapper instanceof PsiMethodWrapper) {
+            PsiMethodWrapper method = (PsiMethodWrapper) memberWrapper;
+            if (method.getJetMethod().flags().get(JvmStdlibNames.JET_METHOD_FLAG_FORCE_OPEN_BIT)) {
+                return Modality.OPEN;
+            }
+            if (method.getJetMethod().flags().get(JvmStdlibNames.JET_METHOD_FLAG_FORCE_FINAL_BIT)) {
+                return Modality.FINAL;
+            }
+        }
+
+        return Modality.convertFromFlags(memberWrapper.isAbstract(), !isFinal);
     }
 
     private static Visibility resolveVisibilityFromPsiModifiers(PsiModifierListOwner modifierListOwner) {

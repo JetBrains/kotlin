@@ -1,0 +1,5 @@
+namespace test
+
+abstract trait test.A : jet.Any {
+    open val v: jet.String
+}

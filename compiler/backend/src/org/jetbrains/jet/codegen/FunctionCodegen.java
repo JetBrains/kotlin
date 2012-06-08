@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.objectweb.asm.Label;
@@ -97,8 +98,9 @@ public class FunctionCodegen {
         {
             flags |= ACC_VARARGS;
         }
-        
-        if (functionDescriptor.getModality() == Modality.FINAL) {
+
+        Modality modality = functionDescriptor.getModality();
+        if (modality == Modality.FINAL) {
             flags |= ACC_FINAL;
         }
 
@@ -117,7 +119,7 @@ public class FunctionCodegen {
                 flags |= ACC_STATIC;
 
             boolean isAbstract = (
-                        functionDescriptor.getModality() == Modality.ABSTRACT
+                        modality == Modality.ABSTRACT
                         || CodegenUtil.isInterface(functionDescriptor.getContainingDeclaration())
                     ) && !isStatic && kind != OwnerKind.TRAIT_IMPL;
             if (isAbstract) flags |= ACC_ABSTRACT;
@@ -128,14 +130,23 @@ public class FunctionCodegen {
                 int start = 0;
                 if (needJetAnnotations) {
                     if (functionDescriptor instanceof PropertyAccessorDescriptor) {
-                        PropertyCodegen.generateJetPropertyAnnotation(mv, propertyTypeSignature, jvmSignature.getKotlinTypeParameter());
+                        PropertyCodegen.generateJetPropertyAnnotation(mv, propertyTypeSignature, jvmSignature.getKotlinTypeParameter(),
+                                                                      ((PropertyAccessorDescriptor) functionDescriptor)
+                                                                              .getCorrespondingProperty());
                     }
                     else if (functionDescriptor instanceof SimpleFunctionDescriptor) {
                         if (propertyTypeSignature != null) {
                             throw new IllegalStateException();
                         }
                         JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
-                        aw.writeFlags();
+                        if (CodegenUtil.isInterface(functionDescriptor.getContainingDeclaration()) && modality != Modality.ABSTRACT) {
+                            aw.writeFlags(modality == Modality.FINAL
+                                          ? JvmStdlibNames.JET_METHOD_FLAG_FORCE_FINAL_BIT
+                                          : JvmStdlibNames.JET_METHOD_FLAG_FORCE_OPEN_BIT);
+                        }
+                        else {
+                            aw.writeFlags();
+                        }
                         aw.writeNullableReturnType(functionDescriptor.getReturnType().isNullable());
                         aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
                         aw.writeReturnType(jvmSignature.getKotlinReturnType());
