@@ -337,17 +337,17 @@ public class ControlStructuresTest extends CodegenTestCase {
         blackBoxFile("regressions/kt2147.kt");
     }
 
-    public void testIfDummy() throws Exception {
+    public void testIfDummy() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt1899.kt");
     }
 
-    public void testKt1742() throws Exception {
+    public void testKt1742() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt1742.kt");
     }
 
-    public void testKt2062() throws Exception {
+    public void testKt2062() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt2062.kt");
     }
@@ -355,5 +355,10 @@ public class ControlStructuresTest extends CodegenTestCase {
     public void testKt910() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt910.kt");
+    }
+
+    public void testKt1688() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        blackBoxFile("regressions/kt1688.kt");
     }
 }

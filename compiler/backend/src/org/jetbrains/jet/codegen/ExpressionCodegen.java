@@ -948,7 +948,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
     }
 
-    private void doFinallyOnReturnOrThrow() {
+    private void doFinallyOnReturn() {
         for(int i = blockStackElements.size()-1; i >= 0; --i) {
             BlockStackElement stackElement = blockStackElements.get(i);
             if(stackElement instanceof FinallyBlockStackElement) {
@@ -969,7 +969,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         final JetExpression returnedExpression = expression.getReturnedExpression();
         if (returnedExpression != null) {
             gen(returnedExpression, returnType);
-            doFinallyOnReturnOrThrow();
+            doFinallyOnReturn();
             v.areturn(returnType);
         }
         else {
@@ -2648,7 +2648,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     @Override
     public StackValue visitThrowExpression(JetThrowExpression expression, StackValue receiver) {
         gen(expression.getThrownExpression(), TYPE_THROWABLE);
-        doFinallyOnReturnOrThrow();
         v.athrow();
         return StackValue.none();
     }
