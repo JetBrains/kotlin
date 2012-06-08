@@ -149,7 +149,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
     @Nullable
     public PsiElement resolveStandardLibrarySymbol(@NotNull BindingContext originalContext, @Nullable JetReferenceExpression referenceExpression) {
         ensureInitialized();
-        DeclarationDescriptor declarationDescriptor = BindingContextUtils.referenceToDescriptor(originalContext, referenceExpression);
+        DeclarationDescriptor declarationDescriptor = originalContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
 
         return declarationDescriptor != null ? resolveStandardLibrarySymbol(declarationDescriptor) : null;
     }
