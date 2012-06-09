@@ -44,11 +44,12 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
     @Override
     public void runChecks(Context context, Scriptable scope) throws Exception {
         Object result = evaluateFunction(context, scope);
-        assertResultValid(result);
+        assertResultValid(result, context);
     }
 
-    protected void assertResultValid(Object result) {
-        assertEquals("Result of " + namespaceName + "." + functionName + "() is not what expected!", expectedResult, result);
+    protected void assertResultValid(Object result, Context context) {
+        String ecmaVersion = context.getLanguageVersion() == Context.VERSION_1_8 ? "ecma5" : "ecma3";
+        assertEquals("Result of " + namespaceName + "." + functionName + "() is not what expected (" + ecmaVersion + ")!", expectedResult, result);
         String report = namespaceName + "." + functionName + "() = " + Context.toString(result);
         System.out.println(report);
     }
