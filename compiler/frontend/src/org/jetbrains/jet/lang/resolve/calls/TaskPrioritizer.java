@@ -184,7 +184,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
         }
     }
 
-    public static <D extends CallableDescriptor> Collection<ResolutionCandidate<D>> convertWithImpliedThis(JetScope scope, Iterable<ReceiverDescriptor> receiverParameters, Collection<? extends D> descriptors) {
+    public static <D extends CallableDescriptor> Collection<ResolutionCandidate<D>> convertWithImpliedThis(JetScope scope, Collection<ReceiverDescriptor> receiverParameters, Collection<? extends D> descriptors) {
         Collection<ResolutionCandidate<D>> result = Lists.newArrayList();
         for (ReceiverDescriptor receiverParameter : receiverParameters) {
             for (D descriptor : descriptors) {
@@ -197,18 +197,20 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
                 }
             }
         }
-        for (D descriptor : descriptors) {
-            if (descriptor.getExpectedThisObject().exists()) {
-                DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-                if (descriptor instanceof ConstructorDescriptor) {
-                    assert containingDeclaration != null;
-                    containingDeclaration = containingDeclaration.getContainingDeclaration();
-                }
-                if (containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.OBJECT) {
-                    ResolutionCandidate<D> candidate = ResolutionCandidate.create(descriptor);
-                    candidate.setThisObject(new ClassReceiver((ClassDescriptor) containingDeclaration));
-                    candidate.setExplicitReceiverKind(ExplicitReceiverKind.NO_EXPLICIT_RECEIVER);
-                    result.add(candidate);
+        if (receiverParameters.size() == 1 && !receiverParameters.iterator().next().exists()) {
+            for (D descriptor : descriptors) {
+                if (descriptor.getExpectedThisObject().exists() && !descriptor.getReceiverParameter().exists()) {
+                    DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+                    if (descriptor instanceof ConstructorDescriptor) {
+                        assert containingDeclaration != null;
+                        containingDeclaration = containingDeclaration.getContainingDeclaration();
+                    }
+                    if (containingDeclaration instanceof ClassDescriptor && DescriptorUtils.isClassObject(containingDeclaration)) {
+                        ResolutionCandidate<D> candidate = ResolutionCandidate.create(descriptor);
+                        candidate.setThisObject(new ClassReceiver((ClassDescriptor) containingDeclaration));
+                        candidate.setExplicitReceiverKind(ExplicitReceiverKind.NO_EXPLICIT_RECEIVER);
+                        result.add(candidate);
+                    }
                 }
             }
         }
