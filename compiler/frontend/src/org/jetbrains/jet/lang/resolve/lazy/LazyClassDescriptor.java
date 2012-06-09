@@ -185,7 +185,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 if (objectDeclaration != null) {
                     ClassMemberDeclarationProvider classMemberDeclarationProvider = resolveSession.getDeclarationProviderFactory()
                             .getClassMemberDeclarationProvider(objectDeclaration);
-                    classObjectDescriptor = new LazyClassDescriptor(resolveSession, this, Name.special("<class object>"),
+                    classObjectDescriptor = new LazyClassDescriptor(resolveSession, this, JetPsiUtil.NO_NAME_PROVIDED,
                                                                     classMemberDeclarationProvider);
                 }
             }
