@@ -78,7 +78,7 @@ public class CompileJavaAgainstKotlinTest extends TestCaseWithTmpdir {
 
         ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, CompilerSpecialMode.REGULAR);
 
-        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, tmpdir.getPath());
+        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, tmpdir);
 
         Disposer.dispose(myTestRootDisposable);
 

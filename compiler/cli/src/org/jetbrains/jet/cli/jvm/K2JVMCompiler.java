@@ -106,6 +106,9 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
         try {
             configureEnvironment(configuration, arguments);
 
+            File jar = arguments.jar != null ? new File(arguments.jar) : null;
+            File outputDir = arguments.outputDir != null ? new File(arguments.outputDir) : null;
+
             boolean noErrors;
             if (arguments.module != null) {
                 boolean oldVerbose = messageCollector.isVerbose();
@@ -115,28 +118,30 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
                 messageCollector.setVerbose(oldVerbose);
                 File directory = new File(arguments.module).getParentFile();
                 noErrors = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules,
-                                                                      directory, arguments.jar, arguments.outputDir,
+                                                                      directory, jar, outputDir,
                                                                       arguments.includeRuntime);
             }
             else {
                 // TODO ideally we'd unify to just having a single field that supports multiple files/dirs
                 if (arguments.getSourceDirs() != null) {
                     noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSourceDirectories(configuration,
-                            arguments.getSourceDirs(), arguments.jar, arguments.outputDir, arguments.script, arguments.includeRuntime);
+                            arguments.getSourceDirs(), jar, outputDir, arguments.script, arguments.includeRuntime);
                 }
                 else {
-                    List<String> sources = Lists.newArrayList();
                     if (arguments.src != null) {
-                        sources.add(arguments.src);
+                        configuration.getEnvironment().addSources(arguments.src);
                     }
                     if (arguments.script) {
-                        sources.add(arguments.freeArgs.get(0));
+                        configuration.getEnvironment().addSources(arguments.freeArgs.get(0));
                     }
                     else {
-                        sources.addAll(arguments.freeArgs);
+                        for (String freeArg : arguments.freeArgs) {
+                            configuration.getEnvironment().addSources(freeArg);
+                        }
                     }
-                    noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSources(configuration,
-                            sources, arguments.jar, arguments.outputDir, arguments.script, arguments.includeRuntime);
+
+                    noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSources(
+                            configuration, jar, outputDir, arguments.script, arguments.includeRuntime);
                 }
             }
             return noErrors ? OK : COMPILATION_ERROR;

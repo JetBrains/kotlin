@@ -75,7 +75,7 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
 
         ClassFileFactory classFileFactory = state.getFactory();
 
-        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, tmpdir.getPath());
+        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, tmpdir);
         
         NamespaceDescriptor namespaceFromSource = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, psiFile);
 

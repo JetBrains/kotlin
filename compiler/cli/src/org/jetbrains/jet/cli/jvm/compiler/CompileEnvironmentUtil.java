@@ -276,7 +276,7 @@ public class CompileEnvironmentUtil {
         }
     }
 
-    public static void writeToOutputDirectory(ClassFileFactory factory, final String outputDir) {
+    public static void writeToOutputDirectory(ClassFileFactory factory, @NotNull File outputDir) {
         List<String> files = factory.files();
         for (String file : files) {
             File target = new File(outputDir, file);

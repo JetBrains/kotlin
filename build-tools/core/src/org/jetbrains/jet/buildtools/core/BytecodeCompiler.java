@@ -97,8 +97,10 @@ public class BytecodeCompiler {
      */
     public void sourcesToDir ( @NotNull String src, @NotNull String output, @Nullable String stdlib, @Nullable String[] classpath ) {
         try {
-            boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(env(stdlib, classpath), Collections.singletonList(src), null, output, false, true
-                                                                                /* Last arg is ignored anyway */);
+            K2JVMCompileEnvironmentConfiguration configuration = env(stdlib, classpath);
+            configuration.getEnvironment().addSources(src);
+
+            boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(configuration, null, new File(output), false, true);
             if ( ! success ) {
                 throw new CompileEnvironmentException( errorMessage( src, false ));
             }
@@ -120,7 +122,10 @@ public class BytecodeCompiler {
      */
     public void sourcesToJar ( @NotNull String src, @NotNull String jar, boolean includeRuntime, @Nullable String stdlib, @Nullable String[] classpath ) {
         try {
-            boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(env(stdlib, classpath), Collections.singletonList(src), jar, null, false, includeRuntime);
+            K2JVMCompileEnvironmentConfiguration configuration = env(stdlib, classpath);
+            configuration.getEnvironment().addSources(src);
+
+            boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(configuration, new File(jar), null, false, includeRuntime);
             if ( ! success ) {
                 throw new CompileEnvironmentException( errorMessage( src, false ));
             }
@@ -145,7 +150,7 @@ public class BytecodeCompiler {
             K2JVMCompileEnvironmentConfiguration env = env(stdlib, classpath);
             List<Module> modules = CompileEnvironmentUtil.loadModuleScript(module, env.getMessageCollector());
             File directory = new File(module).getParentFile();
-            boolean success = KotlinToJVMBytecodeCompiler.compileModules(env, modules, directory, jar, null, includeRuntime);
+            boolean success = KotlinToJVMBytecodeCompiler.compileModules(env, modules, directory, new File(jar), null, includeRuntime);
             if ( ! success ) {
                 throw new CompileEnvironmentException( errorMessage( module, false ));
             }
