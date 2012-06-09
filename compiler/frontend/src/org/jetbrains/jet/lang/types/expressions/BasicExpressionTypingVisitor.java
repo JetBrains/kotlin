@@ -194,22 +194,18 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (right != null) {
             JetType targetType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, right, context.trace, true);
 
-            if (isTypeFlexible(expression.getLeft())) {
+            if (isTypeFlexible(expression.getLeft()) || expression.getOperationSign().getReferencedNameElementType() == JetTokens.COLON) {
                 TemporaryBindingTrace temporaryTraceWithExpectedType = TemporaryBindingTrace.create(context.trace);
-                boolean success = checkBinaryWithTypeRHS(expression, context, targetType, targetType, temporaryTraceWithExpectedType);
+                boolean success = checkBinaryWithTypeRHS(expression, context.replaceBindingTrace(temporaryTraceWithExpectedType).replaceExpectedType(targetType), targetType);
                 if (success) {
                     temporaryTraceWithExpectedType.commit();
                 }
                 else {
-                    TemporaryBindingTrace temporaryTraceWithoutExpectedType = TemporaryBindingTrace.create(context.trace);
-                    checkBinaryWithTypeRHS(expression, context, targetType, NO_EXPECTED_TYPE, temporaryTraceWithoutExpectedType);
-                    temporaryTraceWithoutExpectedType.commit();
+                    checkBinaryWithTypeRHS(expression, context.replaceExpectedType(NO_EXPECTED_TYPE), targetType);
                 }
             }
             else {
-                TemporaryBindingTrace temporaryTraceWithoutExpectedType = TemporaryBindingTrace.create(context.trace);
-                checkBinaryWithTypeRHS(expression, context, targetType, NO_EXPECTED_TYPE, temporaryTraceWithoutExpectedType);
-                temporaryTraceWithoutExpectedType.commit();
+                checkBinaryWithTypeRHS(expression, context.replaceExpectedType(NO_EXPECTED_TYPE), targetType);
             }
 
             IElementType operationType = expression.getOperationSign().getReferencedNameElementType();
@@ -221,10 +217,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return DataFlowUtils.checkType(result, expression, context);
     }
 
-    private boolean checkBinaryWithTypeRHS(JetBinaryExpressionWithTypeRHS expression, ExpressionTypingContext context, @NotNull JetType targetType, @NotNull JetType expectedType, TemporaryBindingTrace temporaryTrace) {
-        ExpressionTypingContext newContext = context.replaceExpectedType(expectedType).replaceBindingTrace(temporaryTrace);
+    private boolean checkBinaryWithTypeRHS(JetBinaryExpressionWithTypeRHS expression, ExpressionTypingContext context, @NotNull JetType targetType) {
 
-        JetType actualType = facade.getType(expression.getLeft(), newContext);
+        JetType actualType = facade.getType(expression.getLeft(), context);
         if (actualType == null) return false;
 
         JetSimpleNameExpression operationSign = expression.getOperationSign();
@@ -782,15 +777,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         // Special case for expr!!
         if (operationType == JetTokens.EXCLEXCL) {
-            JetType result;
             if (isKnownToBeNotNull(baseExpression, context)) {
                 context.trace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, type));
-                result = type;
             }
-            else {
-                result = TypeUtils.makeNotNullable(type);
-            }
-            return DataFlowUtils.checkType(result, expression, context);
+            return DataFlowUtils.checkType(TypeUtils.makeNotNullable(type), expression, context);
         }
 
         // Conventions for unary operations
