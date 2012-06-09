@@ -48,12 +48,4 @@ public class TraitsTest  extends CodegenTestCase {
     public void testStdlib () throws Exception {
         blackBoxFile("traits/stdlib.jet");
     }
-
-    public void testInheritedFun() throws Exception {
-        blackBoxFile("traits/inheritedFun.jet");
-    }
-
-    public void testInheritedVar() throws Exception {
-        blackBoxFile("traits/inheritedVar.jet");
-    }
 }

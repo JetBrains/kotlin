@@ -1,9 +1,0 @@
-namespace test
-
-abstract trait test.A : jet.Any {
-    open var v: jet.String
-}
-final class test.B : test.A {
-    final /*constructor*/ fun <init>(): test.B
-    open var v: jet.String
-}
