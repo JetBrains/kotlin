@@ -792,7 +792,10 @@ public class JetTypeMapper {
 
     
     public JvmPropertyAccessorSignature mapGetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
-        String name = PropertyCodegen.getterName(descriptor.getName());
+        final DeclarationDescriptor parentDescriptor = descriptor.getContainingDeclaration();
+        boolean isAnnotation = parentDescriptor instanceof ClassDescriptor &&
+                               ((ClassDescriptor) parentDescriptor).getKind() == ClassKind.ANNOTATION_CLASS;
+        String name = isAnnotation ? descriptor.getName().getName() : PropertyCodegen.getterName(descriptor.getName());
 
         // TODO: do not generate generics if not needed
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, true);
@@ -801,8 +804,8 @@ public class JetTypeMapper {
 
         signatureWriter.writeParametersStart();
 
-        if (kind == OwnerKind.TRAIT_IMPL) {
-            ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
+        if(kind == OwnerKind.TRAIT_IMPL) {
+            ClassDescriptor containingDeclaration = (ClassDescriptor) parentDescriptor;
             assert containingDeclaration != null;
             signatureWriter.writeParameterType(JvmMethodParameterKind.THIS);
             mapType(containingDeclaration.getDefaultType(), signatureWriter, MapTypeMode.IMPL);

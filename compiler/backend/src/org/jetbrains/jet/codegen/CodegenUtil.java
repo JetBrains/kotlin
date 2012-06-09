@@ -41,7 +41,11 @@ public class CodegenUtil {
     private static final Random RANDOM = new Random(55L);
 
     public static boolean isInterface(DeclarationDescriptor descriptor) {
-        return descriptor instanceof ClassDescriptor && ((ClassDescriptor)descriptor).getKind() == ClassKind.TRAIT;
+        if (descriptor instanceof ClassDescriptor) {
+            final ClassKind kind = ((ClassDescriptor) descriptor).getKind();
+            return kind == ClassKind.TRAIT || kind == ClassKind.ANNOTATION_CLASS;
+        }
+        return false;
     }
 
     public static boolean isInterface(JetType type) {

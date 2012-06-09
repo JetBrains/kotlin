@@ -320,4 +320,8 @@ public class StdlibTest extends CodegenTestCase {
         assertEquals(invoke1[0].value(), RetentionPolicy.RUNTIME);
         assertEquals(invoke1[1].value(), RetentionPolicy.SOURCE);
     }
+
+    public void testInvokeAnnotationMethod() {
+        blackBoxFile("regressions/kt1932.kt");
+    }
 }
