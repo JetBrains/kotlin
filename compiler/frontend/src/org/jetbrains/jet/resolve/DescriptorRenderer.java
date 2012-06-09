@@ -247,6 +247,11 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
     public String render(@NotNull DeclarationDescriptor declarationDescriptor) {
         StringBuilder stringBuilder = new StringBuilder();
         declarationDescriptor.accept(rootVisitor, stringBuilder);
+
+        if (stringBuilder.length() == 0) {
+            stringBuilder.append(declarationDescriptor.getClass().getName() + "@" + System.identityHashCode(declarationDescriptor));
+        }
+
         if (shouldRenderDefinedIn()) {
             appendDefinedIn(declarationDescriptor, stringBuilder);
         }
