@@ -226,15 +226,14 @@ public class PropertyCodegen {
             @NotNull PropertyDescriptor propertyDescriptor) {
         JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
         Modality modality = propertyDescriptor.getModality();
+        BitSet flags = new BitSet();
+        flags.set(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY_BIT);
         if (CodegenUtil.isInterface(propertyDescriptor.getContainingDeclaration()) && modality != Modality.ABSTRACT) {
-            aw.writeFlags(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY_BIT,
-                          modality == Modality.FINAL
-                          ? JvmStdlibNames.JET_METHOD_FLAG_FORCE_FINAL_BIT
-                          : JvmStdlibNames.JET_METHOD_FLAG_FORCE_OPEN_BIT);
+            flags.set(modality == Modality.FINAL
+                      ? JvmStdlibNames.JET_METHOD_FLAG_FORCE_FINAL_BIT
+                      : JvmStdlibNames.JET_METHOD_FLAG_FORCE_OPEN_BIT);
         }
-        else {
-            aw.writeFlags(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY_BIT);
-        }
+        aw.writeFlags(flags);
         aw.writeTypeParameters(typeParameters);
         aw.writePropertyType(kotlinType);
         aw.visitEnd();

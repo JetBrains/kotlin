@@ -776,16 +776,17 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                     JvmMethodSignature jvmSignature = typeMapper.mapToCallableMethod(inheritedFun, false, OwnerKind.IMPLEMENTATION).getSignature();
                     JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
+                    BitSet kotlinFlags = new BitSet();
                     if (fun instanceof PropertyAccessorDescriptor) {
-                        aw.writeFlags(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY_BIT);
+                        kotlinFlags.set(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY_BIT);
                         aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
                         aw.writePropertyType(jvmSignature.getKotlinReturnType());
                     } else {
-                        aw.writeFlags();
                         aw.writeNullableReturnType(fun.getReturnType().isNullable());
                         aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
                         aw.writeReturnType(jvmSignature.getKotlinReturnType());
                     }
+                    aw.writeFlags(kotlinFlags);
                     aw.visitEnd();
 
                     if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {

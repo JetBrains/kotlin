@@ -33,15 +33,7 @@ public class JetMethodAnnotationWriter {
         this.av = av;
     }
 
-    public void writeFlags(int... flagBits) {
-        BitSet bitSet = new BitSet();
-        for (int bit : flagBits) {
-            bitSet.set(bit);
-        }
-        writeFlags(bitSet);
-    }
-
-    private void writeFlags(BitSet flags) {
+    public void writeFlags(BitSet flags) {
         int flagsValue = 0;
         for (int bit = 0; bit < flags.length(); bit++) {
             if (flags.get(bit)) {
