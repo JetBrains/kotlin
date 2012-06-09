@@ -135,9 +135,13 @@ public class GenerationState {
         return getFactory().forNamespace(fqName, namespace);
     }
 
-    public void compileCorrectFiles(@NotNull CompilationErrorHandler errorHandler) {
+    private void beforeCompile() {
         markUsed();
 
+        injector.getClosureAnnotator().init();
+    }
+
+    public void compileCorrectFiles(@NotNull CompilationErrorHandler errorHandler) {
         for (JetFile file : this.files) {
             if (file.isScript()) {
                 injector.getClosureAnnotator().registerClassNameForScript(file.getScript(), ScriptCodegen.SCRIPT_DEFAULT_CLASS_NAME);
@@ -145,6 +149,8 @@ public class GenerationState {
         }
 
         injector.getScriptCodegen().registerEarlierScripts(Collections.<Pair<ScriptDescriptor, JvmClassName>>emptyList());
+
+        beforeCompile();
 
         MultiMap<FqName, JetFile> namespaceGrouping = new MultiMap<FqName, JetFile>();
         for (JetFile file : this.files) {
@@ -162,11 +168,11 @@ public class GenerationState {
             @NotNull JvmClassName className,
             @NotNull List<Pair<ScriptDescriptor, JvmClassName>> earlierScripts,
             @NotNull CompilationErrorHandler errorHandler) {
-        markUsed();
 
         injector.getScriptCodegen().registerEarlierScripts(earlierScripts);
-
         injector.getClosureAnnotator().registerClassNameForScript(script, className);
+
+        beforeCompile();
 
         generateNamespace(
                 JetPsiUtil.getFQName((JetFile) script.getContainingFile()),

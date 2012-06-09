@@ -67,8 +67,6 @@ public class InjectorForJetTypeMapper {
 
         jetTypeMapper.init();
 
-        closureAnnotator.init();
-
     }
 
     @PreDestroy

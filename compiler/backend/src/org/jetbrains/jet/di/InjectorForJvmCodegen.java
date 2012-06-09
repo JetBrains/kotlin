@@ -121,8 +121,6 @@ public class InjectorForJvmCodegen {
 
         intrinsics.init();
 
-        closureAnnotator.init();
-
     }
 
     @PreDestroy

@@ -87,5 +87,10 @@ public class ReplInterpreterTest {
         testFile("functionReferencesPrev.repl");
     }
 
+    @Test
+    public void twoClosures() {
+        testFile("twoClosures.repl");
+    }
+
 
 }

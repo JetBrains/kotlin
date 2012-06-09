@@ -62,7 +62,6 @@ public class ClosureAnnotator {
         this.files = files;
     }
 
-    @PostConstruct
     public void init() {
         mapFilesToNamespaces(files);
         prepareAnonymousClasses();
@@ -241,7 +240,12 @@ public class ClosureAnnotator {
 
         @Override
         public void visitJetFile(JetFile file) {
-            nameStack.push(JetPsiUtil.getFQName(file).getFqName().replace('.', '/'));
+            if (file.isScript()) {
+                nameStack.push(classNameForScriptPsi(file.getScript()).getInternalName());
+            }
+            else {
+                nameStack.push(JetPsiUtil.getFQName(file).getFqName().replace('.', '/'));
+            }
             file.acceptChildren(this);
             nameStack.pop();
         }

@@ -249,6 +249,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         declarationDescriptor.accept(rootVisitor, stringBuilder);
 
         if (stringBuilder.length() == 0) {
+            // don't use toString here because render may be called from toString
             stringBuilder.append(declarationDescriptor.getClass().getName() + "@" + System.identityHashCode(declarationDescriptor));
         }
 
