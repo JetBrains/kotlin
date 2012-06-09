@@ -112,7 +112,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor {
         JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(jetTypeParameter, JetClassOrObject.class);
         if (classOrObject instanceof JetClass) {
             JetClass jetClass = (JetClass) classOrObject;
-            for (JetTypeConstraint jetTypeConstraint : jetClass.getTypeConstaints()) {
+            for (JetTypeConstraint jetTypeConstraint : jetClass.getTypeConstraints()) {
                 if (jetTypeConstraint.isClassObjectContraint() != forClassObject) continue;
 
                 JetSimpleNameExpression constrainedParameterName = jetTypeConstraint.getSubjectTypeParameterName();

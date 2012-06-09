@@ -43,7 +43,7 @@ public class JetTypeParameterListOwner extends JetNamedDeclaration {
     }
 
     @NotNull
-    public List<JetTypeConstraint> getTypeConstaints() {
+    public List<JetTypeConstraint> getTypeConstraints() {
         JetTypeConstraintList typeConstraintList = getTypeConstraintList();
         if (typeConstraintList == null) {
             return Collections.emptyList();

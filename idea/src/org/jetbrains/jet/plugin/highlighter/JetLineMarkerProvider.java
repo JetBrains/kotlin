@@ -129,7 +129,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                 new Function<PsiElement, String>() {
                     @Override
                     public String fun(PsiElement element) {
-                        return countTooltipString(element);
+                        return calculateTooltipString(element);
                     }
                 },
                 new GutterIconNavigationHandler<PsiElement>() {
@@ -184,7 +184,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         }
     }
 
-    private static String countTooltipString(PsiElement element) {
+    private static String calculateTooltipString(PsiElement element) {
         JetFile file = (JetFile)element.getContainingFile();
         if (file == null) return "";
 

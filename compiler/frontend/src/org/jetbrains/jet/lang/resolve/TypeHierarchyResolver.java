@@ -613,7 +613,7 @@ public class TypeHierarchyResolver {
                 }
             }
 
-            for (JetTypeConstraint constraint : jetClass.getTypeConstaints()) {
+            for (JetTypeConstraint constraint : jetClass.getTypeConstraints()) {
                 JetTypeReference extendsBound = constraint.getBoundTypeReference();
                 if (extendsBound != null) {
                     JetType type = trace.getBindingContext().get(TYPE, extendsBound);

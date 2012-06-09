@@ -376,7 +376,7 @@ public class DescriptorResolver {
                 deferredUpperBoundCheckerTasks.add(new UpperBoundCheckerTask(extendsBound, type, false));
             }
         }
-        for (JetTypeConstraint constraint : declaration.getTypeConstaints()) {
+        for (JetTypeConstraint constraint : declaration.getTypeConstraints()) {
             JetSimpleNameExpression subjectTypeParameterName = constraint.getSubjectTypeParameterName();
             if (subjectTypeParameterName == null) {
                 continue;

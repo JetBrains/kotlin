@@ -177,7 +177,7 @@ class AlternativeSignatureParsing {
     private static JetTypeConstraint findTypeParameterConstraint(@NotNull JetFunction function, @NotNull Name typeParameterName, int index) {
         if (index != 0) {
             int currentIndex = 0;
-            for (JetTypeConstraint constraint : function.getTypeConstaints()) {
+            for (JetTypeConstraint constraint : function.getTypeConstraints()) {
                 if (typeParameterName.equals(constraint.getSubjectTypeParameterName().getReferencedNameAsName())) {
                     currentIndex++;
                 }
