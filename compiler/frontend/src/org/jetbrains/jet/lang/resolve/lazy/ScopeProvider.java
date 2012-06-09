@@ -60,6 +60,7 @@ public class ScopeProvider {
 
         WritableScope writableScope = new WritableScopeImpl(
                 JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING, "file scope for declaration resollution");
+        writableScope.importScope(resolveSession.getPackageDescriptorByFqName(FqName.ROOT).getMemberScope());
         writableScope.importScope(packageDescriptor.getMemberScope());
 
         // TODO: imports
