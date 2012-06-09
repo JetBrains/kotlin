@@ -748,8 +748,26 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 if (jetClass.isTrait()) {
                     int flags = ACC_PUBLIC; // TODO.
 
-                    Method function = typeMapper.mapSignature(fun.getName(), fun).getAsmMethod();
-                    Method functionOriginal = typeMapper.mapSignature(fun.getName(), fun.getOriginal()).getAsmMethod();
+                    Method function;
+                    Method functionOriginal;
+                    if (fun instanceof PropertyAccessorDescriptor) {
+                        PropertyDescriptor property = ((PropertyAccessorDescriptor) fun).getCorrespondingProperty();
+                        if (fun instanceof PropertyGetterDescriptor) {
+                            function = typeMapper.mapGetterSignature(property, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
+                            functionOriginal = typeMapper.mapGetterSignature(property.getOriginal(), OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
+                        }
+                        else if (fun instanceof PropertySetterDescriptor) {
+                            function = typeMapper.mapSetterSignature(property, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
+                            functionOriginal = typeMapper.mapSetterSignature(property.getOriginal(), OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
+                        }
+                        else {
+                            throw new IllegalStateException("Accessor is neither getter, nor setter, what is it?");
+                        }
+                    }
+                    else {
+                        function = typeMapper.mapSignature(fun.getName(), fun).getAsmMethod();
+                        functionOriginal = typeMapper.mapSignature(fun.getName(), fun.getOriginal()).getAsmMethod();
+                    }
 
                     final MethodVisitor mv = v.newMethod(myClass, flags, function.getName(), function.getDescriptor(), null, null);
                     AnnotationCodegen.forMethod(mv, state.getInjector().getJetTypeMapper()).genAnnotations(fun);
@@ -758,12 +776,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
                     if (fun instanceof PropertyAccessorDescriptor) {
                         aw.writeFlags(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY_BIT);
+                        aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
+                        aw.writePropertyType(jvmSignature.getKotlinReturnType());
                     } else {
                         aw.writeFlags();
+                        aw.writeNullableReturnType(fun.getReturnType().isNullable());
+                        aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
+                        aw.writeReturnType(jvmSignature.getKotlinReturnType());
                     }
-                    aw.writeNullableReturnType(fun.getReturnType().isNullable());
-                    aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
-                    aw.writeReturnType(jvmSignature.getKotlinReturnType());
                     aw.visitEnd();
 
                     if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
