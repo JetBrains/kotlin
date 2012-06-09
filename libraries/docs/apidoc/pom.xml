@@ -79,7 +79,7 @@
                 <executions>
                     <execution>
                         <id>apidoc</id>
-                        <phase>install</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>apidoc</goal>
                         </goals>
