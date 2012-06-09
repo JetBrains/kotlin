@@ -1021,7 +1021,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             return null;
         }
         if (resolverNamespaceData == ResolverNamespaceData.NEGATIVE) {
-            throw new IllegalStateException("This means that we are trying to create a Java package, but have a package with the same FQN defined in Kotlin");
+            throw new IllegalStateException("This means that we are trying to create a Java package, but have a package with the same FQN defined in Kotlin: " + fqName);
         }
         JavaPackageScope scope = resolverNamespaceData.memberScope;
         if (scope == null) {
