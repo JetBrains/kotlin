@@ -65,7 +65,7 @@ public final class JetModifiableBlockHelper {
         if (declaration != null) {
             if (declaration instanceof JetNamedFunction) {
                 JetNamedFunction function = (JetNamedFunction) declaration;
-                if (!function.hasDeclaredReturnType()) {
+                if (!function.hasDeclaredReturnType() && !function.hasBlockBody()) {
                     return true;
                 }
             }
