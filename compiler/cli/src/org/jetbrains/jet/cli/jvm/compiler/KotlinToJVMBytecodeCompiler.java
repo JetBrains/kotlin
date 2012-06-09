@@ -131,6 +131,22 @@ public class KotlinToJVMBytecodeCompiler {
         return true;
     }
 
+    @Nullable
+    private static FqName findMainClass(@NotNull List<JetFile> files) {
+        FqName mainClass = null;
+        for (JetFile file : files) {
+            if (JetMainDetector.hasMain(file.getDeclarations())) {
+                if (mainClass != null) {
+                    // more than one main
+                    return null;
+                }
+                FqName fqName = JetPsiUtil.getFQName(file);
+                mainClass = fqName.child(Name.identifier(JvmAbi.PACKAGE_CLASS));
+            }
+        }
+        return mainClass;
+    }
+
     public static boolean compileBunchOfSources(
             K2JVMCompileEnvironmentConfiguration configuration,
             @Nullable File jar,
@@ -138,14 +154,7 @@ public class KotlinToJVMBytecodeCompiler {
             boolean script,
             boolean includeRuntime
     ) {
-        FqName mainClass = null;
-        for (JetFile file : configuration.getEnvironment().getSourceFiles()) {
-            if (JetMainDetector.hasMain(file.getDeclarations())) {
-                FqName fqName = JetPsiUtil.getFQName(file);
-                mainClass = fqName.child(Name.identifier(JvmAbi.PACKAGE_CLASS));
-                break;
-            }
-        }
+        FqName mainClass = findMainClass(configuration.getEnvironment().getSourceFiles());
 
         GenerationState generationState = analyzeAndGenerate(configuration);
         if (generationState == null) {
