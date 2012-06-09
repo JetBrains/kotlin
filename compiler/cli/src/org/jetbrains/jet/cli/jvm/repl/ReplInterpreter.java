@@ -59,6 +59,7 @@ import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.utils.Progress;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -218,5 +219,9 @@ public class ReplInterpreter {
         }
 
         return scriptDescriptor;
+    }
+
+    public void dumpClasses(@NotNull PrintWriter out) {
+        classLoader.dumpClasses(out);
     }
 }

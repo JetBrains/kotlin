@@ -25,6 +25,7 @@ import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 
@@ -130,6 +131,11 @@ public class ReplFromTerminal {
             System.out.println("Available commands are:");
             System.out.println(":help                   show this help");
             System.out.println(":quit                   exit the interpreter");
+            System.out.println(":dump bytecode          dump classes to terminal");
+            return true;
+        }
+        else if (command.equals("dump bytecode")) {
+            getReplInterpreter().dumpClasses(new PrintWriter(System.out));
             return true;
         }
         else if (command.equals("quit")) {
