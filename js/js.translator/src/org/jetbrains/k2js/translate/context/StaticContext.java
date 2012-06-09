@@ -153,6 +153,14 @@ public final class StaticContext {
     }
 
     private final class NameGenerator extends Generator<JsName> {
+        private JsName declareName(DeclarationDescriptor descriptor, String name) {
+            NamingScope scope = getEnclosingScope(descriptor);
+            // ecma 5 property name never declares as obfuscatable:
+            // 1) property cannot be overloaded, so, name collision is not possible
+            // 2) main reason: if property doesn't have any custom accessor, value holder will have the same name as accessor, so, the same name will be declared more than once
+            return isEcma5() ? scope.declareUnobfuscatableName(name) : scope.declareObfuscatableName(name);
+        }
+
         public NameGenerator() {
             Rule<JsName> namesForStandardClasses = new Rule<JsName>() {
                 @Override
@@ -203,11 +211,9 @@ public final class StaticContext {
                     boolean isGetter = descriptor instanceof PropertyGetterDescriptor;
                     PropertyAccessorDescriptor accessorDescriptor = (PropertyAccessorDescriptor) descriptor;
                     String propertyName = accessorDescriptor.getCorrespondingProperty().getName().getName();
-                    String accessorName = Namer.getNameForAccessor(propertyName, isGetter, !accessorDescriptor.getReceiverParameter().exists() && isEcma5());
-                    NamingScope enclosingScope = getEnclosingScope(descriptor);
-                    return isEcma5()
-                           ? enclosingScope.declareUnobfuscatableName(accessorName)
-                           : enclosingScope.declareObfuscatableName(accessorName);
+                    String accessorName = Namer.getNameForAccessor(propertyName, isGetter,
+                                                                   !accessorDescriptor.getReceiverParameter().exists() && isEcma5());
+                    return declareName(descriptor, accessorName);
                 }
             };
 
@@ -232,19 +238,12 @@ public final class StaticContext {
                         return null;
                     }
 
-                    //TODO: move somewhere
-                    NamingScope enclosingScope = getEnclosingScope(descriptor);
-                    if (isEcma5()) {
-                        String name = descriptor.getName().getName();
-                        if (JsDescriptorUtils.isAsPrivate((PropertyDescriptor) descriptor)) {
-                            name = '_' + name;
-                        }
+                    String name = descriptor.getName().getName();
+                    if (!isEcma5() || JsDescriptorUtils.isAsPrivate((PropertyDescriptor) descriptor)) {
+                        name = Namer.getKotlinBackingFieldName(name);
+                    }
 
-                        return enclosingScope.declareUnobfuscatableName(name);
-                    }
-                    else {
-                        return enclosingScope.declareObfuscatableName(Namer.getKotlinBackingFieldName(descriptor.getName().getName()));
-                    }
+                    return declareName(descriptor, name);
                 }
             };
             //TODO: hack!
