@@ -85,7 +85,8 @@ public class ReplFromTerminal {
 
     private void doRun() {
         try {
-            System.out.println("Kotlin");
+            System.out.println("Kotlin interactive shell");
+            System.out.println("Type :help for help");
             while (true) {
                 boolean next = one();
                 if (!next) {
@@ -109,12 +110,31 @@ public class ReplFromTerminal {
             if (line == null) {
                 return false;
             }
+
+            if (line.startsWith(":")) {
+                return oneCommand(line.substring(1));
+            }
+
             Object value = getReplInterpreter().eval(line);
             System.out.println(value);
             return true;
         }
         catch (Exception e) {
             throw ExceptionUtils.rethrow(e);
+        }
+    }
+
+    private boolean oneCommand(@NotNull String command) {
+        if (command.equals("help")) {
+            System.out.println("This is Kotlin REPL help");
+            System.out.println("Available commands are:");
+            System.out.println(":help                   show this help");
+            return true;
+        }
+        else {
+            System.out.println("Unknown command");
+            System.out.println("Type :help for help");
+            return true;
         }
     }
 
