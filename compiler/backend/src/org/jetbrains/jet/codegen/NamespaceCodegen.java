@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.utils.Progress;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
@@ -160,7 +161,7 @@ public class NamespaceCodegen {
 
             if (k > 0) {
                 PsiFile containingFile = file.getContainingFile();
-                String className = name.getFqName().replace('.','/') + "namespace$src$" + (nextMultiFile++);
+                String className = name.child(Name.identifier("namespace$src$" + (nextMultiFile++))).getFqName().replace('.','/');
                 ClassBuilder builder = state.forNamespacepart(className, file);
 
                 builder.defineClass(containingFile, V1_6,
