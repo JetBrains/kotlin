@@ -50,3 +50,11 @@ public inline fun Executor.execute(action: ()->Unit) {
     execute(runnable(action))
 }
 
+/**
+ * Allows you to use the executor as a function to
+ * execute the given block on the [[Executor]].
+ */
+public inline fun Executor.invoke(action: ()->Unit) {
+    execute(runnable(action))
+}
+
