@@ -17,7 +17,6 @@
 package org.jetbrains.jet.cli.common;
 
 import com.google.common.collect.Lists;
-import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -41,7 +40,7 @@ public abstract class CompilerArguments {
         this.compilerPlugins = compilerPlugins;
     }
 
-    public List<String> freeArgs;
+    public List<String> freeArgs = Lists.newArrayList();
 
     public abstract boolean isHelp();
     public abstract boolean isTags();
