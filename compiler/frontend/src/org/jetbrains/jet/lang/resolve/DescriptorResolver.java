@@ -743,15 +743,8 @@ public class DescriptorResolver {
         if (modifierList == null) return defaultVisibility;
         if (modifierList.hasModifier(JetTokens.PRIVATE_KEYWORD)) return Visibilities.PRIVATE;
         if (modifierList.hasModifier(JetTokens.PUBLIC_KEYWORD)) return Visibilities.PUBLIC;
-        if (modifierList.hasModifier(JetTokens.PROTECTED_KEYWORD)) {
-            if (modifierList.hasModifier(JetTokens.INTERNAL_KEYWORD)) {
-                return Visibilities.INTERNAL_PROTECTED;
-            }
-            return Visibilities.PROTECTED;
-        }
-        if (modifierList.hasModifier(JetTokens.INTERNAL_KEYWORD)) {
-            return Visibilities.INTERNAL;
-        }
+        if (modifierList.hasModifier(JetTokens.PROTECTED_KEYWORD)) return Visibilities.PROTECTED;
+        if (modifierList.hasModifier(JetTokens.INTERNAL_KEYWORD)) return Visibilities.INTERNAL;
         return defaultVisibility;
     }
 

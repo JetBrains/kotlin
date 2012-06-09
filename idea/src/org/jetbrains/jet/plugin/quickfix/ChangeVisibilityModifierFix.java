@@ -113,10 +113,6 @@ public class ChangeVisibilityModifierFix extends JetIntentionAction<JetModifierL
         else if (maxVisibility == Visibilities.INTERNAL) {
             modifier = JetTokens.INTERNAL_KEYWORD;
         }
-        else if (maxVisibility == Visibilities.INTERNAL_PROTECTED) {
-            //todo should be internal and protected keywords
-            modifier = JetTokens.INTERNAL_KEYWORD;
-        }
         return modifier;
     }
 

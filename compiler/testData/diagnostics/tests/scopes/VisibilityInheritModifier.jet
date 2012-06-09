@@ -40,7 +40,7 @@ fun test_fun_stays_protected(g: G) {
 
 //------------
 open class H {
-    internal protected open fun pi_fun() {}
+    protected open fun pi_fun() {}
 }
 
 class I : H() {
@@ -48,7 +48,7 @@ class I : H() {
 }
 
 class J : H() {
-    internal override fun pi_fun() {}
+    <!CANNOT_CHANGE_ACCESS_PRIVILEGE!>internal<!> override fun pi_fun() {}
 }
 
 class K : H() {
@@ -69,11 +69,11 @@ class M : L() {
 }
 //---------------
 trait R {
-    internal protected fun foo() {}
+    <!INCOMPATIBLE_MODIFIERS!>internal<!> <!INCOMPATIBLE_MODIFIERS!>protected<!> fun foo() {}
 }
 
 trait P : R {
-    internal override fun foo() {}
+    <!CANNOT_CHANGE_ACCESS_PRIVILEGE!>internal<!> override fun foo() {}
 }
 
 trait Q : R {
