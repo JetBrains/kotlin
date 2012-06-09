@@ -18,7 +18,6 @@ package org.jetbrains.jet.cli.jvm;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
@@ -98,8 +97,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
         }
 
         JetCoreEnvironment environment = JetCoreEnvironment.getCoreEnvironmentForJVM(rootDisposable, dependencies);
-        List<String> scriptArgs = arguments.script ? arguments.freeArgs.subList(1, arguments.freeArgs.size()) : Collections.<String>emptyList();
-        K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(environment, messageCollector, arguments.script, scriptArgs);
+        K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(environment, messageCollector, arguments.script);
 
         messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
                                 CompilerMessageLocation.NO_LOCATION);
@@ -121,6 +119,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
                                                                       directory, jar, outputDir,
                                                                       arguments.includeRuntime);
             }
+            else if (arguments.script) {
+                configuration.getEnvironment().addSources(arguments.freeArgs.get(0));
+                List<String> scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size());
+                noErrors = KotlinToJVMBytecodeCompiler.compileAndExecuteScript(configuration, scriptArgs);
+            }
             else {
                 // TODO ideally we'd unify to just having a single field that supports multiple files/dirs
                 if (arguments.getSourceDirs() != null) {
@@ -131,17 +134,12 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
                     if (arguments.src != null) {
                         configuration.getEnvironment().addSources(arguments.src);
                     }
-                    if (arguments.script) {
-                        configuration.getEnvironment().addSources(arguments.freeArgs.get(0));
-                    }
-                    else {
-                        for (String freeArg : arguments.freeArgs) {
-                            configuration.getEnvironment().addSources(freeArg);
-                        }
+                    for (String freeArg : arguments.freeArgs) {
+                        configuration.getEnvironment().addSources(freeArg);
                     }
 
                     noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSources(
-                            configuration, jar, outputDir, arguments.script, arguments.includeRuntime);
+                            configuration, jar, outputDir, arguments.includeRuntime);
                 }
             }
             return noErrors ? OK : COMPILATION_ERROR;

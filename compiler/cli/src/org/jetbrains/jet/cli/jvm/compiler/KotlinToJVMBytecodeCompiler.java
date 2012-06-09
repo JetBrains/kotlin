@@ -151,9 +151,9 @@ public class KotlinToJVMBytecodeCompiler {
             K2JVMCompileEnvironmentConfiguration configuration,
             @Nullable File jar,
             @Nullable File outputDir,
-            boolean script,
             boolean includeRuntime
     ) {
+
         FqName mainClass = findMainClass(configuration.getEnvironment().getSourceFiles());
 
         GenerationState generationState = analyzeAndGenerate(configuration);
@@ -185,22 +185,38 @@ public class KotlinToJVMBytecodeCompiler {
             else if (outputDir != null) {
                 CompileEnvironmentUtil.writeToOutputDirectory(factory, outputDir);
             }
-            else if (script) {
-                try {
-
-                    GeneratedClassLoader classLoader = new GeneratedClassLoader(factory, new URLClassLoader(new URL[]{
-                                // TODO: add all classpath
-                                configuration.getEnvironment().getCompilerDependencies().getRuntimeJar().toURI().toURL()
-                            },
-                            AllModules.class.getClassLoader()));
-                    Class<?> scriptClass = classLoader.loadClass(ScriptCodegen.SCRIPT_DEFAULT_CLASS_NAME.getFqName().getFqName());
-                    scriptClass.getConstructor(String[].class).newInstance(new Object[]{ configuration.getScriptArgs().toArray(new String[0]) });
-                } catch (Exception e) {
-                    throw new RuntimeException("Failed to evaluate script: " + e, e);
-                }
-            }
             else {
                 throw new CompileEnvironmentException("Output directory or jar file is not specified - no files will be saved to the disk");
+            }
+            return true;
+        }
+        finally {
+            generationState.destroy();
+        }
+    }
+
+    public static boolean compileAndExecuteScript(
+            @NotNull K2JVMCompileEnvironmentConfiguration configuration,
+            @NotNull List<String> scriptArgs) {
+
+        GenerationState generationState = analyzeAndGenerate(configuration);
+        if (generationState == null) {
+            return false;
+        }
+
+        try {
+            ClassFileFactory factory = generationState.getFactory();
+            try {
+                GeneratedClassLoader classLoader = new GeneratedClassLoader(factory, new URLClassLoader(new URL[]{
+                        // TODO: add all classpath
+                        configuration.getEnvironment().getCompilerDependencies().getRuntimeJar().toURI().toURL()
+                },
+                        AllModules.class.getClassLoader()));
+                Class<?> scriptClass = classLoader.loadClass(ScriptCodegen.SCRIPT_DEFAULT_CLASS_NAME.getFqName().getFqName());
+                scriptClass.getConstructor(String[].class).newInstance(new Object[]{scriptArgs.toArray(new String[0])});
+            }
+            catch (Exception e) {
+                throw new RuntimeException("Failed to evaluate script: " + e, e);
             }
             return true;
         }
@@ -216,7 +232,7 @@ public class KotlinToJVMBytecodeCompiler {
             configuration.getEnvironment().addSources(sourceFileOrDir);
         }
 
-        return compileBunchOfSources(configuration, jar, outputDir, script, includeRuntime);
+        return compileBunchOfSources(configuration, jar, outputDir, includeRuntime);
     }
 
     public static boolean compileBunchOfSourceDirectories(
@@ -227,7 +243,7 @@ public class KotlinToJVMBytecodeCompiler {
             configuration.getEnvironment().addSources(source);
         }
 
-        return compileBunchOfSources(configuration, jar, outputDir, script, includeRuntime);
+        return compileBunchOfSources(configuration, jar, outputDir, includeRuntime);
     }
 
     @Nullable

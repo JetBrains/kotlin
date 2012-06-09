@@ -22,14 +22,13 @@ import org.jetbrains.jet.cli.common.messages.MessageCollector;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collections;
 
 public class CompileTextTest extends CodegenTestCase {
     public void testMe() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         createEnvironmentWithMockJdkAndIdeaAnnotations();
         String text = "import org.jetbrains.jet.codegen.CompileTextTest; fun x() = CompileTextTest()";
         K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(
-                myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, false, Collections.<String>emptyList());
+                myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, false);
         configuration.getEnvironment().addToClasspathFromClassLoader(getClass().getClassLoader());
         ClassLoader classLoader = KotlinToJVMBytecodeCompiler.compileText(configuration, text);
         Class<?> namespace = classLoader.loadClass("namespace");

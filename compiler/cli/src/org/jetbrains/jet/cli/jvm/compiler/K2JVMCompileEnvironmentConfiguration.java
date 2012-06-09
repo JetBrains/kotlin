@@ -29,7 +29,6 @@ import java.util.List;
 public class K2JVMCompileEnvironmentConfiguration extends CompileEnvironmentConfiguration {
     private final JetCoreEnvironment environment;
     private final boolean script;
-    private final List<String> scriptArgs;
 
     /**
      * NOTE: It's very important to call dispose for every object of this class or there will be memory leaks.
@@ -37,11 +36,10 @@ public class K2JVMCompileEnvironmentConfiguration extends CompileEnvironmentConf
      * @see Disposer
      */
     public K2JVMCompileEnvironmentConfiguration(@NotNull JetCoreEnvironment environment,
-            @NotNull MessageCollector messageCollector, boolean script, List<String> scriptArgs) {
+            @NotNull MessageCollector messageCollector, boolean script) {
         super(messageCollector);
         this.environment = environment;
         this.script = script;
-        this.scriptArgs = scriptArgs;
     }
 
     public JetCoreEnvironment getEnvironment() {
@@ -50,9 +48,5 @@ public class K2JVMCompileEnvironmentConfiguration extends CompileEnvironmentConf
 
     public boolean isScript() {
         return script;
-    }
-
-    public List<String> getScriptArgs() {
-        return scriptArgs;
     }
 }

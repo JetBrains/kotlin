@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -54,7 +53,7 @@ public class BytecodeCompiler {
         CompilerDependencies dependencies = CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR);
         JetCoreEnvironment environment = new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), dependencies);
         K2JVMCompileEnvironmentConfiguration
-                env = new K2JVMCompileEnvironmentConfiguration(environment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, false, Collections.<String>emptyList());
+                env = new K2JVMCompileEnvironmentConfiguration(environment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, false);
 
         if (( stdlib != null ) && ( stdlib.trim().length() > 0 )) {
             File file = new File(stdlib);
@@ -100,7 +99,7 @@ public class BytecodeCompiler {
             K2JVMCompileEnvironmentConfiguration configuration = env(stdlib, classpath);
             configuration.getEnvironment().addSources(src);
 
-            boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(configuration, null, new File(output), false, true);
+            boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(configuration, null, new File(output), true);
             if ( ! success ) {
                 throw new CompileEnvironmentException( errorMessage( src, false ));
             }
@@ -125,7 +124,7 @@ public class BytecodeCompiler {
             K2JVMCompileEnvironmentConfiguration configuration = env(stdlib, classpath);
             configuration.getEnvironment().addSources(src);
 
-            boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(configuration, new File(jar), null, false, includeRuntime);
+            boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(configuration, new File(jar), null, includeRuntime);
             if ( ! success ) {
                 throw new CompileEnvironmentException( errorMessage( src, false ));
             }
