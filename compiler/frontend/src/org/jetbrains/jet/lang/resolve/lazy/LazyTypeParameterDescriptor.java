@@ -106,14 +106,14 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor {
         return upperBounds;
     }
 
-    private JetTypeParameter resolveUpperBoundsFromWhereClause(Set<JetType> upperBounds, boolean forClassObject) {
+    private void resolveUpperBoundsFromWhereClause(Set<JetType> upperBounds, boolean forClassObject) {
         JetTypeParameter jetTypeParameter = getElement();
 
         JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(jetTypeParameter, JetClassOrObject.class);
         if (classOrObject instanceof JetClass) {
             JetClass jetClass = (JetClass) classOrObject;
             for (JetTypeConstraint jetTypeConstraint : jetClass.getTypeConstaints()) {
-                if (jetTypeConstraint.isClassObjectContraint() == forClassObject) continue;
+                if (jetTypeConstraint.isClassObjectContraint() != forClassObject) continue;
 
                 JetSimpleNameExpression constrainedParameterName = jetTypeConstraint.getSubjectTypeParameterName();
                 if (constrainedParameterName != null) {
@@ -127,7 +127,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor {
                 }
             }
         }
-        return jetTypeParameter;
+
     }
 
     private JetTypeParameter getElement() {
