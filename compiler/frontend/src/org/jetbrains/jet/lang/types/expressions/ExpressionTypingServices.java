@@ -177,9 +177,6 @@ public class ExpressionTypingServices {
     @Nullable
     public JetType getBlockReturnedType(@NotNull JetScope outerScope, @NotNull JetBlockExpression expression, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context, BindingTrace trace) {
         List<JetElement> block = expression.getStatements();
-        if (block.isEmpty()) {
-            return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, context);
-        }
 
         DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
         if (containingDescriptor instanceof ScriptDescriptor) {
@@ -192,7 +189,14 @@ public class ExpressionTypingServices {
         WritableScope scope = new WritableScopeImpl(
                 outerScope, containingDescriptor, new TraceBasedRedeclarationHandler(context.trace), "getBlockReturnedType");
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        JetType r = getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context, trace);
+
+        JetType r;
+        if (block.isEmpty()) {
+            r = DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, context);
+        }
+        else {
+            r = getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context, trace);
+        }
         scope.changeLockLevel(WritableScope.LockLevel.READING);
 
         if (containingDescriptor instanceof ScriptDescriptor) {

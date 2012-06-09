@@ -92,5 +92,10 @@ public class ReplInterpreterTest {
         testFile("twoClosures.repl");
     }
 
+    @Test
+    public void empty() {
+        testFile("empty.repl");
+    }
+
 
 }

@@ -26,6 +26,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Stepan Koltsov
@@ -66,10 +68,12 @@ public class ReplSessionTestFile {
                 return new ReplSessionTestFile(list);
             }
 
-            if (!odd.startsWith(">>> ")) {
+            Pattern pattern = Pattern.compile(">>>( |$)(.*)");
+            Matcher matcher = pattern.matcher(odd);
+            if (!matcher.matches()) {
                 throw new IllegalStateException("odd lines must start with >>>");
             }
-            String code = odd.substring(4);
+            String code = matcher.group(2);
 
             String even = reader.readLine();
             if (even == null) {

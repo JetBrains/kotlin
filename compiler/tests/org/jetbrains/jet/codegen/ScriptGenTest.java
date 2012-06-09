@@ -82,4 +82,8 @@ public class ScriptGenTest extends CodegenTestCase {
         blackBoxFile("script/parameterClosure.ktscript");
     }
 
+    public void testEmpty() {
+        blackBoxFile("script/empty.ktscript");
+    }
+
 }
