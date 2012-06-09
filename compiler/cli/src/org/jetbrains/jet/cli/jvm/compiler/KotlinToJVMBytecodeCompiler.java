@@ -43,11 +43,13 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.JetMainDetector;
+import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.utils.Progress;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
@@ -107,11 +109,22 @@ public class KotlinToJVMBytecodeCompiler {
             }
             else {
                 String path = jarPath != null ? jarPath : new File(directory, moduleBuilder.getModuleName() + ".jar").getPath();
+                FileOutputStream outputStream = null;
                 try {
-                    CompileEnvironmentUtil.writeToJar(moduleFactory, new FileOutputStream(path), null, jarRuntime);
+                    outputStream = new FileOutputStream(path);
+                    CompileEnvironmentUtil.writeToJar(moduleFactory, outputStream, null, jarRuntime);
+                    outputStream.close();
                 }
                 catch (FileNotFoundException e) {
                     throw new CompileEnvironmentException("Invalid jar path " + path, e);
+                }
+                catch (IOException e) {
+                    throw ExceptionUtils.rethrow(e);
+                }
+                finally {
+                    try {
+                        outputStream.close();
+                    } catch (Throwable e) {}
                 }
             }
         }
@@ -142,11 +155,22 @@ public class KotlinToJVMBytecodeCompiler {
         try {
             ClassFileFactory factory = generationState.getFactory();
             if (jar != null) {
+                FileOutputStream os = null;
                 try {
+                    os = new FileOutputStream(jar);
                     CompileEnvironmentUtil.writeToJar(factory, new FileOutputStream(jar), mainClass, includeRuntime);
+                    os.close();
                 }
                 catch (FileNotFoundException e) {
                     throw new CompileEnvironmentException("Invalid jar path " + jar, e);
+                }
+                catch (IOException e) {
+                    throw ExceptionUtils.rethrow(e);
+                }
+                finally {
+                    try {
+                        os.close();
+                    } catch (Throwable e) {}
                 }
             }
             else if (outputDir != null) {

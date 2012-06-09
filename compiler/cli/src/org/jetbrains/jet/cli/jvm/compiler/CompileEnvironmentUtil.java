@@ -200,6 +200,7 @@ public class CompileEnvironmentUtil {
         }
     }
 
+    // TODO: includeRuntime should be not a flag but a path to runtime
     public static void writeToJar(ClassFileFactory factory, final OutputStream fos, @Nullable FqName mainClass, boolean includeRuntime) {
         try {
             Manifest manifest = new Manifest();
@@ -210,19 +211,14 @@ public class CompileEnvironmentUtil {
                 mainAttributes.putValue("Main-Class", mainClass.getFqName());
             }
             JarOutputStream stream = new JarOutputStream(fos, manifest);
-            try {
-                for (String file : factory.files()) {
-                    stream.putNextEntry(new JarEntry(file));
-                    stream.write(factory.asBytes(file));
-                }
-                if (includeRuntime) {
-                    writeRuntimeToJar(stream);
-                }
+            for (String file : factory.files()) {
+                stream.putNextEntry(new JarEntry(file));
+                stream.write(factory.asBytes(file));
             }
-            finally {
-                stream.close();
-                fos.close();
+            if (includeRuntime) {
+                writeRuntimeToJar(stream);
             }
+            stream.close();
         }
         catch (IOException e) {
             throw new CompileEnvironmentException("Failed to generate jar file", e);
