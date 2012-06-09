@@ -29,54 +29,58 @@ public class ObjectGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
     }
 
-    public void testSimpleObject() throws Exception {
+    public void testSimpleObject() {
         blackBoxFile("objects/simpleObject.jet");
 //        System.out.println(generateToText());
     }
 
-    public void testObjectLiteral() throws Exception {
+    public void testObjectLiteral() {
         blackBoxFile("objects/objectLiteral.jet");
 //        System.out.println(generateToText());
     }
 
-    public void testObjectLiteralInClosure() throws Exception {
+    public void testObjectLiteralInClosure() {
         blackBoxFile("objects/objectLiteralInClosure.jet");
 //        System.out.println(generateToText());
     }
 
-    public void testMethodOnObject() throws Exception {
+    public void testMethodOnObject() {
         blackBoxFile("objects/methodOnObject.jet");
     }
 
-    public void testKt535() throws Exception {
+    public void testKt535() {
         blackBoxFile("regressions/kt535.jet");
     }
 
-    public void testKt560() throws Exception {
+    public void testKt560() {
         blackBoxFile("regressions/kt560.jet");
     }
 
-    public void testKt640() throws Exception {
+    public void testKt640() {
         blackBoxFile("regressions/kt640.jet");
     }
 
-    public void testKt1136() throws Exception {
+    public void testKt1136() {
         blackBoxFile("regressions/kt1136.kt");
     }
 
-    public void testKt1047() throws Exception {
+    public void testKt1047() {
         blackBoxFile("regressions/kt1047.kt");
     }
 
-    public void testKt694() throws Exception {
+    public void testKt694() {
         blackBoxFile("regressions/kt694.kt");
     }
 
-    public void testKt1186() throws Exception {
+    public void testKt1186() {
         blackBoxFile("regressions/kt1186.kt");
     }
 
-    public void testKt1600() throws Exception {
+    public void testKt1600() {
         blackBoxFile("regressions/kt1600.kt");
+    }
+
+    public void testKt1737() {
+        blackBoxFile("regressions/kt1737.kt");
     }
 }

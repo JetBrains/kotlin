@@ -656,7 +656,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         final ClassDescriptor outerDescriptor = typeMapper.getClosureAnnotator().getEclosingClassDescriptor(descriptor);
-        if (typeMapper.hasThis0(descriptor) && outerDescriptor != null) {
+        final boolean hasOuterThis = typeMapper.hasThis0(descriptor) && outerDescriptor != null;
+        if (hasOuterThis) {
             final Type type = typeMapper.mapType(outerDescriptor.getDefaultType(), MapTypeMode.VALUE);
             String interfaceDesc = type.getDescriptor();
             final String fieldName = "this$0";
@@ -667,7 +668,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         if (closure != null) {
-            int k = outerDescriptor != null && outerDescriptor.getKind() != ClassKind.OBJECT ? 2 : 1;
+            int k = hasOuterThis ? 2 : 1;
             if (closure.captureReceiver != null) {
                 iv.load(0, JetTypeMapper.TYPE_OBJECT);
                 iv.load(1, closure.captureReceiver);
