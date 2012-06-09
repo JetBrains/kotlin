@@ -44,8 +44,8 @@ public class LazyPackageDescriptor extends AbstractNamespaceDescriptorImpl imple
             @NotNull PackageMemberDeclarationProvider declarationProvider
     ) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), name);
-        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Package scope for " + name);
-        //resolveSession.getModuleConfiguration().extendNamespaceScope(resolveSession.getTrace(), this, scope);
+        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Package scope");
+        resolveSession.getModuleConfiguration().extendNamespaceScope(resolveSession.getTrace(), this, scope);
         LazyPackageMemberScope lazyPackageMemberScope = new LazyPackageMemberScope(resolveSession, declarationProvider, this);
         scope.importScope(lazyPackageMemberScope);
         scope.changeLockLevel(WritableScope.LockLevel.READING);

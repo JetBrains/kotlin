@@ -8,7 +8,7 @@ package p; class C {fun f() {}}
 package p; open class G<T> {open fun f(): T {} fun a() {}}
 
 // FILE: d.kt
-package p; class G2<E> : G<E> { fun g() : E {} override fun f() : T {}}
+package p; class G2<E> : G<E> { fun g() : E {} override fun f() : E {}}
 
 // FILE: e.kt
 package p; fun foo() {}

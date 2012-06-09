@@ -62,6 +62,7 @@ public class AllInjectorsGenerator {
         generator.addPublicField(TypeResolver.class);
         generator.addPublicField(ScopeProvider.class);
         generator.addPublicField(AnnotationResolver.class);
+        generator.addPublicField(QualifiedExpressionResolver.class);
         generator.generate("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForLazyResolve");
     }
 

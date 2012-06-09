@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
@@ -73,11 +74,8 @@ public abstract class AbstractLazyResolveComparingTest {
     }
 
     protected void doTest(String testFileName, Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>> transform) throws IOException {
-        TopDownAnalysisParameters params = new TopDownAnalysisParameters(
-                Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
         ModuleDescriptor module = new ModuleDescriptor(Name.special("<test module>"));
-        InjectorForTopDownAnalyzerForJvm
-                injector = new InjectorForTopDownAnalyzerForJvm(project, params, new BindingTraceContext(), module, compilerDependencies);
+        InjectorForTopDownAnalyzerForJvm injector = createInjectorForTDA(module);
 
         List<JetFile> files = JetTestUtils
                 .createTestFiles(testFileName, FileUtil.loadFile(new File(testFileName)), new JetTestUtils.TestFileFactory<JetFile>() {
@@ -88,16 +86,30 @@ public abstract class AbstractLazyResolveComparingTest {
                 });
 
         ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
+        ModuleDescriptor eagerModuleForLazy = new ModuleDescriptor(Name.special("<eager module for lazy>"));
 
-        ResolveSession session = new ResolveSession(project, lazyModule, injector.getJavaBridgeConfiguration(), new FileBasedDeclarationProviderFactory(files));
+        InjectorForTopDownAnalyzerForJvm tdaInjectorForLazy = createInjectorForTDA(eagerModuleForLazy);
+        tdaInjectorForLazy.getTopDownAnalyzer().analyzeFiles(Collections.singletonList(JetPsiFactory.createFile(project, "")), Collections.<AnalyzerScriptParameter>emptyList());
+        ResolveSession session = new ResolveSession(project, lazyModule, tdaInjectorForLazy.getJavaBridgeConfiguration(), new FileBasedDeclarationProviderFactory(files));
 
         injector.getTopDownAnalyzer().analyzeFiles(files, Collections.<AnalyzerScriptParameter>emptyList());
 
         Pair<NamespaceDescriptor, NamespaceDescriptor> namespacesToCompare = transform.fun(Pair.create(module, lazyModule));
 
+        Predicate<NamespaceDescriptor> filterJetNamespace = new Predicate<NamespaceDescriptor>() {
+            @Override
+            public boolean apply(NamespaceDescriptor namespaceDescriptor) {
+                return !namespaceDescriptor.getName().equals(Name.identifier("jet"));
+            }
+        };
         NamespaceComparator.compareNamespaces(namespacesToCompare.first, namespacesToCompare.second,
-                                              true,
-                                              new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt"));
+                                              true, filterJetNamespace, new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt"));
+    }
+
+    private InjectorForTopDownAnalyzerForJvm createInjectorForTDA(ModuleDescriptor module) {
+        TopDownAnalysisParameters params = new TopDownAnalysisParameters(
+                Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
+        return new InjectorForTopDownAnalyzerForJvm(project, params, new BindingTraceContext(), module, compilerDependencies);
     }
 
     protected void doTest(String testFileName) throws Exception {

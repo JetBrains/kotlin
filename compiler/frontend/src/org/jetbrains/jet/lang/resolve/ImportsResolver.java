@@ -87,9 +87,19 @@ public class ImportsResolver {
         }
     }
 
-    private void processImportsInFile(
-            boolean onlyClasses, WritableScope namespaceScope,
-            List<JetImportDirective> importDirectives, @NotNull JetScope rootScope) {
+    private void processImportsInFile(boolean classes, WritableScope scope, List<JetImportDirective> directives, JetScope rootScope) {
+        processImportsInFile(classes, scope, directives, rootScope, configuration, trace, qualifiedExpressionResolver);
+    }
+
+    public static void processImportsInFile(
+            boolean onlyClasses,
+            @NotNull WritableScope namespaceScope,
+            @NotNull List<JetImportDirective> importDirectives,
+            @NotNull JetScope rootScope,
+            @NotNull ModuleConfiguration configuration,
+            @NotNull BindingTrace trace,
+            @NotNull QualifiedExpressionResolver qualifiedExpressionResolver
+    ) {
 
         Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(namespaceScope);
         if (!onlyClasses) {
@@ -114,14 +124,17 @@ public class ImportsResolver {
 
         if (!onlyClasses) {
             for (JetImportDirective importDirective : importDirectives) {
-                reportUselessImport(importDirective, namespaceScope, resolvedDirectives);
+                reportUselessImport(importDirective, namespaceScope, resolvedDirectives, trace);
             }
         }
     }
 
-    private void reportUselessImport(@NotNull JetImportDirective importDirective,
-                                     @NotNull WritableScope namespaceScope,
-                                     @NotNull Map<JetImportDirective, DeclarationDescriptor> resolvedDirectives) {
+    private static void reportUselessImport(
+        @NotNull JetImportDirective importDirective,
+        @NotNull WritableScope namespaceScope,
+        @NotNull Map<JetImportDirective, DeclarationDescriptor> resolvedDirectives,
+        @NotNull BindingTrace trace
+    ) {
 
         JetExpression importedReference = importDirective.getImportedReference();
         if (importedReference == null || !resolvedDirectives.containsKey(importDirective)) {

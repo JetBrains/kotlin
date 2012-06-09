@@ -89,7 +89,7 @@ public class DependencyInjectorGenerator {
             }
 
             String copyright = "injector-generator/copyright.txt";
-            out.println(FileUtil.loadFile(new File(copyright)));
+            out.println(FileUtil.loadFile(new File(copyright), true));
             out.println();
 
             out.println("package " + injectorPackageName + ";");

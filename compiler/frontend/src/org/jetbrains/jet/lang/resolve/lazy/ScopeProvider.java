@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -23,13 +24,13 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
+
+import java.util.List;
 
 /**
 * @author abreslav
@@ -59,8 +60,14 @@ public class ScopeProvider {
         }
 
         WritableScope writableScope = new WritableScopeImpl(
-                JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING, "file scope for declaration resollution");
+                JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING, "File scope for declaration resolution");
         writableScope.importScope(resolveSession.getPackageDescriptorByFqName(FqName.ROOT).getMemberScope());
+        List<JetImportDirective> importDirectives = Lists.newArrayList(file.getImportDirectives());
+        resolveSession.getModuleConfiguration().addDefaultImports(importDirectives);
+        ImportsResolver.processImportsInFile(true, writableScope, importDirectives,
+                                             resolveSession.getPackageDescriptorByFqName(FqName.ROOT).getMemberScope(),
+                                             resolveSession.getModuleConfiguration(), resolveSession.getTrace(),
+                                             resolveSession.getInjector().getQualifiedExpressionResolver());
         writableScope.importScope(packageDescriptor.getMemberScope());
 
         // TODO: imports
