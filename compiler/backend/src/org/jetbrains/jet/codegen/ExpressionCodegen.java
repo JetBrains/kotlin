@@ -264,10 +264,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         Label elseLabel = new Label();
         condition.condJump(elseLabel, true, v);   // == 0, i.e. false
 
-        Label end = continueLabel == null ? new Label() : continueLabel;
-        
-        if (continueLabel != null)
-            asmType = Type.VOID_TYPE;
+        Label end = new Label();
 
         gen(thenExpression, asmType);
 
@@ -276,10 +273,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         gen(elseExpression, asmType);
 
-        if (end != continueLabel)
-            v.mark(end);
-        else
-            v.goTo(end);
+        v.mark(end);
 
         return StackValue.onStack(asmType);
     }

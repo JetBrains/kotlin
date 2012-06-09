@@ -126,4 +126,9 @@ public class VarArgTest extends CodegenTestCase {
         assertEquals("mama", Array.get(invoke, 0));
         assertEquals("papa", Array.get(invoke, 1));
     }
+
+    public void testKt1978() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        blackBoxFile("regressions/kt1978.kt");
+    }
 }
