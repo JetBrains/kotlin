@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.cli.jvm.compiler;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.PropertyCodegen;
@@ -45,14 +47,30 @@ import java.util.*;
 public class NamespaceComparator {
 
     private final boolean includeObject;
+    private final Predicate<NamespaceDescriptor> includeIntoOutput;
 
-    private NamespaceComparator(boolean includeObject) {
+    private NamespaceComparator(boolean includeObject, Predicate<NamespaceDescriptor> includeIntoOutput) {
         this.includeObject = includeObject;
+        this.includeIntoOutput = includeIntoOutput;
     }
 
-    public static void compareNamespaces(@NotNull NamespaceDescriptor nsa, @NotNull NamespaceDescriptor nsb, boolean includeObject,
-            @NotNull File txtFile) {
-        String serialized = new NamespaceComparator(includeObject).doCompareNamespaces(nsa, nsb);
+    public static void compareNamespaces(
+        @NotNull NamespaceDescriptor nsa,
+        @NotNull NamespaceDescriptor nsb,
+        boolean includeObject,
+        @NotNull File txtFile
+    ) {
+        compareNamespaces(nsa, nsb, includeObject, Predicates.<NamespaceDescriptor>alwaysTrue(), txtFile);
+    }
+
+    public static void compareNamespaces(
+            @NotNull NamespaceDescriptor nsa,
+            @NotNull NamespaceDescriptor nsb,
+            boolean includeObject,
+            @NotNull Predicate<NamespaceDescriptor> includeIntoOutput,
+            @NotNull File txtFile
+    ) {
+        String serialized = new NamespaceComparator(includeObject, includeIntoOutput).doCompareNamespaces(nsa, nsb);
         try {
             if (!txtFile.exists()) {
                 FileUtil.writeToFile(txtFile, serialized);
@@ -104,9 +122,12 @@ public class NamespaceComparator {
                     System.err.println("Namespace not found: " + namespaceDescriptorA.getQualifiedName());
                 }
                 else {
-                    sb.append("// <namespace name=\"" + namespaceDescriptorA.getName() + "\">\n");
-                    sb.append(doCompareNamespaces(namespaceDescriptorA, namespaceDescriptorB));
-                    sb.append("// </namespace name=\"" + namespaceDescriptorA.getName() + "\">\n");
+                    String comparison = doCompareNamespaces(namespaceDescriptorA, namespaceDescriptorB);
+                    if (includeIntoOutput.apply(namespaceDescriptorA)) {
+                        sb.append("// <namespace name=\"" + namespaceDescriptorA.getName() + "\">\n");
+                        sb.append(comparison);
+                        sb.append("// </namespace name=\"" + namespaceDescriptorA.getName() + "\">\n");
+                    }
                 }
             }
             else {
@@ -117,15 +138,15 @@ public class NamespaceComparator {
         for (Name name : sorted(classifierNames)) {
             ClassifierDescriptor ca = nsa.getMemberScope().getClassifier(name);
             ClassifierDescriptor cb = nsb.getMemberScope().getClassifier(name);
-            Assert.assertTrue(ca != null);
-            Assert.assertTrue(cb != null);
+            Assert.assertTrue("Classifier not found in " + nsa + ": " + name, ca != null);
+            Assert.assertTrue("Classifier not found in " + nsb + ": " + name, cb != null);
             compareClassifiers(ca, cb, sb);
         }
 
         for (Name name : sorted(propertyNames)) {
             Set<VariableDescriptor> pa = nsa.getMemberScope().getProperties(name);
             Set<VariableDescriptor> pb = nsb.getMemberScope().getProperties(name);
-            compareDeclarationSets(pa, pb, sb);
+            compareDeclarationSets("Properties in package " + nsa, pa, pb, sb);
 
             Assert.assertTrue(nsb.getMemberScope().getFunctions(Name.identifier(PropertyCodegen.getterName(name))).isEmpty());
             Assert.assertTrue(nsb.getMemberScope().getFunctions(Name.identifier(PropertyCodegen.setterName(name))).isEmpty());
@@ -134,17 +155,19 @@ public class NamespaceComparator {
         for (Name name : sorted(functionNames)) {
             Set<FunctionDescriptor> fa = nsa.getMemberScope().getFunctions(name);
             Set<FunctionDescriptor> fb = nsb.getMemberScope().getFunctions(name);
-            compareDeclarationSets(fa, fb, sb);
+            compareDeclarationSets("Functions in package " + nsa, fa, fb, sb);
         }
 
         return sb.toString();
     }
 
-    private static void compareDeclarationSets(Set<? extends DeclarationDescriptor> a, Set<? extends DeclarationDescriptor> b,
+    private static void compareDeclarationSets(String message,
+            Set<? extends DeclarationDescriptor> a,
+            Set<? extends DeclarationDescriptor> b,
             @NotNull StringBuilder sb) {
         String at = serializedDeclarationSets(a);
         String bt = serializedDeclarationSets(b);
-        Assert.assertEquals(at, bt);
+        Assert.assertEquals(message, at, bt);
         sb.append(at);
     }
 
