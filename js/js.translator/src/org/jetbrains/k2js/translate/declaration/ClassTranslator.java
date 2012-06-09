@@ -160,7 +160,7 @@ public final class ClassTranslator extends AbstractTranslator {
         if (!isTrait()) {
             JsFunction initializer = Translation.generateClassInitializerMethod(classDeclaration, classDeclarationContext);
             if (context().isEcma5()) {
-                jsClassDeclaration.getArguments().add(isObject() ? initializer : JsAstUtils.encloseFunction(initializer));
+                jsClassDeclaration.getArguments().add(initializer.getName() == null ? initializer : JsAstUtils.encloseFunction(initializer));
             }
             else {
                 propertyList.add(InitializerUtils.generateInitializeMethod(initializer));
