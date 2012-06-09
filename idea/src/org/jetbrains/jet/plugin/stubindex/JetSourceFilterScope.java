@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.JetFileType;
 
 /**
  * @author Nikolay Krasko
@@ -45,6 +46,6 @@ public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
             return myIndex.isInLibraryClasses(file);
         }
 
-        return myIndex.isInSourceContent(file);
+        return file.getFileType().equals(JetFileType.INSTANCE) && (myIndex.isInSourceContent(file) || myIndex.isInLibrarySource(file));
     }
 }
