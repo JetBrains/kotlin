@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.Variance;
@@ -442,6 +443,10 @@ public class NamespaceComparator {
         }
 
         public void serialize(@NotNull JetType type) {
+            if (ErrorUtils.isErrorType(type)) {
+                sb.append(type);
+                return;
+            }
             serialize(type.getConstructor().getDeclarationDescriptor());
             if (!type.getArguments().isEmpty()) {
                 sb.append("<");
