@@ -24,7 +24,6 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -329,17 +328,9 @@ public class TypeHierarchyResolver {
                 }
 
                 private void createPrimaryConstructorForObject(@Nullable PsiElement object, MutableClassDescriptor mutableClassDescriptor) {
-                    ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(mutableClassDescriptor, Collections.<AnnotationDescriptor>emptyList(), true);
-
-                    // TODO check set mutableClassDescriptor.getVisibility()
-                    constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(),
-                                                     Collections.<ValueParameterDescriptor>emptyList(), Visibilities.INTERNAL);
-
-                    // TODO : make the constructor private?
+                    ConstructorDescriptor constructorDescriptor = DescriptorResolver
+                            .createPrimaryConstructorForObject(object, mutableClassDescriptor, trace);
                     mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor, trace);
-                    if (object != null) {
-                        trace.record(CONSTRUCTOR, object, constructorDescriptor);
-                    }
                 }
 
                 private void prepareForDeferredCall(@NotNull JetScope outerScope,
@@ -354,7 +345,6 @@ public class TypeHierarchyResolver {
 
         return forDeferredResolve;
     }
-
 
 
     @NotNull

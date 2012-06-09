@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.Collection;
@@ -181,13 +182,21 @@ public class ResolveSession {
         }
 
         if (parent instanceof JetClassBody) {
-            JetClassBody classBody = (JetClassBody) parent;
-            JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(classBody, JetClassOrObject.class);
-            ClassDescriptor classDescriptor = getClassDescriptor(classOrObject);
-            assert classDescriptor instanceof LazyClassDescriptor : "Trying to resolve a member of a non-lazily loaded class: " + element;
-            return ((LazyClassDescriptor) classDescriptor).getScopeForMemberDeclarationResolution();
+            return getEnclosingLazyClass(element).getScopeForMemberDeclarationResolution();
+        }
+
+        if (parent instanceof JetClassObject) {
+            return new InnerClassesScopeWrapper(getEnclosingLazyClass(element).getScopeForMemberDeclarationResolution());
         }
 
         throw new IllegalArgumentException("Unsupported PSI element: " + element);
+    }
+
+    private LazyClassDescriptor getEnclosingLazyClass(PsiElement element) {
+        JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(element.getParent(), JetClassOrObject.class);
+        assert classOrObject != null : "Called for an element that is not a class member: " + element;
+        ClassDescriptor classDescriptor = getClassDescriptor(classOrObject);
+        assert classDescriptor instanceof LazyClassDescriptor : "Trying to resolve a member of a non-lazily loaded class: " + element;
+        return (LazyClassDescriptor) classDescriptor;
     }
 }

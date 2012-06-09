@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -61,12 +62,12 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         return thisDescriptor.getScopeForMemberDeclarationResolution();
     }
 
-    @Override
-    protected void getNonDeclaredFunctions(@NotNull Name name, @NotNull final Set<FunctionDescriptor> result) {
-        Collection<FunctionDescriptor> fromSupertypes = Lists.newArrayList();
-        for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
-            fromSupertypes.addAll(supertype.getMemberScope().getFunctions(name));
-        }
+    private <D extends CallableMemberDescriptor> void generateFakeOverrides(
+            @NotNull Name name,
+            @NotNull Collection<D> fromSupertypes,
+            @NotNull final Collection<D> result,
+            @NotNull final Class<? extends D> exactDescriptorClass
+    ) {
         OverrideResolver.generateOverridesInFunctionGroup(
                 name,
                 fromSupertypes,
@@ -75,9 +76,9 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                 new OverrideResolver.DescriptorSink() {
                     @Override
                     public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                        assert fakeOverride instanceof FunctionDescriptor : "A non-function overrides a function";
-                        FunctionDescriptor functionDescriptor = (FunctionDescriptor) fakeOverride;
-                        result.add(functionDescriptor);
+                        assert exactDescriptorClass.isInstance(fakeOverride) : "Wrong descriptor type in an override: " + fakeOverride + " while expecting " + exactDescriptorClass.getSimpleName();
+                        //noinspection unchecked
+                        result.add((D) fakeOverride);
                     }
 
                     @Override
@@ -90,16 +91,28 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                     }
                 }
         );
+
     }
 
     @Override
-    protected void getNonDeclaredProperties(@NotNull Name name, @NotNull Set<VariableDescriptor> result) {
-        System.err.println("getNonDeclaredProperties() should generate fake overrides for a class");
+    protected void getNonDeclaredFunctions(@NotNull Name name, @NotNull final Set<FunctionDescriptor> result) {
+        Collection<FunctionDescriptor> fromSupertypes = Lists.newArrayList();
+        for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
+            fromSupertypes.addAll(supertype.getMemberScope().getFunctions(name));
+        }
+        generateFakeOverrides(name, fromSupertypes, result, FunctionDescriptor.class);
+    }
+
+    @Override
+    protected void getNonDeclaredProperties(@NotNull Name name, @NotNull final Set<VariableDescriptor> result) {
+        System.err.println("Parameter of the primary constructor");
 
         // Inherited fake overrides
-        // Parameters of the primary constructor
-
-        throw new UnsupportedOperationException(); // TODO
+        Collection<PropertyDescriptor> fromSupertypes = Lists.newArrayList();
+        for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
+            fromSupertypes.addAll((Set) supertype.getMemberScope().getProperties(name));
+        }
+        generateFakeOverrides(name, fromSupertypes, (Set) result, PropertyDescriptor.class);
     }
 
     @Override
@@ -137,25 +150,35 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     @Nullable
     public ConstructorDescriptor getPrimaryConstructor() {
         if (!primaryConstructorResolved) {
-            if (EnumSet.of(ClassKind.CLASS, ClassKind.ANNOTATION_CLASS).contains(thisDescriptor.getKind())) {
+            if (EnumSet.of(ClassKind.CLASS, ClassKind.ANNOTATION_CLASS, ClassKind.OBJECT).contains(thisDescriptor.getKind())) {
                 JetClassOrObject classOrObject = declarationProvider.getOwnerClassOrObject();
                 if (classOrObject instanceof JetClass) {
                     JetClass jetClass = (JetClass) classOrObject;
-                    ConstructorDescriptorImpl descriptor = resolveSession.getInjector().getDescriptorResolver()
+                    ConstructorDescriptorImpl constructor = resolveSession.getInjector().getDescriptorResolver()
                             .resolvePrimaryConstructorDescriptor(thisDescriptor.getScopeForClassHeaderResolution(), thisDescriptor,
                                                                  jetClass,
                                                                  resolveSession.getTrace());
-                    primaryConstructor = descriptor;
-                    descriptor.setReturnType(DeferredType.create(resolveSession.getTrace(), new LazyValue<JetType>() {
-                        @Override
-                        protected JetType compute() {
-                            return thisDescriptor.getDefaultType();
-                        }
-                    }));
+                    primaryConstructor = constructor;
+                    setDeferredReturnType(constructor);
+                }
+                else {
+                    ConstructorDescriptorImpl constructor =
+                            DescriptorResolver.createPrimaryConstructorForObject(classOrObject, thisDescriptor, resolveSession.getTrace());
+                    setDeferredReturnType(constructor);
+                    primaryConstructor = constructor;
                 }
             }
             primaryConstructorResolved = true;
         }
         return primaryConstructor;
+    }
+
+    private void setDeferredReturnType(@NotNull ConstructorDescriptorImpl descriptor) {
+        descriptor.setReturnType(DeferredType.create(resolveSession.getTrace(), new LazyValue<JetType>() {
+            @Override
+            protected JetType compute() {
+                return thisDescriptor.getDefaultType();
+            }
+        }));
     }
 }

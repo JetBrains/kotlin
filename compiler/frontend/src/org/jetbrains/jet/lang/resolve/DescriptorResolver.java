@@ -46,6 +46,7 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.CONSTRUCTOR;
 
 /**
  * @author abreslav
@@ -344,6 +345,25 @@ public class DescriptorResolver {
         extensibleScope.addTypeParameterDescriptor(typeParameterDescriptor);
         trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor);
         return typeParameterDescriptor;
+    }
+
+    public static ConstructorDescriptorImpl createPrimaryConstructorForObject(
+            @NotNull PsiElement object,
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull BindingTrace trace
+    ) {
+        ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(classDescriptor, Collections
+                .<AnnotationDescriptor>emptyList(), true);
+
+        // TODO : make the constructor private?
+        // TODO check set classDescriptor.getVisibility()
+        constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(),
+                                         Collections.<ValueParameterDescriptor>emptyList(), Visibilities.INTERNAL);
+
+        if (object != null) {
+            trace.record(CONSTRUCTOR, object, constructorDescriptor);
+        }
+        return constructorDescriptor;
     }
 
     final class UpperBoundCheckerTask {
