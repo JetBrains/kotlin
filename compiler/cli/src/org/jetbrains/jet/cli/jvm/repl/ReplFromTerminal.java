@@ -86,7 +86,7 @@ public class ReplFromTerminal {
     private void doRun() {
         try {
             System.out.println("Kotlin interactive shell");
-            System.out.println("Type :help for help");
+            System.out.println("Type :help for help, :quit for quit");
             while (true) {
                 boolean next = one();
                 if (!next) {
@@ -129,7 +129,11 @@ public class ReplFromTerminal {
             System.out.println("This is Kotlin REPL help");
             System.out.println("Available commands are:");
             System.out.println(":help                   show this help");
+            System.out.println(":quit                   exit the interpreter");
             return true;
+        }
+        else if (command.equals("quit")) {
+            return false;
         }
         else {
             System.out.println("Unknown command");
