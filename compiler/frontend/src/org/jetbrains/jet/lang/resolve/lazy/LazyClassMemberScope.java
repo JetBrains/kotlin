@@ -78,7 +78,6 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                         assert fakeOverride instanceof FunctionDescriptor : "A non-function overrides a function";
                         FunctionDescriptor functionDescriptor = (FunctionDescriptor) fakeOverride;
                         result.add(functionDescriptor);
-                        allDescriptors.add(functionDescriptor);
                     }
 
                     @Override
