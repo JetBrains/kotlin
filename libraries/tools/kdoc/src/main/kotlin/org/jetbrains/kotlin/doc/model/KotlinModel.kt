@@ -1018,6 +1018,8 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
     }
 
     fun packageFunctions() = functions.filter{ it.extensionClass == null }
+
+    fun packageProperties() = properties.filter{ it.extensionClass == null && it.isPublic() }
 }
 
 class KType(val jetType: JetType, model: KModel, val klass: KClass?, val arguments: List<KType> = ArrayList<KType>())
@@ -1174,6 +1176,11 @@ class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, 
     fun isVar(): Boolean = descriptor.isVar()
 
     fun kind(): String = if (isVar()) "var" else "val"
+
+    fun isPublic(): Boolean {
+        val visibility = descriptor.getVisibility()
+        return visibility.isPublicAPI()
+    }
 
     fun toString() = "property $name"
 }

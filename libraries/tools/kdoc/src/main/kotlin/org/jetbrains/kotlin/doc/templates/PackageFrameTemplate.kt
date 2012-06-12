@@ -38,6 +38,7 @@ ${stylesheets()}
         printClasses("enum", "Enums")
         printClasses("annotation", "Annotations")
         printClasses("exception", "Exceptions")
+        printPackageProperties()
         printFunctions()
         printExtensionFunctions()
 
@@ -100,6 +101,24 @@ ${stylesheets()}
                 val c = e.key
                 if (c != null) {
                     println("""<A HREF="${extensionsHref(pkg, c)}" title="extensions functions on class ${c.name} from ${pkg.name}" target="classFrame"><I>${c.name}</I></A>
+<BR>""")
+                }
+            }
+            println("""</TR>
+</TABLE>""")
+        }
+    }
+    protected fun printPackageProperties(): Unit {
+        val list = pkg.packageProperties()
+        if (list.notEmpty()) {
+            println("""<TABLE BORDER="0" WIDTH="100%" SUMMARY="">
+<TR>
+<TD NOWRAP><FONT size="+1" CLASS="FrameHeadingFont">Properties</FONT>&nbsp;
+<FONT CLASS="FrameItemFont">
+<BR>""")
+            for (c in list) {
+                if (c != null) {
+                    println("""<A HREF="${href(pkg, c)}" title="property from ${pkg.name}" target="classFrame"><I>${c.name}</I></A>
 <BR>""")
                 }
             }

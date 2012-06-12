@@ -36,6 +36,13 @@ abstract class KDocTemplate() : TextTemplate() {
         }
     }
 
+    /**
+     * Generates a link to a package level property
+      */
+    open fun href(pkg: KPackage, p: KProperty): String {
+        return "${href(pkg)}#${p.link}"
+    }
+
     open fun href(f: KProperty): String {
         return if (f.owner is KClass) {
             "${href(f.owner)}#${f.link}"

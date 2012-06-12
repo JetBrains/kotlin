@@ -121,8 +121,9 @@ ${pkg.description(this)}
         printClasses("annotation", "Annotations")
         printClasses("exception", "Exceptions")
 
+        printPropertySummary(pkg.packageProperties())
         printFunctionSummary(pkg.packageFunctions())
-        //printFunctions()
+
         printExtensionFunctions()
 
         println("""<A NAME="package_description"><!-- --></A><H2>
