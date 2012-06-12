@@ -117,11 +117,8 @@ public class InjectorForTopDownAnalyzerBasic {
 
         this.topDownAnalyzer.setBodyResolver(bodyResolver);
         this.topDownAnalyzer.setContext(topDownAnalysisContext);
-        this.topDownAnalyzer.setControlFlowAnalyzer(controlFlowAnalyzer);
         this.topDownAnalyzer.setDeclarationResolver(declarationResolver);
-        this.topDownAnalyzer.setDeclarationsChecker(declarationsChecker);
         this.topDownAnalyzer.setDelegationResolver(delegationResolver);
-        this.topDownAnalyzer.setDependencyClassByQualifiedNameResolver(dependencyClassByQualifiedNameResolverDummy);
         this.topDownAnalyzer.setModuleDescriptor(moduleDescriptor);
         this.topDownAnalyzer.setNamespaceFactory(namespaceFactory);
         this.topDownAnalyzer.setOverloadResolver(overloadResolver);
@@ -133,6 +130,8 @@ public class InjectorForTopDownAnalyzerBasic {
         this.topDownAnalysisContext.setTopDownAnalysisParameters(topDownAnalysisParameters);
 
         this.bodyResolver.setCallResolver(callResolver);
+        this.bodyResolver.setControlFlowAnalyzer(controlFlowAnalyzer);
+        this.bodyResolver.setDeclarationsChecker(declarationsChecker);
         this.bodyResolver.setDescriptorResolver(descriptorResolver);
         this.bodyResolver.setExpressionTypingServices(expressionTypingServices);
         this.bodyResolver.setScriptResolver(scriptResolver);

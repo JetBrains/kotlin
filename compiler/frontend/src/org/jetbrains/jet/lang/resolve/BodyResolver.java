@@ -122,6 +122,10 @@ public class BodyResolver {
     private CallResolver callResolver;
     @NotNull
     private ObservableBindingTrace trace;
+    @NotNull
+    private ControlFlowAnalyzer controlFlowAnalyzer;
+    @NotNull
+    private DeclarationsChecker declarationsChecker;
 
     @Inject
     public void setTopDownAnalysisParameters(@NotNull TopDownAnalysisParameters topDownAnalysisParameters) {
@@ -153,7 +157,18 @@ public class BodyResolver {
         this.trace = new ObservableBindingTrace(trace);
     }
 
-    public void resolveBehaviorDeclarationBodies(@NotNull BodiesResolveContext bodiesResolveContext) {
+    @Inject
+    public void setControlFlowAnalyzer(@NotNull ControlFlowAnalyzer controlFlowAnalyzer) {
+        this.controlFlowAnalyzer = controlFlowAnalyzer;
+    }
+
+    @Inject
+    public void setDeclarationsChecker(@NotNull DeclarationsChecker declarationsChecker) {
+        this.declarationsChecker = declarationsChecker;
+    }
+
+
+    private void resolveBehaviorDeclarationBodies(@NotNull BodiesResolveContext bodiesResolveContext) {
         // Initialize context
         context = bodiesResolveContext;
 
@@ -172,6 +187,13 @@ public class BodyResolver {
         if (!topDownAnalysisParameters.isDeclaredLocally()) {
             computeDeferredTypes();
         }
+    }
+
+    public void resolveBodies(@NotNull BodiesResolveContext bodiesResolveContext) {
+        resolveBehaviorDeclarationBodies(bodiesResolveContext);
+        controlFlowAnalyzer.process(bodiesResolveContext);
+        declarationsChecker.process(bodiesResolveContext);
+
     }
 
     private void resolveDelegationSpecifierLists() {

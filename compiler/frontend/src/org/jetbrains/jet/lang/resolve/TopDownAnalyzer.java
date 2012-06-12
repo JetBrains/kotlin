@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
@@ -34,10 +33,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
-import org.jetbrains.jet.lang.types.ref.JetTypeName;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -71,11 +67,7 @@ public class TopDownAnalyzer {
     @NotNull
     private NamespaceFactoryImpl namespaceFactory;
     @NotNull
-    private DependencyClassByQualifiedNameResolver dependencyClassByQualifiedNameResolver;
-
     private BodyResolver bodyResolver;
-    private ControlFlowAnalyzer controlFlowAnalyzer;
-    private DeclarationsChecker declarationsChecker;
 
     @Inject
     public void setDeclarationResolver(@NotNull DeclarationResolver declarationResolver) {
@@ -128,24 +120,10 @@ public class TopDownAnalyzer {
     }
 
     @Inject
-    public void setBodyResolver(BodyResolver bodyResolver) {
+    public void setBodyResolver(@NotNull BodyResolver bodyResolver) {
         this.bodyResolver = bodyResolver;
     }
 
-    @Inject
-    public void setControlFlowAnalyzer(ControlFlowAnalyzer controlFlowAnalyzer) {
-        this.controlFlowAnalyzer = controlFlowAnalyzer;
-    }
-
-    @Inject
-    public void setDeclarationsChecker(DeclarationsChecker declarationsChecker) {
-        this.declarationsChecker = declarationsChecker;
-    }
-
-    @Inject
-    public void setDependencyClassByQualifiedNameResolver(@NotNull DependencyClassByQualifiedNameResolver dependencyClassByQualifiedNameResolver) {
-        this.dependencyClassByQualifiedNameResolver = dependencyClassByQualifiedNameResolver;
-    }
 
 
     public void doProcess(
@@ -165,17 +143,11 @@ public class TopDownAnalyzer {
         overloadResolver.process();
 
         if (!topDownAnalysisParameters.isAnalyzingBootstrapLibrary()) {
-            doProcessForBodies(context);
+            bodyResolver.resolveBodies(context);
         }
 
         context.debug("Exit");
         context.printDebugOutput(System.out);
-    }
-
-    public void doProcessForBodies(BodiesResolveContext bodiesResolveContext) {
-        bodyResolver.resolveBehaviorDeclarationBodies(bodiesResolveContext);
-        controlFlowAnalyzer.process(bodiesResolveContext);
-        declarationsChecker.process(bodiesResolveContext);
     }
 
     private void lockScopes() {

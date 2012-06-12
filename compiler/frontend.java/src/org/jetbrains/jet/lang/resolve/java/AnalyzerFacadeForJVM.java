@@ -152,7 +152,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                 new ObservableBindingTrace(traceContext), owner, compilerDependencies);
 
         try {
-            injector.getTopDownAnalyzer().doProcessForBodies(bodiesResolveContext);
+            injector.getBodyResolver().resolveBodies(bodiesResolveContext);
             return AnalyzeExhaust.success(traceContext.getBindingContext(), JetStandardLibrary.getInstance());
         } finally {
             injector.destroy();

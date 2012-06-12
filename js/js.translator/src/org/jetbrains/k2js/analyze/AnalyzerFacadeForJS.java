@@ -124,7 +124,7 @@ public final class AnalyzerFacadeForJS {
 
         try {
             bodiesResolveContext.setTopDownAnalysisParameters(topDownAnalysisParameters);
-            injector.getTopDownAnalyzer().doProcessForBodies(bodiesResolveContext);
+            injector.getBodyResolver().resolveBodies(bodiesResolveContext);
             return AnalyzeExhaust.success(traceContext.getBindingContext(), JetStandardLibrary.getInstance());
         }
         finally {
