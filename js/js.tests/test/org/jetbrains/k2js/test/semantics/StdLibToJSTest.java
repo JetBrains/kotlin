@@ -33,55 +33,12 @@ import java.util.Set;
 
 /**
  */
-public class StdLibToJSTest extends SingleFileTranslationTest {
-
-    public StdLibToJSTest() {
-        super("stdlib/");
-    }
+public class StdLibToJSTest extends StdLibTestSupport {
 
     public void testCompileJavaScriptFiles() throws Exception {
 
         generateJavaScriptFiles(EcmaVersion.all(),
                                 "libraries/stdlib/src",
                                 "kotlin/Preconditions.kt", "kotlin/dom/Dom.kt", "kotlin/support/AbstractIterator.kt");
-    }
-
-    protected void generateJavaScriptFiles(@NotNull EnumSet<EcmaVersion> ecmaVersions,
-            @NotNull String sourceDir, @NotNull String... stdLibFiles) throws Exception {
-        List<String> files = Lists.newArrayList();
-
-        File stdlibDir = new File(sourceDir);
-        assertTrue("Cannot find stdlib source: " + stdlibDir, stdlibDir.exists());
-        for (String file : stdLibFiles) {
-            files.add(new File(stdlibDir, file).getPath());
-        }
-
-        Set<String> ignoreFiles = Sets.newHashSet(
-                "/jquery/common.kt",
-                "/jquery/ui.kt",
-                "/dom/domcore.kt",
-                "/dom/html/htmlcore.kt",
-                "/dom/html5/canvas.kt",
-                "/dom/html/window.kt");
-
-        // lets add the standard JS library files
-        for (String libFileName : Config.LIB_FILE_NAMES) {
-            if (!ignoreFiles.contains(libFileName)) {
-                System.out.println("Compiling " + libFileName);
-                files.add(Config.LIBRARIES_LOCATION + libFileName);
-            }
-        }
-
-        // now lets try invoke the compiler
-        for (EcmaVersion version : ecmaVersions) {
-            K2JSCompiler compiler = new K2JSCompiler();
-            K2JSCompilerArguments arguments = new K2JSCompilerArguments();
-            arguments.outputFile = getOutputFilePath(getTestName(false) + ".compiler.kt", version);
-            arguments.sourceFiles = files;
-            arguments.verbose = true;
-            System.out.println("Compiling with version: " + version + " to: " + arguments.outputFile);
-            ExitCode answer = compiler.exec(System.out, arguments);
-            assertEquals("Compile failed", ExitCode.OK, answer);
-        }
     }
 }

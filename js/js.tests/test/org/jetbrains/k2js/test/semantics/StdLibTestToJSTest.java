@@ -34,8 +34,8 @@ import java.util.Set;
 
 /**
  */
-public class StdLibTestToJSTest extends StdLibToJSTest {
-    public void testCompileJavaScriptFiles() throws Exception {
+public class StdLibTestToJSTest extends StdLibTestSupport {
+    public void testGenerateTestCase() throws Exception {
 
         generateJavaScriptFiles(EcmaVersion.all(),
                                 "libraries/stdlib/test",
