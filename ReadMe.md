@@ -44,6 +44,8 @@ The [root kotlin project](https://github.com/JetBrains/kotlin) already has an ID
 
 **Note** though that you need a recent IDEA build (e.g. [11 EAP](http://confluence.jetbrains.net/display/IDEADEV/IDEA+11.1+EAP)) which should **not** contain the Kotlin plugin!
 
+If you want to have an IDEA installation without the Kotlin plugin which is separate to your default IDEA installation which has the Kotlin plugin [see this document](http://devnet.jetbrains.net/docs/DOC-181) which describes how to have mutliple IDEA installs using different configurations and plugin directories.
+
 From this root project there are Run/Debug Configurations for running IDEA or the Compiler Tests for example; so if you want to try out the latest greatest IDEA plugin
 
 * VCS -> Git -> Pull
