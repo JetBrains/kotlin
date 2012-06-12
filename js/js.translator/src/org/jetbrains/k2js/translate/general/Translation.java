@@ -19,7 +19,10 @@ package org.jetbrains.k2js.translate.general;
 import com.google.dart.compiler.backend.js.JsNamer;
 import com.google.dart.compiler.backend.js.JsPrettyNamer;
 import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -46,6 +49,7 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.dangerous.DangerousData;
 import org.jetbrains.k2js.translate.utils.dangerous.DangerousTranslator;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -144,10 +148,10 @@ public final class Translation {
     @NotNull
     public static JsProgram generateAst(@NotNull BindingContext bindingContext,
             @NotNull List<JetFile> files, @NotNull MainCallParameters mainCallParameters,
-            @NotNull EcmaVersion ecmaVersion)
+            @NotNull EcmaVersion ecmaVersion, List<String> rawStatements)
             throws TranslationException {
         try {
-            return doGenerateAst(bindingContext, files, mainCallParameters, ecmaVersion);
+            return doGenerateAst(bindingContext, files, mainCallParameters, ecmaVersion, rawStatements);
         }
         catch (UnsupportedOperationException e) {
             throw new UnsupportedFeatureException("Unsupported feature used.", e);
@@ -160,7 +164,7 @@ public final class Translation {
     @NotNull
     private static JsProgram doGenerateAst(@NotNull BindingContext bindingContext, @NotNull List<JetFile> files,
             @NotNull MainCallParameters mainCallParameters,
-            @NotNull EcmaVersion ecmaVersion) throws MainFunctionNotFoundException {
+            @NotNull EcmaVersion ecmaVersion, List<String> rawStatements) throws MainFunctionNotFoundException {
         //TODO: move some of the code somewhere
         JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
         StaticContext staticContext = StaticContext.generateStaticContext(standardLibrary, bindingContext, ecmaVersion);
@@ -176,6 +180,7 @@ public final class Translation {
         if (mainCallParameters.shouldBeGenerated()) {
             statements.add(generateCallToMain(context, files, mainCallParameters.arguments()));
         }
+        generateTestCalls(context, files, block, rawStatements);
         JsNamer namer = new JsPrettyNamer();
         namer.exec(context.program());
         return context.program();
@@ -193,6 +198,7 @@ public final class Translation {
         return translatedCall.makeStmt();
     }
 
+
     @NotNull
     private static JsInvocation generateInvocation(@NotNull TranslationContext context, @NotNull JetNamedFunction mainFunction) {
         FunctionDescriptor functionDescriptor = getFunctionDescriptor(context.bindingContext(), mainFunction);
@@ -207,4 +213,54 @@ public final class Translation {
         arrayLiteral.getExpressions().addAll(toStringLiteralList(arguments, context.program()));
         JsAstUtils.setArguments(translatedCall, Collections.<JsExpression>singletonList(arrayLiteral));
     }
+
+    @NotNull
+    private static void generateTestCalls(@NotNull TranslationContext context,
+            @NotNull List<JetFile> files,
+            @NotNull JsBlock block,
+            List<String> rawStatements) {
+        ClassDescriptor lastClassDescriptor = null;
+        boolean declaredVar = false;
+        List<JetNamedFunction> functions = JetTestFunctionDetector.findTestFunctions(context.bindingContext(), files);
+        for (JetNamedFunction function : functions) {
+            FunctionDescriptor functionDescriptor = getFunctionDescriptor(context.bindingContext(), function);
+            String funName = functionDescriptor.getName().getName();
+            DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
+            if (containingDeclaration instanceof ClassDescriptor) {
+                ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
+                String className = getQualifiedName(classDescriptor);
+                if (lastClassDescriptor != classDescriptor) {
+                    lastClassDescriptor = classDescriptor;
+                    String prefix = "";
+                    if (!declaredVar) {
+                        prefix = "var ";
+                        declaredVar = true;
+                    }
+                    rawStatements.add(prefix + "_testCase = new " + className + "();");
+                }
+                rawStatements.add("QUnit.test( \"" + className + "." + funName + "()\" , function() {");
+                rawStatements.add("    expect(0);");
+                rawStatements.add("    _testCase." + funName + "();");
+            } else {
+                rawStatements.add("QUnit.test( \"" + funName + "()\", function() {");
+                rawStatements.add("    expect(0);");
+                rawStatements.add("    " + funName + "();");
+            }
+            rawStatements.add("});");
+        }
+    }
+
+    public static String  getQualifiedName(ClassDescriptor classDescriptor) {
+            List<String> parts = new ArrayList<String>();
+            DeclarationDescriptor current = classDescriptor;
+            while (current != null) {
+                String name = current.getName().getName();
+                if (name.startsWith("<")) break;
+                parts.add(name);
+                current = current.getContainingDeclaration();
+            }
+            Collections.reverse(parts);
+            return StringUtil.join(parts, ".");
+        }
+
 }

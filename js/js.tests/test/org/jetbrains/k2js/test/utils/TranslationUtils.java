@@ -48,16 +48,19 @@ public final class TranslationUtils {
 
     public static void translateFile(@NotNull Project project, @NotNull String inputFile,
             @NotNull String outputFile, @NotNull MainCallParameters mainCallParameters, @NotNull EcmaVersion version) throws Exception {
-        translateFiles(project, Collections.singletonList(inputFile), outputFile, mainCallParameters, version);
+        translateFiles(project, Collections.singletonList(inputFile), outputFile, mainCallParameters, version, null);
     }
 
     public static void translateFiles(@NotNull Project project, @NotNull List<String> inputFiles,
-            @NotNull String outputFile, @NotNull MainCallParameters mainCallParameters, @NotNull EcmaVersion version) throws Exception {
+            @NotNull String outputFile,
+            @NotNull MainCallParameters mainCallParameters,
+            @NotNull EcmaVersion version,
+            List<String> rawStatements) throws Exception {
         List<JetFile> psiFiles = createPsiFileList(inputFiles, project);
-        JsProgram program = getTranslator(project, version).generateProgram(psiFiles, mainCallParameters);
+        JsProgram program = getTranslator(project, version).generateProgram(psiFiles, mainCallParameters, rawStatements);
         FileWriter writer = new FileWriter(new File(outputFile));
         try {
-            writer.write(CodeGenerator.toString(program));
+            writer.write(CodeGenerator.toString(program, null));
         }
         finally {
             writer.close();
