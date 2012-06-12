@@ -32,11 +32,9 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- */
-public class StdLibTestSupport extends SingleFileTranslationTest {
+abstract class StdLibTestSupport extends SingleFileTranslationTest {
 
-    public StdLibTestSupport() {
+    protected StdLibTestSupport() {
         super("stdlib/");
     }
 
