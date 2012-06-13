@@ -38,6 +38,12 @@
                                         <exclude name="dom/html/htmlcore.kt"/>
                                         <exclude name="dom/html5/canvas.kt"/>
                                         <exclude name="dom/html/window.kt"/>
+                                        <exclude name="stdlib/test.kt"/>
+                                    </fileset>
+                                </copy>
+                                <copy todir="${basedir}/target/generated-js-library">
+                                    <fileset dir="${kotlin-js-lib-srcdir}">
+                                        <include name="stdlib/test.kt"/>
                                     </fileset>
                                 </copy>
                                 <copy todir="${basedir}/target/generated-js-library/kotlin">
@@ -46,6 +52,10 @@
                                         <exclude name="**/*JVM.kt"/>
                                     </fileset>
                                     <fileset dir="${basedir}/../../stdlib/src/kotlin/support">
+                                        <include name="**/*.kt"/>
+                                        <exclude name="**/*JVM.kt"/>
+                                    </fileset>
+                                    <fileset dir="${basedir}/../../stdlib/src/kotlin/test">
                                         <include name="**/*.kt"/>
                                         <exclude name="**/*JVM.kt"/>
                                     </fileset>
