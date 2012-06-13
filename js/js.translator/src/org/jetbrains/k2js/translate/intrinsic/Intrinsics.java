@@ -226,7 +226,7 @@ public final class Intrinsics {
     }
 
     @SuppressWarnings("ConstantConditions")
-    private final class IntrinsicDeclarationVisitor extends DeclarationDescriptorVisitor<Void, Void> {
+    private final class IntrinsicDeclarationVisitor extends DeclarationDescriptorVisitorEmptyBodies<Void, Void> {
 
         @Override
         public Void visitClassDescriptor(@NotNull ClassDescriptor descriptor, @Nullable Void nothing) {

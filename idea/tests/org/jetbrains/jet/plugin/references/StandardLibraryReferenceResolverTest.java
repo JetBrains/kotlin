@@ -17,12 +17,11 @@
 package org.jetbrains.jet.plugin.references;
 
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.tree.PsiCommentImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.ResolveTestCase;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
@@ -78,7 +77,7 @@ public class StandardLibraryReferenceResolverTest extends ResolveTestCase {
 
     private static Collection<DeclarationDescriptor> getAllStandardDescriptors(DeclarationDescriptor baseDescriptor) {
         final ArrayList<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();
-        baseDescriptor.acceptVoid(new DeclarationDescriptorVisitor<Void, Void>() {
+        baseDescriptor.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
             private Void visitDescriptors(Collection<? extends DeclarationDescriptor> descriptors) {
                 for (DeclarationDescriptor descriptor : descriptors) {
                     descriptor.acceptVoid(this);

@@ -17,66 +17,32 @@
 package org.jetbrains.jet.lang.descriptors;
 
 /**
- * @author abreslav
+ * @author Stepan Koltsov
  */
-public class DeclarationDescriptorVisitor<R, D> {
-    public R visitDeclarationDescriptor(DeclarationDescriptor descriptor, D data) {
-        return null;
-    }
+public interface DeclarationDescriptorVisitor<R, D> {
+    R visitNamespaceDescriptor(NamespaceDescriptor descriptor, D data);
 
-    public R visitVariableDescriptor(VariableDescriptor descriptor, D data) {
-        return visitDeclarationDescriptor(descriptor, data);
-    }
+    R visitVariableDescriptor(VariableDescriptor descriptor, D data);
 
-    public R visitFunctionDescriptor(FunctionDescriptor descriptor, D data) {
-        return visitDeclarationDescriptor(descriptor, data);
-    }
+    R visitFunctionDescriptor(FunctionDescriptor descriptor, D data);
 
-    public R visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, D data) {
-        return visitDeclarationDescriptor(descriptor, data);
-    }
+    R visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, D data);
 
-    public R visitNamespaceDescriptor(NamespaceDescriptor descriptor, D data) {
-        return visitDeclarationDescriptor(descriptor, data);
-    }
+    R visitClassDescriptor(ClassDescriptor descriptor, D data);
 
-    public R visitClassDescriptor(ClassDescriptor descriptor, D data) {
-        return visitDeclarationDescriptor(descriptor, data);
-    }
+    R visitModuleDeclaration(ModuleDescriptor descriptor, D data);
 
-    public R visitModuleDeclaration(ModuleDescriptor descriptor, D data) {
-        return visitDeclarationDescriptor(descriptor, data);
-    }
+    R visitConstructorDescriptor(ConstructorDescriptor constructorDescriptor, D data);
 
-    public R visitConstructorDescriptor(ConstructorDescriptor constructorDescriptor, D data) {
-        return visitFunctionDescriptor(constructorDescriptor, data);
-    }
+    R visitScriptDescriptor(ScriptDescriptor scriptDescriptor, D data);
 
-    public R visitScriptDescriptor(ScriptDescriptor scriptDescriptor, D data) {
-        return visitDeclarationDescriptor(scriptDescriptor, data);
-    }
+    R visitLocalVariableDescriptor(LocalVariableDescriptor descriptor, D data);
 
-    public R visitLocalVariableDescriptor(LocalVariableDescriptor descriptor, D data) {
-        return visitVariableDescriptor(descriptor, data);
-    }
+    R visitPropertyDescriptor(PropertyDescriptor descriptor, D data);
 
-    public R visitPropertyDescriptor(PropertyDescriptor descriptor, D data) {
-        return visitVariableDescriptor(descriptor, data);
-    }
+    R visitValueParameterDescriptor(ValueParameterDescriptor descriptor, D data);
 
-    public R visitValueParameterDescriptor(ValueParameterDescriptor descriptor, D data) {
-        return visitVariableDescriptor(descriptor, data);
-    }
+    R visitPropertyGetterDescriptor(PropertyGetterDescriptor descriptor, D data);
 
-    public R visitPropertyGetterDescriptor(PropertyGetterDescriptor descriptor, D data) {
-        return visitPropertyAccessorDescriptor(descriptor, data);
-    }
-
-    private R visitPropertyAccessorDescriptor(PropertyAccessorDescriptor descriptor, D data) {
-        return visitFunctionDescriptor(descriptor, data);
-    }
-
-    public R visitPropertySetterDescriptor(PropertySetterDescriptor descriptor, D data) {
-        return visitPropertyAccessorDescriptor(descriptor, data);
-    }
+    R visitPropertySetterDescriptor(PropertySetterDescriptor descriptor, D data);
 }
