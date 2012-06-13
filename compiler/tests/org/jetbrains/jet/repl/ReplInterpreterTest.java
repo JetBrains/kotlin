@@ -97,5 +97,10 @@ public class ReplInterpreterTest {
         testFile("empty.repl");
     }
 
+    @Test
+    public void imports() {
+        testFile("imports.repl");
+    }
+
 
 }

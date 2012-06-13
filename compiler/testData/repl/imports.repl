@@ -1,0 +1,6 @@
+>>> import java.io.ByteArrayOutputStream
+null
+>>> val s = ByteArrayOutputStream()
+null
+>>> s.getClass()!!.getName()
+java.io.ByteArrayOutputStream
