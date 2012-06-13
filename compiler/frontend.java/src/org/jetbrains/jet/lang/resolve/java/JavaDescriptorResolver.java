@@ -58,32 +58,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     public static final ModuleDescriptor FAKE_ROOT_MODULE = new ModuleDescriptor(JAVA_ROOT);
 
-    /*package*/ static final DeclarationDescriptor JAVA_METHOD_TYPE_PARAMETER_PARENT = new DeclarationDescriptorImpl(null, Collections.<AnnotationDescriptor>emptyList(), Name.special("<java_generic_method>")) {
-
-        @Override
-        public DeclarationDescriptor substitute(TypeSubstitutor substitutor) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
-            return visitor.visitDeclarationDescriptor(this, data);
-        }
-    };
-
-    /*package*/ static final DeclarationDescriptor JAVA_CLASS_OBJECT = new DeclarationDescriptorImpl(null, Collections.<AnnotationDescriptor>emptyList(), Name.special("<java_class_object_emulation>")) {
-        @NotNull
-        @Override
-        public DeclarationDescriptor substitute(TypeSubstitutor substitutor) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
-            return visitor.visitDeclarationDescriptor(this, data);
-        }
-    };
-
     private static Visibility PACKAGE_VISIBILITY = new Visibility("package", false) {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
