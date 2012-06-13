@@ -128,8 +128,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                     getScopeForClassHeaderResolution(), this, RedeclarationHandler.DO_NOTHING, "Member Declaration Resolution");
             scope.importScope(getScopeForMemberLookup());
 
-            // TODO : supertypes etc
-
             scope.changeLockLevel(WritableScope.LockLevel.READING);
             scopeForMemberDeclarationResolution = scope;
         }
