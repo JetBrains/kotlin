@@ -21,6 +21,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
@@ -113,6 +115,14 @@ public final class AnalyzerFacadeWithCache {
                                 BindingTraceContext bindingTraceContext = new BindingTraceContext();
                                 bindingTraceContext.report(Errors.EXCEPTION_WHILE_ANALYZING.on(file, e));
                                 AnalyzeExhaust analyzeExhaust = AnalyzeExhaust.error(bindingTraceContext.getBindingContext(), e);
+
+                                CachedValue<AnalyzeExhaust> bindingContextCachedValue = file.getUserData(ANALYZE_EXHAUST_HEADERS);
+                                if (bindingContextCachedValue != null && bindingContextCachedValue.hasUpToDateValue()) {
+                                    // Force invalidating of headers cache - temp decision for monitoring rewrite slice bug
+                                    PsiModificationTracker tracker = PsiManager.getInstance(file.getProject()).getModificationTracker();
+                                    ((PsiModificationTrackerImpl) tracker).incOutOfCodeBlockModificationCounter();
+                                }
+
                                 return new Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
                             }
                         }, false);
