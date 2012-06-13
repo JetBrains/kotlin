@@ -146,7 +146,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (innerExpression == null) {
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        JetTypeInfo typeInfo = facade.getType(innerExpression, context.replaceScope(context.scope), isStatement);
+        JetTypeInfo typeInfo = facade.getTypeInfo(innerExpression, context.replaceScope(context.scope), isStatement);
         return DataFlowUtils.checkType(typeInfo.getType(), expression, context, typeInfo.getDataFlowInfo());
     }
 
@@ -213,14 +213,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             result = operationType == JetTokens.AS_SAFE ? TypeUtils.makeNullable(targetType) : targetType;
         }
         else {
-            facade.getType(expression.getLeft(), context.replaceExpectedType(NO_EXPECTED_TYPE));
+            facade.getTypeInfo(expression.getLeft(), context.replaceExpectedType(NO_EXPECTED_TYPE));
         }
         return DataFlowUtils.checkType(result, expression, context, context.dataFlowInfo);
     }
 
     private boolean checkBinaryWithTypeRHS(JetBinaryExpressionWithTypeRHS expression, ExpressionTypingContext context, @NotNull JetType targetType) {
 
-        JetType actualType = facade.getType(expression.getLeft(), context).getType();
+        JetType actualType = facade.getTypeInfo(expression.getLeft(), context).getType();
         if (actualType == null) return false;
 
         JetSimpleNameExpression operationSign = expression.getOperationSign();
@@ -532,7 +532,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetExpression selectorExpression = expression.getSelectorExpression();
         JetExpression receiverExpression = expression.getReceiverExpression();
         ExpressionTypingContext contextWithNoExpectedType = context.replaceExpectedType(NO_EXPECTED_TYPE);
-        JetTypeInfo receiverTypeInfo = facade.getType(receiverExpression, contextWithNoExpectedType.replaceNamespacesAllowed(true));
+        JetTypeInfo receiverTypeInfo = facade.getTypeInfo(receiverExpression, contextWithNoExpectedType.replaceNamespacesAllowed(true));
         JetType receiverType = receiverTypeInfo.getType();
         if (selectorExpression == null) return JetTypeInfo.create(null, context.dataFlowInfo);
         if (receiverType == null) receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());
@@ -764,7 +764,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             referencedName = referencedName == null ? " <?>" : referencedName;
             context.labelResolver.enterLabeledElement(new LabelName(referencedName.substring(1)), baseExpression);
             // TODO : Some processing for the label?
-            JetTypeInfo typeInfo = facade.getType(baseExpression, context, isStatement);
+            JetTypeInfo typeInfo = facade.getTypeInfo(baseExpression, context, isStatement);
             context.labelResolver.exitLabeledElement(baseExpression);
             return DataFlowUtils.checkType(typeInfo.getType(), expression, context, typeInfo.getDataFlowInfo());
         }
@@ -772,7 +772,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         IElementType operationType = operationSign.getReferencedNameElementType();
 
         // Type check the base expression
-        JetTypeInfo typeInfo = facade.getType(baseExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
+        JetTypeInfo typeInfo = facade.getTypeInfo(baseExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
         JetType type = typeInfo.getType();
         if (type == null) {
             return typeInfo;
@@ -961,7 +961,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 result = booleanType;
             }
             else if (operationType == JetTokens.ANDAND || operationType == JetTokens.OROR) {
-                JetType leftType = facade.getType(left, context.replaceScope(context.scope)).getType();
+                JetType leftType = facade.getTypeInfo(left, context.replaceScope(context.scope)).getType();
                 WritableScopeImpl leftScope = newWritableScopeImpl(context, "Left scope of && or ||");
                 DataFlowInfo flowInfoLeft = DataFlowUtils.extractDataFlowInfoFromCondition(left, operationType == JetTokens.ANDAND, leftScope, context);  // TODO: This gets computed twice: here and in extractDataFlowInfoFromCondition() for the whole condition
                 WritableScopeImpl rightScope = operationType == JetTokens.ANDAND
@@ -969,7 +969,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                                                : newWritableScopeImpl(context, "Right scope of && or ||");
                 JetType rightType = right == null
                                     ? null
-                                    : facade.getType(right, context.replaceDataFlowInfo(flowInfoLeft).replaceScope(rightScope)).getType();
+                                    : facade.getTypeInfo(right, context.replaceDataFlowInfo(flowInfoLeft).replaceScope(rightScope)).getType();
                 if (leftType != null && !isBoolean(leftType)) {
                     context.trace.report(TYPE_MISMATCH.on(left, booleanType, leftType));
                 }
@@ -979,17 +979,19 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 result = booleanType;
             }
             else if (operationType == JetTokens.ELVIS) {
-                JetType leftType = facade.getType(left, context.replaceScope(context.scope)).getType();
+                JetType leftType = facade.getTypeInfo(left, context.replaceScope(context.scope)).getType();
                 JetType rightType = right == null
                                     ? null
-                                    : facade.getType(right, contextWithExpectedType.replaceScope(context.scope)).getType();
+                                    : facade.getTypeInfo(right, contextWithExpectedType.replaceScope(context.scope)).getType();
                 if (leftType != null) {
                     if (!leftType.isNullable()) {
                         context.trace.report(USELESS_ELVIS.on(left, leftType));
                     }
                     if (rightType != null) {
                         DataFlowUtils.checkType(TypeUtils.makeNullableAsSpecified(leftType, rightType.isNullable()), left, contextWithExpectedType);
-                        return JetTypeInfo.create(TypeUtils.makeNullableAsSpecified(CommonSupertypes.commonSupertype(Arrays.asList(leftType, rightType)), rightType.isNullable()), context.dataFlowInfo);
+                        return JetTypeInfo.create(TypeUtils.makeNullableAsSpecified(
+                                CommonSupertypes.commonSupertype(Arrays.asList(leftType, rightType)), rightType.isNullable()),
+                                                  context.dataFlowInfo);
                     }
                 }
             }
@@ -1018,9 +1020,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetExpression right = expression.getRight();
 
         // TODO : duplicated effort for == and !=
-        JetType leftType = facade.getType(left, context.replaceScope(context.scope)).getType();
+        JetType leftType = facade.getTypeInfo(left, context.replaceScope(context.scope)).getType();
         if (leftType != null && right != null) {
-            JetType rightType = facade.getType(right, context.replaceScope(context.scope)).getType();
+            JetType rightType = facade.getTypeInfo(right, context.replaceScope(context.scope)).getType();
 
             if (rightType != null) {
                 if (TypeUtils.isIntersectionEmpty(leftType, rightType)) {
@@ -1103,7 +1105,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 public void visitStringTemplateEntryWithExpression(JetStringTemplateEntryWithExpression entry) {
                     JetExpression entryExpression = entry.getExpression();
                     if (entryExpression != null) {
-                        facade.getType(entryExpression, context);
+                        facade.getTypeInfo(entryExpression, context);
                     }
                     value[0] = CompileTimeConstantResolver.OUT_OF_RANGE;
                 }
@@ -1140,7 +1142,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (baseExpression == null) {
             return JetTypeInfo.create(null, data.dataFlowInfo);
         }
-        return facade.getType(baseExpression, data);
+        return facade.getTypeInfo(baseExpression, data);
     }
 
     @Override
@@ -1165,7 +1167,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                                                     @NotNull ExpressionTypingContext context,
                                                     @NotNull BindingTrace traceForResolveResult,
                                                     boolean isGet) {
-        JetType arrayType = facade.getType(arrayAccessExpression.getArrayExpression(), context).getType();
+        JetType arrayType = facade.getTypeInfo(arrayAccessExpression.getArrayExpression(), context).getType();
         if (arrayType == null) return null;
 
         ExpressionReceiver receiver = new ExpressionReceiver(arrayAccessExpression.getArrayExpression(), arrayType);

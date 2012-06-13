@@ -26,11 +26,11 @@ import org.jetbrains.jet.lang.types.JetTypeInfo;
  */
 public interface ExpressionTypingFacade {
     @NotNull
-    JetTypeInfo safeGetType(@NotNull JetExpression expression, ExpressionTypingContext context);
+    JetTypeInfo safeGetTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context);
 
     @NotNull
-    JetTypeInfo getType(@NotNull JetExpression expression, ExpressionTypingContext context);
+    JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context);
     
     @NotNull
-    JetTypeInfo getType(@NotNull JetExpression expression, ExpressionTypingContext context, boolean isStatement);
+    JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context, boolean isStatement);
 }

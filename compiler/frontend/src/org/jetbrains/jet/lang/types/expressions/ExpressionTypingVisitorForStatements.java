@@ -112,7 +112,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         JetExpression initializer = property.getInitializer();
         if (property.getPropertyTypeRef() != null && initializer != null) {
             JetType outType = propertyDescriptor.getType();
-            JetType initializerType = facade.getType(initializer, context.replaceExpectedType(outType).replaceScope(scope)).getType();
+            JetType initializerType = facade.getTypeInfo(initializer, context.replaceExpectedType(outType).replaceScope(scope)).getType();
         }
         
         {
@@ -169,7 +169,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             result = visitAssignmentOperation(expression, context);
         }
         else {
-            return facade.getType(expression, context);
+            return facade.getTypeInfo(expression, context);
         }
         return DataFlowUtils.checkType(result, expression, context, context.dataFlowInfo);
     }
@@ -187,9 +187,9 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
         if (left == null) return null;
 
-        JetType leftType = facade.getType(left, context).getType();
+        JetType leftType = facade.getTypeInfo(left, context).getType();
         if (leftType == null) {
-            facade.getType(right, context);
+            facade.getTypeInfo(right, context);
             context.trace.report(UNRESOLVED_REFERENCE.on(operationSign));
             temporaryBindingTrace.commit();
             return null;
@@ -217,7 +217,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             for (ResolvedCall<? extends FunctionDescriptor> call : ambiguityResolutionResults.getResultingCalls()) {
                 descriptors.add(call.getResultingDescriptor());
             }
-            facade.getType(right, context);
+            facade.getTypeInfo(right, context);
             context.trace.record(AMBIGUOUS_REFERENCE_TARGET, operationSign, descriptors);
         }
         else if (assignmentOperationType != null) {
@@ -250,9 +250,9 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             basic.checkLValue(context.trace, arrayAccessExpression);
             return checkAssignmentType(assignmentType, expression, contextWithExpectedType);
         }
-        JetType leftType = facade.getType(expression.getLeft(), context.replaceScope(scope)).getType();
+        JetType leftType = facade.getTypeInfo(expression.getLeft(), context.replaceScope(scope)).getType();
         if (right != null) {
-            JetType rightType = facade.getType(right, context.replaceExpectedType(leftType).replaceScope(scope)).getType();
+            JetType rightType = facade.getTypeInfo(right, context.replaceExpectedType(leftType).replaceScope(scope)).getType();
         }
         if (leftType != null) { //if leftType == null, some another error has been generated
             basic.checkLValue(context.trace, expression.getLeft());
@@ -263,7 +263,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public JetTypeInfo visitExpression(JetExpression expression, ExpressionTypingContext context) {
-        return facade.getType(expression, context);
+        return facade.getTypeInfo(expression, context);
     }
 
     @Override

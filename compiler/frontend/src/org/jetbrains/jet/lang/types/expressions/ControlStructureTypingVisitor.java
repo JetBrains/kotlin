@@ -65,7 +65,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
     private void checkCondition(@NotNull JetScope scope, @Nullable JetExpression condition, ExpressionTypingContext context) {
         if (condition != null) {
-            JetType conditionType = facade.getType(condition, context.replaceScope(scope)).getType();
+            JetType conditionType = facade.getTypeInfo(condition, context.replaceScope(scope)).getType();
 
             if (conditionType != null && !isBoolean(conditionType)) {
                 context.trace.report(TYPE_MISMATCH_IN_CONDITION.on(condition, conditionType));
@@ -100,7 +100,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 if (type != null && JetStandardClasses.isNothing(type)) {
                     facade.setResultingDataFlowInfo(elseInfo);
                 }
-                return DataFlowUtils.checkImplicitCast(DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType), expression, contextWithExpectedType, isStatement, context.dataFlowInfo);
+                return DataFlowUtils.checkImplicitCast(
+                        DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType), expression,
+                        contextWithExpectedType, isStatement, context.dataFlowInfo);
             }
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
@@ -205,7 +207,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.record(BindingContext.BLOCK, function);
             }
             else {
-                facade.getType(body, context.replaceScope(context.scope));
+                facade.getTypeInfo(body, context.replaceScope(context.scope));
             }
         }
         else if (body != null) {
@@ -419,7 +421,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 if (catchBody != null) {
                     WritableScope catchScope = newWritableScopeImpl(context, "Catch scope");
                     catchScope.addVariableDescriptor(variableDescriptor);
-                    JetType type = facade.getType(catchBody, context.replaceScope(catchScope)).getType();
+                    JetType type = facade.getTypeInfo(catchBody, context.replaceScope(catchScope)).getType();
                     if (type != null) {
                         types.add(type);
                     }
@@ -427,9 +429,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         if (finallyBlock != null) {
-            facade.getType(finallyBlock.getFinalExpression(), context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE));
+            facade.getTypeInfo(finallyBlock.getFinalExpression(), context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE));
         }
-        JetType type = facade.getType(tryBlock, context).getType();
+        JetType type = facade.getTypeInfo(tryBlock, context).getType();
         if (type != null) {
             types.add(type);
         }
@@ -446,7 +448,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetExpression thrownExpression = expression.getThrownExpression();
         if (thrownExpression != null) {
             JetType throwableType = JetStandardLibrary.getInstance().getThrowable().getDefaultType();
-            facade.getType(thrownExpression, context.replaceExpectedType(throwableType).replaceScope(context.scope));
+            facade.getTypeInfo(thrownExpression, context.replaceExpectedType(throwableType).replaceScope(context.scope));
         }
         return DataFlowUtils.checkType(JetStandardClasses.getNothingType(), expression, context, context.dataFlowInfo);
     }
@@ -501,7 +503,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         if (returnedExpression != null) {
-            facade.getType(returnedExpression, context.replaceExpectedType(expectedType).replaceScope(context.scope));
+            facade.getTypeInfo(returnedExpression, context.replaceExpectedType(expectedType).replaceScope(context.scope));
         }
         else {
             if (expectedType != TypeUtils.NO_EXPECTED_TYPE && expectedType != null && !JetStandardClasses.isUnit(expectedType)) {

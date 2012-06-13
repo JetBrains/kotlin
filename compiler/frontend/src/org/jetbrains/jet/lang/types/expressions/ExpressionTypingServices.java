@@ -120,13 +120,13 @@ public class ExpressionTypingServices {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 this, trace, scope, dataFlowInfo, expectedType, false
         );
-        return expressionTypingFacade.getType(expression, context).getType();
+        return expressionTypingFacade.getTypeInfo(expression, context).getType();
     }
 
     public JetType getTypeWithNamespaces(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull BindingTrace trace) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 this, trace, scope, DataFlowInfo.EMPTY, NO_EXPECTED_TYPE, true);
-        return expressionTypingFacade.getType(expression, context).getType();
+        return expressionTypingFacade.getTypeInfo(expression, context).getType();
 //        return ((ExpressionTypingContext) ExpressionTyperVisitorWithNamespaces).INSTANCE.getType(expression, ExpressionTypingContext.newRootContext(semanticServices, trace, scope, DataFlowInfo.getEmpty(), TypeUtils.NO_EXPECTED_TYPE, TypeUtils.NO_EXPECTED_TYPE));
     }
 
@@ -171,7 +171,7 @@ public class ExpressionTypingServices {
             getBlockReturnedType(newContext.scope, blockExpression, CoercionStrategy.COERCION_TO_UNIT, context, trace);
         }
         else {
-            expressionTypingFacade.getType(bodyExpression, newContext, !blockBody);
+            expressionTypingFacade.getTypeInfo(bodyExpression, newContext, !blockBody);
         }
     }
 
@@ -215,7 +215,7 @@ public class ExpressionTypingServices {
         JetExpression bodyExpression = function.getBodyExpression();
         assert bodyExpression != null;
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
-        expressionTypingFacade.getType(bodyExpression, ExpressionTypingContext.newContext(
+        expressionTypingFacade.getTypeInfo(bodyExpression, ExpressionTypingContext.newContext(
                 this,
                 trace, functionInnerScope, DataFlowInfo.EMPTY, NO_EXPECTED_TYPE, false), !function.hasBlockBody());
         //todo function literals
@@ -285,13 +285,13 @@ public class ExpressionTypingServices {
                         final boolean[] mismatch = new boolean[1];
                         ObservableBindingTrace errorInterceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceExpectingUnit, statementExpression, mismatch);
                         newContext = createContext(newContext, errorInterceptingTrace, scope, newContext.dataFlowInfo, context.expectedType);
-                        result = blockLevelVisitor.getType(statementExpression, newContext, true);
+                        result = blockLevelVisitor.getTypeInfo(statementExpression, newContext, true);
                         if (mismatch[0]) {
                             TemporaryBindingTrace temporaryTraceNoExpectedType = TemporaryBindingTrace.create(trace);
                             mismatch[0] = false;
                             ObservableBindingTrace interceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceNoExpectedType, statementExpression, mismatch);
                             newContext = createContext(newContext, interceptingTrace, scope, newContext.dataFlowInfo, NO_EXPECTED_TYPE);
-                            result = blockLevelVisitor.getType(statementExpression, newContext, true);
+                            result = blockLevelVisitor.getTypeInfo(statementExpression, newContext, true);
                             if (mismatch[0]) {
                                 temporaryTraceExpectingUnit.commit();
                             }
@@ -305,11 +305,11 @@ public class ExpressionTypingServices {
                     }
                     else {
                         newContext = createContext(newContext, trace, scope, newContext.dataFlowInfo, context.expectedType);
-                        result = blockLevelVisitor.getType(statementExpression, newContext, true);
+                        result = blockLevelVisitor.getTypeInfo(statementExpression, newContext, true);
                     }
                 }
                 else {
-                    result = blockLevelVisitor.getType(statementExpression, newContext, true);
+                    result = blockLevelVisitor.getTypeInfo(statementExpression, newContext, true);
                     if (coercionStrategyForLastExpression == CoercionStrategy.COERCION_TO_UNIT) {
                         boolean mightBeUnit = false;
                         if (statementExpression instanceof JetDeclaration) {
@@ -331,7 +331,7 @@ public class ExpressionTypingServices {
                 }
             }
             else {
-                result = blockLevelVisitor.getType(statementExpression, newContext, true);
+                result = blockLevelVisitor.getTypeInfo(statementExpression, newContext, true);
             }
 
             DataFlowInfo newDataFlowInfo = blockLevelVisitor.getResultingDataFlowInfo();

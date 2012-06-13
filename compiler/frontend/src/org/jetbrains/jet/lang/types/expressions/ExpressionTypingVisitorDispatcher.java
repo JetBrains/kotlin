@@ -92,8 +92,8 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
 
     @Override
     @NotNull
-    public final JetTypeInfo safeGetType(@NotNull JetExpression expression, ExpressionTypingContext context) {
-        JetTypeInfo typeInfo = getType(expression, context);
+    public final JetTypeInfo safeGetTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context) {
+        JetTypeInfo typeInfo = getTypeInfo(expression, context);
         if (typeInfo.getType() != null) {
             return typeInfo;
         }
@@ -102,17 +102,17 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
 
     @Override
     @NotNull
-    public final JetTypeInfo getType(@NotNull JetExpression expression, ExpressionTypingContext context) {
-        return getType(expression, context, this);
+    public final JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context) {
+        return getTypeInfo(expression, context, this);
     }
 
     @NotNull
-    public final JetTypeInfo getType(@NotNull JetExpression expression, ExpressionTypingContext context, boolean isStatement) {
-        if (!isStatement) return getType(expression, context);
+    public final JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context, boolean isStatement) {
+        if (!isStatement) return getTypeInfo(expression, context);
         if (statements != null) {
-            return getType(expression, context, statements);
+            return getTypeInfo(expression, context, statements);
         }
-        return getType(expression, context, createStatementVisitor(context));
+        return getTypeInfo(expression, context, createStatementVisitor(context));
     }
     
     private ExpressionTypingVisitorForStatements createStatementVisitor(ExpressionTypingContext context) {
@@ -125,16 +125,18 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     }
 
     @NotNull
-    private JetTypeInfo getType(@NotNull JetExpression expression, ExpressionTypingContext context, JetVisitor<JetTypeInfo, ExpressionTypingContext> visitor) {
+    private JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context, JetVisitor<JetTypeInfo, ExpressionTypingContext> visitor) {
         if (context.trace.get(BindingContext.PROCESSED, expression)) {
-            return JetTypeInfo.create(context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression), context.dataFlowInfo);
+            return JetTypeInfo.create(context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression),
+                                      context.dataFlowInfo);
         }
         JetTypeInfo result;
         try {
             result = expression.accept(visitor, context);
             // Some recursive definitions (object expressions) must put their types in the cache manually:
             if (context.trace.get(BindingContext.PROCESSED, expression)) {
-                return JetTypeInfo.create(context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression), result.getDataFlowInfo());
+                return JetTypeInfo.create(context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression),
+                                          result.getDataFlowInfo());
             }
 
             if (result.getType() instanceof DeferredType) {

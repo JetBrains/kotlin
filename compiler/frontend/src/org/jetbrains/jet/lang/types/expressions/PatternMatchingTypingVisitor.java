@@ -55,7 +55,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitIsExpression(JetIsExpression expression, ExpressionTypingContext contextWithExpectedType) {
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         JetExpression leftHandSide = expression.getLeftHandSide();
-        JetType knownType = facade.safeGetType(leftHandSide, context.replaceScope(context.scope)).getType();
+        JetType knownType = facade.safeGetTypeInfo(leftHandSide, context.replaceScope(context.scope)).getType();
         JetPattern pattern = expression.getPattern();
         DataFlowInfo newDataFlowInfo = context.dataFlowInfo;
         if (pattern != null) {
@@ -146,7 +146,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 if (rangeExpression == null) return;
                 if (expectedCondition) {
                     context.trace.report(EXPECTED_CONDITION.on(condition));
-                    facade.getType(rangeExpression, context);
+                    facade.getTypeInfo(rangeExpression, context);
                     return;
                 }
                 if (!facade.checkInExpression(condition, condition.getOperationReference(), subjectExpression, rangeExpression, context)) {
@@ -246,7 +246,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             public void visitExpressionPattern(JetExpressionPattern pattern) {
                 JetExpression expression = pattern.getExpression();
                 if (expression == null) return;
-                JetType type = facade.getType(expression, context.replaceScope(scopeToExtend)).getType();
+                JetType type = facade.getTypeInfo(expression, context.replaceScope(scopeToExtend)).getType();
                 if (conditionExpected) {
                     JetType booleanType = JetStandardLibrary.getInstance().getBooleanType();
                     if (type != null && !JetTypeChecker.INSTANCE.equalTypes(booleanType, type)) {
