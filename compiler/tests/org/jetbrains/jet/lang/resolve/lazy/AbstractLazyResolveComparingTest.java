@@ -73,7 +73,11 @@ public abstract class AbstractLazyResolveComparingTest {
         Disposer.dispose(rootDisposable);
     }
 
-    protected void doTest(String testFileName, Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>> transform) throws IOException {
+    protected void doTest(
+            String testFileName,
+            Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>> transform,
+            boolean includeMembersOfObject
+    ) throws IOException {
         ModuleDescriptor module = new ModuleDescriptor(Name.special("<test module>"));
         InjectorForTopDownAnalyzerForJvm injector = createInjectorForTDA(module);
 
@@ -105,7 +109,7 @@ public abstract class AbstractLazyResolveComparingTest {
             }
         };
         NamespaceComparator.compareNamespaces(namespacesToCompare.first, namespacesToCompare.second,
-                                              true, filterJetNamespace, new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt"));
+                                              includeMembersOfObject, filterJetNamespace, new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt"));
     }
 
     private InjectorForTopDownAnalyzerForJvm createInjectorForTDA(ModuleDescriptor module) {
@@ -120,10 +124,14 @@ public abstract class AbstractLazyResolveComparingTest {
             public Pair<NamespaceDescriptor, NamespaceDescriptor> fun(Pair<ModuleDescriptor, ModuleDescriptor> pair) {
                 return Pair.create(pair.first.getRootNamespace(), pair.second.getRootNamespace());
             }
-        });
+        }, true);
     }
 
     protected void doTestSinglePackage(String testFileName) throws Exception {
+        doTestSinglePackage(testFileName, false);
+    }
+
+    protected void doTestSinglePackage(String testFileName, boolean includeMembersOfObject) throws Exception {
         doTest(testFileName, new Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>>() {
             @Override
             public Pair<NamespaceDescriptor, NamespaceDescriptor> fun(Pair<ModuleDescriptor, ModuleDescriptor> pair) {
@@ -133,7 +141,7 @@ public abstract class AbstractLazyResolveComparingTest {
                 NamespaceDescriptor expected = expectedModule.getRootNamespace().getMemberScope().getNamespace(actual.getName());
                 return Pair.create(expected, actual);
             }
-        });
+        }, includeMembersOfObject);
     }
 
     private NamespaceDescriptor theOnlySubPackage(NamespaceDescriptor namespace) {
