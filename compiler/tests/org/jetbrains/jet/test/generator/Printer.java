@@ -37,6 +37,10 @@ public class Printer {
 
     public void print(Object... objects) {
         out.append(indent);
+        printWithNoIndent(objects);
+    }
+
+    public void printWithNoIndent(Object... objects) {
         for (Object object : objects) {
             out.append(object);
         }

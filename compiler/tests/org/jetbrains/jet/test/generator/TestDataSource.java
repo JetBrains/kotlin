@@ -36,12 +36,14 @@ public class TestDataSource {
     private final boolean recursive;
     private final FileFilter filter;
     private final String doTestMethodName;
+    private final String testClassName;
 
     public TestDataSource(@NotNull File rootFile, boolean recursive, @NotNull FileFilter filter, String doTestMethodName) {
         this.rootFile = rootFile;
         this.recursive = recursive;
         this.filter = filter;
         this.doTestMethodName = doTestMethodName;
+        this.testClassName = StringUtil.capitalize(rootFile.getName());
     }
 
     public Collection<TestDataFile> getFiles() {
@@ -72,10 +74,14 @@ public class TestDataSource {
     }
 
     public void getAllTestsPresentCheck(@NotNull Printer p) {
-        p.println("allTestsPresent(new File(\"" + rootFile + "\"), " + recursive + ");");
+        p.println("allTestsPresent(" + getTestClassName() + ".class, new File(\"" + rootFile + "\"), " + recursive + ");");
     }
 
     public String getAllTestsPresentMethodName() {
         return "allTestsPresentIn" + StringUtil.capitalize(rootFile.getName());
+    }
+
+    public String getTestClassName() {
+        return testClassName;
     }
 }
