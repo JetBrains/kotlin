@@ -107,6 +107,9 @@ public class JetParsing extends AbstractJetParsing {
     void parseScript() {
         PsiBuilder.Marker fileMarker = mark();
         PsiBuilder.Marker scriptMarker = mark();
+
+        parseImportDirectives();
+
         PsiBuilder.Marker blockMarker = mark();
 
         myExpressionParsing.parseStatements();
@@ -167,10 +170,7 @@ public class JetParsing extends AbstractJetParsing {
         }
         namespaceHeader.done(NAMESPACE_HEADER);
 
-        // TODO: Duplicate with parsing imports in parseToplevelDeclarations
-        while (at(IMPORT_KEYWORD)) {
-            parseImportDirective();
-        }
+        parseImportDirectives();
     }
 
     /* SimpleName{"."} */
@@ -246,6 +246,13 @@ public class JetParsing extends AbstractJetParsing {
         }
         consumeIf(SEMICOLON);
         importDirective.done(IMPORT_DIRECTIVE);
+    }
+
+    private void parseImportDirectives() {
+        // TODO: Duplicate with parsing imports in parseToplevelDeclarations
+        while (at(IMPORT_KEYWORD)) {
+            parseImportDirective();
+        }
     }
 
     private void handleUselessRename() {
