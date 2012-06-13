@@ -8,7 +8,7 @@ class SimpleTest {
     public fun testFoo() {
         val name = "world"
         val message = "hello $name!"
-        assertEquals("hello world", message)
+        assertEquals("hello world!", message)
     }
 
     test fun cheese() {
