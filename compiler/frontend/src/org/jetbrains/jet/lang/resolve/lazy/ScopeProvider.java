@@ -62,8 +62,9 @@ public class ScopeProvider {
         WritableScope writableScope = new WritableScopeImpl(
                 JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING, "File scope for declaration resolution");
         writableScope.importScope(resolveSession.getPackageDescriptorByFqName(FqName.ROOT).getMemberScope());
-        List<JetImportDirective> importDirectives = Lists.newArrayList(file.getImportDirectives());
+        List<JetImportDirective> importDirectives = Lists.newArrayList();
         resolveSession.getModuleConfiguration().addDefaultImports(importDirectives);
+        importDirectives.addAll(file.getImportDirectives());
         ImportsResolver.processImportsInFile(true, writableScope, importDirectives,
                                              resolveSession.getPackageDescriptorByFqName(FqName.ROOT).getMemberScope(),
                                              resolveSession.getModuleConfiguration(), resolveSession.getTrace(),
