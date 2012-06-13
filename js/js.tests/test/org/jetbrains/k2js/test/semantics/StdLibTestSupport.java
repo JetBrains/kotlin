@@ -17,6 +17,7 @@
  */
 package org.jetbrains.k2js.test.semantics;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
@@ -57,10 +58,19 @@ abstract class StdLibTestSupport extends SingleFileTranslationTest {
                 "/dom/html/window.kt");
 
         // lets add the standard JS library files
-        for (String libFileName : Config.LIB_FILE_NAMES) {
+        Iterable<String> names = Iterables.concat(Config.LIB_FILE_NAMES, Config.LIB_FILE_NAMES_DEPENDENT_ON_STDLIB);
+        for (String libFileName : names) {
             if (!ignoreFiles.contains(libFileName)) {
                 System.out.println("Compiling " + libFileName);
                 files.add(Config.LIBRARIES_LOCATION + libFileName);
+            }
+        }
+
+        // lets add the standard Kotlin library files
+        for (String libFileName : Config.STDLIB_FILE_NAMES) {
+            if (!ignoreFiles.contains(libFileName)) {
+                System.out.println("Compiling " + libFileName);
+                files.add(Config.STDLIB_LOCATION + libFileName);
             }
         }
 

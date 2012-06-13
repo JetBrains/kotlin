@@ -1,6 +1,6 @@
 package java.lang
 
-import java.util.Iterator;
+import java.util.Iterator
 import js.library
 
 library

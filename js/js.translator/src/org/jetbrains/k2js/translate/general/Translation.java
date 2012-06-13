@@ -236,14 +236,14 @@ public final class Translation {
                         prefix = "var ";
                         declaredVar = true;
                     }
-                    rawStatements.add(prefix + "_testCase = new " + className + "();");
+                    rawStatements.add(prefix + "_testCase = new Kotlin.defs." + className + "();");
                 }
                 rawStatements.add("QUnit.test( \"" + className + "." + funName + "()\" , function() {");
-                rawStatements.add("    expect(0);");
+                //rawStatements.add("    expect(0);");
                 rawStatements.add("    _testCase." + funName + "();");
             } else {
                 rawStatements.add("QUnit.test( \"" + funName + "()\", function() {");
-                rawStatements.add("    expect(0);");
+                //rawStatements.add("    expect(0);");
                 rawStatements.add("    " + funName + "();");
             }
             rawStatements.add("});");

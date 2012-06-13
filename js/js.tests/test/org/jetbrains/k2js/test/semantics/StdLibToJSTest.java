@@ -39,6 +39,8 @@ public class StdLibToJSTest extends StdLibTestSupport {
 
         generateJavaScriptFiles(EcmaVersion.all(),
                                 "libraries/stdlib/src",
-                                "kotlin/Preconditions.kt", "kotlin/dom/Dom.kt", "kotlin/support/AbstractIterator.kt");
+                                "kotlin/Preconditions.kt",
+                                "kotlin/dom/Dom.kt",
+                                "kotlin/support/AbstractIterator.kt");
     }
 }
