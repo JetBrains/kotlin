@@ -16,250 +16,39 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.test.generator.TestDataSource;
+import org.jetbrains.jet.test.generator.TestGenerator;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author abreslav
  */
 public class LazyResolveComparingTestGenerator {
     public static void main(String[] args) throws IOException {
-        new LazyResolveComparingTestGenerator().generateAndSave();
+        String testDataFileExtension = "kt";
+        new TestGenerator(
+            "compiler/tests/",
+            testDataFileExtension,
+            "org.jetbrains.jet.lang.resolve.lazy",
+            "LazyResolveComparingTestGenerated",
+            "org.jetbrains.jet.lang.resolve.lazy",
+            "AbstractLazyResolveComparingTest",
+            Arrays.asList(
+                new TestDataSource(new File("compiler/testData/readKotlinBinaryClass"),
+                                   true,
+                                   TestGenerator.filterFilesByExtension(testDataFileExtension),
+                                   "doTestSinglePackage"),
+                new TestDataSource(new File("compiler/testData/lazyResolve"),
+                                   true,
+                                   TestGenerator.filterFilesByExtension(testDataFileExtension),
+                                   "doTest")
+            ),
+            "LazyResolveComparingTestGenerator"
+        ).generateAndSave();
     }
 
-    private static class TestDataSource {
-        private final File rootFile;
-        private final boolean recursive;
-        private final FileFilter filter;
-        private final String doTestMethodName;
-
-        public TestDataSource(@NotNull File rootFile, boolean recursive, @NotNull FileFilter filter, String doTestMethodName) {
-            this.rootFile = rootFile;
-            this.recursive = recursive;
-            this.filter = filter;
-            this.doTestMethodName = doTestMethodName;
-        }
-
-        public Collection<TestDataFile> getFiles() {
-            if (!rootFile.isDirectory()) {
-                return Collections.singletonList(new TestDataFile(rootFile, doTestMethodName));
-            }
-            List<File> files = Lists.newArrayList();
-            collectFiles(rootFile, files, recursive);
-            return Collections2.transform(files, new Function<File, TestDataFile>() {
-                @Override
-                public TestDataFile apply(File file) {
-                    return new TestDataFile(file, doTestMethodName);
-                }
-            });
-        }
-
-        private void collectFiles(File current, List<File> result, boolean recursive) {
-            for (File file : current.listFiles(filter)) {
-                if (file.isDirectory()) {
-                    if (recursive) {
-                        collectFiles(file, result, recursive);
-                    }
-                }
-                else {
-                    result.add(file);
-                }
-            }
-        }
-
-        public void getAllTestsPresentCheck(@NotNull Printer p) {
-            p.println("allTestsPresent(new File(\"" + rootFile + "\"), " + recursive + ");");
-        }
-
-        public String getAllTestsPresentMethodName() {
-            return "allTestsPresentIn" + StringUtil.capitalize(rootFile.getName());
-        }
-    }
-
-    private static class TestDataFile {
-        private final File file;
-        private final String doTestMethodName;
-
-        public TestDataFile(File file, String doTestMethodName) {
-            this.file = file;
-            this.doTestMethodName = doTestMethodName;
-        }
-
-        public String getTestCall() {
-            return doTestMethodName + "(\"" + file + "\");";
-        }
-
-        public String getTestMethodName() {
-            return "test" + FileUtil.getNameWithoutExtension(StringUtil.capitalize(file.getName()));
-        }
-    }
-
-
-    public static FileFilter filterFilesByExtension(@NotNull final String extension) {
-        return new FileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return file.isDirectory() || file.getName().endsWith("." + extension);
-            }
-        };
-    }
-
-    private final String baseDir;
-    private final String testDataFileExtension;
-    private final String testClassPackage;
-    private final String testClassName;
-    private final String baseTestClassPackage;
-    private final String baseTestClassName;
-    private final Collection<TestDataSource> testDataSources;
-    private final String generatorName;
-
-    public LazyResolveComparingTestGenerator() {
-        baseDir = "compiler/tests/";
-        testDataFileExtension = "kt";
-        testClassPackage = "org.jetbrains.jet.lang.resolve.lazy";
-        testClassName = "LazyResolveComparingTestGenerated";
-        baseTestClassPackage = "org.jetbrains.jet.lang.resolve.lazy";
-        baseTestClassName = "AbstractLazyResolveComparingTest";
-        testDataSources = Arrays.asList(
-            new TestDataSource(new File("compiler/testData/readKotlinBinaryClass"), true, filterFilesByExtension(testDataFileExtension), "doTestSinglePackage"),
-            new TestDataSource(new File("compiler/testData/lazyResolve"), true, filterFilesByExtension(testDataFileExtension), "doTest")
-        );
-        generatorName = "LazyResolveComparingTestGenerator";
-    }
-
-    public void generateAndSave() throws IOException {
-        StringBuilder out = new StringBuilder();
-        Printer p = new Printer(out);
-
-        p.print(FileUtil.loadFile(new File("injector-generator/copyright.txt")));
-        p.println("package ", testClassPackage, ";");
-        p.println();
-        p.println("import org.junit.Assert;");
-        p.println("import org.junit.Test;");
-        p.println();
-
-        p.println("import java.io.File;");
-        p.println("import java.io.FileFilter;");
-        p.println("import java.lang.reflect.Method;");
-        p.println("import java.util.HashSet;");
-        p.println("import java.util.Set;");
-        p.println();
-
-        p.println("import ", baseTestClassPackage, ".", baseTestClassName, ";");
-        p.println();
-
-        p.println("/* This class is generated by " + generatorName + ". DO NOT MODIFY MANUALLY */");
-        p.println("public class ", testClassName, " extends ", baseTestClassName, " {");
-        p.pushIndent();
-
-        Collection<TestDataFile> files = Lists.newArrayList();
-        for (TestDataSource testDataSource : testDataSources) {
-            files.addAll(testDataSource.getFiles());
-
-            p.println("@Test");
-            p.println("public void " + testDataSource.getAllTestsPresentMethodName() + "() throws Exception {");
-            p.pushIndent();
-
-            testDataSource.getAllTestsPresentCheck(p);
-
-            p.popIndent();
-            p.println("}");
-            p.println();
-        }
-
-        for (TestDataFile file : files) {
-            p.println("@Test");
-            p.println("public void ", file.getTestMethodName(), "() throws Exception {");
-            p.pushIndent();
-
-            p.println(file.getTestCall());
-
-            p.popIndent();
-            p.println("}");
-            p.println();
-        }
-
-        generateAllTestsPresent(p);
-
-        p.popIndent();
-        p.println("}");
-
-        String testSourceFilePath = baseDir + testClassPackage.replace(".", "/") + "/" + testClassName + ".java";
-        FileUtil.writeToFile(new File(testSourceFilePath), out.toString());
-    }
-
-    private void generateAllTestsPresent(Printer p) {
-        String[] methodText = new String[] {
-                     "public static void allTestsPresent(File testDataDir, boolean recursive) {",
-                     "    Set<String> methodNames = new HashSet<String>();",
-                     "    for (Method method : " + testClassName + ".class.getDeclaredMethods()) {",
-                     "        if (method.isAnnotationPresent(Test.class)) {",
-                     "            methodNames.add(method.getName().toLowerCase() + \"." + testDataFileExtension + "\");",
-                     "        }",
-                     "    }",
-                     "    for (File file : testDataDir.listFiles()) {",
-                     "        if (file.isDirectory()) {",
-                     "            if (recursive) {",
-                     "                allTestsPresent(file, recursive);",
-                     "            }",
-                     "        }",
-                     "        else {",
-                     "            String name = file.getName();",
-                     "            if (name.endsWith(\"." + testDataFileExtension + "\") && !methodNames.contains(\"test\" + name.toLowerCase())) {",
-                     "                Assert.fail(\"Test data file missing from the generated test class: \" + file + \"\\nPlease re-run the generator: " + generatorName + "\");",
-                     "            }",
-                     "        }",
-                     "    }",
-                     "}"};
-
-        for (String s : methodText) {
-            p.println(s);
-        }
-    }
-
-    private static class Printer {
-        private static final String INDENTATION_UNIT = "    ";
-        private String indent = "";
-        private final StringBuilder out;
-
-        private Printer(@NotNull StringBuilder out) {
-            this.out = out;
-        }
-
-        public void println(Object... objects) {
-            print(objects);
-            out.append("\n");
-        }
-
-        public void print(Object... objects) {
-            out.append(indent);
-            for (Object object : objects) {
-                out.append(object);
-            }
-        }
-
-        public void pushIndent() {
-            indent += INDENTATION_UNIT;
-        }
-
-        public void popIndent() {
-            if (indent.length() < INDENTATION_UNIT.length()) {
-                throw new IllegalStateException("No indentation to pop");
-            }
-
-            indent = indent.substring(INDENTATION_UNIT.length());
-        }
-    }
+    private LazyResolveComparingTestGenerator() {}
 }
