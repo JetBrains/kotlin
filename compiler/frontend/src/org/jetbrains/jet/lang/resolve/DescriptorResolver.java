@@ -348,7 +348,7 @@ public class DescriptorResolver {
     }
 
     public static ConstructorDescriptorImpl createPrimaryConstructorForObject(
-            @NotNull PsiElement object,
+            @Nullable PsiElement object,
             @NotNull ClassDescriptor classDescriptor,
             @NotNull BindingTrace trace
     ) {
