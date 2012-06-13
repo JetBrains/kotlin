@@ -17,9 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetClassObject;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.*;
 
 /**
  * @author abreslav
@@ -47,6 +45,15 @@ public class PsiBasedClassMemberDeclarationProvider extends AbstractPsiBasedDecl
             }
             else {
                 putToIndex(declaration);
+            }
+        }
+
+        if (classOrObject instanceof JetClass) {
+            JetClass jetClass = (JetClass) classOrObject;
+            for (JetParameter parameter : jetClass.getPrimaryConstructorParameters()) {
+                if (parameter.getValOrVarNode() != null) {
+                    putToIndex(parameter);
+                }
             }
         }
     }

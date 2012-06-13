@@ -21,10 +21,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.List;
@@ -63,6 +60,9 @@ public abstract class AbstractPsiBasedDeclarationProvider implements Declaration
         else if (declaration instanceof JetClassOrObject) {
             JetClassOrObject classOrObject = (JetClassOrObject) declaration;
             classesAndObjects.put(classOrObject.getNameAsName(), classOrObject);
+        }
+        else if (declaration instanceof JetParameter) {
+            // Do nothing, just put it into allDeclarations is enough
         }
         else {
             throw new IllegalArgumentException("Unknown declaration: " + declaration);

@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
@@ -104,10 +105,25 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void getNonDeclaredProperties(@NotNull Name name, @NotNull final Set<VariableDescriptor> result) {
-        System.err.println("Parameter of the primary constructor");
+        JetClassOrObject classOrObject = declarationProvider.getOwnerClassOrObject();
+        if (classOrObject instanceof JetClass) {
+            JetClass jetClass = (JetClass) classOrObject;
 
-        // Inherited fake overrides
+            for (JetParameter parameter : jetClass.getPrimaryConstructorParameters()) {
+                if (parameter.getValOrVarNode() != null) {
+                    PropertyDescriptor propertyDescriptor =
+                            resolveSession.getInjector().getDescriptorResolver().resolvePrimaryConstructorParameterToAProperty(
+                                    thisDescriptor,
+                                    thisDescriptor.getScopeForClassHeaderResolution(),
+                                    parameter, resolveSession.getTrace()
+                            );
+                    result.add(propertyDescriptor);
+                }
+            }
+        }
+
         Collection<PropertyDescriptor> fromSupertypes = Lists.newArrayList();
         for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
             fromSupertypes.addAll((Set) supertype.getMemberScope().getProperties(name));
