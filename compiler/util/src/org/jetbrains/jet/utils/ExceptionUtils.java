@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.utils;
 
+import java.io.Closeable;
+
 /**
  * @author Stepan Koltsov
  */
@@ -33,6 +35,15 @@ public class ExceptionUtils {
         }
         else {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static void closeQuietly(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (Throwable e) {
+            }
         }
     }
 

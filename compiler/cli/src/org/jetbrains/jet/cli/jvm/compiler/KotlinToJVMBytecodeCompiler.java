@@ -122,9 +122,7 @@ public class KotlinToJVMBytecodeCompiler {
                     throw ExceptionUtils.rethrow(e);
                 }
                 finally {
-                    try {
-                        outputStream.close();
-                    } catch (Throwable e) {}
+                    ExceptionUtils.closeQuietly(outputStream);
                 }
             }
         }
@@ -177,9 +175,7 @@ public class KotlinToJVMBytecodeCompiler {
                     throw ExceptionUtils.rethrow(e);
                 }
                 finally {
-                    try {
-                        os.close();
-                    } catch (Throwable e) {}
+                    ExceptionUtils.closeQuietly(os);
                 }
             }
             else if (outputDir != null) {
