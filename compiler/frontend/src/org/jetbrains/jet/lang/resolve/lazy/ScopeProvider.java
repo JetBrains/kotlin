@@ -20,15 +20,14 @@ import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 
 import java.util.List;
 
@@ -71,31 +70,9 @@ public class ScopeProvider {
                                              resolveSession.getInjector().getQualifiedExpressionResolver());
         writableScope.importScope(packageDescriptor.getMemberScope());
 
-        // TODO: imports
-
         writableScope.changeLockLevel(WritableScope.LockLevel.READING);
         // TODO: Cache
         return writableScope;
-    }
-
-    @NotNull
-    public JetScope getScopeForClassMemberResolution(@NotNull JetClassOrObject classOrObject) {
-        // TODO: cache
-        ClassDescriptor classDescriptor = resolveSession.getClassDescriptor(classOrObject);
-        JetScope memberScope = classDescriptor.getDefaultType().getMemberScope();
-        JetScope outerScope = getResolutionScopeForDeclaration((JetDeclaration) classOrObject);
-
-        WritableScope typeParametersScope = new WritableScopeImpl(
-                JetScope.EMPTY, classDescriptor, RedeclarationHandler.DO_NOTHING, "scope for class member resolution");
-        for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getTypeConstructor().getParameters()) {
-            typeParametersScope.addClassifierDescriptor(typeParameterDescriptor);
-        }
-
-        return new ChainedScope(classDescriptor, memberScope, typeParametersScope, outerScope);
-    }
-
-    public JetScope getScopeForClassSupertypeResolution(JetClassOrObject declaration) {
-        throw new UnsupportedOperationException(); // TODO
     }
 
     @NotNull
@@ -108,19 +85,16 @@ public class ScopeProvider {
         JetDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(jetDeclaration, JetDeclaration.class);
         if (parentDeclaration instanceof JetClassOrObject) {
             JetClassOrObject classOrObject = (JetClassOrObject) parentDeclaration;
-            return getScopeForClassMemberResolution(classOrObject);
+            LazyClassDescriptor classDescriptor = (LazyClassDescriptor) resolveSession.getClassDescriptor(classOrObject);
+            return classDescriptor.getScopeForMemberDeclarationResolution();
+        }
+        else if (parentDeclaration instanceof JetClassObject) {
+            JetClassObject classObject = (JetClassObject) parentDeclaration;
+            LazyClassDescriptor classObjectDescriptor = resolveSession.getClassObjectDescriptor(classObject);
+            return classObjectDescriptor.getScopeForMemberDeclarationResolution();
         }
         else {
-            throw new IllegalStateException("Don't call this method for local declarations: " + jetDeclaration);
+            throw new IllegalStateException("Don't call this method for local declarations: " + jetDeclaration + " " + jetDeclaration.getText());
         }
-    }
-
-    public ClassDescriptor buildLazyClassDescriptor(DeclarationDescriptor declaration, Name name, JetScope outerScope) {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
-    public NamespaceDescriptor buildLazyPackageDescriptor(DeclarationDescriptor declaration,
-            Name name) {
-        throw new UnsupportedOperationException(); // TODO
     }
 }
