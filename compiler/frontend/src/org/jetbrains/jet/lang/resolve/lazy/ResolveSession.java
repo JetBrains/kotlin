@@ -218,6 +218,20 @@ public class ResolveSession {
             }
 
             @Override
+            public DeclarationDescriptor visitParameter(JetParameter parameter, Void data) {
+                PsiElement grandFather = parameter.getParent().getParent();
+                if (grandFather instanceof JetClass) {
+                    JetClass jetClass = (JetClass) grandFather;
+                    // This is a primary constructor parameter
+                    if (parameter.getValOrVarNode() != null) {
+                        getClassDescriptor(jetClass).getDefaultType().getMemberScope().getProperties(parameter.getNameAsName());
+                        return getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
+                    }
+                }
+                return super.visitParameter(parameter, data);
+            }
+
+            @Override
             public DeclarationDescriptor visitProperty(JetProperty property, Void data) {
                 JetScope scopeForDeclaration = getInjector().getScopeProvider().getResolutionScopeForDeclaration(property);
                 scopeForDeclaration.getProperties(property.getNameAsName());
@@ -226,7 +240,7 @@ public class ResolveSession {
 
             @Override
             public DeclarationDescriptor visitJetElement(JetElement element, Void data) {
-                throw new IllegalArgumentException("Unsupported declaration type: " + element);
+                throw new IllegalArgumentException("Unsupported declaration type: " + element + " " + element.getText());
             }
         }, null);
     }
