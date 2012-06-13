@@ -63,7 +63,7 @@ public class Visibilities {
             if (DescriptorUtils.isSubclass(fromClass, classDescriptor)) {
                 return true;
             }
-            return false;
+            return isVisible(what, fromClass.getContainingDeclaration());
         }
     };
 
