@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.util.lazy.ReenteringLazyValueComputationException;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM;
@@ -34,10 +35,10 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO
 /**
  * @author abreslav
  */
-public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetType, ExpressionTypingContext> implements ExpressionTypingInternals {
+public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, ExpressionTypingContext> implements ExpressionTypingInternals {
 
     @Override
-    public JetType visitIdeTemplateExpression(JetIdeTemplateExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitIdeTemplateExpression(JetIdeTemplateExpression expression, ExpressionTypingContext data) {
         return basic.visitIdeTemplateExpression(expression, data);
     }
 
@@ -91,22 +92,22 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetType, Expre
 
     @Override
     @NotNull
-    public final JetType safeGetType(@NotNull JetExpression expression, ExpressionTypingContext context) {
-        JetType type = getType(expression, context);
-        if (type != null) {
-            return type;
+    public final JetTypeInfo safeGetType(@NotNull JetExpression expression, ExpressionTypingContext context) {
+        JetTypeInfo typeInfo = getType(expression, context);
+        if (typeInfo.getType() != null) {
+            return typeInfo;
         }
-        return ErrorUtils.createErrorType("Type for " + expression.getText());
+        return JetTypeInfo.create(ErrorUtils.createErrorType("Type for " + expression.getText()), context.dataFlowInfo);
     }
 
     @Override
-    @Nullable
-    public final JetType getType(@NotNull JetExpression expression, ExpressionTypingContext context) {
+    @NotNull
+    public final JetTypeInfo getType(@NotNull JetExpression expression, ExpressionTypingContext context) {
         return getType(expression, context, this);
     }
 
-    @Nullable
-    public final JetType getType(@NotNull JetExpression expression, ExpressionTypingContext context, boolean isStatement) {
+    @NotNull
+    public final JetTypeInfo getType(@NotNull JetExpression expression, ExpressionTypingContext context, boolean isStatement) {
         if (!isStatement) return getType(expression, context);
         if (statements != null) {
             return getType(expression, context, statements);
@@ -123,30 +124,30 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetType, Expre
         expression.accept(createStatementVisitor(context), context);
     }
 
-    @Nullable
-    private JetType getType(@NotNull JetExpression expression, ExpressionTypingContext context, JetVisitor<JetType, ExpressionTypingContext> visitor) {
+    @NotNull
+    private JetTypeInfo getType(@NotNull JetExpression expression, ExpressionTypingContext context, JetVisitor<JetTypeInfo, ExpressionTypingContext> visitor) {
         if (context.trace.get(BindingContext.PROCESSED, expression)) {
-            return context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
+            return JetTypeInfo.create(context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression), context.dataFlowInfo);
         }
-        JetType result;
+        JetTypeInfo result;
         try {
             result = expression.accept(visitor, context);
             // Some recursive definitions (object expressions) must put their types in the cache manually:
             if (context.trace.get(BindingContext.PROCESSED, expression)) {
-                return context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
+                return JetTypeInfo.create(context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression), result.getDataFlowInfo());
             }
 
-            if (result instanceof DeferredType) {
-                result = ((DeferredType) result).getActualType();
+            if (result.getType() instanceof DeferredType) {
+                result = JetTypeInfo.create(((DeferredType) result.getType()).getActualType(), context.dataFlowInfo);
             }
-            if (result != null) {
-                context.trace.record(BindingContext.EXPRESSION_TYPE, expression, result);
+            if (result.getType() != null) {
+                context.trace.record(BindingContext.EXPRESSION_TYPE, expression, result.getType());
             }
 
         }
         catch (ReenteringLazyValueComputationException e) {
             context.trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(expression));
-            result = null;
+            result = JetTypeInfo.create(null, context.dataFlowInfo);
         }
 
         if (!context.trace.get(BindingContext.PROCESSED, expression) && !(expression instanceof JetReferenceExpression)) {
@@ -159,78 +160,78 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetType, Expre
     //////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public JetType visitFunctionLiteralExpression(JetFunctionLiteralExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitFunctionLiteralExpression(JetFunctionLiteralExpression expression, ExpressionTypingContext data) {
         return expression.accept(closures, data);
     }
 
     @Override
-    public JetType visitObjectLiteralExpression(JetObjectLiteralExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitObjectLiteralExpression(JetObjectLiteralExpression expression, ExpressionTypingContext data) {
         return expression.accept(closures, data);
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public JetType visitThrowExpression(JetThrowExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitThrowExpression(JetThrowExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }
 
     @Override
-    public JetType visitReturnExpression(JetReturnExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitReturnExpression(JetReturnExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }
 
     @Override
-    public JetType visitContinueExpression(JetContinueExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitContinueExpression(JetContinueExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }
 
     @Override
-    public JetType visitIfExpression(JetIfExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitIfExpression(JetIfExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }
 
     @Override
-    public JetType visitTryExpression(JetTryExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitTryExpression(JetTryExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }
 
     @Override
-    public JetType visitForExpression(JetForExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitForExpression(JetForExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }
 
     @Override
-    public JetType visitWhileExpression(JetWhileExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitWhileExpression(JetWhileExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }
 
     @Override
-    public JetType visitDoWhileExpression(JetDoWhileExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitDoWhileExpression(JetDoWhileExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }
 
     @Override
-    public JetType visitBreakExpression(JetBreakExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitBreakExpression(JetBreakExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public JetType visitIsExpression(JetIsExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitIsExpression(JetIsExpression expression, ExpressionTypingContext data) {
         return expression.accept(patterns, data);
     }
 
     @Override
-    public JetType visitWhenExpression(JetWhenExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitWhenExpression(JetWhenExpression expression, ExpressionTypingContext data) {
         return expression.accept(patterns, data);
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public JetType visitJetElement(JetElement element, ExpressionTypingContext data) {
+    public JetTypeInfo visitJetElement(JetElement element, ExpressionTypingContext data) {
         return element.accept(basic, data);
     }
 }

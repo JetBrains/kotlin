@@ -52,27 +52,28 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetType visitIsExpression(JetIsExpression expression, ExpressionTypingContext contextWithExpectedType) {
+    public JetTypeInfo visitIsExpression(JetIsExpression expression, ExpressionTypingContext contextWithExpectedType) {
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         JetExpression leftHandSide = expression.getLeftHandSide();
-        JetType knownType = facade.safeGetType(leftHandSide, context.replaceScope(context.scope));
+        JetType knownType = facade.safeGetType(leftHandSide, context.replaceScope(context.scope)).getType();
         JetPattern pattern = expression.getPattern();
+        DataFlowInfo newDataFlowInfo = context.dataFlowInfo;
         if (pattern != null) {
             WritableScopeImpl scopeToExtend = newWritableScopeImpl(context, "Scope extended in 'is'");
             DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(leftHandSide, knownType, context.trace.getBindingContext());
-            DataFlowInfo newDataFlowInfo = checkPatternType(pattern, knownType, false, scopeToExtend, context, dataFlowValue);
+            newDataFlowInfo = checkPatternType(pattern, knownType, false, scopeToExtend, context, dataFlowValue);
             context.patternsToDataFlowInfo.put(pattern, newDataFlowInfo);
             context.patternsToBoundVariableLists.put(pattern, scopeToExtend.getDeclaredVariables());
         }
-        return DataFlowUtils.checkType(JetStandardLibrary.getInstance().getBooleanType(), expression, contextWithExpectedType);
+        return DataFlowUtils.checkType(JetStandardLibrary.getInstance().getBooleanType(), expression, contextWithExpectedType, newDataFlowInfo);
     }
 
     @Override
-    public JetType visitWhenExpression(final JetWhenExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitWhenExpression(final JetWhenExpression expression, ExpressionTypingContext context) {
         return visitWhenExpression(expression, context, false);
     }
 
-    public JetType visitWhenExpression(final JetWhenExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
+    public JetTypeInfo visitWhenExpression(final JetWhenExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         // TODO :change scope according to the bound value in the when header
         final JetExpression subjectExpression = expression.getSubjectExpression();
@@ -122,7 +123,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             if (bodyExpression != null) {
                 ExpressionTypingContext newContext = contextWithExpectedType.replaceScope(scopeToExtend).replaceDataFlowInfo(newDataFlowInfo);
                 CoercionStrategy coercionStrategy = isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION;
-                JetType type = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(scopeToExtend, Collections.singletonList(bodyExpression), coercionStrategy, newContext, context.trace);
+                JetType type = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(scopeToExtend, Collections.singletonList(bodyExpression), coercionStrategy, newContext, context.trace).getType();
                 if (type != null) {
                     expressionTypes.add(type);
                 }
@@ -130,9 +131,9 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         }
 
         if (!expressionTypes.isEmpty()) {
-            return DataFlowUtils.checkImplicitCast(CommonSupertypes.commonSupertype(expressionTypes), expression, contextWithExpectedType, isStatement);
+            return DataFlowUtils.checkImplicitCast(CommonSupertypes.commonSupertype(expressionTypes), expression, contextWithExpectedType, isStatement, context.dataFlowInfo);
         }
-        return null;
+        return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 
     private DataFlowInfo checkWhenCondition(@Nullable final JetExpression subjectExpression, final boolean expectedCondition, final JetType subjectType, JetWhenCondition condition, final WritableScope scopeToExtend, final ExpressionTypingContext context, final DataFlowValue... subjectVariables) {
@@ -245,7 +246,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             public void visitExpressionPattern(JetExpressionPattern pattern) {
                 JetExpression expression = pattern.getExpression();
                 if (expression == null) return;
-                JetType type = facade.getType(expression, context.replaceScope(scopeToExtend));
+                JetType type = facade.getType(expression, context.replaceScope(scopeToExtend)).getType();
                 if (conditionExpected) {
                     JetType booleanType = JetStandardLibrary.getInstance().getBooleanType();
                     if (type != null && !JetTypeChecker.INSTANCE.equalTypes(booleanType, type)) {

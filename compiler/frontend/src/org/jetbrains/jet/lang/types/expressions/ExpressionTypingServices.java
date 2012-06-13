@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.CommonSupertypes;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -119,13 +120,13 @@ public class ExpressionTypingServices {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 this, trace, scope, dataFlowInfo, expectedType, false
         );
-        return expressionTypingFacade.getType(expression, context);
+        return expressionTypingFacade.getType(expression, context).getType();
     }
 
     public JetType getTypeWithNamespaces(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull BindingTrace trace) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 this, trace, scope, DataFlowInfo.EMPTY, NO_EXPECTED_TYPE, true);
-        return expressionTypingFacade.getType(expression, context);
+        return expressionTypingFacade.getType(expression, context).getType();
 //        return ((ExpressionTypingContext) ExpressionTyperVisitorWithNamespaces).INSTANCE.getType(expression, ExpressionTypingContext.newRootContext(semanticServices, trace, scope, DataFlowInfo.getEmpty(), TypeUtils.NO_EXPECTED_TYPE, TypeUtils.NO_EXPECTED_TYPE));
     }
 
@@ -174,8 +175,8 @@ public class ExpressionTypingServices {
         }
     }
 
-    @Nullable
-    public JetType getBlockReturnedType(@NotNull JetScope outerScope, @NotNull JetBlockExpression expression, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context, BindingTrace trace) {
+    @NotNull
+    public JetTypeInfo getBlockReturnedType(@NotNull JetScope outerScope, @NotNull JetBlockExpression expression, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context, BindingTrace trace) {
         List<JetElement> block = expression.getStatements();
 
         DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
@@ -190,9 +191,9 @@ public class ExpressionTypingServices {
                 outerScope, containingDescriptor, new TraceBasedRedeclarationHandler(context.trace), "getBlockReturnedType");
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
-        JetType r;
+        JetTypeInfo r;
         if (block.isEmpty()) {
-            r = DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, context);
+            r = DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, context, context.dataFlowInfo);
         }
         else {
             r = getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context, trace);
@@ -262,15 +263,15 @@ public class ExpressionTypingServices {
 
     /*package*/
     @SuppressWarnings("SuspiciousMethodCalls")
-    JetType getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context, BindingTrace trace) {
+    JetTypeInfo getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context, BindingTrace trace) {
         if (block.isEmpty()) {
-            return JetStandardClasses.getUnitType();
+            return JetTypeInfo.create(JetStandardClasses.getUnitType(), context.dataFlowInfo);
         }
 
         ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(scope);
         ExpressionTypingContext newContext = createContext(context, trace, scope, context.dataFlowInfo, NO_EXPECTED_TYPE);
 
-        JetType result = null;
+        JetTypeInfo result = JetTypeInfo.create(null, context.dataFlowInfo);
         for (Iterator<? extends JetElement> iterator = block.iterator(); iterator.hasNext(); ) {
             final JetElement statement = iterator.next();
             trace.record(STATEMENT, statement);
@@ -323,8 +324,8 @@ public class ExpressionTypingServices {
                         }
                         if (mightBeUnit) {
                             // ExpressionTypingVisitorForStatements should return only null or Unit for declarations and assignments
-                            assert result == null || JetStandardClasses.isUnit(result);
-                            result = JetStandardClasses.getUnitType();
+                            assert result.getType() == null || JetStandardClasses.isUnit(result.getType());
+                            result = JetTypeInfo.create(JetStandardClasses.getUnitType(), newContext.dataFlowInfo);
                         }
                     }
                 }

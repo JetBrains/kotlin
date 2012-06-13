@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -78,7 +79,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     }
 
     @Override
-    public JetType visitObjectDeclaration(JetObjectDeclaration declaration, ExpressionTypingContext context) {
+    public JetTypeInfo visitObjectDeclaration(JetObjectDeclaration declaration, ExpressionTypingContext context) {
         TopDownAnalyzer.processClassOrObject(context.expressionTypingServices.getProject(), context.trace, scope,
                                              scope.getContainingDeclaration(), declaration);
         ClassDescriptor classDescriptor = context.trace.getBindingContext().get(BindingContext.CLASS, declaration);
@@ -87,11 +88,11 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                     .resolveObjectDeclaration(scope.getContainingDeclaration(), declaration, classDescriptor, context.trace);
             scope.addVariableDescriptor(variableDescriptor);
         }
-        return DataFlowUtils.checkStatementType(declaration, context);
+        return DataFlowUtils.checkStatementType(declaration, context, context.dataFlowInfo);
     }
 
     @Override
-    public JetType visitProperty(JetProperty property, ExpressionTypingContext context) {
+    public JetTypeInfo visitProperty(JetProperty property, ExpressionTypingContext context) {
         JetTypeReference receiverTypeRef = property.getReceiverTypeRef();
         if (receiverTypeRef != null) {
             context.trace.report(LOCAL_EXTENSION_PROPERTY.on(receiverTypeRef));
@@ -111,7 +112,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         JetExpression initializer = property.getInitializer();
         if (property.getPropertyTypeRef() != null && initializer != null) {
             JetType outType = propertyDescriptor.getType();
-            JetType initializerType = facade.getType(initializer, context.replaceExpectedType(outType).replaceScope(scope));
+            JetType initializerType = facade.getType(initializer, context.replaceExpectedType(outType).replaceScope(scope)).getType();
         }
         
         {
@@ -123,41 +124,41 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         }
 
         scope.addVariableDescriptor(propertyDescriptor);
-        return DataFlowUtils.checkStatementType(property, context);
+        return DataFlowUtils.checkStatementType(property, context, context.dataFlowInfo);
     }
 
     @Override
-    public JetType visitNamedFunction(JetNamedFunction function, ExpressionTypingContext context) {
+    public JetTypeInfo visitNamedFunction(JetNamedFunction function, ExpressionTypingContext context) {
         SimpleFunctionDescriptor functionDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveFunctionDescriptor(scope.getContainingDeclaration(), scope, function, context.trace);
         scope.addFunctionDescriptor(functionDescriptor);
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
         context.expressionTypingServices.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace);
-        return DataFlowUtils.checkStatementType(function, context);
+        return DataFlowUtils.checkStatementType(function, context, context.dataFlowInfo);
     }
 
     @Override
-    public JetType visitClass(JetClass klass, ExpressionTypingContext context) {
+    public JetTypeInfo visitClass(JetClass klass, ExpressionTypingContext context) {
         TopDownAnalyzer.processClassOrObject(context.expressionTypingServices.getProject(), context.trace, scope,
                                              scope.getContainingDeclaration(), klass);
         ClassDescriptor classDescriptor = context.trace.getBindingContext().get(BindingContext.CLASS, klass);
         if (classDescriptor != null) {
             scope.addClassifierDescriptor(classDescriptor);
         }
-        return DataFlowUtils.checkStatementType(klass, context);
+        return DataFlowUtils.checkStatementType(klass, context, context.dataFlowInfo);
     }
 
     @Override
-    public JetType visitTypedef(JetTypedef typedef, ExpressionTypingContext context) {
+    public JetTypeInfo visitTypedef(JetTypedef typedef, ExpressionTypingContext context) {
         return super.visitTypedef(typedef, context); // TODO
     }
 
     @Override
-    public JetType visitDeclaration(JetDeclaration dcl, ExpressionTypingContext context) {
-        return DataFlowUtils.checkStatementType(dcl, context);
+    public JetTypeInfo visitDeclaration(JetDeclaration dcl, ExpressionTypingContext context) {
+        return DataFlowUtils.checkStatementType(dcl, context, context.dataFlowInfo);
     }
 
     @Override
-    public JetType visitBinaryExpression(JetBinaryExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitBinaryExpression(JetBinaryExpression expression, ExpressionTypingContext context) {
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         IElementType operationType = operationSign.getReferencedNameElementType();
         JetType result;
@@ -170,7 +171,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         else {
             return facade.getType(expression, context);
         }
-        return DataFlowUtils.checkType(result, expression, context);
+        return DataFlowUtils.checkType(result, expression, context, context.dataFlowInfo);
     }
 
     protected JetType visitAssignmentOperation(JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
@@ -186,7 +187,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
         if (left == null) return null;
 
-        JetType leftType = facade.getType(left, context);
+        JetType leftType = facade.getType(left, context).getType();
         if (leftType == null) {
             facade.getType(right, context);
             context.trace.report(UNRESOLVED_REFERENCE.on(operationSign));
@@ -249,9 +250,9 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             basic.checkLValue(context.trace, arrayAccessExpression);
             return checkAssignmentType(assignmentType, expression, contextWithExpectedType);
         }
-        JetType leftType = facade.getType(expression.getLeft(), context.replaceScope(scope));
+        JetType leftType = facade.getType(expression.getLeft(), context.replaceScope(scope)).getType();
         if (right != null) {
-            JetType rightType = facade.getType(right, context.replaceExpectedType(leftType).replaceScope(scope));
+            JetType rightType = facade.getType(right, context.replaceExpectedType(leftType).replaceScope(scope)).getType();
         }
         if (leftType != null) { //if leftType == null, some another error has been generated
             basic.checkLValue(context.trace, expression.getLeft());
@@ -261,59 +262,59 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
 
     @Override
-    public JetType visitExpression(JetExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitExpression(JetExpression expression, ExpressionTypingContext context) {
         return facade.getType(expression, context);
     }
 
     @Override
-    public JetType visitJetElement(JetElement element, ExpressionTypingContext context) {
+    public JetTypeInfo visitJetElement(JetElement element, ExpressionTypingContext context) {
         context.trace.report(UNSUPPORTED.on(element, "in a block"));
-        return null;
+        return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 
     @Override
-    public JetType visitWhileExpression(JetWhileExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitWhileExpression(JetWhileExpression expression, ExpressionTypingContext context) {
         return controlStructures.visitWhileExpression(expression, context, true);
     }
 
     @Override
-    public JetType visitDoWhileExpression(JetDoWhileExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitDoWhileExpression(JetDoWhileExpression expression, ExpressionTypingContext context) {
         return controlStructures.visitDoWhileExpression(expression, context, true);
     }
 
     @Override
-    public JetType visitForExpression(JetForExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitForExpression(JetForExpression expression, ExpressionTypingContext context) {
         return controlStructures.visitForExpression(expression, context, true);
     }
 
     @Override
-    public JetType visitIfExpression(JetIfExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitIfExpression(JetIfExpression expression, ExpressionTypingContext context) {
         return controlStructures.visitIfExpression(expression, context, true);
     }
 
     @Override
-    public JetType visitWhenExpression(final JetWhenExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitWhenExpression(final JetWhenExpression expression, ExpressionTypingContext context) {
         return patterns.visitWhenExpression(expression, context, true);
     }
 
     @Override
-    public JetType visitBlockExpression(JetBlockExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitBlockExpression(JetBlockExpression expression, ExpressionTypingContext context) {
         return basic.visitBlockExpression(expression, context, true);
     }
 
     @Override
-    public JetType visitParenthesizedExpression(JetParenthesizedExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitParenthesizedExpression(JetParenthesizedExpression expression, ExpressionTypingContext context) {
         return basic.visitParenthesizedExpression(expression, context, true);
     }
 
     @Override
-    public JetType visitUnaryExpression(JetUnaryExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitUnaryExpression(JetUnaryExpression expression, ExpressionTypingContext context) {
         return basic.visitUnaryExpression(expression, context, true);
     }
 
     @Override
-    public JetType visitIdeTemplateExpression(JetIdeTemplateExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitIdeTemplateExpression(JetIdeTemplateExpression expression, ExpressionTypingContext context) {
         context.trace.report(UNRESOLVED_IDE_TEMPLATE.on(expression, ObjectUtils.notNull(expression.getText(), "<no name>")));
-        return null;
+        return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 }

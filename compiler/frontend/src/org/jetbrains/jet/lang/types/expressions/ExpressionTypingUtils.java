@@ -71,12 +71,12 @@ public class ExpressionTypingUtils {
 
     @Nullable
     protected static ExpressionReceiver getExpressionReceiver(@NotNull ExpressionTypingFacade facade, @NotNull JetExpression expression, ExpressionTypingContext context) {
-        return getExpressionReceiver(expression, facade.getType(expression, context));
+        return getExpressionReceiver(expression, facade.getType(expression, context).getType());
     }
 
     @NotNull
     protected static ExpressionReceiver safeGetExpressionReceiver(@NotNull ExpressionTypingFacade facade, @NotNull JetExpression expression, ExpressionTypingContext context) {
-        return new ExpressionReceiver(expression, facade.safeGetType(expression, context));
+        return new ExpressionReceiver(expression, facade.safeGetType(expression, context).getType());
     }
 
     @NotNull
