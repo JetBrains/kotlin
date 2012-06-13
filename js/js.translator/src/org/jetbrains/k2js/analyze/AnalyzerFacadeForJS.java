@@ -174,8 +174,9 @@ public final class AnalyzerFacadeForJS {
 
         @Override
         public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
-            //TODO: these thing should not be hard-coded like that
+            //TODO: these things should not be hard-coded like that
             directives.add(JetPsiFactory.createImportDirective(project, new ImportPath("js.*")));
+            directives.add(JetPsiFactory.createImportDirective(project, new ImportPath("java.lang.*")));
             directives.add(JetPsiFactory.createImportDirective(project, new ImportPath(JetStandardClasses.STANDARD_CLASSES_FQNAME, true)));
             directives.add(JetPsiFactory.createImportDirective(project, new ImportPath("kotlin.*")));
         }

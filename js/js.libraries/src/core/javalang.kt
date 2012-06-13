@@ -8,6 +8,9 @@ trait Iterable<T> {
     fun iterator() : java.util.Iterator<T> = js.noImpl
 }
 
+library
+open class Exception() : Throwable() {}
+
 library("splitString")
 public fun String.split(regex : String) : Array<String> = js.noImpl
 
@@ -19,6 +22,9 @@ class IllegalStateException(message: String = "") : Exception() {}
 
 library
 class IndexOutOfBoundsException(message: String = "") : Exception() {}
-
+s
 library
 class UnsupportedOperationException(message: String = "") : Exception() {}
+
+library
+class NumberFormatException(message: String = "") : Exception() {}

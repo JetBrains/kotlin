@@ -22,9 +22,3 @@ library
 fun safeParseInt(s : String) : Int? = js.noImpl
 library
 fun safeParseDouble(s : String) : Double? = js.noImpl
-library
-open class Exception() : Throwable() {}
-library
-open class RuntimeException() : Exception() {}
-library
-class NumberFormatException() : Exception() {}

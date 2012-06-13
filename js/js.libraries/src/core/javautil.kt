@@ -1,7 +1,6 @@
 package java.util
 
-import js.*;
-
+import java.lang.*
 
 library("collectionsMax")
 public fun max<T>(col : Collection<T>, comp : Comparator<T>) : T = js.noImpl
