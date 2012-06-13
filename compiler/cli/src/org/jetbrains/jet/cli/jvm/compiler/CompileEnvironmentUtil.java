@@ -217,7 +217,7 @@ public class CompileEnvironmentUtil {
             if (includeRuntime) {
                 writeRuntimeToJar(stream);
             }
-            stream.close();
+            stream.finish();
         }
         catch (IOException e) {
             throw new CompileEnvironmentException("Failed to generate jar file", e);
