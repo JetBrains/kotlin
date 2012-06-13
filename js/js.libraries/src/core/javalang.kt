@@ -22,7 +22,7 @@ class IllegalStateException(message: String = "") : Exception() {}
 
 library
 class IndexOutOfBoundsException(message: String = "") : Exception() {}
-s
+
 library
 class UnsupportedOperationException(message: String = "") : Exception() {}
 
