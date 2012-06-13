@@ -48,18 +48,14 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 /**
  * @author Stepan Koltsov
  */
-public class ScriptResolver {
+public class ScriptHeaderResolver {
 
     @NotNull
     private NamespaceFactory namespaceFactory;
     @NotNull
     private DependencyClassByQualifiedNameResolver dependencyClassByQualifiedNameResolver;
     @NotNull
-    private ModuleDescriptor moduleDescriptor;
-    @NotNull
     private TopDownAnalysisContext context;
-    @NotNull
-    private ExpressionTypingServices expressionTypingServices;
     @NotNull
     private BindingTrace trace;
     @NotNull
@@ -76,18 +72,8 @@ public class ScriptResolver {
     }
 
     @Inject
-    public void setModuleDescriptor(@NotNull ModuleDescriptor moduleDescriptor) {
-        this.moduleDescriptor = moduleDescriptor;
-    }
-
-    @Inject
     public void setContext(@NotNull TopDownAnalysisContext context) {
         this.context = context;
-    }
-
-    @Inject
-    public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
-        this.expressionTypingServices = expressionTypingServices;
     }
 
     @Inject
@@ -143,9 +129,7 @@ public class ScriptResolver {
         trace.record(BindingContext.SCRIPT, script, scriptDescriptor);
     }
 
-
-
-    public void resolveScripts() {
+    public void resolveScriptDeclarations() {
         for (Map.Entry<JetScript, ScriptDescriptor> e : context.getScripts().entrySet()) {
             JetScript declaration = e.getKey();
             ScriptDescriptor descriptor = e.getValue();
@@ -163,23 +147,8 @@ public class ScriptResolver {
                 ++index;
             }
 
-            scope.changeLockLevel(WritableScope.LockLevel.READING);
-
-            ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                    expressionTypingServices,
-                    trace,
-                    scope,
-                    DataFlowInfo.EMPTY,
-                    NO_EXPECTED_TYPE,
-                    false);
-            JetType returnType = expressionTypingServices.getBlockReturnedType(scope, declaration.getBlockExpression(), CoercionStrategy.NO_COERCION, context, trace);
-            if (returnType == null) {
-                returnType = ErrorUtils.createErrorType("getBlockReturnedType returned null");
-            }
-            descriptor.initialize(returnType, valueParameters);
+            descriptor.setValueParameters(valueParameters);
         }
     }
-
-
 
 }

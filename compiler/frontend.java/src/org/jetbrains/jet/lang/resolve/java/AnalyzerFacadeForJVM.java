@@ -23,6 +23,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
+import org.jetbrains.jet.di.InjectorForBodyResolve;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -71,7 +72,6 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     ) {
         return analyzeBodiesInFilesWithJavaIntegration(
                 project, scriptParameters, filesForBodiesResolve,
-                compilerDependenciesForProduction(CompilerSpecialMode.REGULAR),
                 headersTraceContext, bodiesResolveContext);
     }
 
@@ -137,19 +137,17 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
     public static AnalyzeExhaust analyzeBodiesInFilesWithJavaIntegration(
             Project project, List<AnalyzerScriptParameter> scriptParameters, Predicate<PsiFile> filesToAnalyzeCompletely,
-            @NotNull CompilerDependencies compilerDependencies,
             @NotNull BindingTrace traceContext,
             @NotNull BodiesResolveContext bodiesResolveContext) {
-        final ModuleDescriptor owner = new ModuleDescriptor(Name.special("<module>"));
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 filesToAnalyzeCompletely, false, false, scriptParameters);
 
         bodiesResolveContext.setTopDownAnalysisParameters(topDownAnalysisParameters);
 
-        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
+        InjectorForBodyResolve injector = new InjectorForBodyResolve(
                 project, topDownAnalysisParameters,
-                new ObservableBindingTrace(traceContext), owner, compilerDependencies);
+                new ObservableBindingTrace(traceContext));
 
         try {
             injector.getBodyResolver().resolveBodies(bodiesResolveContext);

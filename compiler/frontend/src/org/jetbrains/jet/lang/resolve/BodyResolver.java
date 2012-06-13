@@ -115,7 +115,7 @@ public class BodyResolver {
     @NotNull
     private DescriptorResolver descriptorResolver;
     @NotNull
-    private ScriptResolver scriptResolver;
+    private ScriptBodyResolver scriptBodyResolverResolver;
     @NotNull
     private ExpressionTypingServices expressionTypingServices;
     @NotNull
@@ -138,8 +138,8 @@ public class BodyResolver {
     }
 
     @Inject
-    public void setScriptResolver(@NotNull ScriptResolver scriptResolver) {
-        this.scriptResolver = scriptResolver;
+    public void setScriptBodyResolverResolver(@NotNull ScriptBodyResolver scriptBodyResolverResolver) {
+        this.scriptBodyResolverResolver = scriptBodyResolverResolver;
     }
 
     @Inject
@@ -182,7 +182,7 @@ public class BodyResolver {
         resolveSecondaryConstructorBodies();
         resolveFunctionBodies();
 
-        scriptResolver.resolveScripts();
+        scriptBodyResolverResolver.resolveScriptBodies();
 
         if (!topDownAnalysisParameters.isDeclaredLocally()) {
             computeDeferredTypes();

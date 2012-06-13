@@ -50,6 +50,8 @@ public class DeclarationResolver {
     @NotNull
     private DescriptorResolver descriptorResolver;
     @NotNull
+    private ScriptHeaderResolver scriptHeaderResolver;
+    @NotNull
     private BindingTrace trace;
 
 
@@ -76,6 +78,11 @@ public class DeclarationResolver {
     @Inject
     public void setTrace(@NotNull BindingTrace trace) {
         this.trace = trace;
+    }
+
+    @Inject
+    public void setScriptHeaderResolver(@NotNull ScriptHeaderResolver scriptHeaderResolver) {
+        this.scriptHeaderResolver = scriptHeaderResolver;
     }
 
 
@@ -151,6 +158,8 @@ public class DeclarationResolver {
                     classDescriptor.getScopeForInitializers(), classDescriptor.getScopeForMemberResolution(),
                     classDescriptor.getBuilder());
         }
+
+        scriptHeaderResolver.resolveScriptDeclarations();
 
         // TODO : Extensions
     }

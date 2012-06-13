@@ -54,7 +54,7 @@ public class TypeHierarchyResolver {
     @NotNull
     private DescriptorResolver descriptorResolver;
     @NotNull
-    private ScriptResolver scriptResolver;
+    private ScriptHeaderResolver scriptHeaderResolver;
     @NotNull
     private NamespaceFactoryImpl namespaceFactory;
     @NotNull
@@ -79,8 +79,8 @@ public class TypeHierarchyResolver {
     }
 
     @Inject
-    public void setScriptResolver(@NotNull ScriptResolver scriptResolver) {
-        this.scriptResolver = scriptResolver;
+    public void setScriptHeaderResolver(@NotNull ScriptHeaderResolver scriptHeaderResolver) {
+        this.scriptHeaderResolver = scriptHeaderResolver;
     }
 
     @Inject
@@ -195,7 +195,7 @@ public class TypeHierarchyResolver {
                 public void visitJetFile(JetFile file) {
                     if (file.isScript()) {
                         JetScript script = file.getScript();
-                        scriptResolver.processScriptHierarchy(script, outerScope);
+                        scriptHeaderResolver.processScriptHierarchy(script, outerScope);
                         return;
                     }
 

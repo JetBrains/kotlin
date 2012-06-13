@@ -50,6 +50,7 @@ public class AllInjectorsGenerator {
         generateInjectorForJvmCodegen();
         generateInjectorForJetTypeMapper();
         generateInjectorForLazyResolve();
+        generateInjectorForBodyResolve();
     }
 
     private static void generateInjectorForLazyResolve() throws IOException {
@@ -71,6 +72,7 @@ public class AllInjectorsGenerator {
         generateInjectorForTopDownAnalyzerCommon(generator);
         generator.addParameter(ModuleConfiguration.class);
         generator.addField(DependencyClassByQualifiedNameResolverDummyImpl.class);
+        generator.addField(NamespaceFactoryImpl.class);
         generator.generate("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerBasic");
     }
 
@@ -79,6 +81,7 @@ public class AllInjectorsGenerator {
         generateInjectorForTopDownAnalyzerCommon(generator);
         generator.addParameter(ModuleConfiguration.class);
         generator.addField(DependencyClassByQualifiedNameResolverDummyImpl.class);
+        generator.addField(NamespaceFactoryImpl.class);
         generator.generate("js/js.translator/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJs");
     }
 
@@ -188,6 +191,18 @@ public class AllInjectorsGenerator {
         generator.addField(CompilerSpecialMode.REGULAR);
         generator.addField(ClassBuilderMode.FULL);
         generator.generate("compiler/backend/src", "org.jetbrains.jet.di", "InjectorForJetTypeMapper");
+    }
+
+    private static void generateInjectorForBodyResolve() throws IOException {
+        DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        // Fields
+        generator.addPublicField(BodyResolver.class);
+
+        // Parameters
+        generator.addPublicParameter(Project.class);
+        generator.addPublicParameter(TopDownAnalysisParameters.class);
+        generator.addPublicParameter(BindingTrace.class);
+        generator.generate("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForBodyResolve");
     }
 
 }

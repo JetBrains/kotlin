@@ -44,9 +44,8 @@ public class ScriptDescriptor extends DeclarationDescriptorImpl {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), NAME);
     }
 
-    public void initialize(@NotNull JetType returnType, @NotNull List<ValueParameterDescriptor> valueParameters) {
+    public void initialize(@NotNull JetType returnType) {
         this.returnType = returnType;
-        this.valueParameters = valueParameters;
         scriptCodeDescriptor.initialize(implicitReceiver, valueParameters, returnType);
     }
 
@@ -78,5 +77,9 @@ public class ScriptDescriptor extends DeclarationDescriptorImpl {
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitScriptDescriptor(this, data);
+    }
+
+    public void setValueParameters(@NotNull List<ValueParameterDescriptor> valueParameters) {
+        this.valueParameters = valueParameters;
     }
 }

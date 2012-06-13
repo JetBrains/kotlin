@@ -24,6 +24,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.di.InjectorForBodyResolve;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -112,15 +113,13 @@ public final class AnalyzerFacadeForJS {
             @NotNull BodiesResolveContext bodiesResolveContext
     ) {
         Project project = config.getProject();
-        final ModuleDescriptor owner = new ModuleDescriptor(Name.special("<module>"));
         Predicate<PsiFile> completely = Predicates.and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
 
         TopDownAnalysisParameters topDownAnalysisParameters =
                 new TopDownAnalysisParameters(completely, false, false, Collections.<AnalyzerScriptParameter>emptyList());
 
-        InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
-                project, topDownAnalysisParameters, new ObservableBindingTrace(traceContext), owner,
-                JsConfiguration.jsLibConfiguration(project));
+        InjectorForBodyResolve injector = new InjectorForBodyResolve(
+                project, topDownAnalysisParameters, new ObservableBindingTrace(traceContext));
 
         try {
             bodiesResolveContext.setTopDownAnalysisParameters(topDownAnalysisParameters);

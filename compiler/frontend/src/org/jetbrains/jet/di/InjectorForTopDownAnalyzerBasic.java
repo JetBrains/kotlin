@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl;
+import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -37,12 +38,12 @@ import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadingConflictResolver;
 import org.jetbrains.jet.lang.resolve.ImportsResolver;
+import org.jetbrains.jet.lang.resolve.ScriptHeaderResolver;
 import org.jetbrains.jet.lang.resolve.DelegationResolver;
-import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
 import org.jetbrains.jet.lang.resolve.OverloadResolver;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
-import org.jetbrains.jet.lang.resolve.ScriptResolver;
+import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -66,6 +67,7 @@ public class InjectorForTopDownAnalyzerBasic {
     private final ModuleDescriptor moduleDescriptor;
     private final ModuleConfiguration moduleConfiguration;
     private DependencyClassByQualifiedNameResolverDummyImpl dependencyClassByQualifiedNameResolverDummy;
+    private NamespaceFactoryImpl namespaceFactory;
     private DeclarationResolver declarationResolver;
     private AnnotationResolver annotationResolver;
     private CallResolver callResolver;
@@ -74,12 +76,12 @@ public class InjectorForTopDownAnalyzerBasic {
     private QualifiedExpressionResolver qualifiedExpressionResolver;
     private OverloadingConflictResolver overloadingConflictResolver;
     private ImportsResolver importsResolver;
+    private ScriptHeaderResolver scriptHeaderResolver;
     private DelegationResolver delegationResolver;
-    private NamespaceFactoryImpl namespaceFactory;
     private OverloadResolver overloadResolver;
     private OverrideResolver overrideResolver;
     private TypeHierarchyResolver typeHierarchyResolver;
-    private ScriptResolver scriptResolver;
+    private ScriptBodyResolver scriptBodyResolver;
 
     public InjectorForTopDownAnalyzerBasic(
         @NotNull Project project,
@@ -100,6 +102,7 @@ public class InjectorForTopDownAnalyzerBasic {
         this.moduleDescriptor = moduleDescriptor;
         this.moduleConfiguration = moduleConfiguration;
         this.dependencyClassByQualifiedNameResolverDummy = new DependencyClassByQualifiedNameResolverDummyImpl();
+        this.namespaceFactory = new NamespaceFactoryImpl();
         this.declarationResolver = new DeclarationResolver();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
@@ -108,12 +111,12 @@ public class InjectorForTopDownAnalyzerBasic {
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.overloadingConflictResolver = new OverloadingConflictResolver();
         this.importsResolver = new ImportsResolver();
+        this.scriptHeaderResolver = new ScriptHeaderResolver();
         this.delegationResolver = new DelegationResolver();
-        this.namespaceFactory = new NamespaceFactoryImpl();
         this.overloadResolver = new OverloadResolver();
         this.overrideResolver = new OverrideResolver();
         this.typeHierarchyResolver = new TypeHierarchyResolver();
-        this.scriptResolver = new ScriptResolver();
+        this.scriptBodyResolver = new ScriptBodyResolver();
 
         this.topDownAnalyzer.setBodyResolver(bodyResolver);
         this.topDownAnalyzer.setContext(topDownAnalysisContext);
@@ -134,7 +137,7 @@ public class InjectorForTopDownAnalyzerBasic {
         this.bodyResolver.setDeclarationsChecker(declarationsChecker);
         this.bodyResolver.setDescriptorResolver(descriptorResolver);
         this.bodyResolver.setExpressionTypingServices(expressionTypingServices);
-        this.bodyResolver.setScriptResolver(scriptResolver);
+        this.bodyResolver.setScriptBodyResolverResolver(scriptBodyResolver);
         this.bodyResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         this.bodyResolver.setTrace(bindingTrace);
 
@@ -147,10 +150,15 @@ public class InjectorForTopDownAnalyzerBasic {
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         this.descriptorResolver.setTypeResolver(typeResolver);
 
+        namespaceFactory.setConfiguration(moduleConfiguration);
+        namespaceFactory.setModuleDescriptor(moduleDescriptor);
+        namespaceFactory.setTrace(bindingTrace);
+
         declarationResolver.setAnnotationResolver(annotationResolver);
         declarationResolver.setContext(topDownAnalysisContext);
         declarationResolver.setDescriptorResolver(descriptorResolver);
         declarationResolver.setImportsResolver(importsResolver);
+        declarationResolver.setScriptHeaderResolver(scriptHeaderResolver);
         declarationResolver.setTrace(bindingTrace);
 
         annotationResolver.setCallResolver(callResolver);
@@ -175,12 +183,14 @@ public class InjectorForTopDownAnalyzerBasic {
         importsResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
         importsResolver.setTrace(bindingTrace);
 
+        scriptHeaderResolver.setContext(topDownAnalysisContext);
+        scriptHeaderResolver.setDependencyClassByQualifiedNameResolver(dependencyClassByQualifiedNameResolverDummy);
+        scriptHeaderResolver.setNamespaceFactory(namespaceFactory);
+        scriptHeaderResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
+        scriptHeaderResolver.setTrace(bindingTrace);
+
         delegationResolver.setContext(topDownAnalysisContext);
         delegationResolver.setTrace(bindingTrace);
-
-        namespaceFactory.setConfiguration(moduleConfiguration);
-        namespaceFactory.setModuleDescriptor(moduleDescriptor);
-        namespaceFactory.setTrace(bindingTrace);
 
         overloadResolver.setContext(topDownAnalysisContext);
         overloadResolver.setTrace(bindingTrace);
@@ -193,16 +203,12 @@ public class InjectorForTopDownAnalyzerBasic {
         typeHierarchyResolver.setDescriptorResolver(descriptorResolver);
         typeHierarchyResolver.setImportsResolver(importsResolver);
         typeHierarchyResolver.setNamespaceFactory(namespaceFactory);
-        typeHierarchyResolver.setScriptResolver(scriptResolver);
+        typeHierarchyResolver.setScriptHeaderResolver(scriptHeaderResolver);
         typeHierarchyResolver.setTrace(bindingTrace);
 
-        scriptResolver.setContext(topDownAnalysisContext);
-        scriptResolver.setDependencyClassByQualifiedNameResolver(dependencyClassByQualifiedNameResolverDummy);
-        scriptResolver.setExpressionTypingServices(expressionTypingServices);
-        scriptResolver.setModuleDescriptor(moduleDescriptor);
-        scriptResolver.setNamespaceFactory(namespaceFactory);
-        scriptResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
-        scriptResolver.setTrace(bindingTrace);
+        scriptBodyResolver.setContext(topDownAnalysisContext);
+        scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
+        scriptBodyResolver.setTrace(bindingTrace);
 
     }
 
