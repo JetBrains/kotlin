@@ -141,6 +141,16 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                                                                                                       resolveSession.getTrace()));
         }
 
+        // Objects are also properties
+        JetClassOrObject classOrObjectDeclaration = declarationProvider.getClassOrObjectDeclaration(name);
+        if (classOrObjectDeclaration instanceof JetObjectDeclaration) {
+            JetObjectDeclaration objectDeclaration = (JetObjectDeclaration) classOrObjectDeclaration;
+            ClassDescriptor classifier = (ClassDescriptor) getClassifier(name);
+            VariableDescriptor propertyDescriptor = resolveSession.getInjector().getDescriptorResolver()
+                    .resolveObjectDeclaration(thisDescriptor, objectDeclaration, classifier, resolveSession.getTrace());
+            result.add(propertyDescriptor);
+        }
+
         getNonDeclaredProperties(name, result);
 
         if (!result.isEmpty()) {

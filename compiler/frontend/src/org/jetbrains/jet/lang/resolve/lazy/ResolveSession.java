@@ -67,7 +67,7 @@ public class ResolveSession {
     }
 
     @NotNull
-    public InjectorForLazyResolve getInjector() {
+    /*package*/ InjectorForLazyResolve getInjector() {
         return injector;
     }
 
@@ -159,7 +159,7 @@ public class ResolveSession {
 
     @NotNull
     public DeclarationDescriptor resolveToDescriptor(JetDeclaration declaration) {
-        return declaration.accept(new JetVisitor<DeclarationDescriptor, Void>() {
+        DeclarationDescriptor result = declaration.accept(new JetVisitor<DeclarationDescriptor, Void>() {
             @Override
             public DeclarationDescriptor visitClass(JetClass klass, Void data) {
                 return getClassDescriptor(klass);
@@ -239,9 +239,21 @@ public class ResolveSession {
             }
 
             @Override
+            public DeclarationDescriptor visitObjectDeclarationName(JetObjectDeclarationName declarationName, Void data) {
+                JetScope scopeForDeclaration = getInjector().getScopeProvider().getResolutionScopeForDeclaration(
+                        (JetDeclaration) declarationName.getParent());
+                scopeForDeclaration.getProperties(declarationName.getNameAsName());
+                return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, declarationName);
+            }
+
+            @Override
             public DeclarationDescriptor visitJetElement(JetElement element, Void data) {
                 throw new IllegalArgumentException("Unsupported declaration type: " + element + " " + element.getText());
             }
         }, null);
+        if (result == null) {
+            throw new IllegalStateException("No descriptor resolevd for " + declaration + " " + declaration.getText());
+        }
+        return result;
     }
 }

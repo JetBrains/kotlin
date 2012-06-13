@@ -112,7 +112,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             JetClass jetClass = (JetClass) classOrObject;
 
             for (JetParameter parameter : jetClass.getPrimaryConstructorParameters()) {
-                if (parameter.getValOrVarNode() != null) {
+                if (parameter.getValOrVarNode() != null && name.equals(parameter.getNameAsName())) {
                     PropertyDescriptor propertyDescriptor =
                             resolveSession.getInjector().getDescriptorResolver().resolvePrimaryConstructorParameterToAProperty(
                                     thisDescriptor,
