@@ -17,10 +17,8 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.NamespaceComparator;
@@ -30,8 +28,6 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.io.File;
@@ -59,11 +55,7 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends Abstract
                     }
                 });
 
-        ModuleDescriptor eagerModuleForLazy = new ModuleDescriptor(Name.special("<eager module for lazy>"));
-
-        InjectorForTopDownAnalyzerForJvm tdaInjectorForLazy = createInjectorForTDA(eagerModuleForLazy);
-        // This line is required fro the 'jet' namespace to be filled in with functions
-        tdaInjectorForLazy.getTopDownAnalyzer().analyzeFiles(Collections.singletonList(JetPsiFactory.createFile(project, "")), Collections.<AnalyzerScriptParameter>emptyList());
+        InjectorForTopDownAnalyzerForJvm tdaInjectorForLazy = getEagerInjectorForTopDownAnalyzer();
 
         ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
         ResolveSession session = new ResolveSession(project, lazyModule, tdaInjectorForLazy.getJavaBridgeConfiguration(), new FileBasedDeclarationProviderFactory(files));
@@ -80,12 +72,6 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends Abstract
         };
         NamespaceComparator.compareNamespaces(namespacesToCompare.first, namespacesToCompare.second,
                                               includeMembersOfObject, filterJetNamespace, new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt"));
-    }
-
-    private InjectorForTopDownAnalyzerForJvm createInjectorForTDA(ModuleDescriptor module) {
-        TopDownAnalysisParameters params = new TopDownAnalysisParameters(
-                Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
-        return new InjectorForTopDownAnalyzerForJvm(project, params, new BindingTraceContext(), module, compilerDependencies);
     }
 
     protected void doTest(String testFileName) throws Exception {
