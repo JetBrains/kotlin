@@ -26,16 +26,16 @@ import java.util.Arrays;
 /**
  * @author abreslav
  */
-public class LazyResolveComparingTestGenerator {
+public class LazyResolveNamespaceComparingTestGenerator {
     public static void main(String[] args) throws IOException {
         String testDataFileExtension = "kt";
         new TestGenerator(
             "compiler/tests/",
             testDataFileExtension,
             "org.jetbrains.jet.lang.resolve.lazy",
-            "LazyResolveComparingTestGenerated",
+            "LazyResolveNamespaceComparingTestGenerated",
             "org.jetbrains.jet.lang.resolve.lazy",
-            "AbstractLazyResolveComparingTest",
+            "AbstractLazyResolveNamespaceComparingTest",
             Arrays.asList(
                 new TestDataSource(new File("compiler/testData/readKotlinBinaryClass"),
                                    true,
@@ -50,9 +50,9 @@ public class LazyResolveComparingTestGenerator {
                                    TestGenerator.filterFilesByExtension(testDataFileExtension),
                                    "doTest")
             ),
-            "LazyResolveComparingTestGenerator"
+            "LazyResolveNamespaceComparingTestGenerator"
         ).generateAndSave();
     }
 
-    private LazyResolveComparingTestGenerator() {}
+    private LazyResolveNamespaceComparingTestGenerator() {}
 }

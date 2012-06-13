@@ -51,7 +51,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public abstract class AbstractLazyResolveComparingTest {
+public abstract class AbstractLazyResolveNamespaceComparingTest {
     private final Disposable rootDisposable = new Disposable() {
         @Override
         public void dispose() {
