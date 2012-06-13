@@ -898,7 +898,7 @@ public class DescriptorResolver {
         );
         trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor);
         WritableScopeImpl parameterScope = new WritableScopeImpl(
-                scope, classDescriptor, new TraceBasedRedeclarationHandler(trace), "Scope with value parameters of a constructor");
+                scope, constructorDescriptor, new TraceBasedRedeclarationHandler(trace), "Scope with value parameters of a constructor");
         parameterScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         return constructorDescriptor.initialize(
                 typeParameters,

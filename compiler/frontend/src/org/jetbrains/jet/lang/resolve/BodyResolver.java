@@ -61,6 +61,7 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -399,7 +400,13 @@ public class BodyResolver {
             MutableClassDescriptor classDescriptor = entry.getValue();
             ConstructorDescriptor unsubstitutedPrimaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
             if (unsubstitutedPrimaryConstructor != null) {
-                checkDefaultParameterValues(klass.getPrimaryConstructorParameters(), unsubstitutedPrimaryConstructor.getValueParameters(), classDescriptor.getScopeForInitializers());
+                WritableScope parameterScope = new WritableScopeImpl(classDescriptor.getScopeForSupertypeResolution(), unsubstitutedPrimaryConstructor,
+                                                                     RedeclarationHandler.DO_NOTHING, "Scope with value parameters of a constructor");
+                for (ValueParameterDescriptor valueParameterDescriptor : unsubstitutedPrimaryConstructor.getValueParameters()) {
+                    parameterScope.addVariableDescriptor(valueParameterDescriptor);
+                }
+                parameterScope.changeLockLevel(WritableScope.LockLevel.READING);
+                checkDefaultParameterValues(klass.getPrimaryConstructorParameters(), unsubstitutedPrimaryConstructor.getValueParameters(), parameterScope);
             }
         }
     }
