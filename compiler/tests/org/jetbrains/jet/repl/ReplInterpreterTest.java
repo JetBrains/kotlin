@@ -60,7 +60,7 @@ public class ReplInterpreterTest {
             String code = t.first;
             String expected = t.second;
 
-            Object actual = repl.eval(code);
+            Object actual = repl.eval(code).getValue();
             String actualString = actual != null ? actual.toString() : "null";
 
             Assert.assertEquals("after evaluation of: " + code, actualString, expected);

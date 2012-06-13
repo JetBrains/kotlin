@@ -116,8 +116,10 @@ public class ReplFromTerminal {
                 return oneCommand(line.substring(1));
             }
 
-            Object value = getReplInterpreter().eval(line);
-            System.out.println(value);
+            ReplInterpreter.LineResult lineResult = getReplInterpreter().eval(line);
+            if (!lineResult.isUnit()) {
+                System.out.println(lineResult.getValue());
+            }
             return true;
         }
         catch (Exception e) {

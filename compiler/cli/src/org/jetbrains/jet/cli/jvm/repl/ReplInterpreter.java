@@ -118,7 +118,26 @@ public class ReplInterpreter {
         classLoader = new ReplClassLoader(new URLClassLoader(classpath.toArray(new URL[0])));
     }
 
-    public Object eval(@NotNull String line) {
+    public static class LineResult {
+        private final Object value;
+        private final boolean unit;
+
+        public LineResult(Object value, boolean unit) {
+            this.value = value;
+            this.unit = unit;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public boolean isUnit() {
+            return unit;
+        }
+    }
+
+    @NotNull
+    public LineResult eval(@NotNull String line) {
         ++lineNumber;
 
         JvmClassName scriptClassName = JvmClassName.byInternalName("Line" + lineNumber);
@@ -173,7 +192,7 @@ public class ReplInterpreter {
 
             earlierLines.add(new EarlierLine(line, scriptDescriptor, scriptClass, scriptInstance, scriptClassName));
 
-            return rv;
+            return new LineResult(rv, scriptDescriptor.getReturnType().equals(JetStandardClasses.getUnitType()));
         } catch (Throwable e) {
             PrintWriter writer = new PrintWriter(System.err);
             classLoader.dumpClasses(writer);
