@@ -18,16 +18,11 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.cli.jvm.compiler.NamespaceComparator;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -37,11 +32,7 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.junit.After;
-import org.junit.BeforeClass;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,28 +42,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public abstract class AbstractLazyResolveNamespaceComparingTest {
-    private final Disposable rootDisposable = new Disposable() {
-        @Override
-        public void dispose() {
-        }
-    };
-
-    private final CompilerDependencies
-            compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true);
-    private final JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(rootDisposable, compilerDependencies);
-    private final Project project = jetCoreEnvironment.getProject();
-
-    @BeforeClass
-    public static void setUp() throws Exception {
-        System.setProperty("java.awt.headless", "true");
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        Disposer.dispose(rootDisposable);
-    }
-
+public abstract class AbstractLazyResolveNamespaceComparingTest extends AbstractLazyResolveTest {
     protected void doTest(
             String testFileName,
             Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>> transform,
