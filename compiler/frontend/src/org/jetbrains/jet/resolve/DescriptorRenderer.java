@@ -78,7 +78,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
     private final RenderDeclarationDescriptorVisitor rootVisitor = new RenderDeclarationDescriptorVisitor();
 
-    private final DeclarationDescriptorVisitorEmptyBodies<Void, StringBuilder> subVisitor = new RenderDeclarationDescriptorVisitor() {
+    private final DeclarationDescriptorVisitor<Void, StringBuilder> subVisitor = new RenderDeclarationDescriptorVisitor() {
         @Override
         public Void visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, StringBuilder builder) {
             renderTypeParameter(descriptor, builder, false);
