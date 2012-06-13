@@ -1,0 +1,6 @@
+namespace test
+
+abstract class test.ClassTypeTypePRefSuper</*0*/ P : jet.Any?> : java.lang.Iterable<P> {
+    final /*constructor*/ fun </*0*/ P : jet.Any?><init>(): test.ClassTypeTypePRefSuper<P>
+    abstract override /*1*/ fun iterator(): java.util.Iterator<P>
+}
