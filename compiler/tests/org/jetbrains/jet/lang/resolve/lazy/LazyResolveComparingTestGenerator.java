@@ -132,9 +132,8 @@ public class LazyResolveComparingTestGenerator {
         testClassName = "LazyResolveComparingTestGenerated";
         baseTestClassPackage = "org.jetbrains.jet.lang.resolve.lazy";
         baseTestClassName = "AbstractLazyResolveComparingTest";
-        //testDataDir = new File("compiler/testData/lazyResolve");
         testDataSources = Arrays.asList(
-            //new TestDataSource(new File("compiler/testData/readKotlinBinaryClass"), true, filterFilesByExtension(testDataFileExtension), "doTestSinglePackage"),
+            new TestDataSource(new File("compiler/testData/readKotlinBinaryClass"), true, filterFilesByExtension(testDataFileExtension), "doTestSinglePackage"),
             new TestDataSource(new File("compiler/testData/lazyResolve"), true, filterFilesByExtension(testDataFileExtension), "doTest")
         );
         generatorName = "LazyResolveComparingTestGenerator";
@@ -219,7 +218,7 @@ public class LazyResolveComparingTestGenerator {
                      "        else {",
                      "            String name = file.getName();",
                      "            if (name.endsWith(\"." + testDataFileExtension + "\") && !methodNames.contains(\"test\" + name.toLowerCase())) {",
-                     "                Assert.fail(\"Test data file missing from the generated test class: \" + file + \"\\nPlease re-run the generator: " + testClassName + "\");",
+                     "                Assert.fail(\"Test data file missing from the generated test class: \" + file + \"\\nPlease re-run the generator: " + generatorName + "\");",
                      "            }",
                      "        }",
                      "    }",
