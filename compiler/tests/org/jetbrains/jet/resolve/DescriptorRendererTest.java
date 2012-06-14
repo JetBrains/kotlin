@@ -23,6 +23,8 @@ import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
@@ -74,6 +76,10 @@ public class DescriptorRendererTest extends JetLiteFixture {
     }
 
     public void testErrorType() throws IOException {
+        doTest();
+    }
+
+    public void testInheritedMembersVisibility() throws IOException {
         doTest();
     }
 
