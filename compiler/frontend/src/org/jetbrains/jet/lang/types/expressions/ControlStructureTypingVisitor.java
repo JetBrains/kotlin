@@ -96,50 +96,56 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         if (elseBranch == null) {
             if (thenBranch != null) {
-                JetType type = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(thenScope, Collections.singletonList(thenBranch), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(thenInfo), context.trace).getType();
+                JetTypeInfo typeInfo = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(thenScope, Collections.singletonList(thenBranch), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(thenInfo), context.trace);
+                JetType type = typeInfo.getType();
+                DataFlowInfo dataFlowInfo;
                 if (type != null && JetStandardClasses.isNothing(type)) {
-                    facade.setResultingDataFlowInfo(elseInfo);
+                    dataFlowInfo = elseInfo;
+                } else {
+                    dataFlowInfo = typeInfo.getDataFlowInfo().or(elseInfo);
                 }
-                return DataFlowUtils.checkImplicitCast(
-                        DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType), expression,
-                        contextWithExpectedType, isStatement, context.dataFlowInfo);
+                return DataFlowUtils.checkImplicitCast(DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType), expression, contextWithExpectedType, isStatement, dataFlowInfo);
             }
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
         if (thenBranch == null) {
-            JetType type = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(elseScope, Collections.singletonList(elseBranch), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(elseInfo), context.trace).getType();
+            JetTypeInfo typeInfo = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(elseScope, Collections.singletonList(elseBranch), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(elseInfo), context.trace);
+            JetType type = typeInfo.getType();
+            DataFlowInfo dataFlowInfo;
             if (type != null && JetStandardClasses.isNothing(type)) {
-                facade.setResultingDataFlowInfo(thenInfo);
+                dataFlowInfo = thenInfo;
+            } else {
+                dataFlowInfo = typeInfo.getDataFlowInfo().or(thenInfo);
             }
-            return DataFlowUtils.checkImplicitCast(DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType), expression, contextWithExpectedType, isStatement, context.dataFlowInfo);
+            return DataFlowUtils.checkImplicitCast(DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType), expression, contextWithExpectedType, isStatement, dataFlowInfo);
         }
         CoercionStrategy coercionStrategy = isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION;
-        JetType thenType = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(thenScope, Collections.singletonList(thenBranch), coercionStrategy, contextWithExpectedType.replaceDataFlowInfo(thenInfo), context.trace).getType();
-        JetType elseType = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(elseScope, Collections.singletonList(elseBranch), coercionStrategy, contextWithExpectedType.replaceDataFlowInfo(elseInfo), context.trace).getType();
-
-        JetType result;
-        if (thenType == null) {
-            result = elseType;
-        }
-        else if (elseType == null) {
-            result = thenType;
-        }
-        else {
-            result = CommonSupertypes.commonSupertype(Arrays.asList(thenType, elseType));
-        }
+        JetTypeInfo thenTypeInfo = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(thenScope, Collections.singletonList(thenBranch), coercionStrategy, contextWithExpectedType.replaceDataFlowInfo(thenInfo), context.trace);
+        JetTypeInfo elseTypeInfo = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(elseScope, Collections.singletonList(elseBranch), coercionStrategy, contextWithExpectedType.replaceDataFlowInfo(elseInfo), context.trace);
+        JetType thenType = thenTypeInfo.getType();
+        JetType elseType = elseTypeInfo.getType();
+        DataFlowInfo thenDataFlowInfo = thenTypeInfo.getDataFlowInfo();
+        DataFlowInfo elseDataFlowInfo = elseTypeInfo.getDataFlowInfo();
 
         boolean jumpInThen = thenType != null && JetStandardClasses.isNothing(thenType);
         boolean jumpInElse = elseType != null && JetStandardClasses.isNothing(elseType);
 
-        if (jumpInThen && !jumpInElse) {
-            facade.setResultingDataFlowInfo(elseInfo);
+        JetTypeInfo result;
+        if (thenType == null && elseType == null) {
+            result = JetTypeInfo.create(null, thenDataFlowInfo.or(elseDataFlowInfo));
         }
-        else if (jumpInElse && !jumpInThen) {
-            facade.setResultingDataFlowInfo(thenInfo);
+        else if (thenType == null || (jumpInThen && !jumpInElse)) {
+            result = elseTypeInfo;
         }
-        if (result == null) return JetTypeInfo.create(null, context.dataFlowInfo);
-        return DataFlowUtils.checkImplicitCast(result, expression, contextWithExpectedType, isStatement, context.dataFlowInfo);
-    }
+        else if (elseType == null || (jumpInElse && !jumpInThen)) {
+            result = thenTypeInfo;
+        }
+        else {
+            result = JetTypeInfo.create(CommonSupertypes.commonSupertype(Arrays.asList(thenType, elseType)), thenDataFlowInfo.or(elseDataFlowInfo));
+        }
+
+        return DataFlowUtils.checkImplicitCast(result.getType(), expression, contextWithExpectedType, isStatement, result.getDataFlowInfo());
+     }
 
     @Override
     public JetTypeInfo visitWhileExpression(JetWhileExpression expression, ExpressionTypingContext context) {
