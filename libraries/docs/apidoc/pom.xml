@@ -28,6 +28,10 @@
         </dependency>
     </dependencies>
 
+    <properties>
+        <project-root>${basedir}/../../../</project-root>
+    </properties>
+
     <build>
         <plugins>
             <plugin>

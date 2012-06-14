@@ -327,6 +327,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             // lets remove the root project directory
             val rootDir = projectRootDir()
             val canonicalFile = File(filePath).getCanonicalPath() ?: ""
+            //println("=========== root dir for filePath: $canonicalFile is $rootDir")
             val relativeFile = if (rootDir != null && canonicalFile.startsWith(rootDir))
                 canonicalFile.substring(rootDir.length()) else canonicalFile
             if (relativeFile != null) {
