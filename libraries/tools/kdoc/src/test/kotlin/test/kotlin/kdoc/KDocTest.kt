@@ -7,6 +7,8 @@ import kotlin.test.assertTrue
 
 import org.junit.Test
 import java.io.File
+import org.junit.Assert
+import org.jetbrains.jet.cli.common.ExitCode
 
 /**
  */
@@ -37,6 +39,7 @@ class KDocTest {
         config.ignorePackages.add("org")
 
         val compiler = KDocCompiler()
-        compiler.exec(System.out, args)
+        val r = compiler.exec(System.out, args)
+        Assert.assertEquals(ExitCode.OK, r)
     }
 }
