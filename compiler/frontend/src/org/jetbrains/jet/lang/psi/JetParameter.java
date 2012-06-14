@@ -25,7 +25,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author max
  */
-public class JetParameter extends JetNamedDeclaration {
+public class JetParameter extends JetNotStubbedNamedDeclaration {
     public JetParameter(@NotNull ASTNode node) {
         super(node);
     }

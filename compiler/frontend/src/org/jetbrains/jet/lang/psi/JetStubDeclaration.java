@@ -16,53 +16,36 @@
 
 package org.jetbrains.jet.lang.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.Language;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetLanguage;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetToken;
 
 /**
- * @author max
+ * @author Nikolay Krasko
  */
-public class JetElementImpl extends ASTWrapperPsiElement implements JetElement {
-    public JetElementImpl(@NotNull ASTNode node) {
+abstract class JetStubDeclaration<T extends StubElement> extends StubBasedPsiElementBase<T> implements JetDeclaration {
+    public JetStubDeclaration(@NotNull T stub, @NotNull IStubElementType nodeType) {
+        super(stub, nodeType);
+    }
+
+    public JetStubDeclaration(@NotNull ASTNode node) {
         super(node);
     }
 
-    /**
-     * Comes along with @Nullable to indicate null is only possible if parsing error present
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.METHOD})
-    public @interface IfNotParsed {}
-
-    @NotNull
     @Override
-    public Language getLanguage() {
-        return JetLanguage.INSTANCE;
+    public JetModifierList getModifierList() {
+        return (JetModifierList) findChildByType(JetNodeTypes.MODIFIER_LIST);
     }
 
     @Override
-    public String toString() {
-        return getNode().getElementType().toString();
-    }
-
-    @Override
-    public final void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof JetVisitorVoid) {
-            accept((JetVisitorVoid) visitor);
-        }
-        else {
-            visitor.visitElement(this);
-        }
+    public boolean hasModifier(JetToken modifier) {
+        JetModifierList modifierList = getModifierList();
+        return modifierList != null && modifierList.hasModifier(modifier);
     }
 
     @Override
@@ -78,11 +61,11 @@ public class JetElementImpl extends ASTWrapperPsiElement implements JetElement {
 
     @Override
     public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitJetElement(this);
+        visitor.visitExpression(this);
     }
-    
+
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
-        return visitor.visitJetElement(this, data);
+        return visitor.visitExpression(this, data);
     }
 }

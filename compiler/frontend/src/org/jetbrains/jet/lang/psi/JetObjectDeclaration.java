@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class JetObjectDeclaration extends JetNamedDeclaration implements JetClassOrObject  {
+public class JetObjectDeclaration extends JetNotStubbedNamedDeclaration implements JetClassOrObject  {
     public JetObjectDeclaration(@NotNull ASTNode node) {
         super(node);
     }
@@ -123,4 +123,9 @@ public class JetObjectDeclaration extends JetNamedDeclaration implements JetClas
     public void delete() throws IncorrectOperationException {
         JetPsiUtil.deleteClass(this);
     }
+
+    //@Override
+    //public ItemPresentation getPresentation() {
+    //    return ItemPresentationProviders.getItemPresentation(this);
+    //}
 }

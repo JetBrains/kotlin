@@ -16,17 +16,8 @@
 
 package org.jetbrains.jet.lang.psi;
 
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lexer.JetToken;
-
 /**
  * @author Nikolay Krasko
  */
 public interface JetDeclaration extends JetExpression, JetModifierListOwner {
-    @Override
-    @Nullable
-    JetModifierList getModifierList();
-
-    @Override
-    boolean hasModifier(JetToken modifier);
 }
