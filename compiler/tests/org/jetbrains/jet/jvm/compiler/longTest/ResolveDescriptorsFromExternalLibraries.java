@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.cli.jvm.compiler.longTest;
+package org.jetbrains.jet.jvm.compiler.longTest;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
@@ -36,7 +36,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.FileInputStream;

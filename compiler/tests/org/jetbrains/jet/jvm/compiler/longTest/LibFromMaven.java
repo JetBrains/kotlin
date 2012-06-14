@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.cli.jvm.compiler.longTest;
+package org.jetbrains.jet.jvm.compiler.longTest;
 
 import org.jetbrains.annotations.NotNull;
 

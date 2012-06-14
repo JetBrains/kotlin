@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.cli.jvm.compiler;
+package org.jetbrains.jet.jvm.compiler;
 
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestCase;
