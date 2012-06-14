@@ -23,10 +23,15 @@ import java.io.Closeable;
  */
 public class ExceptionUtils {
 
+    public static class Nothing extends Error {
+        private Nothing() {
+        }
+    }
+
     /**
      * Translate exception to unchecked exception.
      */
-    public static RuntimeException rethrow(Throwable e) {
+    public static Nothing rethrow(Throwable e) {
         if (e instanceof RuntimeException) {
             throw (RuntimeException) e;
         }
