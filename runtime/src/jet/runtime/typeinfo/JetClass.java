@@ -28,4 +28,9 @@ import java.lang.annotation.RetentionPolicy;
 public @interface JetClass {
     String signature();
 
+    /**
+     * See JvmStdlibNames
+     * @return flags for method
+     */
+    int flags() default 0;
 }
