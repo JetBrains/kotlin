@@ -164,10 +164,14 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             DataFlowInfo conditionInfo = condition == null ? context.dataFlowInfo : DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, scopeToExtend, context);
             context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(scopeToExtend, Collections.singletonList(body), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(conditionInfo), context.trace);
         }
+        DataFlowInfo dataFlowInfo;
         if (!containsBreak(expression, context)) {
-            facade.setResultingDataFlowInfo(DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, null, context));
+            dataFlowInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, null, context);
         }
-        return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType, context.dataFlowInfo);
+        else {
+            dataFlowInfo = context.dataFlowInfo;
+        }
+        return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType, dataFlowInfo);
     }
 
     private boolean containsBreak(final JetLoopExpression loopExpression, final ExpressionTypingContext context) {
