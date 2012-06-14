@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 
@@ -112,7 +113,7 @@ public final class AnalyzerWithCompilerReport {
 
     private void reportSyntaxErrors(@NotNull Collection<JetFile> files) {
         for (JetFile file : files) {
-            file.accept(new PsiRecursiveElementWalkingVisitor() {
+            file.accept(new AnalyzingUtils.PsiErrorElementVisitor() {
                 @Override
                 public void visitErrorElement(PsiErrorElement element) {
                     String description = element.getErrorDescription();

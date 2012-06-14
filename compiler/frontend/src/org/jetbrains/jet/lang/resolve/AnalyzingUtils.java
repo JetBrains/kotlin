@@ -32,13 +32,19 @@ import java.util.List;
  */
 public class AnalyzingUtils {
 
-    public static void checkForSyntacticErrors(@NotNull PsiElement root) {
-        root.acceptChildren(new PsiElementVisitor() {
-            @Override
-            public void visitElement(PsiElement element) {
-                element.acceptChildren(this);
-            }
+    public abstract static class PsiErrorElementVisitor extends PsiElementVisitor {
+        @Override
+        public void visitElement(PsiElement element) {
+            element.acceptChildren(this);
+        }
 
+        @Override
+        public abstract void visitErrorElement(PsiErrorElement element);
+    }
+
+
+    public static void checkForSyntacticErrors(@NotNull PsiElement root) {
+        root.acceptChildren(new PsiErrorElementVisitor() {
             @Override
             public void visitErrorElement(PsiErrorElement element) {
                 throw new IllegalArgumentException(element.getErrorDescription() + "; looking at " + element.getNode().getElementType() + " '" + element.getText() + DiagnosticUtils.atLocation(element));
@@ -48,12 +54,7 @@ public class AnalyzingUtils {
     
     public static List<PsiErrorElement> getSyntaxErrorRanges(@NotNull PsiElement root) {
         final ArrayList<PsiErrorElement> r = new ArrayList<PsiErrorElement>();
-        root.acceptChildren(new PsiElementVisitor() {
-            @Override
-            public void visitElement(PsiElement element) {
-                element.acceptChildren(this);
-            }
-
+        root.acceptChildren(new PsiErrorElementVisitor() {
             @Override
             public void visitErrorElement(PsiErrorElement element) {
                 r.add(element);
