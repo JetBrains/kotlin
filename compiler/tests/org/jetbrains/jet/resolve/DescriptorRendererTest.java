@@ -61,6 +61,10 @@ public class DescriptorRendererTest extends JetLiteFixture {
         doTest();
     }
 
+    public void testEnum() throws IOException {
+        doTest();
+    }
+
     public void testTupleTypes() throws IOException {
         doTest();
     }
