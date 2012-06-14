@@ -131,6 +131,7 @@ public class CompileEnvironmentUtil {
         return null;
     }
 
+    @NotNull
     public static List<Module> loadModuleScript(String moduleScriptFile, MessageCollector messageCollector) {
         Disposable disposable = new Disposable() {
             @Override
@@ -145,7 +146,7 @@ public class CompileEnvironmentUtil {
         GenerationState generationState = KotlinToJVMBytecodeCompiler
                 .analyzeAndGenerate(new K2JVMCompileEnvironmentConfiguration(scriptEnvironment, messageCollector, false), false);
         if (generationState == null) {
-            return null;
+            throw new CompileEnvironmentException("Module script " + moduleScriptFile + " analyze failed");
         }
 
         List<Module> modules = runDefineModules(dependencies, moduleScriptFile, generationState.getFactory());
