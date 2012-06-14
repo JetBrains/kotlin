@@ -95,6 +95,10 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     public static AnalyzeExhaust analyzeFilesWithJavaIntegrationAndCheckForErrors(
             Project project, Collection<JetFile> files, List<AnalyzerScriptParameter> scriptParameters, Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull CompilerDependencies compilerDependencies) {
+        for (JetFile file : files) {
+            AnalyzingUtils.checkForSyntacticErrors(file); 
+        }
+       
         AnalyzeExhaust analyzeExhaust = analyzeFilesWithJavaIntegration(
                 project, files, scriptParameters, filesToAnalyzeCompletely, compilerDependencies, false);
 
