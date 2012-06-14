@@ -234,10 +234,14 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         }
         JetExpression condition = expression.getCondition();
         checkCondition(conditionScope, condition, context);
+        DataFlowInfo dataFlowInfo;
         if (!containsBreak(expression, context)) {
-            facade.setResultingDataFlowInfo(DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, null, context));
+            dataFlowInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, null, context);
         }
-        return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType, context.dataFlowInfo);
+        else {
+            dataFlowInfo = context.dataFlowInfo;
+        }
+        return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType, dataFlowInfo);
     }
 
     @Override
