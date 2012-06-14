@@ -2346,6 +2346,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/String-extensions.html#hashCode()</href>
+  <name>hashCode() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/String-extensions.html#indexOf(jet.Char)</href>
   <name>indexOf() [jet.String]</name>
   <kind>fun</kind>
