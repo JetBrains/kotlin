@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetNodeTypes;
 
 import java.util.List;
 
@@ -74,6 +75,7 @@ public abstract class AbstractDiagnostic<E extends PsiElement> implements Parame
     public boolean isValid() {
         if (!getFactory().isValid(this)) return false;
         if (hasSyntaxErrors(psiElement)) return false;
+        if (psiElement.getNode().findChildByType(JetNodeTypes.IDE_TEMPLATE_EXPRESSION) != null) return false;
         return true;
     }
 
