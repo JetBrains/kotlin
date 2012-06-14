@@ -252,7 +252,7 @@ public class ResolveSession {
             }
         }, null);
         if (result == null) {
-            throw new IllegalStateException("No descriptor resolevd for " + declaration + " " + declaration.getText());
+            throw new IllegalStateException("No descriptor resolved for " + declaration + " " + declaration.getText());
         }
         return result;
     }
