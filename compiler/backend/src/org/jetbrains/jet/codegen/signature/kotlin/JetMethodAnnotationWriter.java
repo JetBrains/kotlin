@@ -41,7 +41,7 @@ public class JetMethodAnnotationWriter {
             }
         }
 
-        if (flagsValue != JvmStdlibNames.JET_METHOD_FLAGS_DEFAULT_VALUE) {
+        if (flagsValue != JvmStdlibNames.FLAGS_DEFAULT_VALUE) {
             av.visit(JvmStdlibNames.JET_METHOD_FLAGS_FIELD, flagsValue);
         }
     }

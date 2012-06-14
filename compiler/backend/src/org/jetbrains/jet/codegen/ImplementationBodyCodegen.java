@@ -778,13 +778,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
                     BitSet kotlinFlags = new BitSet();
                     if (fun.getVisibility() == Visibilities.INTERNAL) {
-                        kotlinFlags.set(JvmStdlibNames.JET_METHOD_FLAG_INTERNAL_BIT);
+                        kotlinFlags.set(JvmStdlibNames.FLAG_INTERNAL_BIT);
                     }
                     else if (fun.getVisibility() == Visibilities.PRIVATE) {
-                        kotlinFlags.set(JvmStdlibNames.JET_METHOD_FLAG_PRIVATE_BIT);
+                        kotlinFlags.set(JvmStdlibNames.FLAG_PRIVATE_BIT);
                     }
                     if (fun instanceof PropertyAccessorDescriptor) {
-                        kotlinFlags.set(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY_BIT);
+                        kotlinFlags.set(JvmStdlibNames.FLAG_PROPERTY_BIT);
                         aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
                         aw.writePropertyType(jvmSignature.getKotlinReturnType());
                     } else {

@@ -143,14 +143,14 @@ public class FunctionCodegen {
                         BitSet kotlinFlags = new BitSet();
                         if (CodegenUtil.isInterface(functionDescriptor.getContainingDeclaration()) && modality != Modality.ABSTRACT) {
                             kotlinFlags.set(modality == Modality.FINAL
-                                            ? JvmStdlibNames.JET_METHOD_FLAG_FORCE_FINAL_BIT
-                                            : JvmStdlibNames.JET_METHOD_FLAG_FORCE_OPEN_BIT);
+                                            ? JvmStdlibNames.FLAG_FORCE_FINAL_BIT
+                                            : JvmStdlibNames.FLAG_FORCE_OPEN_BIT);
                         }
                         if (functionDescriptor.getVisibility() == Visibilities.INTERNAL) {
-                            kotlinFlags.set(JvmStdlibNames.JET_METHOD_FLAG_INTERNAL_BIT);
+                            kotlinFlags.set(JvmStdlibNames.FLAG_INTERNAL_BIT);
                         }
                         else if (functionDescriptor.getVisibility() == Visibilities.PRIVATE) {
-                            kotlinFlags.set(JvmStdlibNames.JET_METHOD_FLAG_PRIVATE_BIT);
+                            kotlinFlags.set(JvmStdlibNames.FLAG_PRIVATE_BIT);
                         }
                         aw.writeFlags(kotlinFlags);
                         aw.writeNullableReturnType(functionDescriptor.getReturnType().isNullable());

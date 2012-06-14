@@ -36,14 +36,14 @@ public class JetMethodAnnotation extends PsiAnnotationWrapper {
     private BitSet flags = null;
     public BitSet flags() {
         if (flags == null) {
-            int flagsValue = getIntAttribute(JvmStdlibNames.JET_METHOD_FLAGS_FIELD, JvmStdlibNames.JET_METHOD_FLAGS_DEFAULT_VALUE);
-            if (flagsValue == JvmStdlibNames.JET_METHOD_FLAGS_DEFAULT_VALUE) {
+            int flagsValue = getIntAttribute(JvmStdlibNames.JET_METHOD_FLAGS_FIELD, JvmStdlibNames.FLAGS_DEFAULT_VALUE);
+            if (flagsValue == JvmStdlibNames.FLAGS_DEFAULT_VALUE) {
                 // for compatibility
-                flagsValue = getIntAttribute(JvmStdlibNames.JET_METHOD_KIND_FIELD, JvmStdlibNames.JET_METHOD_FLAGS_DEFAULT_VALUE);
+                flagsValue = getIntAttribute(JvmStdlibNames.JET_METHOD_KIND_FIELD, JvmStdlibNames.FLAGS_DEFAULT_VALUE);
             }
 
-            flags = new BitSet(JvmStdlibNames.JET_METHOD_FLAGS_BITS);
-            for (int bit = 0; bit < JvmStdlibNames.JET_METHOD_FLAGS_BITS; bit++) {
+            flags = new BitSet(JvmStdlibNames.FLAGS_BITS);
+            for (int bit = 0; bit < JvmStdlibNames.FLAGS_BITS; bit++) {
                 flags.set(bit, (flagsValue & (1 << bit)) != 0);
             }
         }

@@ -1540,7 +1540,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
 
         // TODO: ugly
-        if (method.getJetMethod().flags().get(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY_BIT)) {
+        if (method.getJetMethod().flags().get(JvmStdlibNames.FLAG_PROPERTY_BIT)) {
             return null;
         }
 
@@ -1829,10 +1829,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private static Modality resolveModality(PsiMemberWrapper memberWrapper, boolean isFinal) {
         if (memberWrapper instanceof PsiMethodWrapper) {
             PsiMethodWrapper method = (PsiMethodWrapper) memberWrapper;
-            if (method.getJetMethod().flags().get(JvmStdlibNames.JET_METHOD_FLAG_FORCE_OPEN_BIT)) {
+            if (method.getJetMethod().flags().get(JvmStdlibNames.FLAG_FORCE_OPEN_BIT)) {
                 return Modality.OPEN;
             }
-            if (method.getJetMethod().flags().get(JvmStdlibNames.JET_METHOD_FLAG_FORCE_FINAL_BIT)) {
+            if (method.getJetMethod().flags().get(JvmStdlibNames.FLAG_FORCE_FINAL_BIT)) {
                 return Modality.FINAL;
             }
         }

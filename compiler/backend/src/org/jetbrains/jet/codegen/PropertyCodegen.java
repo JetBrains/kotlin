@@ -230,17 +230,17 @@ public class PropertyCodegen {
         JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
         Modality modality = propertyDescriptor.getModality();
         BitSet flags = new BitSet();
-        flags.set(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY_BIT);
+        flags.set(JvmStdlibNames.FLAG_PROPERTY_BIT);
         if (CodegenUtil.isInterface(propertyDescriptor.getContainingDeclaration()) && modality != Modality.ABSTRACT) {
             flags.set(modality == Modality.FINAL
-                      ? JvmStdlibNames.JET_METHOD_FLAG_FORCE_FINAL_BIT
-                      : JvmStdlibNames.JET_METHOD_FLAG_FORCE_OPEN_BIT);
+                      ? JvmStdlibNames.FLAG_FORCE_FINAL_BIT
+                      : JvmStdlibNames.FLAG_FORCE_OPEN_BIT);
         }
         if (visibility == Visibilities.INTERNAL) {
-            flags.set(JvmStdlibNames.JET_METHOD_FLAG_INTERNAL_BIT);
+            flags.set(JvmStdlibNames.FLAG_INTERNAL_BIT);
         }
         else if (visibility == Visibilities.PRIVATE) {
-            flags.set(JvmStdlibNames.JET_METHOD_FLAG_PRIVATE_BIT);
+            flags.set(JvmStdlibNames.FLAG_PRIVATE_BIT);
         }
         aw.writeFlags(flags);
         aw.writeTypeParameters(typeParameters);
