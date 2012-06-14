@@ -334,10 +334,7 @@ public class ExpressionTypingServices {
                 result = blockLevelVisitor.getTypeInfo(statementExpression, newContext, true);
             }
 
-            DataFlowInfo newDataFlowInfo = blockLevelVisitor.getResultingDataFlowInfo();
-            if (newDataFlowInfo == null) {
-                newDataFlowInfo = context.dataFlowInfo;
-            }
+            DataFlowInfo newDataFlowInfo = result.getDataFlowInfo();
             if (newDataFlowInfo != context.dataFlowInfo) {
                 newContext = createContext(newContext, trace, scope, newDataFlowInfo, NO_EXPECTED_TYPE);
             }
