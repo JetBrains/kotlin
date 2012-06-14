@@ -165,9 +165,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         AnnotationCodegen.forClass(v.getVisitor(), typeMapper).genAnnotations(descriptor);
 
-        if (signature.getKotlinGenericSignature() != null) {
+        if (signature.getKotlinGenericSignature() != null || descriptor.getVisibility() != Visibilities.PUBLIC) {
             AnnotationVisitor annotationVisitor = v.newAnnotation(myClass, JvmStdlibNames.JET_CLASS.getDescriptor(), true);
             annotationVisitor.visit(JvmStdlibNames.JET_CLASS_SIGNATURE, signature.getKotlinGenericSignature());
+            if (descriptor.getVisibility() == Visibilities.INTERNAL) {
+                annotationVisitor.visit(JvmStdlibNames.JET_CLASS_FLAGS_FIELD, 1 << JvmStdlibNames.FLAG_INTERNAL_BIT);
+            }
+            else if (descriptor.getVisibility() == Visibilities.PRIVATE) {
+                annotationVisitor.visit(JvmStdlibNames.JET_CLASS_FLAGS_FIELD, 1 << JvmStdlibNames.FLAG_PRIVATE_BIT);
+            }
             annotationVisitor.visitEnd();
         }
     }
