@@ -24,7 +24,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author max
  */
-public class JetTypedef extends JetTypeParameterListOwner {
+public class JetTypedef extends JetNotStubbedTypeParameterListOwner {
     public JetTypedef(@NotNull ASTNode node) {
         super(node);
     }

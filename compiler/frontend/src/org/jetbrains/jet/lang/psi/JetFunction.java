@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-abstract public class JetFunction extends JetTypeParameterListOwner
+abstract public class JetFunction extends JetNotStubbedTypeParameterListOwner
         implements JetDeclarationWithBody, JetModifierListOwner {
 
     public JetFunction(@NotNull ASTNode node) {
