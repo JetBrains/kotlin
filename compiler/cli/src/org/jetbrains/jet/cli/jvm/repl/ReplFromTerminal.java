@@ -117,7 +117,10 @@ public class ReplFromTerminal {
             }
 
             ReplInterpreter.LineResult lineResult = getReplInterpreter().eval(line);
-            if (!lineResult.isUnit()) {
+            if (!lineResult.isSuccessful()) {
+                System.out.print(lineResult.getErrorText());
+            }
+            else if (!lineResult.isUnit()) {
                 System.out.println(lineResult.getValue());
             }
             return true;

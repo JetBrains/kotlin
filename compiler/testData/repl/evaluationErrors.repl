@@ -1,0 +1,6 @@
+>>> throw Exception("hi there")
+stack trace
+>>> fun foo() = 2
+null
+>>> foo()
+2

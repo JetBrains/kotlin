@@ -17,7 +17,9 @@
 package org.jetbrains.jet.repl;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.CharStreams;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
@@ -51,7 +53,8 @@ public class ReplSessionTestFile {
             FileInputStream inputStream = new FileInputStream(file);
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
-                return load(reader);
+                List<String> lines = CharStreams.readLines(reader);
+                return load(new SimpleLinesParser(lines));
             } finally {
                 inputStream.close();
             }
@@ -60,28 +63,22 @@ public class ReplSessionTestFile {
         }
     }
 
-    private static ReplSessionTestFile load(@NotNull BufferedReader reader) throws IOException {
+    private static ReplSessionTestFile load(@NotNull SimpleLinesParser parser) throws IOException {
         List<Pair<String, String>> list = Lists.newArrayList();
-        while (true) {
-            String odd = reader.readLine();
-            if (odd == null) {
-                return new ReplSessionTestFile(list);
-            }
-
-            Pattern pattern = Pattern.compile(">>>( |$)(.*)");
-            Matcher matcher = pattern.matcher(odd);
-            if (!matcher.matches()) {
-                throw new IllegalStateException("odd lines must start with >>>");
-            }
+        while (!parser.lookingAtEof()) {
+            Pattern startPattern = Pattern.compile(">>>( |$)(.*)");
+            Matcher matcher = parser.next(startPattern);
             String code = matcher.group(2);
 
-            String even = reader.readLine();
-            if (even == null) {
-                throw new IllegalStateException("expecting even");
+            StringBuilder value = new StringBuilder();
+
+            while (!parser.lookingAtEof() && parser.lookingAt(startPattern) == null) {
+                value.append(parser.next()).append("\n");
             }
 
-            list.add(Pair.create(code, even));
+            list.add(Pair.create(code, value.toString()));
         }
+        return new ReplSessionTestFile(list);
     }
 
 }

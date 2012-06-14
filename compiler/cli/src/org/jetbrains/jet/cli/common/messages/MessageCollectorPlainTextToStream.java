@@ -18,9 +18,22 @@ package org.jetbrains.jet.cli.common.messages;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface MessageCollector {
-    MessageCollector PLAIN_TEXT_TO_SYSTEM_ERR = new MessageCollectorPlainTextToStream(System.err);
+import java.io.PrintStream;
 
-    void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location);
+/**
+ * @author Stepan Koltsov
+ */
+public class MessageCollectorPlainTextToStream implements MessageCollector {
+    @NotNull
+    private final PrintStream stream;
+
+    public MessageCollectorPlainTextToStream(@NotNull PrintStream stream) {
+        this.stream = stream;
+    }
+
+    @Override
+    public void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
+        stream.println(MessageRenderer.PLAIN.render(severity, message, location));
+    }
+
 }
-

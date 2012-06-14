@@ -58,10 +58,17 @@ public class ReplInterpreterTest {
         ReplSessionTestFile file = ReplSessionTestFile.load(new File("compiler/testData/repl/" + relativePath));
         for (Pair<String, String> t : file.getLines()) {
             String code = t.first;
-            String expected = t.second;
+            String expected = t.second.replaceFirst("\r?\n$", "");
 
-            Object actual = repl.eval(code).getValue();
-            String actualString = actual != null ? actual.toString() : "null";
+            ReplInterpreter.LineResult lineResult = repl.eval(code);
+            Object actual;
+            if (lineResult.isSuccessful()) {
+                actual = lineResult.getValue();
+            }
+            else {
+                actual = lineResult.getErrorText();
+            }
+            String actualString = (actual != null ? actual.toString() : "null").replaceFirst("\r?\n$", "");
 
             Assert.assertEquals("after evaluation of: " + code, expected, actualString);
         }
@@ -110,6 +117,24 @@ public class ReplInterpreterTest {
     @Test
     public void imports() {
         testFile("imports.repl");
+    }
+
+
+    @Test
+    public void syntaxErrors() {
+        testFile("syntaxErrors.repl");
+    }
+
+    @Test
+    public void analyzeErrors() {
+        // TODO
+        //testFile("analyzeErrors.repl");
+    }
+
+    @Test
+    public void evaluationErrors() {
+        // TODO
+        //testFile("evaluationErrors.repl");
     }
 
 

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.cli.jvm.repl;
 
 import com.google.common.base.Predicates;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
@@ -29,6 +30,9 @@ import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.cli.common.messages.MessageCollectorToString;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassBuilderFactories;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
@@ -40,7 +44,6 @@ import org.jetbrains.jet.lang.descriptors.NamespaceLikeBuilderDummy;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ScriptHeaderResolver;
@@ -60,7 +63,6 @@ import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.utils.Progress;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -122,18 +124,51 @@ public class ReplInterpreter {
     public static class LineResult {
         private final Object value;
         private final boolean unit;
+        private final String errorText;
 
-        public LineResult(Object value, boolean unit) {
+        private LineResult(Object value, boolean unit, String errorText) {
             this.value = value;
             this.unit = unit;
+            this.errorText = errorText;
+        }
+
+        public boolean isSuccessful() {
+            return errorText == null;
+        }
+
+        private void checkSuccessful() {
+            if (!isSuccessful()) {
+                throw new IllegalStateException("it is error");
+            }
         }
 
         public Object getValue() {
+            checkSuccessful();
             return value;
         }
 
         public boolean isUnit() {
+            checkSuccessful();
             return unit;
+        }
+
+        @NotNull
+        public String getErrorText() {
+            return errorText;
+        }
+
+        public static LineResult successful(Object value, boolean unit) {
+            return new LineResult(value, unit, null);
+        }
+
+        public static LineResult error(@NotNull String errorText) {
+            if (errorText.isEmpty()) {
+                errorText = "<unknown error>";
+            }
+            else if (!errorText.endsWith("\n")) {
+                errorText = errorText + "\n";
+            }
+            return new LineResult(null, false, errorText);
         }
     }
 
@@ -147,13 +182,21 @@ public class ReplInterpreter {
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
 
-        AnalyzingUtils.checkForSyntacticErrors(psiFile);
+        MessageCollectorToString errorCollector = new MessageCollectorToString();
+
+        boolean hasErrors = AnalyzerWithCompilerReport.reportSyntaxErrors(psiFile, errorCollector);
+        if (hasErrors) {
+            return LineResult.error(errorCollector.getString());
+        }
 
         injector.getTopDownAnalyzer().prepareForTheNextReplLine();
 
         psiFile.getScript().putUserData(ScriptHeaderResolver.PRIORITY_KEY, lineNumber);
 
-        ScriptDescriptor scriptDescriptor = doAnalyze(psiFile);
+        ScriptDescriptor scriptDescriptor = doAnalyze(psiFile, errorCollector);
+        if (scriptDescriptor == null) {
+            return LineResult.error(errorCollector.getString());
+        }
 
         Progress backendProgress = new Progress() {
             @Override
@@ -188,14 +231,19 @@ public class ReplInterpreter {
             }
 
             Constructor<?> scriptInstanceConstructor = scriptClass.getConstructor(constructorParams);
-            Object scriptInstance = scriptInstanceConstructor.newInstance(constructorArgs);
+            Object scriptInstance;
+            try {
+                scriptInstance = scriptInstanceConstructor.newInstance(constructorArgs);
+            } catch (Throwable e) {
+                return LineResult.error(Throwables.getStackTraceAsString(e));
+            }
             Field rvField = scriptClass.getDeclaredField("rv");
             rvField.setAccessible(true);
             Object rv = rvField.get(scriptInstance);
 
             earlierLines.add(new EarlierLine(line, scriptDescriptor, scriptClass, scriptInstance, scriptClassName));
 
-            return new LineResult(rv, scriptDescriptor.getReturnType().equals(JetStandardClasses.getUnitType()));
+            return LineResult.successful(rv, scriptDescriptor.getReturnType().equals(JetStandardClasses.getUnitType()));
         } catch (Throwable e) {
             PrintWriter writer = new PrintWriter(System.err);
             classLoader.dumpClasses(writer);
@@ -204,7 +252,8 @@ public class ReplInterpreter {
         }
     }
 
-    private ScriptDescriptor doAnalyze(@NotNull JetFile psiFile) {
+    @Nullable
+    private ScriptDescriptor doAnalyze(@NotNull JetFile psiFile, @NotNull MessageCollector messageCollector) {
         final WritableScope scope = new WritableScopeImpl(
                 JetScope.EMPTY, module,
                 new TraceBasedRedeclarationHandler(trace), "Root scope in analyzeNamespace");
@@ -231,8 +280,10 @@ public class ReplInterpreter {
         // namespaces added to module explicitly in
         injector.getTopDownAnalyzer().doProcess(scope, new NamespaceLikeBuilderDummy(), Collections.singletonList(psiFile));
 
-        // TODO: print, not throw
-        AnalyzingUtils.throwExceptionOnErrors(trace.getBindingContext());
+        boolean hasErrors = AnalyzerWithCompilerReport.reportDiagnostics(trace.getBindingContext(), messageCollector);
+        if (hasErrors) {
+            return null;
+        }
 
         ScriptDescriptor scriptDescriptor = injector.getTopDownAnalysisContext().getScripts().get(psiFile.getScript());
         lastLineScope = trace.get(BindingContext.SCRIPT_SCOPE, scriptDescriptor);

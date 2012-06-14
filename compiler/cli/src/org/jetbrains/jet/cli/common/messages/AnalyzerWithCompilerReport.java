@@ -18,8 +18,8 @@ package org.jetbrains.jet.cli.common.messages;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,8 +75,8 @@ public final class AnalyzerWithCompilerReport {
         };
     }
 
-    private void reportDiagnostic(@NotNull Diagnostic diagnostic) {
-        if (!diagnostic.isValid()) return;
+    private static boolean reportDiagnostic(@NotNull Diagnostic diagnostic, @NotNull MessageCollector messageCollector) {
+        if (!diagnostic.isValid()) return false;
         DiagnosticUtils.LineAndColumn lineAndColumn = DiagnosticUtils.getLineAndColumn(diagnostic);
         VirtualFile virtualFile = diagnostic.getPsiFile().getVirtualFile();
         String path = virtualFile == null ? null : virtualFile.getPath();
@@ -87,8 +87,9 @@ public final class AnalyzerWithCompilerReport {
         else {
             render = DefaultErrorMessages.RENDERER.render(diagnostic);
         }
-        messageCollectorWrapper.report(convertSeverity(diagnostic.getSeverity()), render,
-                                       CompilerMessageLocation.create(path, lineAndColumn.getLine(), lineAndColumn.getColumn()));
+        messageCollector.report(convertSeverity(diagnostic.getSeverity()), render,
+                CompilerMessageLocation.create(path, lineAndColumn.getLine(), lineAndColumn.getColumn()));
+        return diagnostic.getSeverity() == Severity.ERROR;
     }
 
     private void reportIncompleteHierarchies() {
@@ -104,25 +105,38 @@ public final class AnalyzerWithCompilerReport {
         }
     }
 
-    private void reportDiagnostics() {
-        assert analyzeExhaust != null;
-        for (Diagnostic diagnostic : analyzeExhaust.getBindingContext().getDiagnostics()) {
-            reportDiagnostic(diagnostic);
+    public static boolean reportDiagnostics(@NotNull BindingContext bindingContext, @NotNull MessageCollector messageCollector) {
+        boolean hasErrors = false;
+        for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
+            hasErrors |= reportDiagnostic(diagnostic, messageCollector);
         }
+        return hasErrors;
     }
 
     private void reportSyntaxErrors(@NotNull Collection<JetFile> files) {
-        for (JetFile file : files) {
-            file.accept(new AnalyzingUtils.PsiErrorElementVisitor() {
-                @Override
-                public void visitErrorElement(PsiErrorElement element) {
-                    String description = element.getErrorDescription();
-                    String message = StringUtil.isEmpty(description) ? "Syntax error" : description;
-                    Diagnostic diagnostic = new SyntaxErrorDiagnostic(element, Severity.ERROR, message);
-                    reportDiagnostic(diagnostic);
-                }
-            });
+        for (PsiElement file : files) {
+            reportSyntaxErrors(file, AnalyzerWithCompilerReport.this.messageCollectorWrapper);
         }
+    }
+
+    public static boolean reportSyntaxErrors(@NotNull PsiElement file, @NotNull final MessageCollector messageCollector) {
+        class ErrorReportingVisitor extends AnalyzingUtils.PsiErrorElementVisitor {
+            boolean hasErrors = false;
+
+            @Override
+            public void visitErrorElement(PsiErrorElement element) {
+                String description = element.getErrorDescription();
+                String message = StringUtil.isEmpty(description) ? "Syntax error" : description;
+                Diagnostic diagnostic = new SyntaxErrorDiagnostic(element, Severity.ERROR, message);
+                reportDiagnostic(diagnostic, messageCollector);
+                hasErrors = true;
+            }
+        }
+        ErrorReportingVisitor visitor = new ErrorReportingVisitor();
+
+        file.accept(visitor);
+
+        return visitor.hasErrors;
     }
 
     @Nullable
@@ -137,7 +151,7 @@ public final class AnalyzerWithCompilerReport {
     public void analyzeAndReport(@NotNull Function0<AnalyzeExhaust> analyzer, @NotNull Collection<JetFile> files) {
         reportSyntaxErrors(files);
         analyzeExhaust = analyzer.invoke();
-        reportDiagnostics();
+        reportDiagnostics(analyzeExhaust.getBindingContext(), messageCollectorWrapper);
         reportIncompleteHierarchies();
     }
 
