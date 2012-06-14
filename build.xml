@@ -165,7 +165,7 @@
         </javac>
 
         <!-- JarJar Kotlin compiler & dependencies -->
-        <jarjar jarfile="${output}/kotlin-compiler-jarjar.jar">
+        <jarjar jarfile="${output}/kotlin-compiler-jarjar-zapped.jar">
             <fileset dir="${output}/classes/compiler"/>
             <fileset dir="${basedir}/compiler/frontend/src" includes="jet/**"/>
 
@@ -190,24 +190,6 @@
 
             <zap pattern="org.mozilla.javascript.xml.impl.xmlbeans.**"/>
 
-            <rule pattern="com.intellij.**" result="org.jetbrains.jet.internal.com.intellij.@1"/>
-            <rule pattern="com.sun.jna.**" result="org.jetbrains.jet.internal.com.sun.jna.@1"/>
-            <rule pattern="org.apache.log4j.**" result="org.jetbrains.jet.internal.org.apache.log4j.@1"/>
-            <rule pattern="org.jdom.**" result="org.jetbrains.jet.internal.org.jdom.@1"/>
-            <rule pattern="JDOMAbout**" result="org.jetbrains.jet.internal.org.jdom.JDOMAbout@1"/>
-            <rule pattern="org.intellij.lang.annotations.**" result="org.jetbrains.jet.internal.org.intellij.lang.annotations.@1"/>
-            <rule pattern="com.google.**" result="org.jetbrains.jet.internal.com.google.@1"/>
-            <rule pattern="org.objectweb.asm.**" result="org.jetbrains.jet.internal.org.objectweb.asm.@1"/>
-            <rule pattern="com.sampullara.cli.**" result="org.jetbrains.jet.internal.com.sampullara.cli.@1"/>
-            <rule pattern="org.picocontainer.**" result="org.jetbrains.jet.internal.org.picocontainer.@1"/>
-            <rule pattern="gnu.trove.**" result="org.jetbrains.jet.internal.gnu.trove.@1"/>
-            <rule pattern="javax.inject.**" result="org.jetbrains.jet.internal.javax.inject.@1"/>
-            <rule pattern="com.thoughtworks.xstream.**" result="org.jetbrains.jet.internal.com.thoughtworks.xstream.@1"/>
-            <rule pattern="org.json.**" result="org.jetbrains.jet.internal.org.json.@1"/>
-            <rule pattern="org.mozilla.**" result="org.jetbrains.jet.internal.org.mozilla.@1"/>
-            <rule pattern="org.xmlpull.**" result="org.jetbrains.jet.internal.org.xmlpull.@1"/>
-            <rule pattern="org.kohsuke.args4j.**" result="org.jetbrains.jet.internal.org.kohsuke.args4j.@1"/>
-
             <manifest>
                 <attribute name="Built-By" value="JetBrains"/>
 
@@ -225,13 +207,34 @@
             <isfalse value="${shrink}"/>
 
             <then>
-                <copy file="${output}/kotlin-compiler-jarjar.jar"
+                <copy file="${output}/kotlin-compiler-jarjar-zapped.jar"
                       tofile="${kotlin-home}/lib/kotlin-compiler.jar"/>
             </then>
 
             <else>
+                <jarjar jarfile="${output}/kotlin-compiler-jarjar-ruled.jar">
+                    <zipgroupfileset dir="${output}" includes="kotlin-compiler-jarjar-zapped.jar"/>
+                    <rule pattern="com.intellij.**" result="org.jetbrains.jet.internal.com.intellij.@1"/>
+                    <rule pattern="com.sun.jna.**" result="org.jetbrains.jet.internal.com.sun.jna.@1"/>
+                    <rule pattern="org.apache.log4j.**" result="org.jetbrains.jet.internal.org.apache.log4j.@1"/>
+                    <rule pattern="org.jdom.**" result="org.jetbrains.jet.internal.org.jdom.@1"/>
+                    <rule pattern="JDOMAbout**" result="org.jetbrains.jet.internal.org.jdom.JDOMAbout@1"/>
+                    <rule pattern="org.intellij.lang.annotations.**" result="org.jetbrains.jet.internal.org.intellij.lang.annotations.@1"/>
+                    <rule pattern="com.google.**" result="org.jetbrains.jet.internal.com.google.@1"/>
+                    <rule pattern="org.objectweb.asm.**" result="org.jetbrains.jet.internal.org.objectweb.asm.@1"/>
+                    <rule pattern="com.sampullara.cli.**" result="org.jetbrains.jet.internal.com.sampullara.cli.@1"/>
+                    <rule pattern="org.picocontainer.**" result="org.jetbrains.jet.internal.org.picocontainer.@1"/>
+                    <rule pattern="gnu.trove.**" result="org.jetbrains.jet.internal.gnu.trove.@1"/>
+                    <rule pattern="javax.inject.**" result="org.jetbrains.jet.internal.javax.inject.@1"/>
+                    <rule pattern="com.thoughtworks.xstream.**" result="org.jetbrains.jet.internal.com.thoughtworks.xstream.@1"/>
+                    <rule pattern="org.json.**" result="org.jetbrains.jet.internal.org.json.@1"/>
+                    <rule pattern="org.mozilla.**" result="org.jetbrains.jet.internal.org.mozilla.@1"/>
+                    <rule pattern="org.xmlpull.**" result="org.jetbrains.jet.internal.org.xmlpull.@1"/>
+                    <rule pattern="org.kohsuke.args4j.**" result="org.jetbrains.jet.internal.org.kohsuke.args4j.@1"/>
+                </jarjar>
+                
                 <cleandir dir="${output}/kotlin-compiler.exploded"/>
-                <unzip src="${output}/kotlin-compiler-jarjar.jar" dest="${output}/kotlin-compiler.exploded"/>
+                <unzip src="${output}/kotlin-compiler-jarjar-ruled.jar" dest="${output}/kotlin-compiler.exploded"/>
 
                 <!-- Clean JarJar result -->
                 <jar jarfile="${output}/kotlin-compiler-before-proguard.jar"
