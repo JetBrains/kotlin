@@ -29,6 +29,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
+import org.jetbrains.jet.test.Tmpdir;
 import org.junit.ComparisonFailure;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
@@ -45,39 +46,20 @@ import static com.google.common.base.Charsets.UTF_8;
 import static org.junit.Assert.*;
 
 public abstract class KotlinIntegrationTestBase {
-    protected File tempDir;
     protected File testDataDir;
+
+    @Rule
+    public final Tmpdir tmpdir = new Tmpdir();
 
     @Rule
     public TestRule watchman = new TestWatcher() {
         @Override
         protected void starting(Description description) {
-            try {
-                tempDir = Files.createTempDir().getCanonicalFile();
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
             final File baseTestDataDir =
                     new File(getKotlinProjectHome(), "compiler" + File.separator + "integration-tests" + File.separator + "data");
             testDataDir = new File(baseTestDataDir, description.getMethodName());
         }
 
-        @Override
-        protected void succeeded(Description description) {
-            try {
-                tempDir.delete();
-            }
-            catch (Exception e) {
-                System.out.print("Can't delete temp directory " + tempDir + ": " + e);
-            }
-        }
-
-        @Override
-        protected void failed(Throwable e, Description description) {
-            System.err.println("Temp directory: " + tempDir);
-        }
     };
 
     protected int runCompiler(String logName, String... arguments) throws Exception {
@@ -124,7 +106,7 @@ public abstract class KotlinIntegrationTestBase {
 
     protected String normalizeOutput(String content) {
         content = replacePath(content, testDataDir, "[TestData]");
-        content = replacePath(content, tempDir, "[Temp]");
+        content = replacePath(content, tmpdir.getTmpDir(), "[Temp]");
         content = replacePath(content, getCompilerLib(), "[CompilerLib]");
         return content;
     }

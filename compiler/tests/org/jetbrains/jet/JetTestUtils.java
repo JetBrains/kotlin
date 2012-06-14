@@ -240,6 +240,15 @@ public class JetTestUtils {
         filesToDelete.add(file);
     }
 
+    public static void rmrf(File file) {
+        if (file == null) {
+            return;
+        }
+        if (!FileUtil.delete(file)) {
+            throw new RuntimeException("failed to delete " + file);
+        }
+    }
+
     public static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
 
     public static JetCoreEnvironment createEnvironmentWithFullJdk(Disposable disposable) {
