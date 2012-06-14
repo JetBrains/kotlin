@@ -132,7 +132,8 @@ public class FunctionCodegen {
                     if (functionDescriptor instanceof PropertyAccessorDescriptor) {
                         PropertyCodegen.generateJetPropertyAnnotation(mv, propertyTypeSignature, jvmSignature.getKotlinTypeParameter(),
                                                                       ((PropertyAccessorDescriptor) functionDescriptor)
-                                                                              .getCorrespondingProperty());
+                                                                              .getCorrespondingProperty(),
+                                                                      functionDescriptor.getVisibility());
                     }
                     else if (functionDescriptor instanceof SimpleFunctionDescriptor) {
                         if (propertyTypeSignature != null) {
@@ -144,6 +145,12 @@ public class FunctionCodegen {
                             kotlinFlags.set(modality == Modality.FINAL
                                             ? JvmStdlibNames.JET_METHOD_FLAG_FORCE_FINAL_BIT
                                             : JvmStdlibNames.JET_METHOD_FLAG_FORCE_OPEN_BIT);
+                        }
+                        if (functionDescriptor.getVisibility() == Visibilities.INTERNAL) {
+                            kotlinFlags.set(JvmStdlibNames.JET_METHOD_FLAG_INTERNAL_BIT);
+                        }
+                        else if (functionDescriptor.getVisibility() == Visibilities.PRIVATE) {
+                            kotlinFlags.set(JvmStdlibNames.JET_METHOD_FLAG_PRIVATE_BIT);
                         }
                         aw.writeFlags(kotlinFlags);
                         aw.writeNullableReturnType(functionDescriptor.getReturnType().isNullable());

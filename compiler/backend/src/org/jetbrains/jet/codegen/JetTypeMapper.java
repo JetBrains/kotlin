@@ -958,6 +958,9 @@ public class JetTypeMapper {
             }
             return ACC_PRIVATE;
         }
+        else if (p.getVisibility() == Visibilities.INTERNAL) {
+            return ACC_PUBLIC;
+        }
         else {
             return defaultFlags;
         }

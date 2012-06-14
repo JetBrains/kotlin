@@ -338,7 +338,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 MethodVisitor mv = v.newMethod(null, ACC_PUBLIC | ACC_BRIDGE | ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
                 PropertyCodegen.generateJetPropertyAnnotation(mv, originalSignature.getPropertyTypeKotlinSignature(),
                                                               originalSignature.getJvmMethodSignature().getKotlinTypeParameter(),
-                                                              original);
+                                                              original, ((PropertyDescriptor) entry.getValue()).getGetter().getVisibility());
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                     StubCodegen.generateStubCode(mv);
                 }
@@ -366,7 +366,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 MethodVisitor mv = v.newMethod(null, ACC_PUBLIC | ACC_BRIDGE | ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
                 PropertyCodegen.generateJetPropertyAnnotation(mv, originalSignature2.getPropertyTypeKotlinSignature(),
                                                               originalSignature2.getJvmMethodSignature().getKotlinTypeParameter(),
-                                                              original);
+                                                              original, ((PropertyDescriptor) entry.getValue()).getSetter().getVisibility());
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                     StubCodegen.generateStubCode(mv);
                 }
@@ -777,6 +777,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     JvmMethodSignature jvmSignature = typeMapper.mapToCallableMethod(inheritedFun, false, OwnerKind.IMPLEMENTATION).getSignature();
                     JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
                     BitSet kotlinFlags = new BitSet();
+                    if (fun.getVisibility() == Visibilities.INTERNAL) {
+                        kotlinFlags.set(JvmStdlibNames.JET_METHOD_FLAG_INTERNAL_BIT);
+                    }
+                    else if (fun.getVisibility() == Visibilities.PRIVATE) {
+                        kotlinFlags.set(JvmStdlibNames.JET_METHOD_FLAG_PRIVATE_BIT);
+                    }
                     if (fun instanceof PropertyAccessorDescriptor) {
                         kotlinFlags.set(JvmStdlibNames.JET_METHOD_FLAG_PROPERTY_BIT);
                         aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
