@@ -23,10 +23,6 @@ import java.io.File;
 import static junit.framework.Assert.*;
 
 public class CompilerSmokeTest extends KotlinIntegrationTestBase {
-    @Test
-    public void help() throws Exception {
-        runCompiler("help", "--help");
-    }
 
     @Test
     public void compileAndRunHelloApp() throws Exception {
@@ -58,8 +54,4 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
         runCompiler("test.compile", "-src", "test.kt", "-jar", jar);
     }
 
-    @Test
-    public void script() throws Exception {
-        runCompiler("script", "-script", "hello.ktscript", "hi", "there");
-    }
 }

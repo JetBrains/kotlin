@@ -18,10 +18,13 @@ package org.jetbrains.jet.cli.jvm;
 
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.Assert;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.test.Tmpdir;
+import org.jetbrains.jet.utils.ExceptionUtils;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -34,20 +37,55 @@ public class CliTest {
 
     @Rule
     public final Tmpdir tmpdir = new Tmpdir();
+    @Rule
+    public final TestName testName = new TestName();
+
+    @NotNull
+    private String executeCompilerGrabOutput(@NotNull String[] args) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        PrintStream origOut = System.out;
+        try {
+            // we change System.out because scripts ignore passed OutputStream and write to System.out
+            System.setOut(new PrintStream(bytes));
+            ExitCode exitCode = new K2JVMCompiler().exec(System.out, args);
+            return bytes.toString("utf-8") + exitCode + "\n";
+        } catch (Exception e) {
+            throw ExceptionUtils.rethrow(e);
+        } finally {
+            System.setOut(origOut);
+        }
+    }
+
+    private void executeCompilerCompareOutput(@NotNull String[] args) {
+        try {
+            String actual = executeCompilerGrabOutput(args);
+
+            String expected = FileUtil.loadFile(new File("compiler/testData/cli/" + testName.getMethodName() + ".out"));
+
+            Assert.assertEquals(expected, actual);
+        } catch (Exception e) {
+            throw ExceptionUtils.rethrow(e);
+        }
+    }
 
     @Test
     public void simple() throws Exception {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        ExitCode exitCode = new K2JVMCompiler().exec(new PrintStream(bytes),
+        String[] args = {
                 "-src", "compiler/testData/cli/simple.kt",
-                "-output", tmpdir.getTmpDir().getPath());
-        String actual = bytes.toString("utf-8") + exitCode + "\n";
-
-        String expected = FileUtil.loadFile(new File("compiler/testData/cli/simple.out"));
-
-        Assert.assertEquals(expected, actual);
+                "-output", tmpdir.getTmpDir().getPath()};
+        executeCompilerCompareOutput(args);
 
         Assert.assertTrue(new File(tmpdir.getTmpDir(), "namespace.class").isFile());
+    }
+
+    @Test
+    public void help() throws Exception {
+        executeCompilerCompareOutput(new String[]{ "--help" });
+    }
+
+    @Test
+    public void script() throws Exception {
+        executeCompilerCompareOutput(new String[]{ "-script", "compiler/testData/cli/script.ktscript", "hi", "there" });
     }
 
 }
