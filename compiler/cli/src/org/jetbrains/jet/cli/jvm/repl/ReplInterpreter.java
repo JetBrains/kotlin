@@ -190,6 +190,7 @@ public class ReplInterpreter {
         }
 
         injector.getTopDownAnalyzer().prepareForTheNextReplLine();
+        trace.clearDiagnostics();
 
         psiFile.getScript().putUserData(ScriptHeaderResolver.PRIORITY_KEY, lineNumber);
 

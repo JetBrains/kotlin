@@ -134,8 +134,7 @@ public class ReplInterpreterTest {
 
     @Test
     public void analyzeErrors() {
-        // TODO
-        //testFile("analyzeErrors.repl");
+        testFile("analyzeErrors.repl");
     }
 
     @Test
