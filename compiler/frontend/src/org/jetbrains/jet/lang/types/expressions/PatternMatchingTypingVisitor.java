@@ -86,6 +86,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         // TODO : exhaustive patterns
 
         Set<JetType> expressionTypes = Sets.newHashSet();
+        DataFlowInfo commonDataFlowInfo = null;
         for (JetWhenEntry whenEntry : expression.getEntries()) {
             JetWhenCondition[] conditions = whenEntry.getConditions();
             DataFlowInfo newDataFlowInfo;
@@ -123,17 +124,28 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             if (bodyExpression != null) {
                 ExpressionTypingContext newContext = contextWithExpectedType.replaceScope(scopeToExtend).replaceDataFlowInfo(newDataFlowInfo);
                 CoercionStrategy coercionStrategy = isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION;
-                JetType type = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(scopeToExtend, Collections.singletonList(bodyExpression), coercionStrategy, newContext, context.trace).getType();
+                JetTypeInfo typeInfo = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(scopeToExtend, Collections.singletonList(bodyExpression), coercionStrategy, newContext, context.trace);
+                JetType type = typeInfo.getType();
                 if (type != null) {
                     expressionTypes.add(type);
+                }
+                if (commonDataFlowInfo == null) {
+                    commonDataFlowInfo = typeInfo.getDataFlowInfo();
+                }
+                else {
+                    commonDataFlowInfo = commonDataFlowInfo.or(typeInfo.getDataFlowInfo());
                 }
             }
         }
 
-        if (!expressionTypes.isEmpty()) {
-            return DataFlowUtils.checkImplicitCast(CommonSupertypes.commonSupertype(expressionTypes), expression, contextWithExpectedType, isStatement, context.dataFlowInfo);
+        if (commonDataFlowInfo == null) {
+            commonDataFlowInfo = context.dataFlowInfo;
         }
-        return JetTypeInfo.create(null, context.dataFlowInfo);
+
+        if (!expressionTypes.isEmpty()) {
+            return DataFlowUtils.checkImplicitCast(CommonSupertypes.commonSupertype(expressionTypes), expression, contextWithExpectedType, isStatement, commonDataFlowInfo);
+        }
+        return JetTypeInfo.create(null, commonDataFlowInfo);
     }
 
     private DataFlowInfo checkWhenCondition(@Nullable final JetExpression subjectExpression, final boolean expectedCondition, final JetType subjectType, JetWhenCondition condition, final WritableScope scopeToExtend, final ExpressionTypingContext context, final DataFlowValue... subjectVariables) {
