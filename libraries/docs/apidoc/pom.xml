@@ -57,7 +57,7 @@
                         <ignorePackage>kotlin.support</ignorePackage>
                         <ignorePackage>kotlin.properties</ignorePackage>
                     </ignorePackages>
-                    <sourceRootHref>https://github.com/JetBrains/kotlin/tree/master</sourceRootHref>
+                    <sourceRootHref>https://github.com/JetBrains/kotlin/blob/master</sourceRootHref>
                     <projectRootDir>${project-root}</projectRootDir>
                     <packageDescriptionFiles>
                         <kotlin.swing>${project-root}/libraries/kotlin-swing/ReadMe.md</kotlin.swing>
