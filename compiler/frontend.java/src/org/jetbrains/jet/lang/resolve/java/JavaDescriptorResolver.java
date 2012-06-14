@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
+import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -379,7 +380,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         
         classData.classDescriptor.setTypeParameterDescriptors(typeParameters);
         classData.classDescriptor.setSupertypes(supertypes);
-        classData.classDescriptor.setVisibility(resolveVisibilityFromPsiModifiers(psiClass));
+        classData.classDescriptor.setVisibility(resolveVisibility(psiClass, JetClassAnnotation.get(psiClass)));
         Modality modality;
         if (classData.classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
             modality = Modality.FINAL;
@@ -520,7 +521,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
         constructorDescriptor.initialize(classData.classDescriptor.getTypeConstructor().getParameters(),
                 valueParameterDescriptors.descriptors,
-                resolveVisibilityFromPsiModifiers(psiConstructor), aStatic);
+                resolveVisibility(psiConstructor, constructor.getJetMethod()), aStatic);
         trace.record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);
         return constructorDescriptor;
     }
@@ -1312,11 +1313,16 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                 isVar = members.setter != null;
             }
 
+            Visibility visibility = resolveVisibility(anyMember.getMember().psiMember, null);
+            if (members.getter.getMember() instanceof PsiMethodWrapper) {
+                visibility = resolveVisibility(anyMember.getMember().psiMember,
+                                               ((PsiMethodWrapper) members.getter.getMember()).getJetMethod());
+            }
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                     owner,
                     resolveAnnotations(anyMember.getMember().psiMember),
                     resolveModality(anyMember.getMember(), isFinal),
-                    resolveVisibilityFromPsiModifiers(anyMember.getMember().psiMember),
+                    visibility,
                     isVar,
                     false,
                     propertyName,
@@ -1329,17 +1335,22 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                         propertyDescriptor,
                         resolveAnnotations(members.getter.getMember().psiMember),
                         Modality.OPEN,
-                        Visibilities.PUBLIC,
+                        visibility,
                         true,
                         false,
                         CallableMemberDescriptor.Kind.DECLARATION);
             }
             if (members.setter != null) {
+                Visibility setterVisibility = resolveVisibility(members.setter.getMember().psiMember, null);
+                if (members.setter.getMember() instanceof PsiMethodWrapper) {
+                    setterVisibility = resolveVisibility(members.setter.getMember().psiMember,
+                                                         ((PsiMethodWrapper) members.setter.getMember()).getJetMethod());
+                }
                 setterDescriptor = new PropertySetterDescriptor(
                         propertyDescriptor,
                         resolveAnnotations(members.setter.getMember().psiMember),
                         Modality.OPEN,
-                        Visibilities.PUBLIC,
+                        setterVisibility,
                         true,
                         false,
                         CallableMemberDescriptor.Kind.DECLARATION);
@@ -1616,7 +1627,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                 valueParameterDescriptors.descriptors,
                 returnType,
                 resolveModality(method, method.isFinal()),
-                resolveVisibilityFromPsiModifiers(method.getPsiMethod()),
+                resolveVisibility(method.getPsiMethod(), method.getJetMethod()),
                 /*isInline = */ false
         );
         trace.record(BindingContext.FUNCTION, method.getPsiMethod(), functionDescriptorImpl);
@@ -1854,7 +1865,17 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return Modality.convertFromFlags(memberWrapper.isAbstract(), !isFinal);
     }
 
-    private static Visibility resolveVisibilityFromPsiModifiers(PsiModifierListOwner modifierListOwner) {
+    private static Visibility resolveVisibility(PsiModifierListOwner modifierListOwner,
+            @Nullable PsiAnnotationWithFlags annotation) {
+        if (annotation != null) {
+            BitSet flags = annotation.flags();
+            if (flags.get(JvmStdlibNames.FLAG_PRIVATE_BIT)) {
+                return Visibilities.PRIVATE;
+            }
+            else if (flags.get(JvmStdlibNames.FLAG_INTERNAL_BIT)) {
+                return Visibilities.INTERNAL;
+            }
+        }
         return modifierListOwner.hasModifierProperty(PsiModifier.PUBLIC) ? Visibilities.PUBLIC :
                (modifierListOwner.hasModifierProperty(PsiModifier.PRIVATE) ? Visibilities.PRIVATE :
                 (modifierListOwner.hasModifierProperty(PsiModifier.PROTECTED) ? Visibilities.PROTECTED :
