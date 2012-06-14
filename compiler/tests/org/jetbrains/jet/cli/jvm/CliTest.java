@@ -26,9 +26,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
+import java.io.StringReader;
 
 /**
  * @author Stepan Koltsov
@@ -60,11 +62,29 @@ public class CliTest {
 
     private void executeCompilerCompareOutput(@NotNull String[] args) {
         try {
-            String actual = executeCompilerGrabOutput(args);
+            String actual = normalize(executeCompilerGrabOutput(args));
 
-            String expected = FileUtil.loadFile(new File("compiler/testData/cli/" + testName.getMethodName() + ".out"));
+            String expected = normalize(FileUtil.loadFile(new File("compiler/testData/cli/" + testName.getMethodName() + ".out")));
 
             Assert.assertEquals(expected, actual);
+        }
+        catch (Exception e) {
+            throw ExceptionUtils.rethrow(e);
+        }
+    }
+
+    @NotNull
+    private String normalize(String input) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            BufferedReader reader = new BufferedReader(new StringReader(input));
+            while (true) {
+                String line = reader.readLine();
+                if (line == null) {
+                    return sb.toString();
+                }
+                sb.append(line + "\n");
+            }
         }
         catch (Exception e) {
             throw ExceptionUtils.rethrow(e);
