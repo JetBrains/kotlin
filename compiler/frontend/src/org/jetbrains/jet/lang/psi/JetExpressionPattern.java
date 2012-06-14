@@ -30,7 +30,7 @@ public class JetExpressionPattern extends JetPattern {
 
     @Nullable @IfNotParsed
     public JetExpression getExpression() {
-        return findChildByClass(JetExpression.class);
+        return findChildByClass(JetExpressionImpl.class);
     }
 
     @Override

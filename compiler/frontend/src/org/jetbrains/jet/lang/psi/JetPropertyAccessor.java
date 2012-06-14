@@ -74,7 +74,7 @@ public class JetPropertyAccessor extends JetDeclaration implements JetDeclaratio
     @Nullable
     @Override
     public JetExpression getBodyExpression() {
-        return findChildByClass(JetExpression.class);
+        return findChildByClass(JetExpressionImpl.class);
     }
 
     @Override

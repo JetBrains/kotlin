@@ -36,10 +36,12 @@ import java.util.List;
  * Originally from IDEA platform: StatementGroupSelectioner
  */
 public class JetStatementGroupSelectioner extends BasicSelectioner {
+    @Override
     public boolean canSelect(PsiElement e) {
         return e instanceof JetExpression || e instanceof JetWhenEntry;
     }
 
+    @Override
     public List<TextRange> select(PsiElement e, CharSequence editorText, int cursorOffset, Editor editor) {
         List<TextRange> result = new ArrayList<TextRange>();
 

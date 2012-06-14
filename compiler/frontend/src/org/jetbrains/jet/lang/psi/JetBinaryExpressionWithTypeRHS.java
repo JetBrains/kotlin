@@ -25,7 +25,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author max
  */
-public class JetBinaryExpressionWithTypeRHS extends JetExpression {
+public class JetBinaryExpressionWithTypeRHS extends JetExpressionImpl {
     public JetBinaryExpressionWithTypeRHS(@NotNull ASTNode node) {
         super(node);
     }
@@ -42,7 +42,7 @@ public class JetBinaryExpressionWithTypeRHS extends JetExpression {
 
     @NotNull
     public JetExpression getLeft() {
-        JetExpression left = findChildByClass(JetExpression.class);
+        JetExpression left = findChildByClass(JetExpressionImpl.class);
         assert left != null;
         return left;
     }

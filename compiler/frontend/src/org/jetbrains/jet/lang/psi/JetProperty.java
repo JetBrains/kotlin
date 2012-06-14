@@ -130,7 +130,7 @@ public class JetProperty extends JetTypeParameterListOwner implements JetModifie
     @Nullable
     public JetExpression getInitializer() {
         PsiElement eq = findChildByType(EQ);
-        return PsiTreeUtil.getNextSiblingOfType(eq, JetExpression.class);
+        return PsiTreeUtil.getNextSiblingOfType(eq, JetExpressionImpl.class);
     }
 
     @NotNull

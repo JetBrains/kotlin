@@ -40,6 +40,6 @@ public class JetDelegatorByExpressionSpecifier extends JetDelegationSpecifier {
 
     @Nullable @IfNotParsed
     public JetExpression getDelegateExpression() {
-        return findChildByClass(JetExpression.class);
+        return findChildByClass(JetExpressionImpl.class);
     }
 }

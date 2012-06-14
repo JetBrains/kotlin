@@ -27,7 +27,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author abreslav
  */
-public class JetTypeProjection extends JetElement implements JetModifierListOwner {
+public class JetTypeProjection extends JetElementImpl implements JetModifierListOwner {
     public JetTypeProjection(@NotNull ASTNode node) {
         super(node);
     }

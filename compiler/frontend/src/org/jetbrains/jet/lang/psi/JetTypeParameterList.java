@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetTypeParameterList extends JetElement {
+public class JetTypeParameterList extends JetElementImpl {
     public JetTypeParameterList(@NotNull ASTNode node) {
         super(node);
     }

@@ -26,7 +26,7 @@ import org.jetbrains.jet.lexer.JetTokens;
  * @author Evgeny Gerashchenko
  * @since 2/8/12
  */
-public class JetIdeTemplateExpression extends JetExpression {
+public class JetIdeTemplateExpression extends JetExpressionImpl {
     public JetIdeTemplateExpression(@NotNull ASTNode node) {
         super(node);
     }

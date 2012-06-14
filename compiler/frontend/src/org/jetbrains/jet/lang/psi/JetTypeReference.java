@@ -31,7 +31,7 @@ import java.util.List;
  *
  * @author max
  */
-public class JetTypeReference extends JetElement {
+public class JetTypeReference extends JetElementImpl {
     public JetTypeReference(@NotNull ASTNode node) {
         super(node);
     }

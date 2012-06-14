@@ -41,7 +41,7 @@ public class JetWhenConditionInRange extends JetWhenCondition {
         ASTNode node = getOperationReference().getNode().getTreeNext();
         while (node != null) {
             PsiElement psi = node.getPsi();
-            if (psi instanceof JetExpression) {
+            if (psi instanceof JetExpressionImpl) {
                 return (JetExpression) psi;
             }
             node = node.getTreeNext();

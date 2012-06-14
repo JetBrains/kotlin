@@ -17,34 +17,31 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetNodeType;
 
 /**
  * @author max
  */
-public class JetPrefixExpression extends JetUnaryExpression {
-    public JetPrefixExpression(@NotNull ASTNode node) {
+abstract class JetExpressionImpl extends JetElementImpl implements JetExpression {
+    public JetExpressionImpl(@NotNull ASTNode node) {
         super(node);
     }
 
     @Override
     public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitPrefixExpression(this);
+        visitor.visitExpression(this);
     }
 
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
-        return visitor.visitPrefixExpression(this, data);
+        return visitor.visitExpression(this, data);
     }
 
-    @Nullable @IfNotParsed
-    public JetExpression getBaseExpression() {
-        PsiElement expression = getOperationReference().getNextSibling();
-        while (expression != null && !(expression instanceof JetExpressionImpl)) {
-            expression = expression.getNextSibling();
-        }
-        return (JetExpression) expression;
+    protected JetExpression findExpressionUnder(JetNodeType type) {
+        JetContainerNode containerNode = (JetContainerNode) findChildByType(type);
+        if (containerNode == null) return null;
+
+        return containerNode.findChildByClass(JetExpressionImpl.class);
     }
 }

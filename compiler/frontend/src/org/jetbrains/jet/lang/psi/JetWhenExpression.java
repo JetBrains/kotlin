@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class JetWhenExpression extends JetExpression {
+public class JetWhenExpression extends JetExpressionImpl {
     public JetWhenExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -40,7 +40,7 @@ public class JetWhenExpression extends JetExpression {
 
     @Nullable
     public JetExpression getSubjectExpression() {
-        return findChildByClass(JetExpression.class);
+        return findChildByClass(JetExpressionImpl.class);
     }
 
     @Override

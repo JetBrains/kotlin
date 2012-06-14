@@ -24,7 +24,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author abreslav
  */
-public class JetValueArgumentName extends JetElement {
+public class JetValueArgumentName extends JetElementImpl {
     public JetValueArgumentName(@NotNull ASTNode node) {
         super(node);
     }

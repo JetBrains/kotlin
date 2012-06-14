@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author max
  */
-public class JetRootNamespaceExpression extends JetExpression {
+public class JetRootNamespaceExpression extends JetExpressionImpl {
     public JetRootNamespaceExpression(@NotNull ASTNode node) {
         super(node);
     }

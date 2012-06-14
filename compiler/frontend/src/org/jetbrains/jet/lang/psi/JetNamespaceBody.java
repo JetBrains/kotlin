@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetNamespaceBody extends JetElement implements JetDeclarationContainer {
+public class JetNamespaceBody extends JetElementImpl implements JetDeclarationContainer {
     public JetNamespaceBody(@NotNull ASTNode node) {
         super(node);
     }

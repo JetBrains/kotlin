@@ -20,12 +20,11 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 /**
  * @author abreslav
  */
-public class JetLabelQualifiedExpression extends JetExpression {
+public class JetLabelQualifiedExpression extends JetExpressionImpl {
 
     public JetLabelQualifiedExpression(@NotNull ASTNode node) {
         super(node);
@@ -40,7 +39,7 @@ public class JetLabelQualifiedExpression extends JetExpression {
 
     @Nullable @IfNotParsed
     public JetExpression getLabeledExpression() {
-        return findChildByClass(JetExpression.class);
+        return findChildByClass(JetExpressionImpl.class);
     }
 
     @Nullable

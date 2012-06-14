@@ -27,7 +27,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author max
  */
-public class JetValueArgument extends JetElement implements ValueArgument {
+public class JetValueArgument extends JetElementImpl implements ValueArgument {
     public JetValueArgument(@NotNull ASTNode node) {
         super(node);
     }
@@ -44,7 +44,7 @@ public class JetValueArgument extends JetElement implements ValueArgument {
     @Override
     @Nullable @IfNotParsed
     public JetExpression getArgumentExpression() {
-        return findChildByClass(JetExpression.class);
+        return findChildByClass(JetExpressionImpl.class);
     }
 
     @Override

@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetClassBody extends JetElement implements JetDeclarationContainer {
+public class JetClassBody extends JetElementImpl implements JetDeclarationContainer {
     public JetClassBody(@NotNull ASTNode node) {
         super(node);
     }

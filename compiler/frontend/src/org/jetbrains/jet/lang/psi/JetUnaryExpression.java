@@ -24,7 +24,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author abreslav
  */
-public abstract class JetUnaryExpression extends JetExpression implements JetOperationExpression {
+public abstract class JetUnaryExpression extends JetExpressionImpl implements JetOperationExpression {
     public JetUnaryExpression(ASTNode node) {
         super(node);
     }

@@ -25,7 +25,7 @@ import org.jetbrains.jet.lexer.JetToken;
 /**
  * @author max
  */
-public abstract class JetDeclaration extends JetExpression implements JetModifierListOwner {
+public abstract class JetDeclaration extends JetExpressionImpl implements JetModifierListOwner {
     public JetDeclaration(@NotNull ASTNode node) {
         super(node);
     }

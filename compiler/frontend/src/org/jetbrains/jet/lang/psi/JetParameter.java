@@ -51,7 +51,7 @@ public class JetParameter extends JetNamedDeclaration {
         ASTNode child = getNode().getFirstChildNode();
         while (child != null) {
             if (child.getElementType() == JetTokens.EQ) passedEQ = true;
-            if (passedEQ && child.getPsi() instanceof JetExpression) {
+            if (passedEQ && child.getPsi() instanceof JetExpressionImpl) {
                 return (JetExpression) child.getPsi();
             }
             child = child.getTreeNext();

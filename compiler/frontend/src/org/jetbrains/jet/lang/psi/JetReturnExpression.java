@@ -40,6 +40,6 @@ public class JetReturnExpression extends JetLabelQualifiedExpression implements 
 
     @Nullable
     public JetExpression getReturnedExpression() {
-        return findChildByClass(JetExpression.class);
+        return findChildByClass(JetExpressionImpl.class);
     }
 }

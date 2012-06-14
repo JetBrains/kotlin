@@ -46,10 +46,10 @@ public class JetClass extends JetTypeParameterListOwner
     public JetClass(@NotNull ASTNode node) {
         super(node);
     }
-    // TODO (stubs)
-    //    public JetClass(final PsiJetClassStub stub) {
-    //        this.stub = stub;
-    //    }
+
+    //public JetClass(@NotNull final PsiJetClassStub stub) {
+    //    this.stub = stub;
+    //}
 
     @Override
     public List<JetDeclaration> getDeclarations() {
@@ -237,4 +237,9 @@ public class JetClass extends JetTypeParameterListOwner
             }
         }
     }
+
+    //@Override
+    //public ItemPresentation getPresentation() {
+    //    return ItemPresentationProviders.getItemPresentation(this);
+    //}
 }

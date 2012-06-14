@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetDelegationSpecifierList extends JetElement {
+public class JetDelegationSpecifierList extends JetElementImpl {
     public JetDelegationSpecifierList(@NotNull ASTNode node) {
         super(node);
     }

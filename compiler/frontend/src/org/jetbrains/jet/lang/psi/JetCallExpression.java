@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetCallExpression extends JetExpression implements JetCallElement {
+public class JetCallExpression extends JetExpressionImpl implements JetCallElement {
     public JetCallExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -48,7 +48,7 @@ public class JetCallExpression extends JetExpression implements JetCallElement {
     @Override
     @Nullable
     public JetExpression getCalleeExpression() {
-        return findChildByClass(JetExpression.class);
+        return findChildByClass(JetExpressionImpl.class);
     }
 
     @Override

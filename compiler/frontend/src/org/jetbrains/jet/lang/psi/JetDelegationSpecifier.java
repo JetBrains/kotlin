@@ -24,7 +24,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author max
  */
-public class JetDelegationSpecifier extends JetElement{
+public class JetDelegationSpecifier extends JetElementImpl {
     public JetDelegationSpecifier(@NotNull ASTNode node) {
         super(node);
     }

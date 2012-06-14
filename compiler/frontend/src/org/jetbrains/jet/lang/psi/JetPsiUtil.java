@@ -191,7 +191,7 @@ public class JetPsiUtil {
         return firstPart.child(functionName);
     }
 
-    @Nullable @JetElement.IfNotParsed
+    @Nullable @JetElementImpl.IfNotParsed
     public static ImportPath getImportPath(JetImportDirective importDirective) {
         final JetExpression importedReference = importDirective.getImportedReference();
         if (importedReference == null) {

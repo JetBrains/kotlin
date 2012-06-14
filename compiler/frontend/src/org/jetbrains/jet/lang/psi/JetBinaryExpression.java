@@ -26,7 +26,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author max
  */
-public class JetBinaryExpression extends JetExpression implements JetOperationExpression {
+public class JetBinaryExpression extends JetExpressionImpl implements JetOperationExpression {
     public JetBinaryExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -43,7 +43,7 @@ public class JetBinaryExpression extends JetExpression implements JetOperationEx
 
     @NotNull
     public JetExpression getLeft() {
-        JetExpression left = findChildByClass(JetExpression.class);
+        JetExpression left = findChildByClass(JetExpressionImpl.class);
         assert left != null;
         return left;
     }
@@ -53,7 +53,7 @@ public class JetBinaryExpression extends JetExpression implements JetOperationEx
         ASTNode node = getOperationReference().getNode().getTreeNext();
         while (node != null) {
             PsiElement psi = node.getPsi();
-            if (psi instanceof JetExpression) {
+            if (psi instanceof JetExpressionImpl) {
                 return (JetExpression) psi;
             }
             node = node.getTreeNext();

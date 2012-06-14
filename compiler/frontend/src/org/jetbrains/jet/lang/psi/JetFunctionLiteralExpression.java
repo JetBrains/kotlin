@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetFunctionLiteralExpression extends JetExpression implements JetDeclarationWithBody {
+public class JetFunctionLiteralExpression extends JetExpressionImpl implements JetDeclarationWithBody {
     public JetFunctionLiteralExpression(@NotNull ASTNode node) {
         super(node);
     }

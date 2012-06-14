@@ -23,14 +23,14 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author abreslav
  */
-public abstract class JetStringTemplateEntry extends JetElement {
+public abstract class JetStringTemplateEntry extends JetElementImpl {
     public JetStringTemplateEntry(@NotNull ASTNode node) {
         super(node);
     }
 
     @Nullable
     public JetExpression getExpression() {
-        return findChildByClass(JetExpression.class);
+        return findChildByClass(JetExpressionImpl.class);
     }
 
 }

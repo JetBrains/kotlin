@@ -52,7 +52,7 @@ abstract public class JetFunction extends JetTypeParameterListOwner
     @Override
     @Nullable
     public JetExpression getBodyExpression() {
-        return findChildByClass(JetExpression.class);
+        return findChildByClass(JetExpressionImpl.class);
     }
 
     @Override

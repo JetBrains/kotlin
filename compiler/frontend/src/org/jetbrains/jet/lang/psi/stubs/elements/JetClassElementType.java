@@ -51,8 +51,8 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
 
     @Override
     public JetClass createPsi(@NotNull PsiJetClassStub stub) {
-        // return getPsiFactory(stub).createClass(stub);
-        return null;
+        //return getPsiFactory(stub).createClass(stub);
+return null;
     }
 
     @Override

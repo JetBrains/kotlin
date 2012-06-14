@@ -26,14 +26,14 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author max
  */
-public abstract class JetQualifiedExpression extends JetExpression {
+public abstract class JetQualifiedExpression extends JetExpressionImpl {
     public JetQualifiedExpression(@NotNull ASTNode node) {
         super(node);
     }
 
     @NotNull
     public JetExpression getReceiverExpression() {
-        JetExpression left = findChildByClass(JetExpression.class);
+        JetExpression left = findChildByClass(JetExpressionImpl.class);
         assert left != null;
         return left;
     }
@@ -43,7 +43,7 @@ public abstract class JetQualifiedExpression extends JetExpression {
         ASTNode node = getOperationTokenNode();
         while (node != null) {
             PsiElement psi = node.getPsi();
-            if (psi instanceof JetExpression) {
+            if (psi instanceof JetExpressionImpl) {
                 return (JetExpression) psi;
             }
             node = node.getTreeNext();

@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetAnnotatedExpression extends JetExpression {
+public class JetAnnotatedExpression extends JetExpressionImpl {
     public JetAnnotatedExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -45,7 +45,7 @@ public class JetAnnotatedExpression extends JetExpression {
 
     @Nullable
     public JetExpression getBaseExpression() {
-        return findChildByClass(JetExpression.class);
+        return findChildByClass(JetExpressionImpl.class);
     }
 
     public List<JetAnnotation> getAttributeAnnotations() {

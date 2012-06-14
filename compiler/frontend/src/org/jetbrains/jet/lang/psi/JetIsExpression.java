@@ -25,7 +25,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author abreslav
  */
-public class JetIsExpression extends JetExpression {
+public class JetIsExpression extends JetExpressionImpl {
     public JetIsExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -42,7 +42,7 @@ public class JetIsExpression extends JetExpression {
 
     @NotNull
     public JetExpression getLeftHandSide() {
-        return findChildByClass(JetExpression.class);
+        return findChildByClass(JetExpressionImpl.class);
     }
 
     @Nullable @IfNotParsed

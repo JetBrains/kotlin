@@ -29,7 +29,7 @@ public class JetPostfixExpression extends JetUnaryExpression {
 
     @NotNull
     public JetExpression getBaseExpression() {
-        JetExpression answer = findChildByClass(JetExpression.class);
+        JetExpression answer = findChildByClass(JetExpressionImpl.class);
         assert answer != null;
         return answer;
     }

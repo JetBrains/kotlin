@@ -155,8 +155,9 @@ public class ResolveToolwindow extends JPanel implements Disposable {
 
                 if (!callFound) {
 
-                    JetExpression parentExpression = (elementAtOffset instanceof JetExpression) ? (JetExpression) elementAtOffset
-                                                                                                : PsiTreeUtil.getParentOfType(elementAtOffset, JetExpression.class);
+                    JetExpression parentExpression = (elementAtOffset instanceof JetExpression) ?
+                                                     (JetExpression) elementAtOffset :
+                                                     PsiTreeUtil.getParentOfType(elementAtOffset, JetExpression.class);
                     if (parentExpression != null) {
                         JetType type = bindingContext.get(EXPRESSION_TYPE, parentExpression);
                         String text = parentExpression + "|" + parentExpression.getText() + "| : " + type;
@@ -173,7 +174,7 @@ public class ResolveToolwindow extends JPanel implements Disposable {
     }
 
     @Nullable
-    private <D> PsiElement findData(BindingContext bindingContext, PsiElement currentElement, ReadOnlySlice<PsiElement, D> slice) {
+    private static <D> PsiElement findData(BindingContext bindingContext, PsiElement currentElement, ReadOnlySlice<PsiElement, D> slice) {
         while (currentElement != null && !(currentElement instanceof PsiFile)) {
             if (currentElement instanceof JetElement) {
                 JetElement atOffset = (JetElement) currentElement;
@@ -188,7 +189,9 @@ public class ResolveToolwindow extends JPanel implements Disposable {
         return null;
     }
 
-    private String renderDebugInfo(PsiElement currentElement, @Nullable ResolutionDebugInfo.Data debugInfo, @Nullable ResolvedCall<? extends CallableDescriptor> call) {
+    private static String renderDebugInfo(PsiElement currentElement,
+            @Nullable ResolutionDebugInfo.Data debugInfo,
+            @Nullable ResolvedCall<? extends CallableDescriptor> call) {
         StringBuilder result = new StringBuilder();
         
         if (debugInfo != null) {
@@ -208,11 +211,13 @@ public class ResolveToolwindow extends JPanel implements Disposable {
         else {
             result.append("Resolved call is null\n");
         }
-        result.append(currentElement + ": " + currentElement.getText());
+        result.append(currentElement).append(": ").append(currentElement.getText());
         return result.toString();
     }
 
-    private void renderResolutionLogForCall(Data debugInfo, ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall, StringBuilder result) {
+    private static void renderResolutionLogForCall(Data debugInfo,
+            ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall,
+            StringBuilder result) {
         result.append("Trying to call ").append(resolvedCall.getCandidateDescriptor()).append("\n");
         StringBuilder errors = debugInfo.getByKey(ERRORS, resolvedCall);
         if (errors != null) {
@@ -232,7 +237,7 @@ public class ResolveToolwindow extends JPanel implements Disposable {
         result.append(BAR);
     }
 
-    private <K> void renderMap(Map<K, BoundsOwner> map, StringBuilder builder) {
+    private static <K> void renderMap(Map<K, BoundsOwner> map, StringBuilder builder) {
         if (map == null) return;
 
         for (Map.Entry<K, BoundsOwner> entry : map.entrySet()) {
@@ -248,7 +253,7 @@ public class ResolveToolwindow extends JPanel implements Disposable {
         }
     }
 
-    private String renderCall(StringBuilder builder, ResolvedCall<? extends CallableDescriptor> resolvedCall) {
+    private static String renderCall(StringBuilder builder, ResolvedCall<? extends CallableDescriptor> resolvedCall) {
 
         CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
         ReceiverDescriptor receiverArgument = resolvedCall.getReceiverArgument();
@@ -283,7 +288,7 @@ public class ResolveToolwindow extends JPanel implements Disposable {
         return builder.toString();
     }
 
-    private void renderValueArguments(Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments, StringBuilder builder) {
+    private static void renderValueArguments(Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments, StringBuilder builder) {
         ResolvedValueArgument[] args = new ResolvedValueArgument[valueArguments.size()];
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : valueArguments.entrySet()) {
             ValueParameterDescriptor key = entry.getKey();
@@ -302,7 +307,7 @@ public class ResolveToolwindow extends JPanel implements Disposable {
         builder.append(")");
     }
 
-    private void renderTypeArguments(Map<TypeParameterDescriptor, JetType> typeArguments, StringBuilder builder) {
+    private static void renderTypeArguments(Map<TypeParameterDescriptor, JetType> typeArguments, StringBuilder builder) {
         JetType[] args = new JetType[typeArguments.size()];
         for (Map.Entry<TypeParameterDescriptor, JetType> entry : typeArguments.entrySet()) {
             TypeParameterDescriptor key = entry.getKey();
@@ -320,7 +325,7 @@ public class ResolveToolwindow extends JPanel implements Disposable {
         builder.append(">");
     }
 
-    private void renderReceiver(ReceiverDescriptor receiverArgument, ReceiverDescriptor thisObject, StringBuilder builder) {
+    private static void renderReceiver(ReceiverDescriptor receiverArgument, ReceiverDescriptor thisObject, StringBuilder builder) {
         if (receiverArgument.exists()) {
             builder.append("/").append(receiverArgument);
         }

@@ -24,6 +24,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetElementImpl;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.lang.reflect.Constructor;
@@ -49,7 +50,7 @@ public class JetNodeType extends IElementType {
 
         try {
             if (myPsiFactory == null) {
-                return new JetElement(node);
+                return new JetElementImpl(node);
             }
             return myPsiFactory.newInstance(node);
         } catch (Exception e) {
