@@ -49,9 +49,11 @@ public class CliTest {
             System.setOut(new PrintStream(bytes));
             ExitCode exitCode = new K2JVMCompiler().exec(System.out, args);
             return bytes.toString("utf-8") + exitCode + "\n";
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw ExceptionUtils.rethrow(e);
-        } finally {
+        }
+        finally {
             System.setOut(origOut);
         }
     }
@@ -63,7 +65,8 @@ public class CliTest {
             String expected = FileUtil.loadFile(new File("compiler/testData/cli/" + testName.getMethodName() + ".out"));
 
             Assert.assertEquals(expected, actual);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw ExceptionUtils.rethrow(e);
         }
     }
