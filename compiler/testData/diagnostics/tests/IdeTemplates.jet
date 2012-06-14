@@ -18,25 +18,24 @@ fun main(args : Array<String>) {
         else -> <!UNRESOLVED_IDE_TEMPLATE!><#<elseValue>#><!>
     }
 
-    var <#<name>#> = <!UNRESOLVED_IDE_TEMPLATE!><#<value>#><!>
+    <!REDECLARATION!>var <#<name>#> = <!UNRESOLVED_IDE_TEMPLATE!><#<value>#><!><!>
 
-    class <#<name>#> {
+    <!REDECLARATION, REDECLARATION!>class <#<name>#> {
         <#<body>#>
-    }
+    }<!>
 
-    class <#<name>#> {
-        var <#<name>#> : <#<varType>#>
-        get() {
-            <#<body>#>
-        }
+    <!REDECLARATION!>class <#<name>#> {
+        <!REDECLARATION!>var <#<name>#> : <#<varType>#>
+        get() <!RETURN_TYPE_MISMATCH!>{
+            <!UNRESOLVED_IDE_TEMPLATE!><#<body>#><!>
+        }<!>
         set(value) {
-            <#<body>#>
-        }
+            <!UNRESOLVED_IDE_TEMPLATE!><#<body>#><!>
+        }<!>
 
-        val <#<name>#> : <#<valType>#>
-        get() {
-            <#<body>#>
-        }
-    }
+        <!REDECLARATION!>val <#<name>#> : <#<valType>#>
+        get() <!RETURN_TYPE_MISMATCH!>{
+            <!UNRESOLVED_IDE_TEMPLATE!><#<body>#><!>
+        }<!><!>
+    }<!>
 }
-

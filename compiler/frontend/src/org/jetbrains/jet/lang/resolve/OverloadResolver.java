@@ -107,7 +107,7 @@ public class OverloadResolver {
                 ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
                 inClasses.put(classDescriptor, klass.getConstructors());
             }
-            else {
+            else if (!(containingDeclaration instanceof FunctionDescriptor)) {
                 throw new IllegalStateException();
             }
         }

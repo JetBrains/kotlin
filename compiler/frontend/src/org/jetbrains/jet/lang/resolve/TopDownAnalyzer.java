@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
@@ -191,12 +192,12 @@ public class TopDownAnalyzer {
         doProcess(outerScope, standardLibraryNamespace.getBuilder(), toAnalyze);
     }
 
-    public static void processObject(
+    public static void processClassOrObject(
             @NotNull Project project,
             @NotNull final BindingTrace trace,
             @NotNull JetScope outerScope,
             @NotNull final DeclarationDescriptor containingDeclaration,
-            @NotNull JetObjectDeclaration object
+            @NotNull JetClassOrObject object
     ) {
         ModuleDescriptor moduleDescriptor = new ModuleDescriptor(Name.special("<dummy for object>"));
 

@@ -79,7 +79,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public JetType visitObjectDeclaration(JetObjectDeclaration declaration, ExpressionTypingContext context) {
-        TopDownAnalyzer.processObject(context.expressionTypingServices.getProject(), context.trace, scope, scope.getContainingDeclaration(), declaration);
+        TopDownAnalyzer.processClassOrObject(context.expressionTypingServices.getProject(), context.trace, scope,
+                                             scope.getContainingDeclaration(), declaration);
         ClassDescriptor classDescriptor = context.trace.getBindingContext().get(BindingContext.CLASS, declaration);
         if (classDescriptor != null) {
             VariableDescriptor variableDescriptor = context.expressionTypingServices.getDescriptorResolver()
@@ -136,7 +137,13 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public JetType visitClass(JetClass klass, ExpressionTypingContext context) {
-        return super.visitClass(klass, context); // TODO
+        TopDownAnalyzer.processClassOrObject(context.expressionTypingServices.getProject(), context.trace, scope,
+                                             scope.getContainingDeclaration(), klass);
+        ClassDescriptor classDescriptor = context.trace.getBindingContext().get(BindingContext.CLASS, klass);
+        if (classDescriptor != null) {
+            scope.addClassifierDescriptor(classDescriptor);
+        }
+        return DataFlowUtils.checkStatementType(klass, context);
     }
 
     @Override
