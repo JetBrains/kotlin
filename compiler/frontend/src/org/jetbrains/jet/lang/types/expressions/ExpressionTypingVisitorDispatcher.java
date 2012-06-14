@@ -57,7 +57,6 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     private final ClosureExpressionsTypingVisitor closures = new ClosureExpressionsTypingVisitor(this);
     private final ControlStructureTypingVisitor controlStructures = new ControlStructureTypingVisitor(this);
     private final PatternMatchingTypingVisitor patterns = new PatternMatchingTypingVisitor(this);
-    protected DataFlowInfo resultDataFlowInfo;
 
     private ExpressionTypingVisitorDispatcher(WritableScope writableScope) {
         this.basic = new BasicExpressionTypingVisitor(this);
@@ -70,12 +69,6 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     }
 
     @Override
-    @Nullable
-    public DataFlowInfo getResultingDataFlowInfo() {
-        return resultDataFlowInfo;
-    }
-
-    @Override
     public JetType getSelectorReturnType(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression selectorExpression, @NotNull ExpressionTypingContext context) {
         return basic.getSelectorReturnType(receiver, callOperationNode, selectorExpression, context);
     }
@@ -83,11 +76,6 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     @Override
     public boolean checkInExpression(JetElement callElement, @NotNull JetSimpleNameExpression operationSign, @Nullable JetExpression left, @NotNull JetExpression right, ExpressionTypingContext context) {
         return basic.checkInExpression(callElement, operationSign, left, right, context);
-    }
-
-    @Override
-    public void setResultingDataFlowInfo(@NotNull DataFlowInfo dataFlowInfo) {
-        this.resultDataFlowInfo = dataFlowInfo;
     }
 
     @Override
