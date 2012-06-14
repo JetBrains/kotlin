@@ -43,6 +43,7 @@ import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.ScriptHeaderResolver;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
@@ -149,6 +150,8 @@ public class ReplInterpreter {
         AnalyzingUtils.checkForSyntacticErrors(psiFile);
 
         injector.getTopDownAnalyzer().prepareForTheNextReplLine();
+
+        psiFile.getScript().putUserData(ScriptHeaderResolver.PRIORITY_KEY, lineNumber);
 
         ScriptDescriptor scriptDescriptor = doAnalyze(psiFile);
 

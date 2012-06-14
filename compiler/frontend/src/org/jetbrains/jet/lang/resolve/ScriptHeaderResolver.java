@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -49,6 +50,8 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
  * @author Stepan Koltsov
  */
 public class ScriptHeaderResolver {
+
+    public static final Key<Integer> PRIORITY_KEY = Key.create(JetScript.class.getName() + ".priority");
 
     @NotNull
     private NamespaceFactory namespaceFactory;
@@ -118,7 +121,13 @@ public class ScriptHeaderResolver {
 
     public void processScriptHierarchy(@NotNull JetScript script, @NotNull JetScope outerScope) {
         NamespaceDescriptorImpl ns = namespaceFactory.createNamespaceDescriptorPathIfNeeded(FqName.ROOT);
-        ScriptDescriptor scriptDescriptor = new ScriptDescriptor(ns);
+
+        Integer priority = script.getUserData(PRIORITY_KEY);
+        if (priority == null) {
+            priority = 0;
+        }
+
+        ScriptDescriptor scriptDescriptor = new ScriptDescriptor(ns, priority);
         //WriteThroughScope scriptScope = new WriteThroughScope(
         //        outerScope, ns.getMemberScope(), new TraceBasedRedeclarationHandler(trace));
         WritableScopeImpl scriptScope = new WritableScopeImpl(outerScope, scriptDescriptor, RedeclarationHandler.DO_NOTHING, "script");

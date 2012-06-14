@@ -34,19 +34,26 @@ import java.util.List;
 public class ScriptDescriptor extends DeclarationDescriptorImpl {
     private static final Name NAME = Name.special("<script>");
 
+    private final int priority;
+
     private JetType returnType;
     private List<ValueParameterDescriptor> valueParameters;
 
     private final ScriptCodeDescriptor scriptCodeDescriptor = new ScriptCodeDescriptor(this);
     private final ReceiverDescriptor implicitReceiver = new ScriptReceiver(this);
 
-    public ScriptDescriptor(@Nullable DeclarationDescriptor containingDeclaration) {
+    public ScriptDescriptor(@Nullable DeclarationDescriptor containingDeclaration, int priority) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), NAME);
+        this.priority = priority;
     }
 
     public void initialize(@NotNull JetType returnType) {
         this.returnType = returnType;
         scriptCodeDescriptor.initialize(implicitReceiver, valueParameters, returnType);
+    }
+
+    public int getPriority() {
+        return priority;
     }
 
     @NotNull

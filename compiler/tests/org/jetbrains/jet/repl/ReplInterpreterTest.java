@@ -93,6 +93,16 @@ public class ReplInterpreterTest {
     }
 
     @Test
+    public void functionOverloadResolutionAnyBeatsString() {
+        testFile("functionOverloadResolutionAnyBeatsString.repl");
+    }
+
+    @Test
+    public void functionOverloadResolution() {
+        testFile("functionOverloadResolution.repl");
+    }
+
+    @Test
     public void empty() {
         testFile("empty.repl");
     }

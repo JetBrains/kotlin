@@ -21,6 +21,7 @@ import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
@@ -80,6 +81,15 @@ public class OverloadingConflictResolver {
      * Int < Short < Byte
      */
     private <Descriptor extends CallableDescriptor> boolean moreSpecific(Descriptor f, Descriptor g, boolean discriminateGenericDescriptors) {
+        if (f.getContainingDeclaration() instanceof ScriptDescriptor && g.getContainingDeclaration() instanceof ScriptDescriptor) {
+            ScriptDescriptor fs = (ScriptDescriptor) f.getContainingDeclaration();
+            ScriptDescriptor gs = (ScriptDescriptor) g.getContainingDeclaration();
+
+            if (fs.getPriority() != gs.getPriority()) {
+                return fs.getPriority() > gs.getPriority();
+            }
+        }
+
         if (discriminateGenericDescriptors && !isGeneric(f) && isGeneric(g)) return true;
         if (OverridingUtil.overrides(f, g)) return true;
         if (OverridingUtil.overrides(g, f)) return false;
