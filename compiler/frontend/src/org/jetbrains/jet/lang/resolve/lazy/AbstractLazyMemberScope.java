@@ -150,6 +150,10 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                     .resolveObjectDeclaration(thisDescriptor, objectDeclaration, classifier, resolveSession.getTrace());
             result.add(propertyDescriptor);
         }
+        else if (classOrObjectDeclaration instanceof JetEnumEntry) {
+            JetEnumEntry jetEnumEntry = (JetEnumEntry) classOrObjectDeclaration;
+            throw new UnsupportedOperationException("Enums are not supported yet: " + jetEnumEntry + " " + jetEnumEntry.getText());
+        }
 
         getNonDeclaredProperties(name, result);
 
