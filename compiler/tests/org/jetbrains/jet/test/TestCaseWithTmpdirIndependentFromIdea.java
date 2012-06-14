@@ -14,24 +14,32 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.cli.jvm.compiler;
+package org.jetbrains.jet.test;
 
-import com.intellij.testFramework.UsefulTestCase;
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.jet.JetTestUtils;
+import org.junit.After;
+import org.junit.Before;
 
 import java.io.File;
 
 /**
  * @author Stepan Koltsov
  */
-public abstract class TestCaseWithTmpdir extends UsefulTestCase {
-
+public abstract class TestCaseWithTmpdirIndependentFromIdea {
     protected File tmpdir;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        tmpdir = JetTestUtils.tmpDirForTest(this);
+    @Before
+    public void before() throws Exception {
+        tmpdir = JetTestUtils.tmpDir(this.getClass().getName());
     }
+
+    @After
+    public void after() {
+        if (tmpdir != null) {
+            FileUtil.delete(tmpdir);
+        }
+    }
+
 
 }

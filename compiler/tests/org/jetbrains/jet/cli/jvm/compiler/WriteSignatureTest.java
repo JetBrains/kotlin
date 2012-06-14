@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.junit.Assert;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;

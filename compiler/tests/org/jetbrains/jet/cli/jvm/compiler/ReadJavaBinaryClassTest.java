@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.junit.Assert;
 
 import javax.tools.JavaCompiler;

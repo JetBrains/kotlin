@@ -31,6 +31,7 @@ import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.test.TestCaseWithTmpdir;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -42,7 +43,7 @@ import java.net.URLClassLoader;
 /**
  * @author Stepan Koltsov
  */
-public class CompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir  {
+public class CompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir {
 
     private final File ktAFile;
     private final File ktBFile;
