@@ -63,7 +63,7 @@ public class ReplInterpreterTest {
             Object actual = repl.eval(code).getValue();
             String actualString = actual != null ? actual.toString() : "null";
 
-            Assert.assertEquals("after evaluation of: " + code, actualString, expected);
+            Assert.assertEquals("after evaluation of: " + code, expected, actualString);
         }
     }
 
