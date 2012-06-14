@@ -48,7 +48,7 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends Abstract
         InjectorForTopDownAnalyzerForJvm injector = createInjectorForTDA(module);
 
         List<JetFile> files = JetTestUtils
-                .createTestFiles(testFileName, FileUtil.loadFile(new File(testFileName)), new JetTestUtils.TestFileFactory<JetFile>() {
+                .createTestFiles(testFileName, FileUtil.loadFile(new File(testFileName), true), new JetTestUtils.TestFileFactory<JetFile>() {
                     @Override
                     public JetFile create(String fileName, String text) {
                         return JetPsiFactory.createFile(project, fileName, text);
