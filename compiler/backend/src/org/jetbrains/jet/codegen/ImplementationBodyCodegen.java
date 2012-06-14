@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.utils.BitSetUtils;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
@@ -168,11 +169,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (signature.getKotlinGenericSignature() != null || descriptor.getVisibility() != Visibilities.PUBLIC) {
             AnnotationVisitor annotationVisitor = v.newAnnotation(myClass, JvmStdlibNames.JET_CLASS.getDescriptor(), true);
             annotationVisitor.visit(JvmStdlibNames.JET_CLASS_SIGNATURE, signature.getKotlinGenericSignature());
+            BitSet flags = new BitSet();
             if (descriptor.getVisibility() == Visibilities.INTERNAL) {
-                annotationVisitor.visit(JvmStdlibNames.JET_CLASS_FLAGS_FIELD, 1 << JvmStdlibNames.FLAG_INTERNAL_BIT);
+                flags.set(JvmStdlibNames.FLAG_INTERNAL_BIT);
             }
             else if (descriptor.getVisibility() == Visibilities.PRIVATE) {
-                annotationVisitor.visit(JvmStdlibNames.JET_CLASS_FLAGS_FIELD, 1 << JvmStdlibNames.FLAG_PRIVATE_BIT);
+                flags.set(JvmStdlibNames.FLAG_PRIVATE_BIT);
+            }
+            int flagsValue = BitSetUtils.toInt(flags);
+            if (JvmStdlibNames.FLAGS_DEFAULT_VALUE != flagsValue) {
+                annotationVisitor.visit(JvmStdlibNames.JET_CLASS_FLAGS_FIELD, flagsValue);
             }
             annotationVisitor.visitEnd();
         }
