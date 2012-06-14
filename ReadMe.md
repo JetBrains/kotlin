@@ -51,7 +51,7 @@ From this root project there are Run/Debug Configurations for running IDEA or th
 * VCS -> Git -> Pull
 * Run IDEA
 * a child IDEA with the Kotlin plugin will then startup
-* you can now open the [kotlin libraries project](https://github.com/JetBrains/kotlin/libraries) to then work with the various kotlin libraries etc.
+* you can now open the [kotlin libraries project](https://github.com/JetBrains/kotlin/tree/master/libraries) to then work with the various kotlin libraries etc.
 
 ### Using a pre-built Kotlin IDEA plugin
 
