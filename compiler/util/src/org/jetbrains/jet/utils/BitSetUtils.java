@@ -35,4 +35,14 @@ public class BitSetUtils {
         }
         return intValue;
     }
+
+    public static BitSet toBitSet(int value) {
+        BitSet bitSet = new BitSet();
+        int bit = 0;
+        while (value > 0) {
+            bitSet.set(bit++, value % 2 == 1);
+            value >>= 1;
+        }
+        return bitSet;
+    }
 }

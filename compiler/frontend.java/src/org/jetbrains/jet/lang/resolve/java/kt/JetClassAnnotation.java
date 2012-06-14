@@ -21,6 +21,7 @@ import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.utils.BitSetUtils;
 
 import java.util.BitSet;
 
@@ -45,12 +46,7 @@ public class JetClassAnnotation extends PsiAnnotationWrapper {
     private BitSet flags = null;
     public BitSet flags() {
         if (flags == null) {
-            int flagsValue = getIntAttribute(JvmStdlibNames.JET_CLASS_FLAGS_FIELD, JvmStdlibNames.FLAGS_DEFAULT_VALUE);
-
-            flags = new BitSet(JvmStdlibNames.FLAGS_BITS);
-            for (int bit = 0; bit < JvmStdlibNames.FLAGS_BITS; bit++) {
-                flags.set(bit, (flagsValue & (1 << bit)) != 0);
-            }
+            flags = BitSetUtils.toBitSet(getIntAttribute(JvmStdlibNames.JET_CLASS_FLAGS_FIELD, JvmStdlibNames.FLAGS_DEFAULT_VALUE));
         }
         return flags;
     }
