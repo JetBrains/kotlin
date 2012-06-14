@@ -40,8 +40,7 @@ public @interface JetMethod {
     int kind() default 0;
 
     /**
-     * Bit 0 - property/not property
-     *
+     * See JvmStdlibNames
      * @return flags for method
      */
     int flags() default 0;
