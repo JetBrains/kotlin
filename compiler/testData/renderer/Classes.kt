@@ -25,10 +25,6 @@ trait TheTrait {
   }
 }
 
-private enum class TheEnum(val rgb : Int) {
-    VAL1 : TheEnum(0xFF0000)
-}
-
 //package rendererTest defined in root package
 //internal final annotation class TheAnnotation defined in rendererTest
 //public open class TheClass<out T : jet.Int, X> defined in rendererTest
@@ -43,7 +39,3 @@ private enum class TheEnum(val rgb : Int) {
 //internal abstract fun abstractFun() : Unit defined in rendererTest.TheTrait
 //object : rendererTest.TheClass<jet.Int, jet.Int> defined in rendererTest.TheTrait
 //internal final fun classObjectFunction() : jet.Int defined in rendererTest.TheTrait.<no name provided>
-//private final enum class TheEnum defined in rendererTest
-//value-parameter val rgb : jet.Int defined in rendererTest.TheEnum.<init>
-//internal final class VAL1 : rendererTest.TheEnum defined in rendererTest.TheEnum.<class-object-for-TheEnum>
-//internal final val VAL1 : rendererTest.TheEnum.<class-object-for-TheEnum>.VAL1 defined in rendererTest.TheEnum.<class-object-for-TheEnum>
