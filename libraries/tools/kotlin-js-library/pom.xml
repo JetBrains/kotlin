@@ -65,6 +65,10 @@
                                 </copy>
                                 <copy tofile="${basedir}/target/generated-js-library/kotlin-lib.js"
                                       file="${kotlin-js-lib-srcdir}/../../js.translator/testFiles/kotlin_lib.js"/>
+                                <copy tofile="${basedir}/target/generated-js-library/kotlin-lib-ecma3.js"
+                                      file="${kotlin-js-lib-srcdir}/../../js.translator/testFiles/kotlin_lib_ecma3.js"/>
+                                <copy tofile="${basedir}/target/generated-js-library/kotlin-lib-ecma5.js"
+                                      file="${kotlin-js-lib-srcdir}/../../js.translator/testFiles/kotlin_lib_ecma5.js"/>
                             </target>
                         </configuration>
                         <goals>

@@ -39,6 +39,8 @@ import java.nio.charset.Charset;
  */
 public class K2JSCompilerMojo extends KotlinCompileMojo {
     public static final String KOTLIN_JS_LIB = "kotlin-lib.js";
+    public static final String KOTLIN_JS_LIB_ECMA3 = "kotlin-lib-ecma3.js";
+    public static final String KOTLIN_JS_LIB_ECMA5 = "kotlin-lib-ecma5.js";
 
     /**
      * The output JS file name
@@ -52,10 +54,10 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
      * The output Kotlin JS file
      *
      * @required
-     * @parameter default-value="${project.build.directory}/js/kotlin-lib.js"
+     * @parameter default-value="${project.build.directory}/js"
      * @parameter expression="${outputKotlinJSFile}"
      */
-    private File outputKotlinJSFile;
+    private File outputKotlinJSDir;
 
     /**
      * Whether to copy the kotlin-lib.js file to the output directory
@@ -83,52 +85,62 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        super.execute();
-        if (copyLibraryJS != null && copyLibraryJS.booleanValue()) {
-            getLog().info("Copying kotlin JS library to " + outputKotlinJSFile);
-
-            // lets copy the kotlin library into the output directory
-            try {
-                File parentFile = outputKotlinJSFile.getParentFile();
-                parentFile.mkdirs();
-                final InputStream inputStream = MetaInfServices.loadClasspathResource(KOTLIN_JS_LIB);
-                if (inputStream == null) {
-                    System.out.println("WARNING: Could not find " + KOTLIN_JS_LIB + " on the classpath!");
-                } else {
-                    InputSupplier<InputStream> inputSupplier = new InputSupplier<InputStream>() {
-                        @Override
-                        public InputStream getInput() throws IOException {
-                            return inputStream;
-                        }
-                    };
-                    Files.copy(inputSupplier, outputKotlinJSFile);
-                }
-            } catch (IOException e) {
-                throw new MojoExecutionException(e.getMessage(), e);
-            }
-        }
         if (appendLibraryJS != null && appendLibraryJS.booleanValue()) {
             getLog().info("Appending Kotlin Library JS to the generated file " + outputFile);
 
-            // lets copy the kotlin library into the output directory
-            try {
-                final InputStream inputStream = MetaInfServices.loadClasspathResource(KOTLIN_JS_LIB);
-                if (inputStream == null) {
-                    System.out.println("WARNING: Could not find " + KOTLIN_JS_LIB + " on the classpath!");
-                } else {
-                    InputSupplier<InputStream> inputSupplier = new InputSupplier<InputStream>() {
-                        @Override
-                        public InputStream getInput() throws IOException {
-                            return inputStream;
-                        }
-                    };
-                    String text = "\n" + FileUtil.loadTextAndClose(inputStream);
-                    Charset charset = Charset.defaultCharset();
-                    Files.append(text, new File(outputFile), charset);
-                }
-            } catch (IOException e) {
-                throw new MojoExecutionException(e.getMessage(), e);
+            appendFile(KOTLIN_JS_LIB_ECMA3);
+            appendFile(KOTLIN_JS_LIB);
+        }
+        super.execute();
+        if (copyLibraryJS != null && copyLibraryJS.booleanValue()) {
+            getLog().info("Copying kotlin JS library to " + outputKotlinJSDir);
+
+            copyJsLibraryFile(KOTLIN_JS_LIB);
+            copyJsLibraryFile(KOTLIN_JS_LIB_ECMA3);
+            copyJsLibraryFile(KOTLIN_JS_LIB_ECMA5);
+        }
+    }
+
+    protected void appendFile(String jsLib) throws MojoExecutionException {
+        // lets copy the kotlin library into the output directory
+        try {
+            final InputStream inputStream = MetaInfServices.loadClasspathResource(jsLib);
+            if (inputStream == null) {
+                System.out.println("WARNING: Could not find " + jsLib + " on the classpath!");
+            } else {
+                InputSupplier<InputStream> inputSupplier = new InputSupplier<InputStream>() {
+                    @Override
+                    public InputStream getInput() throws IOException {
+                        return inputStream;
+                    }
+                };
+                String text = "\n" + FileUtil.loadTextAndClose(inputStream);
+                Charset charset = Charset.defaultCharset();
+                Files.append(text, new File(outputFile), charset);
             }
+        } catch (IOException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        }
+    }
+
+    protected void copyJsLibraryFile(String jsLib) throws MojoExecutionException {
+        // lets copy the kotlin library into the output directory
+        try {
+            outputKotlinJSDir.mkdirs();
+            final InputStream inputStream = MetaInfServices.loadClasspathResource(jsLib);
+            if (inputStream == null) {
+                System.out.println("WARNING: Could not find " + jsLib + " on the classpath!");
+            } else {
+                InputSupplier<InputStream> inputSupplier = new InputSupplier<InputStream>() {
+                    @Override
+                    public InputStream getInput() throws IOException {
+                        return inputStream;
+                    }
+                };
+                Files.copy(inputSupplier, new File(outputKotlinJSDir, jsLib));
+            }
+        } catch (IOException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
         }
     }
 
