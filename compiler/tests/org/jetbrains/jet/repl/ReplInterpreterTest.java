@@ -56,9 +56,10 @@ public class ReplInterpreterTest {
         ReplInterpreter repl = new ReplInterpreter(disposable, compilerDependencies, Collections.singletonList(new File("out/production/runtime")));
 
         ReplSessionTestFile file = ReplSessionTestFile.load(new File("compiler/testData/repl/" + relativePath));
-        for (Pair<String, String> t : file.getLines()) {
-            String code = t.first;
-            String expected = t.second.replaceFirst("\r?\n$", "");
+        for (ReplSessionTestFile.OneLine t : file.getLines()) {
+            String code = t.getCode();
+            String expected = t.getExpected().replaceFirst("\r?\n$", "");
+            ReplSessionTestFile.MatchType matchType = t.getMatchType();
 
             ReplInterpreter.LineResult lineResult = repl.eval(code);
             Object actual;
@@ -70,7 +71,13 @@ public class ReplInterpreterTest {
             }
             String actualString = (actual != null ? actual.toString() : "null").replaceFirst("\r?\n$", "");
 
-            Assert.assertEquals("after evaluation of: " + code, expected, actualString);
+            if (matchType == ReplSessionTestFile.MatchType.EQUALS) {
+                Assert.assertEquals("after evaluation of: " + code, expected, actualString);
+            }
+            else if (matchType == ReplSessionTestFile.MatchType.SUBSTRING) {
+                Assert.assertTrue("must contain substring: " + expected + ", actual: " + actualString, actualString.contains(expected));
+            }
+
         }
     }
 
@@ -133,8 +140,7 @@ public class ReplInterpreterTest {
 
     @Test
     public void evaluationErrors() {
-        // TODO
-        //testFile("evaluationErrors.repl");
+        testFile("evaluationErrors.repl");
     }
 
 

@@ -36,15 +36,50 @@ import java.util.regex.Pattern;
  */
 public class ReplSessionTestFile {
 
-    @NotNull
-    private final List<Pair<String, String>> lines;
+    public enum MatchType {
+        EQUALS,
+        SUBSTRING,
+    }
 
-    public ReplSessionTestFile(@NotNull List<Pair<String, String>> lines) {
+    public static class OneLine {
+        @NotNull
+        private final String code;
+        @NotNull
+        private final String expected;
+        @NotNull
+        private final MatchType matchType;
+
+        public OneLine(@NotNull String code, @NotNull String expected, @NotNull MatchType matchType) {
+            this.code = code;
+            this.expected = expected;
+            this.matchType = matchType;
+        }
+
+        @NotNull
+        public String getCode() {
+            return code;
+        }
+
+        @NotNull
+        public String getExpected() {
+            return expected;
+        }
+
+        @NotNull
+        public MatchType getMatchType() {
+            return matchType;
+        }
+    }
+
+    @NotNull
+    private final List<OneLine> lines;
+
+    public ReplSessionTestFile(@NotNull List<OneLine> lines) {
         this.lines = lines;
     }
 
     @NotNull
-    public List<Pair<String, String>> getLines() {
+    public List<OneLine> getLines() {
         return lines;
     }
 
@@ -64,19 +99,29 @@ public class ReplSessionTestFile {
     }
 
     private static ReplSessionTestFile load(@NotNull SimpleLinesParser parser) throws IOException {
-        List<Pair<String, String>> list = Lists.newArrayList();
+        List<OneLine> list = Lists.newArrayList();
+
+        Pattern startPattern = Pattern.compile(">>>( |$)(.*)");
+        Pattern substringPattern = Pattern.compile("substring: (.*)");
+
         while (!parser.lookingAtEof()) {
-            Pattern startPattern = Pattern.compile(">>>( |$)(.*)");
             Matcher matcher = parser.next(startPattern);
             String code = matcher.group(2);
 
             StringBuilder value = new StringBuilder();
 
+            Matcher substringMatcher = parser.lookingAt(substringPattern);
+            if (substringMatcher != null) {
+                list.add(new OneLine(code, substringMatcher.group(1), MatchType.SUBSTRING));
+                parser.next();
+                continue;
+            }
+
             while (!parser.lookingAtEof() && parser.lookingAt(startPattern) == null) {
                 value.append(parser.next()).append("\n");
             }
 
-            list.add(Pair.create(code, value.toString()));
+            list.add(new OneLine(code, value.toString(), MatchType.EQUALS));
         }
         return new ReplSessionTestFile(list);
     }

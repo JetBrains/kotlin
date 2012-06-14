@@ -1,5 +1,5 @@
 >>> throw Exception("hi there")
-stack trace
+substring: Exception: hi there
 >>> fun foo() = 2
 null
 >>> foo()
