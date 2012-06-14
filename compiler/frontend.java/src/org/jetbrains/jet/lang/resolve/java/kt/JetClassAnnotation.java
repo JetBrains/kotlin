@@ -28,7 +28,7 @@ import java.util.BitSet;
 /**
  * @author Stepan Koltsov
  */
-public class JetClassAnnotation extends PsiAnnotationWrapper {
+public class JetClassAnnotation extends PsiAnnotationWithFlags {
 
     public JetClassAnnotation(@Nullable PsiAnnotation psiAnnotation) {
         super(psiAnnotation);
@@ -44,6 +44,7 @@ public class JetClassAnnotation extends PsiAnnotationWrapper {
 
 
     private BitSet flags = null;
+    @NotNull
     public BitSet flags() {
         if (flags == null) {
             flags = BitSetUtils.toBitSet(getIntAttribute(JvmStdlibNames.JET_CLASS_FLAGS_FIELD, JvmStdlibNames.FLAGS_DEFAULT_VALUE));

@@ -28,13 +28,14 @@ import java.util.BitSet;
 /**
  * @author Stepan Koltsov
  */
-public class JetMethodAnnotation extends PsiAnnotationWrapper {
+public class JetMethodAnnotation extends PsiAnnotationWithFlags {
 
     public JetMethodAnnotation(@Nullable PsiAnnotation psiAnnotation) {
         super(psiAnnotation);
     }
     
     private BitSet flags = null;
+    @NotNull
     public BitSet flags() {
         if (flags == null) {
             int flagsValue = getIntAttribute(JvmStdlibNames.JET_METHOD_FLAGS_FIELD, JvmStdlibNames.FLAGS_DEFAULT_VALUE);
