@@ -9,6 +9,7 @@ import org.junit.Test
 import java.io.File
 import org.junit.Assert
 import org.jetbrains.jet.cli.common.ExitCode
+import java.util.ArrayList
 
 /**
  */
@@ -25,8 +26,15 @@ class KDocTest {
         println("Generating library KDocs to $outDir")
 
         val args = KDocArguments()
-        args.setModule(moduleName)
+        //args.setModule(moduleName)
+        val sourceDirs = ArrayList<String?>()
+        sourceDirs.add("../../stdlib/src")
+        sourceDirs.add("../../kunit/src/main/kotlin")
+        sourceDirs.add("../../kotlin-jdbc/src/main/kotlin")
+        args.setSourceDirs(sourceDirs)
         args.setOutputDir("target/classes-stdlib")
+        args.setMode("stdlib")
+        args.setClasspath("../runtime/target/kotlin-runtime-0.1-SNAPSHOT.jar:../../lib/junit-4.9.jar")
 
         val config = args.docConfig
         config.docOutputDir = outDir.toString()!!

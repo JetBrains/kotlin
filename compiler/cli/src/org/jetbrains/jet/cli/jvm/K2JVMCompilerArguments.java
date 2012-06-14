@@ -146,6 +146,14 @@ public class K2JVMCompilerArguments extends CompilerArguments {
         this.stdlib = stdlib;
     }
 
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
+
     @Override
     public boolean isTags() {
         return tags;
