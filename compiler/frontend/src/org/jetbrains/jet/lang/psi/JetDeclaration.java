@@ -16,29 +16,17 @@
 
 package org.jetbrains.jet.lang.psi;
 
-import com.intellij.lang.ASTNode;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetToken;
 
 /**
- * @author max
+ * @author Nikolay Krasko
  */
-public abstract class JetDeclaration extends JetExpressionImpl implements JetModifierListOwner {
-    public JetDeclaration(@NotNull ASTNode node) {
-        super(node);
-    }
-
+public interface JetDeclaration extends JetExpression, JetModifierListOwner {
     @Override
     @Nullable
-    public JetModifierList getModifierList() {
-        return (JetModifierList) findChildByType(JetNodeTypes.MODIFIER_LIST);
-    }
+    JetModifierList getModifierList();
 
     @Override
-    public boolean hasModifier(JetToken modifier) {
-        JetModifierList modifierList = getModifierList();
-        return modifierList != null && modifierList.hasModifier(modifier);
-    }
+    boolean hasModifier(JetToken modifier);
 }

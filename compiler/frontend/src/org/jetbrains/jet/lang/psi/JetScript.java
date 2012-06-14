@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * @author Stepan Koltsov
  */
-public class JetScript extends JetDeclaration {
+public class JetScript extends JetDeclarationImpl {
 
     public JetScript(@NotNull ASTNode node) {
         super(node);

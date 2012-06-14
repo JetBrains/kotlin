@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetPropertyAccessor extends JetDeclaration implements JetDeclarationWithBody, JetModifierListOwner {
+public class JetPropertyAccessor extends JetDeclarationImpl implements JetDeclarationWithBody, JetModifierListOwner {
     public JetPropertyAccessor(@NotNull ASTNode node) {
         super(node);
     }

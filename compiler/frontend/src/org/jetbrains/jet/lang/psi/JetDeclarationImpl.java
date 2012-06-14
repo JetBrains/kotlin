@@ -20,28 +20,25 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetToken;
 
 /**
  * @author max
  */
-public class JetClassObject extends JetDeclarationImpl implements JetStatementExpression {
-    public JetClassObject(@NotNull ASTNode node) {
+abstract class JetDeclarationImpl extends JetExpressionImpl implements JetDeclaration {
+    public JetDeclarationImpl(@NotNull ASTNode node) {
         super(node);
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitClassObject(this);
+    @Nullable
+    public JetModifierList getModifierList() {
+        return (JetModifierList) findChildByType(JetNodeTypes.MODIFIER_LIST);
     }
 
     @Override
-    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
-        return visitor.visitClassObject(this, data);
+    public boolean hasModifier(JetToken modifier) {
+        JetModifierList modifierList = getModifierList();
+        return modifierList != null && modifierList.hasModifier(modifier);
     }
-
-    @Nullable @IfNotParsed
-    public JetObjectDeclaration getObjectDeclaration() {
-        return (JetObjectDeclaration) findChildByType(JetNodeTypes.OBJECT_DECLARATION);
-    }
-
 }

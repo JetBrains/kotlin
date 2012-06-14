@@ -29,7 +29,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author max
  */
-public abstract class JetNamedDeclaration extends JetDeclaration implements PsiNameIdentifierOwner, JetStatementExpression, JetNamed {
+public abstract class JetNamedDeclaration extends JetDeclarationImpl implements PsiNameIdentifierOwner, JetStatementExpression, JetNamed {
     public JetNamedDeclaration(@NotNull ASTNode node) {
         super(node);
     }
