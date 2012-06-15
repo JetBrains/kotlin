@@ -113,6 +113,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
     }
 
     public void setReturnType(@NotNull JetType unsubstitutedReturnType) {
+        if (this.unsubstitutedReturnType != null) {
+            // TODO: uncomment and fix tests
+            //throw new IllegalStateException("returnType already set");
+        }
         this.unsubstitutedReturnType = unsubstitutedReturnType;
     }
 
