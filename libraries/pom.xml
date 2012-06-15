@@ -53,6 +53,7 @@
         <module>tools/kotlin-maven-plugin</module>
         <module>tools/kotlin-js-library</module>
         <module>tools/kotlin-js-tests</module>
+        <module>tools/kotlin-js-tests-junit</module>
         <module>tools/kdoc</module>
         <module>tools/kdoc-maven-plugin</module>
 
