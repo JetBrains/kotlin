@@ -88,7 +88,7 @@ public inline fun <T, C: Collection<in T>> java.util.Iterator<T>.filterTo(result
  *
  * @includeFunctionBody ../../test/CollectionTest.kt filterNotIntoLinkedList
  */
-public inline fun <T, L: List<in T>> java.util.Iterator<T>.filterNotTo(result: L, predicate: (T) -> Boolean) : L {
+public inline fun <T, C: Collection<in T>> java.util.Iterator<T>.filterNotTo(result: C, predicate: (T) -> Boolean) : C {
     for (element in this) if (!predicate(element)) result.add(element)
     return result
 }
@@ -98,7 +98,7 @@ public inline fun <T, L: List<in T>> java.util.Iterator<T>.filterNotTo(result: L
  *
  * @includeFunctionBody ../../test/CollectionTest.kt filterNotNullIntoLinkedList
  */
-public inline fun <T, L: List<in T>> java.util.Iterator<T?>?.filterNotNullTo(result: L) : L {
+public inline fun <T, C: Collection<in T>> java.util.Iterator<T?>?.filterNotNullTo(result: C) : C {
     if (this != null) {
         for (element in this) if (element != null) result.add(element)
     }
@@ -195,7 +195,7 @@ public inline fun <T, L: List<in T>> java.util.Iterator<T>.dropWhileTo(result: L
 }
 
 /** Returns a list containing the first elements that satisfy the given *predicate* */
-public inline fun <T, L: List<in T>> java.util.Iterator<T>.takeWhileTo(result: L, predicate: (T) -> Boolean) : L {
+public inline fun <T, C: Collection<in T>> java.util.Iterator<T>.takeWhileTo(result: C, predicate: (T) -> Boolean) : C {
     for (element in this) if (predicate(element)) result.add(element) else break
     return result
 }
