@@ -81,10 +81,10 @@ public final class Message {
     }
 
     public void check(@NotNull Message other) {
-        Assert.assertEquals(this.category, other.category);
         checkMessages(other);
-        Assert.assertEquals(this.line, other.line);
-        Assert.assertEquals(this.column, other.column);
+        Assert.assertEquals(other.category, this.category);
+        Assert.assertEquals(other.line, this.line);
+        Assert.assertEquals(other.column, this.column);
         if (this.url != null) {
             Assert.assertTrue(other.url.endsWith(this.url));
         }

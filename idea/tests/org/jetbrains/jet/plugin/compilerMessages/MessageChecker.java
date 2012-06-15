@@ -17,12 +17,11 @@
 package org.jetbrains.jet.plugin.compilerMessages;
 
 import org.jetbrains.annotations.NotNull;
-import org.junit.Assert;
 
 import java.util.Iterator;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author Pavel Talanov
@@ -37,12 +36,14 @@ public final class MessageChecker {
 
     @NotNull
     public MessageChecker expect(@NotNull Message message) {
-        assertTrue("More messages expected", iterator.hasNext());
+        assertTrue("More messages expected:\n" + message.message, iterator.hasNext());
         message.check(iterator.next());
         return this;
     }
 
     public void finish() {
-        assertFalse("More message than expected", iterator.hasNext());
+        if (iterator.hasNext()) {
+            fail("More message than expected:\n" + iterator.next().message);
+        }
     }
 }

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.compiler;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -126,7 +127,7 @@ public final class K2JSCompiler implements TranslatingCompiler {
         String[] commandLineArgs = constructArguments(context.getProject(), outFile, roots[0]);
         Object rc = invokeExecMethod(environment, out, context, commandLineArgs, "org.jetbrains.jet.cli.js.K2JSCompiler");
 
-        if (outDir != null) {
+        if (outDir != null && !ApplicationManager.getApplication().isUnitTestMode()) {
             outDir.refresh(false, true);
         }
         return CompilerUtils.getReturnCodeFromObject(rc);

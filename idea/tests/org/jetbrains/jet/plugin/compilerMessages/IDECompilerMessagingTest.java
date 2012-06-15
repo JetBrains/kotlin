@@ -16,43 +16,71 @@
 
 package org.jetbrains.jet.plugin.compilerMessages;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.compiler.TranslatingCompiler;
+import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.PlatformTestCase;
 import jet.Function1;
+import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.compiler.JetCompiler;
 
 import java.io.IOException;
-
-import static org.jetbrains.jet.plugin.compilerMessages.Message.error;
-import static org.jetbrains.jet.plugin.compilerMessages.Message.warning;
 
 /**
  * @author Pavel Talanov
  */
 public abstract class IDECompilerMessagingTest extends PlatformTestCase {
 
-    private static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/compilerMessages";
-
-
-    protected void performTest(Function1<MessageChecker, Void> whatToExpect, @NotNull TranslatingCompiler compiler) {
-        String pathToTestDir = TEST_DATA_PATH + "/" + getTestName(true);
+    protected void performTest(@NotNull Function1<MessageChecker, Void> whatToExpect,
+            @NotNull TranslatingCompiler compiler, @NotNull String testDataPath) {
+        final String pathToTestDir = testDataPath + "/" + getTestName(true);
         VirtualFile testDir = LocalFileSystem.getInstance().findFileByPath(pathToTestDir);
+        Assert.assertNotNull(testDir);
         VirtualFile sampleFile = LocalFileSystem.getInstance().findFileByPath(pathToTestDir + "/src/test.kt");
         VirtualFile outDirectory = getOutDirectory(pathToTestDir, testDir);
-        VirtualFile root = LocalFileSystem.getInstance().findFileByPath(pathToTestDir + "/src/");
+        final String pathToSrc = pathToTestDir + "/src/";
+        VirtualFile root = LocalFileSystem.getInstance().findFileByPath(pathToSrc);
+        Assert.assertNotNull(root);
         MockCompileContext mockCompileContext = new MockCompileContext(myModule, outDirectory, root);
         MockModuleChunk mockModuleChunk = new MockModuleChunk(myModule);
-        compiler
-                .compile(mockCompileContext, mockModuleChunk, new VirtualFile[] {sampleFile}, new MockOutputSink());
+        setSourceEntryForModule(root);
+        assert sampleFile != null;
+        compile(compiler, sampleFile, mockCompileContext, mockModuleChunk);
+        checkMessages(whatToExpect, mockCompileContext);
+    }
+
+    private void checkMessages(@NotNull Function1<MessageChecker, Void> whatToExpect, @NotNull MockCompileContext mockCompileContext) {
         MessageChecker checker = new MessageChecker(mockCompileContext);
         checkHeader(checker);
         whatToExpect.invoke(checker);
         checker.finish();
     }
+
+    private static void compile(@NotNull TranslatingCompiler compiler,
+            @NotNull VirtualFile sampleFile,
+            @NotNull MockCompileContext mockCompileContext,
+            @NotNull MockModuleChunk mockModuleChunk) {
+        compiler.compile(mockCompileContext, mockModuleChunk, new VirtualFile[] {sampleFile}, new MockOutputSink());
+    }
+
+    private void setSourceEntryForModule(final VirtualFile root) {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+                ContentEntry entry = model.addContentEntry(root);
+                entry.addSourceFolder(root, false);
+                model.commit();
+            }
+        });
+    }
+
+    protected abstract void checkHeader(@NotNull MessageChecker checker);
 
     @NotNull
     private VirtualFile getOutDirectory(@NotNull String pathToTestDir, @NotNull VirtualFile testDir) {
@@ -68,9 +96,9 @@ public abstract class IDECompilerMessagingTest extends PlatformTestCase {
         return outDirectory;
     }
 
-    private static void checkHeader(@NotNull MessageChecker checker) {
-        checker.expect(Message.info().textStartsWith("Using kotlinHome="));
-        checker.expect(Message.info().textStartsWith("Invoking in-process compiler"));
-        checker.expect(Message.info().textStartsWith("Kotlin Compiler version"));
+    protected <T extends TranslatingCompiler> T getCompiler(Class<T> aClass) {
+        T[] compilers = CompilerManager.getInstance(getProject()).getCompilers(aClass);
+        assert compilers.length == 1;
+        return compilers[0];
     }
 }

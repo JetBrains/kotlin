@@ -19,7 +19,8 @@ package org.jetbrains.jet.plugin.compilerMessages;
 import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.compiler.JetCompiler;
+import org.jetbrains.jet.plugin.compiler.K2JSCompiler;
+import org.jetbrains.jet.plugin.project.K2JSModuleComponent;
 
 import static org.jetbrains.jet.plugin.compilerMessages.Message.error;
 import static org.jetbrains.jet.plugin.compilerMessages.Message.warning;
@@ -27,9 +28,9 @@ import static org.jetbrains.jet.plugin.compilerMessages.Message.warning;
 /**
  * @author Pavel Talanov
  */
-public final class JetCompilerMessagingTest extends IDECompilerMessagingTest {
+public final class K2JSCompilerMessagingTest extends IDECompilerMessagingTest {
 
-    private static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/compilerMessages/k2jvm";
+    private static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/compilerMessages/k2js";
 
     public void testHelloWorld() {
         doTest(new Function1<MessageChecker, Void>() {
@@ -41,13 +42,12 @@ public final class JetCompilerMessagingTest extends IDECompilerMessagingTest {
         });
     }
 
-
     public void testSimpleWarning() {
         doTest(new Function1<MessageChecker, Void>() {
             @Override
             public Void invoke(MessageChecker checker) {
-                checker.expect(warning().text("Unnecessary non-null assertion (!!) on a non-null receiver of type jet.String")
-                                       .at("test.kt", 4, 4));
+                checker.expect(warning().text("Condition 't != null' is always 'true'")
+                                       .at("test.kt", 3, 7));
                 return null;
             }
         });
@@ -64,14 +64,25 @@ public final class JetCompilerMessagingTest extends IDECompilerMessagingTest {
         });
     }
 
+    public void testLib() {
+        K2JSModuleComponent component = myModule.getComponent(K2JSModuleComponent.class);
+        component.setJavaScriptModule(true);
+        component.setPathToJavaScriptLibrary("/lib.zip");
+        doTest(new Function1<MessageChecker, Void>() {
+            @Override
+            public Void invoke(MessageChecker checker) {
+                //nothing apart from header
+                return null;
+            }
+        });
+    }
+
     private void doTest(@NotNull Function1<MessageChecker, Void> whatToExpect) {
-        performTest(whatToExpect, getCompiler(JetCompiler.class), TEST_DATA_PATH);
+        performTest(whatToExpect, getCompiler(K2JSCompiler.class), TEST_DATA_PATH);
     }
 
     @Override
     protected void checkHeader(@NotNull MessageChecker checker) {
-        checker.expect(Message.info().textStartsWith("Using kotlinHome="));
-        checker.expect(Message.info().textStartsWith("Invoking in-process compiler"));
         checker.expect(Message.info().textStartsWith("Kotlin Compiler version"));
     }
 }

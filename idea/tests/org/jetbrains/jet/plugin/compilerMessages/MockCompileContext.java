@@ -53,8 +53,8 @@ public class MockCompileContext implements CompileContextEx {
 
     public MockCompileContext(@NotNull Module module, @NotNull VirtualFile outputDir, @NotNull VirtualFile root) {
         this.module = module;
-        outputDirectory = outputDir;
-        sourceRoot = root;
+        this.outputDirectory = outputDir;
+        this.sourceRoot = root;
     }
 
     @NotNull
@@ -209,7 +209,7 @@ public class MockCompileContext implements CompileContextEx {
 
     @Override
     public Project getProject() {
-        throw new UnsupportedOperationException("org.jetbrains.jet.plugin.compilerMessages.MockCompileContext#getProject");
+        return module.getProject();
     }
 
     @Override
