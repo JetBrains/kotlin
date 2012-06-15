@@ -20,7 +20,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -38,18 +37,16 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetClass extends JetNotStubbedTypeParameterListOwner
-        implements JetClassOrObject, JetModifierListOwner, StubBasedPsiElement<PsiJetClassStub> {
-
-    private PsiJetClassStub stub;
+public class JetClass extends JetStubTypeParameterListOwner<PsiJetClassStub>
+        implements JetClassOrObject, JetModifierListOwner {
 
     public JetClass(@NotNull ASTNode node) {
         super(node);
     }
 
-    //public JetClass(@NotNull final PsiJetClassStub stub) {
-    //    this.stub = stub;
-    //}
+    public JetClass(@NotNull final PsiJetClassStub stub) {
+        super(stub, JetStubElementTypes.CLASS);
+    }
 
     @Override
     public List<JetDeclaration> getDeclarations() {
@@ -154,14 +151,7 @@ public class JetClass extends JetNotStubbedTypeParameterListOwner
     @NotNull
     @Override
     public IStubElementType getElementType() {
-        // TODO (stubs)
         return JetStubElementTypes.CLASS;
-    }
-
-    @Override
-    public PsiJetClassStub getStub() {
-        // TODO (stubs)
-        return null;
     }
 
     @Override

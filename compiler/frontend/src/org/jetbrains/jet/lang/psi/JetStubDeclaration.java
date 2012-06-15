@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
@@ -50,6 +51,21 @@ abstract class JetStubDeclaration<T extends StubElement> extends StubBasedPsiEle
     }
 
     @Override
+    public String toString() {
+        return getNode().getElementType().toString();
+    }
+
+    @Override
+    public final void accept(@NotNull PsiElementVisitor visitor) {
+        if (visitor instanceof JetVisitorVoid) {
+            accept((JetVisitorVoid) visitor);
+        }
+        else {
+            visitor.visitElement(this);
+        }
+    }
+
+    @Override
     public <D> void acceptChildren(@NotNull JetTreeVisitor<D> visitor, D data) {
         PsiElement child = getFirstChild();
         while (child != null) {
@@ -62,11 +78,11 @@ abstract class JetStubDeclaration<T extends StubElement> extends StubBasedPsiEle
 
     @Override
     public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitExpression(this);
+        visitor.visitJetElement(this);
     }
 
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
-        return visitor.visitExpression(this, data);
+        return visitor.visitJetElement(this, data);
     }
 }
