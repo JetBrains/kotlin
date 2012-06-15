@@ -38,7 +38,6 @@ import java.util.*;
  */
 public class MutableClassDescriptorLite extends ClassDescriptorBase
         implements WithDeferredResolve {
-    private ConstructorDescriptor primaryConstructor;
     private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
 
     private List<AnnotationDescriptor> annotations = Lists.newArrayList();
@@ -205,18 +204,6 @@ public class MutableClassDescriptorLite extends ClassDescriptorBase
         this.supertypes = supertypes;
     }
 
-
-    public void setPrimaryConstructor(@NotNull ConstructorDescriptor constructorDescriptor, BindingTrace trace) {
-        assert this.primaryConstructor == null : "Primary constructor assigned twice " + this;
-        this.primaryConstructor = constructorDescriptor;
-        addConstructor(constructorDescriptor, trace);
-    }
-
-    @Override
-    @Nullable
-    public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
-        return primaryConstructor;
-    }
 
     public void addConstructor(@NotNull ConstructorDescriptor constructorDescriptor, @Nullable BindingTrace trace) {
         assert constructorDescriptor.getContainingDeclaration() == this;

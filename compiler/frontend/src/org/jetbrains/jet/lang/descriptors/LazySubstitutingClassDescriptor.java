@@ -122,11 +122,6 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
-    public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
-        return original.getUnsubstitutedPrimaryConstructor();
-    }
-
-    @Override
     public List<AnnotationDescriptor> getAnnotations() {
         return original.getAnnotations();
     }

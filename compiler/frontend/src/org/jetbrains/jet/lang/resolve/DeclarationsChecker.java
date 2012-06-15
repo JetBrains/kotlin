@@ -377,7 +377,7 @@ public class DeclarationsChecker {
 
         DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration().getContainingDeclaration();
         assert declaration instanceof ClassDescriptor;
-        ClassDescriptor enumClass = (ClassDescriptor) declaration;
+        ClassDescriptorFromSource enumClass = (ClassDescriptorFromSource) declaration;
         assert enumClass.getKind() == ClassKind.ENUM_CLASS;
 
         List<JetDelegationSpecifier> delegationSpecifiers = aClass.getDelegationSpecifiers();

@@ -35,7 +35,7 @@ import java.util.*;
 /**
  * @author abreslav
  */
-public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDescriptor {
+public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDescriptorFromSource {
 
     private final ResolveSession resolveSession;
     private final ClassMemberDeclarationProvider declarationProvider;

@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.AbstractScopeAdapter;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -36,7 +37,9 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class MutableClassDescriptor extends MutableClassDescriptorLite {
+public class MutableClassDescriptor extends MutableClassDescriptorLite implements ClassDescriptorFromSource {
+    private ConstructorDescriptor primaryConstructor;
+
     private final Set<CallableMemberDescriptor> declaredCallableMembers = Sets.newHashSet();
     private final Set<CallableMemberDescriptor> allCallableMembers = Sets.newHashSet(); // includes fake overrides
     private final Set<PropertyDescriptor> properties = Sets.newHashSet();
@@ -83,6 +86,20 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
             }
         }
     }
+
+    public void setPrimaryConstructor(@NotNull ConstructorDescriptor constructorDescriptor, BindingTrace trace) {
+        assert this.primaryConstructor == null : "Primary constructor assigned twice " + this;
+        this.primaryConstructor = constructorDescriptor;
+        addConstructor(constructorDescriptor, trace);
+    }
+
+    @Override
+    @Nullable
+    public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
+        return primaryConstructor;
+    }
+
+
 
     @NotNull
     public Set<SimpleFunctionDescriptor> getFunctions() {
