@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -68,9 +69,8 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
         if (object != classOrObjectDeclaration instanceof JetObjectDeclaration) return null;
 
-        ClassMemberDeclarationProvider classMemberDeclarationProvider =
-                resolveSession.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classOrObjectDeclaration);
-        ClassDescriptor classDescriptor = new LazyClassDescriptor(resolveSession, thisDescriptor, name, classMemberDeclarationProvider);
+        ClassDescriptor classDescriptor = new LazyClassDescriptor(resolveSession, thisDescriptor, name,
+                                                                  JetClassInfoUtil.createClassLikeInfo(classOrObjectDeclaration));
 
         classDescriptors.put(name, classDescriptor);
         allDescriptors.add(classDescriptor);

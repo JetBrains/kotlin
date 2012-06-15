@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 /**
@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
  */
 public interface DeclarationProviderFactory {
     @NotNull
-    ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull JetClassOrObject jetClassOrObject);
+    ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull JetClassLikeInfo classLikeInfo);
 
     @Nullable
     PackageMemberDeclarationProvider getPackageMemberDeclarationProvider(@NotNull FqName packageFqName);

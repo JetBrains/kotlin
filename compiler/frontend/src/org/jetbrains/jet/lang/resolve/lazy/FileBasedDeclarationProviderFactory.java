@@ -19,10 +19,9 @@ package org.jetbrains.jet.lang.resolve.lazy;
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
-import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
+import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
@@ -39,7 +38,7 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
     private final Multimap<FqName, JetFile> filesByPackage = HashMultimap.create();
     private final Set<FqName> declaredPackages = Sets.newHashSet();
     private final Map<FqName, PackageMemberDeclarationProvider> packageDeclarationProviders = Maps.newHashMap();
-    private final Map<JetClassOrObject, ClassMemberDeclarationProvider> classMemberDeclarationProviders = Maps.newHashMap();
+    //private final Map<JetClassOrObject, ClassMemberDeclarationProvider> classMemberDeclarationProviders = Maps.newHashMap();
 
     private boolean indexed = false;
 
@@ -104,23 +103,25 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
 
     @NotNull
     @Override
-    public ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull JetClassOrObject jetClassOrObject) {
+    public ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull JetClassLikeInfo classLikeInfo) {
         createIndex();
 
-        ClassMemberDeclarationProvider declarationProvider = classMemberDeclarationProviders.get(jetClassOrObject);
-        if (declarationProvider != null) {
-            return declarationProvider;
+        //JetClassOrObject classOrObject = classLikeInfo.getCorrespondingClassOrObject();
+        //if (classOrObject != null) {
+        //    ClassMemberDeclarationProvider declarationProvider = classMemberDeclarationProviders.get(classOrObject);
+        //    if (declarationProvider != null) {
+        //        return declarationProvider;
+        //    }
+        //}
+
+        if (!filesByPackage.containsKey(classLikeInfo.getContainingPackageFqName())) {
+            throw new IllegalStateException("This factory doesn't know about this class: " + classLikeInfo);
         }
 
-        JetFile file = (JetFile) jetClassOrObject.getContainingFile();
-
-        if (!filesByPackage.containsKey(new FqName(file.getNamespaceHeader().getQualifiedName()))) {
-            throw new IllegalStateException("This factory doesn't know about this class: " + jetClassOrObject);
-        }
-
-        ClassMemberDeclarationProvider provider = new PsiBasedClassMemberDeclarationProvider(
-                JetClassInfoUtil.createClassLikeInfo(jetClassOrObject));
-        classMemberDeclarationProviders.put(jetClassOrObject, provider);
+        ClassMemberDeclarationProvider provider = new PsiBasedClassMemberDeclarationProvider(classLikeInfo);
+        //if (classOrObject != null) {
+        //    classMemberDeclarationProviders.put(classOrObject, provider);
+        //}
 
         return provider;
     }

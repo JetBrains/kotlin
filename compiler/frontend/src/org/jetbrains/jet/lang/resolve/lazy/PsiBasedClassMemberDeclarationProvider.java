@@ -43,9 +43,6 @@ public class PsiBasedClassMemberDeclarationProvider extends AbstractPsiBasedDecl
             if (declaration instanceof JetClassObject) {
                 // Do nothing, class object will be taken directly from the classInfo
             }
-            else if (declaration instanceof JetEnumEntry) {
-                // Do nothing, entries are actually declared in the class object
-            }
             else {
                 putToIndex(declaration);
             }

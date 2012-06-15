@@ -19,13 +19,21 @@ package org.jetbrains.jet.lang.resolve.lazy.data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetEnumEntry;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 
 /**
  * @author abreslav
  */
 public class JetClassInfoUtil {
+
     public static JetClassLikeInfo createClassLikeInfo(@NotNull JetClassOrObject classOrObject) {
+        if (classOrObject instanceof JetEnumEntry) {
+            JetEnumEntry jetEnumEntry = (JetEnumEntry) classOrObject;
+            if (!jetEnumEntry.hasPrimaryConstructor()) {
+                return new JetObjectInfo(jetEnumEntry);
+            }
+        }
         if (classOrObject instanceof JetClass) {
             JetClass jetClass = (JetClass) classOrObject;
             return new JetClassInfo(jetClass);

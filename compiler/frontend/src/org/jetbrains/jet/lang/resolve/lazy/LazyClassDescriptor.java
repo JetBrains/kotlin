@@ -16,14 +16,16 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.lazy.data.FilteringClassLikeInfo;
+import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
@@ -39,7 +41,9 @@ import java.util.*;
  */
 public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDescriptorFromSource {
 
+    private static final Predicate<Object> ONLY_ENUM_ENTIRES = Predicates.instanceOf(JetEnumEntry.class);
     private final ResolveSession resolveSession;
+    private final JetClassLikeInfo originalClassInfo;
     private final ClassMemberDeclarationProvider declarationProvider;
 
     private final Name name;
@@ -65,21 +69,23 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             @NotNull ResolveSession resolveSession,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Name name,
-            @NotNull ClassMemberDeclarationProvider memberDeclarationProvider
+            @NotNull JetClassLikeInfo classLikeInfo
     ) {
-        this.declarationProvider = memberDeclarationProvider;
         this.resolveSession = resolveSession;
+        this.originalClassInfo = classLikeInfo;
+        JetClassLikeInfo classLikeInfoForMembers =
+                classLikeInfo.getClassKind() != ClassKind.ENUM_CLASS ? classLikeInfo : noEnumEntries(classLikeInfo);
+        this.declarationProvider = resolveSession.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfoForMembers);
         this.name = name;
         this.containingDeclaration = containingDeclaration;
-        this.unsubstitutedMemberScope = new LazyClassMemberScope(resolveSession, memberDeclarationProvider, this);
+        this.unsubstitutedMemberScope = new LazyClassMemberScope(resolveSession, declarationProvider, this);
         this.unsubstitutedInnerClassesScope = new InnerClassesScopeWrapper(unsubstitutedMemberScope);
 
         this.typeConstructor = new LazyClassTypeConstructor();
 
-        JetClassLikeInfo classInfo = memberDeclarationProvider.getOwnerInfo();
-        this.kind = classInfo.getClassKind();
+        this.kind = classLikeInfo.getClassKind();
         Modality defaultModality = kind == ClassKind.TRAIT ? Modality.ABSTRACT : Modality.FINAL;
-        JetModifierList modifierList = classInfo.getModifierList();
+        JetModifierList modifierList = classLikeInfo.getModifierList();
         this.modality = DescriptorResolver.resolveModalityFromModifiers(modifierList, defaultModality);
         this.visibility = DescriptorResolver.resolveVisibilityFromModifiers(modifierList);
     }
@@ -166,25 +172,25 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         if (!classObjectDescriptorResolved) {
             JetClassObject classObject = declarationProvider.getOwnerInfo().getClassObject();
 
-            ClassMemberDeclarationProvider classObjectMemberProvider = null;
+            boolean isEnum = getKind() == ClassKind.ENUM_CLASS;
+            JetClassLikeInfo classObjectInfo = null;
             if (classObject != null) {
                 JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
                 if (objectDeclaration != null) {
-                    classObjectMemberProvider = resolveSession.getDeclarationProviderFactory()
-                                                .getClassMemberDeclarationProvider(objectDeclaration);
+                    classObjectInfo = JetClassInfoUtil.createClassLikeInfo(objectDeclaration);
                 }
             }
-            else if (getKind() == ClassKind.ENUM_CLASS) {
-                // Enum classes always have class objects, and enum constants are their members
-                Collection<JetDeclaration> enumEntries =
-                        Collections2.filter(declarationProvider.getAllDeclarations(), Predicates.instanceOf(JetEnumEntry.class));
-                classObjectMemberProvider = new PsiBasedClassMemberDeclarationProvider(null);
+            else {
+                if (isEnum) {
+                    // Enum classes always have class objects, and enum constants are their members
+                    classObjectInfo = onlyEnumEntries(originalClassInfo);
+                }
             }
 
 
-            if (classObjectMemberProvider != null) {
-                classObjectDescriptor = new LazyClassDescriptor(resolveSession, this, JetPsiUtil.NO_NAME_PROVIDED,
-                                                                classObjectMemberProvider);
+            if (classObjectInfo != null) {
+                classObjectDescriptor = new LazyClassDescriptor(resolveSession, this, isEnum ? Name.special("<class-object-for-" + getName() + ">") : JetPsiUtil.NO_NAME_PROVIDED,
+                                                                classObjectInfo);
             }
             classObjectDescriptorResolved = true;
         }
@@ -303,4 +309,19 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             return LazyClassDescriptor.this.getName().toString();
         }
     }
+
+    private static JetClassLikeInfo noEnumEntries(JetClassLikeInfo classLikeInfo) {
+        return new FilteringClassLikeInfo(classLikeInfo, Predicates.not(ONLY_ENUM_ENTIRES));
+    }
+
+    private static JetClassLikeInfo onlyEnumEntries(JetClassLikeInfo classLikeInfo) {
+        return new FilteringClassLikeInfo(classLikeInfo, ONLY_ENUM_ENTIRES) {
+            @NotNull
+            @Override
+            public ClassKind getClassKind() {
+                return ClassKind.OBJECT;
+            }
+        };
+    }
+
 }
