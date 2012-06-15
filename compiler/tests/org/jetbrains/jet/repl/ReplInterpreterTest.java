@@ -18,7 +18,7 @@ package org.jetbrains.jet.repl;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.cli.jvm.repl.ReplInterpreter;
@@ -58,7 +58,8 @@ public class ReplInterpreterTest {
         ReplSessionTestFile file = ReplSessionTestFile.load(new File("compiler/testData/repl/" + relativePath));
         for (ReplSessionTestFile.OneLine t : file.getLines()) {
             String code = t.getCode();
-            String expected = t.getExpected().replaceFirst("\r?\n$", "");
+
+            String expected = StringUtil.convertLineSeparators(t.getExpected()).replaceFirst("\n$", "");
             ReplSessionTestFile.MatchType matchType = t.getMatchType();
 
             ReplInterpreter.LineResult lineResult = repl.eval(code);
@@ -69,7 +70,7 @@ public class ReplInterpreterTest {
             else {
                 actual = lineResult.getErrorText();
             }
-            String actualString = (actual != null ? actual.toString() : "null").replaceFirst("\r?\n$", "");
+            String actualString = StringUtil.convertLineSeparators(actual != null ? actual.toString() : "null").replaceFirst("\n$", "");
 
             if (matchType == ReplSessionTestFile.MatchType.EQUALS) {
                 Assert.assertEquals("after evaluation of: " + code, expected, actualString);

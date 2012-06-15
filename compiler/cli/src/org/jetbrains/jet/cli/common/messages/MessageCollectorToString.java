@@ -36,7 +36,7 @@ public class MessageCollectorToString implements MessageCollector {
         actualCollector.report(severity, message, location);
     }
 
-    private static Charset UTF8 = Charset.forName("utf-8");
+    private static final Charset UTF8 = Charset.forName("utf-8");
 
     @NotNull
     public String getString() {
