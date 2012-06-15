@@ -16,28 +16,14 @@
 
 package org.jetbrains.jet.lang.psi;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * @author abreslav
+ * Comes along with @Nullable to indicate null is only possible if parsing error present
  */
-public interface ValueArgument {
-    @Nullable
-    @IfNotParsed
-    JetExpression getArgumentExpression();
-
-    @Nullable
-    JetValueArgumentName getArgumentName();
-
-    boolean isNamed();
-
-    @NotNull
-    PsiElement asElement();
-
-    /* The '*' in something like foo(*arr) i.e. pass an array as a number of vararg arguments */
-    @Nullable
-    LeafPsiElement getSpreadElement();
-}
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD})
+public @interface IfNotParsed {}

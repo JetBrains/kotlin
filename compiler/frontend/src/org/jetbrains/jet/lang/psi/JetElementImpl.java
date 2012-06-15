@@ -24,11 +24,6 @@ import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetLanguage;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 /**
  * @author max
  */
@@ -36,13 +31,6 @@ public class JetElementImpl extends ASTWrapperPsiElement implements JetElement {
     public JetElementImpl(@NotNull ASTNode node) {
         super(node);
     }
-
-    /**
-     * Comes along with @Nullable to indicate null is only possible if parsing error present
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.METHOD})
-    public @interface IfNotParsed {}
 
     @NotNull
     @Override
