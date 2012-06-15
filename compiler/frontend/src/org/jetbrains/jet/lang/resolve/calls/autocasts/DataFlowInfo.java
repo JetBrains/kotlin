@@ -109,7 +109,7 @@ public class DataFlowInfo {
 
         boolean changed = false;
         changed |= putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB));
-        changed |= putNullability(builder, b, nullabilityOfA.refine(nullabilityOfA));
+        changed |= putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA));
         return changed ? new DataFlowInfo(ImmutableMap.copyOf(builder), typeInfo) : this;
     }
 
