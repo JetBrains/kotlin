@@ -145,7 +145,7 @@ public inline fun CharArray.fold(initial: Char, operation: (Char, Char) -> Char)
  *
  * @includeFunctionBody ../../test/CollectionTest.kt foldRight
  */
-public inline fun CharArray.foldRight(initial: Char, operation: (Char, Char) -> Char): Char = reverse().fold(initial, operation)
+public inline fun CharArray.foldRight(initial: Char, operation: (Char, Char) -> Char): Char = reverse().fold(initial, {x, y -> operation(y, x)})
 
 /**
  * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by

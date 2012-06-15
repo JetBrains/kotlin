@@ -145,7 +145,7 @@ public inline fun ByteArray.fold(initial: Byte, operation: (Byte, Byte) -> Byte)
  *
  * @includeFunctionBody ../../test/CollectionTest.kt foldRight
  */
-public inline fun ByteArray.foldRight(initial: Byte, operation: (Byte, Byte) -> Byte): Byte = reverse().fold(initial, operation)
+public inline fun ByteArray.foldRight(initial: Byte, operation: (Byte, Byte) -> Byte): Byte = reverse().fold(initial, {x, y -> operation(y, x)})
 
 /**
  * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by

@@ -135,7 +135,7 @@ public inline fun <T> java.lang.Iterable<T>.fold(initial: T, operation: (T, T) -
  *
  * @includeFunctionBody ../../test/CollectionTest.kt foldRight
  */
-public inline fun <T> java.lang.Iterable<T>.foldRight(initial: T, operation: (T, T) -> T): T = reverse().fold(initial, operation)
+public inline fun <T> java.lang.Iterable<T>.foldRight(initial: T, operation: (T, T) -> T): T = reverse().fold(initial, {x, y -> operation(y, x)})
 
 /**
  * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
