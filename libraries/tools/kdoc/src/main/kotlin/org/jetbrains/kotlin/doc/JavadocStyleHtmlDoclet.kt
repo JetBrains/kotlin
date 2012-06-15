@@ -50,12 +50,10 @@ class JavadocStyleHtmlDoclet() : Doclet {
             classes.addAll(map.keySet())
             classes.addAll(pmap.keySet())
             for (c in classes) {
-                if (c != null) {
-                    val functions = map.get(c).orEmpty()
-                    val properties = pmap.get(c).orEmpty()
-                    run("${p.nameAsPath}/${c.nameAsPath}-extensions.html",
-                    ClassExtensionsTemplate(model, p, c, functions, properties))
-                }
+                val functions = map.get(c).orEmpty()
+                val properties = pmap.get(c).orEmpty()
+                run("${p.nameAsPath}/${c.nameAsPath}-extensions.html",
+                ClassExtensionsTemplate(model, p, c, functions, properties))
             }
         }
 

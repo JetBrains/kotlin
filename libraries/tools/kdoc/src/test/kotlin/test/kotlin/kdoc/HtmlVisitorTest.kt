@@ -23,7 +23,7 @@ class HtmlVisitorTest {
         val args = K2JVMCompilerArguments()
         args.setSrc(srcDir.toString())
         args.setOutputDir(File(dir, "target/classes-htmldocs").toString())
-        args.getCompilerPlugins()?.add(HtmlCompilerPlugin())
+        args.getCompilerPlugins().add(HtmlCompilerPlugin())
 
         val compiler = K2JVMCompiler()
         compiler.exec(System.out, args)

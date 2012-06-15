@@ -328,13 +328,14 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             val rootDir = projectRootDir()
             val canonicalFile = File(filePath).getCanonicalPath() ?: ""
             //println("=========== root dir for filePath: $canonicalFile is $rootDir")
-            val relativeFile = if (rootDir != null && canonicalFile.startsWith(rootDir))
-                canonicalFile.substring(rootDir.length()) else canonicalFile
-            if (relativeFile != null) {
-                val cleanRoot = root.trimTrailing("/")
-                val cleanPath = relativeFile.trimLeading("/")
-                return "$cleanRoot/$cleanPath$lineLinkText$sourceLine"
-            }
+            val relativeFile =
+                if (canonicalFile.startsWith(rootDir))
+                    canonicalFile.substring(rootDir.length())
+                else
+                    canonicalFile
+            val cleanRoot = root.trimTrailing("/")
+            val cleanPath = relativeFile.trimLeading("/")
+            return "$cleanRoot/$cleanPath$lineLinkText$sourceLine"
         }
         return null
     }
@@ -357,7 +358,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             val descriptors = scope.getAllDescriptors()
             for (descriptor in descriptors) {
                 if (descriptor is PropertyDescriptor) {
-                    val name = descriptor.getName()?.getName()
+                    val name = descriptor.getName().getName()
                     val returnType = getType(descriptor.getReturnType())
                     if (returnType != null) {
                         val receiver = descriptor.getReceiverParameter()
@@ -385,7 +386,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
     protected fun createFunction(owner: KClassOrPackage, descriptor: CallableDescriptor): KFunction? {
         val returnType = getType(descriptor.getReturnType())
         if (returnType != null) {
-            val name = descriptor.getName()?.getName() ?: "null"
+            val name = descriptor.getName().getName()
             val parameters = ArrayList<KParameter>()
             val params = descriptor.getValueParameters()
             for (param in params) {
@@ -422,7 +423,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
     }
 
     protected fun createTypeParameter(descriptor: TypeParameterDescriptor): KTypeParameter? {
-        val name = descriptor.getName()?.getName()
+        val name = descriptor.getName().getName()
         val answer = KTypeParameter(name, descriptor, this)
         configureComments(answer, descriptor)
         return answer
@@ -431,7 +432,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
     protected fun createParameter(descriptor: ValueParameterDescriptor): KParameter? {
         val returnType = getType(descriptor.getReturnType())
         if (returnType != null) {
-            val name = descriptor.getName()?.getName()
+            val name = descriptor.getName().getName()
             val answer = KParameter(descriptor, name, returnType)
             configureComments(answer, descriptor)
             return answer
@@ -486,31 +487,27 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             var text = node?.getText() ?: ""
             // lets remove the comment tokens
             val lines = text.trim().split("\\n")
-            if (lines != null) {
-                // lets remove the /** ... * ... */ tokens
-                val buffer = StringBuilder()
-                val last = lines.size - 1
-                for (i in 0.upto(last)) {
-                    var text = lines[i] ?: ""
-                    text = text.trim()
-                    if (i == 0) {
-                        text = text.trimLeading("/**").trimLeading("/*")
-                    } else {
-                        buffer.append("\n")
-                    }
-                    if (i >= last) {
-                        text = text.trimTrailing("*/")
-                    } else if (i > 0) {
-                        text = text.trimLeading("* ")
-                        if (text == "*") text = ""
-                    }
-                    text = processMacros(text, psiElement)
-                    buffer.append(text)
+            // lets remove the /** ... * ... */ tokens
+            val buffer = StringBuilder()
+            val last = lines.size - 1
+            for (i in 0.upto(last)) {
+                var text = lines[i] ?: ""
+                text = text.trim()
+                if (i == 0) {
+                    text = text.trimLeading("/**").trimLeading("/*")
+                } else {
+                    buffer.append("\n")
                 }
-                return buffer.toString() ?: ""
-            } else {
-                return text
+                if (i >= last) {
+                    text = text.trimTrailing("*/")
+                } else if (i > 0) {
+                    text = text.trimLeading("* ")
+                    if (text == "*") text = ""
+                }
+                text = processMacros(text, psiElement)
+                buffer.append(text)
             }
+            return buffer.toString() ?: ""
         }
         return ""
     }
@@ -527,7 +524,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                 // TODO we could default the test function name to match that of the
                 // source code function if folks adopted a convention of naming the test method after the
                 // method its acting as a demo/test for
-                if (words != null && words.size > 1) {
+                if (words.size > 1) {
                     val includeFile = words[0].sure()
                     val fnName = words[1].sure()
                     val content = findFunctionInclude(psiElement, includeFile, fnName)
@@ -628,22 +625,20 @@ $highlight"""
 
         // lets try resolve the include name relative to this file
         val paths = relativeName.split("/")
-        if (paths != null) {
-            val size = paths.size
-            for (i in 0.upto(size - 2)) {
-                val path = paths[i]
-                if (path == ".") continue
-                else if (path == "..") dir = dir?.getParent()
-                else if (path != null) dir = dir?.findSubdirectory(path)
-            }
-            val name = paths[size - 1]
-            if (dir != null && name != null) {
-                val file = dir?.findFile(name)
-                if (file != null) {
-                    return file
-                } else {
-                    warning("could not find file $relativeName in $dir with name $name")
-                }
+        val size = paths.size
+        for (i in 0.upto(size - 2)) {
+            val path = paths[i]
+            if (path == ".") continue
+            else if (path == "..") dir = dir?.getParent()
+            else dir = dir?.findSubdirectory(path)
+        }
+        val name = paths[size - 1]
+        if (dir != null) {
+            val file = dir?.findFile(name)
+            if (file != null) {
+                return file
+            } else {
+                warning("could not find file $relativeName in $dir with name $name")
             }
         }
         return null
@@ -672,30 +667,28 @@ $highlight"""
         // TODO warning this only works for top level classes
         // a better algorithm is to walk down each dot path dealing with nested packages/classes
         val idx = qualifiedName.lastIndexOf('.')
-        val pkgName = if (idx >= 0) qualifiedName.substring(0, idx) ?: "" else ""
+        val pkgName = if (idx >= 0) qualifiedName.substring(0, idx) else ""
         val pkg = getPackage(pkgName)
         if (pkg != null) {
-            val simpleName = if (idx >= 0) qualifiedName.substring(idx + 1) ?: "" else qualifiedName
+            val simpleName = if (idx >= 0) qualifiedName.substring(idx + 1) else qualifiedName
             return pkg.classMap.get(simpleName)
         }
         return null
     }
 
     fun getClass(classElement: ClassDescriptor): KClass? {
-        val name = classElement.getName()?.getName()
-        if (name != null) {
-            var dec: DeclarationDescriptor? = classElement.getContainingDeclaration()
-            while (dec != null) {
-                val container = dec
-                if (container is NamespaceDescriptor) {
-                    val pkg = getPackage(container)
-                    return pkg.getClass(name, classElement)
-                } else {
-                    dec = dec?.getContainingDeclaration()
-                }
+        val name = classElement.getName().getName()
+        var dec: DeclarationDescriptor? = classElement.getContainingDeclaration()
+        while (dec != null) {
+            val container = dec
+            if (container is NamespaceDescriptor) {
+                val pkg = getPackage(container)
+                return pkg.getClass(name, classElement)
+            } else {
+                dec = dec?.getContainingDeclaration()
             }
-            warning("no package found for class $name")
         }
+        warning("no package found for class $name")
         return null
     }
 
@@ -973,9 +966,7 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
     get() {
         val answer = ArrayList<String>()
         for (n in name.split("\\.")) {
-            if (n != null) {
-                answer.add(n)
-            }
+            answer.add(n)
         }
         return answer;
     }

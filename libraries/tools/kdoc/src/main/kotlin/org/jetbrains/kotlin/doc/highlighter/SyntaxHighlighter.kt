@@ -53,7 +53,7 @@ class SyntaxHighligher() {
                 if (token is JetKeywordToken) {
                     style = "keyword"
                 } else if (token == JetTokens.IDENTIFIER) {
-                    val types = JetTokens.SOFT_KEYWORDS?.getTypes()
+                    val types = JetTokens.SOFT_KEYWORDS.getTypes()
                     if (types != null) {
                         for (softKeyword in types) {
                             if (softKeyword is JetKeywordToken) {

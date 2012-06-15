@@ -24,14 +24,14 @@ class KDocCompiler() : K2JVMCompiler() {
 
     protected override fun configureEnvironment(configuration : K2JVMCompileEnvironmentConfiguration, arguments : K2JVMCompilerArguments) {
         super.configureEnvironment(configuration, arguments)
-        val coreEnvironment = configuration?.getEnvironment()
+        val coreEnvironment = configuration.getEnvironment()
         if (coreEnvironment != null) {
             val kdoc = KDoc()
 
             if (arguments is KDocArguments) {
                 kdoc.config = arguments.apply()
             }
-            val plugins = configuration?.getCompilerPlugins().orEmpty()
+            val plugins = configuration.getCompilerPlugins().orEmpty()
 /*
             val sourcePlugin = HtmlCompilerPlugin()
             plugins.add(sourcePlugin)
@@ -45,7 +45,7 @@ class KDocCompiler() : K2JVMCompiler() {
     }
 
     protected override fun usage(target : PrintStream) {
-        target?.println("Usage: KDocCompiler -docOutput <docOutputDir> [-output <outputDir>|-jar <jarFileName>] [-stdlib <path to runtime.jar>] [-src <filename or dirname>|-module <module file>] [-includeRuntime]");
+        target.println("Usage: KDocCompiler -docOutput <docOutputDir> [-output <outputDir>|-jar <jarFileName>] [-stdlib <path to runtime.jar>] [-src <filename or dirname>|-module <module file>] [-includeRuntime]");
     }
 }
 

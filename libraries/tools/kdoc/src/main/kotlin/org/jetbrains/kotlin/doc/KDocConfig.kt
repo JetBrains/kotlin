@@ -95,10 +95,8 @@ class KDocConfig() {
         for (e in packagePrefixToUrls) {
             val p = e.key
             val url = e.value
-            if (p != null && url != null) {
-                if (packageName.startsWith(p)) {
-                    return url
-                }
+            if (packageName.startsWith(p)) {
+                return url
             }
        }
         if (warn && missingPackageUrls.add(packageName)) {
