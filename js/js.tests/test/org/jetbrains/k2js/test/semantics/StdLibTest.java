@@ -23,9 +23,13 @@ import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionNativeObjectResultChecker;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Pavel Talanov
@@ -66,6 +70,14 @@ public final class StdLibTest extends SingleFileTranslationTest {
 
         Map<String, Object> answer = new HashMap<String, Object>();
         answer.put("document", document);
+        answer.put("Node", new DummyNode());
         return answer;
+    }
+
+    //class cannot be private because Rhino won't be able to access it then
+    @SuppressWarnings({"FieldMayBeStatic", "UnusedDeclaration"})
+    public static class DummyNode {
+        public final short ELEMENT_NODE = Node.ELEMENT_NODE;
+        public final short TEXT_NODE = Node.TEXT_NODE;
     }
 }
