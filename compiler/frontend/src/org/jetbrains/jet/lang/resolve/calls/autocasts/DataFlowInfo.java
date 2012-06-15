@@ -181,7 +181,7 @@ public class DataFlowInfo {
 
         ListMultimap<DataFlowValue, JetType> newTypeInfo = Multimaps.newListMultimap(Maps.<DataFlowValue, Collection<JetType>>newHashMap(), CommonSuppliers.<JetType>getArrayListSupplier());
 
-        Set<DataFlowValue> keys = typeInfo.keySet();
+        Set<DataFlowValue> keys = Sets.newHashSet(typeInfo.keySet());
         keys.retainAll(other.typeInfo.keySet());
 
         for (DataFlowValue key : keys) {
