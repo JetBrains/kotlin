@@ -77,7 +77,7 @@ public class ScriptBodyResolver {
                     DataFlowInfo.EMPTY,
                     NO_EXPECTED_TYPE,
                     false);
-            JetType returnType = expressionTypingServices.getBlockReturnedType(scope, declaration.getBlockExpression(), CoercionStrategy.NO_COERCION, context, trace);
+            JetType returnType = expressionTypingServices.getBlockReturnedType(scope, declaration.getBlockExpression(), CoercionStrategy.NO_COERCION, context, trace).getType();
             if (returnType == null) {
                 returnType = ErrorUtils.createErrorType("getBlockReturnedType returned null");
             }

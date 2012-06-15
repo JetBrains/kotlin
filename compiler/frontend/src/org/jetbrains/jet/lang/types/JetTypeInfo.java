@@ -14,23 +14,37 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.types.expressions;
+package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.types.JetTypeInfo;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 
 /**
- * @author abreslav
+ * @author udalov
  */
-public interface ExpressionTypingFacade {
-    @NotNull
-    JetTypeInfo safeGetTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context);
+public class JetTypeInfo {
 
     @NotNull
-    JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context);
+    public static JetTypeInfo create(@Nullable JetType type, @NotNull DataFlowInfo dataFlowInfo) {
+        return new JetTypeInfo(type, dataFlowInfo);
+    }
     
+    private final JetType type;
+    private final DataFlowInfo dataFlowInfo;
+
+    private JetTypeInfo(@Nullable JetType type, @NotNull DataFlowInfo dataFlowInfo) {
+        this.type = type;
+        this.dataFlowInfo = dataFlowInfo;
+    }
+
+    @Nullable
+    public JetType getType() {
+        return type;
+    }
+
     @NotNull
-    JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context, boolean isStatement);
+    public DataFlowInfo getDataFlowInfo() {
+        return dataFlowInfo;
+    }
 }

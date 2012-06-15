@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -151,6 +152,11 @@ public class DataFlowUtils {
         return context.dataFlowInfo.and(result.get());
     }
 
+    @NotNull
+    public static JetTypeInfo checkType(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ExpressionTypingContext context, @NotNull DataFlowInfo dataFlowInfo) {
+        return JetTypeInfo.create(checkType(expressionType, expression, context), dataFlowInfo);
+    }
+
     @Nullable
     public static JetType checkType(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ExpressionTypingContext context) {
         if (expressionType == null || context.expectedType == null || context.expectedType == TypeUtils.NO_EXPECTED_TYPE ||
@@ -174,6 +180,11 @@ public class DataFlowUtils {
         return expressionType;
     }
 
+    @NotNull
+    public static JetTypeInfo checkStatementType(@NotNull JetExpression expression, @NotNull ExpressionTypingContext context, @NotNull DataFlowInfo dataFlowInfo) {
+        return JetTypeInfo.create(checkStatementType(expression, context), dataFlowInfo);
+    }
+
     @Nullable
     public static JetType checkStatementType(@NotNull JetExpression expression, @NotNull ExpressionTypingContext context) {
         if (context.expectedType != TypeUtils.NO_EXPECTED_TYPE && !JetStandardClasses.isUnit(context.expectedType)) {
@@ -181,6 +192,11 @@ public class DataFlowUtils {
             return null;
         }
         return JetStandardClasses.getUnitType();
+    }
+
+    @NotNull
+    public static JetTypeInfo checkImplicitCast(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ExpressionTypingContext context, boolean isStatement, DataFlowInfo dataFlowInfo) {
+        return JetTypeInfo.create(checkImplicitCast(expressionType, expression, context, isStatement), dataFlowInfo);
     }
 
     @Nullable
@@ -193,10 +209,10 @@ public class DataFlowUtils {
         return expressionType;
     }
 
-    @Nullable
-    public static JetType illegalStatementType(@NotNull JetExpression expression, @NotNull ExpressionTypingContext context, @NotNull ExpressionTypingInternals facade) {
+    @NotNull
+    public static JetTypeInfo illegalStatementType(@NotNull JetExpression expression, @NotNull ExpressionTypingContext context, @NotNull ExpressionTypingInternals facade) {
         facade.checkStatementType(expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE));
         context.trace.report(EXPRESSION_EXPECTED.on(expression, expression));
-        return null;
+        return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 }

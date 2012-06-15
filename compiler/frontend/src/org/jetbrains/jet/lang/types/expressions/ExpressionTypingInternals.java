@@ -31,11 +31,6 @@ import org.jetbrains.jet.lang.types.JetType;
  */
 /*package*/ interface ExpressionTypingInternals extends ExpressionTypingFacade {
 
-    void setResultingDataFlowInfo(@NotNull DataFlowInfo dataFlowInfo);
-
-    @Nullable
-    DataFlowInfo getResultingDataFlowInfo();
-
     @Nullable
     JetType getSelectorReturnType(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression selectorExpression, @NotNull ExpressionTypingContext context);
 
