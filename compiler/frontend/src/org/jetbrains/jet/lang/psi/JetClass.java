@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
+import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -37,8 +39,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub>
-        implements JetClassOrObject, JetModifierListOwner {
+public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> implements JetClassOrObject {
 
     public JetClass(@NotNull ASTNode node) {
         super(node);
@@ -48,6 +49,7 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub>
         super(stub, JetStubElementTypes.CLASS);
     }
 
+    @NotNull
     @Override
     public List<JetDeclaration> getDeclarations() {
         JetClassBody body = (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
@@ -104,6 +106,7 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub>
         return (JetModifierList) findChildByType(JetNodeTypes.PRIMARY_CONSTRUCTOR_MODIFIER_LIST);
     }
 
+    @Override
     @NotNull
     public List<JetClassInitializer> getAnonymousInitializers() {
         JetClassBody body = getBody();
@@ -112,6 +115,7 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub>
         return body.getAnonymousInitializers();
     }
 
+    @Override
     public boolean hasPrimaryConstructor() {
         return getPrimaryConstructorParameterList() != null;
     }
@@ -249,8 +253,8 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub>
         return super.getName();
     }
 
-    //@Override
-    //public ItemPresentation getPresentation() {
-    //    return ItemPresentationProviders.getItemPresentation(this);
-    //}
+    @Override
+    public ItemPresentation getPresentation() {
+        return ItemPresentationProviders.getItemPresentation(this);
+    }
 }

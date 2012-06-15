@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * @author Nikolay Krasko
  */
-public class GotoSymbolContributor implements ChooseByNameContributor {
+public class JetGotoSymbolContributor implements ChooseByNameContributor {
     @NotNull
     @Override
     public String[] getNames(Project project, boolean includeNonProjectItems) {
