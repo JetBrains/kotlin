@@ -27,8 +27,9 @@ import java.util.List;
 /**
  * @author max
  */
+// TODO: Remove when all implementations of JetTypeParameterListOwner get stubs
 @Deprecated
-class JetNotStubbedTypeParameterListOwner extends JetNotStubbedNamedDeclaration implements JetTypeParameterListOwner {
+abstract class JetNotStubbedTypeParameterListOwner extends JetNotStubbedNamedDeclaration implements JetTypeParameterListOwner {
     public JetNotStubbedTypeParameterListOwner(@NotNull ASTNode node) {
         super(node);
     }

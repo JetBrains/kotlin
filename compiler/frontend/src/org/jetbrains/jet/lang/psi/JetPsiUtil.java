@@ -180,7 +180,7 @@ public class JetPsiUtil {
         if (parent instanceof JetFile) {
             firstPart = getFQName((JetFile) parent);
         }
-        else if (parent instanceof JetNotStubbedNamedDeclaration) {
+        else if (parent instanceof JetNamedDeclaration) {
             firstPart = getFQName((JetNamedDeclaration) parent);
         }
 

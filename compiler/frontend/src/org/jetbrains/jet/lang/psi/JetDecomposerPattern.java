@@ -31,7 +31,7 @@ public class JetDecomposerPattern extends JetPattern {
 
     @Nullable @IfNotParsed
     public JetExpression getDecomposerExpression() {
-        return findChildByClass(JetExpressionImpl.class);
+        return findChildByClass(JetExpression.class);
     }
 
     @Nullable

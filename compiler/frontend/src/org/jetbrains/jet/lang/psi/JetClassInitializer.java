@@ -39,7 +39,7 @@ public class JetClassInitializer extends JetDeclarationImpl implements JetStatem
 
     @NotNull
     public JetExpression getBody() {
-        JetExpression body = findChildByClass(JetExpressionImpl.class);
+        JetExpression body = findChildByClass(JetExpression.class);
         assert body != null;
         return body;
     }

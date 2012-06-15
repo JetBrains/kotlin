@@ -40,6 +40,6 @@ public class JetThrowExpression extends JetExpressionImpl {
 
     @Nullable @IfNotParsed
     public JetExpression getThrownExpression() {
-        return findChildByClass(JetExpressionImpl.class);
+        return findChildByClass(JetExpression.class);
     }
 }

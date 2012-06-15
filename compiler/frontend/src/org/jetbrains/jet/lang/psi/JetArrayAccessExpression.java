@@ -57,7 +57,7 @@ public class JetArrayAccessExpression extends JetReferenceExpression {
 
     @NotNull
     public JetExpression getArrayExpression() {
-        JetExpression baseExpression = findChildByClass(JetExpressionImpl.class);
+        JetExpression baseExpression = findChildByClass(JetExpression.class);
         assert baseExpression != null;
         return baseExpression;
     }

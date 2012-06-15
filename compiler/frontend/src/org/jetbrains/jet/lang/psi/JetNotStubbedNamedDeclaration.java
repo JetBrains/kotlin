@@ -28,6 +28,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author max
  */
+// TODO: Remove when all named declarations get stubs
 @Deprecated
 abstract class JetNotStubbedNamedDeclaration extends JetDeclarationImpl implements JetNamedDeclaration {
     public JetNotStubbedNamedDeclaration(@NotNull ASTNode node) {

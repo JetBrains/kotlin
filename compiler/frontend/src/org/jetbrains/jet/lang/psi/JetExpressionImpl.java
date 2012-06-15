@@ -42,6 +42,6 @@ abstract class JetExpressionImpl extends JetElementImpl implements JetExpression
         JetContainerNode containerNode = (JetContainerNode) findChildByType(type);
         if (containerNode == null) return null;
 
-        return containerNode.findChildByClass(JetExpressionImpl.class);
+        return containerNode.findChildByClass(JetExpression.class);
     }
 }

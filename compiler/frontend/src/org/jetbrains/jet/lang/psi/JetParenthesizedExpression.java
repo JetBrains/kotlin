@@ -40,6 +40,6 @@ public class JetParenthesizedExpression extends JetExpressionImpl {
 
     @Nullable @IfNotParsed
     public JetExpression getExpression() {
-        return findChildByClass(JetExpressionImpl.class);
+        return findChildByClass(JetExpression.class);
     }
 }

@@ -41,7 +41,7 @@ public class JetWhenEntry extends JetElementImpl {
 
     @Nullable
     public JetExpression getExpression() {
-        return findChildByClass(JetExpressionImpl.class);
+        return findChildByClass(JetExpression.class);
     }
 
     @Override

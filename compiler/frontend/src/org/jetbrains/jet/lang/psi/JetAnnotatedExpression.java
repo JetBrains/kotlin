@@ -45,7 +45,7 @@ public class JetAnnotatedExpression extends JetExpressionImpl {
 
     @Nullable
     public JetExpression getBaseExpression() {
-        return findChildByClass(JetExpressionImpl.class);
+        return findChildByClass(JetExpression.class);
     }
 
     public List<JetAnnotation> getAttributeAnnotations() {

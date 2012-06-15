@@ -48,7 +48,7 @@ public class JetCallExpression extends JetExpressionImpl implements JetCallEleme
     @Override
     @Nullable
     public JetExpression getCalleeExpression() {
-        return findChildByClass(JetExpressionImpl.class);
+        return findChildByClass(JetExpression.class);
     }
 
     @Override

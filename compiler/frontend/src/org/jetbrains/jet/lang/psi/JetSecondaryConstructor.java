@@ -68,7 +68,7 @@ public class JetSecondaryConstructor extends JetDeclarationImpl implements JetDe
 
     @Override
     public JetExpression getBodyExpression() {
-        return findChildByClass(JetExpressionImpl.class);
+        return findChildByClass(JetExpression.class);
     }
 
     @Override

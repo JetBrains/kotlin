@@ -130,7 +130,7 @@ public class JetProperty extends JetNotStubbedTypeParameterListOwner implements 
     @Nullable
     public JetExpression getInitializer() {
         PsiElement eq = findChildByType(EQ);
-        return PsiTreeUtil.getNextSiblingOfType(eq, JetExpressionImpl.class);
+        return PsiTreeUtil.getNextSiblingOfType(eq, JetExpression.class);
     }
 
     @NotNull

@@ -33,7 +33,7 @@ public abstract class JetQualifiedExpression extends JetExpressionImpl {
 
     @NotNull
     public JetExpression getReceiverExpression() {
-        JetExpression left = findChildByClass(JetExpressionImpl.class);
+        JetExpression left = findChildByClass(JetExpression.class);
         assert left != null;
         return left;
     }
@@ -43,7 +43,7 @@ public abstract class JetQualifiedExpression extends JetExpressionImpl {
         ASTNode node = getOperationTokenNode();
         while (node != null) {
             PsiElement psi = node.getPsi();
-            if (psi instanceof JetExpressionImpl) {
+            if (psi instanceof JetExpression) {
                 return (JetExpression) psi;
             }
             node = node.getTreeNext();

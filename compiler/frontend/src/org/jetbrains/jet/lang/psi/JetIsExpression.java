@@ -42,7 +42,7 @@ public class JetIsExpression extends JetExpressionImpl {
 
     @NotNull
     public JetExpression getLeftHandSide() {
-        return findChildByClass(JetExpressionImpl.class);
+        return findChildByClass(JetExpression.class);
     }
 
     @Nullable @IfNotParsed

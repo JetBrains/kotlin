@@ -44,7 +44,7 @@ public class JetValueArgument extends JetElementImpl implements ValueArgument {
     @Override
     @Nullable @IfNotParsed
     public JetExpression getArgumentExpression() {
-        return findChildByClass(JetExpressionImpl.class);
+        return findChildByClass(JetExpression.class);
     }
 
     @Override

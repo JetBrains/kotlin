@@ -42,7 +42,7 @@ public class JetBinaryExpressionWithTypeRHS extends JetExpressionImpl {
 
     @NotNull
     public JetExpression getLeft() {
-        JetExpression left = findChildByClass(JetExpressionImpl.class);
+        JetExpression left = findChildByClass(JetExpression.class);
         assert left != null;
         return left;
     }

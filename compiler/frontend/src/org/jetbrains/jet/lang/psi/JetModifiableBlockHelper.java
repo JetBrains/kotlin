@@ -30,7 +30,7 @@ public final class JetModifiableBlockHelper {
      * Tested in OutOfBlockModificationTest
      */
     public static boolean shouldChangeModificationCount(PsiElement place) {
-        JetDeclaration declaration = PsiTreeUtil.getParentOfType(place, JetDeclarationImpl.class, true);
+        JetDeclaration declaration = PsiTreeUtil.getParentOfType(place, JetDeclaration.class, true);
         if (declaration != null) {
             if (declaration instanceof JetNamedFunction) {
                 JetNamedFunction function = (JetNamedFunction) declaration;
@@ -61,7 +61,7 @@ public final class JetModifiableBlockHelper {
     }
 
     private static boolean takePartInDeclarationTypeInference(PsiElement place) {
-        JetDeclaration declaration = PsiTreeUtil.getParentOfType(place, JetDeclarationImpl.class, true);
+        JetDeclaration declaration = PsiTreeUtil.getParentOfType(place, JetDeclaration.class, true);
         if (declaration != null) {
             if (declaration instanceof JetNamedFunction) {
                 JetNamedFunction function = (JetNamedFunction) declaration;

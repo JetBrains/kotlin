@@ -40,7 +40,7 @@ public class JetWhenExpression extends JetExpressionImpl {
 
     @Nullable
     public JetExpression getSubjectExpression() {
-        return findChildByClass(JetExpressionImpl.class);
+        return findChildByClass(JetExpression.class);
     }
 
     @Override

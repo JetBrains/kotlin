@@ -43,7 +43,7 @@ public class JetBinaryExpression extends JetExpressionImpl implements JetOperati
 
     @NotNull
     public JetExpression getLeft() {
-        JetExpression left = findChildByClass(JetExpressionImpl.class);
+        JetExpression left = findChildByClass(JetExpression.class);
         assert left != null;
         return left;
     }
@@ -53,7 +53,7 @@ public class JetBinaryExpression extends JetExpressionImpl implements JetOperati
         ASTNode node = getOperationReference().getNode().getTreeNext();
         while (node != null) {
             PsiElement psi = node.getPsi();
-            if (psi instanceof JetExpressionImpl) {
+            if (psi instanceof JetExpression) {
                 return (JetExpression) psi;
             }
             node = node.getTreeNext();

@@ -39,7 +39,7 @@ public class JetLabelQualifiedExpression extends JetExpressionImpl {
 
     @Nullable @IfNotParsed
     public JetExpression getLabeledExpression() {
-        return findChildByClass(JetExpressionImpl.class);
+        return findChildByClass(JetExpression.class);
     }
 
     @Nullable

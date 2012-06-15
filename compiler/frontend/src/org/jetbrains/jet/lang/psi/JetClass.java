@@ -151,6 +151,7 @@ public class JetClass extends JetNotStubbedTypeParameterListOwner
         return hasModifier(JetTokens.ANNOTATION_KEYWORD);
     }
 
+    @NotNull
     @Override
     public IStubElementType getElementType() {
         // TODO (stubs)
@@ -183,6 +184,11 @@ public class JetClass extends JetNotStubbedTypeParameterListOwner
 
     @Nullable
     private String getQualifiedName() {
+        PsiJetClassStub stub = getStub();
+        if (stub != null) {
+            return stub.getQualifiedName();
+        }
+
         List<String> parts = new ArrayList<String>();
         JetClassOrObject current = this;
         while (current != null) {
@@ -207,6 +213,11 @@ public class JetClass extends JetNotStubbedTypeParameterListOwner
      */
     @NotNull
     public List<String> getSuperNames() {
+        PsiJetClassStub stub = getStub();
+        if (stub != null) {
+            return stub.getSuperNames();
+        }
+
         final List<JetDelegationSpecifier> specifiers = getDelegationSpecifiers();
         if (specifiers.size() == 0) return Collections.emptyList();
         List<String> result = new ArrayList<String>();
@@ -236,6 +247,16 @@ public class JetClass extends JetNotStubbedTypeParameterListOwner
                 }
             }
         }
+    }
+
+    @Override
+    public String getName() {
+        PsiJetClassStub stub = getStub();
+        if (stub != null) {
+            return stub.getName();
+        }
+
+        return super.getName();
     }
 
     //@Override

@@ -57,6 +57,6 @@ public class JetCatchClause extends JetElementImpl {
 
     @Nullable @IfNotParsed
     public JetExpression getCatchBody() {
-        return findChildByClass(JetExpressionImpl.class);
+        return findChildByClass(JetExpression.class);
     }
 }

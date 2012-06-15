@@ -46,7 +46,7 @@ public class JetImportDirective extends JetElementImpl {
 
     @Nullable @IfNotParsed
     public JetExpression getImportedReference() {
-        return findChildByClass(JetExpressionImpl.class);
+        return findChildByClass(JetExpression.class);
     }
 
     @Nullable

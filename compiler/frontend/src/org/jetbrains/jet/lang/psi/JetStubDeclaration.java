@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,7 @@ import org.jetbrains.jet.lexer.JetToken;
 /**
  * @author Nikolay Krasko
  */
-abstract class JetStubDeclaration<T extends StubElement> extends StubBasedPsiElementBase<T> implements JetDeclaration {
+abstract class JetStubDeclaration<T extends StubElement> extends StubBasedPsiElementBase<T> implements JetDeclaration, StubBasedPsiElement<T> {
     public JetStubDeclaration(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }
