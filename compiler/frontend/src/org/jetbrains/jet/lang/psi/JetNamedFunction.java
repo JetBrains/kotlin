@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFunctionStub> implements JetNamed, JetDeclarationWithBody, JetModifierListOwner, JetFunction {
+public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFunctionStub> implements JetFunction {
     public JetNamedFunction(@NotNull ASTNode node) {
         super(node);
     }
