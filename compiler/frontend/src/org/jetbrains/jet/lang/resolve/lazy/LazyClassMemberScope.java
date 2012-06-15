@@ -202,4 +202,10 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             }
         }));
     }
+
+    @Override
+    public String toString() {
+        // Do not add details here, they may compromise the laziness during debugging
+        return "lazy scope for class " + thisDescriptor.getName();
+    }
 }

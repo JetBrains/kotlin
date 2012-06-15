@@ -93,4 +93,10 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDes
             getNamespace(packageFqName.shortName());
         }
     }
+
+    @Override
+    public String toString() {
+        // Do not add details here, they may compromise the laziness during debugging
+        return "lazy scope for package " + thisDescriptor.getName();
+    }
 }

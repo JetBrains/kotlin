@@ -238,4 +238,10 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
             result.add(receiver);
         }
     }
+
+    // Do not change this, override in concrete subclasses:
+    // it is very easy to compromise laziness of this class, and fail all the debugging
+    // a generic implementation can't do this properly
+    @Override
+    public abstract String toString();
 }
