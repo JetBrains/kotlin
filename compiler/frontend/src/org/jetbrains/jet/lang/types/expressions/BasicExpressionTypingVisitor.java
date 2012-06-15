@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
@@ -783,6 +784,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (operationType == JetTokens.EXCLEXCL) {
             if (isKnownToBeNotNull(baseExpression, context)) {
                 context.trace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, type));
+            }
+            else {
+                DataFlowValue value = DataFlowValueFactory.INSTANCE.createDataFlowValue(baseExpression, type, context.trace.getBindingContext());
+                dataFlowInfo = dataFlowInfo.disequate(value, DataFlowValue.NULL);
             }
             return DataFlowUtils.checkType(TypeUtils.makeNotNullable(type), expression, context, dataFlowInfo);
         }
