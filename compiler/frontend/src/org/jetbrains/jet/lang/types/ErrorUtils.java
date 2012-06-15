@@ -121,7 +121,7 @@ public class ErrorUtils {
     private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<AnnotationDescriptor>emptyList(), Name.special("<ERROR CLASS>")) {
         @NotNull
         @Override
-        public Set<ConstructorDescriptor> getConstructors() {
+        public Collection<ConstructorDescriptor> getConstructors() {
             return ERROR_CONSTRUCTOR_GROUP;
         }
 

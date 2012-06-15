@@ -111,7 +111,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
 
     @NotNull
     @Override
-    public Set<ConstructorDescriptor> getConstructors() {
+    public Collection<ConstructorDescriptor> getConstructors() {
         return constructors;
     }
 

@@ -147,7 +147,7 @@ public class MutableClassDescriptorLite extends ClassDescriptorBase
 
     @NotNull
     @Override
-    public Set<ConstructorDescriptor> getConstructors() {
+    public Collection<ConstructorDescriptor> getConstructors() {
         return constructors;
     }
 

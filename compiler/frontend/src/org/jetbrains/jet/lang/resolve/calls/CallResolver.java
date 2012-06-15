@@ -188,7 +188,7 @@ public class CallResolver {
                 DeclarationDescriptor declarationDescriptor = constructedType.getConstructor().getDeclarationDescriptor();
                 if (declarationDescriptor instanceof ClassDescriptor) {
                     ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-                    Set<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
+                    Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
                     if (constructors.isEmpty()) {
                         context.trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
                         return checkArgumentTypesAndFail(context);
@@ -213,7 +213,7 @@ public class CallResolver {
                 assert containingDeclaration instanceof ClassDescriptor;
                 ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
 
-                Set<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
+                Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
                 if (constructors.isEmpty()) {
                     context.trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
                     return checkArgumentTypesAndFail(context);

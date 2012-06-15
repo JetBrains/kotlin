@@ -113,8 +113,8 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public Set<ConstructorDescriptor> getConstructors() {
-        Set<ConstructorDescriptor> r = Sets.newHashSet();
+    public Collection<ConstructorDescriptor> getConstructors() {
+        Collection<ConstructorDescriptor> r = Lists.newArrayList();
         for (ConstructorDescriptor constructor : original.getConstructors()) {
             r.add((ConstructorDescriptor) constructor.substitute(getSubstitutor()));
         }
