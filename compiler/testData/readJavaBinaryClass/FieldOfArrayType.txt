@@ -1,6 +1,6 @@
 namespace test
 
-open class test.FieldOfArrayType : java.lang.Object {
-    final /*constructor*/ fun <init>(): test.FieldOfArrayType
-    final var files: jet.Array<java.io.File?>?
+public open class test.FieldOfArrayType : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.FieldOfArrayType
+    public final var files: jet.Array<java.io.File?>?
 }

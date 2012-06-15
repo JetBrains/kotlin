@@ -1,5 +1,5 @@
 namespace test
 
-test.AnnotatedAnnotation() final annotation class test.AnnotatedAnnotation : jet.Any {
-    final /*constructor*/ fun <init>(): test.AnnotatedAnnotation
+test.AnnotatedAnnotation() public final annotation class test.AnnotatedAnnotation : jet.Any {
+    public final /*constructor*/ fun <init>(): test.AnnotatedAnnotation
 }

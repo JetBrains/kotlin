@@ -1,10 +1,6 @@
 namespace test
 
-abstract trait test.Bar : java.lang.Object {
-}
-abstract trait test.Foo : java.lang.Object {
-}
-open class test.MethodTypePTwoUpperBounds : java.lang.Object {
-    final /*constructor*/ fun <init>(): test.MethodTypePTwoUpperBounds
-    open fun </*0*/ T : test.Bar? & test.Foo?>foo(): jet.Tuple0
+public open class test.MethodTypePTwoUpperBounds : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.MethodTypePTwoUpperBounds
+    public open fun </*0*/ T : java.lang.Cloneable? & java.lang.Runnable?>foo(): jet.Tuple0
 }

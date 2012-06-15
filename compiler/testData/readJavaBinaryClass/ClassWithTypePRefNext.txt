@@ -1,7 +1,5 @@
 namespace test
 
-open class test.ClassWithTypePRefNext</*0*/ R : test.Foo<P>?, /*1*/ P : jet.Any?> : java.lang.Object {
-    final /*constructor*/ fun </*0*/ R : test.Foo<P>?, /*1*/ P : jet.Any?><init>(): test.ClassWithTypePRefNext<R, P>
-}
-abstract trait test.Foo</*0*/ Q : jet.Any?> : java.lang.Object {
+public open class test.ClassWithTypePRefNext</*0*/ R : java.lang.Iterable<P>?, /*1*/ P : jet.Any?> : java.lang.Object {
+    public final /*constructor*/ fun </*0*/ R : java.lang.Iterable<P>?, /*1*/ P : jet.Any?><init>(): test.ClassWithTypePRefNext<R, P>
 }

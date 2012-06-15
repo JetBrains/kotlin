@@ -1,5 +1,5 @@
 namespace test
 
-abstract trait test.JavaBeanAbstractGetter : java.lang.Object {
-    abstract fun getRed(): jet.Int
+public abstract trait test.JavaBeanAbstractGetter : java.lang.Object {
+    public abstract fun getRed(): jet.Int
 }
