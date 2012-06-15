@@ -145,7 +145,7 @@ public inline fun BooleanArray.fold(initial: Boolean, operation: (Boolean, Boole
  *
  * @includeFunctionBody ../../test/CollectionTest.kt foldRight
  */
-public inline fun BooleanArray.foldRight(initial: Boolean, operation: (Boolean, Boolean) -> Boolean): Boolean = reverse().fold(initial, operation)
+public inline fun BooleanArray.foldRight(initial: Boolean, operation: (Boolean, Boolean) -> Boolean): Boolean = reverse().fold(initial, {x, y -> operation(y, x)})
 
 /**
  * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by

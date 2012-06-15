@@ -145,7 +145,7 @@ public inline fun LongArray.fold(initial: Long, operation: (Long, Long) -> Long)
  *
  * @includeFunctionBody ../../test/CollectionTest.kt foldRight
  */
-public inline fun LongArray.foldRight(initial: Long, operation: (Long, Long) -> Long): Long = reverse().fold(initial, operation)
+public inline fun LongArray.foldRight(initial: Long, operation: (Long, Long) -> Long): Long = reverse().fold(initial, {x, y -> operation(y, x)})
 
 /**
  * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by

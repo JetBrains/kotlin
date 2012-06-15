@@ -195,10 +195,24 @@ class CollectionTest {
         }
     }
 
+    test fun foldWithNonCommutativeOperation() {
+        expect(1) {
+            val numbers = arrayList(1, 2, 3)
+            numbers.fold(7) {a, b -> a - b}
+        }
+    }
+
     test fun foldRight() {
-        expect("4321") {
+        expect("1234") {
             val numbers = arrayList(1, 2, 3, 4)
             numbers.map<Int, String>{it.toString()}.foldRight(""){ a, b -> a + b}
+        }
+    }
+
+    test fun foldRightWithNonCommutativeOperation() {
+        expect(-5) {
+            val numbers = arrayList(1, 2, 3)
+            numbers.foldRight(7) {a, b -> a - b}
         }
     }
 

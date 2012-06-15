@@ -145,7 +145,7 @@ public inline fun ShortArray.fold(initial: Short, operation: (Short, Short) -> S
  *
  * @includeFunctionBody ../../test/CollectionTest.kt foldRight
  */
-public inline fun ShortArray.foldRight(initial: Short, operation: (Short, Short) -> Short): Short = reverse().fold(initial, operation)
+public inline fun ShortArray.foldRight(initial: Short, operation: (Short, Short) -> Short): Short = reverse().fold(initial, {x, y -> operation(y, x)})
 
 /**
  * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by

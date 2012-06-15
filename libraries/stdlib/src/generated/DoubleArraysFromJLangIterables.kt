@@ -145,7 +145,7 @@ public inline fun DoubleArray.fold(initial: Double, operation: (Double, Double) 
  *
  * @includeFunctionBody ../../test/CollectionTest.kt foldRight
  */
-public inline fun DoubleArray.foldRight(initial: Double, operation: (Double, Double) -> Double): Double = reverse().fold(initial, operation)
+public inline fun DoubleArray.foldRight(initial: Double, operation: (Double, Double) -> Double): Double = reverse().fold(initial, {x, y -> operation(y, x)})
 
 /**
  * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by

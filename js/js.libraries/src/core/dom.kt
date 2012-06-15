@@ -49,17 +49,17 @@ native public trait Document: Node {
     public var xmlVersion: String
     public fun createElement(arg1: String): Element = js.noImpl
     public fun createComment(arg1: String): Comment = js.noImpl
-    public fun getElementsByTagName(arg1: String): NodeList = js.noImpl
-    public fun getElementsByTagNameNS(arg1: String, arg2: String): NodeList = js.noImpl
     public fun createDocumentFragment(): DocumentFragment = js.noImpl
     public fun createTextNode(arg1: String): Text = js.noImpl
     public fun createCDATASection(arg1: String): CDATASection = js.noImpl
     public fun createProcessingInstruction(arg1: String, arg2: String): ProcessingInstruction = js.noImpl
     public fun createAttribute(arg1: String): Attr = js.noImpl
     public fun createEntityReference(arg1: String): EntityReference = js.noImpl
+    public fun getElementsByTagName(arg1: String): NodeList = js.noImpl
     public fun importNode(arg1: Node, arg2: Boolean): Node = js.noImpl
     public fun createElementNS(arg1: String, arg2: String): Element = js.noImpl
     public fun createAttributeNS(arg1: String, arg2: String): Attr = js.noImpl
+    public fun getElementsByTagNameNS(arg1: String, arg2: String): NodeList = js.noImpl
     public fun getElementById(arg1: String): Element = js.noImpl
     public fun adoptNode(arg1: Node): Node = js.noImpl
     public fun normalizeDocument(): Unit = js.noImpl
@@ -136,15 +136,15 @@ native public trait Element: Node {
     public val tagName: String
     public fun getAttribute(arg1: String): String = js.noImpl
     public fun setAttribute(arg1: String, arg2: String): Unit = js.noImpl
+    public fun getElementsByTagName(arg1: String): NodeList = js.noImpl
+    public fun getElementsByTagNameNS(arg1: String, arg2: String): NodeList = js.noImpl
     public fun removeAttribute(arg1: String): Unit = js.noImpl
     public fun getAttributeNode(arg1: String): Attr = js.noImpl
     public fun removeAttributeNode(arg1: Attr): Attr = js.noImpl
-    public fun getElementsByTagName(arg1: String): NodeList = js.noImpl
     public fun getAttributeNS(arg1: String, arg2: String): String = js.noImpl
     public fun setAttributeNS(arg1: String, arg2: String, arg3: String): Unit = js.noImpl
     public fun removeAttributeNS(arg1: String, arg2: String): Unit = js.noImpl
     public fun getAttributeNodeNS(arg1: String, arg2: String): Attr = js.noImpl
-    public fun getElementsByTagNameNS(arg1: String, arg2: String): NodeList = js.noImpl
     public fun hasAttribute(arg1: String): Boolean = js.noImpl
     public fun hasAttributeNS(arg1: String, arg2: String): Boolean = js.noImpl
     public fun setIdAttribute(arg1: String, arg2: Boolean): Unit = js.noImpl
@@ -204,11 +204,10 @@ native public trait Node {
     public var textContent: String
     public fun normalize(): Unit = js.noImpl
     public fun isSupported(arg1: String, arg2: String): Boolean = js.noImpl
-    public fun getUserData(arg1: String): Any = js.noImpl
-    public fun setUserData(arg1: String, arg2: Any, arg3: UserDataHandler): Any = js.noImpl
     public fun getFeature(arg1: String, arg2: String): Any = js.noImpl
     public fun hasAttributes(): Boolean = js.noImpl
     public fun removeChild(arg1: Node): Node = js.noImpl
+    public fun getUserData(arg1: String): Any = js.noImpl
     public fun replaceChild(arg1: Node, arg2: Node): Node = js.noImpl
     public fun insertBefore(arg1: Node, arg2: Node): Node = js.noImpl
     public fun appendChild(arg1: Node): Node = js.noImpl
@@ -220,6 +219,7 @@ native public trait Node {
     public fun isDefaultNamespace(arg1: String): Boolean = js.noImpl
     public fun lookupNamespaceURI(arg1: String): String = js.noImpl
     public fun isEqualNode(arg1: Node): Boolean = js.noImpl
+    public fun setUserData(arg1: String, arg2: Any, arg3: UserDataHandler): Any = js.noImpl
 
     class object {
         public val ELEMENT_NODE: Short = 1
