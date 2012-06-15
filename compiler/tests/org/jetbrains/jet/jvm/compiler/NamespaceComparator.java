@@ -263,6 +263,8 @@ public class NamespaceComparator {
 
 
         public void serialize(FunctionDescriptor fun) {
+            serialize(fun.getVisibility());
+            sb.append(" ");
             serialize(fun.getModality());
             sb.append(" ");
 
@@ -301,7 +303,27 @@ public class NamespaceComparator {
             serialize(extensionReceiver.getType());
         }
 
+        private void serialize(@NotNull PropertyAccessorDescriptor accessor) {
+            if (accessor.getCorrespondingProperty().getVisibility() == accessor.getVisibility()) {
+                // don't serialize if visibility is the same
+                return;
+            }
+            sb.append(" ");
+            sb.append(accessor.getVisibility());
+            if (accessor instanceof PropertyGetterDescriptor) {
+                sb.append(" get");
+            }
+            else if (accessor instanceof PropertySetterDescriptor) {
+                sb.append(" set");
+            }
+            else {
+                throw new IllegalArgumentException("neither getter nor setter");
+            }
+        }
+
         public void serialize(PropertyDescriptor prop) {
+            serialize(prop.getVisibility());
+            sb.append(" ");
             serialize(prop.getModality());
             sb.append(" ");
 
@@ -328,6 +350,10 @@ public class NamespaceComparator {
             sb.append(prop.getName());
             sb.append(": ");
             new TypeSerializer(sb).serialize(prop.getType());
+
+            for (PropertyAccessorDescriptor accessor : prop.getAccessors()) {
+                serialize(accessor);
+            }
         }
 
         public void serialize(ValueParameterDescriptor valueParameter) {
@@ -365,6 +391,10 @@ public class NamespaceComparator {
 
         public void serialize(Modality modality) {
             sb.append(modality.name().toLowerCase());
+        }
+
+        public void serialize(Visibility visibility) {
+            sb.append(visibility);
         }
 
         public void serialize(AnnotationDescriptor annotation) {
@@ -529,6 +559,8 @@ public class NamespaceComparator {
                 new Serializer(sb).serializeSeparated(klass.getAnnotations(), " ");
                 sb.append(" ");
             }
+            serialize(klass.getVisibility());
+            sb.append(" ");
             serialize(klass.getModality());
             sb.append(" ");
 
