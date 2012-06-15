@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
+import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
@@ -117,7 +118,8 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
             throw new IllegalStateException("This factory doesn't know about this class: " + jetClassOrObject);
         }
 
-        ClassMemberDeclarationProvider provider = new PsiBasedClassMemberDeclarationProvider(jetClassOrObject);
+        ClassMemberDeclarationProvider provider = new PsiBasedClassMemberDeclarationProvider(
+                JetClassInfoUtil.createClassLikeInfo(jetClassOrObject));
         classMemberDeclarationProviders.put(jetClassOrObject, provider);
 
         return provider;

@@ -18,49 +18,43 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 
 /**
  * @author abreslav
  */
 public class PsiBasedClassMemberDeclarationProvider extends AbstractPsiBasedDeclarationProvider implements ClassMemberDeclarationProvider {
 
-    private final JetClassOrObject classOrObject;
-    private JetClassObject jetClassObject;
+    private final JetClassLikeInfo classInfo;
 
-    public PsiBasedClassMemberDeclarationProvider(@NotNull JetClassOrObject classOrObject) {
-        this.classOrObject = classOrObject;
+    public PsiBasedClassMemberDeclarationProvider(@NotNull JetClassLikeInfo classInfo) {
+        this.classInfo = classInfo;
     }
 
     @NotNull
     @Override
-    public JetClassOrObject getOwnerClassOrObject() {
-        return classOrObject;
+    public JetClassLikeInfo getOwnerInfo() {
+        return classInfo;
     }
 
     @Override
     protected void doCreateIndex() {
-        for (JetDeclaration declaration : classOrObject.getDeclarations()) {
+        for (JetDeclaration declaration : classInfo.getDeclarations()) {
             if (declaration instanceof JetClassObject) {
-                jetClassObject = (JetClassObject) declaration;
+                // Do nothing, class object will be taken directly from the classInfo
+            }
+            else if (declaration instanceof JetEnumEntry) {
+                // Do nothing, entries are actually declared in the class object
             }
             else {
                 putToIndex(declaration);
             }
         }
 
-        if (classOrObject instanceof JetClass) {
-            JetClass jetClass = (JetClass) classOrObject;
-            for (JetParameter parameter : jetClass.getPrimaryConstructorParameters()) {
-                if (parameter.getValOrVarNode() != null) {
-                    putToIndex(parameter);
-                }
+        for (JetParameter parameter : classInfo.getPrimaryConstructorParameters()) {
+            if (parameter.getValOrVarNode() != null) {
+                putToIndex(parameter);
             }
         }
-    }
-
-    @Override
-    public JetClassObject getClassObject() {
-        createIndex();
-        return jetClassObject;
     }
 }

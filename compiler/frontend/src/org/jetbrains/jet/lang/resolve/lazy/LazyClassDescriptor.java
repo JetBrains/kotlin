@@ -16,19 +16,21 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
-import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
 
@@ -74,27 +76,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         this.typeConstructor = new LazyClassTypeConstructor();
 
-        JetClassOrObject classOrObject = memberDeclarationProvider.getOwnerClassOrObject();
-        this.kind = getClassKind(classOrObject);
+        JetClassLikeInfo classInfo = memberDeclarationProvider.getOwnerInfo();
+        this.kind = classInfo.getClassKind();
         Modality defaultModality = kind == ClassKind.TRAIT ? Modality.ABSTRACT : Modality.FINAL;
-        JetModifierList modifierList = classOrObject.getModifierList();
+        JetModifierList modifierList = classInfo.getModifierList();
         this.modality = DescriptorResolver.resolveModalityFromModifiers(modifierList, defaultModality);
         this.visibility = DescriptorResolver.resolveVisibilityFromModifiers(modifierList);
-    }
-
-    @NotNull
-    private static ClassKind getClassKind(@NotNull JetClassOrObject jetClassOrObject) {
-        if (jetClassOrObject instanceof JetClass) {
-            JetClass jetClass = (JetClass) jetClassOrObject;
-            if (jetClass.isTrait()) return ClassKind.TRAIT;
-            if (jetClass.hasModifier(JetTokens.ANNOTATION_KEYWORD)) return ClassKind.ANNOTATION_CLASS;
-            if (jetClass.hasModifier(JetTokens.ENUM_KEYWORD)) return ClassKind.ENUM_CLASS;
-            return ClassKind.CLASS;
-        }
-        if (jetClassOrObject instanceof JetObjectDeclaration) {
-            return ClassKind.OBJECT;
-        }
-        throw new IllegalArgumentException("Unknown class or object kind: " + jetClassOrObject);
     }
 
     @Override
@@ -112,7 +99,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     public JetScope getScopeForClassHeaderResolution() {
         if (scopeForClassHeaderResolution == null) {
             WritableScopeImpl scope = new WritableScopeImpl(
-                    resolveSession.getResolutionScope(declarationProvider.getOwnerClassOrObject()), this, RedeclarationHandler.DO_NOTHING, "Class Header Resolution");
+                    resolveSession.getResolutionScope(declarationProvider.getOwnerInfo().getScopeAnchor()), this, RedeclarationHandler.DO_NOTHING, "Class Header Resolution");
             for (TypeParameterDescriptor typeParameterDescriptor : getTypeConstructor().getParameters()) {
                 scope.addClassifierDescriptor(typeParameterDescriptor);
             }
@@ -177,15 +164,27 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Override
     public ClassDescriptor getClassObjectDescriptor() {
         if (!classObjectDescriptorResolved) {
-            JetClassObject classObject = declarationProvider.getClassObject();
+            JetClassObject classObject = declarationProvider.getOwnerInfo().getClassObject();
+
+            ClassMemberDeclarationProvider classObjectMemberProvider = null;
             if (classObject != null) {
                 JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
                 if (objectDeclaration != null) {
-                    ClassMemberDeclarationProvider classMemberDeclarationProvider = resolveSession.getDeclarationProviderFactory()
-                            .getClassMemberDeclarationProvider(objectDeclaration);
-                    classObjectDescriptor = new LazyClassDescriptor(resolveSession, this, JetPsiUtil.NO_NAME_PROVIDED,
-                                                                    classMemberDeclarationProvider);
+                    classObjectMemberProvider = resolveSession.getDeclarationProviderFactory()
+                                                .getClassMemberDeclarationProvider(objectDeclaration);
                 }
+            }
+            else if (getKind() == ClassKind.ENUM_CLASS) {
+                // Enum classes always have class objects, and enum constants are their members
+                Collection<JetDeclaration> enumEntries =
+                        Collections2.filter(declarationProvider.getAllDeclarations(), Predicates.instanceOf(JetEnumEntry.class));
+                classObjectMemberProvider = new PsiBasedClassMemberDeclarationProvider(null);
+            }
+
+
+            if (classObjectMemberProvider != null) {
+                classObjectDescriptor = new LazyClassDescriptor(resolveSession, this, JetPsiUtil.NO_NAME_PROVIDED,
+                                                                classObjectMemberProvider);
             }
             classObjectDescriptorResolved = true;
         }
@@ -222,12 +221,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
         if (annotations == null) {
-            JetClassOrObject classOrObject = declarationProvider.getOwnerClassOrObject();
-            JetModifierList modifierList = classOrObject.getModifierList();
+            JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
+            JetModifierList modifierList = classInfo.getModifierList();
             if (modifierList != null) {
                 AnnotationResolver annotationResolver = resolveSession.getInjector().getAnnotationResolver();
                 annotations = annotationResolver
-                        .resolveAnnotations(resolveSession.getResolutionScope(classOrObject), modifierList, resolveSession.getTrace());
+                        .resolveAnnotations(resolveSession.getResolutionScope(classInfo.getScopeAnchor()), modifierList, resolveSession.getTrace());
             }
             else {
                 annotations = Collections.emptyList();
@@ -255,20 +254,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         @Override
         public List<TypeParameterDescriptor> getParameters() {
             if (parameters == null) {
-                JetClassOrObject declaration = declarationProvider.getOwnerClassOrObject();
-                if (declaration instanceof JetClass) {
-                    JetClass jetClass = (JetClass) declaration;
+                JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
+                List<JetTypeParameter> typeParameters = classInfo.getTypeParameters();
+                parameters = new ArrayList<TypeParameterDescriptor>(typeParameters.size());
 
-                    List<JetTypeParameter> typeParameters = jetClass.getTypeParameters();
-                    parameters = new ArrayList<TypeParameterDescriptor>(typeParameters.size());
-
-                    for (int i = 0; i < typeParameters.size(); i++) {
-                        parameters.add(new LazyTypeParameterDescriptor(resolveSession, LazyClassDescriptor.this, typeParameters.get(i), i));
-                    }
-                }
-                else {
-                    // It is an object declaration, no type parameters
-                    parameters = Collections.emptyList();
+                for (int i = 0; i < typeParameters.size(); i++) {
+                    parameters.add(new LazyTypeParameterDescriptor(resolveSession, LazyClassDescriptor.this, typeParameters.get(i), i));
                 }
             }
             return parameters;
@@ -278,11 +269,16 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         @Override
         public Collection<? extends JetType> getSupertypes() {
             if (supertypes == null) {
-                JetClassOrObject declaration = declarationProvider.getOwnerClassOrObject();
-                this.supertypes = resolveSession.getInjector().getDescriptorResolver()
-                        .resolveSupertypes(getScopeForClassHeaderResolution(),
-                                           declaration,
-                                           resolveSession.getTrace());
+                JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
+                if (classOrObject == null) {
+                    this.supertypes = Collections.emptyList();
+                }
+                else {
+                    this.supertypes = resolveSession.getInjector().getDescriptorResolver()
+                            .resolveSupertypes(getScopeForClassHeaderResolution(),
+                                               classOrObject,
+                                               resolveSession.getTrace());
+                }
             }
             return supertypes;
         }

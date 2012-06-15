@@ -17,17 +17,13 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetClassObject;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 
 /**
  * @author abreslav
  */
 public interface ClassMemberDeclarationProvider extends DeclarationProvider {
     @NotNull
-    JetClassOrObject getOwnerClassOrObject();
+    JetClassLikeInfo getOwnerInfo();
 
-    @Nullable
-    JetClassObject getClassObject();
 }
