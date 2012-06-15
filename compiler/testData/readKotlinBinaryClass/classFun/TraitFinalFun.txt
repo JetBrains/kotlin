@@ -1,5 +1,5 @@
 namespace test
 
-abstract trait test.A : jet.Any {
-    final fun f(): jet.String
+internal abstract trait test.A : jet.Any {
+    internal final fun f(): jet.String
 }

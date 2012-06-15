@@ -1,10 +1,10 @@
 namespace test
 
-open class test.BaseClass : jet.Any {
-    final /*constructor*/ fun <init>(): test.BaseClass
-    open val shape: jet.String
+internal open class test.BaseClass : jet.Any {
+    internal open val shape: jet.String
+    public final /*constructor*/ fun <init>(): test.BaseClass
 }
-open class test.Subclass : test.BaseClass {
-    final /*constructor*/ fun <init>(): test.Subclass
-    open val shape: jet.String
+internal open class test.Subclass : test.BaseClass {
+    internal open val shape: jet.String
+    public final /*constructor*/ fun <init>(): test.Subclass
 }

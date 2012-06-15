@@ -1,5 +1,5 @@
 namespace test
 
-abstract trait test.A : jet.Any {
-    open var v: jet.String
+internal abstract trait test.A : jet.Any {
+    internal open var v: jet.String
 }

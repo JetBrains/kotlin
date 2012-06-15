@@ -1,6 +1,6 @@
 namespace test
 
-final class test.ClassVar : jet.Any {
-    final /*constructor*/ fun <init>(): test.ClassVar
-    final var aa: jet.Int
+internal final class test.ClassVar : jet.Any {
+    internal final var aa: jet.Int
+    public final /*constructor*/ fun <init>(): test.ClassVar
 }

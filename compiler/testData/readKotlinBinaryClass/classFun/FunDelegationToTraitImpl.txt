@@ -1,9 +1,9 @@
 namespace test
 
-abstract trait test.A : jet.Any {
-    open fun f(): jet.String
+internal abstract trait test.A : jet.Any {
+    internal open fun f(): jet.String
 }
-final class test.B : test.A {
-    final /*constructor*/ fun <init>(): test.B
-    open override /*1*/ fun f(): jet.String
+internal final class test.B : test.A {
+    internal open override /*1*/ fun f(): jet.String
+    public final /*constructor*/ fun <init>(): test.B
 }
