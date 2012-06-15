@@ -26,6 +26,8 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.equality;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.inequality;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.isNullLiteral;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.nullCheck;
 
 /**
  * @author Pavel Talanov
@@ -40,17 +42,24 @@ public final class PrimitiveEqualsIntrinsic extends EqualsIntrinsic {
     private PrimitiveEqualsIntrinsic() {
     }
 
+    @Override
     @NotNull
     public JsExpression apply(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments,
                               @NotNull TranslationContext context) {
         assert arguments.size() == 1 : "Equals operation should have one argument";
         assert receiver != null;
+        JsExpression argument = arguments.get(0);
+        if (isNullLiteral(context, argument)) {
+            return nullCheck(context, receiver, !isNegated());
+        }
+        if (isNullLiteral(context, receiver)) {
+            return nullCheck(context, argument, !isNegated());
+        }
         if (isNegated()) {
-            return inequality(receiver, arguments.get(0));
+            return inequality(receiver, argument);
         }
         else {
-            return equality(receiver, arguments.get(0));
+            return equality(receiver, argument);
         }
     }
-
 }

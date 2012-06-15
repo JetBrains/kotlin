@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -41,6 +42,8 @@ import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedRe
  * @author Pavel Talanov
  */
 public final class TranslationUtils {
+
+    private static JsNameRef UNDEFINED_LITERAL = AstUtil.newQualifiedNameRef("undefined");
 
     private TranslationUtils() {
     }
@@ -73,14 +76,29 @@ public final class TranslationUtils {
     public static JsBinaryOperation notNullCheck(@NotNull TranslationContext context,
             @NotNull JsExpression expressionToCheck) {
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
-        return inequality(expressionToCheck, nullLiteral);
+        JsBinaryOperation notNull = inequality(expressionToCheck, nullLiteral);
+        JsBinaryOperation notUndefined = inequality(expressionToCheck, UNDEFINED_LITERAL);
+        return and(notNull, notUndefined);
     }
 
     @NotNull
     public static JsBinaryOperation isNullCheck(@NotNull TranslationContext context,
             @NotNull JsExpression expressionToCheck) {
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
-        return equality(expressionToCheck, nullLiteral);
+        JsBinaryOperation isNull = equality(expressionToCheck, nullLiteral);
+        JsBinaryOperation isUndefined = equality(expressionToCheck, UNDEFINED_LITERAL);
+        return or(isNull, isUndefined);
+    }
+
+    @NotNull
+    public static JsBinaryOperation nullCheck(@NotNull TranslationContext context,
+            @NotNull JsExpression expressionToCheck, boolean shouldBeNull) {
+        if (shouldBeNull) {
+            return isNullCheck(context, expressionToCheck);
+        }
+        else {
+            return notNullCheck(context, expressionToCheck);
+        }
     }
 
     @NotNull
@@ -236,5 +254,9 @@ public final class TranslationUtils {
         }
         DeclarationDescriptor expectedThisDescriptor = getDeclarationDescriptorForReceiver(thisObject);
         return getThisObject(context, expectedThisDescriptor);
+    }
+
+    public static boolean isNullLiteral(@NotNull TranslationContext context, @NotNull JsExpression expression) {
+        return expression.equals(context.program().getNullLiteral());
     }
 }

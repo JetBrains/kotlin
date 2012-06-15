@@ -127,12 +127,12 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsBinaryOperation equality(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
-        return new JsBinaryOperation(JsBinaryOperator.EQ, arg1, arg2);
+        return new JsBinaryOperation(JsBinaryOperator.REF_EQ, arg1, arg2);
     }
 
     @NotNull
     public static JsBinaryOperation inequality(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
-        return new JsBinaryOperation(JsBinaryOperator.NEQ, arg1, arg2);
+        return new JsBinaryOperation(JsBinaryOperator.REF_NEQ, arg1, arg2);
     }
 
     @NotNull

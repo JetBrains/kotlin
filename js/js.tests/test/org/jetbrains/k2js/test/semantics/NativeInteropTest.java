@@ -67,4 +67,8 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
     public void testClassObject() throws Exception {
         fooBoxTest();
     }
+
+    public void testSimpleUndefined() throws Exception {
+        fooBoxTest();
+    }
 }
