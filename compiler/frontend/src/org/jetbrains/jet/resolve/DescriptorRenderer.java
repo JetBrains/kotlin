@@ -458,6 +458,8 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
         @Override
         public Void visitConstructorDescriptor(ConstructorDescriptor constructorDescriptor, StringBuilder builder) {
+            renderVisibility(constructorDescriptor.getVisibility(), builder);
+
             builder.append(renderKeyword("ctor")).append(" ");
 
             ClassDescriptor classDescriptor = constructorDescriptor.getContainingDeclaration();
