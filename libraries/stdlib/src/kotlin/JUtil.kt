@@ -173,6 +173,14 @@ val <T> List<T>.last : T?
     }
 
 /**
+ * Returns the index of the last item in the list or -1 if the list is empty
+ *
+ * @includeFunctionBody ../../test/ListTest.kt lastIndex
+ */
+val <T> List<T>.lastIndex : Int
+    get() = this.size - 1
+
+/**
  * Returns the first item in the list
  *
  * @includeFunctionBody ../../test/ListTest.kt head

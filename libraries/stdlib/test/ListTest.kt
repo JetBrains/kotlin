@@ -1,5 +1,6 @@
 package test.collections
 
+import java.util.ArrayList
 import kotlin.test.*
 import org.junit.Test as test
 
@@ -35,5 +36,13 @@ class ListTest {
             index++
         }
         assertEquals(data.size(), index)
+    }
+
+    test fun lastIndex() {
+        val emptyData = ArrayList<String>()
+        val data = arrayList("foo", "bar")
+
+        assertEquals(-1, emptyData.lastIndex)
+        assertEquals(1, data.lastIndex)
     }
 }
