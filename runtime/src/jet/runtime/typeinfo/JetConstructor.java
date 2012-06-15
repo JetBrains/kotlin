@@ -24,4 +24,10 @@ public @interface JetConstructor {
      * @deprecated Some time later all constructors will be visible
      */
     boolean hidden() default false;
+
+    /**
+     * See JvmStdlibNames
+     * @return flags for method
+     */
+    int flags() default 0;
 }

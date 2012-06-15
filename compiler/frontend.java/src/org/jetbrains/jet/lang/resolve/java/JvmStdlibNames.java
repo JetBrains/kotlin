@@ -63,7 +63,8 @@ public class JvmStdlibNames {
      * @see JetConstructor#hidden()
      */
     public static final String JET_CONSTRUCTOR_HIDDEN_FIELD = "hidden";
-    
+    public static final String JET_CONSTRUCTOR_FLAGS_FIELD = "flags";
+
 
     public static final JvmClassName JET_CLASS = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetClass");
     
