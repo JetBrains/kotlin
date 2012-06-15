@@ -103,8 +103,8 @@ public inline fun <T> T?.fold(initial: T, operation: (it: T, it2: T) -> T): T {
  * Folds all the values from right to left with the initial value to perform the operation on sequential pairs of values
  */
 public inline fun <T> T?.foldRight(initial: T, operation: (it: T, it2: T) -> T): T {
-    // maximum size is 1 so it makes no difference :)
-    return fold(initial, operation)
+    // maximum size is 1 so reverse is not needed
+    return fold(initial, {x, y -> operation(y, x)})
 }
 
 /**
