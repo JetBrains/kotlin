@@ -147,6 +147,36 @@ public inline fun FloatArray.fold(initial: Float, operation: (Float, Float) -> F
  */
 public inline fun FloatArray.foldRight(initial: Float, operation: (Float, Float) -> Float): Float = reverse().fold(initial, {x, y -> operation(y, x)})
 
+
+/**
+ * Applies binary operation to all elements of iterable, going from left to right.
+ * Similar to fold function, but uses the first element as initial value
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt reduce
+ */
+public inline fun FloatArray.reduce(operation: (Float, Float) -> Float): Float {
+    val iterator = this.iterator().sure()
+    if (!iterator.hasNext) {
+        throw UnsupportedOperationException("Empty iterable can't be reduced")
+    }
+
+    var result: Float = iterator.next() //compiler doesn't understand that result will initialized anyway
+    while (iterator.hasNext) {
+        result = operation(result, iterator.next())
+    }
+
+    return result
+}
+
+/**
+ * Applies binary operation to all elements of iterable, going from right to left.
+ * Similar to foldRight function, but uses the last element as initial value
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt reduceRight
+ */
+public inline fun FloatArray.reduceRight(operation: (Float, Float) -> Float): Float = reverse().reduce { x, y -> operation(y, x) }
+
+
 /**
  * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
  *

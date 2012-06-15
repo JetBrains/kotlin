@@ -216,6 +216,37 @@ class CollectionTest {
         }
     }
 
+    test fun reduce() {
+        expect("1234") {
+            val list = arrayList("1", "2", "3", "4")
+            list.reduce { a, b -> a + b }
+        }
+
+        expect(-4) {
+            val array = array(1, 2, 3)
+            array.reduce { a, b -> a - b }
+        }
+
+        failsWith<UnsupportedOperationException> {
+            arrayList<Int>().reduce { a, b -> a + b}
+        }
+    }
+
+    test fun reduceRight() {
+        expect("1234") {
+            val list = arrayList("1", "2", "3", "4")
+            list.reduceRight { a, b -> a + b }
+        }
+        expect(2) {
+            val array = array(1, 2, 3)
+            array.reduceRight { a, b -> a - b }
+        }
+
+        failsWith<UnsupportedOperationException> {
+            arrayList<Int>().reduceRight { a, b -> a + b}
+        }
+    }
+
     test fun groupBy() {
         val words = arrayList("a", "ab", "abc", "def", "abcd")
         val byLength = words.groupBy{ it.length }
