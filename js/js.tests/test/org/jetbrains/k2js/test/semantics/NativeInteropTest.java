@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
-import org.jetbrains.k2js.test.utils.JsTestUtils;
 
 import java.util.List;
 
@@ -40,7 +39,8 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
     @Override
     protected List<String> additionalJSFiles(@NotNull EcmaVersion ecmaVersion) {
         List<String> result = Lists.newArrayList(super.additionalJSFiles(ecmaVersion));
-        result.addAll(JsTestUtils.getAllFilesInDir(pathToTestFiles() + NATIVE));
+        result.add(pathToTestFiles() + NATIVE + "/" + getTestName(true) + ".js");
+        //result.addAll(JsTestUtils.getAllFilesInDir(pathToTestFiles() + NATIVE));
         return result;
     }
 
@@ -61,6 +61,6 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
     }
 
     public void testKt1519() throws Exception {
-        checkFooBoxIsTrue("KT-1519.kt", EcmaVersion.all());
+        fooBoxTest();
     }
 }
