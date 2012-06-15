@@ -34,7 +34,7 @@ import java.util.*;
  */
 public class WritableScopeImpl extends WritableScopeWithImports {
 
-    private final Collection<DeclarationDescriptor> allDescriptors = Sets.newHashSet();
+    private final Collection<DeclarationDescriptor> allDescriptors = Lists.newArrayList();
     private final Multimap<Name, DeclarationDescriptor> declaredDescriptorsAccessibleBySimpleName = HashMultimap.create();
     private boolean allDescriptorsDone = false;
 
