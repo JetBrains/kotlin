@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.isNotAny;
 
 /**
@@ -183,7 +184,7 @@ public final class JsDescriptorUtils {
     public static ClassDescriptor getContainingClass(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor containing = descriptor.getContainingDeclaration();
         while (containing != null) {
-            if (containing instanceof ClassDescriptor) {
+            if (containing instanceof ClassDescriptor && !isClassObject(containing)) {
                 return (ClassDescriptor)containing;
             }
             containing = containing.getContainingDeclaration();
