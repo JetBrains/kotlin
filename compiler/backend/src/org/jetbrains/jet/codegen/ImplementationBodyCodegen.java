@@ -566,9 +566,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             jetConstructorVisitor.visit(JvmStdlibNames.JET_CLASS_FLAGS_FIELD, flagsValue);
         }
 
-        if (constructorDescriptor == null) {
-            jetConstructorVisitor.visit(JvmStdlibNames.JET_CONSTRUCTOR_HIDDEN_FIELD, true);
-        }
         jetConstructorVisitor.visitEnd();
         
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(constructorDescriptor);
