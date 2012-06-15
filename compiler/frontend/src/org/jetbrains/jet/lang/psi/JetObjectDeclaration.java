@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class JetObjectDeclaration extends JetNotStubbedNamedDeclaration implements JetClassOrObject  {
+public class JetObjectDeclaration extends JetNamedDeclarationNotStubbed implements JetClassOrObject  {
     public JetObjectDeclaration(@NotNull ASTNode node) {
         super(node);
     }

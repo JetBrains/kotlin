@@ -30,12 +30,12 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author Nikolay Krasko
  */
-abstract class JetStubNamedDeclaration<T extends StubElement> extends JetStubDeclaration<T> implements JetNamedDeclaration {
-    public JetStubNamedDeclaration(@NotNull T stub, @NotNull IStubElementType nodeType) {
+abstract class JetNamedDeclarationStub<T extends StubElement> extends JetDeclarationStub<T> implements JetNamedDeclaration {
+    public JetNamedDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }
 
-    public JetStubNamedDeclaration(@NotNull ASTNode node) {
+    public JetNamedDeclarationStub(@NotNull ASTNode node) {
         super(node);
     }
 

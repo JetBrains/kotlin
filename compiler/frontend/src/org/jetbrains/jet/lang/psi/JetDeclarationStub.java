@@ -30,12 +30,12 @@ import org.jetbrains.jet.lexer.JetToken;
 /**
  * @author Nikolay Krasko
  */
-abstract class JetStubDeclaration<T extends StubElement> extends StubBasedPsiElementBase<T> implements JetDeclaration, StubBasedPsiElement<T> {
-    public JetStubDeclaration(@NotNull T stub, @NotNull IStubElementType nodeType) {
+abstract class JetDeclarationStub<T extends StubElement> extends StubBasedPsiElementBase<T> implements JetDeclaration, StubBasedPsiElement<T> {
+    public JetDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }
 
-    public JetStubDeclaration(@NotNull ASTNode node) {
+    public JetDeclarationStub(@NotNull ASTNode node) {
         super(node);
     }
 

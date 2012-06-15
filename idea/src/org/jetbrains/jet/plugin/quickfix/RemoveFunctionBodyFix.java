@@ -61,20 +61,22 @@ public class RemoveFunctionBodyFix extends JetIntentionAction<JetFunction> {
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         JetFunction function = (JetFunction) element.copy();
+        assert function instanceof ASTDelegatePsiElement;
+        ASTDelegatePsiElement functionElementWithAst = (ASTDelegatePsiElement) function;
         JetExpression bodyExpression = function.getBodyExpression();
         assert bodyExpression != null;
         if (function.hasBlockBody()) {
             PsiElement prevElement = bodyExpression.getPrevSibling();
-            QuickFixUtil.removePossiblyWhiteSpace(function, prevElement);
-            function.deleteChildInternal(bodyExpression.getNode());
+            QuickFixUtil.removePossiblyWhiteSpace(functionElementWithAst, prevElement);
+            functionElementWithAst.deleteChildInternal(bodyExpression.getNode());
         }
         else {
             PsiElement prevElement = bodyExpression.getPrevSibling();
             PsiElement prevPrevElement = prevElement.getPrevSibling();
-            QuickFixUtil.removePossiblyWhiteSpace(function, prevElement);
-            removePossiblyEquationSign(function, prevElement);
-            removePossiblyEquationSign(function, prevPrevElement);
-            function.deleteChildInternal(bodyExpression.getNode());
+            QuickFixUtil.removePossiblyWhiteSpace(functionElementWithAst, prevElement);
+            removePossiblyEquationSign(functionElementWithAst, prevElement);
+            removePossiblyEquationSign(functionElementWithAst, prevPrevElement);
+            functionElementWithAst.deleteChildInternal(bodyExpression.getNode());
         }
         element.replace(function);
     }

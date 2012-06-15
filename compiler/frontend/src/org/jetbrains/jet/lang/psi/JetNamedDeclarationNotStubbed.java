@@ -30,8 +30,8 @@ import org.jetbrains.jet.lexer.JetTokens;
  */
 // TODO: Remove when all named declarations get stubs
 @Deprecated
-abstract class JetNotStubbedNamedDeclaration extends JetDeclarationImpl implements JetNamedDeclaration {
-    public JetNotStubbedNamedDeclaration(@NotNull ASTNode node) {
+abstract class JetNamedDeclarationNotStubbed extends JetDeclarationImpl implements JetNamedDeclaration {
+    public JetNamedDeclarationNotStubbed(@NotNull ASTNode node) {
         super(node);
     }
 

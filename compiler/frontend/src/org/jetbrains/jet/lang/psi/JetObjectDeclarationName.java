@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author abreslav
  */
-public class JetObjectDeclarationName extends JetNotStubbedNamedDeclaration {
+public class JetObjectDeclarationName extends JetNamedDeclarationNotStubbed {
 
     public JetObjectDeclarationName(@NotNull ASTNode node) {
         super(node);

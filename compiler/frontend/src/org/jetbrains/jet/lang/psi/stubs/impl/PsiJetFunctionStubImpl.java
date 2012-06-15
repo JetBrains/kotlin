@@ -22,13 +22,13 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
 
 /**
  * @author Nikolay Krasko
  */
-public class PsiJetFunctionStubImpl extends StubBase<JetFunction> implements PsiJetFunctionStub<JetFunction> {
+public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implements PsiJetFunctionStub {
 
     private final StringRef nameRef;
     private final boolean isTopLevel;

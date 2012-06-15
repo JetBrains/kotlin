@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -25,12 +27,14 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author max
+ * @author Nikolay Krasko
  */
-// TODO: Remove when all implementations of JetTypeParameterListOwner get stubs
-@Deprecated
-abstract class JetNotStubbedTypeParameterListOwner extends JetNotStubbedNamedDeclaration implements JetTypeParameterListOwner {
-    public JetNotStubbedTypeParameterListOwner(@NotNull ASTNode node) {
+abstract class JetTypeParameterListOwnerStub<T extends StubElement> extends JetNamedDeclarationStub<T> implements JetTypeParameterListOwner {
+    public JetTypeParameterListOwnerStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
+        super(stub, nodeType);
+    }
+
+    public JetTypeParameterListOwnerStub(@NotNull ASTNode node) {
         super(node);
     }
 

@@ -25,7 +25,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author abreslav
  */
-public class JetFunctionLiteral extends JetFunction {
+public class JetFunctionLiteral extends JetFunctionNotStubbed {
     public JetFunctionLiteral(@NotNull ASTNode node) {
         super(node);
     }

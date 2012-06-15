@@ -36,7 +36,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 /**
  * @author max
  */
-public class JetProperty extends JetNotStubbedTypeParameterListOwner implements JetModifierListOwner {
+public class JetProperty extends JetTypeParameterListOwnerNotStubbed implements JetModifierListOwner {
     public JetProperty(@NotNull ASTNode node) {
         super(node);
     }

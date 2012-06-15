@@ -17,102 +17,27 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
-import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
- * @author max
+ * @author abreslav
  */
-public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFunctionStub> implements JetNamed, JetDeclarationWithBody, JetModifierListOwner, JetFunction {
-    public JetNamedFunction(@NotNull ASTNode node) {
+abstract public class JetFunctionNotStubbed extends JetTypeParameterListOwnerNotStubbed
+        implements JetFunction {
+
+    public JetFunctionNotStubbed(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetNamedFunction(@NotNull PsiJetFunctionStub stub) {
-        super(stub, JetStubElementTypes.FUNCTION);
-    }
-
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitNamedFunction(this);
-    }
-
-    @Override
-    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
-        return visitor.visitNamedFunction(this, data);
-    }
-
-    public boolean hasTypeParameterListBeforeFunctionName() {
-        JetTypeParameterList typeParameterList = getTypeParameterList();
-        if (typeParameterList == null) {
-            return false;
-        }
-        PsiElement nameIdentifier = getNameIdentifier();
-        if (nameIdentifier == null) {
-            return false;
-        }
-        return nameIdentifier.getTextOffset() > typeParameterList.getTextOffset();
-    }
-
-    @Override
-    public boolean hasBlockBody() {
-        return getEqualsToken() == null;
-    }
-
-    @Nullable
-    public PsiElement getEqualsToken() {
-        return findChildByType(JetTokens.EQ);
-    }
-
-    /**
-     * Returns full qualified name for function "package_fqn.function_name"
-     * Not null for top level functions.
-     * @return
-     */
-    @Nullable
-    public FqName getQualifiedName() {
-        final PsiJetFunctionStub stub = getStub();
-        if (stub != null) {
-            // TODO (stubs): return stub.getQualifiedName();
-        }
-
-        PsiElement parent = getParent();
-        if (parent instanceof JetFile) {
-            // fqname is different in scripts
-            if (((JetFile) parent).getNamespaceHeader() == null) {
-                return null;
-            }
-            JetFile jetFile = (JetFile) parent;
-            final FqName fileFQN = JetPsiUtil.getFQName(jetFile);
-            return fileFQN.child(getNameAsName());
-        }
-
-        return null;
-    }
-
-    @Override
-    public IStubElementType getElementType() {
-        return JetStubElementTypes.FUNCTION;
-    }
-    
-    @Override
-    public ItemPresentation getPresentation() {
-        return ItemPresentationProviders.getItemPresentation(this);
-    }
-
     @Nullable
     public JetParameterList getValueParameterList() {
         return (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);
@@ -136,6 +61,7 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
         return getReturnTypeRef() != null;
     }
 
+    @Override
     @Nullable
     public JetTypeReference getReceiverTypeRef() {
         PsiElement child = getFirstChild();
@@ -151,6 +77,7 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
         return null;
     }
 
+    @Override
     @Nullable
     public JetTypeReference getReturnTypeRef() {
         boolean colonPassed = false;
@@ -175,18 +102,9 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
         return this;
     }
 
+    @Override
     public boolean isLocal() {
         PsiElement parent = getParent();
         return !(parent instanceof JetFile || parent instanceof JetClassBody || parent instanceof JetNamespaceBody);
-    }
-
-    @Override
-    public String getName() {
-        PsiJetFunctionStub stub = getStub();
-        if (stub != null) {
-            return stub.getName();
-        }
-
-        return super.getName();
     }
 }

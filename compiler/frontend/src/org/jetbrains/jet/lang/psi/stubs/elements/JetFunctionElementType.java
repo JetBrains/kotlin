@@ -54,7 +54,7 @@ public class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStu
 
     @Override
     public JetNamedFunction createPsi(@NotNull PsiJetFunctionStub stub) {
-        return null;
+        return new JetNamedFunction(stub);
     }
 
     @Override

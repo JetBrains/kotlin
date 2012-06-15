@@ -19,12 +19,12 @@ package org.jetbrains.jet.lang.psi.stubs;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 
 /**
  * @author Nikolay Krasko
  */
-public interface PsiJetFunctionStub <T extends JetFunction> extends StubElement<T> {
+public interface PsiJetFunctionStub extends StubElement<JetNamedFunction> {
     @Nullable
     String getName();
 

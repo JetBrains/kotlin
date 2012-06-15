@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetClass extends JetStubTypeParameterListOwner<PsiJetClassStub>
+public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub>
         implements JetClassOrObject, JetModifierListOwner {
 
     public JetClass(@NotNull ASTNode node) {
