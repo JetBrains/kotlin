@@ -555,11 +555,17 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             constructorMethod = JvmMethodSignature.simple("<init>", Type.VOID_TYPE, consArgTypes);
         }
 
-        int flags = ACC_PUBLIC; // TODO
+        int flags = JetTypeMapper.getAccessModifiers(constructorDescriptor, 0);
         final MethodVisitor mv = v.newMethod(myClass, flags, constructorMethod.getName(), constructorMethod.getAsmMethod().getDescriptor(), constructorMethod.getGenericsSignature(), null);
         if (state.getClassBuilderMode() == ClassBuilderMode.SIGNATURES) return;
 
         AnnotationVisitor jetConstructorVisitor = mv.visitAnnotation(JvmStdlibNames.JET_CONSTRUCTOR.getDescriptor(), true);
+
+        int flagsValue = BitSetUtils.toInt(CodegenUtil.getFlagsForVisibility(constructorDescriptor.getVisibility()));
+        if (JvmStdlibNames.FLAGS_DEFAULT_VALUE != flagsValue) {
+            jetConstructorVisitor.visit(JvmStdlibNames.JET_CLASS_FLAGS_FIELD, flagsValue);
+        }
+
         if (constructorDescriptor == null) {
             jetConstructorVisitor.visit(JvmStdlibNames.JET_CONSTRUCTOR_HIDDEN_FIELD, true);
         }
@@ -944,8 +950,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             throw new UnsupportedOperationException("failed to get descriptor for secondary constructor");
         }
         CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, kind, typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
-        int flags = ACC_PUBLIC; // TODO
+        int flags = JetTypeMapper.getAccessModifiers(constructorDescriptor, 0);
         final MethodVisitor mv = v.newMethod(constructor, flags, "<init>", method.getSignature().getAsmMethod().getDescriptor(), null, null);
+
+        AnnotationVisitor jetConstructorVisitor = mv.visitAnnotation(JvmStdlibNames.JET_CONSTRUCTOR.getDescriptor(), true);
+        int flagsValue = BitSetUtils.toInt(CodegenUtil.getFlagsForVisibility(constructorDescriptor.getVisibility()));
+        if (JvmStdlibNames.FLAGS_DEFAULT_VALUE != flagsValue) {
+            jetConstructorVisitor.visit(JvmStdlibNames.JET_CLASS_FLAGS_FIELD, flagsValue);
+        }
+        jetConstructorVisitor.visitEnd();
+
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             StubCodegen.generateStubCode(mv);
         }

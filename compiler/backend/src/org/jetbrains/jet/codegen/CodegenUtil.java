@@ -17,15 +17,18 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.Collection;
 import java.util.Random;
@@ -105,4 +108,15 @@ public class CodegenUtil {
         return name;
     }
 
+
+    public static @NotNull BitSet getFlagsForVisibility(@NotNull Visibility visibility) {
+        BitSet flags = new BitSet();
+        if (visibility == Visibilities.INTERNAL) {
+            flags.set(JvmStdlibNames.FLAG_INTERNAL_BIT);
+        }
+        else if (visibility == Visibilities.PRIVATE) {
+            flags.set(JvmStdlibNames.FLAG_PRIVATE_BIT);
+        }
+        return flags;
+    }
 }
