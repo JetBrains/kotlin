@@ -131,6 +131,10 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
         if (!allDescriptorsDone) {
             allDescriptorsDone = true;
+
+            // make sure no descriptors added to allDescriptors collection
+            changeLockLevel(LockLevel.READING);
+
             allDescriptors.addAll(getWorkerScope().getAllDescriptors());
             for (JetScope imported : getImports()) {
                 allDescriptors.addAll(imported.getAllDescriptors());
