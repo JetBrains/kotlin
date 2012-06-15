@@ -202,3 +202,12 @@ fun File.readLines(charset : String = "UTF-8") : List<String> {
 
     return rs
 }
+
+/**
+ * Returns an array of files and directories in the directory that satisfy the specified filter.
+ */
+fun File.listFiles(filter : (file : File) -> Boolean) : Array<File>? = listFiles(
+    object : FileFilter {
+        override fun accept(file: File?) = filter(file!!)
+    }
+) as Array<File>?
