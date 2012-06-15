@@ -426,7 +426,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         if (classData.classDescriptor.getKind() == ClassKind.OBJECT) {
             // TODO: wrong: class objects do not need visible constructors
             ConstructorDescriptorImpl constructor = new ConstructorDescriptorImpl(classData.classDescriptor, new ArrayList<AnnotationDescriptor>(0), true);
-            constructor.initialize(new ArrayList<TypeParameterDescriptor>(0), new ArrayList<ValueParameterDescriptor>(0), Visibilities.PUBLIC);
+            Visibility visibility = psiConstructors.length != 0
+                                    ? resolveVisibility(psiConstructors[0], new PsiMethodWrapper(psiConstructors[0]).getJetConstructor())
+                                    : Visibilities.PUBLIC;
+            constructor.initialize(new ArrayList<TypeParameterDescriptor>(0), new ArrayList<ValueParameterDescriptor>(0), visibility);
             constructors.add(constructor);
         }
         else if (psiConstructors.length == 0) {
@@ -521,7 +524,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
         constructorDescriptor.initialize(classData.classDescriptor.getTypeConstructor().getParameters(),
                 valueParameterDescriptors.descriptors,
-                resolveVisibility(psiConstructor, constructor.getJetMethod()), aStatic);
+                resolveVisibility(psiConstructor, constructor.getJetConstructor()), aStatic);
         trace.record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);
         return constructorDescriptor;
     }
@@ -1314,7 +1317,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             }
 
             Visibility visibility = resolveVisibility(anyMember.getMember().psiMember, null);
-            if (members.getter.getMember() instanceof PsiMethodWrapper) {
+            if (members.getter != null && members.getter.getMember() instanceof PsiMethodWrapper) {
                 visibility = resolveVisibility(anyMember.getMember().psiMember,
                                                ((PsiMethodWrapper) members.getter.getMember()).getJetMethod());
             }

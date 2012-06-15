@@ -18,13 +18,17 @@ package org.jetbrains.jet.lang.resolve.java.kt;
 
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiMethod;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.utils.BitSetUtils;
+
+import java.util.BitSet;
 
 /**
  * @author Stepan Koltsov
  */
-public class JetConstructorAnnotation extends PsiAnnotationWrapper {
+public class JetConstructorAnnotation extends PsiAnnotationWithFlags {
 
     public JetConstructorAnnotation(@Nullable PsiAnnotation psiAnnotation) {
         super(psiAnnotation);
@@ -39,6 +43,16 @@ public class JetConstructorAnnotation extends PsiAnnotationWrapper {
             hiddenInitialized = true;
         }
         return hidden;
+    }
+
+    private BitSet flags;
+    @NotNull
+    @Override
+    public BitSet flags() {
+        if (flags == null) {
+            flags = BitSetUtils.toBitSet(getIntAttribute(JvmStdlibNames.JET_CONSTRUCTOR_FLAGS_FIELD, JvmStdlibNames.FLAGS_DEFAULT_VALUE));
+        }
+        return flags;
     }
     
     public static JetConstructorAnnotation get(PsiMethod constructor) {
