@@ -48,4 +48,14 @@ public final class StringTest extends AbstractExpressionTest {
     public void testObjectToStringCallInTemplate() throws Exception {
         fooBoxTest();
     }
+
+    public void testStringNotEqualToNumber() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testKt2227() throws Exception {
+        fooBoxTest();
+    }
+
+
 }
