@@ -941,7 +941,7 @@ public class JetTypeMapper {
     }
 
 
-    public static int getAccessModifiers(MemberDescriptor p, int defaultFlags) {
+    public static int getAccessModifiers(@NotNull MemberDescriptor p, int defaultFlags) {
         DeclarationDescriptor declaration = p.getContainingDeclaration();
         if (CodegenUtil.isInterface(declaration)) {
             return ACC_PUBLIC;
