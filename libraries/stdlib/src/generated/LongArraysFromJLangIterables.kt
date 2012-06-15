@@ -90,7 +90,7 @@ public inline fun <C: Collection<Long>> LongArray.filterTo(result: C, predicate:
  *
  * @includeFunctionBody ../../test/CollectionTest.kt filterNotIntoLinkedList
  */
-public inline fun <L: List<Long>> LongArray.filterNotTo(result: L, predicate: (Long) -> Boolean) : L {
+public inline fun <C: Collection<Long>> LongArray.filterNotTo(result: C, predicate: (Long) -> Boolean) : C {
     for (element in this) if (!predicate(element)) result.add(element)
     return result
 }
@@ -100,7 +100,7 @@ public inline fun <L: List<Long>> LongArray.filterNotTo(result: L, predicate: (L
  *
  * @includeFunctionBody ../../test/CollectionTest.kt filterNotNullIntoLinkedList
  */
-public inline fun <L: List<Long>> LongArray?.filterNotNullTo(result: L) : L {
+public inline fun <C: Collection<Long>> LongArray?.filterNotNullTo(result: C) : C {
     if (this != null) {
         for (element in this) if (element != null) result.add(element)
     }
@@ -197,7 +197,7 @@ public inline fun <L: List<Long>> LongArray.dropWhileTo(result: L, predicate: (L
 }
 
 /** Returns a list containing the first elements that satisfy the given *predicate* */
-public inline fun <L: List<Long>> LongArray.takeWhileTo(result: L, predicate: (Long) -> Boolean) : L {
+public inline fun <C: Collection<Long>> LongArray.takeWhileTo(result: C, predicate: (Long) -> Boolean) : C {
     for (element in this) if (predicate(element)) result.add(element) else break
     return result
 }

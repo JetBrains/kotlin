@@ -90,7 +90,7 @@ public inline fun <C: Collection<Char>> CharArray.filterTo(result: C, predicate:
  *
  * @includeFunctionBody ../../test/CollectionTest.kt filterNotIntoLinkedList
  */
-public inline fun <L: List<Char>> CharArray.filterNotTo(result: L, predicate: (Char) -> Boolean) : L {
+public inline fun <C: Collection<Char>> CharArray.filterNotTo(result: C, predicate: (Char) -> Boolean) : C {
     for (element in this) if (!predicate(element)) result.add(element)
     return result
 }
@@ -100,7 +100,7 @@ public inline fun <L: List<Char>> CharArray.filterNotTo(result: L, predicate: (C
  *
  * @includeFunctionBody ../../test/CollectionTest.kt filterNotNullIntoLinkedList
  */
-public inline fun <L: List<Char>> CharArray?.filterNotNullTo(result: L) : L {
+public inline fun <C: Collection<Char>> CharArray?.filterNotNullTo(result: C) : C {
     if (this != null) {
         for (element in this) if (element != null) result.add(element)
     }
@@ -197,7 +197,7 @@ public inline fun <L: List<Char>> CharArray.dropWhileTo(result: L, predicate: (C
 }
 
 /** Returns a list containing the first elements that satisfy the given *predicate* */
-public inline fun <L: List<Char>> CharArray.takeWhileTo(result: L, predicate: (Char) -> Boolean) : L {
+public inline fun <C: Collection<Char>> CharArray.takeWhileTo(result: C, predicate: (Char) -> Boolean) : C {
     for (element in this) if (predicate(element)) result.add(element) else break
     return result
 }
