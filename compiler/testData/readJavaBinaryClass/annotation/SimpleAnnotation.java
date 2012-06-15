@@ -1,4 +1,4 @@
 package test;
 
-@interface SimpleAnnotation {
+public @interface SimpleAnnotation {
 }

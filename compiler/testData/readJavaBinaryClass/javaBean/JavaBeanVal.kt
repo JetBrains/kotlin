@@ -1,6 +1,6 @@
 package test
 
-open class JavaBeanVal() : java.lang.Object() {
-    open fun getColor(): String? = ""
+public open class JavaBeanVal() : java.lang.Object() {
+    public open fun getColor(): String? = ""
     //val color: String? = ""
 }

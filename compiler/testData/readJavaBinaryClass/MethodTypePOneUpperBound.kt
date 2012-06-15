@@ -1,7 +1,5 @@
 package test
 
-trait Foo : java.lang.Object
-
-open class MethodTypePOneUpperBound() : java.lang.Object() {
-    open fun <T : Foo?> bar() = #()
+public open class MethodTypePOneUpperBound() : java.lang.Object() {
+    public open fun <T : Cloneable?> bar() : Unit = #()
 }

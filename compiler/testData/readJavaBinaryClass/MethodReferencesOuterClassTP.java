@@ -1,7 +1,7 @@
 package test;
 
-final class Outer<P> {
-    final class Inner {
-        final <Q extends P> void f() {}
+public final class MethodReferencesOuterClassTP<P> {
+    public final class Inner {
+        public final <Q extends P> void f() {}
     }
 }

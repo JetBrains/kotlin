@@ -1,10 +1,7 @@
 package test
 
-trait Foo : java.lang.Object
-trait Bar : java.lang.Object
-
-open class MethodTypePTwoUpperBounds() : java.lang.Object() {
-    open fun <T> foo(): Unit
-        where T : Foo?, T : Bar?
-    {}
+public open class MethodTypePTwoUpperBounds() : java.lang.Object() {
+    public open fun <T> foo(): Unit where T : Cloneable?, T : Runnable? {
+        override fun run() = throw UnsupportedOperationException()
+    }
 }

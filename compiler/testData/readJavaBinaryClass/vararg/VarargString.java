@@ -1,5 +1,5 @@
 package test;
 
-class VarargString {
-    void vararg(String... strings) {}
+public class VarargString {
+    public void vararg(String... strings) {}
 }

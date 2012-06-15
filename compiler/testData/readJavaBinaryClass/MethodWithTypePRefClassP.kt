@@ -1,5 +1,5 @@
 package test
 
-open class MethodWithTypePRefClassP<P>() : java.lang.Object() {
-    fun <Q : P> f() = #()
+public open class MethodWithTypePRefClassP<P>() : java.lang.Object() {
+    public fun <Q : P> f() : Unit = #()
 }

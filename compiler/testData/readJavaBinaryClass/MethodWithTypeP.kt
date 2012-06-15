@@ -1,5 +1,5 @@
 package test
 
-class MethodWithTypeP() : java.lang.Object() {
-    fun <P> f() = #()
+public class MethodWithTypeP() : java.lang.Object() {
+    public fun <P> f() : Unit = #()
 }

@@ -1,4 +1,4 @@
 package test
 
 [AnnotatedAnnotation]
-annotation class AnnotatedAnnotation
+public annotation class AnnotatedAnnotation

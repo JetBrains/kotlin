@@ -1,5 +1,5 @@
 package test
 
-open class VarargString() : java.lang.Object() {
-    open fun vararg(vararg p0: String?): Unit = #()
+public open class VarargString() : java.lang.Object() {
+    public open fun vararg(vararg p0: String?): Unit = #()
 }

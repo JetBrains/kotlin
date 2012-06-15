@@ -1,7 +1,4 @@
 package test;
 
-interface Foo<Q> {
-}
-
-class ClassWithTypePRefNext<R extends Foo<P>, P> {
+public class ClassWithTypePRefNext<R extends Iterable<P>, P> {
 }

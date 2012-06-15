@@ -1,6 +1,6 @@
 package test;
 
-class DifferentGetterAndSetter {
-    void setSomething(String color) { }
-    int getSomething() { return 17; }
+public class DifferentGetterAndSetter {
+    public void setSomething(String color) { }
+    public int getSomething() { return 17; }
 }

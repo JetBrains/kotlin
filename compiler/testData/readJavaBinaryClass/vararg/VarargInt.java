@@ -1,5 +1,5 @@
 package test;
 
-class VarargInt {
-    void vararg(int... p) {}
+public class VarargInt {
+    public void vararg(int... p) {}
 }

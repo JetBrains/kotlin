@@ -1,3 +1,3 @@
 package test
 
-class Simple() : java.lang.Object()
+public class Simple() : java.lang.Object()

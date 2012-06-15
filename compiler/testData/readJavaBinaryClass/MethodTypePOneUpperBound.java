@@ -1,7 +1,5 @@
 package test;
 
-interface Foo {}
-
-class MethodTypePOneUpperBound {
-    <T extends Foo> void bar() {}
+public class MethodTypePOneUpperBound {
+    public <T extends Cloneable> void bar() {}
 }

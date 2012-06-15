@@ -1,5 +1,5 @@
 package test;
 
-class ConstructorGenericSimple {
-    <P> ConstructorGenericSimple(P p) {}
+public class ConstructorGenericSimple {
+    public <P> ConstructorGenericSimple(P p) {}
 }

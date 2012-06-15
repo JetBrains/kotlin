@@ -1,3 +1,3 @@
 package test
 
-annotation class SimpleAnnotation
+public annotation class SimpleAnnotation

@@ -1,4 +1,4 @@
 package test
 
-class ClassWithTypeParameter<P>() : java.lang.Object() {
+public class ClassWithTypeP<P>() : java.lang.Object() {
 }

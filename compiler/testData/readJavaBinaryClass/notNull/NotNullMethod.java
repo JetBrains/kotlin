@@ -2,7 +2,7 @@ package test;
 
 import org.jetbrains.annotations.NotNull;
 
-class NotNullMethod {
+public class NotNullMethod {
     @NotNull
     public String hi() { return ""; }
 }

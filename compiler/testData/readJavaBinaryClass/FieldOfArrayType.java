@@ -1,5 +1,5 @@
 package test;
 
-class FieldOfArrayType {
+public class FieldOfArrayType {
     public java.io.File[] files;
 }

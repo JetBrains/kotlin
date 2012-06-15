@@ -1,4 +1,4 @@
 package test;
 
-final class ClassWithTypePRefSelf<P extends Enum<P>> {
+public final class ClassWithTypePRefSelf<P extends Enum<P>> {
 }

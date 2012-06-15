@@ -1,5 +1,3 @@
 package test
 
-trait Foo<Q> : java.lang.Object
-
-open class ClassWithTypePRefNext<R : Foo<P>?, P>() : java.lang.Object()
+public open class ClassWithTypePRefNext<R : java.lang.Iterable<P>?, P>() : java.lang.Object()

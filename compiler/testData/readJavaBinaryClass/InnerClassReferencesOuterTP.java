@@ -1,6 +1,6 @@
 package test;
 
-class Outer<P> {
-    class Inner<Q extends P> {
+public class InnerClassReferencesOuterTP<P> {
+    public class Inner<Q extends P> {
     }
 }
