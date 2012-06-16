@@ -107,7 +107,6 @@ public class InjectorForJvmCodegen {
         this.scriptCodegen.setState(generationState);
 
         this.intrinsics.setMyProject(project);
-        this.intrinsics.setMyStdLib(jetStandardLibrary);
 
         this.classFileFactory.setBuilderFactory(classBuilderFactory);
         this.classFileFactory.setState(generationState);

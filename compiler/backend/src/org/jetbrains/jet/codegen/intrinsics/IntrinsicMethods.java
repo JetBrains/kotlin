@@ -18,26 +18,20 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.search.DelegatingGlobalSearchScope;
-import com.intellij.psi.search.ProjectScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
-import org.jetbrains.jet.plugin.JetFileType;
 import org.objectweb.asm.Opcodes;
 
 import javax.annotation.PostConstruct;
@@ -73,8 +67,6 @@ public class IntrinsicMethods {
     public static final String KOTLIN_JAVA_CLASS_PROPERTY = "kotlin.javaClass.property";
 
     private Project myProject;
-    private JetStandardLibrary myStdLib;
-    private final Map<CallableMemberDescriptor, IntrinsicMethod> myMethods = new HashMap<CallableMemberDescriptor, IntrinsicMethod>();
     private final Map<String, IntrinsicMethod> namedMethods = new HashMap<String, IntrinsicMethod>();
     private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();
     private final IntrinsicsMap intrinsicsMap = new IntrinsicsMap();
@@ -83,11 +75,6 @@ public class IntrinsicMethods {
     @Inject
     public void setMyProject(Project myProject) {
         this.myProject = myProject;
-    }
-
-    @Inject
-    public void setMyStdLib(JetStandardLibrary myStdLib) {
-        this.myStdLib = myStdLib;
     }
 
     @PostConstruct
@@ -157,7 +144,6 @@ public class IntrinsicMethods {
         }
 //        declareIntrinsicFunction("Any", "equals", 1, new Equals());
 //
-        declareIntrinsicStringMethods();
         declareIntrinsicProperty(Name.identifier("CharSequence"), Name.identifier("length"), new StringLength());
         declareIntrinsicProperty(Name.identifier("String"), Name.identifier("length"), new StringLength());
 
@@ -190,32 +176,6 @@ public class IntrinsicMethods {
         declareIntrinsicFunction(arrayClassName, Name.identifier("iterator"), 0, ARRAY_ITERATOR);
     }
 
-    private void declareIntrinsicStringMethods() {
-        final ClassDescriptor stringClass = myStdLib.getString();
-        final Collection<DeclarationDescriptor> stringMembers = stringClass.getMemberScope(Collections.<TypeProjection>emptyList()).getAllDescriptors(DescriptorPredicate.all());
-        final PsiClass stringPsiClass = JavaPsiFacade.getInstance(myProject).findClass(
-                "java.lang.String",
-                new DelegatingGlobalSearchScope(ProjectScope.getLibrariesScope(myProject)) {
-                    @Override
-                    public boolean contains(VirtualFile file) {
-                        return myBaseScope.contains(file) && file.getFileType() != JetFileType.INSTANCE;
-                    }
-                }
-        );
-        for (DeclarationDescriptor stringMember : stringMembers) {
-            if (stringMember instanceof SimpleFunctionDescriptor) {
-                final SimpleFunctionDescriptor stringMethod = (SimpleFunctionDescriptor) stringMember;
-                final PsiMethod[] methods = stringPsiClass != null?
-                                            stringPsiClass.findMethodsByName(stringMember.getName().getName(), false) : new PsiMethod[]{};
-                for (PsiMethod method : methods) {
-                    if (method.getParameterList().getParametersCount() == stringMethod.getValueParameters().size()) {
-                        myMethods.put(stringMethod, new PsiMethodCall(stringMethod));
-                    }
-                }
-            }
-        }
-    }
-
     private void declareBinaryOp(Name methodName, int opcode) {
         BinaryOp op = new BinaryOp(opcode);
         for (Name type : PRIMITIVE_TYPES) {
@@ -229,24 +189,6 @@ public class IntrinsicMethods {
 
     private void declareIntrinsicFunction(Name className, Name functionName, int arity, IntrinsicMethod implementation) {
         intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME.child(className), functionName, arity, implementation);
-    }
-
-    private void declareOverload(Collection<FunctionDescriptor> group, int arity, IntrinsicMethod implementation) {
-        for (FunctionDescriptor descriptor : group) {
-            if (descriptor.getValueParameters().size() == arity) {
-                myMethods.put(descriptor.getOriginal(), implementation);
-            }
-        }
-    }
-
-    private JetScope getClassMemberScope(Name className) {
-        final ClassDescriptor descriptor = (ClassDescriptor) myStdLib.getLibraryScope().getClassifier(className);
-        final List<TypeParameterDescriptor> typeParameterDescriptors = descriptor.getTypeConstructor().getParameters();
-        List<TypeProjection> typeParameters = new ArrayList<TypeProjection>();
-        for (TypeParameterDescriptor typeParameterDescriptor : typeParameterDescriptors) {
-            typeParameters.add(new TypeProjection(JetStandardClasses.getAnyType()));
-        }
-        return descriptor.getMemberScope(typeParameters);
     }
 
     public IntrinsicMethod isIntrinsicMethod(DeclarationDescriptor descriptor) {
@@ -265,14 +207,19 @@ public class IntrinsicMethods {
 
     @Nullable
     public IntrinsicMethod getIntrinsic(@NotNull CallableMemberDescriptor descriptor) {
-        IntrinsicMethod intrinsicMethod = myMethods.get(descriptor.getOriginal());
+        IntrinsicMethod intrinsicMethod = intrinsicsMap.getIntrinsic(descriptor);
         if (intrinsicMethod != null) {
             return intrinsicMethod;
         }
 
-        intrinsicMethod = intrinsicsMap.getIntrinsic(descriptor);
-        if (intrinsicMethod != null) {
-            return intrinsicMethod;
+        if (descriptor instanceof SimpleFunctionDescriptor) {
+            SimpleFunctionDescriptor functionDescriptor = (SimpleFunctionDescriptor) descriptor;
+            if (!functionDescriptor.getReceiverParameter().exists()) {
+                FqNameUnsafe ownerFqName = DescriptorUtils.getFQName(descriptor.getContainingDeclaration());
+                if (ownerFqName.equalsTo("jet.String")) {
+                    return new PsiMethodCall(functionDescriptor);
+                }
+            }
         }
 
         List<AnnotationDescriptor> annotations = descriptor.getAnnotations();
