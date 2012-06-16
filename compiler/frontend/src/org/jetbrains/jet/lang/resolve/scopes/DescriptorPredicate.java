@@ -128,9 +128,9 @@ public abstract class DescriptorPredicate {
 
     private static class HasName extends DescriptorPredicate {
         @NotNull
-        private final Name required;
+        private final NamePredicate required;
 
-        private HasName(@NotNull Name required) {
+        private HasName(@NotNull NamePredicate required) {
             this.required = required;
         }
 
@@ -151,18 +151,24 @@ public abstract class DescriptorPredicate {
 
         @Override
         public boolean includeName(@NotNull Name name) {
-            return required.equals(name);
+            return required.matches(name);
         }
 
     }
 
-    public static DescriptorPredicate hasName(@NotNull Name name) {
-        return new HasName(name);
+    public static DescriptorPredicate hasName(@NotNull NamePredicate required) {
+        return new HasName(required);
     }
 
 
-    private static class CallableMembers extends DescriptorPredicate {
-        public static final CallableMembers instance = new CallableMembers();
+    private static class MembersOfType extends DescriptorPredicate {
+
+        @NotNull
+        private final DescriptorKind required;
+
+        private MembersOfType(@NotNull DescriptorKind required) {
+            this.required = required;
+        }
 
         @Override
         public boolean includeName(@NotNull Name name) {
@@ -176,23 +182,70 @@ public abstract class DescriptorPredicate {
 
         @Override
         public boolean include(@NotNull DeclarationDescriptor descriptor) {
-            return descriptor instanceof CallableMemberDescriptor;
+            return descriptorKind(descriptor) == required;
         }
 
         @Override
         public boolean includeKind(@NotNull DescriptorKind kind) {
-            return kind == DescriptorKind.CALLABLE_MEMBER;
+            return kind == required;
         }
 
     }
 
+
+    private static final DescriptorPredicate callableMembers = new MembersOfType(DescriptorKind.CALLABLE_MEMBER);
+
     public static DescriptorPredicate callableMembers() {
-        return CallableMembers.instance;
+        return callableMembers;
+    }
+
+    private static final DescriptorPredicate namespaces = new MembersOfType(DescriptorKind.NAMESPACE);
+
+    public static DescriptorPredicate namespaces() {
+        return namespaces;
     }
 
 
-    private static class Extension extends CallableMembers {
+    private static class MembersOrTypeWithName extends MembersOfType {
+        @NotNull
+        private final NamePredicate required;
+
+        private MembersOrTypeWithName(@NotNull DescriptorKind descriptorKind, @NotNull NamePredicate required) {
+            super(descriptorKind);
+            this.required = required;
+        }
+
+        @Override
+        public boolean includeName(@NotNull Name name) {
+            return required.matches(name);
+        }
+    }
+
+    public static DescriptorPredicate callableMembers(@NotNull NamePredicate required) {
+        if (required.isAll()) {
+            return callableMembers();
+        }
+        else {
+            return new MembersOrTypeWithName(DescriptorKind.CALLABLE_MEMBER, required);
+        }
+    }
+
+    public static DescriptorPredicate namespaces(@NotNull NamePredicate required) {
+        if (required.isAll()) {
+            return namespaces();
+        }
+        else {
+            return new MembersOrTypeWithName(DescriptorKind.NAMESPACE, required);
+        }
+    }
+
+
+    private static class Extension extends MembersOfType {
         private static final Extension instance = new Extension();
+
+        private Extension() {
+            super(DescriptorKind.CALLABLE_MEMBER);
+        }
 
         @Override
         public boolean includeExtension(boolean extension) {
@@ -202,6 +255,31 @@ public abstract class DescriptorPredicate {
 
     public static DescriptorPredicate extension() {
         return Extension.instance;
+    }
+
+
+
+    private static class ExtensionWithName extends Extension {
+        @NotNull
+        private final NamePredicate required;
+
+        private ExtensionWithName(@NotNull NamePredicate required) {
+            this.required = required;
+        }
+
+        @Override
+        public boolean includeName(@NotNull Name name) {
+            return required.matches(name);
+        }
+    }
+
+    public static DescriptorPredicate extension(@NotNull NamePredicate required) {
+        if (required.isAll()) {
+            return extension();
+        }
+        else {
+            return new ExtensionWithName(required);
+        }
     }
 
 

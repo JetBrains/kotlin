@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.name.NamePredicate;
 import org.jetbrains.jet.plugin.completion.DescriptorLookupConverter;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
@@ -66,7 +67,7 @@ public class JetSimpleNameReference extends JetPsiReference {
                     .getBindingContext();
 
         return DescriptorLookupConverter.collectLookupElements(
-                bindingContext, TipsManager.getReferenceVariants(myExpression, bindingContext));
+                bindingContext, TipsManager.getReferenceVariants(myExpression, bindingContext, NamePredicate.all()));
     }
 
     @Override

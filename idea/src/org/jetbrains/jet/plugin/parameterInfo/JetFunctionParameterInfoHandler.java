@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.JetVisibilityChecker;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.NamePredicate;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -355,7 +356,7 @@ public class JetFunctionParameterInfoHandler implements
             if (scope != null) {
                 placeDescriptor = scope.getContainingDeclaration();
             }
-            Collection<DeclarationDescriptor> variants = TipsManager.getReferenceVariants(refExpression, bindingContext);
+            Collection<DeclarationDescriptor> variants = TipsManager.getReferenceVariants(refExpression, bindingContext, NamePredicate.all());
             Name refName = refExpression.getReferencedNameAsName();
             PsiReference[] references = refExpression.getReferences();
             if (references.length == 0) return null;
