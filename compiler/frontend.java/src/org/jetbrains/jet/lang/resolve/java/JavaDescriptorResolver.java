@@ -1424,7 +1424,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     private void resolveNamedGroupFunctions(@NotNull ClassOrNamespaceDescriptor owner, PsiClass psiClass,
-            TypeSubstitutor typeSubstitutorForGenericSuperclasses, NamedMembers namedMembers, Name methodName, ResolverScopeData scopeData) {
+            TypeSubstitutor typeSubstitutorForGenericSuperclasses, NamedMembers namedMembers, @NotNull Name methodName, ResolverScopeData scopeData) {
         if (namedMembers.functionDescriptors != null) {
             return;
         }
@@ -1464,7 +1464,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         namedMembers.functionDescriptors = functions;
     }
     
-    private Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(ResolverScopeData scopeData, Name methodName) {
+    private Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(ResolverScopeData scopeData, @NotNull Name methodName) {
         Set<SimpleFunctionDescriptor> r = new HashSet<SimpleFunctionDescriptor>();
         for (JetType supertype : getSupertypes(scopeData)) {
             for (FunctionDescriptor function : supertype.getMemberScope().getFunctions(methodName)) {
@@ -1705,7 +1705,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                         new AbstractMap.SimpleEntry<Name, NamedMembers>(exact, namedMembers));
             }
             else {
-                return null;
+                return Collections.emptyList();
             }
         }
         else {
@@ -1714,7 +1714,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                 Name methodName = e.getKey();
                 NamedMembers namedMembers = e.getValue();
                 if (predicate.matches(methodName)) {
-                    r.add(new AbstractMap.SimpleEntry<Name, NamedMembers>(exact, namedMembers));
+                    r.add(new AbstractMap.SimpleEntry<Name, NamedMembers>(methodName, namedMembers));
                 }
             }
             return r;

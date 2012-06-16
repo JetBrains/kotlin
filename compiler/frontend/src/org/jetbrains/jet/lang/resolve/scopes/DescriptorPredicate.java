@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.NamePredicate;
 
 /**
  * @author Stepan Koltsov
@@ -209,6 +210,15 @@ public abstract class DescriptorPredicate {
             @Override
             public boolean apply(@NotNull DeclarationDescriptor descriptor) {
                 return include(descriptor);
+            }
+        };
+    }
+
+    public NamePredicate asNamePredicate() {
+        return new NamePredicate() {
+            @Override
+            public boolean matches(@NotNull Name name) {
+                return includeName(name);
             }
         };
     }
