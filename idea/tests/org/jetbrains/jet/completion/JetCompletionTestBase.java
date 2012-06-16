@@ -28,6 +28,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.testing.ConfigRuntimeUtil;
 import org.jetbrains.jet.testing.InTextDirectivesUtils;
+import org.jetbrains.jet.utils.ExceptionUtils;
 
 /**
  * @author Nikolay.Krasko
@@ -89,7 +90,7 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
             }
         }
         catch (Exception e) {
-            throw new AssertionError(e);
+            throw ExceptionUtils.rethrow(e);
         }
     }
 
