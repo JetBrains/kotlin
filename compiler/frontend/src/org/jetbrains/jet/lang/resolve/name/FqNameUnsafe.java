@@ -27,7 +27,7 @@ import java.util.List;
  *
  * @author Stepan Koltsov
  */
-public class FqNameUnsafe {
+public class FqNameUnsafe extends FqNameBase {
 
     public static final Name ROOT_NAME = Name.special("<root>");
 

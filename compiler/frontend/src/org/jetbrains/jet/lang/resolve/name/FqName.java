@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * @author Stepan Koltsov
  */
-public class FqName {
+public class FqName extends FqNameBase {
 
     public static final FqName ROOT = new FqName("");
 

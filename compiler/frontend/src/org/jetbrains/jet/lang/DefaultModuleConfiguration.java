@@ -59,7 +59,7 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
 
     @Override
     public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
-        if (DescriptorUtils.getFQName(namespaceDescriptor).equals(JetStandardClasses.STANDARD_CLASSES_FQNAME.toUnsafe())) {
+        if (DescriptorUtils.getFQName(namespaceDescriptor).equalsTo(JetStandardClasses.STANDARD_CLASSES_FQNAME)) {
             if (!extendBuiltins) {
                 namespaceMemberScope.importScope(JetStandardClasses.STANDARD_CLASSES);
             }

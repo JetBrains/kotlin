@@ -603,7 +603,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private boolean isJavaLangObject(JetType type) {
         ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
         return classifierDescriptor instanceof ClassDescriptor &&
-               DescriptorUtils.getFQName(classifierDescriptor).equals(JL_OBJECT.toUnsafe());
+               DescriptorUtils.getFQName(classifierDescriptor).equalsTo(JL_OBJECT);
     }
 
 
