@@ -5,6 +5,6 @@ internal open class test.BaseClass : jet.Any {
     public final /*constructor*/ fun <init>(): test.BaseClass
 }
 internal open class test.Subclass : test.BaseClass {
-    internal open val shape: jet.String
+    internal open override /*1*/ val shape: jet.String
     public final /*constructor*/ fun <init>(): test.Subclass
 }

@@ -4,6 +4,6 @@ internal abstract trait test.A : jet.Any {
     internal open var v: jet.String
 }
 internal final class test.B : test.A {
-    internal open var v: jet.String
+    internal open override /*1*/ var v: jet.String
     public final /*constructor*/ fun <init>(): test.B
 }

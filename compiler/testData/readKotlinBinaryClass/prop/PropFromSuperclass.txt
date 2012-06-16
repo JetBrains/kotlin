@@ -5,6 +5,6 @@ internal open class test.BaseClass : jet.Any {
     public final /*constructor*/ fun <init>(): test.BaseClass
 }
 internal final class test.Subclass : test.BaseClass {
-    internal final val exactly: jet.Int
+    internal final override /*1*/ val exactly: jet.Int
     public final /*constructor*/ fun <init>(): test.Subclass
 }

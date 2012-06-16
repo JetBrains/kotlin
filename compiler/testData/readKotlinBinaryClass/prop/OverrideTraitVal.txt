@@ -1,7 +1,7 @@
 namespace test
 
 internal open class test.Subclass : test.Trait {
-    internal open val shape: jet.String
+    internal open override /*1*/ val shape: jet.String
     public final /*constructor*/ fun <init>(): test.Subclass
 }
 internal abstract trait test.Trait : jet.Any {

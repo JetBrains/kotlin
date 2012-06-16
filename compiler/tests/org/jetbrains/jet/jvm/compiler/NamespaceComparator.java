@@ -274,7 +274,7 @@ public class NamespaceComparator {
             }
 
             if (!fun.getOverriddenDescriptors().isEmpty()) {
-                sb.append("override /*" + fun.getOverriddenDescriptors().size() + "*/ ");
+                sb.append("override /*").append(fun.getOverriddenDescriptors().size()).append("*/ ");
             }
 
             if (fun instanceof ConstructorDescriptor) {
@@ -330,6 +330,10 @@ public class NamespaceComparator {
             if (!prop.getAnnotations().isEmpty()) {
                 new Serializer(sb).serializeSeparated(prop.getAnnotations(), " ");
                 sb.append(" ");
+            }
+
+            if (!prop.getOverriddenDescriptors().isEmpty()) {
+                sb.append("override /*").append(prop.getOverriddenDescriptors().size()).append("*/ ");
             }
 
             if (prop.isVar()) {
