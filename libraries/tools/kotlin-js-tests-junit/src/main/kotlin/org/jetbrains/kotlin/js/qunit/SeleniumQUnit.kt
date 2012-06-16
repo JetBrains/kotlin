@@ -7,9 +7,9 @@ import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 
 /**
- * Waits up to a *maxMills* time for a predicate to be true, sleeping for *sleepMillis*
- * and retrying until the timeout fails
- */
+* Waits up to a *maxMills* time for a predicate to be true, sleeping for *sleepMillis*
+* and retrying until the timeout fails
+*/
 public fun waitFor(maxMillis: Long, sleepMillis: Long = 100, predicate: () -> Boolean): Boolean {
     val end = System.currentTimeMillis() + maxMillis
     while (true) {
@@ -40,11 +40,17 @@ public class SeleniumQUnit(val driver: WebDriver) {
             resultsElement != null
         }
         assertNotNull(resultsElement, "No qunit test elements could be found in ${driver.getCurrentUrl()}")
-        return resultsElement!!.findElements(By.tagName("li")).filterNotNull()
+        return resultsElement!!.findElements(By.xpath("li")).filterNotNull()
     }
 
     public fun findTestName(element: WebElement): String {
-        return element.getAttribute("id") ?: "unknown test name for $element"
+        fun defaultName(name: String?) = name ?: "unknown test name for $element"
+        try {
+            val testNameElement = element.findElement(By.xpath("descendant::*[@class = 'test-name']"))
+            return defaultName(testNameElement!!.getText())
+        } catch (e: Exception) {
+            return defaultName(element.getAttribute("id"))
+        }
     }
 
     public fun runTest(element: WebElement): Unit {
@@ -53,6 +59,21 @@ public class SeleniumQUnit(val driver: WebDriver) {
             result = element.getAttribute("class") ?: "no result"
             !result.startsWith("run")
         }
-        assertEquals("pass", result, "test result for test case ${findTestName(element)}")
+        if ("pass" != result) {
+            var message: String? = null
+            try {
+                val messageElement = element.findElement(By.xpath("descendant::*[@class = 'test-message']"))!!
+                message = messageElement.getText()
+            } catch (e: Exception) {
+                // ignore
+            }
+            val testName = "${findTestName(element)} result: $result"
+            val fullMessage = if (message != null) {
+                testName + message
+            } else {
+                "test result for test case $testName"
+            }
+            fail(fullMessage)
+        }
     }
 }

@@ -52,6 +52,8 @@ public class SeleniumTest {
     public SeleniumTest(WebElement element) {
         this.element = element;
         this.name = tester.findTestName(element);
+
+        System.out.println("Test name: " + name);
     }
 
     @Test
