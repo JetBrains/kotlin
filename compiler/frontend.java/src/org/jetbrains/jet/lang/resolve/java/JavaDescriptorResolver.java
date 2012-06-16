@@ -598,12 +598,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
 
-    private static final FqName JL_OBJECT = new FqName("java.lang.Object");
-
     private boolean isJavaLangObject(JetType type) {
         ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
         return classifierDescriptor instanceof ClassDescriptor &&
-               DescriptorUtils.getFQName(classifierDescriptor).equalsTo(JL_OBJECT);
+               DescriptorUtils.getFQName(classifierDescriptor).equalsTo(JdkNames.JL_OBJECT.getFqName());
     }
 
 
@@ -877,7 +875,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         
         if (result.isEmpty()) {
             if (classData.kotlin
-                    || psiClass.getQualifiedName().equals(JdkNames.JL_OBJECT.getFqName().getFqName())
+                    || JdkNames.JL_OBJECT.getFqName().equalsTo(psiClass.getQualifiedName())
                     // TODO: annotations
                     || classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
                 result.add(JetStandardClasses.getAnyType());
@@ -898,7 +896,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private void transformSupertypeList(List<JetType> result, PsiClassType[] extendsListTypes, TypeVariableResolver typeVariableResolver, boolean annotation) {
         for (PsiClassType type : extendsListTypes) {
             PsiClass resolved = type.resolve();
-            if (resolved != null && resolved.getQualifiedName().equals(JvmStdlibNames.JET_OBJECT.getFqName().getFqName())) {
+            if (resolved != null && JvmStdlibNames.JET_OBJECT.getFqName().equalsTo(resolved.getQualifiedName())) {
                 continue;
             }
             if (resolved != null && annotation && resolved.getQualifiedName().equals("java.lang.annotation.Annotation")) {
@@ -1575,7 +1573,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         if (scopeData.kotlin) {
             // TODO: unless maybe class explicitly extends Object
             String ownerClassName = method.getPsiMethod().getContainingClass().getQualifiedName();
-            if (ownerClassName.equals("java.lang.Object")) {
+            if (JdkNames.JL_OBJECT.getFqName().getFqName().equals(ownerClassName)) {
                 return null;
             }
         }
