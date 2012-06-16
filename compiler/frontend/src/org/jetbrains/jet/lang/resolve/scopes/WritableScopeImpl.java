@@ -125,20 +125,48 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @NotNull
+    private Collection<DeclarationDescriptor> getInheritedDescriptors(@NotNull DescriptorPredicate predicate) {
+        Collection<DeclarationDescriptor> r = Lists.newArrayList();
+        r.addAll(getWorkerScope().getAllDescriptors(predicate));
+        for (JetScope imported : getImports()) {
+            r.addAll(imported.getAllDescriptors(predicate));
+        }
+        return r;
+    }
+
+    @NotNull
+    private static <A> Collection<A> concat(@NotNull Collection<A> c1, @NotNull Collection<A> c2) {
+        if (c1.isEmpty()) {
+            return c2;
+        }
+        else if (c2.isEmpty()) {
+            return c1;
+        }
+        else {
+            Collection<A> r = Lists.newArrayListWithCapacity(c1.size() + c2.size());
+            r.addAll(c1);
+            r.addAll(c2);
+            return r;
+        }
+    }
+
+    @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors(@NotNull DescriptorPredicate predicate) {
         checkMayRead();
 
         if (!allDescriptorsDone) {
+            if (!predicate.includeAll()) {
+                // super-optimized version
+                return concat(allDescriptors, getInheritedDescriptors(predicate));
+            }
+
             allDescriptorsDone = true;
 
             // make sure no descriptors added to allDescriptors collection
             changeLockLevel(LockLevel.READING);
 
-            allDescriptors.addAll(getWorkerScope().getAllDescriptors(DescriptorPredicate.all()));
-            for (JetScope imported : getImports()) {
-                allDescriptors.addAll(imported.getAllDescriptors(DescriptorPredicate.all()));
-            }
+            allDescriptors.addAll(getInheritedDescriptors(DescriptorPredicate.all()));
         }
         return DescriptorPredicateUtils.filter(allDescriptors, predicate);
     }
