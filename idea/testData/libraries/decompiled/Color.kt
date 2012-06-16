@@ -4,5 +4,5 @@
 package testData.libraries
 
 [public final class Color {
-    [public final val rgb : jet.Int] /* compiled code */
+    [internal final val rgb : jet.Int] /* compiled code */
 }]
