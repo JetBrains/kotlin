@@ -35,6 +35,7 @@ import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -53,7 +54,7 @@ public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
     public void testStaticFinal() throws Exception {
         JavaDescriptorResolver javaDescriptorResolver = compileFileGetJavaDescriptorResolver("staticFinal.java");
         NamespaceDescriptor ns = javaDescriptorResolver.resolveNamespace(new FqName("StaticFinal"), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
-        Set<VariableDescriptor> foos = ns.getMemberScope().getProperties(Name.identifier("foo"));
+        Collection<VariableDescriptor> foos = ns.getMemberScope().getProperties(Name.identifier("foo"));
         Assert.assertEquals(1, foos.size());
         VariableDescriptor foo = foos.iterator().next();
         Assert.assertFalse(foo.getType().isNullable());

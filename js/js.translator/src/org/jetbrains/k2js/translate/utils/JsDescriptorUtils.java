@@ -66,7 +66,7 @@ public final class JsDescriptorUtils {
     @NotNull
     public static FunctionDescriptor getFunctionByName(@NotNull JetScope scope,
                                                        @NotNull Name name) {
-        Set<FunctionDescriptor> functionDescriptors = scope.getFunctions(name);
+        Collection<FunctionDescriptor> functionDescriptors = scope.getFunctions(name);
         assert functionDescriptors.size() == 1 :
             "In scope " + scope + " supposed to be exactly one " + name + " function.\n" +
             "Found: " + functionDescriptors.size();
@@ -83,7 +83,7 @@ public final class JsDescriptorUtils {
     @NotNull
     public static PropertyDescriptor getPropertyByName(@NotNull JetScope scope,
                                                        @NotNull Name name) {
-        Set<VariableDescriptor> variables = scope.getProperties(name);
+        Collection<VariableDescriptor> variables = scope.getProperties(name);
         assert variables.size() == 1 : "Actual size: " + variables.size();
         VariableDescriptor variable = variables.iterator().next();
         PropertyDescriptor descriptor = (PropertyDescriptor)variable;

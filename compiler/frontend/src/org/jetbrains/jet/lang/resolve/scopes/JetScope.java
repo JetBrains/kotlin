@@ -51,19 +51,19 @@ public interface JetScope {
     ClassDescriptor getObjectDescriptor(@NotNull Name name);
 
     @NotNull
-    Set<ClassDescriptor> getObjectDescriptors();
+    Collection<ClassDescriptor> getObjectDescriptors();
 
     @Nullable
     NamespaceDescriptor getNamespace(@NotNull Name name);
 
     @NotNull
-    Set<VariableDescriptor> getProperties(@NotNull Name name);
+    Collection<VariableDescriptor> getProperties(@NotNull Name name);
 
     @Nullable
     VariableDescriptor getLocalVariable(@NotNull Name name);
 
     @NotNull
-    Set<FunctionDescriptor> getFunctions(@NotNull Name name);
+    Collection<FunctionDescriptor> getFunctions(@NotNull Name name);
 
     @NotNull
     DeclarationDescriptor getContainingDeclaration();

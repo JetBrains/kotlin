@@ -142,7 +142,7 @@ public class FunctionDescriptorUtil {
 
         ClassifierDescriptor classDescriptorForFunction = functionType.getConstructor().getDeclarationDescriptor();
         assert classDescriptorForFunction instanceof ClassDescriptor;
-        Set<FunctionDescriptor> invokeFunctions = ((ClassDescriptor) classDescriptorForFunction).getMemberScope(functionType.getArguments()).getFunctions(Name.identifier("invoke"));
+        Collection<FunctionDescriptor> invokeFunctions = ((ClassDescriptor) classDescriptorForFunction).getMemberScope(functionType.getArguments()).getFunctions(Name.identifier("invoke"));
         assert invokeFunctions.size() == 1;
         return invokeFunctions.iterator().next();
     }

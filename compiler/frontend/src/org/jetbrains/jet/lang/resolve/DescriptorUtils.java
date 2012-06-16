@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -206,7 +207,7 @@ public class DescriptorUtils {
     }
 
     @Nullable
-    public static VariableDescriptor filterNonExtensionProperty(Set<VariableDescriptor> variables) {
+    public static VariableDescriptor filterNonExtensionProperty(Collection<VariableDescriptor> variables) {
         for (VariableDescriptor variable : variables) {
             if (!variable.getReceiverParameter().exists()) {
                 return variable;

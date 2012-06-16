@@ -76,7 +76,7 @@ public class WriteThroughScope extends WritableScopeWithImports {
 
     @Override
     @NotNull
-    public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
+    public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
         checkMayRead();
 
         Set<FunctionDescriptor> result = Sets.newLinkedHashSet();

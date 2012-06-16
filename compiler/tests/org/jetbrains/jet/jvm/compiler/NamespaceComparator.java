@@ -144,8 +144,8 @@ public class NamespaceComparator {
         }
 
         for (Name name : sorted(propertyNames)) {
-            Set<VariableDescriptor> pa = nsa.getMemberScope().getProperties(name);
-            Set<VariableDescriptor> pb = nsb.getMemberScope().getProperties(name);
+            Collection<VariableDescriptor> pa = nsa.getMemberScope().getProperties(name);
+            Collection<VariableDescriptor> pb = nsb.getMemberScope().getProperties(name);
             compareDeclarationSets("Properties in package " + nsa, pa, pb, sb);
 
             Assert.assertTrue(nsb.getMemberScope().getFunctions(Name.identifier(PropertyCodegen.getterName(name))).isEmpty());
@@ -153,8 +153,8 @@ public class NamespaceComparator {
         }
 
         for (Name name : sorted(functionNames)) {
-            Set<FunctionDescriptor> fa = nsa.getMemberScope().getFunctions(name);
-            Set<FunctionDescriptor> fb = nsb.getMemberScope().getFunctions(name);
+            Collection<FunctionDescriptor> fa = nsa.getMemberScope().getFunctions(name);
+            Collection<FunctionDescriptor> fb = nsb.getMemberScope().getFunctions(name);
             compareDeclarationSets("Functions in package " + nsa, fa, fb, sb);
         }
 
@@ -162,8 +162,8 @@ public class NamespaceComparator {
     }
 
     private static void compareDeclarationSets(String message,
-            Set<? extends DeclarationDescriptor> a,
-            Set<? extends DeclarationDescriptor> b,
+            Collection<? extends DeclarationDescriptor> a,
+            Collection<? extends DeclarationDescriptor> b,
             @NotNull StringBuilder sb) {
         String at = serializedDeclarationSets(a);
         String bt = serializedDeclarationSets(b);

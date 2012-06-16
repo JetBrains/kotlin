@@ -49,7 +49,7 @@ public abstract class AbstractScopeAdapter implements JetScope {
 
     @NotNull
     @Override
-    public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
+    public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
         return getWorkerScope().getFunctions(name);
     }
 
@@ -70,13 +70,13 @@ public abstract class AbstractScopeAdapter implements JetScope {
 
     @NotNull
     @Override
-    public Set<ClassDescriptor> getObjectDescriptors() {
+    public Collection<ClassDescriptor> getObjectDescriptors() {
         return getWorkerScope().getObjectDescriptors();
     }
 
     @NotNull
     @Override
-    public Set<VariableDescriptor> getProperties(@NotNull Name name) {
+    public Collection<VariableDescriptor> getProperties(@NotNull Name name) {
         return getWorkerScope().getProperties(name);
     }
 

@@ -672,7 +672,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
             @NotNull
             @Override
-            public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
+            public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
                 Set<FunctionDescriptor> writableFunctionGroup = Sets.newLinkedHashSet();
                 for (String funDecl : FUNCTION_DECLARATIONS) {
                     FunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(this.getContainingDeclaration(), this, JetPsiFactory.createFunction(getProject(), funDecl), JetTestUtils.DUMMY_TRACE);

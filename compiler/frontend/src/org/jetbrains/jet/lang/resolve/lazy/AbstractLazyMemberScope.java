@@ -164,7 +164,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
     @NotNull
     @Override
-    public Set<ClassDescriptor> getObjectDescriptors() {
+    public Collection<ClassDescriptor> getObjectDescriptors() {
         throw new UnsupportedOperationException(); // TODO
     }
 

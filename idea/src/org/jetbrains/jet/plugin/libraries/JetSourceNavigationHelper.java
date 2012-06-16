@@ -50,6 +50,7 @@ import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -233,7 +234,7 @@ public class JetSourceNavigationHelper {
             }
 
             @Override
-            public Set<VariableDescriptor> getCandidatesFromScope(JetScope scope, Name name) {
+            public Collection<VariableDescriptor> getCandidatesFromScope(JetScope scope, Name name) {
                 return scope.getProperties(name);
             }
         });
@@ -275,7 +276,7 @@ public class JetSourceNavigationHelper {
             }
 
             @Override
-            public Set<FunctionDescriptor> getCandidatesFromScope(JetScope scope, Name name) {
+            public Collection<FunctionDescriptor> getCandidatesFromScope(JetScope scope, Name name) {
                 return scope.getFunctions(name);
             }
         });
@@ -284,6 +285,6 @@ public class JetSourceNavigationHelper {
     private interface Matcher<Decl extends JetDeclaration, Descr extends CallableDescriptor> {
         boolean areSame(Decl declaration, Descr descriptor);
 
-        Set<Descr> getCandidatesFromScope(JetScope scope, Name name);
+        Collection<Descr> getCandidatesFromScope(JetScope scope, Name name);
     }
 }

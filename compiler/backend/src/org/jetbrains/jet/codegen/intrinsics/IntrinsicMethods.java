@@ -220,7 +220,7 @@ public class IntrinsicMethods {
 
     private void declareIntrinsicProperty(Name className, Name methodName, IntrinsicMethod implementation) {
         final JetScope numberScope = getClassMemberScope(className);
-        Set<VariableDescriptor> properties = numberScope.getProperties(methodName);
+        Collection<VariableDescriptor> properties = numberScope.getProperties(methodName);
         assert properties.size() == 1;
         final VariableDescriptor property = properties.iterator().next();
         myMethods.put(property.getOriginal(), implementation);
@@ -228,7 +228,7 @@ public class IntrinsicMethods {
 
     private void declareIntrinsicFunction(Name className, Name functionName, int arity, IntrinsicMethod implementation, boolean original) {
         JetScope memberScope = getClassMemberScope(className);
-        final Set<FunctionDescriptor> group = memberScope.getFunctions(functionName);
+        final Collection<FunctionDescriptor> group = memberScope.getFunctions(functionName);
         for (FunctionDescriptor descriptor : group) {
             if (className.equals(descriptor.getContainingDeclaration().getName()) && descriptor.getValueParameters().size() == arity) {
                 myMethods.put(original ? descriptor.getOriginal() : descriptor, implementation);
@@ -236,7 +236,7 @@ public class IntrinsicMethods {
         }
     }
 
-    private void declareOverload(Set<FunctionDescriptor> group, int arity, IntrinsicMethod implementation) {
+    private void declareOverload(Collection<FunctionDescriptor> group, int arity, IntrinsicMethod implementation) {
         for (FunctionDescriptor descriptor : group) {
             if (descriptor.getValueParameters().size() == arity) {
                 myMethods.put(descriptor.getOriginal(), implementation);

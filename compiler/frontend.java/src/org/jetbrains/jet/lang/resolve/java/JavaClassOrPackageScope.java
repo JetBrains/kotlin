@@ -57,13 +57,13 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
 
     @NotNull
     @Override
-    public Set<VariableDescriptor> getProperties(@NotNull Name name) {
+    public Collection<VariableDescriptor> getProperties(@NotNull Name name) {
         return semanticServices.getDescriptorResolver().resolveFieldGroupByName(name, resolverScopeData);
     }
 
     @NotNull
     @Override
-    public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
+    public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
         return semanticServices.getDescriptorResolver().resolveFunctionGroup(name, resolverScopeData);
     }
 

@@ -66,7 +66,7 @@ public class SubstitutingScope implements JetScope {
     }
 
     @NotNull
-    private <D extends DeclarationDescriptor> Set<D> substitute(@NotNull Set<D> descriptors) {
+    private <D extends DeclarationDescriptor> Collection<D> substitute(@NotNull Collection<D> descriptors) {
         if (substitutor.isEmpty()) return descriptors;
         if (descriptors.isEmpty()) return descriptors;
 
@@ -83,7 +83,7 @@ public class SubstitutingScope implements JetScope {
 
     @NotNull
     @Override
-    public Set<VariableDescriptor> getProperties(@NotNull Name name) {
+    public Collection<VariableDescriptor> getProperties(@NotNull Name name) {
         return substitute(workerScope.getProperties(name));
     }
 
@@ -104,13 +104,13 @@ public class SubstitutingScope implements JetScope {
 
     @NotNull
     @Override
-    public Set<ClassDescriptor> getObjectDescriptors() {
+    public Collection<ClassDescriptor> getObjectDescriptors() {
         return substitute(workerScope.getObjectDescriptors());
     }
 
     @NotNull
     @Override
-    public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
+    public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
         return substitute(workerScope.getFunctions(name));
     }
 
