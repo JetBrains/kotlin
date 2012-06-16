@@ -1015,7 +1015,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         //    descriptor = ((VariableAsFunctionDescriptor) descriptor).getVariableDescriptor();
         //}
 
-        final IntrinsicMethod intrinsic = state.getInjector().getIntrinsics().getIntrinsic(descriptor);
+        IntrinsicMethod intrinsic = null;
+        if (descriptor instanceof CallableMemberDescriptor) {
+            intrinsic = state.getInjector().getIntrinsics().getIntrinsic((CallableMemberDescriptor) descriptor);
+        }
         if (intrinsic != null) {
             final Type expectedType = expressionType(expression);
             return intrinsic.generate(this, v, expectedType, expression, Collections.<JetExpression>emptyList(), receiver, state);

@@ -24,6 +24,8 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
@@ -72,7 +74,7 @@ public class IntrinsicMethods {
 
     private Project myProject;
     private JetStandardLibrary myStdLib;
-    private final Map<DeclarationDescriptor, IntrinsicMethod> myMethods = new HashMap<DeclarationDescriptor, IntrinsicMethod>();
+    private final Map<CallableMemberDescriptor, IntrinsicMethod> myMethods = new HashMap<CallableMemberDescriptor, IntrinsicMethod>();
     private final Map<String, IntrinsicMethod> namedMethods = new HashMap<String, IntrinsicMethod>();
     private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();
 
@@ -223,7 +225,7 @@ public class IntrinsicMethods {
         final JetScope numberScope = getClassMemberScope(className);
         Collection<VariableDescriptor> properties = numberScope.getProperties(methodName);
         assert properties.size() == 1;
-        final VariableDescriptor property = properties.iterator().next();
+        final PropertyDescriptor property = (PropertyDescriptor) properties.iterator().next();
         myMethods.put(property.getOriginal(), implementation);
     }
 
@@ -269,7 +271,8 @@ public class IntrinsicMethods {
         return null;
     }
 
-    public IntrinsicMethod getIntrinsic(DeclarationDescriptor descriptor) {
+    @Nullable
+    public IntrinsicMethod getIntrinsic(@NotNull CallableMemberDescriptor descriptor) {
         IntrinsicMethod intrinsicMethod = myMethods.get(descriptor.getOriginal());
         if (intrinsicMethod == null) {
             List<AnnotationDescriptor> annotations = descriptor.getAnnotations();

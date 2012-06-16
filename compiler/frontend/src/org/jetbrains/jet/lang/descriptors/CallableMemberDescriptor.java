@@ -28,6 +28,10 @@ public interface CallableMemberDescriptor extends CallableDescriptor, MemberDesc
     @Override
     Set<? extends CallableMemberDescriptor> getOverriddenDescriptors();
 
+    @NotNull
+    @Override
+    CallableMemberDescriptor getOriginal();
+
     void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overridden);
 
     enum Kind {
