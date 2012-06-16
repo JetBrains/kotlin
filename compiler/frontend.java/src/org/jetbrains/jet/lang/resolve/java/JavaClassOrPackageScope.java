@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.NamePredicate;
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicateUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
@@ -60,13 +61,13 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
     @NotNull
     @Override
     public Collection<VariableDescriptor> getProperties(@NotNull Name name) {
-        return semanticServices.getDescriptorResolver().resolveFieldGroupByName(name, resolverScopeData);
+        return semanticServices.getDescriptorResolver().resolveFieldGroup(resolverScopeData, NamePredicate.exact(name));
     }
 
     @NotNull
     @Override
     public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
-        return semanticServices.getDescriptorResolver().resolveFunctionGroup(name, resolverScopeData);
+        return semanticServices.getDescriptorResolver().resolveMethods(resolverScopeData, NamePredicate.exact(name));
     }
 
     @NotNull
@@ -76,9 +77,9 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
             allDescriptors = Sets.newHashSet();
 
             if (resolverScopeData.psiClass != null) {
-                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(resolverScopeData));
+                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(resolverScopeData, NamePredicate.all()));
 
-                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(resolverScopeData));
+                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(resolverScopeData, NamePredicate.all()));
 
                 // TODO: Trying to hack the situation when we produce namespace descriptor for java class and still want to see inner classes
                 if (getContainingDeclaration() instanceof JavaNamespaceDescriptor) {

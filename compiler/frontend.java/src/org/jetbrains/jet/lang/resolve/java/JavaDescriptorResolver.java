@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.NamePredicate;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -1143,33 +1144,12 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
     }
 
-    public Set<VariableDescriptor> resolveFieldGroupByName(@NotNull Name fieldName, @NotNull ResolverScopeData scopeData) {
-
-        if (scopeData.psiClass == null) {
-            return Collections.emptySet();
-        }
-
-        getResolverScopeData(scopeData);
-
-        NamedMembers namedMembers = scopeData.namedMembersMap.get(fieldName);
-        if (namedMembers == null) {
-            return Collections.emptySet();
-        }
-
-        resolveNamedGroupProperties(scopeData.classOrNamespaceDescriptor, scopeData, namedMembers, fieldName,
-                "class or namespace " + scopeData.psiClass.getQualifiedName());
-
-        return namedMembers.propertyDescriptors;
-    }
-    
     @NotNull
-    public Set<VariableDescriptor> resolveFieldGroup(@NotNull ResolverScopeData scopeData) {
-
-        getResolverScopeData(scopeData);
+    public Set<VariableDescriptor> resolveFieldGroup(@NotNull ResolverScopeData scopeData, @NotNull NamePredicate predicate) {
 
         Set<VariableDescriptor> descriptors = Sets.newHashSet();
-        Map<Name, NamedMembers> membersForProperties = scopeData.namedMembersMap;
-        for (Map.Entry<Name, NamedMembers> entry : membersForProperties.entrySet()) {
+
+        for (Map.Entry<Name, NamedMembers> entry : getNamedMemberss(scopeData, predicate)) {
             NamedMembers namedMembers = entry.getValue();
             Name propertyName = entry.getKey();
 
@@ -1510,26 +1490,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
     }
 
-    @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroup(@NotNull Name methodName, @NotNull ResolverScopeData scopeData) {
-
-        getResolverScopeData(scopeData);
-
-        Map<Name, NamedMembers> namedMembersMap = scopeData.namedMembersMap;
-
-        NamedMembers namedMembers = namedMembersMap.get(methodName);
-        if (namedMembers != null && namedMembers.methods != null) {
-            TypeSubstitutor typeSubstitutor = typeSubstitutorForGenericSupertypes(scopeData);
-
-            resolveNamedGroupFunctions(scopeData.classOrNamespaceDescriptor, scopeData.psiClass, typeSubstitutor, namedMembers, methodName, scopeData);
-
-            return namedMembers.functionDescriptors;
-        }
-        else {
-            return Collections.emptySet();
-        }
-    }
-
     private TypeSubstitutor createSubstitutorForGenericSupertypes(@Nullable ClassDescriptor classDescriptor) {
         TypeSubstitutor typeSubstitutor;
         if (classDescriptor != null) {
@@ -1729,18 +1689,56 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return annotation;
     }
 
-    public List<FunctionDescriptor> resolveMethods(@NotNull ResolverScopeData scopeData) {
 
+    private Collection<Map.Entry<Name, NamedMembers>> getNamedMemberss(@NotNull ResolverScopeData scopeData, @NotNull NamePredicate predicate) {
         getResolverScopeData(scopeData);
+
+        Name exact = predicate.getExact();
+
+        if (predicate.isAll()) {
+            return scopeData.namedMembersMap.entrySet();
+        }
+        else if (exact != null) {
+            NamedMembers namedMembers = scopeData.namedMembersMap.get(exact);
+            if (namedMembers != null) {
+                return Collections.<Map.Entry<Name, NamedMembers>>singletonList(
+                        new AbstractMap.SimpleEntry<Name, NamedMembers>(exact, namedMembers));
+            }
+            else {
+                return null;
+            }
+        }
+        else {
+            Collection<Map.Entry<Name, NamedMembers>> r = Lists.newArrayList();
+            for (Map.Entry<Name, NamedMembers> e : scopeData.namedMembersMap.entrySet()) {
+                Name methodName = e.getKey();
+                NamedMembers namedMembers = e.getValue();
+                if (predicate.matches(methodName)) {
+                    r.add(new AbstractMap.SimpleEntry<Name, NamedMembers>(exact, namedMembers));
+                }
+            }
+            return r;
+        }
+    }
+
+
+    @NotNull
+    public List<FunctionDescriptor> resolveMethods(@NotNull ResolverScopeData scopeData, @NotNull NamePredicate predicate) {
 
         TypeSubstitutor substitutorForGenericSupertypes = typeSubstitutorForGenericSupertypes(scopeData);
 
         List<FunctionDescriptor> functions = new ArrayList<FunctionDescriptor>();
 
-        for (Map.Entry<Name, NamedMembers> entry : scopeData.namedMembersMap.entrySet()) {
+        for (Map.Entry<Name, NamedMembers> entry : getNamedMemberss(scopeData, predicate)) {
             Name methodName = entry.getKey();
             NamedMembers namedMembers = entry.getValue();
-            resolveNamedGroupFunctions(scopeData.classOrNamespaceDescriptor, scopeData.psiClass, substitutorForGenericSupertypes, namedMembers, methodName, scopeData);
+            resolveNamedGroupFunctions(
+                    scopeData.classOrNamespaceDescriptor,
+                    scopeData.psiClass,
+                    substitutorForGenericSupertypes,
+                    namedMembers,
+                    methodName,
+                    scopeData);
             functions.addAll(namedMembers.functionDescriptors);
         }
 
