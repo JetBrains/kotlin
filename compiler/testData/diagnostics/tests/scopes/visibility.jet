@@ -1,6 +1,9 @@
 //FILE:a.kt
 package test_visibility
 
+<!PACKAGE_MEMBER_CANNOT_BE_PROTECTED!>protected<!> class ProtectedClass
+<!PACKAGE_MEMBER_CANNOT_BE_PROTECTED!>protected<!> trait ProtectedTrait
+
 <!PACKAGE_MEMBER_CANNOT_BE_PROTECTED!>protected<!> val protected_val : Int = 4
 <!PACKAGE_MEMBER_CANNOT_BE_PROTECTED!>protected<!> fun protected_fun() {}
 
