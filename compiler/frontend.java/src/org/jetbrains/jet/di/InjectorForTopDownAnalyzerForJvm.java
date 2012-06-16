@@ -49,6 +49,7 @@ import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
 import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorSignatureResolver;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -92,6 +93,7 @@ public class InjectorForTopDownAnalyzerForJvm {
     private ScriptBodyResolver scriptBodyResolver;
     private JavaSemanticServices javaSemanticServices;
     private JavaTypeTransformer javaTypeTransformer;
+    private JavaDescriptorSignatureResolver javaDescriptorSignatureResolver;
 
     public InjectorForTopDownAnalyzerForJvm(
         @NotNull Project project,
@@ -132,6 +134,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.javaSemanticServices = new JavaSemanticServices();
         this.javaTypeTransformer = new JavaTypeTransformer();
+        this.javaDescriptorSignatureResolver = new JavaDescriptorSignatureResolver();
 
         this.topDownAnalyzer.setBodyResolver(bodyResolver);
         this.topDownAnalyzer.setContext(topDownAnalysisContext);
@@ -169,6 +172,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.javaBridgeConfiguration.setMode(compilerSpecialMode);
         this.javaBridgeConfiguration.setProject(project);
 
+        javaDescriptorResolver.setJavaDescriptorSignatureResolver(javaDescriptorSignatureResolver);
         javaDescriptorResolver.setNamespaceFactory(namespaceFactory);
         javaDescriptorResolver.setProject(project);
         javaDescriptorResolver.setPsiClassFinder(psiClassFinderForJvm);
@@ -245,6 +249,9 @@ public class InjectorForTopDownAnalyzerForJvm {
 
         javaTypeTransformer.setJavaSemanticServices(javaSemanticServices);
         javaTypeTransformer.setResolver(javaDescriptorResolver);
+
+        javaDescriptorSignatureResolver.setJavaDescriptorResolver(javaDescriptorResolver);
+        javaDescriptorSignatureResolver.setJavaSemanticServices(javaSemanticServices);
 
         javaBridgeConfiguration.init();
 

@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorSignatureResolver;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import com.intellij.openapi.project.Project;
@@ -46,6 +47,7 @@ public class InjectorForJavaSemanticServices {
     private CompilerSpecialMode compilerSpecialMode;
     private final Project project;
     private JavaTypeTransformer javaTypeTransformer;
+    private JavaDescriptorSignatureResolver javaDescriptorSignatureResolver;
     private NamespaceFactoryImpl namespaceFactory;
 
     public InjectorForJavaSemanticServices(
@@ -62,6 +64,7 @@ public class InjectorForJavaSemanticServices {
         this.compilerSpecialMode = compilerDependencies.getCompilerSpecialMode();
         this.project = project;
         this.javaTypeTransformer = new JavaTypeTransformer();
+        this.javaDescriptorSignatureResolver = new JavaDescriptorSignatureResolver();
         this.namespaceFactory = new NamespaceFactoryImpl();
 
         this.javaSemanticServices.setDescriptorResolver(javaDescriptorResolver);
@@ -69,6 +72,7 @@ public class InjectorForJavaSemanticServices {
         this.javaSemanticServices.setTrace(bindingTrace);
         this.javaSemanticServices.setTypeTransformer(javaTypeTransformer);
 
+        this.javaDescriptorResolver.setJavaDescriptorSignatureResolver(javaDescriptorSignatureResolver);
         this.javaDescriptorResolver.setNamespaceFactory(namespaceFactory);
         this.javaDescriptorResolver.setProject(project);
         this.javaDescriptorResolver.setPsiClassFinder(psiClassFinderForJvm);
@@ -84,6 +88,9 @@ public class InjectorForJavaSemanticServices {
 
         javaTypeTransformer.setJavaSemanticServices(javaSemanticServices);
         javaTypeTransformer.setResolver(javaDescriptorResolver);
+
+        javaDescriptorSignatureResolver.setJavaDescriptorResolver(javaDescriptorResolver);
+        javaDescriptorSignatureResolver.setJavaSemanticServices(javaSemanticServices);
 
         namespaceFactory.setConfiguration(javaBridgeConfiguration);
         namespaceFactory.setModuleDescriptor(moduleDescriptor);
