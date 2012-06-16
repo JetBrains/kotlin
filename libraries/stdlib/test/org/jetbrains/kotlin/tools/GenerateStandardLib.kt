@@ -63,7 +63,9 @@ fun main(args: Array<String>) {
 
     // JLangIterables - Generic iterable stuff
     generateFile(File(outDir, "ArraysFromJLangIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterables.kt")) {
-        it.replaceAll("java.lang.Iterable<T", "Array<T").replaceAll("java.lang.Iterable<T", "Array<T")
+        it.replaceAll("java.lang.Iterable<T", "Array<T").
+            replaceAll("java.lang.Iterable<T", "Array<T").
+            replaceAll("iterator.hasNext\\(\\)", "iterator.hasNext")
     }
     generateFile(File(outDir, "ArraysFromJLangIterablesLazy.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterablesLazy.kt")) {
         it.replaceAll("java.lang.Iterable<T", "Array<T").replaceAll("java.lang.Iterable<T", "Array<T")
@@ -73,7 +75,8 @@ fun main(args: Array<String>) {
             replaceGenerics(arrayName, it.replaceAll("<T> java.lang.Iterable<T>", "${arrayName}Array").
             replaceAll("<T> java.lang.Iterable<T\\?>", "${arrayName}Array").
             replaceAll("java.lang.Iterable<T\\?>", "${arrayName}Array").
-            replaceAll("java.lang.Iterable<T>", "${arrayName}Array"))
+            replaceAll("java.lang.Iterable<T>", "${arrayName}Array")).
+            replaceAll("iterator.hasNext\\(\\)", "iterator.hasNext")
         }
 
         generateFile(File(outDir, "${arrayName}ArraysFromJLangIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterables.kt")) {
@@ -85,7 +88,8 @@ fun main(args: Array<String>) {
     }
 
     generateFile(File(outDir, "StandardFromJLangIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterables.kt")) {
-        it.replaceAll("java.lang.Iterable<T", "Iterable<T")
+        it.replaceAll("java.lang.Iterable<T", "Iterable<T").
+            replaceAll("iterator.hasNext\\(\\)", "iterator.hasNext")
     }
     generateFile(File(outDir, "StandardFromJLangIterablesLazy.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterablesLazy.kt")) {
         it.replaceAll("java.lang.Iterable<T", "Iterable<T")
