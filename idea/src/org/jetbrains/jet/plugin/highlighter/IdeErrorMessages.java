@@ -111,7 +111,7 @@ public class IdeErrorMessages {
                     @NotNull
                     @Override
                     public String render(@NotNull CallableMemberDescriptor object) {
-                        return DescriptorRenderer.TEXT.renderType(object.getReturnType());
+                        return DescriptorRenderer.HTML.renderType(object.getReturnType());
                     }
                 }, DescriptorRenderer.HTML);
 
