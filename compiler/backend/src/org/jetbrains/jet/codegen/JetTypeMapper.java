@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.google.common.collect.Maps;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,12 +30,15 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibraryNames;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
+import org.jetbrains.jet.lang.types.ref.ClassName;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
@@ -63,17 +67,12 @@ public class JetTypeMapper {
     public static final Type ARRAY_GENERIC_TYPE = Type.getType(Object[].class);
     public static final Type TUPLE0_TYPE = Type.getObjectType("jet/Tuple0");
 
-    private JetStandardLibrary standardLibrary;
+    private JetStandardLibrary standardLibrary1;
     public BindingContext bindingContext;
     private ClosureAnnotator closureAnnotator;
     private CompilerSpecialMode compilerSpecialMode;
     private ClassBuilderMode classBuilderMode;
 
-
-    @Inject
-    public void setStandardLibrary(JetStandardLibrary standardLibrary) {
-        this.standardLibrary = standardLibrary;
-    }
 
     @Inject
     public void setBindingContext(BindingContext bindingContext) {
@@ -111,7 +110,39 @@ public class JetTypeMapper {
         return closureAnnotator;
     }
 
-    private final HashMap<JetType,Type> knowTypes = new HashMap<JetType, Type>();
+    private static final class KnownTypeKey {
+        @NotNull
+        private final FqNameUnsafe className;
+        private final boolean nullable;
+
+        private KnownTypeKey(@NotNull FqNameUnsafe className, boolean nullable) {
+            this.className = className;
+            this.nullable = nullable;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            KnownTypeKey that = (KnownTypeKey) o;
+
+            if (nullable != that.nullable) return false;
+            if (!className.equals(that.className)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = className.hashCode();
+            result = 31 * result + (nullable ? 1 : 0);
+            return result;
+        }
+    }
+
+    private final HashMap<KnownTypeKey, Type> knowTypes = Maps.newHashMap();
+
 
     public static final Type TYPE_ITERATOR = Type.getObjectType("jet/Iterator");
     public static final Type TYPE_INT_RANGE = Type.getObjectType("jet/IntRange");
@@ -370,7 +401,16 @@ public class JetTypeMapper {
 
     @NotNull
     public Type mapType(JetType jetType, @Nullable BothSignatureWriter signatureVisitor, @NotNull MapTypeMode kind) {
-        Type known = knowTypes.get(jetType);
+        Type known = null;
+        ClassifierDescriptor classifier = jetType.getConstructor().getDeclarationDescriptor();
+
+        if (compilerSpecialMode != CompilerSpecialMode.BUILTINS) {
+            if (classifier instanceof ClassDescriptor) {
+                KnownTypeKey key = new KnownTypeKey(DescriptorUtils.getFQName(classifier), jetType.isNullable());
+                known = knowTypes.get(key);
+            }
+        }
+
         if (known != null) {
             if (kind == MapTypeMode.VALUE) {
                 return mapKnownAsmType(jetType, known, signatureVisitor, false);
@@ -415,7 +455,9 @@ public class JetTypeMapper {
             return asmType;
         }
 
-        if (standardLibrary.getArray().equals(descriptor)) {
+        if (descriptor instanceof ClassDescriptor
+                && JetStandardLibraryNames.ARRAY.is((ClassDescriptor) descriptor)
+                && compilerSpecialMode != CompilerSpecialMode.BUILTINS) {
             if (jetType.getArguments().size() != 1) {
                 throw new UnsupportedOperationException("arrays must have one type argument");
             }
@@ -451,7 +493,7 @@ public class JetTypeMapper {
             Type asmType;
             boolean forceReal;
 
-            if (standardLibrary.getComparable().equals(descriptor)) {
+            if (JetStandardLibraryNames.COMPARABLE.is((ClassDescriptor) descriptor) && compilerSpecialMode != CompilerSpecialMode.BUILTINS) {
                 if (jetType.getArguments().size() != 1) {
                     throw new UnsupportedOperationException("Comparable must have one type argument");
                 }
@@ -549,8 +591,7 @@ public class JetTypeMapper {
     }
 
     public CallableMethod mapToCallableMethod(FunctionDescriptor functionDescriptor, boolean superCall, OwnerKind kind) {
-        if (functionDescriptor == null)
-            return null;
+        if (functionDescriptor == null) { return null; }
 
         final DeclarationDescriptor functionParent = functionDescriptor.getOriginal().getContainingDeclaration();
 
@@ -976,28 +1017,27 @@ public class JetTypeMapper {
         return result;
     }
 
+    private void registerKnownType(@NotNull ClassName className, @NotNull Type nonNullType, @NotNull Type nullableType) {
+        knowTypes.put(new KnownTypeKey(className.getFqName().toUnsafe(), true), nullableType);
+        knowTypes.put(new KnownTypeKey(className.getFqName().toUnsafe(), false), nonNullType);
+    }
+
     private void initKnownTypes() {
-        knowTypes.put(JetStandardClasses.getNothingType(), TYPE_NOTHING);
-        knowTypes.put(JetStandardClasses.getNullableNothingType(), TYPE_NOTHING);
-        
+        registerKnownType(JetStandardLibraryNames.NOTHING, TYPE_NOTHING, TYPE_NOTHING);
+
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
             PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-            knowTypes.put(standardLibrary.getPrimitiveJetType(primitiveType), jvmPrimitiveType.getAsmType());
-            knowTypes.put(standardLibrary.getNullablePrimitiveJetType(primitiveType), jvmPrimitiveType.getWrapper().getAsmType());
+            registerKnownType(primitiveType.getClassName(), jvmPrimitiveType.getAsmType(), jvmPrimitiveType.getWrapper().getAsmType());
         }
 
-        knowTypes.put(standardLibrary.getNumberType(),JL_NUMBER_TYPE);
-        knowTypes.put(standardLibrary.getStringType(),JL_STRING_TYPE);
-        knowTypes.put(standardLibrary.getNullableStringType(),JL_STRING_TYPE);
-        knowTypes.put(standardLibrary.getCharSequenceType(),JL_CHAR_SEQUENCE_TYPE);
-        knowTypes.put(standardLibrary.getNullableCharSequenceType(),JL_CHAR_SEQUENCE_TYPE);
-        knowTypes.put(standardLibrary.getThrowableType(), TYPE_THROWABLE);
-        knowTypes.put(standardLibrary.getNullableThrowableType(), TYPE_THROWABLE);
+        registerKnownType(JetStandardLibraryNames.NUMBER, JL_NUMBER_TYPE, JL_NUMBER_TYPE);
+        registerKnownType(JetStandardLibraryNames.STRING, JL_STRING_TYPE, JL_STRING_TYPE);
+        registerKnownType(JetStandardLibraryNames.CHAR_SEQUENCE, JL_CHAR_SEQUENCE_TYPE, JL_CHAR_SEQUENCE_TYPE);
+        registerKnownType(JetStandardLibraryNames.THROWABLE, TYPE_THROWABLE, TYPE_THROWABLE);
 
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
             PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-            knowTypes.put(standardLibrary.getPrimitiveArrayJetType(primitiveType), jvmPrimitiveType.getAsmArrayType());
-            knowTypes.put(standardLibrary.getNullablePrimitiveArrayJetType(primitiveType), jvmPrimitiveType.getAsmArrayType());
+            registerKnownType(primitiveType.getArrayClassName(), jvmPrimitiveType.getAsmArrayType(), jvmPrimitiveType.getAsmArrayType());
         }
     }
     
@@ -1010,11 +1050,13 @@ public class JetTypeMapper {
 
     public boolean isGenericsArray(JetType type) {
         DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
-        if (declarationDescriptor instanceof TypeParameterDescriptor)
+        if (declarationDescriptor instanceof TypeParameterDescriptor) {
             return true;
+        }
 
-        if (standardLibrary.getArray().equals(declarationDescriptor))
+        if (JetStandardLibraryNames.ARRAY.is(type)) {
             return isGenericsArray(type.getArguments().get(0).getType());
+        }
 
         return false;
     }

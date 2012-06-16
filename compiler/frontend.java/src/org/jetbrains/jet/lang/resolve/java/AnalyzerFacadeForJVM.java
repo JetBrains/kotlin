@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -133,7 +132,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
                                                         new CachedBodiesResolveContext(injector.getTopDownAnalysisContext()) :
                                                         null;
-            return AnalyzeExhaust.success(bindingTraceContext.getBindingContext(), JetStandardLibrary.getInstance(), bodiesResolveContext);
+            return AnalyzeExhaust.success(bindingTraceContext.getBindingContext(), bodiesResolveContext);
         } finally {
             injector.destroy();
         }

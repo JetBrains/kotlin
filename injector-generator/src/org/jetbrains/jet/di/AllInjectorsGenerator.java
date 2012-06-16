@@ -164,7 +164,6 @@ public class AllInjectorsGenerator {
 
     private static void generateInjectorForJvmCodegen() throws IOException {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
-        generator.addPublicParameter(JetStandardLibrary.class);
         generator.addParameter(BindingContext.class);
         generator.addParameter(DiType.listOf(JetFile.class));
         generator.addParameter(Project.class);
@@ -184,7 +183,6 @@ public class AllInjectorsGenerator {
 
     private static void generateInjectorForJetTypeMapper() throws IOException {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
-        generator.addParameter(JetStandardLibrary.class);
         generator.addParameter(BindingContext.class);
         generator.addParameter(DiType.listOf(JetFile.class));
         generator.addPublicField(JetTypeMapper.class);

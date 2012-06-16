@@ -72,7 +72,7 @@ public class GenerationState {
         this.files = files;
         this.classBuilderMode = builderFactory.getClassBuilderMode();
         this.injector = new InjectorForJvmCodegen(
-                analyzeExhaust.getStandardLibrary(), analyzeExhaust.getBindingContext(),
+                analyzeExhaust.getBindingContext(),
                 this.files, project, compilerSpecialMode, builderFactory.getClassBuilderMode(), this, builderFactory);
     }
 

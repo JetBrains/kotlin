@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -109,7 +110,7 @@ public abstract class ClassBodyCodegen {
                             if (!propertyDescriptor.isVar()) {
                                 modifiers |= Opcodes.ACC_FINAL;
                             }
-                            if (state.getInjector().getJetStandardLibrary().isVolatile(propertyDescriptor)) {
+                            if (JetStandardLibrary.isVolatile(propertyDescriptor)) {
                                 modifiers |= Opcodes.ACC_VOLATILE;
                             }
                             Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);

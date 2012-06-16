@@ -57,7 +57,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.utils.Progress;
@@ -212,7 +211,7 @@ public class ReplInterpreter {
         }
 
         GenerationState generationState = new GenerationState(jetCoreEnvironment.getProject(), ClassBuilderFactories.binaries(false), backendProgress,
-                AnalyzeExhaust.success(trace.getBindingContext(), JetStandardLibrary.getInstance()), Collections.singletonList(psiFile),
+                AnalyzeExhaust.success(trace.getBindingContext()), Collections.singletonList(psiFile),
                 jetCoreEnvironment.getCompilerDependencies().getCompilerSpecialMode());
         generationState.compileScript(psiFile.getScript(), scriptClassName, earierScripts, CompilationErrorHandler.THROW_EXCEPTION);
 

@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.types.lang;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.ref.ClassName;
 
 /**
  * @author Stepan Koltsov
@@ -36,10 +37,14 @@ public enum PrimitiveType {
     
     private final Name typeName;
     private final Name arrayTypeName;
+    private final ClassName className;
+    private final ClassName arrayClassName;
 
     private PrimitiveType(String typeName) {
         this.typeName = Name.identifier(typeName);
         this.arrayTypeName = Name.identifier(typeName + "Array");
+        this.className = new ClassName(JetStandardClasses.STANDARD_CLASSES_FQNAME.child(this.typeName), 0);
+        this.arrayClassName = new ClassName(JetStandardClasses.STANDARD_CLASSES_FQNAME.child(this.arrayTypeName), 0);
     }
 
     @NotNull
@@ -50,5 +55,15 @@ public enum PrimitiveType {
     @NotNull
     public Name getArrayTypeName() {
         return arrayTypeName;
+    }
+
+    @NotNull
+    public ClassName getClassName() {
+        return className;
+    }
+
+    @NotNull
+    public ClassName getArrayClassName() {
+        return arrayClassName;
     }
 }

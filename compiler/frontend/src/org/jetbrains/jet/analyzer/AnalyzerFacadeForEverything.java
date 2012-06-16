@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.List;
 
@@ -51,7 +50,7 @@ public class AnalyzerFacadeForEverything {
 
         try {
             injector.getBodyResolver().resolveBodies(bodiesResolveContext);
-            return AnalyzeExhaust.success(traceContext.getBindingContext(), JetStandardLibrary.getInstance());
+            return AnalyzeExhaust.success(traceContext.getBindingContext());
         } finally {
             injector.destroy();
         }

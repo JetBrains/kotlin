@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ScriptReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibraryNames;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -517,7 +518,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         protected void generateCondition(Type asmParamType, Label end) {
-            Type arrayElParamType = state.getInjector().getJetStandardLibrary().getArray().equals(expressionType.getConstructor().getDeclarationDescriptor()) ? boxType(asmParamType): asmParamType;
+            Type arrayElParamType;
+            if (JetStandardLibraryNames.ARRAY.is(expressionType)) {
+                arrayElParamType = boxType(asmParamType);
+            }
+            else {
+                arrayElParamType = asmParamType;
+            }
 
             v.load(myIndexVar, Type.INT_TYPE);
             v.load(myArrayVar, TYPE_OBJECT);
@@ -2494,7 +2501,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             args.add(va.getArgumentExpression());
         args.addAll(expression.getFunctionLiteralArguments());
 
-        boolean isArray = state.getInjector().getJetStandardLibrary().getArray().equals(arrayType.getConstructor().getDeclarationDescriptor());
+        boolean isArray = JetStandardLibraryNames.ARRAY.is(arrayType);
         if (isArray) {
 //            if (args.size() != 2 && !arrayType.getArguments().get(0).getType().isNullable()) {
 //                throw new CompilationException("array constructor of non-nullable type requires two arguments");
@@ -2573,13 +2580,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         final List<JetExpression> indices = expression.getIndexExpressions();
         FunctionDescriptor operationDescriptor = (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
         assert operationDescriptor != null;
-        if (arrayType.getSort() == Type.ARRAY && indices.size() == 1 && operationDescriptor.getValueParameters().get(0).getType().equals(state.getInjector().getJetStandardLibrary().getIntType())) {
+        if (arrayType.getSort() == Type.ARRAY && indices.size() == 1 && JetStandardLibraryNames.INT.is(operationDescriptor.getValueParameters().get(0).getType())) {
             gen(array, arrayType);
             for (JetExpression index : indices) {
                 gen(index, Type.INT_TYPE);
             }
             assert type != null;
-            if (state.getInjector().getJetStandardLibrary().getArray().equals(type.getConstructor().getDeclarationDescriptor())) {
+            if (JetStandardLibraryNames.ARRAY.is(type)) {
                 JetType elementType = type.getArguments().get(0).getType();
                 Type notBoxed = asmType(elementType);
                 return StackValue.arrayElement(notBoxed, true);

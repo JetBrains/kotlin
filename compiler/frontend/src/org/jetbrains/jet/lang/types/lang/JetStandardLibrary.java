@@ -502,11 +502,13 @@ public class JetStandardLibrary {
         return volatileType;
     }
 
-    public final boolean isVolatile(PropertyDescriptor descriptor) {
+    public static boolean isVolatile(PropertyDescriptor descriptor) {
         List<AnnotationDescriptor> annotations = descriptor.getOriginal().getAnnotations();
         if (annotations != null) {
             for(AnnotationDescriptor d: annotations) {
-                if (d.getType().equals(getVolatileType())) { return true; }
+                if (JetStandardLibraryNames.VOLATILE.is(d.getType())) {
+                    return true;
+                }
             }
         }
         return false;

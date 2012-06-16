@@ -24,6 +24,8 @@ import java.util.List;
 
 /**
  * @author Stepan Koltsov
+ *
+ * @see ClassName
  */
 public class JetTypeName {
     // generic types one day
