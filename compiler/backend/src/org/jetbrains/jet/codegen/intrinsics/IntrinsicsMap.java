@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen.intrinsics;
 
 import com.google.common.collect.Maps;
-import com.sun.javaws.jnl.PropertyDesc;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
