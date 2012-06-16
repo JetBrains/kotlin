@@ -695,7 +695,32 @@ public class LazyResolveNamespaceComparingTestGenerated {
         public void testTuple0() throws Exception {
             doTestSinglePackage("compiler/testData/readKotlinBinaryClass/type/Tuple0.kt");
         }
-        
+
+        @Test
+        public void testInternalClass() throws Exception {
+            doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/InternalClass.kt");
+        }
+
+        @Test
+        public void testInternalConstructor() throws Exception {
+            doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/InternalConstructor.kt");
+        }
+
+        @Test
+        public void testInternalTopLevelMembers() throws Exception {
+            doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/InternalTopLevelMembers.kt");
+        }
+
+        @Test
+        public void testInternalTraitMembers() throws Exception {
+            doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/InternalTraitMembers.kt");
+        }
+
+        @Test
+        public void testInternalTraitMembersInherited() throws Exception {
+            doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/InternalTraitMembersInherited.kt");
+        }
+
         public static void allTestsPresent(Class<?> clazz, File testDataDir, boolean recursive) {
             Set<String> methodNames = new HashSet<String>();
             for (Method method : clazz.getDeclaredMethods()) {

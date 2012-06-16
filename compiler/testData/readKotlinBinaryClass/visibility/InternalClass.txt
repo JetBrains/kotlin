@@ -1,0 +1,5 @@
+namespace test
+
+internal final class test.InternalClass : jet.Any {
+    public final /*constructor*/ fun <init>(): test.InternalClass
+}
