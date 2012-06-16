@@ -1,5 +1,5 @@
 package java.lang
 
 public trait Iterable<T> {
-    fun iterator() : java.util.Iterator<T>
+    public fun iterator() : java.util.Iterator<T>
 }
