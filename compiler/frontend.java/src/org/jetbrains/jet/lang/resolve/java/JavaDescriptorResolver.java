@@ -899,7 +899,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             if (resolved != null && JvmStdlibNames.JET_OBJECT.getFqName().equalsTo(resolved.getQualifiedName())) {
                 continue;
             }
-            if (resolved != null && annotation && resolved.getQualifiedName().equals("java.lang.annotation.Annotation")) {
+            if (resolved != null && annotation && JdkNames.JLA_ANNOTATION.getFqName().equalsTo(resolved.getQualifiedName())) {
                 continue;
             }
             

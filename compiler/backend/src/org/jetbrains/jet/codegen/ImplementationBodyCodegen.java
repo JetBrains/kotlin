@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.java.JdkNames;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
@@ -92,7 +93,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 isAbstract = true;
                 isInterface = true;
                 isAnnotation = true;
-                signature.getInterfaces().add("java/lang/annotation/Annotation");
+                signature.getInterfaces().add(JdkNames.JLA_ANNOTATION.getInternalName());
             }
             if (!jetClass.hasModifier(JetTokens.OPEN_KEYWORD) && !isAbstract) {
                 isFinal = true;
