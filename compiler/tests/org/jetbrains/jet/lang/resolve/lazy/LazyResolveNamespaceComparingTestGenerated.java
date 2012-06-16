@@ -697,6 +697,12 @@ public class LazyResolveNamespaceComparingTestGenerated {
         }
 
         @Test
+        public void testInternalAbstractTraitMembersOverridden() throws Exception {
+            //TODO Disabled until lazy resolve supports inherited visibility (KT-2285)
+            //doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/InternalAbstractTraitMembersOverridden.kt");
+        }
+
+        @Test
         public void testInternalClass() throws Exception {
             doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/InternalClass.kt");
         }

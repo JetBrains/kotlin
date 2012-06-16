@@ -1,0 +1,13 @@
+namespace test
+
+internal abstract trait test.A : jet.Any {
+    internal abstract fun f(): jet.Int
+    internal abstract val v: jet.Int
+    public abstract var p: jet.Int
+}
+internal final class test.B : test.A {
+    internal open override /*1*/ fun f(): jet.Int
+    internal open override /*1*/ val v: jet.Int
+    public final /*constructor*/ fun <init>(): test.B
+    public open override /*1*/ var p: jet.Int
+}
