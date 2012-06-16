@@ -98,7 +98,6 @@ public class JetTypeMapper {
     @PostConstruct
     public void init() {
         initKnownTypes();
-        initKnownTypeNames();
     }
 
 
@@ -112,7 +111,6 @@ public class JetTypeMapper {
         return closureAnnotator;
     }
 
-    private final HashMap<JetType,String> knowTypeNames = new HashMap<JetType, String>();
     private final HashMap<JetType,Type> knowTypes = new HashMap<JetType, Type>();
 
     public static final Type TYPE_ITERATOR = Type.getObjectType("jet/Iterator");
@@ -976,24 +974,6 @@ public class JetTypeMapper {
             result.add(mapType(classDescriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName());
         }
         return result;
-    }
-
-    private void initKnownTypeNames() {
-        knowTypeNames.put(JetStandardClasses.getAnyType(), "ANY_TYPE_INFO");
-        knowTypeNames.put(JetStandardClasses.getNullableAnyType(), "NULLABLE_ANY_TYPE_INFO");
-        
-        for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
-            PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-            knowTypeNames.put(standardLibrary.getPrimitiveJetType(primitiveType), jvmPrimitiveType.name() + "_TYPE_INFO");
-            knowTypeNames.put(standardLibrary.getNullablePrimitiveJetType(primitiveType), "NULLABLE_" + jvmPrimitiveType.name() + "_TYPE_INFO");
-            knowTypeNames.put(standardLibrary.getPrimitiveArrayJetType(primitiveType), jvmPrimitiveType.name() + "_ARRAY_TYPE_INFO");
-            knowTypeNames.put(standardLibrary.getNullablePrimitiveArrayJetType(primitiveType), jvmPrimitiveType.name() + "_ARRAY_TYPE_INFO");
-        }
-        
-        knowTypeNames.put(standardLibrary.getStringType(),"STRING_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getNullableStringType(),"NULLABLE_STRING_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getTuple0Type(),"TUPLE0_TYPE_INFO");
-        knowTypeNames.put(standardLibrary.getNullableTuple0Type(),"NULLABLE_TUPLE0_TYPE_INFO");
     }
 
     private void initKnownTypes() {
