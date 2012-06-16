@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -29,8 +30,8 @@ import java.util.Collections;
 public class ModuleDescriptor extends DeclarationDescriptorImpl implements ClassOrNamespaceDescriptor, NamespaceDescriptorParent {
     private NamespaceDescriptor rootNamepsace;
 
-    public ModuleDescriptor(Name name) {
-        super(null, Collections.<AnnotationDescriptor>emptyList(), name);
+    public ModuleDescriptor(@NotNull Name name) {
+        super(Collections.<AnnotationDescriptor>emptyList(), name);
         if (!name.isSpecial()) {
             throw new IllegalArgumentException("module name must be special: " + name);
         }
@@ -41,6 +42,12 @@ public class ModuleDescriptor extends DeclarationDescriptorImpl implements Class
             throw new IllegalStateException("setRootNamespace() is called twice");
         }
         this.rootNamepsace = rootNs;
+    }
+
+    @Override
+    @Nullable
+    public DeclarationDescriptor getContainingDeclaration() {
+        return null;
     }
 
     public NamespaceDescriptor getRootNamespace() {

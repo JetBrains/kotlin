@@ -30,7 +30,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorImpl implements FunctionDescriptor, MemberDescriptor {
+public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorNonRootImpl implements FunctionDescriptor, MemberDescriptor {
 
     private final boolean hasBody;
     private final boolean isDefault;

@@ -30,7 +30,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl implements VariableDescriptor {
+public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRootImpl implements VariableDescriptor {
     private JetType outType;
 
     public VariableDescriptorImpl(

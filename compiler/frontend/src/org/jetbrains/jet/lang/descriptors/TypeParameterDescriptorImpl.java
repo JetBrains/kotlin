@@ -35,7 +35,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class TypeParameterDescriptorImpl extends DeclarationDescriptorImpl implements TypeParameterDescriptor {
+public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImpl implements TypeParameterDescriptor {
     public static TypeParameterDescriptor createWithDefaultBound(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,

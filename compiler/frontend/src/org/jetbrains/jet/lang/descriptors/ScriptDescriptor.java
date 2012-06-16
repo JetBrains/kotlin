@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * @author Stepan Koltsov
  */
-public class ScriptDescriptor extends DeclarationDescriptorImpl {
+public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
     private static final Name NAME = Name.special("<script>");
 
     private final int priority;

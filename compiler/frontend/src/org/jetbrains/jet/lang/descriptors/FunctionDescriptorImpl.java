@@ -39,7 +39,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
 /**
  * @author abreslav
  */
-public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements FunctionDescriptor {
+public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRootImpl implements FunctionDescriptor {
 
     protected List<TypeParameterDescriptor> typeParameters;
     protected List<ValueParameterDescriptor> unsubstitutedValueParameters;

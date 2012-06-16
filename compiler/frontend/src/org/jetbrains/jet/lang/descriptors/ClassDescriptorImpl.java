@@ -32,7 +32,7 @@ import java.util.*;
 /**
  * @author abreslav
  */
-public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements ClassDescriptorFromSource {
+public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implements ClassDescriptorFromSource {
     private TypeConstructor typeConstructor;
 
     private JetScope memberDeclarations;

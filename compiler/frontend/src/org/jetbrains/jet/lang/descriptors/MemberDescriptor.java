@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author abreslav
  */
-public interface MemberDescriptor extends DeclarationDescriptor, DeclarationDescriptorWithVisibility {
+public interface MemberDescriptor extends DeclarationDescriptorNonRoot, DeclarationDescriptorWithVisibility {
     @NotNull
     Modality getModality();
 

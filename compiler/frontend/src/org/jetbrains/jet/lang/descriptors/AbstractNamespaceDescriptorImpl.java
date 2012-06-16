@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescriptorImpl implements NamespaceDescriptor {
+public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescriptorNonRootImpl implements NamespaceDescriptor {
     private NamespaceType namespaceType;
 
     public AbstractNamespaceDescriptorImpl(
@@ -44,6 +44,7 @@ public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescrip
     }
 
     @Override
+    @NotNull
     public NamespaceDescriptorParent getContainingDeclaration() {
         return (NamespaceDescriptorParent) super.getContainingDeclaration();
     }
