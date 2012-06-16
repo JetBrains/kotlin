@@ -24,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicateUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
 import java.util.Collection;
@@ -69,7 +71,7 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
 
     @NotNull
     @Override
-    public Collection<DeclarationDescriptor> getAllDescriptors() {
+    public Collection<DeclarationDescriptor> getAllDescriptors(@NotNull DescriptorPredicate predicate) {
         if (allDescriptors == null) {
             allDescriptors = Sets.newHashSet();
 
@@ -127,6 +129,6 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
             }
         }
 
-        return allDescriptors;
+        return DescriptorPredicateUtils.filter(allDescriptors, predicate);
     }
 }

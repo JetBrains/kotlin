@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 
 import java.io.File;
 import java.io.IOException;
@@ -101,6 +102,6 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends Abstract
     }
 
     private NamespaceDescriptor theOnlySubPackage(NamespaceDescriptor namespace) {
-        return (NamespaceDescriptor) namespace.getMemberScope().getAllDescriptors().iterator().next();
+        return (NamespaceDescriptor) namespace.getMemberScope().getAllDescriptors(DescriptorPredicate.all()).iterator().next();
     }
 }

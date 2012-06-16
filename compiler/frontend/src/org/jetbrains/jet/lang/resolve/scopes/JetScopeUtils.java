@@ -53,18 +53,8 @@ public final class JetScopeUtils {
      * @param scope Scope for query extensions.
      * @return extension descriptors.
      */
+    @SuppressWarnings("unchecked")
     public static Collection<CallableDescriptor> getAllExtensions(@NotNull JetScope scope) {
-        final Set<CallableDescriptor> result = Sets.newHashSet();
-
-        for (DeclarationDescriptor descriptor : scope.getAllDescriptors()) {
-            if (descriptor instanceof CallableDescriptor) {
-                CallableDescriptor callDescriptor = (CallableDescriptor) descriptor;
-                if (callDescriptor.getReceiverParameter().exists()) {
-                    result.add(callDescriptor);
-                }
-            }
-        }
-
-        return result;
+        return (Collection<CallableDescriptor>) (Object) scope.getAllDescriptors(DescriptorPredicate.extension());
     }
 }

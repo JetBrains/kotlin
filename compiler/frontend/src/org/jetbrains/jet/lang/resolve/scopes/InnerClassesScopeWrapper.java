@@ -72,8 +72,9 @@ public class InnerClassesScopeWrapper extends JetScopeImpl {
 
     @NotNull
     @Override
-    public Collection<DeclarationDescriptor> getAllDescriptors() {
-        Collection<DeclarationDescriptor> allDescriptors = actualScope.getAllDescriptors();
+    public Collection<DeclarationDescriptor> getAllDescriptors(@NotNull DescriptorPredicate predicate) {
+        // TODO: use better predicate
+        Collection<DeclarationDescriptor> allDescriptors = actualScope.getAllDescriptors(predicate);
         return Collections2.filter(allDescriptors, new Predicate<DeclarationDescriptor>() {
             @Override
             public boolean apply(@Nullable DeclarationDescriptor descriptor) {

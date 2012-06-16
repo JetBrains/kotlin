@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.*;
@@ -89,7 +90,8 @@ class DecompiledDataFactory {
             NamespaceDescriptor nd = myJavaDescriptorResolver.resolveNamespace(new FqName(packageName), DescriptorSearchRule.INCLUDE_KOTLIN);
 
             if (nd != null) {
-                for (DeclarationDescriptor member : sortDeclarations(nd.getMemberScope().getAllDescriptors())) {
+                // TODO: better predicate
+                for (DeclarationDescriptor member : sortDeclarations(nd.getMemberScope().getAllDescriptors(DescriptorPredicate.all()))) {
                     if (member instanceof ClassDescriptor || member instanceof NamespaceDescriptor) {
                         continue;
                     }
@@ -155,7 +157,7 @@ class DecompiledDataFactory {
                 myBuilder.append(subindent).append("class ");
                 appendDescriptor(classDescriptor.getClassObjectDescriptor(), subindent);
             }
-            for (DeclarationDescriptor member : sortDeclarations(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors())) {
+            for (DeclarationDescriptor member : sortDeclarations(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors(DescriptorPredicate.all()))) {
                 if (member.getContainingDeclaration() != descriptor) {
                     continue;
                 }

@@ -283,19 +283,19 @@ public class WriteThroughScope extends WritableScopeWithImports {
 
     @NotNull
     @Override
-    public Collection<DeclarationDescriptor> getAllDescriptors() {
+    public Collection<DeclarationDescriptor> getAllDescriptors(@NotNull DescriptorPredicate predicate) {
         checkMayRead();
 
         if (allDescriptors == null) {
             allDescriptors = Lists.newArrayList();
-            allDescriptors.addAll(writableWorker.getAllDescriptors());
-            allDescriptors.addAll(getWorkerScope().getAllDescriptors());
+            allDescriptors.addAll(writableWorker.getAllDescriptors(DescriptorPredicate.all()));
+            allDescriptors.addAll(getWorkerScope().getAllDescriptors(DescriptorPredicate.all()));
 
             for (JetScope imported : getImports()) {
-                allDescriptors.addAll(imported.getAllDescriptors());
+                allDescriptors.addAll(imported.getAllDescriptors(DescriptorPredicate.all()));
             }
         }
-        return allDescriptors;
+        return DescriptorPredicateUtils.filter(allDescriptors, predicate);
     }
 
     @NotNull

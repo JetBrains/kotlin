@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -139,7 +140,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
                 return null;
             }
             String renderedOriginal = DescriptorRenderer.TEXT.render(originalDescriptor);
-            for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
+            for (DeclarationDescriptor member : memberScope.getAllDescriptors(DescriptorPredicate.all())) {
                 if (renderedOriginal.equals(DescriptorRenderer.TEXT.render(member).replace(TUPLE0_FQ_NAME.getFqName(),
                                                                                            JetStandardClasses.UNIT_ALIAS.getName()))) {
                     return member;

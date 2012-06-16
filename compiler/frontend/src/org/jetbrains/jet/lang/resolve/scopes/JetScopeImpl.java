@@ -88,7 +88,7 @@ public abstract class JetScopeImpl implements JetScope {
 
     @NotNull
     @Override
-    public Collection<DeclarationDescriptor> getAllDescriptors() {
+    public Collection<DeclarationDescriptor> getAllDescriptors(@NotNull DescriptorPredicate predicate) {
         return Collections.emptyList();
     }
 

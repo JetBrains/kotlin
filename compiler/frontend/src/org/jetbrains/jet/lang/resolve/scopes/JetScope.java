@@ -84,7 +84,7 @@ public interface JetScope {
      * @return All visible descriptors from current scope.
      */
     @NotNull
-    Collection<DeclarationDescriptor> getAllDescriptors();
+    Collection<DeclarationDescriptor> getAllDescriptors(@NotNull DescriptorPredicate predicate);
 
     /**
      * @return EFFECTIVE implicit receiver at this point (may be corresponding to an outer scope)

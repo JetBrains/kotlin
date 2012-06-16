@@ -499,6 +499,6 @@ public class JetStandardClasses {
 
     @NotNull
     public static Collection<DeclarationDescriptor> getAllStandardClasses() {
-        return STANDARD_CLASSES.getAllDescriptors();
+        return STANDARD_CLASSES.getAllDescriptors(DescriptorPredicate.all());
     }
 }

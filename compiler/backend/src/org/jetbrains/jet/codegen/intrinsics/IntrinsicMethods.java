@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -187,7 +188,7 @@ public class IntrinsicMethods {
 
     private void declareIntrinsicStringMethods() {
         final ClassDescriptor stringClass = myStdLib.getString();
-        final Collection<DeclarationDescriptor> stringMembers = stringClass.getMemberScope(Collections.<TypeProjection>emptyList()).getAllDescriptors();
+        final Collection<DeclarationDescriptor> stringMembers = stringClass.getMemberScope(Collections.<TypeProjection>emptyList()).getAllDescriptors(DescriptorPredicate.all());
         final PsiClass stringPsiClass = JavaPsiFacade.getInstance(myProject).findClass(
                 "java.lang.String",
                 new DelegatingGlobalSearchScope(ProjectScope.getLibrariesScope(myProject)) {

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
@@ -229,7 +230,7 @@ public final class JsDescriptorUtils {
     @NotNull
     public static List<DeclarationDescriptor> getContainedDescriptorsWhichAreNotPredefined(@NotNull NamespaceDescriptor namespace) {
         List<DeclarationDescriptor> result = Lists.newArrayList();
-        for (DeclarationDescriptor descriptor : namespace.getMemberScope().getAllDescriptors()) {
+        for (DeclarationDescriptor descriptor : namespace.getMemberScope().getAllDescriptors(DescriptorPredicate.all())) {
             if (!AnnotationsUtils.isPredefinedObject(descriptor)) {
                 result.add(descriptor);
             }

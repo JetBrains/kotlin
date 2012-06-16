@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
@@ -193,7 +194,7 @@ public final class Intrinsics {
 
     private void declareOperatorIntrinsics() {
         IntrinsicDeclarationVisitor visitor = new IntrinsicDeclarationVisitor();
-        for (DeclarationDescriptor descriptor : library.getLibraryScope().getAllDescriptors()) {
+        for (DeclarationDescriptor descriptor : library.getLibraryScope().getAllDescriptors(DescriptorPredicate.all())) {
             //noinspection NullableProblems
             descriptor.accept(visitor, null);
         }
@@ -231,7 +232,7 @@ public final class Intrinsics {
         @Override
         public Void visitClassDescriptor(@NotNull ClassDescriptor descriptor, @Nullable Void nothing) {
             for (DeclarationDescriptor memberDescriptor :
-                descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+                descriptor.getDefaultType().getMemberScope().getAllDescriptors(DescriptorPredicate.all())) {
                 //noinspection NullableProblems
                 memberDescriptor.accept(this, null);
             }

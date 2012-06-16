@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -73,7 +74,8 @@ public final class TipsManager {
 
                     for (ReceiverDescriptor descriptor : variantsForExplicitReceiver) {
                         descriptors.addAll(includeExternalCallableExtensions(
-                                excludePrivateDescriptors(descriptor.getType().getMemberScope().getAllDescriptors()),
+                                // TODO: better predicate
+                                excludePrivateDescriptors(descriptor.getType().getMemberScope().getAllDescriptors(DescriptorPredicate.all())),
                                 resolutionScope, descriptor));
                     }
 
@@ -81,7 +83,8 @@ public final class TipsManager {
                 }
 
                 return includeExternalCallableExtensions(
-                        excludePrivateDescriptors(expressionType.getMemberScope().getAllDescriptors()),
+                        // TODO: better predicate
+                        excludePrivateDescriptors(expressionType.getMemberScope().getAllDescriptors(DescriptorPredicate.all())),
                         resolutionScope, new ExpressionReceiver(receiverExpression, expressionType));
             }
             return Collections.emptyList();
@@ -95,7 +98,8 @@ public final class TipsManager {
         JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
         if (resolutionScope != null) {
             if (expression.getParent() instanceof JetImportDirective || expression.getParent() instanceof JetNamespaceHeader) {
-                return excludeNonPackageDescriptors(resolutionScope.getAllDescriptors());
+                // TODO: better predicate
+                return excludeNonPackageDescriptors(resolutionScope.getAllDescriptors(DescriptorPredicate.all()));
             }
             else {
                 Collection<DeclarationDescriptor> descriptorsSet = Sets.newHashSet();
@@ -105,10 +109,12 @@ public final class TipsManager {
 
                 for (ReceiverDescriptor receiverDescriptor : result) {
                     JetType receiverType = receiverDescriptor.getType();
-                    descriptorsSet.addAll(receiverType.getMemberScope().getAllDescriptors());
+                    // TODO: better predicate
+                    descriptorsSet.addAll(receiverType.getMemberScope().getAllDescriptors(DescriptorPredicate.all()));
                 }
 
-                descriptorsSet.addAll(resolutionScope.getAllDescriptors());
+                // TODO: better predicate
+                descriptorsSet.addAll(resolutionScope.getAllDescriptors(DescriptorPredicate.all()));
                 return excludeNotCallableExtensions(excludePrivateDescriptors(descriptorsSet), resolutionScope);
             }
         }
@@ -119,7 +125,8 @@ public final class TipsManager {
     public static Collection<DeclarationDescriptor> getReferenceVariants(JetNamespaceHeader expression, BindingContext context) {
         JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
         if (resolutionScope != null) {
-            return excludeNonPackageDescriptors(resolutionScope.getAllDescriptors());
+            // TODO: better predicate
+            return excludeNonPackageDescriptors(resolutionScope.getAllDescriptors(DescriptorPredicate.all()));
         }
 
         return Collections.emptyList();
