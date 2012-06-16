@@ -108,4 +108,9 @@ public abstract class AbstractScopeAdapter implements JetScope {
     public Collection<DeclarationDescriptor> getAllDescriptors(@NotNull DescriptorPredicate predicate) {
         return getWorkerScope().getAllDescriptors(predicate);
     }
+
+    @Override
+    public Collection<DeclarationDescriptor> getAllDescriptors() {
+        return getAllDescriptors(DescriptorPredicate.all());
+    }
 }

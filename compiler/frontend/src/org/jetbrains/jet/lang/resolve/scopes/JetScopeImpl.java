@@ -93,6 +93,11 @@ public abstract class JetScopeImpl implements JetScope {
     }
 
     @Override
+    public Collection<DeclarationDescriptor> getAllDescriptors() {
+        return getAllDescriptors(DescriptorPredicate.all());
+    }
+
+    @Override
     public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
     }
 }

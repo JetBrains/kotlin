@@ -166,4 +166,9 @@ public class ChainedScope implements JetScope {
         }
         return allDescriptors;
     }
+
+    @Override
+    public Collection<DeclarationDescriptor> getAllDescriptors() {
+        return getAllDescriptors(DescriptorPredicate.all());
+    }
 }

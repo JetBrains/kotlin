@@ -231,6 +231,11 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         return DescriptorPredicateUtils.filter(allDescriptors, predicate);
     }
 
+    @Override
+    public Collection<DeclarationDescriptor> getAllDescriptors() {
+        return getAllDescriptors(DescriptorPredicate.all());
+    }
+
     protected abstract void addExtraDescriptors();
 
     @Override
