@@ -111,6 +111,11 @@ public class FqName extends FqNameBase {
     }
 
     @NotNull
+    public Name shortNameOrSpecial() {
+        return fqName.shortNameOrSpecial();
+    }
+
+    @NotNull
     public List<FqName> path() {
         final List<FqName> path = Lists.newArrayList();
         path.add(ROOT);

@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.NamePredicate;
 import org.jetbrains.jet.lang.types.*;
@@ -694,7 +693,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         JavaNamespaceDescriptor ns = new JavaNamespaceDescriptor(
                 parentNs,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
-                qualifiedName.isRoot() ? FqNameUnsafe.ROOT_NAME : qualifiedName.shortName(),
                 qualifiedName
         );
 

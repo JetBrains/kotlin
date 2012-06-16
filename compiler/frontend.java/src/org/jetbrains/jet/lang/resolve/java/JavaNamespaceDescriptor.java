@@ -34,8 +34,8 @@ public class JavaNamespaceDescriptor extends AbstractNamespaceDescriptorImpl {
     private final FqName qualifiedName;
 
     public JavaNamespaceDescriptor(NamespaceDescriptorParent containingDeclaration, List<AnnotationDescriptor> annotations,
-            @NotNull Name name, @NotNull FqName qualifiedName) {
-        super(containingDeclaration, annotations, name);
+            @NotNull FqName qualifiedName) {
+        super(containingDeclaration, annotations, qualifiedName.shortNameOrSpecial());
         this.qualifiedName = qualifiedName;
     }
 

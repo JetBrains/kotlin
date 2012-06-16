@@ -146,6 +146,16 @@ public class FqNameUnsafe extends FqNameBase {
         return shortName;
     }
 
+    @NotNull
+    public Name shortNameOrSpecial() {
+        if (isRoot()) {
+            return ROOT_NAME;
+        }
+        else {
+            return shortName();
+        }
+    }
+
     interface WalkCallback {
         void segment(@NotNull Name shortName, @NotNull FqNameUnsafe fqName);
     }
