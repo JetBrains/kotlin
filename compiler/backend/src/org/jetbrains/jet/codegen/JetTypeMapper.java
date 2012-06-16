@@ -962,6 +962,9 @@ public class JetTypeMapper {
             return ACC_PUBLIC;
         }
         else {
+            if (p.getVisibility() == Visibilities.INHERITED) {
+                throw new IllegalStateException("'inherited' visibility is unresolved on code generation stage");
+            }
             return defaultFlags;
         }
     }
