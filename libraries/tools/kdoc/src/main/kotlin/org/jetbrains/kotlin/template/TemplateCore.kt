@@ -7,6 +7,8 @@ import java.io.OutputStream
 import java.io.OutputStreamWriter
 import java.io.FileWriter
 import java.io.File
+import java.util.List
+import kotlin.dom.attribute
 
 /**
  * Represents a generic API to templates which should be usable
@@ -29,14 +31,14 @@ trait Template {
  * We abstract away java.io.* APIs here to make the JS implementation simpler
  */
 trait Printer {
-    fun print(value: Any): Unit
+    fun print(value: Any?): Unit
     //fun print(text: String): Unit
 
 }
 
 
 class NullPrinter() : Printer {
-    override fun print(value: Any) {
+    override fun print(value: Any?) {
         throw UnsupportedOperationException("No Printer defined on the Template")
     }
 }
@@ -61,12 +63,14 @@ abstract class TextTemplate() : TemplateSupport(), Printer {
         printer.print(this)
     }
 
-    override fun print(value: Any) = printer.print(value)
+    override fun print(value: Any?) = printer.print(value)
 
-    fun println(value: Any) {
+    fun println(value: Any?) {
         print(value)
         print(newline)
     }
+
+    fun println() = println("")
 
     fun renderToText(): String {
         val buffer = StringWriter()
@@ -97,12 +101,13 @@ abstract class TextTemplate() : TemplateSupport(), Printer {
 }
 
 
+
 /**
  * A Printer implementation which uses a Writer
  */
 class WriterPrinter(val writer: Writer) : Printer {
 
-    override fun print(value: Any) {
+    override fun print(value: Any?) {
         // TODO should be using a formatter to do the conversion
         writer.write(value.toString())
     }

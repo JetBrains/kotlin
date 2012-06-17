@@ -8,6 +8,7 @@ import org.jetbrains.jet.cli.common.CLICompiler
 import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration
 import org.jetbrains.kotlin.doc.highlighter.HtmlCompilerPlugin
 import org.jetbrains.jet.cli.common.ExitCode
+import org.jetbrains.kotlin.doc.highlighter2.Html2CompilerPlugin
 
 /**
 * Main for running the KDocCompiler
@@ -32,10 +33,8 @@ class KDocCompiler() : K2JVMCompiler() {
                 kdoc.config = arguments.apply()
             }
             val plugins = configuration.getCompilerPlugins().orEmpty()
-/*
-            val sourcePlugin = HtmlCompilerPlugin()
+            val sourcePlugin = Html2CompilerPlugin(arguments as KDocArguments)
             plugins.add(sourcePlugin)
-*/
             plugins.add(kdoc);
         }
     }
