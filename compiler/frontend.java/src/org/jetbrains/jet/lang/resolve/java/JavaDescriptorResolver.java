@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.NamePredicate;
+import org.jetbrains.jet.lang.resolve.name.NamePredicateUtils;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -898,7 +899,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
         Set<VariableDescriptor> descriptors = Sets.newHashSet();
 
-        for (Map.Entry<Name, NamedMembers> entry : getNamedMemberss(scopeData, predicate)) {
+        for (Map.Entry<Name, NamedMembers> entry : getNamedMemberss(scopeData, predicate).entrySet()) {
             NamedMembers namedMembers = entry.getValue();
             Name propertyName = entry.getKey();
 
@@ -1463,35 +1464,9 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
 
-    private Collection<Map.Entry<Name, NamedMembers>> getNamedMemberss(@NotNull ResolverScopeData scopeData, @NotNull NamePredicate predicate) {
+    private Map<Name, NamedMembers> getNamedMemberss(@NotNull ResolverScopeData scopeData, @NotNull NamePredicate predicate) {
         getResolverScopeData(scopeData);
-
-        Name exact = predicate.getExact();
-
-        if (predicate.isAll()) {
-            return scopeData.namedMembersMap.entrySet();
-        }
-        else if (exact != null) {
-            NamedMembers namedMembers = scopeData.namedMembersMap.get(exact);
-            if (namedMembers != null) {
-                return Collections.<Map.Entry<Name, NamedMembers>>singletonList(
-                        new AbstractMap.SimpleEntry<Name, NamedMembers>(exact, namedMembers));
-            }
-            else {
-                return Collections.emptyList();
-            }
-        }
-        else {
-            Collection<Map.Entry<Name, NamedMembers>> r = Lists.newArrayList();
-            for (Map.Entry<Name, NamedMembers> e : scopeData.namedMembersMap.entrySet()) {
-                Name methodName = e.getKey();
-                NamedMembers namedMembers = e.getValue();
-                if (predicate.matches(methodName)) {
-                    r.add(new AbstractMap.SimpleEntry<Name, NamedMembers>(methodName, namedMembers));
-                }
-            }
-            return r;
-        }
+        return NamePredicateUtils.filterKeys(scopeData.namedMembersMap, predicate);
     }
 
 
@@ -1502,7 +1477,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
         List<FunctionDescriptor> functions = new ArrayList<FunctionDescriptor>();
 
-        for (Map.Entry<Name, NamedMembers> entry : getNamedMemberss(scopeData, predicate)) {
+        for (Map.Entry<Name, NamedMembers> entry : getNamedMemberss(scopeData, predicate).entrySet()) {
             Name methodName = entry.getKey();
             NamedMembers namedMembers = entry.getValue();
             resolveNamedGroupFunctions(
