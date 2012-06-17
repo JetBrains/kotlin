@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicateUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.JetScopeBase;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.*;
@@ -36,7 +37,7 @@ import java.util.*;
 /**
  * @author abreslav
  */
-public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, DP extends DeclarationProvider> implements JetScope {
+public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, DP extends DeclarationProvider> extends JetScopeBase {
     protected final ResolveSession resolveSession;
     protected final DP declarationProvider;
     protected final D thisDescriptor;
@@ -229,11 +230,6 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         allDescriptorsComputed = true;
 
         return DescriptorPredicateUtils.filter(allDescriptors, predicate);
-    }
-
-    @Override
-    public Collection<DeclarationDescriptor> getAllDescriptors() {
-        return getAllDescriptors(DescriptorPredicate.all());
     }
 
     protected abstract void addExtraDescriptors();

@@ -34,7 +34,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class SubstitutingScope implements JetScope {
+public class SubstitutingScope extends JetScopeBase {
 
     private final JetScope workerScope;
     private final TypeSubstitutor substitutor;
@@ -163,8 +163,4 @@ public class SubstitutingScope implements JetScope {
         return allDescriptors;
     }
 
-    @Override
-    public Collection<DeclarationDescriptor> getAllDescriptors() {
-        return getAllDescriptors(DescriptorPredicate.all());
-    }
 }

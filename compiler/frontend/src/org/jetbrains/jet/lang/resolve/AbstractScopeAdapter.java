@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.JetScopeBase;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
@@ -33,7 +34,7 @@ import java.util.Set;
  *
  * @author abreslav
  */
-public abstract class AbstractScopeAdapter implements JetScope {
+public abstract class AbstractScopeAdapter extends JetScopeBase {
     @NotNull
     protected abstract JetScope getWorkerScope();
 
@@ -109,8 +110,4 @@ public abstract class AbstractScopeAdapter implements JetScope {
         return getWorkerScope().getAllDescriptors(predicate);
     }
 
-    @Override
-    public Collection<DeclarationDescriptor> getAllDescriptors() {
-        return getAllDescriptors(DescriptorPredicate.all());
-    }
 }

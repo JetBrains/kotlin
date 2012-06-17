@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.JetScopeBase;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.error.ErrorSimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
@@ -38,7 +39,7 @@ public class ErrorUtils {
     private static final ModuleDescriptor ERROR_MODULE = new ModuleDescriptor(Name.special("<ERROR MODULE>"));
 
 
-    public static class ErrorScope implements JetScope {
+    public static class ErrorScope extends JetScopeBase {
 
         private final String debugMessage;
 
@@ -117,10 +118,6 @@ public class ErrorUtils {
             return Collections.emptyList();
         }
 
-        @Override
-        public Collection<DeclarationDescriptor> getAllDescriptors() {
-            return getAllDescriptors(DescriptorPredicate.all());
-        }
     }
 
     private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<AnnotationDescriptor>emptyList(), Name.special("<ERROR CLASS>")) {
