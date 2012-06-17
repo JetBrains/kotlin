@@ -16,9 +16,13 @@
 
 package org.jetbrains.jet.lang.resolve.scopes;
 
+import com.google.common.collect.Sets;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * @author Stepan Koltsov
@@ -30,4 +34,14 @@ public abstract class JetScopeBase implements JetScope {
         return getAllDescriptors(DescriptorPredicate.all());
     }
 
+    @NotNull
+    @Override
+    public Collection<Name> getAllDescriptorNames() {
+        // dummy implementation
+        Set<Name> r = Sets.newHashSet();
+        for (DeclarationDescriptor descriptor : getAllDescriptors()) {
+            r.add(descriptor.getName());
+        }
+        return r;
+    }
 }

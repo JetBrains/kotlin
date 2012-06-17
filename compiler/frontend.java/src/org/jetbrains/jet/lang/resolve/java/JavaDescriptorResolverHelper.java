@@ -20,9 +20,12 @@ import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyNameUtils;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyParseResult;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,23 +39,28 @@ class JavaDescriptorResolverHelper {
     }
 
     private static class Builder {
+        @NotNull
+        private final JavaDescriptorResolver.ResolverScopeData scopeData;
+        @NotNull
         private final PsiClassWrapper psiClass;
         private final boolean staticMembers;
         private final boolean kotlin;
         
         private Map<Name, NamedMembers> namedMembersMap = new HashMap<Name, NamedMembers>();
 
-        private Builder(PsiClassWrapper psiClass, boolean staticMembers, boolean kotlin) {
-            this.psiClass = psiClass;
-            this.staticMembers = staticMembers;
-            this.kotlin = kotlin;
+        private Builder(@NotNull JavaDescriptorResolver.ResolverScopeData scopeData) {
+            this.scopeData = scopeData;
+            this.psiClass = new PsiClassWrapper(scopeData.psiClass);
+            this.staticMembers = scopeData.staticMembers;
+            this.kotlin = scopeData.kotlin;
         }
 
         public void run() {
+            createGroupsForMembersFromSupertypes();
             processFields();
             processMethods();
         }
-        
+
         private NamedMembers getNamedMembers(Name name) {
             NamedMembers r = namedMembersMap.get(name);
             if (r == null) {
@@ -61,6 +69,23 @@ class JavaDescriptorResolverHelper {
                 namedMembersMap.put(name, r);
             }
             return r;
+        }
+
+        private void createGroupsForMembersFromSupertypes() {
+            if (scopeData.classOrNamespaceDescriptor instanceof ClassDescriptor) {
+                ClassDescriptor clazz = (ClassDescriptor) scopeData.classOrNamespaceDescriptor;
+                for (JetType supertype : clazz.getTypeConstructor().getSupertypes()) {
+                    for (Name name : supertype.getMemberScope().getAllDescriptorNames()) {
+                        getNamedMembers(name);
+                    }
+                }
+            }
+            else if (scopeData.classOrNamespaceDescriptor instanceof NamespaceDescriptor) {
+
+            }
+            else {
+                throw new IllegalStateException("unknown descriptor: " + scopeData.classOrNamespaceDescriptor);
+            }
         }
         
         private boolean includeMember(PsiMemberWrapper member) {
@@ -98,16 +123,6 @@ class JavaDescriptorResolverHelper {
         }
 
         private void processMethods() {
-            
-            for (PsiMethod method : psiClass.getPsiClass().getAllMethods()) {
-                getNamedMembers(Name.identifier(method.getName()));
-
-                PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
-                if (propertyParseResult != null) {
-                    getNamedMembers(Name.identifier(propertyParseResult.getPropertyName()));
-                }
-            }
-
             
             for (PsiMethod method0 : psiClass.getPsiClass().getMethods()) {
                 PsiMethodWrapper method = new PsiMethodWrapper(method0);
@@ -216,7 +231,7 @@ class JavaDescriptorResolverHelper {
     @NotNull
     static Map<Name, NamedMembers> getNamedMembers(@NotNull JavaDescriptorResolver.ResolverScopeData resolverScopeData) {
         if (resolverScopeData.psiClass != null) {
-            Builder builder = new Builder(new PsiClassWrapper(resolverScopeData.psiClass), resolverScopeData.staticMembers, resolverScopeData.kotlin);
+            Builder builder = new Builder(resolverScopeData);
             builder.run();
             return builder.namedMembersMap;
         }

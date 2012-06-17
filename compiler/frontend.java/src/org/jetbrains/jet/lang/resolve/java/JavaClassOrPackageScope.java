@@ -71,6 +71,12 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
 
     @NotNull
     @Override
+    public Collection<Name> getAllDescriptorNames() {
+        return semanticServices.getDescriptorResolver().resolveMemberNames(resolverScopeData);
+    }
+
+    @NotNull
+    @Override
     public Collection<DeclarationDescriptor> getAllDescriptors(@NotNull DescriptorPredicate predicate) {
         if (allDescriptors == null) {
             if (!predicate.includeAll()) {
