@@ -18,3 +18,4 @@ tmp
 *TestMy.java
 .*.swp
 gh-pages
+*.class
