@@ -349,23 +349,15 @@ public class JetCompletionContributor extends CompletionContributor {
                 (JetFile)reference.getExpression().getContainingFile())
                 .getBindingContext();
 
-        final PrefixMatcher prefixMatcher = result.getPrefixMatcher();
-
-        NamePredicate namePredicate;
-        if (prefixMatcher.getPrefix().length() == 0) {
-            namePredicate = NamePredicate.all();
-        } else {
-            class PrefixMatcherNamePredicate extends NamePredicate {
-                @Override
-                public boolean matches(@NotNull Name name) {
-                    return prefixMatcher.prefixMatches(name.getName());
-                }
+        class PrefixMatcherNamePredicate extends NamePredicate {
+            @Override
+            public boolean matches(@NotNull Name name) {
+                return result.getPrefixMatcher().prefixMatches(name.getName());
             }
-            namePredicate = new PrefixMatcherNamePredicate();
         }
 
         Collection<DeclarationDescriptor> descriptors = TipsManager.getReferenceVariants(
-                reference.getExpression(), bindingContext, namePredicate);
+                reference.getExpression(), bindingContext, new PrefixMatcherNamePredicate());
 
         Collection<DeclarationDescriptor> checkedDescriptors = Collections2.filter(descriptors, new Predicate<DeclarationDescriptor>() {
             @Override
