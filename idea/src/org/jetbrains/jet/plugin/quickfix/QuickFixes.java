@@ -133,8 +133,12 @@ public class QuickFixes {
         actions.put(VAL_WITH_SETTER, changeVariableMutabilityFix);
         actions.put(VAL_REASSIGNMENT, changeVariableMutabilityFix);
 
-        actions.put(UNNECESSARY_SAFE_CALL, new ReplaceCallFix(false));
-        actions.put(UNSAFE_CALL, new ReplaceCallFix(true));
+        actions.put(UNNECESSARY_SAFE_CALL, new ReplaceCallFix(true, false));
+        actions.put(UNSAFE_CALL, new ReplaceCallFix(true, true));
+        actions.put(UNSAFE_CALL, new ReplaceCallFix(false, true));
+
+        actions.put(UNNECESSARY_NOT_NULL_ASSERTION, new UnnecessaryNotNullAssertionFix());
+
         actions.put(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, new SpecifyTypeExplicitlyFix());
     }
 }
