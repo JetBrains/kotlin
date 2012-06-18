@@ -126,7 +126,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @NotNull
     @Override
-    public Collection<DeclarationDescriptor> getAllDescriptors(@NotNull DescriptorPredicate predicate) {
+    public Collection<DeclarationDescriptor> getAllDescriptors() {
         checkMayRead();
 
         if (!allDescriptorsDone) {
@@ -135,12 +135,12 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             // make sure no descriptors added to allDescriptors collection
             changeLockLevel(LockLevel.READING);
 
-            allDescriptors.addAll(getWorkerScope().getAllDescriptors(DescriptorPredicate.all()));
+            allDescriptors.addAll(getWorkerScope().getAllDescriptors());
             for (JetScope imported : getImports()) {
-                allDescriptors.addAll(imported.getAllDescriptors(DescriptorPredicate.all()));
+                allDescriptors.addAll(imported.getAllDescriptors());
             }
         }
-        return DescriptorPredicateUtils.filter(allDescriptors, predicate);
+        return allDescriptors;
     }
 
     @NotNull

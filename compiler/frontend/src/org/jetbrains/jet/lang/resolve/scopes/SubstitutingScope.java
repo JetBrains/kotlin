@@ -149,10 +149,10 @@ public class SubstitutingScope implements JetScope {
 
     @NotNull
     @Override
-    public Collection<DeclarationDescriptor> getAllDescriptors(@NotNull DescriptorPredicate predicate) {
+    public Collection<DeclarationDescriptor> getAllDescriptors() {
         if (allDescriptors == null) {
             allDescriptors = Sets.newHashSet();
-            for (DeclarationDescriptor descriptor : workerScope.getAllDescriptors(DescriptorPredicate.all())) {
+            for (DeclarationDescriptor descriptor : workerScope.getAllDescriptors()) {
                 DeclarationDescriptor substitute = substitute(descriptor);
 //                assert substitute != null : descriptor;
                 if (substitute != null) {

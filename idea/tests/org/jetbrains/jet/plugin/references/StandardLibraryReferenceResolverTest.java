@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
@@ -89,13 +88,13 @@ public class StandardLibraryReferenceResolverTest extends ResolveTestCase {
             @Override
             public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
                 descriptors.add(descriptor);
-                return visitDescriptors(descriptor.getDefaultType().getMemberScope().getAllDescriptors(DescriptorPredicate.all()));
+                return visitDescriptors(descriptor.getDefaultType().getMemberScope().getAllDescriptors());
             }
 
             @Override
             public Void visitNamespaceDescriptor(NamespaceDescriptor descriptor, Void data) {
                 descriptors.add(descriptor);
-                return visitDescriptors(descriptor.getMemberScope().getAllDescriptors(DescriptorPredicate.all()));
+                return visitDescriptors(descriptor.getMemberScope().getAllDescriptors());
             }
 
             @Override

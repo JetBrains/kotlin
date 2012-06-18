@@ -157,11 +157,11 @@ public class ChainedScope implements JetScope {
 
     @NotNull
     @Override
-    public Collection<DeclarationDescriptor> getAllDescriptors(@NotNull DescriptorPredicate predicate) {
+    public Collection<DeclarationDescriptor> getAllDescriptors() {
         if (allDescriptors == null) {
             allDescriptors = Sets.newHashSet();
             for (JetScope scope : scopeChain) {
-                allDescriptors.addAll(scope.getAllDescriptors(DescriptorPredicate.all()));
+                allDescriptors.addAll(scope.getAllDescriptors());
             }
         }
         return allDescriptors;

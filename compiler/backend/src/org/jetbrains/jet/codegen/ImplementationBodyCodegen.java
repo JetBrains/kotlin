@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.java.JdkNames;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.utils.BitSetUtils;
@@ -137,7 +136,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             v.visitOuterClass(typeMapper.mapType(container.getDefaultType(), MapTypeMode.IMPL).getInternalName(), null, null);
         }
 
-        for (DeclarationDescriptor declarationDescriptor : descriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors(DescriptorPredicate.all())) {
+        for (DeclarationDescriptor declarationDescriptor : descriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors()) {
             assert declarationDescriptor instanceof ClassDescriptor;
             ClassDescriptor innerClass = (ClassDescriptor) declarationDescriptor;
             // TODO: proper access
@@ -1056,17 +1055,19 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         final PropertyCodegen propertyCodegen = new PropertyCodegen(delegateContext, v, functionCodegen, state);
 
         ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, toClass);
-        for (DeclarationDescriptor declaration : descriptor.getDefaultType().getMemberScope().getAllDescriptors(DescriptorPredicate.callableMembers())) {
-            CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) declaration;
-            if (callableMemberDescriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION) {
-                Set<? extends CallableMemberDescriptor> overriddenDescriptors = callableMemberDescriptor.getOverriddenDescriptors();
-                for (CallableMemberDescriptor overriddenDescriptor : overriddenDescriptors) {
-                    if (overriddenDescriptor.getContainingDeclaration() == classDescriptor) {
-                        if (declaration instanceof PropertyDescriptor) {
-                            propertyCodegen.genDelegate((PropertyDescriptor) declaration, (PropertyDescriptor) overriddenDescriptor, field);
-                        }
-                        else if (declaration instanceof SimpleFunctionDescriptor) {
-                            functionCodegen.genDelegate((SimpleFunctionDescriptor) declaration, overriddenDescriptor, field);
+        for (DeclarationDescriptor declaration : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+            if (declaration instanceof CallableMemberDescriptor) {
+                CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) declaration;
+                if (callableMemberDescriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION) {
+                    Set<? extends CallableMemberDescriptor> overriddenDescriptors = callableMemberDescriptor.getOverriddenDescriptors();
+                    for (CallableMemberDescriptor overriddenDescriptor : overriddenDescriptors) {
+                        if (overriddenDescriptor.getContainingDeclaration() == classDescriptor) {
+                            if (declaration instanceof PropertyDescriptor) {
+                                propertyCodegen.genDelegate((PropertyDescriptor) declaration, (PropertyDescriptor) overriddenDescriptor, field);
+                            }
+                            else if (declaration instanceof SimpleFunctionDescriptor) {
+                                functionCodegen.genDelegate((SimpleFunctionDescriptor) declaration, overriddenDescriptor, field);
+                            }
                         }
                     }
                 }
@@ -1100,7 +1101,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         List<Pair<CallableMemberDescriptor, CallableMemberDescriptor>> r = Lists.newArrayList();
         
         root:
-        for (DeclarationDescriptor decl : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors(DescriptorPredicate.callableMembers())) {
+        for (DeclarationDescriptor decl : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+            if (!(decl instanceof CallableMemberDescriptor)) {
+                continue;
+            }
+
             CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) decl;
             if (callableMemberDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
                 continue;

@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.DeferredType;
@@ -87,7 +86,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                     public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
                         BindingTrace trace = resolveSession.getTrace();
                         JetDeclaration declaration = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(),
-                                fromCurrent);
+                                                                                                                  fromCurrent);
                         assert declaration != null : "fromCurrent can not be a fake override";
                         trace.report(Errors.CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().getName()));
                     }
@@ -135,7 +134,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     @Override
     protected void addExtraDescriptors() {
         for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
-            for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors(DescriptorPredicate.callableMembers())) {
+            for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
                 if (descriptor instanceof FunctionDescriptor) {
                     getFunctions(descriptor.getName());
                 }

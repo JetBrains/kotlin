@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
@@ -102,8 +101,7 @@ public class JetAnonymousSuperMacro extends Macro {
 
         List<PsiNamedElement> result = new ArrayList<PsiNamedElement>();
 
-        // TODO: better predicate
-        for (DeclarationDescriptor descriptor : scope.getAllDescriptors(DescriptorPredicate.all())) {
+        for (DeclarationDescriptor descriptor : scope.getAllDescriptors()) {
             if (!(descriptor instanceof ClassDescriptor)) continue;
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
             if (!classDescriptor.getModality().isOverridable()) continue;

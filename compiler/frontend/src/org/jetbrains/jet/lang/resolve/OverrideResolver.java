@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -239,7 +238,7 @@ public class OverrideResolver {
 
     private static List<CallableMemberDescriptor> getCallableMembersFromType(JetScope scope) {
         List<CallableMemberDescriptor> r = Lists.newArrayList();
-        for (DeclarationDescriptor decl : scope.getAllDescriptors(DescriptorPredicate.all())) {
+        for (DeclarationDescriptor decl : scope.getAllDescriptors()) {
             if (decl instanceof PropertyDescriptor || decl instanceof SimpleFunctionDescriptor) {
                 r.add((CallableMemberDescriptor) decl);
             }
@@ -333,7 +332,7 @@ public class OverrideResolver {
     public static Multimap<CallableMemberDescriptor, CallableMemberDescriptor> collectSuperMethods(MutableClassDescriptor classDescriptor) {
         Set<CallableMemberDescriptor> inheritedFunctions = Sets.newLinkedHashSet();
         for (JetType supertype : classDescriptor.getSupertypes()) {
-            for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors(DescriptorPredicate.all())) {
+            for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
                 if (descriptor instanceof CallableMemberDescriptor) {
                     CallableMemberDescriptor memberDescriptor = (CallableMemberDescriptor) descriptor;
                     inheritedFunctions.add(memberDescriptor);

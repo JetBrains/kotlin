@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -99,13 +98,13 @@ public class NamespaceComparator {
 
         sb.append("namespace " + nsa.getName() + "\n\n");
 
-        Assert.assertTrue(!nsa.getMemberScope().getAllDescriptors(DescriptorPredicate.all()).isEmpty());
+        Assert.assertTrue(!nsa.getMemberScope().getAllDescriptors().isEmpty());
 
         Set<Name> classifierNames = new HashSet<Name>();
         Set<Name> propertyNames = new HashSet<Name>();
         Set<Name> functionNames = new HashSet<Name>();
 
-        for (DeclarationDescriptor ad : nsa.getMemberScope().getAllDescriptors(DescriptorPredicate.all())) {
+        for (DeclarationDescriptor ad : nsa.getMemberScope().getAllDescriptors()) {
             if (ad instanceof ClassifierDescriptor) {
                 classifierNames.add(ad.getName());
             }
@@ -600,7 +599,7 @@ public class NamespaceComparator {
             }
 
             JetScope memberScope = klass.getMemberScope(typeArguments);
-            for (DeclarationDescriptor member : memberScope.getAllDescriptors(DescriptorPredicate.all())) {
+            for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
                 if (!includeObject) {
                     if (member.getName().getName().matches("equals|hashCode|finalize|wait|notify(All)?|toString|clone|getClass")) {
                         continue;

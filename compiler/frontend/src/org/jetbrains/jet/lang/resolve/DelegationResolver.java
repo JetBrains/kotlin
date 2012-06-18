@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.types.JetType;
 
 import javax.inject.Inject;
@@ -68,7 +67,7 @@ public class DelegationResolver {
                 JetDelegatorByExpressionSpecifier specifier = (JetDelegatorByExpressionSpecifier) delegationSpecifier;
                 JetType type = trace.get(BindingContext.TYPE, specifier.getTypeReference());
                 if (type != null) {
-                    for (DeclarationDescriptor declarationDescriptor : type.getMemberScope().getAllDescriptors(DescriptorPredicate.callableMembers())) {
+                    for (DeclarationDescriptor declarationDescriptor : type.getMemberScope().getAllDescriptors()) {
                         if (declarationDescriptor instanceof PropertyDescriptor) {
                             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) declarationDescriptor;
                             if (propertyDescriptor.getModality().isOverridable()) {

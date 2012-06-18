@@ -36,7 +36,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -197,7 +196,7 @@ public class ResolveDescriptorsFromExternalLibraries {
                     if (clazz == null) {
                         throw new IllegalStateException("class not found by name " + className + " in " + libDescription);
                     }
-                    clazz.getDefaultType().getMemberScope().getAllDescriptors(DescriptorPredicate.all());
+                    clazz.getDefaultType().getMemberScope().getAllDescriptors();
                 }
                 catch (Exception e) {
                     System.err.println("failed to resolve " + className);
