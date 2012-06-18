@@ -193,6 +193,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression, ExpressionTypingContext context) {
         JetTypeReference right = expression.getRight();
         JetType result = null;
+        DataFlowInfo dataFlowInfo = context.dataFlowInfo;
         if (right != null) {
             JetType targetType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, right, context.trace, true);
 
@@ -203,6 +204,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 JetTypeInfo typeInfo = facade.getTypeInfo(expression.getLeft(), contextWithTemporaryTrace);
                 if (typeInfo.getType() != null && checkBinaryWithTypeRHS(expression, contextWithTemporaryTrace, targetType, typeInfo.getType())) {
                     temporaryTraceWithExpectedType.commit();
+                    dataFlowInfo = typeInfo.getDataFlowInfo();
                     tryWithNoExpectedType = false;
                 }
             }
@@ -212,6 +214,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 JetTypeInfo typeInfo = facade.getTypeInfo(expression.getLeft(), contextWithNoExpectedType);
                 if (typeInfo.getType() != null) {
                     checkBinaryWithTypeRHS(expression, contextWithNoExpectedType, targetType, typeInfo.getType());
+                    dataFlowInfo = typeInfo.getDataFlowInfo();
                 }
             }
 
@@ -219,9 +222,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             result = operationType == JetTokens.AS_SAFE ? TypeUtils.makeNullable(targetType) : targetType;
         }
         else {
-            facade.getTypeInfo(expression.getLeft(), context.replaceExpectedType(NO_EXPECTED_TYPE));
+            dataFlowInfo = facade.getTypeInfo(expression.getLeft(), context.replaceExpectedType(NO_EXPECTED_TYPE)).getDataFlowInfo();
         }
-        return DataFlowUtils.checkType(result, expression, context, context.dataFlowInfo);
+        return DataFlowUtils.checkType(result, expression, context, dataFlowInfo);
     }
 
     private boolean checkBinaryWithTypeRHS(JetBinaryExpressionWithTypeRHS expression, ExpressionTypingContext context, @NotNull JetType targetType, JetType actualType) {
