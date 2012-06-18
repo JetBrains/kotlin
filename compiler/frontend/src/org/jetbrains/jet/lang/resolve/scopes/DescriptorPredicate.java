@@ -37,10 +37,6 @@ public abstract class DescriptorPredicate {
 
     public abstract boolean includeName(@NotNull Name name);
 
-    public boolean includeAnyName() {
-        return includeAll();
-    }
-
     public enum DescriptorKind {
         CLASS,
         CALLABLE_MEMBER,
@@ -180,11 +176,6 @@ public abstract class DescriptorPredicate {
         }
 
         @Override
-        public boolean includeAnyName() {
-            return true;
-        }
-
-        @Override
         public boolean includeExtension(boolean extension) {
             return true;
         }
@@ -227,11 +218,6 @@ public abstract class DescriptorPredicate {
         @Override
         public boolean includeName(@NotNull Name name) {
             return required.matches(name);
-        }
-
-        @Override
-        public boolean includeAnyName() {
-            return false;
         }
     }
 
@@ -307,17 +293,12 @@ public abstract class DescriptorPredicate {
     }
 
     public NamePredicate asNamePredicate() {
-        if (includeAnyName()) {
-            return NamePredicate.all();
-        }
-        else {
-            return new NamePredicate() {
-                @Override
-                public boolean matches(@NotNull Name name) {
-                    return includeName(name);
-                }
-            };
-        }
+        return new NamePredicate() {
+            @Override
+            public boolean matches(@NotNull Name name) {
+                return includeName(name);
+            }
+        };
     }
 
 }
