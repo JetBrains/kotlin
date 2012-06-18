@@ -31,7 +31,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class ChainedScope extends JetScopeBase {
+public class ChainedScope implements JetScope {
     private final DeclarationDescriptor containingDeclaration;
     private final JetScope[] scopeChain;
     private Collection<DeclarationDescriptor> allDescriptors;
@@ -167,4 +167,8 @@ public class ChainedScope extends JetScopeBase {
         return allDescriptors;
     }
 
+    @Override
+    public Collection<DeclarationDescriptor> getAllDescriptors() {
+        return getAllDescriptors(DescriptorPredicate.all());
+    }
 }
