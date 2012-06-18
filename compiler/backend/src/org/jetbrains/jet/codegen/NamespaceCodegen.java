@@ -27,9 +27,9 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.utils.Progress;
 import org.objectweb.asm.MethodVisitor;
@@ -120,6 +120,8 @@ public class NamespaceCodegen {
             }
         }
 
+        assert v.isActivated() == shouldGenerateNSClass(files) : "Different algorithms for generating namespace class and for heuristics";
+
         if (hasNonConstantPropertyInitializers()) {
             generateStaticInitializers();
         }
@@ -191,6 +193,18 @@ public class NamespaceCodegen {
                 builder.done();
             }
         }
+    }
+
+    public static boolean shouldGenerateNSClass(Collection<JetFile> files) {
+        for (JetFile file : files) {
+            for (JetDeclaration declaration : file.getDeclarations()) {
+                if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private void generateStaticInitializers() {

@@ -34,22 +34,19 @@ import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import com.intellij.psi.stubs.PsiClassHolderFileStub;
+import com.intellij.psi.stubs.PsiFileStub;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.*;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.codegen.ClassBuilder;
-import org.jetbrains.jet.codegen.ClassBuilderFactory;
-import org.jetbrains.jet.codegen.ClassBuilderMode;
-import org.jetbrains.jet.codegen.CompilationErrorHandler;
-import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 import org.jetbrains.jet.utils.Progress;
@@ -104,9 +101,11 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
             return (PsiClass)stub.getPsi();
         }
 
-        for (StubElement child : stub.getChildrenStubs()) {
-            PsiClass answer = findClass(fqn, child);
-            if (answer != null) return answer;
+        if (stub instanceof PsiClassStub || stub instanceof PsiFileStub) {
+            for (StubElement child : stub.getChildrenStubs()) {
+                PsiClass answer = findClass(fqn, child);
+                if (answer != null) return answer;
+            }
         }
 
         return null;
@@ -205,7 +204,6 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
             }
         };
 
-
         state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         state.getFactory().files();
 
@@ -213,13 +211,13 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     }
 
     @Override
-    public ItemPresentation getPresentation() {
-        return ItemPresentationProviders.getItemPresentation(this);
+    public boolean isEquivalentTo(PsiElement another) {
+        return another instanceof PsiClass && Comparing.equal(((PsiClass)another).getQualifiedName(), getQualifiedName());
     }
 
     @Override
-    public boolean isEquivalentTo(PsiElement another) {
-        return another instanceof PsiClass && Comparing.equal(((PsiClass)another).getQualifiedName(), getQualifiedName());
+    public ItemPresentation getPresentation() {
+        return ItemPresentationProviders.getItemPresentation(this);
     }
 
     @Override

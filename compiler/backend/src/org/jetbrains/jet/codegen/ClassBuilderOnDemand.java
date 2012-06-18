@@ -28,7 +28,7 @@ public abstract class ClassBuilderOnDemand {
 
     private ClassBuilder classBuilder;
 
-    private List<ClassBuilderCallback> optionalDeclarations = Lists.newArrayList();
+    private final List<ClassBuilderCallback> optionalDeclarations = Lists.newArrayList();
 
     interface ClassBuilderCallback {
         void doSomething(@NotNull ClassBuilder classBuilder);
@@ -59,5 +59,9 @@ public abstract class ClassBuilderOnDemand {
         if (classBuilder != null) {
             classBuilder.done();
         }
+    }
+
+    public boolean isActivated() {
+        return classBuilder != null;
     }
 }

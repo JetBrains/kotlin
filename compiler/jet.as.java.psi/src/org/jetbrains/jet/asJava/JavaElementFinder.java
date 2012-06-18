@@ -30,6 +30,7 @@ import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.JetTypeMapper;
+import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JavaPsiFacadeKotlinHacks;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
@@ -38,10 +39,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
 
 public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacadeKotlinHacks.KotlinFinderMarker {
     private final Project project;
@@ -118,7 +116,8 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         for (JetFile file : filesInScope) {
             final FqName packageName = JetPsiUtil.getFQName(file);
             if (packageName != null && qualifiedName.getFqName().startsWith(packageName.getFqName())) {
-                if (qualifiedName.equals(QualifiedNamesUtil.combine(packageName, Name.identifier(JvmAbi.PACKAGE_CLASS)))) {
+                if (qualifiedName.equals(QualifiedNamesUtil.combine(packageName, Name.identifier(JvmAbi.PACKAGE_CLASS))) &&
+                        NamespaceCodegen.shouldGenerateNSClass(Arrays.asList(file))) {
                     answer.add(new JetLightClass(psiManager, file, qualifiedName));
                 }
                 else {

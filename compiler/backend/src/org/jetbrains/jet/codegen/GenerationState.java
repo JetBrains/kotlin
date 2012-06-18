@@ -131,8 +131,8 @@ public class GenerationState {
         return Pair.create(className, getFactory().forAnonymousSubclass(className));
     }
 
-    public NamespaceCodegen forNamespace(FqName fqName, Collection<JetFile> namespace) {
-        return getFactory().forNamespace(fqName, namespace);
+    public NamespaceCodegen forNamespace(FqName fqName, Collection<JetFile> jetFiles) {
+        return getFactory().forNamespace(fqName, jetFiles);
     }
 
     private void beforeCompile() {
@@ -181,8 +181,8 @@ public class GenerationState {
                 progress);
     }
 
-    protected void generateNamespace(FqName fqName, Collection<JetFile> namespace, CompilationErrorHandler errorHandler, Progress progress) {
-        NamespaceCodegen codegen = forNamespace(fqName, namespace);
+    protected void generateNamespace(FqName fqName, Collection<JetFile> jetFiles, CompilationErrorHandler errorHandler, Progress progress) {
+        NamespaceCodegen codegen = forNamespace(fqName, jetFiles);
         codegen.generate(errorHandler, progress);
     }
 
