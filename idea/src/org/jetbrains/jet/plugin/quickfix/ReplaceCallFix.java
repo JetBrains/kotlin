@@ -31,23 +31,26 @@ import org.jetbrains.jet.plugin.JetBundle;
  * @author svtk
  */
 public class ReplaceCallFix implements IntentionAction {
-    private final boolean toSafe;
+    private final boolean safe;
+    private final boolean fromDot;
 
-    public ReplaceCallFix(boolean toSafe) {
-        this.toSafe = toSafe;
+    public ReplaceCallFix(boolean safe, boolean fromDot) {
+        this.safe = safe;
+        this.fromDot = fromDot;
     }
-
 
     @NotNull
     @Override
     public String getText() {
-        return toSafe ? JetBundle.message("replace.with.safe.call") : JetBundle.message("replace.with.dot.call");
+        return fromDot
+               ? (safe ? JetBundle.message("replace.with.safe.call") : JetBundle.message("replace.with.nna.call"))
+               : JetBundle.message("replace.with.dot.call");
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return toSafe ? JetBundle.message("replace.with.safe.call") : JetBundle.message("replace.with.dot.call");
+        return getText();
     }
 
     @Override
@@ -60,7 +63,7 @@ public class ReplaceCallFix implements IntentionAction {
 
     private JetQualifiedExpression getCallExpression(@NotNull Editor editor, @NotNull JetFile file) {
         final PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
-        return PsiTreeUtil.getParentOfType(elementAtCaret, toSafe ? JetDotQualifiedExpression.class : JetSafeQualifiedExpression.class);
+        return PsiTreeUtil.getParentOfType(elementAtCaret, fromDot ? JetDotQualifiedExpression.class : JetSafeQualifiedExpression.class);
     }
 
     @Override
@@ -71,7 +74,8 @@ public class ReplaceCallFix implements IntentionAction {
         JetExpression selector = callExpression.getSelectorExpression();
         if (selector != null) {
             JetQualifiedExpression newElement = (JetQualifiedExpression) JetPsiFactory.createExpression(
-                    project, callExpression.getReceiverExpression().getText() + (toSafe ? "?." : ".") + selector.getText());
+                    project,
+                    callExpression.getReceiverExpression().getText() + (fromDot ? (safe ? "?." : "!!.") : ".") + selector.getText());
 
             callExpression.replace(newElement);
         }
