@@ -644,7 +644,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetType getSelectorReturnType(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression selectorExpression, @NotNull ExpressionTypingContext context) {
         if (selectorExpression instanceof JetCallExpression) {
 
-            return getCallExpressionType((JetCallExpression) selectorExpression, receiver, callOperationNode, context);
+            return getCallExpressionTypeInfo((JetCallExpression) selectorExpression, receiver, callOperationNode, context).getType();
         }
         else if (selectorExpression instanceof JetSimpleNameExpression) {
 
@@ -693,8 +693,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return null;
     }
 
-    @Nullable
-    private JetType getCallExpressionType(@NotNull JetCallExpression callExpression, @NotNull ReceiverDescriptor receiver,
+    @NotNull
+    private JetTypeInfo getCallExpressionTypeInfo(@NotNull JetCallExpression callExpression, @NotNull ReceiverDescriptor receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context) {
 
         boolean[] result = new boolean[1];
@@ -710,7 +710,22 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 boolean hasValueParameters = functionDescriptor == null || functionDescriptor.getValueParameters().size() > 0;
                 context.trace.report(FUNCTION_CALL_EXPECTED.on(callExpression, callExpression, hasValueParameters));
             }
-            return functionDescriptor != null ? functionDescriptor.getReturnType() : null;
+            if (functionDescriptor == null) {
+                return JetTypeInfo.create(null, context.dataFlowInfo);
+            }
+            JetType type = functionDescriptor.getReturnType();
+
+            DataFlowInfo dataFlowInfo = context.dataFlowInfo;
+            JetValueArgumentList argumentList = callExpression.getValueArgumentList();
+            if (argumentList != null) {
+                for (JetValueArgument argument : argumentList.getArguments()) {
+                    JetExpression expression = argument.getArgumentExpression();
+                    if (expression != null) {
+                        dataFlowInfo = dataFlowInfo.and(facade.getTypeInfo(expression, context.replaceDataFlowInfo(dataFlowInfo)).getDataFlowInfo());
+                    }
+                }
+            }
+            return JetTypeInfo.create(type, dataFlowInfo);
         }
 
         JetExpression calleeExpression = callExpression.getCalleeExpression();
@@ -722,11 +737,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 traceForVariable.commit();
                 context.trace.report(FUNCTION_EXPECTED.on((JetReferenceExpression) calleeExpression, calleeExpression,
                                                           type != null ? type : ErrorUtils.createErrorType("")));
-                return null;
+                return JetTypeInfo.create(null, context.dataFlowInfo);
             }
         }
         traceForFunction.commit();
-        return null;
+        return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 
     private static void checkSuper(@NotNull ReceiverDescriptor receiverDescriptor, @NotNull OverloadResolutionResults<? extends CallableDescriptor> results,
@@ -744,8 +759,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitCallExpression(JetCallExpression expression, ExpressionTypingContext context) {
-        JetType expressionType = getCallExpressionType(expression, NO_RECEIVER, null, context);
-        return DataFlowUtils.checkType(expressionType, expression, context, context.dataFlowInfo);
+        JetTypeInfo expressionTypeInfo = getCallExpressionTypeInfo(expression, NO_RECEIVER, null, context);
+        return DataFlowUtils.checkType(expressionTypeInfo.getType(), expression, context, expressionTypeInfo.getDataFlowInfo());
     }
 
     @Override
