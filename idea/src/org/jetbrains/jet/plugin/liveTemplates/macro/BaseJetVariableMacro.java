@@ -36,7 +36,6 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.name.NamePredicate;
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorPredicate;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
@@ -85,7 +84,7 @@ public abstract class BaseJetVariableMacro extends Macro {
         }
 
         List<JetNamedDeclaration> declarations = new ArrayList<JetNamedDeclaration>();
-        for (DeclarationDescriptor declarationDescriptor : TipsManager.excludeNotCallableExtensions(filteredDescriptors, scope, NamePredicate.all())) {
+        for (DeclarationDescriptor declarationDescriptor : TipsManager.excludeNotCallableExtensions(filteredDescriptors, scope)) {
             PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bc, declarationDescriptor);
             assert declaration == null || declaration instanceof PsiNamedElement;
 

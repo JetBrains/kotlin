@@ -158,7 +158,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         if (!allDescriptorsDone) {
             if (!predicate.includeAll()) {
                 // super-optimized version
-                return concat(DescriptorPredicateUtils.filter(allDescriptors, predicate), getInheritedDescriptors(predicate));
+                return concat(allDescriptors, getInheritedDescriptors(predicate));
             }
 
             allDescriptorsDone = true;

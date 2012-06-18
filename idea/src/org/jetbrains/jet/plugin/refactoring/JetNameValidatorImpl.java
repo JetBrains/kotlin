@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.name.NamePredicate;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 import java.util.Collection;
@@ -107,7 +106,7 @@ public class JetNameValidatorImpl implements JetNameValidator {
             @Override
             public void visitExpression(JetExpression expression) {
                 Collection<DeclarationDescriptor> variants =
-                        TipsManager.getVariantsNoReceiver(expression, myBindingContext, NamePredicate.all());
+                        TipsManager.getVariantsNoReceiver(expression, myBindingContext);
                 for (DeclarationDescriptor variant : variants) {
                     if (variant.getName().getName().equals(name) && variant instanceof VariableDescriptor) {
                         result.set(false);
