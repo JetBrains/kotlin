@@ -17,13 +17,10 @@
 package org.jetbrains.jet.lang.resolve.name;
 
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * @author Stepan Koltsov
@@ -38,34 +35,6 @@ public class NamePredicateUtils {
         }
         else {
             return Collections2.filter(descriptors, predicate.asGuavaDescriptorPredicate());
-        }
-    }
-
-    public static <B>Map<Name, B> filterKeys(
-            @NotNull Map<Name, B> map,
-            @NotNull NamePredicate predicate) {
-        Name exact = predicate.getExact();
-
-        if (predicate.isAll()) {
-            return map;
-        }
-        else if (exact != null) {
-            B value = map.get(exact);
-            if (value != null) {
-                return Collections.singletonMap(exact, value);
-            }
-            else {
-                return Collections.emptyMap();
-            }
-        }
-        else {
-            Map<Name, B> r = Maps.newHashMap();
-            for (Map.Entry<Name, B> entry : map.entrySet()) {
-                if (predicate.matches(entry.getKey())) {
-                    r.put(entry.getKey(), entry.getValue());
-                }
-            }
-            return r;
         }
     }
 }
