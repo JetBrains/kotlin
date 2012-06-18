@@ -115,8 +115,11 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     @NotNull
     private JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context, JetVisitor<JetTypeInfo, ExpressionTypingContext> visitor) {
         if (context.trace.get(BindingContext.PROCESSED, expression)) {
-            return JetTypeInfo.create(context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression),
-                                      context.dataFlowInfo);
+            DataFlowInfo dataFlowInfo = context.trace.get(BindingContext.EXPRESSION_DATA_FLOW_INFO, expression);
+            if (dataFlowInfo == null) {
+                dataFlowInfo = context.dataFlowInfo;
+            }
+            return JetTypeInfo.create(context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression), dataFlowInfo);
         }
         JetTypeInfo result;
         try {
@@ -144,7 +147,10 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
             context.trace.record(BindingContext.RESOLUTION_SCOPE, expression, context.scope);
         }
         context.trace.record(BindingContext.PROCESSED, expression);
-        return result;        
+        if (result.getDataFlowInfo() != context.dataFlowInfo) {
+            context.trace.record(BindingContext.EXPRESSION_DATA_FLOW_INFO, expression, result.getDataFlowInfo());
+        }
+        return result;
     }  
 
     //////////////////////////////////////////////////////////////////////////////////////////////
