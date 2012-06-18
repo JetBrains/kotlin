@@ -196,18 +196,23 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (right != null) {
             JetType targetType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, right, context.trace, true);
 
+            boolean tryWithNoExpectedType = true;
             if (isTypeFlexible(expression.getLeft()) || expression.getOperationSign().getReferencedNameElementType() == JetTokens.COLON) {
                 TemporaryBindingTrace temporaryTraceWithExpectedType = TemporaryBindingTrace.create(context.trace);
-                boolean success = checkBinaryWithTypeRHS(expression, context.replaceBindingTrace(temporaryTraceWithExpectedType).replaceExpectedType(targetType), targetType);
-                if (success) {
+                ExpressionTypingContext contextWithTemporaryTrace = context.replaceBindingTrace(temporaryTraceWithExpectedType).replaceExpectedType(targetType);
+                JetTypeInfo typeInfo = facade.getTypeInfo(expression.getLeft(), contextWithTemporaryTrace);
+                if (typeInfo.getType() != null && checkBinaryWithTypeRHS(expression, contextWithTemporaryTrace, targetType, typeInfo.getType())) {
                     temporaryTraceWithExpectedType.commit();
-                }
-                else {
-                    checkBinaryWithTypeRHS(expression, context.replaceExpectedType(NO_EXPECTED_TYPE), targetType);
+                    tryWithNoExpectedType = false;
                 }
             }
-            else {
-                checkBinaryWithTypeRHS(expression, context.replaceExpectedType(NO_EXPECTED_TYPE), targetType);
+
+            if (tryWithNoExpectedType) {
+                ExpressionTypingContext contextWithNoExpectedType = context.replaceExpectedType(NO_EXPECTED_TYPE);
+                JetTypeInfo typeInfo = facade.getTypeInfo(expression.getLeft(), contextWithNoExpectedType);
+                if (typeInfo.getType() != null) {
+                    checkBinaryWithTypeRHS(expression, contextWithNoExpectedType, targetType, typeInfo.getType());
+                }
             }
 
             IElementType operationType = expression.getOperationSign().getReferencedNameElementType();
@@ -219,11 +224,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return DataFlowUtils.checkType(result, expression, context, context.dataFlowInfo);
     }
 
-    private boolean checkBinaryWithTypeRHS(JetBinaryExpressionWithTypeRHS expression, ExpressionTypingContext context, @NotNull JetType targetType) {
-
-        JetType actualType = facade.getTypeInfo(expression.getLeft(), context).getType();
-        if (actualType == null) return false;
-
+    private boolean checkBinaryWithTypeRHS(JetBinaryExpressionWithTypeRHS expression, ExpressionTypingContext context, @NotNull JetType targetType, JetType actualType) {
         JetSimpleNameExpression operationSign = expression.getOperationSign();
         IElementType operationType = operationSign.getReferencedNameElementType();
         if (operationType == JetTokens.COLON) {
