@@ -88,9 +88,6 @@ public interface JetScope {
 
     Collection<DeclarationDescriptor> getAllDescriptors();
 
-    @NotNull
-    Collection<Name> getAllDescriptorNames();
-
     /**
      * @return EFFECTIVE implicit receiver at this point (may be corresponding to an outer scope)
      */

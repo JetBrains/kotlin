@@ -1518,13 +1518,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return functions;
     }
 
-    @NotNull
-    public Collection<Name> resolveMemberNames(@NotNull ResolverScopeData scopeData) {
-        getResolverScopeData(scopeData);
-        // TODO: inner classes are not added
-        return scopeData.namedMembersMap.keySet();
-    }
-
     private Collection<JetType> getSupertypes(ResolverScopeData scope) {
         if (scope instanceof ResolverBinaryClassData) {
             return ((ResolverBinaryClassData) scope).classDescriptor.getSupertypes();
