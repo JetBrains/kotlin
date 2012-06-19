@@ -28,15 +28,12 @@ import java.util.List;
  * @author Nikolay Krasko
  */
 public interface PsiJetClassStub extends NamedStub<JetClass> {
-
-
     @NonNls
     @Nullable
     String getQualifiedName();
 
+    boolean isTrait();
+
     @NotNull
     List<String> getSuperNames();
-
-    boolean isDeprecated();
-    boolean hasDeprecatedAnnotation();
 }

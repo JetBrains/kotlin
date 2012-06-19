@@ -47,4 +47,12 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
         final List<String> names = stub.getSuperNames();
         assertSameElements(names, "ArrayList", "alist");
     }
+
+    public void testClassIsTrait() {
+        PsiFile psiFile = myFixture.configureByText("foo.kt", "trait Test { }");
+        final List<JetDeclaration> declarations = ((JetFile) psiFile).getDeclarations();
+        final JetClass jetClass = (JetClass) declarations.get(0);
+        final PsiJetClassStub stub = JetStubElementTypes.CLASS.createStub(jetClass, null);
+        assertEquals(true, stub.isTrait());
+    }
 }

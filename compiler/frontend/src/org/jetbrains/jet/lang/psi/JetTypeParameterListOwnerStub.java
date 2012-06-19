@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.stubs.NamedStub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * @author Nikolay Krasko
  */
-abstract class JetTypeParameterListOwnerStub<T extends StubElement> extends JetNamedDeclarationStub<T> implements JetTypeParameterListOwner {
+abstract class JetTypeParameterListOwnerStub<T extends NamedStub> extends JetNamedDeclarationStub<T> implements JetTypeParameterListOwner {
     public JetTypeParameterListOwnerStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }
@@ -38,15 +38,13 @@ abstract class JetTypeParameterListOwnerStub<T extends StubElement> extends JetN
         super(node);
     }
 
-    @Override
     @Nullable
-    public JetTypeParameterList getTypeParameterList() {
+    JetTypeParameterList getTypeParameterList() {
         return (JetTypeParameterList) findChildByType(JetNodeTypes.TYPE_PARAMETER_LIST);
     }
 
-    @Override
     @Nullable
-    public JetTypeConstraintList getTypeConstraintList() {
+    JetTypeConstraintList getTypeConstraintList() {
         return (JetTypeConstraintList) findChildByType(JetNodeTypes.TYPE_CONSTRAINT_LIST);
     }
 

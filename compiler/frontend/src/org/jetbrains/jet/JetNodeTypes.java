@@ -43,7 +43,7 @@ public interface JetNodeTypes {
     JetNodeType ANONYMOUS_INITIALIZER = new JetNodeType("ANONYMOUS_INITIALIZER", JetClassInitializer.class);
 
     JetNodeType TYPE_PARAMETER_LIST                 = new JetNodeType("TYPE_PARAMETER_LIST", JetTypeParameterList.class);
-    JetNodeType TYPE_PARAMETER                      = new JetNodeType("TYPE_PARAMETER", JetTypeParameter.class);
+    IElementType TYPE_PARAMETER                      = JetStubElementTypes.TYPE_PARAMETER;
     JetNodeType DELEGATION_SPECIFIER_LIST           = new JetNodeType("DELEGATION_SPECIFIER_LIST", JetDelegationSpecifierList.class);
     JetNodeType DELEGATOR_BY                        = new JetNodeType("DELEGATOR_BY", JetDelegatorByExpressionSpecifier.class);
     JetNodeType DELEGATOR_SUPER_CALL                = new JetNodeType("DELEGATOR_SUPER_CALL", JetDelegatorToSuperCall.class);

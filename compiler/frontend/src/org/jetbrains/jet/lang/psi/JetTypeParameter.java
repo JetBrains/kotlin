@@ -17,18 +17,25 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeParameterStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
  * @author max
  */
-public class JetTypeParameter extends JetNamedDeclarationNotStubbed {
+public class JetTypeParameter extends JetNamedDeclarationStub<PsiJetTypeParameterStub> {
     public JetTypeParameter(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public JetTypeParameter(@NotNull PsiJetTypeParameterStub stub, @NotNull IStubElementType nodeType) {
+        super(stub, nodeType);
     }
 
     @Override
@@ -43,6 +50,13 @@ public class JetTypeParameter extends JetNamedDeclarationNotStubbed {
 
     @NotNull
     public Variance getVariance() {
+        PsiJetTypeParameterStub stub = getStub();
+        if (stub != null) {
+            if (stub.isOutVariance()) return Variance.OUT_VARIANCE;
+            if (stub.isInVariance()) return Variance.IN_VARIANCE;
+            return Variance.INVARIANT;
+        }
+
         JetModifierList modifierList = getModifierList();
         if (modifierList == null) return Variance.INVARIANT;
 
@@ -54,5 +68,11 @@ public class JetTypeParameter extends JetNamedDeclarationNotStubbed {
     @Nullable
     public JetTypeReference getExtendsBound() {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
+    }
+
+    @NotNull
+    @Override
+    public IStubElementType getElementType() {
+        return JetStubElementTypes.TYPE_PARAMETER;
     }
 }

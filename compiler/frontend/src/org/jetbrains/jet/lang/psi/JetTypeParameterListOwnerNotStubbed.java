@@ -34,15 +34,13 @@ abstract class JetTypeParameterListOwnerNotStubbed extends JetNamedDeclarationNo
         super(node);
     }
 
-    @Override
     @Nullable
-    public JetTypeParameterList getTypeParameterList() {
+    JetTypeParameterList getTypeParameterList() {
         return (JetTypeParameterList) findChildByType(JetNodeTypes.TYPE_PARAMETER_LIST);
     }
 
-    @Override
     @Nullable
-    public JetTypeConstraintList getTypeConstraintList() {
+    JetTypeConstraintList getTypeConstraintList() {
         return (JetTypeConstraintList) findChildByType(JetNodeTypes.TYPE_CONSTRAINT_LIST);
     }
 

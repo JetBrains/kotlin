@@ -36,15 +36,16 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     private final StringRef qualifiedName;
     private final StringRef name;
     private final StringRef[] superNames;
+    private final boolean isTrait;
 
     public PsiJetClassStubImpl(
             JetClassElementType type,
-            final StubElement parent,
+            StubElement parent,
             @Nullable final String qualifiedName,
-            final String name,
-            final List<String> superNames) {
-
-        this(type, parent, StringRef.fromString(qualifiedName), StringRef.fromString(name), wrapStrings(superNames));
+            String name,
+            List<String> superNames,
+            boolean isTrait) {
+        this(type, parent, StringRef.fromString(qualifiedName), StringRef.fromString(name), wrapStrings(superNames), isTrait);
     }
 
     private static StringRef[] wrapStrings(List<String> names) {
@@ -57,15 +58,17 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
 
     public PsiJetClassStubImpl(
             JetClassElementType type,
-            final StubElement parent,
-            final StringRef qualifiedName,
-            final StringRef name,
-            final StringRef[] superNames) {
+            StubElement parent,
+            StringRef qualifiedName,
+            StringRef name,
+            StringRef[] superNames,
+            boolean isTrait) {
 
         super(parent, type);
         this.qualifiedName = qualifiedName;
         this.name = name;
         this.superNames = superNames;
+        this.isTrait = isTrait;
     }
 
     @Override
@@ -74,13 +77,8 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     }
 
     @Override
-    public boolean isDeprecated() {
-        return false;
-    }
-
-    @Override
-    public boolean hasDeprecatedAnnotation() {
-        return false;
+    public boolean isTrait() {
+        return isTrait;
     }
 
     @Override
