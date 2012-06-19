@@ -995,6 +995,9 @@ public class JetTypeMapper {
             if (DescriptorUtils.isClassObject(declaration)) {
                 return defaultFlags;
             }
+            if (p.getContainingDeclaration() instanceof NamespaceDescriptor) {
+                return ACC_PUBLIC;
+            }
             return ACC_PRIVATE;
         }
         else if (p.getVisibility() == Visibilities.INTERNAL) {

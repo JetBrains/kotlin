@@ -126,7 +126,8 @@ public class PropertyCodegen {
     }
 
     private static boolean isExternallyAccessible(PropertyDescriptor p) {
-        return p.getVisibility() != Visibilities.PRIVATE || DescriptorUtils.isClassObject(p.getContainingDeclaration());
+        return p.getVisibility() != Visibilities.PRIVATE || DescriptorUtils.isClassObject(p.getContainingDeclaration())
+               || p.getContainingDeclaration() instanceof NamespaceDescriptor;
     }
 
     private void generateSetter(JetProperty p, PropertyDescriptor propertyDescriptor) {

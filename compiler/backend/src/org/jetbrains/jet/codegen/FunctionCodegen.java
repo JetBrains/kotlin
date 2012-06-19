@@ -90,7 +90,7 @@ public class FunctionCodegen {
         List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
         List<TypeParameterDescriptor> typeParameters = (functionDescriptor instanceof PropertyAccessorDescriptor ? ((PropertyAccessorDescriptor)functionDescriptor).getCorrespondingProperty(): functionDescriptor).getTypeParameters();
 
-        int flags = ACC_PUBLIC; // TODO.
+        int flags = JetTypeMapper.getAccessModifiers(functionDescriptor, 0);
         
         if (!functionDescriptor.getValueParameters().isEmpty()
                 && functionDescriptor.getValueParameters().get(functionDescriptor.getValueParameters().size() - 1)
