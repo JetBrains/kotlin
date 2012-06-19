@@ -78,7 +78,9 @@ public abstract class Config {
      */
     @NotNull
     public static final List<String> LIB_FILE_NAMES_DEPENDENT_ON_STDLIB = Arrays.asList(
-            "/stdlib/test.kt"
+            "/stdlib/test.kt",
+            "/core/stringDefs.kt",
+            "/core/strings.kt"
     );
 
     public static final String LIBRARIES_LOCATION = "js/js.libraries/src";
@@ -88,6 +90,8 @@ public abstract class Config {
      */
     @NotNull
     public static final List<String> STDLIB_FILE_NAMES = Arrays.asList(
+            "/kotlin/Preconditions.kt",
+            "/kotlin/Strings.kt",
             "/kotlin/test/Test.kt"
     );
 

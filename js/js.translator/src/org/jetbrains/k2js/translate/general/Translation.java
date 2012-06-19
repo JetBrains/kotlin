@@ -220,7 +220,6 @@ public final class Translation {
             @NotNull JsBlock block,
             List<String> rawStatements) {
         ClassDescriptor lastClassDescriptor = null;
-        boolean declaredVar = false;
         List<JetNamedFunction> functions = JetTestFunctionDetector.findTestFunctions(context.bindingContext(), files);
         for (JetNamedFunction function : functions) {
             FunctionDescriptor functionDescriptor = getFunctionDescriptor(context.bindingContext(), function);
@@ -229,16 +228,9 @@ public final class Translation {
             if (containingDeclaration instanceof ClassDescriptor) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
                 String className = getQualifiedName(classDescriptor);
-                if (lastClassDescriptor != classDescriptor) {
-                    lastClassDescriptor = classDescriptor;
-                    String prefix = "";
-                    if (!declaredVar) {
-                        prefix = "var ";
-                        declaredVar = true;
-                    }
-                    rawStatements.add(prefix + "_testCase = new Kotlin.defs." + className + "();");
-                }
                 rawStatements.add("QUnit.test( \"" + className + "." + funName + "()\" , function() {");
+                String prefix = "    var ";
+                rawStatements.add(prefix + "_testCase = new Kotlin.defs." + className + "();");
                 //rawStatements.add("    expect(0);");
                 rawStatements.add("    _testCase." + funName + "();");
             } else {
