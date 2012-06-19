@@ -71,12 +71,12 @@ public final class NamespaceTranslator extends AbstractTranslator {
     @NotNull
     private JsInvocation getNamespaceDeclaration() {
         JsInvocation namespaceDeclaration = namespaceCreateMethodInvocation();
-        addNamespaceInitalizersAndProperties(namespaceDeclaration);
+        addNamespaceInitializersAndProperties(namespaceDeclaration);
         namespaceDeclaration.getArguments().add(getClassesAndNestedNamespaces());
         return namespaceDeclaration;
     }
 
-    private void addNamespaceInitalizersAndProperties(@NotNull JsInvocation namespaceDeclaration) {
+    private void addNamespaceInitializersAndProperties(@NotNull JsInvocation namespaceDeclaration) {
         JsFunction initializer = Translation.generateNamespaceInitializerMethod(descriptor, context());
         List<JsPropertyInitializer> properties = new DeclarationBodyVisitor().traverseNamespace(descriptor, context());
         if (context().isEcma5()) {
