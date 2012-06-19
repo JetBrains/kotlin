@@ -543,6 +543,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (selectorExpression == null) return JetTypeInfo.create(null, context.dataFlowInfo);
         if (receiverType == null) receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());
 
+        context = context.replaceDataFlowInfo(receiverTypeInfo.getDataFlowInfo());
+
         if (selectorExpression instanceof JetSimpleNameExpression) {
             propagateConstantValues(expression, context, (JetSimpleNameExpression) selectorExpression);
         }
@@ -563,7 +565,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (selectorReturnType != null) {
             context.trace.record(BindingContext.EXPRESSION_TYPE, selectorExpression, selectorReturnType);
         }
-        return DataFlowUtils.checkType(selectorReturnType, expression, context, receiverTypeInfo.getDataFlowInfo());
+        return DataFlowUtils.checkType(selectorReturnType, expression, context, selectorReturnTypeInfo.getDataFlowInfo());
     }
 
     private void propagateConstantValues(JetQualifiedExpression expression, ExpressionTypingContext context, JetSimpleNameExpression selectorExpression) {
@@ -658,9 +660,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             JetExpression newReceiverExpression = qualifiedExpression.getReceiverExpression();
             JetTypeInfo newReceiverTypeInfo = getSelectorReturnTypeInfo(receiver, callOperationNode, newReceiverExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
             JetType newReceiverType = newReceiverTypeInfo.getType();
+            DataFlowInfo newReceiverDataFlowInfo = newReceiverTypeInfo.getDataFlowInfo();
             JetExpression newSelectorExpression = qualifiedExpression.getSelectorExpression();
             if (newReceiverType != null && newSelectorExpression != null) {
-                return getSelectorReturnTypeInfo(new ExpressionReceiver(newReceiverExpression, newReceiverType), qualifiedExpression.getOperationTokenNode(), newSelectorExpression, context);
+                return getSelectorReturnTypeInfo(new ExpressionReceiver(newReceiverExpression, newReceiverType), qualifiedExpression.getOperationTokenNode(), newSelectorExpression, context.replaceDataFlowInfo(newReceiverDataFlowInfo));
             }
         }
         else {
