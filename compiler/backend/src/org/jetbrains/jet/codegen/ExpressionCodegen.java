@@ -1063,8 +1063,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER && contextKind() != OwnerKind.TRAIT_IMPL ;
             JetExpression r = getReceiverForSelector(expression);
             final boolean isSuper = r instanceof JetSuperExpression;
-            if (propertyDescriptor.getVisibility() == Visibilities.PRIVATE && !DescriptorUtils
-                    .isClassObject(propertyDescriptor.getContainingDeclaration())) {
+            if (propertyDescriptor.getVisibility() == Visibilities.PRIVATE
+                    && !DescriptorUtils.isClassObject(propertyDescriptor.getContainingDeclaration())
+                    && propertyDescriptor.getContainingDeclaration() instanceof ClassDescriptor) {
                 if (context.getClassOrNamespaceDescriptor() != propertyDescriptor.getContainingDeclaration()) {
                     DeclarationDescriptor enclosed = propertyDescriptor.getContainingDeclaration();
                     if (enclosed != null && enclosed != context.getThisDescriptor()) {
@@ -1366,7 +1367,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         if (fd.getVisibility() == Visibilities.PRIVATE
-                && !DescriptorUtils.isClassObject(fd.getContainingDeclaration())) {
+                && !DescriptorUtils.isClassObject(fd.getContainingDeclaration())
+                && fd.getContainingDeclaration() instanceof ClassDescriptor) {
             if (context.getClassOrNamespaceDescriptor() != fd.getContainingDeclaration()) {
                 DeclarationDescriptor enclosed = fd.getContainingDeclaration();
                 if (enclosed != context.getThisDescriptor()) {

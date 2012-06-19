@@ -563,4 +563,8 @@ public class NamespaceGenTest extends CodegenTestCase {
         //noinspection ImplicitArrayToString
         assertEquals("s" + args.toString(), main.invoke(null, "s", args));
     }
+
+    public void testPrivateTopLevelPropAndVarInInner() {
+        blackBoxFile("privateTopLevelPropAndVarInInner.kt");
+    }
 }
