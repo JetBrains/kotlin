@@ -767,6 +767,7 @@ public class CallResolver {
 
     private <D extends CallableDescriptor, F extends D> ResolutionStatus checkValueArgumentTypes(CallResolutionContext<D, F> context) {
         ResolutionStatus result = SUCCESS;
+        DataFlowInfo dataFlowInfo = context.dataFlowInfo;
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : context.candidateCall.getValueArguments().entrySet()) {
             ValueParameterDescriptor parameterDescriptor = entry.getKey();
             ResolvedValueArgument resolvedArgument = entry.getValue();
@@ -777,7 +778,9 @@ public class CallResolver {
                 if (expression == null) continue;
 
                 JetType expectedType = getEffectiveExpectedType(parameterDescriptor, argument);
-                JetType type = expressionTypingServices.getType(context.scope, expression, expectedType, context.dataFlowInfo, context.candidateCall.getTrace());
+                JetTypeInfo typeInfo = expressionTypingServices.getTypeInfo(context.scope, expression, expectedType, dataFlowInfo, context.candidateCall.getTrace());
+                JetType type = typeInfo.getType();
+                dataFlowInfo = dataFlowInfo.and(typeInfo.getDataFlowInfo());
                 if (type == null || ErrorUtils.isErrorType(type)) {
                     context.candidateCall.argumentHasNoType();
                 }
