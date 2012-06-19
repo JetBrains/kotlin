@@ -727,6 +727,26 @@ public class LazyResolveNamespaceComparingTestGenerated {
             doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/InternalTraitMembersInherited.kt");
         }
 
+        @Test
+        public void testPrivateClass() throws Exception {
+            doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/PrivateClass.kt");
+        }
+
+        @Test
+        public void testPrivateTopLevelFun() throws Exception {
+            doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/PrivateTopLevelFun.kt");
+        }
+
+        @Test
+        public void testPrivateTopLevelVal() throws Exception {
+            doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/PrivateTopLevelVal.kt");
+        }
+
+        @Test
+        public void testTopLevelVarWithPrivateSetter() throws Exception {
+            doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/TopLevelVarWithPrivateSetter.kt");
+        }
+
         public static void allTestsPresent(Class<?> clazz, File testDataDir, boolean recursive) {
             Set<String> methodNames = new HashSet<String>();
             for (Method method : clazz.getDeclaredMethods()) {
