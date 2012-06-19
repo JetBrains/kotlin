@@ -231,6 +231,16 @@ public class ClassGenTest extends CodegenTestCase {
         blackBox();
     }
 
+    public void testPrivateOuterProperty() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        blackBoxFile("classes/privateOuterProperty.kt");
+    }
+
+    public void testPrivateOuterFunctions() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        blackBoxFile("classes/privateOuterFunctions.kt");
+    }
+
     public void testKt249() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt249.jet");

@@ -1339,7 +1339,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private StackValue invokeFunction(JetCallExpression expression,
-            DeclarationDescriptor fd,
+            FunctionDescriptor fd,
             StackValue receiver,
             ResolvedCall<? extends CallableDescriptor> resolvedCall) {
         boolean superCall = false;
@@ -1357,7 +1357,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                         while(c.getContextDescriptor() != enclosed) {
                             c = c.getParentContext();
                         }
-                        fd = c.getAccessor(fd);
+                        fd = (FunctionDescriptor) c.getAccessor(fd);
                         superCall = false;
                         receiver = StackValue.thisOrOuter(this, enclosed);
                     }
@@ -1365,13 +1365,27 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             }
         }
 
-        Callable callable = resolveToCallable((FunctionDescriptor) fd, superCall);
+        if (fd.getVisibility() == Visibilities.PRIVATE
+                && !DescriptorUtils.isClassObject(fd.getContainingDeclaration())) {
+            if (context.getClassOrNamespaceDescriptor() != fd.getContainingDeclaration()) {
+                DeclarationDescriptor enclosed = fd.getContainingDeclaration();
+                if (enclosed != context.getThisDescriptor()) {
+                    CodegenContext c = context;
+                    while(c.getContextDescriptor() != enclosed) {
+                        c = c.getParentContext();
+                    }
+                    fd = (FunctionDescriptor) c.getAccessor(fd);
+                }
+            }
+        }
+
+        Callable callable = resolveToCallable(fd, superCall);
         if (callable instanceof CallableMethod) {
             final CallableMethod callableMethod = (CallableMethod) callable;
             invokeMethodWithArguments(callableMethod, expression, receiver);
 
             final Type callReturnType = callableMethod.getSignature().getAsmMethod().getReturnType();
-            return returnValueAsStackValue((FunctionDescriptor) fd, callReturnType);
+            return returnValueAsStackValue(fd, callReturnType);
         }
         else {
             receiver = StackValue.receiver(resolvedCall, receiver, this, null, state);
