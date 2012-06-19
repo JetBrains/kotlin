@@ -74,6 +74,15 @@ set(value) {
     this.setAttribute("class", value)
 }
 
+/** Returns true if the element has the given CSS class style in its 'class' attribute */
+fun Element.hasClass(cssClass: String): Boolean {
+    val c = this.classes
+    return if (c != null)
+        c.matches("""(^|.*\s+)$cssClass($|\s+.*)""")
+    else false
+}
+
+
 /** Returns the children of the element as a list */
 inline fun Element?.children(): List<Node> {
     return this?.childNodes.toList()
@@ -130,8 +139,47 @@ inline fun NodeList?.toElementList(): List<Element> {
     }
 }
 
+/** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
+fun Document?.get(selector: String): List<Element> {
+    val root = this?.documentElement
+    return if (root != null) {
+        if (selector == "*") {
+            elements
+        } else if (selector.startsWith(".")) {
+            elements.filter{ it.hasClass(selector.substring(1)) }.toList()
+        } else if (selector.startsWith("#")) {
+            val id = selector.substring(1)
+            val element = this?.getElementById(id)
+            return if (element != null)
+                arrayList<Element>(element)
+            else
+                Collections.EMPTY_LIST as List<Element>
+        } else {
+            //  assume its a vanilla element name
+            elements(selector)
+        }
+    } else {
+        Collections.EMPTY_LIST as List<Element>
+    }
+}
 
-
+/** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
+fun Element.get(selector: String): List<Element> {
+    return if (selector == "*") {
+        elements
+    } else if (selector.startsWith(".")) {
+        elements.filter{ it.hasClass(selector.substring(1)) }.toList()
+    } else if (selector.startsWith("#")) {
+        val element = this.ownerDocument?.getElementById(selector.substring(1))
+        return if (element != null)
+            arrayList<Element>(element)
+        else
+            Collections.EMPTY_LIST as List<Element>
+    } else {
+        //  assume its a vanilla element name
+        elements(selector)
+    }
+}
 
 
 // Helper methods

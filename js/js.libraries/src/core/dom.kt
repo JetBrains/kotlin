@@ -26,10 +26,10 @@ native public trait CDATASection: Text {
 native public trait CharacterData: Node {
     public var data: String
     public val length: Int
-    public fun replaceData(arg1: Int, arg2: Int, arg3: String): Unit = js.noImpl
+    public fun replaceData(arg1: Int, arg2: Int, arg3: String?): Unit = js.noImpl
     public fun substringData(arg1: Int, arg2: Int): String = js.noImpl
-    public fun appendData(arg1: String): Unit = js.noImpl
-    public fun insertData(arg1: Int, arg2: String): Unit = js.noImpl
+    public fun appendData(arg1: String?): Unit = js.noImpl
+    public fun insertData(arg1: Int, arg2: String?): Unit = js.noImpl
     public fun deleteData(arg1: Int, arg2: Int): Unit = js.noImpl
 }
 
@@ -47,23 +47,23 @@ native public trait Document: Node {
     public val xmlEncoding: String
     public var xmlStandalone: Boolean
     public var xmlVersion: String
-    public fun createElement(arg1: String): Element = js.noImpl
-    public fun createComment(arg1: String): Comment = js.noImpl
+    public fun createElement(arg1: String?): Element = js.noImpl
+    public fun createComment(arg1: String?): Comment = js.noImpl
     public fun createDocumentFragment(): DocumentFragment = js.noImpl
-    public fun createTextNode(arg1: String): Text = js.noImpl
-    public fun createCDATASection(arg1: String): CDATASection = js.noImpl
-    public fun createProcessingInstruction(arg1: String, arg2: String): ProcessingInstruction = js.noImpl
-    public fun createAttribute(arg1: String): Attr = js.noImpl
-    public fun createEntityReference(arg1: String): EntityReference = js.noImpl
-    public fun getElementsByTagName(arg1: String): NodeList = js.noImpl
+    public fun createTextNode(arg1: String?): Text = js.noImpl
+    public fun createCDATASection(arg1: String?): CDATASection = js.noImpl
+    public fun createProcessingInstruction(arg1: String?, arg2: String?): ProcessingInstruction = js.noImpl
+    public fun createAttribute(arg1: String?): Attr = js.noImpl
+    public fun createEntityReference(arg1: String?): EntityReference = js.noImpl
+    public fun getElementsByTagName(arg1: String?): NodeList = js.noImpl
     public fun importNode(arg1: Node, arg2: Boolean): Node = js.noImpl
-    public fun createElementNS(arg1: String, arg2: String): Element = js.noImpl
-    public fun createAttributeNS(arg1: String, arg2: String): Attr = js.noImpl
-    public fun getElementsByTagNameNS(arg1: String, arg2: String): NodeList = js.noImpl
-    public fun getElementById(arg1: String): Element = js.noImpl
+    public fun createElementNS(arg1: String?, arg2: String?): Element = js.noImpl
+    public fun createAttributeNS(arg1: String?, arg2: String?): Attr = js.noImpl
+    public fun getElementsByTagNameNS(arg1: String?, arg2: String?): NodeList = js.noImpl
+    public fun getElementById(arg1: String?): Element = js.noImpl
     public fun adoptNode(arg1: Node): Node = js.noImpl
     public fun normalizeDocument(): Unit = js.noImpl
-    public fun renameNode(arg1: Node, arg2: String, arg3: String): Node = js.noImpl
+    public fun renameNode(arg1: Node, arg2: String?, arg3: String?): Node = js.noImpl
 }
 
 native public trait DocumentFragment: Node {
@@ -80,9 +80,9 @@ native public trait DocumentType: Node {
 
 native public trait DOMConfiguration {
     public val parameterNames: DOMStringList
-    public fun setParameter(arg1: String, arg2: Any): Unit = js.noImpl
-    public fun getParameter(arg1: String): Any = js.noImpl
-    public fun canSetParameter(arg1: String, arg2: Any): Boolean = js.noImpl
+    public fun setParameter(arg1: String?, arg2: Any): Unit = js.noImpl
+    public fun getParameter(arg1: String?): Any = js.noImpl
+    public fun canSetParameter(arg1: String?, arg2: Any): Boolean = js.noImpl
 }
 
 native public trait DOMError {
@@ -105,10 +105,10 @@ native public trait DOMErrorHandler {
 }
 
 native public trait DOMImplementation {
-    public fun getFeature(arg1: String, arg2: String): Any = js.noImpl
-    public fun hasFeature(arg1: String, arg2: String): Boolean = js.noImpl
-    public fun createDocumentType(arg1: String, arg2: String, arg3: String): DocumentType = js.noImpl
-    public fun createDocument(arg1: String, arg2: String, arg3: DocumentType): Document = js.noImpl
+    public fun getFeature(arg1: String?, arg2: String?): Any = js.noImpl
+    public fun hasFeature(arg1: String?, arg2: String?): Boolean = js.noImpl
+    public fun createDocumentType(arg1: String?, arg2: String?, arg3: String?): DocumentType = js.noImpl
+    public fun createDocument(arg1: String?, arg2: String?, arg3: DocumentType?): Document = js.noImpl
 }
 
 native public trait DOMImplementationList {
@@ -127,28 +127,28 @@ native public trait DOMLocator {
 
 native public trait DOMStringList {
     public val length: Int
-    public fun contains(arg1: String): Boolean = js.noImpl
+    public fun contains(arg1: String?): Boolean = js.noImpl
     public fun item(arg1: Int): String = js.noImpl
 }
 
 native public trait Element: Node {
     public val schemaTypeInfo: TypeInfo
     public val tagName: String
-    public fun getAttribute(arg1: String): String = js.noImpl
-    public fun setAttribute(arg1: String, arg2: String): Unit = js.noImpl
-    public fun getElementsByTagName(arg1: String): NodeList = js.noImpl
-    public fun getElementsByTagNameNS(arg1: String, arg2: String): NodeList = js.noImpl
-    public fun removeAttribute(arg1: String): Unit = js.noImpl
-    public fun getAttributeNode(arg1: String): Attr = js.noImpl
+    public fun getAttribute(arg1: String?): String = js.noImpl
+    public fun setAttribute(arg1: String?, arg2: String?): Unit = js.noImpl
+    public fun getElementsByTagName(arg1: String?): NodeList = js.noImpl
+    public fun getElementsByTagNameNS(arg1: String?, arg2: String?): NodeList = js.noImpl
+    public fun removeAttribute(arg1: String?): Unit = js.noImpl
+    public fun getAttributeNode(arg1: String?): Attr = js.noImpl
     public fun removeAttributeNode(arg1: Attr): Attr = js.noImpl
-    public fun getAttributeNS(arg1: String, arg2: String): String = js.noImpl
-    public fun setAttributeNS(arg1: String, arg2: String, arg3: String): Unit = js.noImpl
-    public fun removeAttributeNS(arg1: String, arg2: String): Unit = js.noImpl
-    public fun getAttributeNodeNS(arg1: String, arg2: String): Attr = js.noImpl
-    public fun hasAttribute(arg1: String): Boolean = js.noImpl
-    public fun hasAttributeNS(arg1: String, arg2: String): Boolean = js.noImpl
-    public fun setIdAttribute(arg1: String, arg2: Boolean): Unit = js.noImpl
-    public fun setIdAttributeNS(arg1: String, arg2: String, arg3: Boolean): Unit = js.noImpl
+    public fun getAttributeNS(arg1: String?, arg2: String?): String = js.noImpl
+    public fun setAttributeNS(arg1: String?, arg2: String?, arg3: String?): Unit = js.noImpl
+    public fun removeAttributeNS(arg1: String?, arg2: String?): Unit = js.noImpl
+    public fun getAttributeNodeNS(arg1: String?, arg2: String?): Attr = js.noImpl
+    public fun hasAttribute(arg1: String?): Boolean = js.noImpl
+    public fun hasAttributeNS(arg1: String?, arg2: String?): Boolean = js.noImpl
+    public fun setIdAttribute(arg1: String?, arg2: Boolean): Unit = js.noImpl
+    public fun setIdAttributeNS(arg1: String?, arg2: String?, arg3: Boolean): Unit = js.noImpl
     public fun setIdAttributeNode(arg1: Attr, arg2: Boolean): Unit = js.noImpl
     public fun setAttributeNode(arg1: Attr): Attr = js.noImpl
     public fun setAttributeNodeNS(arg1: Attr): Attr = js.noImpl
@@ -169,18 +169,18 @@ native public trait EntityReference: Node {
 native public trait NameList {
     public val length: Int
     public fun getName(arg1: Int): String = js.noImpl
-    public fun contains(arg1: String): Boolean = js.noImpl
+    public fun contains(arg1: String?): Boolean = js.noImpl
     public fun getNamespaceURI(arg1: Int): String = js.noImpl
-    public fun containsNS(arg1: String, arg2: String): Boolean = js.noImpl
+    public fun containsNS(arg1: String?, arg2: String?): Boolean = js.noImpl
 }
 
 native public trait NamedNodeMap {
     public val length: Int
     public fun item(arg1: Int): Node = js.noImpl
-    public fun getNamedItem(arg1: String): Node = js.noImpl
-    public fun removeNamedItem(arg1: String): Node = js.noImpl
-    public fun getNamedItemNS(arg1: String, arg2: String): Node = js.noImpl
-    public fun removeNamedItemNS(arg1: String, arg2: String): Node = js.noImpl
+    public fun getNamedItem(arg1: String?): Node = js.noImpl
+    public fun removeNamedItem(arg1: String?): Node = js.noImpl
+    public fun getNamedItemNS(arg1: String?, arg2: String?): Node = js.noImpl
+    public fun removeNamedItemNS(arg1: String?, arg2: String?): Node = js.noImpl
     public fun setNamedItem(arg1: Node): Node = js.noImpl
     public fun setNamedItemNS(arg1: Node): Node = js.noImpl
 }
@@ -203,11 +203,12 @@ native public trait Node {
     public val previousSibling: Node
     public var textContent: String
     public fun normalize(): Unit = js.noImpl
-    public fun isSupported(arg1: String, arg2: String): Boolean = js.noImpl
-    public fun getFeature(arg1: String, arg2: String): Any = js.noImpl
+    public fun isSupported(arg1: String?, arg2: String?): Boolean = js.noImpl
+    public fun getUserData(arg1: String?): Any = js.noImpl
+    public fun setUserData(arg1: String?, arg2: Any, arg3: UserDataHandler): Any = js.noImpl
+    public fun getFeature(arg1: String?, arg2: String?): Any = js.noImpl
     public fun hasAttributes(): Boolean = js.noImpl
     public fun removeChild(arg1: Node): Node = js.noImpl
-    public fun getUserData(arg1: String): Any = js.noImpl
     public fun replaceChild(arg1: Node, arg2: Node): Node = js.noImpl
     public fun insertBefore(arg1: Node, arg2: Node): Node = js.noImpl
     public fun appendChild(arg1: Node): Node = js.noImpl
@@ -215,11 +216,10 @@ native public trait Node {
     public fun cloneNode(arg1: Boolean): Node = js.noImpl
     public fun compareDocumentPosition(arg1: Node): Short = js.noImpl
     public fun isSameNode(arg1: Node): Boolean = js.noImpl
-    public fun lookupPrefix(arg1: String): String = js.noImpl
-    public fun isDefaultNamespace(arg1: String): Boolean = js.noImpl
-    public fun lookupNamespaceURI(arg1: String): String = js.noImpl
+    public fun lookupPrefix(arg1: String?): String = js.noImpl
+    public fun isDefaultNamespace(arg1: String?): Boolean = js.noImpl
+    public fun lookupNamespaceURI(arg1: String?): String = js.noImpl
     public fun isEqualNode(arg1: Node): Boolean = js.noImpl
-    public fun setUserData(arg1: String, arg2: Any, arg3: UserDataHandler): Any = js.noImpl
 
     class object {
         public val ELEMENT_NODE: Short = 1
@@ -262,13 +262,13 @@ native public trait Text: CharacterData {
     public val wholeText: String
     public fun splitText(arg1: Int): Text = js.noImpl
     public fun isElementContentWhitespace(): Boolean = js.noImpl
-    public fun replaceWholeText(arg1: String): Text = js.noImpl
+    public fun replaceWholeText(arg1: String?): Text = js.noImpl
 }
 
 native public trait TypeInfo {
     public val typeName: String
     public val typeNamespace: String
-    public fun isDerivedFrom(arg1: String, arg2: String, arg3: Int): Boolean = js.noImpl
+    public fun isDerivedFrom(arg1: String?, arg2: String?, arg3: Int): Boolean = js.noImpl
 
     class object {
         public val DERIVATION_RESTRICTION: Int = 1
@@ -279,7 +279,7 @@ native public trait TypeInfo {
 }
 
 native public trait UserDataHandler {
-    public fun handle(arg1: Short, arg2: String, arg3: Any, arg4: Node, arg5: Node): Unit = js.noImpl
+    public fun handle(arg1: Short, arg2: String?, arg3: Any, arg4: Node, arg5: Node): Unit = js.noImpl
 
     class object {
         public val NODE_CLONED: Short = 1

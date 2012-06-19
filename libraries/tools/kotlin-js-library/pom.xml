@@ -32,6 +32,7 @@
                                 <copy todir="${basedir}/target/generated-js-definitions">
                                     <fileset dir="${kotlin-js-lib-srcdir}">
                                         <exclude name="core/dom/core.kt"/>
+                                        <exclude name="core/strings.kt"/>
                                         <exclude name="html5/localstorage.kt"/>
                                         <exclude name="jquery/common.kt"/>
                                         <exclude name="jquery/ui.kt"/>
@@ -39,18 +40,23 @@
                                         <exclude name="dom/html5/canvas.kt"/>
                                         <exclude name="dom/html/window.kt"/>
                                         <exclude name="stdlib/test.kt"/>
+                                        <exclude name="stdlib/dom.kt"/>
                                     </fileset>
                                 </copy>
                                 <copy todir="${basedir}/target/generated-js-library">
                                     <fileset dir="${kotlin-js-lib-srcdir}">
                                         <include name="stdlib/test.kt"/>
+                                        <include name="stdlib/dom.kt"/>
+                                        <include name="core/strings.kt"/>
                                     </fileset>
                                 </copy>
                                 <copy todir="${basedir}/target/generated-js-library/kotlin">
+<!--
                                     <fileset dir="${basedir}/../../stdlib/src/kotlin/dom">
                                         <include name="**/*.kt"/>
                                         <exclude name="**/*JVM.kt"/>
                                     </fileset>
+-->
                                     <fileset dir="${basedir}/../../stdlib/src/kotlin/support">
                                         <include name="**/*.kt"/>
                                         <exclude name="**/*JVM.kt"/>
@@ -61,6 +67,10 @@
                                     </fileset>
                                     <fileset dir="${basedir}/../../stdlib/src/kotlin">
                                         <include name="Preconditions.kt"/>
+<!--
+                                        <include name="Ordering.kt"/>
+-->
+                                        <include name="Strings.kt"/>
                                     </fileset>
                                 </copy>
                                 <copy tofile="${basedir}/target/generated-js-library/kotlin-lib.js"

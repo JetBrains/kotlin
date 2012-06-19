@@ -1,8 +1,6 @@
 package test.dom
 
-import kotlin.*
 import kotlin.dom.*
-import kotlin.util.*
 import kotlin.test.*
 import org.w3c.dom.*
 import org.junit.Test as test

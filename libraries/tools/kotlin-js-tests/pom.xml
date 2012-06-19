@@ -39,9 +39,21 @@
                             <target>
                                 <mkdir dir="${basedir}/target/tests"/>
                                 <copy todir="${basedir}/target/tests">
+<!--
                                     <fileset dir="${basedir}/../../stdlib/test/js">
                                         <include name="**/*.kt"/>
                                         <exclude name="**/*JVM.kt"/>
+                                    </fileset>
+-->
+<!--
+                                    <fileset dir="${basedir}/../../stdlib/test/dom">
+                                        <include name="**/*.kt"/>
+                                        <exclude name="**/DomBuilderTest.kt"/>
+                                        <exclude name="**/*JVM.kt"/>
+                                    </fileset>
+-->
+                                    <fileset dir="${basedir}/../../stdlib/test">
+                                        <include name="StringTest.kt"/>
                                     </fileset>
                                 </copy>
                             </target>

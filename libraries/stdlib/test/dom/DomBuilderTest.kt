@@ -1,16 +1,13 @@
 package test.dom
 
-import kotlin.*
 import kotlin.dom.*
-import kotlin.util.*
 import kotlin.test.*
 import org.w3c.dom.*
-import junit.framework.TestCase
+import org.junit.Test as test
 
-class DomBuilderTest() : TestCase() {
+class DomBuilderTest() {
 
-
-    fun testBuildDocument() {
+    test fun buildDocument() {
         var doc = createDocument()
 
         assertTrue {

@@ -50,6 +50,13 @@ import js.noImpl
             return if (answer == "Void") "Unit" else if (answer == "Object") "Any" else answer
         }
 
+        fun parameterTypeName(klass: Class<out Any?>?): String {
+            val answer = simpleTypeName(klass)
+            return if (answer == "String" || answer.endsWith("DocumentType")) {
+                answer + "?"
+            } else answer
+        }
+
         for (klass in classes) {
             val interfaces = klass.getInterfaces()
             val extends = if (interfaces != null && interfaces.size == 1) ": ${interfaces[0]?.getSimpleName()}" else ""
@@ -108,7 +115,7 @@ import js.noImpl
 
                     // TODO in java 7 its not easy with reflection to get the parameter argument name...
                     var counter = 0
-                    val parameters = parameterTypes.map<Class<out Any?>?, String>{ "arg${++counter}: ${simpleTypeName(it)}" }.makeString(", ")
+                    val parameters = parameterTypes.map<Class<out Any?>?, String>{ "arg${++counter}: ${parameterTypeName(it)}" }.makeString(", ")
                     val returnType = simpleTypeName(method.getReturnType())
                     println("    public fun ${method.getName()}($parameters): $returnType = js.noImpl")
                 }

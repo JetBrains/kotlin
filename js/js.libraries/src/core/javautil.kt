@@ -25,6 +25,12 @@ library
 val Collections = object {
     library("collectionsMax")
     public fun max<T>(col : Collection<T>, comp : Comparator<T>) : T = js.noImpl
+
+    // TODO should be immutable!
+    private val emptyList = ArrayList<Any>()
+
+    public val <T> EMPTY_LIST: List<T>
+    get() = emptyList as List<T>
 }
 
 library
@@ -201,4 +207,3 @@ public class StringBuilder() {
 
 library
 class NoSuchElementException() : Exception() {}
-

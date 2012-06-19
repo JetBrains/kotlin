@@ -92,54 +92,30 @@ val NamedNodeMap.length: Int
 get() = this.getLength()
 
 
+/**
+ * Returns the HTML representation of the node
+ */
+public val Node.outerHTML: String
+get() = toXmlString()
+
+/**
+ * Returns the HTML representation of the node
+ */
+public val Node.innerHTML: String
+get() = childNodes.outerHTML
+
+/**
+ * Returns the HTML representation of the nodes
+ */
+public val NodeList.outerHTML: String
+get() = toList().map<Node, String> { it.innerHTML }.makeString("")
+
 /** Returns an [[Iterator]] of all the next [[Element]] siblings */
 fun Node.nextElements(): Iterator<Element> = nextSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
 
 /** Returns an [[Iterator]] of all the previous [[Element]] siblings */
 fun Node.previousElements(): Iterator<Element> = previousSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
 
-
-/** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
-fun Document?.get(selector: String): List<Element> {
-    val root = this?.getDocumentElement()
-    return if (root != null) {
-        if (selector == "*") {
-            elements
-        } else if (selector.startsWith(".")) {
-            elements.filter{ it.hasClass(selector.substring(1)) }.toList()
-        } else if (selector.startsWith("#")) {
-            val id = selector.substring(1)
-            val element = this?.getElementById(id)
-            return if (element != null)
-                Collections.singletonList(element).sure() as List<Element>
-            else
-                Collections.EMPTY_LIST.sure() as List<Element>
-        } else {
-            //  assume its a vanilla element name
-            elements(selector)
-        }
-    } else {
-        Collections.EMPTY_LIST as List<Element>
-    }
-}
-
-/** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
-fun Element.get(selector: String): List<Element> {
-    return if (selector == "*") {
-        elements
-    } else if (selector.startsWith(".")) {
-        elements.filter{ it.hasClass(selector.substring(1)) }.toList()
-    } else if (selector.startsWith("#")) {
-        val element = this.getOwnerDocument()?.getElementById(selector.substring(1))
-        return if (element != null)
-            Collections.singletonList(element).sure() as List<Element>
-        else
-            Collections.EMPTY_LIST.sure() as List<Element>
-    } else {
-        //  assume its a vanilla element name
-        elements(selector)
-    }
-}
 
 var Element.classSet : Set<String>
 get() {
@@ -154,14 +130,6 @@ get() {
 }
 set(value) {
     this.classes = value.makeString(" ")
-}
-
-/** Returns true if the element has the given CSS class style in its 'class' attribute */
-fun Element.hasClass(cssClass: String): Boolean {
-    val c = this.classes
-    return if (c != null)
-        c.matches("""(^|.*\s+)$cssClass($|\s+.*)""")
-    else false
 }
 
 /** Adds the given CSS class to this element's 'class' attribute */
