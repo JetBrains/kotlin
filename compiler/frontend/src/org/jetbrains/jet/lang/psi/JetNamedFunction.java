@@ -179,14 +179,4 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
         PsiElement parent = getParent();
         return !(parent instanceof JetFile || parent instanceof JetClassBody || parent instanceof JetNamespaceBody);
     }
-
-    @Override
-    public String getName() {
-        PsiJetFunctionStub stub = getStub();
-        if (stub != null) {
-            return stub.getName();
-        }
-
-        return super.getName();
-    }
 }

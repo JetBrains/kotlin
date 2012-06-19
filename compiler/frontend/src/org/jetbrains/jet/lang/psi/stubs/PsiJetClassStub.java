@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.psi.stubs;
 
-import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.stubs.NamedStub;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,13 +27,12 @@ import java.util.List;
 /**
  * @author Nikolay Krasko
  */
-public interface PsiJetClassStub extends StubElement<JetClass> {
+public interface PsiJetClassStub extends NamedStub<JetClass> {
+
+
     @NonNls
     @Nullable
     String getQualifiedName();
-
-    @Nullable
-    String getName();
 
     @NotNull
     List<String> getSuperNames();

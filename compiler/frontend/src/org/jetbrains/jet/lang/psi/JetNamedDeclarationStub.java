@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.stubs.NamedStub;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author Nikolay Krasko
  */
-abstract class JetNamedDeclarationStub<T extends StubElement> extends JetDeclarationStub<T> implements JetNamedDeclaration {
+abstract class JetNamedDeclarationStub<T extends NamedStub> extends JetDeclarationStub<T> implements JetNamedDeclaration {
     public JetNamedDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }
@@ -41,6 +41,11 @@ abstract class JetNamedDeclarationStub<T extends StubElement> extends JetDeclara
 
     @Override
     public String getName() {
+        T stub = getStub();
+        if (stub != null) {
+            return stub.getName();
+        }
+
         PsiElement identifier = getNameIdentifier();
         if (identifier != null) {
             String text = identifier.getText();

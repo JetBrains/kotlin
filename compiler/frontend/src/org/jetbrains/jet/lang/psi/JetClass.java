@@ -244,16 +244,6 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
     }
 
     @Override
-    public String getName() {
-        PsiJetClassStub stub = getStub();
-        if (stub != null) {
-            return stub.getName();
-        }
-
-        return super.getName();
-    }
-
-    @Override
     public ItemPresentation getPresentation() {
         return ItemPresentationProviders.getItemPresentation(this);
     }
