@@ -81,7 +81,7 @@ public class PropertyGenTest extends CodegenTestCase {
         final Field field = fields[0];
         field.setAccessible(true);
         assertEquals("x", field.getName());
-        assertEquals(Modifier.PRIVATE | Modifier.STATIC | Modifier.FINAL, field.getModifiers());
+        assertEquals(Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL, field.getModifiers());
         assertEquals(239, field.get(null));
     }
 
@@ -89,7 +89,7 @@ public class PropertyGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadFile("properties/fieldPropertyAccess.jet");
 //        System.out.println(generateToText());
-        final Method method = generateFunction();
+        final Method method = generateFunction("increment");
         assertEquals(1, method.invoke(null));
         assertEquals(2, method.invoke(null));
     }
