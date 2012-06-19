@@ -29,6 +29,7 @@ import org.jetbrains.k2js.translate.initializer.InitializerUtils;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.newObjectLiteral;
@@ -80,7 +81,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
         JsFunction initializer = Translation.generateNamespaceInitializerMethod(descriptor, context());
         List<JsPropertyInitializer> properties = new DeclarationBodyVisitor().traverseNamespace(descriptor, context());
         if (context().isEcma5()) {
-            addEcma5InitializersAndProperties(namespaceDeclaration, initializer, properties);
+            addEcma5InitializersAndProperties(namespaceDeclaration.getArguments(), initializer, properties);
         }
         else {
             addEcma3InitializersAndProperties(namespaceDeclaration, initializer, properties);
@@ -96,11 +97,11 @@ public final class NamespaceTranslator extends AbstractTranslator {
         namespaceDeclaration.getArguments().add(newObjectLiteral(propertyList));
     }
 
-    private static void addEcma5InitializersAndProperties(@NotNull JsInvocation namespaceDeclaration,
+    private void addEcma5InitializersAndProperties(@NotNull List<JsExpression> expressions,
             @NotNull JsFunction initializer,
             @NotNull List<JsPropertyInitializer> properties) {
-        namespaceDeclaration.getArguments().add(initializer);
-        namespaceDeclaration.getArguments().add(newObjectLiteral(properties));
+        expressions.add(initializer.getBody().getStatements().isEmpty() ? context().program().getNullLiteral() : initializer);
+        expressions.add(properties.isEmpty() ? context().program().getNullLiteral() : newObjectLiteral(properties));
     }
 
     @NotNull
@@ -111,10 +112,8 @@ public final class NamespaceTranslator extends AbstractTranslator {
     @NotNull
     private JsObjectLiteral getClassesAndNestedNamespaces() {
         JsObjectLiteral classesAndNestedNamespaces = new JsObjectLiteral();
-        classesAndNestedNamespaces.getPropertyInitializers()
-            .addAll(getClassesDefined());
-        classesAndNestedNamespaces.getPropertyInitializers()
-            .addAll(getNestedNamespaceDeclarations());
+        classesAndNestedNamespaces.getPropertyInitializers().addAll(getClassesDefined());
+        classesAndNestedNamespaces.getPropertyInitializers().addAll(getNestedNamespaceDeclarations());
         return classesAndNestedNamespaces;
     }
 
@@ -126,7 +125,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
     @NotNull
     private List<JsPropertyInitializer> getNestedNamespaceDeclarations() {
         if (DescriptorUtils.isRootNamespace(descriptor)) {
-            return Lists.newArrayList();
+            return Collections.emptyList();
         }
         List<JsPropertyInitializer> result = Lists.newArrayList();
         List<NamespaceDescriptor> nestedNamespaces = JsDescriptorUtils.getNestedNamespaces(descriptor);

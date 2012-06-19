@@ -110,9 +110,12 @@ var Kotlin = {};
         return o;
     };
 
+    function emptyFunction() {
+    }
+
     Kotlin.createNamespace = function (initializer, properties, classesAndNestedNamespaces) {
         var o = Object.create(null, properties || undefined);
-        Object.defineProperty(o, "initialize", {value: initializer});
+        Object.defineProperty(o, "initialize", {value: initializer || emptyFunction});
         var keys = Object.keys(classesAndNestedNamespaces);
         for (var i = 0, n = keys.length; i < n; i++) {
             var name = keys[i];
