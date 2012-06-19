@@ -73,9 +73,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitSimpleNameExpression(JetSimpleNameExpression expression, ExpressionTypingContext context) {
         // TODO : other members
         // TODO : type substitutions???
-        JetType type = DataFlowUtils.checkType(getSelectorReturnType(NO_RECEIVER, null, expression, context), expression, context);
+        JetTypeInfo typeInfo = getSelectorReturnTypeInfo(NO_RECEIVER, null, expression, context);
+        JetType type = DataFlowUtils.checkType(typeInfo.getType(), expression, context);
         ExpressionTypingUtils.checkWrappingInRef(expression, context);
-        return JetTypeInfo.create(type, context.dataFlowInfo); // TODO : Extensions to this
+        return JetTypeInfo.create(type, typeInfo.getDataFlowInfo()); // TODO : Extensions to this
     }
 
     @Nullable
@@ -546,7 +547,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             propagateConstantValues(expression, context, (JetSimpleNameExpression) selectorExpression);
         }
 
-        JetType selectorReturnType = getSelectorReturnType(new ExpressionReceiver(receiverExpression, receiverType), expression.getOperationTokenNode(), selectorExpression, context);
+        JetTypeInfo selectorReturnTypeInfo = getSelectorReturnTypeInfo(new ExpressionReceiver(receiverExpression, receiverType), expression.getOperationTokenNode(), selectorExpression, context);
+        JetType selectorReturnType = selectorReturnTypeInfo.getType();
 
         //TODO move further
         if (expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
@@ -557,12 +559,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
         }
 
-        JetType result = selectorReturnType;
         // TODO : this is suspicious: remove this code?
-        if (result != null) {
-            context.trace.record(BindingContext.EXPRESSION_TYPE, selectorExpression, result);
+        if (selectorReturnType != null) {
+            context.trace.record(BindingContext.EXPRESSION_TYPE, selectorExpression, selectorReturnType);
         }
-        return DataFlowUtils.checkType(result, expression, context, receiverTypeInfo.getDataFlowInfo());
+        return DataFlowUtils.checkType(selectorReturnType, expression, context, receiverTypeInfo.getDataFlowInfo());
     }
 
     private void propagateConstantValues(JetQualifiedExpression expression, ExpressionTypingContext context, JetSimpleNameExpression selectorExpression) {
@@ -644,34 +645,32 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return null;
     }
 
-    @Nullable
-    public JetType getSelectorReturnType(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression selectorExpression, @NotNull ExpressionTypingContext context) {
+    @NotNull
+    public JetTypeInfo getSelectorReturnTypeInfo(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression selectorExpression, @NotNull ExpressionTypingContext context) {
         if (selectorExpression instanceof JetCallExpression) {
-
-            return getCallExpressionTypeInfo((JetCallExpression) selectorExpression, receiver, callOperationNode, context).getType();
+            return getCallExpressionTypeInfo((JetCallExpression) selectorExpression, receiver, callOperationNode, context);
         }
         else if (selectorExpression instanceof JetSimpleNameExpression) {
-
-            return getSimpleNameExpressionType((JetSimpleNameExpression) selectorExpression, receiver, callOperationNode, context);
+            return getSimpleNameExpressionTypeInfo((JetSimpleNameExpression) selectorExpression, receiver, callOperationNode, context);
         }
         else if (selectorExpression instanceof JetQualifiedExpression) {
-
             JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) selectorExpression;
             JetExpression newReceiverExpression = qualifiedExpression.getReceiverExpression();
-            JetType newReceiverType = getSelectorReturnType(receiver, callOperationNode, newReceiverExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
+            JetTypeInfo newReceiverTypeInfo = getSelectorReturnTypeInfo(receiver, callOperationNode, newReceiverExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
+            JetType newReceiverType = newReceiverTypeInfo.getType();
             JetExpression newSelectorExpression = qualifiedExpression.getSelectorExpression();
             if (newReceiverType != null && newSelectorExpression != null) {
-                return getSelectorReturnType(new ExpressionReceiver(newReceiverExpression, newReceiverType), qualifiedExpression.getOperationTokenNode(), newSelectorExpression, context);
+                return getSelectorReturnTypeInfo(new ExpressionReceiver(newReceiverExpression, newReceiverType), qualifiedExpression.getOperationTokenNode(), newSelectorExpression, context);
             }
         }
         else {
             context.trace.report(ILLEGAL_SELECTOR.on(selectorExpression, selectorExpression.getText()));
         }
-        return null;
+        return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 
-    @Nullable
-    private JetType getSimpleNameExpressionType(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverDescriptor receiver,
+    @NotNull
+    private JetTypeInfo getSimpleNameExpressionTypeInfo(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverDescriptor receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context) {
 
         boolean[] result = new boolean[1];
@@ -680,7 +679,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType type = getVariableType(nameExpression, receiver, callOperationNode, context.replaceBindingTrace(traceForVariable), result);
         if (result[0]) {
             traceForVariable.commit();
-            return type;
+            return JetTypeInfo.create(type, context.dataFlowInfo);
         }
 
         Call call = CallMaker.makeCall(nameExpression, receiver, callOperationNode, nameExpression, Collections.<ValueArgument>emptyList());
@@ -690,11 +689,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             traceForFunction.commit();
             boolean hasValueParameters = functionDescriptor == null || functionDescriptor.getValueParameters().size() > 0;
             context.trace.report(FUNCTION_CALL_EXPECTED.on(nameExpression, nameExpression, hasValueParameters));
-            return functionDescriptor != null ? functionDescriptor.getReturnType() : null;
+            type = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
+            return JetTypeInfo.create(type, context.dataFlowInfo);
         }
 
         traceForVariable.commit();
-        return null;
+        return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 
     @NotNull

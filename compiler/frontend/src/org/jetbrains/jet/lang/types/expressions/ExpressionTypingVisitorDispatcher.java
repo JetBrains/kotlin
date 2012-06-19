@@ -69,8 +69,8 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     }
 
     @Override
-    public JetType getSelectorReturnType(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression selectorExpression, @NotNull ExpressionTypingContext context) {
-        return basic.getSelectorReturnType(receiver, callOperationNode, selectorExpression, context);
+    public JetTypeInfo getSelectorReturnTypeInfo(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression selectorExpression, @NotNull ExpressionTypingContext context) {
+        return basic.getSelectorReturnTypeInfo(receiver, callOperationNode, selectorExpression, context);
     }
 
     @Override
