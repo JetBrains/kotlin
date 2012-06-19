@@ -115,12 +115,17 @@ public class ExpressionTypingServices {
         return ErrorUtils.createErrorType("Type for " + expression.getText());
     }
 
-    @Nullable
-    public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
+    @NotNull
+    public JetTypeInfo getTypeInfo(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 this, trace, scope, dataFlowInfo, expectedType, false
         );
-        return expressionTypingFacade.getTypeInfo(expression, context).getType();
+        return expressionTypingFacade.getTypeInfo(expression, context);
+    }
+
+    @Nullable
+    public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
+        return getTypeInfo(scope, expression, expectedType, dataFlowInfo, trace).getType();
     }
 
     public JetType getTypeWithNamespaces(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull BindingTrace trace) {

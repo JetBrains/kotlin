@@ -6,8 +6,8 @@ fun foo() {
     bar(<!TYPE_MISMATCH!>x<!>)
     if (x != null) bar(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
     if (x == null) bar(x!!)
-    if (x != null) else bar(x!!)
+    if (x != null) else bar(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
     if (x == null) else bar(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
-    if (x != null) bar(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) else bar(x!!)
-    if (x == null) bar(x!!) else bar(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
+    if (x != null) bar(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) else bar(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
+    if (x == null) bar(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) else bar(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
 }

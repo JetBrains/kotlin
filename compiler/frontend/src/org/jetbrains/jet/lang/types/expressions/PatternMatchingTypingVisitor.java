@@ -239,7 +239,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 JetExpression decomposerExpression = pattern.getDecomposerExpression();
                 if (decomposerExpression != null) {
                     ReceiverDescriptor receiver = new TransientReceiver(subjectType);
-                    JetType selectorReturnType = facade.getSelectorReturnType(receiver, null, decomposerExpression, context);
+                    JetType selectorReturnType = facade.getSelectorReturnTypeInfo(receiver, null, decomposerExpression, context).getType();
 
                     if (pattern.getArgumentList() != null) {
                         result.set(checkPatternType(pattern.getArgumentList(), selectorReturnType == null

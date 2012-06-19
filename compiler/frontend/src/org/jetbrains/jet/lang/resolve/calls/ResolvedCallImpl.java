@@ -65,7 +65,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
 
     private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
     private final Map<ValueParameterDescriptor, JetType> autoCasts = Maps.newHashMap();
-    private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newHashMap();
+    private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newLinkedHashMap();
     private boolean someArgumentHasNoType = false;
     private TemporaryBindingTrace trace;
     private ResolutionStatus status = UNKNOWN_STATUS;
