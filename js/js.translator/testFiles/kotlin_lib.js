@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+// todo org.jetbrains.k2js.test.semantics.WebDemoExamples2Test#testBuilder
+var kotlin = {set:function (receiver, key, value) {
+    return receiver.put(key, value);
+}};
+
 (function () {
     "use strict";
 

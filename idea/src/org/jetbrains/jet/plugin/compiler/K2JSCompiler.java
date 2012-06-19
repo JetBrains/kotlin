@@ -17,27 +17,29 @@
 package org.jetbrains.jet.plugin.compiler;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.compiler.CompileContext;
-import com.intellij.openapi.compiler.CompileScope;
-import com.intellij.openapi.compiler.CompilerMessageCategory;
-import com.intellij.openapi.compiler.TranslatingCompiler;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Chunk;
+import com.intellij.util.StringBuilderSpinAllocator;
+import gnu.trove.THashSet;
 import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.k2jsrun.K2JSRunnerUtils;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Set;
 
 import static org.jetbrains.jet.plugin.compiler.CompilerUtils.invokeExecMethod;
 import static org.jetbrains.jet.plugin.compiler.CompilerUtils.outputCompilerMessagesAndHandleExitCode;
@@ -122,9 +124,9 @@ public final class K2JSCompiler implements TranslatingCompiler {
         }
 
         VirtualFile outDir = context.getModuleOutputDirectory(module);
-        String outFile = outDir == null ? null : K2JSRunnerUtils.constructPathToGeneratedFile(context.getProject(), outDir.getPath());
+        String outFile = outDir == null ? null : outDir.getPath() + "/" + module.getName() + ".js";
 
-        String[] commandLineArgs = constructArguments(context.getProject(), outFile, roots[0]);
+        String[] commandLineArgs = constructArguments(module, outFile, roots[0]);
         Object rc = invokeExecMethod(environment, out, context, commandLineArgs, "org.jetbrains.jet.cli.js.K2JSCompiler");
 
         if (outDir != null && !ApplicationManager.getApplication().isUnitTestMode()) {
@@ -134,20 +136,67 @@ public final class K2JSCompiler implements TranslatingCompiler {
     }
 
     @NotNull
-    private static String[] constructArguments(@NotNull Project project, @Nullable String outFile, @NotNull VirtualFile srcDir) {
-        ArrayList<String> args = Lists.newArrayList("-tags", "-verbose", "-version");
+    private static String[] constructArguments(@NotNull Module module, @Nullable String outFile, @NotNull VirtualFile srcDir) {
+        ArrayList<String> args = Lists.newArrayList("-tags", "-verbose", "-version", "-mainCall", "mainWithArgs");
         addPathToSourcesDir(args, srcDir);
         addOutputPath(outFile, args);
-        addLibLocationAndTarget(project, args);
+        addLibLocationAndTarget(module, args);
         return ArrayUtil.toStringArray(args);
     }
 
-    private static void addLibLocationAndTarget(@NotNull Project project, @NotNull ArrayList<String> args) {
-        Pair<String, String> libLocationAndTarget = JsModuleDetector.getLibLocationAndTargetForProject(project);
-        if (libLocationAndTarget.first != null) {
-            args.add("-libzip");
-            args.add(libLocationAndTarget.first);
+    // we cannot use OrderEnumerator because it has critical bug — try https://gist.github.com/2953261, processor will never be called for module dependency
+    private static void collectModuleDependencies(Module dependentModule, Set<Module> modules) {
+        for (OrderEntry entry : ModuleRootManager.getInstance(dependentModule).getOrderEntries()) {
+            if (entry instanceof ModuleOrderEntry) {
+                ModuleOrderEntry moduleEntry = (ModuleOrderEntry) entry;
+                if (!moduleEntry.getScope().isForProductionCompile()) {
+                    continue;
+                }
+
+                Module module = moduleEntry.getModule();
+                if (module == null) {
+                    continue;
+                }
+
+                if (modules.add(module) && moduleEntry.isExported()) {
+                    collectModuleDependencies(module, modules);
+                }
+            }
         }
+    }
+
+    private static void addLibLocationAndTarget(@NotNull Module module, @NotNull ArrayList<String> args) {
+        Pair<String[], String> libLocationAndTarget = JsModuleDetector.getLibLocationAndTargetForProject(module);
+
+        StringBuilder sb = StringBuilderSpinAllocator.alloc();
+        AccessToken token = ReadAction.start();
+        try {
+            THashSet<Module> modules = new THashSet<Module>();
+            collectModuleDependencies(module, modules);
+            if (!modules.isEmpty()) {
+                VirtualFile[] files = CompilerManager.getInstance(module.getProject()).createModulesCompileScope(
+                        modules.toArray(new Module[modules.size()]), false).getFiles(JetFileType.INSTANCE, true);
+                for (VirtualFile file : files) {
+                    sb.append(file.getPath()).append(',');
+                }
+            }
+
+            if (libLocationAndTarget.first != null) {
+                for (String file : libLocationAndTarget.first) {
+                    sb.append(file).append(',');
+                }
+            }
+
+            if (sb.length() > 0) {
+                args.add("-libraryFiles");
+                args.add(sb.substring(0, sb.length() - 1));
+            }
+        }
+        finally {
+            token.finish();
+            StringBuilderSpinAllocator.dispose(sb);
+        }
+
         if (libLocationAndTarget.second != null) {
             args.add("-target");
             args.add(libLocationAndTarget.second);

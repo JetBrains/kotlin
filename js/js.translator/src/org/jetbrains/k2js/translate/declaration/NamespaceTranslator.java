@@ -128,7 +128,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
             return Collections.emptyList();
         }
         List<JsPropertyInitializer> result = Lists.newArrayList();
-        List<NamespaceDescriptor> nestedNamespaces = JsDescriptorUtils.getNestedNamespaces(descriptor);
+        List<NamespaceDescriptor> nestedNamespaces = JsDescriptorUtils.getNestedNamespaces(descriptor, context().bindingContext());
         for (NamespaceDescriptor nestedNamespace : nestedNamespaces) {
             NamespaceTranslator nestedNamespaceTranslator = new NamespaceTranslator(nestedNamespace, classDeclarationTranslator, context());
             result.add(nestedNamespaceTranslator.getDeclarationAsInitializer());

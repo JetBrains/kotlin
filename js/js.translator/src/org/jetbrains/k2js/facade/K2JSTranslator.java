@@ -96,9 +96,7 @@ public final class K2JSTranslator {
             throws TranslationException {
         JetStandardLibrary.initialize(config.getProject());
         BindingContext bindingContext = AnalyzerFacadeForJS.analyzeFilesAndCheckErrors(filesToTranslate, config);
-        Collection<JetFile> files = AnalyzerFacadeForJS.withJsLibAdded(filesToTranslate, config);
-
-        return Translation.generateAst(bindingContext, Lists.newArrayList(files), mainCallParameters, config.getTarget(), rawStatements);
+        return Translation.generateAst(bindingContext, filesToTranslate, mainCallParameters, config.getTarget(), rawStatements);
     }
 
     @NotNull

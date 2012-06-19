@@ -36,8 +36,8 @@ public class K2JSCompilerArguments extends CompilerArguments {
     public String outputFile;
 
     //NOTE: may well be a subject to change soon
-    @Argument(value = "libzip", description = "Path to zipped lib sources")
-    public String libzip;
+    @Argument(value = "libraryFiles", description = "Path to zipped lib sources or kotlin files")
+    public String[] libraryFiles;
 
     @Argument(value = "srcdir", description = "Sources directory")
     public String srcdir;

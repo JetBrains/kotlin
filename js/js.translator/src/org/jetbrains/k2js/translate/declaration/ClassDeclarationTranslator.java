@@ -144,7 +144,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     @NotNull
     public List<JsPropertyInitializer> classDeclarationsForNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
         List<JsPropertyInitializer> result = Lists.newArrayList();
-        for (ClassDescriptor classDescriptor : getAllClassesDefinedInNamespace(namespaceDescriptor)) {
+        for (ClassDescriptor classDescriptor : getAllClassesDefinedInNamespace(namespaceDescriptor, bindingContext())) {
             result.add(getClassNameToClassObject(classDescriptor));
         }
         return result;

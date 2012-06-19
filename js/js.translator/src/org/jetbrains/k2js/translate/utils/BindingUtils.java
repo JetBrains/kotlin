@@ -110,7 +110,7 @@ public final class BindingUtils {
     public static List<JetDeclaration> getDeclarationsForNamespace(@NotNull BindingContext bindingContext,
             @NotNull NamespaceDescriptor namespace) {
         List<JetDeclaration> declarations = new ArrayList<JetDeclaration>();
-        for (DeclarationDescriptor descriptor : getContainedDescriptorsWhichAreNotPredefined(namespace)) {
+        for (DeclarationDescriptor descriptor : getContainedDescriptorsWhichAreNotPredefined(namespace, bindingContext)) {
             if (descriptor instanceof NamespaceDescriptor) {
                 continue;
             }
