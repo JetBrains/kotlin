@@ -29,14 +29,36 @@ import org.jetbrains.jet.plugin.JetBundle;
 
 /**
  * @author svtk
+ * @author slukjanov aka Frostman
  */
 public class ReplaceCallFix implements IntentionAction {
     private final boolean safe;
     private final boolean fromDot;
 
-    public ReplaceCallFix(boolean safe, boolean fromDot) {
+    private ReplaceCallFix(boolean safe, boolean fromDot) {
         this.safe = safe;
         this.fromDot = fromDot;
+    }
+
+    /**
+     * @return quickfix for replacing dot call with safe (?.) call
+     */
+    public static ReplaceCallFix toSafeCall() {
+        return new ReplaceCallFix(true, true);
+    }
+
+    /**
+     * @return quickfix for replacing dot call with non-null asserted (!!.) call
+     */
+    public static ReplaceCallFix toNonNullAssertedCall() {
+        return new ReplaceCallFix(false, true);
+    }
+
+    /**
+     * @return quickfix for replacing unnecessary safe (?.) call with dot call
+     */
+    public static ReplaceCallFix toDotCall() {
+        return new ReplaceCallFix(true, false);
     }
 
     @NotNull
