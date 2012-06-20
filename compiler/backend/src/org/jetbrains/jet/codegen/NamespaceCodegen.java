@@ -52,13 +52,15 @@ public class NamespaceCodegen {
     private final Collection<JetFile> files;
     private int nextMultiFile = 0;
 
-    public NamespaceCodegen(@NotNull ClassBuilderOnDemand v, @NotNull final FqName fqName, GenerationState state, Collection<JetFile> files) {
+    public NamespaceCodegen(@NotNull ClassBuilderOnDemand v, @NotNull final FqName fqName, GenerationState state, Collection<JetFile> namespaceFiles) {
+        checkAllFilesHaveSameNamespace(namespaceFiles);
+
         this.v = v;
         name = fqName;
         this.state = state;
-        this.files = files;
+        this.files = namespaceFiles;
 
-        final PsiFile sourceFile = files.iterator().next().getContainingFile();
+        final PsiFile sourceFile = namespaceFiles.iterator().next().getContainingFile();
 
         v.addOptionalDeclaration(new ClassBuilderOnDemand.ClassBuilderCallback() {
             @Override
@@ -195,8 +197,14 @@ public class NamespaceCodegen {
         }
     }
 
-    public static boolean shouldGenerateNSClass(Collection<JetFile> files) {
-        for (JetFile file : files) {
+    /**
+     * @param namespaceFiles all files should have same package name
+     * @return
+     */
+    public static boolean shouldGenerateNSClass(Collection<JetFile> namespaceFiles) {
+        checkAllFilesHaveSameNamespace(namespaceFiles);
+
+        for (JetFile file : namespaceFiles) {
             for (JetDeclaration declaration : file.getDeclarations()) {
                 if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
                     return true;
@@ -205,6 +213,21 @@ public class NamespaceCodegen {
         }
 
         return false;
+    }
+
+    public static void checkAllFilesHaveSameNamespace(Collection<JetFile> namespaceFiles) {
+        FqName commonFqName = null;
+        for (JetFile file : namespaceFiles) {
+            FqName fqName = JetPsiUtil.getFQName(file);
+            if (commonFqName != null) {
+                if (!commonFqName.equals(fqName)) {
+                    throw new IllegalArgumentException("All files should have same package name");
+                }
+            }
+            else {
+                commonFqName = JetPsiUtil.getFQName(file);
+            }
+        }
     }
 
     private void generateStaticInitializers() {

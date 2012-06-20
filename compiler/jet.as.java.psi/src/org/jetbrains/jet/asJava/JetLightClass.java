@@ -179,7 +179,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
 
         final GenerationState state = new GenerationState(project, builderFactory, context, Collections.singletonList(file)) {
             @Override
-            protected void generateNamespace(FqName fqName, Collection<JetFile> namespace, CompilationErrorHandler errorHandler, Progress progress) {
+            protected void generateNamespace(FqName fqName, Collection<JetFile> namespaceFiles, CompilationErrorHandler errorHandler, Progress progress) {
                 PsiManager manager = PsiManager.getInstance(project);
                 stubStack.push(answer);
 
@@ -196,7 +196,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
                 fakeFile.setPhysical(false);
                 answer.setPsi(fakeFile);
 
-                super.generateNamespace(fqName, namespace, errorHandler, progress);
+                super.generateNamespace(fqName, namespaceFiles, errorHandler, progress);
                 final StubElement pop = stubStack.pop();
                 if (pop != answer) {
                     LOG.error("Unbalanced stack operations: " + pop);
