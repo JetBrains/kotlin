@@ -52,7 +52,7 @@ fun test() {
     out?.println();
   }
 
-  if (out == null || out != null && out.println() == #()) {
+  if (out == null || out.println() == #()) {
     out?.println();
   }
   else {
@@ -108,7 +108,7 @@ fun test() {
     out?.println();
   }
 
-  if (out == null || out != null && out.println() == #()) {
+  if (out == null || out.println() == #()) {
     out?.println();
   }
   else {
@@ -133,10 +133,12 @@ fun test() {
   }
   out?.println();
 
-  while (out == null) {
-    out?.println();
+  val out2 : java.io.PrintStream? = null
+  
+  while (out2 == null) {
+    out2?.println();
   }
-  out.println()
+  out2.println()
 
 }
 
@@ -246,7 +248,7 @@ fun f7(s : String?, t : String?) {
   }
   s?.get(0)
   t?.get(0)
-  if (!(s == null && s == null)) {
+  if (!(s == null)) {
     s.get(0)
     t?.get(0)
   }

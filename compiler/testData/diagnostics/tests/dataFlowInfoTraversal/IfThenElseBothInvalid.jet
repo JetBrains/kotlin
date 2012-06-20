@@ -9,7 +9,7 @@ fun foo() {
         2+<!SYNTAX!><!>
     }
     else {
-        if (x == null) return
+        if (<!SENSELESS_COMPARISON!>x == null<!>) return
         2+<!SYNTAX!><!>
     }
     bar(x)
