@@ -108,6 +108,13 @@ class AlternativeSignatureParsing {
             JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors,
             JetNamedFunction altFunDeclaration) throws AlternativeSignatureMismatchException {
         List<ValueParameterDescriptor> parameterDescriptors = valueParameterDescriptors.descriptors;
+
+        if (parameterDescriptors.size() != altFunDeclaration.getValueParameters().size()) {
+            throw new AlternativeSignatureMismatchException(
+                    String.format("Method signature has %d value parameters, but alternative signature has %d",
+                                  parameterDescriptors.size(), altFunDeclaration.getValueParameters().size()));
+        }
+
         List<ValueParameterDescriptor> altParamDescriptors = new ArrayList<ValueParameterDescriptor>();
         for (int i = 0, size = parameterDescriptors.size(); i < size; i++) {
             ValueParameterDescriptor pd = parameterDescriptors.get(i);
