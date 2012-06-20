@@ -64,7 +64,7 @@ public class DataFlowInfo {
     }
 
     @NotNull
-    private Nullability getNullability(@NotNull DataFlowValue a) {
+    public Nullability getNullability(@NotNull DataFlowValue a) {
         if (!a.isStableIdentifier()) return a.getImmanentNullability();
         Nullability nullability = nullabilityInfo.get(a);
         if (nullability == null) {
