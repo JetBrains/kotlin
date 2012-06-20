@@ -21,10 +21,12 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 
 /**
@@ -57,8 +59,15 @@ public class ReplaceCallFix implements IntentionAction {
     /**
      * @return quickfix for replacing unnecessary safe (?.) call with dot call
      */
-    public static ReplaceCallFix toDotCall() {
+    public static ReplaceCallFix toDotCallFromSafeCall() {
         return new ReplaceCallFix(true, false);
+    }
+
+    /**
+     * @return quickfix for replacing unnecessary non-null asserted (!!.) call with dot call
+     */
+    public static ReplaceCallFix toDotCallFromNonNullAssertedCall() {
+        return new ReplaceCallFix(false, false);
     }
 
     @NotNull
@@ -83,11 +92,6 @@ public class ReplaceCallFix implements IntentionAction {
         return false;
     }
 
-    private JetQualifiedExpression getCallExpression(@NotNull Editor editor, @NotNull JetFile file) {
-        final PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
-        return PsiTreeUtil.getParentOfType(elementAtCaret, fromDot ? JetDotQualifiedExpression.class : JetSafeQualifiedExpression.class);
-    }
-
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         JetQualifiedExpression callExpression = getCallExpression(editor, (JetFile) file);
@@ -95,6 +99,26 @@ public class ReplaceCallFix implements IntentionAction {
 
         JetExpression selector = callExpression.getSelectorExpression();
         if (selector != null) {
+            if (!fromDot && !safe) {
+                final PsiElement elementAtCaret = getElementAtCaret(editor, file);
+                if (elementAtCaret instanceof LeafPsiElement) {
+                    final LeafPsiElement leafElement = (LeafPsiElement) elementAtCaret;
+                    PsiElement exclExclElement = null;
+                    if (leafElement.getElementType() == JetTokens.EXCLEXCL) {
+                        exclExclElement = leafElement;
+                    }
+                    else if (leafElement.getElementType() == JetTokens.DOT) {
+                        PsiElement prevSibling = leafElement.getPrevSibling();
+                        if (prevSibling != null) {
+                            exclExclElement = prevSibling.getLastChild();
+                        }
+                    }
+                    if (exclExclElement != null) {
+                        exclExclElement.delete();
+                    }
+                }
+            }
+
             JetQualifiedExpression newElement = (JetQualifiedExpression) JetPsiFactory.createExpression(
                     project,
                     callExpression.getReceiverExpression().getText() + (fromDot ? (safe ? "?." : "!!.") : ".") + selector.getText());
@@ -106,5 +130,15 @@ public class ReplaceCallFix implements IntentionAction {
     @Override
     public boolean startInWriteAction() {
         return true;
+    }
+
+    private JetQualifiedExpression getCallExpression(@NotNull Editor editor, @NotNull JetFile file) {
+        final PsiElement elementAtCaret = getElementAtCaret(editor, file);
+        return PsiTreeUtil
+                .getParentOfType(elementAtCaret, fromDot || !safe ? JetDotQualifiedExpression.class : JetSafeQualifiedExpression.class);
+    }
+
+    private static PsiElement getElementAtCaret(Editor editor, PsiFile file) {
+        return file.findElementAt(editor.getCaretModel().getOffset());
     }
 }
