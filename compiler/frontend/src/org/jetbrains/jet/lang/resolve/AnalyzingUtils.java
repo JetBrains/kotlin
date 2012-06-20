@@ -23,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
+import org.jetbrains.jet.lang.psi.JetIdeTemplate;
+import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +34,7 @@ import java.util.List;
  */
 public class AnalyzingUtils {
 
-    public abstract static class PsiErrorElementVisitor extends PsiElementVisitor {
+    public abstract static class PsiErrorElementVisitor extends JetVisitorVoid {
         @Override
         public void visitElement(PsiElement element) {
             element.acceptChildren(this);

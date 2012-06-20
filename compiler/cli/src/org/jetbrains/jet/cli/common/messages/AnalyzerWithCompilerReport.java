@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetIdeTemplate;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -54,6 +55,9 @@ public final class AnalyzerWithCompilerReport {
 
     @NotNull
     private static final SimpleDiagnosticFactory<PsiErrorElement> SYNTAX_ERROR_FACTORY = SimpleDiagnosticFactory.create(Severity.ERROR);
+    @NotNull
+    private static final SimpleDiagnosticFactory<JetIdeTemplate> UNRESOLVED_IDE_TEMPLATE_ERROR_FACTORY
+            = SimpleDiagnosticFactory.create(Severity.ERROR);
 
     private boolean hasErrors = false;
     @NotNull
@@ -81,8 +85,8 @@ public final class AnalyzerWithCompilerReport {
         VirtualFile virtualFile = diagnostic.getPsiFile().getVirtualFile();
         String path = virtualFile == null ? null : virtualFile.getPath();
         String render;
-        if (diagnostic.getFactory() == SYNTAX_ERROR_FACTORY) {
-            render = ((SyntaxErrorDiagnostic)diagnostic).message;
+        if (diagnostic instanceof MyDiagnostic) {
+            render = ((MyDiagnostic)diagnostic).message;
         }
         else {
             render = DefaultErrorMessages.RENDERER.render(diagnostic);
@@ -114,8 +118,8 @@ public final class AnalyzerWithCompilerReport {
     }
 
     private void reportSyntaxErrors(@NotNull Collection<JetFile> files) {
-        for (PsiElement file : files) {
-            reportSyntaxErrors(file, AnalyzerWithCompilerReport.this.messageCollectorWrapper);
+        for (JetFile file : files) {
+            reportSyntaxErrors(file, messageCollectorWrapper);
         }
     }
 
@@ -123,13 +127,23 @@ public final class AnalyzerWithCompilerReport {
         class ErrorReportingVisitor extends AnalyzingUtils.PsiErrorElementVisitor {
             boolean hasErrors = false;
 
+            private <E extends PsiElement> void reportDiagnostic(E element, SimpleDiagnosticFactory<E> factory, String message) {
+                MyDiagnostic<?> diagnostic = new MyDiagnostic<E>(element, factory, message);
+                AnalyzerWithCompilerReport.reportDiagnostic(diagnostic, messageCollector);
+                hasErrors = true;
+            }
+
+            @Override
+            public void visitIdeTemplate(JetIdeTemplate expression) {
+                String placeholderText = expression.getPlaceholderText();
+                reportDiagnostic(expression, UNRESOLVED_IDE_TEMPLATE_ERROR_FACTORY,
+                                 "Unresolved IDE template" + (StringUtil.isEmpty(placeholderText) ? "" : ": " + placeholderText));
+            }
+
             @Override
             public void visitErrorElement(PsiErrorElement element) {
                 String description = element.getErrorDescription();
-                String message = StringUtil.isEmpty(description) ? "Syntax error" : description;
-                Diagnostic diagnostic = new SyntaxErrorDiagnostic(element, Severity.ERROR, message);
-                reportDiagnostic(diagnostic, messageCollector);
-                hasErrors = true;
+                reportDiagnostic(element, SYNTAX_ERROR_FACTORY, StringUtil.isEmpty(description) ? "Syntax error" : description);
             }
         }
         ErrorReportingVisitor visitor = new ErrorReportingVisitor();
@@ -156,11 +170,11 @@ public final class AnalyzerWithCompilerReport {
     }
 
 
-    public static class SyntaxErrorDiagnostic extends SimpleDiagnostic<PsiErrorElement> {
+    private static class MyDiagnostic<E extends PsiElement> extends SimpleDiagnostic<E> {
         private String message;
 
-        public SyntaxErrorDiagnostic(@NotNull PsiErrorElement psiElement, @NotNull Severity severity, String message) {
-            super(psiElement, SYNTAX_ERROR_FACTORY, severity);
+        public MyDiagnostic(@NotNull E psiElement, @NotNull SimpleDiagnosticFactory<E> factory, String message) {
+            super(psiElement, factory, Severity.ERROR);
             this.message = message;
         }
 

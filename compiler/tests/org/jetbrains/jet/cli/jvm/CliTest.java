@@ -17,6 +17,7 @@
 package org.jetbrains.jet.cli.jvm;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.ExitCode;
@@ -62,7 +63,8 @@ public class CliTest {
 
     private void executeCompilerCompareOutput(@NotNull String[] args) {
         try {
-            String actual = normalize(executeCompilerGrabOutput(args));
+            String actual = normalize(executeCompilerGrabOutput(args))
+                    .replace(FileUtil.toSystemIndependentName(new File("compiler/testData/cli/").getAbsolutePath()), "$TESTDATA_DIR$");
 
             String expected = normalize(FileUtil.loadFile(new File("compiler/testData/cli/" + testName.getMethodName() + ".out")));
 
@@ -103,12 +105,17 @@ public class CliTest {
 
     @Test
     public void help() throws Exception {
-        executeCompilerCompareOutput(new String[]{ "--help" });
+        executeCompilerCompareOutput(new String[] {"--help"});
     }
 
     @Test
     public void script() throws Exception {
         executeCompilerCompareOutput(new String[]{ "-script", "compiler/testData/cli/script.ktscript", "hi", "there" });
+    }
+
+    @Test
+    public void ideTemplates() {
+        executeCompilerCompareOutput(new String[]{ "-src", "compiler/testData/cli/ideTemplates.kt", "-output", tmpdir.getTmpDir().getPath()});
     }
 
 }
