@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.util.lazy.ReenteringLazyValueComputationException;
 
@@ -38,8 +37,8 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO
 public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, ExpressionTypingContext> implements ExpressionTypingInternals {
 
     @Override
-    public JetTypeInfo visitIdeTemplateExpression(JetIdeTemplateExpression expression, ExpressionTypingContext data) {
-        return basic.visitIdeTemplateExpression(expression, data);
+    public JetTypeInfo visitIdeTemplate(JetIdeTemplate expression, ExpressionTypingContext data) {
+        return basic.visitIdeTemplate(expression, data);
     }
 
     @NotNull

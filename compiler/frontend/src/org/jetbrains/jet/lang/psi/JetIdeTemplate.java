@@ -26,19 +26,19 @@ import org.jetbrains.jet.lexer.JetTokens;
  * @author Evgeny Gerashchenko
  * @since 2/8/12
  */
-public class JetIdeTemplateExpression extends JetExpressionImpl {
-    public JetIdeTemplateExpression(@NotNull ASTNode node) {
+public class JetIdeTemplate extends JetElementImpl {
+    public JetIdeTemplate(@NotNull ASTNode node) {
         super(node);
     }
 
     @Override
     public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitIdeTemplateExpression(this);
+        visitor.visitIdeTemplate(this);
     }
 
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
-        return visitor.visitIdeTemplateExpression(this, data);
+        return visitor.visitIdeTemplate(this, data);
     }
 
     @Nullable

@@ -27,7 +27,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetIdeTemplateExpression;
+import org.jetbrains.jet.lang.psi.JetIdeTemplate;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -38,7 +38,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 public class JetTemplateParameterTraversalPolicy implements TemplateParameterTraversalPolicy {
     @Override
     public boolean isValidForFile(Editor editor, PsiFile file) {
-        return file instanceof JetFile && PsiTreeUtil.findChildOfType(file, JetIdeTemplateExpression.class) != null;
+        return file instanceof JetFile && PsiTreeUtil.findChildOfType(file, JetIdeTemplate.class) != null;
     }
 
     @Override

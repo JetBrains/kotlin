@@ -276,7 +276,7 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitExpression(expression, data);
     }
 
-    public R visitIdeTemplateExpression(JetIdeTemplateExpression expression, D data) {
+    public R visitIdeTemplate(JetIdeTemplate expression, D data) {
         return null;
     }
 

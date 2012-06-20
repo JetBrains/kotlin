@@ -279,6 +279,9 @@ public class ExpressionTypingServices {
         JetTypeInfo result = JetTypeInfo.create(null, context.dataFlowInfo);
         for (Iterator<? extends JetElement> iterator = block.iterator(); iterator.hasNext(); ) {
             final JetElement statement = iterator.next();
+            if (!(statement instanceof JetExpression)) {
+                continue;
+            }
             trace.record(STATEMENT, statement);
             final JetExpression statementExpression = (JetExpression) statement;
             //TODO constructor assert context.expectedType != FORBIDDEN : ""

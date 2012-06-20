@@ -274,7 +274,7 @@ public class JetVisitorVoid extends PsiElementVisitor {
         visitExpression(expression);
     }
 
-    public void visitIdeTemplateExpression(JetIdeTemplateExpression expression) {
+    public void visitIdeTemplate(JetIdeTemplate expression) {
     }
 
     public void visitCatchSection(JetCatchClause catchClause) {

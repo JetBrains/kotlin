@@ -34,6 +34,7 @@ import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.psi.IfNotParsed;
 import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetIdeTemplate;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 
 import java.io.File;
@@ -104,10 +105,11 @@ public class JetParsingTest extends ParsingTestCase {
             if (result == null) {
                 for (Annotation annotation : method.getDeclaredAnnotations()) {
                     if (annotation instanceof IfNotParsed) {
-                        assertNotNull(
+                        assertTrue(
                                 "Incomplete operation in parsed OK test, method " + methodName +
                                 " in " + declaringClass.getSimpleName() + " returns null. Element text: \n" + elem.getText(),
-                                PsiTreeUtil.findChildOfType(elem, PsiErrorElement.class));
+                                PsiTreeUtil.findChildOfType(elem, PsiErrorElement.class) == null
+                                || PsiTreeUtil.findChildOfType(elem, JetIdeTemplate.class) == null);
                     }
                 }
             }
