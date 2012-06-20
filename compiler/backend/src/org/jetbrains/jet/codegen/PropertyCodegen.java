@@ -251,6 +251,7 @@ public class PropertyCodegen {
         int modifiers = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0);
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
         int flags = setter == null ? modifiers : JetTypeMapper.getAccessModifiers(setter, modifiers);
+        flags |= (propertyDescriptor.getModality() == Modality.ABSTRACT ? Opcodes.ACC_ABSTRACT : 0);
         generateDefaultSetter(propertyDescriptor, flags, p);
     }
 
