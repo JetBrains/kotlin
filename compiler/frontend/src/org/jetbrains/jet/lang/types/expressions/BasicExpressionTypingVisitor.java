@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
@@ -1036,29 +1037,50 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     private void ensureNonemptyIntersectionOfOperandTypes(JetBinaryExpression expression, ExpressionTypingContext context) {
-        JetSimpleNameExpression operationSign = expression.getOperationReference();
         JetExpression left = expression.getLeft();
         JetExpression right = expression.getRight();
 
         // TODO : duplicated effort for == and !=
-        JetType leftType = facade.getTypeInfo(left, context.replaceScope(context.scope)).getType();
+        JetType leftType = facade.getTypeInfo(left, context).getType();
         if (leftType != null && right != null) {
-            JetType rightType = facade.getTypeInfo(right, context.replaceScope(context.scope)).getType();
+            JetType rightType = facade.getTypeInfo(right, context).getType();
 
             if (rightType != null) {
                 if (TypeUtils.isIntersectionEmpty(leftType, rightType)) {
-                    context.trace.report(EQUALITY_NOT_APPLICABLE.on(expression, operationSign, leftType, rightType));
+                    context.trace.report(EQUALITY_NOT_APPLICABLE.on(expression, expression.getOperationReference(), leftType, rightType));
                 }
-            }
-            if (isSenselessComparisonWithNull(leftType, right) || isSenselessComparisonWithNull(rightType, left)) {
-                context.trace.report(SENSELESS_COMPARISON.on(expression, expression, operationSign.getReferencedNameElementType() == JetTokens.EXCLEQ));
+                checkSenselessComparisonWithNull(expression, left, right, context);
             }
         }
     }
 
-    private boolean isSenselessComparisonWithNull(@Nullable JetType firstType, @NotNull JetExpression secondExpression) {
-        if (firstType == null) return false;
-        return !firstType.isNullable() && secondExpression instanceof JetConstantExpression && secondExpression.getNode().getElementType() == JetNodeTypes.NULL;
+    private void checkSenselessComparisonWithNull(@NotNull JetBinaryExpression expression, @NotNull JetExpression left, @NotNull JetExpression right, @NotNull ExpressionTypingContext context) {
+        JetExpression expr;
+        if (left instanceof JetConstantExpression && left.getNode().getElementType() == JetNodeTypes.NULL) {
+            expr = right;
+        }
+        else if (right instanceof JetConstantExpression && right.getNode().getElementType() == JetNodeTypes.NULL) {
+            expr = left;
+        }
+        else return;
+
+        JetSimpleNameExpression operationSign = expression.getOperationReference();
+        JetType type = facade.getTypeInfo(expr, context).getType();
+        DataFlowValue value = DataFlowValueFactory.INSTANCE.createDataFlowValue(expr, type, context.trace.getBindingContext());
+        Nullability nullability = context.dataFlowInfo.getNullability(value);
+
+        boolean expressionIsAlways;
+        boolean equality = operationSign.getReferencedNameElementType() == JetTokens.EQEQ || operationSign.getReferencedNameElementType() == JetTokens.EQEQEQ;
+
+        if (nullability == Nullability.NULL) {
+            expressionIsAlways = equality;
+        }
+        else if (nullability == Nullability.NOT_NULL) {
+            expressionIsAlways = !equality;
+        }
+        else return;
+
+        context.trace.report(SENSELESS_COMPARISON.on(expression, expression, expressionIsAlways));
     }
 
     protected JetType visitAssignmentOperation(JetBinaryExpression expression, ExpressionTypingContext context) {
