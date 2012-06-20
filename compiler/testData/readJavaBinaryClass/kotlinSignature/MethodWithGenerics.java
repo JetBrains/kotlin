@@ -5,7 +5,7 @@ import java.util.*;
 import jet.runtime.typeinfo.KotlinSignature;
 
 public class MethodWithGenerics {
-    @KotlinSignature("fun foo(a : String, b : List<Map.Entry<String?, String>?>) : String")
+    @KotlinSignature("fun foo(a : String, b : List<Entry<String?, String>?>) : String")
     public String foo(String a, List<Map.Entry<String, String>> b) {
         throw new UnsupportedOperationException();
     }
