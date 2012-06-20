@@ -836,11 +836,11 @@ public class JetParsing extends AbstractJetParsing {
      *       (getter? setter? | setter? getter?) SEMI?
      *   ;
      */
-    private JetNodeType parseProperty() {
+    private IElementType parseProperty() {
         return parseProperty(false);
     }
 
-    JetNodeType parseProperty(boolean local) {
+    IElementType parseProperty(boolean local) {
         if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) {
             advance(); // VAL_KEYWORD or VAR_KEYWORD
         }

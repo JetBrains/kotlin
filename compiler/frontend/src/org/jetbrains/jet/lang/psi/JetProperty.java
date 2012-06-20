@@ -20,12 +20,15 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
+import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
@@ -36,9 +39,13 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 /**
  * @author max
  */
-public class JetProperty extends JetTypeParameterListOwnerNotStubbed implements JetModifierListOwner {
+public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStub> {
     public JetProperty(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public JetProperty(@NotNull PsiJetPropertyStub stub, @NotNull IStubElementType nodeType) {
+        super(stub, nodeType);
     }
 
     @Override
@@ -51,11 +58,27 @@ public class JetProperty extends JetTypeParameterListOwnerNotStubbed implements 
         return visitor.visitProperty(this, data);
     }
 
+    @NotNull
+    @Override
+    public IStubElementType getElementType() {
+        return JetStubElementTypes.PROPERTY;
+    }
+
     public boolean isVar() {
+        PsiJetPropertyStub stub = getStub();
+        if (stub != null) {
+            return stub.isVar();
+        }
+
         return getNode().findChildByType(JetTokens.VAR_KEYWORD) != null;
     }
 
     public boolean isLocal() {
+        PsiJetPropertyStub stub = getStub();
+        if (stub != null) {
+            return stub.isLocal();
+        }
+
         PsiElement parent = getParent();
         return !(parent instanceof JetFile || parent instanceof JetClassBody || parent instanceof JetNamespaceBody);
     }
@@ -64,7 +87,7 @@ public class JetProperty extends JetTypeParameterListOwnerNotStubbed implements 
     @Override
     public SearchScope getUseScope() {
         if (isLocal()) {
-            PsiElement block = PsiTreeUtil.getParentOfType(this, JetBlockExpression.class, JetClassInitializer.class);
+            @SuppressWarnings("unchecked") PsiElement block = PsiTreeUtil.getParentOfType(this, JetBlockExpression.class, JetClassInitializer.class);
             if (block == null) return super.getUseScope();
             else return new LocalSearchScope(block);
         }   else return super.getUseScope();
@@ -135,11 +158,8 @@ public class JetProperty extends JetTypeParameterListOwnerNotStubbed implements 
 
     @NotNull
     public ASTNode getValOrVarNode() {
-        return getNode().findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD));
-    }
-
-    @Nullable
-    public ASTNode getEqualsSign() {
-        return getNode().findChildByType(TokenSet.create(EQ));
+        ASTNode node = getNode().findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD));
+        assert node != null : "Val or var should always exist for property";
+        return node;
     }
 }

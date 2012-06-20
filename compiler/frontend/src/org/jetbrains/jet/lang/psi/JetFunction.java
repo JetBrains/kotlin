@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Nikolay Krasko
  */
-public interface JetFunction extends JetTypeParameterListOwner, JetDeclarationWithBody, JetModifierListOwner {
+public interface JetFunction extends JetTypeParameterListOwner, JetDeclarationWithBody {
     @Nullable
     JetParameterList getValueParameterList();
 

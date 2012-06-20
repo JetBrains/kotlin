@@ -38,7 +38,7 @@ import java.io.IOException;
  * @author Nikolay Krasko
  */
 public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
-    public static final int STUB_VERSION = 8;
+    public static final int STUB_VERSION = 9;
 
     public JetFileElementType() {
         super("jet.FILE", JetLanguage.INSTANCE);
@@ -71,6 +71,7 @@ public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
         return new PsiJetFileStubImpl(null, packName);
     }
 
+    @Override
     protected ASTNode doParseContents(@NotNull final ASTNode chameleon, @NotNull final PsiElement psi) {
         final Project project = psi.getProject();
         Language languageForParser = getLanguageForParser(psi);
