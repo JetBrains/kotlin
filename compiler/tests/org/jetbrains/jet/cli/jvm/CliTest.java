@@ -64,7 +64,7 @@ public class CliTest {
     private void executeCompilerCompareOutput(@NotNull String[] args) {
         try {
             String actual = normalize(executeCompilerGrabOutput(args))
-                    .replace(FileUtil.toSystemIndependentName(new File("compiler/testData/cli/").getAbsolutePath()), "$TESTDATA_DIR$");
+                    .replace(new File("compiler/testData/cli/").getAbsolutePath(), "$TESTDATA_DIR$");
 
             String expected = normalize(FileUtil.loadFile(new File("compiler/testData/cli/" + testName.getMethodName() + ".out")));
 
