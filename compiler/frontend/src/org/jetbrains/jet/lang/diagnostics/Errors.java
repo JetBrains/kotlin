@@ -336,8 +336,6 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, SolutionStatus> TYPE_INFERENCE_FAILED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetElement, Integer> WRONG_NUMBER_OF_TYPE_ARGUMENTS = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory1<JetIdeTemplateExpression, String> UNRESOLVED_IDE_TEMPLATE = DiagnosticFactory1.create(ERROR);
-
     SimpleDiagnosticFactory<JetExpression> DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED = SimpleDiagnosticFactory.create(WARNING);
 
     DiagnosticFactory1<JetAnnotationEntry, String> NOT_AN_ANNOTATION_CLASS = DiagnosticFactory1.create(ERROR);

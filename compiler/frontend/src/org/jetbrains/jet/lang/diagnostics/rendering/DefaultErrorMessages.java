@@ -398,8 +398,6 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_INFERENCE_FAILED, "Type inference failed: {0}", TO_STRING);
         MAP.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, "{0,choice,0#No type arguments|1#Type argument|1<{0,number,integer} type argument} expected", null);
 
-        MAP.put(UNRESOLVED_IDE_TEMPLATE, "Unresolved IDE template: {0}", TO_STRING);
-
         MAP.put(DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED,
                 "This expression is treated as an argument to the function call on the previous line. " +
                 "Separate it with a semicolon (;) if it is not intended to be an argument.");

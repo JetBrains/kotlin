@@ -902,12 +902,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitIdeTemplateExpression(JetIdeTemplateExpression expression, ExpressionTypingContext context) {
-        context.trace.report(UNRESOLVED_IDE_TEMPLATE.on(expression, ObjectUtils.notNull(expression.getText(), "<no name>")));
-        return JetTypeInfo.create(null, context.dataFlowInfo);
-    }
-
-    @Override
     public JetTypeInfo visitBinaryExpression(JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE);
         JetSimpleNameExpression operationSign = expression.getOperationReference();

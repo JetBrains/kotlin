@@ -311,10 +311,4 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     public JetTypeInfo visitUnaryExpression(JetUnaryExpression expression, ExpressionTypingContext context) {
         return basic.visitUnaryExpression(expression, context, true);
     }
-
-    @Override
-    public JetTypeInfo visitIdeTemplateExpression(JetIdeTemplateExpression expression, ExpressionTypingContext context) {
-        context.trace.report(UNRESOLVED_IDE_TEMPLATE.on(expression, ObjectUtils.notNull(expression.getText(), "<no name>")));
-        return JetTypeInfo.create(null, context.dataFlowInfo);
-    }
 }
