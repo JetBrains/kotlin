@@ -52,7 +52,7 @@ public class DataFlowValueFactory {
     @NotNull
     public DataFlowValue createDataFlowValue(@NotNull ThisReceiverDescriptor receiver) {
         JetType type = receiver.getType();
-        return new DataFlowValue(receiver.getDeclarationDescriptor(), type, true, getImmanentNullability(type));
+        return new DataFlowValue(receiver, type, true, getImmanentNullability(type));
     }
 
     @NotNull
