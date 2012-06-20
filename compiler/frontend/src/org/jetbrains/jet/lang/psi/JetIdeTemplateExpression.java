@@ -42,7 +42,7 @@ public class JetIdeTemplateExpression extends JetExpressionImpl {
     }
 
     @Nullable
-    public String getText() {
+    public String getPlaceholderText() {
         PsiElement idElement = findChildByType(JetTokens.IDENTIFIER);
         return idElement == null ? null : idElement.getText();
     }
