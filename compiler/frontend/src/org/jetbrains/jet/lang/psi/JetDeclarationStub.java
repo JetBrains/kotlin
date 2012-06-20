@@ -16,11 +16,7 @@
 
 package org.jetbrains.jet.lang.psi;
 
-import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +26,7 @@ import org.jetbrains.jet.lexer.JetToken;
 /**
  * @author Nikolay Krasko
  */
-abstract class JetDeclarationStub<T extends StubElement> extends StubBasedPsiElementBase<T> implements JetDeclaration, StubBasedPsiElement<T> {
+abstract class JetDeclarationStub<T extends StubElement> extends JetElementImplStub<T> implements JetDeclaration {
     public JetDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }
@@ -48,41 +44,5 @@ abstract class JetDeclarationStub<T extends StubElement> extends StubBasedPsiEle
     public boolean hasModifier(JetToken modifier) {
         JetModifierList modifierList = getModifierList();
         return modifierList != null && modifierList.hasModifier(modifier);
-    }
-
-    @Override
-    public String toString() {
-        return getNode().getElementType().toString();
-    }
-
-    @Override
-    public final void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof JetVisitorVoid) {
-            accept((JetVisitorVoid) visitor);
-        }
-        else {
-            visitor.visitElement(this);
-        }
-    }
-
-    @Override
-    public <D> void acceptChildren(@NotNull JetTreeVisitor<D> visitor, D data) {
-        PsiElement child = getFirstChild();
-        while (child != null) {
-            if (child instanceof JetElement) {
-                ((JetElement) child).accept(visitor, data);
-            }
-            child = child.getNextSibling();
-        }
-    }
-
-    @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitJetElement(this);
-    }
-
-    @Override
-    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
-        return visitor.visitJetElement(this, data);
     }
 }

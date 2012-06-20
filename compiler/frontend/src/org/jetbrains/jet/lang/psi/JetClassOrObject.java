@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.psi;
 
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +26,7 @@ import java.util.List;
 /**
  * @author max
  */
-public interface JetClassOrObject extends PsiElement, PsiNameIdentifierOwner, JetDeclarationContainer {
+public interface JetClassOrObject extends PsiNameIdentifierOwner, JetDeclarationContainer {
     @Nullable
     JetDelegationSpecifierList getDelegationSpecifierList();
 

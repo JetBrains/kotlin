@@ -57,7 +57,7 @@ public class JetGotoClassContributor implements GotoClassContributor {
         final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
         PsiClass[] classes = JetCacheManager.getInstance(project).getNamesCache().getClassesByName(name, scope);
 
-        HashSet<String> javaQualifiedNames = new HashSet<String>();
+        Collection<String> javaQualifiedNames = new HashSet<String>();
 
         for (PsiClass aClass : classes) {
             String qualifiedName = aClass.getQualifiedName();

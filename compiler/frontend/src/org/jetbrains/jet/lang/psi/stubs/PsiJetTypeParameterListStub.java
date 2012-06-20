@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.psi.stubs.elements;
+package org.jetbrains.jet.lang.psi.stubs;
+
+import com.intellij.psi.stubs.StubElement;
+import org.jetbrains.jet.lang.psi.JetTypeParameterList;
 
 /**
  * @author Nikolay Krasko
  */
-public interface JetStubElementTypes {
-    JetFileElementType FILE = new JetFileElementType();
-
-    JetClassElementType CLASS = new JetClassElementType("CLASS");
-    JetFunctionElementType FUNCTION = new JetFunctionElementType("FUN");
-
-    JetTypeParameterElementType TYPE_PARAMETER = new JetTypeParameterElementType("TYPE_PARAMETER");
-    JetTypeParameterListElementType TYPE_PARAMETER_LIST = new JetTypeParameterListElementType("TYPE_PARAMETER_LIST");
+public interface PsiJetTypeParameterListStub extends StubElement<JetTypeParameterList> {
 }
