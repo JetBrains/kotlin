@@ -311,7 +311,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             Method originalMethod = typeMapper.mapSignature(original.getName(), original).getAsmMethod();
             Type[] argTypes = method.getArgumentTypes();
 
-            MethodVisitor mv = v.newMethod(null, ACC_PUBLIC| ACC_BRIDGE| ACC_FINAL, bridge.getName().getName(), method.getDescriptor(), null, null);
+            MethodVisitor mv = v.newMethod(null, ACC_BRIDGE | ACC_FINAL, bridge.getName().getName(), method.getDescriptor(), null, null);
             if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                 StubCodegen.generateStubCode(mv);
             }
