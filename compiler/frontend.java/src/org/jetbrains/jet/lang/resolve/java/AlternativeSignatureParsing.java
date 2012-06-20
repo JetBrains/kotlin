@@ -27,11 +27,13 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeImpl;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
@@ -60,21 +62,39 @@ class AlternativeSignatureParsing {
 
             @Override
             public JetType visitFunctionType(JetFunctionType type, Void data) {
-                return visitCommonType(type);
+                return visitCommonType(type.getReceiverTypeRef() == null
+                        ? JetStandardClasses.getFunction(type.getParameters().size())
+                        : JetStandardClasses.getReceiverFunction(type.getParameters().size()), type);
             }
 
             @Override
             public JetType visitTupleType(JetTupleType type, Void data) {
-                return visitCommonType(type);
+                return visitCommonType(JetStandardClasses.getTuple(type.getComponentTypeRefs().size()), type);
             }
 
             @Override
             public JetType visitUserType(JetUserType type, Void data) {
-                return visitCommonType(type);
+                JetUserType qualifier = type.getQualifier();
+                String shortName = type.getReferenceExpression().getReferencedName();
+                String longName = (qualifier == null ? "" : qualifier.getText() + ".") + shortName;
+                if (JetStandardClasses.UNIT_ALIAS.getName().equals(longName)) {
+                    return visitCommonType(JetStandardClasses.getTuple(0), type);
+                }
+                return visitCommonType(longName, type);
             }
 
-            private JetType visitCommonType(JetTypeElement type) {
+            private JetType visitCommonType(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeElement type) {
+                return visitCommonType(DescriptorUtils.getFQName(classDescriptor).toSafe().getFqName(), type);
+            }
+
+            private JetType visitCommonType(@NotNull String expectedFqNamePostfix, @NotNull JetTypeElement type) {
                 try {
+                    String fqName = DescriptorUtils.getFQName(autoType.getConstructor().getDeclarationDescriptor()).toSafe().getFqName();
+                    if (!fqName.endsWith(expectedFqNamePostfix)) {
+                        throw new AlternativeSignatureMismatchException(String.format(
+                                "Alternative signature type mismatch, expected: %s, actual: %s", expectedFqNamePostfix, fqName));
+                    }
+
                     List<TypeProjection> arguments = autoType.getArguments();
 
                     if (arguments.size() != type.getTypeArgumentsAsTypes().size()) {
