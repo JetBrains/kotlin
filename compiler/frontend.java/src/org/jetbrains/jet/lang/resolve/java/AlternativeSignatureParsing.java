@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.types.JetTypeImpl;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +76,14 @@ class AlternativeSignatureParsing {
             private JetType visitCommonType(JetTypeElement type) {
                 try {
                     List<TypeProjection> arguments = autoType.getArguments();
+
+                    if (arguments.size() != type.getTypeArgumentsAsTypes().size()) {
+                        throw new AlternativeSignatureMismatchException(String.format(
+                                "'%s' type in method signature has %d type arguments, while '%s' in alternative signature has %d of them",
+                                DescriptorRenderer.TEXT.renderType(autoType), arguments.size(),
+                                type.getText(), type.getTypeArgumentsAsTypes().size()));
+                    }
+
                     List<TypeProjection> altArguments = new ArrayList<TypeProjection>();
                     for (int i = 0, size = arguments.size(); i < size; i++) {
                         JetTypeElement argumentAlternativeTypeElement = type.getTypeArgumentsAsTypes().get(i).getTypeElement();
