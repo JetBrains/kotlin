@@ -40,7 +40,7 @@ import java.util.Collections;
 /**
  * @author abreslav
  */
-public class AbstractLazyResolveTest {
+public abstract class AbstractLazyResolveTest {
     private final Disposable rootDisposable = new Disposable() {
         @Override
         public void dispose() {
@@ -48,7 +48,7 @@ public class AbstractLazyResolveTest {
     };
 
     protected final CompilerDependencies
-              compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true);
+              compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.JDK_HEADERS, true);
     protected final JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(rootDisposable, compilerDependencies);
     protected final Project project = jetCoreEnvironment.getProject();
 
