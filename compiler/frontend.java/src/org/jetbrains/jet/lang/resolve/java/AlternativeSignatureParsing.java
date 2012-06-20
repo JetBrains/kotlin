@@ -147,15 +147,23 @@ class AlternativeSignatureParsing {
         List<ValueParameterDescriptor> altParamDescriptors = new ArrayList<ValueParameterDescriptor>();
         for (int i = 0, size = parameterDescriptors.size(); i < size; i++) {
             ValueParameterDescriptor pd = parameterDescriptors.get(i);
-            JetTypeElement alternativeTypeElement = altFunDeclaration.getValueParameters().get(i).getTypeReference().getTypeElement();
+            JetParameter valueParameter = altFunDeclaration.getValueParameters().get(i);
+            JetTypeElement alternativeTypeElement = valueParameter.getTypeReference().getTypeElement();
             JetType alternativeType;
             JetType alternativeVarargElementType;
-            // TODO check that alternative PSI has "vararg" modifier
             if (pd.getVarargElementType() == null) {
+                if (valueParameter.isVarArg()) {
+                    throw new AlternativeSignatureMismatchException(
+                            "Parameter in method signature is not vararg, but in alternative signature it is vararg");
+                }
                 alternativeType = computeAlternativeTypeFromAnnotation(alternativeTypeElement, pd.getType());
                 alternativeVarargElementType = null;
             }
             else {
+                if (!valueParameter.isVarArg()) {
+                    throw new AlternativeSignatureMismatchException(
+                            "Parameter in method signature is vararg, but in alternative signature it is not");
+                }
                 alternativeVarargElementType = computeAlternativeTypeFromAnnotation(alternativeTypeElement, pd.getVarargElementType());
                 alternativeType = JetStandardLibrary.getInstance().getArrayType(alternativeVarargElementType);
             }
