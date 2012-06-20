@@ -35,7 +35,7 @@ public class UnnecessaryNotNullAssertionFix implements IntentionAction {
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("replace.with.dot.call");
+        return JetBundle.message("remove.unnecessary.non.null.assertion");
     }
 
     @NotNull
