@@ -18,13 +18,11 @@ package org.jetbrains.k2js.translate.declaration;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -32,12 +30,12 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.ClassSortingUtils;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getAllClassesDefinedInNamespace;
 
 /**
  * @author Pavel Talanov
@@ -142,18 +140,17 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public List<JsPropertyInitializer> classDeclarationsForNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        List<JsPropertyInitializer> result = Lists.newArrayList();
-        for (ClassDescriptor classDescriptor : getAllClassesDefinedInNamespace(namespaceDescriptor, bindingContext())) {
-            result.add(getClassNameToClassObject(classDescriptor));
-        }
-        return result;
-    }
-
-    @NotNull
-    private JsPropertyInitializer getClassNameToClassObject(@NotNull ClassDescriptor classDescriptor) {
+    public JsPropertyInitializer getClassNameToClassObject(@NotNull ClassDescriptor classDescriptor) {
         JsName className = context().getNameForDescriptor(classDescriptor);
         JsNameRef alreadyDefinedClassReference = qualified(className, getDeclarationsObjectName().makeRef());
-        return new JsPropertyInitializer(className.makeRef(), alreadyDefinedClassReference);
+        JsExpression value;
+        if (context().isEcma5()) {
+            value = JsAstUtils.createDataDescriptor(alreadyDefinedClassReference, false, context());
+        }
+        else {
+            value = alreadyDefinedClassReference;
+        }
+
+        return new JsPropertyInitializer(className.makeRef(), value);
     }
 }

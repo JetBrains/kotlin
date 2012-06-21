@@ -31,7 +31,7 @@ var kotlin = {set:function (receiver, key, value) {
         return (obj1 === obj2);
     };
 
-    Kotlin.defs = {};
+    Kotlin.modules = {};
     Kotlin.Exceptions = {};
     Kotlin.Exception = Kotlin.$createClass();
     Kotlin.RuntimeException = Kotlin.$createClass(Kotlin.Exception);
@@ -44,7 +44,7 @@ var kotlin = {set:function (receiver, key, value) {
     Kotlin.Exceptions.UnsupportedOperationException = Kotlin.$createClass(Kotlin.Exception);
     Kotlin.Exceptions.IOException = Kotlin.$createClass(Kotlin.Exception);
 
-    Kotlin.throwNPE = function() {
+    Kotlin.throwNPE = function () {
         throw Kotlin.$new(Kotlin.Exceptions.NullPointerException)();
     };
 

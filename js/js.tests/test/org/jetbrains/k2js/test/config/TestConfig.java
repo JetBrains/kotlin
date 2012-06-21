@@ -41,7 +41,7 @@ public final class TestConfig extends Config {
     private /*var*/ List<JetFile> jsLibFiles = null;
 
     public TestConfig(@NotNull Project project, @NotNull EcmaVersion version) {
-        super(project, version);
+        super(project, "main", version);
     }
 
     @NotNull

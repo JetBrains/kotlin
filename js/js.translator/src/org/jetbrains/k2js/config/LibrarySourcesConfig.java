@@ -39,13 +39,17 @@ import java.util.zip.ZipFile;
  * @author Pavel Talanov
  */
 public class LibrarySourcesConfig extends Config {
-    public static final Key<Boolean> EXTERNAL_LIB = new Key<Boolean>("externalLib");
+    public static final Key<String> EXTERNAL_MODULE_NAME = new Key<String>("externalModule");
+    public static final String UNKNOWN_EXTERNAL_MODULE_NAME = "<unknown>";
 
     @Nullable
     private final String[] files;
 
-    public LibrarySourcesConfig(@NotNull Project project, @Nullable String[] files, @NotNull EcmaVersion ecmaVersion) {
-        super(project, ecmaVersion);
+    public LibrarySourcesConfig(@NotNull Project project,
+            @NotNull String moduleId,
+            @Nullable String[] files,
+            @NotNull EcmaVersion ecmaVersion) {
+        super(project, moduleId, ecmaVersion);
         this.files = files;
     }
 
@@ -57,16 +61,22 @@ public class LibrarySourcesConfig extends Config {
         }
 
         List<JetFile> jetFiles = new ArrayList<JetFile>();
+        String moduleName = UNKNOWN_EXTERNAL_MODULE_NAME;
         for (String path : files) {
             File file = new File(path);
             try {
                 String name = file.getName();
+                if (path.charAt(0) == '@') {
+                    moduleName = path.substring(1);
+                    continue;
+                }
+
                 if (name.endsWith(".jar") || name.endsWith(".zip")) {
                     jetFiles.addAll(readZip(file));
                 }
                 else {
                     JetFile psiFile = JetFileUtils.createPsiFile(path, FileUtil.loadFile(file), getProject());
-                    psiFile.putUserData(EXTERNAL_LIB, true);
+                    psiFile.putUserData(EXTERNAL_MODULE_NAME, moduleName);
                     jetFiles.add(psiFile);
                 }
             }
@@ -98,7 +108,7 @@ public class LibrarySourcesConfig extends Config {
                 InputStream stream = file.getInputStream(entry);
                 String text = FileUtil.loadTextAndClose(stream);
                 JetFile jetFile = JetFileUtils.createPsiFile(entry.getName(), text, getProject());
-                jetFile.putUserData(EXTERNAL_LIB, true);
+                jetFile.putUserData(EXTERNAL_MODULE_NAME, UNKNOWN_EXTERNAL_MODULE_NAME);
                 result.add(jetFile);
             }
         }

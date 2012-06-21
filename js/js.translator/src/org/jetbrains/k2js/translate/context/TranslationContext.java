@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 
 import java.util.Map;
@@ -56,6 +57,10 @@ public final class TranslationContext {
 
     public boolean isEcma5() {
         return staticContext.isEcma5();
+    }
+
+    public boolean isNotEcma3() {
+        return staticContext.getEcmaVersion() != EcmaVersion.v3;
     }
 
     private TranslationContext(@NotNull StaticContext staticContext,

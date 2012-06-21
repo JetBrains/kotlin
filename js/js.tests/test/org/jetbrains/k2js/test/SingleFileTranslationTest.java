@@ -42,7 +42,7 @@ public abstract class SingleFileTranslationTest extends BasicTest {
         runFunctionOutputTest(EcmaVersion.all(), kotlinFilename, namespaceName, functionName, expectedResult);
     }
 
-    protected void runFunctionOutputTest(@NotNull EnumSet<EcmaVersion> ecmaVersions, @NotNull String kotlinFilename,
+    protected void runFunctionOutputTest(@NotNull Iterable<EcmaVersion> ecmaVersions, @NotNull String kotlinFilename,
             @NotNull String namespaceName,
             @NotNull String functionName,
             @NotNull Object expectedResult) throws Exception {
@@ -50,7 +50,7 @@ public abstract class SingleFileTranslationTest extends BasicTest {
         runRhinoTests(kotlinFilename, ecmaVersions, new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
-    public void checkFooBoxIsTrue(@NotNull String filename, @NotNull EnumSet<EcmaVersion> ecmaVersions) throws Exception {
+    public void checkFooBoxIsTrue(@NotNull String filename, @NotNull Iterable<EcmaVersion> ecmaVersions) throws Exception {
         runFunctionOutputTest(ecmaVersions, filename, "foo", "box", true);
     }
 
@@ -58,7 +58,7 @@ public abstract class SingleFileTranslationTest extends BasicTest {
         checkFooBoxIsTrue(getTestName(true) + ".kt", EcmaVersion.all());
     }
 
-    protected void fooBoxTest(@NotNull EnumSet<EcmaVersion> ecmaVersions) throws Exception {
+    protected void fooBoxTest(@NotNull Iterable<EcmaVersion> ecmaVersions) throws Exception {
         checkFooBoxIsTrue(getTestName(true) + ".kt", ecmaVersions);
     }
 
@@ -84,7 +84,7 @@ public abstract class SingleFileTranslationTest extends BasicTest {
         runRhinoTests(kotlinFilename, ecmaVersions, new RhinoSystemOutputChecker(expectedResult));
     }
 
-    protected void performTestWithMain(@NotNull EnumSet<EcmaVersion> ecmaVersions,
+    protected void performTestWithMain(@NotNull Iterable<EcmaVersion> ecmaVersions,
             @NotNull String testName,
             @NotNull String testId,
             @NotNull String... args) throws Exception {

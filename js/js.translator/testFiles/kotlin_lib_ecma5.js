@@ -110,18 +110,27 @@ var Kotlin = {};
         return o;
     };
 
-    function emptyFunction() {
-    }
 
-    Kotlin.createNamespace = function (initializer, properties, classesAndNestedNamespaces) {
-        var o = Object.create(null, properties || undefined);
-        Object.defineProperty(o, "initialize", {value: initializer || emptyFunction});
-        var keys = Object.keys(classesAndNestedNamespaces);
-        for (var i = 0, n = keys.length; i < n; i++) {
-            var name = keys[i];
-            Object.defineProperty(o, name, {value: classesAndNestedNamespaces[name]});
+    Kotlin.definePackage = function (functionsAndClasses, nestedNamespaces) {
+        //var p = parent[localName];
+        //if (!p) {
+        //    p = Object.create(null, functionsAndClasses || undefined);
+        //    Object.defineProperty(parent, localName, {value: p});
+        //}
+        //else if (functionsAndClasses) {
+        //    Object.defineProperties(p, functionsAndClasses);
+        //}
+        var p = Object.create(null, functionsAndClasses || undefined);
+
+        if (nestedNamespaces) {
+            var keys = Object.keys(nestedNamespaces);
+            for (var i = 0, n = keys.length; i < n; i++) {
+                var name = keys[i];
+                Object.defineProperty(p, name, {value:nestedNamespaces[name]});
+            }
         }
-        return o;
+
+        return p;
     };
 
     Kotlin.$new = function (f) {
@@ -169,5 +178,14 @@ var Kotlin = {};
         }
 
         return Kotlin.createClass(parent || null, initializer, descriptors);
+    };
+
+    Kotlin.defineModule = function (id, module) {
+        if (id in Kotlin.modules) {
+            throw Kotlin.$new(Kotlin.Exceptions.IllegalArgumentException)();
+        }
+
+        Object.freeze(module);
+        Object.defineProperty(Kotlin.modules, id, {value: module});
     };
 })();

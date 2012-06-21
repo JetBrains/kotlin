@@ -26,7 +26,6 @@ import org.jetbrains.k2js.test.BasicTest;
 import org.mozilla.javascript.*;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -49,12 +48,7 @@ public final class RhinoUtils {
             new Supplier<String>() {
                 @Override
                 public String get() {
-                    try {
-                        return FileUtil.loadFile(new File(BasicTest.JSLINT_LIB));
-                    }
-                    catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    return fileToString(BasicTest.JSLINT_LIB);
                 }
             },
             "JSLINT"
@@ -64,15 +58,19 @@ public final class RhinoUtils {
 
     }
 
+    private static String fileToString(String file) {
+        try {
+            return FileUtil.loadFile(new File(file));
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static void runFileWithRhino(@NotNull String inputFile,
                                          @NotNull Context context,
                                          @NotNull Scriptable scope) throws Exception {
-        FileReader reader = new FileReader(inputFile);
-        try {
-            context.evaluateReader(scope, reader, inputFile, 1, null);
-        } finally {
-            reader.close();
-        }
+        context.evaluateString(scope, fileToString(inputFile), inputFile, 1, null);
     }
 
     public static void runRhinoTest(@NotNull List<String> fileNames,

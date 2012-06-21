@@ -19,6 +19,8 @@ package org.jetbrains.k2js.translate.declaration;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
@@ -39,6 +41,17 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
  * @author Pavel Talanov
  */
 public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPropertyInitializer>> {
+    @Nullable
+    private final ClassDeclarationTranslator classDeclarationTranslator;
+
+    public DeclarationBodyVisitor() {
+        classDeclarationTranslator = null;
+    }
+
+    public DeclarationBodyVisitor(ClassDeclarationTranslator classDeclarationTranslator) {
+        this.classDeclarationTranslator = classDeclarationTranslator;
+    }
+
     @NotNull
     public List<JsPropertyInitializer> traverseClass(@NotNull JetClassOrObject jetClass,
                                                      @NotNull TranslationContext context) {
@@ -51,7 +64,7 @@ public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPrope
 
     @NotNull
     public List<JsPropertyInitializer> traverseNamespace(@NotNull NamespaceDescriptor namespace,
-                                                         @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         List<JsPropertyInitializer> properties = new ArrayList<JsPropertyInitializer>();
         for (JetDeclaration declaration : getDeclarationsForNamespace(context.bindingContext(), namespace)) {
             properties.addAll(declaration.accept(this, context));
@@ -62,7 +75,12 @@ public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPrope
     @Override
     @NotNull
     public List<JsPropertyInitializer> visitClass(@NotNull JetClass expression, @NotNull TranslationContext context) {
-        return Collections.emptyList();
+        if (classDeclarationTranslator == null) {
+            return Collections.emptyList();
+        }
+
+        ClassDescriptor classDescriptor = getClassDescriptor(context.bindingContext(), expression);
+        return Collections.singletonList(classDeclarationTranslator.getClassNameToClassObject(classDescriptor));
     }
 
     @Override

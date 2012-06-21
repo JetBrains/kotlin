@@ -39,11 +39,6 @@ class RhinoFunctionManager {
         this.functionName = functionName;
     }
 
-    @NotNull
-    public String getFunctionName() {
-        return functionName;
-    }
-
     private Script compileScript(int optimizationLevel) {
         long startNano = System.nanoTime();
         Context context = Context.enter();

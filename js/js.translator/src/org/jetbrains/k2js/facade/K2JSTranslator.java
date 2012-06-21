@@ -32,7 +32,6 @@ import org.jetbrains.k2js.utils.JetFileUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.k2js.facade.FacadeUtils.parseString;
@@ -96,7 +95,7 @@ public final class K2JSTranslator {
             throws TranslationException {
         JetStandardLibrary.initialize(config.getProject());
         BindingContext bindingContext = AnalyzerFacadeForJS.analyzeFilesAndCheckErrors(filesToTranslate, config);
-        return Translation.generateAst(bindingContext, filesToTranslate, mainCallParameters, config.getTarget(), rawStatements);
+        return Translation.generateAst(bindingContext, filesToTranslate, mainCallParameters, config, rawStatements);
     }
 
     @NotNull

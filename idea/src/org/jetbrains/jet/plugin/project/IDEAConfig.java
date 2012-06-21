@@ -28,6 +28,6 @@ import static org.jetbrains.jet.plugin.project.JsModuleDetector.getLibLocationAn
  */
 public final class IDEAConfig extends LibrarySourcesConfig {
     public IDEAConfig(@NotNull Project project) {
-        super(project, getLibLocationAndTargetForProject(project).first, EcmaVersion.defaultVersion());
+        super(project, "default", getLibLocationAndTargetForProject(project).first, EcmaVersion.defaultVersion());
     }
 }

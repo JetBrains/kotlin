@@ -174,10 +174,13 @@ public final class K2JSCompiler implements TranslatingCompiler {
             THashSet<Module> modules = new THashSet<Module>();
             collectModuleDependencies(module, modules);
             if (!modules.isEmpty()) {
-                VirtualFile[] files = CompilerManager.getInstance(module.getProject()).createModulesCompileScope(
-                        modules.toArray(new Module[modules.size()]), false).getFiles(JetFileType.INSTANCE, true);
-                for (VirtualFile file : files) {
-                    sb.append(file.getPath()).append(',');
+                for (Module dependency : modules) {
+                    sb.append('@').append(dependency.getName()).append(',');
+                    VirtualFile[] files = CompilerManager.getInstance(module.getProject()).createModuleCompileScope(dependency, false)
+                            .getFiles(JetFileType.INSTANCE, true);
+                    for (VirtualFile file : files) {
+                        sb.append(file.getPath()).append(',');
+                    }
                 }
             }
 

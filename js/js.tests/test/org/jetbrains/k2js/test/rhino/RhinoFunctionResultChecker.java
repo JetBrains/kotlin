@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.test.rhino;
 
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.k2js.translate.context.Namer;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
@@ -59,10 +60,14 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
     }
 
     private String functionCallString() {
-        String result = functionName + "()";
+        StringBuilder sb = new StringBuilder();
         if (namespaceName != null) {
-            result = "Kotlin.defs." + namespaceName + "." + result;
+            sb.append("Kotlin.modules.main");
+            if (namespaceName != Namer.getRootNamespaceName()) {
+                sb.append('.').append(namespaceName);
+            }
+            sb.append('.');
         }
-        return result;
+        return sb.append(functionName).append("()").toString();
     }
 }
