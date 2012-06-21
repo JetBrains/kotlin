@@ -20,8 +20,10 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 /**
@@ -38,5 +40,24 @@ public abstract class JetStubElementType<StubT extends StubElement, PsiT extends
     @Override
     public String getExternalId() {
         return "jet." + toString();
+    }
+
+    @Override
+    public boolean shouldCreateStub(ASTNode node) {
+        PsiElement psi = node.getPsi();
+
+        if (PsiTreeUtil.getParentOfType(psi, JetFunctionLiteral.class) != null) {
+            return false;
+        }
+
+        JetBlockExpression blockExpression = PsiTreeUtil.getParentOfType(psi, JetBlockExpression.class);
+        @SuppressWarnings("unchecked") JetDeclarationWithBody stubStopElement =
+                PsiTreeUtil.getParentOfType(blockExpression, JetFunction.class, JetPropertyAccessor.class);
+
+        if (stubStopElement != null) {
+            return false;
+        }
+
+        return super.shouldCreateStub(node);
     }
 }

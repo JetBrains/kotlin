@@ -84,6 +84,13 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
                     "      VALUE_PARAMETER:PsiJetParameterStubImpl[val name=other typeText=String defaultValue=\"hello\"]\n");
     }
 
+    public void testNotStoreInFunction() {
+        doBuildTest("fun some() { val test = 12;\n fun fake() {}\n class FakeClass\n }",
+                    "PsiJetFileStubImpl[package=]\n" +
+                    "  FUN:PsiJetFunctionStubImpl[top name=some]\n" +
+                    "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
+    }
+
     private void doBuildTest(@NonNls final String source, @NonNls @NotNull final String tree) {
         final JetFile file = (JetFile) createLightFile(JetFileType.INSTANCE, source);
         final FileASTNode fileNode = file.getNode();
