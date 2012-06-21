@@ -296,13 +296,17 @@ class AlternativeSignatureData {
                 else {
                     JetTypeConstraint constraint =
                             findTypeParameterConstraint(altFunDeclaration, pd.getName(), upperBoundIndex);
-                    assert constraint != null; // TODO fail more properly
-                    JetTypeReference boundTypeReference = constraint.getBoundTypeReference();
-                    assert  boundTypeReference != null;
-                    altTypeElement = boundTypeReference.getTypeElement();
+                    if (constraint == null) {
+                        fail("Upper bound #%d for type parameter %s is missing", upperBoundIndex, pd.getName());
+                    }
+                    //noinspection ConstantConditions
+                    altTypeElement = constraint.getBoundTypeReference().getTypeElement();
                 }
                 altParamDescriptor.addUpperBound(computeType(altTypeElement, upperBound));
                 upperBoundIndex++;
+            }
+            if (findTypeParameterConstraint(altFunDeclaration, pd.getName(), upperBoundIndex) != null) {
+                fail("Extra upper bound #%d for type parameter %s", upperBoundIndex, pd.getName());
             }
 
             altParamDescriptor.setInitialized();
