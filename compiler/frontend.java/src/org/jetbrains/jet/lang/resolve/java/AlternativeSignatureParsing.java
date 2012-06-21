@@ -29,10 +29,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.JetTypeImpl;
-import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -110,7 +107,28 @@ class AlternativeSignatureParsing {
                         TypeProjection argument = arguments.get(i);
                         JetType alternativeType =
                                 computeAlternativeTypeFromAnnotation(argumentAlternativeTypeElement, argument.getType());
-                        altArguments.add(new TypeProjection(argument.getProjectionKind(), alternativeType));
+                        Variance variance = argument.getProjectionKind();
+                        if (type instanceof JetUserType) {
+                            JetTypeProjection typeProjection = ((JetUserType) type).getTypeArguments().get(i);
+                            Variance altVariance = Variance.INVARIANT;
+                            switch (typeProjection.getProjectionKind()) {
+                                case IN:
+                                    altVariance = Variance.IN_VARIANCE;
+                                    break;
+                                case OUT:
+                                    altVariance = Variance.OUT_VARIANCE;
+                                    break;
+                                case STAR:
+                                    throw new AlternativeSignatureMismatchException(
+                                            "Star projection is not available in alternative signatures");
+                                default:
+                            }
+                            if (altVariance != variance) {
+                                throw new AlternativeSignatureMismatchException(String.format(
+                                        "Variance mismatch, actual: %s, in alternative signature: %s", variance, altVariance));
+                            }
+                        }
+                        altArguments.add(new TypeProjection(variance, alternativeType));
                     }
                     return new JetTypeImpl(autoType.getAnnotations(), autoType.getConstructor(), false,
                                            altArguments, autoType.getMemberScope());
