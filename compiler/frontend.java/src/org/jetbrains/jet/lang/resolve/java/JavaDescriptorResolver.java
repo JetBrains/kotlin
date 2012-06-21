@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
@@ -1399,11 +1398,11 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                 AlternativeSignatureParsing.checkForSyntaxErrors(method, altFunDeclaration);
 
                 ValueParameterDescriptors altValueParameters = AlternativeSignatureParsing
-                        .computeAlternativeValueParameters(valueParameterDescriptors, altFunDeclaration);
-                JetType altReturnType = AlternativeSignatureParsing.computeAlternativeReturnType(returnType,
-                                                                                                 altFunDeclaration.getReturnTypeRef());
+                        .computeValueParameters(valueParameterDescriptors, altFunDeclaration);
+                JetType altReturnType = AlternativeSignatureParsing.computeReturnType(returnType,
+                                                                                      altFunDeclaration.getReturnTypeRef());
                 List<TypeParameterDescriptor> altTypeParameters = AlternativeSignatureParsing
-                        .computeAlternativeTypeParameters(methodTypeParameters, altFunDeclaration);
+                        .computeTypeParameters(methodTypeParameters, altFunDeclaration);
                 // if no exceptions were thrown, save alternative data
                 valueParameterDescriptors = altValueParameters;
                 returnType = altReturnType;

@@ -43,7 +43,7 @@ import java.util.List;
  * @since 6/5/12
  */
 class AlternativeSignatureParsing {
-    static JetType computeAlternativeTypeFromAnnotation(JetTypeElement alternativeTypeElement, final JetType autoType)
+    static JetType computeType(JetTypeElement alternativeTypeElement, final JetType autoType)
             throws AlternativeSignatureMismatchException {
         final Ref<AlternativeSignatureMismatchException> exception = new Ref<AlternativeSignatureMismatchException>();
         JetType result = alternativeTypeElement.accept(new JetVisitor<JetType, Void>() {
@@ -55,7 +55,7 @@ class AlternativeSignatureParsing {
                                 "Auto type '%s' is not-null, while type in alternative signature is nullable: '%s'",
                                 DescriptorRenderer.TEXT.renderType(autoType), nullableType.getText()));
                     }
-                    return TypeUtils.makeNullable(computeAlternativeTypeFromAnnotation(nullableType.getInnerType(), autoType));
+                    return TypeUtils.makeNullable(computeType(nullableType.getInnerType(), autoType));
                 }
                 catch (AlternativeSignatureMismatchException e) {
                     exception.set(e);
@@ -112,7 +112,7 @@ class AlternativeSignatureParsing {
                         JetTypeElement argumentAlternativeTypeElement = type.getTypeArgumentsAsTypes().get(i).getTypeElement();
                         TypeProjection argument = arguments.get(i);
                         JetType alternativeType =
-                                computeAlternativeTypeFromAnnotation(argumentAlternativeTypeElement, argument.getType());
+                                computeType(argumentAlternativeTypeElement, argument.getType());
                         Variance variance = argument.getProjectionKind();
                         if (type instanceof JetUserType) {
                             JetTypeProjection typeProjection = ((JetUserType) type).getTypeArguments().get(i);
@@ -157,7 +157,7 @@ class AlternativeSignatureParsing {
         return result;
     }
 
-    static JetType computeAlternativeReturnType(@NotNull JetType autoType, @Nullable JetTypeReference altReturnTypeRef)
+    static JetType computeReturnType(@NotNull JetType autoType, @Nullable JetTypeReference altReturnTypeRef)
             throws AlternativeSignatureMismatchException {
         JetType altReturnType;
         if (altReturnTypeRef == null) {
@@ -171,13 +171,13 @@ class AlternativeSignatureParsing {
             }
         }
         else {
-            altReturnType = computeAlternativeTypeFromAnnotation(altReturnTypeRef.getTypeElement(),
-                                                                 autoType);
+            altReturnType = computeType(altReturnTypeRef.getTypeElement(),
+                                        autoType);
         }
         return altReturnType;
     }
 
-    static JavaDescriptorResolver.ValueParameterDescriptors computeAlternativeValueParameters(
+    static JavaDescriptorResolver.ValueParameterDescriptors computeValueParameters(
             JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors,
             JetNamedFunction altFunDeclaration) throws AlternativeSignatureMismatchException {
         List<ValueParameterDescriptor> parameterDescriptors = valueParameterDescriptors.descriptors;
@@ -200,7 +200,7 @@ class AlternativeSignatureParsing {
                     throw new AlternativeSignatureMismatchException(
                             "Parameter in method signature is not vararg, but in alternative signature it is vararg");
                 }
-                alternativeType = computeAlternativeTypeFromAnnotation(alternativeTypeElement, pd.getType());
+                alternativeType = computeType(alternativeTypeElement, pd.getType());
                 alternativeVarargElementType = null;
             }
             else {
@@ -208,7 +208,7 @@ class AlternativeSignatureParsing {
                     throw new AlternativeSignatureMismatchException(
                             "Parameter in method signature is vararg, but in alternative signature it is not");
                 }
-                alternativeVarargElementType = computeAlternativeTypeFromAnnotation(alternativeTypeElement, pd.getVarargElementType());
+                alternativeVarargElementType = computeType(alternativeTypeElement, pd.getVarargElementType());
                 alternativeType = JetStandardLibrary.getInstance().getArrayType(alternativeVarargElementType);
             }
             altParamDescriptors.add(new ValueParameterDescriptorImpl(pd.getContainingDeclaration(), pd.getIndex(), pd.getAnnotations(),
@@ -217,13 +217,13 @@ class AlternativeSignatureParsing {
         }
         JetType altReceiverType = null;
         if (valueParameterDescriptors.receiverType != null) {
-            altReceiverType = computeAlternativeTypeFromAnnotation(altFunDeclaration.getReceiverTypeRef().getTypeElement(),
-                                                                   valueParameterDescriptors.receiverType);
+            altReceiverType = computeType(altFunDeclaration.getReceiverTypeRef().getTypeElement(),
+                                          valueParameterDescriptors.receiverType);
         }
         return new JavaDescriptorResolver.ValueParameterDescriptors(altReceiverType, altParamDescriptors);
     }
 
-    static List<TypeParameterDescriptor> computeAlternativeTypeParameters(List<TypeParameterDescriptor> typeParameterDescriptors,
+    static List<TypeParameterDescriptor> computeTypeParameters(List<TypeParameterDescriptor> typeParameterDescriptors,
             JetNamedFunction altFunDeclaration) throws AlternativeSignatureMismatchException {
         if (typeParameterDescriptors.size() != altFunDeclaration.getTypeParameters().size()) {
             throw new AlternativeSignatureMismatchException(
@@ -257,7 +257,7 @@ class AlternativeSignatureParsing {
                 else {
                     altTypeElement = findTypeParameterConstraint(altFunDeclaration, parameter.getNameAsName(), upperBoundIndex).getBoundTypeReference().getTypeElement();
                 }
-                altParamDescriptor.addUpperBound(computeAlternativeTypeFromAnnotation(altTypeElement, upperBound));
+                altParamDescriptor.addUpperBound(computeType(altTypeElement, upperBound));
                 upperBoundIndex++;
             }
 
