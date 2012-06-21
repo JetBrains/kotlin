@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiSubstitutor;
@@ -44,8 +43,12 @@ import java.util.List;
  * @since 6/5/12
  */
 class AlternativeSignatureData {
+    private JetNamedFunction altFunDeclaration;
+    private PsiMethodWrapper method;
+
     private boolean none;
     private String error;
+
     private JavaDescriptorResolver.ValueParameterDescriptors altValueParameters;
     private JetType altReturnType;
     private List<TypeParameterDescriptor> altTypeParameters;
@@ -54,22 +57,23 @@ class AlternativeSignatureData {
             @NotNull PsiMethodWrapper method,
             @NotNull JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors,
             @NotNull JetType returnType,
-            @NotNull List<TypeParameterDescriptor> methodTypeParameters){
+            @NotNull List<TypeParameterDescriptor> methodTypeParameters) {
         String signature = method.getSignatureAnnotation().signature();
         if (signature.isEmpty()) {
             none = true;
             return;
         }
 
+        this.method = method;
         Project project = method.getPsiMethod().getProject();
-        JetNamedFunction altFunDeclaration = JetPsiFactory.createFunction(project, signature);
-        try {
-            checkForSyntaxErrors(method, altFunDeclaration);
+        altFunDeclaration = JetPsiFactory.createFunction(project, signature);
 
-            altValueParameters = computeValueParameters(valueParameterDescriptors, altFunDeclaration);
-            altReturnType = computeReturnType(returnType,
-                                                      altFunDeclaration.getReturnTypeRef());
-            altTypeParameters = computeTypeParameters(methodTypeParameters, altFunDeclaration);
+        try {
+            checkForSyntaxErrors();
+
+            computeValueParameters(valueParameterDescriptors);
+            computeReturnType(returnType);
+            computeTypeParameters(methodTypeParameters);
         }
         catch (AlternativeSignatureMismatchException e) {
             error = e.getMessage();
@@ -204,8 +208,8 @@ class AlternativeSignatureData {
         }, null);
     }
 
-    static JetType computeReturnType(@NotNull JetType autoType, @Nullable JetTypeReference altReturnTypeRef) {
-        JetType altReturnType;
+    private void computeReturnType(@NotNull JetType autoType) {
+        JetTypeReference altReturnTypeRef = altFunDeclaration.getReturnTypeRef();
         if (altReturnTypeRef == null) {
             if (JetStandardClasses.isUnit(autoType)) {
                 altReturnType = autoType;
@@ -220,12 +224,9 @@ class AlternativeSignatureData {
             altReturnType = computeType(altReturnTypeRef.getTypeElement(),
                                         autoType);
         }
-        return altReturnType;
     }
 
-    static JavaDescriptorResolver.ValueParameterDescriptors computeValueParameters(
-            JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors,
-            JetNamedFunction altFunDeclaration) {
+    private void computeValueParameters(JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors) {
         List<ValueParameterDescriptor> parameterDescriptors = valueParameterDescriptors.descriptors;
 
         if (parameterDescriptors.size() != altFunDeclaration.getValueParameters().size()) {
@@ -266,20 +267,20 @@ class AlternativeSignatureData {
             altReceiverType = computeType(altFunDeclaration.getReceiverTypeRef().getTypeElement(),
                                           valueParameterDescriptors.receiverType);
         }
-        return new JavaDescriptorResolver.ValueParameterDescriptors(altReceiverType, altParamDescriptors);
+        altValueParameters = new JavaDescriptorResolver.ValueParameterDescriptors(altReceiverType, altParamDescriptors);
     }
 
-    static List<TypeParameterDescriptor> computeTypeParameters(List<TypeParameterDescriptor> typeParameterDescriptors,
-            JetNamedFunction altFunDeclaration) {
-        if (typeParameterDescriptors.size() != altFunDeclaration.getTypeParameters().size()) {
+    private void computeTypeParameters(List<TypeParameterDescriptor> typeParameters) {
+
+        if (typeParameters.size() != altFunDeclaration.getTypeParameters().size()) {
             throw new AlternativeSignatureMismatchException(
                     String.format("Method signature has %d type parameters, but alternative signature has %d",
-                                  typeParameterDescriptors.size(), altFunDeclaration.getTypeParameters().size()));
+                                  typeParameters.size(), altFunDeclaration.getTypeParameters().size()));
         }
 
-        List<TypeParameterDescriptor> altParamDescriptors = new ArrayList<TypeParameterDescriptor>();
-        for (int i = 0, size = typeParameterDescriptors.size(); i < size; i++) {
-            TypeParameterDescriptor pd = typeParameterDescriptors.get(i);
+        altTypeParameters = new ArrayList<TypeParameterDescriptor>();
+        for (int i = 0, size = typeParameters.size(); i < size; i++) {
+            TypeParameterDescriptor pd = typeParameters.get(i);
             DeclarationDescriptor containingDeclaration = pd.getContainingDeclaration();
             assert containingDeclaration != null;
             TypeParameterDescriptorImpl altParamDescriptor = TypeParameterDescriptorImpl
@@ -308,9 +309,8 @@ class AlternativeSignatureData {
             }
 
             altParamDescriptor.setInitialized();
-            altParamDescriptors.add(altParamDescriptor);
+            altTypeParameters.add(altParamDescriptor);
         }
-        return altParamDescriptors;
     }
 
     @Nullable
@@ -329,7 +329,7 @@ class AlternativeSignatureData {
         return null;
     }
 
-    static void checkForSyntaxErrors(PsiMethodWrapper method, JetNamedFunction altFunDeclaration) {
+    private void checkForSyntaxErrors() {
         List<PsiErrorElement> syntaxErrors = AnalyzingUtils.getSyntaxErrorRanges(altFunDeclaration);
         if (!syntaxErrors.isEmpty()) {
             String textSignature = String.format("%s(%s)", method.getName(),
