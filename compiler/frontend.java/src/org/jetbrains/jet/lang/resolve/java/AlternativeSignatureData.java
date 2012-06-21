@@ -378,4 +378,10 @@ class AlternativeSignatureData {
                     method.getName(), altFunDeclaration.getName()));
         }
     }
+
+    private static class AlternativeSignatureMismatchException extends Exception {
+        private AlternativeSignatureMismatchException(String message) {
+            super(message);
+        }
+    }
 }
