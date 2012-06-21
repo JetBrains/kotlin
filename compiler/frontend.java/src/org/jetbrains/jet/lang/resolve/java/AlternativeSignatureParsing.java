@@ -49,6 +49,11 @@ class AlternativeSignatureParsing {
             @Override
             public JetType visitNullableType(JetNullableType nullableType, Void data) {
                 try {
+                    if (!autoType.isNullable()) {
+                        throw new AlternativeSignatureMismatchException(String.format(
+                                "Auto type '%s' is not-null, while type in alternative signature is nullable: '%s'",
+                                DescriptorRenderer.TEXT.renderType(autoType), nullableType.getText()));
+                    }
                     return TypeUtils.makeNullable(computeAlternativeTypeFromAnnotation(nullableType.getInnerType(), autoType));
                 }
                 catch (AlternativeSignatureMismatchException e) {
