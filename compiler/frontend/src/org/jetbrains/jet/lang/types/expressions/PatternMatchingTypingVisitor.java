@@ -116,9 +116,6 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 if (newDataFlowInfo == null) {
                     newDataFlowInfo = context.dataFlowInfo;
                 }
-                else {
-                    newDataFlowInfo = newDataFlowInfo.and(context.dataFlowInfo);
-                }
             }
             JetExpression bodyExpression = whenEntry.getExpression();
             if (bodyExpression != null) {
@@ -259,14 +256,21 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 JetExpression expression = pattern.getExpression();
                 if (expression == null) return;
                 JetType type = facade.getTypeInfo(expression, context.replaceScope(scopeToExtend)).getType();
+                if (type == null) return;
                 if (conditionExpected) {
                     JetType booleanType = JetStandardLibrary.getInstance().getBooleanType();
-                    if (type != null && !JetTypeChecker.INSTANCE.equalTypes(booleanType, type)) {
+                    if (!JetTypeChecker.INSTANCE.equalTypes(booleanType, type)) {
                         context.trace.report(TYPE_MISMATCH_IN_CONDITION.on(pattern, type));
                     }
                     return;
                 }
                 checkTypeCompatibility(type, subjectType, pattern);
+                DataFlowInfo dataFlowInfo = context.dataFlowInfo;
+                DataFlowValue expressionDataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(expression, type, context.trace.getBindingContext());
+                for (DataFlowValue subjectVariable : subjectVariables) {
+                    dataFlowInfo = dataFlowInfo.equate(subjectVariable, expressionDataFlowValue);
+                }
+                result.set(dataFlowInfo);
             }
 
             @Override
