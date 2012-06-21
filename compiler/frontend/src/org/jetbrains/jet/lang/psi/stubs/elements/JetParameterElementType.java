@@ -17,8 +17,6 @@
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.LighterAST;
-import com.intellij.lang.LighterASTNode;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
@@ -45,11 +43,6 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
     @Override
     public JetParameter createPsiFromAst(@NotNull ASTNode node) {
         return new JetParameter(node);
-    }
-
-    @Override
-    public PsiJetParameterStub createStub(LighterAST tree, LighterASTNode node, StubElement parentStub) {
-        return null;
     }
 
     @Override

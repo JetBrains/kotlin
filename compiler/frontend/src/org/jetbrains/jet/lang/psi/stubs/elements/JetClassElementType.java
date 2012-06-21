@@ -17,8 +17,6 @@
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.LighterAST;
-import com.intellij.lang.LighterASTNode;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
@@ -42,11 +40,6 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
 
     public JetClassElementType(@NotNull @NonNls String debugName) {
         super(debugName);
-    }
-
-    @Override
-    public PsiJetClassStub createStub(LighterAST tree, LighterASTNode node, StubElement parentStub) {
-        return null;
     }
 
     @Override
