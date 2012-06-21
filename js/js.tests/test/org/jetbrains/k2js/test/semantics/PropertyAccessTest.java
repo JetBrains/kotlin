@@ -83,10 +83,15 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
     public void testInitInstanceProperties() throws Exception {
         fooBoxTest(EnumSet.of(EcmaVersion.v5));
     }
-    
+
     public void testEnumerable() throws Exception {
-            fooBoxTest(JsTestUtils.successOnEcmaV5());
-        }
+        fooBoxTest(JsTestUtils.successOnEcmaV5());
+    }
+
+    public void testOverloadedOverriddenFunctionPropertyName() throws Exception {
+        //fooBoxTest(JsTestUtils.successOnEcmaV5());
+        //fooBoxTest();
+    }
 
     @Override
     @NotNull
