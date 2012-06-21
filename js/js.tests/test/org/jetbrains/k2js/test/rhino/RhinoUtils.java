@@ -111,6 +111,10 @@ public final class RhinoUtils {
     }
 
     private static void lintIt(Context context, String fileName) throws IOException {
+        if (Boolean.valueOf(System.getProperty("test.lint.skip"))) {
+            return;
+        }
+
         NativeObject options = new NativeObject();
         // todo fix dart ast?
         options.defineProperty("white", true, ScriptableObject.READONLY);
