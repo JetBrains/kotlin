@@ -1,16 +1,11 @@
 package kotlin
 
-import java.util.Map as JMap
-import java.util.Map.Entry as JEntry
 import java.util.Collection
 import java.util.Collections
 import java.util.HashMap
 import java.util.List
-import java.util.LinkedHashMap
+import java.util.Map as JMap
 import java.util.Map
-import java.util.TreeMap
-import java.util.SortedMap
-import java.util.Comparator
 
 // Map APIs
 
@@ -27,15 +22,15 @@ public fun <K, V> JMap<K, V>.set(key : K, value : V) : V? = this.put(key, value)
 
 /** Returns the [[Map]] if its not null otherwise it returns the empty [[Map]] */
 public inline fun <K,V> java.util.Map<K,V>?.orEmpty() : java.util.Map<K,V>
-= if (this != null) this else Collections.EMPTY_MAP as java.util.Map<K,V>
+= if (this != null) this else Collections.emptyMap<K,V>() as java.util.Map<K,V>
 
 
 /** Returns the key of the entry */
-val <K,V> JEntry<K,V>.key : K
+val <K,V> Map.Entry<K,V>.key : K
     get() = getKey().sure()
 
 /** Returns the value of the entry */
-val <K,V> JEntry<K,V>.value : V
+val <K,V> Map.Entry<K,V>.value : V
     get() = getValue().sure()
 
 /**
@@ -80,15 +75,6 @@ public inline fun <K,V> java.util.Map<K,V>.iterator(): java.util.Iterator<java.u
 }
 
 /**
- * Returns a new List containing the results of applying the given *transform* function to each [[Map.Entry]] in this [[Map]]
- *
- * @includeFunctionBody ../../test/CollectionTest.kt map
- */
-public inline fun <K,V,R> java.util.Map<K,V>.map(transform: (java.util.Map.Entry<K,V>) -> R) : java.util.List<R> {
-    return mapTo(java.util.ArrayList<R>(this.size), transform)
-}
-
-/**
  * Transforms each [[Map.Entry]] in this [[Map]] with the given *transform* function and
  * adds each return value to the given *results* collection
  */
@@ -96,16 +82,6 @@ public inline fun <K,V,R, C: Collection<in R>> java.util.Map<K,V>.mapTo(result: 
   for (item in this)
     result.add(transform(item))
   return result
-}
-
-
-/**
- * Returns a new Map containing the results of applying the given *transform* function to each [[Map.Entry]] in this [[Map]]
- *
- * @includeFunctionBody ../../test/MapTest.kt mapValues
- */
-public inline fun <K,V,R> java.util.Map<K,V>.mapValues(transform : (java.util.Map.Entry<K,V>) -> R): java.util.Map<K,R> {
-    return mapValuesTo(java.util.HashMap<K,R>(this.size), transform)
 }
 
 /**
@@ -127,26 +103,6 @@ public inline fun <K,V> java.util.Map<K,V>.putAll(vararg values: #(K,V)): Unit {
         put(v._1, v._2)
     }
 }
-
-/**
- * Converts this [[Map]] to a [[LinkedHashMap]] so future insertion orders are maintained
- */
-public inline fun <K,V> java.util.Map<K,V>.toLinkedMap(): LinkedHashMap<K,V> = toMap<K,V>(LinkedHashMap(size)) as LinkedHashMap<K,V>
-
-/**
- * Converts this [[Map]] to a [[SortedMap]] so iteration order will be in key order
- *
- * @includeFunctionBody ../../test/MapTest.kt toSortedMap
- */
-public inline fun <K,V> java.util.Map<K,V>.toSortedMap(): SortedMap<K,V> = toMap<K,V>(TreeMap()) as SortedMap<K,V>
-
-/**
- * Converts this [[Map]] to a [[SortedMap]] using the given *comparator* so that iteration order will be in the order
- * defined by the comparator
- *
- * @includeFunctionBody ../../test/MapTest.kt toSortedMapWithComparator
- */
-public inline fun <K,V> java.util.Map<K,V>.toSortedMap(comparator: Comparator<K>): SortedMap<K,V> = toMap<K,V>(TreeMap(comparator)) as SortedMap<K,V>
 
 /**
  * Copies the entries in this [[Map]] to the given *map*

@@ -28,9 +28,36 @@ val Collections = object {
 
     // TODO should be immutable!
     private val emptyList = ArrayList<Any>()
+    private val emptyMap = HashMap<Any,Any>()
 
     public val <T> EMPTY_LIST: List<T>
-    get() = emptyList as List<T>
+    get() = emptyList<T>()
+
+    public val <K,V> EMPTY_MAP: Map<K,V>
+    get() = emptyMap<K,V>()
+
+    public fun <T> emptyList(): List<T> = emptyList as List<T>
+    public fun <K,V> emptyMap(): Map<K,V> = emptyMap as Map<K,V>
+
+    public fun <in T> sort(list: List<T>): Unit {
+        throw UnsupportedOperationException()
+    }
+
+    public fun <in T> sort(list: List<T>, comparator: java.util.Comparator<T>): Unit {
+        throw UnsupportedOperationException()
+    }
+
+    public fun <T> reverse(list: List<T>): Unit {
+        val size = list.size()
+        for (i in 0.upto(size / 2)) {
+            val i2 = size - i
+            val tmp = list[i]
+            list[i] = list[i2]
+            list[i2] = tmp
+        }
+    }
+
+
 }
 
 library
@@ -163,6 +190,18 @@ public trait Map<K, V> {
     open fun clear() : Unit
     open fun keySet() : java.util.Set<K>
     open fun values() : java.util.Collection<V>
+
+    open fun entrySet() : java.util.Set<Entry<K, V>>
+//    open fun equals(o : Any?) : Boolean
+//    open fun hashCode() : Int
+
+    trait Entry<K, V> {
+        open fun getKey() : K
+        open fun getValue() : V
+        open fun setValue(value : V) : V
+//            open fun equals(o : Any?) : Boolean
+//            open fun hashCode() : Int
+    }
 }
 
 library
@@ -178,6 +217,7 @@ public open class HashMap<K, V>() : java.util.Map<K, V> {
     public override fun containsValue(value : Any?) : Boolean = js.noImpl
     public override fun keySet() : java.util.Set<K> = js.noImpl
     public override fun values() : java.util.Collection<V> = js.noImpl
+    public override fun entrySet() : java.util.Set<Map.Entry<K, V>> = js.noImpl
 }
 
 library
@@ -200,8 +240,11 @@ public open class LinkedList<E>() : List<E> {
 }
 
 library
-public class StringBuilder() {
-    public fun append(obj : Any) : StringBuilder = js.noImpl
+public class StringBuilder() : Appendable {
+    override fun append(c: Char): Appendable? = js.noImpl
+    override fun append(csq: CharSequence?): Appendable? = js.noImpl
+    override fun append(csq: CharSequence?, start: Int, end: Int): Appendable? = js.noImpl
+    public fun append(obj : Any?) : StringBuilder = js.noImpl
     public fun toString() : String = js.noImpl
 }
 

@@ -57,6 +57,7 @@ public abstract class Config {
             "/jquery/ui.kt",
             "/core/javautil.kt",
             "/core/javalang.kt",
+            "/core/javaio.kt",
             "/core/date.kt",
             "/core/core.kt",
             "/core/math.kt",
@@ -78,6 +79,10 @@ public abstract class Config {
      */
     @NotNull
     public static final List<String> LIB_FILE_NAMES_DEPENDENT_ON_STDLIB = Arrays.asList(
+            /**
+             TODO include ASAP...
+            "/stdlib/jutil.kt",
+             */
             "/stdlib/test.kt",
             "/core/stringDefs.kt",
             "/core/strings.kt"
@@ -91,6 +96,17 @@ public abstract class Config {
     @NotNull
     public static final List<String> STDLIB_FILE_NAMES = Arrays.asList(
             "/kotlin/Preconditions.kt",
+            /*
+            TODO include ASAP - right now it generates an issue
+            "/kotlin/Iterators.kt",
+            "/kotlin/JUtil.kt",
+            "/kotlin/JUtilCollections.kt",
+            "/kotlin/JUtilMaps.kt",
+            "/kotlin/JLangIterables.kt",
+            "/kotlin/JLangIterablesLazy.kt",
+            "/kotlin/JLangIterablesSpecial.kt",
+            "/kotlin/support/AbstractIterator.kt"
+             */
             "/kotlin/Strings.kt",
             "/kotlin/test/Test.kt"
     );

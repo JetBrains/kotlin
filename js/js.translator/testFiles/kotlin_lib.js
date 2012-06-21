@@ -37,6 +37,7 @@
     Kotlin.Exceptions.IllegalStateException = Kotlin.$createClass(Kotlin.Exception);
     Kotlin.Exceptions.IndexOutOfBoundsException = Kotlin.$createClass(Kotlin.Exception);
     Kotlin.Exceptions.UnsupportedOperationException = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.Exceptions.IOException = Kotlin.$createClass(Kotlin.Exception);
 
     Kotlin.throwNPE = function() {
         throw Kotlin.$new(Kotlin.Exceptions.NullPointerException)();
