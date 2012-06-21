@@ -204,6 +204,12 @@ class AlternativeSignatureParsing {
 
     static List<TypeParameterDescriptor> computeAlternativeTypeParameters(List<TypeParameterDescriptor> typeParameterDescriptors,
             JetNamedFunction altFunDeclaration) throws AlternativeSignatureMismatchException {
+        if (typeParameterDescriptors.size() != altFunDeclaration.getTypeParameters().size()) {
+            throw new AlternativeSignatureMismatchException(
+                    String.format("Method signature has %d type parameters, but alternative signature has %d",
+                                  typeParameterDescriptors.size(), altFunDeclaration.getTypeParameters().size()));
+        }
+
         List<TypeParameterDescriptor> altParamDescriptors = new ArrayList<TypeParameterDescriptor>();
         for (int i = 0, size = typeParameterDescriptors.size(); i < size; i++) {
             TypeParameterDescriptor pd = typeParameterDescriptors.get(i);
