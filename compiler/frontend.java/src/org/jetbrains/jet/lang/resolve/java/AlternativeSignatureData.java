@@ -118,9 +118,8 @@ class AlternativeSignatureData {
             @Override
             public JetType visitNullableType(JetNullableType nullableType, Void data) {
                 if (!autoType.isNullable()) {
-                    throw new AlternativeSignatureMismatchException(String.format(
-                            "Auto type '%s' is not-null, while type in alternative signature is nullable: '%s'",
-                            DescriptorRenderer.TEXT.renderType(autoType), nullableType.getText()));
+                    fail("Auto type '%s' is not-null, while type in alternative signature is nullable: '%s'",
+                         DescriptorRenderer.TEXT.renderType(autoType), nullableType.getText());
                 }
                 return TypeUtils.makeNullable(computeType(nullableType.getInnerType(), autoType));
             }
@@ -155,17 +154,14 @@ class AlternativeSignatureData {
             private JetType visitCommonType(@NotNull String expectedFqNamePostfix, @NotNull JetTypeElement type) {
                 String fqName = DescriptorUtils.getFQName(autoType.getConstructor().getDeclarationDescriptor()).toSafe().getFqName();
                 if (!fqName.endsWith(expectedFqNamePostfix)) {
-                    throw new AlternativeSignatureMismatchException(String.format(
-                            "Alternative signature type mismatch, expected: %s, actual: %s", expectedFqNamePostfix, fqName));
+                    fail("Alternative signature type mismatch, expected: %s, actual: %s", expectedFqNamePostfix, fqName);
                 }
 
                 List<TypeProjection> arguments = autoType.getArguments();
 
                 if (arguments.size() != type.getTypeArgumentsAsTypes().size()) {
-                    throw new AlternativeSignatureMismatchException(String.format(
-                            "'%s' type in method signature has %d type arguments, while '%s' in alternative signature has %d of them",
-                            DescriptorRenderer.TEXT.renderType(autoType), arguments.size(),
-                            type.getText(), type.getTypeArgumentsAsTypes().size()));
+                    fail("'%s' type in method signature has %d type arguments, while '%s' in alternative signature has %d of them",
+                         DescriptorRenderer.TEXT.renderType(autoType), arguments.size(), type.getText(), type.getTypeArgumentsAsTypes().size());
                 }
 
                 List<TypeProjection> altArguments = new ArrayList<TypeProjection>();
@@ -186,13 +182,11 @@ class AlternativeSignatureData {
                                 altVariance = Variance.OUT_VARIANCE;
                                 break;
                             case STAR:
-                                throw new AlternativeSignatureMismatchException(
-                                        "Star projection is not available in alternative signatures");
+                                fail("Star projection is not available in alternative signatures");
                             default:
                         }
                         if (altVariance != variance) {
-                            throw new AlternativeSignatureMismatchException(String.format(
-                                    "Variance mismatch, actual: %s, in alternative signature: %s", variance, altVariance));
+                            fail("Variance mismatch, actual: %s, in alternative signature: %s", variance, altVariance);
                         }
                     }
                     altArguments.add(new TypeProjection(variance, alternativeType));
@@ -215,9 +209,8 @@ class AlternativeSignatureData {
                 altReturnType = autoType;
             }
             else {
-                throw new AlternativeSignatureMismatchException(String.format(
-                        "Return type in alternative signature is missing, while in real signature it is '%s'",
-                        DescriptorRenderer.TEXT.renderType(autoType)));
+                fail("Return type in alternative signature is missing, while in real signature it is '%s'",
+                     DescriptorRenderer.TEXT.renderType(autoType));
             }
         }
         else {
@@ -230,9 +223,8 @@ class AlternativeSignatureData {
         List<ValueParameterDescriptor> parameterDescriptors = valueParameterDescriptors.descriptors;
 
         if (parameterDescriptors.size() != altFunDeclaration.getValueParameters().size()) {
-            throw new AlternativeSignatureMismatchException(
-                    String.format("Method signature has %d value parameters, but alternative signature has %d",
-                                  parameterDescriptors.size(), altFunDeclaration.getValueParameters().size()));
+            fail("Method signature has %d value parameters, but alternative signature has %d",
+                 parameterDescriptors.size(), altFunDeclaration.getValueParameters().size());
         }
 
         List<ValueParameterDescriptor> altParamDescriptors = new ArrayList<ValueParameterDescriptor>();
@@ -244,16 +236,14 @@ class AlternativeSignatureData {
             JetType alternativeVarargElementType;
             if (pd.getVarargElementType() == null) {
                 if (valueParameter.isVarArg()) {
-                    throw new AlternativeSignatureMismatchException(
-                            "Parameter in method signature is not vararg, but in alternative signature it is vararg");
+                    fail("Parameter in method signature is not vararg, but in alternative signature it is vararg");
                 }
                 alternativeType = computeType(alternativeTypeElement, pd.getType());
                 alternativeVarargElementType = null;
             }
             else {
                 if (!valueParameter.isVarArg()) {
-                    throw new AlternativeSignatureMismatchException(
-                            "Parameter in method signature is vararg, but in alternative signature it is not");
+                    fail("Parameter in method signature is vararg, but in alternative signature it is not");
                 }
                 alternativeVarargElementType = computeType(alternativeTypeElement, pd.getVarargElementType());
                 alternativeType = JetStandardLibrary.getInstance().getArrayType(alternativeVarargElementType);
@@ -273,9 +263,8 @@ class AlternativeSignatureData {
     private void computeTypeParameters(List<TypeParameterDescriptor> typeParameters) {
 
         if (typeParameters.size() != altFunDeclaration.getTypeParameters().size()) {
-            throw new AlternativeSignatureMismatchException(
-                    String.format("Method signature has %d type parameters, but alternative signature has %d",
-                                  typeParameters.size(), altFunDeclaration.getTypeParameters().size()));
+            fail("Method signature has %d type parameters, but alternative signature has %d",
+                 typeParameters.size(), altFunDeclaration.getTypeParameters().size());
         }
 
         altTypeParameters = new ArrayList<TypeParameterDescriptor>();
@@ -343,19 +332,23 @@ class AlternativeSignatureData {
             int errorOffset = syntaxErrors.get(0).getTextOffset();
             String syntaxErrorDescription = syntaxErrors.get(0).getErrorDescription();
 
-            String errorText = syntaxErrors.size() == 1
-                    ? String.format("Alternative signature for %s has syntax error at %d: %s", textSignature,
-                                    errorOffset, syntaxErrorDescription)
-                    : String.format("Alternative signature for %s has %d syntax errors, first is at %d: %s", textSignature,
-                                    syntaxErrors.size(), errorOffset, syntaxErrorDescription);
-            throw new AlternativeSignatureMismatchException(errorText);
+            if (syntaxErrors.size() == 1) {
+                fail("Alternative signature for %s has syntax error at %d: %s",
+                     textSignature, errorOffset, syntaxErrorDescription);
+            }
+            else {
+                fail("Alternative signature for %s has %d syntax errors, first is at %d: %s",
+                     textSignature, syntaxErrors.size(), errorOffset, syntaxErrorDescription);
+            }
         }
 
         if (!ComparatorUtil.equalsNullable(method.getName(), altFunDeclaration.getName())) {
-            throw new AlternativeSignatureMismatchException(String.format(
-                    "Function names mismatch, original: %s, alternative: %s",
-                    method.getName(), altFunDeclaration.getName()));
+            fail("Function names mismatch, original: %s, alternative: %s", method.getName(), altFunDeclaration.getName());
         }
+    }
+
+    private static void fail(String format, Object... params) {
+        throw new AlternativeSignatureMismatchException(String.format(format, params));
     }
 
     private static class AlternativeSignatureMismatchException extends RuntimeException {
