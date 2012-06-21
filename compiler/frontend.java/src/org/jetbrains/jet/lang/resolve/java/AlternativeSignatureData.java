@@ -161,7 +161,8 @@ class AlternativeSignatureData {
 
                 if (arguments.size() != type.getTypeArgumentsAsTypes().size()) {
                     fail("'%s' type in method signature has %d type arguments, while '%s' in alternative signature has %d of them",
-                         DescriptorRenderer.TEXT.renderType(autoType), arguments.size(), type.getText(), type.getTypeArgumentsAsTypes().size());
+                         DescriptorRenderer.TEXT.renderType(autoType), arguments.size(), type.getText(),
+                         type.getTypeArgumentsAsTypes().size());
                 }
 
                 List<TypeProjection> altArguments = new ArrayList<TypeProjection>();
@@ -291,7 +292,8 @@ class AlternativeSignatureData {
                     }
                 }
                 else {
-                    altTypeElement = findTypeParameterConstraint(altFunDeclaration, parameter.getNameAsName(), upperBoundIndex).getBoundTypeReference().getTypeElement();
+                    altTypeElement = findTypeParameterConstraint(altFunDeclaration, parameter.getNameAsName(), upperBoundIndex)
+                            .getBoundTypeReference().getTypeElement();
                 }
                 altParamDescriptor.addUpperBound(computeType(altTypeElement, upperBound));
                 upperBoundIndex++;
@@ -303,7 +305,8 @@ class AlternativeSignatureData {
     }
 
     @Nullable
-    private static JetTypeConstraint findTypeParameterConstraint(@NotNull JetFunction function, @NotNull Name typeParameterName, int index) {
+    private static JetTypeConstraint findTypeParameterConstraint(@NotNull JetFunction function, @NotNull Name typeParameterName,
+            int index) {
         if (index != 0) {
             int currentIndex = 0;
             for (JetTypeConstraint constraint : function.getTypeConstraints()) {
