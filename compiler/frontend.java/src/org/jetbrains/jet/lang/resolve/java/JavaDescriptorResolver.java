@@ -1400,11 +1400,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
                 ValueParameterDescriptors altValueParameters = AlternativeSignatureParsing
                         .computeAlternativeValueParameters(valueParameterDescriptors, altFunDeclaration);
-                JetTypeReference returnTypeRef = altFunDeclaration.getReturnTypeRef();
-                JetType altReturnType = returnTypeRef != null
-                                        ? AlternativeSignatureParsing.computeAlternativeTypeFromAnnotation(returnTypeRef.getTypeElement(),
-                                                                                                           returnType)
-                                        : returnType;
+                JetType altReturnType = AlternativeSignatureParsing.computeAlternativeReturnType(returnType,
+                                                                                                 altFunDeclaration.getReturnTypeRef());
                 List<TypeParameterDescriptor> altTypeParameters = AlternativeSignatureParsing
                         .computeAlternativeTypeParameters(methodTypeParameters, altFunDeclaration);
                 // if no exceptions were thrown, save alternative data

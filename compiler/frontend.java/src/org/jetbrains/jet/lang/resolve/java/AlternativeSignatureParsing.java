@@ -156,6 +156,26 @@ class AlternativeSignatureParsing {
         return result;
     }
 
+    static JetType computeAlternativeReturnType(@NotNull JetType autoType, @Nullable JetTypeReference altReturnTypeRef)
+            throws AlternativeSignatureMismatchException {
+        JetType altReturnType;
+        if (altReturnTypeRef == null) {
+            if (JetStandardClasses.isUnit(autoType)) {
+                altReturnType = autoType;
+            }
+            else {
+                throw new AlternativeSignatureMismatchException(String.format(
+                        "Return type in alternative signature is missing, while in real signature it is '%s'",
+                        DescriptorRenderer.TEXT.renderType(autoType)));
+            }
+        }
+        else {
+            altReturnType = computeAlternativeTypeFromAnnotation(altReturnTypeRef.getTypeElement(),
+                                                                 autoType);
+        }
+        return altReturnType;
+    }
+
     static JavaDescriptorResolver.ValueParameterDescriptors computeAlternativeValueParameters(
             JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors,
             JetNamedFunction altFunDeclaration) throws AlternativeSignatureMismatchException {
