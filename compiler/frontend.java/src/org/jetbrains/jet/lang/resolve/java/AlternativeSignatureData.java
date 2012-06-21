@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiErrorElement;
@@ -42,7 +43,72 @@ import java.util.List;
  * @author Evgeny Gerashchenko
  * @since 6/5/12
  */
-class AlternativeSignatureParsing {
+class AlternativeSignatureData {
+    private boolean none;
+    private String error;
+    private JavaDescriptorResolver.ValueParameterDescriptors altValueParameters;
+    private JetType altReturnType;
+    private List<TypeParameterDescriptor> altTypeParameters;
+
+    AlternativeSignatureData(
+            @NotNull PsiMethodWrapper method,
+            @NotNull JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors,
+            @NotNull JetType returnType,
+            @NotNull List<TypeParameterDescriptor> methodTypeParameters){
+        String signature = method.getSignatureAnnotation().signature();
+        if (signature.isEmpty()) {
+            none = true;
+            return;
+        }
+
+        Project project = method.getPsiMethod().getProject();
+        JetNamedFunction altFunDeclaration = JetPsiFactory.createFunction(project, signature);
+        try {
+            checkForSyntaxErrors(method, altFunDeclaration);
+
+            altValueParameters = computeValueParameters(valueParameterDescriptors, altFunDeclaration);
+            altReturnType = computeReturnType(returnType,
+                                                      altFunDeclaration.getReturnTypeRef());
+            altTypeParameters = computeTypeParameters(methodTypeParameters, altFunDeclaration);
+        }
+        catch (AlternativeSignatureMismatchException e) {
+            error = e.getMessage();
+        }
+    }
+
+    public boolean isNone() {
+        return none;
+    }
+
+    @Nullable
+    public String getError() {
+        return error;
+    }
+
+    private void checkForErrors() {
+        if (none || error != null) {
+            throw new IllegalStateException("Trying to read result while there is none");
+        }
+    }
+
+    @NotNull
+    public JavaDescriptorResolver.ValueParameterDescriptors getValueParameters() {
+        checkForErrors();
+        return altValueParameters;
+    }
+
+    @NotNull
+    public JetType getReturnType() {
+        checkForErrors();
+        return altReturnType;
+    }
+
+    @NotNull
+    public List<TypeParameterDescriptor> getTypeParameters() {
+        checkForErrors();
+        return altTypeParameters;
+    }
+
     static JetType computeType(JetTypeElement alternativeTypeElement, final JetType autoType)
             throws AlternativeSignatureMismatchException {
         final Ref<AlternativeSignatureMismatchException> exception = new Ref<AlternativeSignatureMismatchException>();

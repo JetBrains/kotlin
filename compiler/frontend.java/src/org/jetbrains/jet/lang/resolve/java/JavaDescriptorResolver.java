@@ -1391,26 +1391,12 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         JetType returnType = makeReturnType(returnPsiType, method, methodTypeVariableResolver);
 
         // TODO consider better place for this check
-        String signature = method.getSignatureAnnotation().signature();
-        if (!signature.isEmpty()) {
-            try {
-                JetNamedFunction altFunDeclaration = JetPsiFactory.createFunction(project, signature);
-                AlternativeSignatureParsing.checkForSyntaxErrors(method, altFunDeclaration);
-
-                ValueParameterDescriptors altValueParameters = AlternativeSignatureParsing
-                        .computeValueParameters(valueParameterDescriptors, altFunDeclaration);
-                JetType altReturnType = AlternativeSignatureParsing.computeReturnType(returnType,
-                                                                                      altFunDeclaration.getReturnTypeRef());
-                List<TypeParameterDescriptor> altTypeParameters = AlternativeSignatureParsing
-                        .computeTypeParameters(methodTypeParameters, altFunDeclaration);
-                // if no exceptions were thrown, save alternative data
-                valueParameterDescriptors = altValueParameters;
-                returnType = altReturnType;
-                methodTypeParameters = altTypeParameters;
-            }
-            catch (AlternativeSignatureMismatchException e) {
-                scopeData.addAlternativeSignatureError(e.getMessage());
-            }
+        AlternativeSignatureData alternativeSignatureData =
+                new AlternativeSignatureData(method, valueParameterDescriptors, returnType, methodTypeParameters);
+        if (!alternativeSignatureData.isNone() && alternativeSignatureData.getError() == null) {
+            valueParameterDescriptors = alternativeSignatureData.getValueParameters();
+            returnType = alternativeSignatureData.getReturnType();
+            methodTypeParameters = alternativeSignatureData.getTypeParameters();
         }
 
         functionDescriptorImpl.initialize(
