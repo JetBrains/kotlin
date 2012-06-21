@@ -19,20 +19,19 @@ package org.jetbrains.jet.lang.psi.stubs.impl;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetTypeParameterList;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeParameterListStub;
+import org.jetbrains.jet.lang.psi.JetParameterList;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetParameterListStub;
 
 /**
  * @author Nikolay Krasko
  */
-public class PsiJetTypeParameterListStubImpl extends StubBase<JetTypeParameterList> implements PsiJetTypeParameterListStub {
-    public PsiJetTypeParameterListStubImpl(@NotNull IStubElementType elementType, final StubElement parent) {
+public class PsiJetParameterListStubImpl extends StubBase<JetParameterList> implements PsiJetParameterListStub {
+    public PsiJetParameterListStubImpl(IStubElementType elementType, StubElement parent) {
         super(parent, elementType);
     }
 
     @Override
     public String toString() {
-        return "PsiJetTypeParameterListStubImpl";
+        return "PsiJetParameterListStubImpl";
     }
 }

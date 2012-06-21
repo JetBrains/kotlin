@@ -48,8 +48,8 @@ public interface JetNodeTypes {
     JetNodeType DELEGATOR_SUPER_CALL                = new JetNodeType("DELEGATOR_SUPER_CALL", JetDelegatorToSuperCall.class);
     JetNodeType DELEGATOR_SUPER_CLASS               = new JetNodeType("DELEGATOR_SUPER_CLASS", JetDelegatorToSuperClass.class);
     JetNodeType CONSTRUCTOR_CALLEE                  = new JetNodeType("CONSTRUCTOR_CALLEE", JetConstructorCalleeExpression.class);
-    JetNodeType VALUE_PARAMETER_LIST                = new JetNodeType("VALUE_PARAMETER_LIST", JetParameterList.class);
-    JetNodeType VALUE_PARAMETER                     = new JetNodeType("VALUE_PARAMETER", JetParameter.class);
+    IElementType VALUE_PARAMETER_LIST               = JetStubElementTypes.VALUE_PARAMETER_LIST;
+    IElementType VALUE_PARAMETER                    = JetStubElementTypes.VALUE_PARAMETER;
 
     JetNodeType CLASS_BODY                          = new JetNodeType("CLASS_BODY", JetClassBody.class);
     JetNodeType IMPORT_DIRECTIVE                    = new JetNodeType("IMPORT_DIRECTIVE", JetImportDirective.class);

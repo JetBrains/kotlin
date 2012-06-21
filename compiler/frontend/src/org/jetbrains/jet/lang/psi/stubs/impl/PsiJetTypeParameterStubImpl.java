@@ -35,6 +35,7 @@ public class PsiJetTypeParameterStubImpl extends StubBase<JetTypeParameter> impl
     public PsiJetTypeParameterStubImpl(JetTypeParameterElementType type, final StubElement parent,
             StringRef name, StringRef extendBoundTypeText, boolean isInVariance, boolean isOutVariance) {
         super(parent, type);
+
         this.name = name;
         this.extendBoundTypeText = extendBoundTypeText;
         this.isInVariance = isInVariance;
@@ -64,5 +65,26 @@ public class PsiJetTypeParameterStubImpl extends StubBase<JetTypeParameter> impl
     @Override
     public String getName() {
         return StringRef.toString(name);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("PsiJetTypeParameterStubImpl[");
+
+        if (isInVariance()) {
+            builder.append("in ");
+        }
+
+        if (isOutVariance()) {
+            builder.append("out ");
+        }
+
+        builder.append("name=").append(getName());
+        builder.append(" extendText=").append(getExtendBoundTypeText());
+
+        builder.append("]");
+
+        return builder.toString();
     }
 }

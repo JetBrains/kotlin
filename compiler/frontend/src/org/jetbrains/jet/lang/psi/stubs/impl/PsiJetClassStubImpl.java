@@ -16,8 +16,10 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -94,5 +96,23 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
             result.add(ref.toString());
         }
         return result;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("PsiJetClassStubImpl[");
+
+        if (isTrait()) {
+            builder.append("trait ");
+        }
+
+        builder.append("name=").append(getName());
+        builder.append(" fqn=").append(getQualifiedName());
+        builder.append(" superNames=").append("[").append(StringUtil.join(ArrayUtil.toStringArray(getSuperNames()))).append("]");
+
+        builder.append("]");
+
+        return builder.toString();
     }
 }

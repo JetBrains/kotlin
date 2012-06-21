@@ -33,8 +33,11 @@ public class PsiJetFileStubImpl extends PsiFileStubImpl<JetFile> implements PsiJ
 
     public PsiJetFileStubImpl(JetFile jetFile, StringRef packageName) {
         super(jetFile);
-
         this.packageName = packageName;
+    }
+
+    public PsiJetFileStubImpl(JetFile jetFile, String packageName) {
+        this(jetFile, StringRef.fromString(packageName));
     }
 
     @Override
@@ -55,5 +58,16 @@ public class PsiJetFileStubImpl extends PsiFileStubImpl<JetFile> implements PsiJ
     @Override
     public PsiClass[] getClasses() {
         return new PsiClass[0];
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("PsiJetFileStubImpl[");
+        builder.append("package=").append(getPackageName());
+        builder.append("]");
+
+        return builder.toString();
     }
 }

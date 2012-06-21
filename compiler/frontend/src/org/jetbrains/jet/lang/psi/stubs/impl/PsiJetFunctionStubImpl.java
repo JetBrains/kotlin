@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.psi.stubs.impl;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,6 +68,26 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
     @Override
     public String[] getAnnotations() {
         // TODO (stubs)
-        return new String[0];
+        return ArrayUtil.EMPTY_STRING_ARRAY;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("PsiJetFunctionStubImpl[");
+
+        if (isTopLevel()) {
+            builder.append("top ");
+        }
+
+        if (isExtension()) {
+            builder.append("ext ");
+        }
+
+        builder.append("name=").append(getName());
+
+        builder.append("]");
+
+        return builder.toString();
     }
 }

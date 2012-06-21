@@ -58,7 +58,7 @@ public class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStu
     }
 
     @Override
-    public PsiJetFunctionStub createStub(@NotNull JetNamedFunction psi, StubElement parentStub) {
+    public PsiJetFunctionStub createStub(@NotNull JetNamedFunction psi, @NotNull StubElement parentStub) {
         final boolean isTopLevel = parentStub instanceof PsiJetFileStub;
         final boolean isExtension = psi.getReceiverTypeRef() != null;
 

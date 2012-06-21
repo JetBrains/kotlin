@@ -14,25 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.psi.stubs.impl;
+package org.jetbrains.jet.lang.psi.stubs;
 
-import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetTypeParameterList;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeParameterListStub;
+import org.jetbrains.jet.lang.psi.JetParameterList;
 
 /**
  * @author Nikolay Krasko
  */
-public class PsiJetTypeParameterListStubImpl extends StubBase<JetTypeParameterList> implements PsiJetTypeParameterListStub {
-    public PsiJetTypeParameterListStubImpl(@NotNull IStubElementType elementType, final StubElement parent) {
-        super(parent, elementType);
-    }
-
-    @Override
-    public String toString() {
-        return "PsiJetTypeParameterListStubImpl";
-    }
+public interface PsiJetParameterListStub extends StubElement<JetParameterList> {
 }
