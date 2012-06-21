@@ -1,0 +1,9 @@
+//KT-2146 Nullability casts in when.
+package kt2146
+
+fun f(s : Int?) : Int {
+    return when (s) {
+        null -> 3
+        else -> s // type mismatch
+    }
+}
