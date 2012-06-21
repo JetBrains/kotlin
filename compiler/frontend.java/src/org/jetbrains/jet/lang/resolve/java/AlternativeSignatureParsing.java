@@ -22,6 +22,7 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiSubstitutor;
 import com.intellij.psi.PsiType;
 import com.intellij.util.Function;
+import com.intellij.util.containers.ComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -303,6 +304,12 @@ class AlternativeSignatureParsing {
                     : String.format("Alternative signature for %s has %d syntax errors, first is at %d: %s", textSignature,
                                     syntaxErrors.size(), errorOffset, syntaxErrorDescription);
             throw new AlternativeSignatureMismatchException(errorText);
+        }
+
+        if (!ComparatorUtil.equalsNullable(method.getName(), altFunDeclaration.getName())) {
+            throw new AlternativeSignatureMismatchException(String.format(
+                    "Function names mismatch, original: %s, alternative: %s",
+                    method.getName(), altFunDeclaration.getName()));
         }
     }
 }
