@@ -114,6 +114,7 @@ class AlternativeSignatureData {
     }
 
     static JetType computeType(JetTypeElement alternativeTypeElement, final JetType autoType) {
+        //noinspection NullableProblems
         return alternativeTypeElement.accept(new JetVisitor<JetType, Void>() {
             @Override
             public JetType visitNullableType(JetNullableType nullableType, Void data) {
@@ -139,6 +140,7 @@ class AlternativeSignatureData {
             @Override
             public JetType visitUserType(JetUserType type, Void data) {
                 JetUserType qualifier = type.getQualifier();
+                //noinspection ConstantConditions
                 String shortName = type.getReferenceExpression().getReferencedName();
                 String longName = (qualifier == null ? "" : qualifier.getText() + ".") + shortName;
                 if (JetStandardClasses.UNIT_ALIAS.getName().equals(longName)) {
@@ -152,7 +154,9 @@ class AlternativeSignatureData {
             }
 
             private JetType visitCommonType(@NotNull String expectedFqNamePostfix, @NotNull JetTypeElement type) {
-                String fqName = DescriptorUtils.getFQName(autoType.getConstructor().getDeclarationDescriptor()).toSafe().getFqName();
+                ClassifierDescriptor declarationDescriptor = autoType.getConstructor().getDeclarationDescriptor();
+                assert declarationDescriptor != null;
+                String fqName = DescriptorUtils.getFQName(declarationDescriptor).toSafe().getFqName();
                 if (!fqName.endsWith(expectedFqNamePostfix)) {
                     fail("Alternative signature type mismatch, expected: %s, actual: %s", expectedFqNamePostfix, fqName);
                 }
@@ -232,6 +236,7 @@ class AlternativeSignatureData {
         for (int i = 0, size = parameterDescriptors.size(); i < size; i++) {
             ValueParameterDescriptor pd = parameterDescriptors.get(i);
             JetParameter valueParameter = altFunDeclaration.getValueParameters().get(i);
+            //noinspection ConstantConditions
             JetTypeElement alternativeTypeElement = valueParameter.getTypeReference().getTypeElement();
             JetType alternativeType;
             JetType alternativeVarargElementType;
@@ -253,12 +258,10 @@ class AlternativeSignatureData {
                                                                      pd.getName(), pd.isVar(), alternativeType, pd.declaresDefaultValue(),
                                                                      alternativeVarargElementType));
         }
-        JetType altReceiverType = null;
         if (valueParameterDescriptors.receiverType != null) {
-            altReceiverType = computeType(altFunDeclaration.getReceiverTypeRef().getTypeElement(),
-                                          valueParameterDescriptors.receiverType);
+            throw new UnsupportedOperationException("Alternative annotations for extension functions are not supported yet");
         }
-        altValueParameters = new JavaDescriptorResolver.ValueParameterDescriptors(altReceiverType, altParamDescriptors);
+        altValueParameters = new JavaDescriptorResolver.ValueParameterDescriptors(null, altParamDescriptors);
     }
 
     private void computeTypeParameters(List<TypeParameterDescriptor> typeParameters) {
@@ -272,7 +275,6 @@ class AlternativeSignatureData {
         for (int i = 0, size = typeParameters.size(); i < size; i++) {
             TypeParameterDescriptor pd = typeParameters.get(i);
             DeclarationDescriptor containingDeclaration = pd.getContainingDeclaration();
-            assert containingDeclaration != null;
             TypeParameterDescriptorImpl altParamDescriptor = TypeParameterDescriptorImpl
                     .createForFurtherModification(containingDeclaration, pd.getAnnotations(),
                                                   pd.isReified(), pd.getVariance(), pd.getName(), pd.getIndex());
@@ -292,8 +294,12 @@ class AlternativeSignatureData {
                     }
                 }
                 else {
-                    altTypeElement = findTypeParameterConstraint(altFunDeclaration, parameter.getNameAsName(), upperBoundIndex)
-                            .getBoundTypeReference().getTypeElement();
+                    JetTypeConstraint constraint =
+                            findTypeParameterConstraint(altFunDeclaration, pd.getName(), upperBoundIndex);
+                    assert constraint != null; // TODO fail more properly
+                    JetTypeReference boundTypeReference = constraint.getBoundTypeReference();
+                    assert  boundTypeReference != null;
+                    altTypeElement = boundTypeReference.getTypeElement();
                 }
                 altParamDescriptor.addUpperBound(computeType(altTypeElement, upperBound));
                 upperBoundIndex++;
@@ -310,7 +316,9 @@ class AlternativeSignatureData {
         if (index != 0) {
             int currentIndex = 0;
             for (JetTypeConstraint constraint : function.getTypeConstraints()) {
-                if (typeParameterName.equals(constraint.getSubjectTypeParameterName().getReferencedNameAsName())) {
+                JetSimpleNameExpression parameterName = constraint.getSubjectTypeParameterName();
+                assert parameterName != null;
+                if (typeParameterName.equals(parameterName.getReferencedNameAsName())) {
                     currentIndex++;
                 }
                 if (currentIndex == index) {
