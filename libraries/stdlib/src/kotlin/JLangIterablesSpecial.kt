@@ -78,7 +78,7 @@ public fun <T> java.lang.Iterable<T>.contains(item : T) : Boolean {
   }
 
   for (var elem in this) {
-    if (elem.equals(item)) {
+    if (elem == item) {
       return true
     }
   }
