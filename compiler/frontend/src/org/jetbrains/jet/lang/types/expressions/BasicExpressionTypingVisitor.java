@@ -193,17 +193,19 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression, ExpressionTypingContext context) {
+        JetExpression left = expression.getLeft();
         JetTypeReference right = expression.getRight();
         JetType result = null;
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;
         if (right != null) {
             JetType targetType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, right, context.trace, true);
+            IElementType operationType = expression.getOperationSign().getReferencedNameElementType();
 
             boolean tryWithNoExpectedType = true;
-            if (isTypeFlexible(expression.getLeft()) || expression.getOperationSign().getReferencedNameElementType() == JetTokens.COLON) {
+            if (isTypeFlexible(left) || operationType == JetTokens.COLON) {
                 TemporaryBindingTrace temporaryTraceWithExpectedType = TemporaryBindingTrace.create(context.trace);
                 ExpressionTypingContext contextWithTemporaryTrace = context.replaceBindingTrace(temporaryTraceWithExpectedType).replaceExpectedType(targetType);
-                JetTypeInfo typeInfo = facade.getTypeInfo(expression.getLeft(), contextWithTemporaryTrace);
+                JetTypeInfo typeInfo = facade.getTypeInfo(left, contextWithTemporaryTrace);
                 if (typeInfo.getType() != null && checkBinaryWithTypeRHS(expression, contextWithTemporaryTrace, targetType, typeInfo.getType())) {
                     temporaryTraceWithExpectedType.commit();
                     dataFlowInfo = typeInfo.getDataFlowInfo();
@@ -213,18 +215,21 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
             if (tryWithNoExpectedType) {
                 ExpressionTypingContext contextWithNoExpectedType = context.replaceExpectedType(NO_EXPECTED_TYPE);
-                JetTypeInfo typeInfo = facade.getTypeInfo(expression.getLeft(), contextWithNoExpectedType);
+                JetTypeInfo typeInfo = facade.getTypeInfo(left, contextWithNoExpectedType);
                 if (typeInfo.getType() != null) {
                     checkBinaryWithTypeRHS(expression, contextWithNoExpectedType, targetType, typeInfo.getType());
                     dataFlowInfo = typeInfo.getDataFlowInfo();
+                    if (operationType == JetTokens.AS_KEYWORD) {
+                        DataFlowValue value = DataFlowValueFactory.INSTANCE.createDataFlowValue(left, typeInfo.getType(), context.trace.getBindingContext());
+                        dataFlowInfo = dataFlowInfo.establishSubtyping(new DataFlowValue[]{value}, targetType);
+                    }
                 }
             }
 
-            IElementType operationType = expression.getOperationSign().getReferencedNameElementType();
             result = operationType == JetTokens.AS_SAFE ? TypeUtils.makeNullable(targetType) : targetType;
         }
         else {
-            dataFlowInfo = facade.getTypeInfo(expression.getLeft(), context.replaceExpectedType(NO_EXPECTED_TYPE)).getDataFlowInfo();
+            dataFlowInfo = facade.getTypeInfo(left, context.replaceExpectedType(NO_EXPECTED_TYPE)).getDataFlowInfo();
         }
         return DataFlowUtils.checkType(result, expression, context, dataFlowInfo);
     }
