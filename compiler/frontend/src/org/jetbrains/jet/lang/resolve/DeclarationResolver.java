@@ -229,18 +229,23 @@ public class DeclarationResolver {
         // TODO : not all the parameters are real properties
         JetScope memberScope = classDescriptor.getScopeForSupertypeResolution();
         ConstructorDescriptor constructorDescriptor = descriptorResolver.resolvePrimaryConstructorDescriptor(memberScope, classDescriptor, klass, trace);
-        for (JetParameter parameter : klass.getPrimaryConstructorParameters()) {
-            if (parameter.getValOrVarNode() != null) {
-                PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePrimaryConstructorParameterToAProperty(
-                        classDescriptor,
-                        memberScope,
-                        parameter, trace
-                );
-                classDescriptor.getBuilder().addPropertyDescriptor(propertyDescriptor);
-                context.getPrimaryConstructorParameterProperties().put(parameter, propertyDescriptor);
-            }
-        }
         if (constructorDescriptor != null) {
+            List<ValueParameterDescriptor> valueParameters = constructorDescriptor.getValueParameters();
+            assert valueParameters.size() == klass.getPrimaryConstructorParameters().size();
+            int i = 0;
+            for (JetParameter parameter : klass.getPrimaryConstructorParameters()) {
+                if (parameter.getValOrVarNode() != null) {
+                    PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePrimaryConstructorParameterToAProperty(
+                            classDescriptor,
+                            valueParameters.get(i),
+                            memberScope,
+                            parameter, trace
+                    );
+                    classDescriptor.getBuilder().addPropertyDescriptor(propertyDescriptor);
+                    context.getPrimaryConstructorParameterProperties().put(parameter, propertyDescriptor);
+                }
+                i++;
+            }
             classDescriptor.setPrimaryConstructor(constructorDescriptor, trace);
         }
     }

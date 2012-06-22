@@ -924,6 +924,7 @@ public class DescriptorResolver {
     @NotNull
     public PropertyDescriptor resolvePrimaryConstructorParameterToAProperty(
             @NotNull ClassDescriptor classDescriptor,
+            @NotNull ValueParameterDescriptor valueParameter,
             @NotNull JetScope scope,
             @NotNull JetParameter parameter, BindingTrace trace) {
         JetType type = resolveParameterType(scope, parameter, trace);
@@ -940,7 +941,7 @@ public class DescriptorResolver {
 
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 classDescriptor,
-                annotationResolver.resolveAnnotations(scope, modifierList, trace),
+                valueParameter.getAnnotations(),
                 resolveModalityFromModifiers(parameter.getModifierList(), Modality.FINAL),
                 resolveVisibilityFromModifiers(parameter.getModifierList()),
                 isMutable,

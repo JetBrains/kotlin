@@ -36,10 +36,7 @@ import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.util.lazy.LazyValue;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Set;
+import java.util.*;
 
 /**
 * @author abreslav
@@ -111,15 +108,23 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         if (classOrObject instanceof JetClass) {
             JetClass jetClass = (JetClass) classOrObject;
 
-            for (JetParameter parameter : jetClass.getPrimaryConstructorParameters()) {
-                if (parameter.getValOrVarNode() != null && name.equals(parameter.getNameAsName())) {
-                    PropertyDescriptor propertyDescriptor =
-                            resolveSession.getInjector().getDescriptorResolver().resolvePrimaryConstructorParameterToAProperty(
-                                    thisDescriptor,
-                                    thisDescriptor.getScopeForClassHeaderResolution(),
-                                    parameter, resolveSession.getTrace()
-                            );
-                    result.add(propertyDescriptor);
+            ConstructorDescriptor primaryConstructor = getPrimaryConstructor();
+            if (primaryConstructor != null) {
+                List<ValueParameterDescriptor> valueParameters = primaryConstructor.getValueParameters();
+                assert valueParameters.size() == jetClass.getPrimaryConstructorParameters().size();
+                int i = 0;
+                for (JetParameter parameter : jetClass.getPrimaryConstructorParameters()) {
+                    if (parameter.getValOrVarNode() != null && name.equals(parameter.getNameAsName())) {
+                        PropertyDescriptor propertyDescriptor =
+                                resolveSession.getInjector().getDescriptorResolver().resolvePrimaryConstructorParameterToAProperty(
+                                        thisDescriptor,
+                                        valueParameters.get(i),
+                                        thisDescriptor.getScopeForClassHeaderResolution(),
+                                        parameter, resolveSession.getTrace()
+                                );
+                        result.add(propertyDescriptor);
+                    }
+                    i++;
                 }
             }
         }
