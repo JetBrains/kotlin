@@ -230,21 +230,21 @@ public class DeclarationResolver {
         JetScope memberScope = classDescriptor.getScopeForSupertypeResolution();
         ConstructorDescriptor constructorDescriptor = descriptorResolver.resolvePrimaryConstructorDescriptor(memberScope, classDescriptor, klass, trace);
         if (constructorDescriptor != null) {
-            List<ValueParameterDescriptor> valueParameters = constructorDescriptor.getValueParameters();
-            assert valueParameters.size() == klass.getPrimaryConstructorParameters().size();
-            int i = 0;
-            for (JetParameter parameter : klass.getPrimaryConstructorParameters()) {
+            List<ValueParameterDescriptor> valueParameterDescriptors = constructorDescriptor.getValueParameters();
+            List<JetParameter> primaryConstructorParameters = klass.getPrimaryConstructorParameters();
+            assert valueParameterDescriptors.size() == primaryConstructorParameters.size();
+            for (ValueParameterDescriptor valueParameterDescriptor : valueParameterDescriptors) {
+                JetParameter parameter = primaryConstructorParameters.get(valueParameterDescriptor.getIndex());
                 if (parameter.getValOrVarNode() != null) {
                     PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePrimaryConstructorParameterToAProperty(
                             classDescriptor,
-                            valueParameters.get(i),
+                            valueParameterDescriptor,
                             memberScope,
                             parameter, trace
                     );
                     classDescriptor.getBuilder().addPropertyDescriptor(propertyDescriptor);
                     context.getPrimaryConstructorParameterProperties().put(parameter, propertyDescriptor);
                 }
-                i++;
             }
             classDescriptor.setPrimaryConstructor(constructorDescriptor, trace);
         }

@@ -110,21 +110,21 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
             ConstructorDescriptor primaryConstructor = getPrimaryConstructor();
             if (primaryConstructor != null) {
-                List<ValueParameterDescriptor> valueParameters = primaryConstructor.getValueParameters();
-                assert valueParameters.size() == jetClass.getPrimaryConstructorParameters().size();
-                int i = 0;
-                for (JetParameter parameter : jetClass.getPrimaryConstructorParameters()) {
+                List<ValueParameterDescriptor> valueParameterDescriptors = primaryConstructor.getValueParameters();
+                List<JetParameter> primaryConstructorParameters = jetClass.getPrimaryConstructorParameters();
+                assert valueParameterDescriptors.size() == primaryConstructorParameters.size();
+                for (ValueParameterDescriptor valueParameterDescriptor : valueParameterDescriptors) {
+                    JetParameter parameter = primaryConstructorParameters.get(valueParameterDescriptor.getIndex());
                     if (parameter.getValOrVarNode() != null && name.equals(parameter.getNameAsName())) {
                         PropertyDescriptor propertyDescriptor =
                                 resolveSession.getInjector().getDescriptorResolver().resolvePrimaryConstructorParameterToAProperty(
                                         thisDescriptor,
-                                        valueParameters.get(i),
+                                        valueParameterDescriptor,
                                         thisDescriptor.getScopeForClassHeaderResolution(),
                                         parameter, resolveSession.getTrace()
                                 );
                         result.add(propertyDescriptor);
                     }
-                    i++;
                 }
             }
         }
