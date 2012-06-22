@@ -48,7 +48,6 @@ import static org.jetbrains.jet.plugin.compiler.CompilerUtils.outputCompilerMess
  * @author Pavel Talanov
  */
 public final class K2JSCompiler implements TranslatingCompiler {
-
     @Override
     public boolean isCompilableFile(VirtualFile file, CompileContext context) {
         if (!(file.getFileType() instanceof JetFileType)) {
@@ -130,8 +129,10 @@ public final class K2JSCompiler implements TranslatingCompiler {
 
     @NotNull
     private static String[] constructArguments(@NotNull Module module, @Nullable String outFile) {
-        ArrayList<String> args = Lists.newArrayList("-tags", "-verbose", "-version", "-mainCall", "mainWithArgs");
-        addPathToSourcesDir(module, args);
+        VirtualFile[] sourceFiles = getSourceFiles(module);
+
+        ArrayList<String> args = Lists.newArrayList("-tags", "-verbose", "-version");
+        addPathToSourcesDir(sourceFiles, args);
         addOutputPath(outFile, args);
         addLibLocationAndTarget(module, args);
         return ArrayUtil.toStringArray(args);
@@ -204,12 +205,12 @@ public final class K2JSCompiler implements TranslatingCompiler {
         }
     }
 
-    private static void addPathToSourcesDir(@NotNull Module module, @NotNull ArrayList<String> args) {
+    private static void addPathToSourcesDir(@NotNull VirtualFile[] sourceFiles, @NotNull ArrayList<String> args) {
         args.add("-sourceFiles");
 
         StringBuilder sb = StringBuilderSpinAllocator.alloc();
         try {
-            for (VirtualFile file : getSourceFiles(module)) {
+            for (VirtualFile file : sourceFiles) {
                 sb.append(file.getPath()).append(',');
             }
             args.add(sb.substring(0, sb.length() - 1));

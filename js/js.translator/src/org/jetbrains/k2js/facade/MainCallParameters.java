@@ -25,7 +25,6 @@ import java.util.List;
  * @author Pavel Talanov
  */
 public abstract class MainCallParameters {
-
     @NotNull
     public static MainCallParameters noCall() {
         return new MainCallParameters() {

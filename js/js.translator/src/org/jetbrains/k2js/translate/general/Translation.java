@@ -22,6 +22,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -181,7 +182,10 @@ public final class Translation {
         defineModule(statements, context, config);
 
         if (mainCallParameters.shouldBeGenerated()) {
-            statements.add(generateCallToMain(context, files, mainCallParameters.arguments()));
+            JsStatement statement = generateCallToMain(context, files, mainCallParameters.arguments());
+            if (statement != null) {
+                statements.add(statement);
+            }
         }
         generateTestCalls(context, files, block, rawStatements);
         JsNamer namer = new JsPrettyNamer();
@@ -197,12 +201,12 @@ public final class Translation {
                                              context.jsScope().declareName("_").makeRef()).makeStmt());
     }
 
-    @NotNull
+    @Nullable
     private static JsStatement generateCallToMain(@NotNull TranslationContext context, @NotNull List<JetFile> files,
             @NotNull List<String> arguments) throws MainFunctionNotFoundException {
         JetNamedFunction mainFunction = getMainFunction(files);
         if (mainFunction == null) {
-            throw new MainFunctionNotFoundException("Main function was not found. Please check compiler arguments");
+            return null;
         }
         JsInvocation translatedCall = generateInvocation(context, mainFunction);
         setArguments(context, arguments, translatedCall);
