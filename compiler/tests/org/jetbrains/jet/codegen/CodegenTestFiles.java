@@ -94,7 +94,7 @@ public class CodegenTestFiles {
         for (String name : names) {
             try {
                 String content = JetTestUtils.doLoadFile(JetParsingTest.getTestDataDir() + "/codegen/", name);
-                int i = name.lastIndexOf(File.separatorChar);
+                int i = name.lastIndexOf('/');
                 name = name.substring(i+1);
                 JetFile file = (JetFile) JetTestUtils.createFile(name, content, project);
                 files.add(file);
