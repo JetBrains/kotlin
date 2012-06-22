@@ -94,8 +94,7 @@ public fun <T> java.lang.Iterable<T>.contains(item : T) : Boolean {
 public fun <T> java.lang.Iterable<T>.withIndices() : java.lang.Iterable<#(Int, T)> {
     return object : java.lang.Iterable<#(Int, T)> {
         public override fun iterator(): java.util.Iterator<#(Int, T)> {
-            // TODO explicit typecast as a workaround for KT-1457, should be removed when it is fixed
-            return NumberedIterator<T>(this@withIndices.iterator().sure()) as java.util.Iterator<#(Int, T)>
+            return NumberedIterator<T>(this@withIndices.iterator()!!)
         }
     }
 }
