@@ -263,12 +263,18 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             public void visitExpressionPattern(JetExpressionPattern pattern) {
                 JetExpression expression = pattern.getExpression();
                 if (expression == null) return;
-                JetType type = facade.getTypeInfo(expression, context.replaceScope(scopeToExtend)).getType();
+                JetTypeInfo typeInfo = facade.getTypeInfo(expression, context.replaceScope(scopeToExtend));
+                JetType type = typeInfo.getType();
                 if (type == null) return;
                 if (conditionExpected) {
                     JetType booleanType = JetStandardLibrary.getInstance().getBooleanType();
                     if (!JetTypeChecker.INSTANCE.equalTypes(booleanType, type)) {
                         context.trace.report(TYPE_MISMATCH_IN_CONDITION.on(pattern, type));
+                    }
+                    else {
+                        DataFlowInfo ifInfo = DataFlowUtils.extractDataFlowInfoFromCondition(expression, true, scopeToExtend, context);
+                        DataFlowInfo elseInfo = DataFlowUtils.extractDataFlowInfoFromCondition(expression, false, null, context);
+                        result.set(Pair.create(ifInfo, elseInfo));
                     }
                     return;
                 }
