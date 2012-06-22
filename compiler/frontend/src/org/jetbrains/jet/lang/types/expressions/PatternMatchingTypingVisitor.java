@@ -177,7 +177,13 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                     context.trace.report(EXPECTED_CONDITION.on(condition));
                 }
                 if (pattern != null) {
-                    newDataFlowInfo.set(checkPatternType(pattern, subjectType, subjectExpression == null, scopeToExtend, context, subjectVariables));
+                    Pair<DataFlowInfo, DataFlowInfo> result = checkPatternType(pattern, subjectType, subjectExpression == null, scopeToExtend, context, subjectVariables);
+                    if (condition.isNegated()) {
+                        newDataFlowInfo.set(Pair.create(result.second, result.first));
+                    }
+                    else {
+                        newDataFlowInfo.set(result);
+                    }
                 }
             }
 
