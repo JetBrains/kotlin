@@ -47,6 +47,7 @@
                                 <copy todir="${basedir}/target/generated-js-library">
                                     <fileset dir="${kotlin-js-lib-srcdir}">
                                         <include name="stdlib/test.kt"/>
+                                        <include name="stdlib/jutil.kt"/>
                                         <include name="stdlib/dom.kt"/>
                                         <include name="core/strings.kt"/>
                                     </fileset>
