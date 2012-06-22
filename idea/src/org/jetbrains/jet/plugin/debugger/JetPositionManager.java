@@ -28,11 +28,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.ProjectScope;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.*;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.request.ClassPrepareRequest;
+import com.sun.jna.TypeMapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
@@ -42,17 +43,20 @@ import org.jetbrains.jet.di.InjectorForJetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 import java.util.*;
 
 /**
  * @author yole
+ * @author alex.tkachman
  */
 public class JetPositionManager implements PositionManager {
     private final DebugProcess myDebugProcess;
-    private WeakHashMap<PsiFile, JetTypeMapper> myTypeMappers = new WeakHashMap<PsiFile, JetTypeMapper>();
+    private WeakHashMap<FqName, CachedValue<JetTypeMapper>> myTypeMappers = new WeakHashMap<FqName, CachedValue<JetTypeMapper>>();
 
     public JetPositionManager(DebugProcess debugProcess) {
         myDebugProcess = debugProcess;
@@ -132,7 +136,7 @@ public class JetPositionManager implements PositionManager {
                 final JetFile file = (JetFile)sourcePosition.getFile();
                 JetTypeMapper typeMapper = prepareTypeMapper(file);
 
-                PsiElement psiElement = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class, JetFunctionLiteralExpression.class);
+                PsiElement psiElement = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
                 if (psiElement == null) {
                     JetFile namespace = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetFile.class);
                     if (namespace != null) {
@@ -143,8 +147,31 @@ public class JetPositionManager implements PositionManager {
                     }
                 }
                 else {
-                    if (psiElement instanceof JetClassOrObject)
+                    if (psiElement instanceof JetClassOrObject) {
                         names.addAll(typeMapper.allJvmNames((JetClassOrObject) psiElement));
+                    }
+                    else if(psiElement instanceof JetNamedFunction) {
+                        if(psiElement.getParent() instanceof JetFile) {
+                            JetFile namespace = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetFile.class);
+                            boolean multiFileNamespace = typeMapper.getClosureAnnotator().isMultiFileNamespace(JetPsiUtil.getFQName(namespace));
+                            if(multiFileNamespace) {
+                                String name = namespace.getName();
+                                names.add(NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(namespace)).getInternalName() + "$src$" + name.substring(0,name.lastIndexOf('.')));
+                            }
+                            else {
+                                names.add(NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(namespace)).getInternalName());
+                            }
+                        }
+                        else {
+                            JetFile namespace = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetFile.class);
+                            if (namespace != null) {
+                                names.add(NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(namespace)).getInternalName());
+                            }
+                            else {
+                                names.add(NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(file)).getInternalName());
+                            }
+                        }
+                    }
                     else {
                         names.add(typeMapper.getClosureAnnotator().classNameForAnonymousClass((JetElement) psiElement).getInternalName());
                     }
@@ -155,17 +182,27 @@ public class JetPositionManager implements PositionManager {
         return names;
     }
 
-    private JetTypeMapper prepareTypeMapper(JetFile file) {
-        final JetTypeMapper mapper = myTypeMappers.get(file);
-        if (mapper != null) {
-            return mapper;
+    private JetTypeMapper prepareTypeMapper(final JetFile file) {
+        FqName fqName = JetPsiUtil.getFQName(file);
+        CachedValue<JetTypeMapper> value = myTypeMappers.get(fqName);
+        if(value == null) {
+            value = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<JetTypeMapper>() {
+                @Override
+                public Result<JetTypeMapper> compute() {
+                    final AnalyzeExhaust analyzeExhaust = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
+                    analyzeExhaust.throwIfError();
+
+                    List<JetFile> namespaceFiles = JetFilesProvider.getInstance(file.getProject()).allNamespaceFiles().fun(file);
+
+                    JetTypeMapper typeMapper = new InjectorForJetTypeMapper(analyzeExhaust.getBindingContext(), namespaceFiles).getJetTypeMapper();
+                    typeMapper.getClosureAnnotator().init();
+                    return new Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT);
+                }
+            }, false);
+            myTypeMappers.put(fqName, value);
         }
-        final AnalyzeExhaust analyzeExhaust = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
-        analyzeExhaust.throwIfError();
-        JetTypeMapper typeMapper = new InjectorForJetTypeMapper(
-                analyzeExhaust.getBindingContext(), Collections.singletonList(file)).getJetTypeMapper();
-        myTypeMappers.put(file, typeMapper);
-        return typeMapper;
+
+        return value.getValue();
     }
 
     @NotNull

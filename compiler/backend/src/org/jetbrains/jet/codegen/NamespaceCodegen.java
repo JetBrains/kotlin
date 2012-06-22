@@ -81,20 +81,7 @@ public class NamespaceCodegen {
     }
 
     public void generate(CompilationErrorHandler errorHandler, final Progress progress) {
-        ArrayList<Pair<JetFile, Collection<JetDeclaration>>> byFile = new ArrayList<Pair<JetFile, Collection<JetDeclaration>>>();
-
-        for (JetFile file : files) {
-            ArrayList<JetDeclaration> fileFunctions = new ArrayList<JetDeclaration>();
-            for (JetDeclaration declaration : file.getDeclarations()) {
-                if (declaration instanceof JetNamedFunction) {
-                    fileFunctions.add(declaration);
-                }
-            }
-            if (fileFunctions.size() > 0)
-                byFile.add(new Pair<JetFile, Collection<JetDeclaration>>(file, fileFunctions));
-        }
-
-        boolean multiFile = byFile.size() > 1;
+        boolean multiFile = state.getInjector().getClosureAnnotator().isMultiFileNamespace(name);
 
         for (JetFile file : files) {
             VirtualFile vFile = file.getVirtualFile();
@@ -165,7 +152,9 @@ public class NamespaceCodegen {
 
             if (k > 0) {
                 PsiFile containingFile = file.getContainingFile();
-                String className = name.child(Name.identifier("namespace$src$" + (nextMultiFile++))).getFqName().replace('.','/');
+                String fname = containingFile.getName();
+                fname = fname.substring(0,fname.lastIndexOf('.'));
+                String className = name.child(Name.identifier("namespace$src$" + fname)).getFqName().replace('.','/');
                 ClassBuilder builder = state.forNamespacepart(className, file);
 
                 builder.defineClass(containingFile, V1_6,

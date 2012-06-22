@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,6 +48,7 @@ public class ClosureAnnotator {
     private final Map<DeclarationDescriptor, ClassDescriptorImpl> classesForFunctions = new HashMap<DeclarationDescriptor, ClassDescriptorImpl>();
     private final Map<DeclarationDescriptor,ClassDescriptor> enclosing = new HashMap<DeclarationDescriptor, ClassDescriptor>();
 
+    private final MultiMap<FqName, JetFile> namespaceName2MultiNamespaceFiles = MultiMap.create();
     private final MultiMap<FqName, JetFile> namespaceName2Files = MultiMap.create();
 
     private BindingContext bindingContext;
@@ -165,7 +167,31 @@ public class ClosureAnnotator {
             for (JetFile jetFile : entry.getValue()) {
                 jetFile.accept(visitor);
             }
+
+            ArrayList<JetFile> namespaceFiles = new ArrayList<JetFile>();
+            for (JetFile jetFile : entry.getValue()) {
+                ArrayList<JetDeclaration> fileFunctions = new ArrayList<JetDeclaration>();
+                for (JetDeclaration declaration : jetFile.getDeclarations()) {
+                    if (declaration instanceof JetNamedFunction) {
+                        fileFunctions.add(declaration);
+                    }
+                }
+
+                if (fileFunctions.size() > 0) {
+                    namespaceFiles.add(jetFile);
+                }
+            }
+
+            if(namespaceFiles.size() > 1) {
+                for (JetFile namespaceFile : namespaceFiles) {
+                    namespaceName2MultiNamespaceFiles.putValue(entry.getKey(), namespaceFile);
+                }
+            }
         }
+    }
+
+    public boolean isMultiFileNamespace(FqName fqName) {
+        return namespaceName2MultiNamespaceFiles.get(fqName).size() > 0;
     }
 
     public JvmClassName classNameForAnonymousClass(JetElement expression) {

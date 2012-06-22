@@ -34,6 +34,9 @@ import java.util.List;
  */
 public class AnalyzerFacadeForEverything {
 
+    private AnalyzerFacadeForEverything() {
+    }
+
     public static AnalyzeExhaust analyzeBodiesInFilesWithJavaIntegration(
             Project project, List<AnalyzerScriptParameter> scriptParameters, Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull BindingTrace traceContext,

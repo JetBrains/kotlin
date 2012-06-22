@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.project;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -29,14 +30,18 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
+import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -91,11 +96,11 @@ public final class AnalyzerFacadeWithCache {
                                     BodiesResolveContext context = analyzeExhaustHeaders.getBodiesResolveContext();
                                     assert context != null : "Headers resolver should prepare and stored information for bodies resolve";
 
-                                    // Need to resolve bodies in given file
+                                    // Need to resolve bodies in given file and all in the same package
                                     AnalyzeExhaust exhaust = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file).analyzeBodiesInFiles(
                                             file.getProject(),
                                             Collections.<AnalyzerScriptParameter>emptyList(),
-                                            Predicates.<PsiFile>equalTo(file),
+                                            new JetFilesProvider.SameJetFilePredicate(file),
                                             new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext()),
                                             context);
 
