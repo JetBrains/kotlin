@@ -117,16 +117,9 @@ public final class K2JSCompiler implements TranslatingCompiler {
     @NotNull
     private static Integer doExec(@NotNull CompileContext context, @NotNull CompilerEnvironment environment, @NotNull PrintStream out,
             @NotNull Module module) throws Exception {
-        VirtualFile[] roots = ModuleRootManager.getInstance(module).getSourceRoots();
-        if (roots.length != 1) {
-            context.addMessage(CompilerMessageCategory.ERROR, "K2JSCompiler does not support multiple module source roots.", null, -1, -1);
-            return -1;
-        }
-
         VirtualFile outDir = context.getModuleOutputDirectory(module);
         String outFile = outDir == null ? null : outDir.getPath() + "/" + module.getName() + ".js";
-
-        String[] commandLineArgs = constructArguments(module, outFile, roots[0]);
+        String[] commandLineArgs = constructArguments(module, outFile);
         Object rc = invokeExecMethod(environment, out, context, commandLineArgs, "org.jetbrains.jet.cli.js.K2JSCompiler");
 
         if (outDir != null && !ApplicationManager.getApplication().isUnitTestMode()) {
@@ -136,15 +129,16 @@ public final class K2JSCompiler implements TranslatingCompiler {
     }
 
     @NotNull
-    private static String[] constructArguments(@NotNull Module module, @Nullable String outFile, @NotNull VirtualFile srcDir) {
+    private static String[] constructArguments(@NotNull Module module, @Nullable String outFile) {
         ArrayList<String> args = Lists.newArrayList("-tags", "-verbose", "-version", "-mainCall", "mainWithArgs");
-        addPathToSourcesDir(args, srcDir);
+        addPathToSourcesDir(module, args);
         addOutputPath(outFile, args);
         addLibLocationAndTarget(module, args);
         return ArrayUtil.toStringArray(args);
     }
 
     // we cannot use OrderEnumerator because it has critical bug — try https://gist.github.com/2953261, processor will never be called for module dependency
+    // we don't use context.getCompileScope().getAffectedModules() because we want to know about linkage type (well, we ignore scope right now, but in future...)
     private static void collectModuleDependencies(Module dependentModule, Set<Module> modules) {
         for (OrderEntry entry : ModuleRootManager.getInstance(dependentModule).getOrderEntries()) {
             if (entry instanceof ModuleOrderEntry) {
@@ -165,6 +159,11 @@ public final class K2JSCompiler implements TranslatingCompiler {
         }
     }
 
+    private static VirtualFile[] getSourceFiles(@NotNull Module module) {
+        return CompilerManager.getInstance(module.getProject()).createModuleCompileScope(module, false)
+                .getFiles(JetFileType.INSTANCE, true);
+    }
+
     private static void addLibLocationAndTarget(@NotNull Module module, @NotNull ArrayList<String> args) {
         Pair<String[], String> libLocationAndTarget = JsModuleDetector.getLibLocationAndTargetForProject(module);
 
@@ -176,9 +175,8 @@ public final class K2JSCompiler implements TranslatingCompiler {
             if (!modules.isEmpty()) {
                 for (Module dependency : modules) {
                     sb.append('@').append(dependency.getName()).append(',');
-                    VirtualFile[] files = CompilerManager.getInstance(module.getProject()).createModuleCompileScope(dependency, false)
-                            .getFiles(JetFileType.INSTANCE, true);
-                    for (VirtualFile file : files) {
+
+                    for (VirtualFile file : getSourceFiles(dependency)) {
                         sb.append(file.getPath()).append(',');
                     }
                 }
@@ -206,10 +204,19 @@ public final class K2JSCompiler implements TranslatingCompiler {
         }
     }
 
-    private static void addPathToSourcesDir(@NotNull ArrayList<String> args, @NotNull VirtualFile srcDir) {
-        String srcPath = srcDir.getPath();
-        args.add("-srcdir");
-        args.add(srcPath);
+    private static void addPathToSourcesDir(@NotNull Module module, @NotNull ArrayList<String> args) {
+        args.add("-sourceFiles");
+
+        StringBuilder sb = StringBuilderSpinAllocator.alloc();
+        try {
+            for (VirtualFile file : getSourceFiles(module)) {
+                sb.append(file.getPath()).append(',');
+            }
+            args.add(sb.substring(0, sb.length() - 1));
+        }
+        finally {
+            StringBuilderSpinAllocator.dispose(sb);
+        }
     }
 
     private static void addOutputPath(@Nullable String outFile, @NotNull ArrayList<String> args) {

@@ -21,7 +21,6 @@ import org.jetbrains.jet.cli.common.CompilerArguments;
 import org.jetbrains.k2js.facade.MainCallParameters;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Pavel Talanov
@@ -29,7 +28,7 @@ import java.util.List;
 
 /**
  * NOTE: for now K2JSCompiler supports only minimal amount of parameters required to launch it from the plugin.
- * You can specify only one source folder, path to the file where generated file will be stored, path to zipped library sources.
+ * You can specify path to the file where generated file will be stored, path to zipped library sources.
  */
 public class K2JSCompilerArguments extends CompilerArguments {
     @Argument(value = "output", description = "Output file path")
@@ -39,8 +38,8 @@ public class K2JSCompilerArguments extends CompilerArguments {
     @Argument(value = "libraryFiles", description = "Path to zipped lib sources or kotlin files")
     public String[] libraryFiles;
 
-    @Argument(value = "srcdir", description = "Sources directory")
-    public String srcdir;
+    @Argument(value = "sourceFiles", description = "Source files (dir or file)")
+    public String[] sourceFiles;
 
     @Argument(value = "target", description = "Generate js files for specific ECMA version (3 or 5, default ECMA 3)")
     public String target;
@@ -59,8 +58,6 @@ public class K2JSCompilerArguments extends CompilerArguments {
 
     @Argument(value = "help", alias = "h", description = "Show help")
     public boolean help;
-
-    public List<String> sourceFiles;
 
     @Override
     public boolean isHelp() {
@@ -84,10 +81,7 @@ public class K2JSCompilerArguments extends CompilerArguments {
 
     @Override
     public String getSrc() {
-        if (sourceFiles != null) {
-            return sourceFiles.toString();
-        }
-        return srcdir;
+        throw new IllegalStateException();
     }
 
     public MainCallParameters createMainCallParameters() {

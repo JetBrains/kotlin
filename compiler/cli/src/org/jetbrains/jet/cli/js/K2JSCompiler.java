@@ -65,21 +65,15 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
     @NotNull
     @Override
     protected ExitCode doExecute(K2JSCompilerArguments arguments, PrintingMessageCollector messageCollector, Disposable rootDisposable) {
-
-        if (arguments.srcdir == null && arguments.sourceFiles == null) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify sources location via -srcdir", NO_LOCATION);
+        if (arguments.sourceFiles == null) {
+            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify sources location via -sourceFiles", NO_LOCATION);
             return ExitCode.INTERNAL_ERROR;
         }
 
         JetCoreEnvironment environmentForJS = JetCoreEnvironment.getCoreEnvironmentForJS(rootDisposable);
 
-        if (arguments.srcdir != null) {
-            environmentForJS.addSources(arguments.srcdir);
-        }
-        if (arguments.sourceFiles != null) {
-            for (String sourceFile : arguments.sourceFiles) {
-                environmentForJS.addSources(sourceFile);
-            }
+        for (String sourceFile : arguments.sourceFiles) {
+            environmentForJS.addSources(sourceFile);
         }
 
         Project project = environmentForJS.getProject();
