@@ -31,9 +31,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getHasNextCallable;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getIteratorFunction;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getNextFunction;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToBlock;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.newVar;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopBody;
@@ -104,7 +102,7 @@ public final class IteratorForTranslator extends ForTranslator {
 
     // kotlin iterator define hasNext as property, but java util as function, our js side expects as property
     private static boolean isJavaUtilIterator(CallableDescriptor descriptor) {
-        final DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
+        DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
         return declaration != null && declaration.getName().getName().equals("Iterator");
     }
 
