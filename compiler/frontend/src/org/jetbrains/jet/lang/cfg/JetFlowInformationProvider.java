@@ -367,7 +367,8 @@ public class JetFlowInformationProvider {
 
         JetNamedDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(element, JetNamedDeclaration.class);
         DeclarationDescriptor declarationDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, parentDeclaration);
-        assert declarationDescriptor != null;
+        if (declarationDescriptor == null) return false;
+
         DeclarationDescriptor containingDeclaration = variableDescriptor.getContainingDeclaration();
         if ((containingDeclaration instanceof ClassDescriptor) && DescriptorUtils.isAncestor(containingDeclaration, declarationDescriptor, false)) {
             return false;
