@@ -38,7 +38,7 @@ import java.io.IOException;
  * @author Nikolay Krasko
  */
 public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
-    public static final int STUB_VERSION = 12;
+    public static final int STUB_VERSION = 13;
 
     public JetFileElementType() {
         super("jet.FILE", JetLanguage.INSTANCE);
@@ -63,12 +63,14 @@ public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
     public void serialize(final PsiJetFileStub stub, final StubOutputStream dataStream)
             throws IOException {
         dataStream.writeName(stub.getPackageName());
+        dataStream.writeBoolean(stub.isScript());
     }
 
     @Override
     public PsiJetFileStub deserialize(final StubInputStream dataStream, final StubElement parentStub) throws IOException {
         StringRef packName = dataStream.readName();
-        return new PsiJetFileStubImpl(null, packName);
+        boolean isScript = dataStream.readBoolean();
+        return new PsiJetFileStubImpl(null, packName, isScript);
     }
 
     @Override

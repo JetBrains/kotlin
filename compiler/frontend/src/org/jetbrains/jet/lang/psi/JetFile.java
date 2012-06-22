@@ -94,6 +94,11 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer {
     }
 
     public boolean isScript() {
+        PsiJetFileStub stub = (PsiJetFileStub)getStub();
+        if (stub != null) {
+            return stub.isScript();
+        }
+
         return getScript() != null;
     }
 
