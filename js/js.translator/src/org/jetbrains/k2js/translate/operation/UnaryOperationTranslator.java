@@ -19,9 +19,11 @@ package org.jetbrains.k2js.translate.operation;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsConditional;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
 import org.jetbrains.k2js.translate.reference.CallType;
@@ -62,9 +64,9 @@ public final class UnaryOperationTranslator {
 
     @NotNull
     private static JsExpression translateExclExclOperator(@NotNull JetUnaryExpression expression, @NotNull TranslationContext context) {
-        JsExpression translatedExpression = translateAsExpression(getBaseExpression(expression), context);
-        JsBinaryOperation notNullCheck = notNullCheck(context, translatedExpression);
-        return new JsConditional(notNullCheck, translatedExpression, context.namer().throwNPEFunctionCall());
+        JsNameRef cachedValue = context.declareTemporary(translateAsExpression(getBaseExpression(expression), context), true).reference();
+        JsBinaryOperation notNullCheck = notNullCheck(context, cachedValue);
+        return new JsConditional(notNullCheck, cachedValue, context.namer().throwNPEFunctionCall());
     }
 
     @NotNull
