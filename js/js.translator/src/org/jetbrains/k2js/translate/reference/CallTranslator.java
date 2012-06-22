@@ -19,9 +19,13 @@ package org.jetbrains.k2js.translate.reference;
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
@@ -124,8 +128,24 @@ public final class CallTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression intrinsicInvocation() {
         assert descriptor instanceof FunctionDescriptor;
-        Intrinsic intrinsic = context().intrinsics().getFunctionIntrinsic((FunctionDescriptor) descriptor);
-        return intrinsic.apply(callParameters.getThisOrReceiverOrNull(), arguments, context());
+        try {
+            Intrinsic intrinsic = context().intrinsics().getFunctionIntrinsic((FunctionDescriptor) descriptor);
+            return intrinsic.apply(callParameters.getThisOrReceiverOrNull(), arguments, context());
+        } catch (RuntimeException e) {
+            PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext(), descriptor);
+            if (element == null) {
+                element = BindingContextUtils.descriptorToDeclaration(bindingContext(), descriptor.getOriginal());
+            }
+            if (element == null && descriptor instanceof ASTNode) {
+                element = DiagnosticUtils.getClosestPsiElement((ASTNode) descriptor);
+            }
+            if (element != null) {
+                String location = DiagnosticUtils.atLocation(element);
+                throw new IllegalStateException(e.getMessage() + " at " + location, e);
+            } else {
+                throw e;
+            }
+        }
     }
 
     private boolean isConstructor() {
