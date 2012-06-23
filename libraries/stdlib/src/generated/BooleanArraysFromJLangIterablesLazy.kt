@@ -95,10 +95,6 @@ public inline fun  BooleanArray?.requireNoNulls() : List<Boolean> {
  * @includeFunctionBody ../../test/CollectionTest.kt drop
  */
 public inline fun BooleanArray.drop(n: Int): List<Boolean> {
-    fun countTo(n: Int): (Boolean) -> Boolean {
-      var count = 0
-      return { ++count; count <= n }
-    }
     return dropWhile(countTo(n))
 }
 
@@ -115,10 +111,6 @@ public inline fun BooleanArray.dropWhile(predicate: (Boolean) -> Boolean): List<
  * @includeFunctionBody ../../test/CollectionTest.kt take
  */
 public inline fun BooleanArray.take(n: Int): List<Boolean> {
-    fun countTo(n: Int): (Boolean) -> Boolean {
-      var count = 0
-      return { ++count; count <= n }
-    }
     return takeWhile(countTo(n))
 }
 

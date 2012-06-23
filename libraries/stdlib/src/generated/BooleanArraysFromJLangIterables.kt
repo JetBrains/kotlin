@@ -257,6 +257,9 @@ public inline fun  BooleanArray.toList() : List<Boolean> = toCollection(ArrayLis
 /** Copies all elements into a [[List] */
 public inline fun  BooleanArray.toCollection() : Collection<Boolean> = toCollection(ArrayList<Boolean>())
 
+/** Copies all elements into a [[Set]] */
+public inline fun  BooleanArray.toSet() : Set<Boolean> = toCollection(HashSet<Boolean>())
+
 /**
   TODO figure out necessary variance/generics ninja stuff... :)
 public inline fun  BooleanArray.toSortedList(transform: fun(Boolean) : java.lang.Comparable<*>) : List<Boolean> {
@@ -275,9 +278,6 @@ public inline fun  BooleanArray.toSortedList(transform: fun(Boolean) : java.lang
 
 
 import java.util.*
-
-/** Copies all elements into a [[Set]] */
-public inline fun  BooleanArray.toSet() : Set<Boolean> = toCollection(HashSet<Boolean>())
 
 /** Copies all elements into a [[SortedSet]] */
 public inline fun  BooleanArray.toSortedSet() : SortedSet<Boolean> = toCollection(TreeSet<Boolean>())

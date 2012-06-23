@@ -88,11 +88,6 @@ public inline fun <T> java.lang.Iterable<T>.drop(n: Int): List<T> {
     return dropWhile(countTo(n))
 }
 
-private fun <T> countTo(n: Int): (T) -> Boolean {
-  var count = 0
-  return { ++count; count <= n }
-}
-
 /**
  * Returns a list containing the everything but the first elements that satisfy the given *predicate*
  *

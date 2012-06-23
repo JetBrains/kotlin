@@ -255,6 +255,9 @@ public inline fun <in T> java.util.Iterator<T>.toList() : List<T> = toCollection
 /** Copies all elements into a [[List] */
 public inline fun <in T> java.util.Iterator<T>.toCollection() : Collection<T> = toCollection(ArrayList<T>())
 
+/** Copies all elements into a [[Set]] */
+public inline fun <in T> java.util.Iterator<T>.toSet() : Set<T> = toCollection(HashSet<T>())
+
 /**
   TODO figure out necessary variance/generics ninja stuff... :)
 public inline fun <in T> java.util.Iterator<T>.toSortedList(transform: fun(T) : java.lang.Comparable<*>) : List<T> {
@@ -273,9 +276,6 @@ public inline fun <in T> java.util.Iterator<T>.toSortedList(transform: fun(T) : 
 
 
 import java.util.*
-
-/** Copies all elements into a [[Set]] */
-public inline fun <in T> java.util.Iterator<T>.toSet() : Set<T> = toCollection(HashSet<T>())
 
 /** Copies all elements into a [[SortedSet]] */
 public inline fun <in T> java.util.Iterator<T>.toSortedSet() : SortedSet<T> = toCollection(TreeSet<T>())

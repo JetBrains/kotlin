@@ -257,6 +257,9 @@ public inline fun  IntArray.toList() : List<Int> = toCollection(ArrayList<Int>()
 /** Copies all elements into a [[List] */
 public inline fun  IntArray.toCollection() : Collection<Int> = toCollection(ArrayList<Int>())
 
+/** Copies all elements into a [[Set]] */
+public inline fun  IntArray.toSet() : Set<Int> = toCollection(HashSet<Int>())
+
 /**
   TODO figure out necessary variance/generics ninja stuff... :)
 public inline fun  IntArray.toSortedList(transform: fun(Int) : java.lang.Comparable<*>) : List<Int> {
@@ -275,9 +278,6 @@ public inline fun  IntArray.toSortedList(transform: fun(Int) : java.lang.Compara
 
 
 import java.util.*
-
-/** Copies all elements into a [[Set]] */
-public inline fun  IntArray.toSet() : Set<Int> = toCollection(HashSet<Int>())
 
 /** Copies all elements into a [[SortedSet]] */
 public inline fun  IntArray.toSortedSet() : SortedSet<Int> = toCollection(TreeSet<Int>())

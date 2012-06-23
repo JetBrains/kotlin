@@ -257,6 +257,9 @@ public inline fun  ShortArray.toList() : List<Short> = toCollection(ArrayList<Sh
 /** Copies all elements into a [[List] */
 public inline fun  ShortArray.toCollection() : Collection<Short> = toCollection(ArrayList<Short>())
 
+/** Copies all elements into a [[Set]] */
+public inline fun  ShortArray.toSet() : Set<Short> = toCollection(HashSet<Short>())
+
 /**
   TODO figure out necessary variance/generics ninja stuff... :)
 public inline fun  ShortArray.toSortedList(transform: fun(Short) : java.lang.Comparable<*>) : List<Short> {
@@ -275,9 +278,6 @@ public inline fun  ShortArray.toSortedList(transform: fun(Short) : java.lang.Com
 
 
 import java.util.*
-
-/** Copies all elements into a [[Set]] */
-public inline fun  ShortArray.toSet() : Set<Short> = toCollection(HashSet<Short>())
 
 /** Copies all elements into a [[SortedSet]] */
 public inline fun  ShortArray.toSortedSet() : SortedSet<Short> = toCollection(TreeSet<Short>())

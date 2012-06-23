@@ -257,6 +257,9 @@ public inline fun  CharArray.toList() : List<Char> = toCollection(ArrayList<Char
 /** Copies all elements into a [[List] */
 public inline fun  CharArray.toCollection() : Collection<Char> = toCollection(ArrayList<Char>())
 
+/** Copies all elements into a [[Set]] */
+public inline fun  CharArray.toSet() : Set<Char> = toCollection(HashSet<Char>())
+
 /**
   TODO figure out necessary variance/generics ninja stuff... :)
 public inline fun  CharArray.toSortedList(transform: fun(Char) : java.lang.Comparable<*>) : List<Char> {
@@ -275,9 +278,6 @@ public inline fun  CharArray.toSortedList(transform: fun(Char) : java.lang.Compa
 
 
 import java.util.*
-
-/** Copies all elements into a [[Set]] */
-public inline fun  CharArray.toSet() : Set<Char> = toCollection(HashSet<Char>())
 
 /** Copies all elements into a [[SortedSet]] */
 public inline fun  CharArray.toSortedSet() : SortedSet<Char> = toCollection(TreeSet<Char>())

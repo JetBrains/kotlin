@@ -257,6 +257,9 @@ public inline fun  LongArray.toList() : List<Long> = toCollection(ArrayList<Long
 /** Copies all elements into a [[List] */
 public inline fun  LongArray.toCollection() : Collection<Long> = toCollection(ArrayList<Long>())
 
+/** Copies all elements into a [[Set]] */
+public inline fun  LongArray.toSet() : Set<Long> = toCollection(HashSet<Long>())
+
 /**
   TODO figure out necessary variance/generics ninja stuff... :)
 public inline fun  LongArray.toSortedList(transform: fun(Long) : java.lang.Comparable<*>) : List<Long> {
@@ -275,9 +278,6 @@ public inline fun  LongArray.toSortedList(transform: fun(Long) : java.lang.Compa
 
 
 import java.util.*
-
-/** Copies all elements into a [[Set]] */
-public inline fun  LongArray.toSet() : Set<Long> = toCollection(HashSet<Long>())
 
 /** Copies all elements into a [[SortedSet]] */
 public inline fun  LongArray.toSortedSet() : SortedSet<Long> = toCollection(TreeSet<Long>())

@@ -95,10 +95,6 @@ public inline fun  CharArray?.requireNoNulls() : List<Char> {
  * @includeFunctionBody ../../test/CollectionTest.kt drop
  */
 public inline fun CharArray.drop(n: Int): List<Char> {
-    fun countTo(n: Int): (Char) -> Boolean {
-      var count = 0
-      return { ++count; count <= n }
-    }
     return dropWhile(countTo(n))
 }
 
@@ -115,10 +111,6 @@ public inline fun CharArray.dropWhile(predicate: (Char) -> Boolean): List<Char> 
  * @includeFunctionBody ../../test/CollectionTest.kt take
  */
 public inline fun CharArray.take(n: Int): List<Char> {
-    fun countTo(n: Int): (Char) -> Boolean {
-      var count = 0
-      return { ++count; count <= n }
-    }
     return takeWhile(countTo(n))
 }
 

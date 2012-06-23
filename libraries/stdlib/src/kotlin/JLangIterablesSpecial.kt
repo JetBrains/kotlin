@@ -24,6 +24,12 @@ public fun <T> java.lang.Iterable<T>.count() : Int {
   return number
 }
 
+private fun <T> countTo(n: Int): (T) -> Boolean {
+  var count = 0
+  return { ++count; count <= n }
+}
+
+
 /**
  * Get the first element in the collection.
  *

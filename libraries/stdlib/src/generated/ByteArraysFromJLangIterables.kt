@@ -257,6 +257,9 @@ public inline fun  ByteArray.toList() : List<Byte> = toCollection(ArrayList<Byte
 /** Copies all elements into a [[List] */
 public inline fun  ByteArray.toCollection() : Collection<Byte> = toCollection(ArrayList<Byte>())
 
+/** Copies all elements into a [[Set]] */
+public inline fun  ByteArray.toSet() : Set<Byte> = toCollection(HashSet<Byte>())
+
 /**
   TODO figure out necessary variance/generics ninja stuff... :)
 public inline fun  ByteArray.toSortedList(transform: fun(Byte) : java.lang.Comparable<*>) : List<Byte> {
@@ -275,9 +278,6 @@ public inline fun  ByteArray.toSortedList(transform: fun(Byte) : java.lang.Compa
 
 
 import java.util.*
-
-/** Copies all elements into a [[Set]] */
-public inline fun  ByteArray.toSet() : Set<Byte> = toCollection(HashSet<Byte>())
 
 /** Copies all elements into a [[SortedSet]] */
 public inline fun  ByteArray.toSortedSet() : SortedSet<Byte> = toCollection(TreeSet<Byte>())

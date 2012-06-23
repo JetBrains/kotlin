@@ -257,6 +257,9 @@ public inline fun  FloatArray.toList() : List<Float> = toCollection(ArrayList<Fl
 /** Copies all elements into a [[List] */
 public inline fun  FloatArray.toCollection() : Collection<Float> = toCollection(ArrayList<Float>())
 
+/** Copies all elements into a [[Set]] */
+public inline fun  FloatArray.toSet() : Set<Float> = toCollection(HashSet<Float>())
+
 /**
   TODO figure out necessary variance/generics ninja stuff... :)
 public inline fun  FloatArray.toSortedList(transform: fun(Float) : java.lang.Comparable<*>) : List<Float> {
@@ -275,9 +278,6 @@ public inline fun  FloatArray.toSortedList(transform: fun(Float) : java.lang.Com
 
 
 import java.util.*
-
-/** Copies all elements into a [[Set]] */
-public inline fun  FloatArray.toSet() : Set<Float> = toCollection(HashSet<Float>())
 
 /** Copies all elements into a [[SortedSet]] */
 public inline fun  FloatArray.toSortedSet() : SortedSet<Float> = toCollection(TreeSet<Float>())

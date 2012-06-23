@@ -95,10 +95,6 @@ public inline fun  ShortArray?.requireNoNulls() : List<Short> {
  * @includeFunctionBody ../../test/CollectionTest.kt drop
  */
 public inline fun ShortArray.drop(n: Int): List<Short> {
-    fun countTo(n: Int): (Short) -> Boolean {
-      var count = 0
-      return { ++count; count <= n }
-    }
     return dropWhile(countTo(n))
 }
 
@@ -115,10 +111,6 @@ public inline fun ShortArray.dropWhile(predicate: (Short) -> Boolean): List<Shor
  * @includeFunctionBody ../../test/CollectionTest.kt take
  */
 public inline fun ShortArray.take(n: Int): List<Short> {
-    fun countTo(n: Int): (Short) -> Boolean {
-      var count = 0
-      return { ++count; count <= n }
-    }
     return takeWhile(countTo(n))
 }
 

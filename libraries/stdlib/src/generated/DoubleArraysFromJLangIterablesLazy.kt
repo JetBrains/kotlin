@@ -95,10 +95,6 @@ public inline fun  DoubleArray?.requireNoNulls() : List<Double> {
  * @includeFunctionBody ../../test/CollectionTest.kt drop
  */
 public inline fun DoubleArray.drop(n: Int): List<Double> {
-    fun countTo(n: Int): (Double) -> Boolean {
-      var count = 0
-      return { ++count; count <= n }
-    }
     return dropWhile(countTo(n))
 }
 
@@ -115,10 +111,6 @@ public inline fun DoubleArray.dropWhile(predicate: (Double) -> Boolean): List<Do
  * @includeFunctionBody ../../test/CollectionTest.kt take
  */
 public inline fun DoubleArray.take(n: Int): List<Double> {
-    fun countTo(n: Int): (Double) -> Boolean {
-      var count = 0
-      return { ++count; count <= n }
-    }
     return takeWhile(countTo(n))
 }
 

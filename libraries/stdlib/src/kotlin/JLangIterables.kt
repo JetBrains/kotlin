@@ -247,6 +247,9 @@ public inline fun <in T> java.lang.Iterable<T>.toList() : List<T> = toCollection
 /** Copies all elements into a [[List] */
 public inline fun <in T> java.lang.Iterable<T>.toCollection() : Collection<T> = toCollection(ArrayList<T>())
 
+/** Copies all elements into a [[Set]] */
+public inline fun <in T> java.lang.Iterable<T>.toSet() : Set<T> = toCollection(HashSet<T>())
+
 /**
   TODO figure out necessary variance/generics ninja stuff... :)
 public inline fun <in T> java.lang.Iterable<T>.toSortedList(transform: fun(T) : java.lang.Comparable<*>) : List<T> {
