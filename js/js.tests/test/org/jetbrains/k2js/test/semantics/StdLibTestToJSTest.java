@@ -39,6 +39,7 @@ public class StdLibTestToJSTest extends StdLibTestSupport {
 
         generateJavaScriptFiles(EcmaVersion.all(),
                                 "libraries/stdlib/test",
+                                "ListTest.kt",
                                 "StringTest.kt",
                                 "js/SimpleTest.kt");
     }

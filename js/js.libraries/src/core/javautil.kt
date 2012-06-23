@@ -21,7 +21,6 @@ public trait Iterator<T> {
     open fun remove() : Unit = js.noImpl
 }
 
-library
 val Collections = object {
     library("collectionsMax")
     public fun max<T>(col : Collection<T>, comp : Comparator<T>) : T = js.noImpl

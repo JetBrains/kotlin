@@ -53,12 +53,10 @@
                                     </fileset>
                                 </copy>
                                 <copy todir="${basedir}/target/generated-js-library/kotlin">
-<!--
                                     <fileset dir="${basedir}/../../stdlib/src/kotlin/dom">
                                         <include name="**/*.kt"/>
                                         <exclude name="**/*JVM.kt"/>
                                     </fileset>
--->
                                     <fileset dir="${basedir}/../../stdlib/src/kotlin/support">
                                         <include name="**/*.kt"/>
                                         <exclude name="**/*JVM.kt"/>
