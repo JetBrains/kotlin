@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -28,6 +29,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -35,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author abreslav
@@ -48,6 +51,8 @@ public class ResolveSession {
 
     private final InjectorForLazyResolve injector;
     private final ModuleConfiguration moduleConfiguration;
+
+    private final Map<JetEnumEntry, ClassDescriptor> enumEntryClassDescriptorCache = Maps.newHashMap();
 
     public ResolveSession(
             @NotNull Project project,
@@ -98,6 +103,10 @@ public class ResolveSession {
 
     @NotNull
     public ClassDescriptor getClassDescriptor(@NotNull JetClassOrObject classOrObject) {
+        if (classOrObject instanceof JetEnumEntry) {
+            JetEnumEntry enumEntry = (JetEnumEntry) classOrObject;
+            return getEnumEntryClassDescriptor(enumEntry);
+        }
         if (classOrObject.getParent() instanceof JetClassObject) {
             return getClassObjectDescriptor((JetClassObject) classOrObject.getParent());
         }
@@ -106,6 +115,23 @@ public class ResolveSession {
         assert name != null : "Name is null for " + classOrObject + " " + classOrObject.getText();
         ClassifierDescriptor classifier = resolutionScope.getClassifier(name);
         return (ClassDescriptor) classifier;
+    }
+
+    @NotNull
+    private ClassDescriptor getEnumEntryClassDescriptor(@NotNull JetEnumEntry jetEnumEntry) {
+        ClassDescriptor classDescriptor = enumEntryClassDescriptorCache.get(jetEnumEntry);
+        if (classDescriptor != null) {
+            return classDescriptor;
+        }
+
+        DeclarationDescriptor containingDeclaration = getInjector().getScopeProvider().getResolutionScopeForDeclaration(jetEnumEntry)
+                .getContainingDeclaration();
+        LazyClassDescriptor newClassDescriptor = new LazyClassDescriptor(this,
+                                                                         containingDeclaration,
+                                                                         jetEnumEntry.getNameAsName(),
+                                                                         JetClassInfoUtil.createClassLikeInfo(jetEnumEntry));
+        enumEntryClassDescriptorCache.put(jetEnumEntry, newClassDescriptor);
+        return newClassDescriptor;
     }
 
     /*package*/ LazyClassDescriptor getClassObjectDescriptor(JetClassObject classObject) {

@@ -316,10 +316,21 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     private static JetClassLikeInfo onlyEnumEntries(JetClassLikeInfo classLikeInfo) {
         return new FilteringClassLikeInfo(classLikeInfo, ONLY_ENUM_ENTIRES) {
+            @Override
+            public JetClassOrObject getCorrespondingClassOrObject() {
+                return null;
+            }
+
             @NotNull
             @Override
             public ClassKind getClassKind() {
                 return ClassKind.OBJECT;
+            }
+
+            @NotNull
+            @Override
+            public List<? extends JetParameter> getPrimaryConstructorParameters() {
+                return Collections.emptyList();
             }
         };
     }

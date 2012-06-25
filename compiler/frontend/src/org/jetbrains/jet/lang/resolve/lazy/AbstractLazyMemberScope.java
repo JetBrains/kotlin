@@ -150,10 +150,6 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                     .resolveObjectDeclaration(thisDescriptor, objectDeclaration, classifier, resolveSession.getTrace());
             result.add(propertyDescriptor);
         }
-        else if (classOrObjectDeclaration instanceof JetEnumEntry) {
-            JetEnumEntry jetEnumEntry = (JetEnumEntry) classOrObjectDeclaration;
-            throw new UnsupportedOperationException("Enums are not supported yet: " + jetEnumEntry + " " + jetEnumEntry.getText());
-        }
 
         getNonDeclaredProperties(name, result);
 
@@ -198,7 +194,14 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
         for (JetDeclaration declaration : declarationProvider.getAllDeclarations()) {
-            if (declaration instanceof JetClassOrObject) {
+            if (declaration instanceof JetEnumEntry) {
+                JetEnumEntry jetEnumEntry = (JetEnumEntry) declaration;
+                Name name = jetEnumEntry.getNameAsName();
+                if (name != null) {
+                    getProperties(name);
+                }
+            }
+            else if (declaration instanceof JetClassOrObject) {
                 JetClassOrObject classOrObject = (JetClassOrObject) declaration;
                 Name name = classOrObject.getNameAsName();
                 if (name != null) {

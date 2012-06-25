@@ -22,11 +22,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -72,7 +73,10 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                 new OverrideResolver.DescriptorSink() {
                     @Override
                     public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                        assert exactDescriptorClass.isInstance(fakeOverride) : "Wrong descriptor type in an override: " + fakeOverride + " while expecting " + exactDescriptorClass.getSimpleName();
+                        assert exactDescriptorClass.isInstance(fakeOverride) : "Wrong descriptor type in an override: " +
+                                                                               fakeOverride +
+                                                                               " while expecting " +
+                                                                               exactDescriptorClass.getSimpleName();
                         //noinspection unchecked
                         result.add((D) fakeOverride);
                     }
@@ -83,7 +87,8 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                         JetDeclaration declaration = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(),
                                                                                                                   fromCurrent);
                         assert declaration != null : "fromCurrent can not be a fake override";
-                        trace.report(Errors.CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().getName()));
+                        trace.report(Errors.CONFLICTING_OVERLOADS
+                                             .on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().getName()));
                     }
                 }
         );
@@ -131,31 +136,47 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     @Override
     @SuppressWarnings("unchecked")
     protected void getNonDeclaredProperties(@NotNull Name name, @NotNull final Set<VariableDescriptor> result) {
-        JetClassOrObject classOrObject = declarationProvider.getOwnerClassOrObject();
-        if (classOrObject instanceof JetClass) {
-            JetClass jetClass = (JetClass) classOrObject;
+        JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
 
-            ConstructorDescriptor primaryConstructor = getPrimaryConstructor();
-            if (primaryConstructor != null) {
-                List<ValueParameterDescriptor> valueParameterDescriptors = primaryConstructor.getValueParameters();
-                List<JetParameter> primaryConstructorParameters = jetClass.getPrimaryConstructorParameters();
-                assert valueParameterDescriptors.size() == primaryConstructorParameters.size();
-                for (ValueParameterDescriptor valueParameterDescriptor : valueParameterDescriptors) {
-                    JetParameter parameter = primaryConstructorParameters.get(valueParameterDescriptor.getIndex());
-                    if (parameter.getValOrVarNode() != null && name.equals(parameter.getNameAsName())) {
-                        PropertyDescriptor propertyDescriptor =
-                                resolveSession.getInjector().getDescriptorResolver().resolvePrimaryConstructorParameterToAProperty(
-                                        thisDescriptor,
-                                        valueParameterDescriptor,
-                                        thisDescriptor.getScopeForClassHeaderResolution(),
-                                        parameter, resolveSession.getTrace()
-                                );
-                        result.add(propertyDescriptor);
-                    }
+        // From primary constructor parameters
+        ConstructorDescriptor primaryConstructor = getPrimaryConstructor();
+        if (primaryConstructor != null) {
+            List<ValueParameterDescriptor> valueParameterDescriptors = primaryConstructor.getValueParameters();
+            List<? extends JetParameter> primaryConstructorParameters = classInfo.getPrimaryConstructorParameters();
+            assert valueParameterDescriptors.size() == primaryConstructorParameters.size() : "From descriptor: " + valueParameterDescriptors.size() + " but from PSI: " + primaryConstructorParameters.size();
+            for (ValueParameterDescriptor valueParameterDescriptor : valueParameterDescriptors) {
+                JetParameter parameter = primaryConstructorParameters.get(valueParameterDescriptor.getIndex());
+                if (parameter.getValOrVarNode() != null && name.equals(parameter.getNameAsName())) {
+                    PropertyDescriptor propertyDescriptor =
+                            resolveSession.getInjector().getDescriptorResolver().resolvePrimaryConstructorParameterToAProperty(
+                                    thisDescriptor,
+                                    valueParameterDescriptor,
+                                    thisDescriptor.getScopeForClassHeaderResolution(),
+                                    parameter, resolveSession.getTrace()
+                            );
+                    result.add(propertyDescriptor);
                 }
             }
         }
 
+        // Enum entries
+        JetClassOrObject classOrObjectDeclaration = declarationProvider.getClassOrObjectDeclaration(name);
+        if (classOrObjectDeclaration instanceof JetEnumEntry) {
+            // TODO: This code seems to be wrong, but it mimics the present behavior of eager resolve
+            JetEnumEntry jetEnumEntry = (JetEnumEntry) classOrObjectDeclaration;
+            if (!jetEnumEntry.hasPrimaryConstructor()) {
+                VariableDescriptor propertyDescriptor = resolveSession.getInjector().getDescriptorResolver()
+                        .resolveObjectDeclarationAsPropertyDescriptor(thisDescriptor,
+                                                                      jetEnumEntry,
+                                                                      resolveSession.getClassDescriptor(jetEnumEntry),
+                                                                      resolveSession.getTrace());
+                result.add(propertyDescriptor);
+            }
+
+        }
+
+
+        // Members from supertypes
         Collection<PropertyDescriptor> fromSupertypes = Lists.newArrayList();
         for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
             fromSupertypes.addAll((Set) supertype.getMemberScope().getProperties(name));
@@ -198,12 +219,13 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     @Nullable
     public ConstructorDescriptor getPrimaryConstructor() {
         if (!primaryConstructorResolved) {
-            if (EnumSet.of(ClassKind.CLASS, ClassKind.ANNOTATION_CLASS, ClassKind.OBJECT).contains(thisDescriptor.getKind())) {
-                JetClassOrObject classOrObject = declarationProvider.getOwnerClassOrObject();
-                if (classOrObject instanceof JetClass) {
+            if (EnumSet.of(ClassKind.CLASS, ClassKind.ANNOTATION_CLASS, ClassKind.OBJECT, ClassKind.ENUM_CLASS).contains(thisDescriptor.getKind())) {
+                JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
+                if (thisDescriptor.getKind() != ClassKind.OBJECT) {
                     JetClass jetClass = (JetClass) classOrObject;
                     ConstructorDescriptorImpl constructor = resolveSession.getInjector().getDescriptorResolver()
-                            .resolvePrimaryConstructorDescriptor(thisDescriptor.getScopeForClassHeaderResolution(), thisDescriptor,
+                            .resolvePrimaryConstructorDescriptor(thisDescriptor.getScopeForClassHeaderResolution(),
+                                                                 thisDescriptor,
                                                                  jetClass,
                                                                  resolveSession.getTrace());
                     primaryConstructor = constructor;
