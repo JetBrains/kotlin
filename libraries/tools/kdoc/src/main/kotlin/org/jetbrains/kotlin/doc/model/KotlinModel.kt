@@ -711,7 +711,7 @@ $highlight"""
             val container = dec
             if (container is NamespaceDescriptor) {
                 val pkg = getPackage(container)
-                return pkg.getClass(name, classElement)
+                return pkg.getClass(classElement)
             } else {
                 dec = dec?.getContainingDeclaration()
             }
@@ -958,11 +958,12 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
 
     fun toString() = "KPackage($name)"
 
-    fun getClass(name: String, descriptor: ClassDescriptor): KClass {
+    fun getClass(descriptor: ClassDescriptor): KClass {
+        val name = descriptor.getName().getName()
         var created = false
         val klass = classMap.getOrPut(name) {
             created = true
-            KClass(this, descriptor, name)
+            KClass(this, descriptor)
         }
         if (created) {
             // sometimes we may have source files for a package in different source directories
@@ -1067,10 +1068,10 @@ class KType(val jetType: JetType, model: KModel, val klass: KClass?, val argumen
 
 class KClass(
         val pkg: KPackage,
-        val descriptor: ClassDescriptor,
-        val simpleName: String)
+        val descriptor: ClassDescriptor)
     : KClassOrPackage(pkg.model, descriptor), Comparable<KClass>
 {
+    val simpleName = descriptor.getName().getName()
     var group: String = "Other"
     var annotations: List<KAnnotation> = arrayList<KAnnotation>()
     var typeParameters: List<KTypeParameter> = arrayList<KTypeParameter>()
@@ -1126,7 +1127,7 @@ class KClass(
         return $url
     }
 
-    public val name: String = pkg.qualifiedName(simpleName)
+    public val name: String = pkg.qualifiedName(descriptor.getName().getName())
 
     public val packageName: String = pkg.name
 
