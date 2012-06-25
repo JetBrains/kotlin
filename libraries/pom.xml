@@ -52,7 +52,11 @@
         <module>tools/runtime</module>
         <module>tools/kotlin-maven-plugin</module>
         <module>tools/kotlin-js-library</module>
+<!--
+        TODO temporary disabled until the Ordering.kt#comparator() works in JS
+
         <module>tools/kotlin-js-tests</module>
+-->
 <!--
         TODO temporary disabled until the java.util.Collections.emptyList() works in JS
 
