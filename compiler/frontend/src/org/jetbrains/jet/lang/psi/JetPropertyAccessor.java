@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -29,7 +30,8 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetPropertyAccessor extends JetDeclarationImpl implements JetDeclarationWithBody, JetModifierListOwner {
+public class JetPropertyAccessor extends JetDeclarationImpl
+        implements JetDeclarationWithBody, JetModifierListOwner, JetWithExpressionInitializer {
     public JetPropertyAccessor(@NotNull ASTNode node) {
         super(node);
     }
@@ -105,5 +107,11 @@ public class JetPropertyAccessor extends JetDeclarationImpl implements JetDeclar
             return get;
         }
         return findChildByType(JetTokens.SET_KEYWORD);
+    }
+
+    @Nullable
+    @Override
+    public JetExpression getInitializer() {
+        return PsiTreeUtil.getNextSiblingOfType(findChildByType(JetTokens.EQ), JetExpression.class);
     }
 }

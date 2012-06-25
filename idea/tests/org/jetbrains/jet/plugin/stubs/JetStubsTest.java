@@ -91,6 +91,13 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
                     "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
     }
 
+    public void testNotStorePropertyFromInitializer() {
+        doBuildTest("fun DoubleArray.some() = for (element in this) println(element)",
+                    "PsiJetFileStubImpl[package=]\n" +
+                    "  FUN:PsiJetFunctionStubImpl[top ext name=some]\n" +
+                    "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
+    }
+
     public void testSimpleEnumBuild() {
         doBuildTest("enum class Test { First\n Second\n }",
                     "PsiJetFileStubImpl[package=]\n" +

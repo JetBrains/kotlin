@@ -34,6 +34,10 @@ public class OutOfBlockModificationTest extends LightCodeInsightFixtureTestCase 
         doTest();
     }
 
+    public void testInAntonymsObjectDeclaration() {
+        doTest();
+    }
+
     public void testInClass() {
         doTest();
     }
@@ -58,7 +62,7 @@ public class OutOfBlockModificationTest extends LightCodeInsightFixtureTestCase 
         doTest();
     }
 
-    public void testInAntonymsObjectDeclaration() {
+    public void testInPropertyAccessorWithInference() {
         doTest();
     }
 

@@ -22,6 +22,7 @@ import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -36,7 +37,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFunctionStub> implements JetFunction {
+public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFunctionStub> implements JetFunction, JetWithExpressionInitializer {
     public JetNamedFunction(@NotNull ASTNode node) {
         super(node);
     }
@@ -77,6 +78,12 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
         return findChildByType(JetTokens.EQ);
     }
 
+    @Override
+    @Nullable
+    public JetExpression getInitializer() {
+        return PsiTreeUtil.getNextSiblingOfType(getEqualsToken(), JetExpression.class);
+    }
+
     /**
      * Returns full qualified name for function "package_fqn.function_name"
      * Not null for top level functions.
@@ -103,6 +110,7 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
         return null;
     }
 
+    @NotNull
     @Override
     public IStubElementType getElementType() {
         return JetStubElementTypes.FUNCTION;
@@ -113,6 +121,7 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
         return ItemPresentationProviders.getItemPresentation(this);
     }
 
+    @Override
     @Nullable
     public JetParameterList getValueParameterList() {
         return (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);
@@ -136,6 +145,7 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
         return getReturnTypeRef() != null;
     }
 
+    @Override
     @Nullable
     public JetTypeReference getReceiverTypeRef() {
         PsiElement child = getFirstChild();
@@ -151,6 +161,7 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
         return null;
     }
 
+    @Override
     @Nullable
     public JetTypeReference getReturnTypeRef() {
         boolean colonPassed = false;
@@ -175,6 +186,7 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
         return this;
     }
 
+    @Override
     public boolean isLocal() {
         PsiElement parent = getParent();
         return !(parent instanceof JetFile || parent instanceof JetClassBody || parent instanceof JetNamespaceBody);

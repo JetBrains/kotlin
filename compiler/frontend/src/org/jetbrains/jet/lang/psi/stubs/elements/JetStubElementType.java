@@ -46,16 +46,28 @@ public abstract class JetStubElementType<StubT extends StubElement, PsiT extends
     public boolean shouldCreateStub(ASTNode node) {
         PsiElement psi = node.getPsi();
 
+        // Do not create stubs inside function literals
         if (PsiTreeUtil.getParentOfType(psi, JetFunctionLiteral.class) != null) {
             return false;
         }
 
+        // Don't create stubs if declaration is inside function or property accessor with block
         JetBlockExpression blockExpression = PsiTreeUtil.getParentOfType(psi, JetBlockExpression.class);
         @SuppressWarnings("unchecked") JetDeclarationWithBody stubStopElement =
                 PsiTreeUtil.getParentOfType(blockExpression, JetFunction.class, JetPropertyAccessor.class);
 
         if (stubStopElement != null) {
             return false;
+        }
+
+        // Don't create stubs if declaration is inside other declaration with expression initializer
+        @SuppressWarnings("unchecked") JetWithExpressionInitializer withInitializer =
+                PsiTreeUtil.getParentOfType(psi, JetWithExpressionInitializer.class, true, JetBlockExpression.class);
+        if (withInitializer != null) {
+            JetExpression initializer = withInitializer.getInitializer();
+            if (PsiTreeUtil.isAncestor(initializer, psi, true)) {
+                return false;
+            }
         }
 
         return super.shouldCreateStub(node);

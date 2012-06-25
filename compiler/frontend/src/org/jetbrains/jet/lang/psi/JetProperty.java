@@ -39,7 +39,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 /**
  * @author max
  */
-public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStub> {
+public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStub> implements JetWithExpressionInitializer {
     public JetProperty(@NotNull ASTNode node) {
         super(node);
     }
@@ -150,10 +150,10 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
         return null;
     }
 
+    @Override
     @Nullable
     public JetExpression getInitializer() {
-        PsiElement eq = findChildByType(EQ);
-        return PsiTreeUtil.getNextSiblingOfType(eq, JetExpression.class);
+        return PsiTreeUtil.getNextSiblingOfType(findChildByType(EQ), JetExpression.class);
     }
 
     @NotNull
