@@ -325,13 +325,13 @@ class CollectionTest {
         assertEquals(arrayList("bar", "foo"), rev)
     }
 
-    test fun reverseFunctionShouldReturnSortedCopyForList() {
+    test fun reverseFunctionShouldReturnReversedCopyForList() {
         val list : List<Int> = arrayList(2, 3, 1)
         expect(arrayList(1, 3, 2)) { list.reverse() }
         expect(arrayList(2, 3, 1)) { list }
     }
 
-    test fun reverseFunctionShouldReturnSortedCopyForIterable() {
+    test fun reverseFunctionShouldReturnReversedCopyForIterable() {
         val iterable : java.lang.Iterable<Int> = arrayList(2, 3, 1)
         expect(arrayList(1, 3, 2)) { iterable.reverse() }
         expect(arrayList(2, 3, 1)) { iterable }
