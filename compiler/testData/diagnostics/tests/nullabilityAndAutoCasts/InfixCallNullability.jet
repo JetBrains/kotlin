@@ -32,7 +32,7 @@ fun test(x : Int?, a : A?) {
     a.times(1)
     a * 1
     a times 1
-    a<!UNNECESSARY_SAFE_CALL!>?.<!>times(1)
+    a?.times(1)
 
     1 <!UNSAFE_INFIX_CALL!>in<!> a
     a <!UNSAFE_INFIX_CALL!>contains<!> 1

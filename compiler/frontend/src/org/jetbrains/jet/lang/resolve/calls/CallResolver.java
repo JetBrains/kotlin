@@ -758,7 +758,7 @@ public class CallResolver {
                     result = OTHER_ERROR;
                 }
             }
-            if (safeAccess && (receiverParameter.getType().isNullable() || !receiverArgumentType.isNullable())) {
+            if (safeAccess && !receiverArgumentType.isNullable()) {
                 context.tracing.unnecessarySafeCall(context.candidateCall.getTrace(), receiverArgumentType);
             }
         }
