@@ -15,9 +15,12 @@ import org.jetbrains.jet.internal.com.intellij.psi.PsiElement
 import org.jetbrains.jet.internal.com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.jet.JetNodeTypes
 import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.doc.Doclet
+import org.jetbrains.kotlin.doc.model.KModel
+import org.jetbrains.jet.lang.psi.JetFile
 
 
-class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : CompilerPlugin {
+class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet {
 
     private val docOutputRoot: File
     {
@@ -51,7 +54,7 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Compil
         throw Exception("$file is not a child of any source roots $sourceDirPaths")
     }
 
-    override fun processFiles(context: CompilerPluginContext) {
+    override fun generate(model: KModel, outputDir: File) {
         srcOutputRoot.mkdirs()
 
         val css = javaClass<Html2CompilerPlugin>().getClassLoader()!!.getResourceAsStream(
@@ -62,12 +65,12 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Compil
             #()
         }
 
-        for (file in context.getFiles().requireNoNulls()) {
+        for (file in model.sources) {
             processFile(file)
         }
     }
 
-    private fun processFile(psiFile: PsiFile) {
+    private fun processFile(psiFile: JetFile) {
         val relativePath = fileToWrite(psiFile)
         val htmlFile = File(srcOutputRoot, relativePath.replaceFirst("\\.kt$", "") + ".html")
 

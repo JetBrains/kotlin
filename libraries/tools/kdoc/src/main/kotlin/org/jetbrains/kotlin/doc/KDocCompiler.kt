@@ -29,8 +29,6 @@ class KDocCompiler() : K2JVMCompiler() {
         if (coreEnvironment != null) {
             val kdoc = KDoc(arguments as KDocArguments)
             val plugins = configuration.getCompilerPlugins()
-            val sourcePlugin = Html2CompilerPlugin(arguments as KDocArguments)
-            plugins.add(sourcePlugin)
             plugins.add(kdoc);
         }
     }

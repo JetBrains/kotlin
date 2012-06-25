@@ -175,7 +175,7 @@ abstract class KClassOrPackage(model: KModel, declarationDescriptor: Declaration
     }
 }
 
-class KModel(val context: BindingContext, val config: KDocConfig, private val sources: List<JetFile>) {
+class KModel(val context: BindingContext, val config: KDocConfig, val sources: List<JetFile>) {
     // TODO generates java.lang.NoSuchMethodError: kotlin.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
     //val packages = sortedMap<String,KPackage>()
     public val packageMap: SortedMap<String, KPackage> = TreeMap<String, KPackage>()
