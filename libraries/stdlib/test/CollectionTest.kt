@@ -462,6 +462,18 @@ class CollectionTest {
         //    assertFalse(IterableWrapper(linkedList<Int>()).contains(15))
     }
 
+    test fun sortBy() {
+        expect(arrayList("two" to 2, "three" to 3)) {
+            arrayList("three" to 3, "two" to 2).sortBy { it._2 }
+        }
+        expect(arrayList("three" to 3, "two" to 2)) {
+            arrayList("three" to 3, "two" to 2).sortBy { it._1 }
+        }
+        expect(arrayList("two" to 2, "three" to 3)) {
+            arrayList("three" to 3, "two" to 2).sortBy { it._1.length }
+        }
+    }
+
     class IterableWrapper<T>(collection : java.lang.Iterable<T>) : java.lang.Iterable<T> {
         private val collection = collection
 
