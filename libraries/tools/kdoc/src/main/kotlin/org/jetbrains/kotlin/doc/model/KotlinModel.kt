@@ -44,6 +44,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils.LineAndColumn
 import org.jetbrains.jet.internal.com.intellij.psi.PsiFileSystemItem
 import java.io.File
 import org.jetbrains.jet.internal.com.intellij.psi.PsiElement
+import org.jetbrains.jet.internal.com.intellij.openapi.vfs.local.CoreLocalVirtualFile
 
 
 /**
@@ -175,7 +176,10 @@ abstract class KClassOrPackage(model: KModel, declarationDescriptor: Declaration
     }
 }
 
-class KModel(val context: BindingContext, val config: KDocConfig, val sources: List<JetFile>) {
+// htmlPath does not include "html-src" prefix
+class SourceInfo(val psi: JetFile, val relativePath: String, val htmlPath: String)
+
+class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs: List<File>, val sources: List<JetFile>) {
     // TODO generates java.lang.NoSuchMethodError: kotlin.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
     //val packages = sortedMap<String,KPackage>()
     public val packageMap: SortedMap<String, KPackage> = TreeMap<String, KPackage>()
@@ -236,9 +240,35 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sources: L
         }
     }
 
+
+    val sourcesInfo: List<SourceInfo>
+    ;{
+
+        val normalizedSourceDirs: List<String> =
+            sourceDirs.map { file -> file.getCanonicalPath()!! }
+
+        private fun relativePath(psiFile: PsiFile): String {
+            val file = File((psiFile.getVirtualFile() as CoreLocalVirtualFile).getPath()).getCanonicalFile()!!
+            val filePath = file.getPath()!!
+            for (sourceDirPath in normalizedSourceDirs) {
+                if (filePath.startsWith(sourceDirPath) && filePath.length() > sourceDirPath.length()) {
+                    return filePath.substring(sourceDirPath.length + 1)
+                }
+            }
+            throw Exception("$file is not a child of any source roots $normalizedSourceDirs")
+        }
+
+        sourcesInfo = sources.map { source ->
+            val relativePath = relativePath(source)
+            val htmlPath = relativePath.replaceFirst("\\.kt$", "") + ".html"
+            SourceInfo(source, relativePath, htmlPath)
+        }
+    }
+
+
     /**
-     * Returns the root project directory for calculating relative source links
-     */
+    * Returns the root project directory for calculating relative source links
+    */
     fun projectRootDir(): String {
         if (_projectRootDir == null) {
             val rootDir = config.projectRootDir

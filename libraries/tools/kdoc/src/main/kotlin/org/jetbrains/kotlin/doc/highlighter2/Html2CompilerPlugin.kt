@@ -18,6 +18,7 @@ import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.kotlin.doc.Doclet
 import org.jetbrains.kotlin.doc.model.KModel
 import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.kotlin.doc.model.SourceInfo
 
 
 class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet {
@@ -65,14 +66,15 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet
             #()
         }
 
-        for (file in model.sources) {
-            processFile(file)
+        for (sourceInfo in model.sourcesInfo) {
+            processFile(sourceInfo)
         }
     }
 
-    private fun processFile(psiFile: JetFile) {
-        val relativePath = fileToWrite(psiFile)
-        val htmlFile = File(srcOutputRoot, relativePath.replaceFirst("\\.kt$", "") + ".html")
+    private fun processFile(sourceInfo: SourceInfo) {
+        val psiFile = sourceInfo.psi
+        val htmlPath = sourceInfo.htmlPath
+        val htmlFile = File(srcOutputRoot, htmlPath)
 
         println("Generating $htmlFile")
         htmlFile.getParentFile()!!.mkdirs()

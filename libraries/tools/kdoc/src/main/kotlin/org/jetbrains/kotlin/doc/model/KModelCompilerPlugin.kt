@@ -4,6 +4,8 @@ import org.jetbrains.jet.cli.common.CompilerPlugin
 import org.jetbrains.jet.cli.common.CompilerPluginContext
 import org.jetbrains.kotlin.doc.KDocConfig
 import org.jetbrains.kotlin.doc.KDocArguments
+import java.io.File
+import java.util.List
 
 /** Base class for any compiler plugin which needs to process a KModel */
 abstract class KModelCompilerPlugin(
@@ -16,7 +18,8 @@ abstract class KModelCompilerPlugin(
     public override fun processFiles(context: CompilerPluginContext) {
         val bindingContext = context.getContext()
         val sources = context.getFiles()
-        val model = KModel(bindingContext, arguments.apply(), sources.requireNoNulls())
+        val sourceDirs: List<File> = arguments.getSourceDirs().orEmpty().requireNoNulls().map { path -> File(path) }
+        val model = KModel(bindingContext, arguments.apply(), sourceDirs, sources.requireNoNulls())
 
         processModel(model)
     }
