@@ -75,4 +75,25 @@ public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements Psi
     public String getName() {
         return StringRef.toString(name);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("PsiJetPropertyStubImpl[");
+
+        builder.append(isVar() ? "var " : "val ");
+
+        if (isLocal()) {
+            builder.append("local ");
+        }
+
+        builder.append("name=").append(getName());
+        builder.append(" typeText=").append(getTypeText());
+        builder.append(" bodyText=").append(getInferenceBodyText());
+
+        builder.append("]");
+
+        return builder.toString();
+    }
 }

@@ -62,6 +62,11 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
     }
 
     @Override
+    public boolean shouldCreateStub(ASTNode node) {
+        return node.getElementType() == JetStubElementTypes.VALUE_PARAMETER;
+    }
+
+    @Override
     public void serialize(PsiJetParameterStub stub, StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
         dataStream.writeBoolean(stub.isMutable());

@@ -98,6 +98,25 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
                     "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
     }
 
+    public void testNotStorePropertiesFrom() {
+        doBuildTest("class Test() {\n" +
+                    "    val test = 12;\n" +
+                    "    {\n" +
+                    "        for (i in 0..12) {\n" +
+                    "        }\n" +
+                    "    }\n" +
+                    "    fun more() {\n" +
+                    "    }\n" +
+                    "}\n",
+                    "PsiJetFileStubImpl[package=]\n" +
+                    "  CLASS:PsiJetClassStubImpl[name=Test fqn=Test superNames=[]]\n" +
+                    "    TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n" +
+                    "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n" +
+                    "    PROPERTY:PsiJetPropertyStubImpl[val name=test typeText=null bodyText=12]\n" +
+                    "    FUN:PsiJetFunctionStubImpl[name=more]\n" +
+                    "      VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
+    }
+
     public void testSimpleEnumBuild() {
         doBuildTest("enum class Test { First\n Second\n }",
                     "PsiJetFileStubImpl[package=]\n" +
