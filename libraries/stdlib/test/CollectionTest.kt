@@ -337,15 +337,21 @@ class CollectionTest {
         expect(arrayList(2, 3, 1)) { iterable }
     }
 
-    test fun sort() {
-        val coll: List<String> = arrayList("foo", "bar", "abc")
-
-        // TODO fixme
-        // Some sort of in/out variance thing - or an issue with Java interop?
-        //coll.sort()
+    test fun sortFunctionShouldReturnSortedCopyForList() {
+        // TODO fixme Some sort of in/out variance thing - or an issue with Java interop?
         todo {
-            assertEquals(3, coll.size)
-            assertEquals(arrayList("abc", "bar", "foo"), coll)
+//            val list : List<Int> = arrayList<Int>(2, 3, 1)
+//            expect(arrayList(1, 2, 3)) { list.sort() }
+//            expect(arrayList(2, 3, 1)) { list }
+        }
+    }
+
+    test fun sortFunctionShouldReturnSortedCopyForIterable() {
+        // TODO fixme Some sort of in/out variance thing - or an issue with Java interop?
+        todo {
+//        val list : java.lang.Iterable<Int> = arrayList(2, 3, 1)
+//        expect(arrayList(1, 2, 3)) { list.sort() }
+//        expect(arrayList(2, 3, 1)) { list }
         }
     }
 

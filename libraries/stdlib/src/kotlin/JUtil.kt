@@ -40,17 +40,6 @@ public inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.toSorted
 
 // List APIs
 
-
-public inline fun <in T: java.lang.Comparable<T>> List<T>.sort() : List<T> {
-  Collections.sort(this)
-  return this
-}
-
-public inline fun <in T> List<T>.sort(comparator: java.util.Comparator<T>) : List<T> {
-  Collections.sort(this, comparator)
-  return this
-}
-
 /** Returns the List if its not null otherwise returns the empty list */
 public inline fun <T> java.util.List<T>?.orEmpty() : java.util.List<T>
     = if (this != null) this else Collections.emptyList<T>() as java.util.List<T>
