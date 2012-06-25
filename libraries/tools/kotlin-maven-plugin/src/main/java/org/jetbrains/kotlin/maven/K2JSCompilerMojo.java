@@ -85,13 +85,22 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (appendLibraryJS != null && appendLibraryJS.booleanValue()) {
-            getLog().info("Appending Kotlin Library JS to the generated file " + outputFile);
-
-            appendFile(KOTLIN_JS_LIB_ECMA3);
-            appendFile(KOTLIN_JS_LIB);
-        }
         super.execute();
+        if (appendLibraryJS != null && appendLibraryJS.booleanValue()) {
+            try {
+                Charset charset = Charset.defaultCharset();
+                File file = new File(outputFile);
+                String text = Files.toString(file, charset);
+                StringBuilder builder = new StringBuilder();
+                appendFile(KOTLIN_JS_LIB_ECMA3, builder);
+                appendFile(KOTLIN_JS_LIB, builder);
+                builder.append("\n");
+                builder.append(text);
+                Files.write(builder.toString(), file, charset);
+            } catch (IOException e) {
+                throw new MojoExecutionException(e.getMessage(), e);
+            }
+        }
         if (copyLibraryJS != null && copyLibraryJS.booleanValue()) {
             getLog().info("Copying kotlin JS library to " + outputKotlinJSDir);
 
@@ -101,7 +110,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
         }
     }
 
-    protected void appendFile(String jsLib) throws MojoExecutionException {
+    protected void appendFile(String jsLib, StringBuilder builder) throws MojoExecutionException {
         // lets copy the kotlin library into the output directory
         try {
             final InputStream inputStream = MetaInfServices.loadClasspathResource(jsLib);
@@ -115,8 +124,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
                     }
                 };
                 String text = "\n" + FileUtil.loadTextAndClose(inputStream);
-                Charset charset = Charset.defaultCharset();
-                Files.append(text, new File(outputFile), charset);
+                builder.append(text);
             }
         } catch (IOException e) {
             throw new MojoExecutionException(e.getMessage(), e);
