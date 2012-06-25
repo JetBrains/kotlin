@@ -32,7 +32,7 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet
         docOutputRoot = File(docOutputDir)
     }
 
-    private val srcOutputRoot = File(docOutputRoot, "src")
+    private val srcOutputRoot = File(docOutputRoot, "src-html")
 
     private val sourceDirs: List<File> =
         compilerArguments

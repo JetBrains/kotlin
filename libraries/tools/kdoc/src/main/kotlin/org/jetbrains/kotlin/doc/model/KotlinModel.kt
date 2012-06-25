@@ -4,6 +4,7 @@ import kotlin.*
 import kotlin.util.*
 
 import org.jetbrains.kotlin.doc.KDocConfig
+import org.jetbrains.kotlin.doc.*
 import org.jetbrains.kotlin.doc.highlighter.SyntaxHighligher
 
 import java.util.*
@@ -212,6 +213,37 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
 
     private val readMeDirsScanned = HashSet<String>()
 
+
+
+    val sourcesInfo: List<SourceInfo>
+    ;{
+
+        val normalizedSourceDirs: List<String> =
+        sourceDirs.map { file -> file.getCanonicalPath()!! }
+
+        private fun relativePath(psiFile: PsiFile): String {
+            val file = File((psiFile.getVirtualFile() as CoreLocalVirtualFile).getPath()).getCanonicalFile()!!
+            val filePath = file.getPath()!!
+            for (sourceDirPath in normalizedSourceDirs) {
+                if (filePath.startsWith(sourceDirPath) && filePath.length() > sourceDirPath.length()) {
+                    return filePath.substring(sourceDirPath.length + 1)
+                }
+            }
+            throw Exception("$file is not a child of any source roots $normalizedSourceDirs")
+        }
+
+        sourcesInfo = sources.map { source ->
+            val relativePath = relativePath(source)
+            val htmlPath = relativePath.replaceFirst("\\.kt$", "") + ".html"
+            SourceInfo(source, relativePath, htmlPath)
+        }
+    }
+
+    private val sourceInfoByFile = sourcesInfo.toHashMapMappingToKey<JetFile, SourceInfo> { sourceInfo -> sourceInfo.psi }
+
+    fun sourceInfoByFile(file: JetFile) = sourceInfoByFile.get(file)!!
+
+
     ;{
         /** Loads the model from the given set of source files */
         val allNamespaces = HashSet<NamespaceDescriptor>()
@@ -241,29 +273,6 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
     }
 
 
-    val sourcesInfo: List<SourceInfo>
-    ;{
-
-        val normalizedSourceDirs: List<String> =
-            sourceDirs.map { file -> file.getCanonicalPath()!! }
-
-        private fun relativePath(psiFile: PsiFile): String {
-            val file = File((psiFile.getVirtualFile() as CoreLocalVirtualFile).getPath()).getCanonicalFile()!!
-            val filePath = file.getPath()!!
-            for (sourceDirPath in normalizedSourceDirs) {
-                if (filePath.startsWith(sourceDirPath) && filePath.length() > sourceDirPath.length()) {
-                    return filePath.substring(sourceDirPath.length + 1)
-                }
-            }
-            throw Exception("$file is not a child of any source roots $normalizedSourceDirs")
-        }
-
-        sourcesInfo = sources.map { source ->
-            val relativePath = relativePath(source)
-            val htmlPath = relativePath.replaceFirst("\\.kt$", "") + ".html"
-            SourceInfo(source, relativePath, htmlPath)
-        }
-    }
 
 
     /**
@@ -492,7 +501,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
     }
 
 
-    protected fun getPsiElement(descriptor: DeclarationDescriptor): PsiElement? {
+    fun getPsiElement(descriptor: DeclarationDescriptor): PsiElement? {
         return try {
             BindingContextUtils.descriptorToDeclaration(context, descriptor)
         } catch (e: Throwable) {
@@ -963,7 +972,10 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
         var created = false
         val klass = classMap.getOrPut(name) {
             created = true
-            KClass(this, descriptor)
+            val psiFile = model.getPsiElement(descriptor)?.getContainingFile()
+            val jetFile = psiFile as? JetFile
+            val sourceInfo = if (jetFile != null) model.sourceInfoByFile(jetFile) else null
+            KClass(this, descriptor, sourceInfo)
         }
         if (created) {
             // sometimes we may have source files for a package in different source directories
@@ -1068,7 +1080,8 @@ class KType(val jetType: JetType, model: KModel, val klass: KClass?, val argumen
 
 class KClass(
         val pkg: KPackage,
-        val descriptor: ClassDescriptor)
+        val descriptor: ClassDescriptor,
+        val sourceInfo: SourceInfo?)
     : KClassOrPackage(pkg.model, descriptor), Comparable<KClass>
 {
     val simpleName = descriptor.getName().getName()

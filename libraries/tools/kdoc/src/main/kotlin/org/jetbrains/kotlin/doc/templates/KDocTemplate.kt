@@ -72,8 +72,8 @@ abstract class KDocTemplate() : TextTemplate() {
             return klass.sourceLink()
         } else {
             val pkg = klass.pkg
-            return if (!pkg.useExternalLink) {
-                "${pkg.nameAsRelativePath}src-html/${klass.nameAsPath}.html#line.${klass.sourceLine}"
+            return if (klass.sourceInfo != null) {
+                "${pkg.nameAsRelativePath}src-html/${klass.sourceInfo.htmlPath}.html#line.${klass.sourceLine}"
             } else {
                 href(klass)
             }
@@ -86,8 +86,8 @@ abstract class KDocTemplate() : TextTemplate() {
             val owner = f.owner
             return if (owner is KClass) {
                 val pkg = owner.pkg
-                if (!pkg.useExternalLink) {
-                    "${rootHref(pkg)}src-html/${owner.simpleName}.html#line.${f.sourceLine}"
+                if (owner.sourceInfo != null) {
+                    "${rootHref(pkg)}src-html/${owner.sourceInfo.htmlPath}.html#line.${f.sourceLine}"
                 } else {
                     href(f)
                 }
@@ -109,8 +109,8 @@ abstract class KDocTemplate() : TextTemplate() {
             val owner = f.owner
             return if (owner is KClass) {
                 val pkg = owner.pkg
-                if (!pkg.useExternalLink) {
-                    "${rootHref(pkg)}src-html/${owner.simpleName}.html#line.${f.sourceLine}"
+                if (owner.sourceInfo != null) {
+                    "${rootHref(pkg)}src-html/${owner.sourceInfo.htmlPath}#line.${f.sourceLine}"
                 } else {
                     href(f)
                 }
