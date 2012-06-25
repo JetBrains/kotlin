@@ -25,6 +25,7 @@ public interface JetStubElementTypes {
     JetClassElementType CLASS = new JetClassElementType("CLASS");
     JetFunctionElementType FUNCTION = new JetFunctionElementType("FUN");
     JetPropertyElementType PROPERTY = new JetPropertyElementType("PROPERTY");
+    JetClassElementType ENUM_ENTRY = new JetClassElementType("ENUM_ENTRY");
 
     JetParameterElementType VALUE_PARAMETER = new JetParameterElementType("VALUE_PARAMETER");
     JetParameterListElementType VALUE_PARAMETER_LIST = new JetParameterListElementType("VALUE_PARAMETER_LIST");

@@ -34,11 +34,11 @@ import java.util.List;
  * @author Nikolay Krasko
  */
 public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetClassStub {
-
     private final StringRef qualifiedName;
     private final StringRef name;
     private final StringRef[] superNames;
     private final boolean isTrait;
+    private final boolean isEnumEntry;
 
     public PsiJetClassStubImpl(
             JetClassElementType type,
@@ -46,8 +46,25 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
             @Nullable final String qualifiedName,
             String name,
             List<String> superNames,
-            boolean isTrait) {
-        this(type, parent, StringRef.fromString(qualifiedName), StringRef.fromString(name), wrapStrings(superNames), isTrait);
+            boolean isTrait, boolean isEnumEntry) {
+        this(type, parent, StringRef.fromString(qualifiedName), StringRef.fromString(name), wrapStrings(superNames),
+             isTrait, isEnumEntry);
+    }
+
+    public PsiJetClassStubImpl(
+            JetClassElementType type,
+            StubElement parent,
+            StringRef qualifiedName,
+            StringRef name,
+            StringRef[] superNames,
+            boolean isTrait, boolean isEnumEntry
+    ) {
+        super(parent, type);
+        this.qualifiedName = qualifiedName;
+        this.name = name;
+        this.superNames = superNames;
+        this.isTrait = isTrait;
+        this.isEnumEntry = isEnumEntry;
     }
 
     private static StringRef[] wrapStrings(List<String> names) {
@@ -58,21 +75,6 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
         return refs;
     }
 
-    public PsiJetClassStubImpl(
-            JetClassElementType type,
-            StubElement parent,
-            StringRef qualifiedName,
-            StringRef name,
-            StringRef[] superNames,
-            boolean isTrait) {
-
-        super(parent, type);
-        this.qualifiedName = qualifiedName;
-        this.name = name;
-        this.superNames = superNames;
-        this.isTrait = isTrait;
-    }
-
     @Override
     public String getQualifiedName() {
         return StringRef.toString(qualifiedName);
@@ -81,6 +83,11 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     @Override
     public boolean isTrait() {
         return isTrait;
+    }
+
+    @Override
+    public boolean isEnumEntry() {
+        return isEnumEntry;
     }
 
     @Override
@@ -102,6 +109,10 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("PsiJetClassStubImpl[");
+
+        if (isEnumEntry()) {
+            builder.append("enumEntry ");
+        }
 
         if (isTrait()) {
             builder.append("trait ");

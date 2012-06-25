@@ -34,6 +34,8 @@ public interface PsiJetClassStub extends NamedStub<JetClass> {
 
     boolean isTrait();
 
+    boolean isEnumEntry();
+
     @NotNull
     List<String> getSuperNames();
 }

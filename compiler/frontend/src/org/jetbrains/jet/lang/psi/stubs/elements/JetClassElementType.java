@@ -25,6 +25,7 @@ import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetEnumEntry;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetClassStubImpl;
@@ -44,19 +45,20 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
 
     @Override
     public JetClass createPsi(@NotNull PsiJetClassStub stub) {
-        return new JetClass(stub);
+        return !stub.isEnumEntry() ? new JetClass(stub) : new JetEnumEntry(stub);
     }
 
     @Override
     public JetClass createPsiFromAst(@NotNull ASTNode node) {
-        return new JetClass(node);
+        return node.getElementType() != JetStubElementTypes.ENUM_ENTRY ? new JetClass(node) : new JetEnumEntry(node);
     }
 
     @Override
     public PsiJetClassStub createStub(@NotNull JetClass psi, StubElement parentStub) {
         FqName fqName = JetPsiUtil.getFQName(psi);
-        return new PsiJetClassStubImpl(JetStubElementTypes.CLASS, parentStub, fqName != null ? fqName.getFqName() : null, psi.getName(),
-                                       psi.getSuperNames(), psi.isTrait());
+        boolean isEnumEntry = psi instanceof JetEnumEntry;
+        return new PsiJetClassStubImpl(getStubType(isEnumEntry), parentStub, fqName != null ? fqName.getFqName() : null, psi.getName(),
+                                       psi.getSuperNames(), psi.isTrait(), isEnumEntry);
     }
 
     @Override
@@ -64,6 +66,7 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
         dataStream.writeName(stub.getName());
         dataStream.writeName(stub.getQualifiedName());
         dataStream.writeBoolean(stub.isTrait());
+        dataStream.writeBoolean(stub.isEnumEntry());
 
         List<String> superNames = stub.getSuperNames();
         dataStream.writeVarInt(superNames.size());
@@ -77,6 +80,7 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
         StringRef name = dataStream.readName();
         StringRef qualifiedName = dataStream.readName();
         boolean isTrait = dataStream.readBoolean();
+        boolean isEnumEntry = dataStream.readBoolean();
 
         int superCount = dataStream.readVarInt();
         StringRef[] superNames = StringRef.createArray(superCount);
@@ -84,11 +88,15 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
             superNames[i] = dataStream.readName();
         }
 
-        return new PsiJetClassStubImpl(JetStubElementTypes.CLASS, parentStub, qualifiedName, name, superNames, isTrait);
+        return new PsiJetClassStubImpl(getStubType(isEnumEntry), parentStub, qualifiedName, name, superNames, isTrait, isEnumEntry);
     }
 
     @Override
     public void indexStub(PsiJetClassStub stub, IndexSink sink) {
         StubIndexServiceFactory.getInstance().indexClass(stub, sink);
+    }
+
+    private static JetClassElementType getStubType(boolean isEnumEntry) {
+        return isEnumEntry ? JetStubElementTypes.ENUM_ENTRY : JetStubElementTypes.CLASS;
     }
 }

@@ -38,7 +38,7 @@ public interface JetNodeTypes {
 
     JetNodeType CLASS_OBJECT          = new JetNodeType("CLASS_OBJECT", JetClassObject.class);
     JetNodeType CONSTRUCTOR           = new JetNodeType("CONSTRUCTOR", JetSecondaryConstructor.class);
-    JetNodeType ENUM_ENTRY            = new JetNodeType("ENUM_ENTRY", JetEnumEntry.class);
+    IElementType ENUM_ENTRY            = JetStubElementTypes.ENUM_ENTRY;
     JetNodeType ANONYMOUS_INITIALIZER = new JetNodeType("ANONYMOUS_INITIALIZER", JetClassInitializer.class);
 
     IElementType TYPE_PARAMETER_LIST                 = JetStubElementTypes.TYPE_PARAMETER_LIST;
