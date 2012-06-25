@@ -246,6 +246,12 @@ public class NamespaceComparator {
                 case ANNOTATION_CLASS:
                     sb.append("annotation class");
                     break;
+                case ENUM_CLASS:
+                    sb.append("enum class");
+                    break;
+                case ENUM_ENTRY:
+                    sb.append("enum entry");
+                    break;
                 default:
                     throw new IllegalStateException("unknown class kind: " + kind);
             }
@@ -295,7 +301,13 @@ public class NamespaceComparator {
             sb.append("(");
             new TypeSerializer(sb).serializeCommaSeparated(fun.getValueParameters());
             sb.append("): ");
-            new TypeSerializer(sb).serialize(fun.getReturnType());
+            JetType returnType = fun.getReturnType();
+            if (returnType == null) {
+                throw new IllegalStateException("No return type for " + fun);
+            }
+            else {
+                new TypeSerializer(sb).serialize(returnType);
+            }
         }
 
         public void serialize(ExtensionReceiver extensionReceiver) {
