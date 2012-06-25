@@ -245,7 +245,8 @@ public inline fun <C: Collection<Boolean>> BooleanArray.toCollection(result: C) 
  */
 public inline fun BooleanArray.reverse() : List<Boolean> {
     val list = toList()
-    return list.reverse()
+    Collections.reverse(list)
+    return list
 }
 
 /** Copies all elements into a [[LinkedList]]  */

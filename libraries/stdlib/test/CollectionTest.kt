@@ -325,6 +325,18 @@ class CollectionTest {
         assertEquals(arrayList("bar", "foo"), rev)
     }
 
+    test fun reverseFunctionShouldReturnSortedCopyForList() {
+        val list : List<Int> = arrayList(2, 3, 1)
+        expect(arrayList(1, 3, 2)) { list.reverse() }
+        expect(arrayList(2, 3, 1)) { list }
+    }
+
+    test fun reverseFunctionShouldReturnSortedCopyForIterable() {
+        val iterable : java.lang.Iterable<Int> = arrayList(2, 3, 1)
+        expect(arrayList(1, 3, 2)) { iterable.reverse() }
+        expect(arrayList(2, 3, 1)) { iterable }
+    }
+
     test fun sort() {
         val coll: List<String> = arrayList("foo", "bar", "abc")
 
@@ -334,7 +346,6 @@ class CollectionTest {
         todo {
             assertEquals(3, coll.size)
             assertEquals(arrayList("abc", "bar", "foo"), coll)
-
         }
     }
 
@@ -444,7 +455,6 @@ class CollectionTest {
         //    assertTrue(IterableWrapper(hashSet(45, 14, 13)).contains(14))
         //    assertFalse(IterableWrapper(linkedList<Int>()).contains(15))
     }
-
 
     class IterableWrapper<T>(collection : java.lang.Iterable<T>) : java.lang.Iterable<T> {
         private val collection = collection

@@ -245,7 +245,8 @@ public inline fun <C: Collection<Float>> FloatArray.toCollection(result: C) : C 
  */
 public inline fun FloatArray.reverse() : List<Float> {
     val list = toList()
-    return list.reverse()
+    Collections.reverse(list)
+    return list
 }
 
 /** Copies all elements into a [[LinkedList]]  */

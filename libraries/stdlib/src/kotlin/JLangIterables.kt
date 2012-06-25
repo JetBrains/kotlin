@@ -235,7 +235,8 @@ public inline fun <in T, C: Collection<in T>> java.lang.Iterable<T>.toCollection
  */
 public inline fun <T> java.lang.Iterable<T>.reverse() : List<T> {
     val list = toList()
-    return list.reverse()
+    Collections.reverse(list)
+    return list
 }
 
 /** Copies all elements into a [[LinkedList]]  */

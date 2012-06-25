@@ -40,15 +40,6 @@ public inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.toSorted
 
 // List APIs
 
-/**
- * Reverses the order the elements into a list
- *
- * @includeFunctionBody ../../test/CollectionTest.kt reverse
- */
-public inline fun <T> List<T>.reverse() : List<T> {
-    Collections.reverse(this)
-    return this
-}
 
 public inline fun <in T: java.lang.Comparable<T>> List<T>.sort() : List<T> {
   Collections.sort(this)

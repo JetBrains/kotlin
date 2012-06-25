@@ -245,7 +245,8 @@ public inline fun <C: Collection<Double>> DoubleArray.toCollection(result: C) : 
  */
 public inline fun DoubleArray.reverse() : List<Double> {
     val list = toList()
-    return list.reverse()
+    Collections.reverse(list)
+    return list
 }
 
 /** Copies all elements into a [[LinkedList]]  */

@@ -88,4 +88,15 @@ class ArraysTest {
         }
     }
 
+    test fun reverse() {
+        expect(arrayList(3, 2, 1)) { intArray(1, 2, 3).reverse() }
+        expect(arrayList<Byte>(3, 2, 1)) { byteArray(1, 2, 3).reverse() }
+        expect(arrayList<Short>(3, 2, 1)) { shortArray(1, 2, 3).reverse() }
+        expect(arrayList<Long>(3, 2, 1)) { longArray(1, 2, 3).reverse() }
+        expect(arrayList(3.toFloat(), 2.toFloat(), 1.toFloat())) { floatArray(1.toFloat(), 2.toFloat(), 3.toFloat()).reverse() }
+        expect(arrayList(3.0, 2.0, 1.0)) { doubleArray(1.0, 2.0, 3.0).reverse() }
+        expect(arrayList('3', '2', '1')) { charArray('1', '2', '3').reverse() }
+        expect(arrayList(false, false, true)) { booleanArray(true, false, false).reverse() }
+    }
+
 }
