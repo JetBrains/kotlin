@@ -50,6 +50,7 @@
                                         <exclude name="**/*JVM.kt"/>
                                     </fileset>
                                     <fileset dir="${basedir}/../../stdlib/test">
+                                        <include name="ListTest.kt"/>
                                         <include name="StringTest.kt"/>
                                     </fileset>
                                 </copy>
