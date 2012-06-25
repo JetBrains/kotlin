@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.doc.Doclet
 import org.jetbrains.kotlin.doc.model.KModel
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.kotlin.doc.model.SourceInfo
+import org.jetbrains.kotlin.doc.*
 
 
 class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet {
@@ -32,7 +33,7 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet
         docOutputRoot = File(docOutputDir)
     }
 
-    private val srcOutputRoot = File(docOutputRoot, "src-html")
+    private val srcOutputRoot = File(docOutputRoot, names.htmlSourceDirName)
 
     private val sourceDirs: List<File> =
         compilerArguments

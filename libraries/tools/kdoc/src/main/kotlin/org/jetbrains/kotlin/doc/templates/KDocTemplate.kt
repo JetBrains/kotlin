@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.doc.model.KAnnotation
 import org.jetbrains.kotlin.doc.model.KPackage
 import org.jetbrains.kotlin.template.TextTemplate
 import org.jetbrains.kotlin.doc.model.KFunction
+import org.jetbrains.kotlin.doc.*
 import java.util.Collection
 import org.jetbrains.kotlin.doc.model.KProperty
 import org.jetbrains.kotlin.doc.model.KType
@@ -73,7 +74,7 @@ abstract class KDocTemplate() : TextTemplate() {
         } else {
             val pkg = klass.pkg
             return if (klass.sourceInfo != null) {
-                "${pkg.nameAsRelativePath}src-html/${klass.sourceInfo.htmlPath}.html#line.${klass.sourceLine}"
+                "${pkg.nameAsRelativePath}${names.htmlSourceDirName}/${klass.sourceInfo.htmlPath}.html#${names.lineNumberLinkHref(klass.sourceLine)}"
             } else {
                 href(klass)
             }
@@ -87,14 +88,14 @@ abstract class KDocTemplate() : TextTemplate() {
             return if (owner is KClass) {
                 val pkg = owner.pkg
                 if (owner.sourceInfo != null) {
-                    "${rootHref(pkg)}src-html/${owner.sourceInfo.htmlPath}.html#line.${f.sourceLine}"
+                    "${rootHref(pkg)}${names.htmlSourceDirName}/${owner.sourceInfo.htmlPath}.html#${names.lineNumberLinkHref(f.sourceLine)}"
                 } else {
                     href(f)
                 }
             } else if (owner is KPackage) {
                 if (!owner.useExternalLink) {
                     // TODO how to find the function in a package???
-                    "${rootHref(owner)}src-html/namespace.html#line.${f.sourceLine}"
+                    "${rootHref(owner)}${names.htmlSourceDirName}/namespace.html#${names.lineNumberLinkHref(f.sourceLine)}"
                 } else {
                     href(owner)
                 }
@@ -110,14 +111,14 @@ abstract class KDocTemplate() : TextTemplate() {
             return if (owner is KClass) {
                 val pkg = owner.pkg
                 if (owner.sourceInfo != null) {
-                    "${rootHref(pkg)}src-html/${owner.sourceInfo.htmlPath}#line.${f.sourceLine}"
+                    "${rootHref(pkg)}${names.htmlSourceDirName}/${owner.sourceInfo.htmlPath}#${names.lineNumberLinkHref(f.sourceLine)}"
                 } else {
                     href(f)
                 }
             } else if (owner is KPackage) {
                 if (!owner.useExternalLink) {
                     // TODO how to find the function in a package???
-                    "${rootHref(owner)}src-html/namespace.html#line.${f.sourceLine}"
+                    "${rootHref(owner)}${names.htmlSourceDirName}/namespace.html#${names.lineNumberLinkHref(f.sourceLine)}"
                 } else {
                     href(owner)
                 }
