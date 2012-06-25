@@ -43,13 +43,12 @@
                                         <include name="**/*.kt"/>
                                         <exclude name="**/*JVM.kt"/>
                                     </fileset>
-<!--
                                     <fileset dir="${basedir}/../../stdlib/test/dom">
                                         <include name="**/*.kt"/>
                                         <exclude name="**/DomBuilderTest.kt"/>
+                                        <exclude name="**/NextSiblingTest.kt"/>
                                         <exclude name="**/*JVM.kt"/>
                                     </fileset>
--->
                                     <fileset dir="${basedir}/../../stdlib/test">
                                         <include name="StringTest.kt"/>
                                     </fileset>
