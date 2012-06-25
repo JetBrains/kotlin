@@ -87,7 +87,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         Modality defaultModality = kind == ClassKind.TRAIT ? Modality.ABSTRACT : Modality.FINAL;
         JetModifierList modifierList = classLikeInfo.getModifierList();
         this.modality = DescriptorResolver.resolveModalityFromModifiers(modifierList, defaultModality);
-        this.visibility = DescriptorResolver.resolveVisibilityFromModifiers(modifierList);
+        this.visibility = DescriptorResolver.resolveVisibilityFromModifiers(modifierList, Visibilities.INTERNAL);
     }
 
     @Override

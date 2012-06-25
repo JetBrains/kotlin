@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.collect.Lists;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -25,10 +26,7 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -92,6 +90,20 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
     }
 
+    @NotNull
+    @Override
+    public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
+        // TODO: this should be handled by lazy function descriptors
+        Set<FunctionDescriptor> functions = super.getFunctions(name);
+        for (FunctionDescriptor functionDescriptor : functions) {
+            if (functionDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue;
+            PsiElement element =
+                    BindingContextUtils.callableDescriptorToDeclaration(resolveSession.getTrace().getBindingContext(), functionDescriptor);
+            OverrideResolver.resolveUnknownVisibilityForMember((JetDeclaration) element, functionDescriptor, resolveSession.getTrace());
+        }
+        return functions;
+    }
+
     @Override
     protected void getNonDeclaredFunctions(@NotNull Name name, @NotNull final Set<FunctionDescriptor> result) {
         Collection<FunctionDescriptor> fromSupertypes = Lists.newArrayList();
@@ -99,6 +111,21 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             fromSupertypes.addAll(supertype.getMemberScope().getFunctions(name));
         }
         generateFakeOverrides(name, fromSupertypes, result, FunctionDescriptor.class);
+    }
+
+    @NotNull
+    @Override
+    public Set<VariableDescriptor> getProperties(@NotNull Name name) {
+        // TODO: this should be handled by lazy property descriptors
+        Set<VariableDescriptor> properties = super.getProperties(name);
+        for (VariableDescriptor variableDescriptor : properties) {
+            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
+            if (propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue;
+            PsiElement element =
+                    BindingContextUtils.callableDescriptorToDeclaration(resolveSession.getTrace().getBindingContext(), propertyDescriptor);
+            OverrideResolver.resolveUnknownVisibilityForMember((JetDeclaration) element, propertyDescriptor, resolveSession.getTrace());
+        }
+        return properties;
     }
 
     @Override

@@ -73,6 +73,11 @@ public class LazyResolveDescriptorRendererTestGenerated {
             doTest("compiler/testData/renderer/TupleTypes.kt");
         }
         
+        @Test
+        public void testInheritedMembersVisibility() throws Exception {
+            doTest("compiler/testData/renderer/InheritedMembersVisibility.kt");
+        }
+
         public static void allTestsPresent(Class<?> clazz, File testDataDir, boolean recursive) {
             Set<String> methodNames = new HashSet<String>();
             for (Method method : clazz.getDeclaredMethods()) {

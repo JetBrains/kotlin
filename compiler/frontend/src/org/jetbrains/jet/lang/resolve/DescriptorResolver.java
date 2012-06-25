@@ -753,13 +753,13 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public static Visibility resolveVisibilityFromModifiers(@Nullable JetModifierList modifierList) {
+    /*package*/ static Visibility resolveVisibilityFromModifiers(@Nullable JetModifierList modifierList) {
         Visibility defaultVisibility = modifierList != null && modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD) ? Visibilities.INHERITED : Visibilities.INTERNAL;
         return resolveVisibilityFromModifiers(modifierList, defaultVisibility);
     }
 
     @NotNull
-    /*package*/ static Visibility resolveVisibilityFromModifiers(@Nullable JetModifierList modifierList, @NotNull Visibility defaultVisibility) {
+    public static Visibility resolveVisibilityFromModifiers(@Nullable JetModifierList modifierList, @NotNull Visibility defaultVisibility) {
         if (modifierList == null) return defaultVisibility;
         if (modifierList.hasModifier(JetTokens.PRIVATE_KEYWORD)) return Visibilities.PRIVATE;
         if (modifierList.hasModifier(JetTokens.PUBLIC_KEYWORD)) return Visibilities.PUBLIC;

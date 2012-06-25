@@ -165,7 +165,7 @@ public class OverrideResolver {
                     declaration = (JetDeclaration) element;
                 }
             }
-            resolveUnknownVisibilityForMember(declaration, memberDescriptor);
+            resolveUnknownVisibilityForMember(declaration, memberDescriptor, trace);
         }
     }
 
@@ -519,8 +519,8 @@ public class OverrideResolver {
         return false;
     }
 
-    private void resolveUnknownVisibilityForMember(@Nullable JetDeclaration member, @NotNull CallableMemberDescriptor memberDescriptor) {
-        resolveUnknownVisibilityForOverriddenDescriptors(memberDescriptor.getOverriddenDescriptors());
+    public static void resolveUnknownVisibilityForMember(@Nullable JetDeclaration member, @NotNull CallableMemberDescriptor memberDescriptor, @NotNull BindingTrace trace) {
+        resolveUnknownVisibilityForOverriddenDescriptors(memberDescriptor.getOverriddenDescriptors(), trace);
         if (memberDescriptor.getVisibility() != Visibilities.INHERITED) {
             return;
         }
@@ -536,7 +536,7 @@ public class OverrideResolver {
         if (memberDescriptor instanceof PropertyDescriptor) {
             ((PropertyDescriptor)memberDescriptor).setVisibility(visibility);
             for (PropertyAccessorDescriptor accessor : ((PropertyDescriptor) memberDescriptor).getAccessors()) {
-                resolveUnknownVisibilityForMember(null, accessor);
+                resolveUnknownVisibilityForMember(null, accessor, trace);
             }
         }
         else if (memberDescriptor instanceof FunctionDescriptorImpl) {
@@ -548,18 +548,18 @@ public class OverrideResolver {
         }
     }
 
-    private void resolveUnknownVisibilityForOverriddenDescriptors(@NotNull Collection<? extends CallableMemberDescriptor> descriptors) {
+    private static void resolveUnknownVisibilityForOverriddenDescriptors(@NotNull Collection<? extends CallableMemberDescriptor> descriptors, @NotNull BindingTrace trace) {
         for (CallableMemberDescriptor descriptor : descriptors) {
             if (descriptor.getVisibility() == Visibilities.INHERITED) {
                 PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), descriptor);
                 JetDeclaration declaration = (element instanceof JetDeclaration) ? (JetDeclaration) element : null;
-                resolveUnknownVisibilityForMember(declaration, descriptor);
+                resolveUnknownVisibilityForMember(declaration, descriptor, trace);
             }
         }
     }
 
     @Nullable
-    private Visibility findMaxVisibility(@NotNull Collection<? extends CallableMemberDescriptor> descriptors) {
+    private static Visibility findMaxVisibility(@NotNull Collection<? extends CallableMemberDescriptor> descriptors) {
         if (descriptors.isEmpty()) {
             return Visibilities.INTERNAL;
         }

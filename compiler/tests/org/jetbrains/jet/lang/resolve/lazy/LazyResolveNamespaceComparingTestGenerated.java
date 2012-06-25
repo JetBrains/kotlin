@@ -541,14 +541,12 @@ public class LazyResolveNamespaceComparingTestGenerated {
 
         @Test
         public void testOverrideClassVal() throws Exception {
-            //TODO Disabled until lazy resolve supports inherited visibility (KT-2285)
-            //doTestSinglePackage("compiler/testData/readKotlinBinaryClass/prop/OverrideClassVal.kt");
+            doTestSinglePackage("compiler/testData/readKotlinBinaryClass/prop/OverrideClassVal.kt");
         }
 
         @Test
         public void testOverrideTraitVal() throws Exception {
-            //TODO Disabled until lazy resolve supports inherited visibility (KT-2285)
-            //doTestSinglePackage("compiler/testData/readKotlinBinaryClass/prop/OverrideTraitVal.kt");
+            doTestSinglePackage("compiler/testData/readKotlinBinaryClass/prop/OverrideTraitVal.kt");
         }
         
         @Test
@@ -698,8 +696,7 @@ public class LazyResolveNamespaceComparingTestGenerated {
 
         @Test
         public void testInternalAbstractTraitMembersOverridden() throws Exception {
-            //TODO Disabled until lazy resolve supports inherited visibility (KT-2285)
-            //doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/InternalAbstractTraitMembersOverridden.kt");
+            doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/InternalAbstractTraitMembersOverridden.kt");
         }
 
         @Test
@@ -858,8 +855,7 @@ public class LazyResolveNamespaceComparingTestGenerated {
 
         @Test
         public void testInnerClassesInGeneric() throws Exception {
-            //TODO Disabled until lazy resolve supports inherited visibility (KT-2285)
-            //doTestSinglePackage("compiler/testData/readJavaBinaryClass/InnerClassesInGeneric.kt");
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/InnerClassesInGeneric.kt");
         }
         
         @Test
@@ -1038,8 +1034,7 @@ public class LazyResolveNamespaceComparingTestGenerated {
 
         @Test
         public void testSimpleClass() throws Exception {
-            //TODO Disabled until lazy resolve supports inherited visibility (KT-2285)
-            //doTest("compiler/testData/lazyResolve/simpleClass.kt");
+            doTest("compiler/testData/lazyResolve/simpleClass.kt");
         }
         
         public static void allTestsPresent(Class<?> clazz, File testDataDir, boolean recursive) {
