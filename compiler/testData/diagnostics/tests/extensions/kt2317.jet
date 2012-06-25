@@ -1,0 +1,15 @@
+//KT-2317 Wrong UNNECESSARY_SAFE_CALL
+
+package kt2317
+
+fun Any?.baz() = 1
+
+fun foo(l: Long?) = l?.baz() // UNNECESSARY_SAFE_CALL is reported here
+
+
+fun Any?.bar(): Unit { }
+
+fun quux(x: Int?): Unit {
+	x?.baz()
+	x<!UNNECESSARY_SAFE_CALL!>?.<!>bar()
+}
