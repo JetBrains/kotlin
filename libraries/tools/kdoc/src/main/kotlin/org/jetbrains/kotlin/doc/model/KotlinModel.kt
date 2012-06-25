@@ -175,7 +175,7 @@ abstract class KClassOrPackage(model: KModel, declarationDescriptor: Declaration
     }
 }
 
-class KModel(var context: BindingContext, val config: KDocConfig) {
+class KModel(val context: BindingContext, val config: KDocConfig, private val sources: List<JetFile>) {
     // TODO generates java.lang.NoSuchMethodError: kotlin.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
     //val packages = sortedMap<String,KPackage>()
     public val packageMap: SortedMap<String, KPackage> = TreeMap<String, KPackage>()
@@ -208,35 +208,16 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
 
     private val readMeDirsScanned = HashSet<String>()
 
-    /**
-     * Returns the root project directory for calculating relative source links
-     */
-    fun projectRootDir(): String {
-        if (_projectRootDir == null) {
-            val rootDir = config.projectRootDir
-            _projectRootDir = if (rootDir == null) {
-                warning("KDocConfig does not have a projectRootDir defined so we cannot generate relative source Hrefs")
-                ""
-            } else {
-                File(rootDir).getCanonicalPath() ?: ""
-            }
-        }
-        return _projectRootDir ?: ""
-    }
-
-
-    /** Loads the model from the given set of source files */
-    fun load(sources: List<JetFile?>): Unit {
+    ;{
+        /** Loads the model from the given set of source files */
         val allNamespaces = HashSet<NamespaceDescriptor>()
         for (source in sources) {
-            if (source != null) {
-                // We retrieve a descriptor by a PSI element from the context
-                val namespaceDescriptor = BindingContextUtils.namespaceDescriptor(context, source)
-                if (namespaceDescriptor != null) {
-                    allNamespaces.add(namespaceDescriptor);
-                } else {
-                    warning("No NamespaceDescriptor for source $source")
-                }
+            // We retrieve a descriptor by a PSI element from the context
+            val namespaceDescriptor = BindingContextUtils.namespaceDescriptor(context, source)
+            if (namespaceDescriptor != null) {
+                allNamespaces.add(namespaceDescriptor);
+            } else {
+                warning("No NamespaceDescriptor for source $source")
             }
         }
         val allClasses = HashSet<KClass>()
@@ -254,6 +235,23 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             }
         }
     }
+
+    /**
+     * Returns the root project directory for calculating relative source links
+     */
+    fun projectRootDir(): String {
+        if (_projectRootDir == null) {
+            val rootDir = config.projectRootDir
+            _projectRootDir = if (rootDir == null) {
+                warning("KDocConfig does not have a projectRootDir defined so we cannot generate relative source Hrefs")
+                ""
+            } else {
+                File(rootDir).getCanonicalPath() ?: ""
+            }
+        }
+        return _projectRootDir ?: ""
+    }
+
 
     /* Returns the package for the given name or null if it does not exist */
     fun getPackage(name: String): KPackage? = packageMap.get(name)
@@ -1037,15 +1035,19 @@ class KType(val jetType: JetType, model: KModel, val klass: KClass?, val argumen
     get() = jetType.isNullable()
 }
 
-class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
-        val simpleName: String,
-        var group: String = "Other",
-        var annotations: List<KAnnotation> = arrayList<KAnnotation>(),
-        var typeParameters: List<KTypeParameter> = arrayList<KTypeParameter>(),
-        var since: String = "",
-        var authors: List<String> = arrayList<String>(),
-        var baseClasses: List<KType> = arrayList<KType>(),
-        var nestedClasses: List<KClass> = arrayList<KClass>()): KClassOrPackage(pkg.model, descriptor), Comparable<KClass> {
+class KClass(
+        val pkg: KPackage,
+        val descriptor: ClassDescriptor,
+        val simpleName: String)
+    : KClassOrPackage(pkg.model, descriptor), Comparable<KClass>
+{
+    var group: String = "Other"
+    var annotations: List<KAnnotation> = arrayList<KAnnotation>()
+    var typeParameters: List<KTypeParameter> = arrayList<KTypeParameter>()
+    var since: String = ""
+    var authors: List<String> = arrayList<String>()
+    var baseClasses: List<KType> = arrayList<KType>()
+    var nestedClasses: List<KClass> = arrayList<KClass>()
 
     public override fun compareTo(other: KClass): Int = name.compareTo(other.name)
 

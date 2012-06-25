@@ -3,22 +3,22 @@ package org.jetbrains.kotlin.doc.model
 import org.jetbrains.jet.cli.common.CompilerPlugin
 import org.jetbrains.jet.cli.common.CompilerPluginContext
 import org.jetbrains.kotlin.doc.KDocConfig
+import org.jetbrains.kotlin.doc.KDocArguments
 
 /** Base class for any compiler plugin which needs to process a KModel */
-abstract class KModelCompilerPlugin: CompilerPlugin {
-
-    public open var config: KDocConfig = KDocConfig()
+abstract class KModelCompilerPlugin(
+        // TODO: fix compiler and make protected
+        val arguments: KDocArguments)
+    : CompilerPlugin
+{
 
 
     public override fun processFiles(context: CompilerPluginContext) {
         val bindingContext = context.getContext()
         val sources = context.getFiles()
-        if (bindingContext != null && sources != null) {
-            val model = KModel(bindingContext, config)
-            model.load(sources)
+        val model = KModel(bindingContext, arguments.apply(), sources.requireNoNulls())
 
-            processModel(model)
-        }
+        processModel(model)
     }
 
     protected abstract fun processModel(model: KModel): Unit
