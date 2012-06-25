@@ -538,12 +538,12 @@ public class LazyResolveNamespaceComparingTestGenerated {
         public void testNsVar() throws Exception {
             doTestSinglePackage("compiler/testData/readKotlinBinaryClass/prop/NsVar.kt");
         }
-
+        
         @Test
         public void testOverrideClassVal() throws Exception {
             doTestSinglePackage("compiler/testData/readKotlinBinaryClass/prop/OverrideClassVal.kt");
         }
-
+        
         @Test
         public void testOverrideTraitVal() throws Exception {
             doTestSinglePackage("compiler/testData/readKotlinBinaryClass/prop/OverrideTraitVal.kt");
@@ -693,57 +693,57 @@ public class LazyResolveNamespaceComparingTestGenerated {
         public void testTuple0() throws Exception {
             doTestSinglePackage("compiler/testData/readKotlinBinaryClass/type/Tuple0.kt");
         }
-
+        
         @Test
         public void testInternalAbstractTraitMembersOverridden() throws Exception {
             doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/InternalAbstractTraitMembersOverridden.kt");
         }
-
+        
         @Test
         public void testInternalClass() throws Exception {
             doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/InternalClass.kt");
         }
-
+        
         @Test
         public void testInternalConstructor() throws Exception {
             doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/InternalConstructor.kt");
         }
-
+        
         @Test
         public void testInternalTopLevelMembers() throws Exception {
             doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/InternalTopLevelMembers.kt");
         }
-
+        
         @Test
         public void testInternalTraitMembers() throws Exception {
             doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/InternalTraitMembers.kt");
         }
-
+        
         @Test
         public void testInternalTraitMembersInherited() throws Exception {
             doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/InternalTraitMembersInherited.kt");
         }
-
+        
         @Test
         public void testPrivateClass() throws Exception {
             doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/PrivateClass.kt");
         }
-
+        
         @Test
         public void testPrivateTopLevelFun() throws Exception {
             doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/PrivateTopLevelFun.kt");
         }
-
+        
         @Test
         public void testPrivateTopLevelVal() throws Exception {
             doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/PrivateTopLevelVal.kt");
         }
-
+        
         @Test
         public void testTopLevelVarWithPrivateSetter() throws Exception {
             doTestSinglePackage("compiler/testData/readKotlinBinaryClass/visibility/TopLevelVarWithPrivateSetter.kt");
         }
-
+        
         public static void allTestsPresent(Class<?> clazz, File testDataDir, boolean recursive) {
             Set<String> methodNames = new HashSet<String>();
             for (Method method : clazz.getDeclaredMethods()) {
@@ -847,12 +847,12 @@ public class LazyResolveNamespaceComparingTestGenerated {
         public void testFinalFieldAsVal() throws Exception {
             doTestSinglePackage("compiler/testData/readJavaBinaryClass/FinalFieldAsVal.kt");
         }
-
+        
         @Test
         public void testInnerClass() throws Exception {
             doTestSinglePackage("compiler/testData/readJavaBinaryClass/InnerClass.kt");
         }
-
+        
         @Test
         public void testInnerClassesInGeneric() throws Exception {
             doTestSinglePackage("compiler/testData/readJavaBinaryClass/InnerClassesInGeneric.kt");
@@ -1028,13 +1028,23 @@ public class LazyResolveNamespaceComparingTestGenerated {
         }
         
         @Test
-        public void testGenericFunction() throws Exception {
-            doTest("compiler/testData/lazyResolve/genericFunction.kt");
+        public void testClassObject() throws Exception {
+            doTest("compiler/testData/lazyResolve/descriptorRenderer/ClassObject.kt");
         }
-
+        
+        @Test
+        public void testEnum() throws Exception {
+            doTest("compiler/testData/lazyResolve/namespaceComparator/enum.kt");
+        }
+        
+        @Test
+        public void testGenericFunction() throws Exception {
+            doTest("compiler/testData/lazyResolve/namespaceComparator/genericFunction.kt");
+        }
+        
         @Test
         public void testSimpleClass() throws Exception {
-            doTest("compiler/testData/lazyResolve/simpleClass.kt");
+            doTest("compiler/testData/lazyResolve/namespaceComparator/simpleClass.kt");
         }
         
         public static void allTestsPresent(Class<?> clazz, File testDataDir, boolean recursive) {
