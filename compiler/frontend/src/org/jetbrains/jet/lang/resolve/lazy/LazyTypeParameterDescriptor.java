@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.lazy.LazyValue;
 
 import java.util.Collection;
@@ -59,6 +60,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor {
 
     private Set<JetType> classObjectBounds;
     private JetType classObjectBoundsAsType;
+    private final boolean reified;
 
     public LazyTypeParameterDescriptor(
             @NotNull ResolveSession resolveSession,
@@ -72,11 +74,12 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor {
         this.containingDeclaration = containingDeclaration;
         this.index = index;
         this.name = jetTypeParameter.getNameAsName();
+        this.reified = jetTypeParameter.hasModifier(JetTokens.REIFIED_KEYWORD);
     }
 
     @Override
     public boolean isReified() {
-        return false;
+        return reified;
     }
 
     @Override
