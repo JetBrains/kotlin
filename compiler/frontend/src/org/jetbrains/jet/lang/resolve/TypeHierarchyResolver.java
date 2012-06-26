@@ -292,7 +292,8 @@ public class TypeHierarchyResolver {
                         classObjectDescriptor.setVisibility(DescriptorResolver.resolveVisibilityFromModifiers(klass.getModifierList()));
                         classObjectDescriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));
                         classObjectDescriptor.createTypeConstructor();
-                        createPrimaryConstructorForObject(null, classObjectDescriptor);
+                        ConstructorDescriptorImpl primaryConstructorForObject = createPrimaryConstructorForObject(null, classObjectDescriptor);
+                        primaryConstructorForObject.setReturnType(classObjectDescriptor.getDefaultType());
                         mutableClassDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
                     }
                 }
@@ -327,10 +328,12 @@ public class TypeHierarchyResolver {
                     return mutableClassDescriptor;
                 }
 
-                private void createPrimaryConstructorForObject(@Nullable PsiElement object, MutableClassDescriptor mutableClassDescriptor) {
-                    ConstructorDescriptor constructorDescriptor = DescriptorResolver
+                private ConstructorDescriptorImpl createPrimaryConstructorForObject(@Nullable PsiElement object,
+                        MutableClassDescriptor mutableClassDescriptor) {
+                    ConstructorDescriptorImpl constructorDescriptor = DescriptorResolver
                             .createPrimaryConstructorForObject(object, mutableClassDescriptor, trace);
                     mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor, trace);
+                    return constructorDescriptor;
                 }
 
                 private void prepareForDeferredCall(@NotNull JetScope outerScope,

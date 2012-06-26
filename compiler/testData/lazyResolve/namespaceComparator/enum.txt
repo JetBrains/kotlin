@@ -1,0 +1,10 @@
+namespace <root>
+
+internal final enum class Test : jet.Any {
+    public final /*constructor*/ fun <init>(/*0*/ a: jet.Int): Test
+    internal final object Test.<class-object-for-Test> {
+        internal final /*constructor*/ fun <init>(): Test.<class-object-for-Test>
+        internal final val A: Test.<class-object-for-Test>.A
+        internal final val C: Test.<class-object-for-Test>.C
+    }
+}
