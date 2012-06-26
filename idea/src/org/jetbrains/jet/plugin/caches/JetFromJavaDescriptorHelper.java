@@ -27,6 +27,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import jet.runtime.typeinfo.JetValueParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.kt.JetValueParameterAnnotation;
@@ -165,16 +166,13 @@ class JetFromJavaDescriptorHelper {
 
             // Should be parameter with JetValueParameter.receiver == true
             for (PsiParameter parameter : psiMethod.getParameterList().getParameters()) {
-                PsiModifierList modifierList = parameter.getModifierList();
-                if (modifierList != null) {
-                    for (PsiAnnotation psiAnnotation : modifierList.getAnnotations()) {
-                        if (!JetValueParameter.class.getCanonicalName().equals(psiAnnotation.getQualifiedName())) {
-                            continue;
-                        }
+                for (PsiAnnotation psiAnnotation : JavaDescriptorResolver.getAllAnnotations(parameter)) {
+                    if (!JetValueParameter.class.getCanonicalName().equals(psiAnnotation.getQualifiedName())) {
+                        continue;
+                    }
 
-                        if (filterPredicate.apply(new JetValueParameterAnnotation(psiAnnotation))) {
-                            selectedMethods.add(psiMethod);
-                        }
+                    if (filterPredicate.apply(new JetValueParameterAnnotation(psiAnnotation))) {
+                        selectedMethods.add(psiMethod);
                     }
                 }
             }

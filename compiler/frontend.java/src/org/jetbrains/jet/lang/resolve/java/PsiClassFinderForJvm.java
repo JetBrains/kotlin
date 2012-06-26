@@ -104,8 +104,8 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
             return null;
         }
 
-        PsiAnnotation assertInvisibleAnnotation = result.getModifierList().findAnnotation(
-                JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().getFqName());
+        PsiAnnotation assertInvisibleAnnotation = JavaDescriptorResolver
+                .findAnnotation(result, JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().getFqName());
         if (assertInvisibleAnnotation != null) {
             if (runtimeClassesHandleMode == RuntimeClassesHandleMode.IGNORE) {
                 return null;
