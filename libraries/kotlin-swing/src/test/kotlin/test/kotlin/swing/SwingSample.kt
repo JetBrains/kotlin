@@ -13,6 +13,7 @@ Enter some text here!
 
     val f = frame("Kool Kotlin Swing Demo") {
         exitOnClose()
+        val test = 12
         size = #(500, 300)
 
         val textArea = JTextArea(greeting)

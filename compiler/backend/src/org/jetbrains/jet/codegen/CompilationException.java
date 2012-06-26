@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,15 +53,20 @@ public class CompilationException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        StringBuilder message = new StringBuilder("Back-end (JVM) Internal error: ").append(super.getMessage()).append("\n");
-        Throwable cause = getCause();
-        if (cause != null) {
-            String causeMessage = cause.getMessage();
-            message.append("Cause: ").append(causeMessage == null ? cause.toString() : causeMessage).append("\n");
-        }
-        message.append("File being compiled and position: ").append(DiagnosticUtils.atLocation(element)).append("\n");
-        message.append("The root cause was thrown at: ").append(where());
+        return ApplicationManager.getApplication().runReadAction(new Computable<String>() {
+            @Override
+            public String compute() {
+                StringBuilder message = new StringBuilder("Back-end (JVM) Internal error: ").append(CompilationException.super.getMessage()).append("\n");
+                Throwable cause = getCause();
+                if (cause != null) {
+                    String causeMessage = cause.getMessage();
+                    message.append("Cause: ").append(causeMessage == null ? cause.toString() : causeMessage).append("\n");
+                }
+                message.append("File being compiled and position: ").append(DiagnosticUtils.atLocation(element)).append("\n");
+                message.append("The root cause was thrown at: ").append(where());
 
-        return message.toString();
+                return message.toString();
+            }
+        });
     }
 }
