@@ -1,6 +1,6 @@
 package extendFunctionClass
 
-class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>A<!> : (Int) -> Int {
+class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>A<!> : Function1<Int, Int>() {
 
 }
 
