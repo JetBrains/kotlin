@@ -33,6 +33,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
+import org.jetbrains.jet.lang.resolve.java.extAnnotations.CoreAnnotationsProvider;
+import org.jetbrains.jet.lang.resolve.java.extAnnotations.ExternalAnnotationsProvider;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.JetFileType;
 
@@ -91,6 +93,9 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
                 addLibraryRoot(root);
             }
         }
+
+        ExternalAnnotationsProvider.setInstance(new CoreAnnotationsProvider());
+
         if (compilerSpecialMode.includeKotlinRuntime()) {
             addToClasspath(compilerDependencies.getRuntimeJar());
         }
