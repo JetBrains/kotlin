@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -49,17 +51,32 @@ public class ResolveSession {
     private final BindingTrace trace = new BindingTraceContext();
     private final DeclarationProviderFactory declarationProviderFactory;
 
+    private final Predicate<FqNameUnsafe> specialClasses;
+
+
     private final InjectorForLazyResolve injector;
     private final ModuleConfiguration moduleConfiguration;
 
     private final Map<JetEnumEntry, ClassDescriptor> enumEntryClassDescriptorCache = Maps.newHashMap();
 
     public ResolveSession(
+        @NotNull Project project,
+        @NotNull ModuleDescriptor rootDescriptor,
+        @NotNull ModuleConfiguration moduleConfiguration,
+        @NotNull DeclarationProviderFactory declarationProviderFactory
+    ) {
+        this(project, rootDescriptor, moduleConfiguration, declarationProviderFactory, Predicates.<FqNameUnsafe>alwaysFalse());
+    }
+
+    @Deprecated // Internal use only
+    public ResolveSession(
             @NotNull Project project,
             @NotNull ModuleDescriptor rootDescriptor,
             @NotNull ModuleConfiguration moduleConfiguration,
-            @NotNull DeclarationProviderFactory declarationProviderFactory
+            @NotNull DeclarationProviderFactory declarationProviderFactory,
+            @NotNull Predicate<FqNameUnsafe> specialClasses
     ) {
+        this.specialClasses = specialClasses;
         this.injector = new InjectorForLazyResolve(project, this, trace);
         this.module = rootDescriptor;
         this.moduleConfiguration = moduleConfiguration;
@@ -74,6 +91,10 @@ public class ResolveSession {
     @NotNull
     /*package*/ InjectorForLazyResolve getInjector() {
         return injector;
+    }
+
+    /*package*/ boolean isClassSpecial(@NotNull FqNameUnsafe fqName) {
+        return specialClasses.apply(fqName);
     }
 
     @NotNull

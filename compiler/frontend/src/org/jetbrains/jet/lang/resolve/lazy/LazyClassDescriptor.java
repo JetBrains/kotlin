@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.data.FilteringClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
@@ -275,15 +276,20 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         @Override
         public Collection<? extends JetType> getSupertypes() {
             if (supertypes == null) {
-                JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
-                if (classOrObject == null) {
+                if (resolveSession.isClassSpecial(DescriptorUtils.getFQName(LazyClassDescriptor.this))) {
                     this.supertypes = Collections.emptyList();
                 }
                 else {
-                    this.supertypes = resolveSession.getInjector().getDescriptorResolver()
-                            .resolveSupertypes(getScopeForClassHeaderResolution(),
-                                               classOrObject,
-                                               resolveSession.getTrace());
+                    JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
+                    if (classOrObject == null) {
+                        this.supertypes = Collections.emptyList();
+                    }
+                    else {
+                        this.supertypes = resolveSession.getInjector().getDescriptorResolver()
+                                .resolveSupertypes(getScopeForClassHeaderResolution(),
+                                                   classOrObject,
+                                                   resolveSession.getTrace());
+                    }
                 }
             }
             return supertypes;
