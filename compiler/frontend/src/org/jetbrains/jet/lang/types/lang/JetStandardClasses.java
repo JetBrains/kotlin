@@ -161,7 +161,8 @@ public class JetStandardClasses {
     private static final ClassDescriptor[] TUPLE = new ClassDescriptor[MAX_TUPLE_ORDER + 1];
     static {
         for (int i = 0; i <= MAX_TUPLE_ORDER; i++) {
-            List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
+            List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
+            List<ValueParameterDescriptor> constructorValueParameters = Lists.newArrayList();
             ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
                     STANDARD_CLASSES_NAMESPACE,
                     Collections.<AnnotationDescriptor>emptyList(),
@@ -173,23 +174,37 @@ public class JetStandardClasses {
                         classDescriptor,
                         Collections.<AnnotationDescriptor>emptyList(),
                         false, Variance.OUT_VARIANCE, Name.identifier("T" + (j + 1)), j);
-                parameters.add(typeParameterDescriptor);
+                typeParameters.add(typeParameterDescriptor);
+
                 PropertyDescriptor propertyDescriptor = new PropertyDescriptor(classDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.PUBLIC, false, false, Name.identifier("_" + (j + 1)), CallableMemberDescriptor.Kind.DECLARATION);
                 propertyDescriptor.setType(typeParameterDescriptor.getDefaultType(), Collections.<TypeParameterDescriptorImpl>emptyList(), classDescriptor.getImplicitReceiver(), ReceiverDescriptor.NO_RECEIVER);
                 PropertyGetterDescriptor getterDescriptor = new PropertyGetterDescriptor(propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.PUBLIC, false, true, CallableMemberDescriptor.Kind.DECLARATION);
                 getterDescriptor.initialize(typeParameterDescriptor.getDefaultType());
                 propertyDescriptor.initialize(getterDescriptor, null);
                 writableScope.addPropertyDescriptor(propertyDescriptor);
+
+                ValueParameterDescriptorImpl valueParameterDescriptor =
+                        new ValueParameterDescriptorImpl(classDescriptor, j, Collections.<AnnotationDescriptor>emptyList(),
+                                                         Name.identifier("_" + (j + 1)), false, typeParameterDescriptor.getDefaultType(),
+                                                         false,
+                                                         null);
+                constructorValueParameters.add(valueParameterDescriptor);
             }
             writableScope.changeLockLevel(WritableScope.LockLevel.READING);
+
+            ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(classDescriptor, Collections.<AnnotationDescriptor>emptyList(), true);
+
             TUPLE[i] = classDescriptor.initialize(
                     true,
-                    parameters,
+                    typeParameters,
                     Collections.singleton(getAnyType()),
                     writableScope,
-                    Collections.<ConstructorDescriptor>emptySet(), // TODO
-                    null); // TODO : constructor
+                    Collections.<ConstructorDescriptor>singleton(constructorDescriptor),
+                    null);
             TUPLE_CONSTRUCTORS.add(TUPLE[i].getTypeConstructor());
+
+            constructorDescriptor.initialize(classDescriptor.getTypeConstructor().getParameters(), constructorValueParameters, Visibilities.PUBLIC);
+            constructorDescriptor.setReturnType(classDescriptor.getDefaultType());
         }
     }
 
