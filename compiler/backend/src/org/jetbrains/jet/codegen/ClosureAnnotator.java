@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,14 +24,13 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.*;
 
@@ -78,6 +76,7 @@ public class ClosureAnnotator {
             classDescriptor = new ClassDescriptorImpl(
                     funDescriptor,
                     Collections.<AnnotationDescriptor>emptyList(),
+                    Modality.FINAL,
                     Name.special("<closure>"));
             recordName(classDescriptor, name);
             classDescriptor.initialize(
@@ -102,6 +101,7 @@ public class ClosureAnnotator {
         ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
                 scriptDescriptor,
                 Collections.<AnnotationDescriptor>emptyList(),
+                Modality.FINAL,
                 Name.special("<script-" + className + ">"));
         recordName(classDescriptor, className);
         classDescriptor.initialize(

@@ -39,12 +39,15 @@ public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implem
     private Set<ConstructorDescriptor> constructors;
     private ConstructorDescriptor primaryConstructor;
     private ReceiverDescriptor implicitReceiver;
+    private final Modality modality;
 
     public ClassDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Modality modality,
             @NotNull Name name) {
         super(containingDeclaration, annotations, name);
+        this.modality = modality;
     }
 
     public final ClassDescriptorImpl initialize(boolean sealed,
@@ -155,7 +158,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implem
     @Override
     @NotNull
     public Modality getModality() {
-        return Modality.FINAL;
+        return modality;
     }
 
     @NotNull

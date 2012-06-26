@@ -689,6 +689,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
             final ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
                     scope.getContainingDeclaration(),
                     Collections.<AnnotationDescriptor>emptyList(),
+                    Modality.FINAL,
                     JetPsiUtil.safeName(classElement.getName()));
 
             BindingTrace trace = JetTestUtils.DUMMY_TRACE;

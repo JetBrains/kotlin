@@ -118,7 +118,7 @@ public class ErrorUtils {
 
     }
 
-    private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<AnnotationDescriptor>emptyList(), Name.special("<ERROR CLASS>")) {
+    private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<AnnotationDescriptor>emptyList(), Modality.OPEN, Name.special("<ERROR CLASS>")) {
         @NotNull
         @Override
         public Collection<ConstructorDescriptor> getConstructors() {

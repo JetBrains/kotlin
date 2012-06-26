@@ -70,6 +70,7 @@ public class JetStandardClasses {
     private static final ClassDescriptor NOTHING_CLASS = new ClassDescriptorImpl(
             STANDARD_CLASSES_NAMESPACE,
             Collections.<AnnotationDescriptor>emptyList(),
+            Modality.FINAL,
             Name.identifier("Nothing")
     ).initialize(
             true,
@@ -106,31 +107,41 @@ public class JetStandardClasses {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private static final ClassDescriptor ANY = new ClassDescriptorImpl(
-            STANDARD_CLASSES_NAMESPACE,
-            Collections.<AnnotationDescriptor>emptyList(),
-            Name.identifier("Any")).initialize(
-            false,
-            Collections.<TypeParameterDescriptor>emptyList(),
-            Collections.<JetType>emptySet(),
-            JetScope.EMPTY,
-            Collections.<ConstructorDescriptor>emptySet(),
-            null,
-            null
-    );
+    private static final ClassDescriptor ANY;
+    private static final JetType ANY_TYPE;
 
-    private static final JetType ANY_TYPE = new JetTypeImpl(ANY.getTypeConstructor(), new JetScopeImpl() {
-        @NotNull
-        @Override
-        public DeclarationDescriptor getContainingDeclaration() {
-            return STANDARD_CLASSES_NAMESPACE;
-        }
+    static {
+        ClassDescriptorImpl any = new ClassDescriptorImpl(
+                STANDARD_CLASSES_NAMESPACE,
+                Collections.<AnnotationDescriptor>emptyList(),
+                Modality.OPEN,
+                Name.identifier("Any")
+        );
+        ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(any, Collections.<AnnotationDescriptor>emptyList(), true);
+        constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(), Visibilities.PUBLIC);
+        ANY = any.initialize(
+                false,
+                Collections.<TypeParameterDescriptor>emptyList(),
+                Collections.<JetType>emptySet(),
+                JetScope.EMPTY,
+                Collections.<ConstructorDescriptor>singleton(constructorDescriptor),
+                null,
+                null
+        );
+        ANY_TYPE = new JetTypeImpl(ANY.getTypeConstructor(), new JetScopeImpl() {
+                @NotNull
+                @Override
+                public DeclarationDescriptor getContainingDeclaration() {
+                    return STANDARD_CLASSES_NAMESPACE;
+                }
 
-        @Override
-        public String toString() {
-            return "Scope for Any";
-        }
-    });
+                @Override
+                public String toString() {
+                    return "Scope for Any";
+                }
+        });
+        constructorDescriptor.setReturnType(ANY_TYPE);
+    }
     private static final JetType NULLABLE_ANY_TYPE = new JetTypeImpl(ANY_TYPE.getAnnotations(), ANY_TYPE.getConstructor(), true, ANY_TYPE.getArguments(), ANY_TYPE.getMemberScope());
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -154,6 +165,7 @@ public class JetStandardClasses {
             ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
                     STANDARD_CLASSES_NAMESPACE,
                     Collections.<AnnotationDescriptor>emptyList(),
+                    Modality.FINAL,
                     Name.identifier("Tuple" + i));
             WritableScopeImpl writableScope = new WritableScopeImpl(JetScope.EMPTY, classDescriptor, RedeclarationHandler.THROW_EXCEPTION, "tuples");
             for (int j = 0; j < i; j++) {
@@ -196,6 +208,7 @@ public class JetStandardClasses {
             ClassDescriptorImpl function = new ClassDescriptorImpl(
                     STANDARD_CLASSES_NAMESPACE,
                     Collections.<AnnotationDescriptor>emptyList(),
+                    Modality.OPEN,
                     Name.identifier("Function" + i));
 
             SimpleFunctionDescriptorImpl invoke = new SimpleFunctionDescriptorImpl(function, Collections.<AnnotationDescriptor>emptyList(), Name.identifier("invoke"), CallableMemberDescriptor.Kind.DECLARATION);
@@ -211,6 +224,7 @@ public class JetStandardClasses {
             ClassDescriptorImpl receiverFunction = new ClassDescriptorImpl(
                     STANDARD_CLASSES_NAMESPACE,
                     Collections.<AnnotationDescriptor>emptyList(),
+                    Modality.OPEN,
                     Name.identifier("ExtensionFunction" + i));
             SimpleFunctionDescriptorImpl invokeWithReceiver = new SimpleFunctionDescriptorImpl(receiverFunction, Collections.<AnnotationDescriptor>emptyList(), Name.identifier("invoke"), CallableMemberDescriptor.Kind.DECLARATION);
             WritableScope scopeForInvokeWithReceiver = createScopeForInvokeFunction(receiverFunction, invokeWithReceiver);
