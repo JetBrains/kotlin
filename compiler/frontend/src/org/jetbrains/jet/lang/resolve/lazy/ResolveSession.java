@@ -22,6 +22,7 @@ import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForLazyResolve;
@@ -45,6 +46,14 @@ import java.util.Map;
  * @author abreslav
  */
 public class ResolveSession {
+    private static final Function<FqName, Name> NO_ALIASES = new Function<FqName, Name>() {
+
+        @Override
+        public Name fun(FqName name) {
+            return null;
+        }
+    };
+
     private final ModuleDescriptor module;
     private final LazyPackageDescriptor rootPackage;
 
@@ -58,6 +67,7 @@ public class ResolveSession {
     private final ModuleConfiguration moduleConfiguration;
 
     private final Map<JetEnumEntry, ClassDescriptor> enumEntryClassDescriptorCache = Maps.newHashMap();
+    private final Function<FqName, Name> classifierAliases;
 
     public ResolveSession(
         @NotNull Project project,
@@ -65,7 +75,7 @@ public class ResolveSession {
         @NotNull ModuleConfiguration moduleConfiguration,
         @NotNull DeclarationProviderFactory declarationProviderFactory
     ) {
-        this(project, rootDescriptor, moduleConfiguration, declarationProviderFactory, Predicates.<FqNameUnsafe>alwaysFalse());
+        this(project, rootDescriptor, moduleConfiguration, declarationProviderFactory, NO_ALIASES, Predicates.<FqNameUnsafe>alwaysFalse());
     }
 
     @Deprecated // Internal use only
@@ -74,8 +84,10 @@ public class ResolveSession {
             @NotNull ModuleDescriptor rootDescriptor,
             @NotNull ModuleConfiguration moduleConfiguration,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
+            @NotNull Function<FqName, Name> classifierAliases,
             @NotNull Predicate<FqNameUnsafe> specialClasses
     ) {
+        this.classifierAliases = classifierAliases;
         this.specialClasses = specialClasses;
         this.injector = new InjectorForLazyResolve(project, this, trace);
         this.module = rootDescriptor;
@@ -302,5 +314,15 @@ public class ResolveSession {
             throw new IllegalStateException("No descriptor resolved for " + declaration + " " + declaration.getText());
         }
         return result;
+    }
+
+    @NotNull
+    /*package*/ Name resolveClassifierAlias(@NotNull FqName packageName, @NotNull Name alias) {
+        // TODO: creating a new FqName object every time...
+        Name actualName = classifierAliases.fun(packageName.child(alias));
+        if (actualName == null) {
+            return alias;
+        }
+        return actualName;
     }
 }
