@@ -894,8 +894,98 @@ public class LazyResolveNamespaceComparingTestGenerated {
         }
         
         @Test
+        public void testAddingNullability() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/AddingNullability.kt");
+        }
+        
+        @Test
+        public void testExtraUpperBound() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/ExtraUpperBound.kt");
+        }
+        
+        @Test
+        public void testMissingUpperBound() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/MissingUpperBound.kt");
+        }
+        
+        @Test
+        public void testNotVarargReplacedWithVararg() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/NotVarargReplacedWithVararg.kt");
+        }
+        
+        @Test
+        public void testReturnTypeMissing() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/ReturnTypeMissing.kt");
+        }
+        
+        @Test
         public void testSyntaxError() throws Exception {
             doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/SyntaxError.kt");
+        }
+        
+        @Test
+        public void testVarargReplacedWithNotVararg() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/VarargReplacedWithNotVararg.kt");
+        }
+        
+        @Test
+        public void testWrongMethodName() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/WrongMethodName.kt");
+        }
+        
+        @Test
+        public void testWrongReturnTypeStructure() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/WrongReturnTypeStructure.kt");
+        }
+        
+        @Test
+        public void testWrongTypeName1() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/WrongTypeName1.kt");
+        }
+        
+        @Test
+        public void testWrongTypeName2() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/WrongTypeName2.kt");
+        }
+        
+        @Test
+        public void testWrongTypeName3() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/WrongTypeName3.kt");
+        }
+        
+        @Test
+        public void testWrongTypeParameterBoundStructure1() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/WrongTypeParameterBoundStructure1.kt");
+        }
+        
+        @Test
+        public void testWrongTypeParameterBoundStructure2() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/WrongTypeParameterBoundStructure2.kt");
+        }
+        
+        @Test
+        public void testWrongTypeParametersCount() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/WrongTypeParametersCount.kt");
+        }
+        
+        @Test
+        public void testWrongTypeVariance() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/WrongTypeVariance.kt");
+        }
+        
+        @Test
+        public void testWrongValueParametersCount() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/WrongValueParametersCount.kt");
+        }
+        
+        @Test
+        public void testWrongValueParameterStructure1() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/WrongValueParameterStructure1.kt");
+        }
+        
+        @Test
+        public void testWrongValueParameterStructure2() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/WrongValueParameterStructure2.kt");
         }
         
         @Test
