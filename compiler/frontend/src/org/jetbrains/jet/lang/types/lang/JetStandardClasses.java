@@ -52,52 +52,52 @@ public class JetStandardClasses {
 
     static {
         FAKE_STANDARD_CLASSES_MODULE.setRootNamespace(STANDARD_CLASSES_FAKE_ROOT_NS);
-        //WritableScopeImpl writableScope =
-        //        new WritableScopeImpl(JetScope.EMPTY, FAKE_STANDARD_CLASSES_MODULE, RedeclarationHandler.DO_NOTHING);
-        //STANDARD_CLASSES_FAKE_ROOT_NS.initialize(writableScope);
-        //STANDARD_CLASSES_FAKE_ROOT_NS.getMemberScope().changeLockLevel(WritableScope.LockLevel.BOTH);
     }
 
     public static NamespaceDescriptorImpl STANDARD_CLASSES_NAMESPACE = new NamespaceDescriptorImpl(
             STANDARD_CLASSES_FAKE_ROOT_NS, Collections.<AnnotationDescriptor>emptyList(), Name.identifier("jet"));
-    //
-    //static {
-    //    STANDARD_CLASSES_FAKE_ROOT_NS.getMemberScope().addNamespace(STANDARD_CLASSES_NAMESPACE);
-    //}
-    
+
     public static final FqName STANDARD_CLASSES_FQNAME = DescriptorUtils.getFQName(STANDARD_CLASSES_NAMESPACE).toSafe();
 
-    private static final ClassDescriptor NOTHING_CLASS = new ClassDescriptorImpl(
-            STANDARD_CLASSES_NAMESPACE,
-            Collections.<AnnotationDescriptor>emptyList(),
-            Modality.FINAL,
-            Name.identifier("Nothing")
-    ).initialize(
-            true,
-            Collections.<TypeParameterDescriptor>emptyList(),
-            new AbstractCollection<JetType>() {
-                @Override
-                public boolean contains(Object o) {
-                    return o instanceof JetType;
-                }
+    private static final ClassDescriptor NOTHING_CLASS;
+    private static final JetType NOTHING_TYPE;
+    static {
+        ClassDescriptorImpl nothing = new ClassDescriptorImpl(
+                STANDARD_CLASSES_NAMESPACE,
+                Collections.<AnnotationDescriptor>emptyList(),
+                Modality.FINAL,
+                Name.identifier("Nothing")
+        );
+        ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(nothing, Collections.<AnnotationDescriptor>emptyList(), true);
+        constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(), Visibilities.PRIVATE);
+        NOTHING_CLASS = nothing.initialize(
+                true,
+                Collections.<TypeParameterDescriptor>emptyList(),
+                new AbstractCollection<JetType>() {
+                    @Override
+                    public boolean contains(Object o) {
+                        return o instanceof JetType;
+                    }
 
-                @Override
-                public Iterator<JetType> iterator() {
-                    throw new UnsupportedOperationException("Don't enumerate supertypes of Nothing");
-                }
+                    @Override
+                    public Iterator<JetType> iterator() {
+                        throw new UnsupportedOperationException("Don't enumerate supertypes of Nothing");
+                    }
 
-                @Override
-                public int size() {
-                    throw new UnsupportedOperationException("Supertypes of Nothing do not constitute a valid collection");
-                }
-            },
-            JetScope.EMPTY,
-            Collections.<ConstructorDescriptor>emptySet(),
-            null,
-            null
-    );
+                    @Override
+                    public int size() {
+                        throw new UnsupportedOperationException("Supertypes of Nothing do not constitute a valid collection");
+                    }
+                },
+                JetScope.EMPTY,
+                Collections.<ConstructorDescriptor>singleton(constructorDescriptor),
+                null,
+                null
+        );
+        NOTHING_TYPE = new JetTypeImpl(getNothing());
+        constructorDescriptor.setReturnType(NOTHING_TYPE);
+    }
 
-    private static final JetType NOTHING_TYPE = new JetTypeImpl(getNothing());
     private static final JetType NULLABLE_NOTHING_TYPE = new JetTypeImpl(
             Collections.<AnnotationDescriptor>emptyList(),
             getNothing().getTypeConstructor(),
@@ -243,12 +243,13 @@ public class JetStandardClasses {
             RECEIVER_FUNCTION[i] = receiverFunction.initialize(
                     false,
                     parameters,
-                    Collections.singleton(getAnyType()), scopeForInvokeWithReceiver, Collections.<ConstructorDescriptor>singleton(constructorDescriptorForReceiverFunction), null);
+                    Collections.singleton(getAnyType()), scopeForInvokeWithReceiver, Collections.<ConstructorDescriptor>singleton(
+                    constructorDescriptorForReceiverFunction), null);
             RECEIVER_FUNCTION_TYPE_CONSTRUCTORS.add(RECEIVER_FUNCTION[i].getTypeConstructor());
             FunctionDescriptorUtil.initializeFromFunctionType(invokeWithReceiver, receiverFunction.getDefaultType(), new ClassReceiver(RECEIVER_FUNCTION[i]), Modality.ABSTRACT, Visibilities.PUBLIC);
 
             constructorDescriptorForReceiverFunction.initialize(receiverFunction.getTypeConstructor().getParameters(),
-                                             Collections.<ValueParameterDescriptor>emptyList(), Visibilities.PUBLIC);
+                                                                Collections.<ValueParameterDescriptor>emptyList(), Visibilities.PUBLIC);
             constructorDescriptorForReceiverFunction.setReturnType(receiverFunction.getDefaultType());
         }
     }
