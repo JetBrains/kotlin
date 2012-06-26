@@ -292,7 +292,7 @@ public class DefaultErrorMessages {
 
         MAP.put(ANONYMOUS_INITIALIZER_WITHOUT_CONSTRUCTOR, "Anonymous initializers are only allowed in the presence of a primary constructor");
         MAP.put(NULLABLE_SUPERTYPE, "A supertype cannot be nullable");
-        MAP.put(UNSAFE_CALL, "Only safe calls (?.) are allowed on a nullable receiver of type {0}", RENDER_TYPE);
+        MAP.put(UNSAFE_CALL, "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type {0}", RENDER_TYPE);
         MAP.put(AMBIGUOUS_LABEL, "Ambiguous label");
         MAP.put(UNSUPPORTED, "Unsupported [{0}]", TO_STRING);
         MAP.put(UNNECESSARY_SAFE_CALL, "Unnecessary safe call on a non-null receiver of type {0}", RENDER_TYPE);
