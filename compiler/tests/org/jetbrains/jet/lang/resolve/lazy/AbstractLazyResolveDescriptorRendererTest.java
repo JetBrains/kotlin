@@ -81,14 +81,24 @@ public class AbstractLazyResolveDescriptorRendererTest extends AbstractLazyResol
                 if (declaringElement instanceof JetNamedFunction) {
                     JetNamedFunction jetNamedFunction = (JetNamedFunction) declaringElement;
                     FunctionDescriptor functionDescriptor = (FunctionDescriptor) resolveSession.resolveToDescriptor(jetNamedFunction);
-                    for (ValueParameterDescriptor valueParameterDescriptor : functionDescriptor.getValueParameters()) {
-                        if (valueParameterDescriptor.getName().equals(parameter.getNameAsName())) {
-                            descriptors.add(valueParameterDescriptor);
-                        }
-                    }
+                    addCorrespondingParameterDescriptor(functionDescriptor, parameter);
+                }
+                else if (declaringElement instanceof JetClass) {
+                    // Primary constructor parameter
+                    JetClass jetClass = (JetClass) declaringElement;
+                    ClassDescriptor classDescriptor = resolveSession.getClassDescriptor(jetClass);
+                    addCorrespondingParameterDescriptor(classDescriptor.getConstructors().iterator().next(), parameter);
                 }
                 else {
                     super.visitParameter(parameter);
+                }
+            }
+
+            private void addCorrespondingParameterDescriptor(FunctionDescriptor functionDescriptor, JetParameter parameter) {
+                for (ValueParameterDescriptor valueParameterDescriptor : functionDescriptor.getValueParameters()) {
+                    if (valueParameterDescriptor.getName().equals(parameter.getNameAsName())) {
+                        descriptors.add(valueParameterDescriptor);
+                    }
                 }
             }
 
