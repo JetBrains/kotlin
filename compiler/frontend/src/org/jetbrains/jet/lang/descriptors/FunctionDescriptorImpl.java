@@ -91,8 +91,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         this.expectedThisObject = expectedThisObject;
         
         for (int i = 0; i < typeParameters.size(); ++i) {
-            if (typeParameters.get(i).getIndex() != i) {
-                throw new IllegalStateException();
+            TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
+            if (typeParameterDescriptor.getIndex() != i) {
+                throw new IllegalStateException(typeParameterDescriptor + " index is " + typeParameterDescriptor.getIndex() + " but position is " + i);
             }
         }
 

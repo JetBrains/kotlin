@@ -52,7 +52,7 @@ public class TuplesAndFunctionsGenerator {
     private static void generateFunctions(PrintStream out, int count, boolean extension) {
         generated(out);
         for (int i = 0; i < count; i++) {
-            out.print("public trait " + (extension ? "ExtensionFunction" : "Function") + i);
+            out.print("public abstract class " + (extension ? "ExtensionFunction" : "Function") + i);
             out.print("<");
             if (extension) {
                 out.print("in T");
@@ -65,7 +65,7 @@ public class TuplesAndFunctionsGenerator {
                 out.print(", ");
             }
             out.print("out R> {\n");
-            out.print("  public fun " + (extension ? "T." : "") +
+            out.print("  public abstract fun " + (extension ? "T." : "") +
                       "invoke(");
             for (int j = 1; j <= i; j++) {
                 out.print("p" + j + ": " + "P" + j);
