@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.intellij.codeInsight.CodeInsightUtilBase;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -24,13 +25,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 
 /**
  * @author slukjanov aka Frostman
  */
+@SuppressWarnings("IntentionDescriptionNotFoundInspection")
 public class UnnecessaryNotNullAssertionFix implements IntentionAction {
     @NotNull
     @Override
@@ -46,15 +48,27 @@ public class UnnecessaryNotNullAssertionFix implements IntentionAction {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return file instanceof JetFile && getExclExclElement(editor, file) != null;
+        if (file instanceof JetFile) {
+            JetPostfixExpression postfixExpression = getExclExclPostfixExpression(editor, file);
+            return (postfixExpression != null && postfixExpression.getParent() != null);
+        }
+
+        return false;
     }
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        final PsiElement exclExcl = getExclExclElement(editor, file);
-        assert exclExcl != null;
+        if (!CodeInsightUtilBase.prepareFileForWrite(file)) {
+            return;
+        }
 
-        exclExcl.delete();
+        final JetPostfixExpression postfixExpression = getExclExclPostfixExpression(editor, file);
+
+        PsiElement parent = postfixExpression.getParent();
+        if (parent != null) {
+            JetExpression expression = JetPsiFactory.createExpression(project, postfixExpression.getBaseExpression().getText());
+            postfixExpression.replace(expression);
+        }
     }
 
     @Override
@@ -66,6 +80,21 @@ public class UnnecessaryNotNullAssertionFix implements IntentionAction {
         final PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
         if (elementAtCaret instanceof LeafPsiElement && ((LeafPsiElement) elementAtCaret).getElementType() == JetTokens.EXCLEXCL) {
             return elementAtCaret;
+        }
+
+        return null;
+    }
+
+    private static JetPostfixExpression getExclExclPostfixExpression(Editor editor, PsiFile file) {
+        PsiElement exclExclElement = getExclExclElement(editor, file);
+        if (exclExclElement != null) {
+            PsiElement parent = exclExclElement.getParent();
+            if (parent instanceof JetSimpleNameExpression) {
+                PsiElement operationParent = parent.getParent();
+                if (operationParent instanceof JetPostfixExpression) {
+                    return (JetPostfixExpression) operationParent;
+                }
+            }
         }
 
         return null;
