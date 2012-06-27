@@ -653,7 +653,7 @@ public class JetTypeMapper {
 
             invokeOpcode = isInterface
                     ? (superCall ? Opcodes.INVOKESTATIC : Opcodes.INVOKEINTERFACE)
-                    : (superCall ? Opcodes.INVOKESPECIAL : Opcodes.INVOKEVIRTUAL);
+                    : (superCall || functionDescriptor.getVisibility() == Visibilities.PRIVATE ? Opcodes.INVOKESPECIAL : Opcodes.INVOKEVIRTUAL);
             if (isInterface && superCall) {
                 descriptor = mapSignature(functionDescriptor, false, OwnerKind.TRAIT_IMPL);
                 owner = JvmClassName.byInternalName(owner.getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
