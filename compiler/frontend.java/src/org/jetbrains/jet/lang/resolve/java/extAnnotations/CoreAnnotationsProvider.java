@@ -35,7 +35,10 @@ import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 
@@ -138,7 +141,12 @@ public class CoreAnnotationsProvider extends ExternalAnnotationsProvider {
             if (!file.isValid()) continue;
             final Document document;
             try {
-                document = JDOMUtil.loadDocument(escapeAttributes(StreamUtil.readText(file.getVirtualFile().getInputStream())));
+                // CoreLocalVirtualFile.getInputStream() fails with AssertionError
+                VirtualFile virtualFile = file.getVirtualFile();
+                InputStream stream = "CoreLocalVirtualFile".equals(virtualFile.getClass().getSimpleName())
+                                     ? new BufferedInputStream(new FileInputStream(virtualFile.getPath()))
+                                     : virtualFile.getInputStream();
+                document = JDOMUtil.loadDocument(escapeAttributes(StreamUtil.readText(stream)));
             }
             catch (IOException e) {
 
