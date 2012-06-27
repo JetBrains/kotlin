@@ -34,7 +34,7 @@ public class TestDataFile {
     }
 
     public String getTestCall() {
-        return doTestMethodName + "(\"" + file + "\");";
+        return doTestMethodName + "(\"" + Printer.getFilePath(file) + "\");";
     }
 
     public String getTestMethodName() {

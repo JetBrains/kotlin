@@ -74,7 +74,7 @@ public class TestDataSource {
     }
 
     public void getAllTestsPresentCheck(@NotNull Printer p) {
-        p.println("allTestsPresent(" + getTestClassName() + ".class, new File(\"" + rootFile + "\"), " + recursive + ");");
+        p.println("allTestsPresent(" + getTestClassName() + ".class, new File(\"" + Printer.getFilePath(rootFile) + "\"), " + recursive + ");");
     }
 
     public String getAllTestsPresentMethodName() {

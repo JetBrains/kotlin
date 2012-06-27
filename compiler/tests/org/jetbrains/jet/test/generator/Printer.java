@@ -18,6 +18,8 @@ package org.jetbrains.jet.test.generator;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+
 /**
 * @author abreslav
 */
@@ -56,5 +58,9 @@ public class Printer {
         }
 
         indent = indent.substring(INDENTATION_UNIT.length());
+    }
+
+    public static String getFilePath(File file) {
+        return file.getPath().replaceAll("\\\\", "/");
     }
 }
