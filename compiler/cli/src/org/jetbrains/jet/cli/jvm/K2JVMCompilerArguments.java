@@ -48,6 +48,9 @@ public class K2JVMCompilerArguments extends CompilerArguments {
     @Argument(value = "classpath", description = "classpath to use when compiling")
     public String classpath;
 
+    @Argument(value = "annotations", description = "paths to external annotations")
+    public String annotations;
+
     @Argument(value = "includeRuntime", description = "include Kotlin runtime in to resulting jar")
     public boolean includeRuntime;
 
