@@ -103,6 +103,10 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         JetStandardLibrary.initialize(getProject());
     }
 
+    public static void addExternalAnnotationsRoot(@NotNull VirtualFile root) {
+        ((CoreAnnotationsProvider) ExternalAnnotationsProvider.getInstance()).addExternalAnnotationsRoot(root);
+    }
+
     public MockApplication getApplication() {
         return myApplication;
     }

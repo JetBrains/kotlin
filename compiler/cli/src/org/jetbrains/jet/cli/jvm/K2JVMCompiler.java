@@ -37,7 +37,6 @@ import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.cli.common.ExitCode.*;
@@ -205,6 +204,12 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
         if (arguments.classpath != null) {
             List<File> classpath = getClasspath(arguments);
             CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(), Iterables.toArray(classpath, File.class));
+        }
+
+        if (arguments.annotations != null) {
+            for (String root : Splitter.on(File.pathSeparatorChar).split(arguments.annotations)) {
+                JetCoreEnvironment.addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(new File(root)));
+            }
         }
     }
 
