@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -46,7 +47,17 @@ public class UnnecessaryNotNullAssertionFix implements IntentionAction {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return file instanceof JetFile && getExclExclElement(editor, file) != null;
+        if (file instanceof JetFile) {
+            PsiElement exclExcl = getExclExclElement(editor, file);
+            if (exclExcl != null) {
+                PsiElement element = PsiTreeUtil.nextLeaf(exclExcl);
+                if (element instanceof LeafPsiElement && ((LeafPsiElement) element).getElementType() != JetTokens.DOT) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     @Override
