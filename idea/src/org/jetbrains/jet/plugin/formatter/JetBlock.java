@@ -37,8 +37,8 @@ import java.util.*;
  * @see Block for good JavaDoc documentation
  */
 public class JetBlock extends AbstractBlock {
-    private Indent myIndent;
-    private CodeStyleSettings mySettings;
+    private final Indent myIndent;
+    private final CodeStyleSettings mySettings;
     private final SpacingBuilder mySpacingBuilder;
 
     private List<Block> mySubBlocks;
@@ -158,6 +158,10 @@ public class JetBlock extends AbstractBlock {
             return new ChildAttributes(Indent.getContinuationIndent(), null);
         }
 
+        if (isIncomplete()) {
+            return super.getChildAttributes(newChildIndex);
+        }
+
         return new ChildAttributes(Indent.getNoneIndent(), null);
     }
 
@@ -266,7 +270,11 @@ public class JetBlock extends AbstractBlock {
             ASTIndentStrategy.forNode("For single statement in THEN and ELSE")
                     .in(JetNodeTypes.THEN, JetNodeTypes.ELSE)
                     .notForType(JetNodeTypes.BLOCK)
-                    .set(Indent.getNormalIndent())
+                    .set(Indent.getNormalIndent()),
+
+            ASTIndentStrategy.forNode("Indent for parts")
+                    .in(JetNodeTypes.PROPERTY, JetNodeTypes.FUN)
+                    .set(Indent.getContinuationWithoutFirstIndent()),
     };
 
     @Nullable

@@ -1,0 +1,2 @@
+val a =
+        <caret>

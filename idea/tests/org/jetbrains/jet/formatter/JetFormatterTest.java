@@ -53,6 +53,10 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
         doTest();
     }
 
+    public void testFunctionWithInference() throws Exception {
+        doTest();
+    }
+
     public void testGetterAndSetter() throws Exception {
         doTest();
     }
@@ -63,6 +67,10 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
 
     public void testParameters() throws Exception {
         doTestWithInvert();
+    }
+
+    public void testPropertyWithInference() throws Exception {
+        doTest();
     }
 
     public void testRightBracketOnNewLine() throws Exception {
