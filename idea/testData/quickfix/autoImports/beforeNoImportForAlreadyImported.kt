@@ -1,4 +1,6 @@
 // "Import Class" "false"
+// ERROR: Unresolved reference: someFun
+// ERROR: Unresolved reference: test
 
 package Teting
 

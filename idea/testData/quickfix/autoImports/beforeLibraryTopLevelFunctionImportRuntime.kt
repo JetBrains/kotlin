@@ -2,5 +2,5 @@
 package some
 
 fun testFun() {
-  <caret>measureTimeNano()
+  <caret>measureTimeNano({})
 }

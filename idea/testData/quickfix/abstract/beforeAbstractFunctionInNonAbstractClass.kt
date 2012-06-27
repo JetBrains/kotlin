@@ -1,4 +1,4 @@
 // "Make 'foo' not abstract" "true"
 class A() {
-    <caret>abstract fun foo()
+    <caret>abstract fun foo() {}
 }
