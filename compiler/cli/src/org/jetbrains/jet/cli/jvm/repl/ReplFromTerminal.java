@@ -17,6 +17,7 @@
 package org.jetbrains.jet.cli.jvm.repl;
 
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.io.FileUtil;
 import jline.console.ConsoleReader;
 import jline.console.history.FileHistory;
 import org.jetbrains.annotations.NotNull;
@@ -116,13 +117,7 @@ public class ReplFromTerminal {
                 return oneCommand(line.substring(1));
             }
 
-            ReplInterpreter.LineResult lineResult = getReplInterpreter().eval(line);
-            if (!lineResult.isSuccessful()) {
-                System.out.print(lineResult.getErrorText());
-            }
-            else if (!lineResult.isUnit()) {
-                System.out.println(lineResult.getValue());
-            }
+            eval(line);
             return true;
         }
         catch (Exception e) {
@@ -130,13 +125,24 @@ public class ReplFromTerminal {
         }
     }
 
-    private boolean oneCommand(@NotNull String command) {
+    private void eval(@NotNull String line) {
+        ReplInterpreter.LineResult lineResult = getReplInterpreter().eval(line);
+        if (!lineResult.isSuccessful()) {
+            System.out.print(lineResult.getErrorText());
+        }
+        else if (!lineResult.isUnit()) {
+            System.out.println(lineResult.getValue());
+        }
+    }
+
+    private boolean oneCommand(@NotNull String command) throws Exception {
         if (command.equals("help")) {
             System.out.println("This is Kotlin REPL help");
             System.out.println("Available commands are:");
             System.out.println(":help                   show this help");
             System.out.println(":quit                   exit the interpreter");
             System.out.println(":dump bytecode          dump classes to terminal");
+            System.out.println(":load <file>            load script from specified file");
             return true;
         }
         else if (command.equals("dump bytecode")) {
@@ -145,6 +151,12 @@ public class ReplFromTerminal {
         }
         else if (command.equals("quit")) {
             return false;
+        }
+        else if (command.startsWith("load ")) {
+            String fileName = command.substring("load ".length());
+            String scriptText = FileUtil.loadFile(new File(fileName));
+            eval(scriptText);
+            return true;
         }
         else {
             System.out.println("Unknown command");
