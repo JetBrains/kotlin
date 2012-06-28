@@ -140,7 +140,7 @@ public class CompileEnvironmentUtil {
             }
         };
         CompilerDependencies dependencies = CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR);
-        JetCoreEnvironment scriptEnvironment = JetCoreEnvironment.getCoreEnvironmentForJVM(disposable, dependencies);
+        JetCoreEnvironment scriptEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(disposable, dependencies);
         scriptEnvironment.addSources(moduleScriptFile);
 
         GenerationState generationState = KotlinToJVMBytecodeCompiler

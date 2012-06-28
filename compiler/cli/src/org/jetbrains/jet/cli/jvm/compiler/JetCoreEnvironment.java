@@ -51,12 +51,12 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
     private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
 
     @NotNull
-    public static JetCoreEnvironment getCoreEnvironmentForJS(Disposable disposable) {
+    public static JetCoreEnvironment createCoreEnvironmentForJS(Disposable disposable) {
         return new JetCoreEnvironment(disposable, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.JS));
     }
 
     @NotNull
-    public static JetCoreEnvironment getCoreEnvironmentForJVM(Disposable disposable, @NotNull CompilerDependencies dependencies) {
+    public static JetCoreEnvironment createCoreEnvironmentForJVM(Disposable disposable, @NotNull CompilerDependencies dependencies) {
         return new JetCoreEnvironment(disposable, dependencies);
     }
 

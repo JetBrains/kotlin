@@ -96,7 +96,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
             return ExitCode.OK;
         }
 
-        JetCoreEnvironment environment = JetCoreEnvironment.getCoreEnvironmentForJVM(rootDisposable, dependencies);
+        JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, dependencies);
         K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(environment, messageCollector, arguments.script);
 
         messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
