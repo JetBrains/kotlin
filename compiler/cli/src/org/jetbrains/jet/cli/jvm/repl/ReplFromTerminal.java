@@ -25,8 +25,8 @@ import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -136,7 +136,8 @@ public class ReplFromTerminal {
     }
 
     private boolean oneCommand(@NotNull String command) throws Exception {
-        if (command.equals("help")) {
+        List<String> split = splitCommand(command);
+        if (split.size() >= 1 && command.equals("help")) {
             System.out.println("This is Kotlin REPL help");
             System.out.println("Available commands are:");
             System.out.println(":help                   show this help");
@@ -145,15 +146,15 @@ public class ReplFromTerminal {
             System.out.println(":load <file>            load script from specified file");
             return true;
         }
-        else if (command.equals("dump bytecode")) {
+        else if (split.size() >= 2 && split.get(0).equals("dump") && split.get(1).equals("bytecode")) {
             getReplInterpreter().dumpClasses(new PrintWriter(System.out));
             return true;
         }
-        else if (command.equals("quit")) {
+        else if (split.size() >= 1 && split.get(0).equals("quit")) {
             return false;
         }
-        else if (command.startsWith("load ")) {
-            String fileName = command.substring("load ".length());
+        else if (split.size() >= 2 && split.get(0).equals("load")) {
+            String fileName = split.get(1);
             String scriptText = FileUtil.loadFile(new File(fileName));
             eval(scriptText);
             return true;
@@ -163,6 +164,10 @@ public class ReplFromTerminal {
             System.out.println("Type :help for help");
             return true;
         }
+    }
+
+    private static List<String> splitCommand(@NotNull String command) {
+        return Arrays.asList(command.split(" "));
     }
 
     public static void run(@NotNull Disposable disposable, @NotNull CompilerDependencies compilerDependencies) {
