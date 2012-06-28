@@ -17,15 +17,19 @@
 package org.jetbrains.k2js.translate.utils;
 
 import com.google.common.collect.Lists;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
-import org.jetbrains.k2js.translate.context.Namer;
+import org.jetbrains.k2js.config.LibrarySourcesConfig;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -140,16 +144,6 @@ public final class JsDescriptorUtils {
         return (functionDescriptor.getReceiverParameter().exists());
     }
 
-    @NotNull
-    public static String getNameForNamespace(@NotNull NamespaceDescriptor descriptor) {
-        if (descriptor.getContainingDeclaration() instanceof ModuleDescriptor) {
-            return Namer.getRootNamespaceName();
-        }
-        else {
-            return descriptor.getName().getName();
-        }
-    }
-
     //TODO: why callable descriptor
     @Nullable
     public static DeclarationDescriptor getExpectedThisDescriptor(@NotNull CallableDescriptor callableDescriptor) {
@@ -193,22 +187,12 @@ public final class JsDescriptorUtils {
     }
 
     @NotNull
-    public static List<ClassDescriptor> getAllClassesDefinedInNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        List<ClassDescriptor> classDescriptors = Lists.newArrayList();
-        for (DeclarationDescriptor descriptor : getContainedDescriptorsWhichAreNotPredefined(namespaceDescriptor)) {
-            if (descriptor instanceof ClassDescriptor) {
-                classDescriptors.add((ClassDescriptor)descriptor);
-            }
-        }
-        return classDescriptors;
-    }
-
-    @NotNull
-    public static List<NamespaceDescriptor> getNestedNamespaces(@NotNull NamespaceDescriptor namespaceDescriptor) {
+    public static List<NamespaceDescriptor> getNestedNamespaces(@NotNull NamespaceDescriptor namespaceDescriptor,
+            @NotNull BindingContext context) {
         List<NamespaceDescriptor> result = Lists.newArrayList();
-        for (DeclarationDescriptor descriptor : getContainedDescriptorsWhichAreNotPredefined(namespaceDescriptor)) {
+        for (DeclarationDescriptor descriptor : getContainedDescriptorsWhichAreNotPredefined(namespaceDescriptor, context)) {
             if (descriptor instanceof NamespaceDescriptor) {
-                result.add((NamespaceDescriptor)descriptor);
+                result.add((NamespaceDescriptor) descriptor);
             }
         }
         return result;
@@ -227,10 +211,22 @@ public final class JsDescriptorUtils {
     }
 
     @NotNull
-    public static List<DeclarationDescriptor> getContainedDescriptorsWhichAreNotPredefined(@NotNull NamespaceDescriptor namespace) {
+    public static List<DeclarationDescriptor> getContainedDescriptorsWhichAreNotPredefined(@NotNull NamespaceDescriptor namespace,
+            @NotNull BindingContext context) {
         List<DeclarationDescriptor> result = Lists.newArrayList();
         for (DeclarationDescriptor descriptor : namespace.getMemberScope().getAllDescriptors()) {
             if (!AnnotationsUtils.isPredefinedObject(descriptor)) {
+                // namespace may be defined in multiple files
+                if (!(descriptor instanceof NamespaceDescriptor)) {
+                    PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(context, descriptor);
+                    if (psiElement != null) {
+                        PsiFile file = psiElement.getContainingFile();
+                        if (file.getUserData(LibrarySourcesConfig.EXTERNAL_MODULE_NAME) != null) {
+                            continue;
+                        }
+                    }
+                }
+
                 result.add(descriptor);
             }
         }
@@ -238,11 +234,11 @@ public final class JsDescriptorUtils {
     }
 
     //TODO: at the moment this check is very ineffective
-    public static boolean isNamespaceEmpty(@NotNull NamespaceDescriptor namespace) {
-        List<DeclarationDescriptor> containedDescriptors = getContainedDescriptorsWhichAreNotPredefined(namespace);
+    public static boolean isNamespaceEmpty(@NotNull NamespaceDescriptor namespace, @NotNull BindingContext context) {
+        List<DeclarationDescriptor> containedDescriptors = getContainedDescriptorsWhichAreNotPredefined(namespace, context);
         for (DeclarationDescriptor descriptor : containedDescriptors) {
             if (descriptor instanceof NamespaceDescriptor) {
-                if (!isNamespaceEmpty((NamespaceDescriptor)descriptor)) {
+                if (!isNamespaceEmpty((NamespaceDescriptor) descriptor, context)) {
                     return false;
                 }
             }

@@ -20,6 +20,8 @@ import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.mozilla.javascript.JavaScriptException;
 
+import java.util.EnumSet;
+
 /**
  * @author Pavel Talanov
  *         <p/>

@@ -116,12 +116,11 @@ public final class WhenTranslator extends AbstractTranslator {
             return statementToExecute;
         }
         JsExpression condition = translateConditions(entry);
-        return new JsIf(condition, addDummyBreak(statementToExecute), null);
+        return new JsIf(condition, addDummyBreakIfNeed(statementToExecute), null);
     }
 
     @NotNull
     JsStatement withReturnValueCaptured(@NotNull JsNode node) {
-
         return convertToStatement(LastExpressionMutator.mutateLastExpression(node,
                                                                              new AssignToExpressionMutator(result.reference())));
     }
@@ -172,8 +171,8 @@ public final class WhenTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private static JsBlock addDummyBreak(@NotNull JsStatement statement) {
-        return AstUtil.newBlock(statement, new JsBreak());
+    private static JsStatement addDummyBreakIfNeed(@NotNull JsStatement statement) {
+        return statement instanceof JsReturn ? statement : AstUtil.newBlock(statement, new JsBreak());
     }
 
     @NotNull

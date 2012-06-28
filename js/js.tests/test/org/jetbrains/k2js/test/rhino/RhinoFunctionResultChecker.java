@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.test.rhino;
 
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.k2js.translate.context.Namer;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
@@ -44,11 +45,12 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
     @Override
     public void runChecks(Context context, Scriptable scope) throws Exception {
         Object result = evaluateFunction(context, scope);
-        assertResultValid(result);
+        assertResultValid(result, context);
     }
 
-    protected void assertResultValid(Object result) {
-        assertEquals("Result of " + namespaceName + "." + functionName + "() is not what expected!", expectedResult, result);
+    protected void assertResultValid(Object result, Context context) {
+        String ecmaVersion = context.getLanguageVersion() == Context.VERSION_1_8 ? "ecma5" : "ecma3";
+        assertEquals("Result of " + namespaceName + "." + functionName + "() is not what expected (" + ecmaVersion + ")!", expectedResult, result);
         String report = namespaceName + "." + functionName + "() = " + Context.toString(result);
         System.out.println(report);
     }
@@ -58,10 +60,14 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
     }
 
     private String functionCallString() {
-        String result = functionName + "()";
+        StringBuilder sb = new StringBuilder();
         if (namespaceName != null) {
-            result = "Kotlin.defs." + namespaceName + "." + result;
+            sb.append("Kotlin.modules.main");
+            if (namespaceName != Namer.getRootNamespaceName()) {
+                sb.append('.').append(namespaceName);
+            }
+            sb.append('.');
         }
-        return result;
+        return sb.append(functionName).append("()").toString();
     }
 }

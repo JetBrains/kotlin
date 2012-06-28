@@ -22,3 +22,12 @@ fun json2(pairs : Array<Tuple2<String, Any?>>) : Json = js.noImpl
 
 library("jsonAddProperties")
 fun Json.add(other : Json) : Json = js.noImpl
+
+native
+trait JsonClass {
+    fun stringify(o: Any): String = noImpl
+    fun parse<T>(text: String): T = noImpl
+}
+
+native
+val JSON:JsonClass = noImpl

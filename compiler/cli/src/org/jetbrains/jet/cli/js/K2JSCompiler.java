@@ -22,6 +22,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import jet.Function0;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +41,7 @@ import org.jetbrains.k2js.config.*;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.jetbrains.k2js.facade.MainCallParameters;
 
+import java.io.File;
 import java.util.List;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
@@ -63,21 +65,15 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
     @NotNull
     @Override
     protected ExitCode doExecute(K2JSCompilerArguments arguments, PrintingMessageCollector messageCollector, Disposable rootDisposable) {
-
-        if (arguments.srcdir == null && arguments.sourceFiles == null) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify sources location via -srcdir", NO_LOCATION);
+        if (arguments.sourceFiles == null) {
+            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify sources location via -sourceFiles", NO_LOCATION);
             return ExitCode.INTERNAL_ERROR;
         }
 
         JetCoreEnvironment environmentForJS = JetCoreEnvironment.getCoreEnvironmentForJS(rootDisposable);
 
-        if (arguments.srcdir != null) {
-            environmentForJS.addSources(arguments.srcdir);
-        }
-        if (arguments.sourceFiles != null) {
-            for (String sourceFile : arguments.sourceFiles) {
-                environmentForJS.addSources(sourceFile);
-            }
+        for (String sourceFile : arguments.sourceFiles) {
+            environmentForJS.addSources(sourceFile);
         }
 
         Project project = environmentForJS.getProject();
@@ -100,7 +96,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
             messageCollector.report(CompilerMessageSeverity.ERROR, "Specify output file via -output", CompilerMessageLocation.NO_LOCATION);
             return ExitCode.INTERNAL_ERROR;
         }
-
 
         MainCallParameters mainCallParameters = arguments.createMainCallParameters();
         return translateAndGenerateOutputFile(mainCallParameters, messageCollector, environmentForJS, config, outputFile);
@@ -151,10 +146,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
     @NotNull
     private static Config getConfig(@NotNull K2JSCompilerArguments arguments, @NotNull Project project) {
         EcmaVersion ecmaVersion = EcmaVersion.fromString(arguments.target);
-        if (arguments.libzip == null) {
+        String moduleId = FileUtil.getNameWithoutExtension(new File(arguments.outputFile));
+        if (arguments.libraryFiles == null) {
             // lets discover the JS library definitions on the classpath
-            return new ClassPathLibraryDefintionsConfig(project, ecmaVersion);
+            return new ClassPathLibraryDefintionsConfig(project, moduleId, ecmaVersion);
         }
-        return new ZippedLibrarySourcesConfig(project, arguments.libzip, ecmaVersion);
+        return new LibrarySourcesConfig(project, moduleId, arguments.libraryFiles, ecmaVersion);
     }
 }

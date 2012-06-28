@@ -16,8 +16,8 @@
 
 package org.jetbrains.k2js.translate.utils;
 
-import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.containers.OrderedSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -110,7 +110,7 @@ public final class BindingUtils {
     public static List<JetDeclaration> getDeclarationsForNamespace(@NotNull BindingContext bindingContext,
             @NotNull NamespaceDescriptor namespace) {
         List<JetDeclaration> declarations = new ArrayList<JetDeclaration>();
-        for (DeclarationDescriptor descriptor : getContainedDescriptorsWhichAreNotPredefined(namespace)) {
+        for (DeclarationDescriptor descriptor : getContainedDescriptorsWhichAreNotPredefined(namespace, bindingContext)) {
             if (descriptor instanceof NamespaceDescriptor) {
                 continue;
             }
@@ -321,7 +321,7 @@ public final class BindingUtils {
     @NotNull
     public static Set<NamespaceDescriptor> getAllNonNativeNamespaceDescriptors(@NotNull BindingContext context,
             @NotNull List<JetFile> files) {
-        Set<NamespaceDescriptor> descriptorSet = Sets.newHashSet();
+        Set<NamespaceDescriptor> descriptorSet = new OrderedSet<NamespaceDescriptor>();
         for (JetFile file : files) {
             //TODO: can't be
             NamespaceDescriptor namespaceDescriptor = getNamespaceDescriptor(context, file);

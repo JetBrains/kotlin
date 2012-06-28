@@ -129,21 +129,18 @@ var Kotlin = {};
                 var property = properties[i];
                 object[property] = source[property];
             }
-            return this;
         }
 
         return function () {
-            var result = {};
-            for (var i = 0, length = arguments.length; i < length; i++) {
+            var result = arguments[0];
+            for (var i = 1, n = arguments.length; i < n; i++) {
                 add(result, arguments[i]);
             }
             return result;
         }
     })();
 
-    Kotlin.createNamespace = function () {
-        return Kotlin.createTrait.apply(null, arguments);
-    };
+    Kotlin.definePackage = Kotlin.createTrait;
 
     Kotlin.createClass = (function () {
         var METHODS = {addMethods: addMethods};
@@ -242,5 +239,13 @@ var Kotlin = {};
     Kotlin.createObject = function () {
         var singletonClass = Kotlin.createClass.apply(null, arguments);
         return new singletonClass();
+    };
+
+    Kotlin.defineModule = function (id, module) {
+        if (id in Kotlin.modules) {
+            throw Kotlin.$new(Kotlin.Exceptions.IllegalArgumentException)();
+        }
+
+        Kotlin.modules[id] = module;
     };
 })();

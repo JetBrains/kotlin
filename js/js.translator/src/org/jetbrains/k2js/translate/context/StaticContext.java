@@ -18,13 +18,17 @@ package org.jetbrains.k2js.translate.context;
 
 import com.google.common.collect.Maps;
 import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.config.EcmaVersion;
+import org.jetbrains.k2js.config.LibrarySourcesConfig;
 import org.jetbrains.k2js.translate.context.generator.Generator;
 import org.jetbrains.k2js.translate.context.generator.Rule;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
@@ -106,6 +110,11 @@ public final class StaticContext {
     }
 
     @NotNull
+    public EcmaVersion getEcmaVersion() {
+        return ecmaVersion;
+    }
+
+    @NotNull
     public JsProgram getProgram() {
         return program;
     }
@@ -153,6 +162,14 @@ public final class StaticContext {
     }
 
     private final class NameGenerator extends Generator<JsName> {
+        private JsName declareName(DeclarationDescriptor descriptor, String name) {
+            NamingScope scope = getEnclosingScope(descriptor);
+            // ecma 5 property name never declares as obfuscatable:
+            // 1) property cannot be overloaded, so, name collision is not possible
+            // 2) main reason: if property doesn't have any custom accessor, value holder will have the same name as accessor, so, the same name will be declared more than once
+            return isEcma5() ? scope.declareUnobfuscatableName(name) : scope.declareObfuscatableName(name);
+        }
+
         public NameGenerator() {
             Rule<JsName> namesForStandardClasses = new Rule<JsName>() {
                 @Override
@@ -171,8 +188,16 @@ public final class StaticContext {
                     if (!(descriptor instanceof NamespaceDescriptor)) {
                         return null;
                     }
-                    String nameForNamespace = getNameForNamespace((NamespaceDescriptor) descriptor);
-                    return getRootScope().declareUnobfuscatableName(nameForNamespace);
+
+                    String name;
+                    if (DescriptorUtils.isRootNamespace((NamespaceDescriptor) descriptor)) {
+                        name = Namer.getRootNamespaceName();
+                    }
+                    else {
+                        name = descriptor.getName().getName();
+                    }
+
+                    return getRootScope().declareUnobfuscatableName(name);
                 }
             };
             Rule<JsName> memberDeclarationsInsideParentsScope = new Rule<JsName>() {
@@ -180,6 +205,9 @@ public final class StaticContext {
                 @Nullable
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
                     NamingScope namingScope = getEnclosingScope(descriptor);
+                    if (descriptor instanceof ClassDescriptor) {
+                        return namingScope.declareUnobfuscatableName(descriptor.getName().getName());
+                    }
                     return namingScope.declareObfuscatableName(descriptor.getName().getName());
                 }
             };
@@ -203,11 +231,9 @@ public final class StaticContext {
                     boolean isGetter = descriptor instanceof PropertyGetterDescriptor;
                     PropertyAccessorDescriptor accessorDescriptor = (PropertyAccessorDescriptor) descriptor;
                     String propertyName = accessorDescriptor.getCorrespondingProperty().getName().getName();
-                    String accessorName = Namer.getNameForAccessor(propertyName, isGetter, !accessorDescriptor.getReceiverParameter().exists() && isEcma5());
-                    NamingScope enclosingScope = getEnclosingScope(descriptor);
-                    return isEcma5()
-                           ? enclosingScope.declareUnobfuscatableName(accessorName)
-                           : enclosingScope.declareObfuscatableName(accessorName);
+                    String accessorName = Namer.getNameForAccessor(propertyName, isGetter,
+                                                                   !accessorDescriptor.getReceiverParameter().exists() && isEcma5());
+                    return declareName(descriptor, accessorName);
                 }
             };
 
@@ -232,19 +258,12 @@ public final class StaticContext {
                         return null;
                     }
 
-                    //TODO: move somewhere
-                    NamingScope enclosingScope = getEnclosingScope(descriptor);
-                    if (isEcma5()) {
-                        String name = descriptor.getName().getName();
-                        if (JsDescriptorUtils.isAsPrivate((PropertyDescriptor) descriptor)) {
-                            name = '_' + name;
-                        }
+                    String name = descriptor.getName().getName();
+                    if (!isEcma5() || JsDescriptorUtils.isAsPrivate((PropertyDescriptor) descriptor)) {
+                        name = Namer.getKotlinBackingFieldName(name);
+                    }
 
-                        return enclosingScope.declareUnobfuscatableName(name);
-                    }
-                    else {
-                        return enclosingScope.declareObfuscatableName(Namer.getKotlinBackingFieldName(descriptor.getName().getName()));
-                    }
+                    return declareName(descriptor, name);
                 }
             };
             //TODO: hack!
@@ -386,14 +405,50 @@ public final class StaticContext {
             Rule<JsNameRef> namespaceLevelDeclarationsHaveEnclosingNamespacesNamesAsQualifier = new Rule<JsNameRef>() {
                 @Override
                 public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
-                    DeclarationDescriptor containingDeclaration = getContainingDeclaration(descriptor);
-                    if (!(containingDeclaration instanceof NamespaceDescriptor)) {
+                    DeclarationDescriptor containingDescriptor = getContainingDeclaration(descriptor);
+                    if (!(containingDescriptor instanceof NamespaceDescriptor)) {
                         return null;
                     }
-                    JsName containingDeclarationName = getNameForDescriptor(containingDeclaration);
-                    JsNameRef qualifier = containingDeclarationName.makeRef();
-                    qualifier.setQualifier(getQualifierForDescriptor(containingDeclaration));
-                    return qualifier;
+
+                    final JsNameRef result = new JsNameRef(getNameForDescriptor(containingDescriptor));
+                    if (DescriptorUtils.isRootNamespace((NamespaceDescriptor) containingDescriptor)) {
+                        return result;
+                    }
+
+                    JsNameRef qualifier = result;
+                    while ((containingDescriptor = getContainingDeclaration(containingDescriptor)) instanceof NamespaceDescriptor &&
+                           !DescriptorUtils.isRootNamespace((NamespaceDescriptor) containingDescriptor)) {
+                        JsNameRef ref = getNameForDescriptor(containingDescriptor).makeRef();
+                        qualifier.setQualifier(ref);
+                        qualifier = ref;
+                    }
+
+                    PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
+                    if (element == null && descriptor instanceof PropertyAccessorDescriptor) {
+                        element = BindingContextUtils.descriptorToDeclaration(bindingContext, ((PropertyAccessorDescriptor) descriptor)
+                                .getCorrespondingProperty());
+                    }
+
+                    if (element != null) {
+                        PsiFile file = element.getContainingFile();
+                        String moduleName = file.getUserData(LibrarySourcesConfig.EXTERNAL_MODULE_NAME);
+                        if (LibrarySourcesConfig.UNKNOWN_EXTERNAL_MODULE_NAME.equals(moduleName)) {
+                            return null;
+                        }
+                        else if (moduleName != null) {
+                            qualifier.setQualifier(new JsArrayAccess(namer.kotlin("modules"), program.getStringLiteral(moduleName)));
+                        }
+                        else if (result == qualifier && result.getIdent().equals("kotlin")) {
+                            // todo WebDemoExamples2Test#testBuilder, package "kotlin" from kotlin/js/js.libraries/src/stdlib/JUMaps.kt must be inlined
+                            return qualifier;
+                        }
+                    }
+
+                    if (qualifier.getQualifier() == null) {
+                        qualifier.setQualifier(new JsNameRef(Namer.getRootNamespaceName()));
+                    }
+
+                    return result;
                 }
             };
             Rule<JsNameRef> constructorHaveTheSameQualifierAsTheClass = new Rule<JsNameRef>() {
@@ -449,10 +504,7 @@ public final class StaticContext {
             Rule<Boolean> topLevelNamespaceHaveNoQualifier = new Rule<Boolean>() {
                 @Override
                 public Boolean apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!(descriptor instanceof NamespaceDescriptor)) {
-                        return null;
-                    }
-                    if (DescriptorUtils.isTopLevelNamespace((NamespaceDescriptor) descriptor)) {
+                    if (descriptor instanceof NamespaceDescriptor && DescriptorUtils.isRootNamespace((NamespaceDescriptor) descriptor)) {
                         return true;
                     }
                     return null;
