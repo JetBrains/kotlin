@@ -89,9 +89,10 @@ public class ReplFromTerminal {
         try {
             System.out.println("Kotlin interactive shell");
             System.out.println("Type :help for help, :quit for quit");
+            WhatNextAfterOneLine next = WhatNextAfterOneLine.READ_LINE;
             while (true) {
-                boolean next = one();
-                if (!next) {
+                next = one(next);
+                if (next == WhatNextAfterOneLine.QUIT) {
                     break;
                 }
             }
@@ -106,33 +107,55 @@ public class ReplFromTerminal {
         }
     }
 
-    private boolean one() {
+    private enum WhatNextAfterOneLine {
+        READ_LINE,
+        INCOMPLETE,
+        QUIT,
+    }
+
+    @NotNull
+    private WhatNextAfterOneLine one(@NotNull WhatNextAfterOneLine next) {
         try {
-            String line = consoleReader.readLine(">>> ");
+            String line = consoleReader.readLine(next == WhatNextAfterOneLine.INCOMPLETE ? "... " : ">>> ");
             if (line == null) {
-                return false;
+                return WhatNextAfterOneLine.QUIT;
             }
 
             if (line.startsWith(":")) {
-                return oneCommand(line.substring(1));
+                boolean notQuit = oneCommand(line.substring(1));
+                return notQuit ? WhatNextAfterOneLine.READ_LINE : WhatNextAfterOneLine.QUIT;
             }
 
-            eval(line);
-            return true;
+            ReplInterpreter.LineResultType lineResultType = eval(line);
+            if (lineResultType == ReplInterpreter.LineResultType.INCOMPLETE) {
+                return WhatNextAfterOneLine.INCOMPLETE;
+            }
+            else {
+                return WhatNextAfterOneLine.READ_LINE;
+            }
         }
         catch (Exception e) {
             throw ExceptionUtils.rethrow(e);
         }
     }
 
-    private void eval(@NotNull String line) {
+    @NotNull
+    private ReplInterpreter.LineResultType eval(@NotNull String line) {
         ReplInterpreter.LineResult lineResult = getReplInterpreter().eval(line);
-        if (!lineResult.isSuccessful()) {
+        if (lineResult.getType() == ReplInterpreter.LineResultType.SUCCESS) {
+            if (!lineResult.isUnit()) {
+                System.out.println(lineResult.getValue());
+            }
+        }
+        else if (lineResult.getType() == ReplInterpreter.LineResultType.INCOMPLETE) {
+        }
+        else if (lineResult.getType() == ReplInterpreter.LineResultType.ERROR) {
             System.out.print(lineResult.getErrorText());
         }
-        else if (!lineResult.isUnit()) {
-            System.out.println(lineResult.getValue());
+        else {
+            throw new IllegalStateException("unknown line result type: " + lineResult);
         }
+        return lineResult.getType();
     }
 
     private boolean oneCommand(@NotNull String command) throws Exception {

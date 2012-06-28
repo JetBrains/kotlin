@@ -79,6 +79,7 @@ public class ReplInterpreter {
     @Nullable
     private JetScope lastLineScope;
     private List<EarlierLine> earlierLines = Lists.newArrayList();
+    private List<String> previousIncompleteLines = Lists.newArrayList();
     private final ReplClassLoader classLoader;
 
     @NotNull
@@ -120,23 +121,34 @@ public class ReplInterpreter {
         classLoader = new ReplClassLoader(new URLClassLoader(classpath.toArray(new URL[0])));
     }
 
+    public enum LineResultType {
+        SUCCESS,
+        ERROR,
+        INCOMPLETE,
+    }
+
     public static class LineResult {
+
         private final Object value;
         private final boolean unit;
         private final String errorText;
+        @NotNull
+        private final LineResultType type;
 
-        private LineResult(Object value, boolean unit, String errorText) {
+        private LineResult(Object value, boolean unit, String errorText, @NotNull LineResultType type) {
             this.value = value;
             this.unit = unit;
             this.errorText = errorText;
+            this.type = type;
         }
 
-        public boolean isSuccessful() {
-            return errorText == null;
+        @NotNull
+        public LineResultType getType() {
+            return type;
         }
 
         private void checkSuccessful() {
-            if (!isSuccessful()) {
+            if (!(getType() == LineResultType.SUCCESS)) {
                 throw new IllegalStateException("it is error");
             }
         }
@@ -157,7 +169,7 @@ public class ReplInterpreter {
         }
 
         public static LineResult successful(Object value, boolean unit) {
-            return new LineResult(value, unit, null);
+            return new LineResult(value, unit, null, LineResultType.SUCCESS);
         }
 
         public static LineResult error(@NotNull String errorText) {
@@ -167,7 +179,11 @@ public class ReplInterpreter {
             else if (!errorText.endsWith("\n")) {
                 errorText = errorText + "\n";
             }
-            return new LineResult(null, false, errorText);
+            return new LineResult(null, false, errorText, LineResultType.ERROR);
+        }
+
+        public static LineResult incomplete() {
+            return new LineResult(null, false, null, LineResultType.INCOMPLETE);
         }
     }
 
@@ -177,14 +193,29 @@ public class ReplInterpreter {
 
         JvmClassName scriptClassName = JvmClassName.byInternalName("Line" + lineNumber);
 
-        LightVirtualFile virtualFile = new LightVirtualFile("line" + lineNumber + ".ktscript", JetLanguage.INSTANCE, line);
+        StringBuilder fullText = new StringBuilder();
+        for (String prevLine : previousIncompleteLines) {
+            fullText.append(prevLine + "\n");
+        }
+        fullText.append(line);
+
+        LightVirtualFile virtualFile = new LightVirtualFile("line" + lineNumber + ".ktscript", JetLanguage.INSTANCE, fullText.toString());
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
 
         MessageCollectorToString errorCollector = new MessageCollectorToString();
 
-        boolean hasErrors = AnalyzerWithCompilerReport.reportSyntaxErrors(psiFile, errorCollector);
-        if (hasErrors) {
+        AnalyzerWithCompilerReport.SyntaxErrorReport syntaxErrorReport =
+                AnalyzerWithCompilerReport.reportSyntaxErrors(psiFile, errorCollector);
+
+        if (syntaxErrorReport.isOnlyErrorAtEof()) {
+            previousIncompleteLines.add(line);
+            return LineResult.incomplete();
+        }
+
+        previousIncompleteLines.clear();
+
+        if (syntaxErrorReport.isHasErrors()) {
             return LineResult.error(errorCollector.getString());
         }
 

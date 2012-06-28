@@ -123,13 +123,35 @@ public final class AnalyzerWithCompilerReport {
         }
     }
 
-    public static boolean reportSyntaxErrors(@NotNull PsiElement file, @NotNull final MessageCollector messageCollector) {
+    public static class SyntaxErrorReport {
+        private final boolean hasErrors;
+        private final boolean onlyErrorAtEof;
+
+        public SyntaxErrorReport(boolean hasErrors, boolean onlyErrorAtEof) {
+            this.hasErrors = hasErrors;
+            this.onlyErrorAtEof = onlyErrorAtEof;
+        }
+
+        public boolean isHasErrors() {
+            return hasErrors;
+        }
+
+        public boolean isOnlyErrorAtEof() {
+            return onlyErrorAtEof;
+        }
+    }
+
+    public static SyntaxErrorReport reportSyntaxErrors(@NotNull final PsiElement file, @NotNull final MessageCollector messageCollector) {
         class ErrorReportingVisitor extends AnalyzingUtils.PsiErrorElementVisitor {
             boolean hasErrors = false;
+            boolean onlyErrorAtEof = false;
 
             private <E extends PsiElement> void reportDiagnostic(E element, SimpleDiagnosticFactory<E> factory, String message) {
                 MyDiagnostic<?> diagnostic = new MyDiagnostic<E>(element, factory, message);
                 AnalyzerWithCompilerReport.reportDiagnostic(diagnostic, messageCollector);
+                if (element.getTextRange().getStartOffset() == file.getTextRange().getEndOffset()) {
+                    onlyErrorAtEof = !hasErrors;
+                }
                 hasErrors = true;
             }
 
@@ -150,7 +172,7 @@ public final class AnalyzerWithCompilerReport {
 
         file.accept(visitor);
 
-        return visitor.hasErrors;
+        return new SyntaxErrorReport(visitor.hasErrors, visitor.onlyErrorAtEof);
     }
 
     @Nullable

@@ -64,8 +64,11 @@ public class ReplInterpreterTest {
 
             ReplInterpreter.LineResult lineResult = repl.eval(code);
             Object actual;
-            if (lineResult.isSuccessful()) {
+            if (lineResult.getType() == ReplInterpreter.LineResultType.SUCCESS) {
                 actual = lineResult.getValue();
+            }
+            else if (lineResult.getType() == ReplInterpreter.LineResultType.INCOMPLETE) {
+                actual = "incomplete";
             }
             else {
                 actual = lineResult.getErrorText();
@@ -143,5 +146,14 @@ public class ReplInterpreterTest {
         testFile("evaluationErrors.repl");
     }
 
+    @Test
+    public void multiline() {
+        testFile("multiline.repl");
+    }
+
+    @Test
+    public void multiline3() {
+        testFile("multiline3.repl");
+    }
 
 }
