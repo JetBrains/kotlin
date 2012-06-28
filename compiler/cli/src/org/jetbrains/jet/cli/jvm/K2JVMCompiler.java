@@ -18,6 +18,7 @@ package org.jetbrains.jet.cli.jvm;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
@@ -92,7 +93,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
             arguments.freeArgs.isEmpty() &&
             (argumentsSourceDirs == null || argumentsSourceDirs.size() == 0)) {
 
-            ReplFromTerminal.run(rootDisposable, dependencies);
+            ReplFromTerminal.run(rootDisposable, dependencies, getClasspath(arguments));
             return ExitCode.OK;
         }
 
@@ -202,8 +203,19 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
         }
 
         if (arguments.classpath != null) {
-            Iterable<String> classpath = Splitter.on(File.pathSeparatorChar).split(arguments.classpath);
-            CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(), Iterables.toArray(classpath, String.class));
+            List<File> classpath = getClasspath(arguments);
+            CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(), Iterables.toArray(classpath, File.class));
         }
+    }
+
+    @NotNull
+    private static List<File> getClasspath(@NotNull K2JVMCompilerArguments arguments) {
+        List<File> classpath = Lists.newArrayList();
+        if (arguments.classpath != null) {
+            for (String element : Splitter.on(File.pathSeparatorChar).split(arguments.classpath)) {
+                classpath.add(new File(element));
+            }
+        }
+        return classpath;
     }
 }

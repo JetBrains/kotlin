@@ -41,8 +41,10 @@ public class ReplFromTerminal {
 
     private final ConsoleReader consoleReader;
 
-    public ReplFromTerminal(@NotNull final Disposable disposable, @NotNull final CompilerDependencies compilerDependencies) {
-        final List<File> extraClasspath = Collections.<File>emptyList();
+    public ReplFromTerminal(
+            @NotNull final Disposable disposable,
+            @NotNull final CompilerDependencies compilerDependencies,
+            @NotNull final List<File> extraClasspath) {
         new Thread("initialize-repl") {
             @Override
             public void run() {
@@ -193,8 +195,8 @@ public class ReplFromTerminal {
         return Arrays.asList(command.split(" "));
     }
 
-    public static void run(@NotNull Disposable disposable, @NotNull CompilerDependencies compilerDependencies) {
-        new ReplFromTerminal(disposable, compilerDependencies).doRun();
+    public static void run(@NotNull Disposable disposable, @NotNull CompilerDependencies compilerDependencies, @NotNull List<File> extraClasspath) {
+        new ReplFromTerminal(disposable, compilerDependencies, extraClasspath).doRun();
     }
 
 }
