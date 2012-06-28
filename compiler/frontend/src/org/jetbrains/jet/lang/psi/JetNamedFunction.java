@@ -85,15 +85,15 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
     }
 
     /**
-     * Returns full qualified name for function "package_fqn.function_name"
-     * Not null for top level functions.
-     * @return
-     */
+    * Returns full qualified name for function "package_fqn.function_name"
+    * Not null for top level functions.
+    * @return
+    */
     @Nullable
     public FqName getQualifiedName() {
         final PsiJetFunctionStub stub = getStub();
         if (stub != null) {
-            // TODO (stubs): return stub.getQualifiedName();
+            return stub.getTopFQName();
         }
 
         PsiElement parent = getParent();
