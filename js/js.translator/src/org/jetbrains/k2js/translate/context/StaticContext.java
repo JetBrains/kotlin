@@ -205,6 +205,9 @@ public final class StaticContext {
                 @Nullable
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
                     NamingScope namingScope = getEnclosingScope(descriptor);
+                    if (descriptor instanceof ClassDescriptor) {
+                        return namingScope.declareUnobfuscatableName(descriptor.getName().getName());
+                    }
                     return namingScope.declareObfuscatableName(descriptor.getName().getName());
                 }
             };

@@ -38,6 +38,7 @@ import org.jetbrains.k2js.facade.exceptions.TranslationInternalException;
 import org.jetbrains.k2js.facade.exceptions.UnsupportedFeatureException;
 import org.jetbrains.k2js.translate.context.StaticContext;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.declaration.ClassAliasingMap;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
 import org.jetbrains.k2js.translate.declaration.NamespaceDeclarationTranslator;
 import org.jetbrains.k2js.translate.expression.ExpressionVisitor;
@@ -54,7 +55,6 @@ import org.jetbrains.k2js.translate.utils.dangerous.DangerousTranslator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.jetbrains.jet.plugin.JetMainDetector.getMainFunction;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
@@ -85,9 +85,9 @@ public final class Translation {
 
     @NotNull
     public static JsExpression translateClassDeclaration(@NotNull JetClass classDeclaration,
-            @NotNull Map<JsName, JsName> aliasingMap,
+            @NotNull ClassAliasingMap classAliasingMap,
             @NotNull TranslationContext context) {
-        return ClassTranslator.generateClassCreationExpression(classDeclaration, aliasingMap, context);
+        return ClassTranslator.generateClassCreationExpression(classDeclaration, classAliasingMap, context);
     }
 
     @NotNull

@@ -187,18 +187,6 @@ public final class JsDescriptorUtils {
     }
 
     @NotNull
-    public static List<ClassDescriptor> getAllClassesDefinedInNamespace(@NotNull NamespaceDescriptor namespaceDescriptor,
-            @NotNull BindingContext context) {
-        List<ClassDescriptor> classDescriptors = Lists.newArrayList();
-        for (DeclarationDescriptor descriptor : getContainedDescriptorsWhichAreNotPredefined(namespaceDescriptor, context)) {
-            if (descriptor instanceof ClassDescriptor) {
-                classDescriptors.add((ClassDescriptor) descriptor);
-            }
-        }
-        return classDescriptors;
-    }
-
-    @NotNull
     public static List<NamespaceDescriptor> getNestedNamespaces(@NotNull NamespaceDescriptor namespaceDescriptor,
             @NotNull BindingContext context) {
         List<NamespaceDescriptor> result = Lists.newArrayList();

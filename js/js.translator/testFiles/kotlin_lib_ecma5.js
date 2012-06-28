@@ -112,16 +112,7 @@ var Kotlin = {};
 
 
     Kotlin.definePackage = function (functionsAndClasses, nestedNamespaces) {
-        //var p = parent[localName];
-        //if (!p) {
-        //    p = Object.create(null, functionsAndClasses || undefined);
-        //    Object.defineProperty(parent, localName, {value: p});
-        //}
-        //else if (functionsAndClasses) {
-        //    Object.defineProperties(p, functionsAndClasses);
-        //}
         var p = Object.create(null, functionsAndClasses || undefined);
-
         if (nestedNamespaces) {
             var keys = Object.keys(nestedNamespaces);
             for (var i = 0, n = keys.length; i < n; i++) {

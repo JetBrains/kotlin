@@ -129,12 +129,11 @@ var Kotlin = {};
                 var property = properties[i];
                 object[property] = source[property];
             }
-            return this;
         }
 
         return function () {
-            var result = {};
-            for (var i = 0, length = arguments.length; i < length; i++) {
+            var result = arguments[0];
+            for (var i = 1, n = arguments.length; i < n; i++) {
                 add(result, arguments[i]);
             }
             return result;

@@ -17,10 +17,12 @@
 package org.jetbrains.k2js.translate.declaration;
 
 import com.google.common.collect.Lists;
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.backend.js.ast.JsObjectLiteral;
+import com.google.dart.compiler.backend.js.ast.JsStatement;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -34,7 +36,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getAllNonNativeNamespaceDescriptors;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getAllClassesDefinedInNamespace;
 
 /**
  * @author Pavel Talanov
@@ -55,29 +56,16 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
                                            @NotNull TranslationContext context) {
         super(context);
         this.namespaceDescriptors = namespaceDescriptors;
-        this.classDeclarationTranslator = new ClassDeclarationTranslator(getAllClasses(), context);
-    }
-
-    @NotNull
-    private List<ClassDescriptor> getAllClasses() {
-        List<ClassDescriptor> result = Lists.newArrayList();
-        for (NamespaceDescriptor namespaceDescriptor : namespaceDescriptors) {
-            result.addAll(getAllClassesDefinedInNamespace(namespaceDescriptor, context().bindingContext()));
-        }
-        return result;
+        classDeclarationTranslator = new ClassDeclarationTranslator(context);
     }
 
     @NotNull
     private List<JsStatement> translate() {
         List<JsStatement> result = new ArrayList<JsStatement>();
-        classesDeclarations(result);
+        result.add(classDeclarationTranslator.getDeclarationsStatement());
         namespacesDeclarations(result);
-        return result;
-    }
-
-    private void classesDeclarations(List<JsStatement> statements) {
         classDeclarationTranslator.generateDeclarations();
-        statements.add(classDeclarationTranslator.getDeclarationsStatement());
+        return result;
     }
 
     private void namespacesDeclarations(List<JsStatement> statements) {

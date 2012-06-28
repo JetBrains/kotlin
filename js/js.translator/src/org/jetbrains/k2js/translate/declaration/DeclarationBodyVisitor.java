@@ -79,8 +79,7 @@ public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPrope
             return Collections.emptyList();
         }
 
-        ClassDescriptor classDescriptor = getClassDescriptor(context.bindingContext(), expression);
-        return Collections.singletonList(classDeclarationTranslator.getClassNameToClassObject(classDescriptor));
+        return Collections.singletonList(classDeclarationTranslator.translateAndGetClassNameToClassObject(expression));
     }
 
     @Override

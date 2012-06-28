@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetObjectLiteralExpression;
 import org.jetbrains.jet.lang.psi.JetParameter;
@@ -31,12 +32,11 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.initializer.InitializerUtils;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static com.google.dart.compiler.util.AstUtil.newSequence;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
@@ -64,8 +64,8 @@ public final class ClassTranslator extends AbstractTranslator {
 
     @NotNull
     public static JsExpression generateClassCreationExpression(@NotNull JetClassOrObject classDeclaration,
-                                                               @NotNull Map<JsName, JsName> aliasingMap,
-                                                               @NotNull TranslationContext context) {
+            @NotNull ClassAliasingMap aliasingMap,
+            @NotNull TranslationContext context) {
         return (new ClassTranslator(classDeclaration, aliasingMap, context)).translateClassOrObjectCreation();
     }
 
@@ -73,13 +73,13 @@ public final class ClassTranslator extends AbstractTranslator {
     public static JsExpression generateClassCreationExpression(@NotNull JetClassOrObject classDeclaration,
 
                                                                @NotNull TranslationContext context) {
-        return (new ClassTranslator(classDeclaration, Collections.<JsName, JsName>emptyMap(), context)).translateClassOrObjectCreation();
+        return (new ClassTranslator(classDeclaration, null, context)).translateClassOrObjectCreation();
     }
 
     @NotNull
     public static JsExpression generateObjectLiteralExpression(@NotNull JetObjectLiteralExpression objectLiteralExpression,
                                                                @NotNull TranslationContext context) {
-        return (new ClassTranslator(objectLiteralExpression.getObjectDeclaration(), Collections.<JsName, JsName>emptyMap(), context))
+        return (new ClassTranslator(objectLiteralExpression.getObjectDeclaration(), null, context))
             .translateObjectLiteralExpression();
     }
 
@@ -95,12 +95,12 @@ public final class ClassTranslator extends AbstractTranslator {
     @NotNull
     private final ClassDescriptor descriptor;
 
-    @NotNull
-    private final Map<JsName, JsName> aliasingMap;
+    @Nullable
+    private final ClassAliasingMap aliasingMap;
 
     private ClassTranslator(@NotNull JetClassOrObject classDeclaration,
-                            @NotNull Map<JsName, JsName> aliasingMap,
-                            @NotNull TranslationContext context) {
+            @Nullable ClassAliasingMap aliasingMap,
+            @NotNull TranslationContext context) {
         super(context.newDeclaration(classDeclaration));
         this.aliasingMap = aliasingMap;
         this.descriptor = getClassDescriptor(context.bindingContext(), classDeclaration);
@@ -209,8 +209,7 @@ public final class ClassTranslator extends AbstractTranslator {
 
     private void addTraits(@NotNull List<JsExpression> superclassReferences,
                            @NotNull List<ClassDescriptor> superclassDescriptors) {
-        for (ClassDescriptor superClassDescriptor :
-            superclassDescriptors) {
+        for (ClassDescriptor superClassDescriptor : superclassDescriptors) {
             assert (superClassDescriptor.getKind() == ClassKind.TRAIT) : "Only traits are expected here";
             superclassReferences.add(getClassReference(superClassDescriptor));
         }
@@ -227,12 +226,16 @@ public final class ClassTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression getClassReference(@NotNull ClassDescriptor superClassDescriptor) {
-        //NOTE: aliasing here is needed for the declaration generation step
-        JsName name = context().getNameForDescriptor(superClassDescriptor);
-        JsName alias = aliasingMap.get(name);
-        if (alias != null) {
-            return alias.makeRef();
+        // aliasing here is needed for the declaration generation step
+        if (aliasingMap != null) {
+            JsNameRef name = aliasingMap.get(BindingUtils.getClassForDescriptor(bindingContext(), superClassDescriptor),
+                                                       (JetClass) classDeclaration);
+            if (name != null) {
+                return name;
+            }
         }
+
+        // from library
         return getQualifiedReference(context(), superClassDescriptor);
     }
 
