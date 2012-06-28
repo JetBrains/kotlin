@@ -66,9 +66,8 @@ var Kotlin = {};
                 if (initializer != null) {
                     initializer.apply(o, arguments);
                 }
-                if (initializer == null || !initializer.hasOwnProperty("skipSeal")) {
-                    Object.seal(o);
-                }
+
+                Object.seal(o);
                 return o;
             };
         }
@@ -162,10 +161,6 @@ var Kotlin = {};
                     descriptors[name] = {value: value, writable: true};
                 }
             }
-        }
-
-        if (initializer) {
-            Object.defineProperty(initializer, "skipSeal", {value: true});
         }
 
         return Kotlin.createClass(parent || null, initializer, descriptors);

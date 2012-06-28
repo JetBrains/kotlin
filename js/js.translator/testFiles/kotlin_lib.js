@@ -306,10 +306,15 @@ var kotlin = {set:function (receiver, key, value) {
         }
     );
 
+    var ComparatorImpl = Kotlin.$createClass(Kotlin.Comparator, {
+                                                 initialize: function (comparator) {
+                                                     this.compare = comparator;
+                                                 }
+                                             }
+    );
+
     Kotlin.comparator = function (f) {
-        var result = Kotlin.$new(Kotlin.Comparator)();
-        result.compare = f;
-        return result;
+        return Kotlin.$new(ComparatorImpl)(f);
     };
 
     Kotlin.collectionsMax = function (col, comp) {
