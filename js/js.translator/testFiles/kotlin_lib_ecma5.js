@@ -20,88 +20,75 @@ var Kotlin = {};
         return false;
     };
 
-    // todo compatibility for opera https://raw.github.com/gist/1000718/es5compat-gs.js
+    // as separated function to reduce scope
+    function createConstructor(proto, initializer) {
+        return function () {
+            var o = Object.create(proto);
+            if (initializer != null) {
+                initializer.apply(o, arguments);
+            }
+
+            Object.seal(o);
+            return o;
+        };
+    }
+
+    function computeProto(bases, properties) {
+        var proto = null;
+        for (var i = 0, n = bases.length; i < n; i++) {
+            var base = bases[i];
+            var baseProto = base.proto;
+            if (baseProto == null || base.properties == null) {
+                continue;
+            }
+
+            if (!proto) {
+                proto = Object.create(baseProto, properties || undefined);
+                continue;
+            }
+            Object.defineProperties(proto, base.properties);
+            // todo test A -> B, C(->D) *properties from D is not yet added to proto*
+        }
+
+        return proto;
+    }
+
     // proto must be created for class even if it is not needed (requires for is operator)
-    Kotlin.createClass = (function () {
-        function create(bases, initializer, properties) {
-            var proto;
-            var baseInitializer = null;
-            var isTrait = initializer == null;
-            if (!bases) {
-                proto = !properties && isTrait ? null : Object.create(null, properties || undefined);
+    Kotlin.createClass = function (bases, initializer, properties) {
+        var proto;
+        var baseInitializer = null;
+        var isTrait = initializer == null;
+        if (!bases) {
+            proto = !properties && isTrait ? null : Object.create(null, properties || undefined);
+        }
+        else if (!Array.isArray(bases)) {
+            baseInitializer = bases.initializer;
+            proto = !properties && isTrait ? bases.proto : Object.create(bases.proto, properties || undefined);
+        }
+        else {
+            proto = computeProto(bases, properties);
+            // first is superclass, other are traits
+            baseInitializer = bases[0].initializer;
+            // all bases are traits without properties
+            if (proto == null && !isTrait) {
+                proto = Object.create(null, properties || undefined);
             }
-            else if (!Array.isArray(bases)) {
-                baseInitializer = bases.initializer;
-                proto = !properties && isTrait ? bases.proto : Object.create(bases.proto, properties || undefined);
-            }
-            else {
-                proto = computeProto(bases, properties);
-                // first is superclass, other are traits
-                baseInitializer = bases[0].initializer;
-                // all bases are traits without properties
-                if (proto == null && !isTrait) {
-                    proto = Object.create(null, properties || undefined);
-                }
-            }
-
-            var constructor = createConstructor(proto, initializer);
-            Object.defineProperty(constructor, "proto", {value: proto});
-            Object.defineProperty(constructor, "properties", {value: properties || null});
-            // null for trait
-            if (!isTrait) {
-                Object.defineProperty(constructor, "initializer", {value: initializer});
-
-                Object.defineProperty(initializer, "baseInitializer", {value: baseInitializer});
-                Object.seal(initializer);
-            }
-
-            Object.seal(constructor);
-            return constructor;
         }
 
-        // as separate function to reduce scope
-        function createConstructor(proto, initializer) {
-            return function () {
-                var o = Object.create(proto);
-                if (initializer != null) {
-                    initializer.apply(o, arguments);
-                }
+        var constructor = createConstructor(proto, initializer);
+        Object.defineProperty(constructor, "proto", {value: proto});
+        Object.defineProperty(constructor, "properties", {value: properties || null});
+        // null for trait
+        if (!isTrait) {
+            Object.defineProperty(constructor, "initializer", {value: initializer});
 
-                Object.seal(o);
-                return o;
-            };
+            Object.defineProperty(initializer, "baseInitializer", {value: baseInitializer});
+            Object.freeze(initializer);
         }
 
-        function computeProto(bases, properties) {
-            var proto = null;
-            for (var i = 0, n = bases.length; i < n; i++) {
-                var base = bases[i];
-                var baseProto = base.proto;
-                if (baseProto == null || base.properties == null) {
-                    continue;
-                }
-
-                if (!proto) {
-                    proto = Object.create(baseProto, properties || undefined);
-                    continue;
-                }
-
-                // chrome bug related to getOwnPropertyDescriptor (sometimes returns undefined), so, we keep properties
-                //var names = Object.getOwnPropertyNames(baseProto);
-                //for (var j = 0, k = names.length; j < k; j++) {
-                //    var descriptor = Object.getOwnPropertyDescriptor(baseProto, names[i]);
-                //    Object.defineProperty(proto, names[i], descriptor);
-                //}
-                Object.defineProperties(proto, base.properties);
-
-                // todo test A -> B, C(->D) *properties from D is not yet added to proto*
-            }
-
-            return proto;
-        }
-
-        return create;
-    })();
+        Object.freeze(constructor);
+        return constructor;
+    };
 
     Kotlin.createObject = function (initializer, properties) {
         var o = Object.create(null, properties || undefined);
@@ -128,7 +115,7 @@ var Kotlin = {};
     };
 
     Kotlin.$createClass = function (parent, properties) {
-        if (typeof (parent) != "function") {
+        if (parent !== null && typeof (parent) != "function") {
             properties = parent;
             parent = null;
         }
