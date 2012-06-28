@@ -25,6 +25,10 @@ public class ExceptionUtils {
 
     /**
      * Translate exception to unchecked exception.
+     *
+     * Return type is specified to make it possible to use it like this:
+     *     throw ExceptionUtils.rethrow(e);
+     * In this case compiler knows that code after this rethrowing won't be executed.
      */
     public static RuntimeException rethrow(Throwable e) {
         if (e instanceof RuntimeException) {
