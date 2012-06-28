@@ -34,6 +34,8 @@ public interface PsiJetClassStub extends NamedStub<JetClass> {
 
     boolean isTrait();
 
+    boolean isAnnotation();
+
     boolean isEnumEntry();
 
     @NotNull

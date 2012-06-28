@@ -154,6 +154,11 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
     }
 
     public boolean isAnnotation() {
+        PsiJetClassStub stub = getStub();
+        if (stub != null) {
+            return stub.isAnnotation();
+        }
+
         return hasModifier(JetTokens.ANNOTATION_KEYWORD);
     }
 

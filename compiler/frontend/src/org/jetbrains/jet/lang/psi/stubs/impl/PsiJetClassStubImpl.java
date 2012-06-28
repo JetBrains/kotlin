@@ -39,6 +39,7 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     private final StringRef[] superNames;
     private final boolean isTrait;
     private final boolean isEnumEntry;
+    private final boolean isAnnotation;
 
     public PsiJetClassStubImpl(
             JetClassElementType type,
@@ -46,9 +47,9 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
             @Nullable final String qualifiedName,
             String name,
             List<String> superNames,
-            boolean isTrait, boolean isEnumEntry) {
+            boolean isTrait, boolean isEnumEntry, boolean isAnnotation) {
         this(type, parent, StringRef.fromString(qualifiedName), StringRef.fromString(name), wrapStrings(superNames),
-             isTrait, isEnumEntry);
+             isTrait, isEnumEntry, isAnnotation);
     }
 
     public PsiJetClassStubImpl(
@@ -57,14 +58,15 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
             StringRef qualifiedName,
             StringRef name,
             StringRef[] superNames,
-            boolean isTrait, boolean isEnumEntry
-    ) {
+            boolean isTrait, boolean isEnumEntry,
+            boolean isAnnotation) {
         super(parent, type);
         this.qualifiedName = qualifiedName;
         this.name = name;
         this.superNames = superNames;
         this.isTrait = isTrait;
         this.isEnumEntry = isEnumEntry;
+        this.isAnnotation = isAnnotation;
     }
 
     private static StringRef[] wrapStrings(List<String> names) {
@@ -83,6 +85,11 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     @Override
     public boolean isTrait() {
         return isTrait;
+    }
+
+    @Override
+    public boolean isAnnotation() {
+        return isAnnotation;
     }
 
     @Override
@@ -116,6 +123,10 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
 
         if (isTrait()) {
             builder.append("trait ");
+        }
+
+        if (isAnnotation()) {
+            builder.append("isAnnotation ");
         }
 
         builder.append("name=").append(getName());
