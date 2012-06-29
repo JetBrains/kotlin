@@ -10,10 +10,6 @@ public trait Comparator<T> {
     fun compare(obj1 : T, obj2 : T) : Int;
 }
 
-library("comparator")
-public fun comparator<T>(f : (T, T) -> Int) : Comparator<T> = js.noImpl
-
-
 library
 public trait Iterator<T> {
     open fun next() : T = js.noImpl

@@ -52,15 +52,13 @@
         <module>tools/runtime</module>
         <module>tools/kotlin-maven-plugin</module>
         <module>tools/kotlin-js-library</module>
-<!--
-        TODO temporary disabled until the Ordering.kt#comparator() works in JS
-
         <module>tools/kotlin-js-tests</module>
--->
+
 <!--
-        TODO temporary disabled until the java.util.Collections.emptyList() works in JS
+        TODO temporary disabled until KT-2314 fixed
 
         <module>tools/kotlin-js-tests-junit</module>
+
 -->
         <module>tools/kdoc</module>
         <module>tools/kdoc-maven-plugin</module>
@@ -75,11 +73,8 @@
 
         <module>examples/kotlin-java-example</module>
 
-        <!--
-        TODO disabled while I fix a JS issue
         <module>examples/js-example</module>
         <module>examples/browser-example</module>
-        -->
     </modules>
 
     <dependencies>

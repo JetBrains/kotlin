@@ -5,6 +5,7 @@ import java.util.Collection
 import java.util.List
 import java.util.AbstractList
 import java.util.Iterator
+import java.util.Comparator
 
 /**
  * Count the number of elements in collection.
@@ -69,19 +70,6 @@ public fun <T> java.lang.Iterable<T>.last() : T {
   }
 
   return last;
-}
-
-/**
- * Copies all elements into a [[List]] and sorts it by value of compare_function(element)
- *
- * E.g. arrayList("two" to 2, "one" to 1).sortBy({it._2}) returns list sorted by second element of tuple
- *
- * @includeFunctionBody ../../test/CollectionTest.kt sortBy
- */
-public inline fun <in T, R: Comparable<in R>> java.lang.Iterable<T>.sortBy(f: (T) -> R): java.util.List<T> {
-    val sortedList = this.toList()
-    java.util.Collections.sort(sortedList, comparator {(x, y) -> f(x).compareTo(f(y))})
-    return sortedList
 }
 
 /**

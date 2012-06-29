@@ -58,6 +58,7 @@ public abstract class Config {
             "/core/javautil.kt",
             "/core/javalang.kt",
             "/core/javaio.kt",
+            "/core/kotlin.kt",
             "/core/date.kt",
             "/core/core.kt",
             "/core/math.kt",
@@ -101,6 +102,7 @@ public abstract class Config {
             "/kotlin/JLangIterablesLazy.kt",
             "/kotlin/JLangIterablesSpecial.kt",
             "/kotlin/support/AbstractIterator.kt",
+            //"/kotlin/Ordering.kt",
             "/kotlin/Strings.kt",
             "/kotlin/test/Test.kt"
     );

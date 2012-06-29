@@ -36,14 +36,10 @@ import java.util.Set;
 public class StdLibToJSTest extends StdLibTestSupport {
 
     public void testCompileJavaScriptFiles() throws Exception {
-
-        /*
-        TODO temporary disabled test
         generateJavaScriptFiles(EcmaVersion.all(),
                                 "libraries/stdlib/src",
                                 "kotlin/Preconditions.kt",
                                 "kotlin/dom/Dom.kt",
                                 "kotlin/support/AbstractIterator.kt");
-        */
     }
 }
