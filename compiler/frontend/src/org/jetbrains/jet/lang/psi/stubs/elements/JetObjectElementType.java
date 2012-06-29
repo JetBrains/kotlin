@@ -56,7 +56,7 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
             PsiElement psiElement = node.getPsi();
             if (psiElement instanceof JetObjectDeclaration) {
                 JetObjectDeclaration objectDeclaration = (JetObjectDeclaration) psiElement;
-                return objectDeclaration.getName() != null && objectDeclaration.getFqName() != null;
+                return objectDeclaration.getName() != null;
             }
         }
 
