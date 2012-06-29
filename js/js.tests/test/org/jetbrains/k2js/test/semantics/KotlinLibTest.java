@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
-import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Scriptable;
 
 import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
 
@@ -33,15 +30,6 @@ public final class KotlinLibTest extends SingleFileTranslationTest {
 
     public KotlinLibTest() {
         super("kotlinLib/");
-    }
-
-    public void testKotlinJsLibRunsWithRhino() throws Exception {
-        runRhinoTest(additionalJSFiles(EcmaVersion.v3), new RhinoResultChecker() {
-            @Override
-            public void runChecks(Context context, Scriptable scope) throws Exception {
-                //do nothing
-            }
-        });
     }
 
     public void testNamespaceHasDeclaredFunction() throws Exception {
@@ -66,11 +54,6 @@ public final class KotlinLibTest extends SingleFileTranslationTest {
 
     public void testIsComplexTest() throws Exception {
         runJavascriptTest("isComplexTest.js");
-    }
-
-
-    public void testCommaExpression() throws Exception {
-        runJavascriptTest("commaExpression.js");
     }
 
     public void testArray() throws Exception {

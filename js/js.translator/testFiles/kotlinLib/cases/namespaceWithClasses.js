@@ -15,7 +15,7 @@
  */
 
 {
-  classes = function(){
+  var classes = function(){
     var A = Kotlin.createClass({initialize:function(){
       this.$order = '';
       {
@@ -46,7 +46,7 @@
     return {A:A, B:B, C:C};
   }
   ();
-  foo = Kotlin.createNamespace(classes, {initialize:function(){
+  var foo = Kotlin.createNamespace(classes, {initialize:function(){
   }
   , box:function(){
     return (new foo.C).get_order() === 'ABC' && (new foo.B).get_order() === 'AB' && (new foo.A).get_order() === 'A';

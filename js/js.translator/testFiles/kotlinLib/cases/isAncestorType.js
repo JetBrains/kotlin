@@ -18,6 +18,6 @@ var A = Kotlin.createClass();
 var B = Kotlin.createClass(A);
 var b = new B;
 
-test = function() {
+function test() {
     return (Kotlin.isType(b, A) && Kotlin.isType(b, B));
 }

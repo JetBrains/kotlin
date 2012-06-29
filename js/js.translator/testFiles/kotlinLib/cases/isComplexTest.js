@@ -22,19 +22,19 @@ var c = new C;
 var E = Kotlin.createClass(A)
 var e = new E;
 
-test1 = function() {
-    b2 = b
+var test1 = function() {
+    var b2 = b
     return (Kotlin.isType(b, A) && Kotlin.isType(b, B));
 }
 
-test2 = function() {
+var test2 = function() {
     return (Kotlin.isType(c, C) && Kotlin.isType(c, B) && Kotlin.isType(c, A) && (!Kotlin.isType(c, E)));
 }
 
-test3 = function() {
+var test3 = function() {
     return Kotlin.isType(e, E) && !Kotlin.isType(e, B) && !Kotlin.isType(e, C) && Kotlin.isType(e, A)
 }
 
-test = function() {
+var test = function() {
     return test1() && test2() && test3()
 }
