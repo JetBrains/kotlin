@@ -1,222 +1,222 @@
 <root>
   <item name='java.util.AbstractList boolean add(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun add(e : E) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun add(e : E) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractList void add(int index, E element)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun add(index : jet.Int, element : E) : Unit&quot;"/>
+      <val name="value" val="&quot;fun add(index : Int, element : E)&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractList boolean addAll(int index, java.util.Collection<? extends E> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(index : jet.Int, c : java.util.Collection&lt;out E&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(index : Int, c : Collection&lt;out E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractList E get(int index)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun get(index : jet.Int) : E&quot;"/>
+      <val name="value" val="&quot;fun get(index : Int) : E&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractList java.util.Iterator<E> iterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun iterator() : java.util.Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun iterator() : Iterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractList java.util.ListIterator<E> listIterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun listIterator() : java.util.ListIterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun listIterator() : ListIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractList java.util.ListIterator<E> listIterator(int index)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun listIterator(index : jet.Int) : java.util.ListIterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun listIterator(index : Int) : ListIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractList E set(int index, E element)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun set(index : jet.Int, element : E) : E&quot;"/>
+      <val name="value" val="&quot;fun set(index : Int, element : E) : E&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractList java.util.List<E> subList(int fromIndex, int toIndex)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun subList(fromIndex : jet.Int, toIndex : jet.Int) : java.util.List&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun subList(fromIndex : Int, toIndex : Int) : List&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.ArrayList boolean add(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun add(e : E) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun add(e : E) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.ArrayList void add(int index, E element)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun add(index : jet.Int, element : E) : Unit&quot;"/>
+      <val name="value" val="&quot;fun add(index : Int, element : E)&quot;"/>
     </annotation>
   </item>
   <item name='java.util.ArrayList boolean addAll(java.util.Collection<? extends E> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(c : java.util.Collection&lt;out E&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(c : Collection&lt;out E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.ArrayList boolean addAll(int index, java.util.Collection<? extends E> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(index : jet.Int, c : java.util.Collection&lt;out E&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(index : Int, c : Collection&lt;out E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.ArrayList E get(int index)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun get(index : jet.Int) : E&quot;"/>
+      <val name="value" val="&quot;fun get(index : Int) : E&quot;"/>
     </annotation>
   </item>
   <item name='java.util.ArrayList E remove(int index)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun remove(index : jet.Int) : E&quot;"/>
+      <val name="value" val="&quot;fun remove(index : Int) : E&quot;"/>
     </annotation>
   </item>
   <item name='java.util.ArrayList E set(int index, E element)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun set(index : jet.Int, element : E) : E&quot;"/>
+      <val name="value" val="&quot;fun set(index : Int, element : E) : E&quot;"/>
     </annotation>
   </item>
   <item name='java.util.ArrayList java.lang.Object[] toArray()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun toArray() : jet.Array&lt;jet.Any?&gt;&quot;"/>
+      <val name="value" val="&quot;fun toArray() : Array&lt;Any?&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.ArrayList T[] toArray(T[] a)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : jet.Array&lt;T&gt;) : jet.Array&lt;T&gt;&quot;"/>
+      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List boolean add(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun add(e : E) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun add(e : E) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List void add(int index, E element)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun add(index : jet.Int, element : E) : Unit&quot;"/>
+      <val name="value" val="&quot;fun add(index : Int, element : E)&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List boolean addAll(java.util.Collection<? extends E> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(c : java.util.Collection&lt;out E&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(c : Collection&lt;out E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List boolean addAll(int index, java.util.Collection<? extends E> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(index : jet.Int, c : java.util.Collection&lt;out E&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(index : Int, c : Collection&lt;out E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List boolean containsAll(java.util.Collection<?> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun containsAll(c : java.util.Collection&lt;out jet.Any?&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun containsAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List E get(int index)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun get(index : jet.Int) : E&quot;"/>
+      <val name="value" val="&quot;fun get(index : Int) : E&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List java.util.Iterator<E> iterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun iterator() : java.util.Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun iterator() : Iterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List java.util.ListIterator<E> listIterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun listIterator() : java.util.ListIterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun listIterator() : ListIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List java.util.ListIterator<E> listIterator(int index)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun listIterator(index : jet.Int) : java.util.ListIterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun listIterator(index : Int) : ListIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List E remove(int index)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun remove(index : jet.Int) : E&quot;"/>
+      <val name="value" val="&quot;fun remove(index : Int) : E&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List boolean removeAll(java.util.Collection<?> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun removeAll(c : java.util.Collection&lt;out jet.Any?&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun removeAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List boolean retainAll(java.util.Collection<?> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun retainAll(c : java.util.Collection&lt;out jet.Any?&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun retainAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List E set(int index, E element)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun set(index : jet.Int, element : E) : E&quot;"/>
+      <val name="value" val="&quot;fun set(index : Int, element : E) : E&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List java.util.List<E> subList(int fromIndex, int toIndex)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun subList(fromIndex : jet.Int, toIndex : jet.Int) : java.util.List&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun subList(fromIndex : Int, toIndex : Int) : List&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List java.lang.Object[] toArray()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun toArray() : jet.Array&lt;jet.Any?&gt;&quot;"/>
+      <val name="value" val="&quot;fun toArray() : Array&lt;Any?&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List T[] toArray(T[] a)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : jet.Array&lt;T&gt;) : jet.Array&lt;T&gt;&quot;"/>
+      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.HashSet boolean add(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun add(e : E) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun add(e : E) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.HashSet java.util.Iterator<E> iterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun iterator() : java.util.Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun iterator() : Iterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collection boolean add(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun add(e : E) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun add(e : E) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collection boolean addAll(java.util.Collection<? extends E> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(c : java.util.Collection&lt;out E&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(c : Collection&lt;out E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collection boolean containsAll(java.util.Collection<?> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun containsAll(c : java.util.Collection&lt;out jet.Any?&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun containsAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collection java.util.Iterator<E> iterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun iterator() : java.util.Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun iterator() : Iterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collection boolean removeAll(java.util.Collection<?> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun removeAll(c : java.util.Collection&lt;out jet.Any?&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun removeAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collection boolean retainAll(java.util.Collection<?> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun retainAll(c : java.util.Collection&lt;out jet.Any?&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun retainAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collection java.lang.Object[] toArray()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun toArray() : jet.Array&lt;jet.Any?&gt;&quot;"/>
+      <val name="value" val="&quot;fun toArray() : Array&lt;Any?&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collection T[] toArray(T[] a)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : jet.Array&lt;T&gt;) : jet.Array&lt;T&gt;&quot;"/>
+      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Map.Entry K getKey()'>
@@ -236,12 +236,12 @@
   </item>
   <item name='java.util.Map java.util.Set<java.util.Map.Entry<K,V>> entrySet()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun entrySet() : java.util.Set&lt;java.util.Map.Entry&lt;K, V&gt;&gt;&quot;"/>
+      <val name="value" val="&quot;fun entrySet() : Set&lt;Map.Entry&lt;K, V&gt;&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Map java.util.Set<K> keySet()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun keySet() : java.util.Set&lt;K&gt;&quot;"/>
+      <val name="value" val="&quot;fun keySet() : Set&lt;K&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Map V put(K key, V value)'>
@@ -251,97 +251,97 @@
   </item>
   <item name='java.util.Map void putAll(java.util.Map<? extends K,? extends V> m)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun putAll(m : java.util.Map&lt;out K, out V&gt;) : Unit&quot;"/>
+      <val name="value" val="&quot;fun putAll(m : Map&lt;out K, out V&gt;)&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Map java.util.Collection<V> values()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun values() : java.util.Collection&lt;V&gt;&quot;"/>
+      <val name="value" val="&quot;fun values() : Collection&lt;V&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedHashMap boolean removeEldestEntry(java.util.Map.Entry<K,V> eldest)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun removeEldestEntry(eldest : java.util.Map.Entry&lt;K, V&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun removeEldestEntry(eldest : Map.Entry&lt;K, V&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Set boolean add(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun add(e : E) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun add(e : E) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Set boolean addAll(java.util.Collection<? extends E> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(c : java.util.Collection&lt;out E&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(c : Collection&lt;out E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Set boolean containsAll(java.util.Collection<?> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun containsAll(c : java.util.Collection&lt;out jet.Any?&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun containsAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Set java.util.Iterator<E> iterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun iterator() : java.util.Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun iterator() : Iterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Set boolean removeAll(java.util.Collection<?> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun removeAll(c : java.util.Collection&lt;out jet.Any?&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun removeAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Set boolean retainAll(java.util.Collection<?> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun retainAll(c : java.util.Collection&lt;out jet.Any?&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun retainAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Set java.lang.Object[] toArray()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun toArray() : jet.Array&lt;jet.Any?&gt;&quot;"/>
+      <val name="value" val="&quot;fun toArray() : Array&lt;Any?&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Set T[] toArray(T[] a)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : jet.Array&lt;T&gt;) : jet.Array&lt;T&gt;&quot;"/>
+      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractCollection boolean add(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun add(e : E) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun add(e : E) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractCollection boolean addAll(java.util.Collection<? extends E> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(c : java.util.Collection&lt;out E&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(c : Collection&lt;out E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractCollection boolean containsAll(java.util.Collection<?> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun containsAll(c : java.util.Collection&lt;out jet.Any?&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun containsAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractCollection java.util.Iterator<E> iterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun iterator() : java.util.Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun iterator() : Iterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractCollection boolean removeAll(java.util.Collection<?> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun removeAll(c : java.util.Collection&lt;out jet.Any?&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun removeAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractCollection boolean retainAll(java.util.Collection<?> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun retainAll(c : java.util.Collection&lt;out jet.Any?&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun retainAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractCollection java.lang.Object[] toArray()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun toArray() : jet.Array&lt;jet.Any?&gt;&quot;"/>
+      <val name="value" val="&quot;fun toArray() : Array&lt;Any?&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractCollection T[] toArray(T[] a)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : jet.Array&lt;T&gt;) : jet.Array&lt;T&gt;&quot;"/>
+      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Enumeration E nextElement()'>
@@ -351,12 +351,12 @@
   </item>
   <item name='java.util.HashMap java.util.Set<java.util.Map.Entry<K,V>> entrySet()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun entrySet() : java.util.Set&lt;java.util.Map.Entry&lt;K, V&gt;&gt;&quot;"/>
+      <val name="value" val="&quot;fun entrySet() : Set&lt;Map.Entry&lt;K, V&gt;&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.HashMap java.util.Set<K> keySet()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun keySet() : java.util.Set&lt;K&gt;&quot;"/>
+      <val name="value" val="&quot;fun keySet() : Set&lt;K&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.HashMap V put(K key, V value)'>
@@ -366,22 +366,22 @@
   </item>
   <item name='java.util.HashMap void putAll(java.util.Map<? extends K,? extends V> m)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun putAll(m : java.util.Map&lt;out K, out V&gt;) : Unit&quot;"/>
+      <val name="value" val="&quot;fun putAll(m : Map&lt;out K, out V&gt;)&quot;"/>
     </annotation>
   </item>
   <item name='java.util.HashMap java.util.Collection<V> values()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun values() : java.util.Collection&lt;V&gt;&quot;"/>
+      <val name="value" val="&quot;fun values() : Collection&lt;V&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractSet boolean removeAll(java.util.Collection<?> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun removeAll(c : java.util.Collection&lt;out jet.Any?&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun removeAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Queue boolean add(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun add(e : E) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun add(e : E) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Queue E element()'>
@@ -391,7 +391,7 @@
   </item>
   <item name='java.util.Queue boolean offer(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun offer(e : E) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun offer(e : E) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Queue E peek()'>
@@ -411,37 +411,37 @@
   </item>
   <item name='java.util.LinkedList boolean add(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun add(e : E) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun add(e : E) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList void add(int index, E element)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun add(index : jet.Int, element : E) : Unit&quot;"/>
+      <val name="value" val="&quot;fun add(index : Int, element : E)&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList boolean addAll(java.util.Collection<? extends E> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(c : java.util.Collection&lt;out E&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(c : Collection&lt;out E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList boolean addAll(int index, java.util.Collection<? extends E> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(index : jet.Int, c : java.util.Collection&lt;out E&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(index : Int, c : Collection&lt;out E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList void addFirst(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addFirst(e : E) : Unit&quot;"/>
+      <val name="value" val="&quot;fun addFirst(e : E)&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList void addLast(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addLast(e : E) : Unit&quot;"/>
+      <val name="value" val="&quot;fun addLast(e : E)&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList java.util.Iterator<E> descendingIterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun descendingIterator() : java.util.Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun descendingIterator() : Iterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList E element()'>
@@ -451,7 +451,7 @@
   </item>
   <item name='java.util.LinkedList E get(int index)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun get(index : jet.Int) : E&quot;"/>
+      <val name="value" val="&quot;fun get(index : Int) : E&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList E getFirst()'>
@@ -464,29 +464,24 @@
       <val name="value" val="&quot;fun getLast() : E&quot;"/>
     </annotation>
   </item>
-  <item name='java.util.LinkedList int lastIndexOf(java.lang.Object o)'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun lastIndexOf(o : jet.Any?) : jet.Int&quot;"/>
-    </annotation>
-  </item>
   <item name='java.util.LinkedList java.util.ListIterator<E> listIterator(int index)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun listIterator(index : jet.Int) : java.util.ListIterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun listIterator(index : Int) : ListIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList boolean offer(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun offer(e : E) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun offer(e : E) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList boolean offerFirst(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun offerFirst(e : E) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun offerFirst(e : E) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList boolean offerLast(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun offerLast(e : E) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun offerLast(e : E) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList E peek()'>
@@ -526,7 +521,7 @@
   </item>
   <item name='java.util.LinkedList void push(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun push(e : E) : Unit&quot;"/>
+      <val name="value" val="&quot;fun push(e : E)&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList E remove()'>
@@ -536,7 +531,7 @@
   </item>
   <item name='java.util.LinkedList E remove(int index)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun remove(index : jet.Int) : E&quot;"/>
+      <val name="value" val="&quot;fun remove(index : Int) : E&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList E removeFirst()'>
@@ -551,17 +546,17 @@
   </item>
   <item name='java.util.LinkedList E set(int index, E element)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun set(index : jet.Int, element : E) : E&quot;"/>
+      <val name="value" val="&quot;fun set(index : Int, element : E) : E&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList java.lang.Object[] toArray()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun toArray() : jet.Array&lt;jet.Any?&gt;&quot;"/>
+      <val name="value" val="&quot;fun toArray() : Array&lt;Any?&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList T[] toArray(T[] a)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : jet.Array&lt;T&gt;) : jet.Array&lt;T&gt;&quot;"/>
+      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Iterator E next()'>
@@ -571,22 +566,22 @@
   </item>
   <item name='java.util.Deque boolean add(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun add(e : E) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun add(e : E) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Deque void addFirst(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addFirst(e : E) : Unit&quot;"/>
+      <val name="value" val="&quot;fun addFirst(e : E)&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Deque void addLast(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addLast(e : E) : Unit&quot;"/>
+      <val name="value" val="&quot;fun addLast(e : E)&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Deque java.util.Iterator<E> descendingIterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun descendingIterator() : java.util.Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun descendingIterator() : Iterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Deque E element()'>
@@ -606,22 +601,22 @@
   </item>
   <item name='java.util.Deque java.util.Iterator<E> iterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun iterator() : java.util.Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun iterator() : Iterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Deque boolean offer(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun offer(e : E) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun offer(e : E) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Deque boolean offerFirst(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun offerFirst(e : E) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun offerFirst(e : E) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Deque boolean offerLast(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun offerLast(e : E) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun offerLast(e : E) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Deque E peek()'>
@@ -661,7 +656,7 @@
   </item>
   <item name='java.util.Deque void push(E e)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun push(e : E) : Unit&quot;"/>
+      <val name="value" val="&quot;fun push(e : E)&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Deque E remove()'>
@@ -681,12 +676,12 @@
   </item>
   <item name='java.util.AbstractMap java.util.Set<java.util.Map.Entry<K,V>> entrySet()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun entrySet() : java.util.Set&lt;java.util.Map.Entry&lt;K, V&gt;&gt;&quot;"/>
+      <val name="value" val="&quot;fun entrySet() : Set&lt;Map.Entry&lt;K, V&gt;&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractMap java.util.Set<K> keySet()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun keySet() : java.util.Set&lt;K&gt;&quot;"/>
+      <val name="value" val="&quot;fun keySet() : Set&lt;K&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractMap V put(K key, V value)'>
@@ -696,47 +691,47 @@
   </item>
   <item name='java.util.AbstractMap void putAll(java.util.Map<? extends K,? extends V> m)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun putAll(m : java.util.Map&lt;out K, out V&gt;) : Unit&quot;"/>
+      <val name="value" val="&quot;fun putAll(m : Map&lt;out K, out V&gt;)&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractMap java.util.Collection<V> values()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun values() : java.util.Collection&lt;V&gt;&quot;"/>
+      <val name="value" val="&quot;fun values() : Collection&lt;V&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractSequentialList void add(int index, E element)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun add(index : jet.Int, element : E) : Unit&quot;"/>
+      <val name="value" val="&quot;fun add(index : Int, element : E)&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractSequentialList boolean addAll(int index, java.util.Collection<? extends E> c)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(index : jet.Int, c : java.util.Collection&lt;out E&gt;) : jet.Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(index : Int, c : Collection&lt;out E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractSequentialList E get(int index)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun get(index : jet.Int) : E&quot;"/>
+      <val name="value" val="&quot;fun get(index : Int) : E&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractSequentialList java.util.Iterator<E> iterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun iterator() : java.util.Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun iterator() : Iterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractSequentialList java.util.ListIterator<E> listIterator(int index)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun listIterator(index : jet.Int) : java.util.ListIterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun listIterator(index : Int) : ListIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractSequentialList E remove(int index)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun remove(index : jet.Int) : E&quot;"/>
+      <val name="value" val="&quot;fun remove(index : Int) : E&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractSequentialList E set(int index, E element)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun set(index : jet.Int, element : E) : E&quot;"/>
+      <val name="value" val="&quot;fun set(index : Int, element : E) : E&quot;"/>
     </annotation>
   </item>
 </root>
