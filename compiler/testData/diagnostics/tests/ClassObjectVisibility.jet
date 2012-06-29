@@ -1,0 +1,22 @@
+package foo
+
+fun test() {
+  A.d
+  A.<!INVISIBLE_MEMBER!>f<!>
+  B.<!INVISIBLE_MEMBER!>c<!>
+}
+
+class A() {
+  public class object {
+    val d = 3
+    private object f {
+
+    }
+  }
+}
+
+class B() {
+  private class object {
+    val c = 3
+  }
+}

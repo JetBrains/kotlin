@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -33,7 +34,17 @@ abstract class JetDeclarationImpl extends JetExpressionImpl implements JetDeclar
     @Override
     @Nullable
     public JetModifierList getModifierList() {
+        PsiElement parent = getParent();
+        if (isClassObject(parent)) {
+            assert parent instanceof JetDeclaration;
+            return ((JetDeclaration)parent).getModifierList();
+        }
         return (JetModifierList) findChildByType(JetNodeTypes.MODIFIER_LIST);
+    }
+
+
+    private static boolean isClassObject(@NotNull PsiElement parent) {
+        return parent.getNode().getElementType().equals(JetNodeTypes.CLASS_OBJECT);
     }
 
     @Override
