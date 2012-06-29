@@ -59,7 +59,7 @@ public class JetProjectViewProvider implements SelectableTreeStructureProvider, 
                 List<JetDeclaration> declarations = file.getDeclarations();
 
                 JetClassOrObject mainClass = JetIconProvider.getMainClass(file);
-                if (mainClass != null && (!settings.isShowMembers() || declarations.size() == 1)) {
+                if (mainClass != null && declarations.size() == 1) {
                     result.add(new JetClassOrObjectTreeNode(file.getProject(), mainClass, settings));
                 }
                 else {
@@ -106,7 +106,7 @@ public class JetProjectViewProvider implements SelectableTreeStructureProvider, 
         return current != null ? current : file;
     }
 
-    private boolean isSelectable(PsiElement element) {
+    private static boolean isSelectable(PsiElement element) {
         if (element instanceof JetFile) return true;
         if (element instanceof JetDeclaration) {
             PsiElement parent = element.getParent();

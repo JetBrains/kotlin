@@ -44,7 +44,7 @@ public class JetIconProvider extends IconProvider {
         if (psiElement instanceof JetFile) {
             JetFile file = (JetFile) psiElement;
             JetClassOrObject mainClass = getMainClass(file);
-            return mainClass != null ? getIcon(mainClass, flags) : JetIcons.FILE;
+            return mainClass != null && file.getDeclarations().size() == 1 ? getIcon(mainClass, flags) : JetIcons.FILE;
         }
         if (psiElement instanceof JetNamespaceHeader) {
             return (flags & Iconable.ICON_FLAG_OPEN) != 0 ? PlatformIcons.PACKAGE_OPEN_ICON : PlatformIcons.PACKAGE_ICON;
