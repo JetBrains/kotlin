@@ -16,66 +16,135 @@
 
 package org.jetbrains.k2js.test.rhino;
 
+import closurecompiler.internal.com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.config.EcmaVersion;
+import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
 
 import java.io.FileReader;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jetbrains.jet.utils.ExceptionUtils.rethrow;
+import static org.jetbrains.k2js.test.BasicTest.pathToTestFilesRoot;
+
 /**
  * @author Pavel Talanov
  */
 public final class RhinoUtils {
+
+    public static final String KOTLIN_JS_LIB_COMMON = pathToTestFilesRoot() + "kotlin_lib.js";
+    private static final String KOTLIN_JS_LIB_ECMA_3 = pathToTestFilesRoot() + "kotlin_lib_ecma3.js";
+    private static final String KOTLIN_JS_LIB_ECMA_5 = pathToTestFilesRoot() + "kotlin_lib_ecma5.js";
 
     private RhinoUtils() {
 
     }
 
     private static void runFileWithRhino(@NotNull String inputFile,
-                                         @NotNull Context context,
-                                         @NotNull Scriptable scope) throws Exception {
+            @NotNull Context context,
+            @NotNull Scriptable scope) throws Exception {
         FileReader reader = new FileReader(inputFile);
         try {
             context.evaluateReader(scope, reader, inputFile, 1, null);
-        } finally {
+        }
+        finally {
             reader.close();
         }
     }
 
     public static void runRhinoTest(@NotNull List<String> fileNames,
-                                    @NotNull RhinoResultChecker checker) throws Exception {
-
+            @NotNull RhinoResultChecker checker) throws Exception {
         runRhinoTest(fileNames, checker, null, EcmaVersion.defaultVersion());
     }
 
     public static void runRhinoTest(@NotNull List<String> fileNames,
-                                    @NotNull RhinoResultChecker checker,
-                                    @Nullable Map<String, Object> variables,
-                                    @NotNull EcmaVersion ecmaVersion) throws Exception {
+            @NotNull RhinoResultChecker checker,
+            @Nullable Map<String, Object> variables,
+            @NotNull EcmaVersion ecmaVersion) throws Exception {
+        Context context = createContext(ecmaVersion);
+        try {
+            Scriptable scope = getScope(ecmaVersion, context);
+            putGlobalVariablesIntoScope(scope, variables);
+            for (String filename : fileNames) {
+                runFileWithRhino(filename, context, scope);
+            }
+            checker.runChecks(context, scope);
+        }
+        finally {
+            Context.exit();
+        }
+    }
+
+    @NotNull
+    private static Scriptable getScope(@NotNull EcmaVersion version, @NotNull Context context) {
+        ScriptableObject scope = context.initStandardObjects(null, false);
+        scope.setParentScope(getParentScope(version, context));
+        return scope;
+    }
+
+    @NotNull
+    private static Scriptable getParentScope(@NotNull EcmaVersion version, @NotNull Context context) {
+        Scriptable parentScope = versionToScope.get(version);
+        if (parentScope == null) {
+            parentScope = initScope(version, context);
+            versionToScope.put(version, parentScope);
+        }
+        return parentScope;
+    }
+
+    @NotNull
+    private static Scriptable initScope(@NotNull EcmaVersion version, @NotNull Context context) {
+        ScriptableObject scope = context.initStandardObjects();
+        try {
+            runFileWithRhino(getKotlinLibFile(version), context, scope);
+            runFileWithRhino(KOTLIN_JS_LIB_COMMON, context, scope);
+        }
+        catch (Exception e) {
+            throw rethrow(e);
+        }
+        scope.sealObject();
+        return scope;
+    }
+
+
+    //TODO:
+    @NotNull
+    private static Context createContext(@NotNull EcmaVersion ecmaVersion) {
         Context context = Context.enter();
         if (ecmaVersion == EcmaVersion.v5) {
             // actually, currently, doesn't matter because dart doesn't produce js 1.8 code (expression closures)
             context.setLanguageVersion(Context.VERSION_1_8);
         }
+        return context;
+    }
 
-        Scriptable scope = context.initStandardObjects();
-        if (variables != null) {
-            Set<Map.Entry<String,Object>> entries = variables.entrySet();
-            for (Map.Entry<String, Object> entry : entries) {
-                String name = entry.getKey();
-                Object value = entry.getValue();
-                scope.put(name, scope, value);
-            }
+    private static void putGlobalVariablesIntoScope(@NotNull Scriptable scope, @Nullable Map<String, Object> variables) {
+        if (variables == null) {
+            return;
         }
-        for (String filename : fileNames) {
-            runFileWithRhino(filename, context, scope);
+        Set<Map.Entry<String, Object>> entries = variables.entrySet();
+        for (Map.Entry<String, Object> entry : entries) {
+            String name = entry.getKey();
+            Object value = entry.getValue();
+            scope.put(name, scope, value);
         }
-        checker.runChecks(context, scope);
-        Context.exit();
+    }
+
+    @NotNull
+    private static final Map<EcmaVersion, Scriptable> versionToScope = Maps.newHashMap();
+
+    @NotNull
+    public static String getKotlinLibFile(@NotNull EcmaVersion ecmaVersion) {
+        return ecmaVersion == EcmaVersion.v5 ? KOTLIN_JS_LIB_ECMA_5 : KOTLIN_JS_LIB_ECMA_3;
+    }
+
+    static void flushSystemOut(@NotNull Context context, @NotNull Scriptable scope) {
+        context.evaluateString(scope, K2JSTranslator.FLUSH_SYSTEM_OUT, "test", 0, null);
     }
 }

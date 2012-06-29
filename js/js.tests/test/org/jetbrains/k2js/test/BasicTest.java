@@ -42,9 +42,6 @@ public abstract class BasicTest extends TestWithEnvironment {
     private static final String TEST_FILES = "js/js.translator/testFiles/";
     private static final String CASES = "cases/";
     private static final String OUT = "out/";
-    private static final String KOTLIN_JS_LIB = pathToTestFilesRoot() + "kotlin_lib.js";
-    private static final String KOTLIN_JS_LIB_ECMA_3 = pathToTestFilesRoot() + "kotlin_lib_ecma3.js";
-    private static final String KOTLIN_JS_LIB_ECMA_5 = pathToTestFilesRoot() + "kotlin_lib_ecma5.js";
     private static final String EXPECTED = "expected/";
 
     @NotNull
@@ -90,10 +87,7 @@ public abstract class BasicTest extends TestWithEnvironment {
 
     @NotNull
     protected List<String> additionalJSFiles(@NotNull EcmaVersion ecmaVersion) {
-        List<String> list = Lists.newArrayList();
-        list.add(ecmaVersion == EcmaVersion.v5 ? KOTLIN_JS_LIB_ECMA_5 : KOTLIN_JS_LIB_ECMA_3);
-        list.add(KOTLIN_JS_LIB);
-        return list;
+        return Lists.newArrayList();
     }
 
     protected void generateJavaScriptFiles(@NotNull String kotlinFilename,
@@ -141,7 +135,7 @@ public abstract class BasicTest extends TestWithEnvironment {
     }
 
     @NotNull
-    protected static String pathToTestFilesRoot() {
+    public static String pathToTestFilesRoot() {
         return TEST_FILES;
     }
 

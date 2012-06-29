@@ -21,10 +21,8 @@ import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.google.dart.compiler.util.DefaultTextOutput;
 import com.google.dart.compiler.util.TextOutput;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -35,31 +33,16 @@ public final class CodeGenerator {
     @NotNull
     private final TextOutput output = new DefaultTextOutput(false);
 
-    public CodeGenerator() {
-    }
-
-    public static void toFile(@NotNull String outputFile, @NotNull JsProgram program) throws IOException {
-        CodeGenerator generator = new CodeGenerator();
-        generator.generateToFile(program, new File(outputFile));
+    private CodeGenerator() {
     }
 
     @NotNull
-    public static String toString(@NotNull JsProgram program, List<String> rawStatements) {
+    public static String generateProgramToString(@NotNull JsProgram program, @Nullable List<String> rawStatements) {
         return (new CodeGenerator()).generateToString(program, rawStatements);
     }
 
-    public void generateToFile(@NotNull JsProgram program, @NotNull File file) throws IOException {
-        generateCode(program);
-        FileWriter writer = new FileWriter(file);
-        try {
-            writer.write(output.toString());
-        } finally {
-            writer.close();
-        }
-    }
-
     @NotNull
-    public String generateToString(@NotNull JsProgram program, List<String> rawStatements) {
+    private String generateToString(@NotNull JsProgram program, List<String> rawStatements) {
         generateCode(program);
         if (rawStatements != null) {
             for (String statement : rawStatements) {

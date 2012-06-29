@@ -20,6 +20,7 @@ import closurecompiler.internal.com.google.common.collect.Maps;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.K2JSTranslator;
@@ -29,7 +30,6 @@ import org.jetbrains.k2js.test.config.TestConfig;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -46,21 +46,16 @@ public final class TranslationUtils {
     @NotNull
     private static final Map<EcmaVersion, K2JSTranslator> translators = Maps.newHashMap();
 
-    public static void translateFile(@NotNull Project project, @NotNull String inputFile,
-            @NotNull String outputFile, @NotNull MainCallParameters mainCallParameters, @NotNull EcmaVersion version) throws Exception {
-        translateFiles(project, Collections.singletonList(inputFile), outputFile, mainCallParameters, version, null);
-    }
-
     public static void translateFiles(@NotNull Project project, @NotNull List<String> inputFiles,
             @NotNull String outputFile,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull EcmaVersion version,
-            List<String> rawStatements) throws Exception {
+            @Nullable List<String> rawStatements) throws Exception {
         List<JetFile> psiFiles = createPsiFileList(inputFiles, project);
         JsProgram program = getTranslator(project, version).generateProgram(psiFiles, mainCallParameters, rawStatements);
         FileWriter writer = new FileWriter(new File(outputFile));
         try {
-            writer.write(CodeGenerator.toString(program, null));
+            writer.write(CodeGenerator.generateProgramToString(program, null));
         }
         finally {
             writer.close();

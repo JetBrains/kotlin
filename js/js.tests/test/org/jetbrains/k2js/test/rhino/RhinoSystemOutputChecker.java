@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.test.rhino;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
@@ -44,12 +45,15 @@ public final class RhinoSystemOutputChecker implements RhinoResultChecker {
                    + "END_OF_EXPECTED\n", trimmedExpected.equals(trimmedActual));
     }
 
+    @NotNull
     private static String getSystemOutput(@NotNull Context context, @NotNull Scriptable scope) {
-        Object output = context.evaluateString(scope, "Kotlin.System.output()", "test", 0, null);
+        Object output = context.evaluateString(scope, K2JSTranslator.GET_SYSTEM_OUT, "test", 0, null);
+        RhinoUtils.flushSystemOut(context, scope);
         assertTrue("Output should be a string.", output instanceof String);
         return (String) output;
     }
 
+    @NotNull
     public static String trimSpace(@NotNull String s) {
         String[] choppedUpString = s.trim().split("\\s");
         StringBuilder sb = new StringBuilder();

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
+import static org.jetbrains.k2js.test.rhino.RhinoUtils.flushSystemOut;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -44,6 +45,7 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
     @Override
     public void runChecks(Context context, Scriptable scope) throws Exception {
         Object result = evaluateFunction(context, scope);
+        flushSystemOut(context, scope);
         assertResultValid(result);
     }
 

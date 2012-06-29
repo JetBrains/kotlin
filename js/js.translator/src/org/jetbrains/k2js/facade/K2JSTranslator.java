@@ -20,13 +20,13 @@ import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.facade.exceptions.TranslationException;
-import org.jetbrains.k2js.generate.CodeGenerator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
@@ -37,6 +37,7 @@ import java.util.List;
 
 import static org.jetbrains.k2js.facade.FacadeUtils.parseString;
 import static org.jetbrains.k2js.facade.FacadeUtils.writeCodeToFile;
+import static org.jetbrains.k2js.generate.CodeGenerator.generateProgramToString;
 
 /**
  * @author Pavel Talanov
@@ -44,6 +45,9 @@ import static org.jetbrains.k2js.facade.FacadeUtils.writeCodeToFile;
  *         An entry point of translator.
  */
 public final class K2JSTranslator {
+
+    public static final String FLUSH_SYSTEM_OUT = "Kotlin.System.flush();\n";
+    public static final String GET_SYSTEM_OUT = "Kotlin.System.output();\n";
 
     public static void translateWithMainCallParametersAndSaveToFile(@NotNull MainCallParameters mainCall,
             @NotNull List<JetFile> files,
@@ -62,22 +66,20 @@ public final class K2JSTranslator {
         this.config = config;
     }
 
-    //TODO: web demo related method
+    //NOTE: web demo related method
     @SuppressWarnings("UnusedDeclaration")
     @NotNull
     public String translateStringWithCallToMain(@NotNull String programText, @NotNull String argumentsString) throws TranslationException {
         JetFile file = JetFileUtils.createPsiFile("test", programText, getProject());
         String programCode = generateProgramCode(file, MainCallParameters.mainWithArguments(parseString(argumentsString)), null) + "\n";
-        String flushOutput = "Kotlin.System.flush();\n";
-        String programOutput = "Kotlin.System.output();\n";
-        return flushOutput + programCode + programOutput;
+        return FLUSH_SYSTEM_OUT + programCode + GET_SYSTEM_OUT;
     }
 
     @NotNull
-    public String generateProgramCode(@NotNull JetFile file, @NotNull MainCallParameters mainCallParameters, List<String> rawStatements) throws TranslationException {
+    public String generateProgramCode(@NotNull JetFile file, @NotNull MainCallParameters mainCallParameters,
+            @Nullable List<String> rawStatements) throws TranslationException {
         JsProgram program = generateProgram(Arrays.asList(file), mainCallParameters, rawStatements);
-        CodeGenerator generator = new CodeGenerator();
-        return generator.generateToString(program, rawStatements);
+        return generateProgramToString(program, rawStatements);
     }
 
     @NotNull
@@ -85,14 +87,13 @@ public final class K2JSTranslator {
             throws TranslationException {
         List<String> rawStatements = Lists.newArrayList();
         JsProgram program = generateProgram(files, mainCallParameters, rawStatements);
-        CodeGenerator generator = new CodeGenerator();
-        return generator.generateToString(program, rawStatements);
+        return generateProgramToString(program, rawStatements);
     }
 
     @NotNull
     public JsProgram generateProgram(@NotNull List<JetFile> filesToTranslate,
             @NotNull MainCallParameters mainCallParameters,
-            List<String> rawStatements)
+            @Nullable List<String> rawStatements)
             throws TranslationException {
         JetStandardLibrary.initialize(config.getProject());
         BindingContext bindingContext = AnalyzerFacadeForJS.analyzeFilesAndCheckErrors(filesToTranslate, config);
