@@ -14,31 +14,46 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.lazy;
+package org.jetbrains.jet.plugin.stubindex.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.resolve.lazy.DeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 import java.util.List;
 
 /**
-* @author abreslav
-*/
-public interface DeclarationProvider {
-    List<JetDeclaration> getAllDeclarations();
+ * @author Nikolay Krasko
+ */
+public abstract class AbstractStubDeclarationProvider implements DeclarationProvider {
+    @Override
+    public List<JetDeclaration> getAllDeclarations() {
+        // TODO:
+        return null;
+    }
 
     @NotNull
-    Collection<JetNamedFunction> getFunctionDeclarations(@NotNull Name name);
+    @Override
+    public Collection<JetNamedFunction> getFunctionDeclarations(@NotNull Name name) {
+        // TODO:
+        return null;
+    }
 
     @NotNull
-    List<JetProperty> getPropertyDeclarations(@NotNull Name name);
+    @Override
+    public List<JetProperty> getPropertyDeclarations(@NotNull Name name) {
+        // TODO:
+        return null;
+    }
 
-    @Nullable
-    JetClassOrObject getClassOrObjectDeclaration(@NotNull Name name);
+    @Override
+    public JetClassOrObject getClassOrObjectDeclaration(@NotNull Name name) {
+        // TODO:
+        return null;
+    }
 }

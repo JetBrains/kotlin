@@ -100,7 +100,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
         Set<FunctionDescriptor> result = Sets.newLinkedHashSet();
 
-        List<JetNamedFunction> declarations = declarationProvider.getFunctionDeclarations(name);
+        Collection<JetNamedFunction> declarations = declarationProvider.getFunctionDeclarations(name);
         for (JetNamedFunction functionDeclaration : declarations) {
             JetScope resolutionScope = getScopeForMemberDeclarationResolution(functionDeclaration);
             result.add(resolveSession.getInjector().getDescriptorResolver().resolveFunctionDescriptor(thisDescriptor, resolutionScope,

@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.StubIndexService;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 /**
  * @author Nikolay Krasko
@@ -61,16 +62,18 @@ public class StubIndexServiceImpl implements StubIndexService {
                 // Collection only top level functions as only they are expected in completion without explicit import
                 if (!stub.isExtension()) {
                     sink.occurrence(JetIndexKeys.TOP_LEVEL_FUNCTION_SHORT_NAME_KEY, name);
-                    // sink.occurrence(JetIndexKeys.TOP_LEVEL_FUNCTION_FQNAME_KEY, name);
                 }
                 else {
                     sink.occurrence(JetIndexKeys.TOP_LEVEL_EXTENSION_FUNCTION_SHORT_NAME_KEY, name);
-                    // sink.occurrence(JetIndexKeys.EXTENSION_FUNCTION_FQNAME_KEY, name);
+                }
+
+                FqName topFQName = stub.getTopFQName();
+                if (topFQName != null) {
+                    sink.occurrence(JetIndexKeys.TOP_LEVEL_FUNCTIONS_FQN_NAME_KEY, topFQName.toString());
                 }
             }
 
             sink.occurrence(JetIndexKeys.FUNCTIONS_SHORT_NAME_KEY, name);
-            // sink.occurrence(JetIndexKeys.FUNCTIONS_FQN_NAME_KEY);
         }
     }
 }
