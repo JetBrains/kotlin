@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.stubindex;
 import com.intellij.psi.stubs.IndexSink;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.StubIndexService;
 
 /**
@@ -44,6 +45,15 @@ public class StubIndexServiceImpl implements StubIndexService {
     }
 
     @Override
+    public void indexObject(PsiJetObjectStub stub, IndexSink sink) {
+        String name = stub.getName();
+        assert name != null;
+
+        sink.occurrence(JetIndexKeys.SHORT_NAME_KEY, name);
+        sink.occurrence(JetIndexKeys.FQN_KEY, stub.getFQName().toString());
+    }
+
+    @Override
     public void indexFunction(PsiJetFunctionStub stub, IndexSink sink) {
         String name = stub.getName();
         if (name != null) {
@@ -54,12 +64,13 @@ public class StubIndexServiceImpl implements StubIndexService {
                     // sink.occurrence(JetIndexKeys.TOP_LEVEL_FUNCTION_FQNAME_KEY, name);
                 }
                 else {
-                    sink.occurrence(JetIndexKeys.EXTENSION_FUNCTION_SHORT_NAME_KEY, name);
+                    sink.occurrence(JetIndexKeys.TOP_LEVEL_EXTENSION_FUNCTION_SHORT_NAME_KEY, name);
                     // sink.occurrence(JetIndexKeys.EXTENSION_FUNCTION_FQNAME_KEY, name);
                 }
             }
 
             sink.occurrence(JetIndexKeys.FUNCTIONS_SHORT_NAME_KEY, name);
+            // sink.occurrence(JetIndexKeys.FUNCTIONS_FQN_NAME_KEY);
         }
     }
 }

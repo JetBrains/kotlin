@@ -33,7 +33,7 @@ public interface JetNodeTypes {
     IElementType PROPERTY  = JetStubElementTypes.PROPERTY;
 
     JetNodeType TYPEDEF    = new JetNodeType("TYPEDEF", JetTypedef.class);
-    JetNodeType OBJECT_DECLARATION = new JetNodeType("OBJECT_DECLARATION", JetObjectDeclaration.class);
+    IElementType OBJECT_DECLARATION = JetStubElementTypes.OBJECT_DECLARATION;
     JetNodeType OBJECT_DECLARATION_NAME = new JetNodeType("OBJECT_DECLARATION_NAME", JetObjectDeclarationName.class);
 
     JetNodeType CLASS_OBJECT          = new JetNodeType("CLASS_OBJECT", JetClassObject.class);

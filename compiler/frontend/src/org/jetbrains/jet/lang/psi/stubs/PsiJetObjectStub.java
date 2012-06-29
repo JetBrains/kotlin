@@ -14,26 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.stubindex;
+package org.jetbrains.jet.lang.psi.stubs;
 
-import com.intellij.psi.stubs.StringStubIndexExtension;
-import com.intellij.psi.stubs.StubIndexKey;
+import com.intellij.psi.stubs.NamedStub;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 /**
  * @author Nikolay Krasko
  */
-public class JetExtensionFunctionNameIndex extends StringStubIndexExtension<JetNamedFunction> {
-    private static final JetExtensionFunctionNameIndex instance = new JetExtensionFunctionNameIndex();
-
-    public static JetExtensionFunctionNameIndex getInstance() {
-        return instance;
-    }
-
+public interface PsiJetObjectStub extends NamedStub<JetObjectDeclaration> {
     @NotNull
-    @Override
-    public StubIndexKey<String, JetNamedFunction> getKey() {
-        return JetIndexKeys.TOP_LEVEL_EXTENSION_FUNCTION_SHORT_NAME_KEY;
-    }
+    FqName getFQName();
 }

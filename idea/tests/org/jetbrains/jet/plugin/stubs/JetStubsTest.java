@@ -136,6 +136,12 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
                     "    TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n");
     }
 
+    public void testNamedObject() {
+        doBuildTest("object Test {}",
+                    "PsiJetFileStubImpl[package=]\n" +
+                    "  OBJECT_DECLARATION:PsiJetObjectStubImpl[name=Test fqName=Test]\n");
+    }
+
     private void doBuildTest(@NonNls final String source, @NonNls @NotNull final String tree) {
         final JetFile file = (JetFile) createLightFile(JetFileType.INSTANCE, source);
         final FileASTNode fileNode = file.getNode();

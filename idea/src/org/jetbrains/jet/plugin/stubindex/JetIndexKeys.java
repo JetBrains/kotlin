@@ -29,10 +29,9 @@ public interface JetIndexKeys {
     StubIndexKey<String, JetClassOrObject> FQN_KEY = StubIndexKey.createIndexKey("jet.fqn");
 
     StubIndexKey<String, JetNamedFunction> TOP_LEVEL_FUNCTION_SHORT_NAME_KEY = StubIndexKey.createIndexKey("jet.top.level.function.short.name");
-    StubIndexKey<String, JetNamedFunction> TOP_LEVEL_FUNCTION_FQNAME_KEY = StubIndexKey.createIndexKey("jet.top.level.function.fqname");
+    StubIndexKey<String, JetNamedFunction> TOP_LEVEL_EXTENSION_FUNCTION_SHORT_NAME_KEY = StubIndexKey.createIndexKey("jet.top.level.extension.function.short.name");
 
-    StubIndexKey<String, JetNamedFunction> EXTENSION_FUNCTION_SHORT_NAME_KEY = StubIndexKey.createIndexKey("jet.top.level.extension.function.short.name");
-    StubIndexKey<String, JetNamedFunction> EXTENSION_FUNCTION_FQNAME_KEY = StubIndexKey.createIndexKey("jet.top.level.extension.function.fqname");
+    StubIndexKey<String, JetNamedFunction> TOP_LEVEL_FUNCTIONS_FQN_NAME_KEY = StubIndexKey.createIndexKey("jet.top.level.functions.fqn.name");
 
     StubIndexKey<String, JetNamedFunction> FUNCTIONS_SHORT_NAME_KEY = StubIndexKey.createIndexKey("jet.functions.short.name");
 }

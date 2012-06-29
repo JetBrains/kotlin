@@ -29,8 +29,8 @@ import java.util.Collection;
  * @author Nikolay Krasko
  */
 public class JetFullClassNameIndex extends StringStubIndexExtension<JetClassOrObject> {
-
     private static final JetFullClassNameIndex ourInstance = new JetFullClassNameIndex();
+
     public static JetFullClassNameIndex getInstance() {
         return ourInstance;
     }
