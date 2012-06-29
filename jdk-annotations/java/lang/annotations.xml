@@ -1,0 +1,7 @@
+<root>
+  <item name='java.lang.Iterable java.util.Iterator<T> iterator()'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun iterator() : java.util.Iterator&lt;T&gt;&quot;"/>
+    </annotation>
+  </item>
+</root>
