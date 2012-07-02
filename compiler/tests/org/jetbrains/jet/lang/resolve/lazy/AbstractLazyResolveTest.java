@@ -24,6 +24,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -62,17 +63,17 @@ public abstract class AbstractLazyResolveTest {
         Disposer.dispose(rootDisposable);
     }
 
-    protected InjectorForTopDownAnalyzerForJvm getEagerInjectorForTopDownAnalyzer() {
+    protected InjectorForTopDownAnalyzer getEagerInjectorForTopDownAnalyzer() {
         ModuleDescriptor eagerModuleForLazy = new ModuleDescriptor(Name.special("<eager module for lazy>"));
 
-        InjectorForTopDownAnalyzerForJvm tdaInjectorForLazy = createInjectorForTDA(eagerModuleForLazy);
+        InjectorForTopDownAnalyzer tdaInjectorForLazy = createInjectorForTDA(eagerModuleForLazy);
         // This line is required fro the 'jet' namespace to be filled in with functions
         tdaInjectorForLazy.getTopDownAnalyzer().analyzeFiles(
                 Collections.singletonList(JetPsiFactory.createFile(project, "")), Collections.<AnalyzerScriptParameter>emptyList());
         return tdaInjectorForLazy;
     }
 
-    protected InjectorForTopDownAnalyzerForJvm createInjectorForTDA(ModuleDescriptor module) {
+    protected InjectorForTopDownAnalyzer createInjectorForTDA(ModuleDescriptor module) {
         TopDownAnalysisParameters params = new TopDownAnalysisParameters(
                 Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
         return new InjectorForTopDownAnalyzerForJvm(project, params, new BindingTraceContext(), module, BuiltinsScopeExtensionMode.ALL);

@@ -23,7 +23,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
+import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -46,13 +46,13 @@ public class AbstractLazyResolveDescriptorRendererTest extends AbstractLazyResol
 
     protected void doTest(@NotNull String testFile) throws IOException {
 
-        InjectorForTopDownAnalyzerForJvm injectorForTopDownAnalyzer = getEagerInjectorForTopDownAnalyzer();
+        InjectorForTopDownAnalyzer injectorForTopDownAnalyzer = getEagerInjectorForTopDownAnalyzer();
 
         JetFile psiFile = JetPsiFactory.createFile(project, FileUtil.loadFile(new File(testFile), true));
         Collection<JetFile> files = Lists.newArrayList(psiFile);
 
         ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
-        final ResolveSession resolveSession = new ResolveSession(project, lazyModule, injectorForTopDownAnalyzer.getJavaBridgeConfiguration(),
+        final ResolveSession resolveSession = new ResolveSession(project, lazyModule, injectorForTopDownAnalyzer.getModuleConfiguration(),
                                                     new FileBasedDeclarationProviderFactory(files));
 
         final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();

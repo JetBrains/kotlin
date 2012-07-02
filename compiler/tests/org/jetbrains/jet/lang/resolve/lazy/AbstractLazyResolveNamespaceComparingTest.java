@@ -21,8 +21,8 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.Function;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
 import org.jetbrains.jet.jvm.compiler.NamespaceComparator;
-import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -45,7 +45,7 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends Abstract
             boolean includeMembersOfObject
     ) throws IOException {
         ModuleDescriptor module = new ModuleDescriptor(Name.special("<test module>"));
-        InjectorForTopDownAnalyzerForJvm injector = createInjectorForTDA(module);
+        InjectorForTopDownAnalyzer injector = createInjectorForTDA(module);
 
         List<JetFile> files = JetTestUtils
                 .createTestFiles(testFileName, FileUtil.loadFile(new File(testFileName), true), new JetTestUtils.TestFileFactory<JetFile>() {
@@ -55,10 +55,10 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends Abstract
                     }
                 });
 
-        InjectorForTopDownAnalyzerForJvm tdaInjectorForLazy = getEagerInjectorForTopDownAnalyzer();
+        InjectorForTopDownAnalyzer tdaInjectorForLazy = getEagerInjectorForTopDownAnalyzer();
 
         ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
-        ResolveSession session = new ResolveSession(project, lazyModule, tdaInjectorForLazy.getJavaBridgeConfiguration(), new FileBasedDeclarationProviderFactory(files));
+        ResolveSession session = new ResolveSession(project, lazyModule, tdaInjectorForLazy.getModuleConfiguration(), new FileBasedDeclarationProviderFactory(files));
 
         injector.getTopDownAnalyzer().analyzeFiles(files, Collections.<AnalyzerScriptParameter>emptyList());
 
