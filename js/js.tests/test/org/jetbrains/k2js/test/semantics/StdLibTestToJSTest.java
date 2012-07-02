@@ -20,8 +20,7 @@ import org.jetbrains.k2js.config.EcmaVersion;
 
 /**
  */
-//TODO
-public abstract class StdLibTestToJSTest extends StdLibTestSupport {
+public class StdLibTestToJSTest extends StdLibTestSupport {
     public void testGenerateTestCase() throws Exception {
         generateJavaScriptFiles(EcmaVersion.all(),
                                 "libraries/stdlib/test",

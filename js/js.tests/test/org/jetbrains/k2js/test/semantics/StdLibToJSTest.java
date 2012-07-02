@@ -20,8 +20,7 @@ import org.jetbrains.k2js.config.EcmaVersion;
 
 /**
  */
-//TODO
-public abstract class StdLibToJSTest extends StdLibTestSupport {
+public class StdLibToJSTest extends StdLibTestSupport {
 
     public void testCompileJavaScriptFiles() throws Exception {
         generateJavaScriptFiles(EcmaVersion.all(),

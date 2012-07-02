@@ -17,7 +17,7 @@ public trait Iterator<T> {
     open fun remove() : Unit = js.noImpl
 }
 
-/*
+
 val Collections = object {
     library("collectionsMax")
     public fun max<T>(col : Collection<T>, comp : Comparator<T>) : T = js.noImpl
@@ -52,7 +52,7 @@ val Collections = object {
             list[i2] = tmp
         }
     }
-}*/
+}
 
 library
 public open class ArrayList<E>() : java.util.List<E> {
