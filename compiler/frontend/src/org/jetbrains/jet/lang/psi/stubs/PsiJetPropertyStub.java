@@ -17,14 +17,21 @@
 package org.jetbrains.jet.lang.psi.stubs;
 
 import com.intellij.psi.stubs.NamedStub;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 /**
  * @author Nikolay Krasko
  */
 public interface PsiJetPropertyStub extends NamedStub<JetProperty> {
     boolean isVar();
-    boolean isLocal();
+
+    boolean isTopLevel();
+
+    @Nullable
+    FqName getTopFQName();
+
     String getTypeText();
     String getInferenceBodyText();
 }

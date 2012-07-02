@@ -74,13 +74,17 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
     }
 
     public boolean isLocal() {
-        PsiJetPropertyStub stub = getStub();
-        if (stub != null) {
-            return stub.isLocal();
-        }
-
         PsiElement parent = getParent();
         return !(parent instanceof JetFile || parent instanceof JetClassBody || parent instanceof JetNamespaceBody);
+    }
+
+    public boolean isTopLevel() {
+        PsiJetPropertyStub stub = getStub();
+        if (stub != null) {
+            return stub.isTopLevel();
+        }
+
+        return getParent() instanceof JetFile;
     }
 
     @NotNull

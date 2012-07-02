@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.stubindex;
 import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetProperty;
 
 /**
  * @author Nikolay Krasko
@@ -37,6 +38,9 @@ public interface JetIndexKeys {
     /** Stores package top level function (both extension and non-extension) full qualified names. */
     StubIndexKey<String, JetNamedFunction> TOP_LEVEL_FUNCTIONS_FQN_NAME_KEY =
             StubIndexKey.createIndexKey("jet.top.level.functions.fqn.name");
+
+    StubIndexKey<String, JetProperty> TOP_LEVEL_PROPERTY_FQN_NAME_KEY =
+            StubIndexKey.createIndexKey("jet.top.level.property.fqn.name");
 
     StubIndexKey<String, JetNamedFunction> FUNCTIONS_SHORT_NAME_KEY = StubIndexKey.createIndexKey("jet.functions.short.name");
 }

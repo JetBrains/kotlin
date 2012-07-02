@@ -133,7 +133,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
         Set<VariableDescriptor> result = Sets.newLinkedHashSet();
 
-        List<JetProperty> declarations = declarationProvider.getPropertyDeclarations(name);
+        Collection<JetProperty> declarations = declarationProvider.getPropertyDeclarations(name);
         for (JetProperty propertyDeclaration : declarations) {
             JetScope resolutionScope = getScopeForMemberDeclarationResolution(propertyDeclaration);
             result.add(resolveSession.getInjector().getDescriptorResolver().resolvePropertyDescriptor(thisDescriptor, resolutionScope,

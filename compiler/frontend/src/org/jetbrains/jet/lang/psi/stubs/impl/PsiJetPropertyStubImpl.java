@@ -20,8 +20,10 @@ import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 /**
  * @author Nikolay Krasko
@@ -29,26 +31,33 @@ import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
 public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements PsiJetPropertyStub {
     private final StringRef name;
     private final boolean isVar;
-    private final boolean isLocal;
+    private final boolean isTopLevel;
+    private final FqName topFQName;
     private final StringRef typeText;
     private final StringRef inferenceBodyText;
 
     public PsiJetPropertyStubImpl(IStubElementType elementType, StubElement parent, StringRef name,
-            boolean isVar, boolean isLocal, StringRef typeText, StringRef inferenceBodyText) {
+            boolean isVar, boolean isTopLevel, @Nullable FqName topFQName, StringRef typeText, StringRef inferenceBodyText) {
         super(parent, elementType);
+
+        if (isTopLevel && topFQName == null) {
+            throw new IllegalArgumentException("topFQName shouldn't be null for top level properties");
+        }
+
         this.name = name;
         this.isVar = isVar;
-        this.isLocal = isLocal;
+        this.isTopLevel = isTopLevel;
+        this.topFQName = topFQName;
         this.typeText = typeText;
         this.inferenceBodyText = inferenceBodyText;
     }
 
     public PsiJetPropertyStubImpl(IStubElementType elementType, StubElement parent, String name,
-            boolean isVal, boolean isLocal,
+            boolean isVal, boolean isTopLevel, @Nullable FqName topFQName,
             String typeText, String inferenceBodyText
     ) {
         this(elementType, parent, StringRef.fromString(name),
-             isVal, isLocal, StringRef.fromString(typeText), StringRef.fromString(inferenceBodyText));
+             isVal, isTopLevel, topFQName, StringRef.fromString(typeText), StringRef.fromString(inferenceBodyText));
     }
 
     @Override
@@ -57,8 +66,14 @@ public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements Psi
     }
 
     @Override
-    public boolean isLocal() {
-        return isLocal;
+    public boolean isTopLevel() {
+        return isTopLevel;
+    }
+
+    @Nullable
+    @Override
+    public FqName getTopFQName() {
+        return topFQName;
     }
 
     @Override
@@ -84,8 +99,9 @@ public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements Psi
 
         builder.append(isVar() ? "var " : "val ");
 
-        if (isLocal()) {
-            builder.append("local ");
+        if (isTopLevel()) {
+            assert topFQName != null;
+            builder.append("top ").append("topFQName=").append(topFQName.toString()).append(" ");
         }
 
         builder.append("name=").append(getName());

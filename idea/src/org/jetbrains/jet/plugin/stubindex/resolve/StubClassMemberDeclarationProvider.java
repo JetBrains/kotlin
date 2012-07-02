@@ -17,8 +17,13 @@
 package org.jetbrains.jet.plugin.stubindex.resolve;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.resolve.lazy.ClassMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
+import org.jetbrains.jet.lang.resolve.name.Name;
+
+import java.util.Collection;
 
 /**
  * @author Nikolay Krasko
@@ -27,6 +32,20 @@ public class StubClassMemberDeclarationProvider extends AbstractStubDeclarationP
     @NotNull
     @Override
     public JetClassLikeInfo getOwnerInfo() {
+        // TODO:
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Collection<JetNamedFunction> getFunctionDeclarations(@NotNull Name name) {
+        // TODO:
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Collection<JetProperty> getPropertyDeclarations(@NotNull Name name) {
         // TODO:
         return null;
     }

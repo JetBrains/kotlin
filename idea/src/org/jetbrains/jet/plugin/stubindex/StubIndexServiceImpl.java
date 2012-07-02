@@ -20,6 +20,7 @@ import com.intellij.psi.stubs.IndexSink;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.StubIndexService;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -74,6 +75,16 @@ public class StubIndexServiceImpl implements StubIndexService {
             }
 
             sink.occurrence(JetIndexKeys.FUNCTIONS_SHORT_NAME_KEY, name);
+        }
+    }
+
+    @Override
+    public void indexProperty(PsiJetPropertyStub stub, IndexSink sink) {
+        if (stub.isTopLevel()) {
+            FqName topFQName = stub.getTopFQName();
+            if (topFQName != null) {
+                sink.occurrence(JetIndexKeys.TOP_LEVEL_PROPERTY_FQN_NAME_KEY, topFQName.toString());
+            }
         }
     }
 }

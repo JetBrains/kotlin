@@ -20,6 +20,7 @@ import com.intellij.psi.stubs.IndexSink;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
 
 /**
  * @author Nikolay Krasko
@@ -41,9 +42,14 @@ public interface StubIndexService {
         @Override
         public void indexObject(PsiJetObjectStub stub, IndexSink sink) {
         }
+
+        @Override
+        public void indexProperty(PsiJetPropertyStub stub, IndexSink sink) {
+        }
     };
 
     void indexClass(PsiJetClassStub stub, IndexSink sink);
     void indexFunction(PsiJetFunctionStub stub, IndexSink sink);
     void indexObject(PsiJetObjectStub stub, IndexSink sink);
+    void indexProperty(PsiJetPropertyStub stub, IndexSink sink);
 }

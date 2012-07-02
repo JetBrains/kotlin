@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
@@ -26,9 +27,11 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetPropertyStubImpl;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.IOException;
 
@@ -51,12 +54,27 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
     }
 
     @Override
+    public boolean shouldCreateStub(ASTNode node) {
+        if (super.shouldCreateStub(node)) {
+            PsiElement psi = node.getPsi();
+            if (psi instanceof JetProperty) {
+                JetProperty property = (JetProperty) psi;
+                return property.getName() != null;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     public PsiJetPropertyStub createStub(@NotNull JetProperty psi, StubElement parentStub) {
         JetTypeReference typeRef = psi.getPropertyTypeRef();
         JetExpression expression = psi.getInitializer();
 
+        assert !psi.isLocal() : "Should not store local property";
+
         return new PsiJetPropertyStubImpl(JetStubElementTypes.PROPERTY, parentStub,
-            psi.getName(), psi.isVar(), psi.isLocal(),
+            psi.getName(), psi.isVar(), psi.isTopLevel(), JetPsiUtil.getFQName(psi),
             typeRef != null ? typeRef.getText() : null,
             expression != null ? expression.getText() : null);
     }
@@ -65,7 +83,11 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
     public void serialize(PsiJetPropertyStub stub, StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
         dataStream.writeBoolean(stub.isVar());
-        dataStream.writeBoolean(stub.isLocal());
+        dataStream.writeBoolean(stub.isTopLevel());
+
+        FqName topFQName = stub.getTopFQName();
+        dataStream.writeName(topFQName != null ? topFQName.toString() : null);
+
         dataStream.writeName(stub.getTypeText());
         dataStream.writeName(stub.getInferenceBodyText());
     }
@@ -74,16 +96,20 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
     public PsiJetPropertyStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
         boolean isVar = dataStream.readBoolean();
-        boolean isLocal = dataStream.readBoolean();
+        boolean isTopLevel = dataStream.readBoolean();
+
+        StringRef topFQNameStr = dataStream.readName();
+        FqName fqName = topFQNameStr != null ? new FqName(topFQNameStr.toString()) : null;
+
         StringRef typeText = dataStream.readName();
         StringRef inferenceBodyText = dataStream.readName();
 
         return new PsiJetPropertyStubImpl(JetStubElementTypes.PROPERTY, parentStub,
-                                          name, isVar, isLocal, typeText, inferenceBodyText);
+                                          name, isVar, isTopLevel, fqName, typeText, inferenceBodyText);
     }
 
     @Override
     public void indexStub(PsiJetPropertyStub stub, IndexSink sink) {
-        // No index
+        StubIndexServiceFactory.getInstance().indexProperty(stub, sink);
     }
 }

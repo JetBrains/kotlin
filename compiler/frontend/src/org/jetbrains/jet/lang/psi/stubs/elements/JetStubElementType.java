@@ -23,7 +23,10 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetBlockExpression;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
+import org.jetbrains.jet.lang.psi.JetWithExpressionInitializer;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 /**
@@ -53,10 +56,7 @@ public abstract class JetStubElementType<StubT extends StubElement, PsiT extends
 
         // Don't create stubs if declaration is inside function or property accessor with block
         JetBlockExpression blockExpression = PsiTreeUtil.getParentOfType(psi, JetBlockExpression.class);
-        @SuppressWarnings("unchecked") JetDeclarationWithBody stubStopElement =
-                PsiTreeUtil.getParentOfType(blockExpression, JetFunction.class, JetPropertyAccessor.class);
-
-        if (stubStopElement != null) {
+        if (blockExpression != null) {
             return false;
         }
 

@@ -165,8 +165,8 @@ public class JetPsiUtil {
             return getFQName(objectDeclaration);
         }
 
-        Name functionName = namedDeclaration.getNameAsName();
-        if (functionName == null) {
+        Name name = namedDeclaration.getNameAsName();
+        if (name == null) {
             return null;
         }
 
@@ -180,7 +180,7 @@ public class JetPsiUtil {
         if (parent instanceof JetFile) {
             firstPart = getFQName((JetFile) parent);
         }
-        else if (parent instanceof JetNamedDeclaration) {
+        else if (parent instanceof JetNamedFunction || parent instanceof JetClass || parent instanceof JetObjectDeclaration) {
             firstPart = getFQName((JetNamedDeclaration) parent);
         }
 
@@ -188,7 +188,7 @@ public class JetPsiUtil {
             return null;
         }
 
-        return firstPart.child(functionName);
+        return firstPart.child(name);
     }
 
     @Nullable @IfNotParsed

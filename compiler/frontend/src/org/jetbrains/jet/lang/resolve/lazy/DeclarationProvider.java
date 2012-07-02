@@ -37,7 +37,7 @@ public interface DeclarationProvider {
     Collection<JetNamedFunction> getFunctionDeclarations(@NotNull Name name);
 
     @NotNull
-    List<JetProperty> getPropertyDeclarations(@NotNull Name name);
+    Collection<JetProperty> getPropertyDeclarations(@NotNull Name name);
 
     @Nullable
     JetClassOrObject getClassOrObjectDeclaration(@NotNull Name name);

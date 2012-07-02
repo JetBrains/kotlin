@@ -21,6 +21,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -66,5 +67,19 @@ public class JetStubResolveTest extends LightCodeInsightFixtureTestCase {
         assertSize(2, other);
         assertTrue(functionTexts.contains("fun other(v : Int) = 12"));
         assertTrue(functionTexts.contains("fun other(v : String) {}"));
+    }
+
+    public void testPackageProperty() {
+        myFixture.configureByText(JetFileType.INSTANCE,
+                                  "package test.testing\n" +
+                                  "val test = 12\n");
+
+        StubPackageMemberDeclarationProvider provider =
+                new StubPackageMemberDeclarationProvider(new FqName("test.testing"), getProject());
+
+        List<JetProperty> testProperties = Lists.newArrayList(provider.getPropertyDeclarations(Name.identifier("test")));
+
+        assertSize(1, testProperties);
+        assertEquals("val test = 12", testProperties.get(0).getText());
     }
 }

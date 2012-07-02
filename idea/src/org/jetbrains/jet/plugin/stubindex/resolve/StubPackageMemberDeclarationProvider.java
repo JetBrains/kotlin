@@ -30,10 +30,10 @@ import org.jetbrains.jet.lang.resolve.lazy.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex;
+import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 /**
  * @author Nikolay Krasko
@@ -68,8 +68,8 @@ public class StubPackageMemberDeclarationProvider extends AbstractStubDeclaratio
 
     @NotNull
     @Override
-    public List<JetProperty> getPropertyDeclarations(@NotNull Name name) {
-        return super.getPropertyDeclarations(name);    //To change body of overridden methods use File | Settings | File Templates.
+    public Collection<JetProperty> getPropertyDeclarations(@NotNull Name name) {
+        return JetTopLevelPropertiesFqnNameIndex.getInstance().get(fqName.child(name).toString(), project, GlobalSearchScope.allScope(project));
     }
 
     @Override
