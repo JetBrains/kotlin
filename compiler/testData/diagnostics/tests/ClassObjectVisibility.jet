@@ -3,7 +3,7 @@ package foo
 fun test() {
   A.d
   A.<!INVISIBLE_MEMBER!>f<!>
-  B.<!INVISIBLE_MEMBER!>c<!>
+  CCC.<!INVISIBLE_MEMBER!>classObjectVar<!>
 }
 
 class A() {
@@ -15,8 +15,8 @@ class A() {
   }
 }
 
-class B() {
+class CCC() {
   private class object {
-    val c = 3
+    val classObjectVar = 3
   }
 }

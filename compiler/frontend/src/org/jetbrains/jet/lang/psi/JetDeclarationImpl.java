@@ -31,6 +31,7 @@ abstract class JetDeclarationImpl extends JetExpressionImpl implements JetDeclar
         super(node);
     }
 
+   //TODO: code duplication with JetDeclarationStub
     @Override
     @Nullable
     public JetModifierList getModifierList() {
