@@ -52,7 +52,11 @@ public class StubIndexServiceImpl implements StubIndexService {
         assert name != null;
 
         sink.occurrence(JetIndexKeys.SHORT_NAME_KEY, name);
-        sink.occurrence(JetIndexKeys.FQN_KEY, stub.getFQName().toString());
+
+        FqName fqName = stub.getFQName();
+        if (fqName != null) {
+            sink.occurrence(JetIndexKeys.FQN_KEY, fqName.toString());
+        }
     }
 
     @Override

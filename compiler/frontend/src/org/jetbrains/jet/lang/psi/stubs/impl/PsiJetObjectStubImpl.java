@@ -21,6 +21,7 @@ import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -36,7 +37,7 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
             @NotNull IStubElementType elementType,
             @NotNull StubElement parent,
             @NotNull String name,
-            @NotNull FqName fqName) {
+            @Nullable FqName fqName) {
         this(elementType, parent, StringRef.fromString(name), fqName);
     }
 
@@ -44,7 +45,7 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
             @NotNull IStubElementType elementType,
             @NotNull StubElement parent,
             @NotNull StringRef name,
-            @NotNull FqName fqName) {
+            @Nullable FqName fqName) {
         super(parent, elementType);
 
         this.name = name;
@@ -56,7 +57,7 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
         return StringRef.toString(name);
     }
 
-    @NotNull
+    @Nullable
     @Override
     public FqName getFQName() {
         return fqName;
@@ -68,7 +69,8 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
 
         builder.append("PsiJetObjectStubImpl[");
         builder.append("name=").append(getName());
-        builder.append(" fqName=").append(getFQName().toString());
+
+        builder.append(" fqName=").append(fqName != null ? fqName.toString() : "null");
         builder.append("]");
 
         return builder.toString();

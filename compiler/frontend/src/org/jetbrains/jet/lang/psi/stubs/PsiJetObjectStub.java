@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.psi.stubs;
 
 import com.intellij.psi.stubs.NamedStub;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -25,6 +25,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
  * @author Nikolay Krasko
  */
 public interface PsiJetObjectStub extends NamedStub<JetObjectDeclaration> {
-    @NotNull
+    @Nullable
     FqName getFQName();
 }

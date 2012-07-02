@@ -69,22 +69,21 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
         assert name != null;
 
         FqName fqName = psi.getFqName();
-        assert fqName != null;
-
         return new PsiJetObjectStubImpl(JetStubElementTypes.OBJECT_DECLARATION, parentStub, name, fqName);
     }
 
     @Override
     public void serialize(PsiJetObjectStub stub, StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
-        dataStream.writeName(stub.getFQName().toString());
+        FqName fqName = stub.getFQName();
+        dataStream.writeName(fqName != null ? fqName.toString() : null);
     }
 
     @Override
     public PsiJetObjectStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
         StringRef fqNameStr = dataStream.readName();
-        FqName fqName = new FqName(fqNameStr.toString());
+        FqName fqName = fqNameStr != null ? new FqName(fqNameStr.toString()) : null;
 
         return new PsiJetObjectStubImpl(JetStubElementTypes.OBJECT_DECLARATION, parentStub, name, fqName);
     }
