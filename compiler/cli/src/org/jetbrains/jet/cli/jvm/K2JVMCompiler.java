@@ -57,17 +57,17 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
     protected ExitCode doExecute(K2JVMCompilerArguments arguments, PrintingMessageCollector messageCollector, Disposable rootDisposable) {
 
         CompilerSpecialMode mode = parseCompilerSpecialMode(arguments);
-        File jdkHeadersJar;
-        if (mode.includeJdkHeaders()) {
-            if (arguments.jdkHeaders != null) {
-                jdkHeadersJar = new File(arguments.jdkHeaders);
+        File jdkAnnotationsJar;
+        if (mode.includeJdkAnnotations()) {
+            if (arguments.jdkAnnotations != null) {
+                jdkAnnotationsJar = new File(arguments.jdkAnnotations);
             }
             else {
-                jdkHeadersJar = PathUtil.getAltHeadersPath();
+                jdkAnnotationsJar = PathUtil.getJdkAnnotationsPath();
             }
         }
         else {
-            jdkHeadersJar = null;
+            jdkAnnotationsJar = null;
         }
         File runtimeJar;
 
@@ -83,7 +83,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
             runtimeJar = null;
         }
 
-        CompilerDependencies dependencies = new CompilerDependencies(mode, CompilerDependencies.findRtJar(), jdkHeadersJar, runtimeJar);
+        CompilerDependencies dependencies = new CompilerDependencies(mode, CompilerDependencies.findRtJar(), jdkAnnotationsJar, runtimeJar);
 
         final List<String> argumentsSourceDirs = arguments.getSourceDirs();
         if (!arguments.script &&

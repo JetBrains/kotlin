@@ -59,7 +59,7 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
 
     @PostConstruct
     public void initialize() {
-        this.altClassFinder = new AltClassFinder(project, compilerDependencies.getJdkHeaderRoots());
+        this.altClassFinder = new AltClassFinder(project, compilerDependencies.getJdkAnnotationsRoots());
         this.javaSearchScope = new DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
             @Override
             public boolean contains(VirtualFile file) {

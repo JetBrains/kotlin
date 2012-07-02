@@ -19,7 +19,7 @@ package org.jetbrains.jet.jvm.compiler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileJdkHeaders;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -36,7 +36,6 @@ import org.junit.Assert;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * @author Stepan Koltsov
@@ -80,7 +79,8 @@ public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
     }
 
     public void testResolveJdkHeaderClassWithoutJdk() {
-        JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(myTestRootDisposable, new CompilerDependencies(CompilerSpecialMode.IDEA, null, ForTestCompileJdkHeaders.jdkHeadersForTests(), null));
+        JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(myTestRootDisposable, new CompilerDependencies(CompilerSpecialMode.IDEA, null, ForTestPackJdkAnnotations
+                .jdkAnnotationsForTests(), null));
 
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
                 jetCoreEnvironment.getCompilerDependencies(), jetCoreEnvironment.getProject());

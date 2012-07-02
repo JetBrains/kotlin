@@ -90,9 +90,9 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         }
 
         annotationsProvider = new CoreAnnotationsProvider();
-        if (compilerSpecialMode.includeJdkHeaders()) {
-            for (VirtualFile root : compilerDependencies.getJdkHeaderRoots()) {
-                addLibraryRoot(root);
+        if (compilerSpecialMode.includeJdkAnnotations()) {
+            for (VirtualFile root : compilerDependencies.getJdkAnnotationsRoots()) {
+                annotationsProvider.addExternalAnnotationsRoot(root);
             }
         }
 

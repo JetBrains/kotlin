@@ -20,7 +20,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestCase;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
-import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileJdkHeaders;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.parsing.JetParsingTest;
 import org.junit.Assert;
@@ -44,13 +44,13 @@ public class CompileEnvironmentTest extends TestCase {
 
         try {
             File stdlib = ForTestCompileRuntime.runtimeJarForTests();
-            File jdkHeaders = ForTestCompileJdkHeaders.jdkHeadersForTests();
+            File jdkAnnotations = ForTestPackJdkAnnotations.jdkAnnotationsForTests();
             File resultJar = new File(tempDir, "result.jar");
             ExitCode rv = new K2JVMCompiler().exec(System.out,
-                                                                   "-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts",
-                                                                   "-jar", resultJar.getAbsolutePath(),
-                                                                   "-stdlib", stdlib.getAbsolutePath(),
-                                                                   "-jdkHeaders", jdkHeaders.getAbsolutePath());
+                                                   "-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts",
+                                                   "-jar", resultJar.getAbsolutePath(),
+                                                   "-stdlib", stdlib.getAbsolutePath(),
+                                                   "-jdkAnnotations", jdkAnnotations.getAbsolutePath());
             Assert.assertEquals("compilation completed with non-zero code", ExitCode.OK, rv);
             FileInputStream fileInputStream = new FileInputStream(resultJar);
             try {
@@ -78,10 +78,10 @@ public class CompileEnvironmentTest extends TestCase {
         try {
             File out = new File(tempDir, "out");
             File stdlib = ForTestCompileRuntime.runtimeJarForTests();
-            File jdkHeaders = ForTestCompileJdkHeaders.jdkHeadersForTests();
+            File jdkAnnotations = ForTestPackJdkAnnotations.jdkAnnotationsForTests();
             ExitCode exitCode = new K2JVMCompiler()
                     .exec(System.out, "-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kt", "-output",
-                          out.getAbsolutePath(), "-stdlib", stdlib.getAbsolutePath(), "-jdkHeaders", jdkHeaders.getAbsolutePath());
+                          out.getAbsolutePath(), "-stdlib", stdlib.getAbsolutePath(), "-jdkAnnotations", jdkAnnotations.getAbsolutePath());
             Assert.assertEquals(ExitCode.OK, exitCode);
             assertEquals(1, out.listFiles().length);
             assertEquals(1, out.listFiles()[0].listFiles().length);
