@@ -30,7 +30,9 @@ class Field {
 
     public static Field create(boolean isPublic, DiType type, String name, @Nullable Expression init) {
         Field field = new Field(isPublic, type, name);
-        field.initialization = init;
+        if (init != null) {
+            field.setInitialization(init);
+        }
         return field;
     }
 
@@ -38,7 +40,7 @@ class Field {
     private final String name;
     private final boolean isPublic;
 
-    @Nullable
+    @NotNull
     private Expression initialization;
 
     private final List<SetterDependency> dependencies = Lists.newArrayList();
@@ -47,6 +49,7 @@ class Field {
         this.isPublic = isPublic;
         this.type = type;
         this.name = name;
+        this.initialization = new InstantiateType(type);
     }
 
     public DiType getType() {
@@ -72,7 +75,7 @@ class Field {
         return prefix + StringUtil.capitalize(getName());
     }
 
-    @Nullable
+    @NotNull
     public Expression getInitialization() {
         return initialization;
     }

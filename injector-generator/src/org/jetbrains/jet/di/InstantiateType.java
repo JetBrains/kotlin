@@ -19,42 +19,41 @@ package org.jetbrains.jet.di;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * @author abreslav
  */
-public class ParameterExpression implements Expression {
-    private final Parameter parameter;
+public class InstantiateType implements Expression {
 
-    public ParameterExpression(Parameter parameter) {
-        this.parameter = parameter;
+    private final DiType type;
+
+    public InstantiateType(@NotNull DiType type) {
+        this.type = type;
     }
 
-    public Parameter getParameter() {
-        return parameter;
+    public InstantiateType(@NotNull Class<?> theClass) {
+        this(new DiType(theClass));
+    }
+
+    @NotNull
+    public DiType getType() {
+        return type;
     }
 
     @Override
     public String toString() {
-        return "parameter<" + parameter.getName() + ">";
+        return "[Instantiate type: " + getType() + "]";
     }
 
     @NotNull
     @Override
     public String renderAsCode() {
-        return parameter.getName();
+        throw new UnsupportedOperationException("This should be replaced by some concrete expression by the time this method is called");
     }
 
     @NotNull
     @Override
     public Collection<DiType> getTypesToImport() {
-        return Collections.emptyList();
-    }
-
-    @NotNull
-    @Override
-    public DiType getType() {
-        return parameter.getType();
+        throw new UnsupportedOperationException("This should be replaced by some concrete expression by the time this method is called");
     }
 }

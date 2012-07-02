@@ -17,15 +17,18 @@
 package org.jetbrains.jet.di;
 
 import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 /**
 * @author abreslav
 */
-class ConstructorCall implements Expression {
+public class ConstructorCall implements Expression {
     private final Constructor<?> constructor;
     private final List<Field> constructorArguments = Lists.newArrayList();
 
@@ -39,6 +42,12 @@ class ConstructorCall implements Expression {
 
     @Override
     public String toString() {
+        return constructor.toString();
+    }
+
+    @NotNull
+    @Override
+    public String renderAsCode() {
         StringBuilder builder = new StringBuilder("new " + constructor.getDeclaringClass().getSimpleName() + "(");
         for (Iterator<Field> iterator = constructorArguments.iterator(); iterator.hasNext(); ) {
             Field argument = iterator.next();
@@ -54,5 +63,16 @@ class ConstructorCall implements Expression {
         }
         builder.append(")");
         return builder.toString();
+    }
+
+    @NotNull
+    @Override
+    public Collection<DiType> getTypesToImport() {
+        return Collections.singletonList(new DiType(constructor.getDeclaringClass()));
+    }
+
+    @NotNull
+    public DiType getType() {
+        return new DiType(constructor.getDeclaringClass());
     }
 }
