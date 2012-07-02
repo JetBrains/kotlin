@@ -734,4 +734,11 @@
       <val name="value" val="&quot;fun set(index : Int, element : E) : E&quot;"/>
     </annotation>
   </item>
+
+  <!-- TODO temporary fix for alt-headers/ArrayListClone.jet test -->
+  <item name='java.util.ArrayList java.lang.Object clone()'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun clone() : Any&quot;"/>
+    </annotation>
+  </item>
 </root>
