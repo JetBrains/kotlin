@@ -245,7 +245,8 @@ public inline fun <C: Collection<Byte>> ByteArray.toCollection(result: C) : C {
  */
 public inline fun ByteArray.reverse() : List<Byte> {
     val list = toList()
-    return list.reverse()
+    Collections.reverse(list)
+    return list
 }
 
 /** Copies all elements into a [[LinkedList]]  */

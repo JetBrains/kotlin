@@ -106,6 +106,18 @@ public fun <T> java.lang.Iterable<T>.withIndices() : java.lang.Iterable<#(Int, T
     }
 }
 
+public inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.sort() : List<T> {
+    val list = toList()
+    java.util.Collections.sort(list)
+    return list
+}
+
+public inline fun <in T> java.lang.Iterable<T>.sort(comparator: java.util.Comparator<T>) : List<T> {
+    val list = toList()
+    java.util.Collections.sort(list, comparator)
+    return list
+}
+
 private class NumberedIterator<TT>(private val sourceIterator : java.util.Iterator<TT>) : java.util.Iterator<#(Int, TT)> {
     private var nextIndex = 0
 

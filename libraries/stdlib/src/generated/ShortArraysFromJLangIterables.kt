@@ -245,7 +245,8 @@ public inline fun <C: Collection<Short>> ShortArray.toCollection(result: C) : C 
  */
 public inline fun ShortArray.reverse() : List<Short> {
     val list = toList()
-    return list.reverse()
+    Collections.reverse(list)
+    return list
 }
 
 /** Copies all elements into a [[LinkedList]]  */

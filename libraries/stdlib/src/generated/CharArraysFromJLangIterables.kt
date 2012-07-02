@@ -245,7 +245,8 @@ public inline fun <C: Collection<Char>> CharArray.toCollection(result: C) : C {
  */
 public inline fun CharArray.reverse() : List<Char> {
     val list = toList()
-    return list.reverse()
+    Collections.reverse(list)
+    return list
 }
 
 /** Copies all elements into a [[LinkedList]]  */
