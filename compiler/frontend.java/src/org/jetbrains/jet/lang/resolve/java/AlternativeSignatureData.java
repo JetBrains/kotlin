@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -210,12 +211,24 @@ class AlternativeSignatureData {
                 }
 
                 TypeConstructor typeConstructor = originalTypeConstructor;
-                if (typeConstructor.getDeclarationDescriptor() instanceof TypeParameterDescriptor
-                        && originalToAltTypeParameters.containsKey(typeConstructor.getDeclarationDescriptor())) {
-                    typeConstructor = originalToAltTypeParameters.get(typeConstructor.getDeclarationDescriptor()).getTypeConstructor();
+                ClassifierDescriptor typeConstructorClassifier = typeConstructor.getDeclarationDescriptor();
+                if (typeConstructorClassifier instanceof TypeParameterDescriptor
+                        && originalToAltTypeParameters.containsKey(typeConstructorClassifier)) {
+                    typeConstructor = originalToAltTypeParameters.get(typeConstructorClassifier).getTypeConstructor();
+                }
+                JetScope memberScope;
+                if (typeConstructorClassifier instanceof TypeParameterDescriptor) {
+                    memberScope = ((TypeParameterDescriptor) typeConstructorClassifier).getUpperBoundsAsType().getMemberScope();
+                }
+                else if (typeConstructorClassifier instanceof ClassDescriptor) {
+                    memberScope = ((ClassDescriptor) typeConstructorClassifier).getMemberScope(altArguments);
+                }
+                else {
+                    throw new AssertionError("Unexpected class of type constructor classifier "
+                                             + (typeConstructorClassifier == null ? "null" : typeConstructorClassifier.getClass().getName()));
                 }
                 return new JetTypeImpl(autoType.getAnnotations(), typeConstructor, false,
-                                       altArguments, autoType.getMemberScope());
+                                       altArguments, memberScope);
             }
 
             @Override
