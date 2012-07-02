@@ -17,7 +17,8 @@
 package org.jetbrains.k2js.test.utils;
 
 import closurecompiler.internal.com.google.common.collect.Maps;
-import com.google.common.base.Predicates;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
@@ -58,23 +59,48 @@ public final class TranslationUtils {
     private static BindingContext libraryContext = null;
 
     @NotNull
-    public static BindingContext getLibraryContext(@NotNull Project project, @NotNull List<JetFile> files) {
+    public static BindingContext getLibraryContext(@NotNull Project project, @NotNull List<JetFile> allLibFiles) {
         if (libraryContext == null) {
+            Predicate<PsiFile> filesWithCode = new Predicate<PsiFile>() {
+                @Override
+                public boolean apply(@javax.annotation.Nullable PsiFile file) {
+                    return isFileWithCode((JetFile) file);
+                }
+            };
             AnalyzeExhaust exhaust = AnalyzerFacadeForJS
-                    .analyzeFiles(files, Predicates.<PsiFile>alwaysFalse(),
-                                  Config.getEmptyConfig(project));
+                    .analyzeFiles(allLibFiles, filesWithCode, Config.getEmptyConfig(project));
             libraryContext = exhaust.getBindingContext();
-            AnalyzerFacadeForJS.checkForErrors(files, libraryContext);
+            AnalyzerFacadeForJS.checkForErrors(allLibFiles, libraryContext);
         }
         return libraryContext;
+    }
+
+    @NotNull
+    public static List<JetFile> getFilesWithCode(@NotNull List<JetFile> allLibFiles) {
+        List<JetFile> result = Lists.newArrayList();
+        for (JetFile file : allLibFiles) {
+            if (isFileWithCode(file)) {
+                result.add(file);
+            }
+        }
+        return result;
+    }
+
+    private static boolean isFileWithCode(@NotNull JetFile file) {
+        for (String filename : Config.LIB_FILES_WITH_CODE) {
+            if (file.getName().contains(filename)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @NotNull
     public static Config getConfig(@NotNull Project project, @NotNull EcmaVersion version) {
         Config config = testConfigs.get(version);
         if (config == null) {
-            List<JetFile> files = initLibFiles(project);
-            config = new TestConfig(project, version, files, getLibraryContext(project, files));
+            List<JetFile> allLibFiles = initLibFiles(project);
+            config = new TestConfig(project, version, getFilesWithCode(allLibFiles), getLibraryContext(project, allLibFiles));
             testConfigs.put(version, config);
         }
         return config;
