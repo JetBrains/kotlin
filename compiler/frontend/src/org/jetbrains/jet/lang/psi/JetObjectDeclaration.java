@@ -27,6 +27,7 @@ import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
@@ -86,9 +87,32 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
         return nameAsDeclaration == null ? null : nameAsDeclaration.setName(name);
     }
 
+    @Override
     @Nullable
     public JetObjectDeclarationName getNameAsDeclaration() {
         return (JetObjectDeclarationName) findChildByType(JetNodeTypes.OBJECT_DECLARATION_NAME);
+    }
+
+    @Override
+    @Nullable
+    public JetModifierList getModifierList() {
+        PsiElement parent = getParent();
+        if (isClassObject(parent)) {
+            assert parent instanceof JetDeclaration;
+            return ((JetDeclaration)parent).getModifierList();
+        }
+        return (JetModifierList) findChildByType(JetNodeTypes.MODIFIER_LIST);
+    }
+
+
+    private static boolean isClassObject(@NotNull PsiElement parent) {
+        return parent.getNode().getElementType().equals(JetNodeTypes.CLASS_OBJECT);
+    }
+
+    @Override
+    public boolean hasModifier(JetToken modifier) {
+        JetModifierList modifierList = getModifierList();
+        return modifierList != null && modifierList.hasModifier(modifier);
     }
 
     @Override
