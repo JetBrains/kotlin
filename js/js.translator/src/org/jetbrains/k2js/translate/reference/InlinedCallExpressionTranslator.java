@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetFunction;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -42,22 +41,23 @@ import java.util.Map;
 
 import static org.jetbrains.k2js.translate.reference.CallParametersResolver.resolveCallParameters;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionForDescriptor;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCallForCallExpression;
+import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedThisDescriptor;
-import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
 
 /**
  * @author Pavel Talanov
  */
 public final class InlinedCallExpressionTranslator extends AbstractCallExpressionTranslator {
 
+    @SuppressWarnings("UnusedParameters")
     public static boolean shouldBeInlined(@NotNull JetCallExpression expression, @NotNull TranslationContext context) {
-        ResolvedCall<?> resolvedCall = getResolvedCallForCallExpression(context.bindingContext(), expression);
-        CallableDescriptor descriptor = resolvedCall.getCandidateDescriptor();
-        if (descriptor instanceof SimpleFunctionDescriptor) {
-            return ((SimpleFunctionDescriptor)descriptor).isInline();
-        }
+        //TODO: inlining turned off
+        //ResolvedCall<?> resolvedCall = getResolvedCallForCallExpression(context.bindingContext(), expression);
+        //CallableDescriptor descriptor = resolvedCall.getCandidateDescriptor();
+        //if (descriptor instanceof SimpleFunctionDescriptor) {
+        //    return ((SimpleFunctionDescriptor)descriptor).isInline();
+        //}
         return false;
     }
 

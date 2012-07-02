@@ -61,6 +61,10 @@ public final class MiscTest extends AbstractExpressionTest {
         checkFooBoxIsTrue("KT-1052-2.kt", EcmaVersion.all());
     }
 
+    public void testKt2314() throws Exception {
+        checkFooBoxIsTrue("KT-2314.kt", EcmaVersion.all());
+    }
+
     public void testKt1052() throws Exception {
         checkOutput("KT-1052.kt", "true\n");
     }

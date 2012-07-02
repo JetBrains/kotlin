@@ -26,7 +26,11 @@ import java.io.File;
 /**
  * @author Pavel Talanov
  */
-public final class InlineTest extends SingleFileTranslationTest {
+
+//TODO:
+//Inlining turned off
+@SuppressWarnings("UnusedDeclaration")
+public abstract class InlineTest extends SingleFileTranslationTest {
     public InlineTest() {
         super("inline/");
     }
