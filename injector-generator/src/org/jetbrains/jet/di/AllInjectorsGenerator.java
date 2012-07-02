@@ -91,6 +91,7 @@ public class AllInjectorsGenerator {
 
     private static void generateInjectorForTopDownAnalyzerForJvm() throws IOException {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        generator.implementInterface(InjectorForTopDownAnalyzer.class);
         generateInjectorForTopDownAnalyzerCommon(generator);
         generator.addParameter(BuiltinsScopeExtensionMode.class);
         generator.addPublicField(JavaBridgeConfiguration.class);

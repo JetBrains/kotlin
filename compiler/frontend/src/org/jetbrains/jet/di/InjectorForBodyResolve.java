@@ -32,9 +32,6 @@ import org.jetbrains.jet.lang.resolve.ControlFlowAnalyzer;
 import org.jetbrains.jet.lang.resolve.DeclarationsChecker;
 import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisContext;
-import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 

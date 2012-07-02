@@ -26,7 +26,6 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadingConflictResolver;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 

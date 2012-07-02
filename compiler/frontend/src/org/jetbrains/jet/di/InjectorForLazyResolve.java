@@ -28,9 +28,6 @@ import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadingConflictResolver;
-import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 

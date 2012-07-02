@@ -24,9 +24,6 @@ import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
 import org.jetbrains.jet.codegen.ClosureAnnotator;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import java.util.List;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
