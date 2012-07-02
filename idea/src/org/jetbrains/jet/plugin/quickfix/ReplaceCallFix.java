@@ -21,12 +21,10 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 
 /**
@@ -34,48 +32,30 @@ import org.jetbrains.jet.plugin.JetBundle;
  * @author slukjanov aka Frostman
  */
 public class ReplaceCallFix implements IntentionAction {
-    private final boolean safe;
-    private final boolean fromDot;
+    private final boolean toSafe;
 
-    private ReplaceCallFix(boolean safe, boolean fromDot) {
-        this.safe = safe;
-        this.fromDot = fromDot;
+    private ReplaceCallFix(boolean safe) {
+        this.toSafe = safe;
     }
 
     /**
-     * @return quickfix for replacing dot call with safe (?.) call
+     * @return quickfix for replacing dot call with toSafe (?.) call
      */
     public static ReplaceCallFix toSafeCall() {
-        return new ReplaceCallFix(true, true);
+        return new ReplaceCallFix(true);
     }
 
     /**
-     * @return quickfix for replacing dot call with non-null asserted (!!.) call
-     */
-    public static ReplaceCallFix toNonNullAssertedCall() {
-        return new ReplaceCallFix(false, true);
-    }
-
-    /**
-     * @return quickfix for replacing unnecessary safe (?.) call with dot call
+     * @return quickfix for replacing unnecessary toSafe (?.) call with dot call
      */
     public static ReplaceCallFix toDotCallFromSafeCall() {
-        return new ReplaceCallFix(true, false);
-    }
-
-    /**
-     * @return quickfix for replacing unnecessary non-null asserted (!!.) call with dot call
-     */
-    public static ReplaceCallFix toDotCallFromNonNullAssertedCall() {
-        return new ReplaceCallFix(false, false);
+        return new ReplaceCallFix(false);
     }
 
     @NotNull
     @Override
     public String getText() {
-        return fromDot
-               ? (safe ? JetBundle.message("replace.with.safe.call") : JetBundle.message("replace.with.nna.call"))
-               : JetBundle.message("replace.with.dot.call");
+        return toSafe ? JetBundle.message("replace.with.safe.call") : JetBundle.message("replace.with.dot.call");
     }
 
     @NotNull
@@ -99,29 +79,8 @@ public class ReplaceCallFix implements IntentionAction {
 
         JetExpression selector = callExpression.getSelectorExpression();
         if (selector != null) {
-            if (!fromDot && !safe) {
-                final PsiElement elementAtCaret = getElementAtCaret(editor, file);
-                if (elementAtCaret instanceof LeafPsiElement) {
-                    final LeafPsiElement leafElement = (LeafPsiElement) elementAtCaret;
-                    PsiElement exclExclElement = null;
-                    if (leafElement.getElementType() == JetTokens.EXCLEXCL) {
-                        exclExclElement = leafElement;
-                    }
-                    else if (leafElement.getElementType() == JetTokens.DOT) {
-                        PsiElement prevSibling = leafElement.getPrevSibling();
-                        if (prevSibling != null) {
-                            exclExclElement = prevSibling.getLastChild();
-                        }
-                    }
-                    if (exclExclElement != null) {
-                        exclExclElement.delete();
-                    }
-                }
-            }
-
             JetQualifiedExpression newElement = (JetQualifiedExpression) JetPsiFactory.createExpression(
-                    project,
-                    callExpression.getReceiverExpression().getText() + (fromDot ? (safe ? "?." : "!!.") : ".") + selector.getText());
+                    project, callExpression.getReceiverExpression().getText() + (toSafe ? "?." : ".") + selector.getText());
 
             callExpression.replace(newElement);
         }
@@ -134,8 +93,7 @@ public class ReplaceCallFix implements IntentionAction {
 
     private JetQualifiedExpression getCallExpression(@NotNull Editor editor, @NotNull JetFile file) {
         final PsiElement elementAtCaret = getElementAtCaret(editor, file);
-        return PsiTreeUtil
-                .getParentOfType(elementAtCaret, fromDot || !safe ? JetDotQualifiedExpression.class : JetSafeQualifiedExpression.class);
+        return PsiTreeUtil.getParentOfType(elementAtCaret, toSafe ? JetDotQualifiedExpression.class : JetSafeQualifiedExpression.class);
     }
 
     private static PsiElement getElementAtCaret(Editor editor, PsiFile file) {

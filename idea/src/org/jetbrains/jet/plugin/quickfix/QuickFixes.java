@@ -136,10 +136,8 @@ public class QuickFixes {
         actions.put(UNNECESSARY_SAFE_CALL, ReplaceCallFix.toDotCallFromSafeCall());
         actions.put(UNSAFE_CALL, ReplaceCallFix.toSafeCall());
 
-        actions.put(UNSAFE_CALL, ReplaceCallFix.toNonNullAssertedCall());
-        actions.put(UNNECESSARY_NOT_NULL_ASSERTION, ReplaceCallFix.toDotCallFromNonNullAssertedCall());
-
-        actions.put(UNNECESSARY_NOT_NULL_ASSERTION, new UnnecessaryNotNullAssertionFix());
+        actions.put(UNSAFE_CALL, ExclExclCallFix.introduceExclExclCall());
+        actions.put(UNNECESSARY_NOT_NULL_ASSERTION, ExclExclCallFix.removeExclExclCall());
 
         actions.put(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, new SpecifyTypeExplicitlyFix());
     }
