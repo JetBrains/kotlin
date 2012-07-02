@@ -1617,7 +1617,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             result.addAll(Arrays.asList(list.getAnnotations()));
         }
 
-        PsiAnnotation[] externalAnnotations = ExternalAnnotationsProvider.getInstance().findExternalAnnotations(owner.getProject(), owner);
+        PsiAnnotation[] externalAnnotations = ExternalAnnotationsProvider.getInstance(owner.getProject()).findExternalAnnotations(owner);
         if (externalAnnotations != null) {
             result.addAll(Arrays.asList(externalAnnotations));
         }
@@ -1635,6 +1635,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             }
         }
 
-        return ExternalAnnotationsProvider.getInstance().findExternalAnnotation(owner.getProject(), owner, fqName);
+        return ExternalAnnotationsProvider.getInstance(owner.getProject()).findExternalAnnotation(owner, fqName);
     }
 }

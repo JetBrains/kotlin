@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.extAnnotations;
 
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiModifierListOwner;
@@ -29,20 +30,13 @@ import org.jetbrains.annotations.Nullable;
  */
 @Deprecated
 public abstract class ExternalAnnotationsProvider {
-    private static ExternalAnnotationsProvider instance;
+    @Nullable
+    public abstract PsiAnnotation findExternalAnnotation(@NotNull PsiModifierListOwner listOwner, @NotNull String annotationFQN);
 
     @Nullable
-    public abstract PsiAnnotation findExternalAnnotation(@NotNull Project project, @NotNull PsiModifierListOwner listOwner, @NotNull String annotationFQN);
+    public abstract PsiAnnotation[] findExternalAnnotations(@NotNull PsiModifierListOwner listOwner);
 
-    @Nullable
-    public abstract PsiAnnotation[] findExternalAnnotations(@NotNull Project project, @NotNull PsiModifierListOwner listOwner);
-
-    @NotNull
-    public static ExternalAnnotationsProvider getInstance() {
-        return instance;
-    }
-
-    public static void setInstance(@NotNull ExternalAnnotationsProvider instance) {
-        ExternalAnnotationsProvider.instance = instance;
+    public static ExternalAnnotationsProvider getInstance(@NotNull Project project) {
+        return ServiceManager.getService(project, ExternalAnnotationsProvider.class);
     }
 }

@@ -208,7 +208,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
 
         if (arguments.annotations != null) {
             for (String root : Splitter.on(File.pathSeparatorChar).split(arguments.annotations)) {
-                JetCoreEnvironment.addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(new File(root)));
+                configuration.getEnvironment().addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(new File(root)));
             }
         }
     }

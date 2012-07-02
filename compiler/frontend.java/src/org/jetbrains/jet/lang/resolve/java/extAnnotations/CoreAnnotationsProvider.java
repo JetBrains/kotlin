@@ -105,13 +105,13 @@ public class CoreAnnotationsProvider extends ExternalAnnotationsProvider {
 
     @Override
     @Nullable
-    public PsiAnnotation findExternalAnnotation(@NotNull Project project, @NotNull final PsiModifierListOwner listOwner, @NotNull final String annotationFQN) {
+    public PsiAnnotation findExternalAnnotation(@NotNull final PsiModifierListOwner listOwner, @NotNull final String annotationFQN) {
         return collectExternalAnnotations(listOwner).get(annotationFQN);
     }
 
     @Override
     @Nullable
-    public PsiAnnotation[] findExternalAnnotations(@NotNull Project project, @NotNull final PsiModifierListOwner listOwner) {
+    public PsiAnnotation[] findExternalAnnotations(@NotNull final PsiModifierListOwner listOwner) {
         final Map<String, PsiAnnotation> result = collectExternalAnnotations(listOwner);
         return result.isEmpty() ? null : result.values().toArray(new PsiAnnotation[result.size()]);
     }

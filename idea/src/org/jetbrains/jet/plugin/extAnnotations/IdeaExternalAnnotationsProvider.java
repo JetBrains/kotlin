@@ -31,29 +31,20 @@ import org.jetbrains.jet.lang.resolve.java.extAnnotations.ExternalAnnotationsPro
  * @since 6/26/12
  */
 @Deprecated
-public class IdeaExternalAnnotationsProvider extends ExternalAnnotationsProvider implements ApplicationComponent {
-    @Override
-    public PsiAnnotation findExternalAnnotation(@NotNull Project project, @NotNull PsiModifierListOwner listOwner, @NotNull String annotationFQN) {
-        return ExternalAnnotationsManager.getInstance(project).findExternalAnnotation(listOwner, annotationFQN);
+public class IdeaExternalAnnotationsProvider extends ExternalAnnotationsProvider {
+    private final ExternalAnnotationsManager externalAnnotationsManager;
+
+    public IdeaExternalAnnotationsProvider(ExternalAnnotationsManager externalAnnotationsManager) {
+        this.externalAnnotationsManager = externalAnnotationsManager;
     }
 
     @Override
-    public PsiAnnotation[] findExternalAnnotations(@NotNull Project project, @NotNull PsiModifierListOwner listOwner) {
-        return ExternalAnnotationsManager.getInstance(project).findExternalAnnotations(listOwner);
+    public synchronized PsiAnnotation findExternalAnnotation(@NotNull PsiModifierListOwner listOwner, @NotNull String annotationFQN) {
+        return externalAnnotationsManager.findExternalAnnotation(listOwner, annotationFQN);
     }
 
     @Override
-    public void initComponent() {
-        ExternalAnnotationsProvider.setInstance(this);
-    }
-
-    @Override
-    public void disposeComponent() {
-    }
-
-    @NotNull
-    @Override
-    public String getComponentName() {
-        return getClass().getName();
+    public synchronized PsiAnnotation[] findExternalAnnotations(@NotNull PsiModifierListOwner listOwner) {
+        return externalAnnotationsManager.findExternalAnnotations(listOwner);
     }
 }

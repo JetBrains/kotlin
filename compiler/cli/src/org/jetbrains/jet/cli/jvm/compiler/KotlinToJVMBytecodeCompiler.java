@@ -81,7 +81,7 @@ public class KotlinToJVMBytecodeCompiler {
         }
 
         for (String annotationsRoot : moduleBuilder.getAnnotationsRoots()) {
-            JetCoreEnvironment.addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(new File(annotationsRoot)));
+            configuration.getEnvironment().addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(new File(annotationsRoot)));
         }
 
         GenerationState generationState = analyzeAndGenerate(configuration);

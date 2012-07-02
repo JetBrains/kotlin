@@ -8,12 +8,6 @@
 
   <depends optional="true">JUnit</depends>
 
-  <application-components>
-    <component>
-      <implementation-class>org.jetbrains.jet.plugin.extAnnotations.IdeaExternalAnnotationsProvider</implementation-class>
-    </component>
-  </application-components>
-
   <project-components>
       <component>
           <implementation-class>org.jetbrains.jet.plugin.JetStandardLibraryInitializer</implementation-class>
@@ -76,6 +70,9 @@
 
       <projectService serviceInterface="org.jetbrains.jet.lang.resolve.java.JetFilesProvider"
                       serviceImplementation="org.jetbrains.jet.plugin.project.PluginJetFilesProvider"/>
+
+      <projectService serviceInterface="org.jetbrains.jet.lang.resolve.java.extAnnotations.ExternalAnnotationsProvider"
+                      serviceImplementation="org.jetbrains.jet.plugin.extAnnotations.IdeaExternalAnnotationsProvider"/>
 
       <errorHandler implementation="org.jetbrains.jet.plugin.reporter.KotlinReportSubmitter"/>
 

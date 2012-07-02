@@ -49,6 +49,7 @@ import java.util.List;
  */
 public class JetCoreEnvironment extends JavaCoreEnvironment {
     private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
+    private final CoreAnnotationsProvider annotationsProvider;
 
     @NotNull
     public static JetCoreEnvironment createCoreEnvironmentForJS(Disposable disposable) {
@@ -88,13 +89,14 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
             addToClasspath(compilerDependencies.getJdkJar());
         }
 
+        annotationsProvider = new CoreAnnotationsProvider();
         if (compilerSpecialMode.includeJdkHeaders()) {
             for (VirtualFile root : compilerDependencies.getJdkHeaderRoots()) {
                 addLibraryRoot(root);
             }
         }
 
-        ExternalAnnotationsProvider.setInstance(new CoreAnnotationsProvider());
+        myProject.registerService(ExternalAnnotationsProvider.class, annotationsProvider);
 
         if (compilerSpecialMode.includeKotlinRuntime()) {
             addToClasspath(compilerDependencies.getRuntimeJar());
@@ -103,8 +105,8 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         JetStandardLibrary.initialize(getProject());
     }
 
-    public static void addExternalAnnotationsRoot(@NotNull VirtualFile root) {
-        ((CoreAnnotationsProvider) ExternalAnnotationsProvider.getInstance()).addExternalAnnotationsRoot(root);
+    public void addExternalAnnotationsRoot(VirtualFile root) {
+        annotationsProvider.addExternalAnnotationsRoot(root);
     }
 
     public MockApplication getApplication() {
