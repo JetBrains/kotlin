@@ -71,9 +71,9 @@ public final class TranslationUtils {
 
     @NotNull
     public static Config getConfig(@NotNull Project project, @NotNull EcmaVersion version) {
-        List<JetFile> files = initLibFiles(project);
         Config config = testConfigs.get(version);
         if (config == null) {
+            List<JetFile> files = initLibFiles(project);
             config = new TestConfig(project, version, files, getLibraryContext(project, files));
             testConfigs.put(version, config);
         }

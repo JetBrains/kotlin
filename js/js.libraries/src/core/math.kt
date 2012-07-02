@@ -29,4 +29,4 @@ public class MathClass() {
 }
 
 native
-public val Math = MathClass();
+public val Math: MathClass = MathClass();

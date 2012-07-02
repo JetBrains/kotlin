@@ -64,7 +64,7 @@ public abstract class Config {
             "/core/core.kt",
             "/core/math.kt",
             "/core/json.kt",
-            "/stdlib/JUMaps.kt",
+            //"/stdlib/JUMaps.kt",
             "/stdlib/browser.kt",
             "/core/dom.kt",
             "/dom/domcore.kt",
