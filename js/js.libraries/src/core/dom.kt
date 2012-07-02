@@ -221,7 +221,7 @@ native public trait Node {
     public fun lookupNamespaceURI(arg1: String?): String = js.noImpl
     public fun isEqualNode(arg1: Node): Boolean = js.noImpl
 
-    class object {
+    public class object {
         public val ELEMENT_NODE: Short = 1
         public val ATTRIBUTE_NODE: Short = 2
         public val TEXT_NODE: Short = 3

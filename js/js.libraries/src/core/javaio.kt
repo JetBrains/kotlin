@@ -1,4 +1,4 @@
 package java.io
 
 library
-class IOException(message: String = "") : Exception() {}
+public class IOException(message: String = "") : Exception() {}

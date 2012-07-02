@@ -17,6 +17,7 @@ public trait Iterator<T> {
     open fun remove() : Unit = js.noImpl
 }
 
+/*
 val Collections = object {
     library("collectionsMax")
     public fun max<T>(col : Collection<T>, comp : Comparator<T>) : T = js.noImpl
@@ -51,9 +52,7 @@ val Collections = object {
             list[i2] = tmp
         }
     }
-
-
-}
+}*/
 
 library
 public open class ArrayList<E>() : java.util.List<E> {
@@ -79,19 +78,19 @@ public open class ArrayList<E>() : java.util.List<E> {
 
 library
 public trait Collection<E> : java.lang.Iterable<E> {
-    open fun size() : Int
-    open fun isEmpty() : Boolean
-    open fun contains(o : Any?) : Boolean
-    override fun iterator() : java.util.Iterator<E>
-   // open fun toArray() : Array<Any?>
-   // open fun toArray<T>(a : Array<out T>) : Array<T>
-    open fun add(e : E) : Boolean
-    open fun remove(o : Any?) : Boolean
-    //open fun containsAll(c : java.util.Collection<*>) : Boolean
-    open fun addAll(c : java.util.Collection<out E>) : Boolean
-    //open fun removeAll(c : java.util.Collection<*>) : Boolean
-    //open fun retainAll(c : java.util.Collection<*>) : Boolean
-    open fun clear() : Unit
+    open public fun size() : Int
+    open public fun isEmpty() : Boolean
+    open public fun contains(o : Any?) : Boolean
+    override public fun iterator() : java.util.Iterator<E>
+   // open public fun toArray() : Array<Any?>
+   // open public fun toArray<T>(a : Array<out T>) : Array<T>
+    open public fun add(e : E) : Boolean
+    open public fun remove(o : Any?) : Boolean
+    //open public fun containsAll(c : java.util.Collection<*>) : Boolean
+    open public fun addAll(c : java.util.Collection<out E>) : Boolean
+    //open public fun removeAll(c : java.util.Collection<*>) : Boolean
+    //open public fun retainAll(c : java.util.Collection<*>) : Boolean
+    open public fun clear() : Unit
 }
 
 library
@@ -120,44 +119,44 @@ public abstract open class AbstractList<E>() : AbstractCollection<E>(), List<E> 
 
 library
 public trait List<E> : Collection<E> {
-    override fun size() : Int
-    override fun isEmpty() : Boolean
-    override fun contains(o : Any?) : Boolean
-    override fun iterator() : java.util.Iterator<E>
-  //  override fun toArray() : Array<Any?>
+    override public fun size() : Int
+    override public fun isEmpty() : Boolean
+    override public fun contains(o : Any?) : Boolean
+    override public fun iterator() : java.util.Iterator<E>
+  //  override public fun toArray() : Array<Any?>
     // Simulate Java's array covariance
- //   override fun toArray<T>(a : Array<out T>) : Array<T>
-    override fun add(e : E) : Boolean
-    override fun remove(o : Any?) : Boolean
-  //  override fun containsAll(c : java.util.Collection<*>) : Boolean
-    override fun addAll(c : java.util.Collection<out E>) : Boolean
-   // open fun addAll(index : Int, c : java.util.Collection<out E>) : Boolean
-   // override fun removeAll(c : java.util.Collection<*>) : Boolean
-   // override fun retainAll(c : java.util.Collection<*>) : Boolean
-    override fun clear() : Unit
-    open fun get(index : Int) : E
-    open fun set(index : Int, element : E) : E
-    open fun add(index : Int, element : E) : Unit
-    open fun remove(index : Int) : E
-   // open fun indexOf(o : Any?) : Int
-   // open fun lastIndexOf(o : Any?) : Int
+ //   override public fun toArray<T>(a : Array<out T>) : Array<T>
+    override public fun add(e : E) : Boolean
+    override public fun remove(o : Any?) : Boolean
+  //  override public fun containsAll(c : java.util.Collection<*>) : Boolean
+    override public fun addAll(c : java.util.Collection<out E>) : Boolean
+   // open public fun addAll(index : Int, c : java.util.Collection<out E>) : Boolean
+   // override public fun removeAll(c : java.util.Collection<*>) : Boolean
+   // override public fun retainAll(c : java.util.Collection<*>) : Boolean
+    override public fun clear() : Unit
+    open public fun get(index : Int) : E
+    open public fun set(index : Int, element : E) : E
+    open public fun add(index : Int, element : E) : Unit
+    open public fun remove(index : Int) : E
+   // open public fun indexOf(o : Any?) : Int
+   // open public fun lastIndexOf(o : Any?) : Int
 }
 
 library
 public trait Set<E> : Collection<E> {
-    override fun size() : Int
-    override fun isEmpty() : Boolean
-    override fun contains(o : Any?) : Boolean
-    override fun iterator() : java.util.Iterator<E>
-  //  override fun toArray() : Array<Any?>
-  //  override fun toArray<T>(a : Array<out T>) : Array<T>
-    override fun add(e : E) : Boolean
-    override fun remove(o : Any?) : Boolean
-    //override fun containsAll(c : java.util.Collection<*>) : Boolean
-    override fun addAll(c : java.util.Collection<out E>) : Boolean
-    //override fun retainAll(c : java.util.Collection<*>) : Boolean
-    //override fun removeAll(c : java.util.Collection<*>) : Boolean
-    override fun clear() : Unit
+    override public fun size() : Int
+    override public fun isEmpty() : Boolean
+    override public fun contains(o : Any?) : Boolean
+    override public fun iterator() : java.util.Iterator<E>
+  //  override public fun toArray() : Array<Any?>
+  //  override public fun toArray<T>(a : Array<out T>) : Array<T>
+    override public fun add(e : E) : Boolean
+    override public fun remove(o : Any?) : Boolean
+    //override public fun containsAll(c : java.util.Collection<*>) : Boolean
+    override public fun addAll(c : java.util.Collection<out E>) : Boolean
+    //override public fun retainAll(c : java.util.Collection<*>) : Boolean
+    //override public fun removeAll(c : java.util.Collection<*>) : Boolean
+    override public fun clear() : Unit
 }
 
 library
@@ -174,28 +173,28 @@ public open class HashSet<E>() : java.util.Set<E> {
 
 library
 public trait Map<K, V> {
-    open fun size() : Int
-    open fun isEmpty() : Boolean
-    open fun containsKey(key : Any?) : Boolean
-    open fun containsValue(value : Any?) : Boolean
-    open fun get(key : Any?) : V?
-    open fun put(key : K, value : V) : V?
-    open fun remove(key : Any?) : V?
-    open fun putAll(m : java.util.Map<out K, out V>) : Unit
-    open fun clear() : Unit
-    open fun keySet() : java.util.Set<K>
-    open fun values() : java.util.Collection<V>
+    open public fun size() : Int
+    open public fun isEmpty() : Boolean
+    open public fun containsKey(key : Any?) : Boolean
+    open public fun containsValue(value : Any?) : Boolean
+    open public fun get(key : Any?) : V?
+    open public fun put(key : K, value : V) : V?
+    open public fun remove(key : Any?) : V?
+    open public fun putAll(m : java.util.Map<out K, out V>) : Unit
+    open public fun clear() : Unit
+    open public fun keySet() : java.util.Set<K>
+    open public fun values() : java.util.Collection<V>
 
-    open fun entrySet() : java.util.Set<Entry<K, V>>
-//    open fun equals(o : Any?) : Boolean
-//    open fun hashCode() : Int
+    open public fun entrySet() : java.util.Set<Entry<K, V>>
+//    open public fun equals(o : Any?) : Boolean
+//    open public fun hashCode() : Int
 
     trait Entry<K, V> {
-        open fun getKey() : K
-        open fun getValue() : V
-        open fun setValue(value : V) : V
-//            open fun equals(o : Any?) : Boolean
-//            open fun hashCode() : Int
+        open public fun getKey() : K
+        open public fun getValue() : V
+        open public fun setValue(value : V) : V
+//            open public fun equals(o : Any?) : Boolean
+//            open public fun hashCode() : Int
     }
 }
 
@@ -244,4 +243,4 @@ public class StringBuilder() : Appendable {
 }
 
 library
-class NoSuchElementException() : Exception() {}
+public class NoSuchElementException() : Exception() {}

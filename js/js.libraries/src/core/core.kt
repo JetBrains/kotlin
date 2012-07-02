@@ -7,18 +7,18 @@ import java.lang.*;
 
 
 native
-val noImpl : Nothing = throw Exception();
+public val noImpl : Nothing = throw Exception();
 
 library("println")
-fun println() {}
+public fun println() {}
 library("println")
-fun println(s : Any?) {}
+public fun println(s : Any?) {}
 library("print")
-fun print(s : Any?) {}
+public fun print(s : Any?) {}
 //TODO: consistent parseInt
 library("parseInt")
-fun parseInt(s : String) : Int = js.noImpl
+public fun parseInt(s : String) : Int = js.noImpl
 library
-fun safeParseInt(s : String) : Int? = js.noImpl
+public fun safeParseInt(s : String) : Int? = js.noImpl
 library
-fun safeParseDouble(s : String) : Double? = js.noImpl
+public fun safeParseDouble(s : String) : Double? = js.noImpl

@@ -21,12 +21,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.List;
+
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getNullableDescriptorForFunction;
 
 /**
  * Helps find functions which are annotated with a @Test annotation from junit
@@ -36,17 +40,18 @@ public class JetTestFunctionDetector {
     }
 
     public static boolean isTest(@NotNull BindingContext bindingContext, @NotNull JetNamedFunction function) {
-        FunctionDescriptor functionDescriptor = BindingUtils.getFunctionDescriptor(bindingContext, function);
-        if (functionDescriptor != null) {
-            List<AnnotationDescriptor> annotations = functionDescriptor.getAnnotations();
-            if (annotations != null) {
-                for (AnnotationDescriptor annotation : annotations) {
-                    // TODO ideally we should find the fully qualified name here...
-                    JetType type = annotation.getType();
-                    String name = type.toString();
-                    if (name.equals("Test")) {
-                        return true;
-                    }
+        FunctionDescriptor functionDescriptor = getNullableDescriptorForFunction(bindingContext, function);
+        if (functionDescriptor == null) {
+            return false;
+        }
+        List<AnnotationDescriptor> annotations = functionDescriptor.getAnnotations();
+        if (annotations != null) {
+            for (AnnotationDescriptor annotation : annotations) {
+                // TODO ideally we should find the fully qualified name here...
+                JetType type = annotation.getType();
+                String name = type.toString();
+                if (name.equals("Test")) {
+                    return true;
                 }
             }
         }
@@ -70,13 +75,15 @@ public class JetTestFunctionDetector {
     }
 
     @Nullable
-    private static List<JetNamedFunction> getTestFunctions(@NotNull BindingContext bindingContext, @NotNull List<JetDeclaration> declarations) {
+    private static List<JetNamedFunction> getTestFunctions(@NotNull BindingContext bindingContext,
+            @NotNull List<JetDeclaration> declarations) {
         List<JetNamedFunction> answer = Lists.newArrayList();
         for (JetDeclaration declaration : declarations) {
             if (declaration instanceof JetClass) {
                 JetClass klass = (JetClass) declaration;
                 answer.addAll(getTestFunctions(bindingContext, klass.getDeclarations()));
-            } else if (declaration instanceof JetNamedFunction) {
+            }
+            else if (declaration instanceof JetNamedFunction) {
                 JetNamedFunction candidateFunction = (JetNamedFunction) declaration;
                 if (isTest(bindingContext, candidateFunction)) {
                     answer.add(candidateFunction);

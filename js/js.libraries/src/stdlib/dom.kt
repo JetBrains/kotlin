@@ -3,7 +3,7 @@ package kotlin.dom
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 
-fun createDocument(): Document {
+public fun createDocument(): Document {
     return browser.document.implementation.createDocument(null, null, null)
 }
 

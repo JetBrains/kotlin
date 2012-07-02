@@ -34,7 +34,9 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.k2js.config.Config;
@@ -43,6 +45,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isRootNamespace;
 
 /**
  * @author Pavel Talanov
@@ -75,13 +79,13 @@ public final class AnalyzerFacadeForJS {
         return analyzeFiles(files, filesToAnalyzeCompletely, config, false);
     }
 
+    //TODO: refactor
     @NotNull
     public static AnalyzeExhaust analyzeFiles(
             @NotNull Collection<JetFile> files,
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely, @NotNull Config config,
             boolean storeContextForBodiesResolve) {
         Project project = config.getProject();
-        BindingTraceContext bindingTraceContext = new BindingTraceContext();
 
         final ModuleDescriptor owner = new ModuleDescriptor(Name.special("<module>"));
 
@@ -90,15 +94,22 @@ public final class AnalyzerFacadeForJS {
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 completely, false, false, Collections.<AnalyzerScriptParameter>emptyList());
 
+        BindingContext libraryBindingContext = config.getLibraryBindingContext();
+        BindingTrace trace = libraryBindingContext == null ?
+                             new ObservableBindingTrace(new BindingTraceContext()) :
+                             new DelegatingBindingTrace(libraryBindingContext);
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
-                project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
-                JsConfiguration.jsLibConfiguration(project));
+                project, topDownAnalysisParameters, trace, owner,
+                new JsConfiguration(project, libraryBindingContext));
         try {
-            injector.getTopDownAnalyzer().analyzeFiles(withJsLibAdded(files, config), Collections.<AnalyzerScriptParameter>emptyList());
+            Collection<JetFile> allFiles = libraryBindingContext != null ?
+                                           files :
+                                           withJsLibAdded(files, config);
+            injector.getTopDownAnalyzer().analyzeFiles(allFiles, Collections.<AnalyzerScriptParameter>emptyList());
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
                                                         new CachedBodiesResolveContext(injector.getTopDownAnalysisContext()) :
                                                         null;
-            return AnalyzeExhaust.success(bindingTraceContext.getBindingContext(), bodiesResolveContext);
+            return AnalyzeExhaust.success(trace.getBindingContext(), bodiesResolveContext);
         }
         finally {
             injector.destroy();
@@ -116,7 +127,7 @@ public final class AnalyzerFacadeForJS {
                 config.getProject(), Collections.<AnalyzerScriptParameter>emptyList(), completely, traceContext, bodiesResolveContext);
     }
 
-    private static void checkForErrors(@NotNull Collection<JetFile> allFiles, @NotNull BindingContext bindingContext) {
+    public static void checkForErrors(@NotNull Collection<JetFile> allFiles, @NotNull BindingContext bindingContext) {
         AnalyzingUtils.throwExceptionOnErrors(bindingContext);
         for (JetFile file : allFiles) {
             AnalyzingUtils.checkForSyntacticErrors(file);
@@ -147,13 +158,12 @@ public final class AnalyzerFacadeForJS {
 
         @NotNull
         private final Project project;
+        @Nullable
+        private final BindingContext contextToBaseOn;
 
-        public static JsConfiguration jsLibConfiguration(@NotNull Project project) {
-            return new JsConfiguration(project);
-        }
-
-        private JsConfiguration(@NotNull Project project) {
+        private JsConfiguration(@NotNull Project project, @Nullable BindingContext contextToBaseOn) {
             this.project = project;
+            this.contextToBaseOn = contextToBaseOn;
         }
 
         @Override
@@ -170,6 +180,16 @@ public final class AnalyzerFacadeForJS {
                 @NotNull WritableScope namespaceMemberScope) {
             DefaultModuleConfiguration.createStandardConfiguration(project, true)
                     .extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
+            if (contextToBaseOn == null) {
+                return;
+            }
+            if (!isRootNamespace(namespaceDescriptor)) {
+                return;
+            }
+            NamespaceDescriptor rootNamespaceScope = contextToBaseOn.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, FqName.ROOT);
+            assert rootNamespaceScope != null;
+            JetScope memberScope = rootNamespaceScope.getMemberScope();
+            namespaceMemberScope.importScope(memberScope);
         }
     }
 }

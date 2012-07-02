@@ -358,4 +358,10 @@ public final class BindingUtils {
         assert primaryConstructor != null : "Traits do not have initialize methods.";
         return primaryConstructor;
     }
+
+    @Nullable
+    public static SimpleFunctionDescriptor getNullableDescriptorForFunction(@NotNull BindingContext bindingContext,
+            @NotNull JetNamedFunction function) {
+        return bindingContext.get(BindingContext.FUNCTION, function);
+    }
 }

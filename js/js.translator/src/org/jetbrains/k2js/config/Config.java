@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -63,7 +64,6 @@ public abstract class Config {
             "/core/core.kt",
             "/core/math.kt",
             "/core/json.kt",
-            "/raphael/raphael.kt",
             "/stdlib/JUMaps.kt",
             "/stdlib/browser.kt",
             "/core/dom.kt",
@@ -143,5 +143,10 @@ public abstract class Config {
             libFiles = generateLibFiles();
         }
         return libFiles;
+    }
+
+    @Nullable
+    public BindingContext getLibraryBindingContext() {
+        return null;
     }
 }
