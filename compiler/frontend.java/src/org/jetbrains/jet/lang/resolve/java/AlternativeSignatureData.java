@@ -36,7 +36,9 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Evgeny Gerashchenko
@@ -53,6 +55,9 @@ class AlternativeSignatureData {
     private JetType altReturnType;
     private List<TypeParameterDescriptor> altTypeParameters;
 
+    private Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters =
+            new HashMap<TypeParameterDescriptor, TypeParameterDescriptorImpl>();
+
     AlternativeSignatureData(
             @NotNull PsiMethodWrapper method,
             @NotNull JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors,
@@ -68,12 +73,18 @@ class AlternativeSignatureData {
         Project project = method.getPsiMethod().getProject();
         altFunDeclaration = JetPsiFactory.createFunction(project, signature);
 
+        for (TypeParameterDescriptor tp : methodTypeParameters) {
+            originalToAltTypeParameters.put(tp, TypeParameterDescriptorImpl
+                    .createForFurtherModification(tp.getContainingDeclaration(), tp.getAnnotations(),
+                                                  tp.isReified(), tp.getVariance(), tp.getName(), tp.getIndex()));
+        }
+
         try {
             checkForSyntaxErrors();
 
+            computeTypeParameters(methodTypeParameters);
             computeValueParameters(valueParameterDescriptors);
             computeReturnType(returnType);
-            computeTypeParameters(methodTypeParameters);
         }
         catch (AlternativeSignatureMismatchException e) {
             error = e.getMessage();
@@ -113,7 +124,7 @@ class AlternativeSignatureData {
         return altTypeParameters;
     }
 
-    static JetType computeType(JetTypeElement alternativeTypeElement, final JetType autoType) {
+    JetType computeType(JetTypeElement alternativeTypeElement, final JetType autoType) {
         //noinspection NullableProblems
         return alternativeTypeElement.accept(new JetVisitor<JetType, Void>() {
             @Override
@@ -154,7 +165,8 @@ class AlternativeSignatureData {
             }
 
             private JetType visitCommonType(@NotNull String expectedFqNamePostfix, @NotNull JetTypeElement type) {
-                ClassifierDescriptor declarationDescriptor = autoType.getConstructor().getDeclarationDescriptor();
+                TypeConstructor originalTypeConstructor = autoType.getConstructor();
+                ClassifierDescriptor declarationDescriptor = originalTypeConstructor.getDeclarationDescriptor();
                 assert declarationDescriptor != null;
                 String fqName = DescriptorUtils.getFQName(declarationDescriptor).toSafe().getFqName();
                 if (!fqName.endsWith(expectedFqNamePostfix)) {
@@ -196,7 +208,13 @@ class AlternativeSignatureData {
                     }
                     altArguments.add(new TypeProjection(variance, alternativeType));
                 }
-                return new JetTypeImpl(autoType.getAnnotations(), autoType.getConstructor(), false,
+
+                TypeConstructor typeConstructor = originalTypeConstructor;
+                if (typeConstructor.getDeclarationDescriptor() instanceof TypeParameterDescriptor
+                        && originalToAltTypeParameters.containsKey(typeConstructor.getDeclarationDescriptor())) {
+                    typeConstructor = originalToAltTypeParameters.get(typeConstructor.getDeclarationDescriptor()).getTypeConstructor();
+                }
+                return new JetTypeImpl(autoType.getAnnotations(), typeConstructor, false,
                                        altArguments, autoType.getMemberScope());
             }
 
@@ -274,10 +292,7 @@ class AlternativeSignatureData {
         altTypeParameters = new ArrayList<TypeParameterDescriptor>();
         for (int i = 0, size = typeParameters.size(); i < size; i++) {
             TypeParameterDescriptor pd = typeParameters.get(i);
-            DeclarationDescriptor containingDeclaration = pd.getContainingDeclaration();
-            TypeParameterDescriptorImpl altParamDescriptor = TypeParameterDescriptorImpl
-                    .createForFurtherModification(containingDeclaration, pd.getAnnotations(),
-                                                  pd.isReified(), pd.getVariance(), pd.getName(), pd.getIndex());
+            TypeParameterDescriptorImpl altParamDescriptor = originalToAltTypeParameters.get(pd);
             int upperBoundIndex = 0;
             for (JetType upperBound : pd.getUpperBounds()) {
                 JetTypeElement altTypeElement;
