@@ -54,9 +54,20 @@ public class K2JVMCompilerArguments extends CompilerArguments {
     @Argument(value = "includeRuntime", description = "include Kotlin runtime in to resulting jar")
     public boolean includeRuntime;
 
+    @Argument(value = "noJdk", description = "don't include Java runtime into classpath")
+    public boolean noJdk;
+
+    @Argument(value = "noStdlib", description = "don't include Kotlin runtime into classpath")
+    public boolean noStdlib;
+
+    @Argument(value = "noJdkAnnotations", description = "don't include JDK external annotations into classpath")
+    public boolean noJdkAnnotations;
+
+    @Deprecated
     @Argument(value = "stdlib", description = "Path to the stdlib.jar")
     public String stdlib;
 
+    @Deprecated
     @Argument(value = "jdkAnnotations", description = "Path to the kotlin-jdk-annotations.jar")
     public String jdkAnnotations;
 
