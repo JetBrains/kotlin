@@ -90,7 +90,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
                 psiFile, Collections.<AnalyzerScriptParameter>emptyList(),
-                jetCoreEnvironment.getCompilerDependencies().getCompilerSpecialMode())
+                jetCoreEnvironment.getCompilerSpecialMode())
                     .getBindingContext();
         return bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, FqName.topLevel(Name.identifier("test")));
     }

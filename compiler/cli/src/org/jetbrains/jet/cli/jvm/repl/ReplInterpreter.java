@@ -247,7 +247,7 @@ public class ReplInterpreter {
 
         GenerationState generationState = new GenerationState(jetCoreEnvironment.getProject(), ClassBuilderFactories.binaries(false), backendProgress,
                 AnalyzeExhaust.success(trace.getBindingContext()), Collections.singletonList(psiFile),
-                jetCoreEnvironment.getCompilerDependencies().getCompilerSpecialMode());
+                jetCoreEnvironment.getCompilerSpecialMode());
         generationState.compileScript(psiFile.getScript(), scriptClassName, earierScripts, CompilationErrorHandler.THROW_EXCEPTION);
 
         for (String file : generationState.getFactory().files()) {

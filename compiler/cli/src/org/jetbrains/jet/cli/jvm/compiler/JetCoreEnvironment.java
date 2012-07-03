@@ -65,12 +65,12 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
     }
 
     @NotNull
-    private final CompilerDependencies compilerDependencies;
+    private final CompilerSpecialMode compilerSpecialMode;
 
     public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerDependencies compilerDependencies) {
         super(parentDisposable);
 
-        this.compilerDependencies = compilerDependencies;
+        this.compilerSpecialMode = compilerDependencies.getCompilerSpecialMode();
 
         registerFileType(JetFileType.INSTANCE, "kt");
         registerFileType(JetFileType.INSTANCE, "kts");
@@ -189,8 +189,8 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
     }
 
     @NotNull
-    public CompilerDependencies getCompilerDependencies() {
-        return compilerDependencies;
+    public CompilerSpecialMode getCompilerSpecialMode() {
+        return compilerSpecialMode;
     }
 
     public void configure(@NotNull CompilerConfiguration compilerConfiguration) {

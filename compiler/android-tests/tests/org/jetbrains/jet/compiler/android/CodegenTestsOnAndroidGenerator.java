@@ -159,7 +159,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         JetFile psiFile = JetPsiFactory.createFile(jetEnvironment.getProject(), text);
         ClassFileFactory factory;
         try {
-            factory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, jetEnvironment.getCompilerDependencies().getCompilerSpecialMode());
+            factory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, jetEnvironment.getCompilerSpecialMode());
         }
         catch (Throwable e) {
             throw new RuntimeException("Cannot compile: " + filePath + "\n" + text, e);
