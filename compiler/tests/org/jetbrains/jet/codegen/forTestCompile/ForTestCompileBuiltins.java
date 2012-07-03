@@ -39,7 +39,7 @@ public class ForTestCompileBuiltins {
         @Override
         protected void doCompile(@NotNull File classesDir) throws Exception {
             ExitCode exitCode = new K2JVMCompiler().exec(
-                    System.err, "-output", classesDir.getPath(), "-src", "./compiler/frontend/src", "-mode", "builtins");
+                    System.err, "-output", classesDir.getPath(), "-src", "./compiler/frontend/src", "-noStdlib", "-mode", "builtins");
             if (exitCode != ExitCode.OK) {
                 throw new IllegalStateException("builtins compilation failed: " + exitCode);
             }

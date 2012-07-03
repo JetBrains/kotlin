@@ -61,6 +61,7 @@ public class ForTestCompileRuntime {
         ExitCode exitCode = new K2JVMCompiler().exec(System.err,
                 "-output", destdir.getPath(),
                 "-src", "./libraries/stdlib/src",
+                "-noStdlib",
                 "-mode", "stdlib",
                 "-classpath", "out/production/runtime");
         if (exitCode != ExitCode.OK) {
