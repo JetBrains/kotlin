@@ -17,15 +17,19 @@
 package org.jetbrains.k2js.test.rhino;
 
 import closurecompiler.internal.com.google.common.collect.Maps;
+import com.google.common.base.Supplier;
+import com.google.common.collect.Sets;
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.K2JSTranslator;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
+import org.jetbrains.k2js.test.BasicTest;
+import org.mozilla.javascript.*;
 
+import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +41,28 @@ import static org.jetbrains.k2js.test.BasicTest.pathToTestFilesRoot;
  * @author Pavel Talanov
  */
 public final class RhinoUtils {
+    @NotNull
+    private static final Set<String> IGNORED_JSLINT_WARNINGS = Sets.newHashSet();
+
+    static {
+        // todo dart ast bug
+        IGNORED_JSLINT_WARNINGS.add("Unexpected space between '}' and '('.");
+        // don't read JS, use kotlin and idea debugger ;)
+        IGNORED_JSLINT_WARNINGS
+                .add("Wrap an immediate function invocation in parentheses to assist the reader in understanding that the expression is the result of a function, and not the function itself.");
+    }
+
+    @NotNull
+    private static final RhinoFunctionManager functionManager = new RhinoFunctionManager(
+            new Supplier<String>() {
+                @Override
+                public String get() {
+                    return fileToString(BasicTest.JSLINT_LIB);
+                }
+            },
+            "JSLINT"
+    );
+
 
     public static final String KOTLIN_JS_LIB_COMMON = pathToTestFilesRoot() + "kotlin_lib.js";
     private static final String KOTLIN_JS_LIB_ECMA_3 = pathToTestFilesRoot() + "kotlin_lib_ecma3.js";
@@ -44,6 +70,15 @@ public final class RhinoUtils {
 
     private RhinoUtils() {
 
+    }
+
+    private static String fileToString(String file) {
+        try {
+            return FileUtil.loadFile(new File(file));
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void runFileWithRhino(@NotNull String inputFile,
@@ -75,6 +110,8 @@ public final class RhinoUtils {
                 runFileWithRhino(filename, context, scope);
             }
             checker.runChecks(context, scope);
+
+            lintIt(context, fileNames.get(fileNames.size() - 1));
         }
         finally {
             Context.exit();
@@ -146,5 +183,62 @@ public final class RhinoUtils {
 
     static void flushSystemOut(@NotNull Context context, @NotNull Scriptable scope) {
         context.evaluateString(scope, K2JSTranslator.FLUSH_SYSTEM_OUT, "test", 0, null);
+    }
+
+    private static void lintIt(Context context, String fileName) throws IOException {
+        if (Boolean.valueOf(System.getProperty("test.lint.skip"))) {
+            return;
+        }
+
+        NativeObject options = new NativeObject();
+        // todo fix dart ast?
+        options.defineProperty("white", true, ScriptableObject.READONLY);
+        // vars, http://uxebu.com/blog/2010/04/02/one-var-statement-for-one-variable/
+        options.defineProperty("vars", true, ScriptableObject.READONLY);
+        NativeArray globals = new NativeArray(new Object[] {"Kotlin"});
+        options.defineProperty("predef", globals, ScriptableObject.READONLY);
+
+        Object[] args = {FileUtil.loadFile(new File(fileName)), options};
+        FunctionWithScope functionWithScope = functionManager.getFunctionWithScope();
+        Function function = functionWithScope.getFunction();
+        Scriptable scope = functionWithScope.getScope();
+        Object status = function.call(context, scope, scope, args);
+        Boolean noErrors = (Boolean) Context.jsToJava(status, Boolean.class);
+        if (!noErrors) {
+            Object errors = function.get("errors", scope);
+            if (errors == null) {
+                return;
+            }
+
+            System.out.println(fileName);
+            for (Object errorObj : ((NativeArray) errors)) {
+                if (!(errorObj instanceof NativeObject)) {
+                    continue;
+                }
+
+                NativeObject e = (NativeObject) errorObj;
+                int line = toInt(e.get("line"));
+                int character = toInt(e.get("character"));
+                if (line < 0 || character < 0) {
+                    continue;
+                }
+                Object reasonObj = e.get("reason");
+                if (reasonObj instanceof String) {
+                    String reason = (String) reasonObj;
+                    if (IGNORED_JSLINT_WARNINGS.contains(reason)) {
+                        continue;
+                    }
+
+                    System.out.println(line + ":" + character + " " + reason);
+                }
+            }
+        }
+    }
+
+    private static int toInt(Object obj) {
+        if (obj instanceof Number) {
+            return ((Number) obj).intValue();
+        }
+        return -1;
     }
 }

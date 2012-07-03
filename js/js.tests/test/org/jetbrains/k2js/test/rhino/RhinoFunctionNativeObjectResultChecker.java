@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.test.rhino;
 
 import org.jetbrains.annotations.Nullable;
+import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeJavaObject;
 
 /**
@@ -33,13 +34,13 @@ public class RhinoFunctionNativeObjectResultChecker extends RhinoFunctionResultC
     }
 
     @Override
-    protected void assertResultValid(Object result) {
+    protected void assertResultValid(Object result, Context context) {
         if (result instanceof NativeJavaObject) {
             NativeJavaObject nativeJavaObject = (NativeJavaObject) result;
             Object unwrap = nativeJavaObject.unwrap();
-            super.assertResultValid(unwrap);
+            super.assertResultValid(unwrap, context);
         } else {
-            super.assertResultValid(result);
+            super.assertResultValid(result, context);
         }
     }
 }

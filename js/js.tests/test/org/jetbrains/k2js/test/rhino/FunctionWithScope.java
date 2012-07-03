@@ -14,20 +14,31 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.project;
+package org.jetbrains.k2js.test.rhino;
 
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.config.LibrarySourcesConfig;
-
-import static org.jetbrains.jet.plugin.project.JsModuleDetector.getLibLocationAndTargetForProject;
+import org.mozilla.javascript.Function;
+import org.mozilla.javascript.Scriptable;
 
 /**
- * @author Pavel Talanov
+ * @author Sergey Simonchik
  */
-public final class IDEAConfig extends LibrarySourcesConfig {
-    public IDEAConfig(@NotNull Project project) {
-        super(project, "default", getLibLocationAndTargetForProject(project).first, EcmaVersion.defaultVersion());
+class FunctionWithScope {
+    private final Function fun;
+    private final Scriptable scope;
+
+    FunctionWithScope(@NotNull Function function, @NotNull Scriptable scope) {
+        this.fun = function;
+        this.scope = scope;
+    }
+
+    @NotNull
+    public Function getFunction() {
+        return fun;
+    }
+
+    @NotNull
+    public Scriptable getScope() {
+        return scope;
     }
 }

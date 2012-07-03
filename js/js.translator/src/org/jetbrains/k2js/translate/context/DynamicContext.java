@@ -53,8 +53,13 @@ public final class DynamicContext {
 
     @NotNull
     public TemporaryVariable declareTemporary(@NotNull JsExpression initExpression) {
+        return declareTemporary(initExpression, false);
+    }
+
+    @NotNull
+    public TemporaryVariable declareTemporary(@NotNull JsExpression initExpression, boolean initialize) {
         JsName temporaryName = currentScope.declareTemporary();
-        JsVars temporaryDeclaration = newVar(temporaryName, /*no init expression in var statement*/ null);
+        JsVars temporaryDeclaration = newVar(temporaryName, initialize ? initExpression : null);
         addVarDeclaration(jsBlock(), temporaryDeclaration);
         return new TemporaryVariable(temporaryName, initExpression);
     }

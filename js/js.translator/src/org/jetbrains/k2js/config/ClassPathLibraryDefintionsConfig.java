@@ -16,11 +16,11 @@
 
 package org.jetbrains.k2js.config;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * A Config implementation which is configured with a directory to find the standard library names from
@@ -28,8 +28,8 @@ import java.util.*;
 public class ClassPathLibraryDefintionsConfig extends Config {
     public static final String META_INF_SERVICES_FILE = "META-INF/services/org.jetbrains.kotlin.js.libraryDefinitions";
 
-    public ClassPathLibraryDefintionsConfig(@NotNull Project project, @NotNull EcmaVersion version) {
-        super(project, version);
+    public ClassPathLibraryDefintionsConfig(@NotNull Project project, @NotNull String moduleId, @NotNull EcmaVersion version) {
+        super(project, moduleId, version);
     }
 
     @NotNull

@@ -43,7 +43,7 @@ import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedRe
  */
 public final class TranslationUtils {
 
-    private static JsNameRef UNDEFINED_LITERAL = AstUtil.newQualifiedNameRef("undefined");
+    private static final JsNameRef UNDEFINED_LITERAL = AstUtil.newQualifiedNameRef("undefined");
 
     private TranslationUtils() {
     }
@@ -64,11 +64,7 @@ public final class TranslationUtils {
     @NotNull
     private static JsPropertyInitializer translateExtensionFunctionAsEcma5PropertyDescriptor(@NotNull JsFunction function,
             @NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context) {
-        JsObjectLiteral meta = new JsObjectLiteral();
-        meta.getPropertyInitializers().add(new JsPropertyInitializer(context.program().getStringLiteral("value"), function));
-        if (descriptor.getModality().isOverridable()) {
-            meta.getPropertyInitializers().add(context.namer().writablePropertyDescriptorField());
-        }
+        JsObjectLiteral meta = JsAstUtils.createDataDescriptor(function, descriptor.getModality().isOverridable(), context);
         return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), meta);
     }
 

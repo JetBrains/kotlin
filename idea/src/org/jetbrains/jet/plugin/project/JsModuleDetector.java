@@ -36,10 +36,6 @@ public final class JsModuleDetector {
     private JsModuleDetector() {
     }
 
-    public static boolean isJsProject(@NotNull Project project) {
-        return getJSModule(project) != null;
-    }
-
     public static boolean isJsModule(@NotNull Module module) {
         return K2JSModuleComponent.getInstance(module).isJavaScriptModule();
     }
@@ -57,15 +53,22 @@ public final class JsModuleDetector {
     }
 
     @NotNull
-    public static Pair<String, String> getLibLocationAndTargetForProject(@NotNull Project project) {
+    public static Pair<String[], String> getLibLocationAndTargetForProject(@NotNull Project project) {
         Module module = getJSModule(project);
         if (module == null) {
             return Pair.empty();
         }
+        else {
+            return getLibLocationAndTargetForProject(module);
+        }
+    }
+
+    @NotNull
+    public static Pair<String[], String> getLibLocationAndTargetForProject(@NotNull Module module) {
         K2JSModuleComponent jsModuleComponent = K2JSModuleComponent.getInstance(module);
         String pathToJavaScriptLibrary = jsModuleComponent.getPathToJavaScriptLibrary();
         String basePath = ModuleRootManager.getInstance(module).getContentRoots()[0].getPath();
-        return Pair.create(basePath + pathToJavaScriptLibrary, jsModuleComponent.getEcmaVersion().toString());
+        return Pair.create(new String[] {basePath + pathToJavaScriptLibrary}, jsModuleComponent.getEcmaVersion().toString());
     }
 
     @Nullable

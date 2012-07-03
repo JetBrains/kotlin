@@ -34,4 +34,8 @@ public final class MultiFileTest extends MultipleFilesTranslationTest {
     public void testClassesInheritedFromOtherFile() throws Exception {
         checkFooBoxIsTrue("classesInheritedFromOtherFile");
     }
+
+    public void testClassOfTheSameNameInAnotherPackage() throws Exception {
+        checkFooBoxIsTrue("classOfTheSameNameInAnotherPackage");
+    }
 }

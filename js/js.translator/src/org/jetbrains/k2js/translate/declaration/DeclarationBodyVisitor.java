@@ -19,6 +19,7 @@ package org.jetbrains.k2js.translate.declaration;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
@@ -39,6 +40,17 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
  * @author Pavel Talanov
  */
 public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPropertyInitializer>> {
+    @Nullable
+    private final ClassDeclarationTranslator classDeclarationTranslator;
+
+    public DeclarationBodyVisitor() {
+        classDeclarationTranslator = null;
+    }
+
+    public DeclarationBodyVisitor(ClassDeclarationTranslator classDeclarationTranslator) {
+        this.classDeclarationTranslator = classDeclarationTranslator;
+    }
+
     @NotNull
     public List<JsPropertyInitializer> traverseClass(@NotNull JetClassOrObject jetClass,
                                                      @NotNull TranslationContext context) {
@@ -51,7 +63,7 @@ public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPrope
 
     @NotNull
     public List<JsPropertyInitializer> traverseNamespace(@NotNull NamespaceDescriptor namespace,
-                                                         @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         List<JsPropertyInitializer> properties = new ArrayList<JsPropertyInitializer>();
         for (JetDeclaration declaration : getDeclarationsForNamespace(context.bindingContext(), namespace)) {
             properties.addAll(declaration.accept(this, context));
@@ -62,7 +74,11 @@ public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPrope
     @Override
     @NotNull
     public List<JsPropertyInitializer> visitClass(@NotNull JetClass expression, @NotNull TranslationContext context) {
-        return Collections.emptyList();
+        if (classDeclarationTranslator == null) {
+            return Collections.emptyList();
+        }
+
+        return Collections.singletonList(classDeclarationTranslator.translateAndGetClassNameToClassObject(expression));
     }
 
     @Override
@@ -71,10 +87,9 @@ public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPrope
                                                           @NotNull TranslationContext context) {
         JsPropertyInitializer methodAsPropertyInitializer = Translation.functionTranslator(expression, context).translateAsMethod();
         if (context.isEcma5()) {
-            final FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
-            boolean overridable = descriptor.getModality().isOverridable();
+            FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
             JsExpression methodBodyExpression = methodAsPropertyInitializer.getValueExpr();
-            methodAsPropertyInitializer.setValueExpr(JsAstUtils.createPropertyDataDescriptor(overridable, methodBodyExpression, context));
+            methodAsPropertyInitializer.setValueExpr(JsAstUtils.createPropertyDataDescriptor(descriptor, methodBodyExpression, context));
         }
         return Collections.singletonList(methodAsPropertyInitializer);
     }

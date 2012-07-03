@@ -43,6 +43,8 @@ public abstract class BasicTest extends TestWithEnvironment {
     private static final String CASES = "cases/";
     private static final String OUT = "out/";
     private static final String EXPECTED = "expected/";
+    
+    public static final String JSLINT_LIB = pathToTestFilesRoot() + "jslint.js";    
 
     @NotNull
     private String mainDirectory = "";

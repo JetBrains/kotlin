@@ -18,7 +18,6 @@ package org.jetbrains.k2js.analyze;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -41,10 +40,10 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.k2js.config.Config;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isRootNamespace;
 
@@ -136,7 +135,7 @@ public final class AnalyzerFacadeForJS {
 
     @NotNull
     public static Collection<JetFile> withJsLibAdded(@NotNull Collection<JetFile> files, @NotNull Config config) {
-        Set<JetFile> allFiles = Sets.newHashSet();
+        Collection<JetFile> allFiles = new ArrayList<JetFile>();
         allFiles.addAll(files);
         allFiles.addAll(config.getLibFiles());
         return allFiles;

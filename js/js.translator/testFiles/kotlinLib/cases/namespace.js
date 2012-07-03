@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-
-
-var foo = Kotlin.createNamespace({initialize:function(){
-}
-, box:function(){
+var foo = Kotlin.definePackage({box:function(){
   return !false;
 }
 });

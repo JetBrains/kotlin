@@ -17,11 +17,9 @@
 package org.jetbrains.jet.cli.js;
 
 import com.sampullara.cli.Argument;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.CompilerArguments;
 import org.jetbrains.k2js.facade.MainCallParameters;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Pavel Talanov
@@ -29,18 +27,18 @@ import java.util.List;
 
 /**
  * NOTE: for now K2JSCompiler supports only minimal amount of parameters required to launch it from the plugin.
- * You can specify only one source folder, path to the file where generated file will be stored, path to zipped library sources.
+ * You can specify path to the file where generated file will be stored, path to zipped library sources.
  */
 public class K2JSCompilerArguments extends CompilerArguments {
     @Argument(value = "output", description = "Output file path")
     public String outputFile;
 
     //NOTE: may well be a subject to change soon
-    @Argument(value = "libzip", description = "Path to zipped lib sources")
-    public String libzip;
+    @Argument(value = "libraryFiles", description = "Path to zipped lib sources or kotlin files")
+    public String[] libraryFiles;
 
-    @Argument(value = "srcdir", description = "Sources directory")
-    public String srcdir;
+    @Argument(value = "sourceFiles", description = "Source files (dir or file)")
+    public String[] sourceFiles;
 
     @Argument(value = "target", description = "Generate js files for specific ECMA version (3 or 5, default ECMA 3)")
     public String target;
@@ -54,13 +52,12 @@ public class K2JSCompilerArguments extends CompilerArguments {
     @Argument(value = "version", description = "Display compiler version")
     public boolean version;
 
-    @Argument(value = "mainCall", description = "Whether a main function should be invoked; either 'main' or 'mainWithArgs'")
-    public String mainCall;
+    @Nullable
+    @Argument(value = "main", description = "Whether a main function should be called; either 'call' or 'noCall', default 'call' (main function will be auto detected)")
+    public String main;
 
     @Argument(value = "help", alias = "h", description = "Show help")
     public boolean help;
-
-    public List<String> sourceFiles;
 
     @Override
     public boolean isHelp() {
@@ -84,22 +81,16 @@ public class K2JSCompilerArguments extends CompilerArguments {
 
     @Override
     public String getSrc() {
-        if (sourceFiles != null) {
-            return sourceFiles.toString();
-        }
-        return srcdir;
+        throw new IllegalStateException();
     }
 
     public MainCallParameters createMainCallParameters() {
-        if (mainCall != null) {
-            if (mainCall.equals("main")) {
-                return MainCallParameters.mainWithoutArguments();
-            }
-            if (mainCall.equals("mainWithArgs")) {
-                // TODO should we pass the arguments to the compiler?
-                return MainCallParameters.mainWithArguments(new ArrayList<String>());
-            }
+        if ("noCall".equals(main)) {
+            return MainCallParameters.noCall();
         }
-        return MainCallParameters.noCall();
+        else {
+            // TODO should we pass the arguments to the compiler?
+            return MainCallParameters.mainWithoutArguments();
+        }
     }
 }
