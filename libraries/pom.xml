@@ -78,8 +78,13 @@
 
         <module>examples/kotlin-java-example</module>
 
+        <!--
+                TODO: temporary fix until this bug fixed:
+                java.lang.IllegalStateException: null at (5,10) in /stdlib/JUMaps.kt.jet
+
         <module>examples/js-example</module>
         <module>examples/browser-example</module>
+        -->
     </modules>
 
     <dependencies>
