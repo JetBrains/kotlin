@@ -31,6 +31,14 @@ public inline fun arrayList<T>(vararg values: T) : ArrayList<T> {
     return list
 }
 
+/** Returns a new HashSet with a variable number of initial elements */
+public inline fun hashSet<T>(vararg values: T) : HashSet<T> {
+    val list = HashSet<T>()
+    for (value in values) {
+        list.add(value)
+    }
+    return list
+}
 
 /**
  * Returns a new List containing the results of applying the given *transform* function to each [[Map.Entry]] in this [[Map]]

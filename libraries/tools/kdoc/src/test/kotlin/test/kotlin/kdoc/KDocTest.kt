@@ -14,7 +14,10 @@ import java.util.ArrayList
 /**
  */
 class KDocTest {
-    Test fun generateKDocForStandardLibrary() {
+    Test fun dummy() {
+    }
+    //Test
+    fun generateKDocForStandardLibrary() {
         var moduleName = "ApiDocsModule.kt"
         var dir = "."
         if (!File(moduleName).exists()) {

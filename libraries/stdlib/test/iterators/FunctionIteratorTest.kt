@@ -2,7 +2,6 @@ package iterators
 
 import kotlin.*
 import kotlin.test.*
-import kotlin.util.*
 
 import org.junit.Test
 
