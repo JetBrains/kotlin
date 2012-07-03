@@ -30,7 +30,8 @@ public interface OverloadResolutionResults<D extends CallableDescriptor> {
         NAME_NOT_FOUND(false),
         SINGLE_CANDIDATE_ARGUMENT_MISMATCH(false),
         AMBIGUITY(false),
-        MANY_FAILED_CANDIDATES(false);
+        MANY_FAILED_CANDIDATES(false),
+        DIRTY(false);
 
         private final boolean success;
 
