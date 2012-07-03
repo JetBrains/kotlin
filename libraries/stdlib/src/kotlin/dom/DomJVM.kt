@@ -153,13 +153,6 @@ fun Element.removeClass(cssClass: String): Boolean {
 }
 
 
-/** Converts the node list to an XML String */
-fun NodeList?.toXmlString(xmlDeclaration: Boolean = false): String {
-    return if (this == null)
-        "" else {
-        nodesToXmlString(this.toList(), xmlDeclaration)
-    }
-}
 
 /** Creates a new document with the given document builder*/
 public fun createDocument(builder: DocumentBuilder): Document {
@@ -225,7 +218,10 @@ public fun createTransformer(source: Source? = null, factory: TransformerFactory
 }
 
 /** Converts the node to an XML String */
-public fun Node.toXmlString(xmlDeclaration: Boolean = false): String {
+public fun Node.toXmlString(): String = toXmlString(false)
+
+/** Converts the node to an XML String */
+public fun Node.toXmlString(xmlDeclaration: Boolean): String {
     val writer = StringWriter()
     writeXmlString(writer, xmlDeclaration)
     return writer.toString().sure()
@@ -236,15 +232,4 @@ public fun Node.writeXmlString(writer: Writer, xmlDeclaration: Boolean): Unit {
     val transformer = createTransformer()
     transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, if (xmlDeclaration) "no" else "yes")
     transformer.transform(DOMSource(this), StreamResult(writer))
-}
-
-/** Converts the collection of nodes to an XML String */
-public fun nodesToXmlString(nodes: java.lang.Iterable<Node>, xmlDeclaration: Boolean = false): String {
-    // TODO this should work...
-    // return this.map<Node,String>{it.toXmlString()}.makeString("")
-    val builder = StringBuilder()
-    for (n in nodes) {
-        builder.append(n.toXmlString(xmlDeclaration))
-    }
-    return builder.toString().sure()
 }

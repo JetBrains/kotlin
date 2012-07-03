@@ -24,8 +24,9 @@ public class StdLibTestToJSTest extends StdLibTestSupport {
     public void testGenerateTestCase() throws Exception {
         generateJavaScriptFiles(EcmaVersion.all(),
                                 "libraries/stdlib/test",
-                                //"dom/DomTest.kt",
+                                "dom/DomTest.kt",
                                 "js/MapTest.kt",
+                                "js/JsDomTest.kt",
                                 "ListTest.kt",
                                 "StringTest.kt");
     }

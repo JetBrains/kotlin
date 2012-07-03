@@ -1,15 +1,16 @@
-package test.dom
+package test.js
 
 import kotlin.*
+import kotlin.browser.*
 import kotlin.dom.*
 import kotlin.test.*
 import org.w3c.dom.*
 import org.junit.Test as test
 
-class DomTest {
+class JsDomTest {
 
     test fun testCreateDocument() {
-        var doc = createDocument()
+        var doc = document
         assertNotNull(doc, "Should have created a document")
 
         val e = doc.createElement("foo")!!
@@ -22,13 +23,10 @@ class DomTest {
         // now using the attribute directly
         e.setAttribute("class", "bar")
         assertCssClass(e, "bar")
-
-        doc += e
-        println("document ${doc.toXmlString()}")
     }
 
     test fun addText() {
-        var doc = createDocument()
+        var doc = document
         assertNotNull(doc, "Should have created a document")
 
         val e = doc.createElement("foo")!!
@@ -44,7 +42,7 @@ class DomTest {
 
     fun assertCssClass(e: Element, value: String?): Unit {
         val cl = e.classes
-        val cl2 = e.getAttribute("class")
+        val cl2 = e.getAttribute("class") ?: ""
         val xml = e.toXmlString()
         println("element ${xml} has cssClass `${cl}` class attr `${cl2}`")
 
