@@ -26,12 +26,14 @@ public enum ResolutionStatus {
     UNSAFE_CALL_ERROR,
     OTHER_ERROR,
     STRONG_ERROR,
+    TYPE_INFERENCE_ERROR,
     SUCCESS(true);
 
     @SuppressWarnings("unchecked")
     public static final EnumSet<ResolutionStatus>[] SEVERITY_LEVELS = new EnumSet[] {
             EnumSet.of(UNSAFE_CALL_ERROR), // weakest
             EnumSet.of(OTHER_ERROR),
+            EnumSet.of(TYPE_INFERENCE_ERROR),
             EnumSet.of(STRONG_ERROR), // most severe
     };
 
