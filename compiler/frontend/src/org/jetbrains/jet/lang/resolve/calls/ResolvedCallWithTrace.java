@@ -28,6 +28,8 @@ public interface ResolvedCallWithTrace<D extends CallableDescriptor> extends Res
     @NotNull
     ResolutionStatus getStatus();
 
+    boolean hasUnknownTypeParameters();
+
     boolean isDirty();
 
     TemporaryBindingTrace getTrace();

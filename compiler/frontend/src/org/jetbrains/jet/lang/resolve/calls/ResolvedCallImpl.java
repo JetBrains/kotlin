@@ -17,12 +17,14 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -64,11 +66,13 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private final boolean isSafeCall;
 
     private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
+    private final Map<TypeParameterDescriptor, TypeBounds> typeArgumentBounds = Maps.newLinkedHashMap();
     private final Map<ValueParameterDescriptor, JetType> autoCasts = Maps.newHashMap();
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newLinkedHashMap();
     private boolean someArgumentHasNoType = false;
     private TemporaryBindingTrace trace;
     private ResolutionStatus status = UNKNOWN_STATUS;
+    private boolean hasUnknownTypeParameters = false;
 
     private ResolvedCallImpl(@NotNull ResolutionCandidate<D> candidate, @NotNull TemporaryBindingTrace trace) {
         this.candidateDescriptor = candidate.getDescriptor();
@@ -87,6 +91,15 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
 
     public void addStatus(@NotNull ResolutionStatus status) {
         this.status = this.status.combine(status);
+    }
+
+    @Override
+    public boolean hasUnknownTypeParameters() {
+        return hasUnknownTypeParameters;
+    }
+
+    public void setHasUnknownTypeParameters(boolean hasUnknownTypeParameters) {
+        this.hasUnknownTypeParameters = hasUnknownTypeParameters;
     }
 
     @Override
@@ -115,6 +128,15 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     public void recordTypeArgument(@NotNull TypeParameterDescriptor typeParameter, @NotNull JetType typeArgument) {
         assert !typeArguments.containsKey(typeParameter) : typeParameter + " -> " + typeArgument;
         typeArguments.put(typeParameter, typeArgument);
+    }
+
+    public void recordTypeBounds(@NotNull TypeParameterDescriptor typeParameter, @NotNull TypeBounds typeBounds) {
+        //assert !typeArgumentBounds.containsKey(typeParameter) : typeParameter;
+        typeArgumentBounds.put(typeParameter, typeBounds);
+    }
+
+    public Map<TypeParameterDescriptor, TypeBounds> getTypeArgumentBounds() {
+        return typeArgumentBounds;
     }
 
     public void recordValueArgument(@NotNull ValueParameterDescriptor valueParameter, @NotNull ResolvedValueArgument valueArgument) {

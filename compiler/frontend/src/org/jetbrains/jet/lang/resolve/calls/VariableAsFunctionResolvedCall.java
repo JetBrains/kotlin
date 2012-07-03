@@ -121,4 +121,9 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
     public boolean isSafeCall() {
         return variableCall.isSafeCall();
     }
+
+    @Override
+    public boolean hasUnknownTypeParameters() {
+        return variableCall.hasUnknownTypeParameters();
+    }
 }
