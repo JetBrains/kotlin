@@ -44,9 +44,6 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends Abstract
             Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>> transform,
             boolean includeMembersOfObject
     ) throws IOException {
-        ModuleDescriptor module = new ModuleDescriptor(Name.special("<test module>"));
-        InjectorForTopDownAnalyzer injector = createInjectorForTDA(module);
-
         List<JetFile> files = JetTestUtils
                 .createTestFiles(testFileName, FileUtil.loadFile(new File(testFileName), true), new JetTestUtils.TestFileFactory<JetFile>() {
                     @Override
@@ -55,23 +52,38 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends Abstract
                     }
                 });
 
-        InjectorForTopDownAnalyzer tdaInjectorForLazy = getEagerInjectorForTopDownAnalyzer();
-
-        ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
-        ResolveSession session = new ResolveSession(project, lazyModule, tdaInjectorForLazy.getModuleConfiguration(), new FileBasedDeclarationProviderFactory(files));
-
-        injector.getTopDownAnalyzer().analyzeFiles(files, Collections.<AnalyzerScriptParameter>emptyList());
-
-        Pair<NamespaceDescriptor, NamespaceDescriptor> namespacesToCompare = transform.fun(Pair.create(module, lazyModule));
-
         Predicate<NamespaceDescriptor> filterJetNamespace = new Predicate<NamespaceDescriptor>() {
             @Override
             public boolean apply(NamespaceDescriptor namespaceDescriptor) {
                 return !namespaceDescriptor.getName().equals(Name.identifier("jet"));
             }
         };
+
+        File serializeResultsTo = new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt");
+
+        doTestForGivenFiles(transform, includeMembersOfObject, files, filterJetNamespace, serializeResultsTo);
+    }
+
+    protected void doTestForGivenFiles(Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>> transform,
+            boolean includeMembersOfObject,
+            List<JetFile> files,
+            Predicate<NamespaceDescriptor> filterJetNamespace,
+            File serializeResultsTo) {
+        ModuleDescriptor module = new ModuleDescriptor(Name.special("<test module>"));
+        InjectorForTopDownAnalyzer injector = createInjectorForTDA(module);
+
+        InjectorForTopDownAnalyzer tdaInjectorForLazy = getEagerInjectorForTopDownAnalyzer();
+
+        ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
+        ResolveSession
+                session = new ResolveSession(project, lazyModule, tdaInjectorForLazy.getModuleConfiguration(), new FileBasedDeclarationProviderFactory(files));
+
+        injector.getTopDownAnalyzer().analyzeFiles(files, Collections.<AnalyzerScriptParameter>emptyList());
+
+        Pair<NamespaceDescriptor, NamespaceDescriptor> namespacesToCompare = transform.fun(Pair.create(module, lazyModule));
+
         NamespaceComparator.compareNamespaces(namespacesToCompare.first, namespacesToCompare.second,
-                                              includeMembersOfObject, filterJetNamespace, new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt"));
+                                              includeMembersOfObject, filterJetNamespace, serializeResultsTo);
     }
 
     protected void doTest(String testFileName) throws Exception {
