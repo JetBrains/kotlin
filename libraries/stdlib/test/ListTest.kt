@@ -6,6 +6,11 @@ import org.junit.Test as test
 
 class ListTest {
 
+    test fun toString() {
+        val data = arrayList("foo", "bar")
+        assertEquals("[foo, bar]", data.toString())
+    }
+
     test fun head() {
         val data = arrayList("foo", "bar")
         assertEquals("foo", data.head)
@@ -13,7 +18,9 @@ class ListTest {
 
     test fun tail() {
         val data = arrayList("foo", "bar", "whatnot")
-        assertEquals(arrayList("bar", "whatnot"), data.tail)
+        val actual = data.tail
+        val expected = arrayList("bar", "whatnot")
+        assertEquals(expected, actual)
     }
 
     test fun first() {
