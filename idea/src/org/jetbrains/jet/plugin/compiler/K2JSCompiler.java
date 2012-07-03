@@ -39,6 +39,7 @@ import org.jetbrains.jet.plugin.project.JsModuleDetector;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.plugin.compiler.CompilerUtils.invokeExecMethod;
@@ -166,7 +167,7 @@ public final class K2JSCompiler implements TranslatingCompiler {
     }
 
     private static void addLibLocationAndTarget(@NotNull Module module, @NotNull ArrayList<String> args) {
-        Pair<String[], String> libLocationAndTarget = JsModuleDetector.getLibLocationAndTargetForProject(module);
+        Pair<List<String>, String> libLocationAndTarget = JsModuleDetector.getLibLocationAndTargetForProject(module);
 
         StringBuilder sb = StringBuilderSpinAllocator.alloc();
         AccessToken token = ReadAction.start();

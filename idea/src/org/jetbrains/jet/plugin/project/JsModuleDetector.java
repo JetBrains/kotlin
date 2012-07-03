@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.project;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -26,6 +27,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
+
+import java.util.List;
 
 /**
  * @author Pavel Talanov
@@ -53,7 +56,7 @@ public final class JsModuleDetector {
     }
 
     @NotNull
-    public static Pair<String[], String> getLibLocationAndTargetForProject(@NotNull Project project) {
+    public static Pair<List<String>, String> getLibLocationAndTargetForProject(@NotNull Project project) {
         Module module = getJSModule(project);
         if (module == null) {
             return Pair.empty();
@@ -64,11 +67,15 @@ public final class JsModuleDetector {
     }
 
     @NotNull
-    public static Pair<String[], String> getLibLocationAndTargetForProject(@NotNull Module module) {
+    public static Pair<List<String>, String> getLibLocationAndTargetForProject(@NotNull Module module) {
         K2JSModuleComponent jsModuleComponent = K2JSModuleComponent.getInstance(module);
         String pathToJavaScriptLibrary = jsModuleComponent.getPathToJavaScriptLibrary();
         String basePath = ModuleRootManager.getInstance(module).getContentRoots()[0].getPath();
-        return Pair.create(new String[] {basePath + pathToJavaScriptLibrary}, jsModuleComponent.getEcmaVersion().toString());
+        List<String> pathsToJSLib = Lists.newArrayList();
+        if (pathToJavaScriptLibrary != null) {
+            pathsToJSLib.add(basePath + pathToJavaScriptLibrary);
+        }
+        return Pair.create(pathsToJSLib, jsModuleComponent.getEcmaVersion().toString());
     }
 
     @Nullable
