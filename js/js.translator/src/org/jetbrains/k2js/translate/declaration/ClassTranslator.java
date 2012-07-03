@@ -110,22 +110,6 @@ public final class ClassTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsExpression translateObjectLiteralExpression() {
-        ClassDescriptor containingClass = getContainingClass(descriptor);
-        if (containingClass == null) {
-            return translateClassOrObjectCreation();
-        }
-        return translateAsObjectCreationExpressionWithEnclosingThisSaved(containingClass);
-    }
-
-    @NotNull
-    private JsExpression translateAsObjectCreationExpressionWithEnclosingThisSaved(@NotNull ClassDescriptor containingClass) {
-        aliasForContainingClassThis = context().declareTemporary(getThisObject(context(), containingClass));
-        context().addStatementToCurrentBlock(context().program().getStringLiteral("АВПАВПАВП").makeStmt());
-        return newSequence(aliasForContainingClassThis.assignmentExpression(), translateClassOrObjectCreation());
-    }
-
-    @NotNull
     private JsExpression translateClassOrObjectCreation() {
         JsInvocation jsClassDeclaration = classCreateMethodInvocation();
         if (!isObject()) {
