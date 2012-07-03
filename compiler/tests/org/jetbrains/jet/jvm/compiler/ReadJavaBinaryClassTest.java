@@ -118,7 +118,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
         jetCoreEnvironment.addToClasspath(new File("out/production/runtime"));
 
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
-                jetCoreEnvironment.getCompilerDependencies(), jetCoreEnvironment.getProject());
+                CompilerSpecialMode.JDK_HEADERS, jetCoreEnvironment.getProject());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
         return javaDescriptorResolver.resolveNamespace(FqName.topLevel(Name.identifier("test")), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
     }

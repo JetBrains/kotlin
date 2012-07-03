@@ -594,7 +594,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
         writableScope.importScope(library.getLibraryScope());
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
-                myEnvironment.getCompilerDependencies(), getProject());
+                myEnvironment.getCompilerDependencies().getCompilerSpecialMode(), getProject());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
         writableScope.importScope(javaDescriptorResolver.resolveNamespace(FqName.ROOT,
                 DescriptorSearchRule.INCLUDE_KOTLIN).getMemberScope());

@@ -62,8 +62,7 @@ class DecompiledDataFactory {
     private DecompiledDataFactory(ClsFileImpl clsFile) {
         myClsFile = clsFile;
         Project project = myClsFile.getProject();
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
-                CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR), project);
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(CompilerSpecialMode.REGULAR, project);
         myBindingContext = injector.getBindingTrace().getBindingContext();
         myJavaDescriptorResolver = injector.getJavaDescriptorResolver();
     }

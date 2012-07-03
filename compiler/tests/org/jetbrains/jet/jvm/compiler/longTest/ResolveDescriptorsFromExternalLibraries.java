@@ -160,7 +160,7 @@ public class ResolveDescriptorsFromExternalLibraries {
         }
 
 
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(jetCoreEnvironment.getCompilerDependencies(), jetCoreEnvironment.getProject());
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(CompilerSpecialMode.STDLIB, jetCoreEnvironment.getProject());
 
         boolean hasErrors;
         try {

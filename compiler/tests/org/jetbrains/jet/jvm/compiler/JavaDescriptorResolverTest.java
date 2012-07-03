@@ -74,7 +74,7 @@ public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
         jetCoreEnvironment.addToClasspath(tmpdir);
 
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
-                jetCoreEnvironment.getCompilerDependencies(), jetCoreEnvironment.getProject());
+                CompilerSpecialMode.JDK_HEADERS, jetCoreEnvironment.getProject());
         return injector.getJavaDescriptorResolver();
     }
 
@@ -83,7 +83,7 @@ public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
                 .jdkAnnotationsForTests(), null));
 
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
-                jetCoreEnvironment.getCompilerDependencies(), jetCoreEnvironment.getProject());
+                CompilerSpecialMode.IDEA, jetCoreEnvironment.getProject());
 
         // java.lang.Iterable must exist in jdk-headers otherwize this test is meaningless, resolveClass always returns null
         injector.getJavaDescriptorResolver().resolveClass(new FqName("java.lang.Iterable"));
