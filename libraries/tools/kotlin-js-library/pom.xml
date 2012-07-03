@@ -77,6 +77,7 @@
 <!--
                                         <include name="Ordering.kt"/>
 -->
+                                        <include name="Standard.kt"/>
                                         <include name="Strings.kt"/>
                                     </fileset>
                                 </copy>

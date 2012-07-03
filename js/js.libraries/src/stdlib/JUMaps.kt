@@ -1,7 +1,26 @@
 package kotlin
 
-import java.util.Map as JMap
+import java.util.Map
+
 /** Provides [] access to maps */
-public fun <K, V> JMap<K, V>.set(key : K, value : V): Unit {
+public fun <K, V> Map<K, V>.set(key : K, value : V): Unit {
     this.put(key, value)
+}
+
+/**
+ * Returns a new [[HashMap]] populated with the given tuple values where the first value in each tuple
+ * is the key and the second value is the value
+ *
+ * @includeFunctionBody ../../test/MapTest.kt createUsingTuples
+ */
+public inline fun <K,V> hashMap(vararg values: #(K,V)): java.util.HashMap<K,V> {
+    val answer = java.util.HashMap<K,V>()
+    /**
+        TODO replace by this simpler call when we can pass vararg values into other methods
+        answer.putAll(values)
+    */
+    for (v in values) {
+        answer.put(v._1, v._2)
+    }
+    return answer
 }

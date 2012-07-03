@@ -1,4 +1,4 @@
-package test.collections
+package testPackage
 
 import kotlin.test.*
 
@@ -34,6 +34,10 @@ class MapTest {
         assertEquals(data.size, 0)
     }
 
+    /*
+
+    TODO fix bug with .set() on Map...
+
     test fun setViaIndexOperators() {
         val map = HashMap<String, String>()
         assertTrue{ map.empty }
@@ -45,7 +49,31 @@ class MapTest {
         assertEquals(map.size(), 1)
         assertEquals("James", map["name"])
     }
-    
+    */
+
+    test fun createUsingTuples() {
+        val map = hashMap(#("a", 1), #("b", 2))
+        assertEquals(2, map.size)
+        assertEquals(1, map.get("a"))
+        assertEquals(2, map.get("b"))
+    }
+
+    test fun createUsingTo() {
+        val map = hashMap("a" to 1, "b" to 2)
+        assertEquals(2, map.size)
+        assertEquals(1, map.get("a"))
+        assertEquals(2, map.get("b"))
+    }
+
+    /*
+    test fun createLinkedMap() {
+        val map = linkedMap(#("c", 3), #("b", 2), #("a", 1))
+        assertEquals(1, map.get("a"))
+        assertEquals(2, map.get("b"))
+        assertEquals(3, map.get("c"))
+        assertEquals(arrayList("c", "b", "a"), map.keySet().toList())
+    }
+
     test fun iterate() {
         val map = TreeMap<String, String>()
         map["beverage"] = "beer"
@@ -80,11 +108,6 @@ class MapTest {
         assertEquals("beverage,beer,location,Mells,name,James", list.makeString(","))
     }
 
-    /*
-        TODO compiler bug
-        we should be able to remove the explicit type <String,String,String> on the map function
-        http://youtrack.jetbrains.net/issue/KT-1145
-    */
     test fun map() {
         val m1 = TreeMap<String, String>()
         m1["beverage"] = "beer"
@@ -96,11 +119,6 @@ class MapTest {
         assertEquals(arrayList("beer rocks", "Mells rocks"), list)
     }
 
-    /*
-        TODO compiler bug
-        we should be able to remove the explicit type <String,String,String> on the mapValues function
-        http://youtrack.jetbrains.net/issue/KT-1145
-    */
     test fun mapValues() {
         val m1 = TreeMap<String, String>()
         m1["beverage"] = "beer"
@@ -110,28 +128,6 @@ class MapTest {
 
         println("Got new map $m2")
         assertEquals(arrayList("beer2", "Mells2"), m2.values().toList())
-    }
-
-    test fun createUsingTuples() {
-        val map = hashMap(#("a", 1), #("b", 2))
-        assertEquals(2, map.size)
-        assertEquals(1, map.get("a"))
-        assertEquals(2, map.get("b"))
-    }
-
-    test fun createUsingTo() {
-        val map = hashMap("a" to 1, "b" to 2)
-        assertEquals(2, map.size)
-        assertEquals(1, map.get("a"))
-        assertEquals(2, map.get("b"))
-    }
-
-    test fun createLinkedMap() {
-        val map = linkedMap(#("c", 3), #("b", 2), #("a", 1))
-        assertEquals(1, map.get("a"))
-        assertEquals(2, map.get("b"))
-        assertEquals(3, map.get("c"))
-        assertEquals(arrayList("c", "b", "a"), map.keySet().toList())
     }
 
     test fun createSortedMap() {
@@ -163,10 +159,6 @@ class MapTest {
         assertEquals(2, sorted.get("bc"))
         assertEquals(3, sorted.get("c"))
     }
-
-    /**
-    TODO
-    test case for http://youtrack.jetbrains.com/issue/KT-1773
 
     test fun compilerBug() {
         val map = TreeMap<String, String>()

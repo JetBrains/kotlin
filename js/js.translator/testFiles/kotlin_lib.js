@@ -220,6 +220,12 @@
         }
     });
 
+    Kotlin.Runnable = Kotlin.$createClass({
+        run:function () {
+            throw Kotlin.$new(Kotlin.AbstractFunctionInvocationError)();
+        }
+    });
+
     Kotlin.ArrayIterator = Kotlin.$createClass(Kotlin.Iterator, {
         initialize: function (array) {
             this.array = array;

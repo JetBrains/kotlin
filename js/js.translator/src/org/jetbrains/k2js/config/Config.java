@@ -93,6 +93,7 @@ public abstract class Config {
     @NotNull
     public static final List<String> LIB_FILE_NAMES_DEPENDENT_ON_STDLIB = Arrays.asList(
             "/stdlib/jutil.kt",
+            "/stdlib/JUMaps.kt",
             "/stdlib/test.kt",
             "/core/stringDefs.kt",
             "/core/strings.kt"
@@ -114,8 +115,9 @@ public abstract class Config {
             "/kotlin/JLangIterablesLazy.kt",
             "/kotlin/JLangIterablesSpecial.kt",
             "/kotlin/support/AbstractIterator.kt",
-            //"/kotlin/Ordering.kt",
+            "/kotlin/Standard.kt",
             "/kotlin/Strings.kt",
+            "/kotlin/dom/Dom.kt",
             "/kotlin/test/Test.kt"
     );
 

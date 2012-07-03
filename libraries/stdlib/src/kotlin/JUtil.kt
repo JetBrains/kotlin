@@ -105,5 +105,5 @@ val <T> List<T>.head : T?
  */
 val <T> List<T>.tail : List<T>
     get() {
-        return drop(1)
+        return this.drop(1)
     }

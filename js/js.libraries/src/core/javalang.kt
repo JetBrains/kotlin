@@ -30,6 +30,11 @@ public class UnsupportedOperationException(message: String = "") : Exception() {
 library
 public class NumberFormatException(message: String = "") : Exception() {}
 
+library
+public trait Runnable {
+    open fun run() : Unit;
+}
+
 public trait Comparable<T> {
     fun compareTo(that: T): Int
 }
@@ -39,4 +44,3 @@ public trait Appendable {
     open fun append(csq: CharSequence?, start: Int, end: Int): Appendable?
     open fun append(c: Char): Appendable?
 }
-
