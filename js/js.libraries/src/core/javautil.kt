@@ -17,13 +17,13 @@ public trait Iterator<T> {
     open public fun remove() : Unit = js.noImpl
 }
 
-val Collections = object {
+public object Collections {
     library("collectionsMax")
     public fun max<T>(col : Collection<T>, comp : Comparator<T>) : T = js.noImpl
 
     // TODO should be immutable!
-    private val emptyList = ArrayList<Any>()
-    private val emptyMap = HashMap<Any,Any>()
+    public val emptyList: List<Any> = ArrayList<Any>()
+    public val emptyMap: Map<Any, Any> = HashMap<Any,Any>()
 
     public val <T> EMPTY_LIST: List<T>
     get() = emptyList<T>()
@@ -142,7 +142,7 @@ public trait Map<K, V> {
 // open public fun equals(o : Any?) : Boolean
 // open public fun hashCode() : Int
 
-    trait Entry<K, V> {
+    public trait Entry<K, V> {
         open public fun getKey() : K
         open public fun getValue() : V
         open public fun setValue(value : V) : V
@@ -191,6 +191,6 @@ public class NoSuchElementException() : Exception() {}
 
 library
 public trait Enumeration<E> {
-    open fun hasMoreElements() : Boolean
-    open fun nextElement() : E
+    open public fun hasMoreElements() : Boolean
+    open public fun nextElement() : E
 }

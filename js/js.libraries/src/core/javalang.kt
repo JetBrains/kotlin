@@ -5,8 +5,8 @@ import java.util.Iterator
 import js.library
 
 library
-trait Iterable<T> {
-    fun iterator() : java.util.Iterator<T> = js.noImpl
+public trait Iterable<T> {
+    public fun iterator() : java.util.Iterator<T> = js.noImpl
 }
 
 library
@@ -32,15 +32,15 @@ public class NumberFormatException(message: String = "") : Exception() {}
 
 library
 public trait Runnable {
-    open fun run() : Unit;
+    public open fun run() : Unit;
 }
 
 public trait Comparable<T> {
-    fun compareTo(that: T): Int
+    public fun compareTo(that: T): Int
 }
 
 public trait Appendable {
-    open fun append(csq: CharSequence?): Appendable?
-    open fun append(csq: CharSequence?, start: Int, end: Int): Appendable?
-    open fun append(c: Char): Appendable?
+    public open fun append(csq: CharSequence?): Appendable?
+    public open fun append(csq: CharSequence?, start: Int, end: Int): Appendable?
+    public open fun append(c: Char): Appendable?
 }
