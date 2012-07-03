@@ -339,4 +339,15 @@ public class JetPsiUtil {
         ASTNode callOperationNode = call.getCallOperationNode();
         return callOperationNode != null && callOperationNode.getElementType() == JetTokens.SAFE_ACCESS;
     }
+
+    public static boolean isFunctionLiteralWithoutDeclaredParameterTypes(JetExpression expression) {
+        if (!(expression instanceof JetFunctionLiteralExpression)) return false;
+        JetFunctionLiteralExpression functionLiteral = (JetFunctionLiteralExpression) expression;
+        for (JetParameter parameter : functionLiteral.getValueParameters()) {
+            if (parameter.getTypeReference() != null) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
