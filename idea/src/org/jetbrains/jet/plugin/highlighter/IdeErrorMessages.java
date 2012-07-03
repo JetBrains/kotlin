@@ -16,37 +16,16 @@
 
 package org.jetbrains.jet.plugin.highlighter;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
-import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.rendering.*;
-import org.jetbrains.jet.lang.psi.JetValueArgument;
-import org.jetbrains.jet.lang.psi.ValueArgument;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
+import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT;
+import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.TO_STRING;
+import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.*;
 
 /**
  * @see DefaultErrorMessages
@@ -57,29 +36,6 @@ import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
 public class IdeErrorMessages {
     public static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
     public static final DiagnosticRenderer<Diagnostic> RENDERER = new DispatchingDiagnosticRenderer(MAP, DefaultErrorMessages.MAP);
-
-    private static final Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>> HTML_AMBIGUOUS_CALLS =
-            new Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>>() {
-                @NotNull
-                @Override
-                public String render(@NotNull Collection<? extends ResolvedCall<? extends CallableDescriptor>> calls) {
-                    StringBuilder stringBuilder = new StringBuilder("");
-                    for (ResolvedCall<? extends CallableDescriptor> call : calls) {
-                        stringBuilder.append("<li>");
-                        stringBuilder.append(DescriptorRenderer.HTML.render(call.getResultingDescriptor())).append("\n");
-                        stringBuilder.append("</li>");
-                    }
-                    return stringBuilder.toString();
-                }
-            };
-
-    private static final Renderer<JetType> HTML_RENDER_TYPE = new Renderer<JetType>() {
-        @NotNull
-        @Override
-        public String render(@NotNull JetType type) {
-            return DescriptorRenderer.HTML.renderType(type);
-        }
-    };
 
     static {
         MAP.put(TYPE_MISMATCH, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>",
@@ -138,95 +94,5 @@ public class IdeErrorMessages {
     }
 
     private IdeErrorMessages() {
-    }
-
-    private static class NoneApplicableCallsRenderer implements Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>> {
-        @Nullable
-        private static ValueParameterDescriptor findParameterByArgumentExpression(
-                ResolvedCall<? extends CallableDescriptor> call,
-                JetValueArgument argument) {
-            for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : call.getValueArguments().entrySet()) {
-                for (ValueArgument va : entry.getValue().getArguments()) {
-                    if (va == argument) {
-                        return entry.getKey();
-                    }
-                }
-            }
-            return null;
-        }
-
-        private static Set<ValueParameterDescriptor> getParametersToHighlight(ResolvedCall<? extends CallableDescriptor> call) {
-            Set<ValueParameterDescriptor> parameters = new HashSet<ValueParameterDescriptor>();
-            if (call instanceof ResolvedCallImpl) {
-                Collection<Diagnostic> diagnostics = ((ResolvedCallImpl)call).getTrace().getBindingContext().getDiagnostics();
-                for (Diagnostic diagnostic : diagnostics) {
-                    if (diagnostic.getFactory() == Errors.TOO_MANY_ARGUMENTS) {
-                        parameters.add(null);
-                    } else if (diagnostic.getFactory() == Errors.NO_VALUE_FOR_PARAMETER) {
-                        ValueParameterDescriptor parameter =
-                                ((DiagnosticWithParameters1<PsiElement, ValueParameterDescriptor>)diagnostic).getA();
-                        parameters.add(parameter);
-                    } else {
-                        JetValueArgument argument = PsiTreeUtil.getParentOfType(diagnostic.getPsiElement(), JetValueArgument.class, false);
-                        if (argument != null) {
-                            ValueParameterDescriptor parameter = findParameterByArgumentExpression(call, argument);
-                            if (parameter != null) {
-                                parameters.add(parameter);
-                            }
-                        }
-                    }
-                }
-            }
-            return parameters;
-        }
-
-        @NotNull
-        @Override
-        public String render(@NotNull Collection<? extends ResolvedCall<? extends CallableDescriptor>> calls) {
-            String RED_TEMPLATE = "<font color=red><b>%s</b></font>";
-
-            StringBuilder stringBuilder = new StringBuilder("");
-            for (ResolvedCall<? extends CallableDescriptor> call : calls) {
-                stringBuilder.append("<li>");
-                CallableDescriptor funDescriptor = call.getResultingDescriptor();
-                Set<ValueParameterDescriptor> parametersToHighlight = getParametersToHighlight(call);
-
-                DescriptorRenderer htmlRenderer = DescriptorRenderer.HTML;
-                if (funDescriptor.getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
-                    stringBuilder.append(htmlRenderer.renderType(funDescriptor.getReceiverParameter().getType())).append(".");
-                }
-                stringBuilder.append(funDescriptor.getName()).append("(");
-                boolean first = true;
-                for (ValueParameterDescriptor parameter : funDescriptor.getValueParameters()) {
-                    if (!first) {
-                        stringBuilder.append(", ");
-                    }
-                    JetType type = parameter.getType();
-                    JetType varargElementType = parameter.getVarargElementType();
-                    if (varargElementType != null) {
-                        type = varargElementType;
-                    }
-                    String paramString = (varargElementType != null ? "<b>vararg</b> " : "") + htmlRenderer.renderType(type);
-                    if (parameter.hasDefaultValue()) {
-                        paramString += " = ...";
-                    }
-                    if (parametersToHighlight.contains(parameter)) {
-                        paramString = String.format(RED_TEMPLATE, paramString);
-                    }
-                    stringBuilder.append(paramString);
-
-                    first = false;
-                }
-                stringBuilder.append(parametersToHighlight.contains(null) ? String.format(RED_TEMPLATE, ")") : ")");
-                stringBuilder.append(" ").append(htmlRenderer.renderMessage("defined in")).append(" ");
-                DeclarationDescriptor containingDeclaration = funDescriptor.getContainingDeclaration();
-                if (containingDeclaration != null) {
-                    FqNameUnsafe fqName = DescriptorUtils.getFQName(containingDeclaration);
-                    stringBuilder.append(FqName.ROOT.equalsTo(fqName) ? "root package" : fqName.getFqName());
-                }
-                stringBuilder.append("</li>");
-            }
-            return stringBuilder.toString();
-        }
     }
 }
