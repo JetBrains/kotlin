@@ -27,6 +27,9 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetTypeInfo;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -187,7 +190,7 @@ public class DataFlowUtils {
 
     @Nullable
     public static JetType checkStatementType(@NotNull JetExpression expression, @NotNull ExpressionTypingContext context) {
-        if (context.expectedType != TypeUtils.NO_EXPECTED_TYPE && !JetStandardClasses.isUnit(context.expectedType)) {
+        if (context.expectedType != TypeUtils.NO_EXPECTED_TYPE && !JetStandardClasses.isUnit(context.expectedType) && !ErrorUtils.isErrorType(context.expectedType)) {
             context.trace.report(EXPECTED_TYPE_MISMATCH.on(expression, context.expectedType));
             return null;
         }
