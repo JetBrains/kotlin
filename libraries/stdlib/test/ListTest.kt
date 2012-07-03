@@ -35,9 +35,9 @@ class ListTest {
 
     test fun withIndices() {
         val data = arrayList("foo", "bar")
-        val withIndices = data.withIndices()
+        val wis = data.withIndices()
         var index = 0
-        for (withIndex in withIndices) {
+        for (withIndex in wis) {
             assertEquals(withIndex._1, index)
             assertEquals(withIndex._2, data[index])
             index++
