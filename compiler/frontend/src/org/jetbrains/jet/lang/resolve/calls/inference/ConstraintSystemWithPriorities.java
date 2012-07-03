@@ -33,7 +33,7 @@ import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintType.PARA
 /**
  * @author abreslav
  */
-public class ConstraintSystemWithPriorities implements ConstraintSystem {
+public class ConstraintSystemWithPriorities {
 
     public static final Comparator<SubtypingConstraint> SUBTYPING_CONSTRAINT_ORDER = new Comparator<SubtypingConstraint>() {
         @Override
@@ -107,7 +107,6 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
         return typeValue;
     }
 
-    @Override
     public void registerTypeVariable(@NotNull TypeParameterDescriptor typeParameterDescriptor, @NotNull Variance positionVariance) {
         assert !unknownTypes.containsKey(typeParameterDescriptor);
         TypeValue typeValue = new TypeValue(typeParameterDescriptor, positionVariance);
@@ -124,7 +123,6 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
         return unknownType;
     }
 
-    @Override
     public void addSubtypingConstraint(@NotNull SubtypingConstraint constraint) {
         constraintQueue.add(constraint);
     }
@@ -258,7 +256,6 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
         return true;
     }
 
-    @Override
     @NotNull
     public ConstraintSystemSolution solve() {
         Solution solution = new Solution();

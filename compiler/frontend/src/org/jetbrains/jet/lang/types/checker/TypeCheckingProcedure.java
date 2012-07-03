@@ -34,7 +34,7 @@ public class TypeCheckingProcedure {
     // This method returns the supertype of the first parameter that has the same constructor
     // as the second parameter, applying the substitution of type arguments to it
     @Nullable
-    private static JetType findCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
+    public static JetType findCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
         TypeConstructor constructor = subtype.getConstructor();
         if (constructor.equals(supertype.getConstructor())) {
             return subtype;

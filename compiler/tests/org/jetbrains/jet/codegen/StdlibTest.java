@@ -324,4 +324,10 @@ public class StdlibTest extends CodegenTestCase {
     public void testInvokeAnnotationMethod() {
         blackBoxFile("regressions/kt1932.kt");
     }
+
+
+    public void testKt1800() {
+        blackBoxFile("regressions/kt1800.kt");
+    }
+
 }
