@@ -44,6 +44,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import javax.inject.Inject;
 import java.util.*;
 
+import static org.jetbrains.jet.lang.diagnostics.Errors.TYPE_INFERENCE_FAILED;
 import static org.jetbrains.jet.lang.diagnostics.Errors.TYPE_MISMATCH;
 import static org.jetbrains.jet.lang.resolve.BindingContext.LABEL_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.STATEMENT;
@@ -363,6 +364,9 @@ public class ExpressionTypingServices {
             @Override
             public void report(@NotNull Diagnostic diagnostic) {
                 if (diagnostic.getFactory() == TYPE_MISMATCH && diagnostic.getPsiElement() == expressionToWatch) {
+                    mismatchFound[0] = true;
+                }
+                if (diagnostic.getFactory() == TYPE_INFERENCE_FAILED && diagnostic.getPsiElement().getParent() == expressionToWatch) {
                     mismatchFound[0] = true;
                 }
                 super.report(diagnostic);
