@@ -28,18 +28,11 @@ import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
-import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import static org.jetbrains.jet.lang.resolve.java.CompilerDependencies.compilerDependenciesForProduction;
 
 /**
  * @author abreslav
@@ -58,7 +51,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             @NotNull List<AnalyzerScriptParameter> scriptParameters,
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely) {
         return analyzeFilesWithJavaIntegration(project, files, scriptParameters, filesToAnalyzeCompletely,
-                                               compilerDependenciesForProduction(CompilerSpecialMode.REGULAR), true);
+                                               CompilerSpecialMode.REGULAR, true);
     }
 
     @NotNull
@@ -75,10 +68,10 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     }
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(
-            JetFile file, List<AnalyzerScriptParameter> scriptParameters, @NotNull CompilerDependencies compilerDependencies) {
+            JetFile file, List<AnalyzerScriptParameter> scriptParameters, @NotNull CompilerSpecialMode compilerSpecialMode) {
         AnalyzingUtils.checkForSyntacticErrors(file);
 
-        AnalyzeExhaust analyzeExhaust = analyzeOneFileWithJavaIntegration(file, scriptParameters, compilerDependencies);
+        AnalyzeExhaust analyzeExhaust = analyzeOneFileWithJavaIntegration(file, scriptParameters, compilerSpecialMode);
 
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
 
@@ -86,20 +79,20 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     }
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegration(
-            JetFile file, List<AnalyzerScriptParameter> scriptParameters, @NotNull CompilerDependencies compilerDependencies) {
+            JetFile file, List<AnalyzerScriptParameter> scriptParameters, @NotNull CompilerSpecialMode compilerSpecialMode) {
         return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file), scriptParameters,
-                                               Predicates.<PsiFile>alwaysTrue(), compilerDependencies);
+                                               Predicates.<PsiFile>alwaysTrue(), compilerSpecialMode);
     }
 
     public static AnalyzeExhaust analyzeFilesWithJavaIntegrationAndCheckForErrors(
             Project project, Collection<JetFile> files, List<AnalyzerScriptParameter> scriptParameters, Predicate<PsiFile> filesToAnalyzeCompletely,
-            @NotNull CompilerDependencies compilerDependencies) {
+            @NotNull CompilerSpecialMode compilerSpecialMode) {
         for (JetFile file : files) {
             AnalyzingUtils.checkForSyntacticErrors(file); 
         }
        
         AnalyzeExhaust analyzeExhaust = analyzeFilesWithJavaIntegration(
-                project, files, scriptParameters, filesToAnalyzeCompletely, compilerDependencies, false);
+                project, files, scriptParameters, filesToAnalyzeCompletely, compilerSpecialMode, false);
 
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
 
@@ -108,14 +101,14 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
     public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
             Project project, Collection<JetFile> files, List<AnalyzerScriptParameter> scriptParameters, Predicate<PsiFile> filesToAnalyzeCompletely,
-            @NotNull CompilerDependencies compilerDependencies) {
+            @NotNull CompilerSpecialMode compilerSpecialMode) {
         return analyzeFilesWithJavaIntegration(
-                project, files, scriptParameters, filesToAnalyzeCompletely, compilerDependencies, false);
+                project, files, scriptParameters, filesToAnalyzeCompletely, compilerSpecialMode, false);
     }
 
     public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
             Project project, Collection<JetFile> files, List<AnalyzerScriptParameter> scriptParameters, Predicate<PsiFile> filesToAnalyzeCompletely,
-            @NotNull CompilerDependencies compilerDependencies,
+            @NotNull CompilerSpecialMode compilerSpecialMode,
             boolean storeContextForBodiesResolve) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
 
@@ -126,7 +119,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
         InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
                 project, topDownAnalysisParameters,
-                new ObservableBindingTrace(bindingTraceContext), owner, compilerDependencies);
+                new ObservableBindingTrace(bindingTraceContext), owner, compilerSpecialMode);
         try {
             injector.getTopDownAnalyzer().analyzeFiles(files, scriptParameters);
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
@@ -139,13 +132,13 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     }
 
     public static AnalyzeExhaust shallowAnalyzeFiles(Collection<JetFile> files,
-            @NotNull CompilerSpecialMode compilerSpecialMode, @NotNull CompilerDependencies compilerDependencies) {
+            @NotNull CompilerSpecialMode compilerSpecialMode) {
         assert files.size() > 0;
 
         Project project = files.iterator().next().getProject();
 
         return analyzeFilesWithJavaIntegration(project,
                 files, Collections.<AnalyzerScriptParameter>emptyList(), Predicates.<PsiFile>alwaysFalse(),
-                compilerDependencies);
+                compilerSpecialMode);
     }
 }

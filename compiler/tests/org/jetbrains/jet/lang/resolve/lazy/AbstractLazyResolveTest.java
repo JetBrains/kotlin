@@ -75,7 +75,7 @@ public abstract class AbstractLazyResolveTest {
     protected InjectorForTopDownAnalyzerForJvm createInjectorForTDA(ModuleDescriptor module) {
         TopDownAnalysisParameters params = new TopDownAnalysisParameters(
                 Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
-        return new InjectorForTopDownAnalyzerForJvm(project, params, new BindingTraceContext(), module, compilerDependencies);
+        return new InjectorForTopDownAnalyzerForJvm(project, params, new BindingTraceContext(), module, CompilerSpecialMode.JDK_HEADERS);
     }
 
 }

@@ -171,7 +171,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         AnalyzeExhaust context = AnalyzerFacadeForJVM.shallowAnalyzeFiles(
             JetFilesProvider.getInstance(project).sampleToAllFilesInModule().fun(file),
                 // TODO: wrong environment // stepan.koltsov@ 2012-04-09
-                CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR));
+                CompilerSpecialMode.REGULAR);
 
         if (context.isError()) {
             throw new IllegalStateException("failed to analyze: " + context.getError(), context.getError());

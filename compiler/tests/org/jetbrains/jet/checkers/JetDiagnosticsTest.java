@@ -176,7 +176,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 getProject(), jetFiles, Collections.<AnalyzerScriptParameter>emptyList(),
                 Predicates.<PsiFile>alwaysTrue(),
-                myEnvironment.getCompilerDependencies())
+                myEnvironment.getCompilerDependencies().getCompilerSpecialMode())
                     .getBindingContext();
 
         boolean ok = true;

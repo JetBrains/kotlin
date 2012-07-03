@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
@@ -37,8 +36,7 @@ public class GenerationUtils {
 
     public static GenerationState compileFileGetGenerationStateForTest(JetFile psiFile, @NotNull CompilerSpecialMode compilerSpecialMode) {
         final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
-                psiFile, Collections.<AnalyzerScriptParameter>emptyList(),
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(compilerSpecialMode, true));
+                psiFile, Collections.<AnalyzerScriptParameter>emptyList(), compilerSpecialMode);
         analyzeExhaust.throwIfError();
         GenerationState state = new GenerationState(psiFile.getProject(), ClassBuilderFactories.binaries(false), analyzeExhaust, Collections.singletonList(psiFile));
         state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);

@@ -259,7 +259,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 myFiles.getPsiFiles(),
                 myFiles.getScriptParameterTypes(),
                 Predicates.<PsiFile>alwaysTrue(),
-                myEnvironment.getCompilerDependencies());
+                myEnvironment.getCompilerDependencies().getCompilerSpecialMode());
         analyzeExhaust.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
         GenerationState state = new GenerationState(myEnvironment.getProject(), classBuilderFactory, analyzeExhaust, myFiles.getPsiFiles());
