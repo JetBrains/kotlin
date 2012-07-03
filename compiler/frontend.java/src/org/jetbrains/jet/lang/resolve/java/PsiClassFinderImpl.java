@@ -34,7 +34,7 @@ import javax.inject.Inject;
 /**
  * @author Stepan Koltsov
  */
-public class PsiClassFinderForJvm implements PsiClassFinder {
+public class PsiClassFinderImpl implements PsiClassFinder {
 
     @NotNull
     private Project project;

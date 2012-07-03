@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinderForJvm;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
@@ -75,7 +75,7 @@ public class InjectorForTopDownAnalyzerForJvm {
     private CompilerSpecialMode compilerSpecialMode;
     private JavaBridgeConfiguration javaBridgeConfiguration;
     private JavaDescriptorResolver javaDescriptorResolver;
-    private PsiClassFinderForJvm psiClassFinderForJvm;
+    private PsiClassFinderImpl psiClassFinder;
     private NamespaceFactoryImpl namespaceFactory;
     private DeclarationResolver declarationResolver;
     private AnnotationResolver annotationResolver;
@@ -116,7 +116,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.compilerSpecialMode = compilerDependencies.getCompilerSpecialMode();
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
         this.javaDescriptorResolver = new JavaDescriptorResolver();
-        this.psiClassFinderForJvm = new PsiClassFinderForJvm();
+        this.psiClassFinder = new PsiClassFinderImpl();
         this.namespaceFactory = new NamespaceFactoryImpl();
         this.declarationResolver = new DeclarationResolver();
         this.annotationResolver = new AnnotationResolver();
@@ -175,11 +175,11 @@ public class InjectorForTopDownAnalyzerForJvm {
         javaDescriptorResolver.setJavaDescriptorSignatureResolver(javaDescriptorSignatureResolver);
         javaDescriptorResolver.setNamespaceFactory(namespaceFactory);
         javaDescriptorResolver.setProject(project);
-        javaDescriptorResolver.setPsiClassFinder(psiClassFinderForJvm);
+        javaDescriptorResolver.setPsiClassFinder(psiClassFinder);
         javaDescriptorResolver.setSemanticServices(javaSemanticServices);
         javaDescriptorResolver.setTrace(bindingTrace);
 
-        psiClassFinderForJvm.setProject(project);
+        psiClassFinder.setProject(project);
 
         this.namespaceFactory.setConfiguration(javaBridgeConfiguration);
         this.namespaceFactory.setModuleDescriptor(moduleDescriptor);
@@ -242,7 +242,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         scriptBodyResolver.setTrace(bindingTrace);
 
         javaSemanticServices.setDescriptorResolver(javaDescriptorResolver);
-        javaSemanticServices.setPsiClassFinder(psiClassFinderForJvm);
+        javaSemanticServices.setPsiClassFinder(psiClassFinder);
         javaSemanticServices.setTrace(bindingTrace);
         javaSemanticServices.setTypeTransformer(javaTypeTransformer);
 
@@ -254,7 +254,7 @@ public class InjectorForTopDownAnalyzerForJvm {
 
         javaBridgeConfiguration.init();
 
-        psiClassFinderForJvm.initialize();
+        psiClassFinder.initialize();
 
     }
 

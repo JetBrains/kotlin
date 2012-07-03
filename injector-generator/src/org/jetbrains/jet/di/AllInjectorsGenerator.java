@@ -92,7 +92,7 @@ public class AllInjectorsGenerator {
         generator.addField(false, CompilerSpecialMode.class, null, new GivenExpression("compilerDependencies.getCompilerSpecialMode()"));
         generator.addPublicField(JavaBridgeConfiguration.class);
         generator.addField(JavaDescriptorResolver.class);
-        generator.addField(PsiClassFinderForJvm.class);
+        generator.addField(PsiClassFinderImpl.class);
         generator.addPublicField(NamespaceFactoryImpl.class);
         generator.generate("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJvm");
     }
@@ -150,7 +150,7 @@ public class AllInjectorsGenerator {
         generator.addField(true, BindingTrace.class, null,
                 new GivenExpression("new org.jetbrains.jet.lang.resolve.BindingTraceContext()"));
         generator.addField(JavaBridgeConfiguration.class);
-        generator.addPublicField(PsiClassFinderForJvm.class);
+        generator.addPublicField(PsiClassFinderImpl.class);
         generator.addField(false, ModuleDescriptor.class, null,
                 new GivenExpression("new org.jetbrains.jet.lang.descriptors.ModuleDescriptor(org.jetbrains.jet.lang.resolve.name.Name.special(\"<dummy>\"))"));
         generator.addParameter(CompilerDependencies.class);
