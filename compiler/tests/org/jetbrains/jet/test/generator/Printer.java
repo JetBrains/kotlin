@@ -28,7 +28,7 @@ public class Printer {
     private String indent = "";
     private final StringBuilder out;
 
-    Printer(@NotNull StringBuilder out) {
+    public Printer(@NotNull StringBuilder out) {
         this.out = out;
     }
 
