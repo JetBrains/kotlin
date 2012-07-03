@@ -179,7 +179,6 @@ public class InjectorForTopDownAnalyzerForJvm {
         javaDescriptorResolver.setSemanticServices(javaSemanticServices);
         javaDescriptorResolver.setTrace(bindingTrace);
 
-        psiClassFinderForJvm.setCompilerDependencies(compilerDependencies);
         psiClassFinderForJvm.setProject(project);
 
         this.namespaceFactory.setConfiguration(javaBridgeConfiguration);

@@ -21,7 +21,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
-import com.intellij.psi.impl.compiled.ClsClassImpl;
 import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
@@ -39,8 +38,6 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
 
     @NotNull
     private Project project;
-    @NotNull
-    private CompilerDependencies compilerDependencies;
 
     private GlobalSearchScope javaSearchScope;
     private JavaPsiFacadeKotlinHacks javaFacade;
@@ -48,11 +45,6 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
     @Inject
     public void setProject(@NotNull Project project) {
         this.project = project;
-    }
-
-    @Inject
-    public void setCompilerDependencies(@NotNull CompilerDependencies compilerDependencies) {
-        this.compilerDependencies = compilerDependencies;
     }
 
     @PostConstruct
