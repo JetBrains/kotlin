@@ -18,16 +18,32 @@ package org.jetbrains.jet.lang.resolve.calls.inference;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
 
 /**
  * @author abreslav
  */
 public interface ConstraintSystem {
+    JetType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
+
     void registerTypeVariable(@NotNull TypeParameterDescriptor typeParameterDescriptor, @NotNull Variance positionVariance);
 
-    void addSubtypingConstraint(@NotNull SubtypingConstraint constraint);
+    void registerTypeVariable(@NotNull TypeParameterDescriptor typeParameterDescriptor, @NotNull TypeBounds typeBounds);
 
-    @NotNull
-    ConstraintSystemSolution solve();
+    void addSubtypingConstraint(@NotNull JetType exactType, @NotNull JetType expectedType);
+
+    void addConstraint(@NotNull ConstraintSystemImpl.ConstraintType constraintType, @NotNull JetType exactType, @NotNull JetType expectedType);
+
+    TypeBounds getTypeBounds(TypeParameterDescriptor typeParameterDescriptor);
+
+    boolean isSuccessful();
+
+    boolean hasContradiction();
+
+    TypeSubstitutor getSubstitutor();
+
+    JetType getValue(TypeParameterDescriptor typeParameterDescriptor);
 }
