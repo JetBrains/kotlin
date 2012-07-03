@@ -27,6 +27,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JavaElementFinder;
+import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
+import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.parsing.JetParser;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -37,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.java.extAnnotations.CoreAnnotationsProvide
 import org.jetbrains.jet.lang.resolve.java.extAnnotations.ExternalAnnotationsProvider;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.net.URL;
@@ -188,5 +191,17 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
     @NotNull
     public CompilerDependencies getCompilerDependencies() {
         return compilerDependencies;
+    }
+
+    public void configure(@NotNull CompilerConfiguration compilerConfiguration) {
+        File[] classpath = compilerConfiguration.getUserData(JVMConfigurationKeys.CLASSPATH_KEY);
+        File[] annotationsPath = compilerConfiguration.getUserData(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY);
+        assert classpath != null && annotationsPath != null;
+        for (File path : classpath) {
+            addToClasspath(path);
+        }
+        for (File path : annotationsPath) {
+            addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(path));
+        }
     }
 }

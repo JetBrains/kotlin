@@ -77,7 +77,7 @@ public class TestlibTest extends CodegenTestCase {
 
             myEnvironment.addToClasspath(junitJar);
 
-            myEnvironment.addToClasspath(myEnvironment.getCompilerDependencies().getRuntimeJar());
+            myEnvironment.addToClasspath(ForTestCompileRuntime.runtimeJarForTests());
 
             CoreLocalFileSystem localFileSystem = myEnvironment.getLocalFileSystem();
             myEnvironment.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/stdlib/test"));

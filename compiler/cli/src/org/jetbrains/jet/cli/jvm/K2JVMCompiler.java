@@ -17,7 +17,6 @@
 package org.jetbrains.jet.cli.jvm;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import jet.modules.Module;
@@ -31,6 +30,7 @@ import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.cli.jvm.repl.ReplFromTerminal;
 import org.jetbrains.jet.codegen.CompilationException;
+import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.utils.PathUtil;
@@ -83,6 +83,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
             runtimeJar = null;
         }
 
+        // will be ignored later
         CompilerDependencies dependencies = new CompilerDependencies(mode, CompilerDependencies.findRtJar(), jdkAnnotationsJar, runtimeJar);
 
         final List<String> argumentsSourceDirs = arguments.getSourceDirs();
@@ -196,31 +197,45 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
     protected void configureEnvironment(@NotNull K2JVMCompileEnvironmentConfiguration configuration, @NotNull K2JVMCompilerArguments arguments) {
         super.configureEnvironment(configuration, arguments);
 
-        if (configuration.getEnvironment().getCompilerDependencies().getRuntimeJar() != null) {
-            CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(),
-                                                  configuration.getEnvironment().getCompilerDependencies().getRuntimeJar());
-        }
+        configuration.getEnvironment().configure(createCompilerConfiguration(arguments));
+    }
 
-        if (arguments.classpath != null) {
-            List<File> classpath = getClasspath(arguments);
-            CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(), Iterables.toArray(classpath, File.class));
-        }
-
-        if (arguments.annotations != null) {
-            for (String root : Splitter.on(File.pathSeparatorChar).split(arguments.annotations)) {
-                configuration.getEnvironment().addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(new File(root)));
-            }
-        }
+    @NotNull
+    private static CompilerConfiguration createCompilerConfiguration(@NotNull K2JVMCompilerArguments arguments) {
+        CompilerConfiguration configuration = new CompilerConfiguration();
+        configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(arguments).toArray(new File[0]));
+        configuration.putUserData(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, getAnnotationsPath(arguments).toArray(new File[0]));
+        return configuration;
     }
 
     @NotNull
     private static List<File> getClasspath(@NotNull K2JVMCompilerArguments arguments) {
         List<File> classpath = Lists.newArrayList();
+        if (!arguments.noJdk) {
+            classpath.add(CompilerDependencies.findRtJar());
+        }
+        if (!arguments.noStdlib) {
+            classpath.add(PathUtil.getDefaultRuntimePath());
+        }
         if (arguments.classpath != null) {
             for (String element : Splitter.on(File.pathSeparatorChar).split(arguments.classpath)) {
                 classpath.add(new File(element));
             }
         }
         return classpath;
+    }
+
+    @NotNull
+    private static List<File> getAnnotationsPath(@NotNull K2JVMCompilerArguments arguments) {
+        List<File> annotationsPath = Lists.newArrayList();
+        if (!arguments.noJdkAnnotations) {
+            annotationsPath.add(PathUtil.getJdkAnnotationsPath());
+        }
+        if (arguments.annotations != null) {
+            for (String element : Splitter.on(File.pathSeparatorChar).split(arguments.classpath)) {
+                annotationsPath.add(new File(element));
+            }
+        }
+        return annotationsPath;
     }
 }

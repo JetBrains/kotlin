@@ -19,6 +19,7 @@ package org.jetbrains.jet.cli.jvm.compiler;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.LocalTimeCounter;
@@ -36,6 +37,7 @@ import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -100,11 +102,6 @@ public class KotlinToJVMBytecodeCompiler {
             boolean jarRuntime) {
 
         for (Module moduleBuilder : modules) {
-            // TODO: this should be done only once for the environment
-            if (configuration.getEnvironment().getCompilerDependencies().getRuntimeJar() != null) {
-                CompileEnvironmentUtil
-                        .addToClasspath(configuration.getEnvironment(), configuration.getEnvironment().getCompilerDependencies().getRuntimeJar());
-            }
             ClassFileFactory moduleFactory = compileModule(configuration, moduleBuilder, directory);
             if (moduleFactory == null) {
                 return false;
@@ -210,7 +207,7 @@ public class KotlinToJVMBytecodeCompiler {
             try {
                 GeneratedClassLoader classLoader = new GeneratedClassLoader(factory, new URLClassLoader(new URL[]{
                         // TODO: add all classpath
-                        configuration.getEnvironment().getCompilerDependencies().getRuntimeJar().toURI().toURL()
+                        PathUtil.getDefaultRuntimePath().toURI().toURL()
                 },
                         AllModules.class.getClassLoader()));
                 Class<?> scriptClass = classLoader.loadClass(ScriptCodegen.SCRIPT_DEFAULT_CLASS_NAME.getFqName().getFqName());
