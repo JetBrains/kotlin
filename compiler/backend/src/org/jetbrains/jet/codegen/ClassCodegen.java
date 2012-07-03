@@ -52,6 +52,8 @@ public class ClassCodegen {
 
         if (state.getClassBuilderMode() == ClassBuilderMode.SIGNATURES) {
             // Outer class implementation must happen prior inner classes so we get proper scoping tree in JetLightClass's delegate
+            // The same code is present below for the case when we generate real bytecode. This is because the order should be
+            // different for the case when we compute closures
             generateImplementation(context, aClass, OwnerKind.IMPLEMENTATION, contextForInners.accessors, classBuilder);
         }
         
