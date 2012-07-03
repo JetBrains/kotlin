@@ -71,7 +71,7 @@ public final class ExtensionFunctionTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-    public void TODO_FIXME_testExtensionPropertyOnClassWithExplicitAndImplicitReceiver() throws Exception {
+    public void testExtensionPropertyOnClassWithExplicitAndImplicitReceiver() throws Exception {
         fooBoxTest();
     }
 }

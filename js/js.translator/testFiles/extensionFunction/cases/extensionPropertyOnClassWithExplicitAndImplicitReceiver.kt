@@ -2,25 +2,25 @@ package foo
 
 class Foo {
 
-  fun blah(): Int {
-    return 6
+  fun blah(value: Int): Int {
+    return value + 1
   }
 
 }
 
-val Foo.fooImp : String
+val Foo.fooImp : Int
   get() {
-    return "implProp" + blah()
+    return blah(5)
   }
 
-val Foo.fooExp() : String
+val Foo.fooExp : Int
   get() {
-    return "explProp" + this.blah()
+    return this.blah(10)
   }
 
 fun box() : Boolean {
     var a = Foo()
-    if (a.fooImp != "implProp6") return false
-    if (a.fooExp != "explProp6") return false
+    if (a.fooImp != 6) return false
+    if (a.fooExp != 11) return false
     return true;
 }
