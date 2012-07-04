@@ -22,7 +22,6 @@ import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileBuiltins;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.utils.PathUtil;
 import org.junit.Test;
@@ -49,18 +48,6 @@ public class CompileCompilerDependenciesTest {
     @Test
     public void compileRuntime() {
         ForTestCompileRuntime.runtimeJarForTests();
-    }
-
-    /**
-     * @see CompilerDependencies#compilerDependenciesForProduction(org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode)
-     */
-    @NotNull
-    public static CompilerDependencies compilerDependenciesForTests(@NotNull CompilerSpecialMode compilerSpecialMode, boolean mockJdk) {
-        return new CompilerDependencies(
-                compilerSpecialMode,
-                compilerSpecialMode.includeJdk() ? (mockJdk ? JetTestUtils.findMockJdkRtJar() : PathUtil.findRtJar()) : null,
-                compilerSpecialMode.includeJdkAnnotations() ? ForTestPackJdkAnnotations.jdkAnnotationsForTests() : null,
-                compilerSpecialMode.includeKotlinRuntime() ? ForTestCompileRuntime.runtimeJarForTests() : null);
     }
 
     public static CompilerConfiguration compilerConfigurationForTests(@NotNull CompilerSpecialMode compilerSpecialMode, boolean mockJdk) {

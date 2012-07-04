@@ -24,7 +24,6 @@ import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.*;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.utils.PathUtil;
 

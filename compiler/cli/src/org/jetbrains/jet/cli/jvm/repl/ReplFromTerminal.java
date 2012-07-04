@@ -22,7 +22,6 @@ import jline.console.ConsoleReader;
 import jline.console.history.FileHistory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
