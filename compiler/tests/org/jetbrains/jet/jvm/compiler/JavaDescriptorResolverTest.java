@@ -19,16 +19,14 @@ package org.jetbrains.jet.jvm.compiler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.junit.Assert;
@@ -52,7 +50,8 @@ public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
     // http://youtrack.jetbrains.com/issue/KT-1388
     public void testStaticFinal() throws Exception {
         JavaDescriptorResolver javaDescriptorResolver = compileFileGetJavaDescriptorResolver("staticFinal.java");
-        NamespaceDescriptor ns = javaDescriptorResolver.resolveNamespace(new FqName("StaticFinal"), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
+        NamespaceDescriptor ns = javaDescriptorResolver.resolveNamespace(new FqName("StaticFinal"),
+                                                                         DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
         Collection<VariableDescriptor> foos = ns.getMemberScope().getProperties(Name.identifier("foo"));
         Assert.assertEquals(1, foos.size());
         VariableDescriptor foo = foos.iterator().next();
@@ -76,16 +75,5 @@ public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
                 CompilerSpecialMode.JDK_HEADERS, jetCoreEnvironment.getProject());
         return injector.getJavaDescriptorResolver();
-    }
-
-    public void testResolveJdkHeaderClassWithoutJdk() {
-        JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(myTestRootDisposable, new CompilerDependencies(CompilerSpecialMode.IDEA, null, ForTestPackJdkAnnotations
-                .jdkAnnotationsForTests(), null));
-
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
-                CompilerSpecialMode.IDEA, jetCoreEnvironment.getProject());
-
-        // java.lang.Iterable must exist in jdk-headers otherwize this test is meaningless, resolveClass always returns null
-        injector.getJavaDescriptorResolver().resolveClass(new FqName("java.lang.Iterable"));
     }
 }
