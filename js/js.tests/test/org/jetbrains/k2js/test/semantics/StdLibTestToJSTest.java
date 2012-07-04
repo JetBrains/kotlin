@@ -24,9 +24,14 @@ public class StdLibTestToJSTest extends StdLibTestBase {
     public void testGenerateTestCase() throws Exception {
         performStdLibTest(EcmaVersion.all(),
                           "libraries/stdlib/test",
-                          //"dom/DomTest.kt",
-                          //"js/MapTest.kt",
+                          "dom/DomTest.kt",
+                         // "js/MapTest.kt",
+                          "js/JsDomTest.kt",
+                          //"iterators/FunctionIteratorTest.kt",
+                          //"iterators/IteratorsTest.kt",
+                          "GetOrElseTest.kt",
                           "ListTest.kt",
+                          "SetTest.kt",
                           "StringTest.kt");
     }
 }
