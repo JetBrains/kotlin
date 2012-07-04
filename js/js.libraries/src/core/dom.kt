@@ -93,7 +93,7 @@ native public trait DOMError {
     public val relatedException: Any
     public val severity: Short
 
-    class object {
+    public class object {
         public val SEVERITY_WARNING: Short = 1
         public val SEVERITY_ERROR: Short = 2
         public val SEVERITY_FATAL_ERROR: Short = 3
@@ -221,7 +221,7 @@ native public trait Node {
     public fun lookupNamespaceURI(arg1: String?): String = js.noImpl
     public fun isEqualNode(arg1: Node): Boolean = js.noImpl
 
-    class object {
+    public class object {
         public val ELEMENT_NODE: Short = 1
         public val ATTRIBUTE_NODE: Short = 2
         public val TEXT_NODE: Short = 3
@@ -270,7 +270,7 @@ native public trait TypeInfo {
     public val typeNamespace: String
     public fun isDerivedFrom(arg1: String?, arg2: String?, arg3: Int): Boolean = js.noImpl
 
-    class object {
+    public class object {
         public val DERIVATION_RESTRICTION: Int = 1
         public val DERIVATION_EXTENSION: Int = 2
         public val DERIVATION_UNION: Int = 4
@@ -281,7 +281,7 @@ native public trait TypeInfo {
 native public trait UserDataHandler {
     public fun handle(arg1: Short, arg2: String?, arg3: Any, arg4: Node, arg5: Node): Unit = js.noImpl
 
-    class object {
+    public class object {
         public val NODE_CLONED: Short = 1
         public val NODE_IMPORTED: Short = 2
         public val NODE_DELETED: Short = 3
