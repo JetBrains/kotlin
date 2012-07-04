@@ -59,7 +59,7 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
 
     @PostConstruct
     public void initialize() {
-        this.altClassFinder = new AltClassFinder(project, compilerDependencies.getJdkHeaderRoots());
+        this.altClassFinder = new AltClassFinder(project, compilerDependencies.getJdkAnnotationsRoots());
         this.javaSearchScope = new DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
             @Override
             public boolean contains(VirtualFile file) {
@@ -104,8 +104,8 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
             return null;
         }
 
-        PsiAnnotation assertInvisibleAnnotation = result.getModifierList().findAnnotation(
-                JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().getFqName());
+        PsiAnnotation assertInvisibleAnnotation = JavaDescriptorResolver
+                .findAnnotation(result, JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().getFqName());
         if (assertInvisibleAnnotation != null) {
             if (runtimeClassesHandleMode == RuntimeClassesHandleMode.IGNORE) {
                 return null;

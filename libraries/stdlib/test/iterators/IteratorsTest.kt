@@ -4,13 +4,13 @@ import kotlin.test.assertEquals
 import org.junit.Test as test
 import kotlin.test.failsWith
 
-class IteratorsTest {
+fun fibonacci(): java.util.Iterator<Int> {
+    // fibonacci terms
+    var index = 0; var a = 0; var b = 1
+    return iterate<Int> { when (index++) { 0 -> a; 1 -> b; else -> { val result = a + b; a = b; b = result; result } } }
+}
 
-    private fun fibonacci(): java.util.Iterator<Int> {
-        // fibonacci terms
-        var index = 0; var a = 0; var b = 1
-        return iterate<Int> { when (index++) { 0 -> a; 1 -> b; else -> { val result = a + b; a = b; b = result; result } } }
-    }
+class IteratorsTest {
 
     test fun filterAndTakeWhileExtractTheElementsWithinRange() {
         assertEquals(arrayList(144, 233, 377, 610, 987), fibonacci().filter { it > 100 }.takeWhile { it < 1000 }.toList())
@@ -27,25 +27,6 @@ class IteratorsTest {
 
     test fun mapAndTakeWhileExtractTheTransformedElements() {
         assertEquals(arrayList(0, 3, 3, 6, 9, 15), fibonacci().map { it * 3 }.takeWhile { (i: Int) -> i < 20 }.toList())
-    }
-
-    test fun flatMapAndTakeExtractTheTransformedElements() {
-        fun intToBinaryDigits() = { (i: Int) ->
-            val binary = Integer.toBinaryString(i).sure()
-            var index = 0
-            iterate<Char> { if (index < binary.length()) binary.get(index++) else null }
-        }
-
-        val expected = arrayList(
-                      '0', // fibonacci(0) = 0
-                      '1', // fibonacci(1) = 1
-                      '1', // fibonacci(2) = 1
-                 '1', '0', // fibonacci(3) = 2
-                 '1', '1', // fibonacci(4) = 3
-            '1', '0', '1'  // fibonacci(5) = 5
-        )
-
-        assertEquals(expected, fibonacci().flatMap<Int, Char>(intToBinaryDigits()).take(10).toList())
     }
 
     test fun joinConcatenatesTheFirstNElementsAboveAThreshold() {

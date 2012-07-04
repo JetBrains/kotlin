@@ -184,27 +184,21 @@ public inline fun <T> Iterable<T>.reduceRight(operation: (T, T) -> T): T = rever
  */
 public inline fun <T, K> Iterable<T>.groupBy(toKey: (T) -> K) : Map<K, List<T>> = groupByTo<T,K>(HashMap<K, List<T>>(), toKey)
 
-/**
- * Groups the elements in the collection into the given [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
- *
- * @includeFunctionBody ../../test/CollectionTest.kt groupBy
- */
 public inline fun <T, K> Iterable<T>.groupByTo(result: Map<K, List<T>>, toKey: (T) -> K) : Map<K, List<T>> {
     for (element in this) {
         val key = toKey(element)
         val list = result.getOrPut(key) { ArrayList<T>() }
         list.add(element)
+
+        val some = key
+        val more = some
+        val onceMore = more
+        val again = println(more)
     }
     return result
 }
 
 /**
- * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
- *
- * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
- * a special *truncated* separator (which defaults to "..."
- *
- * @includeFunctionBody ../../test/CollectionTest.kt makeString
  */
 public inline fun <T> Iterable<T>.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
     val buffer = StringBuilder()

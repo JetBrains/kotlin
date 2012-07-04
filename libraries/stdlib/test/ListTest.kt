@@ -6,6 +6,11 @@ import org.junit.Test as test
 
 class ListTest {
 
+    test fun toString() {
+        val data = arrayList("foo", "bar")
+        assertEquals("[foo, bar]", data.toString())
+    }
+
     test fun head() {
         val data = arrayList("foo", "bar")
         assertEquals("foo", data.head)
@@ -13,7 +18,9 @@ class ListTest {
 
     test fun tail() {
         val data = arrayList("foo", "bar", "whatnot")
-        assertEquals(arrayList("bar", "whatnot"), data.tail)
+        val actual = data.tail
+        val expected = arrayList("bar", "whatnot")
+        assertEquals(expected, actual)
     }
 
     test fun first() {
@@ -28,9 +35,9 @@ class ListTest {
 
     test fun withIndices() {
         val data = arrayList("foo", "bar")
-        val withIndices = data.withIndices()
+        val wis = data.withIndices()
         var index = 0
-        for (withIndex in withIndices) {
+        for (withIndex in wis) {
             assertEquals(withIndex._1, index)
             assertEquals(withIndex._2, data[index])
             index++

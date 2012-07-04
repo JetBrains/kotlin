@@ -2,14 +2,14 @@ package test.standard
 
 import kotlin.*
 import kotlin.test.*
-import junit.framework.TestCase
+import org.junit.Test as test
 
-class GetOrElseTest() : TestCase() {
+class GetOrElseTest {
     val v1: String? = "hello"
     val v2: String? = null
     var counter = 0
 
-    fun testDefaultValue() {
+    test fun defaultValue() {
         assertEquals("hello", v1?: "bar")
 
         expect("hello") {
@@ -17,7 +17,7 @@ class GetOrElseTest() : TestCase() {
         }
     }
 
-    fun testDefaultValueOnNull() {
+    test fun defaultValueOnNull() {
         assertEquals("bar", v2?: "bar")
 
         expect("bar") {
@@ -30,7 +30,7 @@ class GetOrElseTest() : TestCase() {
         return "bar"
     }
 
-    fun testLazyDefaultValue() {
+    test fun lazyDefaultValue() {
         counter = 0
 
         assertEquals("hello", v1?: calculateBar())

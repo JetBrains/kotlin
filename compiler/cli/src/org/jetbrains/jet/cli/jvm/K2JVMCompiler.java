@@ -37,7 +37,6 @@ import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.cli.common.ExitCode.*;
@@ -58,17 +57,17 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
     protected ExitCode doExecute(K2JVMCompilerArguments arguments, PrintingMessageCollector messageCollector, Disposable rootDisposable) {
 
         CompilerSpecialMode mode = parseCompilerSpecialMode(arguments);
-        File jdkHeadersJar;
-        if (mode.includeJdkHeaders()) {
-            if (arguments.jdkHeaders != null) {
-                jdkHeadersJar = new File(arguments.jdkHeaders);
+        File jdkAnnotationsJar;
+        if (mode.includeJdkAnnotations()) {
+            if (arguments.jdkAnnotations != null) {
+                jdkAnnotationsJar = new File(arguments.jdkAnnotations);
             }
             else {
-                jdkHeadersJar = PathUtil.getAltHeadersPath();
+                jdkAnnotationsJar = PathUtil.getJdkAnnotationsPath();
             }
         }
         else {
-            jdkHeadersJar = null;
+            jdkAnnotationsJar = null;
         }
         File runtimeJar;
 
@@ -84,7 +83,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
             runtimeJar = null;
         }
 
-        CompilerDependencies dependencies = new CompilerDependencies(mode, CompilerDependencies.findRtJar(), jdkHeadersJar, runtimeJar);
+        CompilerDependencies dependencies = new CompilerDependencies(mode, CompilerDependencies.findRtJar(), jdkAnnotationsJar, runtimeJar);
 
         final List<String> argumentsSourceDirs = arguments.getSourceDirs();
         if (!arguments.script &&
@@ -97,7 +96,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
             return ExitCode.OK;
         }
 
-        JetCoreEnvironment environment = JetCoreEnvironment.getCoreEnvironmentForJVM(rootDisposable, dependencies);
+        JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, dependencies);
         K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(environment, messageCollector, arguments.script);
 
         messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
@@ -205,6 +204,12 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
         if (arguments.classpath != null) {
             List<File> classpath = getClasspath(arguments);
             CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(), Iterables.toArray(classpath, File.class));
+        }
+
+        if (arguments.annotations != null) {
+            for (String root : Splitter.on(File.pathSeparatorChar).split(arguments.annotations)) {
+                configuration.getEnvironment().addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(new File(root)));
+            }
         }
     }
 

@@ -124,7 +124,7 @@ import js.noImpl
             if (fields != null) {
                 if (fields.notEmpty()) {
                     println("")
-                    println("    class object {")
+                    println("    public class object {")
                     for (field in fields) {
                         if (field != null) {
                             val modifiers = field.getModifiers()

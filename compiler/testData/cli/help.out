@@ -2,9 +2,10 @@ Usage: org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
   -jar [String] jar file name
   -src [String] source file or directory
   -classpath [String] classpath to use when compiling
+  -annotations [String] paths to external annotations
   -includeRuntime [flag]
   -stdlib [String] Path to the stdlib.jar
-  -jdkHeaders [String] Path to the kotlin-jdk-headers.jar
+  -jdkAnnotations [String] Path to the kotlin-jdk-annotations.jar
   -mode [String] Special compiler modes: stubs or jdkHeaders
   -output [String] output directory
   -module [String] module to compile

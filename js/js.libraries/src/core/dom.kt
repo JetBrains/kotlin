@@ -93,7 +93,7 @@ native public trait DOMError {
     public val relatedException: Any
     public val severity: Short
 
-    class object {
+    public class object {
         public val SEVERITY_WARNING: Short = 1
         public val SEVERITY_ERROR: Short = 2
         public val SEVERITY_FATAL_ERROR: Short = 3
@@ -136,9 +136,9 @@ native public trait Element: Node {
     public val tagName: String
     public fun getAttribute(arg1: String?): String = js.noImpl
     public fun setAttribute(arg1: String?, arg2: String?): Unit = js.noImpl
+    public fun removeAttribute(arg1: String?): Unit = js.noImpl
     public fun getElementsByTagName(arg1: String?): NodeList = js.noImpl
     public fun getElementsByTagNameNS(arg1: String?, arg2: String?): NodeList = js.noImpl
-    public fun removeAttribute(arg1: String?): Unit = js.noImpl
     public fun getAttributeNode(arg1: String?): Attr = js.noImpl
     public fun removeAttributeNode(arg1: Attr): Attr = js.noImpl
     public fun getAttributeNS(arg1: String?, arg2: String?): String = js.noImpl
@@ -270,7 +270,7 @@ native public trait TypeInfo {
     public val typeNamespace: String
     public fun isDerivedFrom(arg1: String?, arg2: String?, arg3: Int): Boolean = js.noImpl
 
-    class object {
+    public class object {
         public val DERIVATION_RESTRICTION: Int = 1
         public val DERIVATION_EXTENSION: Int = 2
         public val DERIVATION_UNION: Int = 4
@@ -281,7 +281,7 @@ native public trait TypeInfo {
 native public trait UserDataHandler {
     public fun handle(arg1: Short, arg2: String?, arg3: Any, arg4: Node, arg5: Node): Unit = js.noImpl
 
-    class object {
+    public class object {
         public val NODE_CLONED: Short = 1
         public val NODE_IMPORTED: Short = 2
         public val NODE_DELETED: Short = 3

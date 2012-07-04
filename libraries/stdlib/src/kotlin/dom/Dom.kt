@@ -311,6 +311,25 @@ val NodeList?.last : Node?
 get() = this.tail
 
 
+/** Converts the node list to an XML String */
+fun NodeList?.toXmlString(xmlDeclaration: Boolean = false): String {
+    return if (this == null)
+        "" else {
+        nodesToXmlString(this.toList(), xmlDeclaration)
+    }
+}
+
+/** Converts the collection of nodes to an XML String */
+public fun nodesToXmlString(nodes: java.lang.Iterable<Node>, xmlDeclaration: Boolean = false): String {
+    // TODO this should work...
+    // return this.map<Node,String>{it.toXmlString()}.makeString("")
+    val builder = StringBuilder()
+    for (n in nodes) {
+        builder.append(n.toXmlString(xmlDeclaration))
+    }
+    return builder.toString().sure()
+}
+
 // Syntax sugar
 
 inline fun Node.plus(child: Node?): Node {
@@ -381,7 +400,7 @@ Adds a newly created text node to an element which either already has an owner D
 */
 fun Element.addText(text: String?, doc: Document? = null): Element {
     if (text != null) {
-        val child = ownerDocument(doc).createTextNode(text)
+        val child = this.ownerDocument(doc).createTextNode(text)
         this.appendChild(child)
     }
     return this

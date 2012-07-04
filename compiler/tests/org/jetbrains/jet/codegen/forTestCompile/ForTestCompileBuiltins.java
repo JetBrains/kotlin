@@ -41,7 +41,7 @@ public class ForTestCompileBuiltins {
             ExitCode exitCode = new K2JVMCompiler().exec(
                     System.err, "-output", classesDir.getPath(), "-src", "./compiler/frontend/src", "-mode", "builtins");
             if (exitCode != ExitCode.OK) {
-                throw new IllegalStateException("jdk headers compilation failed: " + exitCode);
+                throw new IllegalStateException("builtins compilation failed: " + exitCode);
             }
         }
 

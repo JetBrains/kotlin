@@ -20,6 +20,7 @@ import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.utils.BitSetUtils;
 
@@ -88,6 +89,6 @@ public class JetMethodAnnotation extends PsiAnnotationWithFlags {
     }
 
     public static JetMethodAnnotation get(PsiMethod psiMethod) {
-        return new JetMethodAnnotation(psiMethod.getModifierList().findAnnotation(JvmStdlibNames.JET_METHOD.getFqName().getFqName()));
+        return new JetMethodAnnotation(JavaDescriptorResolver.findAnnotation(psiMethod, JvmStdlibNames.JET_METHOD.getFqName().getFqName()));
     }
 }

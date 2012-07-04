@@ -54,8 +54,16 @@ public abstract class SingleFileTranslationTest extends BasicTest {
         runFunctionOutputTest(ecmaVersions, filename, "foo", "box", true);
     }
 
+    public void checkFooBoxIsValue(@NotNull String filename, @NotNull EnumSet<EcmaVersion> ecmaVersions, Object expected) throws Exception {
+        runFunctionOutputTest(ecmaVersions, filename, "foo", "box", expected);
+    }
+
     protected void fooBoxTest() throws Exception {
         checkFooBoxIsTrue(getTestName(true) + ".kt", EcmaVersion.all());
+    }
+
+    protected void fooBoxIsValue(Object expected) throws Exception {
+        checkFooBoxIsValue(getTestName(true) + ".kt", EcmaVersion.all(), expected);
     }
 
     protected void fooBoxTest(@NotNull Iterable<EcmaVersion> ecmaVersions) throws Exception {

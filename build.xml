@@ -382,29 +382,17 @@
         </jar>
     </target>
 
-    <target name="jdkHeaders">
+    <target name="jdkAnnotations">
         <cleandir dir="${output}/classes/stdlib"/>
 
-        <java classname="org.jetbrains.jet.cli.jvm.K2JVMCompiler" failonerror="true">
-            <classpath>
-                <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
-            </classpath>
-            <arg value="-src"/>
-            <arg value="${basedir}/jdk-headers/src"/>
-            <arg value="-output"/>
-            <arg value="${output}/classes/jdk-headers"/>
-            <arg value="-mode"/>
-            <arg value="jdkHeaders"/>
-        </java>
-
-        <jar destfile="${kotlin-home}/lib/alt/kotlin-jdk-headers.jar">
-            <fileset dir="${output}/classes/jdk-headers"/>
+        <jar destfile="${kotlin-home}/lib/alt/kotlin-jdk-annotations.jar">
+            <fileset dir="${basedir}/jdk-annotations"/>
 
             <manifest>
                 <attribute name="Built-By" value="JetBrains"/>
 
                 <attribute name="Implementation-Vendor" value="JetBrains"/>
-                <attribute name="Implementation-Title" value="Kotlin Compiler JDK Headers"/>
+                <attribute name="Implementation-Title" value="Kotlin Compiler JDK Annotations"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
             </manifest>
         </jar>
@@ -471,7 +459,7 @@
     </target>
 
     <target name="dist"
-            depends="init,prepareDist,injectorsGenerator,generateInjectors,compiler,compilerSources,antTools,jdkHeaders,runtime,lang,jslib"/>
+            depends="init,prepareDist,injectorsGenerator,generateInjectors,compiler,compilerSources,antTools,jdkAnnotations,runtime,lang,jslib"/>
 
     <target name="zip" depends="dist">
         <zip destfile="${output}/${output.name}.zip">

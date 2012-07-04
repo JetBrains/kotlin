@@ -205,8 +205,8 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         log.info("Classes directory is " + output);
         arguments.setOutputDir(output);
 
-        arguments.jdkHeaders = getAltHeaders().getPath();
-        log.debug("Using alt headers from " + arguments.jdkHeaders);
+        arguments.jdkAnnotations = getJdkAnnotations().getPath();
+        log.debug("Using jdk annotations from " + arguments.jdkAnnotations);
     }
 
     // TODO: Make a better runtime detection or get rid of it entirely
@@ -224,37 +224,37 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         return null;
     }
 
-    private File altHeadersPath;
+    private File jdkAnnotationsPath;
 
-    protected File getAltHeaders() {
-        if (altHeadersPath != null)
-            return altHeadersPath;
+    protected File getJdkAnnotations() {
+        if (jdkAnnotationsPath != null)
+            return jdkAnnotationsPath;
 
         try {
-            altHeadersPath = extractAltHeaders();
+            jdkAnnotationsPath = extractJdkAnnotations();
 
-            if (altHeadersPath == null)
-                throw new RuntimeException("Can't find kotlin alt headers in maven plugin resources");
+            if (jdkAnnotationsPath == null)
+                throw new RuntimeException("Can't find kotlin jdk annotations in maven plugin resources");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return altHeadersPath;
+        return jdkAnnotationsPath;
     }
 
-    private File extractAltHeaders() throws IOException {
-        final String kotlin_jdk_headers = "kotlin-jdk-headers.jar";
+    private File extractJdkAnnotations() throws IOException {
+        final String kotlin_jdk_annotations = "kotlin-jdk-annotations.jar";
 
-        final URL jdkHeadersResource = Resources.getResource(kotlin_jdk_headers);
-        if (jdkHeadersResource == null)
+        final URL jdkAnnotationsResource = Resources.getResource(kotlin_jdk_annotations);
+        if (jdkAnnotationsResource == null)
             return null;
 
-        final File jdkHeadersTempDir = Files.createTempDir();
-        jdkHeadersTempDir.deleteOnExit();
+        final File jdkAnnotationsTempDir = Files.createTempDir();
+        jdkAnnotationsTempDir.deleteOnExit();
 
-        final File jdkHeadersFile = new File(jdkHeadersTempDir, kotlin_jdk_headers);
-        Files.copy(Resources.newInputStreamSupplier(jdkHeadersResource), jdkHeadersFile);
+        final File jdkAnnotationsFile = new File(jdkAnnotationsTempDir, kotlin_jdk_annotations);
+        Files.copy(Resources.newInputStreamSupplier(jdkAnnotationsResource), jdkAnnotationsFile);
 
-        return jdkHeadersFile;
+        return jdkAnnotationsFile;
     }
 }

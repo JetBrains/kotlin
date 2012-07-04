@@ -9,6 +9,10 @@
         <execute_update teamcity="http://buildserver.labs.intellij.net" teamcity.build="bt2560"/>
     </target>
 
+    <target name="update-no-third-party">
+        <execute_update/>
+    </target>
+
     <target name="fetch-third-party">
         <mkdir dir="dependencies" />
         <mkdir dir="dependencies/download" />

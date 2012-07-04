@@ -30,6 +30,8 @@ import com.intellij.openapi.projectRoots.JavaSdkType;
 import com.intellij.openapi.projectRoots.JdkUtil;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
+import com.intellij.openapi.roots.AnnotationOrderRootType;
+import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Chunk;
@@ -218,6 +220,13 @@ public class JetCompiler implements TranslatingCompiler {
         script.append("        // Main output\n");
         if (tests && mainOutput != null) {
             script.append("        classpath += \"" + path(mainOutput) + "\"\n");
+        }
+
+        script.append("        // External annotations\n");
+        for (Module module : chunk.getModules()) {
+            for (VirtualFile file : OrderEnumerator.orderEntries(module).roots(AnnotationOrderRootType.getInstance()).getRoots()) {
+                script.append("        annotationsPath += \"").append(path(file)).append("\"\n");
+            }
         }
 
         script.append("    }\n");

@@ -11,6 +11,7 @@ native public val Node.outerHTML: String
 get() = js.noImpl
 
 /** Converts the node to an XML String */
-public fun Node.toXmlString(xmlDeclaration: Boolean = false): String {
-    return this.outerHTML
-}
+public fun Node.toXmlString(): String = this.outerHTML
+
+/** Converts the node to an XML String */
+public fun Node.toXmlString(xmlDeclaration: Boolean): String = this.outerHTML

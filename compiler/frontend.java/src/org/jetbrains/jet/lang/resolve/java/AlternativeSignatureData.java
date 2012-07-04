@@ -30,13 +30,16 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Evgeny Gerashchenko
@@ -53,6 +56,9 @@ class AlternativeSignatureData {
     private JetType altReturnType;
     private List<TypeParameterDescriptor> altTypeParameters;
 
+    private Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters =
+            new HashMap<TypeParameterDescriptor, TypeParameterDescriptorImpl>();
+
     AlternativeSignatureData(
             @NotNull PsiMethodWrapper method,
             @NotNull JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors,
@@ -68,12 +74,18 @@ class AlternativeSignatureData {
         Project project = method.getPsiMethod().getProject();
         altFunDeclaration = JetPsiFactory.createFunction(project, signature);
 
+        for (TypeParameterDescriptor tp : methodTypeParameters) {
+            originalToAltTypeParameters.put(tp, TypeParameterDescriptorImpl
+                    .createForFurtherModification(tp.getContainingDeclaration(), tp.getAnnotations(),
+                                                  tp.isReified(), tp.getVariance(), tp.getName(), tp.getIndex()));
+        }
+
         try {
             checkForSyntaxErrors();
 
+            computeTypeParameters(methodTypeParameters);
             computeValueParameters(valueParameterDescriptors);
             computeReturnType(returnType);
-            computeTypeParameters(methodTypeParameters);
         }
         catch (AlternativeSignatureMismatchException e) {
             error = e.getMessage();
@@ -113,7 +125,7 @@ class AlternativeSignatureData {
         return altTypeParameters;
     }
 
-    static JetType computeType(JetTypeElement alternativeTypeElement, final JetType autoType) {
+    JetType computeType(JetTypeElement alternativeTypeElement, final JetType autoType) {
         //noinspection NullableProblems
         return alternativeTypeElement.accept(new JetVisitor<JetType, Void>() {
             @Override
@@ -154,7 +166,8 @@ class AlternativeSignatureData {
             }
 
             private JetType visitCommonType(@NotNull String expectedFqNamePostfix, @NotNull JetTypeElement type) {
-                ClassifierDescriptor declarationDescriptor = autoType.getConstructor().getDeclarationDescriptor();
+                TypeConstructor originalTypeConstructor = autoType.getConstructor();
+                ClassifierDescriptor declarationDescriptor = originalTypeConstructor.getDeclarationDescriptor();
                 assert declarationDescriptor != null;
                 String fqName = DescriptorUtils.getFQName(declarationDescriptor).toSafe().getFqName();
                 if (!fqName.endsWith(expectedFqNamePostfix)) {
@@ -196,8 +209,26 @@ class AlternativeSignatureData {
                     }
                     altArguments.add(new TypeProjection(variance, alternativeType));
                 }
-                return new JetTypeImpl(autoType.getAnnotations(), autoType.getConstructor(), false,
-                                       altArguments, autoType.getMemberScope());
+
+                TypeConstructor typeConstructor = originalTypeConstructor;
+                ClassifierDescriptor typeConstructorClassifier = typeConstructor.getDeclarationDescriptor();
+                if (typeConstructorClassifier instanceof TypeParameterDescriptor
+                        && originalToAltTypeParameters.containsKey(typeConstructorClassifier)) {
+                    typeConstructor = originalToAltTypeParameters.get(typeConstructorClassifier).getTypeConstructor();
+                }
+                JetScope memberScope;
+                if (typeConstructorClassifier instanceof TypeParameterDescriptor) {
+                    memberScope = ((TypeParameterDescriptor) typeConstructorClassifier).getUpperBoundsAsType().getMemberScope();
+                }
+                else if (typeConstructorClassifier instanceof ClassDescriptor) {
+                    memberScope = ((ClassDescriptor) typeConstructorClassifier).getMemberScope(altArguments);
+                }
+                else {
+                    throw new AssertionError("Unexpected class of type constructor classifier "
+                                             + (typeConstructorClassifier == null ? "null" : typeConstructorClassifier.getClass().getName()));
+                }
+                return new JetTypeImpl(autoType.getAnnotations(), typeConstructor, false,
+                                       altArguments, memberScope);
             }
 
             @Override
@@ -274,10 +305,7 @@ class AlternativeSignatureData {
         altTypeParameters = new ArrayList<TypeParameterDescriptor>();
         for (int i = 0, size = typeParameters.size(); i < size; i++) {
             TypeParameterDescriptor pd = typeParameters.get(i);
-            DeclarationDescriptor containingDeclaration = pd.getContainingDeclaration();
-            TypeParameterDescriptorImpl altParamDescriptor = TypeParameterDescriptorImpl
-                    .createForFurtherModification(containingDeclaration, pd.getAnnotations(),
-                                                  pd.isReified(), pd.getVariance(), pd.getName(), pd.getIndex());
+            TypeParameterDescriptorImpl altParamDescriptor = originalToAltTypeParameters.get(pd);
             int upperBoundIndex = 0;
             for (JetType upperBound : pd.getUpperBounds()) {
                 JetTypeElement altTypeElement;

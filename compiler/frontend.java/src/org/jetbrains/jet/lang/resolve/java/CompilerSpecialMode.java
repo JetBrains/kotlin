@@ -28,7 +28,7 @@ public enum CompilerSpecialMode {
     JS,
     ;
 
-    public boolean includeJdkHeaders() {
+    public boolean includeJdkAnnotations() {
         return this == REGULAR || this == STDLIB || this == IDEA;
     }
 

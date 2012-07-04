@@ -1,4 +1,5 @@
 /*
+/*
  * Copyright 2010-2012 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,14 +36,14 @@ public class CompilerDependencies {
     @Nullable
     private final File jdkJar;
     @Nullable
-    private final File jdkHeadersJar;
+    private final File jdkAnnotationsJar;
     @Nullable
     private final File runtimeJar;
 
-    public CompilerDependencies(@NotNull CompilerSpecialMode compilerSpecialMode, @Nullable File jdkJar, @Nullable File jdkHeadersJar, @Nullable File runtimeJar) {
+    public CompilerDependencies(@NotNull CompilerSpecialMode compilerSpecialMode, @Nullable File jdkJar, @Nullable File jdkAnnotationsJar, @Nullable File runtimeJar) {
         this.compilerSpecialMode = compilerSpecialMode;
         this.jdkJar = jdkJar;
-        this.jdkHeadersJar = jdkHeadersJar;
+        this.jdkAnnotationsJar = jdkAnnotationsJar;
         this.runtimeJar = runtimeJar;
 
         if (compilerSpecialMode.includeJdk()) {
@@ -50,9 +51,9 @@ public class CompilerDependencies {
                 throw new IllegalArgumentException("jdk must be included for mode " + compilerSpecialMode);
             }
         }
-        if (compilerSpecialMode.includeJdkHeaders()) {
-            if (jdkHeadersJar == null) {
-                throw new IllegalArgumentException("jdkHeaders must be included for mode " + compilerSpecialMode);
+        if (compilerSpecialMode.includeJdkAnnotations()) {
+            if (jdkAnnotationsJar == null) {
+                throw new IllegalArgumentException("jdkAnnotations must be included for mode " + compilerSpecialMode);
             }
         }
         if (compilerSpecialMode.includeKotlinRuntime()) {
@@ -73,19 +74,14 @@ public class CompilerDependencies {
     }
 
     @Nullable
-    public File getJdkHeadersJar() {
-        return jdkHeadersJar;
-    }
-
-    @Nullable
     public File getRuntimeJar() {
         return runtimeJar;
     }
 
     @NotNull
-    public List<VirtualFile> getJdkHeaderRoots() {
-        if (compilerSpecialMode.includeJdkHeaders()) {
-            return Collections.singletonList(PathUtil.jarFileOrDirectoryToVirtualFile(jdkHeadersJar));
+    public List<VirtualFile> getJdkAnnotationsRoots() {
+        if (compilerSpecialMode.includeJdkAnnotations()) {
+            return Collections.singletonList(PathUtil.jarFileOrDirectoryToVirtualFile(jdkAnnotationsJar));
         }
         else {
             return Collections.emptyList();
@@ -107,7 +103,7 @@ public class CompilerDependencies {
         return new CompilerDependencies(
                 compilerSpecialMode,
                 compilerSpecialMode.includeJdk() ? findRtJar() : null,
-                compilerSpecialMode.includeJdkHeaders() ? PathUtil.getAltHeadersPath() : null,
+                compilerSpecialMode.includeJdkAnnotations() ? PathUtil.getJdkAnnotationsPath() : null,
                 compilerSpecialMode.includeKotlinRuntime() ? PathUtil.getDefaultRuntimePath() : null);
     }
 

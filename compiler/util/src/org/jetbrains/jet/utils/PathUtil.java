@@ -94,8 +94,8 @@ public class PathUtil {
     }
 
     @Nullable
-    public static File getAltHeadersPath() {
-        return getFilePackedIntoLib("alt/kotlin-jdk-headers.jar");
+    public static File getJdkAnnotationsPath() {
+        return getFilePackedIntoLib("alt/kotlin-jdk-annotations.jar");
     }
 
     @NotNull

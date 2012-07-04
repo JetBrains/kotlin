@@ -27,12 +27,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
+import org.jetbrains.jet.lang.resolve.java.extAnnotations.ExternalAnnotationsProvider;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -873,7 +872,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             if (parameter.getJetValueParameter().nullable()) {
                 transformedType = TypeUtils.makeNullableAsSpecified(outType, parameter.getJetValueParameter().nullable());
             }
-            else if (parameter.getPsiParameter().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
+            else if (findAnnotation(parameter.getPsiParameter(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
                 transformedType = TypeUtils.makeNullableAsSpecified(outType, false);
             }
             else {
@@ -1151,7 +1150,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             }
             else {
                 propertyType = semanticServices.getTypeTransformer().transformToType(anyMember.getType().getPsiType(), typeVariableResolverForPropertyInternals);
-                if (anyMember.getType().getPsiNotNullOwner().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
+                if (findAnnotation(anyMember.getType().getPsiNotNullOwner(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
                     propertyType = TypeUtils.makeNullableAsSpecified(propertyType, false);
                 }
                 else if (members.getter == null && members.setter == null && members.field.getMember().isFinal() && members.field.getMember().isStatic()) {
@@ -1420,7 +1419,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     private List<AnnotationDescriptor> resolveAnnotations(PsiModifierListOwner owner, @NotNull List<Runnable> tasks) {
-        PsiAnnotation[] psiAnnotations = owner.getModifierList().getAnnotations();
+        PsiAnnotation[] psiAnnotations = getAllAnnotations(owner);
         List<AnnotationDescriptor> r = Lists.newArrayListWithCapacity(psiAnnotations.length);
         for (PsiAnnotation psiAnnotation : psiAnnotations) {
             AnnotationDescriptor annotation = resolveAnnotation(psiAnnotation, tasks);
@@ -1549,7 +1548,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         if (method.getJetMethod().returnTypeNullable()) {
             return TypeUtils.makeNullableAsSpecified(transformedType, true);
         }
-        else if (method.getPsiMethod().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
+        else if (findAnnotation(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
             return TypeUtils.makeNullableAsSpecified(transformedType, false);
         }
         else {
@@ -1607,5 +1606,35 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             r.add(resolveClass(new FqName(innerPsiClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN));
         }
         return r;
+    }
+
+    @NotNull
+    public static PsiAnnotation[] getAllAnnotations(@NotNull PsiModifierListOwner owner) {
+        List<PsiAnnotation> result = new ArrayList<PsiAnnotation>();
+
+        PsiModifierList list = owner.getModifierList();
+        if (list != null) {
+            result.addAll(Arrays.asList(list.getAnnotations()));
+        }
+
+        PsiAnnotation[] externalAnnotations = ExternalAnnotationsProvider.getInstance(owner.getProject()).findExternalAnnotations(owner);
+        if (externalAnnotations != null) {
+            result.addAll(Arrays.asList(externalAnnotations));
+        }
+
+        return result.toArray(new PsiAnnotation[result.size()]);
+    }
+
+    @Nullable
+    public static PsiAnnotation findAnnotation(@NotNull PsiModifierListOwner owner, @NotNull String fqName) {
+        PsiModifierList list = owner.getModifierList();
+        if (list != null) {
+            PsiAnnotation found = list.findAnnotation(fqName);
+            if (found != null) {
+                return found;
+            }
+        }
+
+        return ExternalAnnotationsProvider.getInstance(owner.getProject()).findExternalAnnotation(owner, fqName);
     }
 }

@@ -33,6 +33,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
+import org.jetbrains.jet.lang.resolve.java.extAnnotations.CoreAnnotationsProvider;
+import org.jetbrains.jet.lang.resolve.java.extAnnotations.ExternalAnnotationsProvider;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.JetFileType;
 
@@ -47,14 +49,15 @@ import java.util.List;
  */
 public class JetCoreEnvironment extends JavaCoreEnvironment {
     private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
+    private final CoreAnnotationsProvider annotationsProvider;
 
     @NotNull
-    public static JetCoreEnvironment getCoreEnvironmentForJS(Disposable disposable) {
+    public static JetCoreEnvironment createCoreEnvironmentForJS(Disposable disposable) {
         return new JetCoreEnvironment(disposable, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.JS));
     }
 
     @NotNull
-    public static JetCoreEnvironment getCoreEnvironmentForJVM(Disposable disposable, @NotNull CompilerDependencies dependencies) {
+    public static JetCoreEnvironment createCoreEnvironmentForJVM(Disposable disposable, @NotNull CompilerDependencies dependencies) {
         return new JetCoreEnvironment(disposable, dependencies);
     }
 
@@ -86,16 +89,24 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
             addToClasspath(compilerDependencies.getJdkJar());
         }
 
-        if (compilerSpecialMode.includeJdkHeaders()) {
-            for (VirtualFile root : compilerDependencies.getJdkHeaderRoots()) {
-                addLibraryRoot(root);
+        annotationsProvider = new CoreAnnotationsProvider();
+        if (compilerSpecialMode.includeJdkAnnotations()) {
+            for (VirtualFile root : compilerDependencies.getJdkAnnotationsRoots()) {
+                annotationsProvider.addExternalAnnotationsRoot(root);
             }
         }
+
+        myProject.registerService(ExternalAnnotationsProvider.class, annotationsProvider);
+
         if (compilerSpecialMode.includeKotlinRuntime()) {
             addToClasspath(compilerDependencies.getRuntimeJar());
         }
 
         JetStandardLibrary.initialize(getProject());
+    }
+
+    public void addExternalAnnotationsRoot(VirtualFile root) {
+        annotationsProvider.addExternalAnnotationsRoot(root);
     }
 
     public MockApplication getApplication() {

@@ -80,7 +80,7 @@ abstract class ForTestCompileSomething {
         }
     }
 
-    private static void copyToJar(File root, JarOutputStream os) throws IOException {
+    static void copyToJar(File root, JarOutputStream os) throws IOException {
         Stack<Pair<String, File>> toCopy = new Stack<Pair<String, File>>();
         toCopy.add(new Pair<String, File>("", root));
         while (!toCopy.empty()) {

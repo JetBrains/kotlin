@@ -48,14 +48,17 @@ public class K2JVMCompilerArguments extends CompilerArguments {
     @Argument(value = "classpath", description = "classpath to use when compiling")
     public String classpath;
 
+    @Argument(value = "annotations", description = "paths to external annotations")
+    public String annotations;
+
     @Argument(value = "includeRuntime", description = "include Kotlin runtime in to resulting jar")
     public boolean includeRuntime;
 
     @Argument(value = "stdlib", description = "Path to the stdlib.jar")
     public String stdlib;
 
-    @Argument(value = "jdkHeaders", description = "Path to the kotlin-jdk-headers.jar")
-    public String jdkHeaders;
+    @Argument(value = "jdkAnnotations", description = "Path to the kotlin-jdk-annotations.jar")
+    public String jdkAnnotations;
 
     @Argument(value = "mode", description = "Special compiler modes: stubs or jdkHeaders")
     public String mode;

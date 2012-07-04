@@ -44,6 +44,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.JetMainDetector;
 import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jet.utils.Progress;
 
 import java.io.File;
@@ -77,6 +78,10 @@ public class KotlinToJVMBytecodeCompiler {
         CompileEnvironmentUtil.addSourcesFromModuleToEnvironment(configuration.getEnvironment(), moduleBuilder, directory);
         for (String classpathRoot : moduleBuilder.getClasspathRoots()) {
             configuration.getEnvironment().addToClasspath(new File(classpathRoot));
+        }
+
+        for (String annotationsRoot : moduleBuilder.getAnnotationsRoots()) {
+            configuration.getEnvironment().addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(new File(annotationsRoot)));
         }
 
         GenerationState generationState = analyzeAndGenerate(configuration);
