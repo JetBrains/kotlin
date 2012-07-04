@@ -93,7 +93,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
             arguments.freeArgs.isEmpty() &&
             (argumentsSourceDirs == null || argumentsSourceDirs.size() == 0)) {
 
-            ReplFromTerminal.run(rootDisposable, dependencies, getClasspath(arguments));
+            ReplFromTerminal.run(rootDisposable, dependencies, createCompilerConfiguration(arguments));
             return ExitCode.OK;
         }
 

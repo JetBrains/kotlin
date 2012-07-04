@@ -33,10 +33,12 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.messages.MessageCollectorToString;
+import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassBuilderFactories;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorImpl;
@@ -65,6 +67,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
@@ -91,12 +94,10 @@ public class ReplInterpreter {
     @NotNull
     private final ModuleDescriptor module;
 
-    public ReplInterpreter(@NotNull Disposable disposable, @NotNull CompilerDependencies compilerDependencies, @NotNull List<File> extraClasspath) {
-        // TODO: add extraClasspath to jetCoreEnvironment
+    public ReplInterpreter(@NotNull Disposable disposable, @NotNull CompilerDependencies compilerDependencies,
+            @NotNull CompilerConfiguration configuration) {
         jetCoreEnvironment = new JetCoreEnvironment(disposable, compilerDependencies);
-        for (File pathElement : extraClasspath) {
-            jetCoreEnvironment.addToClasspath(pathElement);
-        }
+        jetCoreEnvironment.configure(configuration);
         Project project = jetCoreEnvironment.getProject();
         trace = new BindingTraceContext();
         module = new ModuleDescriptor(Name.special("<repl>"));
@@ -110,16 +111,13 @@ public class ReplInterpreter {
 
         List<URL> classpath = Lists.newArrayList();
 
-        try {
-            if (compilerDependencies.getRuntimeJar() != null) {
-                classpath.add(compilerDependencies.getRuntimeJar().toURI().toURL());
+        for (File file : configuration.getUserData(JVMConfigurationKeys.CLASSPATH_KEY)) {
+            try {
+                classpath.add(file.toURI().toURL());
             }
-
-            for (File extra : extraClasspath) {
-                classpath.add(extra.toURI().toURL());
+            catch (MalformedURLException e) {
+                throw ExceptionUtils.rethrow(e);
             }
-        } catch (Exception e) {
-            throw ExceptionUtils.rethrow(e);
         }
 
         classLoader = new ReplClassLoader(new URLClassLoader(classpath.toArray(new URL[0])));

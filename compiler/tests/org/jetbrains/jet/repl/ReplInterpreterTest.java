@@ -19,9 +19,12 @@ package org.jetbrains.jet.repl;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
+import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.repl.ReplInterpreter;
+import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.junit.After;
@@ -29,7 +32,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.Collections;
 
 /**
  * @author Stepan Koltsov
@@ -53,7 +55,12 @@ public class ReplInterpreterTest {
 
     private void testFile(@NotNull String relativePath) {
         CompilerDependencies compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.JDK_HEADERS, false);
-        ReplInterpreter repl = new ReplInterpreter(disposable, compilerDependencies, Collections.singletonList(new File("out/production/runtime")));
+        CompilerConfiguration configuration =
+                CompileCompilerDependenciesTest.compilerConfigurationForTests(CompilerSpecialMode.JDK_HEADERS, false);
+        File[] classpath = configuration.getUserData(JVMConfigurationKeys.CLASSPATH_KEY);
+        assert classpath != null;
+        configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, ArrayUtil.append(classpath, new File("out/production/runtime")));
+        ReplInterpreter repl = new ReplInterpreter(disposable, compilerDependencies, configuration);
 
         ReplSessionTestFile file = ReplSessionTestFile.load(new File("compiler/testData/repl/" + relativePath));
         for (ReplSessionTestFile.OneLine t : file.getLines()) {
