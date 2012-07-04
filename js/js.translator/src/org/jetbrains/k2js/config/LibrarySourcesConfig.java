@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.config;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
@@ -40,6 +41,8 @@ import java.util.zip.ZipFile;
 public class LibrarySourcesConfig extends Config {
     public static final Key<String> EXTERNAL_MODULE_NAME = new Key<String>("externalModule");
     public static final String UNKNOWN_EXTERNAL_MODULE_NAME = "<unknown>";
+
+    private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.asJava.JetLightClass");
 
     @NotNull
     private final List<String> files;
@@ -80,7 +83,7 @@ public class LibrarySourcesConfig extends Config {
                 }
             }
             catch (IOException e) {
-                throw new RuntimeException(e);
+                LOG.error(e);
             }
         }
 
