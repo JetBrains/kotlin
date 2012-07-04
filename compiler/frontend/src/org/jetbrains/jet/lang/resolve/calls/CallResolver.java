@@ -758,7 +758,8 @@ public class CallResolver {
                     result = OTHER_ERROR;
                 }
             }
-            if (safeAccess && (receiverParameter.getType().isNullable() || !receiverArgumentType.isNullable())) {
+            if (safeAccess && (!receiverArgumentType.isNullable() ||
+                (receiverParameter.getType().isNullable() && JetStandardClasses.getUnitType().equals(candidateCall.getCandidateDescriptor().getReturnType())))) {
                 context.tracing.unnecessarySafeCall(context.candidateCall.getTrace(), receiverArgumentType);
             }
         }

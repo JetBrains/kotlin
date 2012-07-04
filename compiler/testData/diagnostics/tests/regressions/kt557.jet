@@ -5,5 +5,5 @@ fun Array<String>.length() : Int {
 }
 
 fun test(array : Array<String?>?) {
-    array<!UNNECESSARY_SAFE_CALL!>?.<!>sure<Array<String?>>()<!UNSAFE_CALL!>.<!>length()
+    array?.sure<Array<String?>>()<!UNSAFE_CALL!>.<!>length()
 }
