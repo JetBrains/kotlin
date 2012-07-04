@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -32,10 +33,15 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.TypeUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author abreslav
@@ -43,6 +49,12 @@ import java.util.*;
 public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDescriptorFromSource {
 
     private static final Predicate<Object> ONLY_ENUM_ENTIRES = Predicates.instanceOf(JetEnumEntry.class);
+    private static final Predicate<JetType> VALID_SUPERTYPE = new Predicate<JetType>() {
+        @Override
+        public boolean apply(JetType type) {
+            return !ErrorUtils.isErrorType(type) && (TypeUtils.getClassDescriptor(type) != null);
+        }
+    };
     private final ResolveSession resolveSession;
     private final JetClassLikeInfo originalClassInfo;
     private final ClassMemberDeclarationProvider declarationProvider;
@@ -285,10 +297,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                         this.supertypes = Collections.emptyList();
                     }
                     else {
-                        this.supertypes = resolveSession.getInjector().getDescriptorResolver()
+                        List<JetType> allSupertypes = resolveSession.getInjector().getDescriptorResolver()
                                 .resolveSupertypes(getScopeForClassHeaderResolution(),
                                                    classOrObject,
                                                    resolveSession.getTrace());
+                        this.supertypes = Collections2.filter(allSupertypes, VALID_SUPERTYPE);
                     }
                 }
             }
