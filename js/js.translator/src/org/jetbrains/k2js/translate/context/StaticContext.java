@@ -189,14 +189,7 @@ public final class StaticContext {
                         return null;
                     }
 
-                    String name;
-                    if (DescriptorUtils.isRootNamespace((NamespaceDescriptor) descriptor)) {
-                        name = Namer.getRootNamespaceName();
-                    }
-                    else {
-                        name = descriptor.getName().getName();
-                    }
-
+                    String name = Namer.generateNamespaceName(descriptor);
                     return getRootScope().declareUnobfuscatableName(name);
                 }
             };

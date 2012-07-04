@@ -19,6 +19,9 @@ package org.jetbrains.k2js.translate.context;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 
@@ -207,5 +210,15 @@ public final class Namer {
     @NotNull
         /*package*/ JsScope getKotlinScope() {
         return kotlinScope;
+    }
+
+    @NotNull
+    static String generateNamespaceName(DeclarationDescriptor descriptor) {
+        if (DescriptorUtils.isRootNamespace((NamespaceDescriptor) descriptor)) {
+            return getRootNamespaceName();
+        }
+        else {
+            return descriptor.getName().getName();
+        }
     }
 }
