@@ -139,7 +139,7 @@ public final class K2JSCompiler implements TranslatingCompiler {
         return ArrayUtil.toStringArray(args);
     }
 
-    // we cannot use OrderEnumerator because it has critical bug — try https://gist.github.com/2953261, processor will never be called for module dependency
+    // we cannot use OrderEnumerator because it has critical bug - try https://gist.github.com/2953261, processor will never be called for module dependency
     // we don't use context.getCompileScope().getAffectedModules() because we want to know about linkage type (well, we ignore scope right now, but in future...)
     private static void collectModuleDependencies(Module dependentModule, Set<Module> modules) {
         for (OrderEntry entry : ModuleRootManager.getInstance(dependentModule).getOrderEntries()) {
