@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -40,10 +41,17 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
     private final Map<FqName, PackageMemberDeclarationProvider> packageDeclarationProviders = Maps.newHashMap();
     //private final Map<JetClassOrObject, ClassMemberDeclarationProvider> classMemberDeclarationProviders = Maps.newHashMap();
 
+    private final Predicate<FqName> isPackageDeclaredExternally;
+
     private boolean indexed = false;
 
     public FileBasedDeclarationProviderFactory(@NotNull Collection<JetFile> files) {
+        this(files, Predicates.<FqName>alwaysFalse());
+    }
+
+    public FileBasedDeclarationProviderFactory(@NotNull Collection<JetFile> files, Predicate<FqName> isPackageDeclaredExternally) {
         this.allFiles = files;
+        this.isPackageDeclaredExternally = isPackageDeclaredExternally;
     }
 
     private void createIndex() {
@@ -69,9 +77,13 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
         }
     }
 
-    /*package*/ boolean isPackageDeclared(@NotNull FqName packageFqName) {
+    /*package*/ boolean isPackageDeclaredExplicitly(@NotNull FqName packageFqName) {
         createIndex();
         return declaredPackages.contains(packageFqName);
+    }
+
+    /*package*/ boolean isPackageDeclared(@NotNull FqName packageFqName) {
+        return isPackageDeclaredExplicitly(packageFqName) || isPackageDeclaredExternally.apply(packageFqName);
     }
 
     /*package*/ Collection<FqName> getAllDeclaredSubPackagesOf(@NotNull final FqName parent) {
@@ -92,7 +104,12 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
             return declarationProvider;
         }
 
-        if (!isPackageDeclared(packageFqName)) return null;
+        if (!isPackageDeclaredExplicitly(packageFqName)) {
+            if (isPackageDeclaredExternally.apply(packageFqName)) {
+                return EmptyPackageMemberDeclarationProvider.INSTANCE;
+            }
+            return null;
+        }
 
         FileBasedPackageMemberDeclarationProvider provider =
                 new FileBasedPackageMemberDeclarationProvider(packageFqName, this, filesByPackage.get(packageFqName));
