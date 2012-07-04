@@ -25,36 +25,20 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
-import org.jetbrains.jet.lang.DefaultModuleConfiguration;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.k2js.config.Config;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isRootNamespace;
 
 /**
  * @author Pavel Talanov
  */
 public final class AnalyzerFacadeForJS {
-
-    @NotNull
-    public static final List<ImportPath> DEFAULT_IMPORT_PATHS = Arrays.asList(new ImportPath("js.*"), new ImportPath("java.lang.*"),
-                                                               new ImportPath(JetStandardClasses.STANDARD_CLASSES_FQNAME, true),
-                                                               new ImportPath("kotlin.*"));
 
     private AnalyzerFacadeForJS() {
     }
@@ -147,49 +131,5 @@ public final class AnalyzerFacadeForJS {
                 return notLibFile;
             }
         };
-    }
-
-    private static final class JsConfiguration implements ModuleConfiguration {
-
-        @NotNull
-        private final Project project;
-        @Nullable
-        private final BindingContext contextToBaseOn;
-
-        private JsConfiguration(@NotNull Project project, @Nullable BindingContext contextToBaseOn) {
-            this.project = project;
-            this.contextToBaseOn = contextToBaseOn;
-        }
-
-        @Override
-        public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
-            for (ImportPath path : DEFAULT_IMPORT_PATHS) {
-                directives.add(JetPsiFactory.createImportDirective(project, path));
-            }
-        }
-
-        @Override
-        public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor,
-                @NotNull WritableScope namespaceMemberScope) {
-            DefaultModuleConfiguration.createStandardConfiguration(project, true)
-                    .extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
-            if (contextToBaseOn == null) {
-                return;
-            }
-            if (isNamespaceImportedByDefault(namespaceDescriptor) || isRootNamespace(namespaceDescriptor)) {
-                FqName descriptorName = DescriptorUtils.getFQName(namespaceDescriptor).toSafe();
-                NamespaceDescriptor alreadyAnalyzedNamespace = contextToBaseOn.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, descriptorName);
-                namespaceMemberScope.importScope(alreadyAnalyzedNamespace.getMemberScope());
-            }
-        }
-
-        private static boolean isNamespaceImportedByDefault(@NotNull NamespaceDescriptor namespaceDescriptor) {
-            for (ImportPath path : DEFAULT_IMPORT_PATHS) {
-                if (path.fqnPart().equals(DescriptorUtils.getFQName(namespaceDescriptor).toSafe())) {
-                    return true;
-                }
-            }
-            return false;
-        }
     }
 }
