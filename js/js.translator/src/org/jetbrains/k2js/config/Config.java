@@ -77,9 +77,7 @@ public abstract class Config {
     );
 
     @NotNull
-    public static final List<String> LIB_FILES_WITH_CODE = Arrays.asList(
-            "/stdlib/JUMaps.kt"
-    );
+    public static final List<String> LIB_FILES_WITH_CODE = Lists.newArrayList();
 
     @NotNull
     public static final List<String> LIB_FILE_NAMES = Lists.newArrayList();
@@ -94,7 +92,7 @@ public abstract class Config {
     @NotNull
     public static final List<String> LIB_FILE_NAMES_DEPENDENT_ON_STDLIB = Arrays.asList(
             "/stdlib/jutil.kt",
-            "/stdlib/JUMaps.kt",
+            //"/stdlib/JUMaps.kt",
             "/stdlib/test.kt",
             "/core/stringDefs.kt",
             "/core/strings.kt"

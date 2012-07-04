@@ -38,7 +38,6 @@ import org.jetbrains.k2js.test.config.TestConfig;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -58,9 +57,21 @@ public final class TranslationUtils {
     @Nullable
     private static BindingContext libraryContext = null;
 
+    @Nullable
+    private static List<JetFile> libFiles = null;
+
     @NotNull
-    public static BindingContext getLibraryContext(@NotNull Project project, @NotNull List<JetFile> allLibFiles) {
+    private static List<JetFile> getAllLibFiles(@NotNull Project project) {
+        if (libFiles == null) {
+            libFiles = initLibFiles(project);
+        }
+        return libFiles;
+    }
+
+    @NotNull
+    public static BindingContext getLibraryContext(@NotNull Project project) {
         if (libraryContext == null) {
+            List<JetFile> allLibFiles = getAllLibFiles(project);
             Predicate<PsiFile> filesWithCode = new Predicate<PsiFile>() {
                 @Override
                 public boolean apply(@javax.annotation.Nullable PsiFile file) {
@@ -73,17 +84,6 @@ public final class TranslationUtils {
             AnalyzerFacadeForJS.checkForErrors(allLibFiles, libraryContext);
         }
         return libraryContext;
-    }
-
-    @NotNull
-    public static List<JetFile> getFilesWithCode(@NotNull List<JetFile> allLibFiles) {
-        List<JetFile> result = Lists.newArrayList();
-        for (JetFile file : allLibFiles) {
-            if (isFileWithCode(file)) {
-                result.add(file);
-            }
-        }
-        return result;
     }
 
     private static boolean isFileWithCode(@NotNull JetFile file) {
@@ -99,8 +99,8 @@ public final class TranslationUtils {
     public static Config getConfig(@NotNull Project project, @NotNull EcmaVersion version) {
         Config config = testConfigs.get(version);
         if (config == null) {
-            List<JetFile> allLibFiles = initLibFiles(project);
-            config = new TestConfig(project, version, getFilesWithCode(allLibFiles), getLibraryContext(project, allLibFiles));
+            BindingContext preanalyzedContext = getLibraryContext(project);
+            config = new TestConfig(project, version, getLibFilesWithCode(getAllLibFiles(project)), preanalyzedContext);
             testConfigs.put(version, config);
         }
         return config;
@@ -127,9 +127,25 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static List<JetFile> initLibFiles(@NotNull Project project) {
-        List<JetFile> libFiles = new ArrayList<JetFile>();
-        for (String libFileName : Config.LIB_FILE_NAMES) {
+    private static List<JetFile> initLibFiles(@NotNull Project project) {
+        return getLibFiles(project, Config.LIB_FILE_NAMES);
+    }
+
+    @NotNull
+    private static List<JetFile> getLibFilesWithCode(@NotNull List<JetFile> allFiles) {
+        List<JetFile> result = Lists.newArrayList();
+        for (JetFile file : allFiles) {
+            if (isFileWithCode(file)) {
+                result.add(file);
+            }
+        }
+        return result;
+    }
+
+    @NotNull
+    private static List<JetFile> getLibFiles(@NotNull Project project, @NotNull List<String> list) {
+        List<JetFile> libFiles = Lists.newArrayList();
+        for (String libFileName : list) {
             JetFile file = null;
             try {
                 @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
