@@ -18,7 +18,6 @@ package org.jetbrains.k2js.translate.general;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
@@ -28,8 +27,10 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 
+import java.util.Collection;
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getNullableDescriptorForFunction;
 
 /**
@@ -65,8 +66,8 @@ public class JetTestFunctionDetector {
         return false;
     }
 
-    @Nullable
-    public static List<JetNamedFunction> findTestFunctions(@NotNull BindingContext bindingContext, @NotNull List<JetFile> files) {
+    @NotNull
+    private static List<JetNamedFunction> findTestFunctions(@NotNull BindingContext bindingContext, @NotNull Collection<JetFile> files) {
         List<JetNamedFunction> answer = Lists.newArrayList();
         for (JetFile file : files) {
             answer.addAll(getTestFunctions(bindingContext, file.getDeclarations()));
@@ -74,7 +75,16 @@ public class JetTestFunctionDetector {
         return answer;
     }
 
-    @Nullable
+    @NotNull
+    public static List<FunctionDescriptor> getTestFunctionDescriptors(@NotNull BindingContext bindingContext, @NotNull Collection<JetFile> files) {
+        List<FunctionDescriptor> answer = Lists.newArrayList();
+        for (JetNamedFunction function : findTestFunctions(bindingContext, files)) {
+            answer.add(getFunctionDescriptor(bindingContext, function));
+        }
+        return answer;
+    }
+
+    @NotNull
     private static List<JetNamedFunction> getTestFunctions(@NotNull BindingContext bindingContext,
             @NotNull List<JetDeclaration> declarations) {
         List<JetNamedFunction> answer = Lists.newArrayList();

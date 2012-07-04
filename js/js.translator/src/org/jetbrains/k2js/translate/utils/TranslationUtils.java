@@ -255,4 +255,11 @@ public final class TranslationUtils {
     public static boolean isNullLiteral(@NotNull TranslationContext context, @NotNull JsExpression expression) {
         return expression.equals(context.program().getNullLiteral());
     }
+
+    public static void defineModule(@NotNull TranslationContext context, @NotNull List<JsStatement> statements,
+            String moduleId) {
+        statements.add(AstUtil.newInvocation(context.namer().kotlin("defineModule"),
+                                             context.program().getStringLiteral(moduleId),
+                                             context.jsScope().declareName("_").makeRef()).makeStmt());
+    }
 }
