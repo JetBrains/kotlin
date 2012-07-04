@@ -109,13 +109,12 @@ public final class TranslationUtils {
     public static void translateFiles(@NotNull Project project, @NotNull List<String> inputFiles,
             @NotNull String outputFile,
             @NotNull MainCallParameters mainCallParameters,
-            @NotNull EcmaVersion version,
-            @Nullable List<String> rawStatements) throws Exception {
+            @NotNull EcmaVersion version) throws Exception {
         List<JetFile> psiFiles = createPsiFileList(inputFiles, project);
-        JsProgram program = getTranslator(project, version).generateProgram(psiFiles, mainCallParameters, rawStatements);
+        JsProgram program = getTranslator(project, version).generateProgram(psiFiles, mainCallParameters);
         FileWriter writer = new FileWriter(new File(outputFile));
         try {
-            writer.write(CodeGenerator.generateProgramToString(program, null));
+            writer.write(CodeGenerator.generateProgramToString(program));
         }
         finally {
             writer.close();

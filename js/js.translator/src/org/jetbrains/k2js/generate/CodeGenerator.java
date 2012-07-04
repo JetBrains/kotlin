@@ -19,43 +19,21 @@ package org.jetbrains.k2js.generate;
 import com.google.dart.compiler.backend.js.JsSourceGenerationVisitor;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.google.dart.compiler.util.DefaultTextOutput;
-import com.google.dart.compiler.util.TextOutput;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * @author Pavel.Talanov
  */
 public final class CodeGenerator {
 
-    @NotNull
-    private final TextOutput output = new DefaultTextOutput(false);
-
     private CodeGenerator() {
     }
 
     @NotNull
-    public static String generateProgramToString(@NotNull JsProgram program, @Nullable List<String> rawStatements) {
-        return (new CodeGenerator()).generateToString(program, rawStatements);
-    }
-
-    @NotNull
-    private String generateToString(@NotNull JsProgram program, List<String> rawStatements) {
-        generateCode(program);
-        if (rawStatements != null) {
-            for (String statement : rawStatements) {
-                output.print(statement);
-                output.newline();
-            }
-        }
-        return output.toString();
-    }
-
-    private void generateCode(@NotNull JsProgram program) {
-        JsSourceGenerationVisitor sourceGenerator =
-                new JsSourceGenerationVisitor(output);
+    public static String generateProgramToString(@NotNull JsProgram program) {
+        DefaultTextOutput output = new DefaultTextOutput(false);
+        JsSourceGenerationVisitor sourceGenerator = new JsSourceGenerationVisitor(output);
         program.traverse(sourceGenerator, null);
+        return output.toString();
     }
 }

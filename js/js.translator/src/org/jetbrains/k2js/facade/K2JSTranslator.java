@@ -16,11 +16,9 @@
 
 package org.jetbrains.k2js.facade;
 
-import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -71,33 +69,30 @@ public final class K2JSTranslator {
     @NotNull
     public String translateStringWithCallToMain(@NotNull String programText, @NotNull String argumentsString) throws TranslationException {
         JetFile file = JetFileUtils.createPsiFile("test", programText, getProject());
-        String programCode = generateProgramCode(file, MainCallParameters.mainWithArguments(parseString(argumentsString)), null) + "\n";
+        String programCode = generateProgramCode(file, MainCallParameters.mainWithArguments(parseString(argumentsString))) + "\n";
         return FLUSH_SYSTEM_OUT + programCode + GET_SYSTEM_OUT;
     }
 
     @NotNull
-    public String generateProgramCode(@NotNull JetFile file, @NotNull MainCallParameters mainCallParameters,
-            @Nullable List<String> rawStatements) throws TranslationException {
-        JsProgram program = generateProgram(Arrays.asList(file), mainCallParameters, rawStatements);
-        return generateProgramToString(program, rawStatements);
+    public String generateProgramCode(@NotNull JetFile file, @NotNull MainCallParameters mainCallParameters) throws TranslationException {
+        JsProgram program = generateProgram(Arrays.asList(file), mainCallParameters);
+        return generateProgramToString(program);
     }
 
     @NotNull
     public String generateProgramCode(@NotNull List<JetFile> files, @NotNull MainCallParameters mainCallParameters)
             throws TranslationException {
-        List<String> rawStatements = Lists.newArrayList();
-        JsProgram program = generateProgram(files, mainCallParameters, rawStatements);
-        return generateProgramToString(program, rawStatements);
+        JsProgram program = generateProgram(files, mainCallParameters);
+        return generateProgramToString(program);
     }
 
     @NotNull
     public JsProgram generateProgram(@NotNull List<JetFile> filesToTranslate,
-            @NotNull MainCallParameters mainCallParameters,
-            @Nullable List<String> rawStatements)
+            @NotNull MainCallParameters mainCallParameters)
             throws TranslationException {
         JetStandardLibrary.initialize(config.getProject());
         BindingContext bindingContext = AnalyzerFacadeForJS.analyzeFilesAndCheckErrors(filesToTranslate, config);
-        return Translation.generateAst(bindingContext, withJsLibAdded(filesToTranslate, config), mainCallParameters, config, rawStatements);
+        return Translation.generateAst(bindingContext, withJsLibAdded(filesToTranslate, config), mainCallParameters, config);
     }
 
     @NotNull
