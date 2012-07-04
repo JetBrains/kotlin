@@ -197,7 +197,7 @@ public class NamespaceComparator {
         @NotNull
         private String normalize(String s) {
             return s.replaceFirst(
-                    "^ *(private|final|abstract|open|override|fun|val|var|/\\*.*?\\*/|((?!<init>)<.*?>)| )*",
+                    "^ *(private|protected|public|internal|final|abstract|open|override|fun|val|var|/\\*.*?\\*/|((?!<init>)<.*?>)| )*",
                     "")
                + s;
         }
