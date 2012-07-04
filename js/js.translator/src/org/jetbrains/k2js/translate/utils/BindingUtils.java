@@ -57,7 +57,7 @@ public final class BindingUtils {
         DeclarationDescriptor descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, expression);
         assert descriptor != null;
         assert descriptorClass.isInstance(descriptor)
-                : expression.toString() + " expected to have of type" + descriptorClass.toString();
+                : expression.toString() + " expected to have of type" + descriptorClass.toString() + DiagnosticUtils.atLocation(expression) + ".";
         //noinspection unchecked
         return (D) descriptor;
     }
@@ -73,7 +73,7 @@ public final class BindingUtils {
             @NotNull JetFile declaration) {
         NamespaceDescriptor namespaceDescriptor =
                 context.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, JetPsiUtil.getFQName(declaration));
-        assert namespaceDescriptor != null : "File should have a namespace descriptor.";
+        assert namespaceDescriptor != null : "File should have a namespace descriptor"  + DiagnosticUtils.atLocation(declaration) + ".";
         return namespaceDescriptor;
     }
 
@@ -103,7 +103,8 @@ public final class BindingUtils {
     public static JetFunction getFunctionForDescriptor(@NotNull BindingContext context,
             @NotNull SimpleFunctionDescriptor descriptor) {
         PsiElement result = BindingContextUtils.callableDescriptorToDeclaration(context, descriptor);
-        assert result instanceof JetFunction : "SimpleFunctionDescriptor should have declaration of type JetFunction";
+        assert result instanceof JetFunction : "SimpleFunctionDescriptor should have declaration of type JetFunction at " + DiagnosticUtils.atLocation(
+                context, descriptor) + ".";
         return (JetFunction) result;
     }
 
@@ -131,7 +132,8 @@ public final class BindingUtils {
             //TODO: never get there
             return null;
         }
-        assert result instanceof JetDeclaration : "Descriptor should correspond to an element.";
+        assert result instanceof JetDeclaration : "Descriptor should correspond to an element at " + DiagnosticUtils.atLocation(null,
+                                                                                                                                descriptor) + ".";
         return (JetDeclaration) result;
     }
 
@@ -139,7 +141,8 @@ public final class BindingUtils {
     private static JetParameter getParameterForDescriptor(@NotNull BindingContext context,
             @NotNull ValueParameterDescriptor descriptor) {
         PsiElement result = BindingContextUtils.descriptorToDeclaration(context, descriptor);
-        assert result instanceof JetParameter : "ValueParameterDescriptor should have corresponding JetParameter.";
+        assert result instanceof JetParameter : "ValueParameterDescriptor should have corresponding JetParameter at " + DiagnosticUtils.atLocation(
+                context, descriptor) + ".";
         return (JetParameter) result;
     }
 
@@ -151,7 +154,7 @@ public final class BindingUtils {
 
     public static boolean isStatement(@NotNull BindingContext context, @NotNull JetExpression expression) {
         Boolean isStatement = context.get(BindingContext.STATEMENT, expression);
-        assert isStatement != null : "Invalid behaviour of get(BindingContext.STATEMENT)";
+        assert isStatement != null : "Invalid behaviour of get(BindingContext.STATEMENT) at " + DiagnosticUtils.atLocation(expression) + ".";
         return isStatement;
     }
 
@@ -159,7 +162,7 @@ public final class BindingUtils {
     public static JetType getTypeByReference(@NotNull BindingContext context,
             @NotNull JetTypeReference typeReference) {
         JetType result = context.get(BindingContext.TYPE, typeReference);
-        assert result != null : "TypeReference should reference a type";
+        assert result != null : "TypeReference should reference a type at " + DiagnosticUtils.atLocation(typeReference) + ".";
         return result;
     }
 
@@ -208,7 +211,7 @@ public final class BindingUtils {
     public static ResolvedCall<?> getResolvedCall(@NotNull BindingContext context,
             @NotNull JetExpression expression) {
         ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression);
-        assert resolvedCall != null : "Must resolve to a call.";
+        assert resolvedCall != null : "Must resolve to a call at " + DiagnosticUtils.atLocation(expression) + ".";
         return resolvedCall;
     }
 
@@ -216,7 +219,7 @@ public final class BindingUtils {
     public static ResolvedCall<?> getResolvedCallForProperty(@NotNull BindingContext context,
             @NotNull JetExpression expression) {
         ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression);
-        assert resolvedCall != null : "Must resolve to a call.";
+        assert resolvedCall != null : "Must resolve to a call at " + DiagnosticUtils.atLocation(expression) + ".";
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             return ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall();
         }
@@ -232,7 +235,7 @@ public final class BindingUtils {
 
     public static boolean isVariableReassignment(@NotNull BindingContext context, @NotNull JetExpression expression) {
         Boolean result = context.get(BindingContext.VARIABLE_REASSIGNMENT, expression);
-        assert result != null;
+        assert result != null : "at " + DiagnosticUtils.atLocation(expression) + ".";
         return result;
     }
 
@@ -246,7 +249,7 @@ public final class BindingUtils {
         if (descriptorForReferenceExpression == null) return null;
 
         assert descriptorForReferenceExpression instanceof FunctionDescriptor
-                : "Operation should resolve to function descriptor.";
+                : "Operation should resolve to function descriptor at " + DiagnosticUtils.atLocation(expression.getOperationReference()) + ".";
         return (FunctionDescriptor) descriptorForReferenceExpression;
     }
 
@@ -254,7 +257,8 @@ public final class BindingUtils {
     public static DeclarationDescriptor getDescriptorForElement(@NotNull BindingContext context,
             @NotNull PsiElement element) {
         DeclarationDescriptor descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
-        assert descriptor != null : element + " doesn't have a descriptor.";
+
+        assert descriptor != null : element + " doesn't have a descriptor at " + DiagnosticUtils.atLocation(element) + ".";
         return descriptor;
     }
 
@@ -270,17 +274,18 @@ public final class BindingUtils {
     @NotNull
     public static JetExpression getDefaultArgument(@NotNull BindingContext context,
             @NotNull ValueParameterDescriptor parameterDescriptor) {
-        ValueParameterDescriptor descriptorWhichDeclaresDefaultValue = getOriginalDescriptorWhichDeclaresDefaultValue(parameterDescriptor);
+        ValueParameterDescriptor descriptorWhichDeclaresDefaultValue = getOriginalDescriptorWhichDeclaresDefaultValue(context, parameterDescriptor);
         JetParameter psiParameter = getParameterForDescriptor(context, descriptorWhichDeclaresDefaultValue);
         JetExpression defaultValue = psiParameter.getDefaultValue();
-        assert defaultValue != null : "No default value found in PSI.";
+        assert defaultValue != null : "No default value found in PSI at " + DiagnosticUtils.atLocation(context, parameterDescriptor) + ".";
         return defaultValue;
     }
 
     private static ValueParameterDescriptor getOriginalDescriptorWhichDeclaresDefaultValue(
-            @NotNull ValueParameterDescriptor parameterDescriptor) {
+            BindingContext context, @NotNull ValueParameterDescriptor parameterDescriptor) {
         ValueParameterDescriptor result = parameterDescriptor;
-        assert result.hasDefaultValue() : "Unsupplied parameter must have default value.";
+        assert result.hasDefaultValue() : "Unsupplied parameter must have default value at " + DiagnosticUtils.atLocation(context,
+                                                                                                                          parameterDescriptor) + ".";
         while (!result.declaresDefaultValue()) {
             result = result.getOverriddenDescriptors().iterator().next();
         }
@@ -291,7 +296,7 @@ public final class BindingUtils {
     public static FunctionDescriptor getIteratorFunction(@NotNull BindingContext context,
             @NotNull JetExpression rangeExpression) {
         FunctionDescriptor functionDescriptor = context.get(BindingContext.LOOP_RANGE_ITERATOR, rangeExpression);
-        assert functionDescriptor != null : "Range expression must have a descriptor for iterator function.";
+        assert functionDescriptor != null : "Range expression must have a descriptor for iterator function at " + DiagnosticUtils.atLocation(rangeExpression) + ".";
         return functionDescriptor;
     }
 
@@ -299,7 +304,7 @@ public final class BindingUtils {
     public static FunctionDescriptor getNextFunction(@NotNull BindingContext context,
             @NotNull JetExpression rangeExpression) {
         FunctionDescriptor functionDescriptor = context.get(BindingContext.LOOP_RANGE_NEXT, rangeExpression);
-        assert functionDescriptor != null : "Range expression must have a descriptor for next function.";
+        assert functionDescriptor != null : "Range expression must have a descriptor for next function at " + DiagnosticUtils.atLocation(rangeExpression) + ".";
         return functionDescriptor;
     }
 
@@ -307,7 +312,7 @@ public final class BindingUtils {
     public static CallableDescriptor getHasNextCallable(@NotNull BindingContext context,
             @NotNull JetExpression rangeExpression) {
         CallableDescriptor hasNextDescriptor = context.get(BindingContext.LOOP_RANGE_HAS_NEXT, rangeExpression);
-        assert hasNextDescriptor != null : "Range expression must have a descriptor for hasNext function or property.";
+        assert hasNextDescriptor != null : "Range expression must have a descriptor for hasNext function or property at " + DiagnosticUtils.atLocation(rangeExpression) + ".";
         return hasNextDescriptor;
     }
 
@@ -315,7 +320,7 @@ public final class BindingUtils {
     public static PropertyDescriptor getPropertyDescriptorForObjectDeclaration(@NotNull BindingContext context,
             @NotNull JetObjectDeclarationName name) {
         PropertyDescriptor propertyDescriptor = context.get(BindingContext.OBJECT_DECLARATION, name);
-        assert propertyDescriptor != null;
+        assert propertyDescriptor != null : "at " + DiagnosticUtils.atLocation(name) + ".";
         return propertyDescriptor;
     }
 
@@ -337,7 +342,7 @@ public final class BindingUtils {
     public static JetType getTypeForExpression(@NotNull BindingContext context,
             @NotNull JetExpression expression) {
         JetType type = context.get(BindingContext.EXPRESSION_TYPE, expression);
-        assert type != null;
+        assert type != null : "at "  + DiagnosticUtils.atLocation(expression) + ".";
         return type;
     }
 
@@ -348,7 +353,7 @@ public final class BindingUtils {
         ResolvedCall<FunctionDescriptor> resolvedCall = context.get(isGet
                                                                     ? INDEXED_LVALUE_GET
                                                                     : INDEXED_LVALUE_SET, arrayAccessExpression);
-        assert resolvedCall != null;
+        assert resolvedCall != null : "at "  + DiagnosticUtils.atLocation(arrayAccessExpression) + ".";
         return resolvedCall;
     }
 
@@ -356,7 +361,7 @@ public final class BindingUtils {
             @NotNull JetClassOrObject declaration) {
         ConstructorDescriptor primaryConstructor =
                 ((ClassDescriptorFromSource) getClassDescriptor(bindingContext, declaration)).getUnsubstitutedPrimaryConstructor();
-        assert primaryConstructor != null : "Traits do not have initialize methods.";
+        assert primaryConstructor != null : "Traits do not have initialize methods at " + DiagnosticUtils.atLocation(declaration) + ".";
         return primaryConstructor;
     }
 
