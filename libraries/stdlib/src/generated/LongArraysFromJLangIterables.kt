@@ -184,27 +184,21 @@ public inline fun LongArray.reduceRight(operation: (Long, Long) -> Long): Long =
  */
 public inline fun <K> LongArray.groupBy(toKey: (Long) -> K) : Map<K, List<Long>> = groupByTo<K>(HashMap<K, List<Long>>(), toKey)
 
-/**
- * Groups the elements in the collection into the given [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
- *
- * @includeFunctionBody ../../test/CollectionTest.kt groupBy
- */
 public inline fun <K> LongArray.groupByTo(result: Map<K, List<Long>>, toKey: (Long) -> K) : Map<K, List<Long>> {
     for (element in this) {
         val key = toKey(element)
         val list = result.getOrPut(key) { ArrayList<Long>() }
         list.add(element)
+
+        val some = key
+        val more = some
+        val onceMore = more
+        val again = println(more)
     }
     return result
 }
 
 /**
- * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
- *
- * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
- * a special *truncated* separator (which defaults to "..."
- *
- * @includeFunctionBody ../../test/CollectionTest.kt makeString
  */
 public inline fun LongArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
     val buffer = StringBuilder()

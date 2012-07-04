@@ -136,9 +136,9 @@ native public trait Element: Node {
     public val tagName: String
     public fun getAttribute(arg1: String?): String = js.noImpl
     public fun setAttribute(arg1: String?, arg2: String?): Unit = js.noImpl
+    public fun removeAttribute(arg1: String?): Unit = js.noImpl
     public fun getElementsByTagName(arg1: String?): NodeList = js.noImpl
     public fun getElementsByTagNameNS(arg1: String?, arg2: String?): NodeList = js.noImpl
-    public fun removeAttribute(arg1: String?): Unit = js.noImpl
     public fun getAttributeNode(arg1: String?): Attr = js.noImpl
     public fun removeAttributeNode(arg1: Attr): Attr = js.noImpl
     public fun getAttributeNS(arg1: String?, arg2: String?): String = js.noImpl
@@ -221,7 +221,7 @@ native public trait Node {
     public fun lookupNamespaceURI(arg1: String?): String = js.noImpl
     public fun isEqualNode(arg1: Node): Boolean = js.noImpl
 
-    public class object {
+    class object {
         public val ELEMENT_NODE: Short = 1
         public val ATTRIBUTE_NODE: Short = 2
         public val TEXT_NODE: Short = 3

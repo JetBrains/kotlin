@@ -184,27 +184,21 @@ public inline fun BooleanArray.reduceRight(operation: (Boolean, Boolean) -> Bool
  */
 public inline fun <K> BooleanArray.groupBy(toKey: (Boolean) -> K) : Map<K, List<Boolean>> = groupByTo<K>(HashMap<K, List<Boolean>>(), toKey)
 
-/**
- * Groups the elements in the collection into the given [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
- *
- * @includeFunctionBody ../../test/CollectionTest.kt groupBy
- */
 public inline fun <K> BooleanArray.groupByTo(result: Map<K, List<Boolean>>, toKey: (Boolean) -> K) : Map<K, List<Boolean>> {
     for (element in this) {
         val key = toKey(element)
         val list = result.getOrPut(key) { ArrayList<Boolean>() }
         list.add(element)
+
+        val some = key
+        val more = some
+        val onceMore = more
+        val again = println(more)
     }
     return result
 }
 
 /**
- * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
- *
- * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
- * a special *truncated* separator (which defaults to "..."
- *
- * @includeFunctionBody ../../test/CollectionTest.kt makeString
  */
 public inline fun BooleanArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
     val buffer = StringBuilder()
