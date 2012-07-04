@@ -20,10 +20,13 @@ import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
+import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.*;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,19 +53,27 @@ public class BytecodeCompiler {
      * @return compile environment instance
      */
     private K2JVMCompileEnvironmentConfiguration env( String stdlib, String[] classpath ) {
-        CompilerDependencies dependencies = CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR);
-        JetCoreEnvironment environment = new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), dependencies);
+        List<File> classpathItems = new ArrayList<File>();
+        classpathItems.add(PathUtil.findRtJar());
+        if ((stdlib != null) && (stdlib.trim().length() > 0)) {
+            classpathItems.add(new File(stdlib));
+        }
+        else {
+            classpathItems.add(PathUtil.getDefaultRuntimePath());
+        }
+        if ((classpath != null) && (classpath.length > 0)) {
+            for (String path : classpath) {
+                classpathItems.add(new File(path));
+            }
+        }
+        CompilerConfiguration configuration = new CompilerConfiguration();
+        configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, classpathItems.toArray(new File[classpathItems.size()]));
+        configuration.putUserData(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File[]{PathUtil.getJdkAnnotationsPath()});
+
+        JetCoreEnvironment environment = new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), configuration,
+                                                                CompilerSpecialMode.REGULAR);
         K2JVMCompileEnvironmentConfiguration
                 env = new K2JVMCompileEnvironmentConfiguration(environment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, false);
-
-        if (( stdlib != null ) && ( stdlib.trim().length() > 0 )) {
-            File file = new File(stdlib);
-            CompileEnvironmentUtil.addToClasspath(env.getEnvironment(), file);
-        }
-
-        if (( classpath != null ) && ( classpath.length > 0 )) {
-            CompileEnvironmentUtil.addToClasspath(env.getEnvironment(), classpath);
-        }
 
         // lets register any compiler plugins
         env.getCompilerPlugins().addAll(getCompilerPlugins());

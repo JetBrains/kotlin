@@ -32,7 +32,6 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.parsing.JetParser;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.extAnnotations.CoreAnnotationsProvider;
@@ -56,21 +55,23 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
 
     @NotNull
     public static JetCoreEnvironment createCoreEnvironmentForJS(Disposable disposable) {
-        return new JetCoreEnvironment(disposable, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.JS));
+        return new JetCoreEnvironment(disposable, new CompilerConfiguration(), CompilerSpecialMode.JS);
     }
 
     @NotNull
-    public static JetCoreEnvironment createCoreEnvironmentForJVM(Disposable disposable, @NotNull CompilerDependencies dependencies) {
-        return new JetCoreEnvironment(disposable, dependencies);
+    public static JetCoreEnvironment createCoreEnvironmentForJVM(Disposable disposable, @NotNull CompilerConfiguration configuration,
+            @NotNull CompilerSpecialMode compilerSpecialMode) {
+        return new JetCoreEnvironment(disposable, configuration, compilerSpecialMode);
     }
 
     @NotNull
     private final CompilerSpecialMode compilerSpecialMode;
 
-    public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerDependencies compilerDependencies) {
+    public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerConfiguration configuration,
+            @NotNull CompilerSpecialMode compilerSpecialMode) {
         super(parentDisposable);
 
-        this.compilerSpecialMode = compilerDependencies.getCompilerSpecialMode();
+        this.compilerSpecialMode = compilerSpecialMode;
 
         registerFileType(JetFileType.INSTANCE, "kt");
         registerFileType(JetFileType.INSTANCE, "kts");
@@ -86,24 +87,10 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
                 .getExtensionPoint(PsiElementFinder.EP_NAME)
                 .registerExtension(new JavaElementFinder(myProject));
 
-        CompilerSpecialMode compilerSpecialMode = compilerDependencies.getCompilerSpecialMode();
-
-        if (compilerSpecialMode.includeJdk()) {
-            addToClasspath(compilerDependencies.getJdkJar());
-        }
-
         annotationsProvider = new CoreAnnotationsProvider();
-        if (compilerSpecialMode.includeJdkAnnotations()) {
-            for (VirtualFile root : compilerDependencies.getJdkAnnotationsRoots()) {
-                annotationsProvider.addExternalAnnotationsRoot(root);
-            }
-        }
-
         myProject.registerService(ExternalAnnotationsProvider.class, annotationsProvider);
 
-        if (compilerSpecialMode.includeKotlinRuntime()) {
-            addToClasspath(compilerDependencies.getRuntimeJar());
-        }
+        configure(configuration);
 
         JetStandardLibrary.initialize(getProject());
     }
@@ -196,12 +183,15 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
     public void configure(@NotNull CompilerConfiguration compilerConfiguration) {
         File[] classpath = compilerConfiguration.getUserData(JVMConfigurationKeys.CLASSPATH_KEY);
         File[] annotationsPath = compilerConfiguration.getUserData(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY);
-        assert classpath != null && annotationsPath != null;
-        for (File path : classpath) {
-            addToClasspath(path);
+        if (classpath != null) {
+            for (File path : classpath) {
+                addToClasspath(path);
+            }
         }
-        for (File path : annotationsPath) {
-            addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(path));
+        if (annotationsPath != null) {
+            for (File path : annotationsPath) {
+                addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(path));
+            }
         }
     }
 }

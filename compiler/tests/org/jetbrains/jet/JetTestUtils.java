@@ -180,8 +180,9 @@ public class JetTestUtils {
     }
 
     public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable, @NotNull CompilerSpecialMode compilerSpecialMode) {
-        JetCoreEnvironment environment =
-                new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.compilerDependenciesForTests(compilerSpecialMode, true));
+        JetCoreEnvironment environment = new JetCoreEnvironment(disposable,
+                CompileCompilerDependenciesTest.compilerConfigurationForTests(compilerSpecialMode, true),
+                compilerSpecialMode);
         environment.addToClasspath(getAnnotationsJar());
         return environment;
     }
@@ -253,7 +254,8 @@ public class JetTestUtils {
 
     public static JetCoreEnvironment createEnvironmentWithFullJdk(Disposable disposable) {
         return new JetCoreEnvironment(disposable,
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, false));
+                CompileCompilerDependenciesTest.compilerConfigurationForTests(CompilerSpecialMode.REGULAR, false),
+                CompilerSpecialMode.REGULAR);
     }
 
     public static PsiFile createFile(@NonNls String name, String text, @NotNull Project project) {

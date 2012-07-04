@@ -45,13 +45,8 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceLikeBuilderDummy;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.ScriptHeaderResolver;
-import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
-import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
+import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -94,9 +89,8 @@ public class ReplInterpreter {
     @NotNull
     private final ModuleDescriptor module;
 
-    public ReplInterpreter(@NotNull Disposable disposable, @NotNull CompilerDependencies compilerDependencies,
-            @NotNull CompilerConfiguration configuration) {
-        jetCoreEnvironment = new JetCoreEnvironment(disposable, compilerDependencies);
+    public ReplInterpreter(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration, @NotNull CompilerSpecialMode mode) {
+        jetCoreEnvironment = new JetCoreEnvironment(disposable, configuration, mode);
         jetCoreEnvironment.configure(configuration);
         Project project = jetCoreEnvironment.getProject();
         trace = new BindingTraceContext();
@@ -106,8 +100,7 @@ public class ReplInterpreter {
                 false,
                 true,
                 Collections.<AnalyzerScriptParameter>emptyList());
-        injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module,
-                                                        compilerDependencies.getCompilerSpecialMode());
+        injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module, mode);
 
         List<URL> classpath = Lists.newArrayList();
 

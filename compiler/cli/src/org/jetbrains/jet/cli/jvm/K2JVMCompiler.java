@@ -55,36 +55,8 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
     @Override
     @NotNull
     protected ExitCode doExecute(K2JVMCompilerArguments arguments, PrintingMessageCollector messageCollector, Disposable rootDisposable) {
-
         CompilerSpecialMode mode = parseCompilerSpecialMode(arguments);
-        File jdkAnnotationsJar;
-        if (mode.includeJdkAnnotations()) {
-            if (arguments.jdkAnnotations != null) {
-                jdkAnnotationsJar = new File(arguments.jdkAnnotations);
-            }
-            else {
-                jdkAnnotationsJar = PathUtil.getJdkAnnotationsPath();
-            }
-        }
-        else {
-            jdkAnnotationsJar = null;
-        }
-        File runtimeJar;
-
-        if (mode.includeKotlinRuntime()) {
-            if (arguments.stdlib != null) {
-                runtimeJar = new File(arguments.stdlib);
-            }
-            else {
-                runtimeJar = PathUtil.getDefaultRuntimePath();
-            }
-        }
-        else {
-            runtimeJar = null;
-        }
-
-        // will be ignored later
-        CompilerDependencies dependencies = new CompilerDependencies(mode, PathUtil.findRtJar(), jdkAnnotationsJar, runtimeJar);
+        CompilerConfiguration compilerConfiguration = createCompilerConfiguration(arguments);
 
         final List<String> argumentsSourceDirs = arguments.getSourceDirs();
         if (!arguments.script &&
@@ -93,12 +65,13 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
             arguments.freeArgs.isEmpty() &&
             (argumentsSourceDirs == null || argumentsSourceDirs.size() == 0)) {
 
-            ReplFromTerminal.run(rootDisposable, dependencies, createCompilerConfiguration(arguments));
+            ReplFromTerminal.run(rootDisposable, compilerConfiguration, mode);
             return ExitCode.OK;
         }
 
-        JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, dependencies);
-        K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(environment, messageCollector, arguments.script);
+        JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, compilerConfiguration, mode);
+        K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(environment, messageCollector,
+                                                                                                      arguments.script);
 
         messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
                                 CompilerMessageLocation.NO_LOCATION);
