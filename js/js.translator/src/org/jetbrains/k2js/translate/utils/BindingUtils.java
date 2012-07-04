@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -320,7 +321,7 @@ public final class BindingUtils {
 
     @NotNull
     public static Set<NamespaceDescriptor> getAllNonNativeNamespaceDescriptors(@NotNull BindingContext context,
-            @NotNull List<JetFile> files) {
+            @NotNull Collection<JetFile> files) {
         Set<NamespaceDescriptor> descriptorSet = new OrderedSet<NamespaceDescriptor>();
         for (JetFile file : files) {
             //TODO: can't be

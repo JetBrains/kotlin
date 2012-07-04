@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -47,7 +48,7 @@ public class JetMainDetector {
     }
 
     @Nullable
-    public static JetNamedFunction getMainFunction(@NotNull List<JetFile> files) {
+    public static JetNamedFunction getMainFunction(@NotNull Collection<JetFile> files) {
         for (JetFile file : files) {
             JetNamedFunction mainFunction = findMainFunction(file.getDeclarations());
             if (mainFunction != null) {

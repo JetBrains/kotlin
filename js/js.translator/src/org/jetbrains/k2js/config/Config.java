@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -171,5 +172,13 @@ public abstract class Config {
     @Nullable
     public BindingContext getLibraryBindingContext() {
         return null;
+    }
+
+    @NotNull
+    public static Collection<JetFile> withJsLibAdded(@NotNull Collection<JetFile> files, @NotNull Config config) {
+        Collection<JetFile> allFiles = Lists.newArrayList();
+        allFiles.addAll(files);
+        allFiles.addAll(config.getLibFiles());
+        return allFiles;
     }
 }
