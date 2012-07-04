@@ -102,36 +102,8 @@ public class CompilerDependencies {
     public static CompilerDependencies compilerDependenciesForProduction(@NotNull CompilerSpecialMode compilerSpecialMode) {
         return new CompilerDependencies(
                 compilerSpecialMode,
-                compilerSpecialMode.includeJdk() ? findRtJar() : null,
+                compilerSpecialMode.includeJdk() ? PathUtil.findRtJar() : null,
                 compilerSpecialMode.includeJdkAnnotations() ? PathUtil.getJdkAnnotationsPath() : null,
                 compilerSpecialMode.includeKotlinRuntime() ? PathUtil.getDefaultRuntimePath() : null);
-    }
-
-    public static File findRtJar() {
-        String javaHome = System.getProperty("java.home");
-        if ("jre".equals(new File(javaHome).getName())) {
-            javaHome = new File(javaHome).getParent();
-        }
-
-        File rtJar = findRtJar(javaHome);
-
-        if (rtJar == null || !rtJar.exists()) {
-            throw new IllegalArgumentException("No JDK rt.jar found under " + javaHome);
-        }
-
-        return rtJar;
-    }
-
-    private static File findRtJar(String javaHome) {
-        File rtJar = new File(javaHome, "jre/lib/rt.jar");
-        if (rtJar.exists()) {
-            return rtJar;
-        }
-
-        File classesJar = new File(new File(javaHome).getParentFile().getAbsolutePath(), "Classes/classes.jar");
-        if (classesJar.exists()) {
-            return classesJar;
-        }
-        return null;
     }
 }

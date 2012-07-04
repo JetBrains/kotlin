@@ -119,4 +119,32 @@ public class PathUtil {
             throw new IllegalStateException("Path " + file + " does not exist.");
         }
     }
+
+    public static File findRtJar() {
+        String javaHome = System.getProperty("java.home");
+        if ("jre".equals(new File(javaHome).getName())) {
+            javaHome = new File(javaHome).getParent();
+        }
+
+        File rtJar = findRtJar(javaHome);
+
+        if (rtJar == null || !rtJar.exists()) {
+            throw new IllegalArgumentException("No JDK rt.jar found under " + javaHome);
+        }
+
+        return rtJar;
+    }
+
+    private static File findRtJar(String javaHome) {
+        File rtJar = new File(javaHome, "jre/lib/rt.jar");
+        if (rtJar.exists()) {
+            return rtJar;
+        }
+
+        File classesJar = new File(new File(javaHome).getParentFile().getAbsolutePath(), "Classes/classes.jar");
+        if (classesJar.exists()) {
+            return classesJar;
+        }
+        return null;
+    }
 }

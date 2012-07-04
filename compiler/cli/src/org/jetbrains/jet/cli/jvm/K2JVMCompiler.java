@@ -84,7 +84,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
         }
 
         // will be ignored later
-        CompilerDependencies dependencies = new CompilerDependencies(mode, CompilerDependencies.findRtJar(), jdkAnnotationsJar, runtimeJar);
+        CompilerDependencies dependencies = new CompilerDependencies(mode, PathUtil.findRtJar(), jdkAnnotationsJar, runtimeJar);
 
         final List<String> argumentsSourceDirs = arguments.getSourceDirs();
         if (!arguments.script &&
@@ -212,7 +212,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
     private static List<File> getClasspath(@NotNull K2JVMCompilerArguments arguments) {
         List<File> classpath = Lists.newArrayList();
         if (!arguments.noJdk) {
-            classpath.add(CompilerDependencies.findRtJar());
+            classpath.add(PathUtil.findRtJar());
         }
         if (!arguments.noStdlib) {
             classpath.add(PathUtil.getDefaultRuntimePath());

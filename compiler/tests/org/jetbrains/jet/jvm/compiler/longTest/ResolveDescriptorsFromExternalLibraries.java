@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
+import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -115,7 +116,7 @@ public class ResolveDescriptorsFromExternalLibraries {
             System.out.println("Using file " + jar);
         }
         else {
-            jar = CompilerDependencies.findRtJar();
+            jar = PathUtil.findRtJar();
             System.out.println("Using rt.jar: " + jar);
         }
 
@@ -154,8 +155,8 @@ public class ResolveDescriptorsFromExternalLibraries {
         else {
             CompilerDependencies compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.STDLIB, false);
             jetCoreEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(junk, compilerDependencies);
-            if (!CompilerDependencies.findRtJar().equals(jar)) {
-                throw new RuntimeException("rt.jar mismatch: " + jar + ", " + CompilerDependencies.findRtJar());
+            if (!PathUtil.findRtJar().equals(jar)) {
+                throw new RuntimeException("rt.jar mismatch: " + jar + ", " + PathUtil.findRtJar());
             }
         }
 
