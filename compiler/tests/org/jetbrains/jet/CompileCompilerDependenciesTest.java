@@ -30,6 +30,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode.IDEA;
+import static org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode.REGULAR;
+import static org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode.STDLIB;
+
 /**
  * @author Stepan Koltsov
  */
@@ -52,14 +56,14 @@ public class CompileCompilerDependenciesTest {
 
     public static CompilerConfiguration compilerConfigurationForTests(@NotNull CompilerSpecialMode compilerSpecialMode, boolean mockJdk) {
         List<File> classpath = new ArrayList<File>();
-        if (compilerSpecialMode.includeJdk()) {
+        if (includeJdk(compilerSpecialMode)) {
             classpath.add(mockJdk ? JetTestUtils.findMockJdkRtJar() : PathUtil.findRtJar());
         }
-        if (compilerSpecialMode.includeKotlinRuntime()) {
+        if (includeKotlinRuntime(compilerSpecialMode)) {
             classpath.add(ForTestCompileRuntime.runtimeJarForTests());
         }
         File[] annotationsPath = new File[0];
-        if (compilerSpecialMode.includeJdkAnnotations()) {
+        if (includeJdkAnnotations(compilerSpecialMode)) {
             annotationsPath = new File[]{ForTestPackJdkAnnotations.jdkAnnotationsForTests()};
         }
 
@@ -67,5 +71,17 @@ public class CompileCompilerDependenciesTest {
         configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, classpath.toArray(new File[classpath.size()]));
         configuration.putUserData(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, annotationsPath);
         return configuration;
+    }
+
+    private static boolean includeJdkAnnotations(@NotNull CompilerSpecialMode mode) {
+        return mode == REGULAR || mode == STDLIB || mode == IDEA;
+    }
+
+    public static boolean includeKotlinRuntime(@NotNull CompilerSpecialMode mode) {
+        return mode == REGULAR;
+    }
+
+    public static boolean includeJdk(@NotNull CompilerSpecialMode mode) {
+        return mode != IDEA;
     }
 }

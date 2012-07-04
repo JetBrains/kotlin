@@ -28,18 +28,6 @@ public enum CompilerSpecialMode {
     JS,
     ;
 
-    public boolean includeJdkAnnotations() {
-        return this == REGULAR || this == STDLIB || this == IDEA;
-    }
-
-    public boolean includeKotlinRuntime() {
-        return this == REGULAR;
-    }
-
-    public boolean includeJdk() {
-        return this != IDEA;
-    }
-
     public boolean isStubs() {
         return this == BUILTINS || this == JDK_HEADERS;
     }

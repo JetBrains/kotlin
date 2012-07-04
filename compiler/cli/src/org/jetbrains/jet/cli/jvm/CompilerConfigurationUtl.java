@@ -25,6 +25,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode.*;
+
 /**
  * @author Evgeny Gerashchenko
  * @since 7/4/12
@@ -33,14 +35,14 @@ public class CompilerConfigurationUtl {
     // TODO merge with similar K2JVMCompiler method
     public static CompilerConfiguration getDefaultConfiguration(@NotNull CompilerSpecialMode compilerSpecialMode) {
         List<File> classpath = new ArrayList<File>();
-        if (compilerSpecialMode.includeJdk()) {
+        if (includeJdk(compilerSpecialMode)) {
             classpath.add(PathUtil.findRtJar());
         }
-        if (compilerSpecialMode.includeKotlinRuntime()) {
+        if (includeKotlinRuntime(compilerSpecialMode)) {
             classpath.add(PathUtil.getDefaultRuntimePath());
         }
         File[] annotationsPath = new File[0];
-        if (compilerSpecialMode.includeJdkAnnotations()) {
+        if (includeJdkAnnotations(compilerSpecialMode)) {
             annotationsPath = new File[]{PathUtil.getJdkAnnotationsPath()};
         }
 
@@ -48,5 +50,17 @@ public class CompilerConfigurationUtl {
         configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, classpath.toArray(new File[classpath.size()]));
         configuration.putUserData(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, annotationsPath);
         return configuration;
+    }
+
+    private static boolean includeJdkAnnotations(@NotNull CompilerSpecialMode mode) {
+        return mode == REGULAR || mode == STDLIB || mode == IDEA;
+    }
+
+    public static boolean includeKotlinRuntime(@NotNull CompilerSpecialMode mode) {
+        return mode == REGULAR;
+    }
+
+    public static boolean includeJdk(@NotNull CompilerSpecialMode mode) {
+        return mode != IDEA;
     }
 }
