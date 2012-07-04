@@ -149,7 +149,7 @@ public class CompileEnvironmentUtil {
             throw new CompileEnvironmentException("Module script " + moduleScriptFile + " analyze failed");
         }
 
-        List<Module> modules = runDefineModules(dependencies, moduleScriptFile, generationState.getFactory());
+        List<Module> modules = runDefineModules(moduleScriptFile, generationState.getFactory());
 
         Disposer.dispose(disposable);
 
@@ -163,8 +163,8 @@ public class CompileEnvironmentUtil {
         return modules;
     }
 
-    private static List<Module> runDefineModules(CompilerDependencies compilerDependencies, String moduleFile, ClassFileFactory factory) {
-        File stdlibJar = compilerDependencies.getRuntimeJar();
+    private static List<Module> runDefineModules(String moduleFile, ClassFileFactory factory) {
+        File stdlibJar = PathUtil.getDefaultRuntimePath();
         GeneratedClassLoader loader;
         if (stdlibJar != null) {
             try {
