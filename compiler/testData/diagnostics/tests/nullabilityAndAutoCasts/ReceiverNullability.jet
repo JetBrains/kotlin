@@ -12,7 +12,7 @@ fun test(a : A?) {
 
     a?.foo()
     a?.bar()
-    a<!UNNECESSARY_SAFE_CALL!>?.<!>buzz() // warning
+    a?.buzz()
 }
 
 fun A.test2() {
@@ -40,5 +40,5 @@ fun A?.test3() {
 
     this?.foo()
     this?.bar()
-    this<!UNNECESSARY_SAFE_CALL!>?.<!>buzz() // warning
+    this?.buzz()
 }
