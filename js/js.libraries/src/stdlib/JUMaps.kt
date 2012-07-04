@@ -1,6 +1,7 @@
 package kotlin
 
 import java.util.Map
+import java.util.HashMap
 
 /** Provides [] access to maps */
 public fun <K, V> Map<K, V>.set(key : K, value : V): Unit {
@@ -13,8 +14,8 @@ public fun <K, V> Map<K, V>.set(key : K, value : V): Unit {
  *
  * @includeFunctionBody ../../test/MapTest.kt createUsingTuples
  */
-public inline fun <K,V> hashMap(vararg values: #(K,V)): java.util.HashMap<K,V> {
-    val answer = java.util.HashMap<K,V>()
+public inline fun <K,V> hashMap(vararg values: #(K,V)): HashMap<K,V> {
+    val answer = HashMap<K,V>()
     /**
         TODO replace by this simpler call when we can pass vararg values into other methods
         answer.putAll(values)
