@@ -23,4 +23,9 @@ public class BridgeMethodGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("bridge.jet");
     }
+    
+    public void testKt1959() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        blackBoxFile("regressions/kt1959.kt");
+    }
 }

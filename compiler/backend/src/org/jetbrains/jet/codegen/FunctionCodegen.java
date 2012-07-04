@@ -543,6 +543,9 @@ public class FunctionCodegen {
                     if (argType.getSort() == Type.OBJECT) {
                         StackValue.onStack(JetTypeMapper.TYPE_OBJECT).put(method.getArgumentTypes()[i], iv);
                     }
+                    else if (argType.getSort() == Type.ARRAY) {
+                        StackValue.onStack(JetTypeMapper.ARRAY_GENERIC_TYPE).put(method.getArgumentTypes()[i], iv);
+                    }
 
                     //noinspection AssignmentToForLoopParameter
                     reg += argType.getSize();
