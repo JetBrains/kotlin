@@ -49,7 +49,8 @@ public class CompileEnvironmentTest extends TestCase {
             ExitCode rv = new K2JVMCompiler().exec(System.out,
                                                    "-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts",
                                                    "-jar", resultJar.getAbsolutePath(),
-                                                   "-stdlib", stdlib.getAbsolutePath(),
+                                                   "-noStdlib",
+                                                   "-classpath", stdlib.getAbsolutePath(),
                                                    "-noJdkAnnotations",
                                                    "-annotations", jdkAnnotations.getAbsolutePath());
             Assert.assertEquals("compilation completed with non-zero code", ExitCode.OK, rv);
@@ -83,7 +84,8 @@ public class CompileEnvironmentTest extends TestCase {
             ExitCode exitCode = new K2JVMCompiler()
                     .exec(System.out, "-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kt",
                           "-output", out.getAbsolutePath(),
-                          "-stdlib", stdlib.getAbsolutePath(),
+                          "-noStdlib",
+                          "-classpath", stdlib.getAbsolutePath(),
                           "-noJdkAnnotations",
                           "-annotations", jdkAnnotations.getAbsolutePath());
             Assert.assertEquals(ExitCode.OK, exitCode);

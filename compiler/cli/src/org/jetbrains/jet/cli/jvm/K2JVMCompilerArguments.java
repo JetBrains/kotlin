@@ -66,10 +66,6 @@ public class K2JVMCompilerArguments extends CompilerArguments {
     @Argument(value = "builtins", description = "compile builtin classes (internal)")
     public boolean builtins;
 
-    @Deprecated
-    @Argument(value = "stdlib", description = "Path to the stdlib.jar")
-    public String stdlib;
-
     @Argument(value = "output", description = "output directory")
     public String outputDir;
 
@@ -146,14 +142,6 @@ public class K2JVMCompilerArguments extends CompilerArguments {
 
     public void setSrc(String src) {
         this.src = src;
-    }
-
-    public String getStdlib() {
-        return stdlib;
-    }
-
-    public void setStdlib(String stdlib) {
-        this.stdlib = stdlib;
     }
 
     @Override
