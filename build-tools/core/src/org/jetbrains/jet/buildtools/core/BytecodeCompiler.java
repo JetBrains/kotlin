@@ -26,7 +26,6 @@ import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
@@ -71,8 +70,8 @@ public class BytecodeCompiler {
         configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, classpathItems.toArray(new File[classpathItems.size()]));
         configuration.putUserData(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File[]{PathUtil.getJdkAnnotationsPath()});
 
-        JetCoreEnvironment environment = new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), configuration,
-                                                                CompilerSpecialMode.REGULAR);
+        JetCoreEnvironment environment = new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), configuration
+        );
         K2JVMCompileEnvironmentConfiguration
                 env = new K2JVMCompileEnvironmentConfiguration(environment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, false,
                                                                BuiltinsScopeExtensionMode.ALL, false, BuiltinToJavaTypesMapping.ENABLED);

@@ -22,7 +22,6 @@ import jline.console.ConsoleReader;
 import jline.console.history.FileHistory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
@@ -43,13 +42,12 @@ public class ReplFromTerminal {
 
     public ReplFromTerminal(
             @NotNull final Disposable disposable,
-            @NotNull final CompilerConfiguration compilerConfiguration,
-            @NotNull final CompilerSpecialMode mode) {
+            @NotNull final CompilerConfiguration compilerConfiguration) {
         new Thread("initialize-repl") {
             @Override
             public void run() {
                 try {
-                    replInterpreter = new ReplInterpreter(disposable, compilerConfiguration, mode);
+                    replInterpreter = new ReplInterpreter(disposable, compilerConfiguration);
                 } catch (Throwable e) {
                     replInitializationFailed = e;
                 }
@@ -195,9 +193,8 @@ public class ReplFromTerminal {
         return Arrays.asList(command.split(" "));
     }
 
-    public static void run(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration,
-            @NotNull CompilerSpecialMode mode) {
-        new ReplFromTerminal(disposable, configuration, mode).doRun();
+    public static void run(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration) {
+        new ReplFromTerminal(disposable, configuration).doRun();
     }
 
 }

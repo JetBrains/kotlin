@@ -48,7 +48,6 @@ import org.jetbrains.jet.lang.descriptors.NamespaceLikeBuilderDummy;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -91,8 +90,8 @@ public class ReplInterpreter {
     @NotNull
     private final ModuleDescriptor module;
 
-    public ReplInterpreter(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration, @NotNull CompilerSpecialMode mode) {
-        jetCoreEnvironment = new JetCoreEnvironment(disposable, configuration, mode);
+    public ReplInterpreter(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration) {
+        jetCoreEnvironment = new JetCoreEnvironment(disposable, configuration);
         jetCoreEnvironment.configure(configuration);
         Project project = jetCoreEnvironment.getProject();
         trace = new BindingTraceContext();

@@ -48,8 +48,8 @@ public abstract class AbstractLazyResolveTest {
     };
 
     protected final JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(rootDisposable,
-            CompileCompilerDependenciesTest.compilerConfigurationForTests(CompilerSpecialMode.JDK_HEADERS, true),
-            CompilerSpecialMode.JDK_HEADERS);
+            CompileCompilerDependenciesTest.compilerConfigurationForTests(CompilerSpecialMode.JDK_HEADERS, true)
+    );
     protected final Project project = jetCoreEnvironment.getProject();
 
     @BeforeClass

@@ -53,7 +53,7 @@ public abstract class TestWithEnvironment extends UsefulTestCase {
     protected void createEnvironmentWithMockJdkAndIdeaAnnotations() {
         myEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(
                 getTestRootDisposable(),
-                CompileCompilerDependenciesTest.compilerConfigurationForTests(CompilerSpecialMode.JS, true),
-                CompilerSpecialMode.JS);
+                CompileCompilerDependenciesTest.compilerConfigurationForTests(CompilerSpecialMode.JS, true)
+        );
     }
 }

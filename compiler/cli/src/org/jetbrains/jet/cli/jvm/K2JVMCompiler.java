@@ -66,11 +66,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
             arguments.freeArgs.isEmpty() &&
             (argumentsSourceDirs == null || argumentsSourceDirs.size() == 0)) {
 
-            ReplFromTerminal.run(rootDisposable, compilerConfiguration, mode);
+            ReplFromTerminal.run(rootDisposable, compilerConfiguration);
             return ExitCode.OK;
         }
 
-        JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, compilerConfiguration, mode);
+        JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, compilerConfiguration);
         boolean builtins = mode == CompilerSpecialMode.BUILTINS;
         K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(
                 environment, messageCollector, arguments.script,

@@ -58,7 +58,7 @@ public class ReplInterpreterTest {
         File[] classpath = configuration.getUserData(JVMConfigurationKeys.CLASSPATH_KEY);
         assert classpath != null;
         configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, ArrayUtil.append(classpath, new File("out/production/runtime")));
-        ReplInterpreter repl = new ReplInterpreter(disposable, configuration, CompilerSpecialMode.JDK_HEADERS);
+        ReplInterpreter repl = new ReplInterpreter(disposable, configuration);
 
         ReplSessionTestFile file = ReplSessionTestFile.load(new File("compiler/testData/repl/" + relativePath));
         for (ReplSessionTestFile.OneLine t : file.getLines()) {

@@ -32,7 +32,6 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.parsing.JetParser;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.extAnnotations.CoreAnnotationsProvider;
 import org.jetbrains.jet.lang.resolve.java.extAnnotations.ExternalAnnotationsProvider;
@@ -55,23 +54,16 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
 
     @NotNull
     public static JetCoreEnvironment createCoreEnvironmentForJS(Disposable disposable) {
-        return new JetCoreEnvironment(disposable, new CompilerConfiguration(), CompilerSpecialMode.JS);
+        return new JetCoreEnvironment(disposable, new CompilerConfiguration());
     }
 
     @NotNull
-    public static JetCoreEnvironment createCoreEnvironmentForJVM(Disposable disposable, @NotNull CompilerConfiguration configuration,
-            @NotNull CompilerSpecialMode compilerSpecialMode) {
-        return new JetCoreEnvironment(disposable, configuration, compilerSpecialMode);
+    public static JetCoreEnvironment createCoreEnvironmentForJVM(Disposable disposable, @NotNull CompilerConfiguration configuration) {
+        return new JetCoreEnvironment(disposable, configuration);
     }
 
-    @NotNull
-    private final CompilerSpecialMode compilerSpecialMode;
-
-    public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerConfiguration configuration,
-            @NotNull CompilerSpecialMode compilerSpecialMode) {
+    public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerConfiguration configuration) {
         super(parentDisposable);
-
-        this.compilerSpecialMode = compilerSpecialMode;
 
         registerFileType(JetFileType.INSTANCE, "kt");
         registerFileType(JetFileType.INSTANCE, "kts");
@@ -173,11 +165,6 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
                 }
             }
         }
-    }
-
-    @NotNull
-    public CompilerSpecialMode getCompilerSpecialMode() {
-        return compilerSpecialMode;
     }
 
     public void configure(@NotNull CompilerConfiguration compilerConfiguration) {
