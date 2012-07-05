@@ -148,7 +148,7 @@ public class CompileEnvironmentUtil {
 
         GenerationState generationState = KotlinToJVMBytecodeCompiler
                 .analyzeAndGenerate(new K2JVMCompileEnvironmentConfiguration(scriptEnvironment, messageCollector, false,
-                                                                             BuiltinsScopeExtensionMode.ALL), false);
+                                                                             BuiltinsScopeExtensionMode.ALL, false), false);
         if (generationState == null) {
             throw new CompileEnvironmentException("Module script " + moduleScriptFile + " analyze failed");
         }

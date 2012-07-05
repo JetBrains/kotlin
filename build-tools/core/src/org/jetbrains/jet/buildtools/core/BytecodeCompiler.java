@@ -74,7 +74,7 @@ public class BytecodeCompiler {
                                                                 CompilerSpecialMode.REGULAR);
         K2JVMCompileEnvironmentConfiguration
                 env = new K2JVMCompileEnvironmentConfiguration(environment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, false,
-                                                               BuiltinsScopeExtensionMode.ALL);
+                                                               BuiltinsScopeExtensionMode.ALL, false);
 
         // lets register any compiler plugins
         env.getCompilerPlugins().addAll(getCompilerPlugins());

@@ -30,17 +30,16 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.CompilerPluginContext;
-import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.JetMainDetector;
@@ -259,7 +258,7 @@ public class KotlinToJVMBytecodeCompiler {
 
     @Nullable
     public static GenerationState analyzeAndGenerate(K2JVMCompileEnvironmentConfiguration configuration) {
-        return analyzeAndGenerate(configuration, configuration.getEnvironment().getCompilerSpecialMode() == CompilerSpecialMode.BUILTINS);
+        return analyzeAndGenerate(configuration, configuration.isStubs());
     }
 
     @Nullable

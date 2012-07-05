@@ -29,18 +29,20 @@ public class K2JVMCompileEnvironmentConfiguration extends CompileEnvironmentConf
     private final JetCoreEnvironment environment;
     private final boolean script;
     private final BuiltinsScopeExtensionMode builtinsScopeExtensionMode;
+    private final boolean stubs;
 
     /**
      * NOTE: It's very important to call dispose for every object of this class or there will be memory leaks.
      *
      * @see Disposer
      */
-    public K2JVMCompileEnvironmentConfiguration(@NotNull JetCoreEnvironment environment,
-            @NotNull MessageCollector messageCollector, boolean script, BuiltinsScopeExtensionMode builtinsScopeExtensionMode) {
+    public K2JVMCompileEnvironmentConfiguration(@NotNull JetCoreEnvironment environment, @NotNull MessageCollector messageCollector,
+            boolean script, BuiltinsScopeExtensionMode builtinsScopeExtensionMode, boolean stubs) {
         super(messageCollector);
         this.environment = environment;
         this.script = script;
         this.builtinsScopeExtensionMode = builtinsScopeExtensionMode;
+        this.stubs = stubs;
     }
 
     public JetCoreEnvironment getEnvironment() {
@@ -54,5 +56,9 @@ public class K2JVMCompileEnvironmentConfiguration extends CompileEnvironmentConf
 
     public BuiltinsScopeExtensionMode getBuiltinsScopeExtensionMode() {
         return builtinsScopeExtensionMode;
+    }
+
+    public boolean isStubs() {
+        return stubs;
     }
 }

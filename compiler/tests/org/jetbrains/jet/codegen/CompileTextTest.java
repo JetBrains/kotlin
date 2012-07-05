@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
-import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 
 import java.lang.reflect.InvocationTargetException;
@@ -29,7 +29,7 @@ public class CompileTextTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations();
         String text = "import org.jetbrains.jet.codegen.CompileTextTest; fun x() = CompileTextTest()";
         K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(
-                myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, false, BuiltinsScopeExtensionMode.ALL);
+                myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, false, BuiltinsScopeExtensionMode.ALL, false);
         configuration.getEnvironment().addToClasspathFromClassLoader(getClass().getClassLoader());
         ClassLoader classLoader = KotlinToJVMBytecodeCompiler.compileText(configuration, text);
         Class<?> namespace = classLoader.loadClass("namespace");

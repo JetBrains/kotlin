@@ -70,10 +70,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
         }
 
         JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, compilerConfiguration, mode);
+        boolean builtins = mode == CompilerSpecialMode.BUILTINS;
         K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(
-                environment, messageCollector, arguments.script, mode == CompilerSpecialMode.BUILTINS
+                environment, messageCollector, arguments.script, builtins
                                                                  ? BuiltinsScopeExtensionMode.ONLY_STANDARD_CLASSES
-                                                                 : BuiltinsScopeExtensionMode.ALL);
+                                                                 : BuiltinsScopeExtensionMode.ALL, builtins);
 
         messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
                                 CompilerMessageLocation.NO_LOCATION);
