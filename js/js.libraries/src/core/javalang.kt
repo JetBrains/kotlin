@@ -35,10 +35,12 @@ public trait Runnable {
     public open fun run() : Unit;
 }
 
+library
 public trait Comparable<T> {
     public fun compareTo(that: T): Int
 }
 
+library
 public trait Appendable {
     public open fun append(csq: CharSequence?): Appendable?
     public open fun append(csq: CharSequence?, start: Int, end: Int): Appendable?

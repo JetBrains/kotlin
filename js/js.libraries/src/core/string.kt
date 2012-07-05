@@ -12,7 +12,8 @@ native public fun String.indexOf(str : String, fromIndex : Int) : Int = js.noImp
 native public fun String.lastIndexOf(str: String) : Int = js.noImpl
 native public fun String.lastIndexOf(str : String, fromIndex : Int) : Int = js.noImpl
 
-native public fun String.split(regex : String) : Array<String> = js.noImpl
+// Defined in javalang.kt
+//native public fun String.split(regex : String) : Array<String> = js.noImpl
 
 native public fun String.substring(beginIndex : Int) : String = js.noImpl
 native public fun String.substring(beginIndex : Int, endIndex : Int) : String = js.noImpl

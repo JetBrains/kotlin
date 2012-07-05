@@ -17,48 +17,12 @@ public trait Iterator<T> {
     open public fun remove() : Unit = js.noImpl
 }
 
-public object Collections {
-    library("collectionsMax")
-    public fun max<T>(col : Collection<T>, comp : Comparator<T>) : T = js.noImpl
-
-    // TODO should be immutable!
-    public val emptyList: List<Any> = ArrayList<Any>()
-    public val emptyMap: Map<Any, Any> = HashMap<Any,Any>()
-
-    public val <T> EMPTY_LIST: List<T>
-    get() = emptyList<T>()
-
-    public val <K,V> EMPTY_MAP: Map<K,V>
-    get() = emptyMap<K,V>()
-
-    public fun <T> emptyList(): List<T> = emptyList as List<T>
-    public fun <K,V> emptyMap(): Map<K,V> = emptyMap as Map<K,V>
-
-    public fun <in T> sort(list: List<T>): Unit {
-        throw UnsupportedOperationException()
-    }
-
-    public fun <in T> sort(list: List<T>, comparator: java.util.Comparator<T>): Unit {
-        throw UnsupportedOperationException()
-    }
-
-    public fun <T> reverse(list: List<T>): Unit {
-        val size = list.size()
-        for (i in 0.upto(size / 2)) {
-            val i2 = size - i
-            val tmp = list[i]
-            list[i] = list[i2]
-            list[i2] = tmp
-        }
-    }
-}
-
 library
 public trait Collection<E>: Iterable<E> {
     open public fun size(): Int
     open public fun isEmpty(): Boolean
     open public fun contains(o: Any?): Boolean
-    override public fun iterator(): Iterator<E>
+    override public fun iterator(): java.util.Iterator<E>
     public fun toArray(): Array<E>
     // open public fun toArray<T>(a : Array<out T>) : Array<T>
     open public fun add(e: E): Boolean
@@ -76,7 +40,7 @@ public abstract class AbstractCollection<E>() : Collection<E> {
 
     override public fun isEmpty(): Boolean = js.noImpl
     override public fun contains(o: Any?): Boolean = js.noImpl
-    override public fun iterator(): Iterator<E> = js.noImpl
+    override public fun iterator(): java.util.Iterator<E> = js.noImpl
 
     override public fun add(e: E): Boolean = js.noImpl
     override public fun remove(o: Any?): Boolean = js.noImpl

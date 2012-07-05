@@ -56,28 +56,31 @@ public abstract class Config {
     @NotNull
     public static final List<String> LIB_FILES_WITH_DECLARATIONS = Arrays.asList(
             "/core/annotations.kt",
-            "/jquery/common.kt",
-            "/jquery/ui.kt",
-            "/core/javautil.kt",
-            "/core/javalang.kt",
-            "/core/javaio.kt",
-            "/core/kotlin.kt",
-            "/core/date.kt",
             "/core/core.kt",
-            "/core/math.kt",
-            "/core/json.kt",
-            "/stdlib/browser.kt",
+            "/core/date.kt",
             "/core/dom.kt",
+            "/core/javaio.kt",
+            "/core/javalang.kt",
+            "/core/javautil.kt",
+            "/core/json.kt",
+            "/core/kotlin.kt",
+            "/core/math.kt",
+            "/core/string.kt",
             "/dom/domcore.kt",
             "/dom/html/htmlcore.kt",
             "/dom/html5/canvas.kt",
             "/dom/html/window.kt",
+            "/jquery/common.kt",
+            "/jquery/ui.kt",
             "/junit/core.kt",
-            "/qunit/core.kt"
+            "/qunit/core.kt",
+            "/stdlib/browser.kt"
     );
 
     @NotNull
-    public static final List<String> LIB_FILES_WITH_CODE = Lists.newArrayList();
+    public static final List<String> LIB_FILES_WITH_CODE = Arrays.asList(
+            "/core/javautilCode.kt"
+    );
 
     @NotNull
     public static final List<String> LIB_FILE_NAMES = Lists.newArrayList();
@@ -91,12 +94,11 @@ public abstract class Config {
      */
     @NotNull
     public static final List<String> LIB_FILE_NAMES_DEPENDENT_ON_STDLIB = Arrays.asList(
-            "/stdlib/dom.kt",
-            "/stdlib/jutil.kt",
-            //"/stdlib/JUMaps.kt",
-            "/stdlib/test.kt",
-            "/core/stringDefs.kt",
-            "/core/strings.kt"
+            "/core/stringsCode.kt",
+            "/stdlib/domCode.kt",
+            "/stdlib/jutilCode.kt",
+            //"/stdlib/JUMapsCode.kt",
+            "/stdlib/testCode.kt"
     );
 
     public static final String LIBRARIES_LOCATION = "js/js.libraries/src";

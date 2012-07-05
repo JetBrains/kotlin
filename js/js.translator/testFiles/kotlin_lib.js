@@ -161,6 +161,24 @@ var kotlin = {set:function (receiver, key, value) {
         }
     });
 
+    Kotlin.Runnable = Kotlin.$createClass({
+        initialize: function () {
+        },
+        run: throwAbstractFunctionInvocationError
+    });
+
+    Kotlin.Comparable = Kotlin.$createClass({
+        initialize: function () {
+        },
+        compareTo: throwAbstractFunctionInvocationError
+    });
+
+    Kotlin.Appendable = Kotlin.$createClass({
+        initialize: function () {
+        },
+        append: throwAbstractFunctionInvocationError
+    });
+
     Kotlin.parseInt = function (str) {
         return parseInt(str, 10);
     };
