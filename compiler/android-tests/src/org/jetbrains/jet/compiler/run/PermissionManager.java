@@ -19,6 +19,7 @@ package org.jetbrains.jet.compiler.run;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.jet.compiler.PathManager;
+import org.jetbrains.jet.compiler.run.result.RunResult;
 
 /**
  * @author Natalia.Ukhorskaya
@@ -39,6 +40,18 @@ public class PermissionManager {
             RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/emulator-arm"));
             RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/zipalign"));
             RunUtils.execute(generateChmodCmd(pathManager.getAntBinDirectory() + "/ant"));
+        }
+        else {
+            GeneralCommandLine commandLine = new GeneralCommandLine();
+            commandLine.setExePath("cmd");
+            commandLine.addParameter("/c");
+            commandLine.addParameter("mklink");
+            commandLine.addParameter("C:\\WINDOWS\\system32\\config\\systemprofile\\.android");
+            commandLine.addParameter("D:\\.android");
+            RunResult runResult = RunUtils.execute(commandLine);
+            if (!runResult.getStatus()) {
+                throw new RuntimeException(runResult.getOutput());
+            }
         }
     }
 
