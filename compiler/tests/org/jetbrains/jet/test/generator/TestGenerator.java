@@ -75,6 +75,7 @@ public class TestGenerator {
         p.print(FileUtil.loadFile(new File("injector-generator/copyright.txt")));
         p.println("package ", suiteClassPackage, ";");
         p.println();
+        p.println("import junit.framework.TestSuite;");
         p.println("import org.junit.Assert;");
         p.println("import org.junit.Test;");
         p.println("import org.junit.runner.RunWith;");
@@ -101,6 +102,8 @@ public class TestGenerator {
             p.println();
         }
 
+        generateSuiteMethod(p);
+
         p.popIndent();
         p.println("}");
 
@@ -108,6 +111,20 @@ public class TestGenerator {
         File testSourceFile = new File(testSourceFilePath);
         FileUtil.writeToFile(testSourceFile, out.toString());
         System.out.println("Output written to file:\n" + testSourceFile.getAbsolutePath());
+    }
+
+    private void generateSuiteMethod(Printer p) {
+        p.println("public static junit.framework.Test suite() {");
+        p.pushIndent();
+        p.println("TestSuite suite = new TestSuite();");
+
+        for (TestDataSource testDataSource : testDataSources) {
+            p.println("suite.addTestSuite(", testDataSource.getTestClassName(), ".class);");
+        }
+
+        p.println("return suite;");
+        p.popIndent();
+        p.println("}");
     }
 
     private void generateSuiteAnnotations(Printer p) {

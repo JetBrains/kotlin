@@ -78,7 +78,7 @@ public class TestDataSource {
     }
 
     public String getAllTestsPresentMethodName() {
-        return "allTestsPresentIn" + StringUtil.capitalize(rootFile.getName());
+        return "testAllFilesPresentIn" + StringUtil.capitalize(rootFile.getName());
     }
 
     public String getTestClassName() {
