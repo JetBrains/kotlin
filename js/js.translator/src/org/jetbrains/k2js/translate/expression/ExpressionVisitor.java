@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -83,7 +84,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             return context.program().getStringLiteral(value.toString());
         }
         //TODO: all values
-        throw new AssertionError("Unsupported constant expression" + expression.toString());
+        throw new AssertionError("Unsupported constant expression " + expression.toString() + " at " + DiagnosticUtils.atLocation(expression));
     }
 
     @Override
