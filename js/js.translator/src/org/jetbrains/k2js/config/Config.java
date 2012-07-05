@@ -97,7 +97,7 @@ public abstract class Config {
             "/core/stringsCode.kt",
             "/stdlib/domCode.kt",
             "/stdlib/jutilCode.kt",
-            //"/stdlib/JUMapsCode.kt",
+            "/stdlib/JUMapsCode.kt",
             "/stdlib/testCode.kt"
     );
 

@@ -44,7 +44,9 @@
                                 <copy todir="${basedir}/target/generated-js-library">
                                     <fileset dir="${kotlin-js-lib-srcdir}">
                                         <include name="**/*Code.kt"/>
+<!--
                                         <exclude name="**/JUtilMapsCode.kt"/>
+-->
                                     </fileset>
                                 </copy>
                                 <copy todir="${basedir}/target/generated-js-library/kotlin">
@@ -65,12 +67,10 @@
                                         <include name="Iterators.kt"/>
                                         <include name="JUtil.kt"/>
                                         <include name="JUtilCollections.kt"/>
-<!--
                                         <include name="JUtilMaps.kt"/>
--->
                                         <include name="JLangIterables.kt"/>
                                         <include name="JLangIterablesLazy.kt"/>
-                                        <include name="JLangIterablesSpecial.kkt"/>
+                                        <include name="JLangIterablesSpecial.kt"/>
 <!--
                                         <include name="Ordering.kt"/>
 -->
