@@ -69,10 +69,11 @@ public class SeleniumQUnit(val driver: WebDriver) {
             }
             val testName = "${findTestName(element)} result: $result"
             val fullMessage = if (message != null) {
-                testName + message
+                "$testName. $message"
             } else {
                 "test result for test case $testName"
             }
+            println("FAILED: $fullMessage")
             fail(fullMessage)
         }
     }
