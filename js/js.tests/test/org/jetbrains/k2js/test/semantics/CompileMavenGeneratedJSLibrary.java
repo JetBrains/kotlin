@@ -61,6 +61,7 @@ public class CompileMavenGeneratedJSLibrary extends SingleFileTranslationTest {
         if (generatedJsLibraryDir.exists() && generatedJsLibraryDir.isDirectory()) {
             generateJavaScriptFiles(EcmaVersion.all(),
                                     "libraries/stdlib/test",
+                                    "ArraysTest.kt",
                                     "dom/DomTest.kt",
                                     "js/MapTest.kt",
                                     "js/JsDomTest.kt",

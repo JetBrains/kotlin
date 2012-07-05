@@ -55,9 +55,7 @@
                                         <exclude name="**/*JVMTest.kt"/>
                                     </fileset>
                                     <fileset dir="${basedir}/../../stdlib/test">
-<!--
                                         <include name="ArraysTest.kt"/>
--->
                                         <include name="GetOrElseTest.kt"/>
 <!--
     TODO: depends on this being fixed: http://youtrack.jetbrains.com/issue/KT-2372
