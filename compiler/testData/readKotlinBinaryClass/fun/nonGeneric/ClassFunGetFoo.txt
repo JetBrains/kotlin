@@ -1,6 +1,6 @@
 namespace test
 
 internal final class test.ClassFunGetFoo : jet.Any {
-    internal final fun getFoo(): jet.Int
     public final /*constructor*/ fun <init>(): test.ClassFunGetFoo
+    internal final fun getFoo(): jet.Int
 }

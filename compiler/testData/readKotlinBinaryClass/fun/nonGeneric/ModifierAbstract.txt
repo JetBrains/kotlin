@@ -1,6 +1,6 @@
 namespace test
 
 internal abstract class test.ModifierAbstract : jet.Any {
-    internal abstract fun abs(): jet.Int
     public final /*constructor*/ fun <init>(): test.ModifierAbstract
+    internal abstract fun abs(): jet.Int
 }

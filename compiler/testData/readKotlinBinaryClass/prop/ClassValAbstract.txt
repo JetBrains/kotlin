@@ -1,6 +1,6 @@
 namespace test
 
 internal abstract class test.ClassValAbstract : jet.Any {
-    internal abstract val a: jet.Int
     public final /*constructor*/ fun <init>(): test.ClassValAbstract
+    internal abstract val a: jet.Int
 }

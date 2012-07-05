@@ -4,19 +4,19 @@ namespace <root>
 namespace p
 
 internal final class p.C : jet.Any {
-    internal final fun f(): jet.Tuple0
     public final /*constructor*/ fun <init>(): p.C
+    internal final fun f(): jet.Tuple0
 }
 internal open class p.G</*0*/ T : jet.Any?> : jet.Any {
+    public final /*constructor*/ fun </*0*/ T : jet.Any?><init>(): p.G<T>
     internal final fun a(): jet.Tuple0
     internal open fun f(): T
-    public final /*constructor*/ fun </*0*/ T : jet.Any?><init>(): p.G<T>
 }
 internal final class p.G2</*0*/ E : jet.Any?> : p.G<E> {
-    internal final fun g(): E
+    public final /*constructor*/ fun </*0*/ E : jet.Any?><init>(): p.G2<E>
     internal final override /*1*/ fun a(): jet.Tuple0
     internal open override /*1*/ fun f(): E
-    public final /*constructor*/ fun </*0*/ E : jet.Any?><init>(): p.G2<E>
+    internal final fun g(): E
 }
 internal final fun foo(): jet.Tuple0
 internal final fun foo(/*0*/ a: p.C): jet.Tuple0
