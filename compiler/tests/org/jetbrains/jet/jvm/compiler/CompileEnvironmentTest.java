@@ -50,7 +50,8 @@ public class CompileEnvironmentTest extends TestCase {
                                                    "-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts",
                                                    "-jar", resultJar.getAbsolutePath(),
                                                    "-stdlib", stdlib.getAbsolutePath(),
-                                                   "-jdkAnnotations", jdkAnnotations.getAbsolutePath());
+                                                   "-noJdkAnnotations",
+                                                   "-annotations", jdkAnnotations.getAbsolutePath());
             Assert.assertEquals("compilation completed with non-zero code", ExitCode.OK, rv);
             FileInputStream fileInputStream = new FileInputStream(resultJar);
             try {
@@ -80,8 +81,11 @@ public class CompileEnvironmentTest extends TestCase {
             File stdlib = ForTestCompileRuntime.runtimeJarForTests();
             File jdkAnnotations = ForTestPackJdkAnnotations.jdkAnnotationsForTests();
             ExitCode exitCode = new K2JVMCompiler()
-                    .exec(System.out, "-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kt", "-output",
-                          out.getAbsolutePath(), "-stdlib", stdlib.getAbsolutePath(), "-jdkAnnotations", jdkAnnotations.getAbsolutePath());
+                    .exec(System.out, "-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kt",
+                          "-output", out.getAbsolutePath(),
+                          "-stdlib", stdlib.getAbsolutePath(),
+                          "-noJdkAnnotations",
+                          "-annotations", jdkAnnotations.getAbsolutePath());
             Assert.assertEquals(ExitCode.OK, exitCode);
             assertEquals(1, out.listFiles().length);
             assertEquals(1, out.listFiles()[0].listFiles().length);

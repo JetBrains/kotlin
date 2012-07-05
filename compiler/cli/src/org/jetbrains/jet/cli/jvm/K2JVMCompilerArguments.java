@@ -70,10 +70,6 @@ public class K2JVMCompilerArguments extends CompilerArguments {
     @Argument(value = "stdlib", description = "Path to the stdlib.jar")
     public String stdlib;
 
-    @Deprecated
-    @Argument(value = "jdkAnnotations", description = "Path to the kotlin-jdk-annotations.jar")
-    public String jdkAnnotations;
-
     @Argument(value = "output", description = "output directory")
     public String outputDir;
 
