@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.compiler;
 
+import java.io.File;
+
 /**
  * @author Natalia.Ukhorskaya
  */
@@ -32,6 +34,12 @@ public class PathManager {
 
     public String getPlatformFolderInAndroidSdk() {
         return getAndroidSdkRoot() + "/platforms";
+    }
+
+    public String getAndroidEmulatorRoot() {
+        String androidEmulatorRoot = tmpFolder + "/emulator";
+        new File(androidEmulatorRoot).mkdirs();
+        return androidEmulatorRoot;
     }
 
     public String getPlatformToolsFolderInAndroidSdk() {

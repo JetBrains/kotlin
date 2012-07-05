@@ -43,6 +43,8 @@ public class Emulator {
         commandLine.addParameter("--force");
         commandLine.addParameter("-n");
         commandLine.addParameter("my_avd");
+        commandLine.addParameter("-p");
+        commandLine.addParameter(pathManager.getAndroidEmulatorRoot());
         commandLine.addParameter("-t");
         commandLine.addParameter("1");
         return commandLine;

@@ -203,7 +203,13 @@ public class CodegenTestsOnAndroidRunner {
             return antRunner.runTestsOnEmulator();
         }
         finally {
-            emulator.stopEmulator();
+            try {
+                emulator.stopEmulator();
+            }
+            catch (Throwable t) {
+                System.err.println("Exception during stopping emulator:");
+                t.printStackTrace();
+            }
         }
     }
 
