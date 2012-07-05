@@ -74,9 +74,6 @@ public class K2JVMCompilerArguments extends CompilerArguments {
     @Argument(value = "jdkAnnotations", description = "Path to the kotlin-jdk-annotations.jar")
     public String jdkAnnotations;
 
-    @Argument(value = "mode", description = "Special compiler modes: stubs or jdkHeaders")
-    public String mode;
-
     @Argument(value = "output", description = "output directory")
     public String outputDir;
 
@@ -161,14 +158,6 @@ public class K2JVMCompilerArguments extends CompilerArguments {
 
     public void setStdlib(String stdlib) {
         this.stdlib = stdlib;
-    }
-
-    public String getMode() {
-        return mode;
-    }
-
-    public void setMode(String mode) {
-        this.mode = mode;
     }
 
     @Override

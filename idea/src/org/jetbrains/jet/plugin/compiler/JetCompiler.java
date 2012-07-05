@@ -270,8 +270,7 @@ public class JetCompiler implements TranslatingCompiler {
                 "-module", scriptFile.getAbsolutePath(),
                 "-output", path(outputDir),
                 "-tags", "-verbose", "-version",
-                "-noStdlib", "-noJdkAnnotations", "-noJdk",
-                "-mode", "idea"};
+                "-noStdlib", "-noJdkAnnotations", "-noJdk"};
     }
 
     private static void runOutOfProcess(final CompileContext compileContext,

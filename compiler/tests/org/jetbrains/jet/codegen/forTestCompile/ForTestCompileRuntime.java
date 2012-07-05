@@ -62,7 +62,6 @@ public class ForTestCompileRuntime {
                 "-output", destdir.getPath(),
                 "-src", "./libraries/stdlib/src",
                 "-noStdlib",
-                "-mode", "stdlib",
                 "-classpath", "out/production/runtime");
         if (exitCode != ExitCode.OK) {
             throw new IllegalStateException("stdlib for test compilation failed: " + exitCode);

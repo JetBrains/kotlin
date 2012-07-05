@@ -415,8 +415,6 @@
             <arg value="-output"/>
             <arg value="${output}/classes/stdlib"/>
             <arg value="-noStdlib"/>
-            <arg value="-mode"/>
-            <arg value="stdlib"/>
             <arg value="-classpath"/>
             <arg value="${output}/classes/runtime"/>
         </java>
@@ -448,8 +446,6 @@
             <arg value="-output"/>
             <arg value="${output}/classes/lang"/>
             <arg value="-noStdlib"/>
-            <arg value="-mode"/>
-            <arg value="builtins"/>
             <arg value="-builtins"/>
         </java>
 
