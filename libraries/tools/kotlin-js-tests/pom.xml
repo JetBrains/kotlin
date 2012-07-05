@@ -45,13 +45,27 @@
                                     </fileset>
                                     <fileset dir="${basedir}/../../stdlib/test/dom">
                                         <include name="**/*.kt"/>
+                                        <!-- TODO needs toXmlString() or innerHTML / outerHTML to work on newly create Document instances -->
+                                        <exclude name="**/DomTest.kt"/>
                                         <exclude name="**/DomBuilderTest.kt"/>
                                         <exclude name="**/NextSiblingTest.kt"/>
-                                        <exclude name="**/*JVM.kt"/>
+                                        <exclude name="**/*JVMTest.kt"/>
                                     </fileset>
                                     <fileset dir="${basedir}/../../stdlib/test">
+                                        <include name="GetOrElseTest.kt"/>
+<!--
+    TODO: depends on this being fixed: http://youtrack.jetbrains.com/issue/KT-2372
+
                                         <include name="ListTest.kt"/>
+                                        <include name="SetTest.kt"/>
+-->
                                         <include name="StringTest.kt"/>
+<!--
+    TODO: depends on this being fixed: http://youtrack.jetbrains.com/issue/KT-2356
+
+                                        <include name="iterators/*.kt"/>
+-->
+                                        <exclude name="**/*JVMTest.kt"/>
                                     </fileset>
                                 </copy>
                             </target>

@@ -53,12 +53,7 @@
         <module>tools/kotlin-maven-plugin</module>
         <module>tools/kotlin-js-library</module>
         <module>tools/kotlin-js-tests</module>
-<!--
-        TODO temporary disabled until KT-2314 fixed
-
         <module>tools/kotlin-js-tests-junit</module>
-
--->
         <module>tools/kdoc</module>
         <module>tools/kdoc-maven-plugin</module>
 
