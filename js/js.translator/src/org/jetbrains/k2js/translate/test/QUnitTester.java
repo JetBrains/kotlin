@@ -16,30 +16,24 @@
 
 package org.jetbrains.k2js.translate.test;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.translate.context.TranslationContext;
-
-import static com.google.dart.compiler.util.AstUtil.newBlock;
-import static com.google.dart.compiler.util.AstUtil.newInvocation;
 
 /**
  * @author Pavel Talanov
  */
-public final class QUnitTester extends JSTester {
+public final class QUnitTester extends CommonUnitTester {
     @NotNull
     private static final JsNameRef TEST_FUN_REF = AstUtil.newQualifiedNameRef("QUnit.test");
 
-    public QUnitTester(@NotNull JsBlock block, @NotNull TranslationContext context) {
-        super(block, context);
+    public QUnitTester() {
+        super();
     }
 
-    @Override
-    public void constructTestMethodInvocation(@NotNull JsExpression functionToTestCall,
-            @NotNull JsStringLiteral testName) {
-        JsFunction functionToTest = new JsFunction(this.context.jsScope());
-        functionToTest.setBody(newBlock(functionToTestCall.makeStmt()));
-        block.getStatements().add(newInvocation(TEST_FUN_REF, testName, functionToTest).makeStmt());
+    @NotNull
+    protected JsExpression getTestMethodRef() {
+        return TEST_FUN_REF;
     }
 }

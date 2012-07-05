@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.JsBlock;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsStringLiteral;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 /**
@@ -27,15 +28,38 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
  */
 public abstract class JSTester {
 
-    @NotNull
-    protected final JsBlock block;
-    @NotNull
-    protected final TranslationContext context;
+    @Nullable
+    private JsBlock block;
 
-    public JSTester(@NotNull JsBlock block, @NotNull TranslationContext context) {
+    @Nullable
+    private TranslationContext context;
+
+    public JSTester() {
+        this.block = null;
+        this.context = null;
+    }
+
+    public abstract void constructTestMethodInvocation(@NotNull JsExpression call, @NotNull JsStringLiteral name);
+
+    @NotNull
+    protected JsBlock getBlock() {
+        assert block != null : "Call initialize before using tester.";
+        return block;
+    }
+
+    @NotNull
+    protected TranslationContext getContext() {
+        assert context != null : "Call initialize before using tester.";
+        return context;
+    }
+
+    public void initialize(@NotNull TranslationContext context, @NotNull JsBlock block) {
         this.block = block;
         this.context = context;
     }
 
-    public abstract void constructTestMethodInvocation(@NotNull JsExpression call, @NotNull JsStringLiteral name);
+    public void deinitialize() {
+        this.block = null;
+        this.context = null;
+    }
 }

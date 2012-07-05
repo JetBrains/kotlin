@@ -16,7 +16,6 @@
 
 package org.jetbrains.k2js.translate.test;
 
-import com.google.dart.compiler.backend.js.ast.JsBlock;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsNew;
 import com.google.dart.compiler.backend.js.ast.JsStringLiteral;
@@ -42,10 +41,9 @@ public final class JSTestGenerator {
     }
 
     public static void generateTestCalls(@NotNull TranslationContext context,
-            @NotNull Collection<JetFile> files,
-            @NotNull JsBlock block) {
+            @NotNull Collection<JetFile> files, @NotNull JSTester tester) {
         List<FunctionDescriptor> functionDescriptors = JetTestFunctionDetector.getTestFunctionDescriptors(context.bindingContext(), files);
-        doGenerateTestCalls(functionDescriptors, context, new PlainAssertionTester(block, context));
+        doGenerateTestCalls(functionDescriptors, context, tester);
     }
 
     private static void doGenerateTestCalls(@NotNull List<FunctionDescriptor> functionDescriptors,

@@ -16,22 +16,25 @@
 
 package org.jetbrains.k2js.translate.test;
 
-import com.google.dart.compiler.backend.js.ast.JsBlock;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsStringLiteral;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.translate.context.TranslationContext;
 
 /**
  * @author Pavel Talanov
  */
-public final class PlainAssertionTester extends JSTester {
-    public PlainAssertionTester(@NotNull JsBlock block, @NotNull TranslationContext context) {
-        super(block, context);
+public final class JSRhinoUnitTester extends CommonUnitTester {
+
+    public static final JsNameRef TEST_FUN_REF = AstUtil.newQualifiedNameRef("JsTests.test");
+
+    public JSRhinoUnitTester() {
+        super();
     }
 
+    @NotNull
     @Override
-    public void constructTestMethodInvocation(@NotNull JsExpression call, @NotNull JsStringLiteral name) {
-        block.getStatements().add(call.makeStmt());
+    protected JsExpression getTestMethodRef() {
+        return TEST_FUN_REF;
     }
 }

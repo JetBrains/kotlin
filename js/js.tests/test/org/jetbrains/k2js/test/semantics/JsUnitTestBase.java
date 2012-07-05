@@ -20,9 +20,12 @@ import closurecompiler.internal.com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
+import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.MultipleFilesTranslationTest;
+import org.jetbrains.k2js.test.rhino.RhinoSystemOutputChecker;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.test.utils.LibraryFilePathsUtil.getAdditionalLibraryFiles;
@@ -61,10 +64,15 @@ public class JsUnitTestBase extends MultipleFilesTranslationTest {
         assert removed;
         result.addAll(additionalLibraryFiles);
         return result;
-
     }
 
     public void testDummy() throws Exception {
-        checkFooBoxIsTrue("test");
+        performUnitTest("libraries/stdlib/test/ListTest.kt");
+    }
+
+    private void performUnitTest(String... testFiles) throws Exception {
+        Iterable<EcmaVersion> versions = Collections.singletonList(EcmaVersion.v3);
+        generateJavaScriptFiles(Lists.newArrayList(testFiles), "myTest", MainCallParameters.noCall(), versions);
+        runRhinoTests("myTest", versions, new RhinoSystemOutputChecker(""));
     }
 }

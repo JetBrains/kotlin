@@ -16,7 +16,7 @@
 /*Asserter*/
 
 var JsTests = (function() {
-    var out = null;
+    var out = Kotlin.System.out();
     function setOut(newOut) {
         out = newOut;
     }
@@ -28,7 +28,7 @@ var JsTests = (function() {
             }
         };
         this.assertEquals = function (message, actual) {
-
+            throw null;
         };
     };
 

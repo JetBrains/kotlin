@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.k2js.translate.test.JSTester;
+import org.jetbrains.k2js.translate.test.QUnitTester;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -84,6 +86,7 @@ public abstract class Config {
 
     @NotNull
     public static final List<String> LIB_FILE_NAMES = Lists.newArrayList();
+
     static {
         LIB_FILE_NAMES.addAll(LIB_FILES_WITH_DECLARATIONS);
         LIB_FILE_NAMES.addAll(LIB_FILES_WITH_CODE);
@@ -186,5 +189,11 @@ public abstract class Config {
         allFiles.addAll(files);
         allFiles.addAll(config.getLibFiles());
         return allFiles;
+    }
+
+    //TODO: should be null by default I suppose but we can't communicate it to K2JSCompiler atm
+    @Nullable
+    public JSTester getTester() {
+        return new QUnitTester();
     }
 }
