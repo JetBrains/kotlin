@@ -104,8 +104,10 @@ public class TestGenerator {
         p.popIndent();
         p.println("}");
 
-        String testSourceFilePath = baseDir + suiteClassPackage.replace(".", "/") + "/" + suiteClassName + ".java";
-        FileUtil.writeToFile(new File(testSourceFilePath), out.toString());
+        String testSourceFilePath = baseDir + "/" + suiteClassPackage.replace(".", "/") + "/" + suiteClassName + ".java";
+        File testSourceFile = new File(testSourceFilePath);
+        FileUtil.writeToFile(testSourceFile, out.toString());
+        System.out.println("Output written to file:\n" + testSourceFile.getAbsolutePath());
     }
 
     private void generateSuiteAnnotations(Printer p) {
