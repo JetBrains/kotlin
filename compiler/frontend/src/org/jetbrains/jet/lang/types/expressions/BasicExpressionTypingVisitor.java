@@ -21,7 +21,6 @@ import com.google.common.collect.Multimap;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -958,6 +957,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     if (resolutionResults.isSuccess()) {
                         FunctionDescriptor equals = resolutionResults.getResultingCall().getResultingDescriptor();
                         context.trace.record(REFERENCE_TARGET, operationSign, equals);
+                        context.trace.record(RESOLVED_CALL, operationSign, resolutionResults.getResultingCall());
                         if (ensureBooleanResult(operationSign, name, equals.getReturnType(), context)) {
                             ensureNonemptyIntersectionOfOperandTypes(expression, context);
                         }

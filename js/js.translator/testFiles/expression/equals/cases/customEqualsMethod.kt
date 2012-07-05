@@ -1,9 +1,12 @@
 package foo
 
 class Foo(val name: String) {
-  public fun equals(that: Foo): Boolean {
-    return this.name == that.name
-  }
+    public fun equals(that: Any?): Boolean {
+        if (that !is Foo) {
+            return false
+        }
+        return this.name == that.name
+    }
 }
 
 fun box() : Boolean {
