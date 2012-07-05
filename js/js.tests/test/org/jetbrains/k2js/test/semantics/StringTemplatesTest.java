@@ -22,10 +22,6 @@ public final class StringTemplatesTest extends AbstractExpressionTest {
         super("stringTemplates/");
     }
 
-    public void TODO_testObjectWithExtensionToString() throws Exception {
-        fooBoxIsValue("a = abcX, b = defX");
-    }
-
     public void testObjectWithToString() throws Exception {
         fooBoxIsValue("a = abcS, b = defS");
     }
