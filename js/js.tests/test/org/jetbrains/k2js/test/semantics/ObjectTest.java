@@ -39,6 +39,9 @@ public final class ObjectTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
+    public void testObjectDeclarationWithVars() throws Exception {
+        fooBoxTest();
+    }
 
     public void testObjectInMethod() throws Exception {
         fooBoxTest();
