@@ -40,7 +40,8 @@ public class ReadJavaBinaryClassTestGenerator {
                 Arrays.asList(
                         new TestDataSource(new File("compiler/testData/readJavaBinaryClass"), true, TestGenerator.filterFilesByExtension(extension), "doTest")
                 ),
-                ReadJavaBinaryClassTestGenerator.class.getName()
+                ReadJavaBinaryClassTestGenerator.class.getName(),
+                TestGenerator.TargetTestFrameworks.JUNIT_3
         ).generateAndSave();
     }
 }
