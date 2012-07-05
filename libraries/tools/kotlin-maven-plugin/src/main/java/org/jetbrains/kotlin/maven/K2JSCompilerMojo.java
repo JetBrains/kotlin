@@ -29,6 +29,7 @@ import org.jetbrains.k2js.config.MetaInfServices;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
 /**
  * Converts Kotlin to JavaScript code
@@ -165,8 +166,8 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
             if (sources.size() > 0) {
                 k2jsArgs.sourceFiles = sources.toArray(new String[sources.size()]);
             }
+            getLog().info("Compiling Kotlin src from " + Arrays.asList(k2jsArgs.sourceFiles) + " to JavaScript at: " + outputFile);
         }
-        getLog().info("Compiling Kotlin src from " + arguments.getSrc() + " to JavaScript at: " + outputFile);
     }
 
     @Override

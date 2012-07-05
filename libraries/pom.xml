@@ -52,13 +52,7 @@
         <module>tools/runtime</module>
         <module>tools/kotlin-maven-plugin</module>
         <module>tools/kotlin-js-library</module>
-<!--
-        TODO: temporary fix until this bug fixed:
-        java.lang.IllegalStateException: null at (5,10) in /stdlib/JUMaps.kt.jet
-
         <module>tools/kotlin-js-tests</module>
--->
-
 <!--
         TODO temporary disabled until KT-2314 fixed
 
@@ -77,14 +71,8 @@
         <module>docs/website</module>
 
         <module>examples/kotlin-java-example</module>
-
-        <!--
-                TODO: temporary fix until this bug fixed:
-                java.lang.IllegalStateException: null at (5,10) in /stdlib/JUMaps.kt.jet
-
         <module>examples/js-example</module>
         <module>examples/browser-example</module>
-        -->
     </modules>
 
     <dependencies>
