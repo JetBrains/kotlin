@@ -33,7 +33,6 @@ import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.codegen.CompilationException;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
@@ -56,7 +55,6 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
     @Override
     @NotNull
     protected ExitCode doExecute(K2JVMCompilerArguments arguments, PrintingMessageCollector messageCollector, Disposable rootDisposable) {
-        CompilerSpecialMode mode = parseCompilerSpecialMode(arguments);
         CompilerConfiguration compilerConfiguration = createCompilerConfiguration(arguments);
 
         final List<String> argumentsSourceDirs = arguments.getSourceDirs();
@@ -71,7 +69,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
         }
 
         JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, compilerConfiguration);
-        boolean builtins = mode == CompilerSpecialMode.BUILTINS;
+        boolean builtins = arguments.builtins;
         K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(
                 environment, messageCollector, arguments.script,
                 builtins ? BuiltinsScopeExtensionMode.ONLY_STANDARD_CLASSES : BuiltinsScopeExtensionMode.ALL,
@@ -133,22 +131,6 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
                                     CompilerMessageLocation.NO_LOCATION);
             return INTERNAL_ERROR;
         }
-    }
-
-    @NotNull
-    private static CompilerSpecialMode parseCompilerSpecialMode(@NotNull K2JVMCompilerArguments arguments) {
-        if (arguments.mode == null) {
-            return CompilerSpecialMode.REGULAR;
-        }
-        else {
-            for (CompilerSpecialMode variant : CompilerSpecialMode.values()) {
-                if (arguments.mode.equalsIgnoreCase(variant.name().replaceAll("_", ""))) {
-                    return variant;
-                }
-            }
-        }
-        // TODO: report properly
-        throw new IllegalArgumentException("unknown compiler mode: " + arguments.mode);
     }
 
 

@@ -63,6 +63,9 @@ public class K2JVMCompilerArguments extends CompilerArguments {
     @Argument(value = "noJdkAnnotations", description = "don't include JDK external annotations into classpath")
     public boolean noJdkAnnotations;
 
+    @Argument(value = "builtins", description = "compile builtin classes (internal)")
+    public boolean builtins;
+
     @Deprecated
     @Argument(value = "stdlib", description = "Path to the stdlib.jar")
     public String stdlib;

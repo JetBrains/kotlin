@@ -450,6 +450,7 @@
             <arg value="-noStdlib"/>
             <arg value="-mode"/>
             <arg value="builtins"/>
+            <arg value="-builtins"/>
         </java>
 
         <!-- Not used yet -->
