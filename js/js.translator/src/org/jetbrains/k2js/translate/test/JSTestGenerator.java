@@ -36,6 +36,7 @@ import java.util.List;
 /**
  * @author Pavel Talanov
  */
+//TODO: use method object instead of static functions
 public final class JSTestGenerator {
     private JSTestGenerator() {
     }
@@ -44,23 +45,27 @@ public final class JSTestGenerator {
             @NotNull Collection<JetFile> files,
             @NotNull JsBlock block) {
         List<FunctionDescriptor> functionDescriptors = JetTestFunctionDetector.getTestFunctionDescriptors(context.bindingContext(), files);
-        doGenerateTestCalls(functionDescriptors, block, context);
+        doGenerateTestCalls(functionDescriptors, context, new PlainAssertionTester(block, context));
     }
 
     private static void doGenerateTestCalls(@NotNull List<FunctionDescriptor> functionDescriptors,
-            @NotNull JsBlock block,
-            @NotNull TranslationContext context) {
+            @NotNull TranslationContext context, @NotNull JSTester jsTester) {
         for (FunctionDescriptor functionDescriptor : functionDescriptors) {
             ClassDescriptor classDescriptor = JsDescriptorUtils.getContainingClass(functionDescriptor);
             if (classDescriptor == null) {
                 return;
             }
-            JsExpression expression = ReferenceTranslator.translateAsFQReference(classDescriptor, context);
-            JsNew testClass = new JsNew(expression);
-            JsExpression functionToTestCall = CallBuilder.build(context).descriptor(functionDescriptor).receiver(testClass).translate();
-
-            JsStringLiteral testName = context.program().getStringLiteral(classDescriptor.getName() + "." + functionDescriptor.getName());
-            (new JSTester(block, context)).constructTestMethodInvocation(functionToTestCall, testName);
+            generateCodeForTestMethod(context, functionDescriptor, classDescriptor, jsTester);
         }
+    }
+
+    private static void generateCodeForTestMethod(@NotNull TranslationContext context,
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull ClassDescriptor classDescriptor, @NotNull JSTester tester) {
+        JsExpression expression = ReferenceTranslator.translateAsFQReference(classDescriptor, context);
+        JsNew testClass = new JsNew(expression);
+        JsExpression functionToTestCall = CallBuilder.build(context).descriptor(functionDescriptor).receiver(testClass).translate();
+        JsStringLiteral testName = context.program().getStringLiteral(classDescriptor.getName() + "." + functionDescriptor.getName());
+        tester.constructTestMethodInvocation(functionToTestCall, testName);
     }
 }

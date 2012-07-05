@@ -43,8 +43,8 @@ public abstract class BasicTest extends TestWithEnvironment {
     private static final String CASES = "cases/";
     private static final String OUT = "out/";
     private static final String EXPECTED = "expected/";
-    
-    public static final String JSLINT_LIB = pathToTestFilesRoot() + "jslint.js";    
+
+    public static final String JSLINT_LIB = pathToTestFilesRoot() + "jslint.js";
 
     @NotNull
     private String mainDirectory = "";
@@ -103,19 +103,33 @@ public abstract class BasicTest extends TestWithEnvironment {
             @NotNull MainCallParameters mainCallParameters, @NotNull Iterable<EcmaVersion> ecmaVersions)
             throws Exception {
         for (EcmaVersion version : ecmaVersions) {
-            TranslationUtils.translateFiles(getProject(), files, getOutputFilePath(testName, version), mainCallParameters, version);
+            TranslationUtils.translateFiles(getProject(), withAdditionalFiles(files),
+                                            getOutputFilePath(testName, version), mainCallParameters, version);
         }
     }
 
-    protected void runRhinoTests(@NotNull String filename, @NotNull Iterable<EcmaVersion> ecmaVersions, @NotNull RhinoResultChecker checker) throws Exception {
+    @NotNull
+    private List<String> withAdditionalFiles(@NotNull List<String> files) {
+        List<String> result = Lists.newArrayList(files);
+        result.addAll(additionalKotlinFiles());
+        return result;
+    }
+
+    protected void runRhinoTests(@NotNull String filename, @NotNull Iterable<EcmaVersion> ecmaVersions,
+            @NotNull RhinoResultChecker checker) throws Exception {
         for (EcmaVersion ecmaVersion : ecmaVersions) {
             runRhinoTest(withAdditionalFiles(getOutputFilePath(filename, ecmaVersion), ecmaVersion), checker, getRhinoTestVariables(),
                          ecmaVersion);
         }
     }
 
-    protected Map<String,Object> getRhinoTestVariables() throws Exception {
+    protected Map<String, Object> getRhinoTestVariables() throws Exception {
         return null;
+    }
+
+    @NotNull
+    protected List<String> additionalKotlinFiles() {
+        return Lists.newArrayList();
     }
 
 

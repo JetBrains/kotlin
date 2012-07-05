@@ -25,17 +25,13 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 /**
  * @author Pavel Talanov
  */
-public abstract class JSTester {
-
-    @NotNull
-    protected final JsBlock block;
-    @NotNull
-    protected final TranslationContext context;
-
-    public JSTester(@NotNull JsBlock block, @NotNull TranslationContext context) {
-        this.block = block;
-        this.context = context;
+public final class PlainAssertionTester extends JSTester {
+    public PlainAssertionTester(@NotNull JsBlock block, @NotNull TranslationContext context) {
+        super(block, context);
     }
 
-    public abstract void constructTestMethodInvocation(@NotNull JsExpression call, @NotNull JsStringLiteral name);
+    @Override
+    public void constructTestMethodInvocation(@NotNull JsExpression call, @NotNull JsStringLiteral name) {
+        block.getStatements().add(call.makeStmt());
+    }
 }

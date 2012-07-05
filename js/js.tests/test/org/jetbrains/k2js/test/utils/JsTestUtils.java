@@ -60,7 +60,7 @@ public final class JsTestUtils {
     @NotNull
     public static List<String> getAllFilesInDir(@NotNull String dirName) {
         File dir = new File(dirName);
-        assert dir.isDirectory();
+        assert dir.isDirectory() : dir + " is not a directory.";
         List<String> fullFilePaths = new ArrayList<String>();
         for (String fileName : dir.list()) {
             fullFilePaths.add(dirName + "/" + fileName);
