@@ -9,7 +9,7 @@ class Foo(val name: String) {
     }
 }
 
-fun callEqualsMethod(v1: Foo?, v2: Foo?): Boolean {
+fun callEqualsMethod(v1: Any?, v2: Any?): Boolean {
   return v1 == v2
 }
 
