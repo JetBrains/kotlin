@@ -28,7 +28,7 @@ import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.compiler.PathManager;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.CompilerSpecialMode;
 import org.jetbrains.jet.test.generator.Printer;
 
 import java.io.File;

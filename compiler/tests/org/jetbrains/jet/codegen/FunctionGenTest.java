@@ -19,7 +19,7 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.CompilerSpecialMode;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;

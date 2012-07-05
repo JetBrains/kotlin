@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.CompilerSpecialMode;
 
 public class BridgeMethodGenTest extends CodegenTestCase {
     public void testBridgeMethod () throws Exception {

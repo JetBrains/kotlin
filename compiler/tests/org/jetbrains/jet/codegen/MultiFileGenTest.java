@@ -16,9 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
-
-import java.lang.reflect.Method;
+import org.jetbrains.jet.CompilerSpecialMode;
 
 public class MultiFileGenTest extends CodegenTestCase {
     @Override

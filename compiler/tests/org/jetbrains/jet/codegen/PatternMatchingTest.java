@@ -17,7 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import jet.Tuple2;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.CompilerSpecialMode;
 
 import java.lang.reflect.Method;
 

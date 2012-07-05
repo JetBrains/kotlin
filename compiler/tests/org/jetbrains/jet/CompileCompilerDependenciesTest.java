@@ -22,7 +22,6 @@ import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileBuiltins;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.utils.PathUtil;
 import org.junit.Test;
 
@@ -30,9 +29,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode.IDEA;
-import static org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode.REGULAR;
-import static org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode.STDLIB;
+import static org.jetbrains.jet.CompilerSpecialMode.REGULAR;
+import static org.jetbrains.jet.CompilerSpecialMode.STDLIB;
 
 /**
  * @author Stepan Koltsov
@@ -74,7 +72,7 @@ public class CompileCompilerDependenciesTest {
     }
 
     private static boolean includeJdkAnnotations(@NotNull CompilerSpecialMode mode) {
-        return mode == REGULAR || mode == STDLIB || mode == IDEA;
+        return mode == REGULAR || mode == STDLIB;
     }
 
     public static boolean includeKotlinRuntime(@NotNull CompilerSpecialMode mode) {
@@ -82,6 +80,6 @@ public class CompileCompilerDependenciesTest {
     }
 
     public static boolean includeJdk(@NotNull CompilerSpecialMode mode) {
-        return mode != IDEA;
+        return true;
     }
 }

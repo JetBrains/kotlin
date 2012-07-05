@@ -19,7 +19,7 @@ package org.jetbrains.jet.codegen;
 import jet.IntRange;
 import jet.Tuple2;
 import jet.Tuple4;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.CompilerSpecialMode;
 
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
