@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -30,13 +31,13 @@ import java.util.Collections;
  */
 public class GenerationUtils {
 
-    public static ClassFileFactory compileFileGetClassFileFactoryForTest(@NotNull JetFile psiFile, @NotNull CompilerSpecialMode compilerSpecialMode) {
-        return compileFileGetGenerationStateForTest(psiFile, compilerSpecialMode).getFactory();
+    public static ClassFileFactory compileFileGetClassFileFactoryForTest(@NotNull JetFile psiFile) {
+        return compileFileGetGenerationStateForTest(psiFile).getFactory();
     }
 
-    public static GenerationState compileFileGetGenerationStateForTest(JetFile psiFile, @NotNull CompilerSpecialMode compilerSpecialMode) {
+    public static GenerationState compileFileGetGenerationStateForTest(JetFile psiFile) {
         final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
-                psiFile, Collections.<AnalyzerScriptParameter>emptyList(), compilerSpecialMode);
+                psiFile, Collections.<AnalyzerScriptParameter>emptyList(), BuiltinsScopeExtensionMode.ALL);
         analyzeExhaust.throwIfError();
         GenerationState state = new GenerationState(psiFile.getProject(), ClassBuilderFactories.binaries(false), analyzeExhaust, Collections.singletonList(psiFile));
         state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);

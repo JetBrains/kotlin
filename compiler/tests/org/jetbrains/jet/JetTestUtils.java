@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnosticFactory;
@@ -170,9 +171,9 @@ public class JetTestUtils {
     private JetTestUtils() {
     }
 
-    public static AnalyzeExhaust analyzeFile(@NotNull JetFile namespace, @NotNull CompilerSpecialMode compilerSpecialMode) {
+    public static AnalyzeExhaust analyzeFile(@NotNull JetFile namespace, @NotNull BuiltinsScopeExtensionMode builtinsScopeExtensionMode) {
         return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(namespace, Collections.<AnalyzerScriptParameter>emptyList(),
-                                                                      compilerSpecialMode);
+                                                                      builtinsScopeExtensionMode);
     }
 
     public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable) {

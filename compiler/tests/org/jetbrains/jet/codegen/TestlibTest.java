@@ -21,6 +21,7 @@ import gnu.trove.THashSet;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration;
@@ -84,7 +85,8 @@ public class TestlibTest extends CodegenTestCase {
             myEnvironment.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/kunit/src"));
 
             GenerationState generationState = KotlinToJVMBytecodeCompiler
-                    .analyzeAndGenerate(new K2JVMCompileEnvironmentConfiguration(myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, false), false);
+                    .analyzeAndGenerate(new K2JVMCompileEnvironmentConfiguration(myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR,
+                                                                                 false, BuiltinsScopeExtensionMode.ALL), false);
 
             if (generationState == null) {
                 throw new RuntimeException("There were compilation errors");

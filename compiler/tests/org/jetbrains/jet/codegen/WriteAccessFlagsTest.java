@@ -30,7 +30,6 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
@@ -73,7 +72,7 @@ public class WriteAccessFlagsTest extends TestCaseWithTmpdir {
                 .trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
         assert psiFile != null;
 
-        final ClassFileFactory factory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, CompilerSpecialMode.REGULAR);
+        final ClassFileFactory factory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 
         String modifiedTestName = this.getName().replace(".kt", ".class");
         boolean isClassFound = false;

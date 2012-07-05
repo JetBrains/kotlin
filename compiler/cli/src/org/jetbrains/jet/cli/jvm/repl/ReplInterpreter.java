@@ -40,6 +40,7 @@ import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceLikeBuilderDummy;
@@ -100,7 +101,7 @@ public class ReplInterpreter {
                 false,
                 true,
                 Collections.<AnalyzerScriptParameter>emptyList());
-        injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module, mode);
+        injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module, BuiltinsScopeExtensionMode.ALL);
 
         List<URL> classpath = Lists.newArrayList();
 

@@ -32,6 +32,7 @@ import org.jetbrains.jet.TimeUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
@@ -158,7 +159,7 @@ public class ResolveDescriptorsFromExternalLibraries {
         }
 
 
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(CompilerSpecialMode.STDLIB, jetCoreEnvironment.getProject());
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(BuiltinsScopeExtensionMode.ALL, jetCoreEnvironment.getProject());
 
         boolean hasErrors;
         try {

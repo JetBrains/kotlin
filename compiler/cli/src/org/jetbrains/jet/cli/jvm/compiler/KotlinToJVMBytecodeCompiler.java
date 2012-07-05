@@ -297,7 +297,7 @@ public class KotlinToJVMBytecodeCompiler {
                                 environment.getSourceFiles(),
                                 scriptParameters,
                                 filesToAnalyzeCompletely,
-                                configuration.getEnvironment().getCompilerSpecialMode());
+                                configuration.getBuiltinsScopeExtensionMode());
                     }
                 }, environment.getSourceFiles()
         );

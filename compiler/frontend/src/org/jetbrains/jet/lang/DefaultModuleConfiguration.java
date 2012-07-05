@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
@@ -39,15 +38,15 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
             new ImportPath("kotlin.*"), new ImportPath("kotlin.io.*"), new ImportPath("jet.*"), };
 
     private final Project project;
-    private final boolean extendBuiltins;
+    private final @NotNull BuiltinsScopeExtensionMode builtinsScopeExtensionMode;
 
-    public static DefaultModuleConfiguration createStandardConfiguration(Project project, boolean extendBuiltins) {
-        return new DefaultModuleConfiguration(project, extendBuiltins);
+    public static DefaultModuleConfiguration createStandardConfiguration(Project project, @NotNull BuiltinsScopeExtensionMode builtinsScopeExtensionMode) {
+        return new DefaultModuleConfiguration(project, builtinsScopeExtensionMode);
     }
 
-    private DefaultModuleConfiguration(@NotNull Project project, boolean extendBuiltins) {
+    private DefaultModuleConfiguration(@NotNull Project project, @NotNull BuiltinsScopeExtensionMode builtinsScopeExtensionMode) {
         this.project = project;
-        this.extendBuiltins = extendBuiltins;
+        this.builtinsScopeExtensionMode = builtinsScopeExtensionMode;
     }
 
     @Override
@@ -60,11 +59,13 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
     @Override
     public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
         if (DescriptorUtils.getFQName(namespaceDescriptor).equalsTo(JetStandardClasses.STANDARD_CLASSES_FQNAME)) {
-            if (!extendBuiltins) {
-                namespaceMemberScope.importScope(JetStandardClasses.STANDARD_CLASSES);
-            }
-            else {
-                namespaceMemberScope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
+            switch (builtinsScopeExtensionMode) {
+                case ALL:
+                    namespaceMemberScope.importScope(JetStandardClasses.STANDARD_CLASSES);
+                    break;
+                case ONLY_STANDARD_CLASSES:
+                    namespaceMemberScope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
+                    break;
             }
 
         }

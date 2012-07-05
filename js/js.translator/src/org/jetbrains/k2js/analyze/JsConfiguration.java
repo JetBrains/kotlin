@@ -19,6 +19,7 @@ package org.jetbrains.k2js.analyze;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -71,7 +72,7 @@ public final class JsConfiguration implements ModuleConfiguration {
     @Override
     public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor,
             @NotNull WritableScope namespaceMemberScope) {
-        DefaultModuleConfiguration.createStandardConfiguration(project, true)
+        DefaultModuleConfiguration.createStandardConfiguration(project, BuiltinsScopeExtensionMode.ALL)
                 .extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
         if (hasPreanalyzedContextForTests()) {
             extendScopeWithPreAnalyzedContextForTests(namespaceDescriptor, namespaceMemberScope);

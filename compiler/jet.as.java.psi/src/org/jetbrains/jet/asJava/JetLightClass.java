@@ -41,6 +41,7 @@ import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetFunction;
@@ -171,7 +172,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         AnalyzeExhaust context = AnalyzerFacadeForJVM.shallowAnalyzeFiles(
             JetFilesProvider.getInstance(project).sampleToAllFilesInModule().fun(file),
                 // TODO: wrong environment // stepan.koltsov@ 2012-04-09
-                CompilerSpecialMode.REGULAR);
+                BuiltinsScopeExtensionMode.ALL);
 
         if (context.isError()) {
             throw new IllegalStateException("failed to analyze: " + context.getError(), context.getError());

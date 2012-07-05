@@ -29,6 +29,7 @@ import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -73,7 +74,7 @@ public class JetControlFlowTest extends JetLiteFixture {
         JetFile file = loadPsiFile(myName + ".jet");
 
         final Map<JetElement, Pseudocode> data = new LinkedHashMap<JetElement, Pseudocode>();
-        AnalyzeExhaust analyzeExhaust = JetTestUtils.analyzeFile(file, CompilerSpecialMode.JDK_HEADERS);
+        AnalyzeExhaust analyzeExhaust = JetTestUtils.analyzeFile(file, BuiltinsScopeExtensionMode.ALL);
         List<JetDeclaration> declarations = file.getDeclarations();
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
         for (JetDeclaration declaration : declarations) {

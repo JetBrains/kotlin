@@ -27,7 +27,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
@@ -53,7 +53,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -70,7 +70,7 @@ public class InjectorForTopDownAnalyzerForJvm {
     private final TopDownAnalysisParameters topDownAnalysisParameters;
     private final BindingTrace bindingTrace;
     private final ModuleDescriptor moduleDescriptor;
-    private final CompilerSpecialMode compilerSpecialMode;
+    private final BuiltinsScopeExtensionMode builtinsScopeExtensionMode;
     private JavaBridgeConfiguration javaBridgeConfiguration;
     private JavaDescriptorResolver javaDescriptorResolver;
     private PsiClassFinderImpl psiClassFinder;
@@ -98,7 +98,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
         @NotNull BindingTrace bindingTrace,
         @NotNull ModuleDescriptor moduleDescriptor,
-        @NotNull CompilerSpecialMode compilerSpecialMode
+        @NotNull BuiltinsScopeExtensionMode builtinsScopeExtensionMode
     ) {
         this.topDownAnalyzer = new TopDownAnalyzer();
         this.topDownAnalysisContext = new TopDownAnalysisContext();
@@ -110,7 +110,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.topDownAnalysisParameters = topDownAnalysisParameters;
         this.bindingTrace = bindingTrace;
         this.moduleDescriptor = moduleDescriptor;
-        this.compilerSpecialMode = compilerSpecialMode;
+        this.builtinsScopeExtensionMode = builtinsScopeExtensionMode;
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.psiClassFinder = new PsiClassFinderImpl();
@@ -165,8 +165,8 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         this.descriptorResolver.setTypeResolver(typeResolver);
 
+        this.javaBridgeConfiguration.setBuiltinsScopeExtensionMode(builtinsScopeExtensionMode);
         this.javaBridgeConfiguration.setJavaSemanticServices(javaSemanticServices);
-        this.javaBridgeConfiguration.setMode(compilerSpecialMode);
         this.javaBridgeConfiguration.setProject(project);
 
         javaDescriptorResolver.setJavaDescriptorSignatureResolver(javaDescriptorSignatureResolver);

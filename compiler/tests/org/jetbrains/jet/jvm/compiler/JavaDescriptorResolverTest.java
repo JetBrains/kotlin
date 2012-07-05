@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
@@ -72,8 +73,8 @@ public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
                 myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
         jetCoreEnvironment.addToClasspath(tmpdir);
 
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
-                CompilerSpecialMode.JDK_HEADERS, jetCoreEnvironment.getProject());
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(BuiltinsScopeExtensionMode.ALL,
+                                                                                       jetCoreEnvironment.getProject());
         return injector.getJavaDescriptorResolver();
     }
 }

@@ -32,6 +32,7 @@ import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -141,11 +142,13 @@ public class CompileEnvironmentUtil {
             }
         };
         CompilerConfiguration configuration = CompilerConfigurationUtl.getDefaultConfiguration(CompilerSpecialMode.REGULAR);
-        JetCoreEnvironment scriptEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(disposable, configuration, CompilerSpecialMode.REGULAR);
+        JetCoreEnvironment scriptEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(disposable, configuration,
+                                                                                              CompilerSpecialMode.REGULAR);
         scriptEnvironment.addSources(moduleScriptFile);
 
         GenerationState generationState = KotlinToJVMBytecodeCompiler
-                .analyzeAndGenerate(new K2JVMCompileEnvironmentConfiguration(scriptEnvironment, messageCollector, false), false);
+                .analyzeAndGenerate(new K2JVMCompileEnvironmentConfiguration(scriptEnvironment, messageCollector, false,
+                                                                             BuiltinsScopeExtensionMode.ALL), false);
         if (generationState == null) {
             throw new CompileEnvironmentException("Module script " + moduleScriptFile + " analyze failed");
         }

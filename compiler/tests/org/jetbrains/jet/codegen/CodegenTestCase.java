@@ -23,6 +23,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
@@ -259,7 +260,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 myFiles.getPsiFiles(),
                 myFiles.getScriptParameterTypes(),
                 Predicates.<PsiFile>alwaysTrue(),
-                myEnvironment.getCompilerSpecialMode());
+                BuiltinsScopeExtensionMode.ALL);
         analyzeExhaust.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
         GenerationState state = new GenerationState(myEnvironment.getProject(), classBuilderFactory, analyzeExhaust, myFiles.getPsiFiles());

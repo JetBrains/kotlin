@@ -20,8 +20,7 @@ import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CompileEnvironmentConfiguration;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-
-import java.util.List;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 
 /**
  * @author abreslav
@@ -29,6 +28,7 @@ import java.util.List;
 public class K2JVMCompileEnvironmentConfiguration extends CompileEnvironmentConfiguration {
     private final JetCoreEnvironment environment;
     private final boolean script;
+    private final BuiltinsScopeExtensionMode builtinsScopeExtensionMode;
 
     /**
      * NOTE: It's very important to call dispose for every object of this class or there will be memory leaks.
@@ -36,10 +36,11 @@ public class K2JVMCompileEnvironmentConfiguration extends CompileEnvironmentConf
      * @see Disposer
      */
     public K2JVMCompileEnvironmentConfiguration(@NotNull JetCoreEnvironment environment,
-            @NotNull MessageCollector messageCollector, boolean script) {
+            @NotNull MessageCollector messageCollector, boolean script, BuiltinsScopeExtensionMode builtinsScopeExtensionMode) {
         super(messageCollector);
         this.environment = environment;
         this.script = script;
+        this.builtinsScopeExtensionMode = builtinsScopeExtensionMode;
     }
 
     public JetCoreEnvironment getEnvironment() {
@@ -48,5 +49,10 @@ public class K2JVMCompileEnvironmentConfiguration extends CompileEnvironmentConf
 
     public boolean isScript() {
         return script;
+    }
+
+
+    public BuiltinsScopeExtensionMode getBuiltinsScopeExtensionMode() {
+        return builtinsScopeExtensionMode;
     }
 }

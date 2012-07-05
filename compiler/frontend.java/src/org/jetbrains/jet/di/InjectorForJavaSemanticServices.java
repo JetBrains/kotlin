@@ -23,12 +23,12 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorSignatureResolver;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
@@ -42,14 +42,14 @@ public class InjectorForJavaSemanticServices {
     private JavaBridgeConfiguration javaBridgeConfiguration;
     private PsiClassFinderImpl psiClassFinder;
     private ModuleDescriptor moduleDescriptor;
-    private final CompilerSpecialMode compilerSpecialMode;
+    private final BuiltinsScopeExtensionMode builtinsScopeExtensionMode;
     private final Project project;
     private JavaTypeTransformer javaTypeTransformer;
     private JavaDescriptorSignatureResolver javaDescriptorSignatureResolver;
     private NamespaceFactoryImpl namespaceFactory;
 
     public InjectorForJavaSemanticServices(
-        @NotNull CompilerSpecialMode compilerSpecialMode,
+        @NotNull BuiltinsScopeExtensionMode builtinsScopeExtensionMode,
         @NotNull Project project
     ) {
         this.javaSemanticServices = new JavaSemanticServices();
@@ -58,7 +58,7 @@ public class InjectorForJavaSemanticServices {
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
         this.psiClassFinder = new PsiClassFinderImpl();
         this.moduleDescriptor = new org.jetbrains.jet.lang.descriptors.ModuleDescriptor(org.jetbrains.jet.lang.resolve.name.Name.special("<dummy>"));
-        this.compilerSpecialMode = compilerSpecialMode;
+        this.builtinsScopeExtensionMode = builtinsScopeExtensionMode;
         this.project = project;
         this.javaTypeTransformer = new JavaTypeTransformer();
         this.javaDescriptorSignatureResolver = new JavaDescriptorSignatureResolver();
@@ -76,8 +76,8 @@ public class InjectorForJavaSemanticServices {
         this.javaDescriptorResolver.setSemanticServices(javaSemanticServices);
         this.javaDescriptorResolver.setTrace(bindingTrace);
 
+        javaBridgeConfiguration.setBuiltinsScopeExtensionMode(builtinsScopeExtensionMode);
         javaBridgeConfiguration.setJavaSemanticServices(javaSemanticServices);
-        javaBridgeConfiguration.setMode(compilerSpecialMode);
         javaBridgeConfiguration.setProject(project);
 
         this.psiClassFinder.setProject(project);

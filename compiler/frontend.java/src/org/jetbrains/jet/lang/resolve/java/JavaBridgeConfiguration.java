@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -48,7 +49,7 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
     @NotNull
     private ModuleConfiguration delegateConfiguration;
     @NotNull
-    private CompilerSpecialMode mode;
+    private BuiltinsScopeExtensionMode builtinsScopeExtensionMode;
 
     @Inject
     public void setProject(@NotNull Project project) {
@@ -61,13 +62,13 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
     }
 
     @Inject
-    public void setMode(@NotNull CompilerSpecialMode mode) {
-        this.mode = mode;
+    public void setBuiltinsScopeExtensionMode(@NotNull BuiltinsScopeExtensionMode builtinsScopeExtensionMode) {
+        this.builtinsScopeExtensionMode = builtinsScopeExtensionMode;
     }
 
     @PostConstruct
     public void init() {
-        this.delegateConfiguration = DefaultModuleConfiguration.createStandardConfiguration(project, mode == CompilerSpecialMode.BUILTINS);
+        this.delegateConfiguration = DefaultModuleConfiguration.createStandardConfiguration(project, builtinsScopeExtensionMode);
     }
 
 

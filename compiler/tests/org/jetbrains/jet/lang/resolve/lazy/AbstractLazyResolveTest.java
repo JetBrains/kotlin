@@ -24,6 +24,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
@@ -74,7 +75,7 @@ public abstract class AbstractLazyResolveTest {
     protected InjectorForTopDownAnalyzerForJvm createInjectorForTDA(ModuleDescriptor module) {
         TopDownAnalysisParameters params = new TopDownAnalysisParameters(
                 Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
-        return new InjectorForTopDownAnalyzerForJvm(project, params, new BindingTraceContext(), module, CompilerSpecialMode.JDK_HEADERS);
+        return new InjectorForTopDownAnalyzerForJvm(project, params, new BindingTraceContext(), module, BuiltinsScopeExtensionMode.ALL);
     }
 
 }
