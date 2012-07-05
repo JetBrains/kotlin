@@ -34,10 +34,10 @@ public class PermissionManager {
             RunUtils.execute(generateChmodCmd(pathManager.getPlatformToolsFolderInAndroidSdk() + "/adb"));
             RunUtils.execute(generateChmodCmd(pathManager.getPlatformToolsFolderInAndroidSdk() + "/dx"));
             RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/emulator"));
-            RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/tools/ddms"));
-            RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/tools/android"));
-            RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/tools/emulator-arm"));
-            RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/tools/zipalign"));
+            RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/ddms"));
+            RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/android"));
+            RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/emulator-arm"));
+            RunUtils.execute(generateChmodCmd(pathManager.getToolsFolderInAndroidSdk() + "/zipalign"));
             RunUtils.execute(generateChmodCmd(pathManager.getAntBinDirectory() + "/ant"));
         }
     }
