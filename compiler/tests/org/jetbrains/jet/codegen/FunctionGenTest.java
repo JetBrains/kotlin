@@ -18,8 +18,8 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.CompilerSpecialMode;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -32,7 +32,7 @@ public class FunctionGenTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
     public void testDefaultArgs() throws Exception {

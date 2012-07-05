@@ -19,8 +19,8 @@ package org.jetbrains.jet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileBuiltins;
-import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.utils.PathUtil;
 import org.junit.Test;
@@ -29,8 +29,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.jet.CompilerSpecialMode.REGULAR;
-import static org.jetbrains.jet.CompilerSpecialMode.STDLIB;
+import static org.jetbrains.jet.ConfigurationKind.ALL;
+import static org.jetbrains.jet.ConfigurationKind.JDK_AND_ANNOTATIONS;
 
 /**
  * @author Stepan Koltsov
@@ -52,16 +52,15 @@ public class CompileCompilerDependenciesTest {
         ForTestCompileRuntime.runtimeJarForTests();
     }
 
-    public static CompilerConfiguration compilerConfigurationForTests(@NotNull CompilerSpecialMode compilerSpecialMode, boolean mockJdk) {
+    public static CompilerConfiguration compilerConfigurationForTests(@NotNull ConfigurationKind configurationKind, boolean mockJdk) {
         List<File> classpath = new ArrayList<File>();
-        if (includeJdk(compilerSpecialMode)) {
-            classpath.add(mockJdk ? JetTestUtils.findMockJdkRtJar() : PathUtil.findRtJar());
-        }
-        if (includeKotlinRuntime(compilerSpecialMode)) {
+        classpath.add(mockJdk ? JetTestUtils.findMockJdkRtJar() : PathUtil.findRtJar());
+        if (configurationKind == ALL) {
             classpath.add(ForTestCompileRuntime.runtimeJarForTests());
         }
+
         File[] annotationsPath = new File[0];
-        if (includeJdkAnnotations(compilerSpecialMode)) {
+        if (configurationKind == ALL || configurationKind == JDK_AND_ANNOTATIONS) {
             annotationsPath = new File[]{ForTestPackJdkAnnotations.jdkAnnotationsForTests()};
         }
 
@@ -69,17 +68,5 @@ public class CompileCompilerDependenciesTest {
         configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, classpath.toArray(new File[classpath.size()]));
         configuration.putUserData(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, annotationsPath);
         return configuration;
-    }
-
-    private static boolean includeJdkAnnotations(@NotNull CompilerSpecialMode mode) {
-        return mode == REGULAR || mode == STDLIB;
-    }
-
-    public static boolean includeKotlinRuntime(@NotNull CompilerSpecialMode mode) {
-        return mode == REGULAR;
-    }
-
-    public static boolean includeJdk(@NotNull CompilerSpecialMode mode) {
-        return true;
     }
 }

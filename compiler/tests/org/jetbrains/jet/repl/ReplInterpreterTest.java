@@ -22,10 +22,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
+import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.repl.ReplInterpreter;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.CompilerSpecialMode;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -54,7 +54,7 @@ public class ReplInterpreterTest {
 
     private void testFile(@NotNull String relativePath) {
         CompilerConfiguration configuration =
-                CompileCompilerDependenciesTest.compilerConfigurationForTests(CompilerSpecialMode.JDK_HEADERS, false);
+                CompileCompilerDependenciesTest.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, false);
         File[] classpath = configuration.getUserData(JVMConfigurationKeys.CLASSPATH_KEY);
         assert classpath != null;
         configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, ArrayUtil.append(classpath, new File("out/production/runtime")));

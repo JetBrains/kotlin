@@ -16,16 +16,16 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.CompilerSpecialMode;
+import org.jetbrains.jet.ConfigurationKind;
 
 public class BridgeMethodGenTest extends CodegenTestCase {
     public void testBridgeMethod () throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("bridge.jet");
     }
     
     public void testKt1959() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt1959.kt");
     }
 }

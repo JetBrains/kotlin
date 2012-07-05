@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
+import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
@@ -30,7 +31,6 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
-import org.jetbrains.jet.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.junit.After;
 import org.junit.BeforeClass;
@@ -48,7 +48,7 @@ public abstract class AbstractLazyResolveTest {
     };
 
     protected final JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(rootDisposable,
-            CompileCompilerDependenciesTest.compilerConfigurationForTests(CompilerSpecialMode.JDK_HEADERS, true)
+            CompileCompilerDependenciesTest.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, true)
     );
     protected final Project project = jetCoreEnvironment.getProject();
 

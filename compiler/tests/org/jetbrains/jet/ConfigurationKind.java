@@ -16,15 +16,8 @@
 
 package org.jetbrains.jet;
 
-/**
-* @author Stepan Koltsov
-*/
-public enum CompilerSpecialMode {
-    REGULAR,
-    BUILTINS,
-    JDK_HEADERS,
-    STDLIB,
-    IDEA,
-    JS,
-    ;
+public enum ConfigurationKind {
+    JDK_ONLY,
+    JDK_AND_ANNOTATIONS,
+    ALL,
 }

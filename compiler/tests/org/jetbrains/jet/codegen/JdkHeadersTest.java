@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.CompilerSpecialMode;
+import org.jetbrains.jet.ConfigurationKind;
 
 /**
  * Test correct code is generated for descriptors loaded as alt jdk headers
@@ -28,7 +28,7 @@ public class JdkHeadersTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.STDLIB);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_AND_ANNOTATIONS);
     }
 
     public void testArrayList() {

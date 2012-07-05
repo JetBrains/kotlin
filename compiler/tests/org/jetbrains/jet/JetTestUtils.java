@@ -176,12 +176,12 @@ public class JetTestUtils {
     }
 
     public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable) {
-        return createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, CompilerSpecialMode.REGULAR);
+        return createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, ConfigurationKind.ALL);
     }
 
-    public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable, @NotNull CompilerSpecialMode compilerSpecialMode) {
+    public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable, @NotNull ConfigurationKind configurationKind) {
         JetCoreEnvironment environment = new JetCoreEnvironment(disposable,
-                CompileCompilerDependenciesTest.compilerConfigurationForTests(compilerSpecialMode, true)
+                CompileCompilerDependenciesTest.compilerConfigurationForTests(configurationKind, true)
         );
         environment.addToClasspath(getAnnotationsJar());
         return environment;
@@ -254,7 +254,7 @@ public class JetTestUtils {
 
     public static JetCoreEnvironment createEnvironmentWithFullJdk(Disposable disposable) {
         return new JetCoreEnvironment(disposable,
-                CompileCompilerDependenciesTest.compilerConfigurationForTests(CompilerSpecialMode.REGULAR, false)
+                CompileCompilerDependenciesTest.compilerConfigurationForTests(ConfigurationKind.ALL, false)
         );
     }
 

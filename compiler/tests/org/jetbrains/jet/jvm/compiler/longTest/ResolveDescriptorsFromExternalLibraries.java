@@ -27,6 +27,7 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
+import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TimeUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
@@ -34,7 +35,6 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.PathUtil;
@@ -146,12 +146,12 @@ public class ResolveDescriptorsFromExternalLibraries {
 
         JetCoreEnvironment jetCoreEnvironment;
         if (jar != null) {
-            jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(junk, CompilerSpecialMode.STDLIB);
+            jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(junk, ConfigurationKind.JDK_AND_ANNOTATIONS);
             jetCoreEnvironment.addToClasspath(jar);
         }
         else {
             CompilerConfiguration configuration =
-                    CompileCompilerDependenciesTest.compilerConfigurationForTests(CompilerSpecialMode.STDLIB, false);
+                    CompileCompilerDependenciesTest.compilerConfigurationForTests(ConfigurationKind.JDK_AND_ANNOTATIONS, false);
             jetCoreEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(junk, configuration);
             if (!PathUtil.findRtJar().equals(jar)) {
                 throw new RuntimeException("rt.jar mismatch: " + jar + ", " + PathUtil.findRtJar());

@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.CompilerSpecialMode;
+import org.jetbrains.jet.ConfigurationKind;
 
 /**
  * @author yole
@@ -26,7 +26,7 @@ public class ObjectGenTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
     public void testSimpleObject() {

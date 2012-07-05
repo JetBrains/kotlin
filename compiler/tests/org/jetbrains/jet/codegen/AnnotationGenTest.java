@@ -17,7 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import jet.JetObject;
-import org.jetbrains.jet.CompilerSpecialMode;
+import org.jetbrains.jet.ConfigurationKind;
 
 import java.lang.annotation.*;
 import java.lang.reflect.Constructor;
@@ -29,7 +29,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
     public void testPropField() throws NoSuchFieldException, NoSuchMethodException {
