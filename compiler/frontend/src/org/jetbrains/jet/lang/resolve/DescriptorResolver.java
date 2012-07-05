@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -361,7 +362,12 @@ public class DescriptorResolver {
                                          Collections.<ValueParameterDescriptor>emptyList(), Visibilities.INTERNAL);
 
         if (object != null) {
-            trace.record(CONSTRUCTOR, object, constructorDescriptor);
+            try {
+                trace.record(CONSTRUCTOR, object, constructorDescriptor);
+            }
+            catch (RuntimeException e) {
+                throw new RuntimeException(e.getMessage() + " at " + DiagnosticUtils.atLocation(object), e);
+            }
         }
         return constructorDescriptor;
     }
