@@ -46,12 +46,27 @@ abstract class StdLibTestBase extends SingleFileTranslationTest {
         compileFiles(ecmaVersions, files);
     }
 
-    private void compileFiles(@NotNull EnumSet<EcmaVersion> ecmaVersions, @NotNull List<String> files) {
+    private void compileFiles(@NotNull EnumSet<EcmaVersion> ecmaVersions, @NotNull List<String> files) throws Exception {
         List<String> libFiles = createLibFilesList();
         for (EcmaVersion version : ecmaVersions) {
             String outputFilePath = getOutputFilePath(getTestName(false) + ".compiler.kt", version);
             invokeCompiler(files, libFiles, version, outputFilePath);
+            performChecksOnGeneratedJavaScript(outputFilePath, version);
         }
+    }
+
+    /**
+     * Strategy method allowing the generated JS file to be invoked
+     */
+    protected void performChecksOnGeneratedJavaScript(String path, EcmaVersion version) throws Exception {
+    }
+
+    protected String moduleIdFromOutputFile(String path) {
+        String moduleId = new File(path).getName();
+        if (moduleId.endsWith(".js")) {
+            moduleId = moduleId.substring(0, moduleId.length() - 3);
+        }
+        return moduleId;
     }
 
     //TODO: reuse this in CompileMavenGeneratedJSLibrary

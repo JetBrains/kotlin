@@ -18,6 +18,7 @@ package org.jetbrains.k2js.test.rhino;
 
 import closurecompiler.internal.com.google.common.collect.Maps;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,7 @@ import org.mozilla.javascript.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -102,9 +104,17 @@ public final class RhinoUtils {
             @NotNull RhinoResultChecker checker,
             @Nullable Map<String, Object> variables,
             @NotNull EcmaVersion ecmaVersion) throws Exception {
+       runRhinoTest(fileNames, checker, variables, ecmaVersion, Collections.EMPTY_LIST);
+    }
+
+    public static void runRhinoTest(@NotNull List<String> fileNames,
+            @NotNull RhinoResultChecker checker,
+            @Nullable Map<String, Object> variables,
+            @NotNull EcmaVersion ecmaVersion,
+            @NotNull List<String> jsLibraries) throws Exception {
         Context context = createContext(ecmaVersion);
         try {
-            Scriptable scope = getScope(ecmaVersion, context);
+            Scriptable scope = getScope(ecmaVersion, context, jsLibraries);
             putGlobalVariablesIntoScope(scope, variables);
             for (String filename : fileNames) {
                 runFileWithRhino(filename, context, scope);
@@ -119,28 +129,34 @@ public final class RhinoUtils {
     }
 
     @NotNull
-    private static Scriptable getScope(@NotNull EcmaVersion version, @NotNull Context context) {
+    private static Scriptable getScope(@NotNull EcmaVersion version, @NotNull Context context,
+                @NotNull List<String> jsLibraries) {
         ScriptableObject scope = context.initStandardObjects(null, false);
-        scope.setParentScope(getParentScope(version, context));
+        scope.setParentScope(getParentScope(version, context, jsLibraries));
         return scope;
     }
 
     @NotNull
-    private static Scriptable getParentScope(@NotNull EcmaVersion version, @NotNull Context context) {
+    private static Scriptable getParentScope(@NotNull EcmaVersion version, @NotNull Context context,
+                @NotNull List<String> jsLibraries) {
         Scriptable parentScope = versionToScope.get(version);
         if (parentScope == null) {
-            parentScope = initScope(version, context);
+            parentScope = initScope(version, context, jsLibraries);
             versionToScope.put(version, parentScope);
         }
         return parentScope;
     }
 
     @NotNull
-    private static Scriptable initScope(@NotNull EcmaVersion version, @NotNull Context context) {
-        ScriptableObject scope = context.initStandardObjects();
+    private static Scriptable initScope(@NotNull EcmaVersion version, @NotNull Context context,
+                @NotNull List<String> jsLibraries) {
+        ScriptableObject scope = context.initStandardObjects(null, false);
         try {
             runFileWithRhino(getKotlinLibFile(version), context, scope);
             runFileWithRhino(KOTLIN_JS_LIB_COMMON, context, scope);
+            for (String jsLibrary : jsLibraries) {
+                runFileWithRhino(jsLibrary, context, scope);
+            }
         }
         catch (Exception e) {
             throw rethrow(e);

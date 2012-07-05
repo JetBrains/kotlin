@@ -1,11 +1,11 @@
-package testPackage
+package jstest
 
 import org.junit.Test as test
 import kotlin.test.*
 
 class JsArrayTest {
 
-    test fun arrays() {
+    test fun arraySizeAndToList() {
         val a1 = array<String>()
         val a2 = array("foo")
         val a3 = array("foo", "bar")

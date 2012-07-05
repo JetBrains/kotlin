@@ -43,7 +43,7 @@
                                         <include name="**/*.kt"/>
                                         <exclude name="**/*JVM.kt"/>
 
-                                        <!-- TODO FixME ASAP - works fine in JS, why doesn't it work in JUnit? -->
+                                        <!-- TODO FixME ASAP - works fine in JS, why doesn't it work in JUnit with Rhino and Selenium? -->
                                         <exclude name="**/JsArrayTest.kt"/>
                                     </fileset>
                                     <fileset dir="${basedir}/../../stdlib/test/dom">

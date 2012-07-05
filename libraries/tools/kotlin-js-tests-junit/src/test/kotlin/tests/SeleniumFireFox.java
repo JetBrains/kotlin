@@ -23,66 +23,40 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  */
 @RunWith(Parameterized.class)
-public class SeleniumTest {
+public class SeleniumFireFox extends SeleniumTest {
 
-    protected static String testQueryString = "";
-    //protected static String testQueryString = "?testNumber=6";
+    static {
+        driver = createFirefoxDriver();
+        tester = new SeleniumQUnit(driver);
+    }
 
-    protected static WebDriver driver = createDriver();
-
-    public static WebDriver createDriver() {
-        HtmlUnitDriver answer = new HtmlUnitDriver(true);
-        answer.setJavascriptEnabled(true);
+    public static FirefoxDriver createFirefoxDriver() {
+        FirefoxProfile profile = new FirefoxProfile();
+        FirefoxDriver answer = new FirefoxDriver(profile);
         return answer;
     }
 
-    protected static SeleniumQUnit tester = new SeleniumQUnit(driver);
-
-    private final WebElement element;
-    private String name;
-
-    public SeleniumTest(WebElement element) {
-        this.element = element;
-        this.name = tester.findTestName(element);
-
-        System.out.println("Test name: " + name);
+    public SeleniumFireFox(WebElement element) {
+        super(element);
     }
 
-    @Test
-    public void run() {
-        tester.runTest(element);
-    }
 
-    @Override
-    public String toString() {
-        return "test " + name;
-    }
-
+/*
     @Parameterized.Parameters
     public static List<Object[]> findTestElements() throws IOException, InterruptedException {
-        String uri = "../kotlin-js-tests/src/test/web/index.html" + testQueryString;
-        File file = new File(uri);
-        driver.get("file://" + file.getCanonicalPath());
-        Thread.sleep(500);
-        List<WebElement> tests = tester.findTests();
-        // System.out.println("TESTS are: " + tests);
-
-        List<Object[]> list = new ArrayList<Object[]>();
-        for (WebElement test : tests) {
-            Object[] args = new Object[] { test };
-            list.add(args);
-        }
-        return list;
+        return SeleniumTest.findTestElements();
     }
+*/
 }

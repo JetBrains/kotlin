@@ -30,11 +30,17 @@ import static org.junit.Assert.assertEquals;
  */
 public class RhinoFunctionResultChecker implements RhinoResultChecker {
 
+    private final String moduleId;
     private final String namespaceName;
     private final String functionName;
     private final Object expectedResult;
 
     public RhinoFunctionResultChecker(@Nullable String namespaceName, String functionName, Object expectedResult) {
+        this(TestConfig.TEST_MODULE_NAME, namespaceName, functionName, expectedResult);
+    }
+
+    public RhinoFunctionResultChecker(@Nullable String moduleId, @Nullable String namespaceName, String functionName, Object expectedResult) {
+        this.moduleId = moduleId;
         this.namespaceName = namespaceName;
         this.functionName = functionName;
         this.expectedResult = expectedResult;
@@ -62,10 +68,15 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
         return cx.evaluateString(scope, functionCallString(), "function call", 0, null);
     }
 
-    private String functionCallString() {
+    protected String functionCallString() {
         StringBuilder sb = new StringBuilder();
         if (namespaceName != null) {
-            sb.append("Kotlin.modules." + TestConfig.TEST_MODULE_NAME);
+            sb.append("Kotlin.modules");
+            if (moduleId.contains(".")) {
+                sb.append("['").append(moduleId).append("']");
+            } else {
+                sb.append(".").append(moduleId);
+            }
             if (namespaceName != Namer.getRootNamespaceName()) {
                 sb.append('.').append(namespaceName);
             }
