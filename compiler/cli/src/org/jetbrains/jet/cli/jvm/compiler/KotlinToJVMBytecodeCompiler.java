@@ -320,7 +320,7 @@ public class KotlinToJVMBytecodeCompiler {
         };
         GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs), backendProgress,
                                                               exhaust, environment.getSourceFiles(),
-                                                              configuration.getEnvironment().getCompilerSpecialMode());
+                                                              configuration.getBuiltinToJavaTypesMapping());
         generationState.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
 
         List<CompilerPlugin> plugins = configuration.getCompilerPlugins();

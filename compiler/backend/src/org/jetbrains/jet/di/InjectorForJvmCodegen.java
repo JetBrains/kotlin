@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import java.util.List;
 import org.jetbrains.jet.lang.psi.JetFile;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import java.util.List;
 import org.jetbrains.jet.lang.psi.JetFile;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
@@ -49,7 +49,7 @@ public class InjectorForJvmCodegen {
     private final BindingContext bindingContext;
     private final List<JetFile> listOfJetFile;
     private final Project project;
-    private final CompilerSpecialMode compilerSpecialMode;
+    private final BuiltinToJavaTypesMapping builtinToJavaTypesMapping;
     private final ClassBuilderMode classBuilderMode;
     private final GenerationState generationState;
     private final ClassBuilderFactory classBuilderFactory;
@@ -65,7 +65,7 @@ public class InjectorForJvmCodegen {
         @NotNull BindingContext bindingContext,
         @NotNull List<JetFile> listOfJetFile,
         @NotNull Project project,
-        @NotNull CompilerSpecialMode compilerSpecialMode,
+        @NotNull BuiltinToJavaTypesMapping builtinToJavaTypesMapping,
         @NotNull ClassBuilderMode classBuilderMode,
         @NotNull GenerationState generationState,
         @NotNull ClassBuilderFactory classBuilderFactory
@@ -73,7 +73,7 @@ public class InjectorForJvmCodegen {
         this.bindingContext = bindingContext;
         this.listOfJetFile = listOfJetFile;
         this.project = project;
-        this.compilerSpecialMode = compilerSpecialMode;
+        this.builtinToJavaTypesMapping = builtinToJavaTypesMapping;
         this.classBuilderMode = classBuilderMode;
         this.generationState = generationState;
         this.classBuilderFactory = classBuilderFactory;
@@ -86,9 +86,9 @@ public class InjectorForJvmCodegen {
         this.closureAnnotator = new ClosureAnnotator();
 
         this.jetTypeMapper.setBindingContext(bindingContext);
+        this.jetTypeMapper.setBuiltinToJavaTypesMapping(builtinToJavaTypesMapping);
         this.jetTypeMapper.setClassBuilderMode(classBuilderMode);
         this.jetTypeMapper.setClosureAnnotator(closureAnnotator);
-        this.jetTypeMapper.setCompilerSpecialMode(compilerSpecialMode);
 
         this.classCodegen.setJetTypeMapper(jetTypeMapper);
         this.classCodegen.setState(generationState);

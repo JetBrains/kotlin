@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.Progress;
@@ -61,11 +60,11 @@ public class GenerationState {
 
 
     public GenerationState(Project project, ClassBuilderFactory builderFactory, AnalyzeExhaust analyzeExhaust, List<JetFile> files) {
-        this(project, builderFactory, Progress.DEAF, analyzeExhaust, files, CompilerSpecialMode.REGULAR);
+        this(project, builderFactory, Progress.DEAF, analyzeExhaust, files, BuiltinToJavaTypesMapping.ENABLED);
     }
 
     public GenerationState(Project project, ClassBuilderFactory builderFactory, Progress progress,
-            @NotNull AnalyzeExhaust exhaust, @NotNull List<JetFile> files, @NotNull CompilerSpecialMode compilerSpecialMode) {
+            @NotNull AnalyzeExhaust exhaust, @NotNull List<JetFile> files, @NotNull BuiltinToJavaTypesMapping builtinToJavaTypesMapping) {
         this.project = project;
         this.progress = progress;
         this.analyzeExhaust = exhaust;
@@ -73,7 +72,7 @@ public class GenerationState {
         this.classBuilderMode = builderFactory.getClassBuilderMode();
         this.injector = new InjectorForJvmCodegen(
                 analyzeExhaust.getBindingContext(),
-                this.files, project, compilerSpecialMode, builderFactory.getClassBuilderMode(), this, builderFactory);
+                this.files, project, builtinToJavaTypesMapping, builderFactory.getClassBuilderMode(), this, builderFactory);
     }
 
     private void markUsed() {

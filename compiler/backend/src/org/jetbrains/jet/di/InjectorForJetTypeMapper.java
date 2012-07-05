@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import java.util.List;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.codegen.JetTypeMapper;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
 import org.jetbrains.jet.codegen.ClosureAnnotator;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -36,7 +36,7 @@ public class InjectorForJetTypeMapper {
     private final BindingContext bindingContext;
     private final List<JetFile> listOfJetFile;
     private JetTypeMapper jetTypeMapper;
-    private CompilerSpecialMode compilerSpecialMode;
+    private BuiltinToJavaTypesMapping builtinToJavaTypesMapping;
     private ClassBuilderMode classBuilderMode;
     private ClosureAnnotator closureAnnotator;
 
@@ -47,14 +47,14 @@ public class InjectorForJetTypeMapper {
         this.bindingContext = bindingContext;
         this.listOfJetFile = listOfJetFile;
         this.jetTypeMapper = new JetTypeMapper();
-        this.compilerSpecialMode = CompilerSpecialMode.REGULAR;
+        this.builtinToJavaTypesMapping = BuiltinToJavaTypesMapping.ENABLED;
         this.classBuilderMode = ClassBuilderMode.FULL;
         this.closureAnnotator = new ClosureAnnotator();
 
         this.jetTypeMapper.setBindingContext(bindingContext);
+        this.jetTypeMapper.setBuiltinToJavaTypesMapping(builtinToJavaTypesMapping);
         this.jetTypeMapper.setClassBuilderMode(classBuilderMode);
         this.jetTypeMapper.setClosureAnnotator(closureAnnotator);
-        this.jetTypeMapper.setCompilerSpecialMode(compilerSpecialMode);
 
         closureAnnotator.setBindingContext(bindingContext);
         closureAnnotator.setFiles(listOfJetFile);

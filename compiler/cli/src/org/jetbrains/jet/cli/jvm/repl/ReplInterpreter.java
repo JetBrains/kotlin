@@ -35,6 +35,7 @@ import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.messages.MessageCollectorToString;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.codegen.ClassBuilderFactories;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
@@ -239,7 +240,7 @@ public class ReplInterpreter {
 
         GenerationState generationState = new GenerationState(jetCoreEnvironment.getProject(), ClassBuilderFactories.binaries(false), backendProgress,
                 AnalyzeExhaust.success(trace.getBindingContext()), Collections.singletonList(psiFile),
-                jetCoreEnvironment.getCompilerSpecialMode());
+                BuiltinToJavaTypesMapping.ENABLED);
         generationState.compileScript(psiFile.getScript(), scriptClassName, earierScripts, CompilationErrorHandler.THROW_EXCEPTION);
 
         for (String file : generationState.getFactory().files()) {

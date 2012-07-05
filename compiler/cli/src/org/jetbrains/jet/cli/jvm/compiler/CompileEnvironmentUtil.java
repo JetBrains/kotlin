@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.CompilerConfigurationUtl;
+import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
 import org.jetbrains.jet.codegen.GenerationState;
@@ -148,7 +149,8 @@ public class CompileEnvironmentUtil {
 
         GenerationState generationState = KotlinToJVMBytecodeCompiler
                 .analyzeAndGenerate(new K2JVMCompileEnvironmentConfiguration(scriptEnvironment, messageCollector, false,
-                                                                             BuiltinsScopeExtensionMode.ALL, false), false);
+                                                                             BuiltinsScopeExtensionMode.ALL, false,
+                                                                             BuiltinToJavaTypesMapping.ENABLED), false);
         if (generationState == null) {
             throw new CompileEnvironmentException("Module script " + moduleScriptFile + " analyze failed");
         }

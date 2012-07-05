@@ -20,6 +20,7 @@ import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CompileEnvironmentConfiguration;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 
 /**
@@ -30,6 +31,7 @@ public class K2JVMCompileEnvironmentConfiguration extends CompileEnvironmentConf
     private final boolean script;
     private final BuiltinsScopeExtensionMode builtinsScopeExtensionMode;
     private final boolean stubs;
+    private final BuiltinToJavaTypesMapping builtinToJavaTypesMapping;
 
     /**
      * NOTE: It's very important to call dispose for every object of this class or there will be memory leaks.
@@ -37,12 +39,13 @@ public class K2JVMCompileEnvironmentConfiguration extends CompileEnvironmentConf
      * @see Disposer
      */
     public K2JVMCompileEnvironmentConfiguration(@NotNull JetCoreEnvironment environment, @NotNull MessageCollector messageCollector,
-            boolean script, BuiltinsScopeExtensionMode builtinsScopeExtensionMode, boolean stubs) {
+            boolean script, BuiltinsScopeExtensionMode builtinsScopeExtensionMode, boolean stubs, BuiltinToJavaTypesMapping builtinToJavaTypesMapping) {
         super(messageCollector);
         this.environment = environment;
         this.script = script;
         this.builtinsScopeExtensionMode = builtinsScopeExtensionMode;
         this.stubs = stubs;
+        this.builtinToJavaTypesMapping = builtinToJavaTypesMapping;
     }
 
     public JetCoreEnvironment getEnvironment() {
@@ -60,5 +63,9 @@ public class K2JVMCompileEnvironmentConfiguration extends CompileEnvironmentConf
 
     public boolean isStubs() {
         return stubs;
+    }
+
+    public BuiltinToJavaTypesMapping getBuiltinToJavaTypesMapping() {
+        return builtinToJavaTypesMapping;
     }
 }

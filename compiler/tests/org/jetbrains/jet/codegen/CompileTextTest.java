@@ -29,7 +29,8 @@ public class CompileTextTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations();
         String text = "import org.jetbrains.jet.codegen.CompileTextTest; fun x() = CompileTextTest()";
         K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(
-                myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, false, BuiltinsScopeExtensionMode.ALL, false);
+                myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, false, BuiltinsScopeExtensionMode.ALL, false,
+                BuiltinToJavaTypesMapping.ENABLED);
         configuration.getEnvironment().addToClasspathFromClassLoader(getClass().getClassLoader());
         ClassLoader classLoader = KotlinToJVMBytecodeCompiler.compileText(configuration, text);
         Class<?> namespace = classLoader.loadClass("namespace");

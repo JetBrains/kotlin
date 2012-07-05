@@ -25,7 +25,10 @@ import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.signature.JvmPropertyAccessorSignature;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetClassObject;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -70,7 +73,7 @@ public class JetTypeMapper {
     private JetStandardLibrary standardLibrary1;
     public BindingContext bindingContext;
     private ClosureAnnotator closureAnnotator;
-    private CompilerSpecialMode compilerSpecialMode;
+    private boolean mapBuiltinsToJava;
     private ClassBuilderMode classBuilderMode;
 
 
@@ -85,8 +88,8 @@ public class JetTypeMapper {
     }
 
     @Inject
-    public void setCompilerSpecialMode(CompilerSpecialMode compilerSpecialMode) {
-        this.compilerSpecialMode = compilerSpecialMode;
+    public void setBuiltinToJavaTypesMapping(BuiltinToJavaTypesMapping builtinToJavaTypesMapping) {
+        mapBuiltinsToJava = builtinToJavaTypesMapping == BuiltinToJavaTypesMapping.ENABLED;
     }
 
     @Inject
@@ -404,7 +407,7 @@ public class JetTypeMapper {
         Type known = null;
         ClassifierDescriptor classifier = jetType.getConstructor().getDeclarationDescriptor();
 
-        if (compilerSpecialMode != CompilerSpecialMode.BUILTINS) {
+        if (mapBuiltinsToJava) {
             if (classifier instanceof ClassDescriptor) {
                 KnownTypeKey key = new KnownTypeKey(DescriptorUtils.getFQName(classifier), jetType.isNullable());
                 known = knowTypes.get(key);
@@ -422,7 +425,7 @@ public class JetTypeMapper {
                 throw new IllegalStateException("TRAIT_IMPL is not possible for " + jetType);
             }
             else if (kind == MapTypeMode.IMPL) {
-                if (compilerSpecialMode != CompilerSpecialMode.BUILTINS) {
+                if (mapBuiltinsToJava) {
                     // TODO: enable and fix tests
                     //throw new IllegalStateException("must not map known type to IMPL when not compiling builtins: " + jetType);
                 }
@@ -457,7 +460,7 @@ public class JetTypeMapper {
 
         if (descriptor instanceof ClassDescriptor
                 && JetStandardLibraryNames.ARRAY.is((ClassDescriptor) descriptor)
-                && compilerSpecialMode != CompilerSpecialMode.BUILTINS) {
+                && mapBuiltinsToJava) {
             if (jetType.getArguments().size() != 1) {
                 throw new UnsupportedOperationException("arrays must have one type argument");
             }
@@ -493,7 +496,7 @@ public class JetTypeMapper {
             Type asmType;
             boolean forceReal;
 
-            if (JetStandardLibraryNames.COMPARABLE.is((ClassDescriptor) descriptor) && compilerSpecialMode != CompilerSpecialMode.BUILTINS) {
+            if (JetStandardLibraryNames.COMPARABLE.is((ClassDescriptor) descriptor) && mapBuiltinsToJava) {
                 if (jetType.getArguments().size() != 1) {
                     throw new UnsupportedOperationException("Comparable must have one type argument");
                 }
@@ -559,7 +562,7 @@ public class JetTypeMapper {
     }
 
     private void checkValidType(@NotNull Type type) {
-        if (compilerSpecialMode == CompilerSpecialMode.BUILTINS) {
+        if (!mapBuiltinsToJava) {
             String descriptor = type.getDescriptor();
             if (descriptor.equals("Ljava/lang/Object;")) {
                 return;

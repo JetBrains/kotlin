@@ -86,7 +86,8 @@ public class TestlibTest extends CodegenTestCase {
 
             GenerationState generationState = KotlinToJVMBytecodeCompiler
                     .analyzeAndGenerate(new K2JVMCompileEnvironmentConfiguration(myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR,
-                                                                                 false, BuiltinsScopeExtensionMode.ALL, false), false);
+                                                                                 false, BuiltinsScopeExtensionMode.ALL, false,
+                                                                                 BuiltinToJavaTypesMapping.ENABLED), false);
 
             if (generationState == null) {
                 throw new RuntimeException("There were compilation errors");
