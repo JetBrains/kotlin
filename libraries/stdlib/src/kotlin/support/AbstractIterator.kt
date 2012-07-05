@@ -6,7 +6,7 @@ import java.util.NoSuchElementException
 import java.lang.UnsupportedOperationException
 
 // not using an enum for now as JS generation doesn't support it
-public object State {
+object State {
     val Ready = 0
     val NotReady = 1
     val Done = 2
