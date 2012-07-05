@@ -40,6 +40,7 @@ import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.*;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.jetbrains.k2js.facade.MainCallParameters;
+import org.jetbrains.k2js.utils.JetFileUtils;
 
 import java.io.File;
 import java.util.Arrays;
@@ -104,11 +105,17 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
 
     private static void reportCompiledSourcesList(@NotNull PrintingMessageCollector messageCollector,
             @NotNull JetCoreEnvironment environmentForJS) {
-        Iterable<String> fileNames = Iterables.transform(environmentForJS.getSourceFiles(), new Function<JetFile, String>() {
+        List<JetFile> files = environmentForJS.getSourceFiles();
+        Iterable<String> fileNames = Iterables.transform(files, new Function<JetFile, String>() {
             @Override
             public String apply(@Nullable JetFile file) {
                 assert file != null;
-                return file.getName();
+                String packageName = file.getPackageName();
+                if (packageName != null && packageName.length() > 0) {
+                    return packageName + "." + file.getName();
+                } else {
+                    return file.getName();
+                }
             }
         });
         messageCollector.report(CompilerMessageSeverity.LOGGING, "Compiling source files: " + Joiner.on(", ").join(fileNames),
