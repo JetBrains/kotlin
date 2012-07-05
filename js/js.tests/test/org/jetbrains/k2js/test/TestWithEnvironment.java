@@ -20,9 +20,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.config.CompilerConfiguration;
 
 /**
  * @author Pavel Talanov
@@ -51,9 +50,6 @@ public abstract class TestWithEnvironment extends UsefulTestCase {
     }
 
     protected void createEnvironmentWithMockJdkAndIdeaAnnotations() {
-        myEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(
-                getTestRootDisposable(),
-                CompileCompilerDependenciesTest.compilerConfigurationForTests(CompilerSpecialMode.JS, true)
-        );
+        myEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(getTestRootDisposable(), new CompilerConfiguration());
     }
 }
