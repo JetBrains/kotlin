@@ -73,12 +73,17 @@ fun main(args: Array<String>) {
     val otherArrayNames = arrayList("Boolean", "Byte", "Char", "Short", "Int", "Long", "Float", "Double")
 
     // JLangIterables - Generic iterable stuff
-    generateFile(File(outDir, "ArraysFromJLangIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterables.kt"), File(srcDir, "JLangIterablesJVM.kt")) {
+    generateFile(File(outDir, "ArraysFromJLangIterables.kt"), "package kotlin\n", File(srcDir, "JLangIterables.kt")) {
         it.replaceAll("java.lang.Iterable<T", "Array<T").
             replaceAll("java.lang.Iterable<T", "Array<T").
             replaceAll("iterator.hasNext\\(\\)", "iterator.hasNext")
     }
-    generateFile(File(outDir, "ArraysFromJLangIterablesLazy.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterablesLazy.kt")) {
+    generateFile(File(outDir, "ArraysFromJLangIterablesJVM.kt"), "package kotlin\n", File(srcDir, "JLangIterablesJVM.kt")) {
+        it.replaceAll("java.lang.Iterable<T", "Array<T").
+            replaceAll("java.lang.Iterable<T", "Array<T").
+            replaceAll("iterator.hasNext\\(\\)", "iterator.hasNext")
+    }
+    generateFile(File(outDir, "ArraysFromJLangIterablesLazy.kt"), "package kotlin\n", File(srcDir, "JLangIterablesLazy.kt")) {
         it.replaceAll("java.lang.Iterable<T", "Array<T").replaceAll("java.lang.Iterable<T", "Array<T")
     }
     for (arrayName in otherArrayNames) {
@@ -90,19 +95,26 @@ fun main(args: Array<String>) {
             replaceAll("iterator.hasNext\\(\\)", "iterator.hasNext")
         }
 
-        generateFile(File(outDir, "${arrayName}ArraysFromJLangIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterables.kt"), File(srcDir, "JLangIterablesJVM.kt")) {
+        generateFile(File(outDir, "${arrayName}ArraysFromJLangIterables.kt"), "package kotlin\n", File(srcDir, "JLangIterables.kt")) {
             replace(it)
         }
-        generateFile(File(outDir, "${arrayName}ArraysFromJLangIterablesLazy.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterablesLazy.kt")) {
+        generateFile(File(outDir, "${arrayName}ArraysFromJLangIterablesJVM.kt"), "package kotlin\n", File(srcDir, "JLangIterablesJVM.kt")) {
+            replace(it)
+        }
+        generateFile(File(outDir, "${arrayName}ArraysFromJLangIterablesLazy.kt"), "package kotlin\n", File(srcDir, "JLangIterablesLazy.kt")) {
             replace(it)
         }
     }
 
-    generateFile(File(outDir, "StandardFromJLangIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterables.kt"), File(srcDir, "JLangIterablesJVM.kt")) {
+    generateFile(File(outDir, "StandardFromJLangIterables.kt"), "package kotlin\n", File(srcDir, "JLangIterables.kt")) {
         it.replaceAll("java.lang.Iterable<T", "Iterable<T").
             replaceAll("iterator.hasNext\\(\\)", "iterator.hasNext")
     }
-    generateFile(File(outDir, "StandardFromJLangIterablesLazy.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterablesLazy.kt")) {
+    generateFile(File(outDir, "StandardFromJLangIterablesJVM.kt"), "package kotlin\n", File(srcDir, "JLangIterablesJVM.kt")) {
+        it.replaceAll("java.lang.Iterable<T", "Iterable<T").
+            replaceAll("iterator.hasNext\\(\\)", "iterator.hasNext")
+    }
+    generateFile(File(outDir, "StandardFromJLangIterablesLazy.kt"), "package kotlin\n", File(srcDir, "JLangIterablesLazy.kt")) {
         it.replaceAll("java.lang.Iterable<T", "Iterable<T")
     }
 
@@ -115,11 +127,18 @@ fun main(args: Array<String>) {
 
 
     // JUtilCollections - methods returning a collection of the same input size (if its a collection)
-    generateFile(File(outDir, "ArraysFromJUtilCollections.kt"), "package kotlin", File(srcDir, "JUtilCollections.kt"), File(srcDir, "JUtilCollectionsJVM.kt")) {
+    generateFile(File(outDir, "ArraysFromJUtilCollections.kt"), "package kotlin", File(srcDir, "JUtilCollections.kt")) {
+        it.replaceAll("java.util.Collection<T", "Array<T")
+    }
+    generateFile(File(outDir, "ArraysFromJUtilCollectionsJVM.kt"), "package kotlin", File(srcDir, "JUtilCollectionsJVM.kt")) {
         it.replaceAll("java.util.Collection<T", "Array<T")
     }
     for (arrayName in otherArrayNames) {
-        generateFile(File(outDir, "${arrayName}ArraysFromJUtilCollections.kt"), "package kotlin", File(srcDir, "JUtilCollections.kt"), File(srcDir, "JUtilCollectionsJVM.kt")) {
+        generateFile(File(outDir, "${arrayName}ArraysFromJUtilCollections.kt"), "package kotlin", File(srcDir, "JUtilCollections.kt")) {
+            replaceGenerics(arrayName, it.replaceAll("<T> java.util.Collection<T>", "${arrayName}Array").
+            replaceAll("java.util.Collection<T>", "${arrayName}Array"))
+        }
+        generateFile(File(outDir, "${arrayName}ArraysFromJUtilCollectionsJVM.kt"), "package kotlin", File(srcDir, "JUtilCollectionsJVM.kt")) {
             replaceGenerics(arrayName, it.replaceAll("<T> java.util.Collection<T>", "${arrayName}Array").
             replaceAll("java.util.Collection<T>", "${arrayName}Array"))
         }
@@ -132,7 +151,10 @@ fun main(args: Array<String>) {
         it.replaceAll("java.util.Collection<T", "java.lang.Iterable<T").replaceAll("(this.size)", "")
     }
 
-    generateFile(File(outDir, "StandardFromJUtilCollections.kt"), "package kotlin", File(srcDir, "JUtilCollections.kt"), File(srcDir, "JUtilCollectionsJVM.kt")) {
+    generateFile(File(outDir, "StandardFromJUtilCollections.kt"), "package kotlin", File(srcDir, "JUtilCollections.kt")) {
+        it.replaceAll("java.util.Collection<T", "Iterable<T").replaceAll("(this.size)", "")
+    }
+    generateFile(File(outDir, "StandardFromJUtilCollectionsJVM.kt"), "package kotlin",  File(srcDir, "JUtilCollectionsJVM.kt")) {
         it.replaceAll("java.util.Collection<T", "Iterable<T").replaceAll("(this.size)", "")
     }
 }

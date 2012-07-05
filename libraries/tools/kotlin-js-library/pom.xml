@@ -63,6 +63,7 @@
                                         <exclude name="**/*JVM.kt"/>
                                     </fileset>
                                     <fileset dir="${basedir}/../../stdlib/src/kotlin">
+                                        <include name="Arrays.kt"/>
                                         <include name="Preconditions.kt"/>
                                         <include name="Iterators.kt"/>
                                         <include name="JUtil.kt"/>
@@ -78,8 +79,12 @@
                                         <include name="Strings.kt"/>
                                     </fileset>
                                     <fileset dir="${basedir}/../../stdlib/src/generated">
+                                        <include name="*.kt"/>
+                                        <exclude name="**/*JVM.kt"/>
+<!--
                                         <include name="JUtilIteratorsFromJLangIterables.kt"/>
                                         <include name="JUtilIterablesFromJUtilCollections.kt"/>
+-->
                                     </fileset>
                                 </copy>
                                 <copy tofile="${basedir}/target/generated-js-library/kotlin-lib.js"
