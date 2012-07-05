@@ -38,7 +38,7 @@ import java.util.Collection;
 
 /**
  * @author Stepan Koltsov
- * @see ReadJavaBinaryClassTest
+ * @see AbstractReadJavaBinaryClassTest
  */
 public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
 
