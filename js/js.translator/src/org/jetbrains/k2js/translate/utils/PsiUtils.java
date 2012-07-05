@@ -93,6 +93,10 @@ public final class PsiUtils {
         return (binaryExpression.getOperationToken() == JetTokens.NOT_IN);
     }
 
+    public static boolean isNegatedOperation(@NotNull JetBinaryExpression binaryExpression) {
+        return (binaryExpression.getOperationToken() == JetTokens.EXCLEQ) || isNotInOperation(binaryExpression);
+    }
+
     private static boolean isInOperation(@NotNull JetBinaryExpression binaryExpression) {
         return (binaryExpression.getOperationToken() == JetTokens.IN_KEYWORD);
     }
