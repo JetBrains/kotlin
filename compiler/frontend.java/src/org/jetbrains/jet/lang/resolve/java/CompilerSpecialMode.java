@@ -27,8 +27,4 @@ public enum CompilerSpecialMode {
     IDEA,
     JS,
     ;
-
-    public boolean isStubs() {
-        return this == BUILTINS || this == JDK_HEADERS;
-    }
 }

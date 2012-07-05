@@ -36,6 +36,7 @@ import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -258,7 +259,7 @@ public class KotlinToJVMBytecodeCompiler {
 
     @Nullable
     public static GenerationState analyzeAndGenerate(K2JVMCompileEnvironmentConfiguration configuration) {
-        return analyzeAndGenerate(configuration, configuration.getEnvironment().getCompilerSpecialMode().isStubs());
+        return analyzeAndGenerate(configuration, configuration.getEnvironment().getCompilerSpecialMode() == CompilerSpecialMode.BUILTINS);
     }
 
     @Nullable
