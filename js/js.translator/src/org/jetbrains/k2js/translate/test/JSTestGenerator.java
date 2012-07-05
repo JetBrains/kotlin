@@ -16,8 +16,10 @@
 
 package org.jetbrains.k2js.translate.test;
 
-import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
+import com.google.dart.compiler.backend.js.ast.JsBlock;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsNew;
+import com.google.dart.compiler.backend.js.ast.JsStringLiteral;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -31,13 +33,11 @@ import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 import java.util.Collection;
 import java.util.List;
 
-import static com.google.dart.compiler.util.AstUtil.newBlock;
-
 /**
  * @author Pavel Talanov
  */
-public final class TestGenerator {
-    private TestGenerator() {
+public final class JSTestGenerator {
+    private JSTestGenerator() {
     }
 
     public static void generateTestCalls(@NotNull TranslationContext context,
@@ -56,16 +56,11 @@ public final class TestGenerator {
                 return;
             }
             JsExpression expression = ReferenceTranslator.translateAsFQReference(classDescriptor, context);
-            JsNew constructClassExpr = new JsNew(expression);
-            JsExpression functionToTestCall =
-                    CallBuilder.build(context).descriptor(functionDescriptor).receiver(constructClassExpr).translate();
-            JsNameRef qUnitTestFunRef = AstUtil.newQualifiedNameRef("QUnit.test");
-            JsFunction functionToTest = new JsFunction(context.jsScope());
-            functionToTest.setBody(newBlock(functionToTestCall.makeStmt()));
-            String testName = classDescriptor.getName() + "." + functionDescriptor.getName();
-            block.getStatements()
-                    .add(AstUtil.newInvocation(qUnitTestFunRef, context.program().getStringLiteral(testName), functionToTest)
-                                 .makeStmt());
+            JsNew testClass = new JsNew(expression);
+            JsExpression functionToTestCall = CallBuilder.build(context).descriptor(functionDescriptor).receiver(testClass).translate();
+
+            JsStringLiteral testName = context.program().getStringLiteral(classDescriptor.getName() + "." + functionDescriptor.getName());
+            (new JSTester(block, context)).constructTestMethodInvocation(functionToTestCall, testName);
         }
     }
 }
