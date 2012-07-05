@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
+import org.jetbrains.k2js.test.config.TestConfig;
+import org.jetbrains.k2js.test.config.TestConfigFactory;
 import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 import org.jetbrains.k2js.test.utils.TranslationUtils;
 
@@ -100,11 +102,24 @@ public abstract class BasicTest extends TestWithEnvironment {
     }
 
     protected void generateJavaScriptFiles(@NotNull List<String> files, @NotNull String testName,
+            @NotNull MainCallParameters mainCallParameters,
+            @NotNull Iterable<EcmaVersion> ecmaVersions,
+            @NotNull TestConfigFactory configFactory)
+            throws Exception {
+        for (EcmaVersion version : ecmaVersions) {
+            TranslationUtils.translateFiles(getProject(), withAdditionalFiles(files),
+                                            getOutputFilePath(testName, version), mainCallParameters,
+                                            version, configFactory);
+        }
+    }
+
+    protected void generateJavaScriptFiles(@NotNull List<String> files, @NotNull String testName,
             @NotNull MainCallParameters mainCallParameters, @NotNull Iterable<EcmaVersion> ecmaVersions)
             throws Exception {
         for (EcmaVersion version : ecmaVersions) {
             TranslationUtils.translateFiles(getProject(), withAdditionalFiles(files),
-                                            getOutputFilePath(testName, version), mainCallParameters, version);
+                                            getOutputFilePath(testName, version), mainCallParameters,
+                                            version, TestConfig.FACTORY);
         }
     }
 

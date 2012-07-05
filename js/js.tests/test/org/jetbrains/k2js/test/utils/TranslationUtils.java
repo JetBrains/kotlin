@@ -16,7 +16,6 @@
 
 package org.jetbrains.k2js.test.utils;
 
-import closurecompiler.internal.com.google.common.collect.Maps;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
@@ -34,25 +33,22 @@ import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.generate.CodeGenerator;
-import org.jetbrains.k2js.test.config.TestConfig;
+import org.jetbrains.k2js.test.config.TestConfigFactory;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
 import java.io.*;
 import java.util.List;
-import java.util.Map;
 
 import static org.jetbrains.k2js.utils.JetFileUtils.createPsiFileList;
 
 /**
  * @author Pavel Talanov
  */
+//TODO: use method object
 public final class TranslationUtils {
 
     private TranslationUtils() {
     }
-
-    @NotNull
-    private static final Map<EcmaVersion, Config> testConfigs = Maps.newHashMap();
 
     @Nullable
     private static BindingContext libraryContext = null;
@@ -96,22 +92,17 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static Config getConfig(@NotNull Project project, @NotNull EcmaVersion version) {
-        Config config = testConfigs.get(version);
-        if (config == null) {
-            BindingContext preanalyzedContext = getLibraryContext(project);
-            config = new TestConfig(project, version, getLibFilesWithCode(getAllLibFiles(project)), preanalyzedContext);
-            testConfigs.put(version, config);
-        }
-        return config;
+    public static Config getConfig(@NotNull Project project, @NotNull EcmaVersion version, @NotNull TestConfigFactory configFactory) {
+        BindingContext preanalyzedContext = getLibraryContext(project);
+        return configFactory.create(project, version, getLibFilesWithCode(getAllLibFiles(project)), preanalyzedContext);
     }
 
     public static void translateFiles(@NotNull Project project, @NotNull List<String> inputFiles,
             @NotNull String outputFile,
             @NotNull MainCallParameters mainCallParameters,
-            @NotNull EcmaVersion version) throws Exception {
+            @NotNull EcmaVersion version, TestConfigFactory configFactory) throws Exception {
         List<JetFile> psiFiles = createPsiFileList(inputFiles, project);
-        JsProgram program = getTranslator(project, version).generateProgram(psiFiles, mainCallParameters);
+        JsProgram program = new K2JSTranslator(getConfig(project, version, configFactory)).generateProgram(psiFiles, mainCallParameters);
         FileWriter writer = new FileWriter(new File(outputFile));
         try {
             writer.write(CodeGenerator.generateProgramToString(program));
@@ -119,11 +110,6 @@ public final class TranslationUtils {
         finally {
             writer.close();
         }
-    }
-
-    @NotNull
-    private static K2JSTranslator getTranslator(@NotNull Project project, @NotNull EcmaVersion version) {
-        return new K2JSTranslator(getConfig(project, version));
     }
 
     @NotNull

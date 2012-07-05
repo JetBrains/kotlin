@@ -20,15 +20,16 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
+import org.jetbrains.k2js.translate.test.JSRhinoUnitTester;
+import org.jetbrains.k2js.translate.test.JSTester;
 
 import java.util.List;
 
 /**
  * @author Pavel Talanov
  */
-public class TestConfig extends Config {
+public class TestConfigWithUnitTests extends TestConfig {
 
     @NotNull
     public static TestConfigFactory FACTORY = new TestConfigFactory() {
@@ -37,33 +38,19 @@ public class TestConfig extends Config {
                 @NotNull EcmaVersion version,
                 @NotNull List<JetFile> files,
                 @NotNull BindingContext context) {
-            return new TestConfig(project, version, files, context);
+            return new TestConfigWithUnitTests(project, version, files, context);
         }
     };
 
-    //NOTE: hard-coded in kotlin-lib files
-    @NotNull
-    public static final String TEST_MODULE_NAME = "JS_TESTS";
-    @NotNull
-    private final List<JetFile> jsLibFiles;
-    @NotNull
-    private final BindingContext libraryContext;
-
-    public TestConfig(@NotNull Project project, @NotNull EcmaVersion version,
-            @NotNull List<JetFile> files, @NotNull BindingContext context) {
-        super(project, TEST_MODULE_NAME, version);
-        jsLibFiles = files;
-        libraryContext = context;
+    @Override
+    public JSTester getTester() {
+        return new JSRhinoUnitTester();
     }
 
-    @Override
-    public BindingContext getLibraryBindingContext() {
-        return libraryContext;
-    }
-
-    @Override
-    @NotNull
-    public List<JetFile> generateLibFiles() {
-        return jsLibFiles;
+    public TestConfigWithUnitTests(@NotNull Project project,
+            @NotNull EcmaVersion version,
+            @NotNull List<JetFile> files,
+            @NotNull BindingContext context) {
+        super(project, version, files, context);
     }
 }

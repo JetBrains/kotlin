@@ -22,6 +22,7 @@ import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.MultipleFilesTranslationTest;
+import org.jetbrains.k2js.test.config.TestConfigWithUnitTests;
 import org.jetbrains.k2js.test.rhino.RhinoSystemOutputChecker;
 
 import java.util.ArrayList;
@@ -72,7 +73,8 @@ public class JsUnitTestBase extends MultipleFilesTranslationTest {
 
     private void performUnitTest(String... testFiles) throws Exception {
         Iterable<EcmaVersion> versions = Collections.singletonList(EcmaVersion.v3);
-        generateJavaScriptFiles(Lists.newArrayList(testFiles), "myTest", MainCallParameters.noCall(), versions);
+        generateJavaScriptFiles(Lists.newArrayList(testFiles), "myTest", MainCallParameters.noCall(), versions,
+                                TestConfigWithUnitTests.FACTORY);
         runRhinoTests("myTest", versions, new RhinoSystemOutputChecker(""));
     }
 }
