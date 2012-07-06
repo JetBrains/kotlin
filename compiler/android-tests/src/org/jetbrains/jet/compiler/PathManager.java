@@ -37,7 +37,7 @@ public class PathManager {
     }
 
     public String getAndroidEmulatorRoot() {
-        String androidEmulatorRoot = tmpFolder + "/emulator";
+        String androidEmulatorRoot = getAndroidSdkRoot() + "/emulator";
         new File(androidEmulatorRoot).mkdirs();
         return androidEmulatorRoot;
     }
