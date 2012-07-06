@@ -17,16 +17,13 @@
 package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.utils.ErrorReportingUtils;
 
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
@@ -72,22 +69,25 @@ public final class QualifiedExpressionTranslator {
                 ((JetSimpleNameExpression)selector, receiver, callType, context);
         }
         if (selector instanceof JetCallExpression) {
-            try {
-                return CallExpressionTranslator.translate((JetCallExpression)selector, receiver, callType, context);
-            } catch (RuntimeException e) {
-                if (selector != null) {
-                    String location = DiagnosticUtils.atLocation(selector);
-                    throw new IllegalStateException(e.getMessage() + " at " + location, e);
-                } else {
-                    throw e;
-                }
-            }
+            return invokeCallExpressionTranslator(receiver, selector, callType, context);
         }
         //TODO: never get there
         if (selector instanceof JetSimpleNameExpression) {
             return ReferenceTranslator.translateSimpleName((JetSimpleNameExpression)selector, context);
         }
         throw new AssertionError("Unexpected qualified expression: " + selector.getText());
+    }
+
+    @NotNull
+    private static JsExpression invokeCallExpressionTranslator(@Nullable JsExpression receiver,
+            @NotNull JetExpression selector,
+            @NotNull CallType callType,
+            @NotNull TranslationContext context) {
+        try {
+            return CallExpressionTranslator.translate((JetCallExpression) selector, receiver, callType, context);
+        } catch (RuntimeException e) {
+            throw  ErrorReportingUtils.reportErrorWithLocation(selector, e);
+        }
     }
 
     @Nullable
