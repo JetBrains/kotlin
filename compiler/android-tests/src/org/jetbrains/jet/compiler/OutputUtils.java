@@ -64,10 +64,10 @@ public class OutputUtils {
             }
             else {
                 commandLineForStoppingEmulators.setExePath(pathManager.getPlatformToolsFolderInAndroidSdk() + "/adb");
-                commandLineForStoppingEmulators.addParameter("emu");
-                commandLineForStoppingEmulators.addParameter("kill");
                 commandLineForStoppingEmulators.addParameter("-s");
                 commandLineForStoppingEmulators.addParameter(matcher.group());
+                commandLineForStoppingEmulators.addParameter("emu");
+                commandLineForStoppingEmulators.addParameter("kill");
                 checkResult(RunUtils.execute(commandLineForStoppingEmulators));
             }
         }
