@@ -5,21 +5,23 @@ import js.*
 
 public var asserter : Asserter = JsTestsAsserter()
 
-native("JsTests.Asserter")
 public class JsTestsAsserter(): Asserter {
-
-    native
-    public override fun assertTrue(message: String, actual: Boolean) = noImpl
-
-    native
-    public override fun assertEquals(message: String, expected: Any?, actual: Any?) = noImpl
-
-    native
-    public override fun assertNotNull(message: String, actual: Any?) = noImpl
-
-    native
-    public override fun assertNull(message: String, actual: Any?) = noImpl
-
-    native
-    public override fun fail(message: String) = noImpl
+    public override fun assertTrue(message: String, actual: Boolean) {
+        assert(actual, message)
+    }
+    public override fun assertEquals(message: String, expected: Any?, actual: Any?) {
+        assert(actual == expected, "$message. Expected <$expected> actual <$actual>")
+    }
+    public override fun assertNotNull(message: String, actual: Any?) {
+        assert(actual != null, message)
+    }
+    public override fun assertNull(message: String, actual: Any?) {
+        assert(actual == null, message)
+    }
+    public override fun fail(message: String) {
+        assert(false, message)
+    }
 }
+
+native("JsTests.assert")
+public fun assert(value: Boolean, message: String): Unit = js.noImpl

@@ -28,10 +28,6 @@ public final class JSRhinoUnitTester extends CommonUnitTester {
 
     public static final JsNameRef TEST_FUN_REF = AstUtil.newQualifiedNameRef("JsTests.test");
 
-    public JSRhinoUnitTester() {
-        super();
-    }
-
     @NotNull
     @Override
     protected JsExpression getTestMethodRef() {

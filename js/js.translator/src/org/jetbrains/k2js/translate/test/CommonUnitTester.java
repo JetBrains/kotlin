@@ -29,10 +29,6 @@ import static com.google.dart.compiler.util.AstUtil.newInvocation;
  */
 public abstract class CommonUnitTester extends JSTester {
 
-    public CommonUnitTester() {
-        super();
-    }
-
     @Override
     public void constructTestMethodInvocation(@NotNull JsExpression functionToTestCall,
             @NotNull JsStringLiteral testName) {

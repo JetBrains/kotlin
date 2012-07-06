@@ -15,35 +15,34 @@
  */
 /*Asserter*/
 
-var JsTests = (function() {
-    var out = Kotlin.System.out();
-    function setOut(newOut) {
-        out = newOut;
-    }
-    var Asserter = function(out) {
-        this.out = out;
-        this.assertTrue = function (message, actual) {
-            if (!actual) {
-                this.out.println(message);
-            }
-        };
-        this.assertEquals = function (message, actual) {
-            throw null;
-        };
+var JsTests = (function () {
+    var reporter = jsTestReporter;
+    var failedTest = {};
+
+    var assert = function (isTrue, message) {
+        if (!isTrue) {
+            reporter.reportError(message);
+            throw failedTest;
+        }
     };
 
-    var test = function(testName, testFun) {
+    var test = function (testName, testFun) {
+        reporter.testStart(testName);
         try {
             testFun();
         }
         catch (fail) {
-            out.println("Test " + testName + " failed");
+            if (fail != failedTest) {
+                reporter.reportError("Unexpected exception " + Kotlin.toString(fail));
+            }
+            reporter.testFail(testName);
+            return;
         }
+        reporter.testSuccess(testName);
     };
     return {
-        test : test,
-        Asserter : Asserter,
-        setOut : setOut
+        test:test,
+        assert:assert
     }
 })();
 

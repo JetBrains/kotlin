@@ -17,24 +17,28 @@
 package org.jetbrains.k2js.test.semantics;
 
 import closurecompiler.internal.com.google.common.collect.Lists;
+import com.google.dart.compiler.util.Maps;
+import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.MultipleFilesTranslationTest;
+import org.jetbrains.k2js.test.config.JsUnitTestReporter;
 import org.jetbrains.k2js.test.config.TestConfigWithUnitTests;
 import org.jetbrains.k2js.test.rhino.RhinoSystemOutputChecker;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.k2js.test.utils.LibraryFilePathsUtil.getAdditionalLibraryFiles;
 
 /**
  * @author Pavel Talanov
  */
-public class JsUnitTestBase extends MultipleFilesTranslationTest {
+public abstract class JsUnitTestBase extends MultipleFilesTranslationTest {
 
     @NotNull
     private static final String JS_TESTS = pathToTestFilesRoot() + "jsTester/";
@@ -42,6 +46,10 @@ public class JsUnitTestBase extends MultipleFilesTranslationTest {
     protected static final String JS_TESTS_KT = JS_TESTS + "jsTester.kt";
     @NotNull
     protected static final String JS_TESTS_JS = JS_TESTS + "jsTester.js";
+    //NOTE: we use this object to communicate test result from Rhino, it is not necessary to use global objects there
+    // we can inject those objects in JavaScript every time but this kind of solution will complicate logic a bit
+    @NotNull
+    private static final JsUnitTestReporter JS_UNIT_TEST_REPORTER = new JsUnitTestReporter();
 
     public JsUnitTestBase() {
         super("jsUnitTests/");
@@ -58,7 +66,7 @@ public class JsUnitTestBase extends MultipleFilesTranslationTest {
     @NotNull
     @Override
     protected List<String> additionalKotlinFiles() {
-        ArrayList<String> result = Lists.newArrayList();
+        List<String> result = Lists.newArrayList();
         List<String> additionalLibraryFiles = getAdditionalLibraryFiles();
         additionalLibraryFiles.add(JS_TESTS_KT);
         boolean removed = additionalLibraryFiles.remove(Config.LIBRARIES_LOCATION + "/stdlib/testCode.kt");
@@ -67,14 +75,32 @@ public class JsUnitTestBase extends MultipleFilesTranslationTest {
         return result;
     }
 
-    public void testDummy() throws Exception {
-        performUnitTest("libraries/stdlib/test/ListTest.kt");
+    public void runTestFile(@NotNull String pathToTestFile) throws Exception {
+        Iterable<EcmaVersion> versions = Collections.singletonList(EcmaVersion.v3);
+        String testName = pathToTestFile.substring(pathToTestFile.lastIndexOf("/"));
+        generateJavaScriptFiles(Lists.newArrayList(pathToTestFile), testName, MainCallParameters.noCall(), versions,
+                                TestConfigWithUnitTests.FACTORY);
+        runRhinoTests(testName, versions, new RhinoSystemOutputChecker(""));
     }
 
-    private void performUnitTest(String... testFiles) throws Exception {
-        Iterable<EcmaVersion> versions = Collections.singletonList(EcmaVersion.v3);
-        generateJavaScriptFiles(Lists.newArrayList(testFiles), "myTest", MainCallParameters.noCall(), versions,
-                                TestConfigWithUnitTests.FACTORY);
-        runRhinoTests("myTest", versions, new RhinoSystemOutputChecker(""));
+    public static Test createTestSuiteForFile(@NotNull String file, @NotNull String... ignoreFailedTestCases) throws Exception {
+        performTests(file);
+        JS_UNIT_TEST_REPORTER.ignoreTests(ignoreFailedTestCases);
+        return JS_UNIT_TEST_REPORTER.createTestSuiteAndFlush();
+    }
+
+    private static void performTests(@NotNull String testFile) throws Exception {
+        //NOTE: well it doesn't
+        @SuppressWarnings("JUnitTestCaseWithNoTests") JsUnitTestBase runner = new JsUnitTestBase() {
+
+        };
+        runner.setUp();
+        runner.runTestFile(testFile);
+        runner.tearDown();
+    }
+
+    @Override
+    protected Map<String, Object> getRhinoTestVariables() throws Exception {
+        return Maps.<String, Object>create("jsTestReporter", JS_UNIT_TEST_REPORTER);
     }
 }
