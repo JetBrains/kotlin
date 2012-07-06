@@ -18,6 +18,7 @@ package org.jetbrains.jet.compiler.emulator;
 
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.util.SystemInfo;
+import org.jetbrains.jet.compiler.OutputUtils;
 import org.jetbrains.jet.compiler.PathManager;
 import org.jetbrains.jet.compiler.run.RunUtils;
 import org.jetbrains.jet.compiler.run.result.RunResult;
@@ -95,31 +96,26 @@ public class Emulator {
 
     public void createEmulator() {
         System.out.println("Creating emulator...");
-        checkResult(RunUtils.execute(getCreateCommand(), "no"));
+        OutputUtils.checkResult(RunUtils.execute(getCreateCommand(), "no"));
     }
 
 
     public void startEmulator() {
         System.out.println("Starting emulator...");
-        checkResult(RunUtils.executeOnSeparateThread(getStartCommand(), false));
+        OutputUtils.stopRedundantEmulators(pathManager);
+        OutputUtils.checkResult(RunUtils.executeOnSeparateThread(getStartCommand(), false));
     }
 
 
     public void waitEmulatorStart() {
         System.out.println("Waiting for emulator start...");
-        checkResult(RunUtils.execute(getWaitCommand()));
+        OutputUtils.checkResult(RunUtils.execute(getWaitCommand()));
     }
 
     public void stopEmulator() {
         System.out.println("Stopping emulator...");
-        checkResult(RunUtils.execute(getStopCommand()));
+        OutputUtils.checkResult(RunUtils.execute(getStopCommand()));
         System.out.println("Stopping adb...");
-        checkResult(RunUtils.execute(getStopCommandForAdb()));
-    }
-
-    private static void checkResult(RunResult result) {
-        if (!result.getStatus()) {
-            throw new RuntimeException(result.getOutput());
-        }
+        OutputUtils.checkResult(RunUtils.execute(getStopCommandForAdb()));
     }
 }

@@ -27,6 +27,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.compiler.OutputUtils;
 import org.jetbrains.jet.compiler.run.result.RunResult;
 
 import java.io.Closeable;
@@ -138,7 +139,7 @@ public class RunUtils {
         }
         else {
             String output = builderToString(stdOut) + builderToString(stdErr);
-            if (!isResultOk(output)) {
+            if (!OutputUtils.isResultOk(output)) {
                 return new RunResult(false, output);
             }
             return new RunResult(true, output);
@@ -173,12 +174,5 @@ public class RunUtils {
         }
         return writer.toString();
     }
-
-    public static boolean isResultOk(String output) {
-        if (output.contains("BUILD FAILED") 
-            || output.contains("Build failed")) {
-            return false;
-        }
-        return true;
-    }
+    
 }

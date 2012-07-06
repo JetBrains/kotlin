@@ -18,6 +18,7 @@ package org.jetbrains.jet.compiler.ant;
 
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.util.SystemInfo;
+import org.jetbrains.jet.compiler.OutputUtils;
 import org.jetbrains.jet.compiler.PathManager;
 import org.jetbrains.jet.compiler.run.RunUtils;
 import org.jetbrains.jet.compiler.run.result.RunResult;
@@ -40,31 +41,25 @@ public class AntRunner {
         listOfAntCommands.add("-buildfile");
         listOfAntCommands.add(pathManager.getTmpFolder() + "/build.xml");
     }
-    
+
     /* Pack compiled sources on first step to one jar file */
     public void packLibraries() {
         System.out.println("Pack libraries...");
         RunResult result = RunUtils.execute(generateCommandLine("pack_libraries"));
-        if (!result.getStatus()) {
-            throw new RuntimeException(result.getOutput());
-        }
+        OutputUtils.checkResult(result);
     }
 
     /* Clean output directory */
     public void cleanOutput() {
         System.out.println("Clearing output directory...");
         RunResult result = RunUtils.execute(generateCommandLine("clean"));
-        if (!result.getStatus()) {
-            throw new RuntimeException(result.getOutput());
-        }
+        OutputUtils.checkResult(result);
     }
 
     public void compileSources() {
         System.out.println("Compiling sources...");
         RunResult result = RunUtils.execute(generateCommandLine("debug"));
-        if (!result.getStatus()) {
-            throw new RuntimeException(result.getOutput());
-        }
+        OutputUtils.checkResult(result);
     }
 
     public void installApplicationOnEmulator() {
@@ -74,24 +69,19 @@ public class AntRunner {
         if (!isInstallSuccessful(resultOutput)) {
             installApplicationOnEmulator();
             return;
-        } else {
+        }
+        else {
             System.out.println(resultOutput);
         }
-        if (!result.getStatus()) {
-            throw new RuntimeException(resultOutput);
-        }
+        OutputUtils.checkResult(result);
     }
 
     public String runTestsOnEmulator() {
         System.out.println("Running tests...");
         RunResult result = RunUtils.execute(generateCommandLine("test"));
         String resultOutput = result.getOutput();
-        if (!result.getStatus()) {
-            throw new RuntimeException(resultOutput);
-        }
-        else {
-            return resultOutput;
-        }
+        OutputUtils.checkResult(result);
+        return resultOutput;
     }
 
     private static boolean isInstallSuccessful(String output) {
