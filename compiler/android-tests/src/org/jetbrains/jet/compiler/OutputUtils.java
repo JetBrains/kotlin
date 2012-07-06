@@ -71,6 +71,7 @@ public class OutputUtils {
                 checkResult(RunUtils.execute(commandLineForStoppingEmulators));
             }
         }
+        checkResult(RunUtils.execute(commandLineForListOfDevices));
     }
 
     private OutputUtils() {
