@@ -126,7 +126,7 @@ public final class CallTranslator extends AbstractTranslator {
     private JsExpression intrinsicInvocation() {
         assert descriptor instanceof FunctionDescriptor;
         try {
-            Intrinsic intrinsic = context().intrinsics().getFunctionIntrinsic((FunctionDescriptor) descriptor);
+            Intrinsic intrinsic = context().intrinsics().getIntrinsic((FunctionDescriptor) descriptor);
             return intrinsic.apply(callParameters.getThisOrReceiverOrNull(), arguments, context());
         }
         catch (RuntimeException e) {

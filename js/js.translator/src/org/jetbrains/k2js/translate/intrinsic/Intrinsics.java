@@ -56,15 +56,15 @@ public final class Intrinsics {
 
     @NotNull
     private final Map<FunctionDescriptor, Intrinsic> functionIntrinsics =
-        new HashMap<FunctionDescriptor, Intrinsic>();
+            new HashMap<FunctionDescriptor, Intrinsic>();
 
     @NotNull
     private final Map<FunctionDescriptor, EqualsIntrinsic> equalsIntrinsics =
-        new HashMap<FunctionDescriptor, EqualsIntrinsic>();
+            new HashMap<FunctionDescriptor, EqualsIntrinsic>();
 
     @NotNull
     private final Map<FunctionDescriptor, CompareToIntrinsic> compareToIntrinsics =
-        new HashMap<FunctionDescriptor, CompareToIntrinsic>();
+            new HashMap<FunctionDescriptor, CompareToIntrinsic>();
 
     @NotNull
     private final Intrinsic lengthPropertyIntrinsic = new BuiltInPropertyIntrinsic("length");
@@ -147,7 +147,7 @@ public final class Intrinsics {
         FunctionDescriptor iteratorFunction = getFunctionByName(arrayMemberScope, Name.identifier("iterator"));
         functionIntrinsics.put(iteratorFunction, new CallStandardMethodIntrinsic("Kotlin.arrayIterator", true, 0));
         ConstructorDescriptor arrayConstructor =
-            ((ClassDescriptor)arrayMemberScope.getContainingDeclaration()).getConstructors().iterator().next();
+                ((ClassDescriptor) arrayMemberScope.getContainingDeclaration()).getConstructors().iterator().next();
         functionIntrinsics.put(arrayConstructor, new CallStandardMethodIntrinsic("Kotlin.arrayFromFun", false, 2));
     }
 
@@ -171,22 +171,22 @@ public final class Intrinsics {
     private void declareStringIntrinsics() {
         //TODO: same intrinsic for 2 different methods
         PropertyDescriptor stringLengthProperty =
-            getPropertyByName(library.getString().getDefaultType().getMemberScope(), Name.identifier("length"));
+                getPropertyByName(library.getString().getDefaultType().getMemberScope(), Name.identifier("length"));
         functionIntrinsics.put(stringLengthProperty.getGetter(), lengthPropertyIntrinsic);
         PropertyDescriptor charSequenceLengthProperty =
-            getPropertyByName(library.getCharSequence().getDefaultType().getMemberScope(), Name.identifier("length"));
+                getPropertyByName(library.getCharSequence().getDefaultType().getMemberScope(), Name.identifier("length"));
         functionIntrinsics.put(charSequenceLengthProperty.getGetter(), lengthPropertyIntrinsic);
         FunctionDescriptor getFunction =
-            getFunctionByName(library.getString().getDefaultType().getMemberScope(), Name.identifier("get"));
+                getFunctionByName(library.getString().getDefaultType().getMemberScope(), Name.identifier("get"));
         functionIntrinsics.put(getFunction, CharAtIntrinsic.INSTANCE);
     }
 
     private void declareTupleIntrinsicAccessors(@NotNull ClassifierDescriptor tupleDescriptor,
-                                                int tupleSize) {
+            int tupleSize) {
         for (int elementIndex = 0; elementIndex < tupleSize; ++elementIndex) {
             Name accessorName = Name.identifier("_" + (elementIndex + 1));
             PropertyDescriptor propertyDescriptor =
-                getPropertyByName(tupleDescriptor.getDefaultType().getMemberScope(), accessorName);
+                    getPropertyByName(tupleDescriptor.getDefaultType().getMemberScope(), accessorName);
             functionIntrinsics.put(propertyDescriptor.getGetter(), new TupleAccessIntrinsic(elementIndex));
         }
     }
@@ -202,7 +202,7 @@ public final class Intrinsics {
     public boolean isIntrinsic(@NotNull DeclarationDescriptor descriptor) {
         //NOTE: that if we want to add other intrinsics we have to modify this method
         if (descriptor instanceof FunctionDescriptor) {
-            FunctionDescriptor functionDescriptor = (FunctionDescriptor)descriptor.getOriginal();
+            FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor.getOriginal();
             return (equalsIntrinsics.containsKey(functionDescriptor) ||
                     compareToIntrinsics.containsKey(functionDescriptor) ||
                     functionIntrinsics.containsKey(functionDescriptor));
@@ -210,9 +210,17 @@ public final class Intrinsics {
         return false;
     }
 
+    //NOTE: that if we want to add other intrinsics we have to modify this method
     @NotNull
-    public Intrinsic getFunctionIntrinsic(@NotNull FunctionDescriptor descriptor) {
-        return functionIntrinsics.get(descriptor.getOriginal());
+    public Intrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
+        Intrinsic intrinsic = functionIntrinsics.get(descriptor.getOriginal());
+        if (intrinsic == null) {
+            intrinsic = equalsIntrinsics.get(descriptor.getOriginal());
+        }
+        if (intrinsic == null) {
+            intrinsic = compareToIntrinsics.get(descriptor.getOriginal());
+        }
+        return intrinsic;
     }
 
     @NotNull
@@ -231,7 +239,7 @@ public final class Intrinsics {
         @Override
         public Void visitClassDescriptor(@NotNull ClassDescriptor descriptor, @Nullable Void nothing) {
             for (DeclarationDescriptor memberDescriptor :
-                descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+                    descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
                 //noinspection NullableProblems
                 memberDescriptor.accept(this, null);
             }

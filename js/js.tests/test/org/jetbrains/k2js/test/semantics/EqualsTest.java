@@ -30,6 +30,10 @@ public final class EqualsTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
+    public void testExplicitEqualsMethod() throws Exception {
+        fooBoxTest();
+    }
+
     public void testStringsEqual() throws Exception {
         fooBoxTest();
     }
