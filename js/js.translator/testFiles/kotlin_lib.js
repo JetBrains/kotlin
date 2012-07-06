@@ -41,6 +41,10 @@ var kotlin = {set:function (receiver, key, value) {
         return answer;
     };
 
+    Kotlin.upto = function (from, limit, reversed) {
+        return Kotlin.$new(Kotlin.NumberRange)(from, limit - from, reversed).iterator();
+    };
+
     Kotlin.modules = {};
     Kotlin.Exceptions = {};
     Kotlin.Exception = Kotlin.$createClass();
