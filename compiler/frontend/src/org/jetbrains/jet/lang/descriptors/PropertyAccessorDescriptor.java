@@ -123,7 +123,7 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorNo
 
     @NotNull
     @Override
-    public PropertyAccessorDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, boolean makeInvisible, Kind kind, boolean copyOverrides) {
+    public PropertyAccessorDescriptor copy(DeclarationDescriptor newOwner, Modality modality, boolean makeInvisible, Kind kind, boolean copyOverrides) {
         throw new UnsupportedOperationException("Accessors must be copied by the corresponding property");
     }
 

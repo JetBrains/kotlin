@@ -306,8 +306,8 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
 
     @NotNull
     @Override
-    public PropertyDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, boolean makeInvisible, Kind kind, boolean copyOverrides) {
-        return doSubstitute(TypeSubstitutor.EMPTY, newOwner, DescriptorUtils.convertModality(modality, makeNonAbstract), makeInvisible ? Visibilities.INVISIBLE_FAKE : visibility, false, copyOverrides, kind);
+    public PropertyDescriptor copy(DeclarationDescriptor newOwner, Modality modality, boolean makeInvisible, Kind kind, boolean copyOverrides) {
+        return doSubstitute(TypeSubstitutor.EMPTY, newOwner, modality, makeInvisible ? Visibilities.INVISIBLE_FAKE : visibility, false, copyOverrides, kind);
     }
     
     public static PropertyDescriptor createDummy() {

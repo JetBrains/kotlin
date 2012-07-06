@@ -177,45 +177,73 @@ public class OverrideResolver {
     
     public static void generateOverridesInFunctionGroup(
             @NotNull Name name,
-            @NotNull Collection<? extends CallableMemberDescriptor> functionsFromSupertypes,
-            @NotNull Collection<? extends CallableMemberDescriptor> functionsFromCurrent,
+            @NotNull Collection<? extends CallableMemberDescriptor> membersFromSupertypes,
+            @NotNull Collection<? extends CallableMemberDescriptor> membersFromCurrent,
             @NotNull ClassDescriptor current,
             @NotNull DescriptorSink sink) {
-        
-        List<CallableMemberDescriptor> fakeOverrideList = Lists.newArrayList();
+        List<CallableMemberDescriptor> notOverridden = Lists.newArrayList(membersFromSupertypes);
+        for (CallableMemberDescriptor fromCurrent : membersFromCurrent) {
 
-        for (CallableMemberDescriptor functionFromSupertype : functionsFromSupertypes) {
-            boolean overrides = false;
+            // Find what this descriptor overrides, bind them and removed from notOverridden
+            for (Iterator<CallableMemberDescriptor> iterator = notOverridden.iterator(); iterator.hasNext(); ) {
+                CallableMemberDescriptor fromSupertype = iterator.next();
+                OverridingUtil.OverrideCompatibilityInfo.Result result =
+                        OverridingUtil.isOverridableBy(fromSupertype, fromCurrent).getResult();
 
-            boolean isVisible = Visibilities.isVisible(functionFromSupertype, current);
-            
-            for (CallableMemberDescriptor functionFromCurrent : functionsFromCurrent) {
-                OverridingUtil.OverrideCompatibilityInfo.Result result = OverridingUtil.isOverridableBy(functionFromSupertype, functionFromCurrent).getResult();
-                if (result == OVERRIDABLE) {
-
-                    if (isVisible) {
-                        OverridingUtil.bindOverride(functionFromCurrent, functionFromSupertype);
+                if (Visibilities.isVisible(fromSupertype, current)) {
+                    switch (result) {
+                        case OVERRIDABLE:
+                            OverridingUtil.bindOverride(fromCurrent, fromSupertype);
+                            iterator.remove();
+                            break;
+                        case CONFLICT:
+                            sink.conflict(fromSupertype, fromCurrent);
+                            break;
+                        case INCOMPATIBLE:
+                            break;
                     }
-                    overrides = true;
-                }
-                else if (result == OverridingUtil.OverrideCompatibilityInfo.Result.CONFLICT) {
-                    sink.conflict(functionFromSupertype, functionFromCurrent);
                 }
             }
-            
-            for (CallableMemberDescriptor fakeOverride : fakeOverrideList) {
-                if (OverridingUtil.isOverridableBy(functionFromSupertype, fakeOverride).getResult() == OVERRIDABLE) {
-                    OverridingUtil.bindOverride(fakeOverride, functionFromSupertype);
-                    overrides = true;
+        }
+
+        Queue<CallableMemberDescriptor> fromSuperQueue = new LinkedList<CallableMemberDescriptor>(notOverridden);
+        while (!fromSuperQueue.isEmpty()) {
+            CallableMemberDescriptor aFromSuper = fromSuperQueue.remove();
+            Collection<CallableMemberDescriptor> overridableByA = Lists.newArrayList();
+            overridableByA.add(aFromSuper);
+            for (Iterator<CallableMemberDescriptor> iterator = fromSuperQueue.iterator(); iterator.hasNext(); ) {
+                CallableMemberDescriptor bFromSuper = iterator.next();
+                OverridingUtil.OverrideCompatibilityInfo.Result result =
+                        OverridingUtil.isOverridableBy(bFromSuper, aFromSuper).getResult();
+                switch (result) {
+                    case OVERRIDABLE:
+                        overridableByA.add(bFromSuper);
+                        iterator.remove();
+                        break;
+                    case CONFLICT:
+                        sink.conflict(aFromSuper, bFromSuper);
+                        iterator.remove();
+                        break;
+                    case INCOMPATIBLE:
+                        break;
                 }
             }
 
-            if (!overrides) {
-                CallableMemberDescriptor fakeOverride = functionFromSupertype.copy(current, false, !isVisible, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
-                OverridingUtil.bindOverride(fakeOverride, functionFromSupertype);
-                fakeOverrideList.add(fakeOverride);
-                sink.addToScope(fakeOverride);
+            boolean isVisible = true;
+            Modality modality = Modality.ABSTRACT;
+            for (CallableMemberDescriptor descriptor : overridableByA) {
+                isVisible &= Visibilities.isVisible(descriptor, current);
+                if (descriptor.getModality().compareTo(modality) < 0) {
+                    modality = descriptor.getModality();
+                }
             }
+
+            CallableMemberDescriptor fakeOverride =
+                    aFromSuper.copy(current, modality, !isVisible, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
+            for (CallableMemberDescriptor descriptor : overridableByA) {
+                OverridingUtil.bindOverride(fakeOverride, descriptor);
+            }
+            sink.addToScope(fakeOverride);
         }
     }
 

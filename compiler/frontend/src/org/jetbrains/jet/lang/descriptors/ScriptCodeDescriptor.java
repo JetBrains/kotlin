@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -50,7 +49,7 @@ public class ScriptCodeDescriptor extends FunctionDescriptorImpl {
 
     @NotNull
     @Override
-    public FunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, boolean makeInvisible, Kind kind, boolean copyOverrides) {
+    public FunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, boolean makeInvisible, Kind kind, boolean copyOverrides) {
         throw new IllegalStateException("no need to copy script code descriptor");
     }
 }
