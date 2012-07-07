@@ -16,11 +16,23 @@
 
 package org.jetbrains.jet.config;
 
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolderBase;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Evgeny Gerashchenko
  * @since 7/3/12
  */
-public class CompilerConfiguration extends UserDataHolderBase {
+public class CompilerConfiguration {
+    private final UserDataHolderBase holder = new UserDataHolderBase();
+
+    public <T> T getUserData(@NotNull Key<T> key) {
+        return holder.getUserData(key);
+    }
+
+    public <T> void putUserData(@NotNull Key<T> key, @Nullable T value) {
+        holder.putUserData(key, value);
+    }
 }
