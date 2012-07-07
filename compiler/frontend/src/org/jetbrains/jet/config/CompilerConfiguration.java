@@ -28,11 +28,11 @@ import org.jetbrains.annotations.Nullable;
 public class CompilerConfiguration {
     private final UserDataHolderBase holder = new UserDataHolderBase();
 
-    public <T> T getUserData(@NotNull Key<T> key) {
+    public <T> T get(@NotNull Key<T> key) {
         return holder.getUserData(key);
     }
 
-    public <T> void putUserData(@NotNull Key<T> key, @Nullable T value) {
+    public <T> void put(@NotNull Key<T> key, @Nullable T value) {
         holder.putUserData(key, value);
     }
 }

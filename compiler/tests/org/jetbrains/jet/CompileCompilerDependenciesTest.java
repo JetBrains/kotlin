@@ -65,8 +65,8 @@ public class CompileCompilerDependenciesTest {
         }
 
         CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, classpath.toArray(new File[classpath.size()]));
-        configuration.putUserData(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, annotationsPath);
+        configuration.put(JVMConfigurationKeys.CLASSPATH_KEY, classpath.toArray(new File[classpath.size()]));
+        configuration.put(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, annotationsPath);
         return configuration;
     }
 }

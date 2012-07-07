@@ -66,8 +66,8 @@ public class BytecodeCompiler {
             }
         }
         CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, classpathItems.toArray(new File[classpathItems.size()]));
-        configuration.putUserData(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File[] {PathUtil.getJdkAnnotationsPath()});
+        configuration.put(JVMConfigurationKeys.CLASSPATH_KEY, classpathItems.toArray(new File[classpathItems.size()]));
+        configuration.put(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File[] {PathUtil.getJdkAnnotationsPath()});
 
         JetCoreEnvironment environment = new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), configuration
         );

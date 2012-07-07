@@ -33,7 +33,7 @@ class PsiUtilsTest {
         System.setProperty("java.awt.headless", "true")
 
         val configuration = CompilerConfiguration()
-        configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, array(PathUtil.findRtJar()))
+        configuration.put(JVMConfigurationKeys.CLASSPATH_KEY, array(PathUtil.findRtJar()))
         environment = JetCoreEnvironment(rootDisposable, configuration)
     }
 

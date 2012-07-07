@@ -56,9 +56,9 @@ public class ReplInterpreterTest {
     private void testFile(@NotNull String relativePath) {
         CompilerConfiguration configuration =
                 CompileCompilerDependenciesTest.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK);
-        File[] classpath = configuration.getUserData(JVMConfigurationKeys.CLASSPATH_KEY);
+        File[] classpath = configuration.get(JVMConfigurationKeys.CLASSPATH_KEY);
         assert classpath != null;
-        configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, ArrayUtil.append(classpath, new File("out/production/runtime")));
+        configuration.put(JVMConfigurationKeys.CLASSPATH_KEY, ArrayUtil.append(classpath, new File("out/production/runtime")));
         ReplInterpreter repl = new ReplInterpreter(disposable, configuration);
 
         ReplSessionTestFile file = ReplSessionTestFile.load(new File("compiler/testData/repl/" + relativePath));

@@ -105,7 +105,7 @@ public class ReplInterpreter {
 
         List<URL> classpath = Lists.newArrayList();
 
-        for (File file : configuration.getUserData(JVMConfigurationKeys.CLASSPATH_KEY)) {
+        for (File file : configuration.get(JVMConfigurationKeys.CLASSPATH_KEY)) {
             try {
                 classpath.add(file.toURI().toURL());
             }
