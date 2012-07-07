@@ -106,15 +106,6 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         if (JetLanguage.INSTANCE == declaration.getLanguage()) return true;
         ClsClassImpl clsClass = PsiTreeUtil.getParentOfType(declaration, ClsClassImpl.class);
         if (clsClass == null) return false;
-        PsiClass delegate = clsClass.getUserData(ClsClassImpl.DELEGATE_KEY);
-        if (delegate != null) {
-            if (delegate instanceof ClsClassImpl) {
-                clsClass = (ClsClassImpl) delegate;
-            }
-            else {
-                return false;
-            }
-        }
         return JetDecompiledData.isKotlinFile((ClsFileImpl) clsClass.getContainingFile());
     }
 }
