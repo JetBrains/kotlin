@@ -19,11 +19,11 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.jet.ConfigurationKind;
 
 /**
- * Test correct code is generated for descriptors loaded as alt jdk headers
+ * Test correct code is generated for descriptors loaded with alt jdk annotations
  *
  * @author Stepan Koltsov
  */
-public class JdkHeadersTest extends CodegenTestCase {
+public class JdkAnnotationsTest extends CodegenTestCase {
 
     @Override
     protected void setUp() throws Exception {
@@ -32,11 +32,11 @@ public class JdkHeadersTest extends CodegenTestCase {
     }
 
     public void testArrayList() {
-        blackBoxFile("jdk-headers/arrayList.kt");
+        blackBoxFile("jdk-annotations/arrayList.kt");
     }
 
     public void testHashMap() {
-        blackBoxFile("jdk-headers/hashMap.kt");
+        blackBoxFile("jdk-annotations/hashMap.kt");
     }
 
 }

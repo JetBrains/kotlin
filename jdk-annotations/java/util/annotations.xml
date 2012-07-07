@@ -735,7 +735,7 @@
     </annotation>
   </item>
 
-  <!-- TODO temporary fix for alt-headers/ArrayListClone.jet test -->
+  <!-- TODO temporary fix for jdk-annotations/ArrayListClone.jet test -->
   <item name='java.util.ArrayList java.lang.Object clone()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value" val="&quot;fun clone() : Any&quot;"/>
