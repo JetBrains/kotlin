@@ -165,7 +165,7 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
     protected void configureBaseCompilerArguments(Log log, K2JVMCompilerArguments arguments, String module,
                                                   List<String> sources, List<String> classpath, String output) throws MojoExecutionException {
         // don't include runtime, it should be in maven dependencies
-        arguments.mode = "stdlib";
+        arguments.noStdlib = true;
 
         final ArrayList<String> classpathList = new ArrayList<String>();
 
@@ -205,8 +205,9 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         log.info("Classes directory is " + output);
         arguments.setOutputDir(output);
 
-        arguments.jdkAnnotations = getJdkAnnotations().getPath();
-        log.debug("Using jdk annotations from " + arguments.jdkAnnotations);
+        arguments.noJdkAnnotations = true;
+        arguments.annotations = getJdkAnnotations().getPath();
+        log.debug("Using jdk annotations from " + arguments.annotations);
     }
 
     // TODO: Make a better runtime detection or get rid of it entirely

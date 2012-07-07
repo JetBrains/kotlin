@@ -27,6 +27,7 @@ import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
@@ -141,6 +142,7 @@ public class CompileEnvironmentUtil {
             }
         };
         CompilerConfiguration configuration = new CompilerConfiguration();
+        configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, new File[]{PathUtil.getDefaultRuntimePath()});
         JetCoreEnvironment scriptEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(disposable, configuration);
         scriptEnvironment.addSources(moduleScriptFile);
 

@@ -162,4 +162,8 @@ public class K2JVMCompilerArguments extends CompilerArguments {
     public void setTags(boolean tags) {
         this.tags = tags;
     }
+
+    public void setNoStdlib(boolean noStdlib) {
+        this.noStdlib = noStdlib;
+    }
 }

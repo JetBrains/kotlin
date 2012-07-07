@@ -1,23 +1,23 @@
 package test.kotlin
 
+import java.util.List
+import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.junit.Before
+import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.internal.com.intellij.openapi.Disposable
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode
-import org.junit.After
 import org.jetbrains.jet.internal.com.intellij.openapi.util.Disposer
-import org.junit.Test
-import org.jetbrains.jet.plugin.JetLanguage
-import org.jetbrains.jet.internal.com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.jet.internal.com.intellij.openapi.vfs.CharsetToolkit
-import org.jetbrains.jet.internal.com.intellij.psi.PsiFile
-import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.internal.com.intellij.psi.PsiFileFactory
 import org.jetbrains.jet.internal.com.intellij.psi.impl.PsiFileFactoryImpl
+import org.jetbrains.jet.internal.com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.plugin.JetLanguage
+import org.jetbrains.jet.utils.PathUtil
 import org.jetbrains.kotlin.doc.highlighter2.splitPsi
+import org.junit.After
 import org.junit.Assert
-import java.util.List
+import org.junit.Before
+import org.junit.Test
 
 class PsiUtilsTest {
 
@@ -32,8 +32,9 @@ class PsiUtilsTest {
     fun before() {
         System.setProperty("java.awt.headless", "true")
 
-        val compilerDependencies = CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.JDK_HEADERS)
-        environment = JetCoreEnvironment(rootDisposable, compilerDependencies)
+        val configuration = CompilerConfiguration()
+        configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, array(PathUtil.findRtJar()))
+        environment = JetCoreEnvironment(rootDisposable, configuration)
     }
 
     [After]
