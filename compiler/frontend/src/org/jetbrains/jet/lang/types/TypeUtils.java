@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.types;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -450,5 +452,24 @@ public class TypeUtils {
         return false;
     }
 
+    public static boolean dependsOnTypeParameters(@NotNull JetType type, @NotNull Collection<TypeParameterDescriptor> typeParameters) {
+        return dependsOnTypeParameterConstructors(type, Collections2
+                .transform(typeParameters, new Function<TypeParameterDescriptor, TypeConstructor>() {
+                    @Override
+                    public TypeConstructor apply(@Nullable TypeParameterDescriptor typeParameterDescriptor) {
+                        assert typeParameterDescriptor != null;
+                        return typeParameterDescriptor.getTypeConstructor();
+                    }
+                }));
+    }
 
+    public static boolean dependsOnTypeParameterConstructors(@NotNull JetType type, @NotNull Collection<TypeConstructor> typeParameterConstructors) {
+        if (typeParameterConstructors.contains(type.getConstructor())) return true;
+        for (TypeProjection typeProjection : type.getArguments()) {
+            if (dependsOnTypeParameterConstructors(typeProjection.getType(), typeParameterConstructors)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
