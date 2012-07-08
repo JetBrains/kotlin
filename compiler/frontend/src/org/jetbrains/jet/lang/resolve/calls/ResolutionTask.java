@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.inference.SolutionStatus;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -183,12 +182,6 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends R
         @Override
         public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {
             trace.report(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS.on(call.getCallElement()));
-        }
-
-        @Override
-        public void typeInferenceFailed(@NotNull BindingTrace trace, SolutionStatus status) {
-            assert !status.isSuccessful();
-            trace.report(TYPE_INFERENCE_FAILED.on(call.getCallElement(), status));
         }
 
         @Override

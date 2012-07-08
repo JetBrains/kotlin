@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.inference.SolutionStatus;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -72,9 +71,6 @@ import java.util.List;
         public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {}
 
         @Override
-        public void typeInferenceFailed(@NotNull BindingTrace trace, SolutionStatus status) {}
-
-        @Override
         public void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type, boolean isCallForImplicitInvoke) {}
 
         @Override
@@ -109,8 +105,6 @@ import java.util.List;
     <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> descriptors);
 
     void instantiationOfAbstractClass(@NotNull BindingTrace trace);
-
-    void typeInferenceFailed(@NotNull BindingTrace trace, SolutionStatus status);
 
     void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type, boolean isCallForImplicitInvoke);
 
