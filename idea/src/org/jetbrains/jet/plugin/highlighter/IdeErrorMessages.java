@@ -44,6 +44,11 @@ public class IdeErrorMessages {
         MAP.put(ASSIGN_OPERATOR_AMBIGUITY, "<html>Assignment operators ambiguity. All these functions match.<ul>{0}</ul></table></html>",
                 HTML_AMBIGUOUS_CALLS);
 
+        MAP.put(TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS, "<html>Type inference failed: {0}</html>", HTML_INFERENCE_ERROR_CONFLICTING_SUBSTITUTIONS);
+        MAP.put(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, "<html>Type inference failed: {0}</html>", HTML_INFERENCE_NO_INFORMATION_FOR_PARAMETER);
+        MAP.put(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH, "<html>Type inference failed: {0}</html>", HTML_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH);
+        MAP.put(TYPE_INFERENCE_UPPER_BOUND_VIOLATED, "<html>{0}</html>", HTML_INFERENCE_UPPER_BOUND_VIOLATED);
+
         MAP.put(WRONG_SETTER_PARAMETER_TYPE, "<html>Setter parameter type must be equal to the type of the property." +
                                              "<table><tr><td>Expected:</td><td>{0}</td></tr>" +
                                              "<tr><td>Found:</td><td>{1}</td></tr></table></html>", HTML_RENDER_TYPE, HTML_RENDER_TYPE);
