@@ -394,8 +394,13 @@ public class DefaultErrorMessages {
         MAP.put(NO_RECEIVER_ADMITTED, "No receiver can be passed to this function or property");
 
         MAP.put(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, "Cannot create an instance of an abstract class");
-        MAP.put(TYPE_INFERENCE_FAILED, "Type inference failed: {0}", TO_STRING);
-        MAP.put(TYPE_INFERENCE_UPPER_BOUND_VIOLATED, "Type parameter bound is not satisfied: {0} is not a subtype of {1}", TO_STRING, TO_STRING);
+
+        //todo
+        MAP.put(TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS, "Type inference failed: {0}", TO_STRING);
+        MAP.put(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, "Type inference failed: {0}", TO_STRING);
+        MAP.put(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH, "Type inference failed: {0}", TO_STRING);
+        MAP.put(TYPE_INFERENCE_UPPER_BOUND_VIOLATED, "Type parameter bound is not satisfied: {0} is not a subtype of {1}", TO_STRING);
+
         MAP.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, "{0,choice,0#No type arguments|1#Type argument|1<{0,number,integer} type argument} expected", null);
 
         MAP.put(DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED,
