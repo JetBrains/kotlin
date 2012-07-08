@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +26,6 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
@@ -36,11 +36,8 @@ import java.util.*;
  * @author svtk
  */
 public class ConstraintSystemImpl implements ConstraintSystem {
-    public enum ConstraintType {
-        SUB_TYPE, SUPER_TYPE, EQUAL
-    }
 
-    public ConstraintType varianceToConstraintType(Variance variance) {
+    public static ConstraintType varianceToConstraintType(Variance variance) {
         if (variance == Variance.INVARIANT) {
             return ConstraintType.EQUAL;
         }
@@ -52,9 +49,16 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
     private final Map<TypeParameterDescriptor, TypeBounds> typeParameterBounds = Maps.newLinkedHashMap();
     private final TypeSubstitutor typeSubstitutor;
-    private boolean error = false;
+    private final Queue<ConstraintPosition> errorConstraintPositions;
+    private boolean error;
 
     public ConstraintSystemImpl() {
+        this(false, Lists.<ConstraintPosition>newLinkedList());
+    }
+
+    public ConstraintSystemImpl(boolean error, Queue<ConstraintPosition> errorConstraintPositions) {
+        this.error = error;
+        this.errorConstraintPositions = errorConstraintPositions;
         this.typeSubstitutor = TypeSubstitutor.create(new TypeSubstitution() {
             @Override
             public TypeProjection get(TypeConstructor key) {
@@ -84,6 +88,16 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     @Override
+    public boolean hasError() {
+        return error;
+    }
+
+    @Override
+    public Queue<ConstraintPosition> getErrorConstraintPositions() {
+        return errorConstraintPositions;
+    }
+
+    @Override
     public void registerTypeVariable(@NotNull TypeParameterDescriptor typeParameterDescriptor, @NotNull Variance positionVariance) {
         typeParameterBounds.put(typeParameterDescriptor, new TypeBounds(positionVariance));
     }
@@ -93,8 +107,8 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     @Override
-    public void addSubtypingConstraint(@NotNull JetType exactType, @NotNull JetType expectedType) {
-        addConstraint(ConstraintType.SUB_TYPE, exactType, expectedType);
+    public void addSubtypingConstraint(@NotNull JetType exactType, @NotNull JetType expectedType, @NotNull ConstraintPosition constraintPosition) {
+        addConstraint(ConstraintType.SUB_TYPE, exactType, expectedType, constraintPosition);
     }
 
     private static boolean dependsOnTypeParameter(JetType type, TypeConstructor typeParameter) {
@@ -108,7 +122,8 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     @Override
-    public void addConstraint(@NotNull ConstraintType constraintType, @NotNull JetType exactType, @NotNull JetType expectedType) {
+    public void addConstraint(@NotNull ConstraintType constraintType, @NotNull JetType exactType, @NotNull JetType expectedType,
+            @NotNull ConstraintPosition constraintPosition) {
         if (exactType == DONT_CARE || expectedType == DONT_CARE || exactType == TypeUtils.NO_EXPECTED_TYPE
             || expectedType == TypeUtils.NO_EXPECTED_TYPE) return;
 
@@ -148,6 +163,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             }
 
             if (exactType.getConstructor().getParameters().size() != expectedType.getConstructor().getParameters().size()) {
+                errorConstraintPositions.add(constraintPosition);
                 error = true;
                 return;
             }
@@ -159,12 +175,14 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                 List<TypeProjection> superArguments = expectedType.getArguments();
                 List<TypeParameterDescriptor> superParameters = expectedType.getConstructor().getParameters();
                 for (int i = 0; i < superArguments.size(); i++) {
-                    addConstraint(varianceToConstraintType(superParameters.get(i).getVariance()), subArguments.get(i).getType(), superArguments.get(i).getType());
+                    addConstraint(varianceToConstraintType(superParameters.get(i).getVariance()), subArguments.get(i).getType(), superArguments.get(i).getType(),
+                                  constraintPosition);
                 }
                 return;
             }
         }
         error = true;
+        errorConstraintPositions.add(constraintPosition);
     }
 
     private boolean checkConstraints(TypeParameterDescriptor typeParameterDescriptor) {
@@ -214,7 +232,11 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         //todo all checks
         TypeBounds typeBounds = typeParameterBounds.get(typeParameter);
         //todo variance dependance
-        if (typeBounds == null || typeBounds.isEmpty()) return null;
+        if (typeBounds == null) {
+            //todo assert typeBounds != null;
+            return null;
+        }
+        if (typeBounds.isEmpty()) return null;
         Set<JetType> exactValues = typeBounds.getExactValues();
         if (!exactValues.isEmpty()) {
             return exactValues.iterator().next();
@@ -229,16 +251,27 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     @NotNull
-    public Set<JetType> getValues(TypeParameterDescriptor typeParameter) {
+    public JetType getSafeValue(TypeParameterDescriptor typeParameter) {
+        JetType type = getValue(typeParameter);
+        if (type != null) {
+            return type;
+        }
+        //todo may be error type
+        return typeParameter.getUpperBoundsAsType();
+    }
+
+    @NotNull
+    public Collection<JetType> getValues(TypeParameterDescriptor typeParameter) {
         TypeBounds typeBounds = typeParameterBounds.get(typeParameter);
-        if (typeBounds == null || typeBounds.isEmpty()) return Collections.emptySet();
         Set<JetType> values = Sets.newLinkedHashSet();
-        values.addAll(typeBounds.getExactValues());
-        if (!typeBounds.getLowerBounds().isEmpty()) {
-            JetType superTypeOfLowerBounds = CommonSupertypes.commonSupertype(typeBounds.getLowerBounds());
-            for (JetType value : values) {
-                if (!JetTypeChecker.INSTANCE.isSubtypeOf(superTypeOfLowerBounds, value)) {
-                    values.add(superTypeOfLowerBounds);
+        if (typeBounds != null && !typeBounds.isEmpty()) {
+            values.addAll(typeBounds.getExactValues());
+            if (!typeBounds.getLowerBounds().isEmpty()) {
+                JetType superTypeOfLowerBounds = CommonSupertypes.commonSupertype(typeBounds.getLowerBounds());
+                for (JetType value : values) {
+                    if (!JetTypeChecker.INSTANCE.isSubtypeOf(superTypeOfLowerBounds, value)) {
+                        values.add(superTypeOfLowerBounds);
+                    }
                 }
             }
         }
@@ -247,9 +280,56 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     @Override
+    @Nullable
+    public TypeParameterDescriptor getFirstConflictingParameter() {
+        for (TypeParameterDescriptor typeParameter : typeParameterBounds.keySet()) {
+            Collection<JetType> values = getValues(typeParameter);
+            if (!values.isEmpty()) {
+                return typeParameter;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Collection<TypeSubstitutor> getSubstitutors() {
+        TypeParameterDescriptor firstConflictingParameter = getFirstConflictingParameter();
+        if (firstConflictingParameter == null) return Collections.emptyList();
+
+        Collection<JetType> conflictingTypes = getValues(firstConflictingParameter);
+
+        ArrayList<Map<TypeConstructor, TypeProjection>> substitutionContexts = Lists.newArrayList();
+        for (JetType type : conflictingTypes) {
+            Map<TypeConstructor, TypeProjection> context = Maps.newLinkedHashMap();
+            context.put(firstConflictingParameter.getTypeConstructor(), new TypeProjection(type));
+            substitutionContexts.add(context);
+        }
+
+        for (TypeParameterDescriptor typeParameter : typeParameterBounds.keySet()) {
+            if (typeParameter == firstConflictingParameter) continue;
+
+            JetType safeType = getSafeValue(typeParameter);
+            for (Map<TypeConstructor, TypeProjection> context : substitutionContexts) {
+                TypeProjection typeProjection = new TypeProjection(safeType);
+                context.put(typeParameter.getTypeConstructor(), typeProjection);
+            }
+        }
+        Collection<TypeSubstitutor> typeSubstitutors = Lists.newArrayList();
+        for (Map<TypeConstructor, TypeProjection> context : substitutionContexts) {
+            typeSubstitutors.add(TypeSubstitutor.create(context));
+        }
+        return typeSubstitutors;
+    }
+
+    @Override
     @NotNull
     public TypeBounds getTypeBounds(TypeParameterDescriptor typeParameterDescriptor) {
         return typeParameterBounds.get(typeParameterDescriptor);
+    }
+
+    @Override
+    public Map<TypeParameterDescriptor, TypeBounds> getTypeBoundsMap() {
+        return typeParameterBounds;
     }
 
     @Override
@@ -274,6 +354,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         return false;
     }
 
+    @Override
     public TypeSubstitutor getSubstitutor() {
         return typeSubstitutor;
     }
@@ -288,6 +369,21 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                 if (substitute == null || !JetTypeChecker.INSTANCE.isSubtypeOf(type, substitute)) {
                     return false;
                 }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean checkUpperBound(@NotNull TypeParameterDescriptor typeParameter) {
+        assert typeParameterBounds.containsKey(typeParameter);
+        JetType type = getValue(typeParameter);
+        JetType upperBound = typeParameter.getUpperBoundsAsType();
+        JetType substitute = getSubstitutor().substitute(upperBound, Variance.INVARIANT);
+
+        if (type != null) {
+            if (substitute == null || !JetTypeChecker.INSTANCE.isSubtypeOf(type, substitute)) {
+                return false;
             }
         }
         return true;

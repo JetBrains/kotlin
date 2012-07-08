@@ -23,27 +23,48 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.Queue;
+
 /**
- * @author abreslav
+ * @author svtk
  */
 public interface ConstraintSystem {
+
+    enum ConstraintType {
+        SUB_TYPE, SUPER_TYPE, EQUAL
+    }
+
     JetType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
 
     void registerTypeVariable(@NotNull TypeParameterDescriptor typeParameterDescriptor, @NotNull Variance positionVariance);
 
     void registerTypeVariable(@NotNull TypeParameterDescriptor typeParameterDescriptor, @NotNull TypeBounds typeBounds);
 
-    void addSubtypingConstraint(@NotNull JetType exactType, @NotNull JetType expectedType);
+    void addSubtypingConstraint(@NotNull JetType exactType, @NotNull JetType expectedType, @NotNull ConstraintPosition constraintPosition);
 
-    void addConstraint(@NotNull ConstraintSystemImpl.ConstraintType constraintType, @NotNull JetType exactType, @NotNull JetType expectedType);
+    void addConstraint(@NotNull ConstraintType constraintType, @NotNull JetType exactType, @NotNull JetType expectedType, @NotNull ConstraintPosition constraintPosition);
 
     TypeBounds getTypeBounds(TypeParameterDescriptor typeParameterDescriptor);
+
+    Map<TypeParameterDescriptor, TypeBounds> getTypeBoundsMap();
 
     boolean isSuccessful();
 
     boolean hasContradiction();
 
+    TypeParameterDescriptor getFirstConflictingParameter();
+
     TypeSubstitutor getSubstitutor();
 
+    Collection<TypeSubstitutor> getSubstitutors();
+
     JetType getValue(TypeParameterDescriptor typeParameterDescriptor);
+
+    boolean hasError();
+
+    Queue<ConstraintPosition> getErrorConstraintPositions();
+
+    boolean checkUpperBound(@NotNull TypeParameterDescriptor typeParameterDescriptor);
 }
