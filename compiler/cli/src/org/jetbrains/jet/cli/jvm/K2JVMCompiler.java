@@ -152,14 +152,6 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
         return super.exec(errStream, arguments);
     }
 
-
-    @Override
-    protected void configureEnvironment(@NotNull K2JVMCompileEnvironmentConfiguration configuration, @NotNull K2JVMCompilerArguments arguments) {
-        super.configureEnvironment(configuration, arguments);
-
-        configuration.getEnvironment().configure(createCompilerConfiguration(arguments));
-    }
-
     @NotNull
     private static CompilerConfiguration createCompilerConfiguration(@NotNull K2JVMCompilerArguments arguments) {
         CompilerConfiguration configuration = new CompilerConfiguration();

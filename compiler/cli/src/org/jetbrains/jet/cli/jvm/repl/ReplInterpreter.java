@@ -92,7 +92,6 @@ public class ReplInterpreter {
 
     public ReplInterpreter(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration) {
         jetCoreEnvironment = new JetCoreEnvironment(disposable, configuration);
-        jetCoreEnvironment.configure(configuration);
         Project project = jetCoreEnvironment.getProject();
         trace = new BindingTraceContext();
         module = new ModuleDescriptor(Name.special("<repl>"));

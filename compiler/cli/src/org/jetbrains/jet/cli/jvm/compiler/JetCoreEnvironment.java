@@ -82,7 +82,12 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         annotationsProvider = new CoreAnnotationsProvider();
         myProject.registerService(ExternalAnnotationsProvider.class, annotationsProvider);
 
-        configure(configuration);
+        for (File path : configuration.getList(JVMConfigurationKeys.CLASSPATH_KEY)) {
+            addToClasspath(path);
+        }
+        for (File path : configuration.getList(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY)) {
+            addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(path));
+        }
 
         JetStandardLibrary.initialize(getProject());
     }
@@ -163,21 +168,6 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
                 if (file.exists() && (!file.isFile() || file.getPath().endsWith(".jar"))) {
                     addToClasspath(file);
                 }
-            }
-        }
-    }
-
-    public void configure(@NotNull CompilerConfiguration compilerConfiguration) {
-        List<File> classpath = compilerConfiguration.get(JVMConfigurationKeys.CLASSPATH_KEY);
-        List<File> annotationsPath = compilerConfiguration.get(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY);
-        if (classpath != null) {
-            for (File path : classpath) {
-                addToClasspath(path);
-            }
-        }
-        if (annotationsPath != null) {
-            for (File path : annotationsPath) {
-                addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(path));
             }
         }
     }
