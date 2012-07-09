@@ -37,6 +37,7 @@ import org.jetbrains.k2js.test.config.TestConfigFactory;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
 import java.io.*;
+import java.lang.ref.SoftReference;
 import java.util.List;
 
 import static org.jetbrains.k2js.utils.JetFileUtils.createPsiFileList;
@@ -50,8 +51,8 @@ public final class TranslationUtils {
     private TranslationUtils() {
     }
 
-    @Nullable
-    private static BindingContext libraryContext = null;
+    @NotNull
+    private static SoftReference<BindingContext> cachedLibraryContext = new SoftReference<BindingContext>(null);
 
     @Nullable
     private static List<JetFile> libFiles = null;
@@ -66,7 +67,8 @@ public final class TranslationUtils {
 
     @NotNull
     public static BindingContext getLibraryContext(@NotNull Project project) {
-        if (libraryContext == null) {
+        BindingContext context = cachedLibraryContext.get();
+        if (context == null) {
             List<JetFile> allLibFiles = getAllLibFiles(project);
             Predicate<PsiFile> filesWithCode = new Predicate<PsiFile>() {
                 @Override
@@ -76,10 +78,11 @@ public final class TranslationUtils {
             };
             AnalyzeExhaust exhaust = AnalyzerFacadeForJS
                     .analyzeFiles(allLibFiles, filesWithCode, Config.getEmptyConfig(project));
-            libraryContext = exhaust.getBindingContext();
-            AnalyzerFacadeForJS.checkForErrors(allLibFiles, libraryContext);
+            context = exhaust.getBindingContext();
+            AnalyzerFacadeForJS.checkForErrors(allLibFiles, context);
+            cachedLibraryContext = new SoftReference<BindingContext>(context);
         }
-        return libraryContext;
+        return context;
     }
 
     private static boolean isFileWithCode(@NotNull JetFile file) {

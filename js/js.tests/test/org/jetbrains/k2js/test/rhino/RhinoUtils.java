@@ -18,7 +18,6 @@ package org.jetbrains.k2js.test.rhino;
 
 import closurecompiler.internal.com.google.common.collect.Maps;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
@@ -70,6 +69,9 @@ public final class RhinoUtils {
     private static final String KOTLIN_JS_LIB_ECMA_3 = pathToTestFilesRoot() + "kotlin_lib_ecma3.js";
     private static final String KOTLIN_JS_LIB_ECMA_5 = pathToTestFilesRoot() + "kotlin_lib_ecma5.js";
 
+    @NotNull
+    private static final Map<EcmaVersion, Scriptable> versionToScope = Maps.newHashMap();
+
     private RhinoUtils() {
 
     }
@@ -104,7 +106,7 @@ public final class RhinoUtils {
             @NotNull RhinoResultChecker checker,
             @Nullable Map<String, Object> variables,
             @NotNull EcmaVersion ecmaVersion) throws Exception {
-       runRhinoTest(fileNames, checker, variables, ecmaVersion, Collections.EMPTY_LIST);
+       runRhinoTest(fileNames, checker, variables, ecmaVersion, Collections.<String>emptyList());
     }
 
     public static void runRhinoTest(@NotNull List<String> fileNames,
@@ -188,9 +190,6 @@ public final class RhinoUtils {
             scope.put(name, scope, value);
         }
     }
-
-    @NotNull
-    private static final Map<EcmaVersion, Scriptable> versionToScope = Maps.newHashMap();
 
     @NotNull
     public static String getKotlinLibFile(@NotNull EcmaVersion ecmaVersion) {
