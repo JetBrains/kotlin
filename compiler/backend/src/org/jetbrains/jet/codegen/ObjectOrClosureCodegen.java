@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetElement;
@@ -48,7 +49,7 @@ public class ObjectOrClosureCodegen {
         this.state = state;
     }
 
-    public StackValue lookupInContext(DeclarationDescriptor d, StackValue result) {
+    public StackValue lookupInContext(DeclarationDescriptor d, @Nullable StackValue result) {
         EnclosedValueDescriptor answer = closure.get(d);
         if (answer != null) {
             StackValue innerValue = answer.getInnerValue();
