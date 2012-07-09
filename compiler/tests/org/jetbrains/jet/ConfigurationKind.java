@@ -17,7 +17,7 @@
 package org.jetbrains.jet;
 
 public enum ConfigurationKind {
-    JDK_ONLY,
-    JDK_AND_ANNOTATIONS,
-    ALL,
+    JDK_ONLY,            // Java runtime classes
+    JDK_AND_ANNOTATIONS, // Java runtime classes with Kotlin's external annotations
+    ALL,                 // Java runtime classes with Kotlin's external annotations and Kotlin stdlib
 }
