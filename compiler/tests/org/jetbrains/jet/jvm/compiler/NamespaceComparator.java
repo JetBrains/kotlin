@@ -24,6 +24,7 @@ import org.jetbrains.jet.codegen.PropertyCodegen;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
@@ -464,6 +465,10 @@ public class NamespaceComparator {
         }
 
         public void serialize(String s) {
+            sb.append(s);
+        }
+
+        public void serialize(CompileTimeConstant s) {
             sb.append(s);
         }
 
