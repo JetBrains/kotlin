@@ -163,8 +163,8 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
     @NotNull
     private static CompilerConfiguration createCompilerConfiguration(@NotNull K2JVMCompilerArguments arguments) {
         CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.put(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(arguments).toArray(new File[0]));
-        configuration.put(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, getAnnotationsPath(arguments).toArray(new File[0]));
+        configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(arguments));
+        configuration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, getAnnotationsPath(arguments));
         return configuration;
     }
 

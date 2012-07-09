@@ -168,8 +168,8 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
     }
 
     public void configure(@NotNull CompilerConfiguration compilerConfiguration) {
-        File[] classpath = compilerConfiguration.get(JVMConfigurationKeys.CLASSPATH_KEY);
-        File[] annotationsPath = compilerConfiguration.get(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY);
+        List<File> classpath = compilerConfiguration.get(JVMConfigurationKeys.CLASSPATH_KEY);
+        List<File> annotationsPath = compilerConfiguration.get(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY);
         if (classpath != null) {
             for (File path : classpath) {
                 addToClasspath(path);

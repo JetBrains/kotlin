@@ -19,7 +19,6 @@ package org.jetbrains.jet.repl;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
@@ -56,9 +55,7 @@ public class ReplInterpreterTest {
     private void testFile(@NotNull String relativePath) {
         CompilerConfiguration configuration =
                 CompileCompilerDependenciesTest.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK);
-        File[] classpath = configuration.get(JVMConfigurationKeys.CLASSPATH_KEY);
-        assert classpath != null;
-        configuration.put(JVMConfigurationKeys.CLASSPATH_KEY, ArrayUtil.append(classpath, new File("out/production/runtime")));
+        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File("out/production/runtime"));
         ReplInterpreter repl = new ReplInterpreter(disposable, configuration);
 
         ReplSessionTestFile file = ReplSessionTestFile.load(new File("compiler/testData/repl/" + relativePath));

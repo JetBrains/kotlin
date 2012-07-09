@@ -19,6 +19,7 @@ package org.jetbrains.jet.cli.jvm;
 import com.intellij.openapi.util.Key;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * @author Evgeny Gerashchenko
@@ -28,6 +29,6 @@ public class JVMConfigurationKeys {
     private JVMConfigurationKeys() {
     }
 
-    public static final Key<File[]> CLASSPATH_KEY = Key.create("classpath");
-    public static final Key<File[]> ANNOTATIONS_PATH_KEY = Key.create("annotations path");
+    public static final Key<List<File>> CLASSPATH_KEY = Key.create("classpath");
+    public static final Key<List<File>> ANNOTATIONS_PATH_KEY = Key.create("annotations path");
 }

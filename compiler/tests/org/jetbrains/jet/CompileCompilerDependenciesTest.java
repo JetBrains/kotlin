@@ -17,7 +17,6 @@
 package org.jetbrains.jet;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileBuiltins;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
@@ -25,12 +24,9 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.utils.PathUtil;
 import org.junit.Test;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.jetbrains.jet.ConfigurationKind.ALL;
 import static org.jetbrains.jet.ConfigurationKind.JDK_AND_ANNOTATIONS;
+import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.*;
 
 /**
  * @author Stepan Koltsov
@@ -53,20 +49,16 @@ public class CompileCompilerDependenciesTest {
     }
 
     public static CompilerConfiguration compilerConfigurationForTests(@NotNull ConfigurationKind configurationKind, @NotNull TestJdkKind jdkKind) {
-        List<File> classpath = new ArrayList<File>();
-        classpath.add(jdkKind == TestJdkKind.MOCK_JDK ? JetTestUtils.findMockJdkRtJar() : PathUtil.findRtJar());
-        if (configurationKind == ALL) {
-            classpath.add(ForTestCompileRuntime.runtimeJarForTests());
-        }
-
-        File[] annotationsPath = new File[0];
-        if (configurationKind == ALL || configurationKind == JDK_AND_ANNOTATIONS) {
-            annotationsPath = new File[]{ForTestPackJdkAnnotations.jdkAnnotationsForTests()};
-        }
-
         CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.put(JVMConfigurationKeys.CLASSPATH_KEY, classpath.toArray(new File[classpath.size()]));
-        configuration.put(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, annotationsPath);
+        configuration.add(CLASSPATH_KEY, jdkKind == TestJdkKind.MOCK_JDK ? JetTestUtils.findMockJdkRtJar() : PathUtil.findRtJar());
+        if (configurationKind == ALL) {
+            configuration.add(CLASSPATH_KEY, ForTestCompileRuntime.runtimeJarForTests());
+        }
+
+        if (configurationKind == ALL || configurationKind == JDK_AND_ANNOTATIONS) {
+            configuration.add(ANNOTATIONS_PATH_KEY, ForTestPackJdkAnnotations.jdkAnnotationsForTests());
+        }
+
         return configuration;
     }
 }

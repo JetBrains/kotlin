@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.*;
 import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.config.CompilerConfiguration;
@@ -31,6 +30,8 @@ import org.jetbrains.jet.utils.PathUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.*;
 
 
 /**
@@ -52,22 +53,26 @@ public class BytecodeCompiler {
      * @return compile environment instance
      */
     private K2JVMCompileEnvironmentConfiguration env(String stdlib, String[] classpath) {
-        List<File> classpathItems = new ArrayList<File>();
-        classpathItems.add(PathUtil.findRtJar());
+        CompilerConfiguration configuration = new CompilerConfiguration();
+        configuration.add(CLASSPATH_KEY, PathUtil.findRtJar());
         if ((stdlib != null) && (stdlib.trim().length() > 0)) {
-            classpathItems.add(new File(stdlib));
+            configuration.add(CLASSPATH_KEY, new File(stdlib));
         }
         else {
-            classpathItems.add(PathUtil.getDefaultRuntimePath());
+            File path = PathUtil.getDefaultRuntimePath();
+            if (path != null) {
+                configuration.add(CLASSPATH_KEY, path);
+            }
         }
         if ((classpath != null) && (classpath.length > 0)) {
             for (String path : classpath) {
-                classpathItems.add(new File(path));
+                configuration.add(CLASSPATH_KEY, new File(path));
             }
         }
-        CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.put(JVMConfigurationKeys.CLASSPATH_KEY, classpathItems.toArray(new File[classpathItems.size()]));
-        configuration.put(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File[] {PathUtil.getJdkAnnotationsPath()});
+        File jdkAnnotationsPath = PathUtil.getJdkAnnotationsPath();
+        if (jdkAnnotationsPath != null) {
+            configuration.add(ANNOTATIONS_PATH_KEY, jdkAnnotationsPath);
+        }
 
         JetCoreEnvironment environment = new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), configuration
         );
