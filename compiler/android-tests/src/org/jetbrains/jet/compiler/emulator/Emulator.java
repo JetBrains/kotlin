@@ -28,7 +28,7 @@ import org.jetbrains.jet.compiler.run.result.RunResult;
  */
 
 public class Emulator {
-    
+
     private final PathManager pathManager;
 
     public Emulator(PathManager pathManager) {
@@ -69,7 +69,7 @@ public class Emulator {
         commandLine.addParameter("wait-for-device");
         return commandLine;
     }
-    
+
     private GeneralCommandLine getStopCommandForAdb() {
         GeneralCommandLine commandLine = new GeneralCommandLine();
         String adbCmdName = SystemInfo.isWindows ? "adb.exe" : "adb";
@@ -117,5 +117,42 @@ public class Emulator {
         OutputUtils.checkResult(RunUtils.execute(getStopCommand()));
         System.out.println("Stopping adb...");
         OutputUtils.checkResult(RunUtils.execute(getStopCommandForAdb()));
+        if (SystemInfo.isUnix) {
+            finishProcess("emulator-arm");
+            finishProcess("adb");
+            stopDdmsProcess();
+        }
+    }
+
+    //Only for Unix
+    private void stopDdmsProcess() {
+        GeneralCommandLine listOfEmulatorProcess = new GeneralCommandLine();
+        listOfEmulatorProcess.setExePath("sh");
+        listOfEmulatorProcess.addParameter("-c");
+        listOfEmulatorProcess.addParameter("ps aux | grep emulator");
+        RunResult runResult = RunUtils.execute(listOfEmulatorProcess);
+        OutputUtils.checkResult(runResult);
+        String pidFromPsCommand = OutputUtils.getPidFromPsCommand(runResult.getOutput());
+        if (pidFromPsCommand != null) {
+            GeneralCommandLine killCommand = new GeneralCommandLine();
+            killCommand.setExePath("kill");
+            killCommand.addParameter(pidFromPsCommand);
+            OutputUtils.checkResult(RunUtils.execute(killCommand));
+        }
+    }
+
+    //Only for Unix
+    private void finishProcess(String processName) {
+        GeneralCommandLine pidOfProcess = new GeneralCommandLine();
+        pidOfProcess.setExePath("pidof");
+        pidOfProcess.addParameter(processName);
+        RunResult runResult = RunUtils.execute(pidOfProcess);
+        String pid = runResult.getOutput().substring(("pidof " + processName).length());
+        if (pid.length() > 1) {
+            GeneralCommandLine killCommand = new GeneralCommandLine();
+            killCommand.setExePath("kill");
+            killCommand.addParameter(pid);
+            OutputUtils.checkResult(RunUtils.execute(killCommand));
+        }
     }
 }
