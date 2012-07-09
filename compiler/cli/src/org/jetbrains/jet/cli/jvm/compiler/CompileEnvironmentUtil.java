@@ -47,7 +47,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.jar.*;
 
@@ -106,13 +105,15 @@ public class CompileEnvironmentUtil {
             }
         };
         CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.put(JVMConfigurationKeys.CLASSPATH_KEY, Arrays.asList(
-                PathUtil.findRtJar(),
-                PathUtil.getDefaultRuntimePath()
-        ));
-        configuration.put(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, Arrays.asList(
-                PathUtil.getJdkAnnotationsPath()
-        ));
+        File defaultRuntimePath = PathUtil.getDefaultRuntimePath();
+        if (defaultRuntimePath != null) {
+            configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, defaultRuntimePath);
+        }
+        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.findRtJar());
+        File jdkAnnotationsPath = PathUtil.getJdkAnnotationsPath();
+        if (jdkAnnotationsPath != null) {
+            configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, jdkAnnotationsPath);
+        }
         JetCoreEnvironment scriptEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(disposable, configuration);
         scriptEnvironment.addSources(moduleScriptFile);
 
