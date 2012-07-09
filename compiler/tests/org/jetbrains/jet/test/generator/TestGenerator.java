@@ -246,6 +246,11 @@ public class TestGenerator {
             p.println();
         }
 
+        Collection<TestClassModel> innerTestClasses = testDataSource.getInnerTestClasses();
+        for (TestClassModel innerTestClass : innerTestClasses) {
+            generateTestClass(p, innerTestClass, true);
+        }
+
         p.popIndent();
         p.println("}");
     }
