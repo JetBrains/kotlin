@@ -75,7 +75,7 @@ public class LazyResolveTestGenerator {
                                        true,
                                        TestGenerator.filterFilesByExtension(TEST_DATA_FILE_EXTENSION),
                                        "doTestSinglePackage"),
-                    new TestDataSource(new File("compiler/testData/lazyResolve"),
+                    new TestDataSource(new File("compiler/testData/lazyResolve/namespaceComparator"),
                                        true,
                                        TestGenerator.filterFilesByExtension(TEST_DATA_FILE_EXTENSION),
                                        "doTest")

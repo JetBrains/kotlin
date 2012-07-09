@@ -46,13 +46,13 @@ public class AbstractLazyResolveDescriptorRendererTest extends AbstractLazyResol
 
     protected void doTest(@NotNull String testFile) throws IOException {
 
-        InjectorForTopDownAnalyzer injectorForTopDownAnalyzer = getEagerInjectorForTopDownAnalyzer();
+        InjectorForTopDownAnalyzer injectorForTopDownAnalyzer = getEagerInjectorForTopDownAnalyzer(regularEnvironment);
 
-        JetFile psiFile = JetPsiFactory.createFile(project, FileUtil.loadFile(new File(testFile), true));
+        JetFile psiFile = JetPsiFactory.createFile(getProject(), FileUtil.loadFile(new File(testFile), true));
         Collection<JetFile> files = Lists.newArrayList(psiFile);
 
         ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
-        final ResolveSession resolveSession = new ResolveSession(project, lazyModule, injectorForTopDownAnalyzer.getModuleConfiguration(),
+        final ResolveSession resolveSession = new ResolveSession(getProject(), lazyModule, injectorForTopDownAnalyzer.getModuleConfiguration(),
                                                     new FileBasedDeclarationProviderFactory(files));
 
         final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();

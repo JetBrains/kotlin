@@ -30,12 +30,12 @@ import java.util.Set;
 @Suite.SuiteClasses({
     LazyResolveNamespaceComparingTestGenerated.ReadKotlinBinaryClass.class,    
     LazyResolveNamespaceComparingTestGenerated.ReadJavaBinaryClass.class,    
-    LazyResolveNamespaceComparingTestGenerated.LazyResolve.class    
+    LazyResolveNamespaceComparingTestGenerated.NamespaceComparator.class    
 })
 public class LazyResolveNamespaceComparingTestGenerated {
     public static class ReadKotlinBinaryClass extends AbstractLazyResolveNamespaceComparingTest {
         @Test
-        public void allTestsPresentInReadKotlinBinaryClass() throws Exception {
+        public void testAllFilesPresentInReadKotlinBinaryClass() throws Exception {
             allTestsPresent(ReadKotlinBinaryClass.class, new File("compiler/testData/readKotlinBinaryClass"), true);
         }
         
@@ -769,7 +769,7 @@ public class LazyResolveNamespaceComparingTestGenerated {
     
     public static class ReadJavaBinaryClass extends AbstractLazyResolveNamespaceComparingTest {
         @Test
-        public void allTestsPresentInReadJavaBinaryClass() throws Exception {
+        public void testAllFilesPresentInReadJavaBinaryClass() throws Exception {
             allTestsPresent(ReadJavaBinaryClass.class, new File("compiler/testData/readJavaBinaryClass"), true);
         }
         
@@ -1049,6 +1049,11 @@ public class LazyResolveNamespaceComparingTestGenerated {
         }
         
         @Test
+        public void testModalityOfFakeOverrides() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/modality/ModalityOfFakeOverrides.kt");
+        }
+        
+        @Test
         public void testMyException() throws Exception {
             doTestSinglePackage("compiler/testData/readJavaBinaryClass/MyException.kt");
         }
@@ -1111,15 +1116,10 @@ public class LazyResolveNamespaceComparingTestGenerated {
         }
     }
     
-    public static class LazyResolve extends AbstractLazyResolveNamespaceComparingTest {
+    public static class NamespaceComparator extends AbstractLazyResolveNamespaceComparingTest {
         @Test
-        public void allTestsPresentInLazyResolve() throws Exception {
-            allTestsPresent(LazyResolve.class, new File("compiler/testData/lazyResolve"), true);
-        }
-        
-        @Test
-        public void testClassObject() throws Exception {
-            doTest("compiler/testData/lazyResolve/descriptorRenderer/ClassObject.kt");
+        public void testAllFilesPresentInNamespaceComparator() throws Exception {
+            allTestsPresent(NamespaceComparator.class, new File("compiler/testData/lazyResolve/namespaceComparator"), true);
         }
         
         @Test

@@ -21,8 +21,9 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
@@ -42,16 +43,30 @@ import java.util.Collections;
  * @author abreslav
  */
 public abstract class AbstractLazyResolveTest {
+
     private final Disposable rootDisposable = new Disposable() {
         @Override
         public void dispose() {
         }
     };
 
-    protected final JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(rootDisposable,
-            CompileCompilerDependenciesTest.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, true)
-    );
-    protected final Project project = jetCoreEnvironment.getProject();
+    public class JetCoreEnvironmentWithDisposable {
+
+        public final JetCoreEnvironment jetCoreEnvironment;
+        public final Project project;
+
+        public JetCoreEnvironmentWithDisposable(@NotNull ConfigurationKind configurationKind) {
+            this.jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(rootDisposable, configurationKind);
+            this.project = jetCoreEnvironment.getProject();
+        }
+
+    }
+
+    protected final JetCoreEnvironmentWithDisposable regularEnvironment = new JetCoreEnvironmentWithDisposable(ConfigurationKind.ALL);
+
+    protected Project getProject() {
+        return regularEnvironment.project;
+    }
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -63,20 +78,20 @@ public abstract class AbstractLazyResolveTest {
         Disposer.dispose(rootDisposable);
     }
 
-    protected InjectorForTopDownAnalyzer getEagerInjectorForTopDownAnalyzer() {
+    protected InjectorForTopDownAnalyzer getEagerInjectorForTopDownAnalyzer(JetCoreEnvironmentWithDisposable environment) {
         ModuleDescriptor eagerModuleForLazy = new ModuleDescriptor(Name.special("<eager module for lazy>"));
 
-        InjectorForTopDownAnalyzer tdaInjectorForLazy = createInjectorForTDA(eagerModuleForLazy);
+        InjectorForTopDownAnalyzer tdaInjectorForLazy = createInjectorForTDA(eagerModuleForLazy, environment);
         // This line is required fro the 'jet' namespace to be filled in with functions
         tdaInjectorForLazy.getTopDownAnalyzer().analyzeFiles(
-                Collections.singletonList(JetPsiFactory.createFile(project, "")), Collections.<AnalyzerScriptParameter>emptyList());
+                Collections.singletonList(JetPsiFactory.createFile(getProject(), "")), Collections.<AnalyzerScriptParameter>emptyList());
         return tdaInjectorForLazy;
     }
 
-    protected InjectorForTopDownAnalyzer createInjectorForTDA(ModuleDescriptor module) {
+    protected InjectorForTopDownAnalyzer createInjectorForTDA(ModuleDescriptor module, JetCoreEnvironmentWithDisposable environment) {
         TopDownAnalysisParameters params = new TopDownAnalysisParameters(
                 Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
-        return new InjectorForTopDownAnalyzerForJvm(project, params, new BindingTraceContext(), module, BuiltinsScopeExtensionMode.ALL);
+        return new InjectorForTopDownAnalyzerForJvm(environment.project, params, new BindingTraceContext(), module, BuiltinsScopeExtensionMode.ALL);
     }
 
 }

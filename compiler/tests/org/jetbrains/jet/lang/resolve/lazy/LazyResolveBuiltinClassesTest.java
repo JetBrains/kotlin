@@ -62,7 +62,7 @@ public class LazyResolveBuiltinClassesTest extends AbstractLazyResolveTest {
 
         ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
         ResolveSession session = new ResolveSession(
-                project,
+                getProject(),
                 lazyModule,
                 new SpecialModuleConfiguration(),
                 new FileBasedDeclarationProviderFactory(files),
@@ -88,7 +88,7 @@ public class LazyResolveBuiltinClassesTest extends AbstractLazyResolveTest {
     private void addJetFilesFromDir(List<JetFile> files, File jetDir) throws IOException {
         for (File file : jetDir.listFiles()) {
             if (FileUtil.getExtension(file.getName()).equals("jet")) {
-                files.add(JetPsiFactory.createFile(project, file.getName(), FileUtil.loadFile(file, true)));
+                files.add(JetPsiFactory.createFile(getProject(), file.getName(), FileUtil.loadFile(file, true)));
             }
         }
     }
@@ -97,7 +97,7 @@ public class LazyResolveBuiltinClassesTest extends AbstractLazyResolveTest {
         @Override
         public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
             for (ImportPath defaultJetImport : DefaultModuleConfiguration.DEFAULT_JET_IMPORTS) {
-                directives.add(JetPsiFactory.createImportDirective(project, defaultJetImport));
+                directives.add(JetPsiFactory.createImportDirective(getProject(), defaultJetImport));
             }
         }
 

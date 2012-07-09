@@ -34,7 +34,7 @@ import java.util.Set;
 public class LazyResolveDescriptorRendererTestGenerated {
     public static class Renderer extends AbstractLazyResolveDescriptorRendererTest {
         @Test
-        public void allTestsPresentInRenderer() throws Exception {
+        public void testAllFilesPresentInRenderer() throws Exception {
             allTestsPresent(Renderer.class, new File("compiler/testData/renderer"), true);
         }
         
@@ -103,7 +103,7 @@ public class LazyResolveDescriptorRendererTestGenerated {
     
     public static class DescriptorRenderer extends AbstractLazyResolveDescriptorRendererTest {
         @Test
-        public void allTestsPresentInDescriptorRenderer() throws Exception {
+        public void testAllFilesPresentInDescriptorRenderer() throws Exception {
             allTestsPresent(DescriptorRenderer.class, new File("compiler/testData/lazyResolve/descriptorRenderer"), true);
         }
         
