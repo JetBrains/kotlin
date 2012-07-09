@@ -190,6 +190,7 @@ public class TestGenerator {
         p.println("import java.util.HashSet;");
         p.println("import java.util.Set;");
         p.println("import org.jetbrains.jet.JetTestUtils;");
+        p.println("import org.jetbrains.jet.test.TestMetadata;");
         p.println();
 
         p.println("import ", baseTestClassPackage, ".", baseTestClassName, ";");
@@ -229,20 +230,14 @@ public class TestGenerator {
 
     private void generateTestClass(Printer p, TestClassModel testDataSource, boolean isStatic) {
         String staticModifier = isStatic ? "static " : "";
+        generateMetadata(p, testDataSource);
         p.println("public " + staticModifier + "class ", testDataSource.getName(), " extends ", baseTestClassName, " {");
         p.pushIndent();
 
         Collection<TestMethodModel> testMethods = testDataSource.getTestMethods();
 
         for (TestMethodModel testMethodModel : testMethods) {
-            targetTestFramework.generateTestMethodAnnotations(this, p);
-            p.println("public void ", testMethodModel.getName(), "() throws Exception {");
-            p.pushIndent();
-
-            testMethodModel.generateBody(p, generatorName);
-
-            p.popIndent();
-            p.println("}");
+            generateTestMethod(p, testMethodModel);
             p.println();
         }
 
@@ -253,5 +248,24 @@ public class TestGenerator {
 
         p.popIndent();
         p.println("}");
+    }
+
+    private void generateTestMethod(Printer p, TestMethodModel testMethodModel) {
+        targetTestFramework.generateTestMethodAnnotations(this, p);
+        generateMetadata(p, testMethodModel);
+        p.println("public void ", testMethodModel.getName(), "() throws Exception {");
+        p.pushIndent();
+
+        testMethodModel.generateBody(p, generatorName);
+
+        p.popIndent();
+        p.println("}");
+    }
+
+    private void generateMetadata(Printer p, TestEntityModel testDataSource) {
+        String dataString = testDataSource.getDataString();
+        if (dataString != null) {
+            p.println("@TestMetadata(\"", dataString, "\")");
+        }
     }
 }

@@ -21,8 +21,7 @@ import java.util.Collection;
 /**
  * @author abreslav
  */
-public interface TestClassModel {
-    String getName();
+public interface TestClassModel extends TestEntityModel {
 
     Collection<TestClassModel> getInnerTestClasses();
 

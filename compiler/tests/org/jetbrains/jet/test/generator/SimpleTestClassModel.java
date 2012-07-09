@@ -76,15 +76,19 @@ public class SimpleTestClassModel implements TestClassModel {
 
             @Override
             public void generateBody(@NotNull Printer p, @NotNull String generatorClassFqName) {
-                p.println("JetTestUtils.allTestsPresent(" +
+                p.println("JetTestUtils.assertAllTestsPresentByMetadata(" +
                                 "this.getClass(), " +
                                 "\"", generatorClassFqName, "\", " +
                                 "new File(\"", JetTestUtils.getFilePath(rootFile) + "\"), \"",
                                 extension,
-                                "\", ", recursive,
+                                "\", ", false,
                           ");");
             }
 
+            @Override
+            public String getDataString() {
+                return null;
+            }
         });
 
         File[] listFiles = rootFile.listFiles();
@@ -96,6 +100,11 @@ public class SimpleTestClassModel implements TestClassModel {
             }
         }
         return result;
+    }
+
+    @Override
+    public String getDataString() {
+        return rootFile.getPath();
     }
 
     @Override

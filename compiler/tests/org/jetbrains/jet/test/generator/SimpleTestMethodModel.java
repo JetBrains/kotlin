@@ -43,6 +43,11 @@ public class SimpleTestMethodModel implements TestMethodModel {
     }
 
     @Override
+    public String getDataString() {
+        return FileUtil.getRelativePath(rootDir, file);
+    }
+
+    @Override
     public String getName() {
         String fileName = FileUtil.getNameWithoutExtension(file.getName());
         String unescapedName;

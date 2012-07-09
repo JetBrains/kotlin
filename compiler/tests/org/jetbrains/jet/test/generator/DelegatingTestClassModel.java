@@ -42,4 +42,9 @@ public class DelegatingTestClassModel implements TestClassModel {
     public Collection<TestMethodModel> getTestMethods() {
         return delegate.getTestMethods();
     }
+
+    @Override
+    public String getDataString() {
+        return delegate.getDataString();
+    }
 }

@@ -17,6 +17,7 @@
 package org.jetbrains.jet;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
@@ -44,6 +45,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.test.TestMetadata;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.SlicedMap;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -362,34 +364,45 @@ public class JetTestUtils {
         }
     }
 
-    public static void allTestsPresent(
+    public static void assertAllTestsPresentByMetadata(
             @NotNull Class<?> testCaseClass,
             @NotNull String generatorClassFqName,
             @NotNull File testDataDir,
             @NotNull String extension,
             boolean recursive
     ) {
-        Set<String> methodNames = new HashSet<String>();
+        TestMetadata testClassMetadata = testCaseClass.getAnnotation(TestMetadata.class);
+        Assert.assertNotNull("No metadata for class: " + testCaseClass, testClassMetadata);
+        String rootPath = testClassMetadata.value();
+        File rootFile = new File(rootPath);
+
+
+        Set<String> filePaths = Sets.newHashSet();
         for (Method method : testCaseClass.getDeclaredMethods()) {
-            boolean isTestMethod = method.getName().startsWith("test");
-            if (isTestMethod) {
-                methodNames.add(method.getName().toLowerCase() + "." + extension);
+            TestMetadata testMetadata = method.getAnnotation(TestMetadata.class);
+            if (testMetadata != null) {
+                filePaths.add(testMetadata.value());
             }
         }
-        for (File file : testDataDir.listFiles()) {
-            if (file.isDirectory()) {
-                if (recursive) {
-                    allTestsPresent(testCaseClass, generatorClassFqName, file, extension, recursive);
+        File[] files = testDataDir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    if (recursive) {
+                        assertAllTestsPresentByMetadata(testCaseClass, generatorClassFqName, file, extension, recursive);
+                    }
                 }
-            }
-            else {
-                String name = file.getName();
-                if (name.endsWith("." + extension) && !methodNames.contains("test" + name.toLowerCase())) {
-                    String generatorClassSimpleName = generatorClassFqName.substring(generatorClassFqName.lastIndexOf(".") + 1);
-                    junit.framework.Assert.fail("Test data file missing from the generated test class: " +
-                                                file +
-                                                "\nPlease re-run the generator: " + generatorClassFqName +
-                                                "(" + generatorClassSimpleName + ".java:1)");
+                else {
+                    if (file.getName().endsWith("." + extension)) {
+                        String relativePath = FileUtil.getRelativePath(rootFile, file);
+                        if (!filePaths.contains(relativePath)) {
+                            String generatorClassSimpleName = generatorClassFqName.substring(generatorClassFqName.lastIndexOf(".") + 1);
+                            Assert.fail("Test data file missing from the generated test class: " +
+                                                        file +
+                                                        "\nPlease re-run the generator: " + generatorClassFqName +
+                                                        "(" + generatorClassSimpleName + ".java:1)");
+                        }
+                    }
                 }
             }
         }
