@@ -1487,11 +1487,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if (descriptor instanceof ClassReceiver) {
             Type exprType = asmType(descriptor.getType());
             ClassReceiver classReceiver = (ClassReceiver) descriptor;
-            ClassDescriptor classReceiverDeclarationDescriptor = (ClassDescriptor) classReceiver.getDeclarationDescriptor();
+            ClassDescriptor classReceiverDeclarationDescriptor = classReceiver.getDeclarationDescriptor();
             if (DescriptorUtils.isClassObject(classReceiverDeclarationDescriptor)) {
                 ClassDescriptor containingDeclaration = (ClassDescriptor) classReceiverDeclarationDescriptor.getContainingDeclaration();
                 Type classObjType = typeMapper.mapType(containingDeclaration.getDefaultType(), MapTypeMode.IMPL);
-                v.getstatic(classObjType.getInternalName(), "$classobj", exprType.getDescriptor());
+                if (context.getContextDescriptor() instanceof ConstructorDescriptor && classReceiverDeclarationDescriptor.getDefaultType().equals(((ConstructorDescriptor)context.getContextDescriptor()).getReturnType())) {
+                    v.load(0, classObjType);
+                } else {
+                    v.getstatic(classObjType.getInternalName(), "$classobj", exprType.getDescriptor());
+                }
             }
             else {
                 generateThisOrOuter(classReceiverDeclarationDescriptor).put(exprType, v);
