@@ -180,7 +180,8 @@ public class OverrideResolver {
             @NotNull Collection<? extends CallableMemberDescriptor> membersFromSupertypes,
             @NotNull Collection<? extends CallableMemberDescriptor> membersFromCurrent,
             @NotNull ClassDescriptor current,
-            @NotNull DescriptorSink sink) {
+            @NotNull DescriptorSink sink
+    ) {
         List<CallableMemberDescriptor> notOverridden = Lists.newArrayList(membersFromSupertypes);
         for (CallableMemberDescriptor fromCurrent : membersFromCurrent) {
 
@@ -209,6 +210,7 @@ public class OverrideResolver {
         Queue<CallableMemberDescriptor> fromSuperQueue = new LinkedList<CallableMemberDescriptor>(notOverridden);
         while (!fromSuperQueue.isEmpty()) {
             CallableMemberDescriptor aFromSuper = fromSuperQueue.remove();
+
             Collection<CallableMemberDescriptor> overridableByA = Lists.newArrayList();
             overridableByA.add(aFromSuper);
             for (Iterator<CallableMemberDescriptor> iterator = fromSuperQueue.iterator(); iterator.hasNext(); ) {
