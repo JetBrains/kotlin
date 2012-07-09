@@ -41,7 +41,7 @@ public class SimpleTestClassModel implements TestClassModel {
         this.recursive = recursive;
         this.extension = extension;
         this.doTestMethodName = doTestMethodName;
-        this.testClassName = StringUtil.capitalize(rootFile.getName());
+        this.testClassName = StringUtil.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(rootFile.getName()));
     }
 
     @Override
@@ -71,7 +71,7 @@ public class SimpleTestClassModel implements TestClassModel {
         result.add(new TestMethodModel() {
             @Override
             public String getName() {
-                return "testAllFilesPresentIn" + StringUtil.capitalize(rootFile.getName());
+                return "testAllFilesPresentIn" + testClassName;
             }
 
             @Override
@@ -84,6 +84,7 @@ public class SimpleTestClassModel implements TestClassModel {
                                 "\", ", recursive,
                           ");");
             }
+
         });
 
         File[] listFiles = rootFile.listFiles();

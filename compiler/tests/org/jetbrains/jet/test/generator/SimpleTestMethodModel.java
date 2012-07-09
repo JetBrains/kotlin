@@ -53,6 +53,6 @@ public class SimpleTestMethodModel implements TestMethodModel {
             String relativePath = FileUtil.getRelativePath(rootDir, file.getParentFile());
             unescapedName = relativePath + "-" + StringUtil.capitalize(fileName);
         }
-        return "test" + TestGeneratorUtil.escapeForJavaIdentifier(StringUtil.capitalize(unescapedName));
+        return "test" + StringUtil.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(unescapedName));
     }
 }
