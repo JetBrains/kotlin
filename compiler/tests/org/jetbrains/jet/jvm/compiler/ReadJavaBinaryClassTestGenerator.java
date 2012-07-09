@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.jvm.compiler;
 
-import org.jetbrains.jet.test.generator.TestDataSource;
+import org.jetbrains.jet.test.generator.SimpleTestClassModel;
 import org.jetbrains.jet.test.generator.TestGenerator;
 
 import java.io.File;
@@ -38,7 +38,7 @@ public class ReadJavaBinaryClassTestGenerator {
                 aPackage,
                 "AbstractReadJavaBinaryClassTest",
                 Arrays.asList(
-                        new TestDataSource(new File("compiler/testData/readJavaBinaryClass"), true, TestGenerator.filterFilesByExtension(extension), "doTest")
+                        new SimpleTestClassModel(new File("compiler/testData/readJavaBinaryClass"), true, extension, "doTest")
                 ),
                 ReadJavaBinaryClassTestGenerator.class.getName(),
                 TestGenerator.TargetTestFrameworks.JUNIT_3

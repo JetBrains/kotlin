@@ -52,6 +52,7 @@ import org.junit.Assert;
 import javax.tools.*;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -274,6 +275,10 @@ public class JetTestUtils {
         return StringUtil.convertLineSeparators(text);
     }
 
+    public static String getFilePath(File file) {
+        return file.getPath().replaceAll("\\\\", "/");
+    }
+
     public interface TestFileFactory<F> {
         F create(String fileName, String text);
     }
@@ -354,6 +359,39 @@ public class JetTestUtils {
             Assert.assertTrue(task.call());
         } finally {
             fileManager.close();
+        }
+    }
+
+    public static void allTestsPresent(
+            @NotNull Class<?> testCaseClass,
+            @NotNull String generatorClassFqName,
+            @NotNull File testDataDir,
+            @NotNull String extension,
+            boolean recursive
+    ) {
+        Set<String> methodNames = new HashSet<String>();
+        for (Method method : testCaseClass.getDeclaredMethods()) {
+            boolean isTestMethod = method.getName().startsWith("test");
+            if (isTestMethod) {
+                methodNames.add(method.getName().toLowerCase() + "." + extension);
+            }
+        }
+        for (File file : testDataDir.listFiles()) {
+            if (file.isDirectory()) {
+                if (recursive) {
+                    allTestsPresent(testCaseClass, generatorClassFqName, file, extension, recursive);
+                }
+            }
+            else {
+                String name = file.getName();
+                if (name.endsWith("." + extension) && !methodNames.contains("test" + name.toLowerCase())) {
+                    String generatorClassSimpleName = generatorClassFqName.substring(generatorClassFqName.lastIndexOf(".") + 1);
+                    junit.framework.Assert.fail("Test data file missing from the generated test class: " +
+                                                file +
+                                                "\nPlease re-run the generator: " + generatorClassFqName +
+                                                "(" + generatorClassSimpleName + ".java:1)");
+                }
+            }
         }
     }
 
