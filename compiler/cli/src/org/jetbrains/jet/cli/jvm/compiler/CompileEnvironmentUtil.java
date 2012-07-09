@@ -97,43 +97,6 @@ public class CompileEnvironmentUtil {
         }
     }
 
-
-    public static void ensureJdkRuntime(JetCoreEnvironment env) {
-        if (JavaPsiFacade.getInstance(env.getProject()).findClass("java.lang.Object", GlobalSearchScope.allScope(env.getProject())) ==
-            null) {
-            // TODO: prepend
-            env.addToClasspath(findRtJar());
-        }
-    }
-
-    public static File findRtJar() {
-        String javaHome = System.getProperty("java.home");
-        if ("jre".equals(new File(javaHome).getName())) {
-            javaHome = new File(javaHome).getParent();
-        }
-
-        File rtJar = findRtJar(javaHome);
-
-        if (rtJar == null || !rtJar.exists()) {
-            throw new CompileEnvironmentException("No JDK rt.jar found under " + javaHome);
-        }
-
-        return rtJar;
-    }
-
-    private static File findRtJar(String javaHome) {
-        File rtJar = new File(javaHome, "jre/lib/rt.jar");
-        if (rtJar.exists()) {
-            return rtJar;
-        }
-
-        File classesJar = new File(new File(javaHome).getParentFile().getAbsolutePath(), "Classes/classes.jar");
-        if (classesJar.exists()) {
-            return classesJar;
-        }
-        return null;
-    }
-
     @NotNull
     public static List<Module> loadModuleScript(String moduleScriptFile, MessageCollector messageCollector) {
         Disposable disposable = new Disposable() {
