@@ -53,22 +53,6 @@ public class SimpleTestMethodModel implements TestMethodModel {
             String relativePath = FileUtil.getRelativePath(rootDir, file.getParentFile());
             unescapedName = relativePath + "-" + StringUtil.capitalize(fileName);
         }
-        return "test" + escapeForMethodName(StringUtil.capitalize(unescapedName));
-    }
-
-    private static String escapeForMethodName(String fileName) {
-        // A file name may contain characters (like ".") that can't be a part of method name
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < fileName.length(); i++) {
-            char c = fileName.charAt(i);
-
-            if (Character.isJavaIdentifierPart(c)) {
-                result.append(c);
-            }
-            else {
-                result.append("_");
-            }
-        }
-        return result.toString();
+        return "test" + TestGeneratorUtil.escapeForJavaIdentifier(StringUtil.capitalize(unescapedName));
     }
 }
