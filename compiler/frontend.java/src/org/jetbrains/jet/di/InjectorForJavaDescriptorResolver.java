@@ -20,12 +20,11 @@ package org.jetbrains.jet.di;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinderForJvm;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorSignatureResolver;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
@@ -38,12 +37,11 @@ public class InjectorForJavaDescriptorResolver {
     private final Project project;
     private final BindingTrace bindingTrace;
     private final ModuleDescriptor moduleDescriptor;
-    private final CompilerDependencies compilerDependencies;
+    private final BuiltinsScopeExtensionMode builtinsScopeExtensionMode;
     private JavaBridgeConfiguration javaBridgeConfiguration;
-    private CompilerSpecialMode compilerSpecialMode;
     private JavaSemanticServices javaSemanticServices;
     private JavaDescriptorResolver javaDescriptorResolver;
-    private PsiClassFinderForJvm psiClassFinderForJvm;
+    private PsiClassFinderImpl psiClassFinder;
     private JavaTypeTransformer javaTypeTransformer;
     private JavaDescriptorSignatureResolver javaDescriptorSignatureResolver;
     private NamespaceFactoryImpl namespaceFactory;
@@ -52,39 +50,37 @@ public class InjectorForJavaDescriptorResolver {
         @NotNull Project project,
         @NotNull BindingTrace bindingTrace,
         @NotNull ModuleDescriptor moduleDescriptor,
-        @NotNull CompilerDependencies compilerDependencies
+        @NotNull BuiltinsScopeExtensionMode builtinsScopeExtensionMode
     ) {
         this.project = project;
         this.bindingTrace = bindingTrace;
         this.moduleDescriptor = moduleDescriptor;
-        this.compilerDependencies = compilerDependencies;
+        this.builtinsScopeExtensionMode = builtinsScopeExtensionMode;
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
-        this.compilerSpecialMode = compilerDependencies.getCompilerSpecialMode();
         this.javaSemanticServices = new JavaSemanticServices();
         this.javaDescriptorResolver = new JavaDescriptorResolver();
-        this.psiClassFinderForJvm = new PsiClassFinderForJvm();
+        this.psiClassFinder = new PsiClassFinderImpl();
         this.javaTypeTransformer = new JavaTypeTransformer();
         this.javaDescriptorSignatureResolver = new JavaDescriptorSignatureResolver();
         this.namespaceFactory = new NamespaceFactoryImpl();
 
+        javaBridgeConfiguration.setBuiltinsScopeExtensionMode(builtinsScopeExtensionMode);
         javaBridgeConfiguration.setJavaSemanticServices(javaSemanticServices);
-        javaBridgeConfiguration.setMode(compilerSpecialMode);
         javaBridgeConfiguration.setProject(project);
 
         this.javaSemanticServices.setDescriptorResolver(javaDescriptorResolver);
-        this.javaSemanticServices.setPsiClassFinder(psiClassFinderForJvm);
+        this.javaSemanticServices.setPsiClassFinder(psiClassFinder);
         this.javaSemanticServices.setTrace(bindingTrace);
         this.javaSemanticServices.setTypeTransformer(javaTypeTransformer);
 
         this.javaDescriptorResolver.setJavaDescriptorSignatureResolver(javaDescriptorSignatureResolver);
         this.javaDescriptorResolver.setNamespaceFactory(namespaceFactory);
         this.javaDescriptorResolver.setProject(project);
-        this.javaDescriptorResolver.setPsiClassFinder(psiClassFinderForJvm);
+        this.javaDescriptorResolver.setPsiClassFinder(psiClassFinder);
         this.javaDescriptorResolver.setSemanticServices(javaSemanticServices);
         this.javaDescriptorResolver.setTrace(bindingTrace);
 
-        this.psiClassFinderForJvm.setCompilerDependencies(compilerDependencies);
-        this.psiClassFinderForJvm.setProject(project);
+        this.psiClassFinder.setProject(project);
 
         javaTypeTransformer.setJavaSemanticServices(javaSemanticServices);
         javaTypeTransformer.setResolver(javaDescriptorResolver);
@@ -98,7 +94,7 @@ public class InjectorForJavaDescriptorResolver {
 
         javaBridgeConfiguration.init();
 
-        psiClassFinderForJvm.initialize();
+        psiClassFinder.initialize();
 
     }
 
@@ -126,8 +122,8 @@ public class InjectorForJavaDescriptorResolver {
         return this.javaDescriptorResolver;
     }
 
-    public PsiClassFinderForJvm getPsiClassFinderForJvm() {
-        return this.psiClassFinderForJvm;
+    public PsiClassFinderImpl getPsiClassFinder() {
+        return this.psiClassFinder;
     }
 
 }

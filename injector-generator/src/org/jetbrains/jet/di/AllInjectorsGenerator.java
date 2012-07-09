@@ -95,7 +95,7 @@ public class AllInjectorsGenerator {
         generator.implementInterface(InjectorForTopDownAnalyzer.class);
         generateInjectorForTopDownAnalyzerCommon(generator);
         generator.addParameter(BuiltinsScopeExtensionMode.class);
-        generator.addPublicField(JavaBridgeConfiguration.class);
+        generator.addField(true, ModuleConfiguration.class, null, new InstantiateType(JavaBridgeConfiguration.class));
         generator.addField(JavaDescriptorResolver.class);
         generator.addField(PsiClassFinderImpl.class);
         generator.addPublicField(NamespaceFactoryImpl.class);
@@ -109,14 +109,13 @@ public class AllInjectorsGenerator {
         generator.addPublicParameter(Project.class);
         generator.addPublicParameter(BindingTrace.class);
         generator.addPublicParameter(ModuleDescriptor.class);
-        generator.addParameter(CompilerDependencies.class);
+        generator.addParameter(BuiltinsScopeExtensionMode.class);
 
         // Fields
         generator.addField(JavaBridgeConfiguration.class);
-        generator.addField(false, CompilerSpecialMode.class, null, new GivenExpression("compilerDependencies.getCompilerSpecialMode()"));
         generator.addPublicField(JavaSemanticServices.class);
         generator.addPublicField(JavaDescriptorResolver.class);
-        generator.addPublicField(PsiClassFinderForJvm.class);
+        generator.addPublicField(PsiClassFinderImpl.class);
 
         generator.generate("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForJavaDescriptorResolver");
     }
@@ -176,8 +175,8 @@ public class AllInjectorsGenerator {
         generator.addField(JavaBridgeConfiguration.class);
         generator.addPublicField(PsiClassFinderImpl.class);
         generator.addField(false, ModuleDescriptor.class, null,
-                new GivenExpression("new org.jetbrains.jet.lang.descriptors.ModuleDescriptor(" +
-                                    "org.jetbrains.jet.lang.resolve.name.Name.special(\"<dummy>\"))"));
+                           new GivenExpression("new org.jetbrains.jet.lang.descriptors.ModuleDescriptor(" +
+                                               "org.jetbrains.jet.lang.resolve.name.Name.special(\"<dummy>\"))"));
         generator.addParameter(BuiltinsScopeExtensionMode.class);
 
         // Parameters

@@ -23,7 +23,6 @@ import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
@@ -65,7 +64,7 @@ public abstract class AbstractReadJavaBinaryClassTest extends TestCaseWithTmpdir
     }
 
     @NotNull
-    private NamespaceDescriptor compileKotlin() throws Exception {
+    private NamespaceDescriptor compileKotlin(File ktFile) throws Exception {
         JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_ONLY);
 
         String text = FileUtil.loadFile(ktFile);

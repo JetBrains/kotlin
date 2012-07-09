@@ -28,8 +28,6 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorSignatureResolver;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
-import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
