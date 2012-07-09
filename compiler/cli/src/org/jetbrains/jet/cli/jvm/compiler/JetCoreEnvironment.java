@@ -28,6 +28,7 @@ import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JavaElementFinder;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
+import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.parsing.JetParser;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
@@ -87,6 +88,9 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         }
         for (File path : configuration.getList(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY)) {
             addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(path));
+        }
+        for (String path : configuration.getList(CommonConfigurationKeys.SOURCE_ROOTS_KEY)) {
+            addSources(path);
         }
 
         JetStandardLibrary.initialize(getProject());
