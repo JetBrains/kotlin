@@ -541,17 +541,18 @@ public class FunctionCodegen {
                     Type argType = argTypes[i];
                     iv.load(reg, argType);
                     if (argType.getSort() == Type.OBJECT) {
-                        StackValue.onStack(JetTypeMapper.TYPE_OBJECT).put(method.getArgumentTypes()[i], iv);
+                        StackValue.onStack(JetTypeMapper.TYPE_OBJECT).put(jvmSignature.getArgumentTypes()[i], iv);
                     }
                     else if (argType.getSort() == Type.ARRAY) {
-                        StackValue.onStack(JetTypeMapper.ARRAY_GENERIC_TYPE).put(method.getArgumentTypes()[i], iv);
+                        StackValue.onStack(JetTypeMapper.ARRAY_GENERIC_TYPE).put(jvmSignature.getArgumentTypes()[i], iv);
                     }
 
                     //noinspection AssignmentToForLoopParameter
                     reg += argType.getSize();
                 }
 
-                iv.invokevirtual(state.getInjector().getJetTypeMapper().mapType(((ClassDescriptor) owner.getContextDescriptor()).getDefaultType(), MapTypeMode.VALUE).getInternalName(), jvmSignature.getName(), jvmSignature.getDescriptor());
+                iv.invokevirtual(state.getInjector().getJetTypeMapper().mapType(((ClassDescriptor) owner.getContextDescriptor()).getDefaultType(), MapTypeMode.VALUE).getInternalName(),
+                                 jvmSignature.getName(), jvmSignature.getDescriptor());
                 if (JetTypeMapper.isPrimitive(jvmSignature.getReturnType()) && !JetTypeMapper.isPrimitive(overridden.getReturnType()))
                     StackValue.valueOf(iv, jvmSignature.getReturnType());
                 if (jvmSignature.getReturnType() == Type.VOID_TYPE)
