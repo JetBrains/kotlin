@@ -38,9 +38,21 @@ import java.util.*;
  */
 public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
+    public static final DescriptorRenderer COMPACT_WITH_MODIFIERS = new DescriptorRenderer() {
+        @Override
+        protected boolean shouldRenderDefinedIn() {
+            return false;
+        }
+    };
+
     public static final DescriptorRenderer COMPACT = new DescriptorRenderer() {
         @Override
         protected boolean shouldRenderDefinedIn() {
+            return false;
+        }
+
+        @Override
+        protected boolean shouldRenderModifiers() {
             return false;
         }
     };
@@ -77,18 +89,6 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             return null;
         }
     };
-
-    private DescriptorRenderer() {
-        this(true, true);
-    }
-
-    public DescriptorRenderer(boolean renderModifiers, boolean renderDefinedIn) {
-        this.renderModifiers = renderModifiers;
-        this.renderDefinedIn = renderDefinedIn;
-    }
-
-    private final boolean renderModifiers;
-    private final boolean renderDefinedIn;
 
     protected boolean hasDefaultValue(ValueParameterDescriptor descriptor) {
         return descriptor.hasDefaultValue();
@@ -256,8 +256,11 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         return true;
     }
 
+    protected boolean shouldRenderModifiers() {
+        return true;
+    }
+
     private void appendDefinedIn(DeclarationDescriptor declarationDescriptor, StringBuilder stringBuilder) {
-        if (!renderDefinedIn) return;
         if (declarationDescriptor instanceof ModuleDescriptor) {
             stringBuilder.append(" is a module");
             return;
@@ -387,7 +390,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
 
         private void renderVisibility(Visibility visibility, StringBuilder builder) {
-            if(!renderModifiers) return;
+            if(!shouldRenderModifiers()) return;
             if ("package".equals(visibility.toString())) {
                 builder.append("public/*package*/ ");
             } else {
@@ -396,7 +399,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
 
         private void renderModality(Modality modality, StringBuilder builder) {
-            if (!renderModifiers) return;
+            if (!shouldRenderModifiers()) return;
             String keyword = "";
             switch (modality) {
                 case FINAL:
@@ -629,13 +632,6 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
     }
 
     public static class HtmlDescriptorRenderer extends DescriptorRenderer {
-
-        public HtmlDescriptorRenderer() {
-        }
-
-        public HtmlDescriptorRenderer(boolean renderModifiers, boolean renderDefinedIn) {
-            super(renderModifiers, renderDefinedIn);
-        }
 
         @Override
         protected String escape(String s) {

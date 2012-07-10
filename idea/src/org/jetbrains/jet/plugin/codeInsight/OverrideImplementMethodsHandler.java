@@ -141,7 +141,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
         addReceiverParameter(descriptor, bodyBuilder);
 
-        bodyBuilder.append(descriptor.getName()).append(" : ").append(DescriptorRenderer.COMPACT.renderTypeWithShortNames(
+        bodyBuilder.append(descriptor.getName()).append(" : ").append(DescriptorRenderer.COMPACT_WITH_MODIFIERS.renderTypeWithShortNames(
                 descriptor.getType()));
         String initializer = defaultInitializer(descriptor.getType(), JetStandardLibrary.getInstance());
         if (initializer != null) {
