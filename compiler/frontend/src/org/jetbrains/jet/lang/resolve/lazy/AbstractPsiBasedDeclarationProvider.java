@@ -48,6 +48,9 @@ public abstract class AbstractPsiBasedDeclarationProvider implements Declaration
     protected abstract void doCreateIndex();
 
     protected void putToIndex(JetDeclaration declaration) {
+        if (declaration instanceof JetClassInitializer) {
+            return;
+        }
         allDeclarations.add(declaration);
         if (declaration instanceof JetNamedFunction) {
             JetNamedFunction namedFunction = (JetNamedFunction) declaration;
