@@ -41,8 +41,7 @@ public class LazyResolveTestGenerator {
             "compiler/tests/",
             TARGET_PACKAGE,
             "LazyResolveDescriptorRendererTestGenerated",
-            TARGET_PACKAGE,
-            "AbstractLazyResolveDescriptorRendererTest",
+            AbstractLazyResolveDescriptorRendererTest.class,
             Arrays.asList(
                     new SimpleTestClassModel(new File("compiler/testData/renderer"),
                                        true,
@@ -62,8 +61,7 @@ public class LazyResolveTestGenerator {
             "compiler/tests/",
             TARGET_PACKAGE,
             "LazyResolveNamespaceComparingTestGenerated",
-            TARGET_PACKAGE,
-            "AbstractLazyResolveNamespaceComparingTest",
+            AbstractLazyResolveNamespaceComparingTest.class,
             Arrays.asList(
                     new SimpleTestClassModel(new File("compiler/testData/readKotlinBinaryClass"),
                                        true,

@@ -183,8 +183,7 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
                 "compiler/tests/",
                 aPackage,
                 "JetDiagnosticsTestGenerated",
-                aPackage,
-                AbstractJetDiagnosticsTest.class.getSimpleName(),
+                AbstractJetDiagnosticsTest.class,
                 Arrays.asList(
                         new SimpleTestClassModel(new File("compiler/testData/diagnostics/tests"), true, "kt", "doTest"),
                         new SimpleTestClassModel(new File("compiler/testData/diagnostics/tests/script"), true, "ktscript", "doTest")

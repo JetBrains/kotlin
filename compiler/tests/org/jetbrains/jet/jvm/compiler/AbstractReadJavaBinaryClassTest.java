@@ -116,8 +116,7 @@ public abstract class AbstractReadJavaBinaryClassTest extends TestCaseWithTmpdir
                 "compiler/tests/",
                 aPackage,
                 "ReadJavaBinaryClassTestGenerated",
-                aPackage,
-                "AbstractReadJavaBinaryClassTest",
+                AbstractReadJavaBinaryClassTest.class,
                 Arrays.asList(
                         new SimpleTestClassModel(new File("compiler/testData/readJavaBinaryClass"), true, extension, "doTest")
                 ),
