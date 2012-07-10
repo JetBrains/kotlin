@@ -39,7 +39,6 @@ public class LazyResolveTestGenerator {
     private static void generateRendererTests() throws IOException {
         new TestGenerator(
             "compiler/tests/",
-            TEST_DATA_FILE_EXTENSION,
             TARGET_PACKAGE,
             "LazyResolveDescriptorRendererTestGenerated",
             TARGET_PACKAGE,
@@ -61,7 +60,6 @@ public class LazyResolveTestGenerator {
     private static void generateNamespaceComparingTests() throws IOException {
         new TestGenerator(
             "compiler/tests/",
-            TEST_DATA_FILE_EXTENSION,
             TARGET_PACKAGE,
             "LazyResolveNamespaceComparingTestGenerated",
             TARGET_PACKAGE,

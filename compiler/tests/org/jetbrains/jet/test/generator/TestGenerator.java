@@ -16,15 +16,13 @@
 
 package org.jetbrains.jet.test.generator;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -127,32 +125,29 @@ public class TestGenerator {
     }
 
     private final String baseDir;
-    private final String testDataFileExtension;
     private final String suiteClassPackage;
     private final String suiteClassName;
     private final String baseTestClassPackage;
     private final String baseTestClassName;
-    private final Collection<? extends TestClassModel> testClassModels;
+    private final Collection<TestClassModel> testClassModels;
     private final String generatorName;
     private final TargetTestFramework targetTestFramework;
 
     public TestGenerator(
-        @NotNull String baseDir,
-        @NotNull String testDataFileExtension,
-        @NotNull String suiteClassPackage,
-        @NotNull String suiteClassName,
-        @NotNull String baseTestClassPackage,
-        @NotNull String baseTestClassName,
-        @NotNull Collection<? extends TestClassModel> testClassModels,
-        @NotNull String generatorName
+            @NotNull String baseDir,
+            @NotNull String suiteClassPackage,
+            @NotNull String suiteClassName,
+            @NotNull String baseTestClassPackage,
+            @NotNull String baseTestClassName,
+            @NotNull Collection<? extends TestClassModel> testClassModels,
+            @NotNull String generatorName
     ) {
-        this(baseDir, testDataFileExtension, suiteClassPackage, suiteClassName, baseTestClassPackage, baseTestClassName, testClassModels,
+        this(baseDir, suiteClassPackage, suiteClassName, baseTestClassPackage, baseTestClassName, testClassModels,
              generatorName, TargetTestFrameworks.JUNIT_4);
     }
 
     public TestGenerator(
             @NotNull String baseDir,
-            @NotNull String testDataFileExtension,
             @NotNull String suiteClassPackage,
             @NotNull String suiteClassName,
             @NotNull String baseTestClassPackage,
@@ -162,12 +157,11 @@ public class TestGenerator {
             @NotNull TargetTestFramework targetTestFramework
     ) {
         this.baseDir = baseDir;
-        this.testDataFileExtension = testDataFileExtension;
         this.suiteClassPackage = suiteClassPackage;
         this.suiteClassName = suiteClassName;
         this.baseTestClassPackage = baseTestClassPackage;
         this.baseTestClassName = baseTestClassName;
-        this.testClassModels = testClassModels;
+        this.testClassModels = Lists.newArrayList(testClassModels);
         this.generatorName = generatorName;
         this.targetTestFramework = targetTestFramework;
     }
@@ -208,18 +202,34 @@ public class TestGenerator {
             }, false);
         }
         else {
-            p.println("public class ", suiteClassName, " {");
-            p.pushIndent();
+            generateTestClass(p, new TestClassModel() {
+                @NotNull
+                @Override
+                public Collection<TestClassModel> getInnerTestClasses() {
+                    return testClassModels;
+                }
 
-            for (TestClassModel testDataSource : testClassModels) {
-                generateTestClass(p, testDataSource, true);
-                p.println();
-            }
+                @NotNull
+                @Override
+                public Collection<TestMethodModel> getTestMethods() {
+                    return Collections.emptyList();
+                }
 
-            targetTestFramework.generateExtraSuiteClassMethods(this, p);
+                @Override
+                public boolean isEmpty() {
+                    return false;
+                }
 
-            p.popIndent();
-            p.println("}");
+                @Override
+                public String getName() {
+                    return suiteClassName;
+                }
+
+                @Override
+                public String getDataString() {
+                    return null;
+                }
+            }, false);
         }
 
         String testSourceFilePath = baseDir + "/" + suiteClassPackage.replace(".", "/") + "/" + suiteClassName + ".java";
@@ -228,23 +238,56 @@ public class TestGenerator {
         System.out.println("Output written to file:\n" + testSourceFile.getAbsolutePath());
     }
 
-    private void generateTestClass(Printer p, TestClassModel testDataSource, boolean isStatic) {
+    private void generateTestClass(Printer p, TestClassModel testClassModel, boolean isStatic) {
         String staticModifier = isStatic ? "static " : "";
-        generateMetadata(p, testDataSource);
-        p.println("public " + staticModifier + "class ", testDataSource.getName(), " extends ", baseTestClassName, " {");
+        generateMetadata(p, testClassModel);
+        p.println("public " + staticModifier + "class ", testClassModel.getName(), " extends ", baseTestClassName, " {");
         p.pushIndent();
 
-        Collection<TestMethodModel> testMethods = testDataSource.getTestMethods();
+        Collection<TestMethodModel> testMethods = testClassModel.getTestMethods();
 
         for (TestMethodModel testMethodModel : testMethods) {
             generateTestMethod(p, testMethodModel);
             p.println();
         }
 
-        Collection<TestClassModel> innerTestClasses = testDataSource.getInnerTestClasses();
+        Collection<TestClassModel> innerTestClasses = testClassModel.getInnerTestClasses();
         for (TestClassModel innerTestClass : innerTestClasses) {
+            if (innerTestClass.isEmpty()) {
+                continue;
+            }
             generateTestClass(p, innerTestClass, true);
+            p.println();
         }
+
+        if (!innerTestClasses.isEmpty()) {
+            generateSuiteMethod(p, testClassModel);
+        }
+
+        p.popIndent();
+        p.println("}");
+    }
+
+    private static void generateSuiteMethod(Printer p, TestClassModel testClassModel) {
+        p.println("public static Test suite() {");
+        p.pushIndent();
+
+        p.println("TestSuite suite = new TestSuite(\"", testClassModel.getName(), "\");");
+        if (!testClassModel.getTestMethods().isEmpty()) {
+            p.println("suite.addTestSuite(", testClassModel.getName(), ".class);");
+        }
+        for (TestClassModel innerTestClass : testClassModel.getInnerTestClasses()) {
+            if (innerTestClass.isEmpty()) {
+                continue;
+            }
+            if (innerTestClass.getInnerTestClasses().isEmpty()) {
+                p.println("suite.addTestSuite(", innerTestClass.getName(), ".class);");
+            }
+            else {
+                p.println("suite.addTest(", innerTestClass.getName(), ".suite());");
+            }
+        }
+        p.println("return suite;");
 
         p.popIndent();
         p.println("}");

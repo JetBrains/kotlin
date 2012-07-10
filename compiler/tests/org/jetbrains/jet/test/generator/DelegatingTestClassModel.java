@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.test.generator;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 
 /**
@@ -33,14 +35,21 @@ public class DelegatingTestClassModel implements TestClassModel {
         return delegate.getName();
     }
 
+    @NotNull
     @Override
     public Collection<TestClassModel> getInnerTestClasses() {
         return delegate.getInnerTestClasses();
     }
 
+    @NotNull
     @Override
     public Collection<TestMethodModel> getTestMethods() {
         return delegate.getTestMethods();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return delegate.isEmpty();
     }
 
     @Override

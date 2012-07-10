@@ -36,6 +36,9 @@ public class SimpleTestClassModel implements TestClassModel {
     private final String doTestMethodName;
     private final String testClassName;
 
+    private Collection<TestClassModel> innerTestClasses;
+    private Collection<TestMethodModel> testMethods;
+
     public SimpleTestClassModel(@NotNull File rootFile, boolean recursive, @NotNull String extension, @NotNull String doTestMethodName) {
         this.rootFile = rootFile;
         this.recursive = recursive;
@@ -44,62 +47,56 @@ public class SimpleTestClassModel implements TestClassModel {
         this.testClassName = StringUtil.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(rootFile.getName()));
     }
 
+    @NotNull
     @Override
     public Collection<TestClassModel> getInnerTestClasses() {
         if (!rootFile.isDirectory() || !recursive) {
             return Collections.emptyList();
         }
-        List<TestClassModel> children = Lists.newArrayList();
-        File[] files = rootFile.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    children.add(new SimpleTestClassModel(file, recursive, extension, doTestMethodName));
+        if (innerTestClasses == null) {
+            List<TestClassModel> children = Lists.newArrayList();
+            File[] files = rootFile.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        children.add(new SimpleTestClassModel(file, recursive, extension, doTestMethodName));
+                    }
                 }
             }
+            innerTestClasses = children;
         }
-        return children;
+        return innerTestClasses;
+    }
+
+    @NotNull
+    @Override
+    public Collection<TestMethodModel> getTestMethods() {
+        if (testMethods == null) {
+            if (!rootFile.isDirectory()) {
+                testMethods = Collections.<TestMethodModel>singletonList(new SimpleTestMethodModel(rootFile, rootFile, doTestMethodName));
+            }
+            else {
+                List<TestMethodModel> result = Lists.newArrayList();
+
+                result.add(new TestAllFilesPresentMethodModel());
+
+                File[] listFiles = rootFile.listFiles();
+                if (listFiles != null) {
+                    for (File file : listFiles) {
+                        if (!file.isDirectory() && file.getName().endsWith("." + extension)) {
+                            result.add(new SimpleTestMethodModel(rootFile, file, doTestMethodName));
+                        }
+                    }
+                }
+                testMethods = result;
+            }
+        }
+        return testMethods;
     }
 
     @Override
-    public Collection<TestMethodModel> getTestMethods() {
-        if (!rootFile.isDirectory()) {
-            return Collections.<TestMethodModel>singletonList(new SimpleTestMethodModel(rootFile, rootFile, doTestMethodName));
-        }
-        List<TestMethodModel> result = Lists.newArrayList();
-
-        result.add(new TestMethodModel() {
-            @Override
-            public String getName() {
-                return "testAllFilesPresentIn" + testClassName;
-            }
-
-            @Override
-            public void generateBody(@NotNull Printer p, @NotNull String generatorClassFqName) {
-                p.println("JetTestUtils.assertAllTestsPresentByMetadata(" +
-                                "this.getClass(), " +
-                                "\"", generatorClassFqName, "\", " +
-                                "new File(\"", JetTestUtils.getFilePath(rootFile) + "\"), \"",
-                                extension,
-                                "\", ", false,
-                          ");");
-            }
-
-            @Override
-            public String getDataString() {
-                return null;
-            }
-        });
-
-        File[] listFiles = rootFile.listFiles();
-        if (listFiles != null) {
-            for (File file : listFiles) {
-                if (!file.isDirectory() && file.getName().endsWith("." + extension)) {
-                    result.add(new SimpleTestMethodModel(rootFile, file, doTestMethodName));
-                }
-            }
-        }
-        return result;
+    public boolean isEmpty() {
+        return getTestMethods().size() == 1 && getInnerTestClasses().isEmpty();
     }
 
     @Override
@@ -110,5 +107,29 @@ public class SimpleTestClassModel implements TestClassModel {
     @Override
     public String getName() {
         return testClassName;
+    }
+
+    private class TestAllFilesPresentMethodModel implements TestMethodModel {
+
+        @Override
+        public String getName() {
+            return "testAllFilesPresentIn" + testClassName;
+        }
+
+        @Override
+        public void generateBody(@NotNull Printer p, @NotNull String generatorClassFqName) {
+            p.println("JetTestUtils.assertAllTestsPresentByMetadata(" +
+                            "this.getClass(), " +
+                            "\"", generatorClassFqName, "\", " +
+                            "new File(\"", JetTestUtils.getFilePath(rootFile) + "\"), \"",
+                            extension,
+                            "\", ", false,
+                      ");");
+        }
+
+        @Override
+        public String getDataString() {
+            return null;
+        }
     }
 }

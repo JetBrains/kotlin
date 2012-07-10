@@ -32,7 +32,6 @@ public class ReadJavaBinaryClassTestGenerator {
         String extension = "java";
         new TestGenerator(
                 "compiler/tests/",
-                extension,
                 aPackage,
                 "ReadJavaBinaryClassTestGenerated",
                 aPackage,

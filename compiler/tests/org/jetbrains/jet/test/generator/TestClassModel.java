@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.test.generator;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 
 /**
@@ -23,7 +25,11 @@ import java.util.Collection;
  */
 public interface TestClassModel extends TestEntityModel {
 
+    @NotNull
     Collection<TestClassModel> getInnerTestClasses();
 
+    @NotNull
     Collection<TestMethodModel> getTestMethods();
+
+    boolean isEmpty();
 }
