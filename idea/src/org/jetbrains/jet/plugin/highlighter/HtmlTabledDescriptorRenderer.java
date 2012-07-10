@@ -16,119 +16,43 @@
 
 package org.jetbrains.jet.plugin.highlighter;
 
-import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
+
 import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.*;
+import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.*;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 /**
 * @author svtk
 */
-public class TablesRenderer {
-    public static class Table {
-        public final TextRow firstText;
-        public final List<TableRow> rows;
+public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
 
-        public Table(TextRow firstText, List<TableRow> rows) {
-            this.firstText = firstText;
-            this.rows = rows;
+    protected void renderText(TextRenderer textRenderer, StringBuilder result) {
+        for (TextRenderer.TextElement element : textRenderer.elements) {
+            if (element.type == TextRenderer.TextElementType.DEFAULT) {
+                result.append(element.text);
+            }
+            else if (element.type == TextRenderer.TextElementType.ERROR) {
+                result.append(error(element.text));
+            }
+            else if (element.type == TextRenderer.TextElementType.STRONG) {
+                result.append(strong(element.text));
+            }
         }
     }
 
-    public interface TableRow {
-    }
-
-    public static class TextRow implements TableRow {
-        public final String text;
-
-        public TextRow(String text) {
-            this.text = text;
-        }
-    }
-
-    public static class DescriptorRow implements TableRow {
-        public final CallableDescriptor descriptor;
-
-        public DescriptorRow(CallableDescriptor descriptor) {
-            this.descriptor = descriptor;
-        }
-    }
-
-    public static class FunctionArgumentsRow implements TableRow {
-        public final JetType receiverType;
-        public final List<JetType> argumentTypes;
-        public final Collection<ConstraintPosition> errorPositions;
-
-        public FunctionArgumentsRow(JetType receiverType, List<JetType> argumentTypes, Collection<ConstraintPosition> errorPositions) {
-            this.receiverType = receiverType;
-            this.argumentTypes = argumentTypes;
-            this.errorPositions = errorPositions;
-        }
-    }
-
-    private final List<Table> previousTables = Lists.newArrayList();
-    private TextRow currentFirstText;
-    private List<TableRow> currentRows;
-
-    public TablesRenderer newElement() {
-        previousTables.add(new Table(currentFirstText, currentRows));
-        currentFirstText = null;
-        currentRows = Lists.newArrayList();
-        return this;
-    }
-
-    public TablesRenderer text(String text) {
-        if (currentRows.isEmpty()) {
-            currentFirstText = new TextRow(text);
-            return this;
-        }
-        currentRows.add(new TextRow(text));
-        return this;
-    }
-
-    public TablesRenderer text(String text, Object... args) {
-        return text(String.format(text, args));
-    }
-
-    public TablesRenderer descriptor(CallableDescriptor descriptor) {
-        currentRows.add(new DescriptorRow(descriptor));
-        return this;
-    }
-
-    public TablesRenderer functionArgumentTypeList(@Nullable JetType receiverType, @NotNull List<JetType> argumentTypes) {
-        return functionArgumentTypeList(receiverType, argumentTypes, Collections.<ConstraintPosition>emptyList());
-    }
-
-    public TablesRenderer functionArgumentTypeList(@Nullable JetType receiverType,
-            @NotNull List<JetType> argumentTypes,
-            Collection<ConstraintPosition> errorPositions) {
-        currentRows.add(new FunctionArgumentsRow(receiverType, argumentTypes, errorPositions));
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder result = new StringBuilder();
-        newElement();
-        for (Table table : previousTables) {
-            renderTable(table, result);
-        }
-        return result.toString();
-    }
-
-    private static int countRowsNumber(Table table) {
+    private int countRowsNumber(TableRenderer table) {
         int argumentsNumber = 0;
         for (TableRow row : table.rows) {
             if (row instanceof DescriptorRow) {
@@ -149,21 +73,19 @@ public class TablesRenderer {
         return argumentsNumber + 6;
     }
 
-
-
-    private static void renderTable(Table table, StringBuilder result) {
-        if (table.firstText == null && table.rows.isEmpty()) return;
-        if (table.firstText != null) {
-            result.append(table.firstText.text);
-        }
+    @Override
+    protected void renderTable(TableRenderer table, StringBuilder result) {
+        if (table.rows.isEmpty()) return;
         int rowsNumber = countRowsNumber(table);
 
 
         result.append("<table>");
         for (TableRow row : table.rows) {
             result.append("<tr>");
-            if (row instanceof TextRow) {
-                tdColspan(result, ((TextRow) row).text, rowsNumber);
+            if (row instanceof TextRenderer) {
+                StringBuilder rowText = new StringBuilder();
+                renderText((TextRenderer) row, rowText);
+                tdColspan(result, rowText.toString(), rowsNumber);
             }
             if (row instanceof DescriptorRow) {
                 result.append(DESCRIPTOR_IN_TABLE.render(((DescriptorRow) row).descriptor));
@@ -179,7 +101,7 @@ public class TablesRenderer {
         result.append("</table>");
     }
 
-    private static void renderFunctionArguments(@Nullable JetType receiverType, @NotNull List<JetType> argumentTypes, Collection<ConstraintPosition> errorPositions, StringBuilder result) {
+    private void renderFunctionArguments(@Nullable JetType receiverType, @NotNull List<JetType> argumentTypes, Collection<ConstraintPosition> errorPositions, StringBuilder result) {
         boolean hasReceiver = receiverType != null;
         tdSpace(result);
         String receiver = "";
@@ -213,20 +135,25 @@ public class TablesRenderer {
         td(result, strong(")"));
     }
 
-    public static TablesRenderer create() {
-        return new TablesRenderer();
+    public static HtmlTabledDescriptorRenderer create() {
+        return new HtmlTabledDescriptorRenderer();
     }
 
-    TablesRenderer(@Nullable TextRow firstText, @NotNull List<TableRow> rows) {
-        this.currentFirstText = firstText;
-        this.currentRows = rows;
+    protected HtmlTabledDescriptorRenderer() {
+        super();
     }
 
-    TablesRenderer() {
-        this(null, Lists.<TableRow>newArrayList());
-    }
+    public static final DescriptorRenderer DESCRIPTOR_IN_TABLE = new DescriptorRenderer.HtmlDescriptorRenderer() {
+        @Override
+        protected boolean shouldRenderDefinedIn() {
+            return false;
+        }
 
-    public static final DescriptorRenderer DESCRIPTOR_IN_TABLE = new DescriptorRenderer.HtmlDescriptorRenderer(false, false) {
+        @Override
+        protected boolean shouldRenderModifiers() {
+            return false;
+        }
+
         @NotNull
         @Override
         public String render(@NotNull DeclarationDescriptor declarationDescriptor) {
