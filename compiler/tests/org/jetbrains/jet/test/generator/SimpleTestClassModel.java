@@ -111,7 +111,7 @@ public class SimpleTestClassModel implements TestClassModel {
 
     @Override
     public String getDataString() {
-        return rootFile.getPath();
+        return JetTestUtils.getFilePath(rootFile);
     }
 
     @Override

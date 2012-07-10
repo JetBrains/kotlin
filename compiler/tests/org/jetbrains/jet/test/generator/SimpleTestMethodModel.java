@@ -44,7 +44,7 @@ public class SimpleTestMethodModel implements TestMethodModel {
 
     @Override
     public String getDataString() {
-        return FileUtil.getRelativePath(rootDir, file);
+        return JetTestUtils.getFilePath(new File(FileUtil.getRelativePath(rootDir, file)));
     }
 
     @Override
