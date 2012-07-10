@@ -177,10 +177,6 @@ public class TestGenerator {
         p.println();
 
         p.println("import java.io.File;");
-        p.println("import java.io.FileFilter;");
-        p.println("import java.lang.reflect.Method;");
-        p.println("import java.util.HashSet;");
-        p.println("import java.util.Set;");
         p.println("import org.jetbrains.jet.JetTestUtils;");
         p.println("import org.jetbrains.jet.test.TestMetadata;");
         p.println();
