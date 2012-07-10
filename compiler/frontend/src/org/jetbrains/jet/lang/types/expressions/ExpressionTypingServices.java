@@ -20,6 +20,8 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -366,7 +368,8 @@ public class ExpressionTypingServices {
                 if (diagnostic.getFactory() == TYPE_MISMATCH && diagnostic.getPsiElement() == expressionToWatch) {
                     mismatchFound[0] = true;
                 }
-                if (TYPE_INFERENCE_ERRORS.contains(diagnostic.getFactory()) && diagnostic.getPsiElement().getParent() == expressionToWatch) {
+                if (TYPE_INFERENCE_ERRORS.contains(diagnostic.getFactory()) &&
+                    PsiTreeUtil.getParentOfType(diagnostic.getPsiElement(), JetQualifiedExpression.class, false) == expressionToWatch) {
                     mismatchFound[0] = true;
                 }
                 super.report(diagnostic);
