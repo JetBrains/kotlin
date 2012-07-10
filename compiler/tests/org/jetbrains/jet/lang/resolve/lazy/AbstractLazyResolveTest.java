@@ -21,6 +21,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
+import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
@@ -35,14 +36,17 @@ import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.junit.After;
-import org.junit.BeforeClass;
 
 import java.util.Collections;
 
 /**
  * @author abreslav
  */
-public abstract class AbstractLazyResolveTest {
+public abstract class AbstractLazyResolveTest extends TestCase {
+
+    static {
+        System.setProperty("java.awt.headless", "true");
+    }
 
     private final Disposable rootDisposable = new Disposable() {
         @Override
@@ -51,8 +55,8 @@ public abstract class AbstractLazyResolveTest {
     };
 
     public class JetCoreEnvironmentWithDisposable {
-
         public final JetCoreEnvironment jetCoreEnvironment;
+
         public final Project project;
 
         public JetCoreEnvironmentWithDisposable(@NotNull ConfigurationKind configurationKind) {
@@ -66,11 +70,6 @@ public abstract class AbstractLazyResolveTest {
 
     protected Project getProject() {
         return regularEnvironment.project;
-    }
-
-    @BeforeClass
-    public static void setUp() throws Exception {
-        System.setProperty("java.awt.headless", "true");
     }
 
     @After

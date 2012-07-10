@@ -44,14 +44,14 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestSinglePackage("compiler/testData/readKotlinBinaryClass/class/Class.kt");
             }
             
-            @TestMetadata("ClassInnerClass.kt")
-            public void testClassInnerClass() throws Exception {
-                doTestSinglePackage("compiler/testData/readKotlinBinaryClass/class/ClassInnerClass.kt");
-            }
-            
             @TestMetadata("ClassInParam.kt")
             public void testClassInParam() throws Exception {
                 doTestSinglePackage("compiler/testData/readKotlinBinaryClass/class/ClassInParam.kt");
+            }
+            
+            @TestMetadata("ClassInnerClass.kt")
+            public void testClassInnerClass() throws Exception {
+                doTestSinglePackage("compiler/testData/readKotlinBinaryClass/class/ClassInnerClass.kt");
             }
             
             @TestMetadata("ClassOutParam.kt")
@@ -271,39 +271,6 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestGenerator", new File("compiler/testData/readKotlinBinaryClass/fun"), "kt", false);
             }
             
-            @TestMetadata("compiler/testData/readKotlinBinaryClass/fun/genericWithoutTypeVariables")
-            public static class GenericWithoutTypeVariables extends AbstractLazyResolveNamespaceComparingTest {
-                public void testAllFilesPresentInGenericWithoutTypeVariables() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestGenerator", new File("compiler/testData/readKotlinBinaryClass/fun/genericWithoutTypeVariables"), "kt", false);
-                }
-                
-                @TestMetadata("FunClassParamNotNull.kt")
-                public void testFunClassParamNotNull() throws Exception {
-                    doTestSinglePackage("compiler/testData/readKotlinBinaryClass/fun/genericWithoutTypeVariables/FunClassParamNotNull.kt");
-                }
-                
-                @TestMetadata("FunClassParamNullable.kt")
-                public void testFunClassParamNullable() throws Exception {
-                    doTestSinglePackage("compiler/testData/readKotlinBinaryClass/fun/genericWithoutTypeVariables/FunClassParamNullable.kt");
-                }
-                
-                @TestMetadata("FunParamNullable.kt")
-                public void testFunParamNullable() throws Exception {
-                    doTestSinglePackage("compiler/testData/readKotlinBinaryClass/fun/genericWithoutTypeVariables/FunParamNullable.kt");
-                }
-                
-                @TestMetadata("ReturnTypeClassParamNotNull.kt")
-                public void testReturnTypeClassParamNotNull() throws Exception {
-                    doTestSinglePackage("compiler/testData/readKotlinBinaryClass/fun/genericWithoutTypeVariables/ReturnTypeClassParamNotNull.kt");
-                }
-                
-                @TestMetadata("ReturnTypeClassParamNullable.kt")
-                public void testReturnTypeClassParamNullable() throws Exception {
-                    doTestSinglePackage("compiler/testData/readKotlinBinaryClass/fun/genericWithoutTypeVariables/ReturnTypeClassParamNullable.kt");
-                }
-                
-            }
-            
             @TestMetadata("compiler/testData/readKotlinBinaryClass/fun/genericWithTypeVariables")
             public static class GenericWithTypeVariables extends AbstractLazyResolveNamespaceComparingTest {
                 public void testAllFilesPresentInGenericWithTypeVariables() throws Exception {
@@ -383,6 +350,39 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 @TestMetadata("FunTwoTypeParams2.kt")
                 public void testFunTwoTypeParams2() throws Exception {
                     doTestSinglePackage("compiler/testData/readKotlinBinaryClass/fun/genericWithTypeVariables/FunTwoTypeParams2.kt");
+                }
+                
+            }
+            
+            @TestMetadata("compiler/testData/readKotlinBinaryClass/fun/genericWithoutTypeVariables")
+            public static class GenericWithoutTypeVariables extends AbstractLazyResolveNamespaceComparingTest {
+                public void testAllFilesPresentInGenericWithoutTypeVariables() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestGenerator", new File("compiler/testData/readKotlinBinaryClass/fun/genericWithoutTypeVariables"), "kt", false);
+                }
+                
+                @TestMetadata("FunClassParamNotNull.kt")
+                public void testFunClassParamNotNull() throws Exception {
+                    doTestSinglePackage("compiler/testData/readKotlinBinaryClass/fun/genericWithoutTypeVariables/FunClassParamNotNull.kt");
+                }
+                
+                @TestMetadata("FunClassParamNullable.kt")
+                public void testFunClassParamNullable() throws Exception {
+                    doTestSinglePackage("compiler/testData/readKotlinBinaryClass/fun/genericWithoutTypeVariables/FunClassParamNullable.kt");
+                }
+                
+                @TestMetadata("FunParamNullable.kt")
+                public void testFunParamNullable() throws Exception {
+                    doTestSinglePackage("compiler/testData/readKotlinBinaryClass/fun/genericWithoutTypeVariables/FunParamNullable.kt");
+                }
+                
+                @TestMetadata("ReturnTypeClassParamNotNull.kt")
+                public void testReturnTypeClassParamNotNull() throws Exception {
+                    doTestSinglePackage("compiler/testData/readKotlinBinaryClass/fun/genericWithoutTypeVariables/ReturnTypeClassParamNotNull.kt");
+                }
+                
+                @TestMetadata("ReturnTypeClassParamNullable.kt")
+                public void testReturnTypeClassParamNullable() throws Exception {
+                    doTestSinglePackage("compiler/testData/readKotlinBinaryClass/fun/genericWithoutTypeVariables/ReturnTypeClassParamNullable.kt");
                 }
                 
             }
@@ -478,8 +478,8 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             public static Test suite() {
                 TestSuite suite = new TestSuite("Fun");
                 suite.addTestSuite(Fun.class);
-                suite.addTestSuite(GenericWithoutTypeVariables.class);
                 suite.addTestSuite(GenericWithTypeVariables.class);
+                suite.addTestSuite(GenericWithoutTypeVariables.class);
                 suite.addTestSuite(NonGeneric.class);
                 return suite;
             }
@@ -581,11 +581,6 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestSinglePackage("compiler/testData/readKotlinBinaryClass/prop/ExtVarIntTQInClass.kt");
             }
             
-            @TestMetadata("ExtVarl.kt")
-            public void testExtVarl() throws Exception {
-                doTestSinglePackage("compiler/testData/readKotlinBinaryClass/prop/ExtVarl.kt");
-            }
-            
             @TestMetadata("ExtVarMapPQInt.kt")
             public void testExtVarMapPQInt() throws Exception {
                 doTestSinglePackage("compiler/testData/readKotlinBinaryClass/prop/ExtVarMapPQInt.kt");
@@ -599,6 +594,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             @TestMetadata("ExtVarTQIntInClass.kt")
             public void testExtVarTQIntInClass() throws Exception {
                 doTestSinglePackage("compiler/testData/readKotlinBinaryClass/prop/ExtVarTQIntInClass.kt");
+            }
+            
+            @TestMetadata("ExtVarl.kt")
+            public void testExtVarl() throws Exception {
+                doTestSinglePackage("compiler/testData/readKotlinBinaryClass/prop/ExtVarl.kt");
             }
             
             @TestMetadata("NsVal.kt")
@@ -734,11 +734,6 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestSinglePackage("compiler/testData/readKotlinBinaryClass/type/ListOfAnyQ.kt");
             }
             
-            @TestMetadata("ListOfjlString.kt")
-            public void testListOfjlString() throws Exception {
-                doTestSinglePackage("compiler/testData/readKotlinBinaryClass/type/ListOfjlString.kt");
-            }
-            
             @TestMetadata("ListOfStar.kt")
             public void testListOfStar() throws Exception {
                 doTestSinglePackage("compiler/testData/readKotlinBinaryClass/type/ListOfStar.kt");
@@ -747,6 +742,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             @TestMetadata("ListOfString.kt")
             public void testListOfString() throws Exception {
                 doTestSinglePackage("compiler/testData/readKotlinBinaryClass/type/ListOfString.kt");
+            }
+            
+            @TestMetadata("ListOfjlString.kt")
+            public void testListOfjlString() throws Exception {
+                doTestSinglePackage("compiler/testData/readKotlinBinaryClass/type/ListOfjlString.kt");
             }
             
             @TestMetadata("Nothing.kt")
@@ -905,14 +905,14 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             doTestSinglePackage("compiler/testData/readJavaBinaryClass/InnerClass.kt");
         }
         
-        @TestMetadata("InnerClassesInGeneric.kt")
-        public void testInnerClassesInGeneric() throws Exception {
-            doTestSinglePackage("compiler/testData/readJavaBinaryClass/InnerClassesInGeneric.kt");
-        }
-        
         @TestMetadata("InnerClassReferencesOuterTP.kt")
         public void testInnerClassReferencesOuterTP() throws Exception {
             doTestSinglePackage("compiler/testData/readJavaBinaryClass/InnerClassReferencesOuterTP.kt");
+        }
+        
+        @TestMetadata("InnerClassesInGeneric.kt")
+        public void testInnerClassesInGeneric() throws Exception {
+            doTestSinglePackage("compiler/testData/readJavaBinaryClass/InnerClassesInGeneric.kt");
         }
         
         @TestMetadata("MethodReferencesOuterClassTP.kt")
@@ -1082,13 +1082,13 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             
             @TestMetadata("compiler/testData/readJavaBinaryClass/kotlinSignature/error")
             public static class Error extends AbstractLazyResolveNamespaceComparingTest {
-                public void testAllFilesPresentInError() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestGenerator", new File("compiler/testData/readJavaBinaryClass/kotlinSignature/error"), "kt", false);
-                }
-                
                 @TestMetadata("AddingNullability.kt")
                 public void testAddingNullability() throws Exception {
                     doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/AddingNullability.kt");
+                }
+                
+                public void testAllFilesPresentInError() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestGenerator", new File("compiler/testData/readJavaBinaryClass/kotlinSignature/error"), "kt", false);
                 }
                 
                 @TestMetadata("ExtraUpperBound.kt")
@@ -1166,11 +1166,6 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/WrongTypeVariance.kt");
                 }
                 
-                @TestMetadata("WrongValueParametersCount.kt")
-                public void testWrongValueParametersCount() throws Exception {
-                    doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/WrongValueParametersCount.kt");
-                }
-                
                 @TestMetadata("WrongValueParameterStructure1.kt")
                 public void testWrongValueParameterStructure1() throws Exception {
                     doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/WrongValueParameterStructure1.kt");
@@ -1179,6 +1174,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 @TestMetadata("WrongValueParameterStructure2.kt")
                 public void testWrongValueParameterStructure2() throws Exception {
                     doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/WrongValueParameterStructure2.kt");
+                }
+                
+                @TestMetadata("WrongValueParametersCount.kt")
+                public void testWrongValueParametersCount() throws Exception {
+                    doTestSinglePackage("compiler/testData/readJavaBinaryClass/kotlinSignature/error/WrongValueParametersCount.kt");
                 }
                 
             }
