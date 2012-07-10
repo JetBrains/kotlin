@@ -50,6 +50,11 @@ import java.util.concurrent.ConcurrentMap;
  */
 @Deprecated
 public class CoreAnnotationsProvider extends ExternalAnnotationsProvider {
+    static {
+        // This is an ugly workaround for JDOM 1.1 used from application started from Ant 1.8 without forking
+        System.setProperty("javax.xml.parsers.SAXParserFactory", "com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl");
+    }
+
     private static final Logger LOG = Logger.getInstance("#" + CoreAnnotationsProvider.class.getName());
     @NotNull private static final List<PsiFile> NULL = new ArrayList<PsiFile>();
     @NotNull private final ConcurrentMap<String, List<PsiFile>>
