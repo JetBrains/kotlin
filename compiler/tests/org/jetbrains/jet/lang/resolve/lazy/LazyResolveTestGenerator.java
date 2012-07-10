@@ -52,7 +52,7 @@ public class LazyResolveTestGenerator {
                                        TEST_DATA_FILE_EXTENSION,
                                        "doTest")
             ),
-            LazyResolveTestGenerator.class.getSimpleName()
+            LazyResolveTestGenerator.class
         ).generateAndSave();
     }
 
@@ -76,7 +76,7 @@ public class LazyResolveTestGenerator {
                                        TEST_DATA_FILE_EXTENSION,
                                        "doTest")
             ),
-            LazyResolveTestGenerator.class.getSimpleName()
+            LazyResolveTestGenerator.class
         ).generateAndSave();
     }
 

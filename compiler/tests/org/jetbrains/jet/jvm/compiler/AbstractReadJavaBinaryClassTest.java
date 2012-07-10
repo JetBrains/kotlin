@@ -120,7 +120,7 @@ public abstract class AbstractReadJavaBinaryClassTest extends TestCaseWithTmpdir
                 Arrays.asList(
                         new SimpleTestClassModel(new File("compiler/testData/readJavaBinaryClass"), true, extension, "doTest")
                 ),
-                AbstractReadJavaBinaryClassTest.class.getName(),
+                AbstractReadJavaBinaryClassTest.class,
                 TestGenerator.TargetTestFrameworks.JUNIT_3
         ).generateAndSave();
     }

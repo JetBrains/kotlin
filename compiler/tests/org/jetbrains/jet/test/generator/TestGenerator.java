@@ -139,10 +139,10 @@ public class TestGenerator {
             @NotNull String suiteClassName,
             @NotNull Class<?> baseTestClass,
             @NotNull Collection<? extends TestClassModel> testClassModels,
-            @NotNull String generatorName
+            @NotNull Class<?> generatorClass
     ) {
         this(baseDir, suiteClassPackage, suiteClassName, baseTestClass, testClassModels,
-             generatorName, TargetTestFrameworks.JUNIT_4);
+             generatorClass, TargetTestFrameworks.JUNIT_4);
     }
 
     public TestGenerator(
@@ -151,7 +151,7 @@ public class TestGenerator {
             @NotNull String suiteClassName,
             @NotNull Class<?> baseTestClass,
             @NotNull Collection<? extends TestClassModel> testClassModels,
-            @NotNull String generatorName,
+            @NotNull Class<?> generatorClass,
             @NotNull TargetTestFramework targetTestFramework
     ) {
         this.baseDir = baseDir;
@@ -160,7 +160,7 @@ public class TestGenerator {
         this.baseTestClassPackage = baseTestClass.getPackage().getName();
         this.baseTestClassName = baseTestClass.getSimpleName();
         this.testClassModels = Lists.newArrayList(testClassModels);
-        this.generatorName = generatorName;
+        this.generatorName = generatorClass.getCanonicalName();
         this.targetTestFramework = targetTestFramework;
     }
 
