@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -25,7 +26,6 @@ import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Queue;
 
 /**
  * @author svtk
@@ -46,25 +46,34 @@ public interface ConstraintSystem {
 
     void addConstraint(@NotNull ConstraintType constraintType, @NotNull JetType exactType, @NotNull JetType expectedType, @NotNull ConstraintPosition constraintPosition);
 
-    TypeBounds getTypeBounds(TypeParameterDescriptor typeParameterDescriptor);
-
-    Map<TypeParameterDescriptor, TypeBounds> getTypeBoundsMap();
-
     boolean isSuccessful();
 
     boolean hasContradiction();
 
+    boolean hasConflictingParameters();
+
+    boolean hasUnknownParameters();
+
+    boolean hasTypeConstructorMismatch();
+
+    TypeBounds getTypeBounds(TypeParameterDescriptor typeParameterDescriptor);
+
+    Map<TypeParameterDescriptor, TypeBounds> getTypeBoundsMap();
+
+    @Nullable
     TypeParameterDescriptor getFirstConflictingParameter();
 
+    @NotNull
     TypeSubstitutor getSubstitutor();
 
+    @NotNull
     Collection<TypeSubstitutor> getSubstitutors();
 
+    @Nullable
     JetType getValue(TypeParameterDescriptor typeParameterDescriptor);
 
-    boolean hasError();
-
-    Queue<ConstraintPosition> getErrorConstraintPositions();
+    @NotNull
+    Collection<ConstraintPosition> getErrorConstraintPositions();
 
     boolean checkUpperBound(@NotNull TypeParameterDescriptor typeParameterDescriptor);
 }

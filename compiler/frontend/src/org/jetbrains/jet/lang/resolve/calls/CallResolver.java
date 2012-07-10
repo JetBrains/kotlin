@@ -399,15 +399,17 @@ public class CallResolver {
     }
 
     private void reportTypeInferenceFailed(@NotNull BindingTrace trace, @NotNull Call call, @NotNull InferenceErrorData inferenceErrorData) {
+        assert !inferenceErrorData.constraintSystem.isSuccessful();
         JetExpression calleeExpression = call.getCalleeExpression();
         PsiElement element = calleeExpression != null ? calleeExpression : call.getCallElement();
-        if (inferenceErrorData.constraintSystem.hasError()) {
+        if (inferenceErrorData.constraintSystem.hasTypeConstructorMismatch()) {
             trace.report(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH.on(element, inferenceErrorData));
         }
-        else if (inferenceErrorData.constraintSystem.hasContradiction()) {
+        else if (inferenceErrorData.constraintSystem.hasConflictingParameters()) {
             trace.report(TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS.on(element, inferenceErrorData));
         }
         else {
+            assert inferenceErrorData.constraintSystem.hasUnknownParameters();
             trace.report(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(element, inferenceErrorData));
         }
     }
@@ -415,7 +417,8 @@ public class CallResolver {
     private <D extends CallableDescriptor> void checkBounds(ResolvedCallImpl<D> call, ConstraintSystem constraintSystem, BasicResolutionContext context) {
         for (TypeParameterDescriptor typeParameter : call.getCandidateDescriptor().getTypeParameters()) {
             if (!constraintSystem.checkUpperBound(typeParameter)) {
-                context.trace.report(Errors.TYPE_INFERENCE_UPPER_BOUND_VIOLATED.on(context.call.getCallElement(), InferenceErrorData.create(call.getCandidateDescriptor(), constraintSystem)));
+                context.trace.report(Errors.TYPE_INFERENCE_UPPER_BOUND_VIOLATED.on(context.call.getCallElement(), InferenceErrorData
+                        .create(call.getCandidateDescriptor(), constraintSystem)));
             }
         }
     }
@@ -765,7 +768,7 @@ public class CallResolver {
             constraintSystem.addSubtypingConstraint(receiverArgument.getType(), receiverParameter.getType(), ConstraintPosition.RECEIVER_POSITION);
         }
 
-        ConstraintSystemImpl constraintSystemWithRightTypeParameters = new ConstraintSystemImpl(constraintSystem.hasError(), constraintSystem.getErrorConstraintPositions());
+        ConstraintSystemImpl constraintSystemWithRightTypeParameters = new ConstraintSystemImpl(constraintSystem.hasTypeConstructorMismatch(), constraintSystem.getErrorConstraintPositions());
         for (TypeParameterDescriptor typeParameterDescriptor : candidate.getTypeParameters()) {
             TypeBounds typeBounds = constraintSystem.getTypeBounds(
                     candidateWithFreshVariables.getTypeParameters().get(typeParameterDescriptor.getIndex()));

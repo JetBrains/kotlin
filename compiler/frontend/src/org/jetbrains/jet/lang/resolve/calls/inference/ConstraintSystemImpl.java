@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -49,15 +48,15 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
     private final Map<TypeParameterDescriptor, TypeBounds> typeParameterBounds = Maps.newLinkedHashMap();
     private final TypeSubstitutor typeSubstitutor;
-    private final Queue<ConstraintPosition> errorConstraintPositions;
-    private boolean error;
+    private final Collection<ConstraintPosition> errorConstraintPositions;
+    private boolean typeConstructorMismatch;
 
     public ConstraintSystemImpl() {
-        this(false, Lists.<ConstraintPosition>newLinkedList());
+        this(false, Lists.<ConstraintPosition>newArrayList());
     }
 
-    public ConstraintSystemImpl(boolean error, Queue<ConstraintPosition> errorConstraintPositions) {
-        this.error = error;
+    public ConstraintSystemImpl(boolean typeConstructorMismatch, Collection<ConstraintPosition> errorConstraintPositions) {
+        this.typeConstructorMismatch = typeConstructorMismatch;
         this.errorConstraintPositions = errorConstraintPositions;
         this.typeSubstitutor = TypeSubstitutor.create(new TypeSubstitution() {
             @Override
@@ -88,12 +87,13 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     @Override
-    public boolean hasError() {
-        return error;
+    public boolean hasTypeConstructorMismatch() {
+        return typeConstructorMismatch;
     }
 
+    @NotNull
     @Override
-    public Queue<ConstraintPosition> getErrorConstraintPositions() {
+    public Collection<ConstraintPosition> getErrorConstraintPositions() {
         return errorConstraintPositions;
     }
 
@@ -164,7 +164,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
             if (exactType.getConstructor().getParameters().size() != expectedType.getConstructor().getParameters().size()) {
                 errorConstraintPositions.add(constraintPosition);
-                error = true;
+                typeConstructorMismatch = true;
                 return;
             }
 
@@ -181,15 +181,12 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                 return;
             }
         }
-        error = true;
+        typeConstructorMismatch = true;
         errorConstraintPositions.add(constraintPosition);
     }
 
     private boolean checkConstraints(TypeParameterDescriptor typeParameterDescriptor) {
         //todo refactor
-        if (error) {
-            return false;
-        }
         TypeBounds typeBounds = typeParameterBounds.get(typeParameterDescriptor);
         if (typeBounds == null || typeBounds.isEmpty()) return true;
         JetType exactType = null;
@@ -268,14 +265,30 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             values.addAll(typeBounds.getExactValues());
             if (!typeBounds.getLowerBounds().isEmpty()) {
                 JetType superTypeOfLowerBounds = CommonSupertypes.commonSupertype(typeBounds.getLowerBounds());
+                if (values.isEmpty()) {
+                    values.add(superTypeOfLowerBounds);
+                }
                 for (JetType value : values) {
                     if (!JetTypeChecker.INSTANCE.isSubtypeOf(superTypeOfLowerBounds, value)) {
                         values.add(superTypeOfLowerBounds);
+                        break;
+                    }
+                }
+            }
+            if (!typeBounds.getUpperBounds().isEmpty()) {
+                //todo subTypeOfUpperBounds
+                JetType subTypeOfUpperBounds = typeBounds.getUpperBounds().iterator().next(); //todo
+                if (values.isEmpty()) {
+                    values.add(subTypeOfUpperBounds);
+                }
+                for (JetType value : values) {
+                    if (!JetTypeChecker.INSTANCE.isSubtypeOf(value, subTypeOfUpperBounds)) {
+                        values.add(subTypeOfUpperBounds);
+                        break;
                     }
                 }
             }
         }
-        //todo subTypeOfLowerBounds
         return values;
     }
 
@@ -291,6 +304,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         return null;
     }
 
+    @NotNull
     @Override
     public Collection<TypeSubstitutor> getSubstitutors() {
         TypeParameterDescriptor firstConflictingParameter = getFirstConflictingParameter();
@@ -334,18 +348,25 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
     @Override
     public boolean isSuccessful() {
-        return !error && !hasUnknownParameters() && !hasContradiction();
+        return !hasTypeConstructorMismatch() && !hasUnknownParameters() && !hasConflictingParameters();
     }
 
     @Override
     public boolean hasContradiction() {
+        return hasTypeConstructorMismatch() || hasConflictingParameters();
+    }
+
+    @Override
+    public boolean hasConflictingParameters() {
         for (TypeParameterDescriptor typeParameter : typeParameterBounds.keySet()) {
-            if (!checkConstraints(typeParameter)) return true;
+            if (getValues(typeParameter).size() > 1) return true;
+            //if (!checkConstraints(typeParameter)) return true;
         }
         return false;
     }
 
-    private boolean hasUnknownParameters() {
+    @Override
+    public boolean hasUnknownParameters() {
         for (TypeBounds bounds : typeParameterBounds.values()) {
             if (bounds.isEmpty()) {
                 return true;
@@ -354,6 +375,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         return false;
     }
 
+    @NotNull
     @Override
     public TypeSubstitutor getSubstitutor() {
         return typeSubstitutor;
