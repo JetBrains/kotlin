@@ -145,7 +145,10 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         JetClassOrObject classOrObjectDeclaration = declarationProvider.getClassOrObjectDeclaration(name);
         if (classOrObjectDeclaration instanceof JetObjectDeclaration) {
             JetObjectDeclaration objectDeclaration = (JetObjectDeclaration) classOrObjectDeclaration;
-            ClassDescriptor classifier = (ClassDescriptor) getClassifier(name);
+            ClassDescriptor classifier = getObjectDescriptor(name);
+            if (classifier == null) {
+                throw new IllegalStateException("Object declaration " + name + " found in the DeclarationProvider " + declarationProvider + " but not in the scope " + this);
+            }
             VariableDescriptor propertyDescriptor = resolveSession.getInjector().getDescriptorResolver()
                     .resolveObjectDeclaration(thisDescriptor, objectDeclaration, classifier, resolveSession.getTrace());
             result.add(propertyDescriptor);

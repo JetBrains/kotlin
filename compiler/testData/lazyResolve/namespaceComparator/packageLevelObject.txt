@@ -1,0 +1,7 @@
+namespace <root>
+
+// <namespace name="foo">
+namespace foo
+
+internal final val Bar: foo.Bar
+// </namespace name="foo">
