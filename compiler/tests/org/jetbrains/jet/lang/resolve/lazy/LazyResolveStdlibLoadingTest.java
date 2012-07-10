@@ -53,16 +53,15 @@ public class LazyResolveStdlibLoadingTest extends AbstractLazyResolveTest {
             Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>> transform,
             boolean includeMembersOfObject,
             List<JetFile> files,
-            Predicate<NamespaceDescriptor> filterJetNamespace,
-            File serializeResultsTo
+            Predicate<NamespaceDescriptor> filterJetNamespace
     ) {
         ModuleDescriptor module = resolveEagerly(files, new JetCoreEnvironmentWithDisposable(ConfigurationKind.JDK_AND_ANNOTATIONS, false).jetCoreEnvironment);
         ModuleDescriptor lazyModule = resolveLazily(files, stdlibEnvironment.jetCoreEnvironment);
 
         Pair<NamespaceDescriptor, NamespaceDescriptor> namespacesToCompare = transform.fun(Pair.create(module, lazyModule));
 
-        NamespaceComparator.compareNamespaces(namespacesToCompare.first, namespacesToCompare.second,
-                                              includeMembersOfObject, filterJetNamespace, serializeResultsTo);
+        NamespaceComparator.assertNamespacesEqual(namespacesToCompare.first, namespacesToCompare.second,
+                                              includeMembersOfObject, filterJetNamespace);
     }
 
     public void testStdLib() throws Exception {
@@ -76,14 +75,14 @@ public class LazyResolveStdlibLoadingTest extends AbstractLazyResolveTest {
                 true,
                 //convertToJetFiles(collectKtFiles(new File("compiler/testData/lazyResolve/namespaceComparatorWithJavaMerge"))),
                 convertToJetFiles(collectKtFiles(STD_LIB_SRC)),
-                Predicates.<NamespaceDescriptor>alwaysTrue(),
+                Predicates.<NamespaceDescriptor>alwaysTrue()
                 //new Predicate<NamespaceDescriptor>() {
                 //    @Override
                 //    public boolean apply(NamespaceDescriptor descriptor) {
                 //        return Name.identifier("jet").equals(descriptor.getName());
                 //    }
                 //},
-                new File("compiler/testData/lazyResolve/namespaceComparatorWithJavaMerge/stdlib-log.txt")
+                //new File("compiler/testData/lazyResolve/namespaceComparatorWithJavaMerge/stdlib-log.txt")
         );
     }
 

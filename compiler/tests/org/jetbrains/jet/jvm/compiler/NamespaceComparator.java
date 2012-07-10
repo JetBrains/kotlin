@@ -71,7 +71,7 @@ public class NamespaceComparator {
             @NotNull Predicate<NamespaceDescriptor> includeIntoOutput,
             @NotNull File txtFile
     ) {
-        String serialized = new NamespaceComparator(includeObject, includeIntoOutput).doCompareNamespaces(nsa, nsb);
+        String serialized = assertNamespacesEqual(nsa, nsb, includeObject, includeIntoOutput);
         try {
             if (!txtFile.exists()) {
                 FileUtil.writeToFile(txtFile, serialized);
@@ -85,6 +85,13 @@ public class NamespaceComparator {
         catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String assertNamespacesEqual(NamespaceDescriptor nsa,
+            NamespaceDescriptor nsb,
+            boolean includeObject,
+            Predicate<NamespaceDescriptor> includeIntoOutput) {
+        return new NamespaceComparator(includeObject, includeIntoOutput).doCompareNamespaces(nsa, nsb);
     }
 
     private static <T extends Comparable<T>> List<T> sorted(Collection<T> items) {
