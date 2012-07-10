@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.codegen.forTestCompile;
 
-import com.google.common.io.Files;
-import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 
@@ -25,8 +23,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Stack;
-import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
 /**
@@ -67,6 +63,13 @@ public class ForTestPackJdkAnnotations {
 
     @NotNull
     public static File jdkAnnotationsForTests() {
-        return ForTestCompileSomething.ACTUALLY_COMPILE ? getJarFile() : new File("dist/kotlinc/lib/alt/kotlin-jdk-annotations.jar");
+        if (ForTestCompileSomething.ACTUALLY_COMPILE) {
+            return getJarFile();
+        }
+        final File jdkAnnotations = new File("dist/kotlinc/lib/alt/kotlin-jdk-annotations.jar");
+        if (!jdkAnnotations.exists()) {
+            throw new RuntimeException("Kotlin JDK annotations jar not found; please run 'ant dist' to build it");
+        }
+        return jdkAnnotations;
     }
 }
