@@ -1228,6 +1228,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         containingDeclaration = containingDeclaration.getOriginal();
 
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptor;
+        boolean overridesTrait = isOverrideForTrait(propertyDescriptor);
         propertyDescriptor = propertyDescriptor.getOriginal();
         boolean isInsideClass = ((containingDeclaration == context.getThisDescriptor()) ||
                                  (context.getParentContext() instanceof CodegenContexts.NamespaceContext) && context.getParentContext().getContextDescriptor() == containingDeclaration)
@@ -1294,11 +1295,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         boolean isInterface;
         if (isInsideClass || isStatic || propertyDescriptor.getGetter() == null) {
             owner = ownerParam = typeMapper.getOwner(propertyDescriptor, contextKind());
-            isInterface = false;
-            invokeOpcode = isStatic ? Opcodes.INVOKESTATIC : Opcodes.INVOKEVIRTUAL;
+            isInterface = overridesTrait;
+            invokeOpcode = isStatic ? Opcodes.INVOKESTATIC :
+                           overridesTrait ? Opcodes.INVOKEINTERFACE
+                                          : Opcodes.INVOKEVIRTUAL;
         }
         else {
-            isInterface = CodegenUtil.isInterface(containingDeclaration);
+            isInterface = CodegenUtil.isInterface(containingDeclaration) || overridesTrait;
             // TODO ugly
             CallableMethod callableMethod = typeMapper.mapToCallableMethod(propertyDescriptor.getGetter(), isSuper, contextKind());
             invokeOpcode = callableMethod.getInvokeOpcode();
@@ -1307,6 +1310,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         return StackValue.property(propertyDescriptor.getName().getName(), owner, ownerParam, asmType(propertyDescriptor.getType()), isStatic, isInterface, isSuper, getter, setter, invokeOpcode);
+    }
+
+    static boolean isOverrideForTrait(CallableMemberDescriptor propertyDescriptor) {
+        if (propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            final Set<? extends CallableMemberDescriptor> overriddenDescriptors = propertyDescriptor.getOverriddenDescriptors();
+            for (CallableMemberDescriptor descriptor : overriddenDescriptors) {
+                if (CodegenUtil.isInterface(descriptor.getContainingDeclaration())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
