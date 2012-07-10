@@ -23,7 +23,6 @@ import com.intellij.util.Function;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.jvm.compiler.NamespaceComparator;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -74,8 +73,8 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends Abstract
             Predicate<NamespaceDescriptor> filterJetNamespace,
             File serializeResultsTo
     ) {
-        ModuleDescriptor module = resolveEagerly(files, ConfigurationKind.JDK_ONLY);
-        ModuleDescriptor lazyModule = resolveLazily(files, ConfigurationKind.JDK_ONLY);
+        ModuleDescriptor module = resolveEagerly(files, new JetCoreEnvironmentWithDisposable(ConfigurationKind.JDK_ONLY).jetCoreEnvironment);
+        ModuleDescriptor lazyModule = resolveLazily(files, new JetCoreEnvironmentWithDisposable(ConfigurationKind.JDK_ONLY).jetCoreEnvironment);
 
         Pair<NamespaceDescriptor, NamespaceDescriptor> namespacesToCompare = transform.fun(Pair.create(module, lazyModule));
 
@@ -83,14 +82,14 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends Abstract
                                               includeMembersOfObject, filterJetNamespace, serializeResultsTo);
     }
 
-    private ModuleDescriptor resolveLazily(List<JetFile> files, ConfigurationKind configurationKind) {
-        ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
-        JetCoreEnvironmentWithDisposable environment = new JetCoreEnvironmentWithDisposable(configurationKind);
-        ModuleConfiguration moduleConfiguration = getEagerInjectorForTopDownAnalyzer(environment).getModuleConfiguration();
-        ResolveSession
-                session = new ResolveSession(getProject(), lazyModule, moduleConfiguration, new FileBasedDeclarationProviderFactory(files));
-        return lazyModule;
-    }
+    //private ModuleDescriptor resolveLazily(List<JetFile> files, ConfigurationKind configurationKind) {
+    //    ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
+    //    JetCoreEnvironmentWithDisposable environment = new JetCoreEnvironmentWithDisposable(configurationKind);
+    //    ModuleConfiguration moduleConfiguration = getEagerInjectorForTopDownAnalyzer(environment).getModuleConfiguration();
+    //    ResolveSession
+    //            session = new ResolveSession(getProject(), lazyModule, moduleConfiguration, new FileBasedDeclarationProviderFactory(files));
+    //    return lazyModule;
+    //}
 
     protected void doTest(String testFileName) throws Exception {
         doTest(testFileName, new Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>>() {

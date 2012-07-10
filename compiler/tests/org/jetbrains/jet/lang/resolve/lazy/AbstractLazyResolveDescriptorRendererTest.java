@@ -47,7 +47,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends Abstract
 
     protected void doTest(@NotNull String testFile) throws IOException {
 
-        InjectorForTopDownAnalyzer injectorForTopDownAnalyzer = getEagerInjectorForTopDownAnalyzer(getRegularEnvironment());
+        InjectorForTopDownAnalyzer injectorForTopDownAnalyzer = getEagerInjectorForTopDownAnalyzer(getRegularEnvironment().jetCoreEnvironment);
 
         JetFile psiFile = JetPsiFactory.createFile(getProject(), FileUtil.loadFile(new File(testFile), true));
         Collection<JetFile> files = Lists.newArrayList(psiFile);
