@@ -20,15 +20,14 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.intellij.lang.java.JavaLanguage;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
-import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
-import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
@@ -37,25 +36,21 @@ import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.test.generator.SimpleTestClassModel;
+import org.jetbrains.jet.test.generator.TestGenerator;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * @author abreslav
  */
-public class JetDiagnosticsTest extends JetLiteFixture {
-    @NotNull
-    private final String name;
-    private final File file;
-
-    public JetDiagnosticsTest(@NotNull File file) {
-        this.name = file.getName().replaceFirst("\\.[^.]+$", "");
-        this.file = file;
-    }
+public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
 
     @Override
     protected void setUp() throws Exception {
@@ -63,11 +58,63 @@ public class JetDiagnosticsTest extends JetLiteFixture {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_AND_ANNOTATIONS);
     }
 
-    @Override
-    public String getName() {
-        return "test" + name;
+    private boolean writeJavaFile(@NotNull String fileName, @NotNull String content, @NotNull File javaFilesDir) {
+        try {
+            File javaFile = new File(javaFilesDir, fileName);
+            JetTestUtils.mkdirs(javaFile.getParentFile());
+            Files.write(content, javaFile, Charset.forName("utf-8"));
+            return true;
+        } catch (Exception e) {
+            throw ExceptionUtils.rethrow(e);
+        }
     }
 
+    protected void doTest(String filePath) throws IOException {
+        File file = new File(filePath);
+        final File javaFilesDir = new File(FileUtil.getTempDirectory(), "java-files");
+
+        String expectedText = JetTestUtils.doLoadFile(file);
+        final Ref<Boolean> hasJavaFiles = new Ref<Boolean>(false);
+
+        List<TestFile> testFileFiles =
+                JetTestUtils.createTestFiles(file.getName(), expectedText, new JetTestUtils.TestFileFactory<TestFile>() {
+                    @Override
+                    public TestFile create(String fileName, String text) {
+                        if (fileName.endsWith(".java")) {
+                            hasJavaFiles.set(writeJavaFile(fileName, text, javaFilesDir));
+                        }
+                        return new TestFile(fileName, text);
+                    }
+                });
+
+        if (hasJavaFiles.get()) {
+            // According to yole@ the only way to import java files is to write them on disk
+            // -- stepan.koltsov@ 2012-02-29
+            myEnvironment.addToClasspath(javaFilesDir);
+        }
+
+        List<JetFile> jetFiles = Lists.newArrayList();
+        for (TestFile testFileFile : testFileFiles) {
+            if (testFileFile.jetFile != null) {
+                jetFiles.add(testFileFile.jetFile);
+            }
+        }
+
+        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                getProject(), jetFiles, Collections.<AnalyzerScriptParameter>emptyList(),
+                Predicates.<PsiFile>alwaysTrue(), BuiltinsScopeExtensionMode.ALL).getBindingContext();
+
+        boolean ok = true;
+
+        StringBuilder actualText = new StringBuilder();
+        for (TestFile testFileFile : testFileFiles) {
+            ok &= testFileFile.getActualText(bindingContext, actualText);
+        }
+
+        assertEquals(expectedText, actualText.toString());
+
+        assertTrue("something is wrong is this test", ok);
+    }
 
     private class TestFile {
         private final List<CheckerTestUtil.DiagnosedRange> diagnosedRanges = Lists.newArrayList();
@@ -130,103 +177,21 @@ public class JetDiagnosticsTest extends JetLiteFixture {
 
     }
 
-    private boolean hasJavaFiles;
-    private File javaFilesDir;
-
-    private void writeJavaFile(@NotNull String fileName, @NotNull String content) {
-        try {
-            File javaFile = new File(javaFilesDir, fileName);
-            JetTestUtils.mkdirs(javaFile.getParentFile());
-            Files.write(content, javaFile, Charset.forName("utf-8"));
-            hasJavaFiles = true;
-        } catch (Exception e) {
-            throw ExceptionUtils.rethrow(e);
-        }
+    public static void main(String[] args) throws IOException {
+        String aPackage = "org.jetbrains.jet.checkers";
+        new TestGenerator(
+                "compiler/tests/",
+                aPackage,
+                "JetDiagnosticsTestGenerated",
+                aPackage,
+                AbstractJetDiagnosticsTest.class.getSimpleName(),
+                Arrays.asList(
+                        new SimpleTestClassModel(new File("compiler/testData/diagnostics/tests"), true, "kt", "doTest"),
+                        new SimpleTestClassModel(new File("compiler/testData/diagnostics/tests/script"), true, "ktscript", "doTest")
+                ),
+                AbstractJetDiagnosticsTest.class.getName(),
+                TestGenerator.TargetTestFrameworks.JUNIT_3
+        ).generateAndSave();
     }
 
-    @Override
-    public void runTest() throws Exception {
-        javaFilesDir = new File(FileUtil.getTempDirectory(), "java-files");
-
-        String expectedText = JetTestUtils.doLoadFile(file);
-
-        List<TestFile> testFileFiles = JetTestUtils.createTestFiles(file.getName(), expectedText, new JetTestUtils.TestFileFactory<TestFile>() {
-            @Override
-            public TestFile create(String fileName, String text) {
-                if (fileName.endsWith(".java")) {
-                    writeJavaFile(fileName, text);
-                }
-                return new TestFile(fileName, text);
-            }
-        });
-
-//        ModuleConfiguration configuration = JavaBridgeConfiguration.createJavaBridgeConfiguration(getProject());
-        if (hasJavaFiles) {
-            // According to yole@ the only way to import java files is to write them on disk
-            // -- stepan.koltsov@ 2012-02-29
-            myEnvironment.addToClasspath(javaFilesDir);
-        }
-
-        List<JetFile> jetFiles = Lists.newArrayList();
-        for (TestFile testFileFile : testFileFiles) {
-            if (testFileFile.jetFile != null) {
-                jetFiles.add(testFileFile.jetFile);
-            }
-        }
-
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                getProject(), jetFiles, Collections.<AnalyzerScriptParameter>emptyList(),
-                Predicates.<PsiFile>alwaysTrue(), BuiltinsScopeExtensionMode.ALL).getBindingContext();
-
-        boolean ok = true;
-
-        StringBuilder actualText = new StringBuilder();
-        for (TestFile testFileFile : testFileFiles) {
-            ok &= testFileFile.getActualText(bindingContext, actualText);
-        }
-
-        assertEquals(expectedText, actualText.toString());
-
-        assertTrue("something is wrong is this test", ok);
-    }
-
-    //    private void convert(File src, File dest) throws IOException {
-//        File[] files = src.listFiles();
-//        for (File file : files) {
-//            try {
-//                if (file.isDirectory()) {
-//                    File destDir = new File(dest, file.getName());
-//                    destDir.mkdir();
-//                    convert(file, destDir);
-//                    continue;
-//                }
-//                if (!file.getName().endsWith(".jet")) continue;
-//                String text = doLoadFile(file.getParentFile().getAbsolutePath(), file.getName());
-//                Pattern pattern = Pattern.compile("</?(error|warning)>");
-//                String clearText = pattern.matcher(text).replaceAll("");
-//                createAndCheckPsiFile(name, clearText);
-//
-//                BindingContext bindingContext = AnalyzingUtils.getInstance(ImportingStrategy.NONE).analyzeFileWithCache((JetFile) myFiles);
-//                String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(myFiles, bindingContext).toString();
-//
-//                File destFile = new File(dest, file.getName());
-//                FileWriter fileWriter = new FileWriter(destFile);
-//                fileWriter.write(expectedText);
-//                fileWriter.close();
-//            }
-//            catch (RuntimeException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-
-    public static Test suite() {
-        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/diagnostics/tests", true, new JetTestCaseBuilder.NamedTestFactory() {
-            @NotNull
-            @Override
-            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
-                return new JetDiagnosticsTest(file);
-            }
-        });
-    }
 }
