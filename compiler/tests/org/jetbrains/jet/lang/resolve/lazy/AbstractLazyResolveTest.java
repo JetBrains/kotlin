@@ -17,19 +17,14 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.base.Predicates;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
-import junit.framework.TestCase;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.KotlinTestWithDefaultEnvironment;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
@@ -37,51 +32,12 @@ import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author abreslav
  */
-public abstract class AbstractLazyResolveTest extends TestCase {
-
-    static {
-        System.setProperty("java.awt.headless", "true");
-    }
-
-    private final Disposable rootDisposable = new Disposable() {
-        @Override
-        public void dispose() {
-        }
-    };
-
-    public class JetCoreEnvironmentWithDisposable {
-        public final JetCoreEnvironment jetCoreEnvironment;
-
-        public final Project project;
-
-        public JetCoreEnvironmentWithDisposable(@NotNull ConfigurationKind configurationKind) {
-            this.jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(rootDisposable, configurationKind);
-            this.project = jetCoreEnvironment.getProject();
-        }
-
-    }
-
-    protected JetCoreEnvironmentWithDisposable regularEnvironment;
-
-    protected Project getProject() {
-        return regularEnvironment.project;
-    }
-
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        regularEnvironment = new JetCoreEnvironmentWithDisposable(ConfigurationKind.ALL);
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        Disposer.dispose(rootDisposable);
-    }
+public abstract class AbstractLazyResolveTest extends KotlinTestWithDefaultEnvironment {
 
     protected InjectorForTopDownAnalyzer getEagerInjectorForTopDownAnalyzer(JetCoreEnvironmentWithDisposable environment) {
         ModuleDescriptor eagerModuleForLazy = new ModuleDescriptor(Name.special("<eager module for lazy>"));
@@ -97,6 +53,14 @@ public abstract class AbstractLazyResolveTest extends TestCase {
         TopDownAnalysisParameters params = new TopDownAnalysisParameters(
                 Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
         return new InjectorForTopDownAnalyzerForJvm(environment.project, params, new BindingTraceContext(), module, BuiltinsScopeExtensionMode.ALL);
+    }
+
+    protected ModuleDescriptor resolveEagerly(List<JetFile> files, ConfigurationKind configurationKind) {
+        ModuleDescriptor module = new ModuleDescriptor(Name.special("<test module>"));
+        JetCoreEnvironmentWithDisposable environment = new JetCoreEnvironmentWithDisposable(configurationKind);
+        InjectorForTopDownAnalyzer injector = createInjectorForTDA(module, environment);
+        injector.getTopDownAnalyzer().analyzeFiles(files, Collections.<AnalyzerScriptParameter>emptyList());
+        return module;
     }
 
 }

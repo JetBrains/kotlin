@@ -29,10 +29,13 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.test.generator.SimpleTestClassModel;
+import org.jetbrains.jet.test.generator.TestGenerator;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -44,7 +47,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends Abstract
 
     protected void doTest(@NotNull String testFile) throws IOException {
 
-        InjectorForTopDownAnalyzer injectorForTopDownAnalyzer = getEagerInjectorForTopDownAnalyzer(regularEnvironment);
+        InjectorForTopDownAnalyzer injectorForTopDownAnalyzer = getEagerInjectorForTopDownAnalyzer(getRegularEnvironment());
 
         JetFile psiFile = JetPsiFactory.createFile(getProject(), FileUtil.loadFile(new File(testFile), true));
         Collection<JetFile> files = Lists.newArrayList(psiFile);
@@ -135,5 +138,26 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends Abstract
 
         Document document = new DocumentImpl(psiFile.getText());
         assertEquals(JetTestUtils.getLastCommentedLines(document), renderedDescriptors.toString());
+    }
+
+    public static void main(String[] args) throws IOException {
+        String extension = "kt";
+        new TestGenerator(
+            "compiler/tests/",
+            AbstractLazyResolveDescriptorRendererTest.class.getPackage().getName(),
+            "LazyResolveDescriptorRendererTestGenerated",
+            AbstractLazyResolveDescriptorRendererTest.class,
+            Arrays.asList(
+                    new SimpleTestClassModel(new File("compiler/testData/renderer"),
+                                             true,
+                                             extension,
+                                             "doTest"),
+                    new SimpleTestClassModel(new File("compiler/testData/lazyResolve/descriptorRenderer"),
+                                             true,
+                                             extension,
+                                             "doTest")
+            ),
+            LazyResolveTestGenerator.class
+        ).generateAndSave();
     }
 }

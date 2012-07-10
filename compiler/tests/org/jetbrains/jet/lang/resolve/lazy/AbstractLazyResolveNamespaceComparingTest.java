@@ -22,19 +22,19 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.Function;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
 import org.jetbrains.jet.jvm.compiler.NamespaceComparator;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.test.generator.SimpleTestClassModel;
+import org.jetbrains.jet.test.generator.TestGenerator;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -47,12 +47,13 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends Abstract
             boolean includeMembersOfObject
     ) throws IOException {
         List<JetFile> files = JetTestUtils
-                .createTestFiles(testFileName, FileUtil.loadFile(new File(testFileName), true), new JetTestUtils.TestFileFactory<JetFile>() {
-                    @Override
-                    public JetFile create(String fileName, String text) {
-                        return JetPsiFactory.createFile(getProject(), fileName, text);
-                    }
-                });
+                .createTestFiles(testFileName, FileUtil.loadFile(new File(testFileName), true),
+                                 new JetTestUtils.TestFileFactory<JetFile>() {
+                                     @Override
+                                     public JetFile create(String fileName, String text) {
+                                         return JetPsiFactory.createFile(getProject(), fileName, text);
+                                     }
+                                 });
 
         Predicate<NamespaceDescriptor> filterJetNamespace = new Predicate<NamespaceDescriptor>() {
             @Override
@@ -91,14 +92,6 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends Abstract
         return lazyModule;
     }
 
-    protected ModuleDescriptor resolveEagerly(List<JetFile> files, ConfigurationKind configurationKind) {
-        ModuleDescriptor module = new ModuleDescriptor(Name.special("<test module>"));
-        JetCoreEnvironmentWithDisposable environment = new JetCoreEnvironmentWithDisposable(configurationKind);
-        InjectorForTopDownAnalyzer injector = createInjectorForTDA(module, environment);
-        injector.getTopDownAnalyzer().analyzeFiles(files, Collections.<AnalyzerScriptParameter>emptyList());
-        return module;
-    }
-
     protected void doTest(String testFileName) throws Exception {
         doTest(testFileName, new Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>>() {
             @Override
@@ -130,5 +123,30 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends Abstract
 
     private NamespaceDescriptor theOnlySubPackage(NamespaceDescriptor namespace) {
         return (NamespaceDescriptor) namespace.getMemberScope().getAllDescriptors().iterator().next();
+    }
+
+    public static void main(String[] args) throws IOException {
+        String extension = "kt";
+        new TestGenerator(
+            "compiler/tests/",
+            AbstractLazyResolveNamespaceComparingTest.class.getPackage().getName(),
+            "LazyResolveNamespaceComparingTestGenerated",
+            AbstractLazyResolveNamespaceComparingTest.class,
+            Arrays.asList(
+                    new SimpleTestClassModel(new File("compiler/testData/readKotlinBinaryClass"),
+                                             true,
+                                             extension,
+                                             "doTestSinglePackage"),
+                    new SimpleTestClassModel(new File("compiler/testData/readJavaBinaryClass"),
+                                             true,
+                                             extension,
+                                             "doTestSinglePackage"),
+                    new SimpleTestClassModel(new File("compiler/testData/lazyResolve/namespaceComparator"),
+                                             true,
+                                             extension,
+                                             "doTest")
+            ),
+            LazyResolveTestGenerator.class
+        ).generateAndSave();
     }
 }
