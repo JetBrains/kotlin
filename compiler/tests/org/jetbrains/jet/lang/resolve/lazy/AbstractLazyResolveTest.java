@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.junit.After;
 
 import java.util.Collections;
 
@@ -66,13 +65,20 @@ public abstract class AbstractLazyResolveTest extends TestCase {
 
     }
 
-    protected final JetCoreEnvironmentWithDisposable regularEnvironment = new JetCoreEnvironmentWithDisposable(ConfigurationKind.ALL);
+    protected JetCoreEnvironmentWithDisposable regularEnvironment;
 
     protected Project getProject() {
         return regularEnvironment.project;
     }
 
-    @After
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        regularEnvironment = new JetCoreEnvironmentWithDisposable(ConfigurationKind.ALL);
+    }
+
+    @Override
     public void tearDown() throws Exception {
         Disposer.dispose(rootDisposable);
     }

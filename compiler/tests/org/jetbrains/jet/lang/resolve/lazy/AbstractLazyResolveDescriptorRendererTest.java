@@ -36,12 +36,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-
 /**
  * @author abreslav
  */
-public class AbstractLazyResolveDescriptorRendererTest extends AbstractLazyResolveTest {
+public abstract class AbstractLazyResolveDescriptorRendererTest extends AbstractLazyResolveTest {
 
 
     protected void doTest(@NotNull String testFile) throws IOException {
