@@ -113,7 +113,6 @@ public abstract class AbstractLazyResolveTest extends KotlinTestWithDefaultEnvir
                     namespaceMemberScope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
                 }
                 if (psiClassFinder.findPsiPackage(fqName) != null) {
-                    System.out.println(fqName);
                     JavaPackageScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(fqName, namespaceDescriptor);
                     namespaceMemberScope.importScope(javaPackageScope);
                 }
