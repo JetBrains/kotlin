@@ -24,12 +24,19 @@ import org.jetbrains.jet.JetTestUtils;
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
 * @author abreslav
 */
 public class SimpleTestClassModel implements TestClassModel {
+    private static final Comparator<TestEntityModel> BY_NAME = new Comparator<TestEntityModel>() {
+        @Override
+        public int compare(TestEntityModel o1, TestEntityModel o2) {
+            return o1.getName().compareTo(o2.getName());
+        }
+    };
     private final File rootFile;
     private final boolean recursive;
     private final String extension;
@@ -63,6 +70,7 @@ public class SimpleTestClassModel implements TestClassModel {
                     }
                 }
             }
+            Collections.sort(children, BY_NAME);
             innerTestClasses = children;
         }
         return innerTestClasses;
@@ -88,6 +96,8 @@ public class SimpleTestClassModel implements TestClassModel {
                         }
                     }
                 }
+                Collections.sort(result, BY_NAME);
+
                 testMethods = result;
             }
         }
