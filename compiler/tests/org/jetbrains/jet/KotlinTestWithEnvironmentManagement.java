@@ -43,7 +43,13 @@ public abstract class KotlinTestWithEnvironmentManagement extends TestCase {
         public final Project project;
 
         public JetCoreEnvironmentWithDisposable(@NotNull ConfigurationKind configurationKind) {
-            this.jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(rootDisposable, configurationKind);
+            this(configurationKind, true);
+        }
+
+        public JetCoreEnvironmentWithDisposable(@NotNull ConfigurationKind configurationKind, boolean mockJdk) {
+            this.jetCoreEnvironment = new JetCoreEnvironment(rootDisposable,
+                            CompileCompilerDependenciesTest.compilerConfigurationForTests(configurationKind, mockJdk)
+                    );
             this.project = jetCoreEnvironment.getProject();
         }
 
