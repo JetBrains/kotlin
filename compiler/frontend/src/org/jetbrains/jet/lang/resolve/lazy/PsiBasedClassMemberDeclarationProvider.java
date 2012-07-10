@@ -54,4 +54,9 @@ public class PsiBasedClassMemberDeclarationProvider extends AbstractPsiBasedDecl
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "Declarations for " + classInfo;
+    }
 }

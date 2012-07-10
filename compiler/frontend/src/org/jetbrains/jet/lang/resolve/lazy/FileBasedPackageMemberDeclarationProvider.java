@@ -65,4 +65,9 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
         }
         return allDeclaredPackages;
     }
+
+    @Override
+    public String toString() {
+        return "Declarations for package " + fqName;
+    }
 }
