@@ -18,6 +18,7 @@ package org.jetbrains.jet.test.generator;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
+import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -29,100 +30,11 @@ import java.util.*;
  */
 public class TestGenerator {
 
-    public interface TargetTestFramework {
-        List<String> getImports();
-
-        void generateSuiteClassAnnotations(@NotNull TestGenerator testGenerator, @NotNull Printer p);
-        void generateExtraSuiteClassMethods(@NotNull TestGenerator testGenerator, @NotNull Printer p);
-        void generateTestMethodAnnotations(@NotNull TestGenerator testGenerator, @NotNull Printer p);
-        String getIsTestMethodCondition(@NotNull String methodVariableName);
-    }
-
-    public enum TargetTestFrameworks implements TargetTestFramework {
-        JUNIT_3 {
-            @Override
-            public List<String> getImports() {
-                return Arrays.asList(
-                        "junit.framework.Assert",
-                        "junit.framework.Test",
-                        "junit.framework.TestSuite"
-                );
-            }
-
-            @Override
-            public void generateSuiteClassAnnotations(@NotNull TestGenerator testGenerator, @NotNull Printer p) {
-                // Do nothing
-            }
-
-            @Override
-            public void generateExtraSuiteClassMethods(@NotNull TestGenerator testGenerator, @NotNull Printer p) {
-                p.println("public static Test suite() {");
-                p.pushIndent();
-                p.println("TestSuite suite = new TestSuite();");
-
-                for (TestClassModel testDataSource : testGenerator.testClassModels) {
-                    p.println("suite.addTestSuite(", testDataSource.getName(), ".class);");
-                }
-
-                p.println("return suite;");
-                p.popIndent();
-                p.println("}");
-            }
-
-            @Override
-            public void generateTestMethodAnnotations(@NotNull TestGenerator testGenerator, @NotNull Printer p) {
-                // Do nothing
-            }
-
-            @Override
-            public String getIsTestMethodCondition(@NotNull String methodVariableName) {
-                return "method.getName().startsWith(\"test\")";
-            }
-        },
-        JUNIT_4 {
-            @Override
-            public List<String> getImports() {
-                return Arrays.asList(
-                        "org.junit.Assert",
-                        "org.junit.Test",
-                        "org.junit.runner.RunWith",
-                        "org.junit.runners.Suite"
-                );
-            }
-
-            @Override
-            public void generateSuiteClassAnnotations(@NotNull TestGenerator testGenerator, @NotNull Printer p) {
-                p.println("@RunWith(Suite.class)");
-                p.println("@Suite.SuiteClasses({");
-                p.pushIndent();
-                for (Iterator<? extends TestClassModel> iterator = testGenerator.testClassModels.iterator(); iterator.hasNext(); ) {
-                    TestClassModel testClassModel = iterator.next();
-                    p.print(testGenerator.suiteClassName, ".", testClassModel.getName(), ".class");
-                    if (iterator.hasNext()) {
-                        p.printWithNoIndent(",");
-                    }
-                    p.println();
-                }
-                p.popIndent();
-                p.println("})");
-            }
-
-            @Override
-            public void generateExtraSuiteClassMethods(@NotNull TestGenerator testGenerator, @NotNull Printer p) {
-                // Do nothing
-            }
-
-            @Override
-            public void generateTestMethodAnnotations(@NotNull TestGenerator testGenerator, @NotNull Printer p) {
-                p.println("@Test");
-            }
-
-            @Override
-            public String getIsTestMethodCondition(@NotNull String methodVariableName) {
-                return "method.isAnnotationPresent(Test.class)";
-            }
-        }
-    }
+    private static final List<String> JUNIT3_IMPORTS = Arrays.asList(
+            "junit.framework.Assert",
+            "junit.framework.Test",
+            "junit.framework.TestSuite"
+    );
 
     private final String baseDir;
     private final String suiteClassPackage;
@@ -131,28 +43,14 @@ public class TestGenerator {
     private final String baseTestClassName;
     private final Collection<TestClassModel> testClassModels;
     private final String generatorName;
-    private final TargetTestFramework targetTestFramework;
 
     public TestGenerator(
             @NotNull String baseDir,
             @NotNull String suiteClassPackage,
             @NotNull String suiteClassName,
-            @NotNull Class<?> baseTestClass,
+            @NotNull Class<? extends TestCase> baseTestClass,
             @NotNull Collection<? extends TestClassModel> testClassModels,
             @NotNull Class<?> generatorClass
-    ) {
-        this(baseDir, suiteClassPackage, suiteClassName, baseTestClass, testClassModels,
-             generatorClass, TargetTestFrameworks.JUNIT_4);
-    }
-
-    public TestGenerator(
-            @NotNull String baseDir,
-            @NotNull String suiteClassPackage,
-            @NotNull String suiteClassName,
-            @NotNull Class<?> baseTestClass,
-            @NotNull Collection<? extends TestClassModel> testClassModels,
-            @NotNull Class<?> generatorClass,
-            @NotNull TargetTestFramework targetTestFramework
     ) {
         this.baseDir = baseDir;
         this.suiteClassPackage = suiteClassPackage;
@@ -161,7 +59,6 @@ public class TestGenerator {
         this.baseTestClassName = baseTestClass.getSimpleName();
         this.testClassModels = Lists.newArrayList(testClassModels);
         this.generatorName = generatorClass.getCanonicalName();
-        this.targetTestFramework = targetTestFramework;
     }
 
     public void generateAndSave() throws IOException {
@@ -171,7 +68,7 @@ public class TestGenerator {
         p.print(FileUtil.loadFile(new File("injector-generator/copyright.txt")));
         p.println("package ", suiteClassPackage, ";");
         p.println();
-        for (String importedClassName : targetTestFramework.getImports()) {
+        for (String importedClassName : JUNIT3_IMPORTS) {
             p.println("import ", importedClassName, ";");
         }
         p.println();
@@ -185,7 +82,6 @@ public class TestGenerator {
         p.println();
 
         p.println("/** This class is generated by {@link ", generatorName, "}. DO NOT MODIFY MANUALLY */");
-        targetTestFramework.generateSuiteClassAnnotations(this, p);
         if (testClassModels.size() == 1) {
             TestClassModel theOnlyTestClass = testClassModels.iterator().next();
             generateTestClass(p, new DelegatingTestClassModel(theOnlyTestClass) {
@@ -288,7 +184,6 @@ public class TestGenerator {
     }
 
     private void generateTestMethod(Printer p, TestMethodModel testMethodModel) {
-        targetTestFramework.generateTestMethodAnnotations(this, p);
         generateMetadata(p, testMethodModel);
         p.println("public void ", testMethodModel.getName(), "() throws Exception {");
         p.pushIndent();

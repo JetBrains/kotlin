@@ -188,8 +188,7 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
                         new SimpleTestClassModel(new File("compiler/testData/diagnostics/tests"), true, "kt", "doTest"),
                         new SimpleTestClassModel(new File("compiler/testData/diagnostics/tests/script"), true, "ktscript", "doTest")
                 ),
-                AbstractJetDiagnosticsTest.class,
-                TestGenerator.TargetTestFrameworks.JUNIT_3
+                AbstractJetDiagnosticsTest.class
         ).generateAndSave();
     }
 
