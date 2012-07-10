@@ -76,6 +76,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     private JetScope scopeForClassHeaderResolution;
     private JetScope scopeForMemberDeclarationResolution;
+    private JetScope scopeForPropertyInitializerResolution;
 
 
     public LazyClassDescriptor(
@@ -138,6 +139,25 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             scopeForMemberDeclarationResolution = scope;
         }
         return scopeForMemberDeclarationResolution;
+    }
+
+    public JetScope getScopeForPropertyInitializerResolution() {
+        ConstructorDescriptor primaryConstructor = getUnsubstitutedPrimaryConstructor();
+        if (primaryConstructor == null) return getScopeForMemberDeclarationResolution();
+
+        if (scopeForPropertyInitializerResolution == null) {
+            WritableScopeImpl scope = new WritableScopeImpl(
+                    getScopeForMemberDeclarationResolution(), this, RedeclarationHandler.DO_NOTHING, "Property Initializer Resolution");
+
+            List<ValueParameterDescriptor> parameters = primaryConstructor.getValueParameters();
+            for (ValueParameterDescriptor valueParameterDescriptor : parameters) {
+                scope.addVariableDescriptor(valueParameterDescriptor);
+            }
+
+            scope.changeLockLevel(WritableScope.LockLevel.READING);
+            scopeForPropertyInitializerResolution = scope;
+        }
+        return scopeForPropertyInitializerResolution;
     }
 
     @NotNull

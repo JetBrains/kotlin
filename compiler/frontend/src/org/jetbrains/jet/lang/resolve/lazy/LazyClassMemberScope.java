@@ -56,6 +56,9 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     @NotNull
     @Override
     protected JetScope getScopeForMemberDeclarationResolution(JetDeclaration declaration) {
+        if (declaration instanceof JetProperty) {
+            return thisDescriptor.getScopeForPropertyInitializerResolution();
+        }
         return thisDescriptor.getScopeForMemberDeclarationResolution();
     }
 
