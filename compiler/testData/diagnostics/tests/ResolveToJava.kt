@@ -18,10 +18,10 @@ fun test(<!UNUSED_PARAMETER!>l<!> : java.util.List<Int>) {
 
   val <!UNUSED_VARIABLE!>f<!> : java.io.File? = null
 
-  Collections.<!TYPE_INFERENCE_FAILED, FUNCTION_CALL_EXPECTED!>emptyList<!>
+  Collections.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, FUNCTION_CALL_EXPECTED!>emptyList<!>
   Collections.<!FUNCTION_CALL_EXPECTED!>emptyList<Int><!>
   Collections.emptyList<Int>()
-  Collections.<!TYPE_INFERENCE_FAILED!>emptyList()<!>
+  Collections.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
 
   Collections.singleton<Int>(1) : Set<Int>?
   Collections.singleton<Int>(<!ERROR_COMPILE_TIME_VALUE!>1.0<!>)
