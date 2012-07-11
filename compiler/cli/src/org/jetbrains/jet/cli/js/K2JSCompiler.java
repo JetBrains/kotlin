@@ -74,11 +74,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
             return ExitCode.INTERNAL_ERROR;
         }
 
-        JetCoreEnvironment environmentForJS = JetCoreEnvironment.createCoreEnvironmentForJS(rootDisposable, new CompilerConfiguration());
-
-        for (String sourceFile : arguments.sourceFiles) {
-            environmentForJS.addSources(sourceFile);
-        }
+        CompilerConfiguration configuration = new CompilerConfiguration();
+        configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(arguments.sourceFiles));
+        JetCoreEnvironment environmentForJS = JetCoreEnvironment.createCoreEnvironmentForJS(rootDisposable, configuration);
 
         Project project = environmentForJS.getProject();
 
