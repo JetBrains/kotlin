@@ -86,10 +86,10 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
             getEnvironment().addToClasspath(javaFilesDir);
         }
 
-        analyzeAndCheck(expectedText, testFiles);
+        analyzeAndCheck(file, expectedText, testFiles);
     }
 
-    protected abstract void analyzeAndCheck(String expectedText, List<TestFile> files);
+    protected abstract void analyzeAndCheck(File testDataFile, String expectedText, List<TestFile> files);
 
     protected static List<JetFile> getJetFiles(List<TestFile> testFiles) {
         List<JetFile> jetFiles = Lists.newArrayList();

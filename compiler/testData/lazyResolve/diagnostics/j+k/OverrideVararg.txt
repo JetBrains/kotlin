@@ -1,0 +1,10 @@
+namespace <root>
+
+public abstract class Aaa : java.lang.Object {
+    public final /*constructor*/ fun <init>(): Aaa
+    public abstract fun foo(/*0*/ vararg args: jet.String? /*jet.Array<jet.String?>*/): jet.Tuple0
+}
+internal final class Bbb : Aaa {
+    public final /*constructor*/ fun <init>(): Bbb
+    public open override /*1*/ fun foo(/*0*/ vararg args: jet.String? /*jet.Array<jet.String?>*/): jet.Tuple0
+}

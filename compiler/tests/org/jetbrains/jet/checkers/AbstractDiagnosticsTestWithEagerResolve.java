@@ -37,7 +37,8 @@ import java.util.List;
  */
 public abstract class AbstractDiagnosticsTestWithEagerResolve extends AbstractJetDiagnosticsTest {
 
-    protected void analyzeAndCheck(String expectedText, List<TestFile> testFiles) {
+    @Override
+    protected void analyzeAndCheck(File testDataFile, String expectedText, List<TestFile> testFiles) {
         List<JetFile> jetFiles = getJetFiles(testFiles);
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(

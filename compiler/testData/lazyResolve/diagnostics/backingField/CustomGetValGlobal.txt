@@ -1,0 +1,7 @@
+namespace <root>
+
+// <namespace name="customGetValGlobal">
+namespace customGetValGlobal
+
+internal final val zz: jet.Int
+// </namespace name="customGetValGlobal">

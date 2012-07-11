@@ -1,0 +1,16 @@
+namespace <root>
+
+public open class A : java.lang.Object {
+    public final /*constructor*/ fun <init>(): A
+}
+public open class X</*0*/ T : jet.Any?> : java.lang.Object {
+    public final /*constructor*/ fun </*0*/ T : jet.Any?><init>(): X<T>
+    package open fun barN(/*0*/ a: T): jet.Tuple0
+    package open fun fooN(): T
+}
+public open class Y : X<A> {
+    public final /*constructor*/ fun <init>(): Y
+    package open override /*1*/ fun barN(/*0*/ a: A): jet.Tuple0
+    package open override /*1*/ fun fooN(): A
+}
+internal final fun main(): jet.Tuple0

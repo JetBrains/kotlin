@@ -1,0 +1,9 @@
+namespace <root>
+
+public open class Aaa : java.lang.Object {
+    public final /*constructor*/ fun <init>(): Aaa
+}
+public open class Bbb : Aaa {
+    public final /*constructor*/ fun <init>(): Bbb
+}
+internal final fun foo(): jet.String

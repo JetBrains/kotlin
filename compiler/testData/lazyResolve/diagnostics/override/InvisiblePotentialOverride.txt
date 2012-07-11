@@ -1,0 +1,11 @@
+namespace <root>
+
+internal open class A : jet.Any {
+    public final /*constructor*/ fun <init>(): A
+    private final fun foo(): jet.Int
+}
+internal final class B : A {
+    public final /*constructor*/ fun <init>(): B
+    internal final fun foo(): jet.String
+    invisible_fake final override /*1*/ fun foo(): jet.Int
+}

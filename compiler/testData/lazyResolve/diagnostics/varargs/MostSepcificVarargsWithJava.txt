@@ -1,0 +1,11 @@
+namespace <root>
+
+public open class C : java.lang.Object {
+    public final /*constructor*/ fun <init>(): C
+    package open fun from(): jet.Tuple0
+    package open fun from(/*0*/ s1: jet.String?, /*1*/ vararg s: jet.String? /*jet.Array<jet.String?>*/): jet.Tuple0
+    package open fun from(/*0*/ s: jet.String?): jet.Tuple0
+    package open fun from(/*0*/ s: jet.String?, /*1*/ s1: jet.String?): jet.Tuple0
+    package open fun from(/*0*/ vararg s: jet.String? /*jet.Array<jet.String?>*/): jet.Tuple0
+}
+internal final fun main(/*0*/ j: C, /*1*/ s: jet.Array<jet.String?>): jet.Tuple0

@@ -1,0 +1,8 @@
+namespace <root>
+
+public open class JavaClass : java.lang.Object {
+    public final /*constructor*/ fun <init>(): JavaClass
+    package open fun from(/*0*/ s: jet.String?): jet.Tuple0
+    package open fun from(/*0*/ vararg s: jet.String? /*jet.Array<jet.String?>*/): jet.Tuple0
+}
+internal final fun main(/*0*/ args: jet.Array<jet.String>): jet.Tuple0

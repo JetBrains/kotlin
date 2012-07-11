@@ -16,15 +16,18 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
-import com.google.common.base.Predicates;
+import com.google.common.base.Predicate;
+import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestCase;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTest;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.jvm.compiler.NamespaceComparator;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.test.generator.SimpleTestClassModel;
 import org.jetbrains.jet.test.generator.TestGenerator;
 
@@ -37,18 +40,31 @@ import java.util.List;
  * @author abreslav
  */
 public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiagnosticsTest {
+
+    private static final File TEST_DATA_DIR = new File("compiler/testData/diagnostics/tests");
+
     @Override
     protected JetCoreEnvironment createEnvironment() {
-        return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
+        return createEnvironmentWithMockJdk(ConfigurationKind.JDK_AND_ANNOTATIONS);
     }
 
     @Override
-    protected void analyzeAndCheck(String expectedText, List<TestFile> files) {
+    protected void analyzeAndCheck(File testDataFile, String expectedText, List<TestFile> files) {
         List<JetFile> jetFiles = getJetFiles(files);
         ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(jetFiles, getEnvironment());
         ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(jetFiles, getEnvironment());
 
-        NamespaceComparator.assertNamespacesEqual(eagerModule.getRootNamespace(), lazyModule.getRootNamespace(), false, Predicates.<NamespaceDescriptor>alwaysTrue());
+        String path = JetTestUtils.getFilePath(new File(FileUtil.getRelativePath(TEST_DATA_DIR, testDataFile)));
+        String txtFileRelativePath = path.replaceAll("\\.kt$|\\.ktscript", ".txt");
+        File txtFile = new File("compiler/testData/lazyResolve/diagnostics/" + txtFileRelativePath);
+        NamespaceComparator.compareNamespaces(eagerModule.getRootNamespace(), lazyModule.getRootNamespace(), false,
+                                              new Predicate<NamespaceDescriptor>() {
+                                                  @Override
+                                                  public boolean apply(NamespaceDescriptor descriptor) {
+                                                      return !Name.identifier("jet").equals(descriptor.getName());
+                                                  }
+                                              },
+                                              txtFile);
     }
 
     public static void main(String[] args) throws IOException {
@@ -59,7 +75,7 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiag
                 "LazyResolveDiagnosticsTestGenerated",
                 thisClass,
                 Arrays.asList(
-                        new SimpleTestClassModel(new File("compiler/testData/diagnostics/tests"), true, "kt", "doTest"),
+                        new SimpleTestClassModel(TEST_DATA_DIR, true, "kt", "doTest"),
                         new SimpleTestClassModel(new File("compiler/testData/diagnostics/tests/script"), true, "ktscript", "doTest")
                 ),
                 thisClass

@@ -1,0 +1,7 @@
+namespace <root>
+
+public open class Test : java.lang.Object {
+    public final /*constructor*/ fun <init>(): Test
+    package open fun number(/*0*/ n: jet.Number?): jet.Tuple0
+}
+internal final fun main(/*0*/ args: jet.Array<jet.String>): jet.Tuple0
