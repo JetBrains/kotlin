@@ -16,19 +16,20 @@
 
 package org.jetbrains.jet.lang.diagnostics.rendering;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.DescriptorRow;
+import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.FunctionArgumentsRow;
+import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.TableRow;
+import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TextRenderer.TextElement;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
-import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.*;
-import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TextRenderer.*;
-
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -53,12 +54,12 @@ public class TabledDescriptorRenderer {
         public static class FunctionArgumentsRow implements TableRow {
             public final JetType receiverType;
             public final List<JetType> argumentTypes;
-            public final Collection<ConstraintPosition> errorPositions;
+            public final Predicate<ConstraintPosition> isErrorPosition;
 
-            public FunctionArgumentsRow(JetType receiverType, List<JetType> argumentTypes, Collection<ConstraintPosition> errorPositions) {
+            public FunctionArgumentsRow(JetType receiverType, List<JetType> argumentTypes, Predicate<ConstraintPosition> isErrorPosition) {
                 this.receiverType = receiverType;
                 this.argumentTypes = argumentTypes;
-                this.errorPositions = errorPositions;
+                this.isErrorPosition = isErrorPosition;
             }
         }
 
@@ -71,13 +72,14 @@ public class TabledDescriptorRenderer {
         }
 
         public TableRenderer functionArgumentTypeList(@Nullable JetType receiverType, @NotNull List<JetType> argumentTypes) {
-            return functionArgumentTypeList(receiverType, argumentTypes, Collections.<ConstraintPosition>emptyList());
+
+            return functionArgumentTypeList(receiverType, argumentTypes, Predicates.<ConstraintPosition>alwaysFalse());
         }
 
         public TableRenderer functionArgumentTypeList(@Nullable JetType receiverType,
                 @NotNull List<JetType> argumentTypes,
-                Collection<ConstraintPosition> errorPositions) {
-            rows.add(new FunctionArgumentsRow(receiverType, argumentTypes, errorPositions));
+                @NotNull Predicate<ConstraintPosition> isErrorPosition) {
+            rows.add(new FunctionArgumentsRow(receiverType, argumentTypes, isErrorPosition));
             return this;
         }
 

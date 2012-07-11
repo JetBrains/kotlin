@@ -16,10 +16,12 @@
 
 package org.jetbrains.jet.lang.diagnostics.rendering;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.Named;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -194,7 +196,7 @@ public class Renderers {
         for (CallableDescriptor substitutedDescriptor : substitutedDescriptors) {
             JetType receiverType = substitutedDescriptor.getReceiverParameter().exists() ? substitutedDescriptor.getReceiverParameter().getType() : null;
 
-            Collection<ConstraintPosition> errorPositions = Sets.newHashSet();
+            final Collection<ConstraintPosition> errorPositions = Sets.newHashSet();
             List<JetType> valueArgumentTypes = Lists.newArrayList();
             for (ValueParameterDescriptor valueParameterDescriptor : substitutedDescriptor.getValueParameters()) {
                 valueArgumentTypes.add(valueParameterDescriptor.getType());
@@ -209,7 +211,13 @@ public class Renderers {
                 errorPositions.add(ConstraintPosition.RECEIVER_POSITION);
             }
 
-            table.functionArgumentTypeList(receiverType, valueArgumentTypes, errorPositions);
+            Predicate<ConstraintPosition> isErrorPosition = new Predicate<ConstraintPosition>() {
+                @Override
+                public boolean apply(@Nullable ConstraintPosition constraintPosition) {
+                    return errorPositions.contains(constraintPosition);
+                }
+            };
+            table.functionArgumentTypeList(receiverType, valueArgumentTypes, isErrorPosition);
         }
 
         table.text("can be applied to")
@@ -218,16 +226,22 @@ public class Renderers {
         return result;
     }
 
-    public static TabledDescriptorRenderer renderTypeConstructorMismatchError(InferenceErrorData inferenceErrorData,
+    public static TabledDescriptorRenderer renderTypeConstructorMismatchError(final InferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer renderer) {
+        Predicate<ConstraintPosition> isErrorPosition = new Predicate<ConstraintPosition>() {
+            @Override
+            public boolean apply(@Nullable ConstraintPosition constraintPosition) {
+                assert constraintPosition != null;
+                return inferenceErrorData.constraintsSystem.hasTypeConstructorMismatchAt(constraintPosition);
+            }
+        };
         return renderer.table(TabledDescriptorRenderer.newTable()
                                       .descriptor(inferenceErrorData.descriptor)
                                       .text("cannot be applied to")
                                       .functionArgumentTypeList(
                                               inferenceErrorData.receiverArgumentType,
                                               inferenceErrorData.valueArgumentsTypes,
-                                              inferenceErrorData.constraintsSystem
-                                                      .getTypeConstructorMismatchConstraintPositions()));
+                                              isErrorPosition));
     }
 
     public static TabledDescriptorRenderer renderNoInformationForParameterError(InferenceErrorData inferenceErrorData,

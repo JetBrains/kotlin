@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
+import com.google.common.base.Predicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -37,7 +38,13 @@ public interface ConstraintsSystem {
     @NotNull
     Set<TypeParameterDescriptor> getTypeVariables();
 
-    // only subject type might contain type variables
+    //todo
+    /** only subject type might contain type variables
+     *
+     * @param subjectType
+     * @param constrainingType
+     * @param constraintPosition
+     */
     void addSubtypingConstraint(@NotNull JetType subjectType, @NotNull JetType constrainingType, @NotNull ConstraintPosition constraintPosition);
 
     // only subject type might contain type variables
@@ -53,12 +60,15 @@ public interface ConstraintsSystem {
 
     boolean hasTypeConstructorMismatch();
 
-    @NotNull
-    Set<ConstraintPosition> getTypeConstructorMismatchConstraintPositions();
+    boolean hasTypeConstructorMismatchAt(@NotNull ConstraintPosition constraintPosition);
 
     @Nullable
     TypeConstraints getTypeConstraints(@NotNull TypeParameterDescriptor typeParameterDescriptor);
 
+    /**
+     *
+     * @return
+     */
     @NotNull
     TypeSubstitutor getResultingSubstitutor();
 }

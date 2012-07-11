@@ -16,22 +16,25 @@
 
 package org.jetbrains.jet.plugin.highlighter;
 
+import com.google.common.base.Predicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer;
+import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.DescriptorRow;
+import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.FunctionArgumentsRow;
+import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.TableRow;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
-import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.*;
-import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.*;
-
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.error;
+import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.strong;
 
 /**
 * @author svtk
@@ -92,7 +95,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
             }
             if (row instanceof FunctionArgumentsRow) {
                 FunctionArgumentsRow functionArgumentsRow = (FunctionArgumentsRow) row;
-                renderFunctionArguments(functionArgumentsRow.receiverType, functionArgumentsRow.argumentTypes, functionArgumentsRow.errorPositions, result);
+                renderFunctionArguments(functionArgumentsRow.receiverType, functionArgumentsRow.argumentTypes, functionArgumentsRow.isErrorPosition, result);
             }
             result.append("</tr>");
         }
@@ -101,13 +104,13 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
         result.append("</table>");
     }
 
-    private void renderFunctionArguments(@Nullable JetType receiverType, @NotNull List<JetType> argumentTypes, Collection<ConstraintPosition> errorPositions, StringBuilder result) {
+    private void renderFunctionArguments(@Nullable JetType receiverType, @NotNull List<JetType> argumentTypes, Predicate<ConstraintPosition> isErrorPosition, StringBuilder result) {
         boolean hasReceiver = receiverType != null;
         tdSpace(result);
         String receiver = "";
         if (hasReceiver) {
             boolean error = false;
-            if (errorPositions.contains(ConstraintPosition.RECEIVER_POSITION)) {
+            if (isErrorPosition.apply(ConstraintPosition.RECEIVER_POSITION)) {
                 error = true;
             }
             receiver = "receiver: " + strong(IdeRenderers.HTML_RENDER_TYPE.render(receiverType), error);
@@ -124,7 +127,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
         for (Iterator<JetType> iterator = argumentTypes.iterator(); iterator.hasNext(); ) {
             JetType argumentType = iterator.next();
             boolean error = false;
-            if (errorPositions.contains(ConstraintPosition.getValueParameterPosition(i))) {
+            if (isErrorPosition.apply(ConstraintPosition.getValueParameterPosition(i))) {
                 error = true;
             }
             String renderedArgument = IdeRenderers.HTML_RENDER_TYPE.render(argumentType);
