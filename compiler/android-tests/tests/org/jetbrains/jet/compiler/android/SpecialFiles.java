@@ -54,6 +54,7 @@ public class SpecialFiles {
         filesCompiledWithoutStdLib.add("kt773.jet"); // OVERLOAD_RESOLUTION_AMBIGUITY
         filesCompiledWithoutStdLib.add("kt796_797.jet"); // OVERLOAD_RESOLUTION_AMBIGUITY
         filesCompiledWithoutStdLib.add("kt950.jet"); // OVERLOAD_RESOLUTION_AMBIGUITY
+        filesCompiledWithoutStdLib.add("kt2395.kt"); // With MOCK_JDK
     }
 
     private static void fillExcludedFiles() {
