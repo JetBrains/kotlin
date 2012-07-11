@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.Variance;
 
@@ -27,21 +26,17 @@ import java.util.Set;
  * @author svtk
  */
 public interface TypeConstraints {
-
-    @Nullable
-    JetType getLowerConstraint();
-
-    @Nullable
-    JetType getUpperConstraint();
+    @NotNull
+    Set<JetType> getLowerBounds();
 
     @NotNull
-    Set<JetType> getConflicts();
+    Set<JetType> getUpperBounds();
 
     @NotNull
-    Variance getVariance();
+    Set<JetType> getExactBounds();
 
-    boolean isSuccessful();
+    @NotNull
+    Variance getVarianceOfPosition();
 
     boolean isEmpty();
-
 }
