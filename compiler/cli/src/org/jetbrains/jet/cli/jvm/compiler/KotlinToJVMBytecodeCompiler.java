@@ -221,16 +221,6 @@ public class KotlinToJVMBytecodeCompiler {
         }
     }
 
-    public static boolean compileBunchOfSources(
-            K2JVMCompileEnvironmentConfiguration configuration,
-            List<String> sourceFilesOrDirs, File jar, File outputDir, boolean script,  boolean includeRuntime) {
-        for (String sourceFileOrDir : sourceFilesOrDirs) {
-            configuration.getEnvironment().addSources(sourceFileOrDir);
-        }
-
-        return compileBunchOfSources(configuration, jar, outputDir, includeRuntime);
-    }
-
     public static boolean compileBunchOfSourceDirectories(
             K2JVMCompileEnvironmentConfiguration configuration,
 
