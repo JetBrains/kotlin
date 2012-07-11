@@ -76,7 +76,7 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
         String expectedText = JetTestUtils.doLoadFile(file);
         final Ref<Boolean> hasJavaFiles = new Ref<Boolean>(false);
 
-        List<TestFile> testFileFiles =
+        List<TestFile> testFiles =
                 JetTestUtils.createTestFiles(file.getName(), expectedText, new JetTestUtils.TestFileFactory<TestFile>() {
                     @Override
                     public TestFile create(String fileName, String text) {
@@ -94,9 +94,9 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
         }
 
         List<JetFile> jetFiles = Lists.newArrayList();
-        for (TestFile testFileFile : testFileFiles) {
-            if (testFileFile.jetFile != null) {
-                jetFiles.add(testFileFile.jetFile);
+        for (TestFile testFile : testFiles) {
+            if (testFile.jetFile != null) {
+                jetFiles.add(testFile.jetFile);
             }
         }
 
@@ -107,13 +107,13 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
         boolean ok = true;
 
         StringBuilder actualText = new StringBuilder();
-        for (TestFile testFileFile : testFileFiles) {
+        for (TestFile testFileFile : testFiles) {
             ok &= testFileFile.getActualText(bindingContext, actualText);
         }
 
         assertEquals(expectedText, actualText.toString());
 
-        assertTrue("something is wrong is this test", ok);
+        assertTrue("Diagnostics mismatch. See the output above", ok);
     }
 
     private class TestFile {
@@ -148,7 +148,7 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
                 return true;
             }
 
-            final boolean ok[] = { true };
+            final boolean[] ok = { true };
             CheckerTestUtil.diagnosticsDiff(diagnosedRanges, CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile), new CheckerTestUtil.DiagnosticDiffCallbacks() {
                 @NotNull
                 @Override
