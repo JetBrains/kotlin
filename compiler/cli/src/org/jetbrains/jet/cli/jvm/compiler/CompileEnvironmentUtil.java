@@ -32,6 +32,7 @@ import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
 import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -114,8 +115,8 @@ public class CompileEnvironmentUtil {
         if (jdkAnnotationsPath != null) {
             configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, jdkAnnotationsPath);
         }
+        configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, moduleScriptFile);
         JetCoreEnvironment scriptEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(disposable, configuration);
-        scriptEnvironment.addSources(moduleScriptFile);
 
         GenerationState generationState = KotlinToJVMBytecodeCompiler
                 .analyzeAndGenerate(new K2JVMCompileEnvironmentConfiguration(scriptEnvironment, messageCollector, false,
