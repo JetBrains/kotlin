@@ -54,8 +54,8 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
     private final CoreAnnotationsProvider annotationsProvider;
 
     @NotNull
-    public static JetCoreEnvironment createCoreEnvironmentForJS(Disposable disposable) {
-        return new JetCoreEnvironment(disposable, new CompilerConfiguration());
+    public static JetCoreEnvironment createCoreEnvironmentForJS(Disposable disposable, @NotNull CompilerConfiguration configuration) {
+        return new JetCoreEnvironment(disposable, configuration);
     }
 
     @NotNull

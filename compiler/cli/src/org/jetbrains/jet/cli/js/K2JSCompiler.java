@@ -35,6 +35,8 @@ import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.PrintingMessageCollector;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.config.CommonConfigurationKeys;
+import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.*;
@@ -72,7 +74,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
             return ExitCode.INTERNAL_ERROR;
         }
 
-        JetCoreEnvironment environmentForJS = JetCoreEnvironment.createCoreEnvironmentForJS(rootDisposable);
+        JetCoreEnvironment environmentForJS = JetCoreEnvironment.createCoreEnvironmentForJS(rootDisposable, new CompilerConfiguration());
 
         for (String sourceFile : arguments.sourceFiles) {
             environmentForJS.addSources(sourceFile);
