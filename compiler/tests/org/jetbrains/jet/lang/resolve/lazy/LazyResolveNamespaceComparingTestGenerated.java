@@ -701,6 +701,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestSinglePackage("compiler/testData/readKotlinBinaryClass/type/jlIntegerQ.kt");
             }
             
+            @TestMetadata("jlNumber.kt")
+            public void testJlNumber() throws Exception {
+                doTestSinglePackage("compiler/testData/readKotlinBinaryClass/type/jlNumber.kt");
+            }
+            
             @TestMetadata("jlObject.kt")
             public void testJlObject() throws Exception {
                 doTestSinglePackage("compiler/testData/readKotlinBinaryClass/type/jlObject.kt");

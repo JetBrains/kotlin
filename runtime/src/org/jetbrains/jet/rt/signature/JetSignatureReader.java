@@ -96,7 +96,7 @@ public class JetSignatureReader {
                 pos = end + 1;
 
                 c = signature.charAt(pos);
-                if (c == 'L' || c == '[' || c == 'T' || c == '?') {
+                if (c == 'L' || c == 'M' || c == '[' || c == 'T' || c == '?') {
                     pos = parseType(signature, pos, parameterVisitor.visitClassBound());
                 }
 
