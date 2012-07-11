@@ -32,14 +32,6 @@ import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.MemberCodegen;
 import org.jetbrains.jet.codegen.ClosureAnnotator;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import java.util.List;
-import org.jetbrains.jet.lang.psi.JetFile;
-import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
-import org.jetbrains.jet.codegen.ClassBuilderMode;
-import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
