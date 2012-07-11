@@ -16,10 +16,15 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.google.common.base.Predicates;
 import junit.framework.TestCase;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTest;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.jvm.compiler.NamespaceComparator;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.test.generator.SimpleTestClassModel;
 import org.jetbrains.jet.test.generator.TestGenerator;
 
@@ -39,7 +44,11 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiag
 
     @Override
     protected void analyzeAndCheck(String expectedText, List<TestFile> files) {
+        List<JetFile> jetFiles = getJetFiles(files);
+        ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(jetFiles, getEnvironment());
+        ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(jetFiles, getEnvironment());
 
+        NamespaceComparator.assertNamespacesEqual(eagerModule.getRootNamespace(), lazyModule.getRootNamespace(), false, Predicates.<NamespaceDescriptor>alwaysTrue());
     }
 
     public static void main(String[] args) throws IOException {

@@ -91,6 +91,16 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
 
     protected abstract void analyzeAndCheck(String expectedText, List<TestFile> files);
 
+    protected static List<JetFile> getJetFiles(List<TestFile> testFiles) {
+        List<JetFile> jetFiles = Lists.newArrayList();
+        for (TestFile testFile : testFiles) {
+            if (testFile.getJetFile() != null) {
+                jetFiles.add(testFile.getJetFile());
+            }
+        }
+        return jetFiles;
+    }
+
     protected class TestFile {
         private final List<CheckerTestUtil.DiagnosedRange> diagnosedRanges = Lists.newArrayList();
         private final String expectedText;
