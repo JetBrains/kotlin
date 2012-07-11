@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
+import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -234,7 +234,7 @@ public final class TranslationUtils {
 
     @NotNull
     public static JsExpression applyIntrinsicToBinaryExpression(@NotNull TranslationContext context,
-            @NotNull Intrinsic intrinsic,
+            @NotNull FunctionIntrinsic intrinsic,
             @NotNull JetBinaryExpression binaryExpression) {
         JsExpression left = translateLeftExpression(context, binaryExpression);
         JsExpression right = translateRightExpression(context, binaryExpression);

@@ -50,13 +50,13 @@ import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getPropertyBy
 /**
  * @author Pavel Talanov
  *         <p/>
- *         Provides mechanism to substitute method calls /w native constucts directly.
+ *         Provides mechanism to substitute method calls /w native constructs directly.
  */
 public final class Intrinsics {
 
     @NotNull
-    private final Map<FunctionDescriptor, Intrinsic> functionIntrinsics =
-            new HashMap<FunctionDescriptor, Intrinsic>();
+    private final Map<FunctionDescriptor, FunctionIntrinsic> functionIntrinsics =
+            new HashMap<FunctionDescriptor, FunctionIntrinsic>();
 
     @NotNull
     private final Map<FunctionDescriptor, EqualsIntrinsic> equalsIntrinsics =
@@ -67,7 +67,7 @@ public final class Intrinsics {
             new HashMap<FunctionDescriptor, CompareToIntrinsic>();
 
     @NotNull
-    private final Intrinsic lengthPropertyIntrinsic = new BuiltInPropertyIntrinsic("length");
+    private final FunctionIntrinsic lengthPropertyIntrinsic = new BuiltInPropertyIntrinsic("length");
 
     public static Intrinsics standardLibraryIntrinsics(@NotNull JetStandardLibrary library) {
         return new Intrinsics(library);
@@ -106,7 +106,7 @@ public final class Intrinsics {
     }
 
     @NotNull
-    public Intrinsic getLengthPropertyIntrinsic() {
+    public FunctionIntrinsic getLengthPropertyIntrinsic() {
         return lengthPropertyIntrinsic;
     }
 
@@ -212,8 +212,8 @@ public final class Intrinsics {
 
     //NOTE: that if we want to add other intrinsics we have to modify this method
     @NotNull
-    public Intrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
-        Intrinsic intrinsic = functionIntrinsics.get(descriptor.getOriginal());
+    public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
+        FunctionIntrinsic intrinsic = functionIntrinsics.get(descriptor.getOriginal());
         if (intrinsic == null) {
             intrinsic = equalsIntrinsics.get(descriptor.getOriginal());
         }

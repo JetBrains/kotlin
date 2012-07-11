@@ -33,7 +33,7 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.newInvocation;
 /**
  * @author Pavel Talanov
  */
-public final class CallStandardMethodIntrinsic implements Intrinsic {
+public final class CallStandardMethodIntrinsic implements FunctionIntrinsic {
 
     @NotNull
     private final String methodName;

@@ -26,14 +26,14 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
+import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 import static org.jetbrains.k2js.translate.utils.TemporariesUtils.temporariesInitialization;
 
@@ -70,7 +70,7 @@ public final class ArrayForTranslator extends ForTranslator {
     private ArrayForTranslator(@NotNull JetForExpression forExpression, @NotNull TranslationContext context) {
         super(forExpression, context);
         loopRange = context.declareTemporary(Translation.translateAsExpression(getLoopRange(expression), context));
-        Intrinsic lengthPropertyIntrinsic = context().intrinsics().getLengthPropertyIntrinsic();
+        FunctionIntrinsic lengthPropertyIntrinsic = context().intrinsics().getLengthPropertyIntrinsic();
         JsExpression length = lengthPropertyIntrinsic.apply(loopRange.reference(),
                                                             Collections.<JsExpression>emptyList(),
                                                             context());

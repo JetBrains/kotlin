@@ -15,7 +15,7 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
  * @author Pavel Talanov
  */
 //TODO: find should be usages
-public final class BuiltInPropertyIntrinsic implements Intrinsic {
+public final class BuiltInPropertyIntrinsic implements FunctionIntrinsic {
 
     @NotNull
     private final String propertyName;

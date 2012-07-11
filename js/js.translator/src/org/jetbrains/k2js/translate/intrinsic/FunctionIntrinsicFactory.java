@@ -16,25 +16,16 @@
 
 package org.jetbrains.k2js.translate.intrinsic;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.k2js.translate.context.TranslationContext;
-
-import java.util.List;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 
 /**
  * @author Pavel Talanov
  */
-public enum ReturnReceiverIntrinsic implements FunctionIntrinsic {
+public abstract class FunctionIntrinsicFactory {
 
-    INSTANCE;
+    public abstract boolean isApplicable(@NotNull FunctionDescriptor descriptor);
 
     @NotNull
-    @Override
-    public JsExpression apply(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments,
-                              @NotNull TranslationContext context) {
-        assert receiver != null;
-        return receiver;
-    }
+    public abstract FunctionIntrinsic createIntrinsic(@NotNull FunctionDescriptor descriptor);
 }

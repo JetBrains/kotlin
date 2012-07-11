@@ -23,7 +23,7 @@ import org.jetbrains.jet.lexer.JetToken;
 /**
  * @author Pavel Talanov
  */
-public abstract class CompareToIntrinsic implements Intrinsic {
+public abstract class CompareToIntrinsic implements FunctionIntrinsic {
 
     private JetToken comparisonToken = null;
 

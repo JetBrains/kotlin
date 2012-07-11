@@ -26,9 +26,9 @@ import java.util.List;
 /**
  * @author Pavel Talanov
  *         <p/>
- *         Base class for all intrinsics.
+ *         Base for intrinsics that substitute standard function calls like Int#plus, Float#minus ... etc
  */
-public interface Intrinsic {
+public interface FunctionIntrinsic {
 
     @NotNull
     JsExpression apply(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments,

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Pavel Talanov
  */
-public abstract class EqualsIntrinsic implements Intrinsic {
+public abstract class EqualsIntrinsic implements FunctionIntrinsic {
 
     @NotNull
     private Boolean isNegated = false;

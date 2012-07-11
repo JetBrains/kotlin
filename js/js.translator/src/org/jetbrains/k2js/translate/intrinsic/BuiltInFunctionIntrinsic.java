@@ -31,7 +31,7 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 /**
  * @author Pavel Talanov
  */
-public final class BuiltInFunctionIntrinsic implements Intrinsic {
+public final class BuiltInFunctionIntrinsic implements FunctionIntrinsic {
 
     @NotNull
     private final String functionName;
