@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -53,9 +54,8 @@ import java.util.List;
 public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
 
     @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_AND_ANNOTATIONS);
+    protected JetCoreEnvironment createEnvironment() {
+        return createEnvironmentWithMockJdk(ConfigurationKind.JDK_AND_ANNOTATIONS);
     }
 
     private boolean writeJavaFile(@NotNull String fileName, @NotNull String content, @NotNull File javaFilesDir) {
@@ -90,7 +90,7 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
         if (hasJavaFiles.get()) {
             // According to yole@ the only way to import java files is to write them on disk
             // -- stepan.koltsov@ 2012-02-29
-            myEnvironment.addToClasspath(javaFilesDir);
+            getEnvironment().addToClasspath(javaFilesDir);
         }
 
         List<JetFile> jetFiles = Lists.newArrayList();

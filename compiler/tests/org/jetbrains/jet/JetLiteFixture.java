@@ -17,18 +17,15 @@
 package org.jetbrains.jet;
 
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.TestDataFile;
-import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.junit.Assert;
 
 import java.io.IOException;
@@ -36,11 +33,11 @@ import java.io.IOException;
 /**
  * @author abreslav
  */
-public abstract class JetLiteFixture extends UsefulTestCase {
+public abstract class JetLiteFixture extends KotlinTestWithEnvironment {
     @NonNls
     protected final String myFullDataPath;
-    protected JetFile myFile;
-    protected JetCoreEnvironment myEnvironment;
+    private JetFile myFile;
+
 
     public JetLiteFixture(@NonNls String dataPath) {
         myFullDataPath = getTestDataPath() + "/" + dataPath;
@@ -50,12 +47,12 @@ public abstract class JetLiteFixture extends UsefulTestCase {
         myFullDataPath = getTestDataPath();
     }
 
-    protected String getTestDataPath() {
-        return JetTestCaseBuilder.getTestDataPathBase();
+    protected JetFile getFile() {
+        return myFile;
     }
 
-    public Project getProject() {
-        return myEnvironment.getProject();
+    protected String getTestDataPath() {
+        return JetTestCaseBuilder.getTestDataPathBase();
     }
 
     @Override
@@ -63,31 +60,9 @@ public abstract class JetLiteFixture extends UsefulTestCase {
         super.setUp();
     }
 
-    protected void createEnvironmentWithMockJdkAndIdeaAnnotations() {
-        if (myEnvironment != null) {
-            throw new IllegalStateException("must not set up myEnvironment twice");
-        }
-        myEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable());
-    }
-
-    protected void createEnvironmentWithMockJdkAndIdeaAnnotations(@NotNull ConfigurationKind configurationKind) {
-        if (myEnvironment != null) {
-            throw new IllegalStateException("must not set up myEnvironment twice");
-        }
-        myEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(), configurationKind);
-    }
-
-    protected void createEnvironmentWithFullJdk() {
-        if (myEnvironment != null) {
-            throw new IllegalStateException("must not set up myEnvironment twice");
-        }
-        myEnvironment = JetTestUtils.createEnvironmentWithFullJdk(getTestRootDisposable());
-    }
-
     @Override
     protected void tearDown() throws Exception {
         myFile = null;
-        myEnvironment = null;
         super.tearDown();
     }
 
@@ -100,7 +75,7 @@ public abstract class JetLiteFixture extends UsefulTestCase {
             Assert.assertNotNull(testName);
             fileName = testName + ".jet";
         }
-        return (JetFile) JetTestUtils.createFile(fileName, text, myEnvironment.getProject());
+        return (JetFile) JetTestUtils.createFile(fileName, text, getProject());
     }
 
     protected JetFile loadPsiFile(String name) {

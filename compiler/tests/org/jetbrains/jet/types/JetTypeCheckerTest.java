@@ -20,9 +20,11 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
@@ -67,10 +69,13 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     @Override
+    protected JetCoreEnvironment createEnvironment() {
+        return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
+    }
+
+    @Override
     public void setUp() throws Exception {
         super.setUp();
-
-        super.createEnvironmentWithMockJdkAndIdeaAnnotations();
 
         library          = JetStandardLibrary.getInstance();
         classDefinitions = new ClassDefinitions();

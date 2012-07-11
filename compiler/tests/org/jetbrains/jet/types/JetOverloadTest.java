@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.types;
 
+import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -39,9 +41,13 @@ public class JetOverloadTest extends JetLiteFixture {
     private DescriptorResolver descriptorResolver;
 
     @Override
+    protected JetCoreEnvironment createEnvironment() {
+        return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
+    }
+
+    @Override
     public void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdkAndIdeaAnnotations();
         InjectorForTests injector = new InjectorForTests(getProject());
         library = injector.getJetStandardLibrary();
         descriptorResolver = injector.getDescriptorResolver();

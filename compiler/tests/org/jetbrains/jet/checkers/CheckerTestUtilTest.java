@@ -19,7 +19,9 @@ package org.jetbrains.jet.checkers;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -40,15 +42,14 @@ public class CheckerTestUtilTest extends JetLiteFixture {
     }
 
     @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        createEnvironmentWithMockJdkAndIdeaAnnotations();
+    protected JetCoreEnvironment createEnvironment() {
+        return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
     }
 
 
     protected void doTest(TheTest theTest) throws Exception {
         prepareForTest("test");
-        theTest.test(myFile);
+        theTest.test(getFile());
     }
 
     public void testEquals() throws Exception {

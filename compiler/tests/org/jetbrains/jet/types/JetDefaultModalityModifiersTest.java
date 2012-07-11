@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.types;
 
+import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -44,9 +46,13 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
     private JetDefaultModalityModifiersTestCase tc = new JetDefaultModalityModifiersTestCase();
 
     @Override
+    protected JetCoreEnvironment createEnvironment() {
+        return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
+    }
+
+    @Override
     public void setUp() throws Exception {
         super.setUp();
-        super.createEnvironmentWithMockJdkAndIdeaAnnotations();
         tc.setUp();
     }
 

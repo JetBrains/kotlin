@@ -102,7 +102,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         nameToDeclaration.put("java::java.lang.Number", java_lang_Number);
         nameToDeclaration.put("java::java.lang.Number.intValue()", java_lang_Number.findMethodsByName("intValue", true)[0]);
 
-        return new ExpectedResolveData(nameToDescriptor, nameToDeclaration, myEnvironment) {
+        return new ExpectedResolveData(nameToDescriptor, nameToDeclaration, getEnvironment()) {
             @Override
             protected JetFile createJetFile(String fileName, String text) {
                 return createCheckAndReturnPsiFile(fileName, null, text);
