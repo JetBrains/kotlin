@@ -107,7 +107,8 @@ public class CallResolver {
         else {
             callableDescriptorCollectors.add(CallableDescriptorCollectors.VARIABLES);
         }
-        List<ResolutionTask<VariableDescriptor, VariableDescriptor>> prioritizedTasks = TaskPrioritizer.computePrioritizedTasks(context, referencedName, nameExpression, callableDescriptorCollectors);
+        List<ResolutionTask<VariableDescriptor, VariableDescriptor>> prioritizedTasks =
+                TaskPrioritizer.<VariableDescriptor, VariableDescriptor>computePrioritizedTasks(context, referencedName, nameExpression, callableDescriptorCollectors);
         return doResolveCallOrGetCachedResults(RESOLUTION_RESULTS_FOR_PROPERTY, context, prioritizedTasks, CallTransformer.PROPERTY_CALL_TRANSFORMER, nameExpression);
     }
 
@@ -116,7 +117,8 @@ public class CallResolver {
             @NotNull BasicResolutionContext context,
             @NotNull final JetReferenceExpression functionReference,
             @NotNull Name name) {
-        List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks = TaskPrioritizer.computePrioritizedTasks(context, name, functionReference, CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES);
+        List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks =
+                TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasks(context, name, functionReference, CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES);
         return doResolveCallOrGetCachedResults(RESOLUTION_RESULTS_FOR_FUNCTION, context, tasks, CallTransformer.FUNCTION_CALL_TRANSFORMER,
                                                functionReference);
     }
@@ -145,7 +147,7 @@ public class CallResolver {
             Name name = expression.getReferencedNameAsName();
             if (name == null) return checkArgumentTypesAndFail(context);
 
-            prioritizedTasks = TaskPrioritizer.computePrioritizedTasks(context, name, functionReference, CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES);
+            prioritizedTasks = TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasks(context, name, functionReference, CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES);
             ResolutionTask.DescriptorCheckStrategy abstractConstructorCheck = new ResolutionTask.DescriptorCheckStrategy() {
                 @Override
                 public <D extends CallableDescriptor> boolean performAdvancedChecks(D descriptor, BindingTrace trace, TracingStrategy tracing) {
