@@ -28,24 +28,24 @@ import java.util.List;
  */
 public class InferenceErrorData {
     public final CallableDescriptor descriptor;
-    public final ConstraintsBuilder constraintsBuilder;
+    public final ConstraintsSystem constraintsSystem;
     public final JetType receiverArgumentType;
     public final List<JetType> valueArgumentsTypes;
 
-    private InferenceErrorData(@NotNull CallableDescriptor descriptor, @NotNull ConstraintsBuilder constraintsBuilder,
+    private InferenceErrorData(@NotNull CallableDescriptor descriptor, @NotNull ConstraintsSystem constraintsSystem,
             @Nullable List<JetType> valueArgumentsTypes, @Nullable JetType receiverArgumentType) {
         this.descriptor = descriptor;
-        this.constraintsBuilder = constraintsBuilder;
+        this.constraintsSystem = constraintsSystem;
         this.receiverArgumentType = receiverArgumentType;
         this.valueArgumentsTypes = valueArgumentsTypes;
     }
 
-    public static InferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintsBuilder constraintsBuilder,
+    public static InferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintsSystem constraintsSystem,
             @NotNull List<JetType> valueArgumentsTypes, @Nullable JetType receiverArgumentType) {
-        return new InferenceErrorData(descriptor, constraintsBuilder, valueArgumentsTypes, receiverArgumentType);
+        return new InferenceErrorData(descriptor, constraintsSystem, valueArgumentsTypes, receiverArgumentType);
     }
 
-    public static InferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintsBuilder constraintsBuilder) {
-        return new InferenceErrorData(descriptor, constraintsBuilder, null, null);
+    public static InferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintsSystem constraintsSystem) {
+        return new InferenceErrorData(descriptor, constraintsSystem, null, null);
     }
 }

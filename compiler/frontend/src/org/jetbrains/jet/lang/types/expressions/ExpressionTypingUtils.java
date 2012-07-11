@@ -232,7 +232,7 @@ public class ExpressionTypingUtils {
             @NotNull JetType receiverType,
             @NotNull CallableDescriptor receiverArgument
     ) {
-        ConstraintsBuilderImpl constraintsBuilder = new ConstraintsBuilderImpl();
+        ConstraintsSystemImpl constraintsBuilder = new ConstraintsSystemImpl();
         for (TypeParameterDescriptor typeParameterDescriptor : receiverArgument.getTypeParameters()) {
             constraintsBuilder.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT);
         }

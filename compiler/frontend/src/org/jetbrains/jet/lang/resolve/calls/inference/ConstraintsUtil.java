@@ -35,9 +35,9 @@ import java.util.Map;
 public class ConstraintsUtil {
 
     @Nullable
-    public static TypeParameterDescriptor getFirstConflictingParameter(@NotNull ConstraintsBuilder constraintsBuilder) {
-        for (TypeParameterDescriptor typeParameter : constraintsBuilder.getTypeParameters()) {
-            TypeConstraints constraints = constraintsBuilder.getTypeConstraints(typeParameter);
+    public static TypeParameterDescriptor getFirstConflictingParameter(@NotNull ConstraintsSystem constraintsSystem) {
+        for (TypeParameterDescriptor typeParameter : constraintsSystem.getTypeVariables()) {
+            TypeConstraints constraints = constraintsSystem.getTypeConstraints(typeParameter);
             if (!constraints.getConflicts().isEmpty()) {
                 return typeParameter;
             }
@@ -46,11 +46,11 @@ public class ConstraintsUtil {
     }
 
     @NotNull
-    public static Collection<TypeSubstitutor> getSubstitutorsForConflictingParameters(@NotNull ConstraintsBuilder constraintsBuilder) {
-        TypeParameterDescriptor firstConflictingParameter = getFirstConflictingParameter(constraintsBuilder);
+    public static Collection<TypeSubstitutor> getSubstitutorsForConflictingParameters(@NotNull ConstraintsSystem constraintsSystem) {
+        TypeParameterDescriptor firstConflictingParameter = getFirstConflictingParameter(constraintsSystem);
         if (firstConflictingParameter == null) return Collections.emptyList();
 
-        Collection<JetType> conflictingTypes = constraintsBuilder.getTypeConstraints(firstConflictingParameter).getConflicts();
+        Collection<JetType> conflictingTypes = constraintsSystem.getTypeConstraints(firstConflictingParameter).getConflicts();
 
         ArrayList<Map<TypeConstructor, TypeProjection>> substitutionContexts = Lists.newArrayList();
         for (JetType type : conflictingTypes) {
@@ -59,10 +59,10 @@ public class ConstraintsUtil {
             substitutionContexts.add(context);
         }
 
-        for (TypeParameterDescriptor typeParameter : constraintsBuilder.getTypeParameters()) {
+        for (TypeParameterDescriptor typeParameter : constraintsSystem.getTypeVariables()) {
             if (typeParameter == firstConflictingParameter) continue;
 
-            JetType safeType = getSafeValue(constraintsBuilder, typeParameter);
+            JetType safeType = getSafeValue(constraintsSystem, typeParameter);
             for (Map<TypeConstructor, TypeProjection> context : substitutionContexts) {
                 TypeProjection typeProjection = new TypeProjection(safeType);
                 context.put(typeParameter.getTypeConstructor(), typeProjection);
@@ -76,8 +76,8 @@ public class ConstraintsUtil {
     }
 
     @NotNull
-    public static JetType getSafeValue(@NotNull ConstraintsBuilder constraintsBuilder, @NotNull TypeParameterDescriptor typeParameter) {
-        JetType type = constraintsBuilder.getValue(typeParameter);
+    public static JetType getSafeValue(@NotNull ConstraintsSystem constraintsSystem, @NotNull TypeParameterDescriptor typeParameter) {
+        JetType type = constraintsSystem.getValue(typeParameter);
         if (type != null) {
             return type;
         }
@@ -85,12 +85,12 @@ public class ConstraintsUtil {
         return typeParameter.getUpperBoundsAsType();
     }
 
-    public static boolean checkUpperBoundIsSatisfied(@NotNull ConstraintsBuilder constraintsBuilder,
+    public static boolean checkUpperBoundIsSatisfied(@NotNull ConstraintsSystem constraintsSystem,
             @NotNull TypeParameterDescriptor typeParameter) {
-        assert constraintsBuilder.getTypeConstraints(typeParameter) != null;
-        JetType type = constraintsBuilder.getValue(typeParameter);
+        assert constraintsSystem.getTypeConstraints(typeParameter) != null;
+        JetType type = constraintsSystem.getValue(typeParameter);
         JetType upperBound = typeParameter.getUpperBoundsAsType();
-        JetType substitute = constraintsBuilder.getSubstitutor().substitute(upperBound, Variance.INVARIANT);
+        JetType substitute = constraintsSystem.getSubstitutor().substitute(upperBound, Variance.INVARIANT);
 
         if (type != null) {
             if (substitute == null || !JetTypeChecker.INSTANCE.isSubtypeOf(type, substitute)) {

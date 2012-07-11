@@ -24,9 +24,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsBuilder;
-import org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraints;
-import org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsSystem;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -74,7 +72,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private TemporaryBindingTrace trace;
     private ResolutionStatus status = UNKNOWN_STATUS;
     private boolean hasUnknownTypeParameters = false;
-    private ConstraintsBuilder constraintsBuilder = null;
+    private ConstraintsSystem constraintsSystem = null;
 
     private ResolvedCallImpl(@NotNull ResolutionCandidate<D> candidate, @NotNull TemporaryBindingTrace trace) {
         this.candidateDescriptor = candidate.getDescriptor();
@@ -132,13 +130,13 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         typeArguments.put(typeParameter, typeArgument);
     }
 
-    public void setConstraintsBuilder(@NotNull ConstraintsBuilder constraintsBuilder) {
-        this.constraintsBuilder = constraintsBuilder;
+    public void setConstraintsSystem(@NotNull ConstraintsSystem constraintsSystem) {
+        this.constraintsSystem = constraintsSystem;
     }
 
     @Nullable
-    public ConstraintsBuilder getConstraintsBuilder() {
-        return constraintsBuilder;
+    public ConstraintsSystem getConstraintsSystem() {
+        return constraintsSystem;
     }
 
     public void recordValueArgument(@NotNull ValueParameterDescriptor valueParameter, @NotNull ResolvedValueArgument valueArgument) {

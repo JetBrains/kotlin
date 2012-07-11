@@ -30,15 +30,17 @@ import java.util.Set;
 /**
  * @author svtk
  */
-public interface ConstraintsBuilder {
+public interface ConstraintsSystem {
 
     void registerTypeVariable(@NotNull TypeParameterDescriptor typeParameterDescriptor, @NotNull Variance positionVariance);
 
     @NotNull
-    Set<TypeParameterDescriptor> getTypeParameters();
+    Set<TypeParameterDescriptor> getTypeVariables();
 
+    // only subject type might contain type variables
     void addSubtypingConstraint(@NotNull JetType subjectType, @NotNull JetType constrainingType, @NotNull ConstraintPosition constraintPosition);
 
+    // only subject type might contain type variables
     void addSupertypeConstraint(@NotNull JetType subjectType, @NotNull JetType constrainingType, @NotNull ConstraintPosition constraintPosition);
 
     boolean isSuccessful();
