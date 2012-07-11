@@ -1229,10 +1229,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptor;
         boolean overridesTrait = isOverrideForTrait(propertyDescriptor);
-        propertyDescriptor = propertyDescriptor.getOriginal();
-        boolean isInsideClass = ((containingDeclaration == context.getThisDescriptor()) ||
+        boolean isFakeOverride = propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
+        PropertyDescriptor initialDescriptor = propertyDescriptor;
+        propertyDescriptor = initialDescriptor.getOriginal();
+        boolean isInsideClass = !isFakeOverride && (((containingDeclaration == context.getThisDescriptor()) ||
                                  (context.getParentContext() instanceof CodegenContexts.NamespaceContext) && context.getParentContext().getContextDescriptor() == containingDeclaration)
-                                && contextKind() != OwnerKind.TRAIT_IMPL;
+                                && contextKind() != OwnerKind.TRAIT_IMPL);
         Method getter;
         Method setter;
         if (forceField) {
@@ -1305,7 +1307,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             // TODO ugly
             CallableMethod callableMethod = typeMapper.mapToCallableMethod(propertyDescriptor.getGetter(), isSuper, contextKind());
             invokeOpcode = callableMethod.getInvokeOpcode();
-            owner = callableMethod.getOwner();
+            owner = isFakeOverride && !overridesTrait && !CodegenUtil.isInterface(initialDescriptor.getContainingDeclaration()) ? JvmClassName.byType(typeMapper.mapType(((ClassDescriptor)initialDescriptor.getContainingDeclaration()).getDefaultType(), MapTypeMode.IMPL)): callableMethod.getOwner();
             ownerParam = callableMethod.getDefaultImplParam();
         }
 
