@@ -16,15 +16,22 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.vfs.local.CoreLocalFileSystem;
 import gnu.trove.THashSet;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.jetbrains.jet.CompileCompilerDependenciesTest;
+import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.jet.config.CommonConfigurationKeys;
+import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
@@ -48,6 +55,8 @@ import java.util.Set;
  */
 public class TestlibTest extends CodegenTestCase {
 
+    private File junitJar;
+
     public static Test suite() {
         return new TestlibTest().buildSuite();
     }
@@ -70,20 +79,6 @@ public class TestlibTest extends CodegenTestCase {
 
     private TestSuite doBuildSuite() {
         try {
-            File junitJar = new File("libraries/lib/junit-4.9.jar");
-
-            if (!junitJar.exists()) {
-                throw new AssertionError();
-            }
-
-            myEnvironment.addToClasspath(junitJar);
-
-            myEnvironment.addToClasspath(ForTestCompileRuntime.runtimeJarForTests());
-
-            CoreLocalFileSystem localFileSystem = myEnvironment.getLocalFileSystem();
-            myEnvironment.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/stdlib/test"));
-            myEnvironment.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/kunit/src"));
-
             GenerationState generationState = KotlinToJVMBytecodeCompiler
                     .analyzeAndGenerate(new K2JVMCompileEnvironmentConfiguration(myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR,
                                                                                  false, BuiltinsScopeExtensionMode.ALL, false,
@@ -162,6 +157,17 @@ public class TestlibTest extends CodegenTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithFullJdk();
+        CompilerConfiguration configuration = CompileCompilerDependenciesTest.compilerConfigurationForTests(ConfigurationKind.ALL,
+                                                                                                            TestJdkKind.FULL_JDK);
+        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, JetTestUtils.getAnnotationsJar());
+
+        junitJar = new File("libraries/lib/junit-4.9.jar");
+        assertTrue(junitJar.exists());
+        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, junitJar);
+
+        configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetParsingTest.getTestDataDir() + "/../../libraries/stdlib/test");
+        configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetParsingTest.getTestDataDir() + "/../../libraries/kunit/src");
+
+        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
     }
 }
