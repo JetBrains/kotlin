@@ -338,7 +338,8 @@ public class CallResolver {
         ConstraintsSystem constraintsSystem = resolvedCall.getConstraintsSystem();
         assert constraintsSystem != null;
 
-        constraintsSystem.addSupertypeConstraint(context.expectedType, descriptor.getReturnType(), ConstraintPosition.EXPECTED_TYPE_POSITION);
+        constraintsSystem.addSubtypingConstraint(descriptor.getReturnType(), context.expectedType,
+                                                 ConstraintPosition.EXPECTED_TYPE_POSITION);
 
         // constraints for function literals
         // Value parameters
@@ -744,7 +745,8 @@ public class CallResolver {
         ReceiverDescriptor receiverArgument = candidateCall.getReceiverArgument();
         ReceiverDescriptor receiverParameter = candidateWithFreshVariables.getReceiverParameter();
         if (receiverArgument.exists() && receiverParameter.exists()) {
-            constraintsSystem.addSubtypingConstraint(receiverArgument.getType(), receiverParameter.getType(), ConstraintPosition.RECEIVER_POSITION);
+            constraintsSystem.addSupertypeConstraint(receiverParameter.getType(), receiverArgument.getType(),
+                                                     ConstraintPosition.RECEIVER_POSITION);
         }
 
         ConstraintsSystemImpl constraintsBuilderWithRightTypeParameters = new ConstraintsSystemImpl(constraintsSystem.hasTypeConstructorMismatch(), constraintsSystem
@@ -785,7 +787,7 @@ public class CallResolver {
                 context.scope, argumentExpression, substitutor.substitute(valueParameterDescriptor.getType(), Variance.INVARIANT),
                 context.dataFlowInfo, traceForUnknown) : null;
         if (type == null || ErrorUtils.isErrorType(type)) return false;
-        constraintsSystem.addSubtypingConstraint(type, effectiveExpectedType, ConstraintPosition.getValueParameterPosition(
+        constraintsSystem.addSupertypeConstraint(effectiveExpectedType, type, ConstraintPosition.getValueParameterPosition(
                 valueParameterDescriptor.getIndex()));
         return true;
     }

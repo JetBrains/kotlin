@@ -239,7 +239,7 @@ public class ExpressionTypingUtils {
 
         ReceiverDescriptor receiverParameter = receiverArgument.getReceiverParameter();
         if (expectedReceiver.exists() && receiverParameter.exists()) {
-            constraintsSystem.addSubtypingConstraint(receiverType, receiverParameter.getType(), ConstraintPosition.RECEIVER_POSITION);
+            constraintsSystem.addSupertypeConstraint(receiverParameter.getType(), receiverType, ConstraintPosition.RECEIVER_POSITION);
         }
         else if (expectedReceiver.exists() || receiverParameter.exists()) {
             // Only one of receivers exist
