@@ -22,6 +22,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.Function;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.jvm.compiler.NamespaceComparator;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -39,7 +40,13 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public abstract class AbstractLazyResolveNamespaceComparingTest extends AbstractLazyResolveTest {
+public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTestWithEnvironment {
+
+    @Override
+    protected JetCoreEnvironment createEnvironment() {
+        return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
+    }
+
     protected void doTest(
             String testFileName,
             Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>> transform,
@@ -73,8 +80,8 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends Abstract
             Predicate<NamespaceDescriptor> filterJetNamespace,
             File serializeResultsTo
     ) {
-        ModuleDescriptor module = resolveEagerly(files, new JetCoreEnvironmentWithDisposable(ConfigurationKind.JDK_ONLY).jetCoreEnvironment);
-        ModuleDescriptor lazyModule = resolveLazily(files, new JetCoreEnvironmentWithDisposable(ConfigurationKind.JDK_ONLY).jetCoreEnvironment);
+        ModuleDescriptor module = LazyResolveTestUtil.resolveEagerly(files, getEnvironment());
+        ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(files, getEnvironment());
 
         Pair<NamespaceDescriptor, NamespaceDescriptor> namespacesToCompare = transform.fun(Pair.create(module, lazyModule));
 

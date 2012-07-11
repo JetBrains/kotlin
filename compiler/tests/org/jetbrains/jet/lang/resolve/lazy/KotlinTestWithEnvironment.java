@@ -14,42 +14,40 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test;
+package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.KotlinTestWithEnvironmentManagement;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.config.CompilerConfiguration;
 
 /**
- * @author Pavel Talanov
+ * @author abreslav
  */
-public abstract class TestWithEnvironment extends UsefulTestCase {
-
-    @Nullable
-    protected JetCoreEnvironment myEnvironment;
-
-    @NotNull
-    public Project getProject() {
-        assert myEnvironment != null : "Environment should be created beforehand.";
-        return myEnvironment.getProject();
-    }
+public abstract class KotlinTestWithEnvironment extends KotlinTestWithEnvironmentManagement {
+    private JetCoreEnvironment environment;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdkAndIdeaAnnotations();
+        environment = createEnvironment();
     }
 
     @Override
     protected void tearDown() throws Exception {
-        myEnvironment = null;
+        environment = null;
         super.tearDown();
     }
 
-    protected void createEnvironmentWithMockJdkAndIdeaAnnotations() {
-        myEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(getTestRootDisposable(), new CompilerConfiguration());
+    protected abstract JetCoreEnvironment createEnvironment();
+
+    @NotNull
+    public JetCoreEnvironment getEnvironment() {
+        return environment;
+    }
+
+    @NotNull
+    public Project getProject() {
+        return getEnvironment().getProject();
     }
 }

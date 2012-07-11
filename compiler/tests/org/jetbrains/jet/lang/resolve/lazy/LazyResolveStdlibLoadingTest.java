@@ -24,6 +24,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.KotlinTestWithEnvironmentManagement;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.jvm.compiler.NamespaceComparator;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -38,15 +40,15 @@ import java.util.regex.Pattern;
 /**
  * @author abreslav
  */
-public class LazyResolveStdlibLoadingTest extends AbstractLazyResolveTest {
+public class LazyResolveStdlibLoadingTest extends KotlinTestWithEnvironmentManagement {
 
     private static final File STD_LIB_SRC = new File("libraries/stdlib/src");
-    private JetCoreEnvironmentWithDisposable stdlibEnvironment;
+    private JetCoreEnvironment stdlibEnvironment;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        stdlibEnvironment = new JetCoreEnvironmentWithDisposable(ConfigurationKind.JDK_AND_ANNOTATIONS, false);
+        stdlibEnvironment = createEnvironmentWithJdk(ConfigurationKind.JDK_AND_ANNOTATIONS, false);
     }
 
     protected void doTestForGivenFiles(
@@ -55,8 +57,8 @@ public class LazyResolveStdlibLoadingTest extends AbstractLazyResolveTest {
             List<JetFile> files,
             Predicate<NamespaceDescriptor> filterJetNamespace
     ) {
-        ModuleDescriptor module = resolveEagerly(files, new JetCoreEnvironmentWithDisposable(ConfigurationKind.JDK_AND_ANNOTATIONS, false).jetCoreEnvironment);
-        ModuleDescriptor lazyModule = resolveLazily(files, stdlibEnvironment.jetCoreEnvironment);
+        ModuleDescriptor module = LazyResolveTestUtil.resolveEagerly(files, stdlibEnvironment);
+        ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(files, stdlibEnvironment);
 
         Pair<NamespaceDescriptor, NamespaceDescriptor> namespacesToCompare = transform.fun(Pair.create(module, lazyModule));
 
@@ -76,26 +78,19 @@ public class LazyResolveStdlibLoadingTest extends AbstractLazyResolveTest {
                 //convertToJetFiles(collectKtFiles(new File("compiler/testData/lazyResolve/namespaceComparatorWithJavaMerge"))),
                 convertToJetFiles(collectKtFiles(STD_LIB_SRC)),
                 Predicates.<NamespaceDescriptor>alwaysTrue()
-                //new Predicate<NamespaceDescriptor>() {
-                //    @Override
-                //    public boolean apply(NamespaceDescriptor descriptor) {
-                //        return Name.identifier("jet").equals(descriptor.getName());
-                //    }
-                //},
-                //new File("compiler/testData/lazyResolve/namespaceComparatorWithJavaMerge/stdlib-log.txt")
         );
     }
 
     private List<JetFile> convertToJetFiles(List<File> files) throws IOException {
         List<JetFile> jetFiles = Lists.newArrayList();
         for (File file : files) {
-            JetFile jetFile = JetPsiFactory.createFile(getProject(), file.getName(), FileUtil.loadFile(file, true));
+            JetFile jetFile = JetPsiFactory.createFile(stdlibEnvironment.getProject(), file.getName(), FileUtil.loadFile(file, true));
             jetFiles.add(jetFile);
         }
         return jetFiles;
     }
 
-    private List<File> collectKtFiles(@NotNull File root) {
+    private static List<File> collectKtFiles(@NotNull File root) {
         List<File> files = Lists.newArrayList();
         FileUtil.collectMatchedFiles(root, Pattern.compile(".*?.kt"), files);
         return files;

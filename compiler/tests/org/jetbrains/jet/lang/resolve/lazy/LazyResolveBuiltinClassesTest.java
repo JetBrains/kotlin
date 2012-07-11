@@ -23,6 +23,8 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.jvm.compiler.NamespaceComparator;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -49,7 +51,12 @@ import java.util.Map;
 /**
  * @author abreslav
  */
-public class LazyResolveBuiltinClassesTest extends AbstractLazyResolveTest {
+public class LazyResolveBuiltinClassesTest extends KotlinTestWithEnvironment {
+    @Override
+    protected JetCoreEnvironment createEnvironment() {
+        return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
+    }
+
     @Test
     public void testJetStandardLibrary() throws Exception {
         List<JetFile> files = Lists.newArrayList();

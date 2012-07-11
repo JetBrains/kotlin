@@ -20,6 +20,9 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.config.TestConfig;
@@ -38,7 +41,7 @@ import static org.jetbrains.k2js.test.utils.JsTestUtils.convertFileNameToDotJsFi
 /**
  * @author Pavel Talanov
  */
-public abstract class BasicTest extends TestWithEnvironment {
+public abstract class BasicTest extends KotlinTestWithEnvironment {
 
     private static final boolean DELETE_OUT = false;
     private static final String TEST_FILES = "js/js.translator/testFiles/";
@@ -54,6 +57,11 @@ public abstract class BasicTest extends TestWithEnvironment {
     @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
     public BasicTest(@NotNull String main) {
         this.mainDirectory = main;
+    }
+
+    @Override
+    protected JetCoreEnvironment createEnvironment() {
+        return JetCoreEnvironment.createCoreEnvironmentForJVM(getTestRootDisposable(), new CompilerConfiguration());
     }
 
     @NotNull

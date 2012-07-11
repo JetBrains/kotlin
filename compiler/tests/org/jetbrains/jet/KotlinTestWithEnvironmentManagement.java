@@ -16,49 +16,25 @@
 
 package org.jetbrains.jet;
 
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
-import junit.framework.TestCase;
+import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 
 /**
  * @author abreslav
  */
-public abstract class KotlinTestWithEnvironmentManagement extends TestCase {
+public abstract class KotlinTestWithEnvironmentManagement extends UsefulTestCase {
     static {
         System.setProperty("java.awt.headless", "true");
     }
 
-    private final Disposable rootDisposable = new Disposable() {
-        @Override
-        public void dispose() {
-        }
-    };
-
-    public class JetCoreEnvironmentWithDisposable {
-        public final JetCoreEnvironment jetCoreEnvironment;
-
-        public final Project project;
-
-        public JetCoreEnvironmentWithDisposable(@NotNull ConfigurationKind configurationKind) {
-            this(configurationKind, true);
-        }
-
-        public JetCoreEnvironmentWithDisposable(@NotNull ConfigurationKind configurationKind, boolean mockJdk) {
-            this.jetCoreEnvironment = new JetCoreEnvironment(rootDisposable,
-                            CompileCompilerDependenciesTest.compilerConfigurationForTests(configurationKind, mockJdk)
-                    );
-            this.project = jetCoreEnvironment.getProject();
-        }
-
+    protected JetCoreEnvironment createEnvironmentWithMockJdk(@NotNull ConfigurationKind configurationKind) {
+        return createEnvironmentWithJdk(configurationKind, true);
     }
 
-    @Override
-    public void tearDown() throws Exception {
-        Disposer.dispose(rootDisposable);
-        super.tearDown();
+    protected JetCoreEnvironment createEnvironmentWithJdk(@NotNull ConfigurationKind configurationKind, boolean mockJdk) {
+        return new JetCoreEnvironment(getTestRootDisposable(),
+                                    CompileCompilerDependenciesTest.compilerConfigurationForTests(configurationKind, mockJdk)
+                            );
     }
-
 }

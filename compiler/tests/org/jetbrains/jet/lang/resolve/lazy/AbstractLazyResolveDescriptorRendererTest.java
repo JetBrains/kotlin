@@ -22,7 +22,9 @@ import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -42,12 +44,16 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public abstract class AbstractLazyResolveDescriptorRendererTest extends AbstractLazyResolveTest {
+public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTestWithEnvironment {
 
+    @Override
+    protected JetCoreEnvironment createEnvironment() {
+        return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
+    }
 
     protected void doTest(@NotNull String testFile) throws IOException {
 
-        InjectorForTopDownAnalyzer injectorForTopDownAnalyzer = getEagerInjectorForTopDownAnalyzer(getRegularEnvironment().jetCoreEnvironment);
+        InjectorForTopDownAnalyzer injectorForTopDownAnalyzer = LazyResolveTestUtil.getEagerInjectorForTopDownAnalyzer(getEnvironment());
 
         JetFile psiFile = JetPsiFactory.createFile(getProject(), FileUtil.loadFile(new File(testFile), true));
         Collection<JetFile> files = Lists.newArrayList(psiFile);
