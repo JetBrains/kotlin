@@ -136,21 +136,16 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
         DeclarationDescriptor subjectTypeDescriptor = subjectType.getConstructor().getDeclarationDescriptor();
 
         if (subjectTypeDescriptor instanceof TypeParameterDescriptor) {
-            if (TypeUtils.dependsOnTypeParameterConstructors(constrainingType, Collections.singleton(DONT_CARE.getConstructor()))) return;
-            if (subjectType.isNullable()) {
-                constrainingType = TypeUtils.makeNotNullable(constrainingType);
-            }
             TypeParameterDescriptor typeParameter = (TypeParameterDescriptor) subjectTypeDescriptor;
-            if (constraintKind == ConstraintKind.SUPER_TYPE) {
-                typeParameterConstraints.get(typeParameter).addLowerBound(constrainingType);
+            TypeConstraintsImpl typeConstraints = typeParameterConstraints.get(typeParameter);
+            if (typeConstraints != null) {
+                addBoundToTypeConstraints(constraintKind, subjectType, constrainingType, typeConstraints);
+                return;
             }
-            else if (constraintKind == ConstraintKind.SUB_TYPE) {
-                typeParameterConstraints.get(typeParameter).addUpperBound(constrainingType);
-            }
-            else {
-                typeParameterConstraints.get(typeParameter).addExactBound(constrainingType);
-            }
-            return;
+        }
+        if (constrainingTypeDescriptor instanceof TypeParameterDescriptor) {
+            // assert that constraining type doesn't contain type variables
+            assert typeParameterConstraints.get(constrainingTypeDescriptor) == null;
         }
 
         if (constrainingTypeDescriptor instanceof ClassDescriptor && subjectTypeDescriptor instanceof ClassDescriptor) {
@@ -188,6 +183,24 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
         }
         typeConstructorMismatch = true;
         errorConstraintPositions.add(constraintPosition);
+    }
+
+    private void addBoundToTypeConstraints(@NotNull ConstraintKind constraintKind, @NotNull JetType subjectType,
+            @NotNull JetType constrainingType, @NotNull TypeConstraintsImpl typeConstraints) {
+
+        if (TypeUtils.dependsOnTypeParameterConstructors(constrainingType, Collections.singleton(DONT_CARE.getConstructor()))) return;
+        if (subjectType.isNullable()) {
+            constrainingType = TypeUtils.makeNotNullable(constrainingType);
+        }
+        if (constraintKind == ConstraintKind.SUPER_TYPE) {
+            typeConstraints.addLowerBound(constrainingType);
+        }
+        else if (constraintKind == ConstraintKind.SUB_TYPE) {
+            typeConstraints.addUpperBound(constrainingType);
+        }
+        else {
+            typeConstraints.addExactBound(constrainingType);
+        }
     }
 
     @NotNull
