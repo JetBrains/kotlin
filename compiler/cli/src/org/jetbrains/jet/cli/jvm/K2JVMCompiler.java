@@ -192,7 +192,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
             annotationsPath.add(PathUtil.getJdkAnnotationsPath());
         }
         if (arguments.annotations != null) {
-            for (String element : Splitter.on(File.pathSeparatorChar).split(arguments.classpath)) {
+            for (String element : Splitter.on(File.pathSeparatorChar).split(arguments.annotations)) {
                 annotationsPath.add(new File(element));
             }
         }
