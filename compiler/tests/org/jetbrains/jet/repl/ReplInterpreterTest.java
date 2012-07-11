@@ -23,6 +23,7 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.repl.ReplInterpreter;
 import org.jetbrains.jet.config.CompilerConfiguration;
@@ -54,7 +55,7 @@ public class ReplInterpreterTest {
 
     private void testFile(@NotNull String relativePath) {
         CompilerConfiguration configuration =
-                CompileCompilerDependenciesTest.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, false);
+                CompileCompilerDependenciesTest.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK);
         File[] classpath = configuration.getUserData(JVMConfigurationKeys.CLASSPATH_KEY);
         assert classpath != null;
         configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, ArrayUtil.append(classpath, new File("out/production/runtime")));

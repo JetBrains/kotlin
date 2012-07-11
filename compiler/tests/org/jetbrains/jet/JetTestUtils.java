@@ -178,13 +178,27 @@ public class JetTestUtils {
                                                                       builtinsScopeExtensionMode);
     }
 
+    public static JetCoreEnvironment createEnvironmentWithFullJdk(Disposable disposable) {
+        return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable,
+                                                                         ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
+    }
+
     public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable) {
         return createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, ConfigurationKind.ALL);
     }
 
     public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable, @NotNull ConfigurationKind configurationKind) {
+        return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, configurationKind, TestJdkKind.MOCK_JDK);
+    }
+
+    public static JetCoreEnvironment createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+            @NotNull Disposable disposable,
+            @NotNull ConfigurationKind configurationKind,
+            @NotNull TestJdkKind jdkKind
+    ) {
         JetCoreEnvironment environment = new JetCoreEnvironment(disposable,
-                CompileCompilerDependenciesTest.compilerConfigurationForTests(configurationKind, true)
+                                                                CompileCompilerDependenciesTest
+                                                                        .compilerConfigurationForTests(configurationKind, jdkKind)
         );
         environment.addToClasspath(getAnnotationsJar());
         return environment;
@@ -197,7 +211,6 @@ public class JetTestUtils {
     public static File getAnnotationsJar() {
         return new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/annotations.jar");
     }
-
 
     public static void mkdirs(File file) throws IOException {
         if (file.isDirectory()) {
@@ -254,12 +267,6 @@ public class JetTestUtils {
     }
 
     public static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
-
-    public static JetCoreEnvironment createEnvironmentWithFullJdk(Disposable disposable) {
-        return new JetCoreEnvironment(disposable,
-                CompileCompilerDependenciesTest.compilerConfigurationForTests(ConfigurationKind.ALL, false)
-        );
-    }
 
     public static PsiFile createFile(@NonNls String name, String text, @NotNull Project project) {
         LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);

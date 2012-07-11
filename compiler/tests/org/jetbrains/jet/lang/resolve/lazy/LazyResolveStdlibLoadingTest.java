@@ -25,6 +25,7 @@ import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.KotlinTestWithEnvironmentManagement;
+import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.jvm.compiler.NamespaceComparator;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -48,7 +49,7 @@ public class LazyResolveStdlibLoadingTest extends KotlinTestWithEnvironmentManag
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        stdlibEnvironment = createEnvironmentWithJdk(ConfigurationKind.JDK_AND_ANNOTATIONS, false);
+        stdlibEnvironment = createEnvironmentWithJdk(ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.FULL_JDK);
     }
 
     protected void doTestForGivenFiles(

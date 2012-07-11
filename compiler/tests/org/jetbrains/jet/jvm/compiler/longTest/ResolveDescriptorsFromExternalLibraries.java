@@ -26,10 +26,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.TimeUtils;
+import org.jetbrains.jet.*;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
@@ -151,7 +148,7 @@ public class ResolveDescriptorsFromExternalLibraries {
         }
         else {
             CompilerConfiguration configuration =
-                    CompileCompilerDependenciesTest.compilerConfigurationForTests(ConfigurationKind.JDK_AND_ANNOTATIONS, false);
+                    CompileCompilerDependenciesTest.compilerConfigurationForTests(ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.FULL_JDK);
             jetCoreEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(junk, configuration);
             if (!PathUtil.findRtJar().equals(jar)) {
                 throw new RuntimeException("rt.jar mismatch: " + jar + ", " + PathUtil.findRtJar());

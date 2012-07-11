@@ -52,9 +52,9 @@ public class CompileCompilerDependenciesTest {
         ForTestCompileRuntime.runtimeJarForTests();
     }
 
-    public static CompilerConfiguration compilerConfigurationForTests(@NotNull ConfigurationKind configurationKind, boolean mockJdk) {
+    public static CompilerConfiguration compilerConfigurationForTests(@NotNull ConfigurationKind configurationKind, @NotNull TestJdkKind jdkKind) {
         List<File> classpath = new ArrayList<File>();
-        classpath.add(mockJdk ? JetTestUtils.findMockJdkRtJar() : PathUtil.findRtJar());
+        classpath.add(jdkKind == TestJdkKind.MOCK_JDK ? JetTestUtils.findMockJdkRtJar() : PathUtil.findRtJar());
         if (configurationKind == ALL) {
             classpath.add(ForTestCompileRuntime.runtimeJarForTests());
         }

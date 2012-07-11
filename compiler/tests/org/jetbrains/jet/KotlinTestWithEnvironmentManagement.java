@@ -29,15 +29,10 @@ public abstract class KotlinTestWithEnvironmentManagement extends UsefulTestCase
     }
 
     protected JetCoreEnvironment createEnvironmentWithMockJdk(@NotNull ConfigurationKind configurationKind) {
-        return createEnvironmentWithJdk(configurationKind, true);
+        return createEnvironmentWithJdk(configurationKind, TestJdkKind.MOCK_JDK);
     }
 
-    protected JetCoreEnvironment createEnvironmentWithJdk(@NotNull ConfigurationKind configurationKind, boolean mockJdk) {
-        JetCoreEnvironment environment = new JetCoreEnvironment(getTestRootDisposable(),
-                                                                CompileCompilerDependenciesTest
-                                                                        .compilerConfigurationForTests(configurationKind, mockJdk)
-        );
-        environment.addToClasspath(JetTestUtils.getAnnotationsJar());
-        return environment;
+    protected JetCoreEnvironment createEnvironmentWithJdk(@NotNull ConfigurationKind configurationKind, @NotNull TestJdkKind jdkKind) {
+        return JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(getTestRootDisposable(), configurationKind, jdkKind);
     }
 }
