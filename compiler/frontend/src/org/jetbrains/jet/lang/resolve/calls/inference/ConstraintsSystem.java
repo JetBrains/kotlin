@@ -45,10 +45,10 @@ public interface ConstraintsSystem {
      * @param constrainingType
      * @param constraintPosition
      */
-    void addSubtypingConstraint(@NotNull JetType subjectType, @NotNull JetType constrainingType, @NotNull ConstraintPosition constraintPosition);
+    void addSubtypingConstraint(@NotNull JetType subjectType, @Nullable JetType constrainingType, @NotNull ConstraintPosition constraintPosition);
 
     // only subject type might contain type variables
-    void addSupertypeConstraint(@NotNull JetType subjectType, @NotNull JetType constrainingType, @NotNull ConstraintPosition constraintPosition);
+    void addSupertypeConstraint(@NotNull JetType subjectType, @Nullable JetType constrainingType, @NotNull ConstraintPosition constraintPosition);
 
     boolean isSuccessful();
 
@@ -61,6 +61,8 @@ public interface ConstraintsSystem {
     boolean hasTypeConstructorMismatch();
 
     boolean hasTypeConstructorMismatchAt(@NotNull ConstraintPosition constraintPosition);
+
+    boolean hasErrorInConstrainingTypes();
 
     @Nullable
     TypeConstraints getTypeConstraints(@NotNull TypeParameterDescriptor typeParameterDescriptor);
