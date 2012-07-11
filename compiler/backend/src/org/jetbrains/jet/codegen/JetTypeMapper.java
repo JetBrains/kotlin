@@ -1051,7 +1051,8 @@ public class JetTypeMapper {
         return JvmPrimitiveType.getByWrapperClass(className) != null
                 || className.getFqName().getFqName().equals("java.lang.String")
                 || className.getFqName().getFqName().equals("java.lang.CharSequence")
-                || className.getFqName().getFqName().equals("java.lang.Object");
+                || className.getFqName().getFqName().equals("java.lang.Object")
+                || className.getFqName().getFqName().equals("java.lang.Number");
     }
 
     public boolean isGenericsArray(JetType type) {
