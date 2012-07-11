@@ -123,7 +123,7 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
         addConstraint(ConstraintKind.SUPER_TYPE, subjectType, constrainingType, constraintPosition);
     }
 
-    public void addConstraint(@NotNull ConstraintKind constraintKind, @NotNull JetType subjectType, @NotNull JetType constrainingType,
+    private void addConstraint(@NotNull ConstraintKind constraintKind, @NotNull JetType subjectType, @NotNull JetType constrainingType,
             @NotNull ConstraintPosition constraintPosition) {
         if (subjectType == DONT_CARE || constrainingType == DONT_CARE || subjectType == TypeUtils.NO_EXPECTED_TYPE
             || constrainingType == TypeUtils.NO_EXPECTED_TYPE) {
@@ -233,20 +233,5 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
     @Override
     public TypeSubstitutor getResultingSubstitutor() {
         return resultingSubstitutor;
-    }
-
-    public boolean upperBoundsAreSatisfied() {
-        for (TypeParameterDescriptor typeParameter : typeParameterConstraints.keySet()) {
-            JetType type = ConstraintsUtil.getValue(getTypeConstraints(typeParameter));
-            JetType upperBound = typeParameter.getUpperBoundsAsType();
-            JetType substitute = getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
-
-            if (type != null) {
-                if (substitute == null || !JetTypeChecker.INSTANCE.isSubtypeOf(type, substitute)) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 }

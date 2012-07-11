@@ -232,20 +232,20 @@ public class ExpressionTypingUtils {
             @NotNull JetType receiverType,
             @NotNull CallableDescriptor receiverArgument
     ) {
-        ConstraintsSystemImpl constraintsBuilder = new ConstraintsSystemImpl();
+        ConstraintsSystem constraintsSystem = new ConstraintsSystemImpl();
         for (TypeParameterDescriptor typeParameterDescriptor : receiverArgument.getTypeParameters()) {
-            constraintsBuilder.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT);
+            constraintsSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT);
         }
 
         ReceiverDescriptor receiverParameter = receiverArgument.getReceiverParameter();
         if (expectedReceiver.exists() && receiverParameter.exists()) {
-            constraintsBuilder.addSubtypingConstraint(receiverType, receiverParameter.getType(), ConstraintPosition.RECEIVER_POSITION);
+            constraintsSystem.addSubtypingConstraint(receiverType, receiverParameter.getType(), ConstraintPosition.RECEIVER_POSITION);
         }
         else if (expectedReceiver.exists() || receiverParameter.exists()) {
             // Only one of receivers exist
             return false;
         }
 
-        return constraintsBuilder.isSuccessful() && constraintsBuilder.upperBoundsAreSatisfied();
+        return constraintsSystem.isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintsSystem);
     }
 }

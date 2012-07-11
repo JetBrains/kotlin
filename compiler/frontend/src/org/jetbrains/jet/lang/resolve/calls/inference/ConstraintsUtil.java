@@ -150,4 +150,19 @@ public class ConstraintsUtil {
         }
         return true;
     }
+
+    public static boolean checkBoundsAreSatisfied(ConstraintsSystem constraintsSystem) {
+        for (TypeParameterDescriptor typeVariable : constraintsSystem.getTypeVariables()) {
+            JetType type = getValue(constraintsSystem.getTypeConstraints(typeVariable));
+            JetType upperBound = typeVariable.getUpperBoundsAsType();
+            JetType substitutedType = constraintsSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
+
+            if (type != null) {
+                if (substitutedType == null || !JetTypeChecker.INSTANCE.isSubtypeOf(type, substitutedType)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }
