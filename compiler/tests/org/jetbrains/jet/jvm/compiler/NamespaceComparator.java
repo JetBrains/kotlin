@@ -18,6 +18,7 @@ package org.jetbrains.jet.jvm.compiler;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Maps;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.PropertyCodegen;
@@ -232,13 +233,82 @@ public class NamespaceComparator {
     }
 
 
+    private static class MethodCache {
+        // Argument type -> method
+        private final Map<Class<?>, Method> methodCache = Maps.newHashMap();
+        private final Class<? extends Serializer> serializerClass;
+
+        private MethodCache(Class<? extends Serializer> aClass) {
+            serializerClass = aClass;
+        }
+
+        @NotNull
+        public Class<? extends Serializer> getSerializerClass() {
+            return serializerClass;
+        }
+
+        private void buildMethodCache() {
+            if (!methodCache.isEmpty()) return;
+            for (Method method : serializerClass.getMethods()) {
+                if (!method.getName().equals("serialize")) {
+                    continue;
+                }
+                if (method.getParameterTypes().length != 1) {
+                    continue;
+                }
+                if (method.getParameterTypes()[0].equals(Object.class)) {
+                    continue;
+                }
+                method.setAccessible(true);
+                methodCache.put(method.getParameterTypes()[0], method);
+            }
+        }
+
+        @NotNull
+        public Method getMethodToSerialize(Object o) {
+            if (o == null) {
+                throw new IllegalStateException("won't serialize null");
+            }
+
+            buildMethodCache();
+            Method method = methodCache.get(o.getClass());
+            if (method != null) {
+                return method;
+            }
+            for (Map.Entry<Class<?>, Method> entry : methodCache.entrySet()) {
+                Class<?> parameterType = entry.getKey();
+                Method serializeMethod = entry.getValue();
+                if (parameterType.isInstance(o)) {
+                    methodCache.put(o.getClass(), serializeMethod);
+                    return serializeMethod;
+                }
+            }
+            throw new IllegalStateException("don't know how to serialize " + o + " (of " + o.getClass() + ")");
+        }
+    }
+
 
     private static class Serializer {
 
+        private static final MethodCache SERIALIZER_METHOD_CACHE = new MethodCache(Serializer.class);
+
         protected final StringBuilder sb;
+
 
         public Serializer(StringBuilder sb) {
             this.sb = sb;
+        }
+
+        protected MethodCache doGetMethodCache() {
+            return SERIALIZER_METHOD_CACHE;
+        }
+
+        private MethodCache getMethodCache() {
+            MethodCache methodCache = doGetMethodCache();
+            if (methodCache.getSerializerClass() != this.getClass()) {
+                throw new IllegalStateException("No method cache for class " + this.getClass() + ". Please, override doGetMethodCache()");
+            }
+            return methodCache;
         }
 
         public void serialize(ClassKind kind) {
@@ -443,32 +513,8 @@ public class NamespaceComparator {
             }
         }
 
-        private Method getMethodToSerialize(Object o) {
-            if (o == null) {
-                throw new IllegalStateException("won't serialize null");
-            }
-
-            // TODO: cache
-            for (Method method : this.getClass().getMethods()) {
-                if (!method.getName().equals("serialize")) {
-                    continue;
-                }
-                if (method.getParameterTypes().length != 1) {
-                    continue;
-                }
-                if (method.getParameterTypes()[0].equals(Object.class)) {
-                    continue;
-                }
-                if (method.getParameterTypes()[0].isInstance(o)) {
-                    method.setAccessible(true);
-                    return method;
-                }
-            }
-            throw new IllegalStateException("don't know how to serialize " + o + " (of " + o.getClass() + ")");
-        }
-
         public void serialize(Object o) {
-            Method method = getMethodToSerialize(o);
+            Method method = getMethodCache().getMethodToSerialize(o);
             invoke(method, this, o);
         }
 
@@ -515,8 +561,15 @@ public class NamespaceComparator {
     
     private static class TypeSerializer extends Serializer {
 
+        private static final MethodCache TYPE_SERIALIZER_METHOD_CACHE = new MethodCache(TypeSerializer.class);
+
         public TypeSerializer(StringBuilder sb) {
             super(sb);
+        }
+
+        @Override
+        protected MethodCache doGetMethodCache() {
+            return TYPE_SERIALIZER_METHOD_CACHE;
         }
 
         @Override
@@ -556,8 +609,15 @@ public class NamespaceComparator {
 
     private static class NamespacePrefixSerializer extends Serializer {
 
+        private static final MethodCache NAMESPACE_PREFIX_SERIALIZER_METHOD_CACHE = new MethodCache(NamespacePrefixSerializer.class);
+
         public NamespacePrefixSerializer(StringBuilder sb) {
             super(sb);
+        }
+
+        @Override
+        protected MethodCache doGetMethodCache() {
+            return NAMESPACE_PREFIX_SERIALIZER_METHOD_CACHE;
         }
 
         @Override
@@ -576,9 +636,16 @@ public class NamespaceComparator {
         }
     }
 
+    private static final MethodCache FULL_CONTENT_SERIALIZER_METHOD_CACHE = new MethodCache(FullContentSerialier.class);
     private class FullContentSerialier extends Serializer {
+
         private FullContentSerialier(StringBuilder sb) {
             super(sb);
+        }
+
+        @Override
+        protected MethodCache doGetMethodCache() {
+            return FULL_CONTENT_SERIALIZER_METHOD_CACHE;
         }
 
         public void serialize(ClassDescriptor klass) {
