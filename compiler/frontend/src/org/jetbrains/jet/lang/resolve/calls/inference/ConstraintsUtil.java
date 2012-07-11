@@ -18,27 +18,76 @@ package org.jetbrains.jet.lang.resolve.calls.inference;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author svtk
  */
 public class ConstraintsUtil {
 
+    @NotNull
+    public static Set<JetType> getValues(@Nullable TypeConstraints typeConstraints) {
+        Set<JetType> values = Sets.newLinkedHashSet();
+        if (typeConstraints != null && !typeConstraints.isEmpty()) {
+            values.addAll(typeConstraints.getExactBounds());
+            if (!typeConstraints.getLowerBounds().isEmpty()) {
+                JetType superTypeOfLowerBounds = CommonSupertypes.commonSupertype(typeConstraints.getLowerBounds());
+                if (values.isEmpty()) {
+                    values.add(superTypeOfLowerBounds);
+                }
+                for (JetType value : values) {
+                    if (!JetTypeChecker.INSTANCE.isSubtypeOf(superTypeOfLowerBounds, value)) {
+                        values.add(superTypeOfLowerBounds);
+                        break;
+                    }
+                }
+            }
+            if (!typeConstraints.getUpperBounds().isEmpty()) {
+                //todo subTypeOfUpperBounds
+                JetType subTypeOfUpperBounds = typeConstraints.getUpperBounds().iterator().next(); //todo
+                if (values.isEmpty()) {
+                    values.add(subTypeOfUpperBounds);
+                }
+                for (JetType value : values) {
+                    if (!JetTypeChecker.INSTANCE.isSubtypeOf(value, subTypeOfUpperBounds)) {
+                        values.add(subTypeOfUpperBounds);
+                        break;
+                    }
+                }
+            }
+        }
+        return values;
+    }
+
+    @Nullable
+    public static JetType getValue(@Nullable TypeConstraints typeConstraints) {
+        //todo all checks
+        //todo variance dependance
+        if (typeConstraints == null) {
+            //todo assert typeConstraints != null;
+            return null;
+        }
+        Set<JetType> values = getValues(typeConstraints);
+        if (values.size() == 1) {
+            return values.iterator().next();
+        }
+        return null;
+    }
+
+
+
     @Nullable
     public static TypeParameterDescriptor getFirstConflictingParameter(@NotNull ConstraintsSystem constraintsSystem) {
         for (TypeParameterDescriptor typeParameter : constraintsSystem.getTypeVariables()) {
             TypeConstraints constraints = constraintsSystem.getTypeConstraints(typeParameter);
-            if (!constraints.getConflicts().isEmpty()) {
+            if (getValues(constraints).size() > 1) {
                 return typeParameter;
             }
         }
@@ -50,7 +99,7 @@ public class ConstraintsUtil {
         TypeParameterDescriptor firstConflictingParameter = getFirstConflictingParameter(constraintsSystem);
         if (firstConflictingParameter == null) return Collections.emptyList();
 
-        Collection<JetType> conflictingTypes = constraintsSystem.getTypeConstraints(firstConflictingParameter).getConflicts();
+        Collection<JetType> conflictingTypes = getValues(constraintsSystem.getTypeConstraints(firstConflictingParameter));
 
         ArrayList<Map<TypeConstructor, TypeProjection>> substitutionContexts = Lists.newArrayList();
         for (JetType type : conflictingTypes) {
@@ -77,7 +126,8 @@ public class ConstraintsUtil {
 
     @NotNull
     public static JetType getSafeValue(@NotNull ConstraintsSystem constraintsSystem, @NotNull TypeParameterDescriptor typeParameter) {
-        JetType type = constraintsSystem.getValue(typeParameter);
+        TypeConstraints constraints = constraintsSystem.getTypeConstraints(typeParameter);
+        JetType type = getValue(constraints);
         if (type != null) {
             return type;
         }
@@ -87,10 +137,11 @@ public class ConstraintsUtil {
 
     public static boolean checkUpperBoundIsSatisfied(@NotNull ConstraintsSystem constraintsSystem,
             @NotNull TypeParameterDescriptor typeParameter) {
-        assert constraintsSystem.getTypeConstraints(typeParameter) != null;
-        JetType type = constraintsSystem.getValue(typeParameter);
+        TypeConstraints typeConstraints = constraintsSystem.getTypeConstraints(typeParameter);
+        assert typeConstraints != null;
+        JetType type = getValue(typeConstraints);
         JetType upperBound = typeParameter.getUpperBoundsAsType();
-        JetType substitute = constraintsSystem.getSubstitutor().substitute(upperBound, Variance.INVARIANT);
+        JetType substitute = constraintsSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
 
         if (type != null) {
             if (substitute == null || !JetTypeChecker.INSTANCE.isSubtypeOf(type, substitute)) {

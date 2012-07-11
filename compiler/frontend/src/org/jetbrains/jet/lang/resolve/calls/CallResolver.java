@@ -349,7 +349,7 @@ public class CallResolver {
             for (ValueArgument valueArgument : resolvedValueArgument.getArguments()) {
                 if (!JetPsiUtil.isFunctionLiteralWithoutDeclaredParameterTypes(valueArgument.getArgumentExpression())) continue;
 
-                addConstraintForValueArgument(valueArgument, valueParameterDescriptor, constraintsSystem.getSubstitutor(),
+                addConstraintForValueArgument(valueArgument, valueParameterDescriptor, constraintsSystem.getResultingSubstitutor(),
                                               constraintsSystem, context);
             }
         }
@@ -366,7 +366,7 @@ public class CallResolver {
             return;
         }
 
-        D substitute = (D) descriptor.substitute(constraintsSystem.getSubstitutor());
+        D substitute = (D) descriptor.substitute(constraintsSystem.getResultingSubstitutor());
         assert substitute != null;
         replaceValueParametersWithSubstitutedOnes(resolvedCall, substitute);
         resolvedCall.setResultingDescriptor(substitute); //replacement

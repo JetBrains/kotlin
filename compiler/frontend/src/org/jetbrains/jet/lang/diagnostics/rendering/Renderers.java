@@ -264,9 +264,9 @@ public class Renderers {
                 .table(newTable().
                         descriptor(inferenceErrorData.descriptor));
 
-        JetType type = inferenceErrorData.constraintsSystem.getValue(typeParameterDescriptor);
+        JetType type = ConstraintsUtil.getValue(inferenceErrorData.constraintsSystem.getTypeConstraints(typeParameterDescriptor));
         JetType upperBound = typeParameterDescriptor.getUpperBoundsAsType();
-        JetType substitute = inferenceErrorData.constraintsSystem.getSubstitutor().substitute(upperBound, Variance.INVARIANT);
+        JetType substitute = inferenceErrorData.constraintsSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
 
         result.text(newText()
                             .normal(" is not satisfied: inferred type ")

@@ -53,15 +53,12 @@ public interface ConstraintsSystem {
 
     boolean hasTypeConstructorMismatch();
 
+    @NotNull
+    Set<ConstraintPosition> getTypeConstructorMismatchConstraintPositions();
+
     @Nullable
     TypeConstraints getTypeConstraints(@NotNull TypeParameterDescriptor typeParameterDescriptor);
 
     @NotNull
-    TypeSubstitutor getSubstitutor();
-
-    @Nullable
-    JetType getValue(@NotNull TypeParameterDescriptor typeParameterDescriptor);
-
-    @NotNull
-    Collection<ConstraintPosition> getTypeConstructorMismatchConstraintPositions();
+    TypeSubstitutor getResultingSubstitutor();
 }

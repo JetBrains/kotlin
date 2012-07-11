@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -52,25 +52,25 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
     }
 
     private final Map<TypeParameterDescriptor, TypeConstraintsImpl> typeParameterConstraints = Maps.newLinkedHashMap();
-    private final TypeSubstitutor typeSubstitutor;
-    private final Collection<ConstraintPosition> errorConstraintPositions;
+    private final TypeSubstitutor resultingSubstitutor;
+    private final Set<ConstraintPosition> errorConstraintPositions;
     private boolean typeConstructorMismatch;
 
     public ConstraintsSystemImpl() {
-        this(false, Lists.<ConstraintPosition>newArrayList());
+        this(false, Sets.<ConstraintPosition>newHashSet());
     }
 
-    public ConstraintsSystemImpl(boolean typeConstructorMismatch, Collection<ConstraintPosition> errorConstraintPositions) {
+    public ConstraintsSystemImpl(boolean typeConstructorMismatch, Set<ConstraintPosition> errorConstraintPositions) {
         this.typeConstructorMismatch = typeConstructorMismatch;
         this.errorConstraintPositions = errorConstraintPositions;
-        this.typeSubstitutor = TypeSubstitutor.create(new TypeSubstitution() {
+        this.resultingSubstitutor = TypeSubstitutor.create(new TypeSubstitution() {
             @Override
             public TypeProjection get(TypeConstructor key) {
                 DeclarationDescriptor declarationDescriptor = key.getDeclarationDescriptor();
                 if (declarationDescriptor instanceof TypeParameterDescriptor) {
                     TypeParameterDescriptor descriptor = (TypeParameterDescriptor) declarationDescriptor;
 
-                    JetType value = getValue(descriptor);
+                    JetType value = ConstraintsUtil.getValue(getTypeConstraints(descriptor));
                     if (value != null && !TypeUtils.dependsOnTypeParameterConstructors(value, Collections.singleton(
                             DONT_CARE.getConstructor()))) {
                         return new TypeProjection(value);
@@ -99,7 +99,7 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
 
     @NotNull
     @Override
-    public Collection<ConstraintPosition> getTypeConstructorMismatchConstraintPositions() {
+    public Set<ConstraintPosition> getTypeConstructorMismatchConstraintPositions() {
         return errorConstraintPositions;
     }
 
@@ -140,13 +140,13 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
             }
             TypeParameterDescriptor typeParameter = (TypeParameterDescriptor) constrainingTypeDescriptor;
             if (constraintKind == ConstraintKind.SUB_TYPE) {
-                typeParameterConstraints.get(typeParameter).addLowerConstraint(subjectType);
+                typeParameterConstraints.get(typeParameter).addLowerBound(subjectType);
             }
             else if (constraintKind == ConstraintKind.SUPER_TYPE) {
-                typeParameterConstraints.get(typeParameter).addUpperConstraint(subjectType);
+                typeParameterConstraints.get(typeParameter).addUpperBound(subjectType);
             }
             else {
-                typeParameterConstraints.get(typeParameter).addEqualConstraint(subjectType);
+                typeParameterConstraints.get(typeParameter).addExactBound(subjectType);
             }
             return;
         }
@@ -188,25 +188,6 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
         errorConstraintPositions.add(constraintPosition);
     }
 
-    @Nullable
-    public JetType getValue(@NotNull TypeParameterDescriptor typeParameter) {
-        //todo all checks
-        TypeConstraintsImpl typeConstraints = typeParameterConstraints.get(typeParameter);
-        //todo variance dependance
-        if (typeConstraints == null) {
-            //todo assert typeConstraints != null;
-            return null;
-        }
-        if (typeConstraints.getLowerConstraint() != null) {
-            return typeConstraints.getLowerConstraint();
-        }
-
-        if (typeConstraints.getUpperConstraint() != null) {
-            return typeConstraints.getUpperConstraint();
-        }
-        return null;
-    }
-
     @NotNull
     @Override
     public Set<TypeParameterDescriptor> getTypeVariables() {
@@ -233,7 +214,7 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
     public boolean hasConflictingParameters() {
         for (TypeParameterDescriptor typeParameter : typeParameterConstraints.keySet()) {
             TypeConstraints typeConstraints = getTypeConstraints(typeParameter);
-            if (typeConstraints != null && !typeConstraints.isSuccessful()) return true;
+            if (typeConstraints != null && ConstraintsUtil.getValues(typeConstraints).size() > 1) return true;
         }
         return false;
     }
@@ -250,15 +231,15 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
 
     @NotNull
     @Override
-    public TypeSubstitutor getSubstitutor() {
-        return typeSubstitutor;
+    public TypeSubstitutor getResultingSubstitutor() {
+        return resultingSubstitutor;
     }
 
     public boolean upperBoundsAreSatisfied() {
         for (TypeParameterDescriptor typeParameter : typeParameterConstraints.keySet()) {
-            JetType type = getValue(typeParameter);
+            JetType type = ConstraintsUtil.getValue(getTypeConstraints(typeParameter));
             JetType upperBound = typeParameter.getUpperBoundsAsType();
-            JetType substitute = getSubstitutor().substitute(upperBound, Variance.INVARIANT);
+            JetType substitute = getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
 
             if (type != null) {
                 if (substitute == null || !JetTypeChecker.INSTANCE.isSubtypeOf(type, substitute)) {
