@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.checkers;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.intellij.lang.java.JavaLanguage;
@@ -26,26 +25,20 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.test.generator.SimpleTestClassModel;
-import org.jetbrains.jet.test.generator.TestGenerator;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -93,39 +86,20 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
             getEnvironment().addToClasspath(javaFilesDir);
         }
 
-        List<JetFile> jetFiles = Lists.newArrayList();
-        for (TestFile testFile : testFiles) {
-            if (testFile.jetFile != null) {
-                jetFiles.add(testFile.jetFile);
-            }
-        }
-
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                getProject(), jetFiles, Collections.<AnalyzerScriptParameter>emptyList(),
-                Predicates.<PsiFile>alwaysTrue(), BuiltinsScopeExtensionMode.ALL).getBindingContext();
-
-        boolean ok = true;
-
-        StringBuilder actualText = new StringBuilder();
-        for (TestFile testFileFile : testFiles) {
-            ok &= testFileFile.getActualText(bindingContext, actualText);
-        }
-
-        assertEquals(expectedText, actualText.toString());
-
-        assertTrue("Diagnostics mismatch. See the output above", ok);
+        analyzeAndCheck(expectedText, testFiles);
     }
 
-    private class TestFile {
+    protected abstract void analyzeAndCheck(String expectedText, List<TestFile> files);
+
+    protected class TestFile {
         private final List<CheckerTestUtil.DiagnosedRange> diagnosedRanges = Lists.newArrayList();
         private final String expectedText;
         private final String clearText;
         private final JetFile jetFile;
-        private final PsiFile javaFile;
 
         public TestFile(String fileName, String textWithMarkers) {
             if (fileName.endsWith(".java")) {
-                this.javaFile = PsiFileFactory.getInstance(getProject()).createFileFromText(fileName, JavaLanguage.INSTANCE, textWithMarkers);
+                PsiFileFactory.getInstance(getProject()).createFileFromText(fileName, JavaLanguage.INSTANCE, textWithMarkers);
                 // TODO: check there's not syntax errors
                 this.jetFile = null;
                 this.expectedText = this.clearText = textWithMarkers;
@@ -133,12 +107,16 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
             else {
                 expectedText = textWithMarkers;
                 clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
-                this.javaFile = null;
                 this.jetFile = createCheckAndReturnPsiFile(null, fileName, clearText);
                 for (CheckerTestUtil.DiagnosedRange diagnosedRange : diagnosedRanges) {
                     diagnosedRange.setFile(jetFile);
                 }
             }
+        }
+
+        @Nullable
+        public JetFile getJetFile() {
+            return jetFile;
         }
 
         public boolean getActualText(BindingContext bindingContext, StringBuilder actualText) {
@@ -175,21 +153,6 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
             return ok[0];
         }
 
-    }
-
-    public static void main(String[] args) throws IOException {
-        String aPackage = "org.jetbrains.jet.checkers";
-        new TestGenerator(
-                "compiler/tests/",
-                aPackage,
-                "JetDiagnosticsTestGenerated",
-                AbstractJetDiagnosticsTest.class,
-                Arrays.asList(
-                        new SimpleTestClassModel(new File("compiler/testData/diagnostics/tests"), true, "kt", "doTest"),
-                        new SimpleTestClassModel(new File("compiler/testData/diagnostics/tests/script"), true, "ktscript", "doTest")
-                ),
-                AbstractJetDiagnosticsTest.class
-        ).generateAndSave();
     }
 
 }

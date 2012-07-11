@@ -16,16 +16,45 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import junit.framework.TestCase;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTest;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.test.generator.SimpleTestClassModel;
+import org.jetbrains.jet.test.generator.TestGenerator;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author abreslav
  */
-public abstract class AbstractLazyResolveDiagnosticsTest extends KotlinTestWithEnvironment {
+public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiagnosticsTest {
     @Override
     protected JetCoreEnvironment createEnvironment() {
         return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
+    }
+
+    @Override
+    protected void analyzeAndCheck(String expectedText, List<TestFile> files) {
+
+    }
+
+    public static void main(String[] args) throws IOException {
+        Class<? extends TestCase> thisClass = AbstractLazyResolveDiagnosticsTest.class;
+        new TestGenerator(
+                "compiler/tests/",
+                thisClass.getPackage().getName(),
+                "LazyResolveDiagnosticsTestGenerated",
+                thisClass,
+                Arrays.asList(
+                        new SimpleTestClassModel(new File("compiler/testData/diagnostics/tests"), true, "kt", "doTest"),
+                        new SimpleTestClassModel(new File("compiler/testData/diagnostics/tests/script"), true, "ktscript", "doTest")
+                ),
+                thisClass
+        ).generateAndSave();
     }
 
 
