@@ -23,7 +23,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
@@ -280,8 +279,7 @@ public class JetTestUtils {
     }
 
     public static String doLoadFile(@NotNull File file) throws IOException {
-        String text = FileUtil.loadFile(file, CharsetToolkit.UTF8).trim();
-        return StringUtil.convertLineSeparators(text);
+        return FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim();
     }
 
     public static String getFilePath(File file) {
