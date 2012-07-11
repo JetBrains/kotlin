@@ -85,11 +85,16 @@ public class InnerClassesScopeWrapper extends JetScopeImpl {
     @NotNull
     @Override
     public ReceiverDescriptor getImplicitReceiver() {
-        return actualScope.getImplicitReceiver();
+        return ReceiverDescriptor.NO_RECEIVER;
     }
 
     @Override
     public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
-        actualScope.getImplicitReceiversHierarchy(result);
+        // Do nothing
+    }
+
+    @Override
+    public String toString() {
+        return "Classes from " + actualScope;
     }
 }
