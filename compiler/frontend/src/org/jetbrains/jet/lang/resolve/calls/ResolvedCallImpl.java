@@ -17,14 +17,16 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsBuilder;
+import org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraints;
+import org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -66,13 +68,13 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private final boolean isSafeCall;
 
     private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
-    private final Map<TypeParameterDescriptor, TypeBounds> typeArgumentBounds = Maps.newLinkedHashMap();
     private final Map<ValueParameterDescriptor, JetType> autoCasts = Maps.newHashMap();
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newLinkedHashMap();
     private boolean someArgumentHasNoType = false;
     private TemporaryBindingTrace trace;
     private ResolutionStatus status = UNKNOWN_STATUS;
     private boolean hasUnknownTypeParameters = false;
+    private ConstraintsBuilder constraintsBuilder = null;
 
     private ResolvedCallImpl(@NotNull ResolutionCandidate<D> candidate, @NotNull TemporaryBindingTrace trace) {
         this.candidateDescriptor = candidate.getDescriptor();
@@ -130,13 +132,13 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         typeArguments.put(typeParameter, typeArgument);
     }
 
-    public void recordTypeBounds(@NotNull TypeParameterDescriptor typeParameter, @NotNull TypeBounds typeBounds) {
-        //assert !typeArgumentBounds.containsKey(typeParameter) : typeParameter;
-        typeArgumentBounds.put(typeParameter, typeBounds);
+    public void setConstraintsBuilder(@NotNull ConstraintsBuilder constraintsBuilder) {
+        this.constraintsBuilder = constraintsBuilder;
     }
 
-    public Map<TypeParameterDescriptor, TypeBounds> getTypeArgumentBounds() {
-        return typeArgumentBounds;
+    @Nullable
+    public ConstraintsBuilder getConstraintsBuilder() {
+        return constraintsBuilder;
     }
 
     public void recordValueArgument(@NotNull ValueParameterDescriptor valueParameter, @NotNull ResolvedValueArgument valueArgument) {
