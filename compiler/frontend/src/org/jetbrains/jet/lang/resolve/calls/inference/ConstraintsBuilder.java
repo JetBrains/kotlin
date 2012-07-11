@@ -25,26 +25,21 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.Collection;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * @author svtk
  */
-public interface ConstraintSystem {
-
-    enum ConstraintType {
-        SUB_TYPE, SUPER_TYPE, EQUAL
-    }
-
-    JetType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
+public interface ConstraintsBuilder {
 
     void registerTypeVariable(@NotNull TypeParameterDescriptor typeParameterDescriptor, @NotNull Variance positionVariance);
 
-    void registerTypeVariable(@NotNull TypeParameterDescriptor typeParameterDescriptor, @NotNull TypeBounds typeBounds);
+    @NotNull
+    Set<TypeParameterDescriptor> getTypeParameters();
 
-    void addSubtypingConstraint(@NotNull JetType exactType, @NotNull JetType expectedType, @NotNull ConstraintPosition constraintPosition);
+    void addSubtypingConstraint(@NotNull JetType subjectType, @NotNull JetType constrainingType, @NotNull ConstraintPosition constraintPosition);
 
-    void addConstraint(@NotNull ConstraintType constraintType, @NotNull JetType exactType, @NotNull JetType expectedType, @NotNull ConstraintPosition constraintPosition);
+    void addSupertypeConstraint(@NotNull JetType subjectType, @NotNull JetType constrainingType, @NotNull ConstraintPosition constraintPosition);
 
     boolean isSuccessful();
 
@@ -56,24 +51,15 @@ public interface ConstraintSystem {
 
     boolean hasTypeConstructorMismatch();
 
-    TypeBounds getTypeBounds(TypeParameterDescriptor typeParameterDescriptor);
-
-    Map<TypeParameterDescriptor, TypeBounds> getTypeBoundsMap();
-
     @Nullable
-    TypeParameterDescriptor getFirstConflictingParameter();
+    TypeConstraints getTypeConstraints(@NotNull TypeParameterDescriptor typeParameterDescriptor);
 
     @NotNull
     TypeSubstitutor getSubstitutor();
 
-    @NotNull
-    Collection<TypeSubstitutor> getSubstitutors();
-
     @Nullable
-    JetType getValue(TypeParameterDescriptor typeParameterDescriptor);
+    JetType getValue(@NotNull TypeParameterDescriptor typeParameterDescriptor);
 
     @NotNull
-    Collection<ConstraintPosition> getErrorConstraintPositions();
-
-    boolean checkUpperBound(@NotNull TypeParameterDescriptor typeParameterDescriptor);
+    Collection<ConstraintPosition> getTypeConstructorMismatchConstraintPositions();
 }

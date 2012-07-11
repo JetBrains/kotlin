@@ -28,8 +28,8 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
-import org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
@@ -41,7 +41,6 @@ import static org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRende
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author svtk
@@ -169,16 +168,17 @@ public class Renderers {
 
     public static TabledDescriptorRenderer renderConflictingSubstitutionsInferenceError(InferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer result) {
-        assert inferenceErrorData.constraintSystem.hasConflictingParameters();
+        assert inferenceErrorData.constraintsBuilder.hasConflictingParameters();
 
         Collection<CallableDescriptor> substitutedDescriptors = Lists.newArrayList();
-        Collection<TypeSubstitutor> substitutors = inferenceErrorData.constraintSystem.getSubstitutors();
+        Collection<TypeSubstitutor> substitutors = ConstraintsUtil.getSubstitutorsForConflictingParameters(
+                inferenceErrorData.constraintsBuilder);
         for (TypeSubstitutor substitutor : substitutors) {
             CallableDescriptor substitutedDescriptor = inferenceErrorData.descriptor.substitute(substitutor);
             substitutedDescriptors.add(substitutedDescriptor);
         }
 
-        TypeParameterDescriptor firstConflictingParameter = inferenceErrorData.constraintSystem.getFirstConflictingParameter();
+        TypeParameterDescriptor firstConflictingParameter = ConstraintsUtil.getFirstConflictingParameter(inferenceErrorData.constraintsBuilder);
         assert firstConflictingParameter != null;
 
         result.text(newText()
@@ -200,7 +200,7 @@ public class Renderers {
                 valueArgumentTypes.add(valueParameterDescriptor.getType());
                 JetType actualType = inferenceErrorData.valueArgumentsTypes.get(valueParameterDescriptor.getIndex());
                 if (!JetTypeChecker.INSTANCE.isSubtypeOf(actualType, valueParameterDescriptor.getType())) {
-                    errorPositions.add(ConstraintPosition.valueParameterPosition(valueParameterDescriptor.getIndex()));
+                    errorPositions.add(ConstraintPosition.getValueParameterPosition(valueParameterDescriptor.getIndex()));
                 }
             }
 
@@ -226,16 +226,16 @@ public class Renderers {
                                       .functionArgumentTypeList(
                                               inferenceErrorData.receiverArgumentType,
                                               inferenceErrorData.valueArgumentsTypes,
-                                              inferenceErrorData.constraintSystem
-                                                      .getErrorConstraintPositions()));
+                                              inferenceErrorData.constraintsBuilder
+                                                      .getTypeConstructorMismatchConstraintPositions()));
     }
 
     public static TabledDescriptorRenderer renderNoInformationForParameterError(InferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer renderer) {
         TypeParameterDescriptor firstUnknownParameter = null;
-        for (Map.Entry<TypeParameterDescriptor, TypeBounds> entry : inferenceErrorData.constraintSystem.getTypeBoundsMap().entrySet()) {
-            if (entry.getValue().isEmpty()) {
-                firstUnknownParameter = entry.getKey();
+        for (TypeParameterDescriptor typeParameter : inferenceErrorData.constraintsBuilder.getTypeParameters()) {
+            if (inferenceErrorData.constraintsBuilder.getTypeConstraints(typeParameter).isEmpty()) {
+                firstUnknownParameter = typeParameter;
                 break;
             }
         }
@@ -253,7 +253,7 @@ public class Renderers {
     public static TabledDescriptorRenderer renderUpperBoundViolatedInferenceError(InferenceErrorData inferenceErrorData, TabledDescriptorRenderer result) {
         TypeParameterDescriptor typeParameterDescriptor = null;
         for (TypeParameterDescriptor typeParameter : inferenceErrorData.descriptor.getTypeParameters()) {
-            if (!inferenceErrorData.constraintSystem.checkUpperBound(typeParameter)) {
+            if (!ConstraintsUtil.checkUpperBoundIsSatisfied(inferenceErrorData.constraintsBuilder, typeParameter)) {
                 typeParameterDescriptor = typeParameter;
                 break;
             }
@@ -264,9 +264,9 @@ public class Renderers {
                 .table(newTable().
                         descriptor(inferenceErrorData.descriptor));
 
-        JetType type = inferenceErrorData.constraintSystem.getValue(typeParameterDescriptor);
+        JetType type = inferenceErrorData.constraintsBuilder.getValue(typeParameterDescriptor);
         JetType upperBound = typeParameterDescriptor.getUpperBoundsAsType();
-        JetType substitute = inferenceErrorData.constraintSystem.getSubstitutor().substitute(upperBound, Variance.INVARIANT);
+        JetType substitute = inferenceErrorData.constraintsBuilder.getSubstitutor().substitute(upperBound, Variance.INVARIANT);
 
         result.text(newText()
                             .normal(" is not satisfied: inferred type ")

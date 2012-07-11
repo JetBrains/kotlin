@@ -19,35 +19,33 @@ package org.jetbrains.jet.lang.resolve.calls.inference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author svtk
  */
 public class InferenceErrorData {
     public final CallableDescriptor descriptor;
-    public final ConstraintSystem constraintSystem;
+    public final ConstraintsBuilder constraintsBuilder;
     public final JetType receiverArgumentType;
     public final List<JetType> valueArgumentsTypes;
 
-    private InferenceErrorData(@NotNull CallableDescriptor descriptor, @NotNull ConstraintSystem constraintSystem,
+    private InferenceErrorData(@NotNull CallableDescriptor descriptor, @NotNull ConstraintsBuilder constraintsBuilder,
             @Nullable List<JetType> valueArgumentsTypes, @Nullable JetType receiverArgumentType) {
         this.descriptor = descriptor;
-        this.constraintSystem = constraintSystem;
+        this.constraintsBuilder = constraintsBuilder;
         this.receiverArgumentType = receiverArgumentType;
         this.valueArgumentsTypes = valueArgumentsTypes;
     }
 
-    public static InferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintSystem constraintSystem,
+    public static InferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintsBuilder constraintsBuilder,
             @NotNull List<JetType> valueArgumentsTypes, @Nullable JetType receiverArgumentType) {
-        return new InferenceErrorData(descriptor, constraintSystem, valueArgumentsTypes, receiverArgumentType);
+        return new InferenceErrorData(descriptor, constraintsBuilder, valueArgumentsTypes, receiverArgumentType);
     }
 
-    public static InferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintSystem constraintSystem) {
-        return new InferenceErrorData(descriptor, constraintSystem, null, null);
+    public static InferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintsBuilder constraintsBuilder) {
+        return new InferenceErrorData(descriptor, constraintsBuilder, null, null);
     }
 }
