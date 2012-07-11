@@ -151,15 +151,16 @@ public class TestGenerator {
         }
 
         if (!innerTestClasses.isEmpty()) {
-            generateSuiteMethod(p, testClassModel);
+            generateSuiteMethod(p, testClassModel, isStatic);
         }
 
         p.popIndent();
         p.println("}");
     }
 
-    private static void generateSuiteMethod(Printer p, TestClassModel testClassModel) {
-        p.println("public static Test suite() {");
+    private static void generateSuiteMethod(Printer p, TestClassModel testClassModel, boolean innerClass) {
+        String name = innerClass ? "innerSuite" : "suite";
+        p.println("public static Test " + name + "() {");
         p.pushIndent();
 
         p.println("TestSuite suite = new TestSuite(\"", testClassModel.getName(), "\");");
@@ -174,7 +175,7 @@ public class TestGenerator {
                 p.println("suite.addTestSuite(", innerTestClass.getName(), ".class);");
             }
             else {
-                p.println("suite.addTest(", innerTestClass.getName(), ".suite());");
+                p.println("suite.addTest(", innerTestClass.getName(), ".innerSuite());");
             }
         }
         p.println("return suite;");

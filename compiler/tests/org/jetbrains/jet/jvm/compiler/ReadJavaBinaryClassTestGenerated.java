@@ -360,7 +360,7 @@ public class ReadJavaBinaryClassTestGenerated extends AbstractReadJavaBinaryClas
             
         }
         
-        public static Test suite() {
+        public static Test innerSuite() {
             TestSuite suite = new TestSuite("KotlinSignature");
             suite.addTestSuite(KotlinSignature.class);
             suite.addTestSuite(Error.class);
@@ -428,7 +428,7 @@ public class ReadJavaBinaryClassTestGenerated extends AbstractReadJavaBinaryClas
         suite.addTestSuite(Annotation.class);
         suite.addTestSuite(Constructor.class);
         suite.addTestSuite(JavaBean.class);
-        suite.addTest(KotlinSignature.suite());
+        suite.addTest(KotlinSignature.innerSuite());
         suite.addTestSuite(Modality.class);
         suite.addTestSuite(NotNull.class);
         suite.addTestSuite(Vararg.class);
