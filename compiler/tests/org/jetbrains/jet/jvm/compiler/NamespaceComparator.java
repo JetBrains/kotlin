@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * @author Stepan Koltsov
@@ -202,12 +203,12 @@ public class NamespaceComparator {
      */
     private static class MemberComparator implements Comparator<String> {
 
+        private static final Pattern IRRELEVANT = Pattern.compile(
+                "^ *(private|protected|public|internal|final|abstract|open|override|fun|val|var|/\\*.*?\\*/|((?!<init>)<.*?>)| )*");
+
         @NotNull
         private String normalize(String s) {
-            return s.replaceFirst(
-                    "^ *(private|protected|public|internal|final|abstract|open|override|fun|val|var|/\\*.*?\\*/|((?!<init>)<.*?>)| )*",
-                    "")
-               + s;
+            return IRRELEVANT.matcher(s).replaceAll("");
         }
 
         @Override
