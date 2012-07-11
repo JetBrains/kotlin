@@ -98,6 +98,7 @@ public class JetStandardLibrary {
     private ClassDescriptor throwableClass;
 
     private JetType numberType;
+    private JetType nullableNumberType;
     private JetType stringType;
     private JetType volatileType;
     private JetType nullableStringType;
@@ -180,6 +181,7 @@ public class JetStandardLibrary {
             this.comparableClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Comparable"));
 
             this.numberType = new JetTypeImpl(getNumber());
+            this.nullableNumberType = TypeUtils.makeNullable(numberType);
             this.stringType = new JetTypeImpl(getString());
             this.charSequenceType = new JetTypeImpl(getCharSequence());
             this.nullableCharSequenceType = TypeUtils.makeNullable(charSequenceType);
@@ -519,6 +521,12 @@ public class JetStandardLibrary {
     }
 
     public JetType getNumberType() {
+        initStdClasses();
         return numberType;
+    }
+
+    public JetType getNullableNumberType() {
+        initStdClasses();
+        return nullableNumberType;
     }
 }
