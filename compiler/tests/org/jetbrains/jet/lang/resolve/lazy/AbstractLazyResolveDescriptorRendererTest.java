@@ -157,7 +157,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends Abstract
                                              extension,
                                              "doTest")
             ),
-            LazyResolveTestGenerator.class
+            AbstractLazyResolveDescriptorRendererTest.class
         ).generateAndSave();
     }
 }

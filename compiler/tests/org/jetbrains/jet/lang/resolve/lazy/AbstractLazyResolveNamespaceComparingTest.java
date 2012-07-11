@@ -145,7 +145,7 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends Abstract
                                              extension,
                                              "doTest")
             ),
-            LazyResolveTestGenerator.class
+            AbstractLazyResolveNamespaceComparingTest.class
         ).generateAndSave();
     }
 }
