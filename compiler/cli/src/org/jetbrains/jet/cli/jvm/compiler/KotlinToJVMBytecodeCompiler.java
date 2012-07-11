@@ -233,20 +233,6 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     @Nullable
-    public static ClassLoader compileText(
-            K2JVMCompileEnvironmentConfiguration configuration,
-            String code) {
-        configuration.getEnvironment()
-                .addSources(new LightVirtualFile("script" + LocalTimeCounter.currentTime() + ".kt", JetLanguage.INSTANCE, code));
-
-        GenerationState generationState = analyzeAndGenerate(configuration);
-        if (generationState == null) {
-            return null;
-        }
-        return new GeneratedClassLoader(generationState.getFactory());
-    }
-
-    @Nullable
     public static GenerationState analyzeAndGenerate(K2JVMCompileEnvironmentConfiguration configuration) {
         return analyzeAndGenerate(configuration, configuration.isStubs());
     }
