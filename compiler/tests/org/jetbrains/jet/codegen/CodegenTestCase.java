@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
@@ -370,7 +371,9 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected static void assertIsCurrentTime(long returnValue) {
         long currentTime = System.currentTimeMillis();
         long diff = Math.abs(returnValue - currentTime);
-        assertTrue("Difference with current time: " + diff + " (this test is a bad one: it may fail even if the generated code is correct)", diff <= 1L);
+        long toleratedDifference = SystemInfo.isWindows ? 15 : 1;
+        assertTrue("Difference with current time: " + diff + " (this test is a bad one: it may fail even if the generated code is correct)",
+                   diff <= toleratedDifference);
     }
 
     protected Class loadImplementationClass(@NotNull ClassFileFactory codegens, final String name) {
