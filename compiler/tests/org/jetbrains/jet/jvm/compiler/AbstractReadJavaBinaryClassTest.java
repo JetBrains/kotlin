@@ -40,6 +40,7 @@ import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.generator.SimpleTestClassModel;
 import org.jetbrains.jet.test.generator.TestGenerator;
+import org.jetbrains.jet.test.util.NamespaceComparator;
 import org.junit.Assert;
 
 import javax.tools.*;

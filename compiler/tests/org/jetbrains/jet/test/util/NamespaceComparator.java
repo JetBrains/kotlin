@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.jvm.compiler;
+package org.jetbrains.jet.test.util;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;

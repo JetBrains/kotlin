@@ -44,6 +44,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
+import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.File;
 
