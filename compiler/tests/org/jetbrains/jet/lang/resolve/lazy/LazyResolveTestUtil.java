@@ -74,7 +74,7 @@ public class LazyResolveTestUtil {
     }
 
     public static ModuleDescriptor resolveLazily(List<JetFile> files, JetCoreEnvironment environment) {
-        ModuleDescriptor javaModule = new ModuleDescriptor(Name.special("<lazy module>"));
+        ModuleDescriptor javaModule = new ModuleDescriptor(Name.special("<java module>"));
 
         final Project project = environment.getProject();
         InjectorForJavaDescriptorResolver injector =
