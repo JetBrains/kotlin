@@ -20,6 +20,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -205,29 +206,33 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         if (!classObjectDescriptorResolved) {
             JetClassObject classObject = declarationProvider.getOwnerInfo().getClassObject();
 
-            boolean isEnum = getKind() == ClassKind.ENUM_CLASS;
-            JetClassLikeInfo classObjectInfo = null;
-            if (classObject != null) {
-                JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
-                if (objectDeclaration != null) {
-                    classObjectInfo = JetClassInfoUtil.createClassLikeInfo(objectDeclaration);
-                }
-            }
-            else {
-                if (isEnum) {
-                    // Enum classes always have class objects, and enum constants are their members
-                    classObjectInfo = onlyEnumEntries(originalClassInfo);
-                }
-            }
-
-
+            JetClassLikeInfo classObjectInfo = getClassObjectInfo(classObject);
             if (classObjectInfo != null) {
-                classObjectDescriptor = new LazyClassDescriptor(resolveSession, this, isEnum ? Name.special("<class-object-for-" + getName() + ">") : JetPsiUtil.NO_NAME_PROVIDED,
-                                                                classObjectInfo);
+                Name classObjectName = getKind() == ClassKind.ENUM_CLASS
+                                       ? Name.special("<class-object-for-" + getName() + ">")
+                                       : JetPsiUtil.NO_NAME_PROVIDED;
+                classObjectDescriptor = new LazyClassDescriptor(resolveSession, this, classObjectName, classObjectInfo);
             }
             classObjectDescriptorResolved = true;
         }
         return classObjectDescriptor;
+    }
+
+    @Nullable
+    private JetClassLikeInfo getClassObjectInfo(JetClassObject classObject) {
+        if (classObject != null) {
+            JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
+            if (objectDeclaration != null) {
+                return JetClassInfoUtil.createClassLikeInfo(objectDeclaration);
+            }
+        }
+        else {
+            if (getKind() == ClassKind.ENUM_CLASS) {
+                // Enum classes always have class objects, and enum constants are their members
+                return onlyEnumEntries(originalClassInfo);
+            }
+        }
+        return null;
     }
 
     @NotNull
