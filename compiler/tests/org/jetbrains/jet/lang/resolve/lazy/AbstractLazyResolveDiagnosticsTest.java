@@ -22,7 +22,7 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 /**
  * @author abreslav
  */
-public class AbstractLazyResolveDiagnosticsTest extends KotlinTestWithEnvironment {
+public abstract class AbstractLazyResolveDiagnosticsTest extends KotlinTestWithEnvironment {
     @Override
     protected JetCoreEnvironment createEnvironment() {
         return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
