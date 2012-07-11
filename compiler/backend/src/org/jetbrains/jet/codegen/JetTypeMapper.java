@@ -953,7 +953,7 @@ public class JetTypeMapper {
 
         for (ScriptDescriptor importedScript : importedScripts) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
-            mapType(closureAnnotator.classDescriptorForScrpitDescriptor(importedScript).getDefaultType(), signatureWriter, MapTypeMode.VALUE);
+            mapType(closureAnnotator.classDescriptorForScriptDescriptor(importedScript).getDefaultType(), signatureWriter, MapTypeMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
         }
 

@@ -127,7 +127,7 @@ public class ClosureAnnotator {
     }
 
     @NotNull
-    public ClassDescriptor classDescriptorForScrpitDescriptor(@NotNull ScriptDescriptor scriptDescriptor) {
+    public ClassDescriptor classDescriptorForScriptDescriptor(@NotNull ScriptDescriptor scriptDescriptor) {
         ClassDescriptorImpl classDescriptor = classesForFunctions.get(scriptDescriptor);
         if (classDescriptor == null) {
             throw new IllegalStateException("Class for script is not registered: " + scriptDescriptor);
@@ -146,7 +146,7 @@ public class ClosureAnnotator {
 
     @NotNull
     public JvmClassName classNameForScriptDescriptor(@NotNull ScriptDescriptor scriptDescriptor) {
-        return classNameForClassDescriptor(classDescriptorForScrpitDescriptor(scriptDescriptor));
+        return classNameForClassDescriptor(classDescriptorForScriptDescriptor(scriptDescriptor));
     }
 
     private void mapFilesToNamespaces(Collection<JetFile> files) {

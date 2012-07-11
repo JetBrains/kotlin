@@ -1087,7 +1087,8 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            codegen.generateThisOrOuter(descriptor);
+            final StackValue stackValue = codegen.generateThisOrOuter(descriptor);
+            stackValue.put(stackValue.type, v);  // no coercion here
         }
     }
 

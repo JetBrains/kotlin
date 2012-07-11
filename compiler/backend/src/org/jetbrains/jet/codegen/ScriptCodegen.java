@@ -35,7 +35,6 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 
 import javax.inject.Inject;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -99,7 +98,7 @@ public class ScriptCodegen {
 
         ScriptDescriptor scriptDescriptor = (ScriptDescriptor) state.getBindingContext().get(BindingContext.SCRIPT, scriptDeclaration);
 
-        ClassDescriptor classDescriptorForScript = closureAnnotator.classDescriptorForScrpitDescriptor(scriptDescriptor);
+        ClassDescriptor classDescriptorForScript = closureAnnotator.classDescriptorForScriptDescriptor(scriptDescriptor);
 
         CodegenContexts.ScriptContext context = (CodegenContexts.ScriptContext) CodegenContexts.STATIC.intoScript(scriptDescriptor, classDescriptorForScript);
 

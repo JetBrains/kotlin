@@ -471,4 +471,9 @@ public class ClassGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxMultiFile("regressions/kt2060_1.kt", "regressions/kt2060.kt");
     }
+
+    public void testKt2395() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxMultiFile("regressions/kt2395.kt");
+    }
 }
