@@ -159,20 +159,4 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
     public List<JetFile> getSourceFiles() {
         return sourceFiles;
     }
-
-    public void addToClasspathFromClassLoader(ClassLoader loader) {
-        ClassLoader parent = loader.getParent();
-        if (parent != null) {
-            addToClasspathFromClassLoader(parent);
-        }
-
-        if (loader instanceof URLClassLoader) {
-            for (URL url : ((URLClassLoader) loader).getURLs()) {
-                File file = new File(url.getPath());
-                if (file.exists() && (!file.isFile() || file.getPath().endsWith(".jar"))) {
-                    addToClasspath(file);
-                }
-            }
-        }
-    }
 }
