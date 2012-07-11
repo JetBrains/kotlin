@@ -23,30 +23,29 @@ import java.util.Map;
 /**
  * @author svtk
  */
-public abstract class ConstraintPosition {
-    public static final ConstraintPosition RECEIVER_POSITION = new ConstraintPosition() {};
-    public static final ConstraintPosition EXPECTED_TYPE_POSITION = new ConstraintPosition() {};
+public class ConstraintPosition {
+    public static final ConstraintPosition RECEIVER_POSITION = new ConstraintPosition("RECEIVER_POSITION");
+    public static final ConstraintPosition EXPECTED_TYPE_POSITION = new ConstraintPosition("EXPECTED_TYPE_POSITION");
 
-    private static final Map<Integer, ValueParameterPosition> valueParameterPositions = Maps.newHashMap();
+    private static final Map<Integer, ConstraintPosition> valueParameterPositions = Maps.newHashMap();
 
-    public static ConstraintPosition valueParameterPosition(int index) {
-        ValueParameterPosition position = valueParameterPositions.get(index);
+    public static ConstraintPosition getValueParameterPosition(int index) {
+        ConstraintPosition position = valueParameterPositions.get(index);
         if (position == null) {
-            position = new ValueParameterPosition(index);
+            position = new ConstraintPosition("VALUE_PARAMETER_POSITION(" + index + ")");
             valueParameterPositions.put(index, position);
         }
         return position;
     }
 
-    private static class ValueParameterPosition extends ConstraintPosition {
-        private final int index;
+    private final String debugName;
 
-        private ValueParameterPosition(int index) {
-            this.index = index;
-        }
+    private ConstraintPosition(String name) {
+        debugName = name;
+    }
 
-        public int getIndex() {
-            return index;
-        }
+    @Override
+    public String toString() {
+        return debugName;
     }
 }

@@ -124,7 +124,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
         for (Iterator<JetType> iterator = argumentTypes.iterator(); iterator.hasNext(); ) {
             JetType argumentType = iterator.next();
             boolean error = false;
-            if (errorPositions.contains(ConstraintPosition.valueParameterPosition(i))) {
+            if (errorPositions.contains(ConstraintPosition.getValueParameterPosition(i))) {
                 error = true;
             }
             String renderedArgument = IdeRenderers.HTML_RENDER_TYPE.render(argumentType);
