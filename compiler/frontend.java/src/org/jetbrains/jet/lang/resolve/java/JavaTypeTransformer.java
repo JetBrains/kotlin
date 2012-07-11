@@ -258,6 +258,7 @@ public class JavaTypeTransformer {
             classTypesMap.put(new FqName("java.lang.String"), JetStandardLibrary.getInstance().getNullableStringType());
             classTypesMap.put(new FqName("java.lang.CharSequence"), JetStandardLibrary.getInstance().getNullableCharSequenceType());
             classTypesMap.put(new FqName("java.lang.Throwable"), JetStandardLibrary.getInstance().getNullableThrowableType());
+            classTypesMap.put(new FqName("java.lang.Number"), JetStandardLibrary.getInstance().getNullableNumberType());
         }
         return classTypesMap;
     }
@@ -277,6 +278,7 @@ public class JavaTypeTransformer {
             classDescriptorMap.put(new FqName("java.lang.String"), JetStandardLibrary.getInstance().getString());
             classDescriptorMap.put(new FqName("java.lang.CharSequence"), JetStandardLibrary.getInstance().getCharSequence());
             classDescriptorMap.put(new FqName("java.lang.Throwable"), JetStandardLibrary.getInstance().getThrowable());
+            classDescriptorMap.put(new FqName("java.lang.Number"), JetStandardLibrary.getInstance().getNumber());
         }
         return classDescriptorMap;
     }
