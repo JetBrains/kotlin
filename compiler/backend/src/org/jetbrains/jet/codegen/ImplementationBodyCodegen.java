@@ -19,7 +19,6 @@ package org.jetbrains.jet.codegen;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.signature.*;
@@ -772,89 +771,85 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         DeclarationDescriptor containingDeclaration = fun.getContainingDeclaration();
         if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor declaration = (ClassDescriptor) containingDeclaration;
-            PsiElement psiElement = BindingContextUtils.classDescriptorToDeclaration(bindingContext, declaration);
-            if (psiElement instanceof JetClass) {
-                JetClass jetClass = (JetClass) psiElement;
-                if (jetClass.isTrait()) {
-                    int flags = ACC_PUBLIC; // TODO.
+            if (declaration.getKind() == ClassKind.TRAIT) {
+                int flags = ACC_PUBLIC; // TODO.
 
-                    Method function;
-                    Method functionOriginal;
-                    if (fun instanceof PropertyAccessorDescriptor) {
-                        PropertyDescriptor property = ((PropertyAccessorDescriptor) fun).getCorrespondingProperty();
-                        if (fun instanceof PropertyGetterDescriptor) {
-                            function = typeMapper.mapGetterSignature(property, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
-                            functionOriginal = typeMapper.mapGetterSignature(property.getOriginal(), OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
-                        }
-                        else if (fun instanceof PropertySetterDescriptor) {
-                            function = typeMapper.mapSetterSignature(property, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
-                            functionOriginal = typeMapper.mapSetterSignature(property.getOriginal(), OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
-                        }
-                        else {
-                            throw new IllegalStateException("Accessor is neither getter, nor setter, what is it?");
-                        }
+                Method function;
+                Method functionOriginal;
+                if (fun instanceof PropertyAccessorDescriptor) {
+                    PropertyDescriptor property = ((PropertyAccessorDescriptor) fun).getCorrespondingProperty();
+                    if (fun instanceof PropertyGetterDescriptor) {
+                        function = typeMapper.mapGetterSignature(property, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
+                        functionOriginal = typeMapper.mapGetterSignature(property.getOriginal(), OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
+                    }
+                    else if (fun instanceof PropertySetterDescriptor) {
+                        function = typeMapper.mapSetterSignature(property, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
+                        functionOriginal = typeMapper.mapSetterSignature(property.getOriginal(), OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
                     }
                     else {
-                        function = typeMapper.mapSignature(fun.getName(), fun).getAsmMethod();
-                        functionOriginal = typeMapper.mapSignature(fun.getName(), fun.getOriginal()).getAsmMethod();
+                        throw new IllegalStateException("Accessor is neither getter, nor setter, what is it?");
                     }
-
-                    final MethodVisitor mv = v.newMethod(myClass, flags, function.getName(), function.getDescriptor(), null, null);
-                    AnnotationCodegen.forMethod(mv, state.getInjector().getJetTypeMapper()).genAnnotations(fun);
-
-                    JvmMethodSignature jvmSignature = typeMapper.mapToCallableMethod(inheritedFun, false, OwnerKind.IMPLEMENTATION).getSignature();
-                    JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
-                    BitSet kotlinFlags = CodegenUtil.getFlagsForVisibility(fun.getVisibility());
-                    if (fun instanceof PropertyAccessorDescriptor) {
-                        kotlinFlags.set(JvmStdlibNames.FLAG_PROPERTY_BIT);
-                        aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
-                        aw.writePropertyType(jvmSignature.getKotlinReturnType());
-                    } else {
-                        aw.writeNullableReturnType(fun.getReturnType().isNullable());
-                        aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
-                        aw.writeReturnType(jvmSignature.getKotlinReturnType());
-                    }
-                    aw.writeFlags(kotlinFlags);
-                    aw.visitEnd();
-
-                    if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-                        StubCodegen.generateStubCode(mv);
-                    }
-                    else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-                        mv.visitCode();
-                        FrameMap frameMap = context.prepareFrame(state.getInjector().getJetTypeMapper());
-                        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getAsmMethod().getReturnType(), context, state);
-                        codegen.generateThisOrOuter(descriptor);    // ??? wouldn't it be a good idea to put it?
-
-                        Type[] argTypes = function.getArgumentTypes();
-                        InstructionAdapter iv = new InstructionAdapter(mv);
-                        iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                        for (int i = 0, reg = 1; i < argTypes.length; i++) {
-                            Type argType = argTypes[i];
-                            iv.load(reg, argType);
-                            //noinspection AssignmentToForLoopParameter
-                            reg += argType.getSize();
-                        }
-
-                        JetType jetType = TraitImplBodyCodegen.getSuperClass(declaration, bindingContext);
-                        Type type = typeMapper.mapType(jetType, MapTypeMode.IMPL);
-                        if (type.getInternalName().equals("java/lang/Object")) {
-                            jetType = declaration.getDefaultType();
-                            type = typeMapper.mapType(jetType, MapTypeMode.IMPL);
-                        }
-
-                        String fdescriptor = functionOriginal.getDescriptor().replace("(","(" +  type.getDescriptor());
-                        Type type1 = typeMapper.mapType(((ClassDescriptor) fun.getContainingDeclaration()).getDefaultType(), MapTypeMode.TRAIT_IMPL);
-                        iv.invokestatic(type1.getInternalName(), function.getName(), fdescriptor);
-                        if (function.getReturnType().getSort() == Type.OBJECT && !function.getReturnType().equals(functionOriginal.getReturnType())) {
-                            iv.checkcast(function.getReturnType());
-                        }
-                        iv.areturn(function.getReturnType());
-                        FunctionCodegen.endVisit(iv, "trait method", BindingContextUtils.callableDescriptorToDeclaration(bindingContext, fun));
-                    }
-
-                    FunctionCodegen.generateBridgeIfNeeded(context, state, v, function, fun, kind);
                 }
+                else {
+                    function = typeMapper.mapSignature(fun.getName(), fun).getAsmMethod();
+                    functionOriginal = typeMapper.mapSignature(fun.getName(), fun.getOriginal()).getAsmMethod();
+                }
+
+                final MethodVisitor mv = v.newMethod(myClass, flags, function.getName(), function.getDescriptor(), null, null);
+                AnnotationCodegen.forMethod(mv, state.getInjector().getJetTypeMapper()).genAnnotations(fun);
+
+                JvmMethodSignature jvmSignature = typeMapper.mapToCallableMethod(inheritedFun, false, OwnerKind.IMPLEMENTATION).getSignature();
+                JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
+                BitSet kotlinFlags = CodegenUtil.getFlagsForVisibility(fun.getVisibility());
+                if (fun instanceof PropertyAccessorDescriptor) {
+                    kotlinFlags.set(JvmStdlibNames.FLAG_PROPERTY_BIT);
+                    aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
+                    aw.writePropertyType(jvmSignature.getKotlinReturnType());
+                } else {
+                    aw.writeNullableReturnType(fun.getReturnType().isNullable());
+                    aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
+                    aw.writeReturnType(jvmSignature.getKotlinReturnType());
+                }
+                aw.writeFlags(kotlinFlags);
+                aw.visitEnd();
+
+                if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
+                    StubCodegen.generateStubCode(mv);
+                }
+                else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+                    mv.visitCode();
+                    FrameMap frameMap = context.prepareFrame(state.getInjector().getJetTypeMapper());
+                    ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getAsmMethod().getReturnType(), context, state);
+                    codegen.generateThisOrOuter(descriptor);    // ??? wouldn't it be a good idea to put it?
+
+                    Type[] argTypes = function.getArgumentTypes();
+                    InstructionAdapter iv = new InstructionAdapter(mv);
+                    iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                    for (int i = 0, reg = 1; i < argTypes.length; i++) {
+                        Type argType = argTypes[i];
+                        iv.load(reg, argType);
+                        //noinspection AssignmentToForLoopParameter
+                        reg += argType.getSize();
+                    }
+
+                    JetType jetType = TraitImplBodyCodegen.getSuperClass(declaration, bindingContext);
+                    Type type = typeMapper.mapType(jetType, MapTypeMode.IMPL);
+                    if (type.getInternalName().equals("java/lang/Object")) {
+                        jetType = declaration.getDefaultType();
+                        type = typeMapper.mapType(jetType, MapTypeMode.IMPL);
+                    }
+
+                    String fdescriptor = functionOriginal.getDescriptor().replace("(","(" +  type.getDescriptor());
+                    Type type1 = typeMapper.mapType(((ClassDescriptor) fun.getContainingDeclaration()).getDefaultType(), MapTypeMode.TRAIT_IMPL);
+                    iv.invokestatic(type1.getInternalName(), function.getName(), fdescriptor);
+                    if (function.getReturnType().getSort() == Type.OBJECT && !function.getReturnType().equals(functionOriginal.getReturnType())) {
+                        iv.checkcast(function.getReturnType());
+                    }
+                    iv.areturn(function.getReturnType());
+                    FunctionCodegen.endVisit(iv, "trait method", BindingContextUtils.callableDescriptorToDeclaration(bindingContext, fun));
+                }
+
+                FunctionCodegen.generateBridgeIfNeeded(context, state, v, function, fun, kind);
             }
         }
     }
