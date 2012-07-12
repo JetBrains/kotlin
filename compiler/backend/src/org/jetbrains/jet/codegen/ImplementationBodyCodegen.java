@@ -291,6 +291,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             throw new RuntimeException("Error generating primary constructor of class " + myClass.getName() + " with kind " + kind, e);
         }
 
+        generateTraitMethods();
+
         generateAccessors();
     }
 
@@ -736,22 +738,20 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateInitializers(codegen, iv, myClass.getDeclarations(), bindingContext, typeMapper);
 
-        generateTraitMethods(codegen);
-
         mv.visitInsn(RETURN);
         FunctionCodegen.endVisit(mv, "constructor", myClass);
 
         FunctionCodegen.generateDefaultIfNeeded(constructorContext, state, v, constructorMethod.getAsmMethod(), constructorDescriptor, OwnerKind.IMPLEMENTATION);
     }
 
-    private void generateTraitMethods(ExpressionCodegen codegen) {
+    private void generateTraitMethods() {
         if (myClass instanceof JetClass && (((JetClass)myClass).isTrait() || ((JetClass)myClass).hasModifier(JetTokens.ABSTRACT_KEYWORD)))
             return;
         
         for (Pair<CallableMemberDescriptor, CallableMemberDescriptor> needDelegates : getTraitImplementations(descriptor)) {
             CallableMemberDescriptor callableDescriptor = needDelegates.first;
             if (needDelegates.second instanceof SimpleFunctionDescriptor) {
-                generateDelegationToTraitImpl(codegen, (FunctionDescriptor) needDelegates.second, (FunctionDescriptor) needDelegates.first);
+                generateDelegationToTraitImpl((FunctionDescriptor) needDelegates.second, (FunctionDescriptor) needDelegates.first);
             }
             else if (needDelegates.second instanceof PropertyDescriptor) {
                 PropertyDescriptor property = (PropertyDescriptor) needDelegates.second;
@@ -759,7 +759,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 for (PropertyAccessorDescriptor accessor : property.getAccessors()) {
                     for (PropertyAccessorDescriptor inheritedAccessor : inheritedAccessors) {
                         if (inheritedAccessor.getClass() == accessor.getClass()) { // same accessor kind
-                            generateDelegationToTraitImpl(codegen, accessor, inheritedAccessor);
+                            generateDelegationToTraitImpl(accessor, inheritedAccessor);
                         }
                     }
                 }
@@ -768,7 +768,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
 
-    private void generateDelegationToTraitImpl(ExpressionCodegen codegen, FunctionDescriptor fun, @NotNull FunctionDescriptor inheritedFun) {
+    private void generateDelegationToTraitImpl(FunctionDescriptor fun, @NotNull FunctionDescriptor inheritedFun) {
         DeclarationDescriptor containingDeclaration = fun.getContainingDeclaration();
         if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor declaration = (ClassDescriptor) containingDeclaration;
@@ -822,8 +822,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     }
                     else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
                         mv.visitCode();
-
-                        codegen.generateThisOrOuter(descriptor);
+                        FrameMap frameMap = context.prepareFrame(state.getInjector().getJetTypeMapper());
+                        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getAsmMethod().getReturnType(), context, state);
+                        codegen.generateThisOrOuter(descriptor);    // ??? wouldn't it be a good idea to put it?
 
                         Type[] argTypes = function.getArgumentTypes();
                         InstructionAdapter iv = new InstructionAdapter(mv);
