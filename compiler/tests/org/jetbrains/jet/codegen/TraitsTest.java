@@ -18,7 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.ConfigurationKind;
 
-public class TraitsTest  extends CodegenTestCase {
+public class TraitsTest extends CodegenTestCase {
 
     @Override
     protected void setUp() throws Exception {
@@ -31,29 +31,33 @@ public class TraitsTest  extends CodegenTestCase {
         return "traits";
     }
 
-    public void testSimple () throws Exception {
+    public void testSimple () {
         blackBoxFile("traits/simple.jet");
 //        System.out.println(generateToText());
     }
 
-    public void testWithRequired () throws Exception {
+    public void testWithRequired () {
         blackBoxFile("traits/withRequired.jet");
 //        System.out.println(generateToText());
     }
 
-    public void testMultiple () throws Exception {
+    public void testMultiple () {
         blackBoxFile("traits/multiple.jet");
     }
 
-    public void testStdlib () throws Exception {
+    public void testStdlib () {
         blackBoxFile("traits/stdlib.jet");
     }
 
-    public void testInheritedFun() throws Exception {
+    public void testInheritedFun() {
         blackBoxFile("traits/inheritedFun.jet");
     }
 
-    public void testInheritedVar() throws Exception {
+    public void testInheritedVar() {
         blackBoxFile("traits/inheritedVar.jet");
+    }
+    
+    public void testKt2399() {
+        blackBoxFile("regressions/kt2399.kt");
     }
 }
