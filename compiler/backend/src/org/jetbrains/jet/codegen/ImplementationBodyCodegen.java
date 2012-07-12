@@ -846,7 +846,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         String fdescriptor = functionOriginal.getDescriptor().replace("(","(" +  type.getDescriptor());
                         Type type1 = typeMapper.mapType(((ClassDescriptor) fun.getContainingDeclaration()).getDefaultType(), MapTypeMode.TRAIT_IMPL);
                         iv.invokestatic(type1.getInternalName(), function.getName(), fdescriptor);
-                        if (function.getReturnType().getSort() == Type.OBJECT) {
+                        if (function.getReturnType().getSort() == Type.OBJECT && !function.getReturnType().equals(functionOriginal.getReturnType())) {
                             iv.checkcast(function.getReturnType());
                         }
                         iv.areturn(function.getReturnType());
