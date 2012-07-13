@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.calls.inference;
 
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.Variance;
 
@@ -43,16 +42,17 @@ public class TypeConstraintsImpl implements TypeConstraints {
         return varianceOfPosition;
     }
 
-    public void addUpperBound(@NotNull JetType type) {
-        upperBounds.add(type);
-    }
-
-    public void addLowerBound(@NotNull JetType type) {
-        lowerBounds.add(type);
-    }
-
-    public void addExactBound(@NotNull JetType type) {
-        exactBounds.add(type);
+    public void addBound(@NotNull ConstraintKind constraintKind, @NotNull JetType type) {
+        switch (constraintKind) {
+            case SUPER_TYPE:
+                lowerBounds.add(type);
+                break;
+            case SUB_TYPE:
+                upperBounds.add(type);
+                break;
+            case EQUAL:
+                exactBounds.add(type);
+        }
     }
 
     @Override
@@ -76,5 +76,25 @@ public class TypeConstraintsImpl implements TypeConstraints {
     @Override
     public Set<JetType> getExactBounds() {
         return exactBounds;
+    }
+
+    public static enum ConstraintKind {
+        SUB_TYPE, SUPER_TYPE, EQUAL;
+
+        @NotNull
+        static ConstraintKind fromVariance(@NotNull Variance variance) {
+            ConstraintKind constraintKind = null;
+            switch (variance) {
+                case INVARIANT:
+                    constraintKind = EQUAL;
+                    break;
+                case OUT_VARIANCE:
+                    constraintKind = SUPER_TYPE;
+                    break;
+                case IN_VARIANCE:
+                    constraintKind = SUB_TYPE;
+            }
+            return constraintKind;
+        }
     }
 }
