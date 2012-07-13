@@ -18,7 +18,9 @@ package org.jetbrains.jet.cli.jvm.compiler;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
 import jet.Function0;
 import jet.modules.AllModules;
@@ -31,7 +33,10 @@ import org.jetbrains.jet.cli.common.CompilerPluginContext;
 import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
+import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.config.CommonConfigurationKeys;
+import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
@@ -72,20 +77,54 @@ public class KotlinToJVMBytecodeCompiler {
             throw new CompileEnvironmentException("No source files where defined");
         }
 
-        CompileEnvironmentUtil.addSourcesFromModuleToEnvironment(configuration.getEnvironment(), moduleBuilder, directory);
+        // TODO creating environment copy each time — not good. original environment shouldn't be passed at all
+        CompilerConfiguration compilerConfiguration = configuration.getEnvironment().getConfiguration().copy();
+        for (String sourceFile : moduleBuilder.getSourceFiles()) {
+            File source = new File(sourceFile);
+            if (!source.isAbsolute()) {
+                source = new File(directory, sourceFile);
+            }
+
+            if (!source.exists()) {
+                throw new CompileEnvironmentException("'" + source + "' does not exist");
+            }
+
+            compilerConfiguration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, source.getPath());
+        }
+
         for (String classpathRoot : moduleBuilder.getClasspathRoots()) {
-            configuration.getEnvironment().addToClasspath(new File(classpathRoot));
+            compilerConfiguration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File(classpathRoot));
         }
 
         for (String annotationsRoot : moduleBuilder.getAnnotationsRoots()) {
-            configuration.getEnvironment().addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(new File(annotationsRoot)));
+            compilerConfiguration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File(annotationsRoot));
         }
 
-        GenerationState generationState = analyzeAndGenerate(configuration);
-        if (generationState == null) {
-            return null;
+        Disposable parentDisposable = new Disposable() {
+            @Override
+            public void dispose() {
+            }
+        };
+        JetCoreEnvironment environment = null;
+        try {
+            environment = JetCoreEnvironment.createCoreEnvironmentForJVM(parentDisposable,
+                                                                         compilerConfiguration);
+
+
+            K2JVMCompileEnvironmentConfiguration currentK2JVMConfiguration = new K2JVMCompileEnvironmentConfiguration(
+                    environment, configuration.getMessageCollector(), configuration.isScript(),
+                    configuration.getBuiltinsScopeExtensionMode(), configuration.isStubs(),
+                    configuration.getBuiltinToJavaTypesMapping());
+            GenerationState generationState = analyzeAndGenerate(currentK2JVMConfiguration);
+            if (generationState == null) {
+                return null;
+            }
+            return generationState.getFactory();
+        } finally {
+            if (environment != null) {
+                Disposer.dispose(parentDisposable);
+            }
         }
-        return generationState.getFactory();
     }
 
     public static boolean compileModules(

@@ -292,21 +292,4 @@ public class CompileEnvironmentUtil {
             addToClasspath(environment, new File(path));
         }
     }
-
-    public static void addSourcesFromModuleToEnvironment(@NotNull JetCoreEnvironment environment,
-            @NotNull Module module,
-            @NotNull File moduleDirectory) {
-        for (String sourceFile : module.getSourceFiles()) {
-            File source = new File(sourceFile);
-            if (!source.isAbsolute()) {
-                source = new File(moduleDirectory, sourceFile);
-            }
-
-            if (!source.exists()) {
-                throw new CompileEnvironmentException("'" + source + "' does not exist");
-            }
-
-            environment.addSources(source.getPath());
-        }
-    }
 }
