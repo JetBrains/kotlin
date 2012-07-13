@@ -25,17 +25,19 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.config.LibrarySourcesConfig;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.isNotAny;
 
 /**
  * @author Pavel Talanov
@@ -53,44 +55,12 @@ public final class JsDescriptorUtils {
         return (valueParametersCount(functionDescriptor) > 0);
     }
 
-    public static boolean isEquals(@NotNull FunctionDescriptor functionDescriptor) {
-        return (functionDescriptor.getName().equals(OperatorConventions.EQUALS));
-    }
-
     public static boolean isCompareTo(@NotNull FunctionDescriptor functionDescriptor) {
         return (functionDescriptor.getName().equals(OperatorConventions.COMPARE_TO));
     }
 
     public static boolean isConstructorDescriptor(@NotNull CallableDescriptor descriptor) {
         return (descriptor instanceof ConstructorDescriptor);
-    }
-
-    @NotNull
-    public static FunctionDescriptor getFunctionByName(@NotNull JetScope scope,
-                                                       @NotNull Name name) {
-        Collection<FunctionDescriptor> functionDescriptors = scope.getFunctions(name);
-        assert functionDescriptors.size() == 1 :
-            "In scope " + scope + " supposed to be exactly one " + name + " function.\n" +
-            "Found: " + functionDescriptors.size();
-        //noinspection LoopStatementThatDoesntLoop
-        for (FunctionDescriptor descriptor : functionDescriptors) {
-            return descriptor;
-        }
-        throw new AssertionError("In scope " + scope
-                                 + " supposed to be exactly one " + name + " function.");
-    }
-
-    //TODO: some strange stuff happening to this method
-    //TODO: inspect
-    @NotNull
-    public static PropertyDescriptor getPropertyByName(@NotNull JetScope scope,
-                                                       @NotNull Name name) {
-        Collection<VariableDescriptor> variables = scope.getProperties(name);
-        assert variables.size() == 1 : "Actual size: " + variables.size();
-        VariableDescriptor variable = variables.iterator().next();
-        PropertyDescriptor descriptor = (PropertyDescriptor)variable;
-        assert descriptor != null : "Must have a descriptor.";
-        return descriptor;
     }
 
     @Nullable
@@ -103,9 +73,31 @@ public final class JsDescriptorUtils {
         return null;
     }
 
+    @NotNull
+    public static List<ClassDescriptor> getSuperclassDescriptors(@NotNull ClassDescriptor classDescriptor) {
+        Collection<? extends JetType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
+        List<ClassDescriptor> superClassDescriptors = new ArrayList<ClassDescriptor>();
+        for (JetType type : superclassTypes) {
+            ClassDescriptor result = getClassDescriptorForType(type);
+            if (isNotAny(result)) {
+                superClassDescriptors.add(result);
+            }
+        }
+        return superClassDescriptors;
+    }
+
     @Nullable
     public static ClassDescriptor getSuperclass(@NotNull ClassDescriptor classDescriptor) {
-        return findAncestorClass(DescriptorUtils.getSuperclassDescriptors(classDescriptor));
+        return findAncestorClass(getSuperclassDescriptors(classDescriptor));
+    }
+
+    @NotNull
+    public static ClassDescriptor getClassDescriptorForType(@NotNull JetType type) {
+        DeclarationDescriptor superClassDescriptor =
+                type.getConstructor().getDeclarationDescriptor();
+        assert superClassDescriptor instanceof ClassDescriptor
+                : "Superclass descriptor of a type should be of type ClassDescriptor";
+        return (ClassDescriptor) superClassDescriptor;
     }
 
 
@@ -132,9 +124,9 @@ public final class JsDescriptorUtils {
 
     @NotNull
     public static DeclarationDescriptor getDeclarationDescriptorForReceiver
-        (@NotNull ReceiverDescriptor receiverParameter) {
+            (@NotNull ReceiverDescriptor receiverParameter) {
         DeclarationDescriptor declarationDescriptor =
-            receiverParameter.getType().getConstructor().getDeclarationDescriptor();
+                receiverParameter.getType().getConstructor().getDeclarationDescriptor();
         //TODO: WHY assert?
         assert declarationDescriptor != null;
         return declarationDescriptor.getOriginal();
@@ -155,11 +147,24 @@ public final class JsDescriptorUtils {
         DeclarationDescriptor containing = descriptor.getContainingDeclaration();
         while (containing != null) {
             if (containing instanceof ClassDescriptor && !isClassObject(containing)) {
-                return (ClassDescriptor)containing;
+                return (ClassDescriptor) containing;
             }
             containing = containing.getContainingDeclaration();
         }
         return null;
+    }
+
+    @Nullable
+    public static NamespaceDescriptor getContainingNamespace(@NotNull DeclarationDescriptor descriptor) {
+        return DescriptorUtils.getParentOfType(descriptor, NamespaceDescriptor.class);
+    }
+
+    public static boolean isStandardDeclaration(@NotNull DeclarationDescriptor descriptor) {
+        NamespaceDescriptor namespace = getContainingNamespace(descriptor);
+        if (namespace == null) {
+            return false;
+        }
+        return namespace.equals(JetStandardLibrary.getInstance().getLibraryScope().getContainingDeclaration());
     }
 
     @NotNull
@@ -232,7 +237,7 @@ public final class JsDescriptorUtils {
         while (!(current.getContainingDeclaration() instanceof ModuleDescriptor)) {
             result.add(current);
             if (current.getContainingDeclaration() instanceof NamespaceDescriptor) {
-                current = (NamespaceDescriptor)current.getContainingDeclaration();
+                current = (NamespaceDescriptor) current.getContainingDeclaration();
                 assert current != null;
             }
             else {

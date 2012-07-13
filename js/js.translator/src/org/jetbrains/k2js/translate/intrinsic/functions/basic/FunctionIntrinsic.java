@@ -14,31 +14,27 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.translate.intrinsic.array;
+package org.jetbrains.k2js.translate.intrinsic.functions.basic;
 
-import com.google.dart.compiler.backend.js.ast.JsArrayAccess;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 
 import java.util.List;
 
 /**
  * @author Pavel Talanov
+ *         <p/>
+ *         Base for intrinsics that substitute standard function calls like Int#plus, Float#minus ... etc
  */
-public enum ArrayGetIntrinsic implements FunctionIntrinsic {
-
-    INSTANCE;
+public abstract class FunctionIntrinsic {
 
     @NotNull
-    @Override
-    public JsExpression apply(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments,
-                              @NotNull TranslationContext context) {
-        assert receiver != null;
-        assert arguments.size() == 1 : "Array get expression must have one argument.";
-        JsExpression indexExpression = arguments.get(0);
-        return new JsArrayAccess(receiver, indexExpression);
+    public abstract JsExpression apply(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments,
+            @NotNull TranslationContext context);
+
+    public boolean exists() {
+        return true;
     }
 }

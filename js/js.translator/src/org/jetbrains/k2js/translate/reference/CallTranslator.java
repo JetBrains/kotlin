@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.ErrorReportingUtils;
 
@@ -119,14 +119,19 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     private boolean isIntrinsic() {
-        return context().intrinsics().isIntrinsic(descriptor);
+        if (descriptor instanceof FunctionDescriptor) {
+            FunctionIntrinsic intrinsic = context().intrinsics().getFunctionIntrinsics().getIntrinsic((FunctionDescriptor) descriptor);
+            return intrinsic.exists();
+        }
+        return false;
     }
 
     @NotNull
     private JsExpression intrinsicInvocation() {
         assert descriptor instanceof FunctionDescriptor;
         try {
-            FunctionIntrinsic intrinsic = context().intrinsics().getIntrinsic((FunctionDescriptor) descriptor);
+            FunctionIntrinsic intrinsic = context().intrinsics().getFunctionIntrinsics().getIntrinsic((FunctionDescriptor) descriptor);
+            assert intrinsic.exists();
             return intrinsic.apply(callParameters.getThisOrReceiverOrNull(), arguments, context());
         }
         catch (RuntimeException e) {

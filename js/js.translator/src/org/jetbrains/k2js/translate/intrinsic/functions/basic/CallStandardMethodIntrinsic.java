@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.translate.intrinsic;
+package org.jetbrains.k2js.translate.intrinsic.functions.basic;
 
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.Source;
@@ -33,7 +33,7 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.newInvocation;
 /**
  * @author Pavel Talanov
  */
-public final class CallStandardMethodIntrinsic implements FunctionIntrinsic {
+public final class CallStandardMethodIntrinsic extends FunctionIntrinsic {
 
     @NotNull
     private final String methodName;
@@ -50,8 +50,8 @@ public final class CallStandardMethodIntrinsic implements FunctionIntrinsic {
     @NotNull
     @Override
     public JsExpression apply(@Nullable JsExpression receiver,
-                              @NotNull List<JsExpression> arguments,
-                              @NotNull TranslationContext context) {
+            @NotNull List<JsExpression> arguments,
+            @NotNull TranslationContext context) {
         assert (receiver != null == receiverShouldBeNotNull);
         assert arguments.size() == expectedParamsNumber : "Incorrect number of arguments " + arguments.size() + " when expected " + expectedParamsNumber + " on method " + methodName + " " + atLocation(receiver, arguments);
         JsNameRef iteratorFunName = AstUtil.newQualifiedNameRef(methodName);

@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.translate.intrinsic;
+package org.jetbrains.k2js.translate.intrinsic.operation;
 
+import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetBinaryExpression;
+import org.jetbrains.k2js.translate.context.TranslationContext;
 
 /**
  * @author Pavel Talanov
  */
-public abstract class EqualsIntrinsic implements FunctionIntrinsic {
+public interface BinaryOperationIntrinsic {
 
-    @NotNull
-    private Boolean isNegated = false;
+    boolean isApplicable(@NotNull JetBinaryExpression expression, @NotNull TranslationContext context);
 
-    public void setNegated(boolean isNegated) {
-        this.isNegated = isNegated;
-    }
-
-    protected boolean isNegated() {
-        return isNegated;
-    }
+    JsExpression apply(@NotNull JetBinaryExpression expression, @NotNull JsExpression left,
+            @NotNull JsExpression right, @NotNull TranslationContext context);
 }

@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.functions.factories.ArrayFIF;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.Collections;
@@ -44,12 +44,12 @@ public final class ArrayForTranslator extends ForTranslator {
 
     @NotNull
     public static JsStatement doTranslate(@NotNull JetForExpression expression,
-                                          @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         return (new ArrayForTranslator(expression, context).translate());
     }
 
     public static boolean isApplicable(@NotNull JetForExpression expression,
-                                       @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         JetExpression loopRange = getLoopRange(expression);
         JetType rangeType = BindingUtils.getTypeForExpression(context.bindingContext(), loopRange);
         //TODO: better check
@@ -70,10 +70,10 @@ public final class ArrayForTranslator extends ForTranslator {
     private ArrayForTranslator(@NotNull JetForExpression forExpression, @NotNull TranslationContext context) {
         super(forExpression, context);
         loopRange = context.declareTemporary(Translation.translateAsExpression(getLoopRange(expression), context));
-        FunctionIntrinsic lengthPropertyIntrinsic = context().intrinsics().getLengthPropertyIntrinsic();
-        JsExpression length = lengthPropertyIntrinsic.apply(loopRange.reference(),
-                                                            Collections.<JsExpression>emptyList(),
-                                                            context());
+
+        JsExpression length = ArrayFIF.ARRAY_LENGTH_INTRINSIC.apply(loopRange.reference(),
+                                             Collections.<JsExpression>emptyList(),
+                                             context());
         end = context().declareTemporary(length);
         index = context().declareTemporary(program().getNumberLiteral(0));
     }

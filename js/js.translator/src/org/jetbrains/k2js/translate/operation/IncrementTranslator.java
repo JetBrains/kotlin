@@ -34,7 +34,7 @@ import static org.jetbrains.k2js.translate.reference.AccessTranslationUtils.getC
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.newSequence;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
 import static org.jetbrains.k2js.translate.utils.TemporariesUtils.temporariesInitialization;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.isIntrinsicOperation;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.hasCorrespondingFunctionIntrinsic;
 
 /**
  * @author Pavel Talanov
@@ -49,7 +49,7 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     @NotNull
     public static JsExpression translate(@NotNull JetUnaryExpression expression,
                                          @NotNull TranslationContext context) {
-        if (isIntrinsicOperation(context, expression)) {
+        if (hasCorrespondingFunctionIntrinsic(context, expression)) {
             return IntrinsicIncrementTranslator.doTranslate(expression, context);
         }
         return (new OverloadedIncrementTranslator(expression, context)).translateIncrementExpression();

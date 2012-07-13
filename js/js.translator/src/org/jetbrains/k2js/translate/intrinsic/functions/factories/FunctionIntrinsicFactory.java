@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.translate.intrinsic;
+package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.Pattern;
 
 /**
  * @author Pavel Talanov
  */
-public abstract class FunctionIntrinsicFactory {
-
-    public abstract boolean isApplicable(@NotNull FunctionDescriptor descriptor);
+public interface FunctionIntrinsicFactory {
 
     @NotNull
-    public abstract FunctionIntrinsic createIntrinsic(@NotNull FunctionDescriptor descriptor);
+    Pattern getPattern();
+
+    @NotNull
+    FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor);
 }

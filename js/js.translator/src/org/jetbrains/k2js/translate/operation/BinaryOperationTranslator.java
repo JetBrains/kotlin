@@ -30,7 +30,7 @@ import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.intrinsic.EqualsIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.operation.BinaryOperationIntrinsic;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
 import org.jetbrains.k2js.translate.reference.CallType;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
@@ -40,9 +40,9 @@ import static org.jetbrains.k2js.translate.operation.CompareToTranslator.isCompa
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.not;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isEquals;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateLeftExpression;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRightExpression;
 
 
 /**
@@ -78,6 +78,10 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression translate() {
+        BinaryOperationIntrinsic intrinsic = getIntrinsicForExpression();
+        if (intrinsic != null) {
+            return applyIntrinsic(intrinsic);
+        }
         if (isElvisOperator(expression)) {
             return translateAsElvisOperator(expression);
         }
@@ -92,10 +96,20 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         }
         assert operationDescriptor != null :
                 "Overloadable operations must have not null descriptor";
-        if (isEquals(operationDescriptor) && context().intrinsics().isIntrinsic(operationDescriptor)) {
-            return translateAsEqualsIntrinsic();
-        }
         return translateAsOverloadedBinaryOperation();
+    }
+
+    @Nullable
+    private BinaryOperationIntrinsic getIntrinsicForExpression() {
+        return context().intrinsics().getBinaryOperationIntrinsics().getIntrinsic(expression, context());
+    }
+
+    @NotNull
+    private JsExpression applyIntrinsic(@NotNull BinaryOperationIntrinsic intrinsic) {
+        return intrinsic.apply(expression,
+                               translateLeftExpression(context(), expression),
+                               translateRightExpression(context(), expression),
+                               context());
     }
 
     private static boolean isElvisOperator(@NotNull JetBinaryExpression expression) {
@@ -113,14 +127,6 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
 
     private boolean isNotOverloadable() {
         return operationDescriptor == null;
-    }
-
-    @NotNull
-    private JsExpression translateAsEqualsIntrinsic() {
-        assert operationDescriptor != null : "Equals operation must resolve to descriptor.";
-        EqualsIntrinsic intrinsic = context().intrinsics().getEqualsIntrinsic(operationDescriptor);
-        intrinsic.setNegated(expression.getOperationToken().equals(JetTokens.EXCLEQ));
-        return applyIntrinsicToBinaryExpression(context(), intrinsic, expression);
     }
 
     @NotNull

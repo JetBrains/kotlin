@@ -1,4 +1,4 @@
-package org.jetbrains.k2js.translate.intrinsic;
+package org.jetbrains.k2js.translate.intrinsic.functions.basic;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
@@ -15,7 +15,7 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
  * @author Pavel Talanov
  */
 //TODO: find should be usages
-public final class BuiltInPropertyIntrinsic implements FunctionIntrinsic {
+public final class BuiltInPropertyIntrinsic extends FunctionIntrinsic {
 
     @NotNull
     private final String propertyName;

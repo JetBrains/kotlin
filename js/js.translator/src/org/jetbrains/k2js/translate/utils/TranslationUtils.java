@@ -26,10 +26,8 @@ import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.google.dart.compiler.util.AstUtil.newAssignment;
@@ -205,13 +203,12 @@ public final class TranslationUtils {
         return Translation.translateAsExpression(rightExpression, context);
     }
 
-    public static boolean isIntrinsicOperation(@NotNull TranslationContext context,
+    public static boolean hasCorrespondingFunctionIntrinsic(@NotNull TranslationContext context,
             @NotNull JetOperationExpression expression) {
-        FunctionDescriptor operationDescriptor =
-                BindingUtils.getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
+        FunctionDescriptor operationDescriptor = getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
 
         if (operationDescriptor == null) return true;
-        if (context.intrinsics().isIntrinsic(operationDescriptor)) return true;
+        if (context.intrinsics().getFunctionIntrinsics().getIntrinsic(operationDescriptor).exists()) return true;
 
         return false;
     }
@@ -230,15 +227,6 @@ public final class TranslationUtils {
     @NotNull
     public static JsNumberLiteral zeroLiteral(@NotNull TranslationContext context) {
         return context.program().getNumberLiteral(0);
-    }
-
-    @NotNull
-    public static JsExpression applyIntrinsicToBinaryExpression(@NotNull TranslationContext context,
-            @NotNull FunctionIntrinsic intrinsic,
-            @NotNull JetBinaryExpression binaryExpression) {
-        JsExpression left = translateLeftExpression(context, binaryExpression);
-        JsExpression right = translateRightExpression(context, binaryExpression);
-        return intrinsic.apply(left, Arrays.asList(right), context);
     }
 
     @Nullable

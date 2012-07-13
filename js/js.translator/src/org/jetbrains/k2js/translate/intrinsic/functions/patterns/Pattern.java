@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.translate.intrinsic;
+package org.jetbrains.k2js.translate.intrinsic.functions.patterns;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.k2js.translate.context.TranslationContext;
-
-import java.util.List;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 
 /**
  * @author Pavel Talanov
- *         <p/>
- *         Base for intrinsics that substitute standard function calls like Int#plus, Float#minus ... etc
  */
-public interface FunctionIntrinsic {
+public interface Pattern {
 
-    @NotNull
-    JsExpression apply(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments,
-                       @NotNull TranslationContext context);
+    boolean apply(@NotNull FunctionDescriptor descriptor);
 }

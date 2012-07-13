@@ -14,27 +14,39 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.translate.intrinsic;
+package org.jetbrains.k2js.translate.intrinsic.functions.basic;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.newInvocation;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
+
 /**
  * @author Pavel Talanov
  */
-public enum ReturnReceiverIntrinsic implements FunctionIntrinsic {
+public final class BuiltInFunctionIntrinsic extends FunctionIntrinsic {
 
-    INSTANCE;
+    @NotNull
+    private final String functionName;
+
+    public BuiltInFunctionIntrinsic(@NotNull String functionName) {
+        this.functionName = functionName;
+    }
 
     @NotNull
     @Override
     public JsExpression apply(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments,
                               @NotNull TranslationContext context) {
         assert receiver != null;
-        return receiver;
+        JsNameRef functionReference = AstUtil.newQualifiedNameRef(functionName);
+        setQualifier(functionReference, receiver);
+        return newInvocation(functionReference, arguments);
     }
 }
