@@ -20,8 +20,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.LightVirtualFile;
-import com.intellij.util.LocalTimeCounter;
 import jet.Function0;
 import jet.modules.AllModules;
 import jet.modules.Module;
@@ -41,7 +39,6 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.JetMainDetector;
 import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.utils.PathUtil;
@@ -219,17 +216,6 @@ public class KotlinToJVMBytecodeCompiler {
         finally {
             generationState.destroy();
         }
-    }
-
-    public static boolean compileBunchOfSourceDirectories(
-            K2JVMCompileEnvironmentConfiguration configuration,
-
-            List<String> sources, File jar, File outputDir, boolean script, boolean includeRuntime) {
-        for (String source : sources) {
-            configuration.getEnvironment().addSources(source);
-        }
-
-        return compileBunchOfSources(configuration, jar, outputDir, includeRuntime);
     }
 
     @Nullable
