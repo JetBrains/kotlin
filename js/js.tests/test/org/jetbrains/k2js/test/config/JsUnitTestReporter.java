@@ -18,6 +18,8 @@ package org.jetbrains.k2js.test.config;
 
 import closurecompiler.internal.com.google.common.collect.Lists;
 import closurecompiler.internal.com.google.common.collect.Maps;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -104,26 +106,25 @@ public class JsUnitTestReporter {
         final TestSuite suite = new TestSuite("!");
         Collection<String> newFinishedTests = getNewFinishedTests();
         for (String test : newFinishedTests) {
-            //TODO: uncomment this when teamcity test runner is fixed
             //NOTE: well, it is a test
             //noinspection JUnitTestCaseWithNoTests
-            //suite.addTest(new TestCase(test) {
-            //    @Override
-            //    protected void runTest() throws Throwable {
-            //        Boolean result = getResult(getName());
-            //        if (!result) {
-            //            Collection<String> errorMessages = getErrors(getName());
-            //            StringBuilder sb = new StringBuilder();
-            //            for (String error : errorMessages) {
-            //                sb.append(error);
-            //            }
-            //            eraseTestInfo(getName());
-            //            Assert.fail(sb.toString());
-            //        }
-            //        eraseTestInfo(getName());
-            //        Assert.assertTrue(result);
-            //    }
-            //});
+            suite.addTest(new TestCase(test) {
+                @Override
+                protected void runTest() throws Throwable {
+                    Boolean result = getResult(getName());
+                    if (!result) {
+                        Collection<String> errorMessages = getErrors(getName());
+                        StringBuilder sb = new StringBuilder();
+                        for (String error : errorMessages) {
+                            sb.append(error);
+                        }
+                        eraseTestInfo(getName());
+                        Assert.fail(sb.toString());
+                    }
+                    eraseTestInfo(getName());
+                    Assert.assertTrue(result);
+                }
+            });
         }
         processedTests.addAll(newFinishedTests);
         return suite;
