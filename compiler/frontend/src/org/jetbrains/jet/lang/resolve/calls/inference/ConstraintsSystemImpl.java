@@ -23,9 +23,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
+import org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.ConstraintKind;
 
 import java.util.*;
 
@@ -142,74 +142,51 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
             TypeParameterDescriptor typeParameter = (TypeParameterDescriptor) subjectTypeDescriptor;
             TypeConstraintsImpl typeConstraints = typeParameterConstraints.get(typeParameter);
             if (typeConstraints != null) {
-                addBoundToTypeConstraints(constraintKind, subjectType, constrainingType, typeConstraints);
+                if (TypeUtils.dependsOnTypeParameterConstructors(constrainingType, Collections.singleton(DONT_CARE.getConstructor()))) {
+                    return;
+                }
+                if (subjectType.isNullable() && constrainingType.isNullable()) {
+                    constrainingType = TypeUtils.makeNotNullable(constrainingType);
+                }
+                typeConstraints.addBound(constraintKind, constrainingType);
                 return;
             }
         }
         if (constrainingTypeDescriptor instanceof TypeParameterDescriptor) {
-            assert typeParameterConstraints.get(constrainingTypeDescriptor) == null : "Constraining type contains type variable " + "";//todo
+            assert typeParameterConstraints.get(constrainingTypeDescriptor) == null : "Constraining type contains type variable " + constrainingTypeDescriptor.getName();
         }
-
-        if (constrainingTypeDescriptor instanceof ClassDescriptor && subjectTypeDescriptor instanceof ClassDescriptor) {
-            switch (constraintKind) {
-                case SUPER_TYPE:
-                {
-                    JetType correspondingSupertype = TypeCheckingProcedure.findCorrespondingSupertype(constrainingType, subjectType);
-                    if (correspondingSupertype != null) {
-                        constrainingType = correspondingSupertype;
-                    }
-                    break;
+        if (!(constrainingTypeDescriptor instanceof ClassDescriptor) || !(subjectTypeDescriptor instanceof ClassDescriptor)) {
+            errorConstraintPositions.add(constraintPosition);
+            return;
+        }
+        switch (constraintKind) {
+            case SUPER_TYPE: {
+                JetType correspondingSupertype = TypeCheckingProcedure.findCorrespondingSupertype(constrainingType, subjectType);
+                if (correspondingSupertype != null) {
+                    constrainingType = correspondingSupertype;
                 }
-                case SUB_TYPE:
-                {
-                    JetType correspondingSupertype = TypeCheckingProcedure.findCorrespondingSupertype(subjectType, constrainingType);
-                    if (correspondingSupertype != null) {
-                        subjectType = correspondingSupertype;
-                    }
+                break;
+            }
+            case SUB_TYPE: {
+                JetType correspondingSupertype = TypeCheckingProcedure.findCorrespondingSupertype(subjectType, constrainingType);
+                if (correspondingSupertype != null) {
+                    subjectType = correspondingSupertype;
                 }
-                case EQUAL: //nothing
             }
-            //todo type constructors are same, else error
-
-            if (constrainingType.getConstructor().getParameters().size() != subjectType.getConstructor().getParameters().size()) {
-                errorConstraintPositions.add(constraintPosition);
-                return;
-            }
-            ClassDescriptor subClass = (ClassDescriptor) constrainingType.getConstructor().getDeclarationDescriptor();
-            ClassDescriptor superClass = (ClassDescriptor) subjectType.getConstructor().getDeclarationDescriptor();
-            if (DescriptorUtils.isSubclass(subClass, superClass)) {
-                List<TypeProjection> subArguments = constrainingType.getArguments();
-                List<TypeProjection> superArguments = subjectType.getArguments();
-                List<TypeParameterDescriptor> superParameters = subjectType.getConstructor().getParameters();
-                for (int i = 0; i < superArguments.size(); i++) {
-                    //todo subArguments.get(i).getType() -> type projections
-                    addConstraint(ConstraintKind.fromVariance(superParameters.get(i).getVariance()), superArguments.get(i).getType(),
-                                  subArguments.get(i).getType(), constraintPosition);
-                }
-                return;
-            }
+            case EQUAL: //nothing
         }
-        errorConstraintPositions.add(constraintPosition);
-    }
-
-    //todo move to type constraints
-    private void addBoundToTypeConstraints(@NotNull ConstraintKind constraintKind, @NotNull JetType subjectType,
-            @NotNull JetType constrainingType, @NotNull TypeConstraintsImpl typeConstraints) {
-
-        if (TypeUtils.dependsOnTypeParameterConstructors(constrainingType, Collections.singleton(DONT_CARE.getConstructor()))) return;
-        //todo it's an error
-        if (subjectType.isNullable()) {
-            constrainingType = TypeUtils.makeNotNullable(constrainingType);
+        if (constrainingType.getConstructor() != subjectType.getConstructor()) {
+            errorConstraintPositions.add(constraintPosition);
+            return;
         }
-        //todo switch
-        if (constraintKind == ConstraintKind.SUPER_TYPE) {
-            typeConstraints.addLowerBound(constrainingType);
-        }
-        else if (constraintKind == ConstraintKind.SUB_TYPE) {
-            typeConstraints.addUpperBound(constrainingType);
-        }
-        else {
-            typeConstraints.addExactBound(constrainingType);
+        TypeConstructor typeConstructor = subjectType.getConstructor();
+        List<TypeProjection> subjectArguments = subjectType.getArguments();
+        List<TypeProjection> constrainingArguments = constrainingType.getArguments();
+        List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
+        for (int i = 0; i < subjectArguments.size(); i++) {
+            //todo constrainingArguments.get(i).getType() -> type projections
+            addConstraint(ConstraintKind.fromVariance(parameters.get(i).getVariance()), subjectArguments.get(i).getType(),
+                          constrainingArguments.get(i).getType(), constraintPosition);
         }
     }
 
@@ -258,25 +235,5 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
     @Override
     public TypeSubstitutor getResultingSubstitutor() {
         return resultingSubstitutor;
-    }
-
-    private enum ConstraintKind {
-        SUB_TYPE, SUPER_TYPE, EQUAL;
-
-        @NotNull
-        static ConstraintKind fromVariance(@NotNull Variance variance) {
-            ConstraintKind constraintKind = null;
-            switch (variance) {
-                case INVARIANT:
-                    constraintKind = EQUAL;
-                    break;
-                case OUT_VARIANCE:
-                    constraintKind = SUPER_TYPE;
-                    break;
-                case IN_VARIANCE:
-                    constraintKind = SUB_TYPE;
-            }
-            return constraintKind;
-        }
     }
 }
