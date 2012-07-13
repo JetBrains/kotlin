@@ -52,6 +52,7 @@ import java.util.List;
 public class JetCoreEnvironment extends JavaCoreEnvironment {
     private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
     private final CoreAnnotationsProvider annotationsProvider;
+    private final CompilerConfiguration configuration;
 
     @NotNull
     public static JetCoreEnvironment createCoreEnvironmentForJS(Disposable disposable, @NotNull CompilerConfiguration configuration) {
@@ -65,6 +66,7 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
 
     public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerConfiguration configuration) {
         super(parentDisposable);
+        this.configuration = configuration;
 
         registerFileType(JetFileType.INSTANCE, "kt");
         registerFileType(JetFileType.INSTANCE, "kts");
@@ -94,6 +96,10 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         }
 
         JetStandardLibrary.initialize(getProject());
+    }
+
+    public CompilerConfiguration getConfiguration() {
+        return configuration;
     }
 
     public void addExternalAnnotationsRoot(VirtualFile root) {
