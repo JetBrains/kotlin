@@ -27,11 +27,11 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.types.JetTypeInfo;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
@@ -70,7 +70,7 @@ public class DataFlowUtils {
             @Override
             public void visitBinaryExpression(JetBinaryExpression expression) {
                 IElementType operationToken = expression.getOperationToken();
-                if (operationToken == JetTokens.ANDAND || operationToken == JetTokens.OROR) {
+                if (OperatorConventions.BOOLEAN_OPERATIONS.containsKey(operationToken)) {
                     WritableScope actualScopeToExtend;
                     if (operationToken == JetTokens.ANDAND) {
                         actualScopeToExtend = conditionValue ? scopeToExtend : null;

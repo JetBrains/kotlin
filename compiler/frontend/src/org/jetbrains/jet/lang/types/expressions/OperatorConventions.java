@@ -99,7 +99,6 @@ public class OperatorConventions {
             .put(JetTokens.MINUSEQ, JetTokens.MINUS)
             .build();
 
-    //TODO: use these across frontend
     public static final ImmutableBiMap<JetToken, Name> BOOLEAN_OPERATIONS = ImmutableBiMap.<JetToken, Name>builder()
              .put(JetTokens.ANDAND, Name.identifier("and"))
              .put(JetTokens.OROR, Name.identifier("or"))
