@@ -36,32 +36,12 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
 
     public static final JetType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
 
-    enum ConstraintKind {
-        SUB_TYPE, SUPER_TYPE, EQUAL
-    }
-
-    public static ConstraintKind varianceToConstraintKind(Variance variance) {
-        if (variance == Variance.INVARIANT) {
-            return ConstraintKind.EQUAL;
-        }
-        if (variance == Variance.OUT_VARIANCE) {
-            return ConstraintKind.SUPER_TYPE;
-        }
-        return ConstraintKind.SUB_TYPE;
-    }
-
     private final Map<TypeParameterDescriptor, TypeConstraintsImpl> typeParameterConstraints = Maps.newLinkedHashMap();
+    private final Set<ConstraintPosition> errorConstraintPositions = Sets.newHashSet();
     private final TypeSubstitutor resultingSubstitutor;
-    private final Set<ConstraintPosition> errorConstraintPositions;
-    private boolean typeConstructorMismatch;
+    private boolean hasErrorInConstrainingTypes;
 
     public ConstraintsSystemImpl() {
-        this(false, Sets.<ConstraintPosition>newHashSet());
-    }
-
-    public ConstraintsSystemImpl(boolean typeConstructorMismatch, Set<ConstraintPosition> errorConstraintPositions) {
-        this.typeConstructorMismatch = typeConstructorMismatch;
-        this.errorConstraintPositions = errorConstraintPositions;
         this.resultingSubstitutor = TypeSubstitutor.create(new TypeSubstitution() {
             @Override
             public TypeProjection get(TypeConstructor key) {
@@ -93,13 +73,17 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
 
     @Override
     public boolean hasTypeConstructorMismatch() {
-        return typeConstructorMismatch;
+        return !errorConstraintPositions.isEmpty();
     }
 
-    @NotNull
     @Override
-    public Set<ConstraintPosition> getTypeConstructorMismatchConstraintPositions() {
-        return errorConstraintPositions;
+    public boolean hasTypeConstructorMismatchAt(@NotNull ConstraintPosition constraintPosition) {
+        return errorConstraintPositions.contains(constraintPosition);
+    }
+
+    @Override
+    public boolean hasErrorInConstrainingTypes() {
+        return hasErrorInConstrainingTypes;
     }
 
     @Override
@@ -107,28 +91,47 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
         typeParameterConstraints.put(typeParameterDescriptor, new TypeConstraintsImpl(positionVariance));
     }
 
-    //todo remove
-    public void registerTypeVariable(@NotNull TypeParameterDescriptor typeParameterDescriptor, @NotNull TypeConstraints typeConstraints) {
-        typeParameterConstraints.put(typeParameterDescriptor, (TypeConstraintsImpl) typeConstraints);
+    @NotNull
+    public ConstraintsSystemImpl replaceTypeVariables(@NotNull Map<TypeParameterDescriptor, TypeParameterDescriptor> typeVariablesMap) {
+        ConstraintsSystemImpl newConstraintSystem = new ConstraintsSystemImpl();
+        for (Map.Entry<TypeParameterDescriptor, TypeConstraintsImpl> entry : typeParameterConstraints.entrySet()) {
+            TypeParameterDescriptor typeParameter = entry.getKey();
+            TypeConstraintsImpl typeConstraints = entry.getValue();
+
+            TypeParameterDescriptor newTypeParameter = typeVariablesMap.get(typeParameter);
+            assert newTypeParameter != null;
+            newConstraintSystem.typeParameterConstraints.put(newTypeParameter, typeConstraints);
+        }
+        for (ConstraintPosition constraintPosition : errorConstraintPositions) {
+            newConstraintSystem.errorConstraintPositions.add(constraintPosition);
+        }
+        newConstraintSystem.hasErrorInConstrainingTypes = hasErrorInConstrainingTypes;
+        return newConstraintSystem;
     }
 
     @Override
-    public void addSubtypingConstraint(@NotNull JetType subjectType, @NotNull JetType constrainingType, @NotNull ConstraintPosition constraintPosition) {
+    public void addSubtypingConstraint(@NotNull JetType subjectType, @Nullable JetType constrainingType, @NotNull ConstraintPosition constraintPosition) {
         addConstraint(ConstraintKind.SUB_TYPE, subjectType, constrainingType, constraintPosition);
     }
 
     @Override
-    public void addSupertypeConstraint(@NotNull JetType subjectType, @NotNull JetType constrainingType, @NotNull ConstraintPosition constraintPosition) {
+    public void addSupertypeConstraint(@NotNull JetType subjectType, @Nullable JetType constrainingType, @NotNull ConstraintPosition constraintPosition) {
         addConstraint(ConstraintKind.SUPER_TYPE, subjectType, constrainingType, constraintPosition);
     }
 
     private void addConstraint(@NotNull ConstraintKind constraintKind,
             @NotNull JetType subjectType,
-            @NotNull JetType constrainingType,
+            @Nullable JetType constrainingType,
             @NotNull ConstraintPosition constraintPosition) {
 
-        if (constrainingType == DONT_CARE || subjectType == DONT_CARE || constrainingType == TypeUtils.NO_EXPECTED_TYPE
-            || subjectType == TypeUtils.NO_EXPECTED_TYPE) {
+        if (constrainingType == null || (ErrorUtils.isErrorType(constrainingType) && constrainingType != DONT_CARE)) {
+            hasErrorInConstrainingTypes = true;
+            return;
+        }
+
+        assert subjectType != TypeUtils.NO_EXPECTED_TYPE : "Subject type shouldn't be NO_EXPECTED_TYPE (in position " + constraintPosition + " )";
+
+        if (constrainingType == DONT_CARE || ErrorUtils.isErrorType(subjectType) || constrainingType == TypeUtils.NO_EXPECTED_TYPE) {
             return;
         }
 
@@ -144,30 +147,34 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
             }
         }
         if (constrainingTypeDescriptor instanceof TypeParameterDescriptor) {
-            // assert that constraining type doesn't contain type variables
-            assert typeParameterConstraints.get(constrainingTypeDescriptor) == null;
+            assert typeParameterConstraints.get(constrainingTypeDescriptor) == null : "Constraining type contains type variable " + "";//todo
         }
 
         if (constrainingTypeDescriptor instanceof ClassDescriptor && subjectTypeDescriptor instanceof ClassDescriptor) {
-            if (constraintKind != ConstraintKind.SUB_TYPE) {
-                JetType correspondingSupertype = TypeCheckingProcedure.findCorrespondingSupertype(constrainingType, subjectType);
-                if (correspondingSupertype != null) {
-                    constrainingType = correspondingSupertype;
+            switch (constraintKind) {
+                case SUPER_TYPE:
+                {
+                    JetType correspondingSupertype = TypeCheckingProcedure.findCorrespondingSupertype(constrainingType, subjectType);
+                    if (correspondingSupertype != null) {
+                        constrainingType = correspondingSupertype;
+                    }
+                    break;
                 }
-            }
-            else {
-                JetType correspondingSupertype = TypeCheckingProcedure.findCorrespondingSupertype(subjectType, constrainingType);
-                if (correspondingSupertype != null) {
-                    subjectType = correspondingSupertype;
+                case SUB_TYPE:
+                {
+                    JetType correspondingSupertype = TypeCheckingProcedure.findCorrespondingSupertype(subjectType, constrainingType);
+                    if (correspondingSupertype != null) {
+                        subjectType = correspondingSupertype;
+                    }
                 }
+                case EQUAL: //nothing
             }
+            //todo type constructors are same, else error
 
             if (constrainingType.getConstructor().getParameters().size() != subjectType.getConstructor().getParameters().size()) {
                 errorConstraintPositions.add(constraintPosition);
-                typeConstructorMismatch = true;
                 return;
             }
-
             ClassDescriptor subClass = (ClassDescriptor) constrainingType.getConstructor().getDeclarationDescriptor();
             ClassDescriptor superClass = (ClassDescriptor) subjectType.getConstructor().getDeclarationDescriptor();
             if (DescriptorUtils.isSubclass(subClass, superClass)) {
@@ -175,23 +182,26 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
                 List<TypeProjection> superArguments = subjectType.getArguments();
                 List<TypeParameterDescriptor> superParameters = subjectType.getConstructor().getParameters();
                 for (int i = 0; i < superArguments.size(); i++) {
-                    addConstraint(varianceToConstraintKind(superParameters.get(i).getVariance()), superArguments.get(i).getType(),
+                    //todo subArguments.get(i).getType() -> type projections
+                    addConstraint(ConstraintKind.fromVariance(superParameters.get(i).getVariance()), superArguments.get(i).getType(),
                                   subArguments.get(i).getType(), constraintPosition);
                 }
                 return;
             }
         }
-        typeConstructorMismatch = true;
         errorConstraintPositions.add(constraintPosition);
     }
 
+    //todo move to type constraints
     private void addBoundToTypeConstraints(@NotNull ConstraintKind constraintKind, @NotNull JetType subjectType,
             @NotNull JetType constrainingType, @NotNull TypeConstraintsImpl typeConstraints) {
 
         if (TypeUtils.dependsOnTypeParameterConstructors(constrainingType, Collections.singleton(DONT_CARE.getConstructor()))) return;
+        //todo it's an error
         if (subjectType.isNullable()) {
             constrainingType = TypeUtils.makeNotNullable(constrainingType);
         }
+        //todo switch
         if (constraintKind == ConstraintKind.SUPER_TYPE) {
             typeConstraints.addLowerBound(constrainingType);
         }
@@ -248,5 +258,25 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
     @Override
     public TypeSubstitutor getResultingSubstitutor() {
         return resultingSubstitutor;
+    }
+
+    private enum ConstraintKind {
+        SUB_TYPE, SUPER_TYPE, EQUAL;
+
+        @NotNull
+        static ConstraintKind fromVariance(@NotNull Variance variance) {
+            ConstraintKind constraintKind = null;
+            switch (variance) {
+                case INVARIANT:
+                    constraintKind = EQUAL;
+                    break;
+                case OUT_VARIANCE:
+                    constraintKind = SUPER_TYPE;
+                    break;
+                case IN_VARIANCE:
+                    constraintKind = SUB_TYPE;
+            }
+            return constraintKind;
+        }
     }
 }

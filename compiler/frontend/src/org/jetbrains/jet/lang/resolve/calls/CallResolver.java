@@ -388,6 +388,7 @@ public class CallResolver {
 
     private void reportTypeInferenceFailed(@NotNull BindingTrace trace, @NotNull Call call, @NotNull InferenceErrorData inferenceErrorData) {
         assert !inferenceErrorData.constraintsSystem.isSuccessful();
+        if (inferenceErrorData.constraintsSystem.hasErrorInConstrainingTypes()) return;
         JetExpression calleeExpression = call.getCalleeExpression();
         PsiElement element = calleeExpression != null ? calleeExpression : call.getCallElement();
         if (inferenceErrorData.constraintsSystem.hasTypeConstructorMismatch()) {
@@ -701,7 +702,7 @@ public class CallResolver {
 
         ResolutionDebugInfo.Data debugInfo = context.trace.get(ResolutionDebugInfo.RESOLUTION_DEBUG_INFO, context.call.getCallElement());
 
-        ConstraintsSystem constraintsSystem = new ConstraintsSystemImpl();
+        ConstraintsSystemImpl constraintsSystem = new ConstraintsSystemImpl();
 
         // If the call is recursive, e.g.
         //   fun foo<T>(t : T) : T = foo(t)
@@ -749,13 +750,12 @@ public class CallResolver {
                                                      ConstraintPosition.RECEIVER_POSITION);
         }
 
-        ConstraintsSystemImpl constraintsBuilderWithRightTypeParameters = new ConstraintsSystemImpl(constraintsSystem.hasTypeConstructorMismatch(), constraintsSystem
-                .getTypeConstructorMismatchConstraintPositions());
+        Map<TypeParameterDescriptor, TypeParameterDescriptor> typeVariablesMap = Maps.newLinkedHashMap();
         for (TypeParameterDescriptor typeParameterDescriptor : candidate.getTypeParameters()) {
-            TypeConstraints typeConstraints = constraintsSystem.getTypeConstraints(
-                    candidateWithFreshVariables.getTypeParameters().get(typeParameterDescriptor.getIndex()));
-            constraintsBuilderWithRightTypeParameters.registerTypeVariable(typeParameterDescriptor, typeConstraints);
+            typeVariablesMap.put(candidateWithFreshVariables.getTypeParameters().get(typeParameterDescriptor.getIndex()),
+                                   typeParameterDescriptor);
         }
+        ConstraintsSystem constraintsBuilderWithRightTypeParameters = constraintsSystem.replaceTypeVariables(typeVariablesMap);
         candidateCall.setConstraintsSystem(constraintsBuilderWithRightTypeParameters);
 
 
@@ -786,9 +786,10 @@ public class CallResolver {
         JetType type = argumentExpression != null ? expressionTypingServices.getType(
                 context.scope, argumentExpression, substitutor.substitute(valueParameterDescriptor.getType(), Variance.INVARIANT),
                 context.dataFlowInfo, traceForUnknown) : null;
-        if (type == null || ErrorUtils.isErrorType(type)) return false;
         constraintsSystem.addSupertypeConstraint(effectiveExpectedType, type, ConstraintPosition.getValueParameterPosition(
                 valueParameterDescriptor.getIndex()));
+        //todo no return
+        if (type == null || ErrorUtils.isErrorType(type)) return false;
         return true;
     }
 
