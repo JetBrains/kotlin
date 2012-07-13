@@ -19,8 +19,6 @@ package org.jetbrains.jet.cli.jvm.compiler;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Processor;
 import jet.modules.AllModules;
 import jet.modules.Module;
@@ -80,21 +78,6 @@ public class CompileEnvironmentUtil {
             return new File(path.substring(path.indexOf(":") + 1, path.indexOf("!/")));
         }
         return null;
-    }
-
-    public static void ensureKotlinRuntime(JetCoreEnvironment env) {
-        if (JavaPsiFacade.getInstance(env.getProject()).findClass("jet.JetObject", GlobalSearchScope.allScope(env.getProject())) == null) {
-            // TODO: prepend
-            File kotlin = PathUtil.getDefaultRuntimePath();
-            if (kotlin == null || !kotlin.exists()) {
-                kotlin = getUnpackedRuntimePath();
-                if (kotlin == null) kotlin = getRuntimeJarPath();
-            }
-            if (kotlin == null) {
-                throw new IllegalStateException("kotlin runtime not found");
-            }
-            env.addToClasspath(kotlin);
-        }
     }
 
     @NotNull
