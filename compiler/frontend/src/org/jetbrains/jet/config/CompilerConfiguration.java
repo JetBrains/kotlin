@@ -62,4 +62,10 @@ public class CompilerConfiguration {
         List<T> list = holder.putUserDataIfAbsent(key, new CopyOnWriteArrayList<T>());
         list.addAll(value);
     }
+
+    public CompilerConfiguration copy() {
+        CompilerConfiguration copy = new CompilerConfiguration();
+        holder.copyUserDataTo(copy.holder);
+        return copy;
+    }
 }
