@@ -102,12 +102,12 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         return configuration;
     }
 
-    public void addExternalAnnotationsRoot(VirtualFile root) {
-        annotationsProvider.addExternalAnnotationsRoot(root);
-    }
-
     public MockApplication getApplication() {
         return myApplication;
+    }
+
+    private void addExternalAnnotationsRoot(VirtualFile root) {
+        annotationsProvider.addExternalAnnotationsRoot(root);
     }
 
     private void addSources(File file) {
@@ -130,23 +130,7 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         }
     }
 
-    public void addSources(VirtualFile vFile) {
-        if (vFile.isDirectory()) {
-            for (VirtualFile virtualFile : vFile.getChildren()) {
-                addSources(virtualFile);
-            }
-        }
-        else {
-            if (vFile.getFileType() == JetFileType.INSTANCE) {
-                PsiFile psiFile = PsiManager.getInstance(getProject()).findFile(vFile);
-                if (psiFile instanceof JetFile) {
-                    sourceFiles.add((JetFile) psiFile);
-                }
-            }
-        }
-    }
-
-    public void addSources(String path) {
+    private void addSources(String path) {
         if (path == null) {
             return;
         }
