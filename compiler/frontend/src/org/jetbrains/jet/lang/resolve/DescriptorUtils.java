@@ -31,10 +31,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
 
@@ -309,5 +306,31 @@ public class DescriptorUtils {
             }
         }
         return false;
+    }
+
+    @NotNull
+    public static List<ClassDescriptor> getSuperclassDescriptors(@NotNull ClassDescriptor classDescriptor) {
+        Collection<? extends JetType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
+        List<ClassDescriptor> superClassDescriptors = new ArrayList<ClassDescriptor>();
+        for (JetType type : superclassTypes) {
+            ClassDescriptor result = getClassDescriptorForType(type);
+            if (isNotAny(result)) {
+                superClassDescriptors.add(result);
+            }
+        }
+        return superClassDescriptors;
+    }
+
+    @NotNull
+    public static ClassDescriptor getClassDescriptorForType(@NotNull JetType type) {
+        DeclarationDescriptor superClassDescriptor =
+            type.getConstructor().getDeclarationDescriptor();
+        assert superClassDescriptor instanceof ClassDescriptor
+            : "Superclass descriptor of a type should be of type ClassDescriptor";
+        return (ClassDescriptor)superClassDescriptor;
+    }
+
+    public static boolean isNotAny(@NotNull DeclarationDescriptor superClassDescriptor) {
+        return !superClassDescriptor.equals(JetStandardClasses.getAny());
     }
 }

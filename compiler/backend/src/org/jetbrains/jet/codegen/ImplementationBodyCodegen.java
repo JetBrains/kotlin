@@ -832,7 +832,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         reg += argType.getSize();
                     }
 
-                    JetType jetType = TraitImplBodyCodegen.getSuperClass(declaration, bindingContext);
+                    JetType jetType = TraitImplBodyCodegen.getSuperClass(declaration);
                     Type type = typeMapper.mapType(jetType, MapTypeMode.IMPL);
                     if (type.getInternalName().equals("java/lang/Object")) {
                         jetType = declaration.getDefaultType();

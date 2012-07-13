@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -189,7 +190,7 @@ public final class ClassTranslator extends AbstractTranslator {
     @NotNull
     private List<JsExpression> getSuperclassNameReferences() {
         List<JsExpression> superclassReferences = new ArrayList<JsExpression>();
-        List<ClassDescriptor> superclassDescriptors = getSuperclassDescriptors(descriptor);
+        List<ClassDescriptor> superclassDescriptors = DescriptorUtils.getSuperclassDescriptors(descriptor);
         addAncestorClass(superclassReferences, superclassDescriptors);
         addTraits(superclassReferences, superclassDescriptors);
         return superclassReferences;

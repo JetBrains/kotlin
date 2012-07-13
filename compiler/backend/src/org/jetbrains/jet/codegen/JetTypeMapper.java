@@ -710,7 +710,7 @@ public class JetTypeMapper {
 
         if (kind == OwnerKind.TRAIT_IMPL) {
             ClassDescriptor containingDeclaration = (ClassDescriptor) f.getContainingDeclaration();
-            JetType jetType = TraitImplBodyCodegen.getSuperClass(containingDeclaration, bindingContext);
+            JetType jetType = TraitImplBodyCodegen.getSuperClass(containingDeclaration);
             Type type = mapType(jetType, MapTypeMode.VALUE);
             if(type.getInternalName().equals("java/lang/Object")) {
                 jetType = containingDeclaration.getDefaultType();
