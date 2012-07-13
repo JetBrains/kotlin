@@ -248,31 +248,4 @@ public class CompileEnvironmentUtil {
             }
         }
     }
-
-    /**
-     * Add path specified to the compilation environment.
-     *
-     * @param environment compilation environment to add to
-     * @param paths       paths to add
-     */
-    public static void addToClasspath(JetCoreEnvironment environment, File... paths) {
-        for (File path : paths) {
-            if (!path.exists()) {
-                throw new CompileEnvironmentException("'" + path + "' does not exist");
-            }
-            environment.addToClasspath(path);
-        }
-    }
-
-    /**
-     * Add path specified to the compilation environment.
-     *
-     * @param environment compilation environment to add to
-     * @param paths       paths to add
-     */
-    public static void addToClasspath(JetCoreEnvironment environment, String... paths) {
-        for (String path : paths) {
-            addToClasspath(environment, new File(path));
-        }
-    }
 }
