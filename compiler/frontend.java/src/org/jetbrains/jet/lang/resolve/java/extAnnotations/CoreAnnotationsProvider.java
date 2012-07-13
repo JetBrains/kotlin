@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java.extAnnotations;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.StreamUtil;
@@ -249,11 +248,47 @@ public class CoreAnnotationsProvider extends ExternalAnnotationsProvider {
     private static String escapeAttributes(@NotNull String invalidXml) {
         // We assume that XML has single- and double-quote characters only for attribute values, therefore we don't any complex parsing,
         // just split by ['"] regexp instead
-        String[] split = invalidXml.split("[\"\']");
-        assert split.length % 2 == 1;
-        for (int i = 1; i < split.length; i += 2) {
-            split[i] = split[i].replace("<", "&lt;").replace(">", "&gt;");
+
+        // For PERFORMANCE REASONS this is written by hand instead of using regular expressions
+        // This implementation turned out to be too slow:
+        //    String[] split = invalidXml.split("[\"\']");
+        //    assert split.length % 2 == 1;
+        //    for (int i = 1; i < split.length; i += 2) {
+        //        split[i] = split[i].replace("<", "&lt;").replace(">", "&gt;");
+        //    }
+        //    return StringUtil.join(split, "\"");
+
+        StringBuilder sb = new StringBuilder();
+        boolean inQuotes = false;
+        for (int i = 0; i < invalidXml.length(); i++) {
+             char c = invalidXml.charAt(i);
+             switch (c) {
+                 case '\'':
+                 case '\"':
+                     inQuotes = !inQuotes;
+                     sb.append('\"');
+                     break;
+                 case '<':
+                     if (inQuotes) {
+                        sb.append("&lt;");
+                     }
+                     else {
+                         sb.append(c);
+                     }
+                     break;
+                 case '>':
+                     if (inQuotes) {
+                        sb.append("&gt;");
+                     }
+                     else {
+                         sb.append(c);
+                     }
+                     break;
+                 default:
+                     sb.append(c);
+                     break;
+             }
         }
-        return StringUtil.join(split, "\"");
+        return sb.toString();
     }
 }
