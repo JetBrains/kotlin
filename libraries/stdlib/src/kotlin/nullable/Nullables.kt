@@ -112,7 +112,7 @@ public inline fun <T> T?.foldRight(initial: T, operation: (it: T, it2: T) -> T):
  * but supports further chaining.
  */
 public inline fun <T> T?.getOrElse(alt : T) : T {
-    return this ?: alt
+    return this as T ?: alt
 }
 
 /**
