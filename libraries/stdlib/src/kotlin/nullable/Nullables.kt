@@ -119,7 +119,7 @@ public inline fun <T> T?.getOrElse(alt : T) : T {
  * Returns the value of the Nullable unless it is null, otherwise it will return the result of the expression passed in.  
  * Equivalent to ?: but supports further chaining.
  */
-fun <T> T?.getOrElse(t: () -> T) : T {
+public inline fun <T> T?.getOrElse(t: () -> T) : T {
     return this ?: t()
 }
 
