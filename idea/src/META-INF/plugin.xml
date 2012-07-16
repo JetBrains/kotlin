@@ -159,6 +159,7 @@
       <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.JetStatementGroupSelectioner"/>
       <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.JetCodeBlockSelectioner"/>
       <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.JetListSelectioner"/>
+      <typedHandler implementation="org.jetbrains.jet.plugin.editor.KotlinTypedHandler" />
 
       <lang.documentationProvider language="JAVA" implementationClass="org.jetbrains.jet.plugin.JetQuickDocumentationProvider" order="first"/>
       <documentationProvider implementation="org.jetbrains.jet.plugin.JetQuickDocumentationProvider"/>
