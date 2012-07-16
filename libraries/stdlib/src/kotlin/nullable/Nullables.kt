@@ -112,7 +112,15 @@ public inline fun <T> T?.foldRight(initial: T, operation: (it: T, it2: T) -> T):
  * but supports further chaining.
  */
 public inline fun <T> T?.getOrElse(alt : T) : T {
-    return this as T ?: alt
+    return this ?: alt
+}
+
+/**
+ * Returns the value of the Nullable unless it is null, otherwise it will return the result of the expression passed in.  
+ * Equivalent to ?: but supports further chaining.
+ */
+fun <T> T?.getOrElse(t: () -> T) : T {
+    return this ?: t()
 }
 
 /**
