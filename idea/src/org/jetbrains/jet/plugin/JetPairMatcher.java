@@ -30,6 +30,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 public class JetPairMatcher implements PairedBraceMatcher {
     private final BracePair[] pairs = new BracePair[]{
             new BracePair(JetTokens.LPAR, JetTokens.RPAR, false),
+            new BracePair(JetTokens.LONG_TEMPLATE_ENTRY_START, JetTokens.LONG_TEMPLATE_ENTRY_END, false),
             new BracePair(JetTokens.LBRACE, JetTokens.RBRACE, true),
             new BracePair(JetTokens.LBRACKET, JetTokens.RBRACKET, false)
     };
