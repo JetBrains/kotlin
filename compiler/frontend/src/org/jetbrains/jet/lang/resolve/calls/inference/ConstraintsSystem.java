@@ -121,4 +121,11 @@ public interface ConstraintsSystem {
      */
     @NotNull
     TypeSubstitutor getResultingSubstitutor();
+
+    /**
+     * Returns a current result of solving the constraint system (mapping from the type variable to the resulting type projection).
+     * If there is no information for type parameter, returns type projection for DONT_CARE type.
+     */
+    @NotNull
+    TypeSubstitutor getCurrentSubstitutor();
 }

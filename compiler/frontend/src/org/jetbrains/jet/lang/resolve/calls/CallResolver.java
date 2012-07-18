@@ -350,7 +350,7 @@ public class CallResolver {
             for (ValueArgument valueArgument : resolvedValueArgument.getArguments()) {
                 if (!JetPsiUtil.isFunctionLiteralWithoutDeclaredParameterTypes(valueArgument.getArgumentExpression())) continue;
 
-                addConstraintForValueArgument(valueArgument, valueParameterDescriptor, constraintsSystem.getResultingSubstitutor(),
+                addConstraintForValueArgument(valueArgument, valueParameterDescriptor, constraintsSystem.getCurrentSubstitutor(),
                                               constraintsSystem, context);
             }
         }

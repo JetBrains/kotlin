@@ -39,10 +39,16 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
     private final Map<TypeParameterDescriptor, TypeConstraintsImpl> typeParameterConstraints = Maps.newLinkedHashMap();
     private final Set<ConstraintPosition> errorConstraintPositions = Sets.newHashSet();
     private final TypeSubstitutor resultingSubstitutor;
+    private final TypeSubstitutor currentSubstitutor;
     private boolean hasErrorInConstrainingTypes;
 
     public ConstraintsSystemImpl() {
-        this.resultingSubstitutor = TypeSubstitutor.create(new TypeSubstitution() {
+        this.resultingSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(null);
+        this.currentSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjection(DONT_CARE));
+    }
+
+    private TypeSubstitutor createTypeSubstitutorWithDefaultForUnknownTypeParameter(@Nullable final TypeProjection defaultTypeProjection) {
+        return TypeSubstitutor.create(new TypeSubstitution() {
             @Override
             public TypeProjection get(TypeConstructor key) {
                 DeclarationDescriptor declarationDescriptor = key.getDeclarationDescriptor();
@@ -54,7 +60,9 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
                             DONT_CARE.getConstructor()))) {
                         return new TypeProjection(value);
                     }
-                    return new TypeProjection(DONT_CARE);
+                    if (typeParameterConstraints.containsKey(descriptor)) {
+                        return defaultTypeProjection;
+                    }
                 }
                 return null;
             }
@@ -230,5 +238,11 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
     @Override
     public TypeSubstitutor getResultingSubstitutor() {
         return resultingSubstitutor;
+    }
+
+    @NotNull
+    @Override
+    public TypeSubstitutor getCurrentSubstitutor() {
+        return currentSubstitutor;
     }
 }
