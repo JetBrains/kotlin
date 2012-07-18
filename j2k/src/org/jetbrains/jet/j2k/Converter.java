@@ -175,7 +175,9 @@ public class Converter {
             else if (e instanceof PsiClassInitializer) {
                 members.add(initializerToInitializer((PsiClassInitializer) e));
             }
-            else if (e instanceof PsiMember) System.out.println(e.getClass() + " " + e.getText());
+            else if (e instanceof PsiMember) {
+                // System.out.println(e.getClass() + " " + e.getText());
+            }
         }
         return members;
     }
@@ -219,7 +221,7 @@ public class Converter {
     }
 
     @NotNull
-    private Class classToClass(@NotNull PsiClass psiClass) {
+    public Class classToClass(@NotNull PsiClass psiClass) {
         final Set<String> modifiers = modifiersListToModifiersSet(psiClass.getModifierList());
         final List<Field> fields = fieldsToFieldList(psiClass.getFields(), psiClass);
         final List<Element> typeParameters = elementsToElementList(psiClass.getTypeParameters());
@@ -233,7 +235,7 @@ public class Converter {
         // we try to find super() call and generate class declaration like that: class A(name: String, i : Int) : Base(name)
         final SuperVisitor visitor = new SuperVisitor();
         psiClass.accept(visitor);
-        final HashSet<PsiExpressionList> resolvedSuperCallParameters = visitor.getResolvedSuperCallParameters();
+        final Collection<PsiExpressionList> resolvedSuperCallParameters = visitor.getResolvedSuperCallParameters();
         if (resolvedSuperCallParameters.size() == 1) {
             baseClassParams.addAll(
                     expressionsToExpressionList(
@@ -677,7 +679,7 @@ public class Converter {
 
     @NotNull
     public static Set<String> modifiersListToModifiersSet(@Nullable PsiModifierList modifierList) {
-        HashSet<String> modifiersSet = new HashSet<String>();
+        Set<String> modifiersSet = new HashSet<String>();
         if (modifierList != null) {
             if (modifierList.hasExplicitModifier(PsiModifier.ABSTRACT)) modifiersSet.add(Modifier.ABSTRACT);
             if (modifierList.hasModifierProperty(PsiModifier.FINAL)) modifiersSet.add(Modifier.FINAL);
