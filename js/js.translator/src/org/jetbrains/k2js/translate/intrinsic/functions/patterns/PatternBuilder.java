@@ -18,6 +18,7 @@ package org.jetbrains.k2js.translate.intrinsic.functions.patterns;
 
 import closurecompiler.internal.com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -30,49 +31,50 @@ import java.util.List;
  */
 public final class PatternBuilder {
 
-    public static final NameChecker JET = new NameChecker("jet");
+    public static final NamePredicate JET = new NamePredicate("jet");
 
     private PatternBuilder() {
     }
 
     @NotNull
-    public static Pattern pattern(@NotNull NameChecker checker, @NotNull String stringWithPattern) {
-        List<NameChecker> checkers = Lists.newArrayList(checker);
+    public static DescriptorPredicate pattern(@NotNull NamePredicate checker, @NotNull String stringWithPattern) {
+        List<NamePredicate> checkers = Lists.newArrayList(checker);
         checkers.addAll(parseStringAsCheckerList(stringWithPattern));
         return pattern(checkers);
     }
 
     @NotNull
-    public static Pattern pattern(@NotNull String stringWithPattern, @NotNull NameChecker checker) {
-        List<NameChecker> checkers = Lists.newArrayList(parseStringAsCheckerList(stringWithPattern));
+    public static DescriptorPredicate pattern(@NotNull String stringWithPattern, @NotNull NamePredicate checker) {
+        List<NamePredicate> checkers = Lists.newArrayList(parseStringAsCheckerList(stringWithPattern));
         checkers.add(checker);
         return pattern(checkers);
     }
 
     @NotNull
-    public static Pattern pattern(@NotNull String string) {
-        List<NameChecker> checkers = parseStringAsCheckerList(string);
+    public static DescriptorPredicate pattern(@NotNull String string) {
+        List<NamePredicate> checkers = parseStringAsCheckerList(string);
         return pattern(checkers);
     }
 
     @NotNull
-    private static List<NameChecker> parseStringAsCheckerList(@NotNull String stringWithPattern) {
+    private static List<NamePredicate> parseStringAsCheckerList(@NotNull String stringWithPattern) {
         String[] subPatterns = stringWithPattern.split("\\.");
-        List<NameChecker> checkers = Lists.newArrayList();
+        List<NamePredicate> checkers = Lists.newArrayList();
         for (String subPattern : subPatterns) {
             String[] validNames = subPattern.split("\\|");
-            checkers.add(new NameChecker(validNames));
+            checkers.add(new NamePredicate(validNames));
         }
         return checkers;
     }
 
     @NotNull
-    private static Pattern pattern(@NotNull List<NameChecker> checkers) {
-        final List<NameChecker> checkersWithPrefixChecker = Lists.newArrayList(JET);
+    private static DescriptorPredicate pattern(@NotNull List<NamePredicate> checkers) {
+        final List<NamePredicate> checkersWithPrefixChecker = Lists.newArrayList(JET);
         checkersWithPrefixChecker.addAll(checkers);
-        return new Pattern() {
+        return new DescriptorPredicate() {
             @Override
-            public boolean apply(@NotNull FunctionDescriptor descriptor) {
+            public boolean apply(@Nullable FunctionDescriptor descriptor) {
+                assert descriptor != null;
                 //TODO: no need to wrap if we check beforehand
                 try {
                     return doApply(descriptor);
@@ -94,8 +96,8 @@ public final class PatternBuilder {
             private boolean allNamePartsValid(@NotNull List<Name> nameParts) {
                 for (int i = 0; i < nameParts.size(); ++i) {
                     Name namePart = nameParts.get(i);
-                    NameChecker correspondingPredicate = checkersWithPrefixChecker.get(i);
-                    if (!correspondingPredicate.isValid(namePart)) {
+                    NamePredicate correspondingPredicate = checkersWithPrefixChecker.get(i);
+                    if (!correspondingPredicate.apply(namePart)) {
                         return false;
                     }
                 }
@@ -105,37 +107,7 @@ public final class PatternBuilder {
     }
 
     @NotNull
-    public static Pattern pattern(@NotNull final NameChecker... checkers) {
+    public static DescriptorPredicate pattern(@NotNull final NamePredicate... checkers) {
         return pattern(Arrays.asList(checkers));
-    }
-
-    @NotNull
-    public static Pattern any(@NotNull final Pattern... patterns) {
-        return new Pattern() {
-            @Override
-            public boolean apply(@NotNull FunctionDescriptor descriptor) {
-                for (Pattern pattern : patterns) {
-                    if (pattern.apply(descriptor)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        };
-    }
-
-    @NotNull
-    public static Pattern all(@NotNull final Pattern... patterns) {
-        return new Pattern() {
-            @Override
-            public boolean apply(@NotNull FunctionDescriptor descriptor) {
-                for (Pattern pattern : patterns) {
-                    if (!pattern.apply(descriptor)) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        };
     }
 }

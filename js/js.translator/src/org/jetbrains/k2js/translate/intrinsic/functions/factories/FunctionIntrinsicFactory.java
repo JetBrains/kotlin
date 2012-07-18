@@ -16,10 +16,10 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
+import com.google.common.base.Predicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.Pattern;
 
 /**
  * @author Pavel Talanov
@@ -27,7 +27,7 @@ import org.jetbrains.k2js.translate.intrinsic.functions.patterns.Pattern;
 public interface FunctionIntrinsicFactory {
 
     @NotNull
-    Pattern getPattern();
+    Predicate<FunctionDescriptor> getPredicate();
 
     @NotNull
     FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor);

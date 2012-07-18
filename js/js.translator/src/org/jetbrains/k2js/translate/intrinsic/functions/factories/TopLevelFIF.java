@@ -19,7 +19,7 @@ package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInFunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.CallStandardMethodIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.Pattern;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
 
@@ -29,7 +29,7 @@ import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternB
 public final class TopLevelFIF {
 
     @NotNull
-    private static final Pattern EXT_TO_STRING = pattern("toString");
+    private static final DescriptorPredicate EXT_TO_STRING = pattern("toString");
 
     @NotNull
     public static final FunctionIntrinsicFactory INSTANCE = FIFBuilder.start()

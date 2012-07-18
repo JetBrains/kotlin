@@ -28,7 +28,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInPropertyIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.CallStandardMethodIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NameChecker;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternB
 public final class ArrayFIF {
 
     @NotNull
-    private static final NameChecker ARRAYS;
+    private static final NamePredicate ARRAYS;
 
     static {
         List<Name> arrayTypeNames = Lists.newArrayList();
@@ -48,7 +48,7 @@ public final class ArrayFIF {
             arrayTypeNames.add(type.getArrayTypeName());
         }
         arrayTypeNames.add(Name.identifier("Array"));
-        ARRAYS = new NameChecker(arrayTypeNames);
+        ARRAYS = new NamePredicate(arrayTypeNames);
     }
 
     @NotNull

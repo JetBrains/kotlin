@@ -99,7 +99,7 @@ public final class FunctionIntrinsics {
     @NotNull
     private FunctionIntrinsic computeIntrinsic(@NotNull FunctionDescriptor descriptor) {
         for (FunctionIntrinsicFactory factory : factories) {
-            if (factory.getPattern().apply(descriptor)) {
+            if (factory.getPredicate().apply(descriptor)) {
                 return factory.getIntrinsic(descriptor);
             }
         }

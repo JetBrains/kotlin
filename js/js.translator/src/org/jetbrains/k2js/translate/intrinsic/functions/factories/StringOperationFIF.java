@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInPropertyIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.Pattern;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 public final class StringOperationFIF {
 
     @NotNull
-    private static final Pattern GET_PATTERN = pattern("String.get");
+    private static final DescriptorPredicate GET_PATTERN = pattern("String.get");
 
     @NotNull
     private static final FunctionIntrinsic GET_INTRINSIC = new FunctionIntrinsic() {

@@ -16,6 +16,8 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
@@ -26,9 +28,7 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NameChecker;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.Pattern;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.operation.OperatorTable;
 
 import java.util.List;
@@ -63,15 +63,15 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         }
     };
     @NotNull
-    private static final NameChecker BINARY_OPERATIONS = new NameChecker(OperatorConventions.BINARY_OPERATION_NAMES.values());
+    private static final NamePredicate BINARY_OPERATIONS = new NamePredicate(OperatorConventions.BINARY_OPERATION_NAMES.values());
 
     @NotNull
     @Override
-    public Pattern getPattern() {
+    public Predicate<FunctionDescriptor> getPredicate() {
         //TODO: check that it is binary operation
-        return PatternBuilder.any(pattern(NameChecker.PRIMITIVE_NUMBERS, BINARY_OPERATIONS),
-                                  pattern("Boolean.or|and|xor"),
-                                  pattern("String.plus"));
+        return Predicates.or(pattern(NamePredicate.PRIMITIVE_NUMBERS, BINARY_OPERATIONS),
+                             pattern("Boolean.or|and|xor"),
+                             pattern("String.plus"));
     }
 
     @NotNull

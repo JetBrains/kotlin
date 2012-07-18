@@ -16,13 +16,14 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.patterns;
 
-import org.jetbrains.annotations.NotNull;
+import com.google.common.base.Predicate;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 
 /**
  * @author Pavel Talanov
  */
-public interface Pattern {
-
-    boolean apply(@NotNull FunctionDescriptor descriptor);
+public interface DescriptorPredicate extends Predicate<FunctionDescriptor> {
+    @Override
+    boolean apply(@Nullable FunctionDescriptor descriptor);
 }

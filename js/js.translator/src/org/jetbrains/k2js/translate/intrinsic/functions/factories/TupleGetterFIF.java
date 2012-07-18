@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
 import closurecompiler.internal.com.google.common.collect.Lists;
+import com.google.common.base.Predicate;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
@@ -25,8 +26,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NameChecker;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.Pattern;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder;
 
 import java.util.List;
@@ -38,30 +38,30 @@ public enum TupleGetterFIF implements FunctionIntrinsicFactory {
     INSTANCE;
 
     @NotNull
-    private static final NameChecker TUPLES;
+    private static final NamePredicate TUPLES;
 
     static {
         List<String> tupleNames = Lists.newArrayList();
         for (int tupleSize = 0; tupleSize <= JetStandardClasses.MAX_TUPLE_ORDER; ++tupleSize) {
             tupleNames.add("Tuple" + tupleSize);
         }
-        TUPLES = new NameChecker(tupleNames);
+        TUPLES = new NamePredicate(tupleNames);
     }
 
     @NotNull
-    private static final NameChecker TUPLE_UNDERSCORE_ACCESSORS;
+    private static final NamePredicate TUPLE_UNDERSCORE_ACCESSORS;
 
     static {
         List<String> accessorNames = Lists.newArrayList();
         for (int tupleSize = 0; tupleSize <= JetStandardClasses.MAX_TUPLE_ORDER; ++tupleSize) {
             accessorNames.add("<get-_" + (tupleSize + 1) + ">");
         }
-        TUPLE_UNDERSCORE_ACCESSORS = new NameChecker(accessorNames);
+        TUPLE_UNDERSCORE_ACCESSORS = new NamePredicate(accessorNames);
     }
 
     @NotNull
     @Override
-    public Pattern getPattern() {
+    public Predicate<FunctionDescriptor> getPredicate() {
         return PatternBuilder.pattern(TUPLES, TUPLE_UNDERSCORE_ACCESSORS);
     }
 

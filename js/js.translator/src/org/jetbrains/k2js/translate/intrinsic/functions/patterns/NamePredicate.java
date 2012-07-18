@@ -17,7 +17,9 @@
 package org.jetbrains.k2js.translate.intrinsic.functions.patterns;
 
 import closurecompiler.internal.com.google.common.collect.Lists;
+import com.google.common.base.Predicate;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Arrays;
@@ -27,33 +29,37 @@ import java.util.List;
 /**
  * @author Pavel Talanov
  */
-public final class NameChecker {
+public final class NamePredicate implements Predicate<Name> {
 
     @NotNull
-    public static final NameChecker PRIMITIVE_NUMBERS = new NameChecker("Int", "Double", "Float", "Long", "Short");
+    public static final NamePredicate PRIMITIVE_NUMBERS = new NamePredicate("Int", "Double", "Float", "Long", "Short");
 
     @NotNull
     private final List<Name> validNames = Lists.newArrayList();
 
-    public NameChecker(@NotNull String... validNames) {
+    public NamePredicate(@NotNull String... validNames) {
         this(Arrays.asList(validNames));
     }
 
-    public NameChecker(@NotNull List<String> validNames) {
+    public NamePredicate(@NotNull List<String> validNames) {
         for (String validName : validNames) {
             this.validNames.add(Name.guess(validName));
         }
     }
 
-    public NameChecker(@NotNull Collection<Name> validNames) {
+    public NamePredicate(@NotNull Collection<Name> validNames) {
         this.validNames.addAll(validNames);
     }
 
-    public NameChecker(@NotNull Name... validNames) {
+    public NamePredicate(@NotNull Name... validNames) {
         this.validNames.addAll(Lists.newArrayList(validNames));
     }
 
-    public boolean isValid(@NotNull Name name) {
+    @Override
+    public boolean apply(@Nullable Name name) {
+        if (name == null) {
+            return false;
+        }
         for (Name validName : validNames) {
             if (name.equals(validName)) {
                 return true;

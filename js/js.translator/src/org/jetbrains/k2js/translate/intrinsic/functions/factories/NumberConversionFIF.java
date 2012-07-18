@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.CallStandardMethodIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NameChecker;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 
 import java.util.List;
 import java.util.Set;
@@ -38,21 +38,21 @@ import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternB
  */
 public final class NumberConversionFIF {
     @NotNull
-    private static final NameChecker SUPPORTED_CONVERSIONS;
+    private static final NamePredicate SUPPORTED_CONVERSIONS;
 
     static {
         Set<Name> supportedConversions = Sets.newHashSet(NUMBER_CONVERSIONS);
         //TODO: support longs and chars
         supportedConversions.remove(CHAR);
         supportedConversions.remove(LONG);
-        SUPPORTED_CONVERSIONS = new NameChecker(supportedConversions);
+        SUPPORTED_CONVERSIONS = new NamePredicate(supportedConversions);
     }
 
     @NotNull
-    private static final NameChecker FLOATING_POINT_CONVERSIONS = new NameChecker(OperatorConventions.FLOAT, OperatorConventions.DOUBLE);
+    private static final NamePredicate FLOATING_POINT_CONVERSIONS = new NamePredicate(OperatorConventions.FLOAT, OperatorConventions.DOUBLE);
 
     @NotNull
-    private static final NameChecker INTEGER_CONVERSIONS = new NameChecker(OperatorConventions.INT, OperatorConventions.SHORT,
+    private static final NamePredicate INTEGER_CONVERSIONS = new NamePredicate(OperatorConventions.INT, OperatorConventions.SHORT,
                                                                            OperatorConventions.BYTE);
 
     @NotNull

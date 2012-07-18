@@ -16,6 +16,8 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsPrefixOperation;
 import com.google.dart.compiler.backend.js.ast.JsUnaryOperator;
@@ -27,15 +29,15 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NameChecker;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.Pattern;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.operation.OperatorTable;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.NameChecker.PRIMITIVE_NUMBERS;
-import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.*;
+import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate.PRIMITIVE_NUMBERS;
+import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
 
 /**
  * @author Pavel Talanov
@@ -44,23 +46,28 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
 
     INSTANCE;
 
-    private static final NameChecker UNARY_OPERATIONS = new NameChecker(OperatorConventions.UNARY_OPERATION_NAMES.values());
+    private static final NamePredicate UNARY_OPERATIONS = new NamePredicate(OperatorConventions.UNARY_OPERATION_NAMES.values());
     @NotNull
-    private static final Pattern UNARY_OPERATION_FOR_PRIMITIVE_NUMBER =
+    private static final DescriptorPredicate UNARY_OPERATION_FOR_PRIMITIVE_NUMBER =
             pattern(PRIMITIVE_NUMBERS, UNARY_OPERATIONS);
     @NotNull
-    private static final Pattern NO_PARAMETERS = new Pattern() {
+    public static final Predicate<FunctionDescriptor> PRIMITIVE_UNARY_OPERATION_NAMES =
+            Predicates.or(UNARY_OPERATION_FOR_PRIMITIVE_NUMBER, pattern("Boolean.not"));
+    @NotNull
+    private static final DescriptorPredicate NO_PARAMETERS = new DescriptorPredicate() {
         @Override
-        public boolean apply(@NotNull FunctionDescriptor descriptor) {
+        public boolean apply(@Nullable FunctionDescriptor descriptor) {
+            assert descriptor != null;
             return !JsDescriptorUtils.hasParameters(descriptor);
         }
     };
+    @NotNull
+    public static final Predicate<FunctionDescriptor> PATTERN = Predicates.and(PRIMITIVE_UNARY_OPERATION_NAMES, NO_PARAMETERS);
 
     @NotNull
     @Override
-    public Pattern getPattern() {
-        Pattern primitiveUnaryOperationNames = any(UNARY_OPERATION_FOR_PRIMITIVE_NUMBER, pattern("Boolean.not"));
-        return all(primitiveUnaryOperationNames, NO_PARAMETERS);
+    public Predicate<FunctionDescriptor> getPredicate() {
+        return PATTERN;
     }
 
     @NotNull

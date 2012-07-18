@@ -16,12 +16,14 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.Pattern;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 
 import java.util.Collection;
 import java.util.Map;
@@ -31,7 +33,7 @@ import java.util.Map;
  */
 public final class FIFBuilder {
 
-    @NotNull final Map<Pattern, FunctionIntrinsic> patternToIntrinsic = Maps.newHashMap();
+    @NotNull final Map<DescriptorPredicate, FunctionIntrinsic> patternToIntrinsic = Maps.newHashMap();
 
     private FIFBuilder() {
     }
@@ -42,7 +44,7 @@ public final class FIFBuilder {
     }
 
     @NotNull
-    public FIFBuilder add(@NotNull Pattern pattern, @NotNull FunctionIntrinsic intrinsic) {
+    public FIFBuilder add(@NotNull DescriptorPredicate pattern, @NotNull FunctionIntrinsic intrinsic) {
         patternToIntrinsic.put(pattern, intrinsic);
         return this;
     }
@@ -53,15 +55,21 @@ public final class FIFBuilder {
 
             @NotNull
             @Override
-            public Pattern getPattern() {
-                Collection<Pattern> patterns = patternToIntrinsic.keySet();
-                return PatternBuilder.any(patterns.toArray(new Pattern[patterns.size()]));
+            public Predicate<FunctionDescriptor> getPredicate() {
+                Collection<DescriptorPredicate> patterns = patternToIntrinsic.keySet();
+                final DescriptorPredicate[] patterns1 = patterns.toArray(new DescriptorPredicate[patterns.size()]);
+                return new DescriptorPredicate() {
+                    @Override
+                    public boolean apply(@Nullable FunctionDescriptor descriptor) {
+                        return Predicates.or(patterns1).apply(descriptor);
+                    }
+                };
             }
 
             @NotNull
             @Override
             public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
-                for (Pattern pattern : patternToIntrinsic.keySet()) {
+                for (DescriptorPredicate pattern : patternToIntrinsic.keySet()) {
                     if (pattern.apply(descriptor)) {
                         return patternToIntrinsic.get(pattern);
                     }
