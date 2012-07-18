@@ -23,9 +23,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -228,6 +230,29 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends R
         @Override
         public void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor descriptor) {
             trace.report(INVISIBLE_MEMBER.on(call.getCallElement(), descriptor, descriptor.getContainingDeclaration()));
+        }
+
+        @Override
+        public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData) {
+            assert !inferenceErrorData.constraintsSystem.isSuccessful();
+            if (inferenceErrorData.constraintsSystem.hasErrorInConstrainingTypes()) {
+                return;
+            }
+            if (inferenceErrorData.constraintsSystem.hasTypeConstructorMismatch()) {
+                trace.report(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH.on(reference, inferenceErrorData));
+            }
+            else if (inferenceErrorData.constraintsSystem.hasConflictingConstraints()) {
+                trace.report(TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS.on(reference, inferenceErrorData));
+            }
+            else {
+                assert inferenceErrorData.constraintsSystem.hasUnknownParameters();
+                trace.report(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(reference, inferenceErrorData));
+            }
+        }
+
+        @Override
+        public void upperBoundViolated(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData) {
+            trace.report(Errors.TYPE_INFERENCE_UPPER_BOUND_VIOLATED.on(reference, inferenceErrorData));
         }
     };
 }

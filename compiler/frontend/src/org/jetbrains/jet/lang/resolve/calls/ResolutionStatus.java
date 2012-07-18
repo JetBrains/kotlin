@@ -26,7 +26,7 @@ public enum ResolutionStatus {
     UNSAFE_CALL_ERROR,
     OTHER_ERROR,
     STRONG_ERROR,
-    TYPE_INFERENCE_ERROR,
+    TYPE_INFERENCE_ERROR, //todo remove
     SUCCESS(true);
 
     @SuppressWarnings("unchecked")

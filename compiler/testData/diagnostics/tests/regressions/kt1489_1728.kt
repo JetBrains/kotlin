@@ -18,9 +18,9 @@ class C {
     fun p() : Resource? = null
 
     fun bar() {
-        <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>foo(p()) {
+        <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>foo<!>(p()) {
 
-        }<!>
+        }
     }
 }
 
