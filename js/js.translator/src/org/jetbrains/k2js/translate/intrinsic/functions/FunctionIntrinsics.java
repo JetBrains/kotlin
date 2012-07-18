@@ -18,11 +18,9 @@ package org.jetbrains.k2js.translate.intrinsic.functions;
 
 import closurecompiler.internal.com.google.common.collect.Lists;
 import closurecompiler.internal.com.google.common.collect.Maps;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.factories.*;
 
@@ -33,22 +31,6 @@ import java.util.Map;
  * @author Pavel Talanov
  */
 public final class FunctionIntrinsics {
-
-    @NotNull
-    private static final FunctionIntrinsic NO_INTRINSIC = new FunctionIntrinsic() {
-        @Override
-        public boolean exists() {
-            return false;
-        }
-
-        @NotNull
-        @Override
-        public JsExpression apply(@Nullable JsExpression receiver,
-                @NotNull List<JsExpression> arguments,
-                @NotNull TranslationContext context) {
-            throw new UnsupportedOperationException("FunctionIntrinsic#NO_INTRINSIC_#apply");
-        }
-    };
 
     @NotNull
     private final Map<FunctionDescriptor, FunctionIntrinsic> intrinsicCache = Maps.newHashMap();
@@ -103,6 +85,6 @@ public final class FunctionIntrinsics {
                 return factory.getIntrinsic(descriptor);
             }
         }
-        return NO_INTRINSIC;
+        return FunctionIntrinsic.NO_INTRINSIC;
     }
 }

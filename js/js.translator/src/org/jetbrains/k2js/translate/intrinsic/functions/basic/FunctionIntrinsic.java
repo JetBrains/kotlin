@@ -31,6 +31,22 @@ import java.util.List;
 public abstract class FunctionIntrinsic {
 
     @NotNull
+    public static final FunctionIntrinsic NO_INTRINSIC = new FunctionIntrinsic() {
+        @Override
+        public boolean exists() {
+            return false;
+        }
+
+        @NotNull
+        @Override
+        public JsExpression apply(@Nullable JsExpression receiver,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context) {
+            throw new UnsupportedOperationException("FunctionIntrinsic#NO_INTRINSIC_#apply");
+        }
+    };
+
+    @NotNull
     public abstract JsExpression apply(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments,
             @NotNull TranslationContext context);
 
