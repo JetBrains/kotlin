@@ -23,19 +23,20 @@ import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.intrinsic.functions.factories.TopLevelFIF;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
+import java.util.Arrays;
+
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.equality;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.inequality;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.isNullLiteral;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.nullCheck;
 
 /**
  * @author Pavel Talanov
  */
 public final class EqualsIntrinsic implements BinaryOperationIntrinsic {
+
     @Override
     public boolean isApplicable(@NotNull JetBinaryExpression expression, @NotNull TranslationContext context) {
         if (!OperatorConventions.EQUALS_OPERATIONS.contains(getOperationToken(expression))) {
@@ -47,22 +48,13 @@ public final class EqualsIntrinsic implements BinaryOperationIntrinsic {
     }
 
     @Override
+    @NotNull
     public JsExpression apply(@NotNull JetBinaryExpression expression,
             @NotNull JsExpression left,
             @NotNull JsExpression right,
             @NotNull TranslationContext context) {
         boolean isNegated = getOperationToken(expression).equals(JetTokens.EXCLEQ);
-        if (isNullLiteral(context, right)) {
-            return nullCheck(context, left, !isNegated);
-        }
-        if (isNullLiteral(context, left)) {
-            return nullCheck(context, right, !isNegated);
-        }
-        if (isNegated) {
-            return inequality(left, right);
-        }
-        else {
-            return equality(left, right);
-        }
+        JsExpression result = TopLevelFIF.EQUALS.apply(left, Arrays.asList(right), context);
+        return isNegated ? JsAstUtils.negated(result) : result;
     }
 }

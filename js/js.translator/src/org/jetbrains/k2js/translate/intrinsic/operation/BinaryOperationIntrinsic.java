@@ -28,6 +28,7 @@ public interface BinaryOperationIntrinsic {
 
     boolean isApplicable(@NotNull JetBinaryExpression expression, @NotNull TranslationContext context);
 
+    @NotNull
     JsExpression apply(@NotNull JetBinaryExpression expression, @NotNull JsExpression left,
             @NotNull JsExpression right, @NotNull TranslationContext context);
 }

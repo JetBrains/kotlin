@@ -19,7 +19,7 @@ package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInFunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.CallStandardMethodIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
 
@@ -27,16 +27,16 @@ import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternB
  * @author Pavel Talanov
  */
 public final class TopLevelFIF extends CompositeFIF {
-
     @NotNull
-    private static final DescriptorPredicate EXT_TO_STRING = pattern("toString");
-
+    public static final CallStandardMethodIntrinsic EQUALS = new CallStandardMethodIntrinsic("Kotlin.equals", true, 1);
     @NotNull
     public static final FunctionIntrinsicFactory INSTANCE = new TopLevelFIF();
 
     private TopLevelFIF() {
-        add(EXT_TO_STRING, new BuiltInFunctionIntrinsic("toString"));
-        //TODO: add intrinsic for calling equals explicitly
+        add(pattern("toString"), new BuiltInFunctionIntrinsic("toString"));
+        add(pattern("equals"), EQUALS);
+        add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), EQUALS);
+        add(pattern("String|Boolean|Char|Number.equals"), EQUALS);
         add(pattern("arrayOfNulls"), new CallStandardMethodIntrinsic("Kotlin.nullArray", false, 1));
     }
 }

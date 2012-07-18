@@ -32,7 +32,7 @@ import java.util.List;
 public final class NamePredicate implements Predicate<Name> {
 
     @NotNull
-    public static final NamePredicate PRIMITIVE_NUMBERS = new NamePredicate("Int", "Double", "Float", "Long", "Short");
+    public static final NamePredicate PRIMITIVE_NUMBERS = new NamePredicate("Int", "Double", "Float", "Long", "Short", "Byte");
 
     @NotNull
     private final List<Name> validNames = Lists.newArrayList();

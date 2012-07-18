@@ -23,6 +23,7 @@ var kotlin = {set:function (receiver, key, value) {
     "use strict";
 
     Kotlin.equals = function (obj1, obj2) {
+        if ((obj1 === null)|| (obj1 === undefined)) return obj2 === null;
         if (typeof obj1 == "object") {
             if (obj1.equals !== undefined) {
                 return obj1.equals(obj2);

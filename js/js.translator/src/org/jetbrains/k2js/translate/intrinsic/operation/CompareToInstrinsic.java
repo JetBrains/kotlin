@@ -44,6 +44,7 @@ public final class CompareToInstrinsic implements BinaryOperationIntrinsic {
         return JsDescriptorUtils.isStandardDeclaration(functionDescriptor);
     }
 
+    @NotNull
     @Override
     public JsExpression apply(@NotNull JetBinaryExpression expression,
             @NotNull JsExpression left,
