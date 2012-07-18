@@ -32,8 +32,8 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 import static org.jetbrains.k2js.translate.utils.TemporariesUtils.temporariesInitialization;
 
@@ -72,8 +72,8 @@ public final class ArrayForTranslator extends ForTranslator {
         loopRange = context.declareTemporary(Translation.translateAsExpression(getLoopRange(expression), context));
 
         JsExpression length = ArrayFIF.ARRAY_LENGTH_INTRINSIC.apply(loopRange.reference(),
-                                             Collections.<JsExpression>emptyList(),
-                                             context());
+                                                                    Collections.<JsExpression>emptyList(),
+                                                                    context());
         end = context().declareTemporary(length);
         index = context().declareTemporary(program().getNumberLiteral(0));
     }

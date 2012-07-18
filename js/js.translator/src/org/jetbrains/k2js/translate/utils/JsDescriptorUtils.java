@@ -26,18 +26,15 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.config.LibrarySourcesConfig;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getSuperclassDescriptors;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.isNotAny;
 
 /**
  * @author Pavel Talanov
@@ -73,33 +70,10 @@ public final class JsDescriptorUtils {
         return null;
     }
 
-    @NotNull
-    public static List<ClassDescriptor> getSuperclassDescriptors(@NotNull ClassDescriptor classDescriptor) {
-        Collection<? extends JetType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
-        List<ClassDescriptor> superClassDescriptors = new ArrayList<ClassDescriptor>();
-        for (JetType type : superclassTypes) {
-            ClassDescriptor result = getClassDescriptorForType(type);
-            if (isNotAny(result)) {
-                superClassDescriptors.add(result);
-            }
-        }
-        return superClassDescriptors;
-    }
-
     @Nullable
     public static ClassDescriptor getSuperclass(@NotNull ClassDescriptor classDescriptor) {
         return findAncestorClass(getSuperclassDescriptors(classDescriptor));
     }
-
-    @NotNull
-    public static ClassDescriptor getClassDescriptorForType(@NotNull JetType type) {
-        DeclarationDescriptor superClassDescriptor =
-                type.getConstructor().getDeclarationDescriptor();
-        assert superClassDescriptor instanceof ClassDescriptor
-                : "Superclass descriptor of a type should be of type ClassDescriptor";
-        return (ClassDescriptor) superClassDescriptor;
-    }
-
 
     @NotNull
     public static DeclarationDescriptor getContainingDeclaration(@NotNull DeclarationDescriptor descriptor) {
