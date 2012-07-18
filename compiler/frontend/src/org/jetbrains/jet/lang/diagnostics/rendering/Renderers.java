@@ -170,7 +170,7 @@ public class Renderers {
 
     public static TabledDescriptorRenderer renderConflictingSubstitutionsInferenceError(InferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer result) {
-        assert inferenceErrorData.constraintsSystem.hasConflictingParameters();
+        assert inferenceErrorData.constraintsSystem.hasConflictingConstraints();
 
         Collection<CallableDescriptor> substitutedDescriptors = Lists.newArrayList();
         Collection<TypeSubstitutor> substitutors = ConstraintsUtil.getSubstitutorsForConflictingParameters(

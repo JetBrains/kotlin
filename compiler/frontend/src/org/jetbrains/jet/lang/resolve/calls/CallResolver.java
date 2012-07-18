@@ -394,7 +394,7 @@ public class CallResolver {
         if (inferenceErrorData.constraintsSystem.hasTypeConstructorMismatch()) {
             trace.report(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH.on(element, inferenceErrorData));
         }
-        else if (inferenceErrorData.constraintsSystem.hasConflictingParameters()) {
+        else if (inferenceErrorData.constraintsSystem.hasConflictingConstraints()) {
             trace.report(TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS.on(element, inferenceErrorData));
         }
         else {
@@ -760,7 +760,7 @@ public class CallResolver {
 
 
         // Solution
-        if (!constraintsSystem.hasContradiction()) {
+        if (!constraintsSystem.hasTypeConstructorMismatch() && !constraintsSystem.hasConflictingConstraints()) { //no contradiction
             candidateCall.setHasUnknownTypeParameters(true);
             return SUCCESS;
         }

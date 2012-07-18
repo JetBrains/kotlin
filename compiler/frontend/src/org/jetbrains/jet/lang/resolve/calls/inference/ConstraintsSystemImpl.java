@@ -87,8 +87,8 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
     }
 
     @Override
-    public void registerTypeVariable(@NotNull TypeParameterDescriptor typeParameterDescriptor, @NotNull Variance positionVariance) {
-        typeParameterConstraints.put(typeParameterDescriptor, new TypeConstraintsImpl(positionVariance));
+    public void registerTypeVariable(@NotNull TypeParameterDescriptor typeVariable, @NotNull Variance positionVariance) {
+        typeParameterConstraints.put(typeVariable, new TypeConstraintsImpl(positionVariance));
     }
 
     @NotNull
@@ -198,22 +198,17 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
 
     @Override
     @Nullable
-    public TypeConstraints getTypeConstraints(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
-        return typeParameterConstraints.get(typeParameterDescriptor);
+    public TypeConstraints getTypeConstraints(@NotNull TypeParameterDescriptor typeVariable) {
+        return typeParameterConstraints.get(typeVariable);
     }
 
     @Override
     public boolean isSuccessful() {
-        return !hasTypeConstructorMismatch() && !hasUnknownParameters() && !hasConflictingParameters();
+        return !hasTypeConstructorMismatch() && !hasUnknownParameters() && !hasConflictingConstraints();
     }
 
     @Override
-    public boolean hasContradiction() {
-        return hasTypeConstructorMismatch() || hasConflictingParameters();
-    }
-
-    @Override
-    public boolean hasConflictingParameters() {
+    public boolean hasConflictingConstraints() {
         for (TypeParameterDescriptor typeParameter : typeParameterConstraints.keySet()) {
             TypeConstraints typeConstraints = getTypeConstraints(typeParameter);
             if (typeConstraints != null && ConstraintsUtil.getValues(typeConstraints).size() > 1) return true;
