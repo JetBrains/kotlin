@@ -69,10 +69,15 @@ public final class NumberConversionFIF {
     };
 
     @NotNull
+    public static final String INTEGER_NUMBER_TYPES = "Int|Byte|Short";
+    //NOTE: treat Number as if it is floating point type
+    @NotNull
+    public static final String FLOATING_POINT_NUMBER_TYPES = "Float|Double|Number";
+    @NotNull
     public static final FunctionIntrinsicFactory INSTANCE = FIFBuilder.start()
-            .add(pattern("Int", SUPPORTED_CONVERSIONS), RETURN_RECEIVER)
-            .add(pattern("Double|Number", INTEGER_CONVERSIONS), new CallStandardMethodIntrinsic("Math.floor", true, 0))
-            .add(pattern("Double|Number", FLOATING_POINT_CONVERSIONS), RETURN_RECEIVER)
+            .add(pattern(INTEGER_NUMBER_TYPES, SUPPORTED_CONVERSIONS), RETURN_RECEIVER)
+            .add(pattern(FLOATING_POINT_NUMBER_TYPES, INTEGER_CONVERSIONS), new CallStandardMethodIntrinsic("Math.floor", true, 0))
+            .add(pattern(FLOATING_POINT_NUMBER_TYPES, FLOATING_POINT_CONVERSIONS), RETURN_RECEIVER)
             .build();
 
     private NumberConversionFIF() {

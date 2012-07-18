@@ -37,4 +37,8 @@ public final class NumberTest extends SingleFileTranslationTest {
     public void testNumberConversions() throws Exception {
         fooBoxTest();
     }
+
+    public void testByteAndShortConversions() throws Exception {
+        fooBoxTest();
+    }
 }
