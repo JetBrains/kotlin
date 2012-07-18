@@ -720,11 +720,24 @@ public class NamespaceComparator {
 
             if (klass.getClassObjectDescriptor() != null) {
                 StringBuilder sbForClassObject = new StringBuilder();
-                new FullContentSerialier(sbForClassObject).serialize(klass.getClassObjectDescriptor());
+                new ClassObjectSerializer(sbForClassObject).serialize(klass.getClassObjectDescriptor());
                 sb.append(indent(sbForClassObject.toString()));
             }
 
             sb.append("}\n");
+        }
+    }
+
+    private class ClassObjectSerializer extends FullContentSerialier {
+
+        private ClassObjectSerializer(StringBuilder sb) {
+            super(sb);
+        }
+
+        @Override
+        public void serialize(ClassKind kind) {
+            assert kind == ClassKind.OBJECT : "Must be called for class objects only";
+            sb.append("class object");
         }
     }
 
