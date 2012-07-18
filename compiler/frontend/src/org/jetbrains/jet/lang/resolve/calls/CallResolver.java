@@ -297,7 +297,7 @@ public class CallResolver {
             @NotNull BasicResolutionContext context,
             @NotNull OverloadResolutionResults<D> results,
             @Nullable TracingStrategy tracing) {
-        if (results.getResultCode() != OverloadResolutionResults.Code.DIRTY) return results;
+        if (results.getResultCode() != OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE) return results;
         Set<ResolvedCallWithTrace<D>> successful = Sets.newLinkedHashSet();
         Set<ResolvedCallWithTrace<D>> failed = Sets.newLinkedHashSet();
         for (ResolvedCall<? extends D> call : results.getResultingCalls()) {
@@ -357,8 +357,7 @@ public class CallResolver {
 
 
         if (!constraintsSystem.isSuccessful()) {
-            List<JetType> argumentTypes = Lists.newArrayList();
-            checkValueArgumentTypes(context, resolvedCall, context.trace, argumentTypes);
+            List<JetType> argumentTypes = checkValueArgumentTypes(context, resolvedCall, context.trace).argumentTypes;
             JetType receiverType = resolvedCall.getReceiverArgument().exists() ? resolvedCall.getReceiverArgument().getType() : null;
             reportTypeInferenceFailed(context.trace, context.call, InferenceErrorData.create(descriptor, constraintsSystem,
                                                                                              argumentTypes, receiverType));
@@ -373,7 +372,7 @@ public class CallResolver {
         resolvedCall.setResultingDescriptor(substitute); //replacement
 
         // Here we type check the arguments with inferred types expected
-        checkValueArgumentTypes(context, resolvedCall, context.trace, null);
+        checkValueArgumentTypes(context, resolvedCall, context.trace);
 
         checkBounds(resolvedCall, constraintsSystem, context);
         resolvedCall.setHasUnknownTypeParameters(false);
@@ -466,7 +465,7 @@ public class CallResolver {
 
                 return results;
             }
-            if (results.getResultCode() == OverloadResolutionResults.Code.DIRTY) {
+            if (results.getResultCode() == OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE) {
                 results.setTrace(taskTrace);
                 return results;
             }
@@ -588,7 +587,7 @@ public class CallResolver {
         
         OverloadResolutionResultsImpl<F> results = computeResultAndReportErrors(task.trace, task.tracing, successfulCandidates,
                                                                                 failedCandidates);
-        if (!results.isSingleResult() && results.getResultCode() != OverloadResolutionResults.Code.DIRTY) {
+        if (!results.isSingleResult() && results.getResultCode() != OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE) {
             checkTypesWithNoCallee(task.toBasic());
         }
         return results;
@@ -638,7 +637,7 @@ public class CallResolver {
                 candidateCall.addStatus(status);
             }
             else {
-                candidateCall.addStatus(checkAllValueArguments(context, null));
+                candidateCall.addStatus(checkAllValueArguments(context).status);
             }
         }
         else {
@@ -674,7 +673,7 @@ public class CallResolver {
                     TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
                     candidateCall.recordTypeArgument(typeParameterDescriptor, typeArguments.get(i));
                 }
-                candidateCall.addStatus(checkAllValueArguments(context, null));
+                candidateCall.addStatus(checkAllValueArguments(context).status);
             }
             else {
                 candidateCall.addStatus(OTHER_ERROR);
@@ -765,8 +764,9 @@ public class CallResolver {
             return SUCCESS;
         }
         else {
-            List<JetType> argumentTypes = Lists.newArrayList();
-            ResolutionStatus argumentsStatus = checkAllValueArguments(context, argumentTypes);
+            ValueArgumentsCheckingResult checkingResult = checkAllValueArguments(context);
+            ResolutionStatus argumentsStatus = checkingResult.status;
+            List<JetType> argumentTypes = checkingResult.argumentTypes;
             JetType receiverType = candidateCall.getReceiverArgument().exists() ? candidateCall.getReceiverArgument().getType() : null;
             reportTypeInferenceFailed(context.trace, context.call, InferenceErrorData.create(candidate,
                                                                                              constraintsBuilderWithRightTypeParameters, argumentTypes, receiverType));
@@ -862,8 +862,9 @@ public class CallResolver {
         }
     }
 
-    private <D extends CallableDescriptor, F extends D> ResolutionStatus checkAllValueArguments(CallResolutionContext<D, F> context, @Nullable List<JetType> argumentTypes) {
-        ResolutionStatus result = checkValueArgumentTypes(context, context.candidateCall, argumentTypes);
+    private <D extends CallableDescriptor, F extends D> ValueArgumentsCheckingResult checkAllValueArguments(CallResolutionContext<D, F> context) {
+        ValueArgumentsCheckingResult checkingResult = checkValueArgumentTypes(context, context.candidateCall);
+        ResolutionStatus resultStatus = checkingResult.status;
         ResolvedCall<D> candidateCall = context.candidateCall;
 
         // Comment about a very special case.
@@ -871,14 +872,14 @@ public class CallResolver {
         // both 'b' (receiver) and 'foo' (this object) might be nullable. In the first case we mark dot, in the second 'foo'.
         // Class 'CallForImplicitInvoke' helps up to recognise this case, and parameter 'implicitInvokeCheck' helps us to distinguish whether we check receiver or this object.
 
-        result = result.combine(checkReceiver(context, candidateCall, candidateCall.getResultingDescriptor().getReceiverParameter(), candidateCall.getReceiverArgument(),
+        resultStatus = resultStatus.combine(checkReceiver(context, candidateCall, candidateCall.getResultingDescriptor().getReceiverParameter(), candidateCall.getReceiverArgument(),
                                               candidateCall.getExplicitReceiverKind().isReceiver(), false));
 
-        result = result.combine(checkReceiver(context, candidateCall, candidateCall.getResultingDescriptor().getExpectedThisObject(), candidateCall.getThisObject(),
+        resultStatus = resultStatus.combine(checkReceiver(context, candidateCall, candidateCall.getResultingDescriptor().getExpectedThisObject(), candidateCall.getThisObject(),
                                               candidateCall.getExplicitReceiverKind().isThisObject(),
                                               // for the invocation 'foo(1)' where foo is a variable of function type we should mark 'foo' if there is unsafe call error
                                               context.call instanceof CallTransformer.CallForImplicitInvoke));
-        return result;
+        return new ValueArgumentsCheckingResult(resultStatus, checkingResult.argumentTypes);
     }
 
     private <D extends CallableDescriptor, F extends D> ResolutionStatus checkReceiver(CallResolutionContext<D, F> context, ResolvedCall<D> candidateCall,
@@ -913,14 +914,24 @@ public class CallResolver {
         return result;
     }
 
-    private <D extends CallableDescriptor> ResolutionStatus checkValueArgumentTypes(ResolutionContext context, ResolvedCallImpl<D> candidateCall, List<JetType> argumentTypes) {
-        return checkValueArgumentTypes(context, candidateCall, candidateCall.getTrace(), argumentTypes);
+    private static class ValueArgumentsCheckingResult {
+        public final List<JetType> argumentTypes;
+        public final ResolutionStatus status;
+
+        private ValueArgumentsCheckingResult(@NotNull ResolutionStatus status, @NotNull List<JetType> argumentTypes) {
+            this.status = status;
+            this.argumentTypes = argumentTypes;
+        }
     }
 
-    private <D extends CallableDescriptor> ResolutionStatus checkValueArgumentTypes(ResolutionContext context, ResolvedCallImpl<D> candidateCall, BindingTrace trace,
-            @Nullable List<JetType> argumentTypes) {
-        ResolutionStatus result = SUCCESS;
+    private <D extends CallableDescriptor> ValueArgumentsCheckingResult checkValueArgumentTypes(ResolutionContext context, ResolvedCallImpl<D> candidateCall) {
+        return checkValueArgumentTypes(context, candidateCall, candidateCall.getTrace());
+    }
+
+    private <D extends CallableDescriptor> ValueArgumentsCheckingResult checkValueArgumentTypes(ResolutionContext context, ResolvedCallImpl<D> candidateCall, BindingTrace trace) {
+        ResolutionStatus resultStatus = SUCCESS;
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;
+        List<JetType> argumentTypes = Lists.newArrayList();
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : candidateCall.getValueArguments().entrySet()) {
             ValueParameterDescriptor parameterDescriptor = entry.getKey();
             ResolvedValueArgument resolvedArgument = entry.getValue();
@@ -936,9 +947,7 @@ public class CallResolver {
                 }
                 JetTypeInfo typeInfo = expressionTypingServices.getTypeInfo(context.scope, expression, expectedType, dataFlowInfo, trace);
                 JetType type = typeInfo.getType();
-                if (argumentTypes != null) {
-                    argumentTypes.add(type);
-                }
+                argumentTypes.add(type);
                 dataFlowInfo = dataFlowInfo.and(typeInfo.getDataFlowInfo());
                 if (type == null || ErrorUtils.isErrorType(type)) {
                     candidateCall.argumentHasNoType();
@@ -959,16 +968,16 @@ public class CallResolver {
 //                            }
 //                            else {
 //                                temporaryTrace.report(AUTOCAST_IMPOSSIBLE.on(argument, autoCastType, variableDescriptor));
-//                                result = false;
+//                                resultStatus = false;
 //                            }
 //                        }
 //                    }
 //                    else {
-                    result = OTHER_ERROR;
+                    resultStatus = OTHER_ERROR;
                 }
             }
         }
-        return result;
+        return new ValueArgumentsCheckingResult(resultStatus, argumentTypes);
     }
 
     @NotNull
@@ -1056,7 +1065,7 @@ public class CallResolver {
             ResolvedCallWithTrace<D> failed = failedCandidates.iterator().next();
             failed.getTrace().commit();
             if (failed.getStatus() != ResolutionStatus.STRONG_ERROR && failed.hasUnknownTypeParameters()) {
-                return OverloadResolutionResultsImpl.dirty(failed);
+                return OverloadResolutionResultsImpl.incompleteTypeInference(failed);
             }
             return OverloadResolutionResultsImpl.singleFailedCandidate(failed);
         }
@@ -1105,7 +1114,7 @@ public class CallResolver {
             Set<ResolvedCallWithTrace<D>> noOverrides = OverridingUtil.filterOverrides(candidates, MAP_TO_RESULT);
 
             if (dirty) {
-                return OverloadResolutionResultsImpl.dirty(candidates);
+                return OverloadResolutionResultsImpl.incompleteTypeInference(candidates);
             }
 
             return OverloadResolutionResultsImpl.ambiguity(noOverrides);
@@ -1116,7 +1125,7 @@ public class CallResolver {
             TemporaryBindingTrace temporaryTrace = result.getTrace();
             temporaryTrace.commit();
             if (result.hasUnknownTypeParameters()) {
-                return OverloadResolutionResultsImpl.dirty(result);
+                return OverloadResolutionResultsImpl.incompleteTypeInference(result);
             }
 
             return OverloadResolutionResultsImpl.success(result);
