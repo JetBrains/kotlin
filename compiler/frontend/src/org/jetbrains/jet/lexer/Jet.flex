@@ -128,7 +128,7 @@ MULTILINE_DELIMITER=[^\ \t\f\r\n]*([\ \t\f\r]*\n)
 // --------------------------------------------
 // Multi line raw strings.
 // --------------------------------------------
-(\#\!(\'|\")){MULTILINE_DELIMITER}
+(\#\\(\'|\")){MULTILINE_DELIMITER}
             {
                 this.terminator = yytext().toString().substring(2).trim();
                 yybegin(MULTILINE_RAW_STRING);
@@ -192,7 +192,7 @@ MULTILINE_DELIMITER=[^\ \t\f\r\n]*([\ \t\f\r]*\n)
 // --------------------------------------------
 // Single line raw strings.
 // --------------------------------------------
-\!((\'+)|(\"+))
+\\((\'+)|(\"+))
             {
                 this.terminator = yytext().toString().substring(1);
                 yybegin(SINGLELINE_RAW_STRING);

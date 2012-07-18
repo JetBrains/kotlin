@@ -163,7 +163,7 @@ JetFile: MultilineString.jet
       PsiComment(EOL_COMMENT)('// Multi line raw strings')
       PsiWhiteSpace('\n  ')
       STRING_TEMPLATE
-        PsiElement(OPEN_QUOTE)('#!' \n')
+        PsiElement(OPEN_QUOTE)('#\' \n')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('\n \r \n')
         LITERAL_STRING_TEMPLATE_ENTRY
@@ -173,7 +173,7 @@ JetFile: MultilineString.jet
         PsiElement(CLOSING_QUOTE)(''')
       PsiWhiteSpace('\n  ')
       STRING_TEMPLATE
-        PsiElement(OPEN_QUOTE)('#!''' \n')
+        PsiElement(OPEN_QUOTE)('#\''' \n')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('\n \r \n')
         LITERAL_STRING_TEMPLATE_ENTRY
@@ -183,7 +183,7 @@ JetFile: MultilineString.jet
         PsiElement(CLOSING_QUOTE)(''''')
       PsiWhiteSpace('\n  ')
       STRING_TEMPLATE
-        PsiElement(OPEN_QUOTE)('#!'EOS \n')
+        PsiElement(OPEN_QUOTE)('#\'EOS \n')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('\n \r \n')
         LITERAL_STRING_TEMPLATE_ENTRY
@@ -199,7 +199,7 @@ JetFile: MultilineString.jet
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(OPEN_QUOTE)('#!' \n')
+              PsiElement(OPEN_QUOTE)('#\' \n')
               LITERAL_STRING_TEMPLATE_ENTRY
                 PsiElement(REGULAR_STRING_PART)('\n \r \n')
               LITERAL_STRING_TEMPLATE_ENTRY
@@ -210,7 +210,7 @@ JetFile: MultilineString.jet
           PsiElement(RPAR)(')')
       PsiWhiteSpace('\n\n  ')
       STRING_TEMPLATE
-        PsiElement(OPEN_QUOTE)('#!" \n')
+        PsiElement(OPEN_QUOTE)('#\" \n')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('\n \r \n')
         LITERAL_STRING_TEMPLATE_ENTRY
@@ -220,7 +220,7 @@ JetFile: MultilineString.jet
         PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n  ')
       STRING_TEMPLATE
-        PsiElement(OPEN_QUOTE)('#!""" \n')
+        PsiElement(OPEN_QUOTE)('#\""" \n')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('\n \r \n')
         LITERAL_STRING_TEMPLATE_ENTRY
@@ -230,7 +230,7 @@ JetFile: MultilineString.jet
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n  ')
       STRING_TEMPLATE
-        PsiElement(OPEN_QUOTE)('#!"EOS \n')
+        PsiElement(OPEN_QUOTE)('#\"EOS \n')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('\n \r \n')
         LITERAL_STRING_TEMPLATE_ENTRY
@@ -246,7 +246,7 @@ JetFile: MultilineString.jet
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             STRING_TEMPLATE
-              PsiElement(OPEN_QUOTE)('#!" \n')
+              PsiElement(OPEN_QUOTE)('#\" \n')
               LITERAL_STRING_TEMPLATE_ENTRY
                 PsiElement(REGULAR_STRING_PART)('\n \r \n')
               LITERAL_STRING_TEMPLATE_ENTRY

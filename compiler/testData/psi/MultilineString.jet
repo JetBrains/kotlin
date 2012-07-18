@@ -27,38 +27,38 @@ fun demo() {
   ")
 
   // Multi line raw strings
-  #!' 
+  #\' 
 \n \r 
 \x ${foo}
   '
-  #!''' 
+  #\''' 
 \n \r 
 \x ${foo}
   '''
-  #!'EOS 
+  #\'EOS 
 \n \r 
 \x ${foo}
   'EOS
   
-  wrap(#!' 
+  wrap(#\' 
 \n \r 
 \x ${foo}
   ')
 
-  #!" 
+  #\" 
 \n \r 
 \x ${foo}
   "
-  #!""" 
+  #\""" 
 \n \r 
 \x ${foo}
   """
-  #!"EOS 
+  #\"EOS 
 \n \r 
 \x ${foo}
   "EOS
   
-  wrap(#!" 
+  wrap(#\" 
 \n \r 
 \x ${foo}
   ")

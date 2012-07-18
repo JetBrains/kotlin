@@ -3,7 +3,7 @@ fun box() : String {
   val hello="Hiram"
   val world="Chirino"
 
-  val s = #!"
+  val s = #\"
  ${hello}
  [\n]
  ${world}
