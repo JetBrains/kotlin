@@ -16,12 +16,18 @@
 
 package org.jetbrains.k2js.translate.utils;
 
+import com.google.common.collect.Lists;
+import com.google.dart.compiler.Source;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+
+import java.util.List;
 
 /**
  * @author Pavel Talanov
@@ -62,5 +68,18 @@ public final class ErrorReportingUtils {
             @NotNull DeclarationDescriptor descriptor,
             @NotNull BindingContext bindingContext) {
         throw reportErrorWithLocation(e, DiagnosticUtils.atLocation(bindingContext, descriptor));
+    }
+
+    @NotNull
+    public static String atLocation(@Nullable JsExpression expression, @NotNull List<JsExpression> arguments) {
+        List<JsExpression> list = Lists.newArrayList(expression);
+        list.addAll(arguments);
+        for (JsExpression value : arguments) {
+            Source source = value.getSource();
+            if (source != null) {
+                return "at " + source + " " + value.getSourceLine() + ":" + value.getSourceColumn();
+            }
+        }
+        return "at unknown location";
     }
 }
