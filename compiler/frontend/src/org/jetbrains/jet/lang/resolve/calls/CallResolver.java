@@ -277,6 +277,11 @@ public class CallResolver {
         delegatingBindingTrace.addAllMyDataTo(cloneDelta);
         cacheResults(resolutionResultsSlice, context, results, cloneDelta);
 
+        if (prioritizedTasks.isEmpty()) {
+            delegatingBindingTrace.commit();
+            return results;
+        }
+
         TemporaryBindingTrace temporaryBindingTrace = null;
         if (results instanceof OverloadResolutionResultsImpl) {
             temporaryBindingTrace = ((OverloadResolutionResultsImpl) results).getTrace();
@@ -284,7 +289,7 @@ public class CallResolver {
                 newContext = newContext.replaceTrace(temporaryBindingTrace);
             }
         }
-        TracingStrategy tracing = !prioritizedTasks.isEmpty() ? prioritizedTasks.iterator().next().tracing : null;
+        TracingStrategy tracing = prioritizedTasks.iterator().next().tracing;
         OverloadResolutionResults<F> completeResults = completeTypeInferenceDependentOnExpectedType(newContext, results, tracing);
         if (temporaryBindingTrace != null) {
             temporaryBindingTrace.commit();
@@ -296,7 +301,8 @@ public class CallResolver {
     private <D extends CallableDescriptor> OverloadResolutionResults<D> completeTypeInferenceDependentOnExpectedType(
             @NotNull BasicResolutionContext context,
             @NotNull OverloadResolutionResults<D> results,
-            @Nullable TracingStrategy tracing) {
+            @NotNull TracingStrategy tracing
+    ) {
         if (results.getResultCode() != OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE) return results;
         Set<ResolvedCallWithTrace<D>> successful = Sets.newLinkedHashSet();
         Set<ResolvedCallWithTrace<D>> failed = Sets.newLinkedHashSet();
