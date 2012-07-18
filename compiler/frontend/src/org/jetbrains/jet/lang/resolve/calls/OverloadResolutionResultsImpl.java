@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.calls;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 
 import java.util.Collection;
@@ -48,12 +47,12 @@ import java.util.Collections;
         return new OverloadResolutionResultsImpl<D>(Code.AMBIGUITY, descriptors);
     }
 
-    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> dirty(Collection<ResolvedCallWithTrace<D>> descriptors) {
-        return new OverloadResolutionResultsImpl<D>(Code.DIRTY, descriptors);
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> incompleteTypeInference(Collection<ResolvedCallWithTrace<D>> descriptors) {
+        return new OverloadResolutionResultsImpl<D>(Code.INCOMPLETE_TYPE_INFERENCE, descriptors);
     }
 
-    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> dirty(ResolvedCallWithTrace<D> descriptor) {
-        return new OverloadResolutionResultsImpl<D>(Code.DIRTY, Collections.singleton(descriptor));
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> incompleteTypeInference(ResolvedCallWithTrace<D> descriptor) {
+        return new OverloadResolutionResultsImpl<D>(Code.INCOMPLETE_TYPE_INFERENCE, Collections.singleton(descriptor));
     }
 
     private final Collection<ResolvedCallWithTrace<D>> results;

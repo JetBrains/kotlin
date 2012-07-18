@@ -31,7 +31,7 @@ public interface OverloadResolutionResults<D extends CallableDescriptor> {
         SINGLE_CANDIDATE_ARGUMENT_MISMATCH(false),
         AMBIGUITY(false),
         MANY_FAILED_CANDIDATES(false),
-        DIRTY(false);
+        INCOMPLETE_TYPE_INFERENCE(false);
 
         private final boolean success;
 
