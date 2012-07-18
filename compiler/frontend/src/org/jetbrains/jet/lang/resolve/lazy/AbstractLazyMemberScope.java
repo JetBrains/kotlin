@@ -171,6 +171,12 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         throw new UnsupportedOperationException(); // TODO
     }
 
+    @NotNull
+    @Override
+    public Collection<ClassDescriptor> getClassDescriptors() {
+        throw new UnsupportedOperationException(); // TODO
+    }
+
     @Override
     public VariableDescriptor getLocalVariable(@NotNull Name name) {
         return null;

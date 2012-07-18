@@ -63,6 +63,12 @@ public class ErrorUtils {
 
         @NotNull
         @Override
+        public Set<ClassDescriptor> getClassDescriptors() {
+            return Collections.emptySet();
+        }
+
+        @NotNull
+        @Override
         public Set<VariableDescriptor> getProperties(@NotNull Name name) {
             return ERROR_PROPERTY_GROUP;
         }

@@ -49,6 +49,12 @@ public abstract class JetScopeImpl implements JetScope {
 
     @NotNull
     @Override
+    public Set<ClassDescriptor> getClassDescriptors() {
+        return Collections.emptySet();
+    }
+
+    @NotNull
+    @Override
     public Collection<VariableDescriptor> getProperties(@NotNull Name name) {
         return Collections.emptySet();
     }

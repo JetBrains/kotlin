@@ -69,6 +69,16 @@ public class ChainedScope implements JetScope {
         return objectDescriptors;
     }
 
+    @NotNull
+    @Override
+    public Set<ClassDescriptor> getClassDescriptors() {
+        Set<ClassDescriptor> classDescriptors = Sets.newHashSet();
+        for (JetScope scope : scopeChain) {
+            classDescriptors.addAll(scope.getClassDescriptors());
+        }
+        return classDescriptors;
+    }
+
     @Override
     public NamespaceDescriptor getNamespace(@NotNull Name name) {
         for (JetScope jetScope : scopeChain) {
