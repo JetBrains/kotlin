@@ -36,10 +36,8 @@ import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.junit.Assert;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -732,23 +730,28 @@ public class NamespaceComparator {
 
 
     private static String indent(String string) {
-        try {
-            StringBuilder r = new StringBuilder();
-            BufferedReader reader = new BufferedReader(new StringReader(string));
-            while (true) {
-                String line = reader.readLine();
-                if (line == null) {
-                    break;
+        // This method gets called a lot, so the performance is critical
+        // That's why the hand-written code
+
+        String indent = "    ";
+        StringBuilder r = new StringBuilder(string.length());
+        r.append(indent);
+        boolean lastCharIsNewLine = false;
+        for (int i = 0; i < string.length(); i++) {
+             char c = string.charAt(i);
+            r.append(c);
+            if (c == '\n') {
+                if (i != string.length() - 1) {
+                    r.append(indent);
                 }
-                r.append("    ");
-                r.append(line);
-                r.append("\n");
+                else {
+                    lastCharIsNewLine = true;
+                }
             }
-            return r.toString();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
+        if (!lastCharIsNewLine) {
+            r.append("\n");
+        }
+        return r.toString();
     }
-
-
 }
