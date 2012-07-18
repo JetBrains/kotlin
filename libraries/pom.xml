@@ -30,6 +30,10 @@
         <exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
     </properties>
 
+    <prerequisites>
+        <maven>3.0.3</maven>
+    </prerequisites>
+
     <distributionManagement>
         <repository>
             <uniqueVersion>false</uniqueVersion>
