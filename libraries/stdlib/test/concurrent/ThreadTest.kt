@@ -18,4 +18,14 @@ class ThreadTest {
         }
         assertTrue(countDown.await(2, SECONDS), "Count down is executed")
     }
+
+    test fun callableInvoke() {
+
+        val pool = Executors.newFixedThreadPool(1).sure()
+        val future = pool<String> {
+            "Hello"
+        }
+        assertEquals("Hello", future.get(2, SECONDS))
+    }
+
 }

@@ -1,6 +1,9 @@
 package kotlin.concurrent
 
 import java.util.concurrent.Executor
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Future
+import java.util.concurrent.Callable
 
 inline val currentThread : Thread
     get() = Thread.currentThread().sure()
@@ -58,3 +61,18 @@ public inline fun Executor.invoke(action: ()->Unit) {
     execute(runnable(action))
 }
 
+/**
+ * Executes the given block on the [[Executor]]
+ */
+public inline fun <T>ExecutorService.submit(action: ()->T):Future<T> {
+    val c:Callable<T> = callable(action)
+    return submit(c).sure();
+}
+
+/**
+* Allows you to use the executor as a function to
+* execute the given block on the [[Executor]].
+*/
+public inline fun <T>ExecutorService.invoke(action: ()->T):Future<T> {
+    return submit(action)
+}
