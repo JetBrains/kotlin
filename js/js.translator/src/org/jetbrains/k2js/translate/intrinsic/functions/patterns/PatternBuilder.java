@@ -43,6 +43,13 @@ public final class PatternBuilder {
     }
 
     @NotNull
+    public static Pattern pattern(@NotNull String stringWithPattern, @NotNull NameChecker checker) {
+        List<NameChecker> checkers = Lists.newArrayList(parseStringAsCheckerList(stringWithPattern));
+        checkers.add(checker);
+        return pattern(checkers);
+    }
+
+    @NotNull
     public static Pattern pattern(@NotNull String string) {
         List<NameChecker> checkers = parseStringAsCheckerList(string);
         return pattern(checkers);

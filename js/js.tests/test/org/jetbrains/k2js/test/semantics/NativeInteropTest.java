@@ -32,7 +32,7 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
     private static final String NATIVE = "native/";
 
     public NativeInteropTest() {
-        super("native/");
+        super(NATIVE);
     }
 
     @NotNull
