@@ -36,7 +36,7 @@ import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternB
 /**
  * @author Pavel Talanov
  */
-public final class NumberConversionFIF {
+public final class NumberConversionFIF extends CompositeFIF {
     @NotNull
     private static final NamePredicate SUPPORTED_CONVERSIONS;
 
@@ -74,12 +74,11 @@ public final class NumberConversionFIF {
     @NotNull
     public static final String FLOATING_POINT_NUMBER_TYPES = "Float|Double|Number";
     @NotNull
-    public static final FunctionIntrinsicFactory INSTANCE = FIFBuilder.start()
-            .add(pattern(INTEGER_NUMBER_TYPES, SUPPORTED_CONVERSIONS), RETURN_RECEIVER)
-            .add(pattern(FLOATING_POINT_NUMBER_TYPES, INTEGER_CONVERSIONS), new CallStandardMethodIntrinsic("Math.floor", true, 0))
-            .add(pattern(FLOATING_POINT_NUMBER_TYPES, FLOATING_POINT_CONVERSIONS), RETURN_RECEIVER)
-            .build();
+    public static final FunctionIntrinsicFactory INSTANCE = new NumberConversionFIF();
 
     private NumberConversionFIF() {
+        add(pattern(INTEGER_NUMBER_TYPES, SUPPORTED_CONVERSIONS), RETURN_RECEIVER);
+        add(pattern(FLOATING_POINT_NUMBER_TYPES, INTEGER_CONVERSIONS), new CallStandardMethodIntrinsic("Math.floor", true, 0));
+        add(pattern(FLOATING_POINT_NUMBER_TYPES, FLOATING_POINT_CONVERSIONS), RETURN_RECEIVER);
     }
 }

@@ -26,18 +26,17 @@ import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternB
 /**
  * @author Pavel Talanov
  */
-public final class TopLevelFIF {
+public final class TopLevelFIF extends CompositeFIF {
 
     @NotNull
     private static final DescriptorPredicate EXT_TO_STRING = pattern("toString");
 
     @NotNull
-    public static final FunctionIntrinsicFactory INSTANCE = FIFBuilder.start()
-            .add(EXT_TO_STRING, new BuiltInFunctionIntrinsic("toString"))
-                    //TODO: add intrinsic for calling equals explicitly
-            .add(pattern("arrayOfNulls"), new CallStandardMethodIntrinsic("Kotlin.nullArray", false, 1))
-            .build();
+    public static final FunctionIntrinsicFactory INSTANCE = new TopLevelFIF();
 
     private TopLevelFIF() {
+        add(EXT_TO_STRING, new BuiltInFunctionIntrinsic("toString"));
+        //TODO: add intrinsic for calling equals explicitly
+        add(pattern("arrayOfNulls"), new CallStandardMethodIntrinsic("Kotlin.nullArray", false, 1));
     }
 }

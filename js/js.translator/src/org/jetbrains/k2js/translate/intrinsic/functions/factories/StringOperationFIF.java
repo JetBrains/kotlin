@@ -35,7 +35,7 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 /**
  * @author Pavel Talanov
  */
-public final class StringOperationFIF {
+public final class StringOperationFIF extends CompositeFIF {
 
     @NotNull
     private static final DescriptorPredicate GET_PATTERN = pattern("String.get");
@@ -57,12 +57,11 @@ public final class StringOperationFIF {
     };
 
     @NotNull
-    public static final FunctionIntrinsicFactory INSTANCE = FIFBuilder.start()
-            .add(GET_PATTERN, GET_INTRINSIC)
-            .add(pattern("String.<get-length>"), new BuiltInPropertyIntrinsic("length"))
-            .add(pattern("CharSequence.<get-length>"), new BuiltInPropertyIntrinsic("length"))
-            .build();
+    public static final FunctionIntrinsicFactory INSTANCE = new StringOperationFIF();
 
     private StringOperationFIF() {
+        add(GET_PATTERN, GET_INTRINSIC);
+        add(pattern("String.<get-length>"), new BuiltInPropertyIntrinsic("length"));
+        add(pattern("CharSequence.<get-length>"), new BuiltInPropertyIntrinsic("length"));
     }
 }

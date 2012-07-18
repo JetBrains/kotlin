@@ -37,7 +37,7 @@ import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternB
 /**
  * @author Pavel Talanov
  */
-public final class ArrayFIF {
+public final class ArrayFIF extends CompositeFIF {
 
     @NotNull
     private static final NamePredicate ARRAYS;
@@ -85,15 +85,14 @@ public final class ArrayFIF {
     public static final BuiltInPropertyIntrinsic ARRAY_LENGTH_INTRINSIC = new BuiltInPropertyIntrinsic("length");
 
     @NotNull
-    public static final FunctionIntrinsicFactory INSTANCE = FIFBuilder.start()
-            .add(pattern(ARRAYS, "get"), GET_INTRINSIC)
-            .add(pattern(ARRAYS, "set"), SET_INTRINSIC)
-            .add(pattern(ARRAYS, "<get-size>"), ARRAY_LENGTH_INTRINSIC)
-            .add(pattern(ARRAYS, "<get-indices>"), new CallStandardMethodIntrinsic("Kotlin.arrayIndices", true, 0))
-            .add(pattern(ARRAYS, "iterator"), new CallStandardMethodIntrinsic("Kotlin.arrayIterator", true, 0))
-            .add(pattern(ARRAYS, "<init>"), new CallStandardMethodIntrinsic("Kotlin.arrayFromFun", false, 2))
-            .build();
+    public static final FunctionIntrinsicFactory INSTANCE = new ArrayFIF();
 
     private ArrayFIF() {
+        add(pattern(ARRAYS, "get"), GET_INTRINSIC);
+        add(pattern(ARRAYS, "set"), SET_INTRINSIC);
+        add(pattern(ARRAYS, "<get-size>"), ARRAY_LENGTH_INTRINSIC);
+        add(pattern(ARRAYS, "<get-indices>"), new CallStandardMethodIntrinsic("Kotlin.arrayIndices", true, 0));
+        add(pattern(ARRAYS, "iterator"), new CallStandardMethodIntrinsic("Kotlin.arrayIterator", true, 0));
+        add(pattern(ARRAYS, "<init>"), new CallStandardMethodIntrinsic("Kotlin.arrayFromFun", false, 2));
     }
 }
