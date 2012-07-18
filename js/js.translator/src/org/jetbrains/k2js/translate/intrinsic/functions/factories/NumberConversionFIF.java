@@ -27,8 +27,8 @@ import org.jetbrains.k2js.translate.intrinsic.functions.basic.CallStandardMethod
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NameChecker;
 
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
@@ -41,7 +41,7 @@ public final class NumberConversionFIF {
     private static final NameChecker SUPPORTED_CONVERSIONS;
 
     static {
-        HashSet<Name> supportedConversions = Sets.newHashSet(NUMBER_CONVERSIONS);
+        Set<Name> supportedConversions = Sets.newHashSet(NUMBER_CONVERSIONS);
         //TODO: support longs and chars
         supportedConversions.remove(CHAR);
         supportedConversions.remove(LONG);
@@ -71,8 +71,8 @@ public final class NumberConversionFIF {
     @NotNull
     public static final FunctionIntrinsicFactory INSTANCE = FIFBuilder.start()
             .add(pattern("Int", SUPPORTED_CONVERSIONS), RETURN_RECEIVER)
-            .add(pattern("Double", INTEGER_CONVERSIONS), new CallStandardMethodIntrinsic("Math.floor", true, 0))
-            .add(pattern("Double", FLOATING_POINT_CONVERSIONS), RETURN_RECEIVER)
+            .add(pattern("Double|Number", INTEGER_CONVERSIONS), new CallStandardMethodIntrinsic("Math.floor", true, 0))
+            .add(pattern("Double|Number", FLOATING_POINT_CONVERSIONS), RETURN_RECEIVER)
             .build();
 
     private NumberConversionFIF() {

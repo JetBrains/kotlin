@@ -33,4 +33,8 @@ public final class NumberTest extends SingleFileTranslationTest {
     public void testDoubleConversions() throws Exception {
         fooBoxTest();
     }
+
+    public void testNumberConversions() throws Exception {
+        fooBoxTest();
+    }
 }
