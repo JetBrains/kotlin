@@ -21,7 +21,9 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.intrinsic.functions.basic.CallStandardMethodIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NameChecker;
 
@@ -36,15 +38,22 @@ import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternB
  */
 public final class NumberConversionFIF {
     @NotNull
-    private static final NameChecker CONVERSIONS;
+    private static final NameChecker SUPPORTED_CONVERSIONS;
 
     static {
         HashSet<Name> supportedConversions = Sets.newHashSet(NUMBER_CONVERSIONS);
         //TODO: support longs and chars
         supportedConversions.remove(CHAR);
         supportedConversions.remove(LONG);
-        CONVERSIONS = new NameChecker(supportedConversions);
+        SUPPORTED_CONVERSIONS = new NameChecker(supportedConversions);
     }
+
+    @NotNull
+    private static final NameChecker FLOATING_POINT_CONVERSIONS = new NameChecker(OperatorConventions.FLOAT, OperatorConventions.DOUBLE);
+
+    @NotNull
+    private static final NameChecker INTEGER_CONVERSIONS = new NameChecker(OperatorConventions.INT, OperatorConventions.SHORT,
+                                                                           OperatorConventions.BYTE);
 
     @NotNull
     private static final FunctionIntrinsic RETURN_RECEIVER = new FunctionIntrinsic() {
@@ -61,7 +70,9 @@ public final class NumberConversionFIF {
 
     @NotNull
     public static final FunctionIntrinsicFactory INSTANCE = FIFBuilder.start()
-            .add(pattern("Int", CONVERSIONS), RETURN_RECEIVER)
+            .add(pattern("Int", SUPPORTED_CONVERSIONS), RETURN_RECEIVER)
+            .add(pattern("Double", INTEGER_CONVERSIONS), new CallStandardMethodIntrinsic("Math.floor", true, 0))
+            .add(pattern("Double", FLOATING_POINT_CONVERSIONS), RETURN_RECEIVER)
             .build();
 
     private NumberConversionFIF() {

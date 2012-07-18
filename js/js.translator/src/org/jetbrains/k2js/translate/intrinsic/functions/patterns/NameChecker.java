@@ -49,6 +49,10 @@ public final class NameChecker {
         this.validNames.addAll(validNames);
     }
 
+    public NameChecker(@NotNull Name... validNames) {
+        this.validNames.addAll(Lists.newArrayList(validNames));
+    }
+
     public boolean isValid(@NotNull Name name) {
         for (Name validName : validNames) {
             if (name.equals(validName)) {

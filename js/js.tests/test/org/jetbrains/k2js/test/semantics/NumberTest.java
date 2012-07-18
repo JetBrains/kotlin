@@ -29,4 +29,8 @@ public final class NumberTest extends SingleFileTranslationTest {
     public void testIntConversions() throws Exception {
         fooBoxTest();
     }
+
+    public void testDoubleConversions() throws Exception {
+        fooBoxTest();
+    }
 }
