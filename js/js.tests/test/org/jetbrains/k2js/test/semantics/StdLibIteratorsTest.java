@@ -23,8 +23,11 @@ import junit.framework.Test;
  */
 //NOTE: well, it has tests
 @SuppressWarnings("JUnitTestCaseWithNoTests")
-public final class StdLibListTest extends JsUnitTestBase {
+public final class StdLibIteratorsTest extends JsUnitTestBase {
     public static Test suite() throws Exception {
-        return createTestSuiteForFile("libraries/stdlib/test/ListTest.kt");
+        return createTestSuiteForFile("libraries/stdlib/test/iterators/IteratorsTest.kt",
+                                      "IteratorsTest.requireNoNulls",
+                                      "IteratorsTest.plus",
+                                      "IteratorsTest.plusCollection");
     }
 }
