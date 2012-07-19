@@ -147,6 +147,9 @@ public class ResolveSession {
         Name name = classOrObject.getNameAsName();
         assert name != null : "Name is null for " + classOrObject + " " + classOrObject.getText();
         ClassifierDescriptor classifier = resolutionScope.getClassifier(name);
+        if (classifier == null) {
+            throw new IllegalArgumentException("Could not find a classifier for " + classOrObject + " " + classOrObject.getText());
+        }
         return (ClassDescriptor) classifier;
     }
 
