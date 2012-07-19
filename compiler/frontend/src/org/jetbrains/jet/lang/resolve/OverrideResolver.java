@@ -39,7 +39,6 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.DELEGATED;
 import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
 
 /**
@@ -392,11 +391,11 @@ public class OverrideResolver {
     private void checkOverrideForMember(@NotNull CallableMemberDescriptor declared) {
         JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
         if (member == null) {
-            Boolean delegated = trace.get(DELEGATED, declared);
-            if (delegated == null || !delegated)
+            if (declared.getKind() != CallableMemberDescriptor.Kind.DELEGATION)
                 throw new IllegalStateException(
                         "decriptor is not resolved to declaration" +
-                        " and it is not delegate: " + declared + ", DELEGATED: " + delegated);
+                        " and it is not delegate: " + declared + ", DELEGATED: " +
+                        (declared.getKind() == CallableMemberDescriptor.Kind.DELEGATION));
             return;
         }
 

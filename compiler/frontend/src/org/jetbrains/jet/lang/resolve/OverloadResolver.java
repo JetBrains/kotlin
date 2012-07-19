@@ -31,8 +31,6 @@ import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.DELEGATED;
-
 /**
  * @author Stepan Koltsov
  */
@@ -196,7 +194,7 @@ public class OverloadResolver {
                 if (!overloadable.isSuccess()) {
                     JetDeclaration jetDeclaration = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), member);
                     if (jetDeclaration == null) {
-                        assert trace.get(DELEGATED, member);
+                        assert member.getKind() == CallableMemberDescriptor.Kind.DELEGATION;
                         return;
                     }
 
