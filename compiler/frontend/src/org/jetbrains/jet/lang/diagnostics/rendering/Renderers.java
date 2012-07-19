@@ -170,17 +170,17 @@ public class Renderers {
 
     public static TabledDescriptorRenderer renderConflictingSubstitutionsInferenceError(InferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer result) {
-        assert inferenceErrorData.constraintsSystem.hasConflictingConstraints();
+        assert inferenceErrorData.constraintSystem.hasConflictingConstraints();
 
         Collection<CallableDescriptor> substitutedDescriptors = Lists.newArrayList();
         Collection<TypeSubstitutor> substitutors = ConstraintsUtil.getSubstitutorsForConflictingParameters(
-                inferenceErrorData.constraintsSystem);
+                inferenceErrorData.constraintSystem);
         for (TypeSubstitutor substitutor : substitutors) {
             CallableDescriptor substitutedDescriptor = inferenceErrorData.descriptor.substitute(substitutor);
             substitutedDescriptors.add(substitutedDescriptor);
         }
 
-        TypeParameterDescriptor firstConflictingParameter = ConstraintsUtil.getFirstConflictingParameter(inferenceErrorData.constraintsSystem);
+        TypeParameterDescriptor firstConflictingParameter = ConstraintsUtil.getFirstConflictingParameter(inferenceErrorData.constraintSystem);
         assert firstConflictingParameter != null;
 
         result.text(newText()
@@ -232,7 +232,7 @@ public class Renderers {
             @Override
             public boolean apply(@Nullable ConstraintPosition constraintPosition) {
                 assert constraintPosition != null;
-                return inferenceErrorData.constraintsSystem.hasTypeConstructorMismatchAt(constraintPosition);
+                return inferenceErrorData.constraintSystem.hasTypeConstructorMismatchAt(constraintPosition);
             }
         };
         return renderer.table(TabledDescriptorRenderer.newTable()
@@ -247,8 +247,8 @@ public class Renderers {
     public static TabledDescriptorRenderer renderNoInformationForParameterError(InferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer renderer) {
         TypeParameterDescriptor firstUnknownParameter = null;
-        for (TypeParameterDescriptor typeParameter : inferenceErrorData.constraintsSystem.getTypeVariables()) {
-            if (inferenceErrorData.constraintsSystem.getTypeConstraints(typeParameter).isEmpty()) {
+        for (TypeParameterDescriptor typeParameter : inferenceErrorData.constraintSystem.getTypeVariables()) {
+            if (inferenceErrorData.constraintSystem.getTypeConstraints(typeParameter).isEmpty()) {
                 firstUnknownParameter = typeParameter;
                 break;
             }
@@ -267,7 +267,7 @@ public class Renderers {
     public static TabledDescriptorRenderer renderUpperBoundViolatedInferenceError(InferenceErrorData inferenceErrorData, TabledDescriptorRenderer result) {
         TypeParameterDescriptor typeParameterDescriptor = null;
         for (TypeParameterDescriptor typeParameter : inferenceErrorData.descriptor.getTypeParameters()) {
-            if (!ConstraintsUtil.checkUpperBoundIsSatisfied(inferenceErrorData.constraintsSystem, typeParameter)) {
+            if (!ConstraintsUtil.checkUpperBoundIsSatisfied(inferenceErrorData.constraintSystem, typeParameter)) {
                 typeParameterDescriptor = typeParameter;
                 break;
             }
@@ -278,9 +278,9 @@ public class Renderers {
                 .table(newTable().
                         descriptor(inferenceErrorData.descriptor));
 
-        JetType type = ConstraintsUtil.getValue(inferenceErrorData.constraintsSystem.getTypeConstraints(typeParameterDescriptor));
+        JetType type = ConstraintsUtil.getValue(inferenceErrorData.constraintSystem.getTypeConstraints(typeParameterDescriptor));
         JetType upperBound = typeParameterDescriptor.getUpperBoundsAsType();
-        JetType substitute = inferenceErrorData.constraintsSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
+        JetType substitute = inferenceErrorData.constraintSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
 
         result.text(newText()
                             .normal(" is not satisfied: inferred type ")

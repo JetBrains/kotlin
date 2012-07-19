@@ -29,27 +29,27 @@ import java.util.List;
  */
 public class InferenceErrorData {
     public final CallableDescriptor descriptor;
-    public final ConstraintsSystem constraintsSystem;
+    public final ConstraintSystem constraintSystem;
     public final JetType receiverArgumentType;
     public final JetType expectedType;
     public final List<JetType> valueArgumentsTypes;
 
-    private InferenceErrorData(@NotNull CallableDescriptor descriptor, @NotNull ConstraintsSystem constraintsSystem,
+    private InferenceErrorData(@NotNull CallableDescriptor descriptor, @NotNull ConstraintSystem constraintSystem,
             @Nullable List<JetType> valueArgumentsTypes, @Nullable JetType receiverArgumentType, @Nullable JetType expectedType) {
         this.descriptor = descriptor;
-        this.constraintsSystem = constraintsSystem;
+        this.constraintSystem = constraintSystem;
         this.receiverArgumentType = receiverArgumentType;
         this.valueArgumentsTypes = valueArgumentsTypes;
         this.expectedType = expectedType;
     }
 
-    public static InferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintsSystem constraintsSystem,
+    public static InferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintSystem constraintSystem,
             @NotNull List<JetType> valueArgumentsTypes, @Nullable JetType receiverArgumentType, @Nullable JetType expectedType) {
-        return new InferenceErrorData(descriptor, constraintsSystem, valueArgumentsTypes, receiverArgumentType,
+        return new InferenceErrorData(descriptor, constraintSystem, valueArgumentsTypes, receiverArgumentType,
                                       expectedType != TypeUtils.NO_EXPECTED_TYPE ? expectedType : null);
     }
 
-    public static InferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintsSystem constraintsSystem) {
-        return new InferenceErrorData(descriptor, constraintsSystem, null, null, null);
+    public static InferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintSystem constraintSystem) {
+        return new InferenceErrorData(descriptor, constraintSystem, null, null, null);
     }
 }

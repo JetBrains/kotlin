@@ -28,7 +28,7 @@ import java.util.Set;
 /**
  * @author svtk
  */
-public interface ConstraintsSystem {
+public interface ConstraintSystem {
 
     /**
      * Registers a variable in a constraint system.

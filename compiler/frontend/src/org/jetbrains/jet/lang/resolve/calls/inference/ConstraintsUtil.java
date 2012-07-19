@@ -84,9 +84,9 @@ public class ConstraintsUtil {
 
 
     @Nullable
-    public static TypeParameterDescriptor getFirstConflictingParameter(@NotNull ConstraintsSystem constraintsSystem) {
-        for (TypeParameterDescriptor typeParameter : constraintsSystem.getTypeVariables()) {
-            TypeConstraints constraints = constraintsSystem.getTypeConstraints(typeParameter);
+    public static TypeParameterDescriptor getFirstConflictingParameter(@NotNull ConstraintSystem constraintSystem) {
+        for (TypeParameterDescriptor typeParameter : constraintSystem.getTypeVariables()) {
+            TypeConstraints constraints = constraintSystem.getTypeConstraints(typeParameter);
             if (getValues(constraints).size() > 1) {
                 return typeParameter;
             }
@@ -95,11 +95,11 @@ public class ConstraintsUtil {
     }
 
     @NotNull
-    public static Collection<TypeSubstitutor> getSubstitutorsForConflictingParameters(@NotNull ConstraintsSystem constraintsSystem) {
-        TypeParameterDescriptor firstConflictingParameter = getFirstConflictingParameter(constraintsSystem);
+    public static Collection<TypeSubstitutor> getSubstitutorsForConflictingParameters(@NotNull ConstraintSystem constraintSystem) {
+        TypeParameterDescriptor firstConflictingParameter = getFirstConflictingParameter(constraintSystem);
         if (firstConflictingParameter == null) return Collections.emptyList();
 
-        Collection<JetType> conflictingTypes = getValues(constraintsSystem.getTypeConstraints(firstConflictingParameter));
+        Collection<JetType> conflictingTypes = getValues(constraintSystem.getTypeConstraints(firstConflictingParameter));
 
         ArrayList<Map<TypeConstructor, TypeProjection>> substitutionContexts = Lists.newArrayList();
         for (JetType type : conflictingTypes) {
@@ -108,10 +108,10 @@ public class ConstraintsUtil {
             substitutionContexts.add(context);
         }
 
-        for (TypeParameterDescriptor typeParameter : constraintsSystem.getTypeVariables()) {
+        for (TypeParameterDescriptor typeParameter : constraintSystem.getTypeVariables()) {
             if (typeParameter == firstConflictingParameter) continue;
 
-            JetType safeType = getSafeValue(constraintsSystem, typeParameter);
+            JetType safeType = getSafeValue(constraintSystem, typeParameter);
             for (Map<TypeConstructor, TypeProjection> context : substitutionContexts) {
                 TypeProjection typeProjection = new TypeProjection(safeType);
                 context.put(typeParameter.getTypeConstructor(), typeProjection);
@@ -125,8 +125,8 @@ public class ConstraintsUtil {
     }
 
     @NotNull
-    public static JetType getSafeValue(@NotNull ConstraintsSystem constraintsSystem, @NotNull TypeParameterDescriptor typeParameter) {
-        TypeConstraints constraints = constraintsSystem.getTypeConstraints(typeParameter);
+    public static JetType getSafeValue(@NotNull ConstraintSystem constraintSystem, @NotNull TypeParameterDescriptor typeParameter) {
+        TypeConstraints constraints = constraintSystem.getTypeConstraints(typeParameter);
         JetType type = getValue(constraints);
         if (type != null) {
             return type;
@@ -135,13 +135,13 @@ public class ConstraintsUtil {
         return typeParameter.getUpperBoundsAsType();
     }
 
-    public static boolean checkUpperBoundIsSatisfied(@NotNull ConstraintsSystem constraintsSystem,
+    public static boolean checkUpperBoundIsSatisfied(@NotNull ConstraintSystem constraintSystem,
             @NotNull TypeParameterDescriptor typeParameter) {
-        TypeConstraints typeConstraints = constraintsSystem.getTypeConstraints(typeParameter);
+        TypeConstraints typeConstraints = constraintSystem.getTypeConstraints(typeParameter);
         assert typeConstraints != null;
         JetType type = getValue(typeConstraints);
         JetType upperBound = typeParameter.getUpperBoundsAsType();
-        JetType substitute = constraintsSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
+        JetType substitute = constraintSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
 
         if (type != null) {
             if (substitute == null || !JetTypeChecker.INSTANCE.isSubtypeOf(type, substitute)) {
@@ -151,11 +151,11 @@ public class ConstraintsUtil {
         return true;
     }
 
-    public static boolean checkBoundsAreSatisfied(ConstraintsSystem constraintsSystem) {
-        for (TypeParameterDescriptor typeVariable : constraintsSystem.getTypeVariables()) {
-            JetType type = getValue(constraintsSystem.getTypeConstraints(typeVariable));
+    public static boolean checkBoundsAreSatisfied(ConstraintSystem constraintSystem) {
+        for (TypeParameterDescriptor typeVariable : constraintSystem.getTypeVariables()) {
+            JetType type = getValue(constraintSystem.getTypeConstraints(typeVariable));
             JetType upperBound = typeVariable.getUpperBoundsAsType();
-            JetType substitutedType = constraintsSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
+            JetType substitutedType = constraintSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
 
             if (type != null) {
                 if (substitutedType == null || !JetTypeChecker.INSTANCE.isSubtypeOf(type, substitutedType)) {

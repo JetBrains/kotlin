@@ -32,7 +32,7 @@ import java.util.*;
 /**
  * @author svtk
  */
-public class ConstraintsSystemImpl implements ConstraintsSystem {
+public class ConstraintSystemImpl implements ConstraintSystem {
 
     public static final JetType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
 
@@ -42,7 +42,7 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
     private final TypeSubstitutor currentSubstitutor;
     private boolean hasErrorInConstrainingTypes;
 
-    public ConstraintsSystemImpl() {
+    public ConstraintSystemImpl() {
         this.resultingSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(null);
         this.currentSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjection(DONT_CARE));
     }
@@ -105,8 +105,8 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
     }
 
     @NotNull
-    public ConstraintsSystemImpl replaceTypeVariables(@NotNull Map<TypeParameterDescriptor, TypeParameterDescriptor> typeVariablesMap) {
-        ConstraintsSystemImpl newConstraintSystem = new ConstraintsSystemImpl();
+    public ConstraintSystemImpl replaceTypeVariables(@NotNull Map<TypeParameterDescriptor, TypeParameterDescriptor> typeVariablesMap) {
+        ConstraintSystemImpl newConstraintSystem = new ConstraintSystemImpl();
         for (Map.Entry<TypeParameterDescriptor, TypeConstraintsImpl> entry : typeParameterConstraints.entrySet()) {
             TypeParameterDescriptor typeParameter = entry.getKey();
             TypeConstraintsImpl typeConstraints = entry.getValue();
