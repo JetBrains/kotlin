@@ -46,23 +46,14 @@ import java.util.*;
  */
 public class NamespaceComparator {
 
-    private final boolean includeObject;
-    private final Predicate<NamespaceDescriptor> includeIntoOutput;
-
-    private NamespaceComparator(boolean includeObject, Predicate<NamespaceDescriptor> includeIntoOutput) {
-        this.includeObject = includeObject;
-        this.includeIntoOutput = includeIntoOutput;
-    }
-
     public static void compareNamespaces(
-        @NotNull NamespaceDescriptor nsa,
-        @NotNull NamespaceDescriptor nsb,
-        boolean includeObject,
-        @NotNull File txtFile
+            @NotNull NamespaceDescriptor nsa,
+            @NotNull NamespaceDescriptor nsb,
+            boolean includeObject,
+            @NotNull File txtFile
     ) {
         compareNamespaces(nsa, nsb, includeObject, Predicates.<NamespaceDescriptor>alwaysTrue(), txtFile);
     }
-
     public static void compareNamespaces(
             @NotNull NamespaceDescriptor nsa,
             @NotNull NamespaceDescriptor nsb,
@@ -96,10 +87,13 @@ public class NamespaceComparator {
         return new NamespaceComparator(includeObject, includeIntoOutput).doCompareNamespaces(nsa, nsb);
     }
 
-    private static <T extends Comparable<T>> List<T> sorted(Collection<T> items) {
-        List<T> r = new ArrayList<T>(items);
-        Collections.sort(r);
-        return r;
+    private final boolean includeObject;
+
+    private final Predicate<NamespaceDescriptor> includeIntoOutput;
+
+    private NamespaceComparator(boolean includeObject, Predicate<NamespaceDescriptor> includeIntoOutput) {
+        this.includeObject = includeObject;
+        this.includeIntoOutput = includeIntoOutput;
     }
 
     private String doCompareNamespaces(@NotNull NamespaceDescriptor nsa, @NotNull NamespaceDescriptor nsb) {
@@ -766,5 +760,11 @@ public class NamespaceComparator {
             r.append("\n");
         }
         return r.toString();
+    }
+
+    private static <T extends Comparable<T>> List<T> sorted(Collection<T> items) {
+        List<T> r = new ArrayList<T>(items);
+        Collections.sort(r);
+        return r;
     }
 }
