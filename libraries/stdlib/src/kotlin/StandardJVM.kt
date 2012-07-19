@@ -10,6 +10,7 @@ import java.util.SortedSet
 import java.util.Comparator
 import java.io.PrintWriter
 import java.io.PrintStream
+import java.util.concurrent.Callable
 
 /**
  * Add iterated elements to a [[LinkedHashSet]] to preserve insertion order
@@ -44,3 +45,12 @@ public inline fun Throwable.printStackTrace(stream: PrintStream): Unit {
     jlt.printStackTrace(stream)
 }
 
+
+/**
+ * A helper method for creating a [[Callable]] from a function
+ */
+public inline fun <T> callable(action: ()-> T): Callable<T> {
+    return object: Callable<T> {
+        public override fun call() = action()
+    }
+}
