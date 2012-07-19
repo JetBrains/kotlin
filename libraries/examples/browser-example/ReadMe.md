@@ -14,9 +14,9 @@ To run the example try:
 
 This should open a browser which then shows some simple HTML which then includes some dynamically generated content.
 
-## Running the sample on Java 7 with JavaFX and KoolApp's browser
+## Running the sample on Java 7 with JavaFX and [kool.io](http://kool.io/)'s browser
 
-You can also run the sample as Java code on a JVM using JavaFX (which includes its own webkit rendering engine for HTML / CSS / JS support) using the [KoolApp JavaFX browser](https://github.com/koolapp/koolapp/blob/master/koolapp-javafx/ReadMe.md).
+You can also run the sample as Java code on a JVM using JavaFX (which includes its own webkit rendering engine for HTML / CSS / JS support) using the [kool.io JavaFX browser](https://github.com/koolio/kool/blob/master/samples/kool-template-sample/ReadMe.md).
 
 First you need to install [Java 7 update 4](http://www.oracle.com/technetwork/java/javase/overview/index.html) or later which ships with JavaFX.
 
@@ -35,8 +35,8 @@ which should find the javafx jar.
 
 To run the sample try...
 
-    mvn -Pjavafx
+    mvn test -Pjavafx
 
-Assuming you've Java 7 enabled and JAVA_HOME points to the JRE/JDK for Java 7 or later.
+Assuming you've Java 7 enabled and JAVA_HOME points to the JRE/JDK for Java 7 or later which includes JavaFX.
 
 This should popup a JVM process with an embedded webkit based browser running the application; using the compiled bytecode on the JVM rather than JavaScript.
