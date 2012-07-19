@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
@@ -105,13 +106,13 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     @NotNull
-    public ConstraintSystemImpl replaceTypeVariables(@NotNull Map<TypeParameterDescriptor, TypeParameterDescriptor> typeVariablesMap) {
+    public ConstraintSystem replaceTypeVariables(@NotNull Function<TypeParameterDescriptor, TypeParameterDescriptor> typeVariablesMap) {
         ConstraintSystemImpl newConstraintSystem = new ConstraintSystemImpl();
         for (Map.Entry<TypeParameterDescriptor, TypeConstraintsImpl> entry : typeParameterConstraints.entrySet()) {
             TypeParameterDescriptor typeParameter = entry.getKey();
             TypeConstraintsImpl typeConstraints = entry.getValue();
 
-            TypeParameterDescriptor newTypeParameter = typeVariablesMap.get(typeParameter);
+            TypeParameterDescriptor newTypeParameter = typeVariablesMap.apply(typeParameter);
             assert newTypeParameter != null;
             newConstraintSystem.typeParameterConstraints.put(newTypeParameter, typeConstraints);
         }

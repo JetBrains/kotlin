@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.calls;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -689,7 +690,7 @@ public class CallResolver {
 
     private <D extends CallableDescriptor, F extends D> ResolutionStatus inferTypeArguments(CallResolutionContext<D, F> context) {
         ResolvedCallImpl<D> candidateCall = context.candidateCall;
-        D candidate = candidateCall.getCandidateDescriptor();
+        final D candidate = candidateCall.getCandidateDescriptor();
 
         ResolutionDebugInfo.Data debugInfo = context.trace.get(ResolutionDebugInfo.RESOLUTION_DEBUG_INFO, context.call.getCallElement());
 
@@ -741,12 +742,13 @@ public class CallResolver {
                                                      ConstraintPosition.RECEIVER_POSITION);
         }
 
-        Map<TypeParameterDescriptor, TypeParameterDescriptor> typeVariablesMap = Maps.newLinkedHashMap();
-        for (TypeParameterDescriptor typeParameterDescriptor : candidate.getTypeParameters()) {
-            typeVariablesMap.put(candidateWithFreshVariables.getTypeParameters().get(typeParameterDescriptor.getIndex()),
-                                   typeParameterDescriptor);
-        }
-        ConstraintSystem constraintBuilderWithRightTypeParameters = constraintsSystem.replaceTypeVariables(typeVariablesMap);
+        ConstraintSystem constraintBuilderWithRightTypeParameters = constraintsSystem.replaceTypeVariables(new Function<TypeParameterDescriptor, TypeParameterDescriptor>() {
+            @Override
+            public TypeParameterDescriptor apply(@Nullable TypeParameterDescriptor typeParameterDescriptor) {
+                assert typeParameterDescriptor != null;
+                return candidate.getTypeParameters().get(typeParameterDescriptor.getIndex());
+            }
+        });
         candidateCall.setConstraintSystem(constraintBuilderWithRightTypeParameters);
 
 
