@@ -93,6 +93,7 @@ public class DeclarationResolver {
         resolveFunctionAndPropertyHeaders();
         importsResolver.processMembersImports(rootScope);
         checkRedeclarationsInNamespaces();
+        checkClassObjectInnerClassNames();
     }
 
 
@@ -313,5 +314,27 @@ public class DeclarationResolver {
             declarations = Collections.singletonList(BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declarationDescriptor));
         }
         return declarations;
+    }
+
+    private void checkClassObjectInnerClassNames() {
+        for (MutableClassDescriptor classDescriptor : context.getClasses().values()) {
+            MutableClassDescriptorLite classObj = classDescriptor.getClassObjectDescriptor();
+            if (classObj == null) {
+                continue;
+            }
+
+            Collection<ClassDescriptor> myInnerClasses = classDescriptor.getInnerClasses();
+            Collection<ClassDescriptor> classObjInnerClasses = classObj.getInnerClasses();
+
+            for (ClassDescriptor myInnerClass : myInnerClasses) {
+                for (ClassDescriptor classObjInnerClass : classObjInnerClasses) {
+                    if (myInnerClass.getName().equals(classObjInnerClass.getName())) {
+                        trace.report(REDECLARATION.on(BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), myInnerClass), myInnerClass.getName().getName()));
+                        trace.report(REDECLARATION.on(BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classObjInnerClass), classObjInnerClass.getName().getName()));
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
