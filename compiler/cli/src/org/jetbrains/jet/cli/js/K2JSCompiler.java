@@ -52,7 +52,6 @@ import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_L
  * @author Pavel Talanov
  */
 public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompileEnvironmentConfiguration> {
-
     public static void main(String... args) {
         doMain(new K2JSCompiler(), args);
     }
@@ -62,7 +61,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
     protected K2JSCompilerArguments createArguments() {
         return new K2JSCompilerArguments();
     }
-
 
     @NotNull
     @Override
@@ -157,9 +155,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
         String moduleId = FileUtil.getNameWithoutExtension(new File(arguments.outputFile));
         if (arguments.libraryFiles != null) {
             return new LibrarySourcesConfig(project, moduleId, Arrays.asList(arguments.libraryFiles), ecmaVersion);
-        } if (arguments.libraryDirectories != null) {
-            return new LibrarySourceDirectoriesConfig(project, moduleId, arguments.libraryDirectories, ecmaVersion);
-        } else {
+        }
+        else {
             // lets discover the JS library definitions on the classpath
             return new ClassPathLibraryDefintionsConfig(project, moduleId, ecmaVersion);
         }

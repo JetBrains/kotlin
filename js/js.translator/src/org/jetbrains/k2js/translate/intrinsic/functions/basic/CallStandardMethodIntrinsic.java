@@ -16,10 +16,11 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.basic;
 
-import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -27,7 +28,6 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.atLocation;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.newInvocation;
 
 /**
  * @author Pavel Talanov
@@ -54,7 +54,7 @@ public final class CallStandardMethodIntrinsic extends FunctionIntrinsic {
         assert (receiver != null == receiverShouldBeNotNull);
         assert arguments.size() == expectedParamsNumber : errorMessage(receiver, arguments);
         JsNameRef iteratorFunName = AstUtil.newQualifiedNameRef(methodName);
-        return newInvocation(iteratorFunName, composeArguments(receiver, arguments));
+        return new JsInvocation(iteratorFunName, composeArguments(receiver, arguments));
     }
 
     @NotNull
@@ -66,8 +66,7 @@ public final class CallStandardMethodIntrinsic extends FunctionIntrinsic {
     @NotNull
     private static List<JsExpression> composeArguments(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments) {
         if (receiver != null) {
-            List<JsExpression> args = Lists.newArrayList();
-            args.add(receiver);
+            List<JsExpression> args = new SmartList<JsExpression>(receiver);
             args.addAll(arguments);
             return args;
         }

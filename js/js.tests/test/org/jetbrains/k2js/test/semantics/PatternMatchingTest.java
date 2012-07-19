@@ -23,7 +23,6 @@ import org.mozilla.javascript.JavaScriptException;
  * @author Pavel Talanov
  */
 public final class PatternMatchingTest extends SingleFileTranslationTest {
-
     public PatternMatchingTest() {
         super("patternMatching/");
     }
@@ -73,7 +72,7 @@ public final class PatternMatchingTest extends SingleFileTranslationTest {
             fooBoxTest();
             fail();
         }
-        catch (JavaScriptException e) {
+        catch (JavaScriptException ignored) {
         }
     }
 

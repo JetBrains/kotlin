@@ -25,7 +25,6 @@ import java.util.EnumSet;
  * @author Pavel Talanov
  */
 public final class ObjectTest extends SingleFileTranslationTest {
-
     public ObjectTest() {
         super("object/");
     }
@@ -34,12 +33,7 @@ public final class ObjectTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-
     public void testObjectDeclaration() throws Exception {
-        fooBoxTest();
-    }
-
-    public void testObjectDeclarationWithVars() throws Exception {
         fooBoxTest();
     }
 
@@ -51,9 +45,7 @@ public final class ObjectTest extends SingleFileTranslationTest {
         fooBoxTest(EnumSet.noneOf(EcmaVersion.class));
     }
 
-
     public void testObjectInheritingFromATrait() throws Exception {
         fooBoxTest();
     }
-
 }

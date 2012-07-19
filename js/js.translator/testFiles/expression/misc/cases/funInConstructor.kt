@@ -1,17 +1,18 @@
 package foo
 
 class A() {
+    fun lold() = true
 
-  fun lold() = true
-
-  val p = {{lold()}()}
+    val p = {{
+        lold()
+    }()
+    }
 }
 
-
-fun box() : Boolean {
-  return A().p()
+fun box(): Boolean {
+    return A().p()
 }
 
-fun main(arg : Array<String>) {
+fun main(arg: Array<String>) {
     println(box())
 }

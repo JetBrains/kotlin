@@ -16,10 +16,8 @@
 
 package org.jetbrains.k2js.translate.expression;
 
-import com.google.dart.compiler.backend.js.ast.JsBlock;
-import com.google.dart.compiler.backend.js.ast.JsCatch;
-import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.backend.js.ast.JsTry;
+import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
@@ -27,10 +25,9 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToBlock;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.asBlock;
 
 /**
  * @author Pavel Talanov
@@ -55,11 +52,7 @@ public final class TryTranslator extends AbstractTranslator {
     }
 
     private JsTry translate() {
-        JsTry result = new JsTry();
-        result.setTryBlock(translateTryBlock());
-        result.setFinallyBlock(translateFinallyBlock());
-        result.getCatches().addAll(translateCatches());
-        return result;
+        return new JsTry(translateTryBlock(), translateCatches(), translateFinallyBlock());
     }
 
     @Nullable
@@ -67,18 +60,17 @@ public final class TryTranslator extends AbstractTranslator {
         JetFinallySection finallyBlock = expression.getFinallyBlock();
         if (finallyBlock == null) return null;
 
-        return convertToBlock(Translation.translateAsStatement(finallyBlock.getFinalExpression(), context()));
+        return asBlock(Translation.translateAsStatement(finallyBlock.getFinalExpression(), context()));
     }
 
     @NotNull
     private JsBlock translateTryBlock() {
-        return convertToBlock(Translation.translateAsStatement(expression.getTryBlock(), context()));
+        return asBlock(Translation.translateAsStatement(expression.getTryBlock(), context()));
     }
-
 
     @NotNull
     private List<JsCatch> translateCatches() {
-        List<JsCatch> result = new ArrayList<JsCatch>();
+        List<JsCatch> result = new SmartList<JsCatch>();
         for (JetCatchClause catchClause : expression.getCatchClauses()) {
             result.add(translateCatchClause(catchClause));
         }
@@ -91,7 +83,7 @@ public final class TryTranslator extends AbstractTranslator {
         assert catchParameter != null : "Valid catch must have a parameter.";
 
         JsName parameterName = context().getNameForElement(catchParameter);
-        JsCatch result = new JsCatch(context().jsScope(), parameterName.getIdent());
+        JsCatch result = new JsCatch(context().scope(), parameterName.getIdent());
         result.setBody(translateCatchBody(catchClause));
         return result;
     }
@@ -100,9 +92,9 @@ public final class TryTranslator extends AbstractTranslator {
     private JsBlock translateCatchBody(@NotNull JetCatchClause catchClause) {
         JetExpression catchBody = catchClause.getCatchBody();
         if (catchBody == null) {
-            return convertToBlock(program().getEmptyStmt());
+            return asBlock(program().getEmptyStmt());
         }
-        return convertToBlock(Translation.translateAsStatement(catchBody, context()));
+        return asBlock(Translation.translateAsStatement(catchBody, context()));
     }
 
 }

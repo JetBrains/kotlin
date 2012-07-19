@@ -16,8 +16,8 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.patterns;
 
-import closurecompiler.internal.com.google.common.collect.Lists;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;

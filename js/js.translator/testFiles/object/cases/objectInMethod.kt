@@ -1,9 +1,7 @@
 package foo
 
 class A() {
-
-    fun f() : Boolean {
-
+    fun f(): Boolean {
         object t {
             val c = true;
         }
@@ -12,7 +10,6 @@ class A() {
         }
         return t.c && z.c
     }
-
 }
 
 fun box() = A().f();

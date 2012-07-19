@@ -18,15 +18,14 @@ package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsName;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.qualified;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedThisDescriptor;
 
 /**
@@ -72,7 +71,7 @@ public final class NativePropertyAccessTranslator extends PropertyAccessTranslat
     private JsExpression doTranslateAsGet(JsExpression receiver) {
         JsName nativePropertyName = context().getNameForDescriptor(propertyDescriptor);
         if (receiver != null) {
-            return qualified(nativePropertyName, receiver);
+            return new JsNameRef(nativePropertyName, receiver);
         }
         else {
             return nativePropertyName.makeRef();
@@ -108,7 +107,7 @@ public final class NativePropertyAccessTranslator extends PropertyAccessTranslat
         if (expectedThisDescriptor == null) {
             return null;
         }
-        return TranslationUtils.getThisObject(context(), expectedThisDescriptor);
+        return context().getThisObject(expectedThisDescriptor);
     }
 
     @NotNull

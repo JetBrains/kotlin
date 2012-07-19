@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,6 @@ import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredi
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.newInvocation;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 
 /**
@@ -52,7 +52,7 @@ public final class StringOperationFIF extends CompositeFIF {
             //TODO: provide better way
             JsNameRef charAtReference = AstUtil.newQualifiedNameRef("charAt");
             setQualifier(charAtReference, receiver);
-            return newInvocation(charAtReference, arguments);
+            return new JsInvocation(charAtReference, arguments);
         }
     };
 

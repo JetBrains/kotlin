@@ -17,10 +17,7 @@
 package org.jetbrains.k2js.translate.reference;
 
 import com.google.common.collect.Maps;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.backend.js.ast.JsNode;
-import com.google.dart.compiler.backend.js.ast.JsReturn;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
@@ -79,9 +76,9 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
         TranslationContext contextWithAllParametersAliased = createContextForInlining();
         JsNode translatedBody = translateFunctionBody(getFunctionDescriptor(), getFunctionBody(), contextWithAllParametersAliased);
         //TODO: declare uninitialized temporary
-        TemporaryVariable temporaryVariable = contextWithAllParametersAliased.declareTemporary(program().getNullLiteral());
-        JsNode mutatedBody = LastExpressionMutator.mutateLastExpression(translatedBody, new InlineFunctionMutator(temporaryVariable));
-        context().addStatementToCurrentBlock(JsAstUtils.convertToBlock(mutatedBody));
+        TemporaryVariable temporaryVariable = contextWithAllParametersAliased.declareTemporary(JsLiteral.NULL);
+        JsStatement mutatedBody = LastExpressionMutator.mutateLastExpression(translatedBody, new InlineFunctionMutator(temporaryVariable));
+        context().addStatementToCurrentBlock(JsAstUtils.asBlock(mutatedBody));
         return temporaryVariable.reference();
     }
 

@@ -16,7 +16,7 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.patterns;
 
-import closurecompiler.internal.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -79,7 +79,7 @@ public final class PatternBuilder {
                 try {
                     return doApply(descriptor);
                 }
-                catch (IllegalArgumentException e) {
+                catch (IllegalArgumentException ignored) {
                     return false;
                 }
             }

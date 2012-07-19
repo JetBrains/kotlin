@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.calls.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
@@ -43,6 +42,7 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.getCallee;
  * @author Pavel Talanov
  */
 public final class CallExpressionTranslator extends AbstractCallExpressionTranslator {
+    private final boolean isNativeFunctionCall;
 
     @NotNull
     public static JsExpression translate(@NotNull JetCallExpression expression,
@@ -52,10 +52,8 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         if (InlinedCallExpressionTranslator.shouldBeInlined(expression, context)) {
             return InlinedCallExpressionTranslator.translate(expression, receiver, callType, context);
         }
-        return (new CallExpressionTranslator(expression, receiver, callType, context)).translate();
+        return new CallExpressionTranslator(expression, receiver, callType, context).translate();
     }
-
-    private final boolean isNativeFunctionCall;
 
     private CallExpressionTranslator(@NotNull JetCallExpression expression,
             @Nullable JsExpression receiver,

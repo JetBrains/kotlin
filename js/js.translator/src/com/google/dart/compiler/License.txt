@@ -1,0 +1,5 @@
+Google Dart Js backend was removed — https://code.google.com/p/dart/source/detail?r=4771
+
+According to http://www.apache.org/legal/3party.html we can include "Google Dart Js backend" in source form, because code license is "New BSD License" (Authorized License).
+
+This part of code will be removed when kotlin will be rewritten on kotlin.

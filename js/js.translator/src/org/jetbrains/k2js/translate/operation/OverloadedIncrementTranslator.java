@@ -17,8 +17,8 @@
 package org.jetbrains.k2js.translate.operation;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -45,7 +45,7 @@ public final class OverloadedIncrementTranslator extends IncrementTranslator {
     @NotNull
     protected JsExpression operationExpression(@NotNull JsExpression receiver) {
         setQualifier(operationReference, receiver);
-        return AstUtil.newInvocation(operationReference);
+        return new JsInvocation(operationReference);
     }
 
 }

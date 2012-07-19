@@ -38,20 +38,20 @@ import java.util.List;
  *         RootNode is a node which contains such an expression. For example, it may be a statement expression belongs to.
  */
 public class DangerousData {
+    @NotNull
+    private final List<JetExpression> nodesToBeGeneratedBefore = Lists.newArrayList();
+
 
     @NotNull
     public static DangerousData collect(@NotNull JetExpression expression, @NotNull TranslationContext context) {
-        if (cantContainDangerousElements(expression, context)) {
+        if (cantContainDangerousElements(expression)) {
             return emptyData();
         }
         return doCollectData(expression, context);
     }
 
-    private static boolean cantContainDangerousElements(@NotNull JetElement element, @NotNull TranslationContext context) {
-        if (element instanceof JetBlockExpression) {
-            return true;
-        }
-        return false;
+    private static boolean cantContainDangerousElements(@NotNull JetElement element) {
+        return element instanceof JetBlockExpression;
     }
 
     @NotNull
@@ -86,9 +86,6 @@ public class DangerousData {
         return EMPTY;
     }
 
-    @NotNull
-    private List<JetExpression> nodesToBeGeneratedBefore = Lists.newArrayList();
-
     @Nullable
     private JetExpression dangerousNode = null;
 
@@ -103,11 +100,6 @@ public class DangerousData {
     @NotNull
     public List<JetExpression> getNodesToBeGeneratedBefore() {
         return nodesToBeGeneratedBefore;
-    }
-
-    @SuppressWarnings("NullableProblems")
-    public void setNodesToBeGeneratedBefore(@NotNull List<JetExpression> nodesToBeGeneratedBefore) {
-        this.nodesToBeGeneratedBefore = nodesToBeGeneratedBefore;
     }
 
     public boolean exists() {

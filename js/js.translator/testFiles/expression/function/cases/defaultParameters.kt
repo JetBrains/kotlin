@@ -1,6 +1,5 @@
 package foo
 
-
 fun f(a : Int = 2, b : Int = 3) = a + b
 
 fun box() : Boolean

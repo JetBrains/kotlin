@@ -1,7 +1,6 @@
 package foo
 
 class A() {
-
   var i = 0
 
   fun f() {
