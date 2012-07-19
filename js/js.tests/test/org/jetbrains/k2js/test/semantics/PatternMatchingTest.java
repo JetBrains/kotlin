@@ -40,6 +40,10 @@ public final class PatternMatchingTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
+    public void testWhenEvaluatesArgumentOnlyOnce() throws Exception {
+        fooBoxTest();
+    }
+
     public void testWhenValue() throws Exception {
         fooBoxTest();
     }
