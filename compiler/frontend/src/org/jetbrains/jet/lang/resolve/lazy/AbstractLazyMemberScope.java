@@ -73,7 +73,9 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                                                                   JetClassInfoUtil.createClassLikeInfo(classOrObjectDeclaration));
 
         classDescriptors.put(name, classDescriptor);
-        allDescriptors.add(classDescriptor);
+        if (!object) {
+            allDescriptors.add(classDescriptor);
+        }
 
         return classDescriptor;
     }
@@ -200,6 +202,13 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
             if (declaration instanceof JetEnumEntry) {
                 JetEnumEntry jetEnumEntry = (JetEnumEntry) declaration;
                 Name name = jetEnumEntry.getNameAsName();
+                if (name != null) {
+                    getProperties(name);
+                }
+            }
+            else if (declaration instanceof JetObjectDeclaration) {
+                JetClassOrObject classOrObject = (JetClassOrObject) declaration;
+                Name name = classOrObject.getNameAsName();
                 if (name != null) {
                     getProperties(name);
                 }
