@@ -27,7 +27,10 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeSubstitutor;
+import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.Collections;
 import java.util.List;
@@ -53,16 +56,6 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     private List<TypeParameterDescriptor> typeParameters;
     private PropertyGetterDescriptor getter;
     private PropertySetterDescriptor setter;
-    
-    private PropertyDescriptor() {
-        super(ErrorUtils.getErrorClass(), Collections.<AnnotationDescriptor>emptyList(), Name.special("<dummy>"));
-        this.modality = null;
-        this.visibility = null;
-        this.isVar = false;
-        this.isObject = false;
-        this.original = null;
-        this.kind = Kind.DECLARATION;
-    }
 
     private PropertyDescriptor(
             @Nullable PropertyDescriptor original,
@@ -73,7 +66,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             boolean isVar,
             boolean isObject,
             @NotNull Name name,
-            Kind kind) {
+            @NotNull Kind kind) {
         super(containingDeclaration, annotations, name);
         this.isVar = isVar;
         this.isObject = isObject;
@@ -91,7 +84,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             boolean isVar,
             boolean isObject,
             @NotNull Name name,
-            Kind kind) {
+            @NotNull Kind kind) {
         this(null, containingDeclaration, annotations, modality, visibility, isVar, isObject, name, kind);
     }
 
@@ -106,7 +99,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull ReceiverDescriptor expectedThisObject,
             @NotNull Name name,
             @NotNull JetType outType,
-            Kind kind
+            @NotNull Kind kind
         ) {
         this(containingDeclaration, annotations, modality, visibility, isVar, isObject, name, kind);
         setType(outType, Collections.<TypeParameterDescriptor>emptyList(), expectedThisObject, receiverType);
@@ -143,6 +136,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         return typeParameters;
     }
 
+    @Override
     @NotNull
     public ReceiverDescriptor getReceiverParameter() {
         return receiver;
@@ -154,11 +148,13 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         return expectedThisObject;
     }
 
+    @NotNull
     @Override
     public JetType getReturnType() {
         return getType();
     }
 
+    @Override
     public boolean isVar() {
         return isVar;
     }
@@ -308,9 +304,5 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     @Override
     public PropertyDescriptor copy(DeclarationDescriptor newOwner, Modality modality, boolean makeInvisible, Kind kind, boolean copyOverrides) {
         return doSubstitute(TypeSubstitutor.EMPTY, newOwner, modality, makeInvisible ? Visibilities.INVISIBLE_FAKE : visibility, false, copyOverrides, kind);
-    }
-    
-    public static PropertyDescriptor createDummy() {
-        return new PropertyDescriptor();
     }
 }

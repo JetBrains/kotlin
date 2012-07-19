@@ -41,7 +41,7 @@ public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
             @NotNull Visibility visibility,
             boolean hasBody,
             boolean isDefault,
-            Kind kind) {
+            @NotNull Kind kind) {
         this(correspondingProperty, annotations, modality, visibility, hasBody, isDefault, kind, null);
     }
 
@@ -51,7 +51,7 @@ public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
             @NotNull Visibility visibility,
             boolean hasBody,
             boolean isDefault,
-            Kind kind,
+            @NotNull Kind kind,
             @Nullable PropertyGetterDescriptor original)
     {
         super(modality, visibility, correspondingProperty, annotations, Name.special("<get-" + correspondingProperty.getName() + ">"), hasBody, isDefault, kind);

@@ -99,6 +99,7 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
         return ReceiverDescriptor.NO_RECEIVER;
     }
 
+    @NotNull
     @Override
     public JetType getReturnType() {
         return getType();
