@@ -24,12 +24,12 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>2.23.1</version>
+            <version>${selenium.version}</version>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-htmlunit-driver</artifactId>
-            <version>2.23.1</version>
+            <version>${selenium.version}</version>
         </dependency>
     </dependencies>
 

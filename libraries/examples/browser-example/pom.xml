@@ -20,6 +20,20 @@
             <artifactId>kotlin-stdlib</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- testing -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-htmlunit-driver</artifactId>
+            <version>${selenium.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -51,6 +65,13 @@
                         <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-compile</goal>
                         </goals>
                     </execution>
                 </executions>

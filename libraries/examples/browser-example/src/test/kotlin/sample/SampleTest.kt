@@ -1,9 +1,22 @@
 package test.sample
 
-import org.junit.Test
+import org.junit.Test as test
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import org.openqa.selenium.By
+import java.io.File
+import kotlin.test.*
 
-class SampleTest {
-    Test fun dummy(): Unit {
+open class SampleTest {
+    open val driver: WebDriver = HtmlUnitDriver(true)
 
+    test fun homePage(): Unit {
+        driver.get("file://" + File("sample.html").getCanonicalPath())
+        Thread.sleep(1000)
+
+        val foo = driver.findElement(By.id("foo"))!!
+        val text = foo.getText() ?: ""
+        println("Found $foo with text '$text'")
+        assertEquals("Some Dynamically Created Content!!!", text.trim())
     }
 }
