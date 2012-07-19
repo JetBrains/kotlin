@@ -93,6 +93,9 @@ var kotlin = {set:function (receiver, key, value) {
         },
         get_hasNext: function () {
             return this.index < this.size;
+        },
+        hasNext: function () {
+            return this.index < this.size;
         }
     });
 

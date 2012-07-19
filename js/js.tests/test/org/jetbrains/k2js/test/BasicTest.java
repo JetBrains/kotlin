@@ -219,4 +219,9 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     protected String expected(@NotNull String testName) {
         return getExpectedPath() + testName + ".out";
     }
+
+    @NotNull
+    protected static List<EcmaVersion> failOnEcma5() {
+        return Collections.singletonList(EcmaVersion.v3);
+    }
 }

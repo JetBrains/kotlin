@@ -29,7 +29,6 @@ import org.jetbrains.k2js.test.config.TestConfigWithUnitTests;
 import org.jetbrains.k2js.test.rhino.RhinoSystemOutputChecker;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -76,13 +75,14 @@ public abstract class JsUnitTestBase extends MultipleFilesTranslationTest {
     }
 
     public void runTestFile(@NotNull String pathToTestFile) throws Exception {
-        Iterable<EcmaVersion> versions = Collections.singletonList(EcmaVersion.v3);
+        Iterable<EcmaVersion> versions = failOnEcma5();
         String testName = pathToTestFile.substring(pathToTestFile.lastIndexOf("/"));
         generateJavaScriptFiles(Lists.newArrayList(pathToTestFile), testName, MainCallParameters.noCall(), versions,
                                 TestConfigWithUnitTests.FACTORY);
         runRhinoTests(testName, versions, new RhinoSystemOutputChecker(""));
     }
 
+    @NotNull
     public static Test createTestSuiteForFile(@NotNull String file, @NotNull String... ignoreFailedTestCases) throws Exception {
         performTests(file);
         JS_UNIT_TEST_REPORTER.ignoreTests(ignoreFailedTestCases);

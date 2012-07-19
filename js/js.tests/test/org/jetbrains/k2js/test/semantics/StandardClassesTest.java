@@ -59,7 +59,8 @@ public final class StandardClassesTest extends SingleFileTranslationTest {
     //    }
 
 
+    //TODO: fails on ecma 5 because of ArrayIterator declaration: ecma 5 expects hasNext to be property while it is a function
     public void testArraysIterator() throws Exception {
-        fooBoxTest();
+        fooBoxTest(failOnEcma5());
     }
 }

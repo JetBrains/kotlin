@@ -311,6 +311,11 @@ public final class BindingUtils {
         CallableDescriptor hasNextDescriptor = context.get(BindingContext.LOOP_RANGE_HAS_NEXT, rangeExpression);
         assert hasNextDescriptor != null
                 : message(rangeExpression, "Range expression must have a descriptor for hasNext function or property");
+        if (hasNextDescriptor instanceof PropertyDescriptor) {
+            PropertyGetterDescriptor getter = ((PropertyDescriptor) hasNextDescriptor).getGetter();
+            assert getter != null : "Loop range hasNext val should have a getter.";
+            return getter;
+        }
         return hasNextDescriptor;
     }
 
