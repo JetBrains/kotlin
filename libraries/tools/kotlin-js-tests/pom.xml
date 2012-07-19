@@ -57,6 +57,7 @@
                                     <fileset dir="${basedir}/../../stdlib/test">
                                         <include name="ArraysTest.kt"/>
                                         <include name="GetOrElseTest.kt"/>
+                                        <include name="StringTest.kt"/>
 
                                         <!-- TODO FixME ASAP - works fine in JS, why doesn't it work in JUnit with Rhino and Selenium?
                                         <include name="ListTest.kt"/>
@@ -65,13 +66,16 @@
     TODO: depends on this being fixed: http://youtrack.jetbrains.com/issue/KT-2372
                                         <include name="SetTest.kt"/>
 -->
-                                        <include name="StringTest.kt"/>
 <!--
     TODO: depends on this being fixed: http://youtrack.jetbrains.com/issue/KT-2356
                                         <include name="CollectionTest.kt"/>
-                                        <include name="MapTest.kt"/>
                                         <include name="iterators/*.kt"/>
 -->
+<!--
+    TODO: needs a TreeMap see: http://youtrack.jetbrains.com/issue/KT-2377
+                                        <include name="MapTest.kt"/>
+-->
+
                                         <exclude name="**/*JVMTest.kt"/>
                                     </fileset>
                                 </copy>
