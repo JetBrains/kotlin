@@ -1769,6 +1769,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve", new File("compiler/testData/diagnostics/tests/redeclarations"), "kt", false);
             }
             
+            @TestMetadata("kt2247.kt")
+            public void testKt2247() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/redeclarations/kt2247.kt");
+            }
+            
             @TestMetadata("MultiFilePackageRedeclaration.kt")
             public void testMultiFilePackageRedeclaration() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/redeclarations/MultiFilePackageRedeclaration.kt");
