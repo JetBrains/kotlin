@@ -256,10 +256,10 @@ public class Renderers {
         assert firstUnknownParameter != null;
 
         return renderer
-                .text(TabledDescriptorRenderer.newText().normal("Not enough information to infer parameter ")
+                .text(newText().normal("Not enough information to infer parameter ")
                               .strong(firstUnknownParameter.getName())
                               .normal(" in "))
-                .table(TabledDescriptorRenderer.newTable()
+                .table(newTable()
                                .descriptor(inferenceErrorData.descriptor)
                                .text("Please specify it explicitly."));
     }

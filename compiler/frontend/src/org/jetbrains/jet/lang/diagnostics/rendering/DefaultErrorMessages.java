@@ -35,8 +35,6 @@ import java.util.Iterator;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
-import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.RENDER_TYPE;
-import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.TO_STRING;
 
 /**
  * @author Evgeny Gerashchenko
@@ -399,6 +397,7 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, "Type inference failed: {0}", TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER);
         MAP.put(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH, "Type inference failed: {0}", TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH_RENDERER);
         MAP.put(TYPE_INFERENCE_UPPER_BOUND_VIOLATED, "{0}", TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER);
+        MAP.put(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, "Type inference failed. Expected type mismatch: found: {0} required: {1}", RENDER_TYPE, RENDER_TYPE);
 
         MAP.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, "{0,choice,0#No type arguments|1#Type argument|1<{0,number,integer} type argument} expected", null);
 

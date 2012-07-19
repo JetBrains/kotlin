@@ -365,7 +365,7 @@ public class CallResolver {
             List<JetType> argumentTypes = checkValueArgumentTypes(context, resolvedCall, context.trace).argumentTypes;
             JetType receiverType = resolvedCall.getReceiverArgument().exists() ? resolvedCall.getReceiverArgument().getType() : null;
             tracing.typeInferenceFailed(context.trace,
-                                        InferenceErrorData.create(descriptor, constraintsSystem, argumentTypes, receiverType));
+                                        InferenceErrorData.create(descriptor, constraintsSystem, argumentTypes, receiverType, context.expectedType));
             resolvedCall.addStatus(ResolutionStatus.TYPE_INFERENCE_ERROR);
             failed.add(resolvedCall);
             return;
@@ -761,7 +761,7 @@ public class CallResolver {
             List<JetType> argumentTypes = checkingResult.argumentTypes;
             JetType receiverType = candidateCall.getReceiverArgument().exists() ? candidateCall.getReceiverArgument().getType() : null;
             context.tracing.typeInferenceFailed(context.trace,
-                InferenceErrorData.create(candidate, constraintsBuilderWithRightTypeParameters, argumentTypes, receiverType));
+                InferenceErrorData.create(candidate, constraintsBuilderWithRightTypeParameters, argumentTypes, receiverType, context.expectedType));
             return TYPE_INFERENCE_ERROR.combine(argumentsStatus);
         }
     }

@@ -100,6 +100,11 @@ public interface ConstraintsSystem {
     boolean hasTypeConstructorMismatchAt(@NotNull ConstraintPosition constraintPosition);
 
     /**
+     * Returns <tt>true</tt> if there is type constructor mismatch only in {@link ConstraintPosition.EXPECTED_TYPE_POSITION}.
+     */
+    boolean hasExpectedTypeMismatch();
+
+    /**
      * Returns <tt>true</tt> if there is an error in constraining types. <p/>
      * Is used not to generate type inference error if there was one in argument types.
      */

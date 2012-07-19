@@ -27,6 +27,8 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -233,20 +235,26 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends R
         }
 
         @Override
-        public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData) {
-            assert !inferenceErrorData.constraintsSystem.isSuccessful();
-            if (inferenceErrorData.constraintsSystem.hasErrorInConstrainingTypes()) {
+        public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData data) {
+            ConstraintsSystem constraintsSystem = data.constraintsSystem;
+            assert !constraintsSystem.isSuccessful();
+            if (constraintsSystem.hasErrorInConstrainingTypes()) {
                 return;
             }
-            if (inferenceErrorData.constraintsSystem.hasTypeConstructorMismatch()) {
-                trace.report(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH.on(reference, inferenceErrorData));
+            if (constraintsSystem.hasExpectedTypeMismatch()) {
+                JetType returnType = data.descriptor.getReturnType();
+                assert returnType != null;
+                trace.report(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(reference, returnType, data.expectedType));
             }
-            else if (inferenceErrorData.constraintsSystem.hasConflictingConstraints()) {
-                trace.report(TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS.on(reference, inferenceErrorData));
+            else if (constraintsSystem.hasTypeConstructorMismatch()) {
+                trace.report(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH.on(reference, data));
+            }
+            else if (constraintsSystem.hasConflictingConstraints()) {
+                trace.report(TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS.on(reference, data));
             }
             else {
-                assert inferenceErrorData.constraintsSystem.hasUnknownParameters();
-                trace.report(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(reference, inferenceErrorData));
+                assert constraintsSystem.hasUnknownParameters();
+                trace.report(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(reference, data));
             }
         }
 

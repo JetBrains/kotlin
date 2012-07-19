@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 
 import java.util.List;
 
@@ -30,22 +31,25 @@ public class InferenceErrorData {
     public final CallableDescriptor descriptor;
     public final ConstraintsSystem constraintsSystem;
     public final JetType receiverArgumentType;
+    public final JetType expectedType;
     public final List<JetType> valueArgumentsTypes;
 
     private InferenceErrorData(@NotNull CallableDescriptor descriptor, @NotNull ConstraintsSystem constraintsSystem,
-            @Nullable List<JetType> valueArgumentsTypes, @Nullable JetType receiverArgumentType) {
+            @Nullable List<JetType> valueArgumentsTypes, @Nullable JetType receiverArgumentType, @Nullable JetType expectedType) {
         this.descriptor = descriptor;
         this.constraintsSystem = constraintsSystem;
         this.receiverArgumentType = receiverArgumentType;
         this.valueArgumentsTypes = valueArgumentsTypes;
+        this.expectedType = expectedType;
     }
 
     public static InferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintsSystem constraintsSystem,
-            @NotNull List<JetType> valueArgumentsTypes, @Nullable JetType receiverArgumentType) {
-        return new InferenceErrorData(descriptor, constraintsSystem, valueArgumentsTypes, receiverArgumentType);
+            @NotNull List<JetType> valueArgumentsTypes, @Nullable JetType receiverArgumentType, @Nullable JetType expectedType) {
+        return new InferenceErrorData(descriptor, constraintsSystem, valueArgumentsTypes, receiverArgumentType,
+                                      expectedType != TypeUtils.NO_EXPECTED_TYPE ? expectedType : null);
     }
 
     public static InferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintsSystem constraintsSystem) {
-        return new InferenceErrorData(descriptor, constraintsSystem, null, null);
+        return new InferenceErrorData(descriptor, constraintsSystem, null, null, null);
     }
 }

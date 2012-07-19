@@ -90,6 +90,11 @@ public class ConstraintsSystemImpl implements ConstraintsSystem {
     }
 
     @Override
+    public boolean hasExpectedTypeMismatch() {
+        return errorConstraintPositions.size() == 1 && errorConstraintPositions.contains(ConstraintPosition.EXPECTED_TYPE_POSITION);
+    }
+
+    @Override
     public boolean hasErrorInConstrainingTypes() {
         return hasErrorInConstrainingTypes;
     }

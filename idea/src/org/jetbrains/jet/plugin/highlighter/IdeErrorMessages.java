@@ -25,7 +25,10 @@ import org.jetbrains.jet.resolve.DescriptorRenderer;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.TO_STRING;
+import static org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TextElementType;
+import static org.jetbrains.jet.plugin.highlighter.HtmlTabledDescriptorRenderer.tableForTypes;
 import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.*;
+
 
 /**
  * @see DefaultErrorMessages
@@ -47,6 +50,9 @@ public class IdeErrorMessages {
         MAP.put(TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS, "<html>Type inference failed: {0}</html>", HTML_TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER);
         MAP.put(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, "<html>Type inference failed: {0}</html>", HTML_TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER);
         MAP.put(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH, "<html>Type inference failed: {0}</html>", HTML_TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH_RENDERER);
+        MAP.put(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, tableForTypes("Type inference failed. Expected type mismatch: ",
+                                                                     "found: ", TextElementType.ERROR,
+                                                                     "required: ", TextElementType.STRONG), HTML_RENDER_TYPE, HTML_RENDER_TYPE);
         MAP.put(TYPE_INFERENCE_UPPER_BOUND_VIOLATED, "<html>{0}</html>", HTML_TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER);
 
         MAP.put(WRONG_SETTER_PARAMETER_TYPE, "<html>Setter parameter type must be equal to the type of the property." +

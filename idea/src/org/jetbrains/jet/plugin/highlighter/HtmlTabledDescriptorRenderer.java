@@ -23,9 +23,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer;
-import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.DescriptorRow;
-import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.FunctionArgumentsRow;
-import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.TableRow;
+import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.*;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -33,6 +31,7 @@ import org.jetbrains.jet.resolve.DescriptorRenderer;
 import java.util.Iterator;
 import java.util.List;
 
+import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.HTML_RENDER_TYPE;
 import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.error;
 import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.strong;
 
@@ -41,21 +40,26 @@ import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.strong;
 */
 public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
 
+    @Override
     protected void renderText(TextRenderer textRenderer, StringBuilder result) {
         for (TextRenderer.TextElement element : textRenderer.elements) {
-            if (element.type == TextRenderer.TextElementType.DEFAULT) {
-                result.append(element.text);
-            }
-            else if (element.type == TextRenderer.TextElementType.ERROR) {
-                result.append(error(element.text));
-            }
-            else if (element.type == TextRenderer.TextElementType.STRONG) {
-                result.append(strong(element.text));
-            }
+            renderText(result, element.type, element.text);
         }
     }
 
-    private int countRowsNumber(TableRenderer table) {
+    private static void renderText(StringBuilder result, TextElementType elementType, String text) {
+        if (elementType == TextElementType.DEFAULT) {
+            result.append(text);
+        }
+        else if (elementType == TextElementType.ERROR) {
+            result.append(error(text));
+        }
+        else if (elementType == TextElementType.STRONG) {
+            result.append(strong(text));
+        }
+    }
+
+    private int countColumnNumber(TableRenderer table) {
         int argumentsNumber = 0;
         for (TableRow row : table.rows) {
             if (row instanceof DescriptorRow) {
@@ -79,7 +83,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
     @Override
     protected void renderTable(TableRenderer table, StringBuilder result) {
         if (table.rows.isEmpty()) return;
-        int rowsNumber = countRowsNumber(table);
+        int rowsNumber = countColumnNumber(table);
 
 
         result.append("<table>");
@@ -220,5 +224,16 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
 
     private static void tdRightBoldColspan(StringBuilder builder, int colspan, String text) {
         builder.append("<td align=\"right\" colspan=\"").append(colspan).append("\"><div style=\"white-space:nowrap;font-weight:bold;\">").append(text).append("</div></td>");
+    }
+
+    public static String tableForTypes(String message, String firstDescription, TextElementType firstType, String secondDescription, TextElementType secondType) {
+        StringBuilder result = new StringBuilder();
+        result.append("<html>").append(message);
+        result.append("<table><tr><td>").append(firstDescription).append("</td><td>");
+        renderText(result, firstType, "{0}");
+        result.append("</td></tr><tr><td>").append(secondDescription).append("</td><td>");
+        renderText(result, secondType, "{1}");
+        result.append("</td></tr></table></html>");
+        return result.toString();
     }
 }
