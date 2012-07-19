@@ -27,9 +27,9 @@ You will need to setup **JAVA_HOME** and **PATH** environment variables to point
 
 You can check you have JavaFX in your JDK install via
 
-    ls -l $JAVA_HOME/lib/javafx-mx.jar
+    ls -l $JAVA_HOME/jre/lib/jfxrt.jar
 
-which should find the javafx jar.
+which should find the JavaFX runtime jar (jfxrt.jar).
 
 ### Running the sample in JavaFX
 
