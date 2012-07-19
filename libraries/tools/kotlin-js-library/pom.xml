@@ -33,12 +33,6 @@
                                     <fileset dir="${kotlin-js-lib-srcdir}">
                                         <exclude name="**/*Code.kt"/>
                                         <exclude name="core/dom/core.kt"/>
-                                        <exclude name="html5/localstorage.kt"/>
-                                        <exclude name="jquery/common.kt"/>
-                                        <exclude name="jquery/ui.kt"/>
-                                        <exclude name="dom/html/htmlcore.kt"/>
-                                        <exclude name="dom/html5/canvas.kt"/>
-                                        <exclude name="dom/html/window.kt"/>
                                     </fileset>
                                 </copy>
                                 <copy todir="${basedir}/target/generated-js-library">
