@@ -137,8 +137,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     public JetScope getScopeForMemberDeclarationResolution() {
         if (scopeForMemberDeclarationResolution == null) {
             WritableScopeImpl scope = new WritableScopeImpl(
-                    getScopeForClassHeaderResolution(), this, RedeclarationHandler.DO_NOTHING, "Member Declaration Resolution");
-            scope.importScope(getScopeForMemberLookup());
+                    getScopeForMemberLookup(), this, RedeclarationHandler.DO_NOTHING, "Member Declaration Resolution");
+            scope.importScope(getScopeForClassHeaderResolution());
 
             scope.changeLockLevel(WritableScope.LockLevel.READING);
             scopeForMemberDeclarationResolution = scope;

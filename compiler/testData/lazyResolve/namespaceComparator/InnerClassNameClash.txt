@@ -1,0 +1,12 @@
+namespace <root>
+
+internal final class B : jet.Any {
+    public final /*constructor*/ fun <init>(): B
+    internal final class B.B : jet.Any {
+        public final /*constructor*/ fun <init>(): B.B
+        internal final class B.B.C : jet.Any {
+            public final /*constructor*/ fun <init>(): B.B.C
+        }
+        internal final fun foo(/*0*/ b: B.B.C): jet.Tuple0
+    }
+}
