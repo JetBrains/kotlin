@@ -17,10 +17,11 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +33,8 @@ import java.util.Set;
 public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
 
     private ValueParameterDescriptor parameter;
+    @NotNull
+    private final PropertySetterDescriptor original;
 
     public PropertySetterDescriptor(
             @NotNull PropertyDescriptor correspondingProperty,
@@ -41,7 +44,20 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
             boolean hasBody,
             boolean isDefault,
             Kind kind) {
+        this(correspondingProperty, annotations, modality, visibility, hasBody, isDefault, kind, null);
+    }
+
+    public PropertySetterDescriptor(
+            @NotNull PropertyDescriptor correspondingProperty,
+            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Modality modality,
+            @NotNull Visibility visibility,
+            boolean hasBody,
+            boolean isDefault,
+            Kind kind,
+            @Nullable PropertySetterDescriptor original) {
         super(modality, visibility, correspondingProperty, annotations, Name.special("<set-" + correspondingProperty.getName() + ">"), hasBody, isDefault, kind);
+        this.original = original != null ? original : this;
     }
 
     public void initialize(@NotNull ValueParameterDescriptor parameter) {
@@ -78,5 +94,11 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitPropertySetterDescriptor(this, data);
+    }
+
+    @NotNull
+    @Override
+    public PropertySetterDescriptor getOriginal() {
+        return this.original;
     }
 }

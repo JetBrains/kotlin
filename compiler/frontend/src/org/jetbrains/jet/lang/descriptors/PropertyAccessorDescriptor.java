@@ -72,9 +72,7 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorNo
 
     @NotNull
     @Override
-    public PropertyAccessorDescriptor getOriginal() {
-        return (PropertyAccessorDescriptor) super.getOriginal();
-    }
+    public abstract PropertyAccessorDescriptor getOriginal();
 
     @NotNull
     @Override

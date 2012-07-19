@@ -247,14 +247,14 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         PropertyGetterDescriptor newGetter = getter == null ? null : new PropertyGetterDescriptor(
                 substitutedDescriptor, Lists.newArrayList(getter.getAnnotations()),
                 DescriptorUtils.convertModality(getter.getModality(), false), getter.getVisibility(),
-                getter.hasBody(), getter.isDefault(), kind);
+                getter.hasBody(), getter.isDefault(), kind, getter);
         if (newGetter != null) {
             JetType returnType = getter.getReturnType();
             newGetter.initialize(returnType != null ? substitutor.substitute(returnType, Variance.OUT_VARIANCE) : null);
         }
         PropertySetterDescriptor newSetter = setter == null ? null : new PropertySetterDescriptor(
                 substitutedDescriptor, Lists.newArrayList(setter.getAnnotations()), DescriptorUtils.convertModality(setter.getModality(), false), setter.getVisibility(),
-                setter.hasBody(), setter.isDefault(), kind);
+                setter.hasBody(), setter.isDefault(), kind, setter);
         if (newSetter != null) {
             List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorUtil.getSubstitutedValueParameters(newSetter, setter, substitutor);
             if (substitutedValueParameters == null) {

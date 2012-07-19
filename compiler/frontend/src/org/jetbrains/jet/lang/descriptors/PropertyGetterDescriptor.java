@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -31,10 +32,30 @@ import java.util.Set;
 public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
     private JetType returnType;
 
-    public PropertyGetterDescriptor(@NotNull PropertyDescriptor correspondingProperty, @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull Modality modality, @NotNull Visibility visibility, boolean hasBody, boolean isDefault, Kind kind)
+    @NotNull
+    private final PropertyGetterDescriptor original;
+
+    public PropertyGetterDescriptor(@NotNull PropertyDescriptor correspondingProperty,
+            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Modality modality,
+            @NotNull Visibility visibility,
+            boolean hasBody,
+            boolean isDefault,
+            Kind kind) {
+        this(correspondingProperty, annotations, modality, visibility, hasBody, isDefault, kind, null);
+    }
+
+    public PropertyGetterDescriptor(@NotNull PropertyDescriptor correspondingProperty,
+            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Modality modality,
+            @NotNull Visibility visibility,
+            boolean hasBody,
+            boolean isDefault,
+            Kind kind,
+            @Nullable PropertyGetterDescriptor original)
     {
         super(modality, visibility, correspondingProperty, annotations, Name.special("<get-" + correspondingProperty.getName() + ">"), hasBody, isDefault, kind);
+        this.original = original != null ? original : this;
     }
     
     public void initialize(JetType returnType) {
@@ -61,5 +82,11 @@ public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitPropertyGetterDescriptor(this, data);
+    }
+
+    @NotNull
+    @Override
+    public PropertyGetterDescriptor getOriginal() {
+        return this.original;
     }
 }
