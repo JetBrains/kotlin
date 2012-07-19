@@ -6,6 +6,7 @@ import java.util.List
 import java.util.AbstractList
 import java.util.Iterator
 import java.util.Comparator
+import java.util.ArrayList
 
 /**
  * Count the number of elements in collection.
@@ -94,16 +95,18 @@ public fun <T> java.lang.Iterable<T>.contains(item : T) : Boolean {
 }
 
 /**
- * Convert collection of arbitrary elements to collection of tuples of the index and the element
+ * Convert collection of arbitrary elements to a List of tuples of the index and the element
  *
  * @includeFunctionBody ../../test/ListTest.kt withIndices
  */
-public fun <T> java.lang.Iterable<T>.withIndices() : java.lang.Iterable<#(Int, T)> {
-    return object : java.lang.Iterable<#(Int, T)> {
-        public override fun iterator(): java.util.Iterator<#(Int, T)> {
-            return NumberedIterator<T>(this@withIndices.iterator()!!)
-        }
+public fun <T> java.lang.Iterable<T>.withIndices(): java.util.List<#(Int, T)> {
+    val answer = ArrayList<#(Int, T)>()
+    var nextIndex = 0
+    for (e in this) {
+        answer.add(#(nextIndex, e))
+        nextIndex++
     }
+    return answer
 }
 
 public inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.sort() : List<T> {
@@ -116,27 +119,4 @@ public inline fun <in T> java.lang.Iterable<T>.sort(comparator: java.util.Compar
     val list = toList()
     java.util.Collections.sort(list, comparator)
     return list
-}
-
-private class NumberedIterator<TT>(private val sourceIterator : java.util.Iterator<TT>) : java.util.Iterator<#(Int, TT)> {
-    private var nextIndex = 0
-
-    public override fun remove() {
-        try {
-            sourceIterator.remove()
-            nextIndex--;
-        } catch (e : UnsupportedOperationException) {
-            throw e
-        }
-    }
-
-    public override fun hasNext(): Boolean {
-        return sourceIterator.hasNext();
-    }
-
-    public override fun next(): #(Int, TT) {
-        val result = #(nextIndex, sourceIterator.next())
-        nextIndex++
-        return result
-    }
 }
