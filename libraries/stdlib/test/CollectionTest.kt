@@ -52,6 +52,14 @@ class CollectionTest {
         assertEquals(arrayList("foo"), foo)
     }
 
+    test fun filterReturnsList() {
+        val data = arrayList("foo", "bar")
+        val foo = data.filter{it.startsWith("f")}
+        assertTrue {
+            foo is List<String>
+        }
+    }
+
     test fun filterNot() {
         val data = arrayList("foo", "bar")
         val foo = data.filterNot{it.startsWith("b")}
@@ -63,57 +71,12 @@ class CollectionTest {
         assertEquals(arrayList("foo"), foo)
     }
 
-    // TODO would be nice to avoid the <String>
-    test fun filterIntoLinkedList() {
-        val data = arrayList("foo", "bar")
-        val foo = data.filterTo(linkedList<String>()){it.startsWith("f")}
-
-        assertTrue {
-            foo.all{it.startsWith("f")}
-        }
-        assertEquals(1, foo.size)
-        assertEquals(linkedList("foo"), foo)
-
-        assertTrue {
-            foo is LinkedList<String>
-        }
-    }
-
-    // TODO would be nice to avoid the <String>
-    test fun filterNotIntoLinkedList() {
-        val data = arrayList("foo", "bar")
-        val foo = data.filterNotTo(linkedList<String>()){it.startsWith("f")}
-
-        assertTrue {
-            foo.all{!it.startsWith("f")}
-        }
-        assertEquals(1, foo.size)
-        assertEquals(linkedList("bar"), foo)
-
-        assertTrue {
-            foo is LinkedList<String>
-        }
-    }
-
-    // TODO would be nice to avoid the <String>
-    test fun filterNotNullIntoLinkedList() {
-        val data = arrayList(null, "foo", null, "bar")
-        val foo = data.filterNotNullTo(linkedList<String>())
-
-        assertEquals(2, foo.size)
-        assertEquals(linkedList("foo", "bar"), foo)
-
-        assertTrue {
-            foo is LinkedList<String>
-        }
-    }
-
     test fun filterNotNull() {
         val data = arrayList(null, "foo", null, "bar")
         val foo = data.filterNotNull()
 
         assertEquals(2, foo.size)
-        assertEquals(linkedList("foo", "bar"), foo)
+        assertEquals(arrayList("foo", "bar"), foo)
 
         assertTrue {
             foo is List<String>
@@ -136,37 +99,14 @@ class CollectionTest {
         }
     }
 
-    // TODO would be nice to avoid the <String>
-    test fun filterIntoSortedSet() {
-        val data = arrayList("foo", "bar")
-        val sorted = data.filterTo(sortedSet<String>()){it.length == 3}
-        assertEquals(2, sorted.size)
-        assertEquals(sortedSet("bar", "foo"), sorted)
-        assertTrue {
-            sorted is TreeSet<String>
-        }
-    }
-
     test fun find() {
         val data = arrayList("foo", "bar")
         val x = data.find{it.startsWith("x")}
         assertNull(x)
-        fails {
-            x.sure()
-        }
 
         val f = data.find{it.startsWith("f")}
         f.sure()
         assertEquals("foo", f)
-    }
-
-    test fun flatMap() {
-        val data = arrayList("", "foo", "bar", "x", "")
-        val characters = data.flatMap<String,Char>{ it.toCharList() }
-        println("Got list of characters ${characters}")
-        assertEquals(7, characters.size())
-        val text = characters.makeString("")
-        assertEquals("foobarx", text)
     }
 
     test fun forEach() {
@@ -337,23 +277,6 @@ class CollectionTest {
         expect(arrayList(2, 3, 1)) { iterable }
     }
 
-    test fun sortFunctionShouldReturnSortedCopyForList() {
-        // TODO fixme Some sort of in/out variance thing - or an issue with Java interop?
-        todo {
-//            val list : List<Int> = arrayList<Int>(2, 3, 1)
-//            expect(arrayList(1, 2, 3)) { list.sort() }
-//            expect(arrayList(2, 3, 1)) { list }
-        }
-    }
-
-    test fun sortFunctionShouldReturnSortedCopyForIterable() {
-        // TODO fixme Some sort of in/out variance thing - or an issue with Java interop?
-        todo {
-//        val list : java.lang.Iterable<Int> = arrayList(2, 3, 1)
-//        expect(arrayList(1, 2, 3)) { list.sort() }
-//        expect(arrayList(2, 3, 1)) { list }
-        }
-    }
 
     test fun drop() {
         val coll = arrayList("foo", "bar", "abc")
@@ -382,6 +305,7 @@ class CollectionTest {
         val data = arrayList("foo", "bar")
         val arr = data.toArray()
         println("Got array ${arr}")
+        assertEquals(2, arr.size)
         todo {
             assertTrue {
                 arr is Array<String>
@@ -401,7 +325,7 @@ class CollectionTest {
         val data = arrayList("foo", "bar")
         assertEquals("bar", data.last())
         assertEquals(25, arrayList(15, 19, 20, 25).last())
-        assertEquals('a', linkedList('a').last())
+        assertEquals('a', arrayList('a').last())
     }
         // TODO
         // assertEquals(19, TreeSet(arrayList(90, 47, 19)).first())
@@ -409,7 +333,6 @@ class CollectionTest {
 
     test fun lastException() {
         fails { arrayList<Int>().last() }
-        fails { linkedList<String>().last() }
         fails { hashSet<Char>().last() }
     }
 
@@ -456,22 +379,10 @@ class CollectionTest {
         //    assertFalse(IterableWrapper(data).contains("some"))
 
         assertFalse(hashSet<Int>().contains(12))
-        assertTrue(linkedList(15, 19, 20).contains(15))
+        assertTrue(arrayList(15, 19, 20).contains(15))
 
         //    assertTrue(IterableWrapper(hashSet(45, 14, 13)).contains(14))
         //    assertFalse(IterableWrapper(linkedList<Int>()).contains(15))
-    }
-
-    test fun sortBy() {
-        expect(arrayList("two" to 2, "three" to 3)) {
-            arrayList("three" to 3, "two" to 2).sortBy { it._2 }
-        }
-        expect(arrayList("three" to 3, "two" to 2)) {
-            arrayList("three" to 3, "two" to 2).sortBy { it._1 }
-        }
-        expect(arrayList("two" to 2, "three" to 3)) {
-            arrayList("three" to 3, "two" to 2).sortBy { it._1.length }
-        }
     }
 
     class IterableWrapper<T>(collection : java.lang.Iterable<T>) : java.lang.Iterable<T> {
