@@ -333,4 +333,20 @@ public class DescriptorUtils {
     public static boolean isNotAny(@NotNull DeclarationDescriptor superClassDescriptor) {
         return !superClassDescriptor.equals(JetStandardClasses.getAny());
     }
+
+    public static boolean inStaticContext(@NotNull DeclarationDescriptor descriptor) {
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (containingDeclaration instanceof NamespaceDescriptor) {
+            return true;
+        }
+        if (containingDeclaration instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
+
+            if (classDescriptor.getKind() == ClassKind.OBJECT) {
+                return inStaticContext(classDescriptor.getContainingDeclaration());
+            }
+
+        }
+        return false;
+    }
 }

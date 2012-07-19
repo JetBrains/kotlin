@@ -225,6 +225,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Nullable
     private JetClassLikeInfo getClassObjectInfo(JetClassObject classObject) {
         if (classObject != null) {
+            if (!DescriptorUtils.inStaticContext(this)) {
+                return null;
+            }
             JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
             if (objectDeclaration != null) {
                 return JetClassInfoUtil.createClassLikeInfo(objectDeclaration);
