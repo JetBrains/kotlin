@@ -18,6 +18,7 @@ package org.jetbrains.jet.test.util;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +36,7 @@ import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.junit.Assert;
+import org.junit.ComparisonFailure;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,6 +56,7 @@ public class NamespaceComparator {
     ) {
         compareNamespaces(nsa, nsb, includeObject, Predicates.<NamespaceDescriptor>alwaysTrue(), txtFile);
     }
+
     public static void compareNamespaces(
             @NotNull NamespaceDescriptor nsa,
             @NotNull NamespaceDescriptor nsb,
@@ -84,12 +87,15 @@ public class NamespaceComparator {
             NamespaceDescriptor nsb,
             boolean includeObject,
             Predicate<NamespaceDescriptor> includeIntoOutput) {
-        return new NamespaceComparator(includeObject, includeIntoOutput).doCompareNamespaces(nsa, nsb);
+        NamespaceComparator comparator = new NamespaceComparator(includeObject, includeIntoOutput);
+        String serialized = comparator.doCompareNamespaces(nsa, nsb);
+        comparator.deferred.throwFailures();
+        return serialized;
     }
 
     private final boolean includeObject;
-
     private final Predicate<NamespaceDescriptor> includeIntoOutput;
+    private final DeferredAssertions deferred = new DeferredAssertions();
 
     private NamespaceComparator(boolean includeObject, Predicate<NamespaceDescriptor> includeIntoOutput) {
         this.includeObject = includeObject;
@@ -98,11 +104,11 @@ public class NamespaceComparator {
 
     private String doCompareNamespaces(@NotNull NamespaceDescriptor nsa, @NotNull NamespaceDescriptor nsb) {
         StringBuilder sb = new StringBuilder();
-        Assert.assertEquals(nsa.getName(), nsb.getName());
+        deferred.assertEquals(nsa.getName(), nsb.getName());
 
         sb.append("namespace " + nsa.getName() + "\n\n");
 
-        Assert.assertTrue(!nsa.getMemberScope().getAllDescriptors().isEmpty());
+        deferred.assertTrue(!nsa.getMemberScope().getAllDescriptors().isEmpty());
 
         Set<Name> classifierNames = new HashSet<Name>();
         Set<Name> propertyNames = new HashSet<Name>();
@@ -121,7 +127,7 @@ public class NamespaceComparator {
             else if (ad instanceof NamespaceDescriptor) {
                 NamespaceDescriptor namespaceDescriptorA = (NamespaceDescriptor) ad;
                 NamespaceDescriptor namespaceDescriptorB = nsb.getMemberScope().getNamespace(namespaceDescriptorA.getName());
-                //Assert.assertNotNull("Namespace not found: " + namespaceDescriptorA.getQualifiedName(), namespaceDescriptorB);
+                //deferred.assertNotNull("Namespace not found: " + namespaceDescriptorA.getQualifiedName(), namespaceDescriptorB);
                 if (namespaceDescriptorB == null) {
                     System.err.println("Namespace not found: " + namespaceDescriptorA.getQualifiedName());
                 }
@@ -142,8 +148,8 @@ public class NamespaceComparator {
         for (Name name : sorted(classifierNames)) {
             ClassifierDescriptor ca = nsa.getMemberScope().getClassifier(name);
             ClassifierDescriptor cb = nsb.getMemberScope().getClassifier(name);
-            Assert.assertTrue("Classifier not found in " + nsa + ": " + name, ca != null);
-            Assert.assertTrue("Classifier not found in " + nsb + ": " + name, cb != null);
+            deferred.assertTrue("Classifier not found in " + nsa + ": " + name, ca != null);
+            deferred.assertTrue("Classifier not found in " + nsb + ": " + name, cb != null);
             compareClassifiers(ca, cb, sb);
         }
 
@@ -152,8 +158,8 @@ public class NamespaceComparator {
             Collection<VariableDescriptor> pb = nsb.getMemberScope().getProperties(name);
             compareDeclarationSets("Properties in package " + nsa, pa, pb, sb);
 
-            Assert.assertTrue(nsb.getMemberScope().getFunctions(Name.identifier(PropertyCodegen.getterName(name))).isEmpty());
-            Assert.assertTrue(nsb.getMemberScope().getFunctions(Name.identifier(PropertyCodegen.setterName(name))).isEmpty());
+            deferred.assertTrue(nsb.getMemberScope().getFunctions(Name.identifier(PropertyCodegen.getterName(name))).isEmpty());
+            deferred.assertTrue(nsb.getMemberScope().getFunctions(Name.identifier(PropertyCodegen.setterName(name))).isEmpty());
         }
 
         for (Name name : sorted(functionNames)) {
@@ -165,13 +171,13 @@ public class NamespaceComparator {
         return sb.toString();
     }
 
-    private static void compareDeclarationSets(String message,
+    private void compareDeclarationSets(String message,
             Collection<? extends DeclarationDescriptor> a,
             Collection<? extends DeclarationDescriptor> b,
             @NotNull StringBuilder sb) {
         String at = serializedDeclarationSets(a);
         String bt = serializedDeclarationSets(b);
-        Assert.assertEquals(message, at, bt);
+        deferred.assertEquals(message, at, bt);
         sb.append(at);
     }
 
@@ -225,7 +231,7 @@ public class NamespaceComparator {
         String as = sba.toString();
         String bs = sbb.toString();
 
-        Assert.assertEquals(as, bs);
+        deferred.assertEquals(as, bs);
         sb.append(as);
     }
 
@@ -766,5 +772,74 @@ public class NamespaceComparator {
         List<T> r = new ArrayList<T>(items);
         Collections.sort(r);
         return r;
+    }
+
+    private static class DeferredAssertions {
+        private final List<AssertionError> assertionFailures = Lists.newArrayList();
+
+        private void assertTrue(String message, Boolean b) {
+            try {
+                Assert.assertTrue(message, b);
+            }
+            catch (AssertionError e) {
+                assertionFailures.add(e);
+            }
+        }
+
+        private void assertTrue(Boolean b) {
+            try {
+                Assert.assertTrue(b);
+            }
+            catch (AssertionError e) {
+                assertionFailures.add(e);
+            }
+        }
+
+        private void assertNotNull(Object a) {
+            try {
+                Assert.assertNotNull(a);
+            }
+            catch (AssertionError e) {
+                assertionFailures.add(e);
+            }
+        }
+
+        private void assertEquals(Object a, Object b) {
+            try {
+                Assert.assertEquals(a, b);
+            }
+            catch (AssertionError e) {
+                assertionFailures.add(e);
+            }
+        }
+
+        private void assertEquals(String message, Object a, Object b) {
+            try {
+                Assert.assertEquals(message, a, b);
+            }
+            catch (AssertionError e) {
+                assertionFailures.add(e);
+            }
+        }
+
+        public void throwFailures() {
+            StringBuilder expected = new StringBuilder();
+            StringBuilder actual = new StringBuilder();
+            for (AssertionError failure : assertionFailures) {
+                if (failure instanceof ComparisonFailure) {
+                    ComparisonFailure comparisonFailure = (ComparisonFailure) failure;
+                    expected.append(comparisonFailure.getExpected());
+                    actual.append(comparisonFailure.getActual());
+                }
+                else {
+                    throw failure;
+                }
+            }
+            Assert.assertEquals(expected.toString(), actual.toString());
+        }
+
+        public boolean failed() {
+            return !assertionFailures.isEmpty();
+        }
     }
 }
