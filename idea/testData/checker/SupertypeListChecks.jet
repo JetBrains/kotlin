@@ -22,7 +22,6 @@ trait T1 {}
 trait T2<T> {}
 
 trait Test<error>()</error> {
-    <warning><error>this</error>(x : Int) {}</warning>
 }
 
 trait Test1 : C2<error>()</error> {}

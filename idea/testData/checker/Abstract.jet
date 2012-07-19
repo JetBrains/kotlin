@@ -157,10 +157,9 @@ abstract class B1(
 class B2() : B1(1, "r") {}
 
 abstract class B3(i: Int) {
-    <warning>this(): this(1)</warning>
 }
 
 fun foo(<warning>a</warning>: B3) {
-    val <warning>a</warning> = <error>B3()</error>
+    val <warning>a</warning> = <error>B3(1)</error>
     val <warning>b</warning> = <error>B1(2, "s")</error>
 }

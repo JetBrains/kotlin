@@ -7,12 +7,12 @@
       this : Foo
     }
 
-    <warning>this(var bar : Int) : this(1, 1, 1) {
-      bar = <warning>1</warning>
+    {
+      bar = 1
       this.bar
       1 : Int
-      val <warning>a</warning> : Int =1
+      val a : Int =1
       this : Foo
-    }</warning>
+    }
   }
 

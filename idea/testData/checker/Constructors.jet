@@ -8,24 +8,13 @@ class NoC2 : <error>WithC1</error>
 class NoC3 : WithC1()
 class WithC2() : <error>WithC1</error>
 
-class <error>NoPC</error> {
-  <error><error>this</error>() {}</error>
+class NoPC {
 }
 
 class WithPC0() {
-  <warning>this(a : Int) : this() {}</warning>
 }
 
 class WithPC1(a : Int) {
-  <warning><error>this</error>() {}</warning>
-
-  <warning>this(b : Long) : this("") {}</warning>
-
-  <warning>this(s : String) : this(1) {}</warning>
-
-  <warning>this(b : Char) : <error>this</error>("", 2) {}</warning>
-
-  <warning>this(b : Byte) : this(""), <error>this(1)</error> {}</warning>
 }
 
 
