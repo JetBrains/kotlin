@@ -15,3 +15,8 @@ There are various Kotlin APIs to JavaScript environments and libraries in the [j
 Any Kotlin test cases using the **org.junit.Test** annotation and the [kotlin.test](http://jetbrains.github.com/kotlin/versions/snapshot/apidocs/kotlin/test/package-summary.html) package, such as [this test case](https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/test/StringTest.kt#L5) are automatically converted to JavaScript using [QUnit](http://qunitjs.com/).
 
 This allows the test cases to be [ran directly in a web page in any web browser](https://github.com/JetBrains/kotlin/blob/master/libraries/tools/kotlin-js-tests/ReadMe.md).
+
+## Using the Kotlin Library in JavaScript
+
+There is a [simple sample](https://github.com/JetBrains/kotlin/blob/master/libraries/examples/browser-example/ReadMe.md) which shows how to use the [Kotlin Standard Library](http://jetbrains.github.com/kotlin/versions/snapshot/apidocs/index.html) from inside JavaScript in a web page or in a JVM using [kool.io](http://kool.io/)'s [JavaFX browser](https://github.com/koolio/kool/blob/master/samples/kool-template-sample/ReadMe.md)
+
