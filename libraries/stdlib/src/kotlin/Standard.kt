@@ -4,6 +4,7 @@ import java.util.ArrayList
 import java.util.Collection
 import java.util.HashSet
 import java.util.LinkedList
+import java.util.concurrent.Callable
 
 /**
 Helper to make jet.Iterator usable in for
@@ -77,3 +78,13 @@ public inline fun runnable(action: ()-> Unit): Runnable {
         }
     }
 }
+
+/**
+ * A helper method for creating a [[Callable]] from a function
+ */
+public inline fun <T> callable(action: ()-> T): Callable<T> {
+    return object: Callable<T> {
+        public override fun call() = action()
+    }
+}
+
