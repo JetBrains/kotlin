@@ -85,17 +85,6 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsBinaryOperation nullCheck(@NotNull TranslationContext context,
-            @NotNull JsExpression expressionToCheck, boolean shouldBeNull) {
-        if (shouldBeNull) {
-            return isNullCheck(context, expressionToCheck);
-        }
-        else {
-            return notNullCheck(context, expressionToCheck);
-        }
-    }
-
-    @NotNull
     public static List<JsExpression> translateArgumentList(@NotNull TranslationContext context,
             @NotNull List<? extends ValueArgument> jetArguments) {
         List<JsExpression> jsArguments = new ArrayList<JsExpression>();
@@ -213,22 +202,6 @@ public final class TranslationUtils {
         return false;
     }
 
-    @NotNull
-    public static JsNameRef getMethodReferenceForOverloadedOperation(@NotNull TranslationContext context,
-            @NotNull JetOperationExpression expression) {
-        FunctionDescriptor overloadedOperationDescriptor = getFunctionDescriptorForOperationExpression
-                (context.bindingContext(), expression);
-        assert overloadedOperationDescriptor != null;
-        JsNameRef overloadedOperationReference = context.getNameForDescriptor(overloadedOperationDescriptor).makeRef();
-        assert overloadedOperationReference != null;
-        return overloadedOperationReference;
-    }
-
-    @NotNull
-    public static JsNumberLiteral zeroLiteral(@NotNull TranslationContext context) {
-        return context.program().getNumberLiteral(0);
-    }
-
     @Nullable
     public static JsExpression resolveThisObjectForResolvedCall(@NotNull ResolvedCall<?> call,
             @NotNull TranslationContext context) {
@@ -238,10 +211,6 @@ public final class TranslationUtils {
         }
         DeclarationDescriptor expectedThisDescriptor = getDeclarationDescriptorForReceiver(thisObject);
         return getThisObject(context, expectedThisDescriptor);
-    }
-
-    public static boolean isNullLiteral(@NotNull TranslationContext context, @NotNull JsExpression expression) {
-        return expression.equals(context.program().getNullLiteral());
     }
 
     public static void defineModule(@NotNull TranslationContext context, @NotNull List<JsStatement> statements,

@@ -17,14 +17,12 @@
 package org.jetbrains.k2js.translate.operation;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMethodReferenceForOverloadedOperation;
+import org.jetbrains.k2js.translate.reference.CallBuilder;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 /**
  * @author Pavel Talanov
@@ -33,17 +31,20 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
     public static JsExpression doTranslate(@NotNull JetBinaryExpression expression,
-                                           @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         return (new OverloadedAssignmentTranslator(expression, context)).translate();
     }
 
     @NotNull
-    private final JsNameRef operationReference;
+    private final FunctionDescriptor operationDescriptor;
 
     private OverloadedAssignmentTranslator(@NotNull JetBinaryExpression expression,
-                                           @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         super(expression, context);
-        this.operationReference = getMethodReferenceForOverloadedOperation(context, expression);
+        FunctionDescriptor functionDescriptor =
+                BindingUtils.getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
+        assert functionDescriptor != null : "";
+        this.operationDescriptor = functionDescriptor;
     }
 
     @NotNull
@@ -61,8 +62,10 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
     private JsExpression overloadedMethodInvocation() {
-        setQualifier(operationReference, accessTranslator.translateAsGet());
-        return AstUtil.newInvocation(operationReference, right);
+        return CallBuilder.build(context())
+                .descriptor(operationDescriptor)
+                .receiver(accessTranslator.translateAsGet())
+                .args(right)
+                .translate();
     }
-
 }

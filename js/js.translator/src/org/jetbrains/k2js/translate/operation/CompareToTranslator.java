@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isCompareTo;
@@ -69,6 +68,6 @@ public final class CompareToTranslator extends AbstractTranslator {
     private JsExpression translate() {
         JsBinaryOperator correspondingOperator = OperatorTable.getBinaryOperator(getOperationToken(expression));
         JsExpression methodCall = BinaryOperationTranslator.translateAsOverloadedCall(expression, context());
-        return new JsBinaryOperation(correspondingOperator, methodCall, TranslationUtils.zeroLiteral(context()));
+        return new JsBinaryOperation(correspondingOperator, methodCall, context().program().getNumberLiteral(0));
     }
 }

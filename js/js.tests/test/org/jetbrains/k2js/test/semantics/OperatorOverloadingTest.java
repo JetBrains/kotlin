@@ -103,4 +103,20 @@ public final class OperatorOverloadingTest extends SingleFileTranslationTest {
     public void testOverloadPlusAssignArrayList() throws Exception {
         checkFooBoxIsOk("overloadPlusAssignArrayList.kt");
     }
+
+    public void testOverloadPlusAssignViaExtensionFunction() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testOverloadPlusViaExtensionFunction() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testOverloadPlusAssignViaPlusExtensionFunction() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testOverloadUnaryOperationsViaExtensionFunctions() throws Exception {
+        fooBoxTest();
+    }
 }
