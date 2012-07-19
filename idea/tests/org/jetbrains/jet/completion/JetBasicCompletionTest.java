@@ -97,6 +97,11 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testInLocalObjectDeclaration() {
+        doTest();
+    }
+
+
     public void testInMiddleOfNamespace() {
         doTest();
     }
