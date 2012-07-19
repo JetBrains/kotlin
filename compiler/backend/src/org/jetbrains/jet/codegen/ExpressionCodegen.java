@@ -2855,7 +2855,7 @@ The "returned" value of try expression with no finally is either the last expres
                 boolean patternIsNullable = false;
                 JetType condJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, condExpression);
                 Type condType;
-                if (isNumberPrimitive(subjectType)) {
+                if (isNumberPrimitive(subjectType) || subjectType.getSort() == Type.BOOLEAN) {
                     condType = asmType(condJetType);
                 }
                 else {
