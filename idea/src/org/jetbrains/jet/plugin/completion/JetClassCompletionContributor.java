@@ -59,7 +59,7 @@ public class JetClassCompletionContributor extends CompletionContributor {
                            return;
                        }
 
-                       final PsiReference ref = parameters.getPosition().getContainingFile().findReferenceAt(parameters.getOffset());
+                       final PsiReference ref = position.getContainingFile().findReferenceAt(parameters.getOffset());
                        if (ref instanceof JetSimpleNameReference) {
                            addClasses(parameters, result, new Consumer<LookupElement>() {
                                @Override
@@ -67,7 +67,6 @@ public class JetClassCompletionContributor extends CompletionContributor {
                                    jetResult.addElement(lookupElement);
                                }
                            });
-                           result.stopHere();
                        }
 
                        result.stopHere();
