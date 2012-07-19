@@ -169,6 +169,18 @@ public class WriteThroughScope extends WritableScopeWithImports {
         return objectDescriptors;
     }
 
+    @NotNull
+    @Override
+    public Set<ClassDescriptor> getClassDescriptors() {
+        checkMayRead();
+        Set<ClassDescriptor> classDescriptors = Sets.newHashSet();
+
+        classDescriptors.addAll(super.getClassDescriptors());
+        classDescriptors.addAll(getWorkerScope().getClassDescriptors());
+        classDescriptors.addAll(writableWorker.getClassDescriptors());
+        return classDescriptors;
+    }
+
     @Override
     public void addLabeledDeclaration(@NotNull DeclarationDescriptor descriptor) {
         checkMayWrite();

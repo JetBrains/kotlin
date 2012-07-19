@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.scopes;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -413,6 +414,19 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @Override
     public Set<ClassDescriptor> getObjectDescriptors() {
         return Sets.newHashSet(getObjectDescriptorsMap().values());
+    }
+
+    @NotNull
+    @Override
+    @SuppressWarnings("unchecked")
+    public Collection<ClassDescriptor> getClassDescriptors() {
+        Collection<DeclarationDescriptor> classDescriptors = Maps.filterValues(getVariableClassOrNamespaceDescriptors(), new Predicate<DeclarationDescriptor>() {
+            @Override
+            public boolean apply(@Nullable DeclarationDescriptor descriptor) {
+                return descriptor instanceof ClassDescriptor;
+            }
+        }).values();
+        return (Collection<ClassDescriptor>)(Object)classDescriptors;
     }
 
     @Override

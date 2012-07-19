@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.resolve.AbstractScopeAdapter;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -34,11 +35,17 @@ import java.util.List;
 /**
  * @author svtk
  */
-public class InnerClassesScopeWrapper extends JetScopeImpl {
+public class InnerClassesScopeWrapper extends AbstractScopeAdapter {
     private final JetScope actualScope;
 
     public InnerClassesScopeWrapper(JetScope actualScope) {
         this.actualScope = actualScope;
+    }
+
+    @NotNull
+    @Override
+    protected JetScope getWorkerScope() {
+        return actualScope;
     }
 
     private boolean isClass(DeclarationDescriptor descriptor) {
@@ -50,12 +57,6 @@ public class InnerClassesScopeWrapper extends JetScopeImpl {
         ClassifierDescriptor classifier = actualScope.getClassifier(name);
         if (isClass(classifier)) return classifier;
         return null;
-    }
-
-    @NotNull
-    @Override
-    public DeclarationDescriptor getContainingDeclaration() {
-        return actualScope.getContainingDeclaration();
     }
 
     @NotNull

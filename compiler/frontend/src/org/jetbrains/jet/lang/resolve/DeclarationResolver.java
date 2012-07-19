@@ -30,10 +30,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
@@ -93,6 +90,7 @@ public class DeclarationResolver {
         resolveFunctionAndPropertyHeaders();
         importsResolver.processMembersImports(rootScope);
         checkRedeclarationsInNamespaces();
+        checkClassObjectInnerClassNames();
     }
 
 
@@ -313,5 +311,27 @@ public class DeclarationResolver {
             declarations = Collections.singletonList(BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declarationDescriptor));
         }
         return declarations;
+    }
+
+    private void checkClassObjectInnerClassNames() {
+        for (MutableClassDescriptor classDescriptor : context.getClasses().values()) {
+            MutableClassDescriptorLite classObj = classDescriptor.getClassObjectDescriptor();
+            if (classObj == null) {
+                continue;
+            }
+
+            Collection<ClassDescriptor> myInnerClasses = classDescriptor.getUnsubstitutedInnerClassesScope().getClassDescriptors();
+            Collection<ClassDescriptor> classObjInnerClasses = classObj.getUnsubstitutedInnerClassesScope().getClassDescriptors();
+
+            for (ClassDescriptor myInnerClass : myInnerClasses) {
+                for (ClassDescriptor classObjInnerClass : classObjInnerClasses) {
+                    if (myInnerClass.getName().equals(classObjInnerClass.getName())) {
+                        trace.report(REDECLARATION.on(BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), myInnerClass), myInnerClass.getName().getName()));
+                        trace.report(REDECLARATION.on(BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classObjInnerClass), classObjInnerClass.getName().getName()));
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
