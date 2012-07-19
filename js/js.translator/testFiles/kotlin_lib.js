@@ -63,15 +63,23 @@ var kotlin = {set:function (receiver, key, value) {
         throw Kotlin.$new(Kotlin.Exceptions.NullPointerException)();
     };
 
-    function throwAbstractFunctionInvocationError() {
-        throw new TypeError("Function is abstract");
+    function throwAbstractFunctionInvocationError(funName) {
+        return function() {
+            var message;
+            if (funName !== undefined) {
+                message = "Function " + funName + " is abstract";
+            } else {
+                message = "Function is abstract";
+            }
+            throw new TypeError(message);
+        };
     }
 
     Kotlin.Iterator = Kotlin.$createClass({
         initialize: function () {
         },
-        next: throwAbstractFunctionInvocationError,
-        get_hasNext: throwAbstractFunctionInvocationError
+        next: throwAbstractFunctionInvocationError("Iterator#next"),
+        get_hasNext: throwAbstractFunctionInvocationError("Iterator#get_hasNext")
     });
 
     var ArrayIterator = Kotlin.$createClass(Kotlin.Iterator, {
@@ -212,19 +220,19 @@ var kotlin = {set:function (receiver, key, value) {
     Kotlin.Runnable = Kotlin.$createClass({
         initialize: function () {
         },
-        run: throwAbstractFunctionInvocationError
+        run: throwAbstractFunctionInvocationError("Runnable#run")
     });
 
     Kotlin.Comparable = Kotlin.$createClass({
         initialize: function () {
         },
-        compareTo: throwAbstractFunctionInvocationError
+        compareTo: throwAbstractFunctionInvocationError("Comparable#compareTo")
     });
 
     Kotlin.Appendable = Kotlin.$createClass({
         initialize: function () {
         },
-        append: throwAbstractFunctionInvocationError
+        append: throwAbstractFunctionInvocationError("Appendable#append")
     });
 
     Kotlin.parseInt = function (str) {
@@ -358,7 +366,7 @@ var kotlin = {set:function (receiver, key, value) {
     Kotlin.Comparator = Kotlin.$createClass({
         initialize: function () {
         },
-        compare: throwAbstractFunctionInvocationError
+        compare: throwAbstractFunctionInvocationError("Comparator#compare")
     });
 
     var ComparatorImpl = Kotlin.$createClass(Kotlin.Comparator, {

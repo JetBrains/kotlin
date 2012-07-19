@@ -23,7 +23,7 @@ import junit.framework.Test;
  */
 //NOTE: well, it has tests
 @SuppressWarnings("JUnitTestCaseWithNoTests")
-public class StdLibGetOtElseTest extends JsUnitTestBase {
+public final class StdLibGetOtElseTest extends JsUnitTestBase {
     public static Test suite() throws Exception {
         return createTestSuiteForFile("libraries/stdlib/test/GetOrElseTest.kt");
     }
