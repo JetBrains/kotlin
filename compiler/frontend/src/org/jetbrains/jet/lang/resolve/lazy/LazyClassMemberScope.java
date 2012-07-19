@@ -23,10 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -41,6 +38,28 @@ import java.util.*;
 * @author abreslav
 */
 public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescriptor, ClassMemberDeclarationProvider> {
+
+    private interface MemberExtractor<T extends CallableMemberDescriptor> {
+        MemberExtractor<FunctionDescriptor> EXTRACT_FUNCTIONS = new MemberExtractor<FunctionDescriptor>() {
+            @NotNull
+            @Override
+            public Collection<FunctionDescriptor> extract(@NotNull JetType extractFrom, @NotNull Name name) {
+                return extractFrom.getMemberScope().getFunctions(name);
+            }
+        };
+
+        MemberExtractor<PropertyDescriptor> EXTRACT_PROPERTIES = new MemberExtractor<PropertyDescriptor>() {
+            @NotNull
+            @Override
+            public Collection<PropertyDescriptor> extract(@NotNull JetType extractFrom, @NotNull Name name) {
+                //noinspection unchecked
+                return (Collection) extractFrom.getMemberScope().getProperties(name);
+            }
+        };
+
+        @NotNull
+        Collection<T> extract(@NotNull JetType extractFrom, @NotNull Name name);
+    }
 
     private ConstructorDescriptor primaryConstructor;
     private boolean primaryConstructorResolved = false;
@@ -118,6 +137,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
             fromSupertypes.addAll(supertype.getMemberScope().getFunctions(name));
         }
+        generateDelegatingDescriptors(name, MemberExtractor.EXTRACT_FUNCTIONS, result);
         generateFakeOverrides(name, fromSupertypes, result, FunctionDescriptor.class);
     }
 
@@ -178,15 +198,37 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
         }
 
-
         // Members from supertypes
         Collection<PropertyDescriptor> fromSupertypes = Lists.newArrayList();
         for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
             fromSupertypes.addAll((Set) supertype.getMemberScope().getProperties(name));
         }
+        generateDelegatingDescriptors(name, MemberExtractor.EXTRACT_PROPERTIES, result);
         generateFakeOverrides(name, fromSupertypes, (Set) result, PropertyDescriptor.class);
     }
 
+    private <T extends CallableMemberDescriptor> void generateDelegatingDescriptors(
+            @NotNull Name name,
+            @NotNull MemberExtractor<T> extractor,
+            @NotNull Set<? super T> result
+    ) {
+        for (JetDelegationSpecifier delegationSpecifier : declarationProvider.getOwnerInfo().getDelegationSpecifiers()) {
+            if (delegationSpecifier instanceof JetDelegatorByExpressionSpecifier) {
+                JetDelegatorByExpressionSpecifier specifier = (JetDelegatorByExpressionSpecifier) delegationSpecifier;
+                JetTypeReference typeReference = specifier.getTypeReference();
+                if (typeReference != null) {
+                    JetType supertype = resolveSession.getInjector().getTypeResolver().resolveType(
+                            thisDescriptor.getScopeForClassHeaderResolution(),
+                            typeReference,
+                            resolveSession.getTrace(),
+                            false);
+                    Collection<T> descriptors =
+                            DelegationResolver.generateDelegatedMembers(thisDescriptor, extractor.extract(supertype, name));
+                    result.addAll(descriptors);
+                }
+            }
+        }
+    }
     @Override
     protected void addExtraDescriptors() {
         for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
