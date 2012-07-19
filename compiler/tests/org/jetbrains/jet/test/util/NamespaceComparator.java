@@ -728,10 +728,16 @@ public class NamespaceComparator {
         }
     }
 
+    private static final MethodCache CLASS_OBJECT_SERIALIZER_METHOD_CACHE = new MethodCache(ClassObjectSerializer.class);
     private class ClassObjectSerializer extends FullContentSerialier {
 
         private ClassObjectSerializer(StringBuilder sb) {
             super(sb);
+        }
+
+        @Override
+        protected MethodCache doGetMethodCache() {
+            return CLASS_OBJECT_SERIALIZER_METHOD_CACHE;
         }
 
         @Override
