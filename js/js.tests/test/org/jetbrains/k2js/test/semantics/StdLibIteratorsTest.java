@@ -26,8 +26,6 @@ import junit.framework.Test;
 public final class StdLibIteratorsTest extends JsUnitTestBase {
     public static Test suite() throws Exception {
         return createTestSuiteForFile("libraries/stdlib/test/iterators/IteratorsTest.kt",
-                                      "IteratorsTest.requireNoNulls",
-                                      "IteratorsTest.plus",
-                                      "IteratorsTest.plusCollection");
+                                      "IteratorsTest.requireNoNulls");
     }
 }
