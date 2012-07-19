@@ -405,6 +405,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             public List<? extends JetParameter> getPrimaryConstructorParameters() {
                 return Collections.emptyList();
             }
+
+            @NotNull
+            @Override
+            public List<JetTypeParameter> getTypeParameters() {
+                return Collections.emptyList();
+            }
         };
     }
 
