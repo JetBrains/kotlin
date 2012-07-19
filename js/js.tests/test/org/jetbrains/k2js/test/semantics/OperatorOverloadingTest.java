@@ -22,7 +22,6 @@ import org.jetbrains.k2js.test.SingleFileTranslationTest;
  * @author Pavel Talanov
  */
 public final class OperatorOverloadingTest extends SingleFileTranslationTest {
-
     public OperatorOverloadingTest() {
         super("operatorOverloading/");
     }
@@ -31,46 +30,37 @@ public final class OperatorOverloadingTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-
     public void testPostfixInc() throws Exception {
         fooBoxTest();
     }
-
 
     public void testPrefixDecOverload() throws Exception {
         fooBoxTest();
     }
 
-
     public void testPrefixIncReturnsCorrectValue() throws Exception {
         fooBoxTest();
     }
-
 
     public void testOverloadedCallOnProperty() throws Exception {
         fooBoxTest();
     }
 
-
     public void testPostfixOnProperty() throws Exception {
         fooBoxTest();
     }
-
 
     public void testOperatorOverloadOnPropertyCallGetterAndSetterOnlyOnce() throws Exception {
         fooBoxTest();
     }
 
-
     public void testUnaryOnIntProperty() throws Exception {
         fooBoxTest();
     }
 
-
     public void testUnaryOnIntPropertyAsStatement() throws Exception {
         fooBoxTest();
     }
-
 
     public void testBinaryDivOverload() throws Exception {
         fooBoxTest();
@@ -85,16 +75,13 @@ public final class OperatorOverloadingTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-
     public void testCompareTo() throws Exception {
         fooBoxTest();
     }
 
-
     public void testPlusAndMinusAsAnExpression() throws Exception {
         fooBoxTest();
     }
-
 
     public void testUsingModInCaseModAssignNotAvailable() throws Exception {
         fooBoxTest();

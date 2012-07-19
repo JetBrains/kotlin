@@ -5,15 +5,20 @@ var Kotlin = {};
 (function () {
     "use strict";
 
-    Kotlin.isType = function (object, klass) {
-        if (object === null) {
+    // ecma5 is still sucks — concat doesn't accept arguments, but apply does, so, we just return arguments
+    Kotlin.argumentsToArrayLike = function (args) {
+      return args;
+    };
+
+    Kotlin.isType = function (object, type) {
+        if (object === null || object === undefined) {
             return false;
         }
 
         var proto = Object.getPrototypeOf(object);
         // todo test nested class
         //noinspection RedundantIfStatementJS
-        if (proto == klass.proto) {
+        if (proto == type.proto) {
             return true;
         }
 
@@ -21,11 +26,17 @@ var Kotlin = {};
     };
 
     // as separated function to reduce scope
-    function createConstructor(proto, initializer) {
-        return function () {
-            var o = Object.create(proto);
+    function createConstructor() {
+        return function $fun() {
+            var o = Object.create($fun.proto);
+            var initializer = $fun.initializer;
             if (initializer != null) {
-                initializer.apply(o, arguments);
+                if (initializer.length == 0) {
+                    initializer.call(o);
+                }
+                else {
+                    initializer.apply(o, arguments);
+                }
             }
 
             Object.seal(o);
@@ -38,11 +49,11 @@ var Kotlin = {};
         for (var i = 0, n = bases.length; i < n; i++) {
             var base = bases[i];
             var baseProto = base.proto;
-            if (baseProto == null || base.properties == null) {
+            if (baseProto === null || base.properties === null) {
                 continue;
             }
 
-            if (!proto) {
+            if (proto === null) {
                 proto = Object.create(baseProto, properties || undefined);
                 continue;
             }
@@ -53,33 +64,54 @@ var Kotlin = {};
         return proto;
     }
 
-    // proto must be created for class even if it is not needed (requires for is operator)
+    Kotlin.createTrait = function (bases, properties) {
+        return createClass(bases, null, properties, false);
+    };
+
     Kotlin.createClass = function (bases, initializer, properties) {
+        // proto must be created for class even if it is not needed (requires for is operator)
+        return createClass(bases, initializer === null ? function () {} : initializer, properties, true);
+    };
+
+    function computeProto2(bases, properties) {
+        if (bases === null) {
+            return null;
+        }
+        return Array.isArray(bases) ? computeProto(bases, properties) : bases.proto;
+    }
+
+    Kotlin.createObject = function (bases, initializer, properties) {
+        var o = Object.create(computeProto2(bases, properties), properties || undefined);
+        if (initializer !== null) {
+            initializer.call(o);
+        }
+        return o;
+    };
+
+    function createClass(bases, initializer, properties, isClass) {
         var proto;
         var baseInitializer = null;
-        var isTrait = initializer == null;
-        if (!bases) {
-            proto = !properties && isTrait ? null : Object.create(null, properties || undefined);
+        if (bases === null) {
+            proto = !isClass && properties === null ? null : Object.create(null, properties || undefined);
         }
         else if (!Array.isArray(bases)) {
             baseInitializer = bases.initializer;
-            proto = !properties && isTrait ? bases.proto : Object.create(bases.proto, properties || undefined);
+            proto = !isClass && properties === null ? bases.proto : Object.create(bases.proto, properties || undefined);
         }
         else {
             proto = computeProto(bases, properties);
             // first is superclass, other are traits
             baseInitializer = bases[0].initializer;
             // all bases are traits without properties
-            if (proto == null && !isTrait) {
+            if (proto === null && isClass) {
                 proto = Object.create(null, properties || undefined);
             }
         }
 
-        var constructor = createConstructor(proto, initializer);
+        var constructor = createConstructor();
         Object.defineProperty(constructor, "proto", {value: proto});
         Object.defineProperty(constructor, "properties", {value: properties || null});
-        // null for trait
-        if (!isTrait) {
+        if (isClass) {
             Object.defineProperty(constructor, "initializer", {value: initializer});
 
             Object.defineProperty(initializer, "baseInitializer", {value: baseInitializer});
@@ -88,27 +120,32 @@ var Kotlin = {};
 
         Object.freeze(constructor);
         return constructor;
-    };
+    }
 
-    Kotlin.createObject = function (initializer, properties) {
-        var o = Object.create(null, properties || undefined);
-        initializer.call(o);
-        return o;
-    };
-
-
-    Kotlin.definePackage = function (functionsAndClasses, nestedNamespaces) {
-        var p = Object.create(null, functionsAndClasses || undefined);
-        if (nestedNamespaces) {
-            var keys = Object.keys(nestedNamespaces);
-            for (var i = 0, n = keys.length; i < n; i++) {
-                var name = keys[i];
-                Object.defineProperty(p, name, {value:nestedNamespaces[name]});
-            }
+    Kotlin.definePackage = function (initializer, members) {
+        var definition = Object.create(null, members === null ? undefined : members);
+        if (initializer === null) {
+            return {value: definition};
         }
-
-        return p;
+        else {
+            var getter = createPackageGetter(definition, initializer);
+            Object.freeze(getter);
+            return {get: getter};
+        }
     };
+
+    function createPackageGetter(instance, initializer) {
+        return function () {
+            if (initializer !== null) {
+                var tmp = initializer;
+                initializer = null;
+                tmp.call(instance);
+                Object.seal(instance);
+            }
+
+            return instance;
+        };
+    }
 
     Kotlin.$new = function (f) {
         return f;
@@ -154,12 +191,11 @@ var Kotlin = {};
     };
 
     Kotlin.defineModule = function (id, module) {
-        var isTestMode = id === "JS_TESTS";
-        if ((id in Kotlin.modules) && (!isTestMode)) {
-            throw Kotlin.$new(Kotlin.Exceptions.IllegalArgumentException)();
+        if (id in Kotlin.modules) {
+            throw Kotlin.$new(Kotlin.exceptions.IllegalArgumentException)();
         }
 
         Object.freeze(module);
-        Object.defineProperty(Kotlin.modules, id, {value: module, writable: isTestMode});
+        Object.defineProperty(Kotlin.modules, id, {value: module});
     };
 })();

@@ -17,8 +17,8 @@
 package org.jetbrains.k2js.translate.operation;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -62,7 +62,7 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
     @NotNull
     private JsExpression overloadedMethodInvocation() {
         setQualifier(operationReference, accessTranslator.translateAsGet());
-        return AstUtil.newInvocation(operationReference, right);
+        return new JsInvocation(operationReference, right);
     }
 
 }

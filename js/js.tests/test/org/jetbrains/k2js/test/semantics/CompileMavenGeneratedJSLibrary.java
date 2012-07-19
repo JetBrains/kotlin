@@ -17,21 +17,16 @@
  */
 package org.jetbrains.k2js.test.semantics;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.js.K2JSCompiler;
 import org.jetbrains.jet.cli.js.K2JSCompilerArguments;
-import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
 import java.io.File;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Lets test compiling all the JS code thats used by the library-js-library from the maven build
@@ -59,7 +54,7 @@ public class CompileMavenGeneratedJSLibrary extends SingleFileTranslationTest {
 
     public void DISABLED_testGenerateTestCase() throws Exception {
         if (generatedJsLibraryDir.exists() && generatedJsLibraryDir.isDirectory()) {
-            generateJavaScriptFiles(EcmaVersion.all(),
+            generateJavaScriptFiles(DEFAULT_ECMA_VERSIONS,
                                     "libraries/stdlib/test",
                                     "ArraysTest.kt",
                                     "dom/DomTest.kt",
@@ -77,7 +72,7 @@ public class CompileMavenGeneratedJSLibrary extends SingleFileTranslationTest {
         }
     }
 
-    protected void generateJavaScriptFiles(@NotNull EnumSet<EcmaVersion> ecmaVersions,
+    protected void generateJavaScriptFiles(@NotNull Iterable<EcmaVersion> ecmaVersions,
             @NotNull String sourceDir, @NotNull String... stdLibFiles) throws Exception {
         List<String> files = Lists.newArrayList();
 
@@ -100,7 +95,7 @@ public class CompileMavenGeneratedJSLibrary extends SingleFileTranslationTest {
             arguments.outputFile = getOutputFilePath(getTestName(false) + ".compiler.kt", version);
             arguments.sourceFiles = files.toArray(new String[files.size()]);
             arguments.verbose = true;
-            arguments.libraryDirectories = new String[] {generatedJsDefinitionsDir};
+            arguments.libraryFiles = new String[] {generatedJsDefinitionsDir};
             System.out.println("Compiling with version: " + version + " to: " + arguments.outputFile);
             ExitCode answer = compiler.exec(System.out, arguments);
             assertEquals("Compile failed", ExitCode.OK, answer);

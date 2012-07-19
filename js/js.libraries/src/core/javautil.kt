@@ -68,12 +68,12 @@ public abstract class AbstractList<E>(): AbstractCollection<E>(), List<E> {
     override public  fun set(index: Int, element: E): E = js.noImpl
 
     library("addAt")
-    override public  public  fun add(index: Int, element: E): Unit = js.noImpl
+    override public fun add(index: Int, element: E): Unit = js.noImpl
 
     library("removeAt")
-    override public  fun remove(index: Int): E = js.noImpl
+    override public fun remove(index: Int): E = js.noImpl
 
-    override public  fun indexOf(o: E?): Int = js.noImpl
+    override public fun indexOf(o: E?): Int = js.noImpl
 }
 
 library

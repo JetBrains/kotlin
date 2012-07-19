@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.translate.utils;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.OrderedSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -30,16 +29,11 @@ import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_GET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_SET;
 import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.message;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getContainedDescriptorsWhichAreNotPredefined;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getNamespaceDescriptorHierarchy;
 
 /**
  * @author Pavel Talanov
@@ -70,15 +64,6 @@ public final class BindingUtils {
     }
 
     @NotNull
-    public static NamespaceDescriptor getNamespaceDescriptor(@NotNull BindingContext context,
-            @NotNull JetFile declaration) {
-        NamespaceDescriptor namespaceDescriptor =
-                context.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, JetPsiUtil.getFQName(declaration));
-        assert namespaceDescriptor != null : message(declaration, "File should have a namespace descriptor");
-        return namespaceDescriptor;
-    }
-
-    @NotNull
     public static FunctionDescriptor getFunctionDescriptor(@NotNull BindingContext context,
             @NotNull JetDeclarationWithBody declaration) {
         return getDescriptorForExpression(context, declaration, FunctionDescriptor.class);
@@ -105,34 +90,6 @@ public final class BindingUtils {
         assert result instanceof JetFunction
                 : message(context, descriptor, "SimpleFunctionDescriptor should have declaration of type JetFunction");
         return (JetFunction) result;
-    }
-
-    @NotNull
-    public static List<JetDeclaration> getDeclarationsForNamespace(@NotNull BindingContext bindingContext,
-            @NotNull NamespaceDescriptor namespace) {
-        List<JetDeclaration> declarations = new ArrayList<JetDeclaration>();
-        for (DeclarationDescriptor descriptor : getContainedDescriptorsWhichAreNotPredefined(namespace, bindingContext)) {
-            if (descriptor instanceof NamespaceDescriptor) {
-                continue;
-            }
-            JetDeclaration declaration = getDeclarationForDescriptor(bindingContext, descriptor);
-            if (declaration != null) {
-                declarations.add(declaration);
-            }
-        }
-        return declarations;
-    }
-
-    @Nullable
-    private static JetDeclaration getDeclarationForDescriptor(@NotNull BindingContext context,
-            @NotNull DeclarationDescriptor descriptor) {
-        PsiElement result = BindingContextUtils.descriptorToDeclaration(context, descriptor);
-        if (result == null) {
-            //TODO: never get there
-            return null;
-        }
-        assert result instanceof JetDeclaration : message(context, descriptor, "Descriptor should correspond to an element");
-        return (JetDeclaration) result;
     }
 
     @NotNull
@@ -174,16 +131,6 @@ public final class BindingUtils {
     public static PropertyDescriptor getPropertyDescriptorForConstructorParameter(@NotNull BindingContext context,
             @NotNull JetParameter parameter) {
         return context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
-    }
-
-    @Nullable
-    public static JetProperty getPropertyForDescriptor(@NotNull BindingContext context,
-            @NotNull PropertyDescriptor property) {
-        PsiElement result = BindingContextUtils.descriptorToDeclaration(context, property);
-        if (!(result instanceof JetProperty)) {
-            return null;
-        }
-        return (JetProperty) result;
     }
 
     @NotNull
@@ -320,20 +267,6 @@ public final class BindingUtils {
         PropertyDescriptor propertyDescriptor = context.get(BindingContext.OBJECT_DECLARATION, name);
         assert propertyDescriptor != null : message(name);
         return propertyDescriptor;
-    }
-
-    @NotNull
-    public static Set<NamespaceDescriptor> getAllNonNativeNamespaceDescriptors(@NotNull BindingContext context,
-            @NotNull Collection<JetFile> files) {
-        Set<NamespaceDescriptor> descriptorSet = new OrderedSet<NamespaceDescriptor>();
-        for (JetFile file : files) {
-            //TODO: can't be
-            NamespaceDescriptor namespaceDescriptor = getNamespaceDescriptor(context, file);
-            if (!AnnotationsUtils.isPredefinedObject(namespaceDescriptor)) {
-                descriptorSet.addAll(getNamespaceDescriptorHierarchy(namespaceDescriptor));
-            }
-        }
-        return descriptorSet;
     }
 
     @NotNull

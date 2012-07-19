@@ -18,7 +18,6 @@ package org.jetbrains.k2js.translate.expression.foreach;
 
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetForExpression;
@@ -81,15 +80,12 @@ public final class RangeForTranslator extends ForTranslator {
         List<JsStatement> blockStatements = Lists.newArrayList();
         blockStatements.add(temporariesInitialization(rangeExpression, incrVar, start, end).makeStmt());
         blockStatements.add(generateForExpression());
-        return newBlock(blockStatements);
+        return new JsBlock(blockStatements);
     }
 
     @NotNull
     private JsFor generateForExpression() {
-        JsFor result = new JsFor();
-        result.setInitVars(initExpression());
-        result.setCondition(getCondition());
-        result.setIncrExpr(getIncrExpression());
+        JsFor result = new JsFor(initExpression(), getCondition(), getIncrExpression());
         result.setBody(translateOriginalBodyExpression());
         return result;
     }
@@ -110,14 +106,7 @@ public final class RangeForTranslator extends ForTranslator {
     }
 
     @NotNull
-    private JsExpression getField(@NotNull String fieldName) {
-        JsNameRef nameRef = AstUtil.newQualifiedNameRef(fieldName);
-        setQualifier(nameRef, rangeExpression.reference());
-        return nameRef;
-    }
-
-    @NotNull
     private JsExpression callFunction(@NotNull String funName) {
-        return AstUtil.newInvocation(getField(funName));
+        return new JsInvocation(new JsNameRef(funName, rangeExpression.reference()));
     }
 }

@@ -14,6 +14,19 @@
  * limitations under the License.
  */
 
+// todo inlined
+String.prototype.startsWith = function (s) {
+  return this.indexOf(s) === 0;
+};
+
+String.prototype.endsWith = function (s) {
+  return this.indexOf(s, this.length - s.length) !== -1;
+};
+
+String.prototype.contains = function (s) {
+  return this.indexOf(s) !== -1;
+};
+
 // todo org.jetbrains.k2js.test.semantics.WebDemoExamples2Test#testBuilder
 var kotlin = {set:function (receiver, key, value) {
     return receiver.put(key, value);
@@ -23,7 +36,10 @@ var kotlin = {set:function (receiver, key, value) {
     "use strict";
 
     Kotlin.equals = function (obj1, obj2) {
-        if ((obj1 === null)|| (obj1 === undefined)) return obj2 === null;
+        if (obj1 === null || obj1 === undefined) {
+            return obj2 === null;
+        }
+
         if (typeof obj1 == "object") {
             if (obj1.equals !== undefined) {
                 return obj1.equals(obj2);
@@ -33,13 +49,7 @@ var kotlin = {set:function (receiver, key, value) {
     };
 
     Kotlin.array = function (args) {
-        var answer = [];
-        if (args !== null && args !== undefined) {
-            for (var i = 0, n = args.length; i < n; ++i) {
-                answer[i] = args[i]
-            }
-        }
-        return answer;
+        return args === null || args === undefined ? [] : args.slice();
     };
 
     Kotlin.upto = function (from, limit, reversed) {
@@ -47,20 +57,22 @@ var kotlin = {set:function (receiver, key, value) {
     };
 
     Kotlin.modules = {};
-    Kotlin.Exceptions = {};
+
     Kotlin.Exception = Kotlin.$createClass();
-    Kotlin.RuntimeException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.Exceptions.IndexOutOfBounds = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.Exceptions.NullPointerException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.Exceptions.NoSuchElementException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.Exceptions.IllegalArgumentException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.Exceptions.IllegalStateException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.Exceptions.IndexOutOfBoundsException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.Exceptions.UnsupportedOperationException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.Exceptions.IOException = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.exceptions = {
+        RuntimeException: Kotlin.$createClass(Kotlin.Exception),
+        IndexOutOfBounds: Kotlin.$createClass(Kotlin.Exception),
+        NullPointerException: Kotlin.$createClass(Kotlin.Exception),
+        NoSuchElementException: Kotlin.$createClass(Kotlin.Exception),
+        IllegalArgumentException: Kotlin.$createClass(Kotlin.Exception),
+        IllegalStateException: Kotlin.$createClass(Kotlin.Exception),
+        IndexOutOfBoundsException: Kotlin.$createClass(Kotlin.Exception),
+        UnsupportedOperationException: Kotlin.$createClass(Kotlin.Exception),
+        IOException: Kotlin.$createClass(Kotlin.Exception)
+    };
 
     Kotlin.throwNPE = function () {
-        throw Kotlin.$new(Kotlin.Exceptions.NullPointerException)();
+        throw Kotlin.$new(Kotlin.exceptions.NullPointerException)();
     };
 
     function throwAbstractFunctionInvocationError() {
@@ -126,18 +138,12 @@ var kotlin = {set:function (receiver, key, value) {
         },
         equals: function (o) {
             if (this.$size === o.$size) {
-                var iter1 = this.iterator();
-                var iter2 = o.iterator();
-                while (true) {
-                    var hn1 = iter1.get_hasNext();
-                    var hn2 = iter2.get_hasNext();
-                    if (hn1 != hn2) return false;
-                    if (!hn2)
-                        return true;
-                    else {
-                        var o1 = iter1.next();
-                        var o2 = iter2.next();
-                        if (!Kotlin.equals(o1, o2)) return false;
+                var iterator1 = this.iterator();
+                var iterator2 = o.iterator();
+                var i = this.$size;
+                while (i-- > 0) {
+                    if (!Kotlin.equals(iterator1.next(), iterator2.next())) {
+                        return false;
                     }
                 }
             }
@@ -145,14 +151,17 @@ var kotlin = {set:function (receiver, key, value) {
         },
         toString: function() {
             var builder = "[";
-            var iter = this.iterator();
+            var iterator = this.iterator();
             var first = true;
-            while (iter.get_hasNext()) {
-                if (first)
+            var i = this.$size;
+            while (i-- > 0) {
+                if (first) {
                     first = false;
-                else
+                }
+                else {
                     builder += ", ";
-                builder += iter.next();
+                }
+                builder += iterator.next();
             }
             builder += "]";
             return builder;
@@ -166,13 +175,13 @@ var kotlin = {set:function (receiver, key, value) {
         },
         get: function (index) {
             if (index < 0 || index >= this.$size) {
-                throw Kotlin.Exceptions.IndexOutOfBounds;
+                throw Kotlin.exceptions.IndexOutOfBounds;
             }
             return this.array[index];
         },
         set: function (index, value) {
             if (index < 0 || index >= this.$size) {
-                throw Kotlin.Exceptions.IndexOutOfBounds;
+                throw Kotlin.exceptions.IndexOutOfBounds;
             }
             this.array[index] = value;
         },
@@ -190,6 +199,7 @@ var kotlin = {set:function (receiver, key, value) {
         },
         addAt: function (index, element) {
             this.array.splice(index, 0, element);
+            this.$size++;
         },
         removeAt: function (index) {
             this.array.splice(index, 1);
@@ -206,6 +216,9 @@ var kotlin = {set:function (receiver, key, value) {
                 }
             }
             return -1;
+        },
+        toString: function () {
+            return "[" + this.array.join(", ") + "]";
         }
     });
 
@@ -237,7 +250,7 @@ var kotlin = {set:function (receiver, key, value) {
     };
 
     Kotlin.safeParseDouble = function(str) {
-        var r = parseFloat(str, 10);
+        var r = parseFloat(str);
         return isNaN(r) ? null : r;
     };
 
@@ -415,12 +428,11 @@ var kotlin = {set:function (receiver, key, value) {
     };
 
     Kotlin.arrayFromFun = function (size, initFun) {
-        var res = [];
-        var i = size;
-        while (i > 0) {
-            res[--i] = initFun(i);
+        var result = new Array(size);
+        for (var i = 0; i < size; i++) {
+            result[i] = initFun(i);
         }
-        return res;
+        return result;
     };
 
     Kotlin.arrayIndices = function (arr) {
@@ -931,4 +943,52 @@ var kotlin = {set:function (receiver, key, value) {
             HashSet.call(this);
         }});
     }());
+
+    // native concat doesn't work for arguments
+    Kotlin.concat = function (a, b) {
+        var r = new Array(a.length + b.length);
+        var i = 0;
+        var n = a.length;
+        for (; i < n; i++) {
+            r[i] = a[i];
+        }
+        n = b.length;
+        for (var j = 0; j < n;) {
+            r[i++] = b[j++];
+        }
+        return r;
+    }
 })();
+
+Kotlin.assignOwner = function(f, o) {
+  f.o = o;
+  return f;
+};
+
+// we cannot use Function.bind, because if we bind with null self, but call with not null — fun must receive passed not null self
+// test case: WebDemoExamples2Test.testBuilder
+Kotlin.b0 = function (f, self, value) {
+    return function () {
+        return f.call(self !== null ? self : this, value);
+    }
+};
+Kotlin.b1 = function (f, self, values) {
+    return function () {
+        return f.apply(self !== null ? self : this, values);
+    }
+};
+Kotlin.b2 = function (f, self, values) {
+    return function () {
+        return f.apply(self !== null ? self : this, Kotlin.concat(values, arguments));
+    }
+};
+Kotlin.b3 = function (f, self) {
+    return function () {
+        return f.call(self)
+    }
+};
+Kotlin.b4 = function (f, self) {
+    return function () {
+        return f.apply(self, Kotlin.argumentsToArrayLike(arguments));
+    }
+};

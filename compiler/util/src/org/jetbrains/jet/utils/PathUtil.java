@@ -33,7 +33,7 @@ import java.util.List;
 public class PathUtil {
 
     public static String JS_LIB_JAR_NAME = "kotlin-jslib.jar";
-    public static String JS_LIB_JS_NAME = "kotlinLib.js";
+    public static String JS_LIB_JS_NAME = "kotlinEcma3.js";
 
     private PathUtil() {}
 

@@ -15,41 +15,41 @@
  */
 
 {
-  var classes = function(){
-    var A = Kotlin.createClass({initialize:function(){
-      this.$order = '';
-      {
-        this.set_order(this.get_order() + 'A');
-      }
+    var items = function () {
+        var A = Kotlin.createClass({initialize: function () {
+            this.$order = '';
+            {
+                this.set_order(this.get_order() + 'A');
+            }
+        }, set_order: function (tmp$0) {
+            this.$order = tmp$0;
+        }, get_order: function () {
+            return this.$order;
+        }
+                                   });
+        var B = Kotlin.createClass(A, {initialize: function () {
+            this.super_init();
+            {
+                this.set_order(this.get_order() + 'B');
+            }
+        }
+        });
+        var C = Kotlin.createClass(B, {initialize: function () {
+            this.super_init();
+            {
+                this.set_order(this.get_order() + 'C');
+            }
+        }
+        });
+        return {A: A, B: B, C: C};
     }
-    , set_order:function(tmp$0){
-      this.$order = tmp$0;
-    }
-    , get_order:function(){
-      return this.$order;
-    }
-    });
-    var B = Kotlin.createClass(A, {initialize:function(){
-      this.super_init();
-      {
-        this.set_order(this.get_order() + 'B');
-      }
-    }
-    });
-    var C = Kotlin.createClass(B, {initialize:function(){
-      this.super_init();
-      {
-        this.set_order(this.get_order() + 'C');
-      }
-    }
-    });
-    return {A:A, B:B, C:C};
-  }
-  ();
-  var foo = Kotlin.definePackage(classes, {box:function(){
-    return (new foo.C).get_order() === 'ABC' && (new foo.B).get_order() === 'AB' && (new foo.A).get_order() === 'A';
-  }
-  });
+        ();
+
+    items.box = function () {
+        return (new foo.C).get_order() === 'ABC' && (new foo.B).get_order() === 'AB' && (new foo.A).get_order() === 'A';
+    };
+
+    var foo = Kotlin.definePackage(items);
 }
 
 function test() {

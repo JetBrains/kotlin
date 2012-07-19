@@ -16,10 +16,7 @@
 
 package org.jetbrains.k2js.translate.utils;
 
-import com.google.dart.compiler.backend.js.ast.JsBlock;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNode;
-import com.google.dart.compiler.backend.js.ast.JsReturn;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
@@ -31,21 +28,19 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.mutator.Mutator;
 
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToBlock;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.asBlock;
 import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
 /**
  * @author Pavel Talanov
  */
 public final class FunctionBodyTranslator extends AbstractTranslator {
-
     @NotNull
     public static JsBlock translateFunctionBody(@NotNull FunctionDescriptor descriptor,
                                                 @NotNull JetDeclarationWithBody declarationWithBody,
                                                 @NotNull TranslationContext functionBodyContext) {
-        return (new FunctionBodyTranslator(descriptor, declarationWithBody, functionBodyContext)).translate();
+        return new FunctionBodyTranslator(descriptor, declarationWithBody, functionBodyContext).translate();
     }
-
 
     @NotNull
     private final FunctionDescriptor descriptor;
@@ -70,15 +65,15 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
     @NotNull
     private JsBlock mayBeWrapWithReturn(@NotNull JsNode body) {
         if (!mustAddReturnToGeneratedFunctionBody()) {
-            return convertToBlock(body);
+            return asBlock(body);
         }
-        return convertToBlock(lastExpressionReturned(body));
+        return asBlock(lastExpressionReturned(body));
     }
 
     private boolean mustAddReturnToGeneratedFunctionBody() {
         JetType functionReturnType = descriptor.getReturnType();
         assert functionReturnType != null : "Function return typed type must be resolved.";
-        return (!declaration.hasBlockBody()) && (!JetStandardClasses.isUnit(functionReturnType));
+        return !declaration.hasBlockBody() && !JetStandardClasses.isUnit(functionReturnType);
     }
 
     @NotNull

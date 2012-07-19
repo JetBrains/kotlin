@@ -18,20 +18,19 @@ package org.jetbrains.k2js.generate;
 
 import com.google.dart.compiler.backend.js.JsSourceGenerationVisitor;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
-import com.google.dart.compiler.util.DefaultTextOutput;
+import com.google.dart.compiler.util.TextOutputImpl;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Pavel.Talanov
  */
 public final class CodeGenerator {
-
     private CodeGenerator() {
     }
 
     @NotNull
     public static String generateProgramToString(@NotNull JsProgram program) {
-        DefaultTextOutput output = new DefaultTextOutput(false);
+        TextOutputImpl output = new TextOutputImpl();
         JsSourceGenerationVisitor sourceGenerator = new JsSourceGenerationVisitor(output);
         program.traverse(sourceGenerator, null);
         return output.toString();
