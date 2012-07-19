@@ -34,7 +34,7 @@ internal final enum class abstract.MyEnum : jet.Any {
     internal final var l1: jet.Int
     internal final var l: jet.Int
     internal final var n: jet.Int
-    internal final object abstract.MyEnum.<class-object-for-MyEnum> {
+    internal final class object abstract.MyEnum.<class-object-for-MyEnum> {
         internal final /*constructor*/ fun <init>(): abstract.MyEnum.<class-object-for-MyEnum>
     }
 }

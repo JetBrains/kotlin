@@ -2,7 +2,7 @@ namespace <root>
 
 public final class Throwables : jet.Any {
     public final /*constructor*/ fun <init>(): Throwables
-    internal final object Throwables.<no name provided> : jet.Any {
+    internal final class object Throwables.<no name provided> : jet.Any {
         internal final /*constructor*/ fun <init>(): Throwables.<no name provided>
         public final fun </*0*/ X : jet.Throwable?>propagateIfInstanceOf(/*0*/ throwable: jet.Throwable?, /*1*/ declaredType: java.lang.Class<X?>?): jet.Tuple0
         public final fun propagateIfPossible(/*0*/ throwable: jet.Throwable?): jet.Tuple0

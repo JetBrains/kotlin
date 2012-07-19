@@ -10,7 +10,7 @@ internal final val y: jet.Any?
 // </namespace name="ns">
 internal final class example.AClass : jet.Any {
     public final /*constructor*/ fun <init>(): example.AClass
-    internal final object example.AClass.<no name provided> : jet.Any {
+    internal final class object example.AClass.<no name provided> : jet.Any {
         internal final /*constructor*/ fun <init>(): example.AClass.<no name provided>
         internal final val y: jet.Any?
     }

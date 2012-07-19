@@ -5,7 +5,7 @@ namespace demo
 
 internal final class demo.Foo : jet.Any {
     public final /*constructor*/ fun <init>(): demo.Foo
-    internal final object demo.Foo.<no name provided> : jet.Any {
+    internal final class object demo.Foo.<no name provided> : jet.Any {
         internal final /*constructor*/ fun <init>(): demo.Foo.<no name provided>
         internal final class demo.Foo.<no name provided>.Bar : jet.Any {
             public final /*constructor*/ fun <init>(): demo.Foo.<no name provided>.Bar

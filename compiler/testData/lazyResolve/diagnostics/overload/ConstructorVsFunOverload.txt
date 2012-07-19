@@ -6,7 +6,7 @@ namespace constructorVsFun
 internal final class constructorVsFun.Rtyu : jet.Any {
     public final /*constructor*/ fun <init>(): constructorVsFun.Rtyu
     internal final fun ololo(): jet.Tuple0
-    internal final object constructorVsFun.Rtyu.<no name provided> : jet.Any {
+    internal final class object constructorVsFun.Rtyu.<no name provided> : jet.Any {
         internal final /*constructor*/ fun <init>(): constructorVsFun.Rtyu.<no name provided>
         internal final class constructorVsFun.Rtyu.<no name provided>.ololo : jet.Any {
             public final /*constructor*/ fun <init>(): constructorVsFun.Rtyu.<no name provided>.ololo
@@ -22,7 +22,7 @@ internal final class constructorVsFun.Tram : jet.Any {
 }
 internal final class constructorVsFun.Yvayva : jet.Any {
     public final /*constructor*/ fun <init>(): constructorVsFun.Yvayva
-    internal final object constructorVsFun.Yvayva.<no name provided> : jet.Any {
+    internal final class object constructorVsFun.Yvayva.<no name provided> : jet.Any {
         internal final /*constructor*/ fun <init>(): constructorVsFun.Yvayva.<no name provided>
         internal final class constructorVsFun.Yvayva.<no name provided>.fghj : jet.Any {
             public final /*constructor*/ fun <init>(): constructorVsFun.Yvayva.<no name provided>.fghj

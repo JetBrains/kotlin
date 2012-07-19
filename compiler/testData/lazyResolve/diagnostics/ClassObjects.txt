@@ -5,7 +5,7 @@ namespace Jet86
 
 internal final class Jet86.A : jet.Any {
     public final /*constructor*/ fun <init>(): Jet86.A
-    internal final object Jet86.A.<no name provided> : jet.Any {
+    internal final class object Jet86.A.<no name provided> : jet.Any {
         internal final /*constructor*/ fun <init>(): Jet86.A.<no name provided>
         internal final val x: jet.Int
     }

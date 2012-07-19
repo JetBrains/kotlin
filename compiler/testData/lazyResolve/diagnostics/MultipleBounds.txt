@@ -23,7 +23,7 @@ internal final class Jet87.C : Jet87.A, Jet87.B {
 }
 internal final class Jet87.D : jet.Any {
     public final /*constructor*/ fun <init>(): Jet87.D
-    internal final object Jet87.D.<no name provided> : Jet87.A, Jet87.B {
+    internal final class object Jet87.D.<no name provided> : Jet87.A, Jet87.B {
         internal final /*constructor*/ fun <init>(): Jet87.D.<no name provided>
         internal open override /*1*/ fun bar(): jet.Double
         internal final override /*1*/ fun foo(): jet.Int

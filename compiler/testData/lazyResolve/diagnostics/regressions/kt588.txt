@@ -11,9 +11,8 @@ internal final class Test : java.lang.Thread {
     public final override /*1*/ fun getPriority(): jet.Int
     public open override /*1*/ fun getStackTrace(): jet.Array<[ERROR : Unresolved java class: StackTraceElement]>?
     public final override /*1*/ fun getThreadGroup(): [ERROR : Unresolved java class: ThreadGroup]
-    public open override /*1*/ fun interrupt(): jet.Tuple0
     invisible_fake final override /*1*/ var inheritableThreadLocals: java.lang.ThreadLocal.ThreadLocalMap?
-    invisible_fake final override /*1*/ var threadLocals: java.lang.ThreadLocal.ThreadLocalMap?
+    public open override /*1*/ fun interrupt(): jet.Tuple0
     public final override /*1*/ fun isAlive(): jet.Boolean
     public final override /*1*/ fun isDaemon(): jet.Boolean
     public open override /*1*/ fun isInterrupted(): jet.Boolean
@@ -30,7 +29,8 @@ internal final class Test : java.lang.Thread {
     public final override /*1*/ fun stop(): jet.Tuple0
     public final override /*1*/ fun stop(/*0*/ p0: jet.Throwable?): jet.Tuple0
     public final override /*1*/ fun suspend(): jet.Tuple0
-    internal final object Test.<no name provided> : jet.Any {
+    invisible_fake final override /*1*/ var threadLocals: java.lang.ThreadLocal.ThreadLocalMap?
+    internal final class object Test.<no name provided> : jet.Any {
         internal final /*constructor*/ fun <init>(): Test.<no name provided>
         internal final fun init2(): jet.Tuple0
     }

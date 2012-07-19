@@ -5,11 +5,11 @@ namespace c
 
 internal final class c.A : jet.Any {
     public final /*constructor*/ fun <init>(): c.A
-    internal final object c.A.<no name provided> : jet.Any {
+    internal final class object c.A.<no name provided> : jet.Any {
         internal final /*constructor*/ fun <init>(): c.A.<no name provided>
         internal final class c.A.<no name provided>.B : jet.Any {
             public final /*constructor*/ fun <init>(): c.A.<no name provided>.B
-            internal final object c.A.<no name provided>.B.<no name provided> : jet.Any {
+            internal final class object c.A.<no name provided>.B.<no name provided> : jet.Any {
                 internal final /*constructor*/ fun <init>(): c.A.<no name provided>.B.<no name provided>
             }
         }

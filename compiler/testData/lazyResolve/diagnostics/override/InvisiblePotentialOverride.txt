@@ -6,6 +6,6 @@ internal open class A : jet.Any {
 }
 internal final class B : A {
     public final /*constructor*/ fun <init>(): B
-    internal final fun foo(): jet.String
     invisible_fake final override /*1*/ fun foo(): jet.Int
+    internal final fun foo(): jet.String
 }

@@ -7,7 +7,7 @@ internal final class kt2069.T : kt2069.T1 {
     public final /*constructor*/ fun <init>(): kt2069.T
     internal final fun bar(): jet.Tuple0
     internal open override /*1*/ fun foo(): jet.Tuple0
-    internal final object kt2069.T.<no name provided> : jet.Any {
+    internal final class object kt2069.T.<no name provided> : jet.Any {
         internal final /*constructor*/ fun <init>(): kt2069.T.<no name provided>
     }
 }

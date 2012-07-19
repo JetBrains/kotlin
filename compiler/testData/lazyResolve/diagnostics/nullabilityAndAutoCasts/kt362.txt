@@ -9,15 +9,15 @@ internal final fun test(): jet.Tuple0
 namespace test
 
 internal final class test.Internal : jet.Any {
-    public final val public: jet.Int?
-    protected final val protected: jet.Int?
-    internal final val internal: jet.Int?
     public final /*constructor*/ fun <init>(): test.Internal
+    internal final val internal: jet.Int?
+    protected final val protected: jet.Int?
+    public final val public: jet.Int?
 }
 public final class test.Public : jet.Any {
-    public final val public: jet.Int?
-    protected final val protected: jet.Int?
-    internal final val internal: jet.Int?
     public final /*constructor*/ fun <init>(): test.Public
+    internal final val internal: jet.Int?
+    protected final val protected: jet.Int?
+    public final val public: jet.Int?
 }
 // </namespace name="test">

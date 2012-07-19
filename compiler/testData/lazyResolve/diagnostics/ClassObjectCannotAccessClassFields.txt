@@ -3,7 +3,7 @@ namespace <root>
 internal final class A : jet.Any {
     public final /*constructor*/ fun <init>(): A
     internal final val x: jet.Int
-    internal final object A.<no name provided> : jet.Any {
+    internal final class object A.<no name provided> : jet.Any {
         internal final /*constructor*/ fun <init>(): A.<no name provided>
         internal final val y: [ERROR : Type for x]
     }
