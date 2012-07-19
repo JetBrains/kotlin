@@ -58,14 +58,6 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
         return body.getDeclarations();
     }
 
-    @NotNull
-    public List<JetSecondaryConstructor> getSecondaryConstructors() {
-        JetClassBody body = (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
-        if (body == null) return Collections.emptyList();
-
-        return body.getSecondaryConstructors();
-    }
-
     @Override
     public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitClass(this);

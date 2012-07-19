@@ -651,9 +651,6 @@ public class JetParsing extends AbstractJetParsing {
         else if (keywordToken == TYPE_KEYWORD) {
             declType = parseTypeDef();
         }
-        else if (keywordToken == THIS_KEYWORD) {
-            declType = parseConstructor();
-        }
         else if (keywordToken == OBJECT_KEYWORD) {
             parseObject(true, true);
             declType = OBJECT_DECLARATION;
@@ -707,34 +704,6 @@ public class JetParsing extends AbstractJetParsing {
                 parseClassBody();
             }
         }
-    }
-
-    /*
-     * constructor
-     *   : modifiers "this" functionParameters (":" initializer{","}) block?
-     *   ;
-     */
-    private JetNodeType parseConstructor() {
-        assert _at(THIS_KEYWORD);
-
-        advance(); // THIS_KEYWORD
-
-        parseValueParameterList(false, TokenSet.create(COLON, LBRACE, SEMICOLON));
-
-        if (at(COLON)) {
-            advance(); // COLON
-
-            parseInitializerList();
-        }
-
-        if (at(LBRACE)) {
-            parseBlock();
-        }
-        else {
-            consumeIf(SEMICOLON);
-        }
-
-        return CONSTRUCTOR;
     }
 
     /*

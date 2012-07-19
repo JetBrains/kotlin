@@ -21,9 +21,11 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiComment;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.components.JBList;
 import org.jetbrains.annotations.NotNull;
@@ -87,7 +89,7 @@ public class JetRefactoringUtil {
         ArrayList<JetExpression> expressions = new ArrayList<JetExpression>();
         while (element != null && !(element instanceof JetBlockExpression && !(element.getParent() instanceof JetFunctionLiteral)) &&
                !(element instanceof JetNamedFunction)
-               && !(element instanceof JetClassBody) && !(element instanceof JetSecondaryConstructor)) {
+               && !(element instanceof JetClassBody)) {
             if (element instanceof JetExpression && !(element instanceof JetStatementExpression)) {
                 boolean addExpression = true;
                 if (element.getParent() instanceof JetQualifiedExpression) {

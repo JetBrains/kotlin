@@ -279,7 +279,6 @@ public class DefaultErrorMessages {
         MAP.put(SUPERTYPE_NOT_A_CLASS_OR_TRAIT, "Only classes and traits may serve as supertypes");
         MAP.put(SUPERTYPE_INITIALIZED_IN_TRAIT, "Traits cannot initialize supertypes");
         MAP.put(CONSTRUCTOR_IN_TRAIT, "A trait may not have a constructor");
-        MAP.put(SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED, "Secondary constructors are not supported");
         MAP.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice");
         MAP.put(FINAL_SUPERTYPE, "This type is final, so it cannot be inherited from");
 

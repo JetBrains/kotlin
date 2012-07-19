@@ -620,7 +620,7 @@ public class JetControlFlowProcessor {
             if (subroutine instanceof JetFunctionLiteralExpression) {
                 subroutine = ((JetFunctionLiteralExpression) subroutine).getFunctionLiteral();
             }
-            if (subroutine instanceof JetFunction || subroutine instanceof JetPropertyAccessor || subroutine instanceof JetSecondaryConstructor) {
+            if (subroutine instanceof JetFunction || subroutine instanceof JetPropertyAccessor) {
                 if (returnedExpression == null) {
                     builder.returnNoValue(expression, subroutine);
                 }

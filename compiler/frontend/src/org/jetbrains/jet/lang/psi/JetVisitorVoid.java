@@ -38,10 +38,6 @@ public class JetVisitorVoid extends PsiElementVisitor {
         visitDeclaration(classObject);
     }
 
-    public void visitConstructor(JetSecondaryConstructor constructor) {
-        visitDeclaration(constructor);
-    }
-
     public void visitNamedFunction(JetNamedFunction function) {
         visitNamedDeclaration(function);
     }

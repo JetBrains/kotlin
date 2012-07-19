@@ -245,7 +245,6 @@ public interface Errors {
     SimpleDiagnosticFactory<JetTypeReference> SUPERTYPE_NOT_A_CLASS_OR_TRAIT = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<PsiElement> SUPERTYPE_INITIALIZED_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<PsiElement> CONSTRUCTOR_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetSecondaryConstructor> SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED = SimpleDiagnosticFactory.create(WARNING);
     SimpleDiagnosticFactory<JetTypeReference> SUPERTYPE_APPEARS_TWICE = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetTypeReference> FINAL_SUPERTYPE = SimpleDiagnosticFactory.create(ERROR);
 

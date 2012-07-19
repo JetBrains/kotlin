@@ -21,41 +21,8 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Queue;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassKind;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptorUtil;
-import org.jetbrains.jet.lang.descriptors.MutableClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetClassInitializer;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
-import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
-import org.jetbrains.jet.lang.psi.JetDelegatorByExpressionSpecifier;
-import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
-import org.jetbrains.jet.lang.psi.JetDelegatorToSuperClass;
-import org.jetbrains.jet.lang.psi.JetDelegatorToThisCall;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetEnumEntry;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
-import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
-import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.psi.JetSecondaryConstructor;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.psi.JetTypeReference;
-import org.jetbrains.jet.lang.psi.JetValueArgumentList;
-import org.jetbrains.jet.lang.psi.JetVisitorVoid;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
@@ -65,43 +32,18 @@ import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.DeferredType;
-import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeConstructor;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.Box;
 import org.jetbrains.jet.util.lazy.ReenteringLazyValueComputationException;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.ANONYMOUS_INITIALIZER_WITHOUT_CONSTRUCTOR;
-import static org.jetbrains.jet.lang.diagnostics.Errors.BY_IN_SECONDARY_CONSTRUCTOR;
-import static org.jetbrains.jet.lang.diagnostics.Errors.CONSTRUCTOR_IN_TRAIT;
-import static org.jetbrains.jet.lang.diagnostics.Errors.DELEGATION_IN_TRAIT;
-import static org.jetbrains.jet.lang.diagnostics.Errors.DELEGATION_NOT_TO_TRAIT;
-import static org.jetbrains.jet.lang.diagnostics.Errors.FINAL_SUPERTYPE;
-import static org.jetbrains.jet.lang.diagnostics.Errors.INITIALIZER_WITH_NO_ARGUMENTS;
-import static org.jetbrains.jet.lang.diagnostics.Errors.MANY_CALLS_TO_THIS;
-import static org.jetbrains.jet.lang.diagnostics.Errors.MANY_CLASSES_IN_SUPERTYPE_LIST;
-import static org.jetbrains.jet.lang.diagnostics.Errors.SECONDARY_CONSTRUCTOR_BUT_NO_PRIMARY;
-import static org.jetbrains.jet.lang.diagnostics.Errors.SECONDARY_CONSTRUCTOR_NO_INITIALIZER_LIST;
-import static org.jetbrains.jet.lang.diagnostics.Errors.SUPERTYPE_APPEARS_TWICE;
-import static org.jetbrains.jet.lang.diagnostics.Errors.SUPERTYPE_INITIALIZED_IN_TRAIT;
-import static org.jetbrains.jet.lang.diagnostics.Errors.SUPERTYPE_NOT_A_CLASS_OR_TRAIT;
-import static org.jetbrains.jet.lang.diagnostics.Errors.SUPERTYPE_NOT_INITIALIZED;
-import static org.jetbrains.jet.lang.diagnostics.Errors.SUPERTYPE_NOT_INITIALIZED_DEFAULT;
-import static org.jetbrains.jet.lang.diagnostics.Errors.TYPE_MISMATCH;
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.DEFERRED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
@@ -180,7 +122,6 @@ public class BodyResolver {
         resolveAnonymousInitializers();
         resolvePrimaryConstructorParameters();
 
-        resolveSecondaryConstructorBodies();
         resolveFunctionBodies();
 
         scriptBodyResolverResolver.resolveScriptBodies();
@@ -409,95 +350,6 @@ public class BodyResolver {
                 checkDefaultParameterValues(klass.getPrimaryConstructorParameters(), unsubstitutedPrimaryConstructor.getValueParameters(), parameterScope);
             }
         }
-    }
-
-    private void resolveSecondaryConstructorBodies() {
-        for (Map.Entry<JetSecondaryConstructor, ConstructorDescriptor> entry : this.context.getConstructors().entrySet()) {
-            JetSecondaryConstructor constructor = entry.getKey();
-            ConstructorDescriptor descriptor = entry.getValue();
-
-            resolveSecondaryConstructorBody(constructor, descriptor);
-
-            assert descriptor.getReturnType() != null;
-        }
-    }
-
-    private void resolveSecondaryConstructorBody(JetSecondaryConstructor declaration, final ConstructorDescriptor descriptor) {
-        if (!context.completeAnalysisNeeded(declaration)) return;
-        MutableClassDescriptor classDescriptor = (MutableClassDescriptor) descriptor.getContainingDeclaration();
-        final JetScope scopeForSupertypeInitializers = FunctionDescriptorUtil.getFunctionInnerScope(classDescriptor.getScopeForSupertypeResolution(), descriptor, trace);
-        //contains only constructor parameters
-        final JetScope scopeForConstructorBody = FunctionDescriptorUtil.getFunctionInnerScope(classDescriptor.getScopeForInitializers(), descriptor, trace);
-        //contains members & backing fields
-
-        final DataFlowInfo dataFlowInfo = DataFlowInfo.EMPTY; // TODO: dataFlowInfo
-
-        PsiElement nameElement = declaration.getNameNode().getPsi();
-        if (classDescriptor.getUnsubstitutedPrimaryConstructor() == null) {
-            trace.report(SECONDARY_CONSTRUCTOR_BUT_NO_PRIMARY.on(nameElement));
-        }
-        else {
-            List<JetDelegationSpecifier> initializers = declaration.getInitializers();
-            if (initializers.isEmpty()) {
-                trace.report(SECONDARY_CONSTRUCTOR_NO_INITIALIZER_LIST.on(nameElement));
-            }
-            else {
-                initializers.get(0).accept(new JetVisitorVoid() {
-                    @Override
-                    public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
-                        JetTypeReference typeReference = call.getTypeReference();
-                        if (typeReference != null) {
-                            callResolver.resolveFunctionCall(trace, scopeForSupertypeInitializers,
-                                                             CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call),
-                                                             NO_EXPECTED_TYPE, dataFlowInfo);
-                        }
-                    }
-
-                    @Override
-                    public void visitDelegationToThisCall(JetDelegatorToThisCall call) {
-                        // TODO : check that there's no recursion in this() calls
-                        // TODO : check: if a this() call is present, no other initializers are allowed
-                        ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
-
-                        callResolver.resolveFunctionCall(trace,
-                                                         scopeForSupertypeInitializers,
-                                                         CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE, dataFlowInfo);
-//                                call.getThisReference(),
-//                                classDescriptor,
-//                                classDescriptor.getDefaultType(),
-//                                call);
-//                        trace.getErrorHandler().genericError(call.getNode(), "this-calls are not supported");
-                    }
-
-                    @Override
-                    public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
-                        trace.report(BY_IN_SECONDARY_CONSTRUCTOR.on(specifier));
-                    }
-
-                    @Override
-                    public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
-                        trace.report(INITIALIZER_WITH_NO_ARGUMENTS.on(specifier));
-                    }
-
-                    @Override
-                    public void visitDelegationSpecifier(JetDelegationSpecifier specifier) {
-                        throw new IllegalStateException();
-                    }
-                });
-                for (int i = 1, initializersSize = initializers.size(); i < initializersSize; i++) {
-                    JetDelegationSpecifier initializer = initializers.get(i);
-                    trace.report(MANY_CALLS_TO_THIS.on(initializer));
-                }
-            }
-        }
-        JetExpression bodyExpression = declaration.getBodyExpression();
-        if (bodyExpression != null) {
-
-            expressionTypingServices.checkFunctionReturnType(scopeForConstructorBody, declaration, descriptor, DataFlowInfo.EMPTY,
-                                                             JetStandardClasses.getUnitType(), trace);
-        }
-
-        checkDefaultParameterValues(declaration.getValueParameters(), descriptor.getValueParameters(), scopeForConstructorBody);
     }
 
     private void resolvePropertyDeclarationBodies() {

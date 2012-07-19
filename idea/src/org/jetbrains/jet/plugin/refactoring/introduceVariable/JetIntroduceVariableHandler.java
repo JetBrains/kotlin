@@ -292,12 +292,6 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                                 oldElement = body;
                             }
                         }
-                        else if (commonContainer instanceof JetSecondaryConstructor) {
-                            JetExpression body = ((JetSecondaryConstructor)commonContainer).getBodyExpression();
-                            if (body != null) {
-                                oldElement = body;
-                            }
-                        }
                         else if (commonContainer instanceof JetContainerNode) {
                             JetContainerNode container = (JetContainerNode)commonContainer;
                             PsiElement[] children = container.getChildren();
@@ -513,12 +507,6 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                     return parent;
                 }
             }
-            else if (parent instanceof JetSecondaryConstructor) {
-                JetSecondaryConstructor secondaryConstructor = (JetSecondaryConstructor)parent;
-                if (secondaryConstructor.getBodyExpression() == place) {
-                    return parent;
-                }
-            }
             place = parent;
         }
         return null;
@@ -565,14 +553,6 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
             else if (parent instanceof JetNamedFunction) {
                 JetNamedFunction function = (JetNamedFunction)parent;
                 if (function.getBodyExpression() == place) {
-                    if (!(place instanceof JetBlockExpression)) {
-                        result = parent;
-                    }
-                }
-            }
-            else if (parent instanceof JetSecondaryConstructor) {
-                JetSecondaryConstructor secondaryConstructor = (JetSecondaryConstructor)parent;
-                if (secondaryConstructor.getBodyExpression() == place) {
                     if (!(place instanceof JetBlockExpression)) {
                         result = parent;
                     }

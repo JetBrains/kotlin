@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
 import javax.inject.Inject;
 import java.util.Map;
@@ -64,10 +63,6 @@ public class ControlFlowAnalyzer {
                                                ? NO_EXPECTED_TYPE
                                                : functionDescriptor.getReturnType();
             checkFunction(function, expectedReturnType);
-        }
-        for (JetSecondaryConstructor constructor : bodiesResolveContext.getConstructors().keySet()) {
-            if (!bodiesResolveContext.completeAnalysisNeeded(constructor)) continue;
-            checkFunction(constructor, JetStandardClasses.getUnitType());
         }
         for (Map.Entry<JetProperty, PropertyDescriptor> entry : bodiesResolveContext.getProperties().entrySet()) {
             JetProperty property = entry.getKey();

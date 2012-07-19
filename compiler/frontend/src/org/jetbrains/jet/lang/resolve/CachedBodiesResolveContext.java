@@ -36,7 +36,6 @@ import java.util.Map;
 public class CachedBodiesResolveContext implements BodiesResolveContext {
     private final Map<JetClass, MutableClassDescriptor> classes;
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects;
-    private final Map<JetSecondaryConstructor, ConstructorDescriptor> constructors;
     private final Map<JetProperty, PropertyDescriptor> properties;
     private final Map<JetNamedFunction, SimpleFunctionDescriptor> functions;
     private final Map<JetDeclaration, JetScope> declaringScopes;
@@ -48,7 +47,6 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
     public CachedBodiesResolveContext(TopDownAnalysisContext context) {
         classes = Collections.unmodifiableMap(context.getClasses());
         objects = Collections.unmodifiableMap(context.getObjects());
-        constructors = Collections.unmodifiableMap(context.getConstructors());
         properties = Collections.unmodifiableMap(context.getProperties());
         functions = Collections.unmodifiableMap(context.getFunctions());
         declaringScopes = Collections.unmodifiableMap(context.getDeclaringScopes());
@@ -66,11 +64,6 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
     @Override
     public Map<JetObjectDeclaration, MutableClassDescriptor> getObjects() {
         return objects;
-    }
-
-    @Override
-    public Map<JetSecondaryConstructor, ConstructorDescriptor> getConstructors() {
-        return constructors;
     }
 
     @Override

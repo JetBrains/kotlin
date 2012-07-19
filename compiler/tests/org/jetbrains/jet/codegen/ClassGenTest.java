@@ -137,11 +137,6 @@ public class ClassGenTest extends CodegenTestCase {
         blackBoxFile("classes/outerThis.jet");
     }
 
-    public void testSecondaryConstructors() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("classes/secondaryConstructors.jet");
-    }
-
     public void testExceptionConstructor() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("classes/exceptionConstructor.jet");
@@ -332,7 +327,7 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testKt1120 () throws Exception {
-        createEnvironmentWithFullJdk();
+        //createEnvironmentWithFullJdk();
 //        blackBoxFile("regressions/kt1120.kt");
     }
 

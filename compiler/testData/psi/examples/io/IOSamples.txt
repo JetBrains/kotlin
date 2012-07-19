@@ -275,62 +275,11 @@ JetFile: IOSamples.jet
         BOOLEAN_CONSTANT
           PsiElement(false)('false')
       PsiWhiteSpace('\n\n  ')
-      CONSTRUCTOR
-        PsiElement(this)('this')
-        VALUE_PARAMETER_LIST
-          PsiElement(LPAR)('(')
-          VALUE_PARAMETER
-            PsiElement(IDENTIFIER)('file')
-            PsiWhiteSpace(' ')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('File')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        INITIALIZER_LIST
-          DELEGATOR_SUPER_CALL
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('JavaCloseableWrapper')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('stream')
-              PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BLOCK
-          PsiElement(LBRACE)('{')
-          PsiWhiteSpace(' ')
-          PsiComment(EOL_COMMENT)('// implicitly throws IOException')
-          PsiWhiteSpace('\n    ')
-          BINARY_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('stream')
-            PsiWhiteSpace(' ')
-            OPERATION_REFERENCE
-              PsiElement(EQ)('=')
-            PsiWhiteSpace(' ')
-            CALL_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('FileInputStream')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                VALUE_ARGUMENT
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('file')
-                PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiComment(EOL_COMMENT)('// throws IOException')
-          PsiWhiteSpace('\n  ')
-          PsiElement(RBRACE)('}')
+      PsiComment(EOL_COMMENT)('//this(file : File) : JavaCloseableWrapper(stream) { // implicitly throws IOException')
+      PsiWhiteSpace('\n  ')
+      PsiComment(EOL_COMMENT)('//  stream = FileInputStream(file) // throws IOException')
+      PsiWhiteSpace('\n  ')
+      PsiComment(EOL_COMMENT)('//}')
       PsiWhiteSpace('\n\n  ')
       FUN
         MODIFIER_LIST
@@ -543,58 +492,11 @@ JetFile: IOSamples.jet
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('OutputStream')
       PsiWhiteSpace('\n\n  ')
-      CONSTRUCTOR
-        PsiElement(this)('this')
-        VALUE_PARAMETER_LIST
-          PsiElement(LPAR)('(')
-          VALUE_PARAMETER
-            PsiElement(IDENTIFIER)('file')
-            PsiWhiteSpace(' ')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('File')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        INITIALIZER_LIST
-          DELEGATOR_SUPER_CALL
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('JavaCloseableWrapper')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('stream')
-              PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BLOCK
-          PsiElement(LBRACE)('{')
-          PsiWhiteSpace('\n    ')
-          BINARY_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('stream')
-            PsiWhiteSpace(' ')
-            OPERATION_REFERENCE
-              PsiElement(EQ)('=')
-            PsiWhiteSpace(' ')
-            CALL_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('FileOutputStream')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                VALUE_ARGUMENT
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('file')
-                PsiElement(RPAR)(')')
-          PsiWhiteSpace('\n  ')
-          PsiElement(RBRACE)('}')
+      PsiComment(EOL_COMMENT)('//this(file : File) : JavaCloseableWrapper(stream) {')
+      PsiWhiteSpace('\n  ')
+      PsiComment(EOL_COMMENT)('//  stream = FileOutputStream(file)')
+      PsiWhiteSpace('\n  ')
+      PsiComment(EOL_COMMENT)('//}')
       PsiWhiteSpace('\n\n  ')
       FUN
         MODIFIER_LIST

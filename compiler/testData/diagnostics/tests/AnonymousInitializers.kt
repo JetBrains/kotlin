@@ -26,9 +26,4 @@ class WithC() {
     val zz = x
     val zzz = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$a<!>
   }
-
-  <!SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED!>this(a : Int) : this() {
-    val <!UNUSED_VARIABLE!>b<!> = x
-  }<!>
-
 }

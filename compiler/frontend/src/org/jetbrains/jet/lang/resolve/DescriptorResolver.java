@@ -885,11 +885,6 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public ConstructorDescriptorImpl resolveSecondaryConstructorDescriptor(@NotNull JetScope scope, @NotNull ClassDescriptor classDescriptor, @NotNull JetSecondaryConstructor constructor, BindingTrace trace) {
-        return createConstructorDescriptor(scope, classDescriptor, false, constructor.getModifierList(), constructor, classDescriptor.getTypeConstructor().getParameters(), constructor.getValueParameters(), trace);
-    }
-
-    @NotNull
     private ConstructorDescriptorImpl createConstructorDescriptor(
             @NotNull JetScope scope,
             @NotNull ClassDescriptor classDescriptor,

@@ -42,7 +42,6 @@ open class X(p: Int, r: Int) {
 
 class Y(i: Int) : X(i, <!UNRESOLVED_REFERENCE!>rrr<!>) {
     val rrr = 3
-    <!SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED!>this(s: Int, r: Int) : this(s, <!UNRESOLVED_REFERENCE!>rrr<!>)<!>
 }
 
 class Z(val i: Int) : X(<!UNRESOLVED_REFERENCE!>s<!>, <!UNRESOLVED_REFERENCE!>x<!>) {

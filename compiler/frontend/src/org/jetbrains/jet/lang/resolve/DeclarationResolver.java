@@ -103,9 +103,6 @@ public class DeclarationResolver {
             MutableClassDescriptor classDescriptor = entry.getValue();
 
             processPrimaryConstructor(classDescriptor, jetClass);
-            for (JetSecondaryConstructor jetConstructor : jetClass.getSecondaryConstructors()) {
-                processSecondaryConstructor(classDescriptor, jetConstructor);
-            }
         }
     }
 
@@ -248,20 +245,6 @@ public class DeclarationResolver {
             }
             classDescriptor.setPrimaryConstructor(constructorDescriptor, trace);
         }
-    }
-
-    private void processSecondaryConstructor(MutableClassDescriptor classDescriptor, JetSecondaryConstructor constructor) {
-        trace.report(SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED.on(constructor));
-        if (classDescriptor.getKind() == ClassKind.TRAIT) {
-            trace.report(CONSTRUCTOR_IN_TRAIT.on(constructor.getNameNode().getPsi()));
-        }
-        ConstructorDescriptor constructorDescriptor = descriptorResolver.resolveSecondaryConstructorDescriptor(
-                classDescriptor.getScopeForMemberResolution(),
-                classDescriptor,
-                constructor, trace);
-        classDescriptor.addConstructor(constructorDescriptor, trace);
-        context.getConstructors().put(constructor, constructorDescriptor);
-        context.getDeclaringScopes().put(constructor, classDescriptor.getScopeForMemberLookup());
     }
 
     private void checkRedeclarationsInNamespaces() {

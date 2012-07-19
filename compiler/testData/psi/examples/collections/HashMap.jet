@@ -50,7 +50,7 @@ class StrategyHashMap<K, V>(hashingStrategy : IHashingStrategy<K>) : IMap<K, V> 
 
 
   // where !(K : IHashable)
-  this() : this(JavaObjectHashingStrategy<K>()) {}
+  //this() : this(JavaObjectHashingStrategy<K>()) {}
 
   //this() where (K : IHashable) : this(DefaultHashingStrategy<K>()) {}
   //...

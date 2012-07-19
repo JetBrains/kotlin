@@ -53,10 +53,9 @@ abstract class B1(
 class B2() : B1(1, "r") {}
 
 abstract class B3(i: Int) {
-    <!SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED!>this(): this(1)<!>
 }
 
 fun foo(<!UNUSED_PARAMETER!>c<!>: B3) {
-    val <!UNUSED_VARIABLE!>a<!> = <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>B3()<!>
+    val <!UNUSED_VARIABLE!>a<!> = <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>B3(1)<!>
     val <!UNUSED_VARIABLE!>b<!> = <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>B1(2, "s")<!>
 }

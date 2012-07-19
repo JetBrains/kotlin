@@ -41,10 +41,6 @@ public class JetClassBody extends JetElementImpl implements JetDeclarationContai
         return PsiTreeUtil.getChildrenOfTypeAsList(this, JetDeclaration.class);
     }
 
-    public List<JetSecondaryConstructor> getSecondaryConstructors() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, JetSecondaryConstructor.class);
-    }
-
     @Override
     public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitClassBody(this);

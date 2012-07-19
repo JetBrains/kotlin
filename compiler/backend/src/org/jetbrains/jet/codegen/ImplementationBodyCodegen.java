@@ -884,10 +884,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration, FunctionCodegen functionCodegen) {
-        if (declaration instanceof JetSecondaryConstructor) {
-            generateSecondaryConstructor((JetSecondaryConstructor) declaration);
-        }
-        else if (declaration instanceof JetClassObject) {
+        if (declaration instanceof JetClassObject) {
             // done earlier in order to have accessors
         }
         else if (declaration instanceof JetEnumEntry && !((JetEnumEntry) declaration).hasPrimaryConstructor()) {
@@ -941,57 +938,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 v.invokespecial(implClass, "<init>", "()V");
             }
             v.putstatic(implClass, enumConstant.getName(), "L" + implClass + ";");
-        }
-    }
-
-    private void generateSecondaryConstructor(JetSecondaryConstructor constructor) {
-        ConstructorDescriptor constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, constructor);
-        if (constructorDescriptor == null) {
-            throw new UnsupportedOperationException("failed to get descriptor for secondary constructor");
-        }
-        CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, kind, typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
-        int flags = JetTypeMapper.getAccessModifiers(constructorDescriptor, 0);
-        final MethodVisitor mv = v.newMethod(constructor, flags, "<init>", method.getSignature().getAsmMethod().getDescriptor(), null, null);
-
-        AnnotationVisitor jetConstructorVisitor = mv.visitAnnotation(JvmStdlibNames.JET_CONSTRUCTOR.getDescriptor(), true);
-        int flagsValue = BitSetUtils.toInt(CodegenUtil.getFlagsForVisibility(constructorDescriptor.getVisibility()));
-        if (JvmStdlibNames.FLAGS_DEFAULT_VALUE != flagsValue) {
-            jetConstructorVisitor.visit(JvmStdlibNames.JET_CLASS_FLAGS_FIELD, flagsValue);
-        }
-        jetConstructorVisitor.visitEnd();
-
-        if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            StubCodegen.generateStubCode(mv);
-        }
-        else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            mv.visitCode();
-
-            ConstructorFrameMap frameMap = new ConstructorFrameMap(method, constructorDescriptor, typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
-
-            final InstructionAdapter iv = new InstructionAdapter(mv);
-            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, context, state);
-
-            for (JetDelegationSpecifier initializer : constructor.getInitializers()) {
-                if (initializer instanceof JetDelegatorToThisCall) {
-                    JetDelegatorToThisCall thisCall = (JetDelegatorToThisCall) initializer;
-                    DeclarationDescriptor thisDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, thisCall.getThisReference());
-                    if (!(thisDescriptor instanceof ConstructorDescriptor)) {
-                        throw new UnsupportedOperationException("expected 'this' delegator to resolve to constructor");
-                    }
-                    generateDelegatorToConstructorCall(iv, codegen, thisCall, (ConstructorDescriptor) thisDescriptor, frameMap, flags);
-                }
-                else {
-                    throw new UnsupportedOperationException("unknown initializer type");
-                }
-            }
-
-            JetExpression bodyExpression = constructor.getBodyExpression();
-            if (bodyExpression != null) {
-                codegen.gen(bodyExpression, Type.VOID_TYPE);
-            }
-
-            mv.visitInsn(RETURN);
-            FunctionCodegen.endVisit(mv, "constructor", null);
         }
     }
 

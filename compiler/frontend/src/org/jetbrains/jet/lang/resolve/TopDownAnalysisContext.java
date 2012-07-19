@@ -40,7 +40,6 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
     private final Map<JetNamedFunction, SimpleFunctionDescriptor> functions = Maps.newLinkedHashMap();
-    private final Map<JetSecondaryConstructor, ConstructorDescriptor> constructors = Maps.newLinkedHashMap();
     private final Map<JetProperty, PropertyDescriptor> properties = Maps.newLinkedHashMap();
     private final Map<JetParameter, PropertyDescriptor> primaryConstructorParameterProperties = Maps.newHashMap();
     private Map<JetDeclaration, CallableMemberDescriptor> members = null;
@@ -131,11 +130,6 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     public Map<JetParameter, PropertyDescriptor> getPrimaryConstructorParameterProperties() {
         return primaryConstructorParameterProperties;
-    }
-
-    @Override
-    public Map<JetSecondaryConstructor, ConstructorDescriptor> getConstructors() {
-        return constructors;
     }
 
     @Override

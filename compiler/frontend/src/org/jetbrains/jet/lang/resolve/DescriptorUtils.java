@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFunction;
-import org.jetbrains.jet.lang.psi.JetSecondaryConstructor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -223,9 +222,6 @@ public class DescriptorUtils {
             else {
                 expectedType = TypeUtils.NO_EXPECTED_TYPE;
             }
-        }
-        else if (function instanceof JetSecondaryConstructor) {
-            expectedType = JetStandardClasses.getUnitType();
         }
         else {
             expectedType = descriptor.getReturnType();
