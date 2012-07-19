@@ -86,18 +86,20 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     @Override
     public PsiClass[] getClassesByName(@NotNull @NonNls String name, @NotNull GlobalSearchScope scope) {
         // Quick check for classes from getAllClassNames()
-        Collection<String> classNames = JetShortClassNameIndex.getInstance().getAllKeys(project);
-        if (!classNames.contains(name)) {
+        Collection<JetClassOrObject> classOrObjects = JetShortClassNameIndex.getInstance().get(name, project, scope);
+        if (classOrObjects.isEmpty()) {
             return new PsiClass[0];
         }
 
         List<PsiClass> result = new ArrayList<PsiClass>();
-
-        for (String fqName : JetFullClassNameIndex.getInstance().getAllKeys(project)) {
-            if ((new FqName(fqName)).shortName().getName().equals(name)) {
-                PsiClass psiClass = javaElementFinder.findClass(fqName, scope);
-                if (psiClass != null) {
-                    result.add(psiClass);
+        for (JetClassOrObject classOrObject : classOrObjects) {
+            if (classOrObject instanceof JetNamedDeclaration) {
+                FqName fqName = JetPsiUtil.getFQName((JetNamedDeclaration) classOrObject);
+                if (fqName != null && fqName.shortName().getName().equals(name)) {
+                    PsiClass psiClass = javaElementFinder.findClass(fqName.getFqName(), scope);
+                    if (psiClass != null) {
+                        result.add(psiClass);
+                    }
                 }
             }
         }
