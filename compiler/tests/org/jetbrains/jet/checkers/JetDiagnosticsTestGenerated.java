@@ -1588,6 +1588,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/ReceiverNullability.kt");
             }
             
+            @TestMetadata("SenselessNullInWhen.kt")
+            public void testSenselessNullInWhen() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/SenselessNullInWhen.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/objects")
