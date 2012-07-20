@@ -1,0 +1,14 @@
+namespace <root>
+
+// <namespace name="kt1080">
+namespace kt1080
+
+// </namespace name="kt1080">
+// <namespace name="b">
+namespace b
+
+// <namespace name="d">
+namespace d
+
+// </namespace name="d">
+// </namespace name="b">
