@@ -5,7 +5,7 @@ import kotlin.test.*
 import java.util.*
 import org.junit.Test as test
 
-class MapTest {
+class MapJsTest {
 
     test fun getOrElse() {
         val data = HashMap<String, Int>()
