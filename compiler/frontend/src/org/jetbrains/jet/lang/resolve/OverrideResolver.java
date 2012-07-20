@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
@@ -175,81 +177,132 @@ public class OverrideResolver {
     }
     
     public static void generateOverridesInFunctionGroup(
-            @NotNull Name name,
+            @NotNull Name name, //DO NOT DELETE THIS PARAMETER: needed to make sure all descriptors have the same name
             @NotNull Collection<? extends CallableMemberDescriptor> membersFromSupertypes,
             @NotNull Collection<? extends CallableMemberDescriptor> membersFromCurrent,
             @NotNull ClassDescriptor current,
             @NotNull DescriptorSink sink
     ) {
         List<CallableMemberDescriptor> notOverridden = Lists.newArrayList(membersFromSupertypes);
+
         for (CallableMemberDescriptor fromCurrent : membersFromCurrent) {
-
-            // Find what this descriptor overrides, bind them and removed from notOverridden
-            for (Iterator<CallableMemberDescriptor> iterator = notOverridden.iterator(); iterator.hasNext(); ) {
-                CallableMemberDescriptor fromSupertype = iterator.next();
-                OverridingUtil.OverrideCompatibilityInfo.Result result =
-                        OverridingUtil.isOverridableBy(fromSupertype, fromCurrent).getResult();
-
-                boolean isVisible = Visibilities.isVisible(fromSupertype, current);
-                switch (result) {
-                    case OVERRIDABLE:
-                        if (isVisible) {
-                            OverridingUtil.bindOverride(fromCurrent, fromSupertype);
-                        }
-                        iterator.remove();
-                        break;
-                    case CONFLICT:
-                        if (isVisible) {
-                            sink.conflict(fromSupertype, fromCurrent);
-                        }
-                        iterator.remove();
-                        break;
-                    case INCOMPATIBLE:
-                        break;
-                }
-            }
+            extractAndBindOverridesForMember(fromCurrent, notOverridden, current, sink);
         }
 
+        bindFakeOverrides(current, notOverridden, sink);
+    }
+
+    private static void extractAndBindOverridesForMember(
+            @NotNull CallableMemberDescriptor fromCurrent,
+            @NotNull List<CallableMemberDescriptor> notOverridden, @NotNull ClassDescriptor current,
+            @NotNull DescriptorSink sink
+    ) {
+        for (Iterator<CallableMemberDescriptor> iterator = notOverridden.iterator(); iterator.hasNext(); ) {
+            CallableMemberDescriptor fromSupertype = iterator.next();
+            OverridingUtil.OverrideCompatibilityInfo.Result result =
+                    OverridingUtil.isOverridableBy(fromSupertype, fromCurrent).getResult();
+
+            boolean isVisible = Visibilities.isVisible(fromSupertype, current);
+            switch (result) {
+                case OVERRIDABLE:
+                    if (isVisible) {
+                        OverridingUtil.bindOverride(fromCurrent, fromSupertype);
+                    }
+                    iterator.remove();
+                    break;
+                case CONFLICT:
+                    if (isVisible) {
+                        sink.conflict(fromSupertype, fromCurrent);
+                    }
+                    iterator.remove();
+                    break;
+                case INCOMPATIBLE:
+                    break;
+            }
+        }
+    }
+
+    private static void bindFakeOverrides(
+            @NotNull ClassDescriptor current,
+            @NotNull List<CallableMemberDescriptor> notOverridden,
+            @NotNull DescriptorSink sink
+    ) {
         Queue<CallableMemberDescriptor> fromSuperQueue = new LinkedList<CallableMemberDescriptor>(notOverridden);
         while (!fromSuperQueue.isEmpty()) {
-            CallableMemberDescriptor aFromSuper = fromSuperQueue.remove();
-
-            Collection<CallableMemberDescriptor> overridableByA = Lists.newArrayList();
-            overridableByA.add(aFromSuper);
-            for (Iterator<CallableMemberDescriptor> iterator = fromSuperQueue.iterator(); iterator.hasNext(); ) {
-                CallableMemberDescriptor bFromSuper = iterator.next();
-                OverridingUtil.OverrideCompatibilityInfo.Result result =
-                        OverridingUtil.isOverridableBy(bFromSuper, aFromSuper).getResult();
-                switch (result) {
-                    case OVERRIDABLE:
-                        overridableByA.add(bFromSuper);
-                        iterator.remove();
-                        break;
-                    case CONFLICT:
-                        sink.conflict(aFromSuper, bFromSuper);
-                        iterator.remove();
-                        break;
-                    case INCOMPATIBLE:
-                        break;
-                }
-            }
-
-            boolean isVisible = true;
-            Modality modality = Modality.ABSTRACT;
-            for (CallableMemberDescriptor descriptor : overridableByA) {
-                isVisible &= Visibilities.isVisible(descriptor, current);
-                if (descriptor.getModality().compareTo(modality) < 0) {
-                    modality = descriptor.getModality();
-                }
-            }
-
-            CallableMemberDescriptor fakeOverride =
-                    aFromSuper.copy(current, modality, !isVisible, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
-            for (CallableMemberDescriptor descriptor : overridableByA) {
-                OverridingUtil.bindOverride(fakeOverride, descriptor);
-            }
-            sink.addToScope(fakeOverride);
+            CallableMemberDescriptor notOverriddenFromSuper = fromSuperQueue.remove();
+            Collection<CallableMemberDescriptor> overridables = extractMembersOverridableBy(notOverriddenFromSuper, fromSuperQueue, sink);
+            bindFakeOverride(notOverriddenFromSuper, overridables, current, sink);
         }
+    }
+
+    private static void bindFakeOverride(
+            @NotNull CallableMemberDescriptor notOverriddenFromSuper,
+            @NotNull Collection<CallableMemberDescriptor> overridables,
+            @NotNull ClassDescriptor current,
+            @NotNull DescriptorSink sink
+    ) {
+        Collection<CallableMemberDescriptor> visibleOverridables = filterVisible(current, overridables);
+        Modality modality = getMinimalModality(visibleOverridables);
+        boolean allInvisible = visibleOverridables.isEmpty();
+        Collection<CallableMemberDescriptor> effectiveOverridden = allInvisible ? overridables : visibleOverridables;
+        CallableMemberDescriptor fakeOverride =
+                notOverriddenFromSuper.copy(current, modality, allInvisible, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
+        for (CallableMemberDescriptor descriptor : effectiveOverridden) {
+            OverridingUtil.bindOverride(fakeOverride, descriptor);
+        }
+        sink.addToScope(fakeOverride);
+    }
+
+    @NotNull
+    private static Modality getMinimalModality(@NotNull Collection<CallableMemberDescriptor> descriptors) {
+        Modality modality = Modality.ABSTRACT;
+        for (CallableMemberDescriptor descriptor : descriptors) {
+            if (descriptor.getModality().compareTo(modality) < 0) {
+                modality = descriptor.getModality();
+            }
+        }
+        return modality;
+    }
+
+    @NotNull
+    private static Collection<CallableMemberDescriptor> filterVisible(
+            @NotNull final ClassDescriptor current,
+            @NotNull Collection<CallableMemberDescriptor> toFilter
+    ) {
+        return Collections2.filter(toFilter, new Predicate<CallableMemberDescriptor>() {
+            @Override
+            public boolean apply(@Nullable CallableMemberDescriptor descriptor) {
+                return Visibilities.isVisible(descriptor, current);
+            }
+        });
+    }
+
+    @NotNull
+    private static Collection<CallableMemberDescriptor> extractMembersOverridableBy(
+            @NotNull CallableMemberDescriptor overrider,
+            @NotNull Queue<CallableMemberDescriptor> extractFrom,
+            @NotNull DescriptorSink sink
+    ) {
+        Collection<CallableMemberDescriptor> overridable = Lists.newArrayList();
+        overridable.add(overrider);
+        for (Iterator<CallableMemberDescriptor> iterator = extractFrom.iterator(); iterator.hasNext(); ) {
+            CallableMemberDescriptor candidate = iterator.next();
+            OverridingUtil.OverrideCompatibilityInfo.Result result =
+                    OverridingUtil.isOverridableBy(candidate, overrider).getResult();
+            switch (result) {
+                case OVERRIDABLE:
+                    overridable.add(candidate);
+                    iterator.remove();
+                    break;
+                case CONFLICT:
+                    sink.conflict(overrider, candidate);
+                    iterator.remove();
+                    break;
+                case INCOMPATIBLE:
+                    break;
+            }
+        }
+        return overridable;
     }
 
     private static <T extends DeclarationDescriptor> MultiMap<Name, T> groupDescriptorsByName(Collection<T> properties) {
@@ -336,30 +389,37 @@ public class OverrideResolver {
         }
     }
 
-    private static void collectMissingImplementations(CallableMemberDescriptor descriptor, Set<CallableMemberDescriptor> abstractNoImpl, Set<CallableMemberDescriptor> manyImpl) {
-        if (!descriptor.getKind().isReal()) {
-            Collection<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(descriptor);
-            if (overriddenDeclarations.size() == 0) {
-                throw new IllegalStateException("A 'fake override' must override something");
-            }
-            else {
-                List<CallableMemberDescriptor> nonAbstractManyImpl = Lists.newArrayList();
-                Set<CallableMemberDescriptor> filteredOverriddenDeclarations = OverridingUtil.filterOverrides(Sets.newHashSet(overriddenDeclarations));
-                boolean allSuperAbstract = true;
-                for (CallableMemberDescriptor overridden : filteredOverriddenDeclarations) {
-                    if (overridden.getModality() != Modality.ABSTRACT) {
-                        nonAbstractManyImpl.add(overridden);
-                        allSuperAbstract = false;
-                    }
+    private static void collectMissingImplementations(
+            @NotNull CallableMemberDescriptor descriptor,
+            @NotNull Set<CallableMemberDescriptor> abstractNoImpl,
+            @NotNull Set<CallableMemberDescriptor> manyImpl
+    ) {
+        if (descriptor.getKind().isReal()) return;
+
+        Collection<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(descriptor);
+        if (overriddenDeclarations.size() == 0) {
+            throw new IllegalStateException("A 'fake override' must override something");
+        }
+
+        List<CallableMemberDescriptor> nonAbstractManyImpl = Lists.newArrayList();
+        Set<CallableMemberDescriptor> filteredOverriddenDeclarations = OverridingUtil.filterOverrides(Sets.newHashSet(overriddenDeclarations));
+
+        boolean allSuperAbstract = true;
+        for (CallableMemberDescriptor overridden : filteredOverriddenDeclarations) {
+            if (overridden.getModality() != Modality.ABSTRACT) {
+                if (descriptor.getVisibility() != Visibilities.INVISIBLE_FAKE) {
+                    nonAbstractManyImpl.add(overridden);
                 }
-                if (nonAbstractManyImpl.size() > 1) {
-                    manyImpl.addAll(nonAbstractManyImpl);
-                }
-                else if (allSuperAbstract) {
-                    abstractNoImpl.addAll(overriddenDeclarations);
-                }
+                allSuperAbstract = false;
             }
         }
+        if (nonAbstractManyImpl.size() > 1) {
+            manyImpl.addAll(nonAbstractManyImpl);
+        }
+        else if (allSuperAbstract) {
+            abstractNoImpl.addAll(overriddenDeclarations);
+        }
+
     }
 
     public static Multimap<CallableMemberDescriptor, CallableMemberDescriptor> collectSuperMethods(MutableClassDescriptor classDescriptor) {
@@ -395,11 +455,12 @@ public class OverrideResolver {
     private void checkOverrideForMember(@NotNull CallableMemberDescriptor declared) {
         JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
         if (member == null) {
-            if (declared.getKind() != CallableMemberDescriptor.Kind.DELEGATION)
+            if (declared.getKind() != CallableMemberDescriptor.Kind.DELEGATION) {
                 throw new IllegalStateException(
                         "decriptor is not resolved to declaration" +
                         " and it is not delegate: " + declared + ", DELEGATED: " +
                         (declared.getKind() == CallableMemberDescriptor.Kind.DELEGATION));
+            }
             return;
         }
 
