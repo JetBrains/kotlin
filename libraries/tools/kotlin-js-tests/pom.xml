@@ -63,12 +63,19 @@
                                         <include name="ListTest.kt"/>
                                         -->
 <!--
-    TODO: depends on this being fixed: http://youtrack.jetbrains.com/issue/KT-2372
+    TODO: depends on this being fixed: http://youtrack.jetbrains.com/issue/KT-2468
                                         <include name="SetTest.kt"/>
 -->
 <!--
-    TODO: depends on this being fixed: http://youtrack.jetbrains.com/issue/KT-2356
+    TODO: depends on this being fixed:
+    http://youtrack.jetbrains.com/issue/KT-2470
+    http://youtrack.jetbrains.com/issue/KT-2374
+    http://youtrack.jetbrains.com/issue/KT-2468
                                         <include name="CollectionTest.kt"/>
+-->
+
+<!--
+    TODO: depends on this being fixed: http://youtrack.jetbrains.com/issue/KT-2470
                                         <include name="iterators/*.kt"/>
 -->
 <!--

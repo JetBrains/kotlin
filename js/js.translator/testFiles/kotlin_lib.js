@@ -124,6 +124,7 @@ var kotlin = {set:function (receiver, key, value) {
             }
         },
         equals: function (o) {
+            if (o === null || o === undefined) return false;
             if (this.size() === o.size()) {
                 var iter1 = this.iterator();
                 var iter2 = o.iterator();
@@ -909,6 +910,7 @@ var kotlin = {set:function (receiver, key, value) {
             };
 
             this.equals = function (o) {
+                if (o === null || o === undefined) return false;
                 if (this.size() === o.size()) {
                     var iter1 = this.iterator();
                     var iter2 = o.iterator();
