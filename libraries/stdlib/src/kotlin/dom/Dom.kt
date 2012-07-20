@@ -246,7 +246,17 @@ class ElementListAsList(val nodeList: NodeList): AbstractList<Element>() {
 
 }
 
-
+/** Removes all the children from this node */
+fun Node.clear(): Unit {
+    while (true) {
+        val child = firstChild
+        if (child == null) {
+            return
+        } else {
+            removeChild(child)
+        }
+    }
+}
 
 /** Returns an [[Iterator]] over the next siblings of this node */
 fun Node.nextSiblings() : Iterator<Node> = NextSiblingIterator(this)
