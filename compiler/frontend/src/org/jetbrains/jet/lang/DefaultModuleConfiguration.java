@@ -61,10 +61,10 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
         if (DescriptorUtils.getFQName(namespaceDescriptor).equalsTo(JetStandardClasses.STANDARD_CLASSES_FQNAME)) {
             switch (builtinsScopeExtensionMode) {
                 case ALL:
-                    namespaceMemberScope.importScope(JetStandardClasses.STANDARD_CLASSES);
+                    namespaceMemberScope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
                     break;
                 case ONLY_STANDARD_CLASSES:
-                    namespaceMemberScope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
+                    namespaceMemberScope.importScope(JetStandardClasses.STANDARD_CLASSES);
                     break;
             }
 
