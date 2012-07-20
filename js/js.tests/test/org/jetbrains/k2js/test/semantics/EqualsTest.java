@@ -41,4 +41,8 @@ public final class EqualsTest extends AbstractExpressionTest {
     public void testStringsEqual() throws Exception {
         fooBoxTest();
     }
+
+    public void testKt2370() throws Exception {
+        fooBoxTest();
+    }
 }
