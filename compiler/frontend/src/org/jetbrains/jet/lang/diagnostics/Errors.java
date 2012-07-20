@@ -283,6 +283,7 @@ public interface Errors {
             DiagnosticFactory3.create(ERROR);
 
     DiagnosticFactory2<JetBinaryExpression, JetBinaryExpression, Boolean> SENSELESS_COMPARISON = DiagnosticFactory2.create(WARNING);
+    SimpleDiagnosticFactory<JetElement> SENSELESS_NULL_IN_WHEN = SimpleDiagnosticFactory.create(WARNING);
 
     DiagnosticFactory2<PsiElement, CallableMemberDescriptor, DeclarationDescriptor> OVERRIDING_FINAL_MEMBER = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory3<JetModifierListOwner, Visibility, CallableMemberDescriptor, DeclarationDescriptor> CANNOT_WEAKEN_ACCESS_PRIVILEGE =
