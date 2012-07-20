@@ -65,6 +65,11 @@ public interface ConstraintSystem {
     boolean isSuccessful();
 
     /**
+     * Return <tt>true</tt> if constraint system has no contradiction (it can be not successful because of the lack of information for a type variable).
+     */
+    boolean hasContradiction();
+
+    /**
      * Returns <tt>true</tt> if type constraints for some type variable are contradicting. <p/>
      *
      * For example, for <pre>fun &lt;R&gt; foo(r: R, t: java.util.List&lt;R&gt;) {}</pre> in invocation <tt>foo(1, arrayList("s"))</tt>
@@ -133,4 +138,6 @@ public interface ConstraintSystem {
      */
     @NotNull
     TypeSubstitutor getCurrentSubstitutor();
+
+    ConstraintSystem copy();
 }

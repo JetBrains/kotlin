@@ -347,6 +347,9 @@ public class CallResolver {
         constraintSystem.addSubtypingConstraint(descriptor.getReturnType(), context.expectedType,
                                                  ConstraintPosition.EXPECTED_TYPE_POSITION);
 
+        TypeSubstitutor substituteDontCare = ConstraintSystemWithPriorities
+            .makeConstantSubstitutor(resolvedCall.getCandidateDescriptor().getTypeParameters(), ConstraintSystemImpl.DONT_CARE);
+
         // constraints for function literals
         // Value parameters
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : resolvedCall.getValueArguments().entrySet()) {
@@ -356,8 +359,15 @@ public class CallResolver {
             for (ValueArgument valueArgument : resolvedValueArgument.getArguments()) {
                 if (!JetPsiUtil.isFunctionLiteralWithoutDeclaredParameterTypes(valueArgument.getArgumentExpression())) continue;
 
+                ConstraintSystem systemWithCurrentSubstitution = constraintSystem.copy();
                 addConstraintForValueArgument(valueArgument, valueParameterDescriptor, constraintSystem.getCurrentSubstitutor(),
-                                              constraintSystem, context);
+                                              systemWithCurrentSubstitution, context);
+                if (systemWithCurrentSubstitution.hasContradiction() || systemWithCurrentSubstitution.hasErrorInConstrainingTypes()) {
+                    addConstraintForValueArgument(valueArgument, valueParameterDescriptor, substituteDontCare, constraintSystem, context);
+                }
+                else {
+                    constraintSystem = systemWithCurrentSubstitution;
+                }
             }
         }
 
@@ -753,7 +763,7 @@ public class CallResolver {
 
 
         // Solution
-        if (!constraintsSystem.hasTypeConstructorMismatch() && !constraintsSystem.hasConflictingConstraints()) { //no contradiction
+        if (!constraintsSystem.hasContradiction()) {
             candidateCall.setHasUnknownTypeParameters(true);
             return SUCCESS;
         }

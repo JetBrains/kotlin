@@ -105,6 +105,16 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         typeParameterConstraints.put(typeVariable, new TypeConstraintsImpl(positionVariance));
     }
 
+    @Override
+    @NotNull
+    public ConstraintSystem copy() {
+        ConstraintSystemImpl newConstraintSystem = new ConstraintSystemImpl();
+        newConstraintSystem.typeParameterConstraints.putAll(typeParameterConstraints);
+        newConstraintSystem.errorConstraintPositions.addAll(errorConstraintPositions);
+        newConstraintSystem.hasErrorInConstrainingTypes = hasErrorInConstrainingTypes;
+        return newConstraintSystem;
+    }
+
     @NotNull
     public ConstraintSystem replaceTypeVariables(@NotNull Function<TypeParameterDescriptor, TypeParameterDescriptor> typeVariablesMap) {
         ConstraintSystemImpl newConstraintSystem = new ConstraintSystemImpl();
@@ -116,9 +126,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             assert newTypeParameter != null;
             newConstraintSystem.typeParameterConstraints.put(newTypeParameter, typeConstraints);
         }
-        for (ConstraintPosition constraintPosition : errorConstraintPositions) {
-            newConstraintSystem.errorConstraintPositions.add(constraintPosition);
-        }
+        newConstraintSystem.errorConstraintPositions.addAll(errorConstraintPositions);
         newConstraintSystem.hasErrorInConstrainingTypes = hasErrorInConstrainingTypes;
         return newConstraintSystem;
     }
@@ -219,6 +227,11 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     @Override
     public boolean isSuccessful() {
         return !hasTypeConstructorMismatch() && !hasUnknownParameters() && !hasConflictingConstraints();
+    }
+
+    @Override
+    public boolean hasContradiction() {
+        return hasTypeConstructorMismatch() || hasConflictingConstraints();
     }
 
     @Override
