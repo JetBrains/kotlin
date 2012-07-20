@@ -25,6 +25,6 @@ import junit.framework.Test;
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public final class StdLibMapTest extends JsUnitTestBase {
     public static Test suite() throws Exception {
-        return createTestSuiteForFile("libraries/stdlib/test/js/MapTest.kt");
+        return createTestSuiteForFile("libraries/stdlib/test/js/MapJsTest.kt");
     }
 }
