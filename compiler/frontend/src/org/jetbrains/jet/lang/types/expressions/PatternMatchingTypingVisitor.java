@@ -330,6 +330,11 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                     return;
                 }
 
+                // check if the pattern is essentially a 'null' expression
+                if (type == JetStandardClasses.getNullableNothingType() && !subjectType.isNullable()) {
+                    context.trace.report(SENSELESS_NULL_IN_WHEN.on(reportErrorOn));
+                }
+
                 if (BasicExpressionTypingVisitor.isCastErased(subjectType, type, JetTypeChecker.INSTANCE)) {
                     context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(reportErrorOn, type));
                 }
