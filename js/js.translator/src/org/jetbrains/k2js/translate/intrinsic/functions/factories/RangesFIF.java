@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test.semantics;
+package org.jetbrains.k2js.translate.intrinsic.functions.factories;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.translate.intrinsic.functions.basic.CallStandardMethodIntrinsic;
+
+import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
 
 /**
  * @author Pavel Talanov
  */
-public final class ForeachTest extends AbstractExpressionTest {
+public final class RangesFIF extends CompositeFIF {
 
-    public ForeachTest() {
-        super("for/");
-    }
+    @NotNull
+    public static final FunctionIntrinsicFactory INSTANCE = new RangesFIF();
 
-    public void testForIteratesOverArray() throws Exception {
-        fooBoxTest();
-    }
-
-    public void testForOnEmptyArray() throws Exception {
-        fooBoxTest();
+    private RangesFIF() {
+        add(pattern("Int.upto"), new CallStandardMethodIntrinsic("Kotlin.intUpto", true, 1));
     }
 }

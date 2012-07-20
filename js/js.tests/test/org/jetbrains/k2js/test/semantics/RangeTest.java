@@ -44,4 +44,8 @@ public final class RangeTest extends SingleFileTranslationTest {
     public void testIteratingOverRanges() throws Exception {
         fooBoxTest();
     }
+
+    public void testIntUpTo() throws Exception {
+        fooBoxTest();
+    }
 }
