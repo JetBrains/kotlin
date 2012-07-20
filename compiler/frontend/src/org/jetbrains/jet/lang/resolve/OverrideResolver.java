@@ -190,18 +190,22 @@ public class OverrideResolver {
                 OverridingUtil.OverrideCompatibilityInfo.Result result =
                         OverridingUtil.isOverridableBy(fromSupertype, fromCurrent).getResult();
 
-                if (Visibilities.isVisible(fromSupertype, current)) {
-                    switch (result) {
-                        case OVERRIDABLE:
+                boolean isVisible = Visibilities.isVisible(fromSupertype, current);
+                switch (result) {
+                    case OVERRIDABLE:
+                        if (isVisible) {
                             OverridingUtil.bindOverride(fromCurrent, fromSupertype);
-                            iterator.remove();
-                            break;
-                        case CONFLICT:
+                        }
+                        iterator.remove();
+                        break;
+                    case CONFLICT:
+                        if (isVisible) {
                             sink.conflict(fromSupertype, fromCurrent);
-                            break;
-                        case INCOMPATIBLE:
-                            break;
-                    }
+                        }
+                        iterator.remove();
+                        break;
+                    case INCOMPATIBLE:
+                        break;
                 }
             }
         }
