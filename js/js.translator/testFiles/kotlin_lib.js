@@ -43,7 +43,11 @@ var kotlin = {set:function (receiver, key, value) {
     };
 
     Kotlin.intUpto = function (from, limit) {
-        return Kotlin.$new(Kotlin.NumberRange)(from, limit - from + 1);
+        return Kotlin.$new(Kotlin.NumberRange)(from, limit - from + 1, false);
+    };
+
+    Kotlin.intDownto = function (from, limit) {
+        return Kotlin.$new(Kotlin.NumberRange)(from, from - limit + 1, true);
     };
 
     Kotlin.modules = {};

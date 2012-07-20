@@ -31,5 +31,6 @@ public final class RangesFIF extends CompositeFIF {
 
     private RangesFIF() {
         add(pattern("Int.upto"), new CallStandardMethodIntrinsic("Kotlin.intUpto", true, 1));
+        add(pattern("Int.downto"), new CallStandardMethodIntrinsic("Kotlin.intDownto", true, 1));
     }
 }

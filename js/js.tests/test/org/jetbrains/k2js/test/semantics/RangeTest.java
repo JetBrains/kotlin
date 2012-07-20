@@ -48,4 +48,8 @@ public final class RangeTest extends SingleFileTranslationTest {
     public void testIntUpTo() throws Exception {
         fooBoxTest();
     }
+
+    public void testIntDownTo() throws Exception {
+        fooBoxTest();
+    }
 }
