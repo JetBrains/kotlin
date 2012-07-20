@@ -52,4 +52,8 @@ public final class RangeTest extends SingleFileTranslationTest {
     public void testIntDownTo() throws Exception {
         fooBoxTest();
     }
+
+    public void testUpToDownToDoNotIterate() throws Exception {
+        fooBoxTest();
+    }
 }
