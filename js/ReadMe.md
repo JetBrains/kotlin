@@ -20,3 +20,10 @@ This allows the test cases to be [ran directly in a web page in any web browser]
 
 There is a [simple sample](https://github.com/JetBrains/kotlin/blob/master/libraries/examples/browser-example/ReadMe.md) which shows how to use the [Kotlin Standard Library](http://jetbrains.github.com/kotlin/versions/snapshot/apidocs/index.html) from inside JavaScript in a web page or in a JVM using [kool.io](http://kool.io/)'s [JavaFX browser](https://github.com/koolio/kool/blob/master/samples/kool-template-sample/ReadMe.md)
 
+## Contributing
+
+We love contributions! The JavaScript translation could really use your help! If you fancy contributing:
+
+* check the [contributing section](https://github.com/JetBrains/kotlin/blob/master/ReadMe.md) on general stuff like getting the code etc
+* here's the list of [current excluded standard library unit tests](https://github.com/JetBrains/kotlin/blob/master/libraries/tools/kotlin-js-tests/pom.xml#L46) from the JavaScript JUnit test run; see if you can fix one of those? (Check the TODO commands and the links to specific issues)
+* try fix one of the pending [JavaScript translation issues](http://youtrack.jetbrains.com/issues/KT?q=Subsystems%3A+%7BBack-end+(JavaScript)%7D+-Resolved+)
