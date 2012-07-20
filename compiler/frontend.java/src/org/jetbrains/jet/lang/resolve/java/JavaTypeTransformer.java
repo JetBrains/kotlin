@@ -58,9 +58,7 @@ public class JavaTypeTransformer {
 
 
     private Map<String, JetType> primitiveTypesMap;
-    private Map<FqName, JetType> classTypesMap;
-    private HashMap<FqName, ClassDescriptor> classDescriptorMap;
-
+    private Map<FqName, ClassDescriptor> classDescriptorMap;
 
 
     @NotNull
@@ -159,13 +157,11 @@ public class JavaTypeTransformer {
                     // 'L extends List<T>' in Java is a List<T> in Kotlin, not a List<T?>
                     boolean nullable = !EnumSet.of(SUPERTYPE_ARGUMENT, SUPERTYPE).contains(howThisTypeIsUsed);
 
-                    JetType jetAnalog = getKotlinAnalog(new FqName(psiClass.getQualifiedName()));
-                    if (jetAnalog != null) {
-                        return TypeUtils.makeNullableAsSpecified(jetAnalog, nullable);
-                    }
+                    ClassDescriptor classData = getKotlinAnalog(new FqName(psiClass.getQualifiedName()));
 
-                    final ClassDescriptor classData =
-                            resolver.resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
+                    if (classData == null) {
+                        classData = resolver.resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
+                    }
                     if (classData == null) {
                         return ErrorUtils.createErrorType("Unresolved java class: " + classType.getPresentableText());
                     }
@@ -240,52 +236,34 @@ public class JavaTypeTransformer {
                 PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
                 primitiveTypesMap.put(jvmPrimitiveType.getName(), JetStandardLibrary.getInstance().getPrimitiveJetType(primitiveType));
                 primitiveTypesMap.put("[" + jvmPrimitiveType.getName(), JetStandardLibrary.getInstance().getPrimitiveArrayJetType(primitiveType));
-                primitiveTypesMap.put(jvmPrimitiveType.getWrapper().getFqName().getFqName(), JetStandardLibrary.getInstance().getNullablePrimitiveJetType(primitiveType));
+                primitiveTypesMap.put(jvmPrimitiveType.getWrapper().getFqName().getFqName(), JetStandardLibrary.getInstance().getNullablePrimitiveJetType(
+                        primitiveType));
             }
             primitiveTypesMap.put("void", JetStandardClasses.getUnitType());
         }
         return primitiveTypesMap;
     }
 
-    public Map<FqName, JetType> getClassTypesMap() {
-        if (classTypesMap == null) {
-            classTypesMap = new HashMap<FqName, JetType>();
-            for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
-                PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-                classTypesMap.put(jvmPrimitiveType.getWrapper().getFqName(), JetStandardLibrary.getInstance().getNullablePrimitiveJetType(primitiveType));
-            }
-            classTypesMap.put(new FqName("java.lang.Object"), JetStandardClasses.getNullableAnyType());
-            classTypesMap.put(new FqName("java.lang.String"), JetStandardLibrary.getInstance().getNullableStringType());
-            classTypesMap.put(new FqName("java.lang.CharSequence"), JetStandardLibrary.getInstance().getNullableCharSequenceType());
-            classTypesMap.put(new FqName("java.lang.Throwable"), JetStandardLibrary.getInstance().getNullableThrowableType());
-            classTypesMap.put(new FqName("java.lang.Number"), JetStandardLibrary.getInstance().getNullableNumberType());
-        }
-        return classTypesMap;
-    }
-
-    @Nullable
-    public JetType getKotlinAnalog(@NotNull FqName fqName) {
-        return getClassTypesMap().get(fqName);
-    }
-
-    private Map<FqName, ClassDescriptor> getPrimitiveWrappersClassDescriptorMap() {
+    public Map<FqName, ClassDescriptor> getClassDescriptorMap() {
         if (classDescriptorMap == null) {
             classDescriptorMap = new HashMap<FqName, ClassDescriptor>();
             for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
                 PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
                 classDescriptorMap.put(jvmPrimitiveType.getWrapper().getFqName(), JetStandardLibrary.getInstance().getPrimitiveClassDescriptor(primitiveType));
             }
+            classDescriptorMap.put(new FqName("java.lang.Object"), JetStandardClasses.getAny());
             classDescriptorMap.put(new FqName("java.lang.String"), JetStandardLibrary.getInstance().getString());
             classDescriptorMap.put(new FqName("java.lang.CharSequence"), JetStandardLibrary.getInstance().getCharSequence());
             classDescriptorMap.put(new FqName("java.lang.Throwable"), JetStandardLibrary.getInstance().getThrowable());
             classDescriptorMap.put(new FqName("java.lang.Number"), JetStandardLibrary.getInstance().getNumber());
+
         }
         return classDescriptorMap;
     }
 
     @Nullable
-    public ClassDescriptor unwrapPrimitive(@NotNull FqName fqName) {
-        return getPrimitiveWrappersClassDescriptorMap().get(fqName);
+    public ClassDescriptor getKotlinAnalog(@NotNull FqName fqName) {
+        return getClassDescriptorMap().get(fqName);
     }
 
     /**
