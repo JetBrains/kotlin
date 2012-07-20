@@ -7,8 +7,10 @@ Welcome to [Kotlin](http://www.jetbrains.com/kotlin)! Some handy links:
  * [Kotlin Site](http://jetbrains.github.com/kotlin/)
  * [API](http://jetbrains.github.com/kotlin/versions/snapshot/apidocs/index.html)
  * [Issue Tracker](http://youtrack.jetbrains.com/issues/KT)
+ * [Forum](http://devnet.jetbrains.net/community/kotlin?view=discussions)
  * [Kotlin Blog](http://blog.jetbrains.com/kotlin/)
  * [follow Kotlin on twitter](http://twitter.com/#!/project_kotlin)
+ * [TeamCity CI build](http://teamcity.jetbrains.com/project.html?projectId=project67&tab=projectOverview)
 
 ## Editing Kotlin
 
@@ -67,6 +69,21 @@ You can now open any Kotlin based projects. Its advisable you don't open the [ro
 build the kotlin compiler and plugin itself; instead open the [kotlin libraries project](https://github.com/JetBrains/tree/master/kotlin/libraries)
 
 
+# Contributing
+
+We love contributions! There's [lots to do on kotlin](http://youtrack.jetbrains.com/issues/KT) and on the [standard library](http://youtrack.jetbrains.com/issues/KT?q=%23%7BStandard+Library%7D+-Resolved) so why not chat with us on the [forum](http://devnet.jetbrains.net/community/kotlin?view=discussions) about what you're interested in doing?
+
+If you want to find some issues to start off with, try [this query](http://youtrack.jetbrains.com/issues/KT?q=-Resolved+%23Kontributor) which should find all issues that are not resolved assigned to Kontributor.
+
+Currently only committers can assign issues to themselves so just add a comment if you're starting work on it.
+
+A nice gentle way to contribute would be to review the [API docs](http://jetbrains.github.com/kotlin/versions/snapshot/apidocs/index.html) and find classes or functions which are not documented very well and submit a patch.
+
+In particular it'd be great if all functions included a nice example of how to use it such as for the <a href="http://jetbrains.github.com/kotlin/versions/snapshot/apidocs/kotlin/java/util/Collection-extensions.html#filter(jet.Function1)">filter()</a> function on Collection. This is implemented using the <a href="https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/src/kotlin/JLangIterablesLazy.kt#L17">@includeFunctionBody</a> macro to include code from a test function. This serves as a double win; the API gets better documented with nice examples to help new users and the code gets more test coverage.
+
+Also the [JavaScript translation](https://github.com/JetBrains/kotlin/blob/master/js/ReadMe.md) could really use your help. See the [JavaScript contribution section](https://github.com/JetBrains/kotlin/blob/master/js/ReadMe.md) for more details.
+
+
 ## If you want to work on the compiler
 
 The Kotlin compiler is currently all written in Java (we plan to port it to Kotlin later). So the easiest way to work on the compiler or IDEA plugin is
@@ -95,17 +112,6 @@ Then build via
     mvn install
 
 
-## Contributing
-
-We love contributions! There's [lots to do on kotlin](http://youtrack.jetbrains.com/issues/KT) and on the [standard library](http://youtrack.jetbrains.com/issues/KT?q=%23%7BStandard+Library%7D+-Resolved) so why not chat with us on the [forum](http://devnet.jetbrains.net/community/kotlin?view=discussions) about what you're interested in doing?
-
-If you want to find some issues to start off with, try [this query](http://youtrack.jetbrains.com/issues/KT?q=-Resolved+%23Kontributor) which should find all issues that are not resolved assigned to Kontributor.
-Currently only committers can assign issues to themselves so just add a comment if you're starting work on it.
-
-A nice gentle way to contribute would be to review the [API docs](http://jetbrains.github.com/kotlin/versions/snapshot/apidocs/index.html) and find classes or functions which are not documented very well and submit a patch.
-
-In particular it'd be great if all functions included a nice example of how to use it such as for the <a href="http://jetbrains.github.com/kotlin/versions/snapshot/apidocs/kotlin/java/util/Collection-extensions.html#filter(jet.Function1)">filter()</a> function on Collection. This is implemented using the <a href="https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/src/kotlin/JLangIterablesLazy.kt#L17">@includeFunctionBody</a> macro to include code from a test function. This serves as a double win; the API gets better documented with nice examples to help new users and the code gets more test coverage.
-
 ## Submitting patchces
 
 The best way to submit a patch is to [fork the project on github](http://help.github.com/fork-a-repo/) then send us a
@@ -119,8 +125,3 @@ which will avoid your local repo having too many merge commits which will help k
 If you include in your comment this text (where KT-1234 is the Issue ID in the [Issue Tracker](http://youtrack.jetbrains.com/issues/KT), the issue will get automatically marked as fixed.
 
     #KT-1234 Fixed
-
-
-## Kommitter links
-
-* [TeamCity CI build](http://teamcity.jetbrains.com/project.html?projectId=project67&tab=projectOverview)
