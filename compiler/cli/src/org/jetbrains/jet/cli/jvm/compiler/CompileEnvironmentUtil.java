@@ -142,7 +142,13 @@ public class CompileEnvironmentUtil {
             }
         };
         CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, new File[]{PathUtil.getDefaultRuntimePath()});
+        configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, new File[]{
+                PathUtil.findRtJar(),
+                PathUtil.getDefaultRuntimePath()
+        });
+        configuration.putUserData(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File[]{
+                PathUtil.getJdkAnnotationsPath()
+        });
         JetCoreEnvironment scriptEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(disposable, configuration);
         scriptEnvironment.addSources(moduleScriptFile);
 
