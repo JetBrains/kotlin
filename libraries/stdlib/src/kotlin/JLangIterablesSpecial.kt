@@ -109,7 +109,7 @@ public fun <T> java.lang.Iterable<T>.withIndices(): java.util.List<#(Int, T)> {
     return answer
 }
 
-public inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.sort() : List<T> {
+public inline fun <in T: Comparable<T>> java.lang.Iterable<T>.sort() : List<T> {
     val list = toList()
     java.util.Collections.sort(list)
     return list

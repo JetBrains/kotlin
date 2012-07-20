@@ -256,7 +256,7 @@ public class JavaTypeTransformer {
             classDescriptorMap.put(new FqName("java.lang.CharSequence"), JetStandardLibrary.getInstance().getCharSequence());
             classDescriptorMap.put(new FqName("java.lang.Throwable"), JetStandardLibrary.getInstance().getThrowable());
             classDescriptorMap.put(new FqName("java.lang.Number"), JetStandardLibrary.getInstance().getNumber());
-
+            classDescriptorMap.put(new FqName("java.lang.Comparable"), JetStandardLibrary.getInstance().getComparable());
         }
         return classDescriptorMap;
     }

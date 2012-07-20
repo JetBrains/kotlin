@@ -33,9 +33,9 @@ public inline fun <T> java.util.Collection<T>?.orEmpty() : Collection<T>
 
 
 /** TODO these functions don't work when they generate the Array<T> versions when they are in JLIterables */
-public inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.toSortedList() : List<T> = toList().sort()
+public inline fun <in T: Comparable<T>> java.lang.Iterable<T>.toSortedList() : List<T> = toList().sort()
 
-public inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.toSortedList(comparator: java.util.Comparator<T>) : List<T> = toList().sort(comparator)
+public inline fun <in T: Comparable<T>> java.lang.Iterable<T>.toSortedList(comparator: java.util.Comparator<T>) : List<T> = toList().sort(comparator)
 
 
 // List APIs

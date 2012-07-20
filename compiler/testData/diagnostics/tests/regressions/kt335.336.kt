@@ -2,9 +2,8 @@
 // KT-335 Type inference fails on Collections.sort
 
 import java.util.*
-import java.lang.Comparable as Comparable
 
-fun <T : java.lang.Comparable<T>> List<T>.sort() {
+fun <T : Comparable<T>> List<T>.sort() {
   Collections.sort(this) // Error here
 }
 
