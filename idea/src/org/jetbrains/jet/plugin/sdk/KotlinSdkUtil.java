@@ -16,14 +16,18 @@
 
 package org.jetbrains.jet.plugin.sdk;
 
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.search.FilenameIndex;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -42,7 +46,7 @@ public class KotlinSdkUtil {
                     return new KotlinSdkProperties("");
                 }
             };
-    @NotNull public static final String KOTLIN_COMPILER_JAR = "kotlin-compiler.jar";
+    @NotNull private static final String KOTLIN_COMPILER_JAR = "kotlin-compiler.jar";
     @NotNull private static final String[] KOTLIN_COMPILER_JAR_ENTRY_NAMES = {
         "org/jetbrains/jet/cli/KotlinCompiler.class",
         "org/jetbrains/jet/cli/jvm/K2JVMCompiler.class"
@@ -106,7 +110,21 @@ public class KotlinSdkUtil {
         return null;
     }
 
-    public static boolean isKotlinCompilerJar(@NotNull final File jar) {
+    public static boolean isSDKConfiguredFor(@NotNull final Module module) {
+        final GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
+        return containsKotlinCompilerJar(FilenameIndex.getVirtualFilesByName(module.getProject(), KOTLIN_COMPILER_JAR, scope));
+    }
+
+    private static boolean containsKotlinCompilerJar(@NotNull final Collection<VirtualFile> jars) {
+        for (final VirtualFile jar : jars) {
+            if (isKotlinCompilerJar(new File(jar.getPath()))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isKotlinCompilerJar(@NotNull final File jar) {
         try {
             return doIsKotlinCompilerJar(jar);
         }

@@ -54,6 +54,7 @@ import com.intellij.ui.EditorNotifications;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.sdk.KotlinSdkUtil;
 import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
@@ -85,6 +86,8 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
             if (module == null) return null;
 
             if (isJsModule(module)) return null;
+
+            if (!KotlinSdkUtil.isSDKConfiguredFor(module)) return null;
 
             GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
             if (JavaPsiFacade.getInstance(myProject).findClass("jet.JetObject", scope) == null) {
@@ -143,6 +146,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
 
         final Library finalKotlinRuntime = kotlinRuntime;
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
             public void run() {
                 Library.ModifiableModel model = finalKotlinRuntime.getModifiableModel();
                 model.addRoot(VfsUtil.getUrlForLibraryRoot(targetJar), OrderRootType.CLASSES);

@@ -26,16 +26,11 @@ import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.search.FilenameIndex;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetPluginUtil;
-
-import java.io.File;
-import java.util.Collection;
 
 /**
  * @author Maxim.Manuylov
@@ -72,8 +67,7 @@ public class KotlinSdkNotConfiguredNotificationProvider implements EditorNotific
             final Module module = JetPluginUtil.getModuleForKotlinFile(file, myProject);
             if (module == null) return null;
 
-            final GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
-            if (!containsKotlinCompilerJar(FilenameIndex.getVirtualFilesByName(myProject, KotlinSdkUtil.KOTLIN_COMPILER_JAR, scope))) {
+            if (!KotlinSdkUtil.isSDKConfiguredFor(module)) {
                 return createNotificationPanel(module);
             }
         }
@@ -81,15 +75,6 @@ public class KotlinSdkNotConfiguredNotificationProvider implements EditorNotific
         catch (final IndexNotReadyException ignore) {}
 
         return null;
-    }
-
-    private static boolean containsKotlinCompilerJar(@NotNull final Collection<VirtualFile> jars) {
-        for (final VirtualFile jar : jars) {
-            if (KotlinSdkUtil.isKotlinCompilerJar(new File(jar.getPath()))) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @NotNull
