@@ -56,7 +56,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
     private final static InsertHandler<LookupElement> KEYWORDS_INSERT_HANDLER = new JetKeywordInsertHandler();
     private final static InsertHandler<LookupElement> FUNCTION_INSERT_HANDLER = new JetFunctionInsertHandler(
-            JetFunctionInsertHandler.CaretPosition.AFTER_BRACKETS);
+            JetFunctionInsertHandler.CaretPosition.AFTER_BRACKETS, JetFunctionInsertHandler.BracketType.PARENTHESIS);
 
     private final static ElementFilter GENERAL_FILTER = new NotFilter(new OrFilter(
             new CommentFilter(), // or

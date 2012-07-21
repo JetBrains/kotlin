@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
 import org.jetbrains.jet.plugin.completion.handlers.JetClassInsertHandler;
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
@@ -41,10 +42,13 @@ import java.util.List;
 public final class DescriptorLookupConverter {
 
     private final static JetFunctionInsertHandler EMPTY_FUNCTION_HANDLER = new JetFunctionInsertHandler(
-            JetFunctionInsertHandler.CaretPosition.AFTER_BRACKETS);
+            JetFunctionInsertHandler.CaretPosition.AFTER_BRACKETS, JetFunctionInsertHandler.BracketType.PARENTHESIS);
 
-    private final static JetFunctionInsertHandler PARAMS_FUNCTION_HANDLER = new JetFunctionInsertHandler(
-            JetFunctionInsertHandler.CaretPosition.IN_BRACKETS);
+    private final static JetFunctionInsertHandler PARAMS_PARENTHESIS_FUNCTION_HANDLER = new JetFunctionInsertHandler(
+            JetFunctionInsertHandler.CaretPosition.IN_BRACKETS, JetFunctionInsertHandler.BracketType.PARENTHESIS);
+
+    private final static JetFunctionInsertHandler PARAMS_BRACES_FUNCTION_HANDLER = new JetFunctionInsertHandler(
+            JetFunctionInsertHandler.CaretPosition.IN_BRACKETS, JetFunctionInsertHandler.BracketType.BRACES);
 
     private DescriptorLookupConverter() {}
 
@@ -79,7 +83,12 @@ public final class DescriptorLookupConverter {
                 element = element.setInsertHandler(EMPTY_FUNCTION_HANDLER);
             }
             else {
-                element = element.setInsertHandler(PARAMS_FUNCTION_HANDLER);
+                if (functionDescriptor.getValueParameters().size() == 1
+                        && JetStandardClasses.isFunctionType(functionDescriptor.getValueParameters().get(0).getType())) {
+                    element = element.setInsertHandler(PARAMS_BRACES_FUNCTION_HANDLER);
+                } else {
+                    element = element.setInsertHandler(PARAMS_PARENTHESIS_FUNCTION_HANDLER);
+                }
             }
         }
         else if (descriptor instanceof VariableDescriptor) {

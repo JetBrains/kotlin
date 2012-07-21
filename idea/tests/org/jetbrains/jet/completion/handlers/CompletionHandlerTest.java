@@ -72,6 +72,14 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
         doTest();
     }
 
+    public void testHigherOrderFunction() {
+        doTest();
+    }
+
+    public void testHigherOrderFunctionWithArg() {
+        doTest(CompletionType.BASIC, 2, "filterNot", null);
+    }
+
     public void doTest() {
         doTest(CompletionType.BASIC, 2, null, null);
     }

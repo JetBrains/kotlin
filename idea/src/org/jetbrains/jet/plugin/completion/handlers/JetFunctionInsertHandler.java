@@ -47,11 +47,14 @@ import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
 
     public enum CaretPosition { IN_BRACKETS, AFTER_BRACKETS }
+    public enum BracketType { PARENTHESIS, BRACES }
 
     private final CaretPosition caretPosition;
+    private final BracketType bracketType;
 
-    public JetFunctionInsertHandler(CaretPosition caretPosition) {
+    public JetFunctionInsertHandler(CaretPosition caretPosition, BracketType bracketType) {
         this.caretPosition = caretPosition;
+        this.bracketType = bracketType;
     }
 
     @Override
@@ -87,22 +90,36 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
         boolean bothParentheses = false;
         String documentText = document.getText();
 
-        if (!(endOffset < documentText.length() && documentText.charAt(endOffset) == '(')) {
-            // Insert () if it's not already exist
-            document.insertString(endOffset, "()");
+        boolean braces = bracketType == BracketType.BRACES && context.getCompletionChar() != '(';
+        char openingBracket = braces ? '{' : '(';
+        char closingBracket = braces ? '}' : ')';
+        int openingBracketIndex = documentText.indexOf(openingBracket, endOffset);
+        if (openingBracketIndex != -1 && documentText.substring(endOffset, openingBracketIndex).trim().length() != 0) {
+            openingBracketIndex = -1; // opening bracket is too far
+        }
+        if (openingBracketIndex == -1) {
+            // Insert ()/{} if it's not already exist
+            if (braces) {
+                document.insertString(endOffset, " {}");
+                openingBracketIndex = endOffset + 1;
+            }
+            else {
+                document.insertString(endOffset, "()");
+                openingBracketIndex = endOffset;
+            }
             bothParentheses = true;
         }
-        else if (endOffset + 1 < documentText.length() && documentText.charAt(endOffset + 1) == ')') {
+        else if (openingBracketIndex + 1 < documentText.length() && documentText.charAt(openingBracketIndex + 1) == closingBracket) {
             bothParentheses = true;
         }
 
         Editor editor = context.getEditor();
         if (caretPosition == CaretPosition.IN_BRACKETS || !bothParentheses) {
-            editor.getCaretModel().moveToOffset(editor.getCaretModel().getOffset() + 1);
+            editor.getCaretModel().moveToOffset(openingBracketIndex + 1);
             AutoPopupController.getInstance(context.getProject()).autoPopupParameterInfo(editor, offsetElement);
         }
         else {
-            editor.getCaretModel().moveToOffset(editor.getCaretModel().getOffset() + 2);
+            editor.getCaretModel().moveToOffset(openingBracketIndex + 2);
         }
 
         PsiDocumentManager.getInstance(context.getProject()).commitDocument(context.getDocument());
