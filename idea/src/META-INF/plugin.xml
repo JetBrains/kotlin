@@ -78,6 +78,7 @@
 
       <framework.type implementation="org.jetbrains.jet.plugin.sdk.KotlinFrameworkType"/>
       <library.presentationProvider implementation="org.jetbrains.jet.plugin.sdk.KotlinSdkPresentationProvider"/>
+      <editorNotificationProvider implementation="org.jetbrains.jet.plugin.sdk.KotlinSdkNotConfiguredNotificationProvider"/>
 
       <internalFileTemplate name="Kotlin File"/>
       <internalFileTemplate name="Kotlin Class"/>
