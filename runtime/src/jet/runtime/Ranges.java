@@ -38,7 +38,7 @@ public class Ranges {
     }
 
     public static ByteRange downTo(byte from, byte to) {
-        if (from > to) {
+        if (from >= to) {
             return new ByteRange(from, to - from - 1);
         }
         else {
@@ -56,7 +56,7 @@ public class Ranges {
     }
 
     public static ShortRange downTo(byte from, short to) {
-        if (from > to) {
+        if (from >= to) {
             return new ShortRange(from, to - from - 1);
         }
         else {
@@ -74,7 +74,7 @@ public class Ranges {
     }
 
     public static IntRange downTo(byte from, int to) {
-        if (from > to) {
+        if (from >= to) {
             return new IntRange(from, to - from - 1);
         }
         else {
@@ -92,7 +92,7 @@ public class Ranges {
     }
 
     public static LongRange downTo(byte from, long to) {
-        if (from > to) {
+        if (from >= to) {
             return new LongRange(from, to - from - 1);
         }
         else {
@@ -126,7 +126,7 @@ public class Ranges {
     }
 
     public static CharRange downTo(byte from, char to) {
-        if (from > to) {
+        if (from >= to) {
             return new CharRange((char) from, to - from - 1);
         }
         else {
@@ -144,7 +144,7 @@ public class Ranges {
     }
 
     public static ShortRange downTo(short from, byte to) {
-        if (from > to) {
+        if (from >= to) {
             return new ShortRange(from, to - from - 1);
         }
         else {
@@ -162,7 +162,7 @@ public class Ranges {
     }
 
     public static ShortRange downTo(short from, short to) {
-        if (from > to) {
+        if (from >= to) {
             return new ShortRange(from, to - from - 1);
         }
         else {
@@ -180,7 +180,7 @@ public class Ranges {
     }
 
     public static IntRange downTo(short from, int to) {
-        if (from > to) {
+        if (from >= to) {
             return new IntRange(from, to - from - 1);
         }
         else {
@@ -198,7 +198,7 @@ public class Ranges {
     }
 
     public static LongRange downTo(short from, long to) {
-        if (from > to) {
+        if (from >= to) {
             return new LongRange(from, to - from - 1);
         }
         else {
@@ -232,7 +232,7 @@ public class Ranges {
     }
 
     public static ShortRange downTo(short from, char to) {
-        if (from > to) {
+        if (from >= to) {
             return new ShortRange(from, to - from - 1);
         }
         else {
@@ -250,7 +250,7 @@ public class Ranges {
     }
 
     public static IntRange downTo(int from, byte to) {
-        if (from > to) {
+        if (from >= to) {
             return new IntRange(from, to - from - 1);
         }
         else {
@@ -268,7 +268,7 @@ public class Ranges {
     }
 
     public static IntRange downTo(int from, short to) {
-        if (from > to) {
+        if (from >= to) {
             return new IntRange(from, to - from - 1);
         }
         else {
@@ -286,7 +286,7 @@ public class Ranges {
     }
 
     public static IntRange downTo(int from, int to) {
-        if (from > to) {
+        if (from >= to) {
             return new IntRange(from, to - from - 1);
         }
         else {
@@ -304,7 +304,7 @@ public class Ranges {
     }
 
     public static LongRange downTo(int from, long to) {
-        if (from > to) {
+        if (from >= to) {
             return new LongRange(from, to - from - 1);
         }
         else {
@@ -338,7 +338,7 @@ public class Ranges {
     }
 
     public static IntRange downTo(int from, char to) {
-        if (from > to) {
+        if (from >= to) {
             return new IntRange(from, to - from - 1);
         }
         else {
@@ -356,7 +356,7 @@ public class Ranges {
     }
 
     public static LongRange downTo(long from, byte to) {
-        if (from > to) {
+        if (from >= to) {
             return new LongRange(from, to - from - 1);
         }
         else {
@@ -374,7 +374,7 @@ public class Ranges {
     }
 
     public static LongRange downTo(long from, short to) {
-        if (from > to) {
+        if (from >= to) {
             return new LongRange(from, to - from - 1);
         }
         else {
@@ -392,7 +392,7 @@ public class Ranges {
     }
 
     public static LongRange downTo(long from, int to) {
-        if (from > to) {
+        if (from >= to) {
             return new LongRange(from, to - from - 1);
         }
         else {
@@ -410,7 +410,7 @@ public class Ranges {
     }
 
     public static LongRange downTo(long from, long to) {
-        if (from > to) {
+        if (from >= to) {
             return new LongRange(from, to - from - 1);
         }
         else {
@@ -444,7 +444,7 @@ public class Ranges {
     }
 
     public static LongRange downTo(long from, char to) {
-        if (from > to) {
+        if (from >= to) {
             return new LongRange(from, to - from - 1);
         }
         else {
@@ -574,7 +574,7 @@ public class Ranges {
     }
 
     public static CharRange downTo(char from, byte to) {
-        if (from > to) {
+        if (from >= to) {
             return new CharRange(from, to - from - 1);
         }
         else {
@@ -592,7 +592,7 @@ public class Ranges {
     }
 
     public static ShortRange downTo(char from, short to) {
-        if (from > to) {
+        if (from >= to) {
             return new ShortRange((short) from, to - from - 1);
         }
         else {
@@ -610,7 +610,7 @@ public class Ranges {
     }
 
     public static IntRange downTo(char from, int to) {
-        if (from > to) {
+        if (from >= to) {
             return new IntRange(from, to - from - 1);
         }
         else {
@@ -628,7 +628,7 @@ public class Ranges {
     }
 
     public static LongRange downTo(char from, long to) {
-        if (from > to) {
+        if (from >= to) {
             return new LongRange(from, to - from - 1);
         }
         else {
@@ -662,7 +662,7 @@ public class Ranges {
     }
 
     public static CharRange downTo(char from, char to) {
-        if (from > to) {
+        if (from >= to) {
             return new CharRange(from, to - from - 1);
         }
         else {
@@ -715,7 +715,7 @@ public class Ranges {
                                        "  }\n" +
                                        "}");
                     System.out.println("\npublic static " + resType + " downTo(" + t1 + " from, " + t2 + " to) {" +
-                                       "\n  if(from > to) {\n" +
+                                       "\n  if(from >= to) {\n" +
                                        "    return new " + resType + "(from, to-from-1);\n" +
                                        "  }\n" +
                                        "  else {\n" +
