@@ -20,13 +20,11 @@
 package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.fileChooser.FileTextField;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
@@ -55,7 +53,7 @@ import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
@@ -83,14 +81,8 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
     @Override
     public EditorNotificationPanel createNotificationPanel(VirtualFile file) {
         try {
-            if (file.getFileType() != JetFileType.INSTANCE) return null;
-
-            if (CompilerManager.getInstance(myProject).isExcludedFromCompilation(file)) return null;
-
-            final Module module = ModuleUtil.findModuleForFile(file, myProject);
+            final Module module = JetPluginUtil.getModuleForKotlinFile(file, myProject);
             if (module == null) return null;
-
-            if (isMavenModule(module)) return null;
 
             if (isJsModule(module)) return null;
 
@@ -249,14 +241,6 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
                 EditorNotifications.getInstance(myProject).updateAllNotifications();
             }
         });
-    }
-
-    private static boolean isMavenModule(@NotNull Module module) {
-        for (VirtualFile root : ModuleRootManager.getInstance(module).getContentRoots()) {
-            if (root.findChild("pom.xml") != null) return true;
-        }
-
-        return false;
     }
 
     private static class ChoosePathDialog extends DialogWrapper {

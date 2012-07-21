@@ -17,8 +17,14 @@
 package org.jetbrains.jet.plugin;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.compiler.CompilerManager;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -76,5 +82,25 @@ public class JetPluginUtil {
             assert declaration != null;
         }
         return libraryScope == ((NamespaceDescriptor) declaration).getMemberScope();
+    }
+
+    @Nullable
+    public static Module getModuleForKotlinFile(@NotNull final VirtualFile file, @NotNull final Project project) {
+        if (file.getFileType() != JetFileType.INSTANCE) return null;
+        if (CompilerManager.getInstance(project).isExcludedFromCompilation(file)) return null;
+
+        final Module module = ModuleUtil.findModuleForFile(file, project);
+        if (module == null || isMavenModule(module)) return null;
+
+        return module;
+    }
+
+    private static boolean isMavenModule(@NotNull final Module module) {
+        for (final VirtualFile root : ModuleRootManager.getInstance(module).getContentRoots()) {
+            if (root.findChild("pom.xml") != null) {
+                return true;
+            }
+        }
+        return false;
     }
 }
