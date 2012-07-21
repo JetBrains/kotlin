@@ -64,6 +64,14 @@ public class KotlinSdkUtil {
 
     @Nullable
     public static String getSDKVersion(@NotNull final String sdkHomePath) {
+        final String buildNumber = getSDKBuildNumber(sdkHomePath);
+        if (buildNumber == null) return null;
+        final int lastDotPos = buildNumber.lastIndexOf('.');
+        return lastDotPos == -1 ? buildNumber : buildNumber.substring(0, lastDotPos);
+    }
+
+    @Nullable
+    private static String getSDKBuildNumber(@NotNull final String sdkHomePath) {
         try {
             return FileUtil.loadFile(new File(sdkHomePath, "build.txt")).trim();
         }
