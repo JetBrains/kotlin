@@ -68,6 +68,8 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             Boolean backingFieldRequired = bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
             highlightProperty(nameIdentifier, propertyDescriptor, Boolean.TRUE.equals(backingFieldRequired));
         }
+
+        super.visitParameter(parameter);
     }
 
     private void highlightProperty(@NotNull PsiElement elementToHighlight,

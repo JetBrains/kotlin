@@ -15,6 +15,8 @@ class <info textAttributesKey="KOTLIN_CLASS">Foo</info>(val <info textAttributes
     <info textAttributesKey="KOTLIN_PARAMETER">b</info>
   }
 
+  fun <info textAttributesKey="KOTLIN_FUNCTION_DECLARATION">f</info>(<info textAttributesKey="KOTLIN_PARAMETER">p</info> : <info textAttributesKey="KOTLIN_CLASS">Int</info> = <info textAttributesKey="KOTLIN_INSTANCE_PROPERTY">a</info>) {}
+
   var <info textAttributesKey="KOTLIN_MUTABLE_VARIABLE"><info textAttributesKey="KOTLIN_INSTANCE_PROPERTY">v</info></info> : <info textAttributesKey="KOTLIN_CLASS">Int</info>
   <info textAttributesKey="KOTLIN_KEYWORD">get</info>() {
     return 1;
