@@ -20,6 +20,7 @@ import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
+import org.jetbrains.jet.cli.common.util.CompilerPathUtil;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.*;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
@@ -59,7 +60,7 @@ public class BytecodeCompiler {
             classpathItems.add(new File(stdlib));
         }
         else {
-            classpathItems.add(PathUtil.getDefaultRuntimePath());
+            classpathItems.add(CompilerPathUtil.getRuntimePath());
         }
         if ((classpath != null) && (classpath.length > 0)) {
             for (String path : classpath) {
@@ -68,7 +69,7 @@ public class BytecodeCompiler {
         }
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, classpathItems.toArray(new File[classpathItems.size()]));
-        configuration.putUserData(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File[]{PathUtil.getJdkAnnotationsPath()});
+        configuration.putUserData(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File[]{CompilerPathUtil.getJdkAnnotationsPath()});
 
         JetCoreEnvironment environment = new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), configuration
         );

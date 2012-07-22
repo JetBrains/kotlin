@@ -36,6 +36,7 @@ import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.project.K2JSModuleComponent;
+import org.jetbrains.jet.plugin.util.PluginPathUtil;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
@@ -65,7 +66,7 @@ public final class JsModuleSetUp {
             return;
         }
 
-        if (!copyJsLibFiles(rootDir)) return;
+        if (!copyJsLibFiles(module, rootDir)) return;
 
         setUpK2JSModuleComponent(module);
         setUpLibraryAsSourceLibrary(module, rootDir);
@@ -108,9 +109,9 @@ public final class JsModuleSetUp {
         DaemonCodeAnalyzer.getInstance(module.getProject()).restart();
     }
 
-    private static boolean copyJsLibFiles(@NotNull File rootDir) {
-        File jsLibJarPath = PathUtil.getDefaultJsLibJarPath();
-        File jsLibJsPath = PathUtil.getDefaultJsLibJsPath();
+    private static boolean copyJsLibFiles(@NotNull Module module, @NotNull File rootDir) {
+        File jsLibJarPath = PluginPathUtil.getJsLibJarPath(module);
+        File jsLibJsPath = PluginPathUtil.getJsLibJsPath(module);
         if ((jsLibJarPath == null) || (jsLibJsPath == null)) {
             notifyFailure("JavaScript library not found. Make sure plugin is installed properly.");
             return false;

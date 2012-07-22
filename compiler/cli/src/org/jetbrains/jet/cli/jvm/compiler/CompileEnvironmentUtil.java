@@ -27,6 +27,7 @@ import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.cli.common.util.CompilerPathUtil;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.codegen.ClassFileFactory;
@@ -84,7 +85,7 @@ public class CompileEnvironmentUtil {
     public static void ensureKotlinRuntime(JetCoreEnvironment env) {
         if (JavaPsiFacade.getInstance(env.getProject()).findClass("jet.JetObject", GlobalSearchScope.allScope(env.getProject())) == null) {
             // TODO: prepend
-            File kotlin = PathUtil.getDefaultRuntimePath();
+            File kotlin = CompilerPathUtil.getRuntimePath();
             if (kotlin == null || !kotlin.exists()) {
                 kotlin = getUnpackedRuntimePath();
                 if (kotlin == null) kotlin = getRuntimeJarPath();
@@ -144,10 +145,10 @@ public class CompileEnvironmentUtil {
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.putUserData(JVMConfigurationKeys.CLASSPATH_KEY, new File[]{
                 PathUtil.findRtJar(),
-                PathUtil.getDefaultRuntimePath()
+                CompilerPathUtil.getRuntimePath()
         });
         configuration.putUserData(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File[]{
-                PathUtil.getJdkAnnotationsPath()
+                CompilerPathUtil.getJdkAnnotationsPath()
         });
         JetCoreEnvironment scriptEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(disposable, configuration);
         scriptEnvironment.addSources(moduleScriptFile);
@@ -175,7 +176,7 @@ public class CompileEnvironmentUtil {
     }
 
     private static List<Module> runDefineModules(String moduleFile, ClassFileFactory factory) {
-        File stdlibJar = PathUtil.getDefaultRuntimePath();
+        File stdlibJar = CompilerPathUtil.getRuntimePath();
         GeneratedClassLoader loader;
         if (stdlibJar != null) {
             try {

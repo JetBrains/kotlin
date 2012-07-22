@@ -24,14 +24,14 @@
       <component>
           <implementation-class>org.jetbrains.jet.plugin.highlighter.DeclarationHintSupport</implementation-class>
       </component>
-      <component>
-        <implementation-class>org.jetbrains.jet.plugin.OutdatedKotlinRuntimeNotification</implementation-class>
-      </component>
   </project-components>
 
   <module-components>
     <component>
       <implementation-class>org.jetbrains.jet.plugin.project.K2JSModuleComponent</implementation-class>
+    </component>
+    <component>
+      <implementation-class>org.jetbrains.jet.plugin.OutdatedKotlinRuntimeNotification</implementation-class>
     </component>
   </module-components>
 
