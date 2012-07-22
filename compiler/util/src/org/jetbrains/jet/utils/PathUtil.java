@@ -69,6 +69,15 @@ public class PathUtil {
         return answer.exists() ? answer : null;
     }
 
+    @Nullable
+    public static File getSDKHomeByCompilerPath(@Nullable final File compilerPath) {
+        if (compilerPath == null) return null;
+        final File libDir = compilerPath.getParentFile();
+        if (libDir == null) return null;
+        final File sdkHome = libDir.getParentFile();
+        return sdkHome != null && sdkHome.exists() ? sdkHome : null;
+    }
+
     @NotNull
     public static VirtualFile jarFileOrDirectoryToVirtualFile(@NotNull File file) {
         if (file.exists()) {

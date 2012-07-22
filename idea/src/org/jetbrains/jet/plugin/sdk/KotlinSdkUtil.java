@@ -17,19 +17,21 @@
 package org.jetbrains.jet.plugin.sdk;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.search.FilenameIndex;
-import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -63,21 +65,21 @@ public class KotlinSdkUtil {
     }
 
     @Nullable
-    public static String getSDKVersion(@NotNull final String sdkHomePath) {
-        final String buildNumber = getSDKBuildNumber(sdkHomePath);
+    public static String getSDKVersion(@NotNull final File sdkHome) {
+        final String buildNumber = getSDKBuildNumber(sdkHome);
         if (buildNumber == null) return null;
         final int lastDotPos = buildNumber.lastIndexOf('.');
         return lastDotPos == -1 ? buildNumber : buildNumber.substring(0, lastDotPos);
     }
 
     @Nullable
-    private static String getSDKBuildNumber(@NotNull final String sdkHomePath) {
+    private static String getSDKBuildNumber(@NotNull final File sdkHome) {
         try {
-            return FileUtil.loadFile(new File(sdkHomePath, "build.txt")).trim();
+            return FileUtil.loadFile(new File(sdkHome, "build.txt")).trim();
         }
         catch (final IOException e) {
             try {
-                final File compilerJar = PathUtil.getCompilerPath(new File(sdkHomePath));
+                final File compilerJar = PathUtil.getCompilerPath(sdkHome);
                 return compilerJar == null ? null : getJarImplementationVersion(compilerJar);
             }
             catch (final IOException e1) {
@@ -100,18 +102,32 @@ public class KotlinSdkUtil {
 
     @Nullable
     public static String detectSDKVersion(@NotNull final List<VirtualFile> jars) {
-        for (final VirtualFile jar : jars) {
-            if (jar.getName().equals(PathUtil.KOTLIN_COMPILER_JAR) && isKotlinCompilerJar(new File(jar.getPath()))) {
-                final VirtualFile libDir = jar.getParent();
-                if (libDir != null) {
-                    final VirtualFile sdkHomeDir = libDir.getParent();
-                    if (sdkHomeDir != null) {
-                        return getSDKVersion(sdkHomeDir.getPath());
-                    }
+        final File sdkHome = detectSDKHome(jars);
+        return sdkHome == null ? null : getSDKVersion(sdkHome);
+    }
+
+    @Nullable
+    private static File detectSDKHome(@NotNull final List<VirtualFile> jars) {
+        for (VirtualFile jar : jars) {
+            jar = prepare(jar);
+            if (jar == null) continue;
+            final File file = new File(jar.getPath());
+            if (file.getName().equals(PathUtil.KOTLIN_COMPILER_JAR) && isKotlinCompilerJar(file)) {
+                final File sdkHome = PathUtil.getSDKHomeByCompilerPath(file);
+                if (sdkHome != null) {
+                    return sdkHome;
                 }
             }
         }
         return null;
+    }
+
+    @Nullable
+    private static VirtualFile prepare(@NotNull final VirtualFile jar) {
+        if (jar.getFileSystem() instanceof JarFileSystem) {
+            return JarFileSystem.getInstance().getVirtualFileForJar(jar);
+        }
+        return jar;
     }
 
     public static boolean isSDKConfiguredFor(@NotNull final Module module) {
@@ -120,19 +136,38 @@ public class KotlinSdkUtil {
 
     @Nullable
     public static File getSDKHomeFor(@NotNull final Module module) {
-        final GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
-        return findKotlinCompilerJar(FilenameIndex.getVirtualFilesByName(module.getProject(), PathUtil.KOTLIN_COMPILER_JAR, scope));
+        return findSDKHome(module, new HashSet<String>(), false);
     }
 
     @Nullable
-    private static File findKotlinCompilerJar(@NotNull final Collection<VirtualFile> jars) {
-        for (final VirtualFile jar : jars) {
-            final File file = new File(jar.getPath());
-            if (isKotlinCompilerJar(file)) {
-                return file;
+    public static File findSDKHome(@NotNull final Module module, @NotNull final Set<String> checkedModuleNames, final boolean isDependency) {
+        checkedModuleNames.add(module.getName());
+        for (final OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
+            if (orderEntry instanceof ModuleOrderEntry) {
+                final ModuleOrderEntry moduleOrderEntry = (ModuleOrderEntry)orderEntry;
+                final Module depModule = moduleOrderEntry.getModule();
+                if (depModule != null && !checkedModuleNames.contains(depModule.getName()) && isAvailable(moduleOrderEntry, isDependency)) {
+                    final File sdkHome = findSDKHome(depModule, checkedModuleNames, true);
+                    if (sdkHome != null) {
+                        return sdkHome;
+                    }
+                }
+            }
+            else if (orderEntry instanceof LibraryOrderEntry) {
+                final LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry)orderEntry;
+                if (isAvailable(libraryOrderEntry, isDependency)) {
+                    final File sdkHome = detectSDKHome(Arrays.asList(libraryOrderEntry.getRootFiles(OrderRootType.CLASSES)));
+                    if (sdkHome != null) {
+                        return sdkHome;
+                    }
+                }
             }
         }
         return null;
+    }
+
+    private static boolean isAvailable(@NotNull final ExportableOrderEntry orderEntry, final boolean isDependency) {
+        return !isDependency || orderEntry.isExported();
     }
 
     private static boolean isKotlinCompilerJar(@Nullable final File jar) {

@@ -72,7 +72,7 @@ public class KotlinSdkDescription extends CustomLibraryDescription {
         if (sdkHome == null) return null;
 
         final String sdkHomePath = sdkHome.getPath();
-        final String sdkVersion = KotlinSdkUtil.getSDKVersion(sdkHomePath);
+        final String sdkVersion = KotlinSdkUtil.getSDKVersion(new File(sdkHomePath));
         if (sdkVersion == null) {
             Messages.showErrorDialog(parentComponent,
                                      "Failed to find Kotlin SDK in the specified path: cannot determine Kotlin version.",
