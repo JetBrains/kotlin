@@ -33,6 +33,7 @@ import org.jetbrains.jet.cli.common.CompilerPluginContext;
 import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
+import org.jetbrains.jet.cli.common.util.CompilerPathUtil;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
@@ -241,7 +242,7 @@ public class KotlinToJVMBytecodeCompiler {
             try {
                 GeneratedClassLoader classLoader = new GeneratedClassLoader(factory, new URLClassLoader(new URL[]{
                         // TODO: add all classpath
-                        PathUtil.getDefaultRuntimePath().toURI().toURL()
+                        CompilerPathUtil.getRuntimePath().toURI().toURL()
                 },
                         AllModules.class.getClassLoader()));
                 Class<?> scriptClass = classLoader.loadClass(ScriptCodegen.SCRIPT_DEFAULT_CLASS_NAME.getFqName().getFqName());

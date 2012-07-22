@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.cli.common.util.CompilerPathUtil;
+import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.*;
 import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
@@ -63,7 +65,7 @@ public class BytecodeCompiler {
             configuration.add(CLASSPATH_KEY, new File(stdlib));
         }
         else {
-            File path = PathUtil.getDefaultRuntimePath();
+            File path = CompilerPathUtil.getRuntimePath();
             if (path != null) {
                 configuration.add(CLASSPATH_KEY, path);
             }
@@ -73,7 +75,7 @@ public class BytecodeCompiler {
                 configuration.add(CLASSPATH_KEY, new File(path));
             }
         }
-        File jdkAnnotationsPath = PathUtil.getJdkAnnotationsPath();
+        File jdkAnnotationsPath = CompilerPathUtil.getJdkAnnotationsPath();
         if (jdkAnnotationsPath != null) {
             configuration.add(ANNOTATIONS_PATH_KEY, jdkAnnotationsPath);
         }

@@ -55,7 +55,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.sdk.KotlinSdkUtil;
-import org.jetbrains.jet.utils.PathUtil;
+import org.jetbrains.jet.plugin.util.PluginPathUtil;
 
 import javax.swing.*;
 import java.io.File;
@@ -105,7 +105,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
         return null;
     }
 
-    private Library findOrCreateRuntimeLibrary() {
+    private Library findOrCreateRuntimeLibrary(@NotNull Module module) {
         LibraryTable table = ProjectLibraryTable.getInstance(myProject);
         Library kotlinRuntime = table.getLibraryByName(LIBRARY_NAME);
         if (kotlinRuntime != null) {
@@ -116,7 +116,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
             }
         }
 
-        File runtimePath = PathUtil.getDefaultRuntimePath();
+        File runtimePath = PluginPathUtil.getRuntimePath(module);
         if (runtimePath == null) {
             Messages.showErrorDialog(myProject, "kotlin-runtime.jar is not found. Make sure plugin is properly installed.",
                                      "No Runtime Found");
@@ -192,7 +192,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                Library library = findOrCreateRuntimeLibrary();
+                Library library = findOrCreateRuntimeLibrary(module);
                 if (library != null) {
                     ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
                     if (model.findLibraryOrderEntry(library) == null) {
@@ -214,7 +214,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
     /* package */ static void addJdkAnnotations(Module module) {
         Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
         assert sdk != null;
-        File annotationsIoFile = PathUtil.getJdkAnnotationsPath();
+        File annotationsIoFile = PluginPathUtil.getJdkAnnotationsPath(module);
         if (annotationsIoFile != null) {
             VirtualFile jdkAnnotationsJar = LocalFileSystem.getInstance().findFileByIoFile(annotationsIoFile);
             if (jdkAnnotationsJar != null) {

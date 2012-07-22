@@ -24,6 +24,7 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +47,6 @@ public class KotlinSdkUtil {
                     return new KotlinSdkProperties("");
                 }
             };
-    @NotNull private static final String KOTLIN_COMPILER_JAR = "kotlin-compiler.jar";
     @NotNull private static final String[] KOTLIN_COMPILER_JAR_ENTRY_NAMES = {
         "org/jetbrains/jet/cli/KotlinCompiler.class",
         "org/jetbrains/jet/cli/jvm/K2JVMCompiler.class"
@@ -59,7 +59,7 @@ public class KotlinSdkUtil {
     }
 
     private static boolean isSDKHome(@NotNull final File dir) {
-        return dir.isDirectory() && isKotlinCompilerJar(getKotlinCompilerJar(dir));
+        return dir.isDirectory() && isKotlinCompilerJar(PathUtil.getCompilerPath(dir));
     }
 
     @Nullable
@@ -77,7 +77,8 @@ public class KotlinSdkUtil {
         }
         catch (final IOException e) {
             try {
-                return getJarImplementationVersion(getKotlinCompilerJar(new File(sdkHomePath)));
+                final File compilerJar = PathUtil.getCompilerPath(new File(sdkHomePath));
+                return compilerJar == null ? null : getJarImplementationVersion(compilerJar);
             }
             catch (final IOException e1) {
                 return null;
@@ -97,15 +98,10 @@ public class KotlinSdkUtil {
         }
     }
 
-    @NotNull
-    private static File getKotlinCompilerJar(@NotNull final File sdkHome) {
-        return new File(new File(sdkHome, "lib"), KOTLIN_COMPILER_JAR);
-    }
-
     @Nullable
     public static String detectSDKVersion(@NotNull final List<VirtualFile> jars) {
         for (final VirtualFile jar : jars) {
-            if (jar.getName().equals(KOTLIN_COMPILER_JAR) && isKotlinCompilerJar(new File(jar.getPath()))) {
+            if (jar.getName().equals(PathUtil.KOTLIN_COMPILER_JAR) && isKotlinCompilerJar(new File(jar.getPath()))) {
                 final VirtualFile libDir = jar.getParent();
                 if (libDir != null) {
                     final VirtualFile sdkHomeDir = libDir.getParent();
@@ -119,22 +115,29 @@ public class KotlinSdkUtil {
     }
 
     public static boolean isSDKConfiguredFor(@NotNull final Module module) {
-        final GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
-        return containsKotlinCompilerJar(FilenameIndex.getVirtualFilesByName(module.getProject(), KOTLIN_COMPILER_JAR, scope));
+        return getSDKHomeFor(module) != null;
     }
 
-    private static boolean containsKotlinCompilerJar(@NotNull final Collection<VirtualFile> jars) {
+    @Nullable
+    public static File getSDKHomeFor(@NotNull final Module module) {
+        final GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
+        return findKotlinCompilerJar(FilenameIndex.getVirtualFilesByName(module.getProject(), PathUtil.KOTLIN_COMPILER_JAR, scope));
+    }
+
+    @Nullable
+    private static File findKotlinCompilerJar(@NotNull final Collection<VirtualFile> jars) {
         for (final VirtualFile jar : jars) {
-            if (isKotlinCompilerJar(new File(jar.getPath()))) {
-                return true;
+            final File file = new File(jar.getPath());
+            if (isKotlinCompilerJar(file)) {
+                return file;
             }
         }
-        return false;
+        return null;
     }
 
-    private static boolean isKotlinCompilerJar(@NotNull final File jar) {
+    private static boolean isKotlinCompilerJar(@Nullable final File jar) {
         try {
-            return doIsKotlinCompilerJar(jar);
+            return jar != null && doIsKotlinCompilerJar(jar);
         }
         catch (final IOException e) {
             return false;

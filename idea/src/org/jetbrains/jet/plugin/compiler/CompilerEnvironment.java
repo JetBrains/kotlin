@@ -19,12 +19,11 @@ package org.jetbrains.jet.plugin.compiler;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
-import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.utils.PathUtil;
+import org.jetbrains.jet.plugin.sdk.KotlinSdkUtil;
 
-import java.io.*;
+import java.io.File;
 
 import static com.intellij.openapi.compiler.CompilerMessageCategory.ERROR;
 
@@ -37,7 +36,7 @@ public final class CompilerEnvironment {
     public static CompilerEnvironment getEnvironmentFor(@NotNull CompileContext compileContext, @NotNull Module module, boolean tests) {
         VirtualFile mainOutput = compileContext.getModuleOutputDirectory(module);
         final VirtualFile outputDir = tests ? compileContext.getModuleOutputDirectoryForTests(module) : mainOutput;
-        File kotlinHome = PathUtil.getDefaultCompilerPath();
+        File kotlinHome = KotlinSdkUtil.getSDKHomeFor(module);
         return new CompilerEnvironment(kotlinHome, outputDir);
     }
 

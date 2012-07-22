@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.common.messages.*;
+import org.jetbrains.jet.cli.common.util.CompilerPathUtil;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration;
@@ -180,7 +181,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
             classpath.add(PathUtil.findRtJar());
         }
         if (!arguments.noStdlib) {
-            classpath.add(PathUtil.getDefaultRuntimePath());
+            classpath.add(CompilerPathUtil.getRuntimePath());
         }
         if (arguments.classpath != null) {
             for (String element : Splitter.on(File.pathSeparatorChar).split(arguments.classpath)) {
@@ -194,7 +195,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
     private static List<File> getAnnotationsPath(@NotNull K2JVMCompilerArguments arguments) {
         List<File> annotationsPath = Lists.newArrayList();
         if (!arguments.noJdkAnnotations) {
-            annotationsPath.add(PathUtil.getJdkAnnotationsPath());
+            annotationsPath.add(CompilerPathUtil.getJdkAnnotationsPath());
         }
         if (arguments.annotations != null) {
             for (String element : Splitter.on(File.pathSeparatorChar).split(arguments.annotations)) {
