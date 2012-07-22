@@ -151,7 +151,7 @@ public class OutdatedKotlinRuntimeNotification implements ModuleComponent {
         Library kotlinRuntime = table.getLibraryByName(ConfigureKotlinLibraryNotificationProvider.LIBRARY_NAME);
         if (kotlinRuntime != null) {
             for (VirtualFile root : kotlinRuntime.getFiles(OrderRootType.CLASSES)) {
-                if (root.getName().equals(ConfigureKotlinLibraryNotificationProvider.KOTLIN_RUNTIME_JAR)) {
+                if (root.getName().equals(PathUtil.KOTLIN_RUNTIME_JAR)) {
                     return root;
                 }
             }

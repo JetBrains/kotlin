@@ -88,19 +88,6 @@ public class JetPluginUtil {
     public static Module getModuleForKotlinFile(@NotNull final VirtualFile file, @NotNull final Project project) {
         if (file.getFileType() != JetFileType.INSTANCE) return null;
         if (CompilerManager.getInstance(project).isExcludedFromCompilation(file)) return null;
-
-        final Module module = ModuleUtil.findModuleForFile(file, project);
-        if (module == null || isMavenModule(module)) return null;
-
-        return module;
-    }
-
-    private static boolean isMavenModule(@NotNull final Module module) {
-        for (final VirtualFile root : ModuleRootManager.getInstance(module).getContentRoots()) {
-            if (root.findChild("pom.xml") != null) {
-                return true;
-            }
-        }
-        return false;
+        return ModuleUtil.findModuleForFile(file, project);
     }
 }
