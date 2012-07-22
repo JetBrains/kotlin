@@ -30,6 +30,9 @@ import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkModificator;
+import com.intellij.openapi.roots.AnnotationOrderRootType;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
@@ -39,8 +42,10 @@ import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -48,6 +53,7 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.utils.PathUtil;
@@ -202,8 +208,38 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
                     }
                     updateNotifications();
                 }
+                if (!jdkAnnotationsArePresent(module)) {
+                    addJdkAnnotations(module);
+                }
             }
         });
+    }
+
+    /* package */ static void addJdkAnnotations(Module module) {
+        Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
+        assert sdk != null;
+        File annotationsIoFile = PathUtil.getJdkAnnotationsPath();
+        if (annotationsIoFile != null) {
+            VirtualFile jdkAnnotationsJar = LocalFileSystem.getInstance().findFileByIoFile(annotationsIoFile);
+            if (jdkAnnotationsJar != null) {
+                SdkModificator modificator = sdk.getSdkModificator();
+                modificator.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(jdkAnnotationsJar),
+                                    AnnotationOrderRootType.getInstance());
+                modificator.commitChanges();
+            }
+        }
+    }
+
+    /* package */ static boolean jdkAnnotationsArePresent(Module module) {
+        Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
+        if (sdk == null) return false;
+        return ContainerUtil.exists(sdk.getRootProvider().getFiles(AnnotationOrderRootType.getInstance()),
+                                    new Condition<VirtualFile>() {
+                                        @Override
+                                        public boolean value(VirtualFile file) {
+                                            return PathUtil.JDK_ANNOTATIONS_JAR.equals(file.getName());
+                                        }
+                                    });
     }
 
     private void updateNotifications() {
