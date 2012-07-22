@@ -32,8 +32,9 @@ import java.util.List;
 
 public class PathUtil {
 
-    public static String JS_LIB_JAR_NAME = "kotlin-jslib.jar";
-    public static String JS_LIB_JS_NAME = "kotlinLib.js";
+    public static final String JS_LIB_JAR_NAME = "kotlin-jslib.jar";
+    public static final String JS_LIB_JS_NAME = "kotlinLib.js";
+    public static final String JDK_ANNOTATIONS_JAR = "kotlin-jdk-annotations.jar";
 
     private PathUtil() {}
 
@@ -95,7 +96,7 @@ public class PathUtil {
 
     @Nullable
     public static File getJdkAnnotationsPath() {
-        return getFilePackedIntoLib("alt/kotlin-jdk-annotations.jar");
+        return getFilePackedIntoLib("alt/" + JDK_ANNOTATIONS_JAR);
     }
 
     @NotNull
