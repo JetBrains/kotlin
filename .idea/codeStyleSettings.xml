@@ -63,11 +63,6 @@
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
         </XML>
-        <ADDITIONAL_INDENT_OPTIONS fileType="html">
-          <option name="INDENT_SIZE" value="2" />
-          <option name="CONTINUATION_INDENT_SIZE" value="4" />
-          <option name="TAB_SIZE" value="8" />
-        </ADDITIONAL_INDENT_OPTIONS>
         <codeStyleSettings language="CFML">
           <option name="ELSE_ON_NEW_LINE" value="true" />
           <option name="WHILE_ON_NEW_LINE" value="true" />
@@ -152,6 +147,13 @@
           <indentOptions>
             <option name="INDENT_SIZE" value="2" />
             <option name="TAB_SIZE" value="2" />
+          </indentOptions>
+        </codeStyleSettings>
+        <codeStyleSettings language="HTML">
+          <indentOptions>
+            <option name="INDENT_SIZE" value="2" />
+            <option name="CONTINUATION_INDENT_SIZE" value="4" />
+            <option name="TAB_SIZE" value="8" />
           </indentOptions>
         </codeStyleSettings>
         <codeStyleSettings language="JAVA">

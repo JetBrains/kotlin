@@ -30,7 +30,7 @@ import javax.swing.*;
  */
 public final class JetDescriptorIconProvider {
 
-    private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.plugin.compiler.JetCompiler");
+    private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.plugin.JetDescriptorIconProvider");
 
     private JetDescriptorIconProvider() {
     }
