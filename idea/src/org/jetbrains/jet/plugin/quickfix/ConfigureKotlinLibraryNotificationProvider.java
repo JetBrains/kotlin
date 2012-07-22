@@ -197,6 +197,9 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
                         model.addLibraryEntry(library);
                         model.commit();
                     }
+                    else {
+                        model.dispose();
+                    }
                     updateNotifications();
                 }
             }
@@ -204,7 +207,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
     }
 
     private void updateNotifications() {
-        SwingUtilities.invokeLater(new Runnable() {
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
                 EditorNotifications.getInstance(myProject).updateAllNotifications();
