@@ -160,14 +160,14 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
         final EditorNotificationPanel answer = new EditorNotificationPanel();
 
         answer.setText("Kotlin is not configured for module '" + module.getName() + "'");
-        answer.createActionLabel("Set Up module '" + module.getName() + "' as JVM Kotlin module", new Runnable() {
+        answer.createActionLabel("Set up module '" + module.getName() + "' as JVM Kotlin module", new Runnable() {
             @Override
             public void run() {
                 setUpKotlinRuntime(module);
             }
         });
 
-        answer.createActionLabel("Set Up module '" + module.getName() + "' as JavaScript Kotlin module", new Runnable() {
+        answer.createActionLabel("Set up module '" + module.getName() + "' as JavaScript Kotlin module", new Runnable() {
             @Override
             public void run() {
                 setUpJSModule(module);
