@@ -118,7 +118,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
 
         File runtimePath = PluginPathUtil.getRuntimePath(module);
         if (runtimePath == null) {
-            Messages.showErrorDialog(myProject, "kotlin-runtime.jar is not found. Make sure plugin is properly installed.",
+            Messages.showErrorDialog(myProject, "\"kotlin-runtime.jar\" is not found. Make sure Kotlin SDK is configured for module \"" + module.getName() + "\".",
                                      "No Runtime Found");
             return null;
         }

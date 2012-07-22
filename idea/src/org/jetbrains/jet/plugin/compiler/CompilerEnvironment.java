@@ -37,15 +37,15 @@ public final class CompilerEnvironment {
         VirtualFile mainOutput = compileContext.getModuleOutputDirectory(module);
         final VirtualFile outputDir = tests ? compileContext.getModuleOutputDirectoryForTests(module) : mainOutput;
         File kotlinHome = KotlinSdkUtil.getSDKHomeFor(module);
-        return new CompilerEnvironment(kotlinHome, outputDir);
+        return new CompilerEnvironment(module.getName(), kotlinHome, outputDir);
     }
 
-    @Nullable
-    private final File kotlinHome;
-    @Nullable
-    private final VirtualFile output;
+    @NotNull private final String moduleName;
+    @Nullable private final File kotlinHome;
+    @Nullable private final VirtualFile output;
 
-    public CompilerEnvironment(@Nullable File home, @Nullable VirtualFile output) {
+    public CompilerEnvironment(@NotNull String moduleName, @Nullable File home, @Nullable VirtualFile output) {
+        this.moduleName = moduleName;
         this.kotlinHome = home;
         this.output = output;
     }
@@ -71,8 +71,7 @@ public final class CompilerEnvironment {
             compileContext.addMessage(ERROR, "[Internal Error] No output directory", "", -1, -1);
         }
         if (kotlinHome == null) {
-            compileContext.addMessage(ERROR, "Cannot find kotlinc home. Make sure plugin is properly installed", "", -1, -1);
+            compileContext.addMessage(ERROR, "Cannot find Kotlin SDK home. Make sure Kotlin SDK is configured for module \"" + moduleName + "\".", "", -1, -1);
         }
     }
-
 }

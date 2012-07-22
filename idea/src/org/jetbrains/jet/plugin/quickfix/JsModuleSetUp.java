@@ -113,7 +113,7 @@ public final class JsModuleSetUp {
         File jsLibJarPath = PluginPathUtil.getJsLibJarPath(module);
         File jsLibJsPath = PluginPathUtil.getJsLibJsPath(module);
         if ((jsLibJarPath == null) || (jsLibJsPath == null)) {
-            notifyFailure("JavaScript library not found. Make sure plugin is installed properly.");
+            notifyFailure("JavaScript library not found. Make sure Kotlin SDK is configured for module \"" + module.getName() + "\".");
             return false;
         }
 

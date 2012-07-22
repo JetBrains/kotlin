@@ -66,7 +66,7 @@ public class OutdatedKotlinRuntimeNotification implements ModuleComponent {
         String runtimeVersion = getRuntimeVersion(getKotlinRuntimeJar());
         if (runtimeVersion == null) return; // runtime is not present in project
         final String sdkVersion = getRuntimeVersion(getRuntimeFromSdk());
-        if (sdkVersion == null || "snapshot".equals(sdkVersion)) return; // plugin is run from sources, can't compare versions
+        if (sdkVersion == null || "snapshot".equals(sdkVersion)) return; // plugin is run from sources or SDK is not configured for the module, can't compare versions
 
         // user already clicked suppress
         if (sdkVersion.equals(PropertiesComponent.getInstance(myModule.getProject()).getValue(mySuppressedPropertyName))) return;
@@ -110,7 +110,7 @@ public class OutdatedKotlinRuntimeNotification implements ModuleComponent {
                 File runtimePath = PluginPathUtil.getRuntimePath(myModule);
                 if (runtimePath == null) {
                     Messages.showErrorDialog(myModule.getProject(),
-                                             "kotlin-runtime.jar is not found. Make sure plugin is properly installed.",
+                                             "\"kotlin-runtime.jar\" is not found. Make sure Kotlin SDK is configured for module \"" + myModule.getName() + "\".",
                                              "No Runtime Found");
                     return;
                 }
