@@ -22,13 +22,19 @@ import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesContainer;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesContainerFactory;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.PlatformTestCase;
 import jet.Function1;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.sdk.KotlinSdkDescription;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -49,6 +55,7 @@ public abstract class IDECompilerMessagingTest extends PlatformTestCase {
         MockCompileContext mockCompileContext = new MockCompileContext(myModule, outDirectory, root);
         MockModuleChunk mockModuleChunk = new MockModuleChunk(myModule);
         setSourceEntryForModule(root);
+        setKotlinSdkForModule();
         assert sampleFile != null;
         compile(compiler, sampleFile, mockCompileContext, mockModuleChunk);
         checkMessages(whatToExpect, mockCompileContext);
@@ -78,6 +85,25 @@ public abstract class IDECompilerMessagingTest extends PlatformTestCase {
                 model.commit();
             }
         });
+    }
+
+    private void setKotlinSdkForModule() {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+                model.addLibraryEntry(createKotlinSdkLibrary());
+                model.commit();
+            }
+        });
+    }
+
+    @NotNull
+    private Library createKotlinSdkLibrary() {
+        final NewLibraryEditor editor = new NewLibraryEditor();
+        editor.setName("Kotlin SDK");
+        KotlinSdkDescription.addSDKRoots(editor, new File("dist/kotlinc"));
+        return LibrariesContainerFactory.createContainer(myModule).createLibrary(editor, LibrariesContainer.LibraryLevel.GLOBAL);
     }
 
     protected abstract void checkHeader(@NotNull MessageChecker checker);

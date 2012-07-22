@@ -68,11 +68,11 @@ public class KotlinSdkDescription extends CustomLibraryDescription {
         descriptor.setTitle("Kotlin SDK");
         descriptor.setDescription("Choose a directory containing Kotlin distribution");
 
-        final VirtualFile sdkHome = FileChooser.chooseFile(parentComponent, descriptor, initial);
-        if (sdkHome == null) return null;
+        final VirtualFile sdkHomeVFile = FileChooser.chooseFile(parentComponent, descriptor, initial);
+        if (sdkHomeVFile == null) return null;
 
-        final String sdkHomePath = sdkHome.getPath();
-        final String sdkVersion = KotlinSdkUtil.getSDKVersion(new File(sdkHomePath));
+        final File sdkHome = new File(sdkHomeVFile.getPath());
+        final String sdkVersion = KotlinSdkUtil.getSDKVersion(sdkHome);
         if (sdkVersion == null) {
             Messages.showErrorDialog(parentComponent,
                                      "Failed to find Kotlin SDK in the specified path: cannot determine Kotlin version.",
@@ -83,7 +83,7 @@ public class KotlinSdkDescription extends CustomLibraryDescription {
         return new NewLibraryConfiguration(KotlinSdkUtil.getSDKName(sdkVersion)) {
             @Override
             public void addRoots(@NotNull final LibraryEditor editor) {
-                addSDKRoots(editor, sdkHomePath);
+                addSDKRoots(editor, sdkHome);
             }
         };
     }
@@ -95,8 +95,8 @@ public class KotlinSdkDescription extends CustomLibraryDescription {
         return LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(path));
     }
 
-    private static void addSDKRoots(@NotNull final LibraryEditor editor, @NotNull final String sdkHomePath) {
-        final File libDir = new File(sdkHomePath, "lib");
+    public static void addSDKRoots(@NotNull final LibraryEditor editor, @NotNull final File sdkHome) {
+        final File libDir = new File(sdkHome, "lib");
         if (!libDir.isDirectory()) return;
 
         final List<File> jars = new ArrayList<File>();
