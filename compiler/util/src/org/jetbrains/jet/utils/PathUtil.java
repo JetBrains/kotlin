@@ -19,6 +19,7 @@
  */
 package org.jetbrains.jet.utils;
 
+import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -92,6 +93,12 @@ public class PathUtil {
         else {
             throw new IllegalStateException("Path " + file + " does not exist.");
         }
+    }
+
+    @NotNull
+    public static String getJarPathForClass(@NotNull final Class aClass) {
+        final String resourceRoot = PathManager.getResourceRoot(aClass, "/" + aClass.getName().replace('.', '/') + ".class");
+        return new File(resourceRoot).getAbsoluteFile().getAbsolutePath();
     }
 
     public static File findRtJar() {

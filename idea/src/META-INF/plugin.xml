@@ -8,6 +8,12 @@
 
   <depends optional="true">JUnit</depends>
 
+  <application-components>
+    <component>
+      <implementation-class>org.jetbrains.jet.plugin.sdk.BundledKotlinSdkLibraryCreator</implementation-class>
+    </component>
+  </application-components>
+
   <project-components>
       <component>
           <implementation-class>org.jetbrains.jet.plugin.JetStandardLibraryInitializer</implementation-class>

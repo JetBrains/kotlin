@@ -18,17 +18,25 @@ package org.jetbrains.jet.plugin.sdk;
 
 import com.intellij.openapi.roots.libraries.LibraryProperties;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
 
 /**
  * @author Maxim.Manuylov
  *         Date: 19.05.12
  */
 public class KotlinSdkProperties extends LibraryProperties<KotlinSdkProperties> {
+    @NotNull private File mySdkHome;
     @NotNull private String myVersion;
 
-    public KotlinSdkProperties(@NotNull final String version) {
+    public KotlinSdkProperties(@NotNull final File sdkHome, @NotNull final String version) {
+        mySdkHome = sdkHome;
         myVersion = version;
+    }
+
+    @NotNull
+    public File getSdkHome() {
+        return mySdkHome;
     }
 
     @NotNull
@@ -43,16 +51,27 @@ public class KotlinSdkProperties extends LibraryProperties<KotlinSdkProperties> 
 
     @Override
     public void loadState(@NotNull final KotlinSdkProperties state) {
+        mySdkHome = state.mySdkHome;
         myVersion = state.myVersion;
     }
 
     @Override
-    public boolean equals(@Nullable final Object that) {
-        return this == that || (that instanceof KotlinSdkProperties && myVersion.equals(((KotlinSdkProperties)that).myVersion));
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof KotlinSdkProperties)) return false;
+
+        KotlinSdkProperties that = (KotlinSdkProperties) o;
+
+        if (!mySdkHome.equals(that.mySdkHome)) return false;
+        if (!myVersion.equals(that.myVersion)) return false;
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return myVersion.hashCode();
+        int result = mySdkHome.hashCode();
+        result = 31 * result + myVersion.hashCode();
+        return result;
     }
 }

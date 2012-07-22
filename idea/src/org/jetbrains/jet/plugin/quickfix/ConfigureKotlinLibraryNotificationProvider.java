@@ -56,6 +56,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.sdk.KotlinSdkUtil;
 import org.jetbrains.jet.plugin.util.PluginPathUtil;
+import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
 import java.io.File;
@@ -66,7 +67,6 @@ import static org.jetbrains.jet.plugin.project.JsModuleDetector.isJsModule;
 public class ConfigureKotlinLibraryNotificationProvider implements EditorNotifications.Provider<EditorNotificationPanel> {
     private static final Key<EditorNotificationPanel> KEY = Key.create("configure.kotlin.library");
     public static final String LIBRARY_NAME = "KotlinRuntime";
-    public static final String KOTLIN_RUNTIME_JAR = "kotlin-runtime.jar";
     private final Project myProject;
 
     @Override
@@ -85,7 +85,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
             final Module module = JetPluginUtil.getModuleForKotlinFile(file, myProject);
             if (module == null) return null;
 
-            if (isJsModule(module)) return null;
+            if (isMavenModule(module) || isJsModule(module)) return null;
 
             if (!KotlinSdkUtil.isSDKConfiguredFor(module)) return null;
 
@@ -110,7 +110,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
         Library kotlinRuntime = table.getLibraryByName(LIBRARY_NAME);
         if (kotlinRuntime != null) {
             for (VirtualFile root : kotlinRuntime.getFiles(OrderRootType.CLASSES)) {
-                if (root.getName().equals(KOTLIN_RUNTIME_JAR)) {
+                if (root.getName().equals(PathUtil.KOTLIN_RUNTIME_JAR)) {
                     return kotlinRuntime;
                 }
             }
@@ -245,6 +245,15 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
                 EditorNotifications.getInstance(myProject).updateAllNotifications();
             }
         });
+    }
+
+    private static boolean isMavenModule(@NotNull final Module module) {
+        for (final VirtualFile root : ModuleRootManager.getInstance(module).getContentRoots()) {
+            if (root.findChild("pom.xml") != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static class ChoosePathDialog extends DialogWrapper {

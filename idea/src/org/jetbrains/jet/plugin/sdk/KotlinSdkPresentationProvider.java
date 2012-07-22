@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetIcons;
 
 import javax.swing.*;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -43,13 +44,15 @@ public class KotlinSdkPresentationProvider extends LibraryPresentationProvider<K
     @NotNull
     @Override
     public String getDescription(@NotNull final KotlinSdkProperties properties) {
-        return KotlinSdkUtil.getSDKName(properties.getVersion());
+        return KotlinSdkUtil.getSDKName(properties.getSdkHome(), properties.getVersion());
     }
 
     @Nullable
     @Override
     public KotlinSdkProperties detect(@NotNull final List<VirtualFile> classesRoots) {
-        final String sdkVersion = KotlinSdkUtil.detectSDKVersion(classesRoots);
-        return sdkVersion == null ? null : new KotlinSdkProperties(sdkVersion);
+        final File sdkHome = KotlinSdkUtil.detectSDKHome(classesRoots);
+        if (sdkHome == null) return null;
+        final String sdkVersion = KotlinSdkUtil.getSDKVersion(sdkHome);
+        return sdkVersion == null ? null : new KotlinSdkProperties(sdkHome, sdkVersion);
     }
 }

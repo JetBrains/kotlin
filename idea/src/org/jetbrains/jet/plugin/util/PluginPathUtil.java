@@ -32,6 +32,23 @@ public class PluginPathUtil {
     private PluginPathUtil() {}
 
     @Nullable
+    public static File getBundledSDKHome() {
+        final File plugin_jar_path = new File(PathUtil.getJarPathForClass(PathUtil.class));
+        if (!plugin_jar_path.exists()) return null;
+
+        if (plugin_jar_path.getName().equals("kotlin-plugin.jar")) {
+            File lib = plugin_jar_path.getParentFile();
+            File pluginHome = lib.getParentFile();
+
+            File answer = new File(pluginHome, "kotlinc");
+
+            return answer.exists() ? answer : null;
+        }
+
+        return null;
+    }
+
+    @Nullable
     public static File getRuntimePath(@NotNull final Module module) {
         return PathUtil.getRuntimePath(KotlinSdkUtil.getSDKHomeFor(module));
     }

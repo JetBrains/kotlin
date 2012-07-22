@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.cli.common.util;
 
-import com.intellij.openapi.application.PathManager;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -32,7 +30,7 @@ public class CompilerPathUtil {
 
     @Nullable
     public static File getSDKHome() {
-        final File compilerJar = new File(getJarPathForClass(CompilerPathUtil.class));
+        final File compilerJar = new File(PathUtil.getJarPathForClass(CompilerPathUtil.class));
         if (!compilerJar.exists()) return null;
 
         if (compilerJar.getName().equals(PathUtil.KOTLIN_COMPILER_JAR)) {
@@ -60,11 +58,5 @@ public class CompilerPathUtil {
     @Nullable
     public static File getJdkAnnotationsPath() {
         return PathUtil.getJdkAnnotationsPath(getSDKHome());
-    }
-
-    @NotNull
-    public static String getJarPathForClass(@NotNull final Class aClass) {
-        final String resourceRoot = PathManager.getResourceRoot(aClass, "/" + aClass.getName().replace('.', '/') + ".class");
-        return new File(resourceRoot).getAbsoluteFile().getAbsolutePath();
     }
 }

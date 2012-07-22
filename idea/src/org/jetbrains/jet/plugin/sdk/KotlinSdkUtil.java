@@ -24,6 +24,7 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.plugin.util.PluginPathUtil;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
@@ -46,7 +47,7 @@ public class KotlinSdkUtil {
                 @NotNull
                 @Override
                 public KotlinSdkProperties createDefaultProperties() {
-                    return new KotlinSdkProperties("");
+                    return new KotlinSdkProperties(new File(""), "");
                 }
             };
     @NotNull private static final String[] KOTLIN_COMPILER_JAR_ENTRY_NAMES = {
@@ -101,13 +102,7 @@ public class KotlinSdkUtil {
     }
 
     @Nullable
-    public static String detectSDKVersion(@NotNull final List<VirtualFile> jars) {
-        final File sdkHome = detectSDKHome(jars);
-        return sdkHome == null ? null : getSDKVersion(sdkHome);
-    }
-
-    @Nullable
-    private static File detectSDKHome(@NotNull final List<VirtualFile> jars) {
+    public static File detectSDKHome(@NotNull final List<VirtualFile> jars) {
         for (VirtualFile jar : jars) {
             jar = prepare(jar);
             if (jar == null) continue;
@@ -194,9 +189,13 @@ public class KotlinSdkUtil {
         }
     }
 
+    public static boolean isBundledSDK(@NotNull final File sdkHome) {
+        return sdkHome.equals(PluginPathUtil.getBundledSDKHome());
+    }
+
     @NotNull
-    public static String getSDKName(@NotNull final String version) {
-        return "Kotlin " + version;
+    public static String getSDKName(@NotNull final File sdkHome, @NotNull final String version) {
+        return "Kotlin " + version + (isBundledSDK(sdkHome) ? " (bundled)" : "");
     }
 
     @NotNull

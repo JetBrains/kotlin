@@ -80,7 +80,7 @@ public class KotlinSdkDescription extends CustomLibraryDescription {
             return null;
         }
 
-        return new NewLibraryConfiguration(KotlinSdkUtil.getSDKName(sdkVersion)) {
+        return new NewLibraryConfiguration(KotlinSdkUtil.getSDKName(sdkHome, sdkVersion)) {
             @Override
             public void addRoots(@NotNull final LibraryEditor editor) {
                 addSDKRoots(editor, sdkHome);
