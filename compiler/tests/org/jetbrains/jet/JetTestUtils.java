@@ -195,12 +195,8 @@ public class JetTestUtils {
             @NotNull ConfigurationKind configurationKind,
             @NotNull TestJdkKind jdkKind
     ) {
-        JetCoreEnvironment environment = new JetCoreEnvironment(disposable,
-                                                                CompileCompilerDependenciesTest
-                                                                        .compilerConfigurationForTests(configurationKind, jdkKind)
-        );
-        environment.addToClasspath(getAnnotationsJar());
-        return environment;
+        return new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.compilerConfigurationForTests(
+                configurationKind, jdkKind, getAnnotationsJar()));
     }
 
     public static File findMockJdkRtJar() {

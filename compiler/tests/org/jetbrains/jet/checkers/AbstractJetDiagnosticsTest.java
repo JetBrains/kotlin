@@ -19,16 +19,13 @@ package org.jetbrains.jet.checkers;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.intellij.lang.java.JavaLanguage;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetLiteFixture;
-import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.*;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -48,10 +45,19 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
-        return createEnvironmentWithMockJdk(ConfigurationKind.JDK_AND_ANNOTATIONS);
+        File javaFilesDir = new File(FileUtil.getTempDirectory(), "java-files");
+        try {
+            JetTestUtils.mkdirs(javaFilesDir);
+        }
+        catch (IOException e) {
+            throw ExceptionUtils.rethrow(e);
+        }
+        return new JetCoreEnvironment(getTestRootDisposable(), CompileCompilerDependenciesTest.compilerConfigurationForTests(
+                ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(),
+                javaFilesDir));
     }
 
-    private boolean writeJavaFile(@NotNull String fileName, @NotNull String content, @NotNull File javaFilesDir) {
+    private static boolean writeJavaFile(@NotNull String fileName, @NotNull String content, @NotNull File javaFilesDir) {
         try {
             File javaFile = new File(javaFilesDir, fileName);
             JetTestUtils.mkdirs(javaFile.getParentFile());
@@ -67,24 +73,17 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
         final File javaFilesDir = new File(FileUtil.getTempDirectory(), "java-files");
 
         String expectedText = JetTestUtils.doLoadFile(file);
-        final Ref<Boolean> hasJavaFiles = new Ref<Boolean>(false);
 
         List<TestFile> testFiles =
                 JetTestUtils.createTestFiles(file.getName(), expectedText, new JetTestUtils.TestFileFactory<TestFile>() {
                     @Override
                     public TestFile create(String fileName, String text) {
                         if (fileName.endsWith(".java")) {
-                            hasJavaFiles.set(writeJavaFile(fileName, text, javaFilesDir));
+                            writeJavaFile(fileName, text, javaFilesDir);
                         }
                         return new TestFile(fileName, text);
                     }
                 });
-
-        if (hasJavaFiles.get()) {
-            // According to yole@ the only way to import java files is to write them on disk
-            // -- stepan.koltsov@ 2012-02-29
-            getEnvironment().addToClasspath(javaFilesDir);
-        }
 
         analyzeAndCheck(file, expectedText, testFiles);
     }

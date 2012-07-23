@@ -25,8 +25,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.Assert;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestCaseBuilder;
-import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.*;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.*;
@@ -100,9 +99,8 @@ public class CompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir {
     }
 
     private void compileB() throws IOException {
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable);
-
-        jetCoreEnvironment.addToClasspath(aDir);
+        JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(myTestRootDisposable, CompileCompilerDependenciesTest
+                .compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), aDir));
 
         String text = FileUtil.loadFile(ktBFile);
 

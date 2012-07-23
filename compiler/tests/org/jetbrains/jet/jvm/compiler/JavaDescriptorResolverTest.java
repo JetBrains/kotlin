@@ -17,8 +17,10 @@
 package org.jetbrains.jet.jvm.compiler;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
@@ -69,9 +71,9 @@ public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
     private JavaDescriptorResolver compileFileGetJavaDescriptorResolver(String fileRelativePath) throws IOException {
         JetTestUtils.compileJavaFile(new File("compiler/testData/javaDescriptorResolver/" + fileRelativePath), tmpdir);
 
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(
-                myTestRootDisposable, ConfigurationKind.JDK_ONLY);
-        jetCoreEnvironment.addToClasspath(tmpdir);
+        JetCoreEnvironment jetCoreEnvironment =
+                new JetCoreEnvironment(myTestRootDisposable, CompileCompilerDependenciesTest.compilerConfigurationForTests(
+                        ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), tmpdir));
 
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(BuiltinsScopeExtensionMode.ALL,
                                                                                        jetCoreEnvironment.getProject());

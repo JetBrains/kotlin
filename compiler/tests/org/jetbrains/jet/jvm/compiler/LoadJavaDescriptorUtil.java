@@ -18,8 +18,10 @@ package org.jetbrains.jet.jvm.compiler;
 
 import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
@@ -66,10 +68,9 @@ public final class LoadJavaDescriptorUtil {
             fileManager.close();
         }
 
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, ConfigurationKind.JDK_ONLY);
-
-        jetCoreEnvironment.addToClasspath(tmpdir);
-        jetCoreEnvironment.addToClasspath(new File("out/production/runtime"));
+        JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.
+                compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), tmpdir,
+                                              new File("out/production/runtime")));
 
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(BuiltinsScopeExtensionMode.ALL,
                                                                                        jetCoreEnvironment.getProject());

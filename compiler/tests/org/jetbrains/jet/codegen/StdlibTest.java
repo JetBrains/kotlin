@@ -16,6 +16,11 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.CompileCompilerDependenciesTest;
+import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.junit.Test;
@@ -35,15 +40,17 @@ public class StdlibTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithFullJdk();
-        myEnvironment.addToClasspath(ForTestCompileRuntime.runtimeJarForTests());
         File junitJar = new File("libraries/lib/junit-4.9.jar");
 
         if (!junitJar.exists()) {
             throw new AssertionError();
         }
 
-        myEnvironment.addToClasspath(junitJar);
+        if (myEnvironment != null) {
+            throw new IllegalStateException("must not set up myEnvironemnt twice");
+        }
+        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), CompileCompilerDependenciesTest.compilerConfigurationForTests(
+                ConfigurationKind.ALL, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar(), junitJar));
     }
 
     @Override

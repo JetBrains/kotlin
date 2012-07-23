@@ -25,6 +25,7 @@ import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.JetTestUtils;
@@ -54,7 +55,6 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     // for environment and classloader
     protected JetCoreEnvironment myEnvironment;
-    private List<File> extraClasspath = Lists.newArrayList();
     protected CodegenTestFiles myFiles;
 
     protected Object scriptInstance;
@@ -78,11 +78,6 @@ public abstract class CodegenTestCase extends UsefulTestCase {
             throw new IllegalStateException("must not set up myEnvironemnt twice");
         }
         myEnvironment = JetTestUtils.createEnvironmentWithFullJdk(getTestRootDisposable());
-    }
-
-    protected void addToClasspath(@NotNull File file) {
-        myEnvironment.addToClasspath(file);
-        extraClasspath.add(file);
     }
 
     protected static void assertThrows(Method foo, Class<? extends Throwable> exceptionClass, Object instance, Object... args) throws IllegalAccessException {
@@ -240,7 +235,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens) {
         List<URL> urls = Lists.newArrayList();
-        for (File file : extraClasspath) {
+        for (File file : myEnvironment.getConfiguration().getList(JVMConfigurationKeys.CLASSPATH_KEY)) {
             try {
                 urls.add(file.toURI().toURL());
             } catch (MalformedURLException e) {
