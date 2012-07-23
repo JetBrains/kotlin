@@ -18,6 +18,7 @@ package org.jetbrains.jet.config;
 
 import com.intellij.openapi.util.Key;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -25,6 +26,8 @@ import java.util.List;
  * @since 7/9/12
  */
 public class CommonConfigurationKeys {
-    public static final Key<List<String>> SOURCE_ROOTS_KEY = Key.create("source roots");
+    private CommonConfigurationKeys() {
+    }
 
+    public static final Key<List<String>> SOURCE_ROOTS_KEY = Key.create("source roots");
 }
