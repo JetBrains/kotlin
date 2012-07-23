@@ -26,13 +26,13 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.LABEL_TARGET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
 /**
 * @author abreslav
@@ -140,10 +140,10 @@ public class LabelResolver {
                 thisReceiver = functionDescriptor.getReceiverParameter();
             }
             else {
-                throw new UnsupportedOperationException(); // TODO
+                throw new UnsupportedOperationException("Unsupported descriptor: " + declarationDescriptor); // TODO
             }
             PsiElement element = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), declarationDescriptor);
-            assert element != null;
+            assert element != null : "No PSI element for descriptor: " + declarationDescriptor;
             context.trace.record(LABEL_TARGET, targetLabel, element);
             context.trace.record(REFERENCE_TARGET, thisReference, declarationDescriptor);
         }
