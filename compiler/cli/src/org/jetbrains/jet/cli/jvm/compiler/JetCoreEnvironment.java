@@ -41,8 +41,6 @@ import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +51,7 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
     private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
     private final CoreAnnotationsProvider annotationsProvider;
     private final CompilerConfiguration configuration;
+    private boolean initialized = false;
 
     @NotNull
     public static JetCoreEnvironment createCoreEnvironmentForJS(Disposable disposable, @NotNull CompilerConfiguration configuration) {
@@ -96,6 +95,7 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         }
 
         JetStandardLibrary.initialize(getProject());
+        initialized = true;
     }
 
     public CompilerConfiguration getConfiguration() {
@@ -144,6 +144,14 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         }
 
         addSources(new File(path));
+    }
+
+    @Override
+    public void addToClasspath(File path) {
+        if (initialized) {
+            throw new IllegalStateException("Cannot add class path when JetCoreEnvironment is already initialized");
+        }
+        super.addToClasspath(path);
     }
 
     public List<JetFile> getSourceFiles() {
