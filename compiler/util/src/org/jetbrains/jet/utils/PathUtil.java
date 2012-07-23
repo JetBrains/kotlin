@@ -96,7 +96,7 @@ public class PathUtil {
 
     @Nullable
     public static File getJdkAnnotationsPath() {
-        return getFilePackedIntoLib("alt/" + JDK_ANNOTATIONS_JAR);
+        return getFilePackedIntoLib(JDK_ANNOTATIONS_JAR);
     }
 
     @NotNull
