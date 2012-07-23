@@ -285,11 +285,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         Label condition = new Label();
         v.mark(condition);
 
-        Label end = continueLabel != null ? continueLabel : new Label();
+        Label end = new Label();
         blockStackElements.push(new LoopBlockStackElement(end, condition, targetLabel(expression)));
-
-        Label savedContinueLabel = continueLabel;
-        continueLabel = condition;
 
         final StackValue conditionValue = gen(expression.getCondition());
         conditionValue.condJump(end, true, v);
@@ -297,9 +294,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         gen(expression.getBody(), Type.VOID_TYPE);
         v.goTo(condition);
 
-        continueLabel = savedContinueLabel;
-        if (end != continueLabel)
-            v.mark(end);
+        v.mark(end);
 
         blockStackElements.pop();
 
@@ -683,14 +678,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private StackValue generateSingleBranchIf(StackValue condition, JetExpression expression, boolean inverse) {
-        Label end = continueLabel != null ? continueLabel : new Label();
+        Label end = new Label();
 
         condition.condJump(end, inverse, v);
 
         gen(expression, Type.VOID_TYPE);
 
-        if (continueLabel != end)
-            v.mark(end);
+        v.mark(end);
         return StackValue.none();
     }
 
@@ -849,8 +843,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return StackValue.onStack(closure.getClassname().getAsmType());
     }
 
-    private Label continueLabel;
-    
     private StackValue generateBlock(List<JetElement> statements) {
         Label blockStart = new Label();
         v.mark(blockStart);
@@ -880,12 +872,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         StackValue answer = StackValue.none();
-        Label savedContinueLabel = continueLabel;
-        continueLabel = null;
         for (int i = 0, statementsSize = statements.size(); i < statementsSize; i++) {
             JetElement statement = statements.get(i);
             if (i == statements.size() - 1 /*&& statement instanceof JetExpression && !bindingContext.get(BindingContext.STATEMENT, statement)*/) {
-                continueLabel = savedContinueLabel;
                 answer = gen(statement);
             }
             else {
@@ -2709,9 +2698,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 The "returned" value of try expression with no finally is either the last expression in the try block or the last expression in the catch block
 (or blocks).
          */
-        Label savedContinueLabel = continueLabel;
-        continueLabel = null;
-
         JetFinallySection finallyBlock = expression.getFinallyBlock();
         if (finallyBlock != null) {
             blockStackElements.push(new FinallyBlockStackElement(expression));
@@ -2770,8 +2756,6 @@ The "returned" value of try expression with no finally is either the last expres
         if (finallyBlock != null) {
             blockStackElements.pop();
         }
-
-        continueLabel = savedContinueLabel;
 
         return StackValue.onStack(expectedAsmType);
     }
