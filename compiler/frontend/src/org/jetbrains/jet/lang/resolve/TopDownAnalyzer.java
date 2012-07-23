@@ -148,19 +148,6 @@ public class TopDownAnalyzer {
         }
 
         context.debug("Exit");
-        for (DeclarationDescriptor descriptor : outerScope.getAllDescriptors()) {
-            if (descriptor instanceof NamespaceDescriptor) {
-                JetScope scope = ((NamespaceDescriptor) descriptor).getMemberScope();
-                for (DeclarationDescriptor member : scope.getAllDescriptors()) {
-                    if (member instanceof ClassDescriptor) {
-                        if (scope.getClassifier(member.getName()) != member) {
-                            System.out.println("Different members with same name " + member.getName());
-                        }
-                    }
-                }
-            }
-        }
-
         context.printDebugOutput(System.out);
     }
 

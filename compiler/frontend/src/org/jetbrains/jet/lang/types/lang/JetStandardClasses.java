@@ -335,7 +335,6 @@ public class JetStandardClasses {
             }
         }
         STANDARD_CLASSES_NAMESPACE.initialize(writableScope);
-        writableScope.changeLockLevel(WritableScope.LockLevel.READING);
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
