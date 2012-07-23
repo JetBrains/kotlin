@@ -10,7 +10,7 @@ import java.math.BigDecimal
 fun <T> Connection.statement(block: (Statement) -> T): T {
     val statement = createStatement()
     if (statement != null) {
-        return statement.use(block)
+        return statement.useSql(block)
     } else {
         throw IllegalStateException("No Statement returned from $this")
     }
