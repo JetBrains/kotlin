@@ -77,7 +77,7 @@ public class KotlinToJVMBytecodeCompiler {
             throw new CompileEnvironmentException("No source files where defined");
         }
 
-        // TODO creating environment copy each time — not good. original environment shouldn't be passed at all
+        // TODO creating environment copy each time - not good. original environment shouldn't be passed at all
         CompilerConfiguration compilerConfiguration = configuration.getEnvironment().getConfiguration().copy();
         for (String sourceFile : moduleBuilder.getSourceFiles()) {
             File source = new File(sourceFile);
