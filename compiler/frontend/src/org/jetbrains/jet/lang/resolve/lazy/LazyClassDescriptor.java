@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.data.FilteringClassLikeInfo;
@@ -85,6 +86,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             @NotNull JetClassLikeInfo classLikeInfo
     ) {
         this.resolveSession = resolveSession;
+        this.resolveSession.getTrace().record(BindingContext.CLASS, classLikeInfo.getCorrespondingClassOrObject(), this);
+
         this.originalClassInfo = classLikeInfo;
         JetClassLikeInfo classLikeInfoForMembers =
                 classLikeInfo.getClassKind() != ClassKind.ENUM_CLASS ? classLikeInfo : noEnumEntries(classLikeInfo);
@@ -138,6 +141,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         if (scopeForMemberDeclarationResolution == null) {
             WritableScopeImpl scope = new WritableScopeImpl(
                     getScopeForMemberLookup(), this, RedeclarationHandler.DO_NOTHING, "Member Declaration Resolution");
+            scope.addLabeledDeclaration(this);
             scope.importScope(getScopeForClassHeaderResolution());
 
             scope.changeLockLevel(WritableScope.LockLevel.READING);

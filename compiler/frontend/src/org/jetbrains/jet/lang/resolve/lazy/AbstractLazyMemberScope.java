@@ -187,7 +187,8 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName) {
-        throw new UnsupportedOperationException(); // TODO
+        // A member scope has no labels
+        return Collections.emptySet();
     }
 
     @Override
