@@ -39,7 +39,8 @@
         <resources>
             <resource>
                 <!-- jdkAnnotations -->
-                <directory>${kotlin-sdk}/lib/alt</directory>
+                <directory>${kotlin-sdk}/lib</directory>
+                <includes><include>kotlin-jdk-annotations.jar</include></includes>
                 <filtering>false</filtering>
             </resource>
         </resources>
