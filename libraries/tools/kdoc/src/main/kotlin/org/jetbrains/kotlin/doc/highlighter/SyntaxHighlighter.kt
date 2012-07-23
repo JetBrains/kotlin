@@ -1,11 +1,11 @@
 package org.jetbrains.kotlin.doc.highlighter
 
-import org.jetbrains.jet.internal.com.intellij.psi.*
-import org.jetbrains.jet.internal.com.intellij.psi.tree.IElementType
-import org.jetbrains.jet.internal.com.intellij.psi.tree.TokenSet
 import java.util.HashMap
 import java.util.Map
 import kotlin.template.HtmlFormatter
+import org.jetbrains.jet.internal.com.intellij.psi.*
+import org.jetbrains.jet.internal.com.intellij.psi.tree.IElementType
+import org.jetbrains.jet.internal.com.intellij.psi.tree.TokenSet
 import org.jetbrains.jet.lexer.*
 
 fun main(args: Array<String>) {

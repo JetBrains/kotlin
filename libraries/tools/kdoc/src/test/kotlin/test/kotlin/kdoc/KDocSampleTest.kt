@@ -1,13 +1,12 @@
 package test.kotlin.kdoc
 
-import org.junit.Test
-import org.jetbrains.kotlin.doc.KDoc
-import org.jetbrains.kotlin.doc.KDocCompiler
-import org.jetbrains.kotlin.doc.KDocArguments
-import org.jetbrains.jet.cli.common.ExitCode
-import org.junit.Assert
 import java.io.File
 import java.io.IOException
+import org.jetbrains.jet.cli.common.ExitCode
+import org.jetbrains.kotlin.doc.KDocArguments
+import org.jetbrains.kotlin.doc.KDocCompiler
+import org.junit.Assert
+import org.junit.Test
 
 fun File.rmrf() {
     val children = listFiles()

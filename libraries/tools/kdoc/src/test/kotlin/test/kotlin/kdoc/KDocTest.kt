@@ -1,18 +1,16 @@
 package test.kotlin.kdoc
 
+import java.io.File
+import java.util.ArrayList
+import kotlin.test.assertTrue
+import org.jetbrains.jet.cli.common.ExitCode
 import org.jetbrains.kotlin.doc.KDocArguments
 import org.jetbrains.kotlin.doc.KDocCompiler
-
-import kotlin.test.assertTrue
-
-import org.junit.Test
-import java.io.File
 import org.junit.Assert
-import org.jetbrains.jet.cli.common.ExitCode
-import java.util.ArrayList
+import org.junit.Test
 
 /**
- */
+*/
 class KDocTest {
     Test fun generateKDocForStandardLibrary() {
         var moduleName = "ApiDocsModule.kt"

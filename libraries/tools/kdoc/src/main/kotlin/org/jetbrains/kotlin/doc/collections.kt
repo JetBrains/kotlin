@@ -1,9 +1,8 @@
 package org.jetbrains.kotlin.doc
 
+import java.util.HashMap
 import java.util.List
 import java.util.Map
-import java.util.HashMap
-
 
 fun <A, K, V> List<A>.toHashMap(f: (A) -> #(K, V)): Map<K, V> {
     val r = HashMap<K, V>()

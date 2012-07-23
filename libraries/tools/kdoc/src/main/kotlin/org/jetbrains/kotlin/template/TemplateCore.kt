@@ -1,22 +1,19 @@
 package org.jetbrains.kotlin.template
 
-import kotlin.io.*
-import java.io.Writer
-import java.io.StringWriter
+import java.io.File
+import java.io.FileWriter
 import java.io.OutputStream
 import java.io.OutputStreamWriter
-import java.io.FileWriter
-import java.io.File
-import java.util.List
-import kotlin.dom.attribute
+import java.io.StringWriter
+import java.io.Writer
 
 /**
- * Represents a generic API to templates which should be usable
- * in JavaScript in a browser or on the server side stand alone or in a web app etc.
- *
- * To make things easier to implement in JS this namespace won't refer to any java.io or servlet
- * stuff
- */
+* Represents a generic API to templates which should be usable
+* in JavaScript in a browser or on the server side stand alone or in a web app etc.
+*
+* To make things easier to implement in JS this namespace won't refer to any java.io or servlet
+* stuff
+*/
 trait Template {
 
     /** Renders the template to the output printer */

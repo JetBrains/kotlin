@@ -1,13 +1,11 @@
 package org.jetbrains.kotlin.doc
 
-import kotlin.*
-import kotlin.util.*
 import java.util.*
 import org.jetbrains.kotlin.doc.model.KPackage
 
 /**
- * The configuration used with KDoc
- */
+* The configuration used with KDoc
+*/
 class KDocConfig() {
 
     /**

@@ -1,57 +1,47 @@
 package org.jetbrains.kotlin.doc.model
 
-import kotlin.*
-import kotlin.util.*
-
-import org.jetbrains.kotlin.doc.KDocConfig
-import org.jetbrains.kotlin.doc.*
-import org.jetbrains.kotlin.doc.highlighter.SyntaxHighligher
-
+import java.io.File
 import java.util.*
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.resolve.BindingContextUtils
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.pegdown.PegDownProcessor
-import org.pegdown.LinkRenderer
-import org.pegdown.ast.WikiLinkNode
-import org.pegdown.LinkRenderer.Rendering
-import org.pegdown.ast.RefLinkNode
-import org.pegdown.ast.AutoLinkNode
-import org.pegdown.ast.ExpLinkNode
-import org.pegdown.Extensions
-import org.jetbrains.kotlin.doc.templates.KDocTemplate
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl
-import org.jetbrains.jet.lang.descriptors.Visibility
-import org.jetbrains.jet.lang.descriptors.ClassKind
+import org.jetbrains.jet.internal.com.intellij.openapi.vfs.local.CoreLocalVirtualFile
+import org.jetbrains.jet.internal.com.intellij.psi.PsiDirectory
 import org.jetbrains.jet.internal.com.intellij.psi.PsiElement
 import org.jetbrains.jet.internal.com.intellij.psi.PsiFile
-import org.jetbrains.jet.internal.com.intellij.psi.PsiDirectory
+import org.jetbrains.jet.internal.com.intellij.psi.PsiFileSystemItem
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.descriptors.ClassKind
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils.LineAndColumn
-import org.jetbrains.jet.internal.com.intellij.psi.PsiFileSystemItem
-import java.io.File
-import org.jetbrains.jet.internal.com.intellij.psi.PsiElement
-import org.jetbrains.jet.internal.com.intellij.openapi.vfs.local.CoreLocalVirtualFile
-
+import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.resolve.BindingContextUtils
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
+import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.doc.*
+import org.jetbrains.kotlin.doc.highlighter.SyntaxHighligher
+import org.jetbrains.kotlin.doc.templates.KDocTemplate
+import org.pegdown.Extensions
+import org.pegdown.LinkRenderer
+import org.pegdown.LinkRenderer.Rendering
+import org.pegdown.PegDownProcessor
+import org.pegdown.ast.AutoLinkNode
+import org.pegdown.ast.ExpLinkNode
+import org.pegdown.ast.RefLinkNode
+import org.pegdown.ast.WikiLinkNode
 
 /**
- * Returns the collection of functions with duplicate function names filtered out
- * so only the first one is included
- */
+* Returns the collection of functions with duplicate function names filtered out
+* so only the first one is included
+*/
 fun filterDuplicateNames(functions: Collection<KFunction>): Collection<KFunction> {
     var lastName = ""
     return functions.filter{

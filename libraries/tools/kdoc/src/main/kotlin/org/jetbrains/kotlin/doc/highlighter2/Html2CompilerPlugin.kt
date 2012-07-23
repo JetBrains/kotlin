@@ -1,26 +1,17 @@
 package org.jetbrains.kotlin.doc.highlighter2
 
-import org.jetbrains.jet.cli.common.CompilerPlugin
-import org.jetbrains.jet.cli.common.CompilerPluginContext
 import java.io.File
 import java.util.List
-import org.jetbrains.jet.internal.com.intellij.psi.PsiFile
 import org.jetbrains.jet.internal.com.intellij.openapi.vfs.local.CoreLocalVirtualFile
-import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
-import org.jetbrains.kotlin.doc.KDocArguments
-import org.jetbrains.kotlin.template.TextTemplate
+import org.jetbrains.jet.internal.com.intellij.psi.PsiElement
+import org.jetbrains.jet.internal.com.intellij.psi.PsiFile
+import org.jetbrains.jet.internal.com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.doc.*
+import org.jetbrains.kotlin.doc.model.KModel
+import org.jetbrains.kotlin.doc.model.SourceInfo
 import org.jetbrains.kotlin.template.HtmlTemplate
 import org.jetbrains.kotlin.template.escapeHtml
-import org.jetbrains.jet.internal.com.intellij.psi.PsiElement
-import org.jetbrains.jet.internal.com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.jet.JetNodeTypes
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.kotlin.doc.Doclet
-import org.jetbrains.kotlin.doc.model.KModel
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.kotlin.doc.model.SourceInfo
-import org.jetbrains.kotlin.doc.*
-
 
 class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet {
 

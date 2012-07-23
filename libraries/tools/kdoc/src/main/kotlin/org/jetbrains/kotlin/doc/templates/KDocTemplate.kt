@@ -1,17 +1,14 @@
 package org.jetbrains.kotlin.doc.templates
 
-import kotlin.*
-import kotlin.util.*
-import org.jetbrains.kotlin.doc.model.KClass
-import org.jetbrains.kotlin.doc.model.KAnnotation
-import org.jetbrains.kotlin.doc.model.KPackage
-import org.jetbrains.kotlin.template.TextTemplate
-import org.jetbrains.kotlin.doc.model.KFunction
+import java.util.List
 import org.jetbrains.kotlin.doc.*
-import java.util.Collection
+import org.jetbrains.kotlin.doc.model.KAnnotation
+import org.jetbrains.kotlin.doc.model.KClass
+import org.jetbrains.kotlin.doc.model.KFunction
+import org.jetbrains.kotlin.doc.model.KPackage
 import org.jetbrains.kotlin.doc.model.KProperty
 import org.jetbrains.kotlin.doc.model.KType
-import java.util.List
+import org.jetbrains.kotlin.template.TextTemplate
 
 abstract class KDocTemplate() : TextTemplate() {
     // TODO: use same timestamp for all pages

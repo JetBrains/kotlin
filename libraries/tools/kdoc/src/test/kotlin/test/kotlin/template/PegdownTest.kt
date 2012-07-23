@@ -1,13 +1,9 @@
 package test.pegdown
 
-import kotlin.*
-import kotlin.util.*
-import kotlin.test.*
-
 import junit.framework.TestCase
 import org.pegdown.*
-import org.pegdown.ast.*
 import org.pegdown.LinkRenderer.Rendering
+import org.pegdown.ast.*
 
 class PegdownTest() : TestCase() {
     var markdownProcessor = PegDownProcessor(Extensions.ALL)

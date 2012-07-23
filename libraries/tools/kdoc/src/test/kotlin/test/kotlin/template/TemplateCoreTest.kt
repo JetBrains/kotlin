@@ -1,13 +1,9 @@
 package test.kotlin.template
 
-import kotlin.*
-import org.jetbrains.kotlin.template.*
-import kotlin.io.*
-import kotlin.util.*
 import java.util.*
-
-import junit.framework.TestCase
 import junit.framework.Assert.*
+import junit.framework.TestCase
+import org.jetbrains.kotlin.template.*
 
 class EmailTemplate(var name: String = "James", var time: Date = Date()) : TextTemplate() {
     public override fun render() {

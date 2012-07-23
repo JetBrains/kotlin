@@ -1,10 +1,5 @@
 package org.jetbrains.kotlin.doc.templates
 
-import kotlin.*
-import org.jetbrains.kotlin.template.*
-import kotlin.io.*
-import kotlin.util.*
-import java.util.*
 import org.jetbrains.kotlin.doc.model.KModel
 
 class IndexTemplate(val model: KModel) : KDocTemplate() {

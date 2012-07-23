@@ -1,14 +1,10 @@
 package org.jetbrains.kotlin.doc
 
-import java.io.File
 import java.io.PrintStream
-import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
-import org.jetbrains.jet.cli.jvm.K2JVMCompiler
 import org.jetbrains.jet.cli.common.CLICompiler
+import org.jetbrains.jet.cli.jvm.K2JVMCompiler
+import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
 import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration
-import org.jetbrains.kotlin.doc.highlighter.HtmlCompilerPlugin
-import org.jetbrains.jet.cli.common.ExitCode
-import org.jetbrains.kotlin.doc.highlighter2.Html2CompilerPlugin
 
 /**
 * Main for running the KDocCompiler

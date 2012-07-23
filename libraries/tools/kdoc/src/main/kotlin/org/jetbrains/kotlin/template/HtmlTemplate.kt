@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.template
 
 import java.util.List
 
-
 abstract class HtmlTemplate() : TextTemplate() {
 
     fun tag(

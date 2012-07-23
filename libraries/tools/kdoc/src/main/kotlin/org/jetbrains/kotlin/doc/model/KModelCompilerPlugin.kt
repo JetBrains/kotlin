@@ -1,11 +1,10 @@
 package org.jetbrains.kotlin.doc.model
 
-import org.jetbrains.jet.cli.common.CompilerPlugin
-import org.jetbrains.jet.cli.common.CompilerPluginContext
-import org.jetbrains.kotlin.doc.KDocConfig
-import org.jetbrains.kotlin.doc.KDocArguments
 import java.io.File
 import java.util.List
+import org.jetbrains.jet.cli.common.CompilerPlugin
+import org.jetbrains.jet.cli.common.CompilerPluginContext
+import org.jetbrains.kotlin.doc.KDocArguments
 
 /** Base class for any compiler plugin which needs to process a KModel */
 abstract class KModelCompilerPlugin(
