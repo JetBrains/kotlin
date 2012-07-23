@@ -221,7 +221,6 @@ public class DeclarationResolver {
             if (primaryConstructorParameterList != null) {
                 trace.report(CONSTRUCTOR_IN_TRAIT.on(primaryConstructorParameterList));
             }
-            if (!klass.hasPrimaryConstructor()) return;
         }
 
         // TODO : not all the parameters are real properties
@@ -244,7 +243,9 @@ public class DeclarationResolver {
                     context.getPrimaryConstructorParameterProperties().put(parameter, propertyDescriptor);
                 }
             }
-            classDescriptor.setPrimaryConstructor(constructorDescriptor, trace);
+            if (classDescriptor.getKind() != ClassKind.TRAIT) {
+                classDescriptor.setPrimaryConstructor(constructorDescriptor, trace);
+            }
         }
     }
 

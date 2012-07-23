@@ -202,6 +202,7 @@ public class BodyResolver {
                 if (typeReference == null) return;
                 if (descriptor.getUnsubstitutedPrimaryConstructor() == null) {
                     assert descriptor.getKind() == ClassKind.TRAIT;
+                    recordSupertype(typeReference, trace.getBindingContext().get(BindingContext.TYPE, typeReference));
                     return;
                 }
                 OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveFunctionCall(
