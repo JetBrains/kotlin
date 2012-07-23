@@ -17,6 +17,7 @@
 package org.jetbrains.jet.cli.common;
 
 import com.intellij.openapi.util.Key;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ import java.util.List;
  * @since 7/23/12
  */
 public class CLIConfigurationKeys {
+    public static final Key<MessageCollector> MESSAGE_COLLECTOR_KEY = Key.create("message collector");
     public static final Key<List<CompilerPlugin>> COMPILER_PLUGINS = Key.create("compiler plugins");
 
     private CLIConfigurationKeys() {

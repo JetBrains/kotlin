@@ -30,7 +30,7 @@ public class K2JSCompileEnvironmentConfiguration extends CompileEnvironmentConfi
      *
      * @see Disposer
      */
-    public K2JSCompileEnvironmentConfiguration(@NotNull MessageCollector messageCollector) {
-        super(messageCollector);
+    public K2JSCompileEnvironmentConfiguration() {
+        super();
     }
 }

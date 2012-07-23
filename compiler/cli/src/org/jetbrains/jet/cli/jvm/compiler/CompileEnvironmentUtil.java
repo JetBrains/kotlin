@@ -24,6 +24,7 @@ import jet.modules.AllModules;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.util.CompilerPathUtil;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
@@ -98,10 +99,12 @@ public class CompileEnvironmentUtil {
             configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, jdkAnnotationsPath);
         }
         configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, moduleScriptFile);
+        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
+
         JetCoreEnvironment scriptEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(disposable, configuration);
 
         GenerationState generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(
-                new K2JVMCompileEnvironmentConfiguration(scriptEnvironment, messageCollector), false);
+                new K2JVMCompileEnvironmentConfiguration(scriptEnvironment), false);
         if (generationState == null) {
             throw new CompileEnvironmentException("Module script " + moduleScriptFile + " analyze failed");
         }

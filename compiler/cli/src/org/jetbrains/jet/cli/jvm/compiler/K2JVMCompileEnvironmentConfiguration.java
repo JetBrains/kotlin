@@ -32,9 +32,7 @@ public class K2JVMCompileEnvironmentConfiguration extends CompileEnvironmentConf
      *
      * @see Disposer
      */
-    public K2JVMCompileEnvironmentConfiguration(@NotNull JetCoreEnvironment environment,
-            @NotNull MessageCollector messageCollector) {
-        super(messageCollector);
+    public K2JVMCompileEnvironmentConfiguration(@NotNull JetCoreEnvironment environment) {
         this.environment = environment;
     }
 

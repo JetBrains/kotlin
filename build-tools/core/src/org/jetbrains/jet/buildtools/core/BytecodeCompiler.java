@@ -79,9 +79,9 @@ public class BytecodeCompiler {
         }
 
         configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(sourceRoots));
+        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
         JetCoreEnvironment environment = new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), configuration);
-        K2JVMCompileEnvironmentConfiguration env = new K2JVMCompileEnvironmentConfiguration(environment,
-                                                                                            MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
+        K2JVMCompileEnvironmentConfiguration env = new K2JVMCompileEnvironmentConfiguration(environment);
 
         // lets register any compiler plugins
         configuration.addAll(CLIConfigurationKeys.COMPILER_PLUGINS, getCompilerPlugins());

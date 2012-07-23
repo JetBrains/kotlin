@@ -116,9 +116,7 @@ public class KotlinToJVMBytecodeCompiler {
                                                                          compilerConfiguration);
 
 
-            K2JVMCompileEnvironmentConfiguration currentK2JVMConfiguration = new K2JVMCompileEnvironmentConfiguration(
-                    environment, configuration.getMessageCollector()
-            );
+            K2JVMCompileEnvironmentConfiguration currentK2JVMConfiguration = new K2JVMCompileEnvironmentConfiguration(environment);
             GenerationState generationState = analyzeAndGenerate(currentK2JVMConfiguration);
             if (generationState == null) {
                 return null;
@@ -316,7 +314,8 @@ public class KotlinToJVMBytecodeCompiler {
             final List<AnalyzerScriptParameter> scriptParameters,
             boolean stubs) {
         final JetCoreEnvironment environment = configuration.getEnvironment();
-        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(configuration.getMessageCollector());
+        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(configuration.getEnvironment().getConfiguration().get(
+                CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY));
         final Predicate<PsiFile> filesToAnalyzeCompletely =
                 stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
         analyzerWithCompilerReport.analyzeAndReport(
@@ -340,15 +339,15 @@ public class KotlinToJVMBytecodeCompiler {
 
     @NotNull
     private static GenerationState generate(
-            final K2JVMCompileEnvironmentConfiguration configuration,
+            K2JVMCompileEnvironmentConfiguration configuration,
             AnalyzeExhaust exhaust,
             boolean stubs) {
-        JetCoreEnvironment environment = configuration.getEnvironment();
+        final JetCoreEnvironment environment = configuration.getEnvironment();
         Project project = environment.getProject();
         Progress backendProgress = new Progress() {
             @Override
             public void log(String message) {
-                configuration.getMessageCollector().report(CompilerMessageSeverity.LOGGING, message, CompilerMessageLocation.NO_LOCATION);
+                environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(CompilerMessageSeverity.LOGGING, message, CompilerMessageLocation.NO_LOCATION);
             }
         };
         GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs), backendProgress,
@@ -375,6 +374,7 @@ public class KotlinToJVMBytecodeCompiler {
         Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
         try {
             CompilerConfiguration compilerConfiguration = new CompilerConfiguration();
+            compilerConfiguration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
             compilerConfiguration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(parentLoader));
             compilerConfiguration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, Collections.singletonList(
                     CompilerPathUtil.getJdkAnnotationsPath()));

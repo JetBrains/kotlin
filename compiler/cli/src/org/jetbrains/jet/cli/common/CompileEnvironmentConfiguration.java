@@ -25,20 +25,11 @@ import org.jetbrains.jet.cli.common.messages.MessageCollector;
  */
 public abstract class CompileEnvironmentConfiguration {
 
-    @NotNull
-    private final MessageCollector messageCollector;
-
     /**
      * NOTE: It's very important to call dispose for every object of this class or there will be memory leaks.
      *
      * @see Disposer
      */
-    public CompileEnvironmentConfiguration(@NotNull MessageCollector messageCollector) {
-        this.messageCollector = messageCollector;
-    }
-
-    @NotNull
-    public MessageCollector getMessageCollector() {
-        return messageCollector;
+    public CompileEnvironmentConfiguration() {
     }
 }
