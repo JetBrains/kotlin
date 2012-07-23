@@ -17,13 +17,16 @@
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
 import closurecompiler.internal.com.google.common.collect.Sets;
+import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
+import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
+import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.intrinsic.functions.basic.CallStandardMethodIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 
@@ -32,6 +35,7 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.subtract;
 
 /**
  * @author Pavel Talanov
@@ -72,13 +76,27 @@ public final class NumberConversionFIF extends CompositeFIF {
     public static final String INTEGER_NUMBER_TYPES = "Int|Byte|Short";
     //NOTE: treat Number as if it is floating point type
     @NotNull
-    public static final String FLOATING_POINT_NUMBER_TYPES = "Float|Double|Number";
+    private static final String FLOATING_POINT_NUMBER_TYPES = "Float|Double|Number";
+    @NotNull
+    private static final FunctionIntrinsic GET_INTEGER_PART = new FunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(@Nullable JsExpression receiver,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context) {
+            assert receiver != null;
+            assert arguments.isEmpty();
+            TemporaryVariable toConvert = context.declareTemporary(receiver);
+            JsBinaryOperation fractional = new JsBinaryOperation(JsBinaryOperator.MOD, toConvert.reference(), context.program().getNumberLiteral(1));
+            return AstUtil.newSequence(toConvert.assignmentExpression(), subtract(toConvert.reference(), fractional));
+        }
+    };
     @NotNull
     public static final FunctionIntrinsicFactory INSTANCE = new NumberConversionFIF();
 
     private NumberConversionFIF() {
         add(pattern(INTEGER_NUMBER_TYPES, SUPPORTED_CONVERSIONS), RETURN_RECEIVER);
-        add(pattern(FLOATING_POINT_NUMBER_TYPES, INTEGER_CONVERSIONS), new CallStandardMethodIntrinsic("Math.floor", true, 0));
+        add(pattern(FLOATING_POINT_NUMBER_TYPES, INTEGER_CONVERSIONS), GET_INTEGER_PART);
         add(pattern(FLOATING_POINT_NUMBER_TYPES, FLOATING_POINT_CONVERSIONS), RETURN_RECEIVER);
     }
 }
