@@ -2,11 +2,10 @@ package org.jetbrains.kotlin.doc
 
 import java.io.PrintStream
 import org.jetbrains.jet.cli.common.CLICompiler
+import org.jetbrains.jet.cli.common.CLIConfigurationKeys
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler
 import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
-import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration
 import org.jetbrains.jet.config.CompilerConfiguration
-import org.jetbrains.jet.cli.common.CLIConfigurationKeys
 
 /**
 * Main for running the KDocCompiler

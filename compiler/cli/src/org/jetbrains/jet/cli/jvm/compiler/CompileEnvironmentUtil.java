@@ -63,7 +63,7 @@ public class CompileEnvironmentUtil {
 
     @Nullable
     public static File getUnpackedRuntimePath() {
-        URL url = K2JVMCompileEnvironmentConfiguration.class.getClassLoader().getResource("jet/JetObject.class");
+        URL url = KotlinToJVMBytecodeCompiler.class.getClassLoader().getResource("jet/JetObject.class");
         if (url != null && url.getProtocol().equals("file")) {
             return new File(url.getPath()).getParentFile().getParentFile();
         }
@@ -72,7 +72,7 @@ public class CompileEnvironmentUtil {
 
     @Nullable
     public static File getRuntimeJarPath() {
-        URL url = K2JVMCompileEnvironmentConfiguration.class.getClassLoader().getResource("jet/JetObject.class");
+        URL url = KotlinToJVMBytecodeCompiler.class.getClassLoader().getResource("jet/JetObject.class");
         if (url != null && url.getProtocol().equals("jar")) {
             String path = url.getPath();
             return new File(path.substring(path.indexOf(":") + 1, path.indexOf("!/")));
@@ -103,8 +103,7 @@ public class CompileEnvironmentUtil {
 
         JetCoreEnvironment scriptEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(disposable, configuration);
 
-        GenerationState generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(
-                new K2JVMCompileEnvironmentConfiguration(scriptEnvironment), false);
+        GenerationState generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(scriptEnvironment, false);
         if (generationState == null) {
             throw new CompileEnvironmentException("Module script " + moduleScriptFile + " analyze failed");
         }
@@ -136,7 +135,7 @@ public class CompileEnvironmentUtil {
             }
         }
         else {
-            loader = new GeneratedClassLoader(factory, K2JVMCompileEnvironmentConfiguration.class.getClassLoader());
+            loader = new GeneratedClassLoader(factory, KotlinToJVMBytecodeCompiler.class.getClassLoader());
         }
         try {
             Class namespaceClass = loader.loadClass(JvmAbi.PACKAGE_CLASS);

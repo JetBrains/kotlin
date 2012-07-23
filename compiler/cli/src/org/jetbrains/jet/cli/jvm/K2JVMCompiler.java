@@ -106,8 +106,6 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
         compilerConfiguration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
-        K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(environment);
-
         messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
                                 CompilerMessageLocation.NO_LOCATION);
         try {
@@ -123,16 +121,16 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                 List<Module> modules = CompileEnvironmentUtil.loadModuleScript(arguments.module, messageCollector);
                 messageCollector.setVerbose(oldVerbose);
                 File directory = new File(arguments.module).getParentFile();
-                noErrors = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules,
+                noErrors = KotlinToJVMBytecodeCompiler.compileModules(environment, modules,
                                                                       directory, jar, outputDir,
                                                                       arguments.includeRuntime);
             }
             else if (arguments.script) {
                 List<String> scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size());
-                noErrors = KotlinToJVMBytecodeCompiler.compileAndExecuteScript(configuration, scriptArgs);
+                noErrors = KotlinToJVMBytecodeCompiler.compileAndExecuteScript(environment, scriptArgs);
             }
             else {
-                noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSources(configuration, jar, outputDir, arguments.includeRuntime);
+                noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, jar, outputDir, arguments.includeRuntime);
             }
             return noErrors ? OK : COMPILATION_ERROR;
         }

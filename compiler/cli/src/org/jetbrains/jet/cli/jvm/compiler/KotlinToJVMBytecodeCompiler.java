@@ -73,17 +73,13 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     @Nullable
-    public static ClassFileFactory compileModule(
-            K2JVMCompileEnvironmentConfiguration configuration,
-            Module moduleBuilder,
-            File directory
-    ) {
+    public static ClassFileFactory compileModule(JetCoreEnvironment environment, Module moduleBuilder, File directory) {
         if (moduleBuilder.getSourceFiles().isEmpty()) {
             throw new CompileEnvironmentException("No source files where defined");
         }
 
         // TODO creating environment copy each time - not good. original environment shouldn't be passed at all
-        CompilerConfiguration compilerConfiguration = configuration.getEnvironment().getConfiguration().copy();
+        CompilerConfiguration compilerConfiguration = environment.getConfiguration().copy();
         for (String sourceFile : moduleBuilder.getSourceFiles()) {
             File source = new File(sourceFile);
             if (!source.isAbsolute()) {
@@ -105,32 +101,27 @@ public class KotlinToJVMBytecodeCompiler {
             compilerConfiguration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File(annotationsRoot));
         }
 
-        Disposable parentDisposable = new Disposable() {
-            @Override
-            public void dispose() {
-            }
-        };
-        JetCoreEnvironment environment = null;
+        Disposable parentDisposable = CompileEnvironmentUtil.createMockDisposable();
+        JetCoreEnvironment moduleEnvironment = null;
         try {
-            environment = JetCoreEnvironment.createCoreEnvironmentForJVM(parentDisposable,
+            moduleEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(parentDisposable,
                                                                          compilerConfiguration);
 
 
-            K2JVMCompileEnvironmentConfiguration currentK2JVMConfiguration = new K2JVMCompileEnvironmentConfiguration(environment);
-            GenerationState generationState = analyzeAndGenerate(currentK2JVMConfiguration);
+            GenerationState generationState = analyzeAndGenerate(moduleEnvironment);
             if (generationState == null) {
                 return null;
             }
             return generationState.getFactory();
         } finally {
-            if (environment != null) {
+            if (moduleEnvironment != null) {
                 Disposer.dispose(parentDisposable);
             }
         }
     }
 
     public static boolean compileModules(
-            K2JVMCompileEnvironmentConfiguration configuration,
+            JetCoreEnvironment environment,
             @NotNull List<Module> modules,
             @NotNull File directory,
             @Nullable File jarPath,
@@ -138,7 +129,7 @@ public class KotlinToJVMBytecodeCompiler {
             boolean jarRuntime) {
 
         for (Module moduleBuilder : modules) {
-            ClassFileFactory moduleFactory = compileModule(configuration, moduleBuilder, directory);
+            ClassFileFactory moduleFactory = compileModule(environment, moduleBuilder, directory);
             if (moduleFactory == null) {
                 return false;
             }
@@ -184,15 +175,15 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     public static boolean compileBunchOfSources(
-            K2JVMCompileEnvironmentConfiguration configuration,
+            JetCoreEnvironment environment,
             @Nullable File jar,
             @Nullable File outputDir,
             boolean includeRuntime
     ) {
 
-        FqName mainClass = findMainClass(configuration.getEnvironment().getSourceFiles());
+        FqName mainClass = findMainClass(environment.getSourceFiles());
 
-        GenerationState generationState = analyzeAndGenerate(configuration);
+        GenerationState generationState = analyzeAndGenerate(environment);
         if (generationState == null) {
             return false;
         }
@@ -230,9 +221,9 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     public static boolean compileAndExecuteScript(
-            @NotNull K2JVMCompileEnvironmentConfiguration configuration,
+            @NotNull JetCoreEnvironment environment,
             @NotNull List<String> scriptArgs) {
-        Class<?> scriptClass = compileScript(configuration, null);
+        Class<?> scriptClass = compileScript(environment, null);
         if(scriptClass == null)
             return false;
 
@@ -249,9 +240,9 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     public static Class<?> compileScript(
-            @NotNull K2JVMCompileEnvironmentConfiguration configuration, ClassLoader parentLoader) {
+            @NotNull JetCoreEnvironment environment, ClassLoader parentLoader) {
 
-        GenerationState generationState = analyzeAndGenerate(configuration);
+        GenerationState generationState = analyzeAndGenerate(environment);
         if (generationState == null) {
             return null;
         }
@@ -264,7 +255,7 @@ public class KotlinToJVMBytecodeCompiler {
                         CompilerPathUtil.getRuntimePath().toURI().toURL()
                 },
                         parentLoader == null ? AllModules.class.getClassLoader() : parentLoader));
-                JetFile scriptFile = configuration.getEnvironment().getSourceFiles().get(0);
+                JetFile scriptFile = environment.getSourceFiles().get(0);
                 return classLoader.loadClass(ScriptCodegen.classNameForScript(scriptFile));
             }
             catch (Exception e) {
@@ -277,27 +268,27 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     @Nullable
-    public static GenerationState analyzeAndGenerate(K2JVMCompileEnvironmentConfiguration configuration) {
-        return analyzeAndGenerate(configuration, configuration.getEnvironment().getConfiguration().get(JVMConfigurationKeys.STUBS, false),
-                                  configuration.getEnvironment().getConfiguration().getList(JVMConfigurationKeys.SCRIPT_PARAMETERS));
+    public static GenerationState analyzeAndGenerate(JetCoreEnvironment environment) {
+        return analyzeAndGenerate(environment, environment.getConfiguration().get(JVMConfigurationKeys.STUBS, false),
+                                  environment.getConfiguration().getList(JVMConfigurationKeys.SCRIPT_PARAMETERS));
     }
 
     @Nullable
     public static GenerationState analyzeAndGenerate(
-            K2JVMCompileEnvironmentConfiguration configuration,
+            JetCoreEnvironment environment,
             boolean stubs
     ) {
-        return analyzeAndGenerate(configuration, stubs,
-                                  configuration.getEnvironment().getConfiguration().getList(JVMConfigurationKeys.SCRIPT_PARAMETERS));
+        return analyzeAndGenerate(environment, stubs,
+                                  environment.getConfiguration().getList(JVMConfigurationKeys.SCRIPT_PARAMETERS));
     }
 
     @Nullable
     public static GenerationState analyzeAndGenerate(
-            K2JVMCompileEnvironmentConfiguration configuration,
+            JetCoreEnvironment environment,
             boolean stubs,
             List<AnalyzerScriptParameter> scriptParameters
     ) {
-        AnalyzeExhaust exhaust = analyze(configuration, scriptParameters, stubs);
+        AnalyzeExhaust exhaust = analyze(environment, scriptParameters, stubs);
 
         if (exhaust == null) {
             return null;
@@ -305,17 +296,16 @@ public class KotlinToJVMBytecodeCompiler {
 
         exhaust.throwIfError();
 
-        return generate(configuration, exhaust, stubs);
+        return generate(environment, exhaust, stubs);
     }
 
     @Nullable
     private static AnalyzeExhaust analyze(
-            final K2JVMCompileEnvironmentConfiguration configuration,
+            final JetCoreEnvironment environment,
             final List<AnalyzerScriptParameter> scriptParameters,
             boolean stubs) {
-        final JetCoreEnvironment environment = configuration.getEnvironment();
-        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(configuration.getEnvironment().getConfiguration().get(
-                CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY));
+        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(
+                environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY));
         final Predicate<PsiFile> filesToAnalyzeCompletely =
                 stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
         analyzerWithCompilerReport.analyzeAndReport(
@@ -339,10 +329,9 @@ public class KotlinToJVMBytecodeCompiler {
 
     @NotNull
     private static GenerationState generate(
-            K2JVMCompileEnvironmentConfiguration configuration,
+            final JetCoreEnvironment environment,
             AnalyzeExhaust exhaust,
             boolean stubs) {
-        final JetCoreEnvironment environment = configuration.getEnvironment();
         Project project = environment.getProject();
         Progress backendProgress = new Progress() {
             @Override
@@ -384,11 +373,10 @@ public class KotlinToJVMBytecodeCompiler {
             compilerConfiguration.put(JVMConfigurationKeys.SCRIPT_PARAMETERS, scriptParameters);
 
             JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, compilerConfiguration);
-            K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(environment, messageCollector);
 
             try {
                 JetScriptDefinitionProvider.getInstance(environment.getProject()).markFileAsScript(environment.getSourceFiles().get(0));
-                return compileScript(configuration, parentLoader);
+                return compileScript(environment, parentLoader);
             }
             catch (CompilationException e) {
                 messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(e),

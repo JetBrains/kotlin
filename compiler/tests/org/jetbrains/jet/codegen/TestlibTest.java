@@ -28,7 +28,6 @@ import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
@@ -79,8 +78,7 @@ public class TestlibTest extends CodegenTestCase {
 
     private TestSuite doBuildSuite() {
         try {
-            GenerationState generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(
-                    new K2JVMCompileEnvironmentConfiguration(myEnvironment), false);
+            GenerationState generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(myEnvironment, false);
 
             if (generationState == null) {
                 throw new RuntimeException("There were compilation errors");
