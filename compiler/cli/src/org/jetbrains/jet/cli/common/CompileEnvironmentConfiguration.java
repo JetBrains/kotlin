@@ -16,12 +16,9 @@
 
 package org.jetbrains.jet.cli.common;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-
-import java.util.List;
 
 /**
  * @author Pavel Talanov
@@ -30,8 +27,6 @@ public abstract class CompileEnvironmentConfiguration {
 
     @NotNull
     private final MessageCollector messageCollector;
-    @NotNull
-    private final List<CompilerPlugin> compilerPlugins = Lists.newArrayList();
 
     /**
      * NOTE: It's very important to call dispose for every object of this class or there will be memory leaks.
@@ -45,10 +40,5 @@ public abstract class CompileEnvironmentConfiguration {
     @NotNull
     public MessageCollector getMessageCollector() {
         return messageCollector;
-    }
-
-    @NotNull
-    public List<CompilerPlugin> getCompilerPlugins() {
-        return compilerPlugins;
     }
 }

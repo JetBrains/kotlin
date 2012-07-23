@@ -42,7 +42,6 @@ import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.*;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.jetbrains.k2js.facade.MainCallParameters;
-import org.jetbrains.k2js.utils.JetFileUtils;
 
 import java.io.File;
 import java.util.Arrays;
@@ -53,7 +52,7 @@ import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_L
 /**
  * @author Pavel Talanov
  */
-public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompileEnvironmentConfiguration> {
+public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
     public static void main(String... args) {
         doMain(new K2JSCompiler(), args);

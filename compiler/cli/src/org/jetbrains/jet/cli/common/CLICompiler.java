@@ -26,9 +26,9 @@ import org.jetbrains.jet.cli.common.messages.MessageRenderer;
 import org.jetbrains.jet.cli.common.messages.PrintingMessageCollector;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
+import org.jetbrains.jet.config.CompilerConfiguration;
 
 import java.io.PrintStream;
-import java.util.List;
 
 import static org.jetbrains.jet.cli.common.ExitCode.INTERNAL_ERROR;
 import static org.jetbrains.jet.cli.common.ExitCode.OK;
@@ -36,7 +36,7 @@ import static org.jetbrains.jet.cli.common.ExitCode.OK;
 /**
  * @author Pavel Talanov
  */
-public abstract class CLICompiler<A extends CompilerArguments, C extends CompileEnvironmentConfiguration> {
+public abstract class CLICompiler<A extends CompilerArguments> {
 
     @NotNull
     public ExitCode exec(@NotNull PrintStream errStream, @NotNull String... args) {
@@ -90,9 +90,8 @@ public abstract class CLICompiler<A extends CompilerArguments, C extends Compile
      * based tools to customise their own plugins
      */
     //TODO: add parameter annotations when KT-1863 is resolved
-    protected void configureEnvironment(@NotNull C configuration, @NotNull A arguments) {
-        List<CompilerPlugin> plugins = arguments.getCompilerPlugins();
-        configuration.getCompilerPlugins().addAll(plugins);
+    protected void configureEnvironment(@NotNull CompilerConfiguration configuration, @NotNull A arguments) {
+        configuration.addAll(CLIConfigurationKeys.COMPILER_PLUGINS, arguments.getCompilerPlugins());
     }
 
     @NotNull

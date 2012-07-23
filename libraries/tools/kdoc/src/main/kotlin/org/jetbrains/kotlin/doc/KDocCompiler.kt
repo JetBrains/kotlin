@@ -5,6 +5,8 @@ import org.jetbrains.jet.cli.common.CLICompiler
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler
 import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
 import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration
+import org.jetbrains.jet.config.CompilerConfiguration
+import org.jetbrains.jet.cli.common.CLIConfigurationKeys
 
 /**
 * Main for running the KDocCompiler
@@ -19,14 +21,9 @@ fun main(args: Array<String?>): Unit {
  */
 class KDocCompiler() : K2JVMCompiler() {
 
-    protected override fun configureEnvironment(configuration : K2JVMCompileEnvironmentConfiguration, arguments : K2JVMCompilerArguments) {
+    protected override fun configureEnvironment(configuration : CompilerConfiguration, arguments : K2JVMCompilerArguments) {
         super.configureEnvironment(configuration, arguments)
-        val coreEnvironment = configuration.getEnvironment()
-        if (coreEnvironment != null) {
-            val kdoc = KDoc(arguments as KDocArguments)
-            val plugins = configuration.getCompilerPlugins()
-            plugins.add(kdoc);
-        }
+        configuration.add(CLIConfigurationKeys.COMPILER_PLUGINS, KDoc(arguments as KDocArguments))
     }
 
     protected override fun createArguments() : K2JVMCompilerArguments {

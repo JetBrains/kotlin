@@ -28,6 +28,7 @@ import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.CompilerPluginContext;
 import org.jetbrains.jet.cli.common.messages.*;
@@ -357,9 +358,8 @@ public class KotlinToJVMBytecodeCompiler {
                                                                       BuiltinToJavaTypesMapping.ENABLED));
         generationState.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
 
-        List<CompilerPlugin> plugins = configuration.getCompilerPlugins();
         CompilerPluginContext context = new CompilerPluginContext(project, exhaust.getBindingContext(), environment.getSourceFiles());
-        for (CompilerPlugin plugin : plugins) {
+        for (CompilerPlugin plugin : environment.getConfiguration().getList(CLIConfigurationKeys.COMPILER_PLUGINS)) {
             plugin.processFiles(context);
         }
         return generationState;

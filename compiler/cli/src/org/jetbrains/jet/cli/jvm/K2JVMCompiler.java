@@ -47,7 +47,7 @@ import static org.jetbrains.jet.cli.common.ExitCode.*;
  * @author alex.tkachman
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
-public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMCompileEnvironmentConfiguration> {
+public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
     public static void main(String... args) {
         doMain(new K2JVMCompiler(), args);
@@ -108,7 +108,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
         messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
                                 CompilerMessageLocation.NO_LOCATION);
         try {
-            configureEnvironment(configuration, arguments);
+            configureEnvironment(compilerConfiguration, arguments);
 
             File jar = arguments.jar != null ? new File(arguments.jar) : null;
             File outputDir = arguments.outputDir != null ? new File(arguments.outputDir) : null;
@@ -157,8 +157,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
 
     // TODO this method is here only to workaround KT-2498
     @Override
-    protected void configureEnvironment(@NotNull K2JVMCompileEnvironmentConfiguration configuration,
-            @NotNull K2JVMCompilerArguments arguments) {
+    protected void configureEnvironment(@NotNull CompilerConfiguration configuration, @NotNull K2JVMCompilerArguments arguments) {
         super.configureEnvironment(configuration, arguments);
     }
 

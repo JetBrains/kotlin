@@ -19,6 +19,7 @@ package org.jetbrains.jet.buildtools.core;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.util.CompilerPathUtil;
@@ -83,7 +84,7 @@ public class BytecodeCompiler {
                                                                                             MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
 
         // lets register any compiler plugins
-        env.getCompilerPlugins().addAll(getCompilerPlugins());
+        configuration.addAll(CLIConfigurationKeys.COMPILER_PLUGINS, getCompilerPlugins());
 
         return env;
     }
