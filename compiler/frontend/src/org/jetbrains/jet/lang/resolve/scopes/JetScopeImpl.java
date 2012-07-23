@@ -95,4 +95,10 @@ public abstract class JetScopeImpl implements JetScope {
     @Override
     public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
     }
+
+    @NotNull
+    @Override
+    public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
+        return Collections.emptyList();
+    }
 }

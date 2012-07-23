@@ -1898,6 +1898,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/redeclarations/kt2247.kt");
             }
             
+            @TestMetadata("kt2438.kt")
+            public void testKt2438() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/redeclarations/kt2438.kt");
+            }
+            
             @TestMetadata("MultiFilePackageRedeclaration.kt")
             public void testMultiFilePackageRedeclaration() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/redeclarations/MultiFilePackageRedeclaration.kt");

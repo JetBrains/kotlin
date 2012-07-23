@@ -533,4 +533,10 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public Multimap<Name, DeclarationDescriptor> getDeclaredDescriptorsAccessibleBySimpleName() {
         return declaredDescriptorsAccessibleBySimpleName;
     }
+
+    @NotNull
+    @Override
+    public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
+        return declaredDescriptorsAccessibleBySimpleName.values();
+    }
 }
