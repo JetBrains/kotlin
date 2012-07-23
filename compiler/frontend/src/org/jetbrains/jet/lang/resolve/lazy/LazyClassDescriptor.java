@@ -86,7 +86,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             @NotNull JetClassLikeInfo classLikeInfo
     ) {
         this.resolveSession = resolveSession;
-        this.resolveSession.getTrace().record(BindingContext.CLASS, classLikeInfo.getCorrespondingClassOrObject(), this);
+
+        if (classLikeInfo.getCorrespondingClassOrObject() != null) {
+            this.resolveSession.getTrace().record(BindingContext.CLASS, classLikeInfo.getCorrespondingClassOrObject(), this);
+        }
 
         this.originalClassInfo = classLikeInfo;
         JetClassLikeInfo classLikeInfoForMembers =
