@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.util.slicedmap;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -82,6 +84,8 @@ public class Slices {
 
         private RewritePolicy rewritePolicy;
 
+        private String debugName;
+
         private SliceBuilder(RewritePolicy rewritePolicy) {
             this.rewritePolicy = rewritePolicy;
         }
@@ -101,12 +105,25 @@ public class Slices {
             return this;
         }
 
+        public SliceBuilder<K, V> setDebugName(@NotNull String debugName) {
+            this.debugName = debugName;
+            return this;
+        }
+
         public SliceBuilder<K, V> setKeyNormalizer(KeyNormalizer<K> keyNormalizer) {
             this.keyNormalizer = keyNormalizer;
             return this;
         }
 
         public RemovableSlice<K, V>  build() {
+            SliceWithOpposite<K, V> result = doBuild();
+            if (debugName != null) {
+                result.setDebugName(debugName);
+            }
+            return result;
+        }
+
+        private SliceWithOpposite<K, V> doBuild() {
             if (defaultValue != null) {
                 return new SliceWithOpposite<K, V>(rewritePolicy, opposite, keyNormalizer) {
                     @Override
@@ -133,7 +150,6 @@ public class Slices {
             }
             return new SliceWithOpposite<K, V>(rewritePolicy, opposite, keyNormalizer);
         }
-
     }
 
     public static class BasicRemovableSlice<K, V> extends BasicWritableSlice<K, V> implements RemovableSlice<K, V> {

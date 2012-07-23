@@ -43,7 +43,7 @@ public class BindingContextUtils {
             if (declarationDescriptor instanceof CallableMemberDescriptor) {
                 CallableMemberDescriptor callable = (CallableMemberDescriptor) declarationDescriptor;
                 if (callable.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
-                    throw new IllegalStateException("non-declaration descriptors should be filtered out earler: " + callable);
+                    throw new IllegalStateException("non-declaration descriptors should be filtered out earlier: " + callable);
                 }
             }
             //if (declarationDescriptor instanceof VariableAsFunctionDescriptor) {
@@ -56,8 +56,8 @@ public class BindingContextUtils {
         }
     };
 
-    static final ReadOnlySlice<DeclarationDescriptor, PsiElement> DESCRIPTOR_TO_DECLARATION =
-            Slices.<DeclarationDescriptor, PsiElement>sliceBuilder().setKeyNormalizer(DECLARATION_DESCRIPTOR_NORMALIZER).build();
+    /*package*/ static final ReadOnlySlice<DeclarationDescriptor, PsiElement> DESCRIPTOR_TO_DECLARATION =
+            Slices.<DeclarationDescriptor, PsiElement>sliceBuilder().setKeyNormalizer(DECLARATION_DESCRIPTOR_NORMALIZER).setDebugName("DESCRIPTOR_TO_DECLARATION").build();
 
     @Nullable
     public static PsiElement resolveToDeclarationPsiElement(@NotNull BindingContext bindingContext, @Nullable JetReferenceExpression referenceExpression) {
