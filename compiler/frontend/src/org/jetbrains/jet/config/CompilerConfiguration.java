@@ -39,6 +39,12 @@ public class CompilerConfiguration {
     }
 
     @NotNull
+    public <T> T get(@NotNull Key<T> key, @NotNull T defaultValue) {
+        T data = holder.getUserData(key);
+        return data == null ? defaultValue : data;
+    }
+
+    @NotNull
     public <T> List<T> getList(@NotNull Key<List<T>> key) {
         List<T> data = holder.getUserData(key);
         if (data == null) {

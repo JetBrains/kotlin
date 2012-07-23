@@ -37,7 +37,6 @@ import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
-import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -51,7 +50,10 @@ import org.jetbrains.jet.plugin.JetMainDetector;
 import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.utils.Progress;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collection;
@@ -114,9 +116,8 @@ public class KotlinToJVMBytecodeCompiler {
 
 
             K2JVMCompileEnvironmentConfiguration currentK2JVMConfiguration = new K2JVMCompileEnvironmentConfiguration(
-                    environment, configuration.getMessageCollector(), Collections.<AnalyzerScriptParameter>emptyList(),
-                    configuration.getBuiltinsScopeExtensionMode(), configuration.isStubs(),
-                    configuration.getBuiltinToJavaTypesMapping());
+                    environment, configuration.getMessageCollector()
+            );
             GenerationState generationState = analyzeAndGenerate(currentK2JVMConfiguration);
             if (generationState == null) {
                 return null;
@@ -278,7 +279,8 @@ public class KotlinToJVMBytecodeCompiler {
 
     @Nullable
     public static GenerationState analyzeAndGenerate(K2JVMCompileEnvironmentConfiguration configuration) {
-        return analyzeAndGenerate(configuration, configuration.isStubs(), configuration.getScript());
+        return analyzeAndGenerate(configuration, configuration.getEnvironment().getConfiguration().get(JVMConfigurationKeys.STUBS, false),
+                                  configuration.getEnvironment().getConfiguration().getList(JVMConfigurationKeys.SCRIPT_PARAMETERS));
     }
 
     @Nullable
@@ -286,9 +288,8 @@ public class KotlinToJVMBytecodeCompiler {
             K2JVMCompileEnvironmentConfiguration configuration,
             boolean stubs
     ) {
-        return analyzeAndGenerate(configuration, stubs, configuration.isScript()
-                                                        ? CommandLineScriptUtils.scriptParameters()
-                                                        : Collections.<AnalyzerScriptParameter>emptyList());
+        return analyzeAndGenerate(configuration, stubs,
+                                  configuration.getEnvironment().getConfiguration().getList(JVMConfigurationKeys.SCRIPT_PARAMETERS));
     }
 
     @Nullable
@@ -327,7 +328,8 @@ public class KotlinToJVMBytecodeCompiler {
                                 environment.getSourceFiles(),
                                 scriptParameters,
                                 filesToAnalyzeCompletely,
-                                configuration.getBuiltinsScopeExtensionMode());
+                                environment.getConfiguration().get(JVMConfigurationKeys.BUILTINS_SCOPE_EXTENSION_MODE_KEY,
+                                                                   BuiltinsScopeExtensionMode.ALL));
                     }
                 }, environment.getSourceFiles()
         );
@@ -350,7 +352,9 @@ public class KotlinToJVMBytecodeCompiler {
         };
         GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs), backendProgress,
                                                               exhaust, environment.getSourceFiles(),
-                                                              configuration.getBuiltinToJavaTypesMapping());
+                                                              environment.getConfiguration().get(
+                                                                      JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY,
+                                                                      BuiltinToJavaTypesMapping.ENABLED));
         generationState.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
 
         List<CompilerPlugin> plugins = configuration.getCompilerPlugins();
@@ -377,13 +381,10 @@ public class KotlinToJVMBytecodeCompiler {
             compilerConfiguration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, scriptPath);
             compilerConfiguration.addAll(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY,
                                          scriptDefinitions != null ? scriptDefinitions : Collections.<JetScriptDefinition>emptyList());
+            compilerConfiguration.put(JVMConfigurationKeys.SCRIPT_PARAMETERS, scriptParameters);
 
             JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, compilerConfiguration);
-            K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(
-                    environment, messageCollector, scriptParameters != null ? scriptParameters : Collections.<AnalyzerScriptParameter>emptyList(),
-                    BuiltinsScopeExtensionMode.ALL,
-                    false,
-                    BuiltinToJavaTypesMapping.ENABLED);
+            K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(environment, messageCollector);
 
             try {
                 JetScriptDefinitionProvider.getInstance(environment.getProject()).markFileAsScript(environment.getSourceFiles().get(0));

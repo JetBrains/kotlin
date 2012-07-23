@@ -37,7 +37,6 @@ import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -94,11 +93,17 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
 
         JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, compilerConfiguration);
         boolean builtins = arguments.builtins;
-        K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(
-                environment, messageCollector, arguments.script ? CommandLineScriptUtils.scriptParameters() : Collections.<AnalyzerScriptParameter>emptyList(),
-                builtins ? BuiltinsScopeExtensionMode.ONLY_STANDARD_CLASSES : BuiltinsScopeExtensionMode.ALL,
-                builtins,
-                builtins ? BuiltinToJavaTypesMapping.DISABLED : BuiltinToJavaTypesMapping.ENABLED);
+
+        compilerConfiguration.put(JVMConfigurationKeys.SCRIPT_PARAMETERS, arguments.script
+                                                                          ? CommandLineScriptUtils.scriptParameters()
+                                                                          : Collections.<AnalyzerScriptParameter>emptyList());
+        compilerConfiguration.put(JVMConfigurationKeys.BUILTINS_SCOPE_EXTENSION_MODE_KEY,
+                                  builtins? BuiltinsScopeExtensionMode.ONLY_STANDARD_CLASSES : BuiltinsScopeExtensionMode.ALL);
+        compilerConfiguration.put(JVMConfigurationKeys.STUBS, builtins);
+        compilerConfiguration.put(JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY,
+                                  builtins ? BuiltinToJavaTypesMapping.DISABLED : BuiltinToJavaTypesMapping.ENABLED);
+
+        K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(environment, messageCollector);
 
         messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
                                 CompilerMessageLocation.NO_LOCATION);

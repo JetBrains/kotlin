@@ -27,14 +27,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.util.CompilerPathUtil;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
-import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.PathUtil;
@@ -48,7 +45,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.jar.*;
 
@@ -104,10 +100,8 @@ public class CompileEnvironmentUtil {
         configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, moduleScriptFile);
         JetCoreEnvironment scriptEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(disposable, configuration);
 
-        GenerationState generationState = KotlinToJVMBytecodeCompiler
-                .analyzeAndGenerate(new K2JVMCompileEnvironmentConfiguration(scriptEnvironment, messageCollector, Collections.<AnalyzerScriptParameter>emptyList(),
-                                                                             BuiltinsScopeExtensionMode.ALL, false,
-                                                                             BuiltinToJavaTypesMapping.ENABLED), false);
+        GenerationState generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(
+                new K2JVMCompileEnvironmentConfiguration(scriptEnvironment, messageCollector), false);
         if (generationState == null) {
             throw new CompileEnvironmentException("Module script " + moduleScriptFile + " analyze failed");
         }

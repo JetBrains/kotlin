@@ -22,19 +22,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.util.CompilerPathUtil;
-import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.*;
-import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.ANNOTATIONS_PATH_KEY;
@@ -84,9 +79,8 @@ public class BytecodeCompiler {
 
         configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(sourceRoots));
         JetCoreEnvironment environment = new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), configuration);
-        K2JVMCompileEnvironmentConfiguration
-                env = new K2JVMCompileEnvironmentConfiguration(environment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, Collections.<AnalyzerScriptParameter>emptyList(),
-                                                               BuiltinsScopeExtensionMode.ALL, false, BuiltinToJavaTypesMapping.ENABLED);
+        K2JVMCompileEnvironmentConfiguration env = new K2JVMCompileEnvironmentConfiguration(environment,
+                                                                                            MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
 
         // lets register any compiler plugins
         env.getCompilerPlugins().addAll(getCompilerPlugins());

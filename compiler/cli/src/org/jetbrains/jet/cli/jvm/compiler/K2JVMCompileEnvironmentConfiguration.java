@@ -20,58 +20,25 @@ import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CompileEnvironmentConfiguration;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
-import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-
-import java.util.List;
 
 /**
  * @author abreslav
  */
 public class K2JVMCompileEnvironmentConfiguration extends CompileEnvironmentConfiguration {
     private final JetCoreEnvironment environment;
-    private final List<AnalyzerScriptParameter> scriptParameters;
-    private final BuiltinsScopeExtensionMode builtinsScopeExtensionMode;
-    private final boolean stubs;
-    private final BuiltinToJavaTypesMapping builtinToJavaTypesMapping;
 
     /**
      * NOTE: It's very important to call dispose for every object of this class or there will be memory leaks.
      *
      * @see Disposer
      */
-    public K2JVMCompileEnvironmentConfiguration(@NotNull JetCoreEnvironment environment, @NotNull MessageCollector messageCollector,
-            List<AnalyzerScriptParameter> scriptParameters, BuiltinsScopeExtensionMode builtinsScopeExtensionMode, boolean stubs, BuiltinToJavaTypesMapping builtinToJavaTypesMapping) {
+    public K2JVMCompileEnvironmentConfiguration(@NotNull JetCoreEnvironment environment,
+            @NotNull MessageCollector messageCollector) {
         super(messageCollector);
         this.environment = environment;
-        this.scriptParameters = scriptParameters;
-        this.builtinsScopeExtensionMode = builtinsScopeExtensionMode;
-        this.stubs = stubs;
-        this.builtinToJavaTypesMapping = builtinToJavaTypesMapping;
     }
 
     public JetCoreEnvironment getEnvironment() {
         return environment;
-    }
-
-    public boolean isScript() {
-        return scriptParameters != null;
-    }
-
-    public List<AnalyzerScriptParameter> getScript() {
-        return scriptParameters;
-    }
-
-    public BuiltinsScopeExtensionMode getBuiltinsScopeExtensionMode() {
-        return builtinsScopeExtensionMode;
-    }
-
-    public boolean isStubs() {
-        return stubs;
-    }
-
-    public BuiltinToJavaTypesMapping getBuiltinToJavaTypesMapping() {
-        return builtinToJavaTypesMapping;
     }
 }
