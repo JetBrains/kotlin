@@ -92,8 +92,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
             return renderedDecl;
         } else {
             if (mergeKotlinAndJava) {
-                return renderedDecl + "\nOriginal: " + XmlStringUtil.escapeString(
-                        new JavaDocumentationProvider().getQuickNavigateInfo(element, originalElement));
+                return renderedDecl + "\nOriginal: " + new JavaDocumentationProvider().getQuickNavigateInfo(element, originalElement);
             } else {
                 return null;
             }
