@@ -41,4 +41,8 @@ public final class NumberTest extends SingleFileTranslationTest {
     public void testByteAndShortConversions() throws Exception {
         fooBoxTest();
     }
+
+    public void testDivision() throws Exception {
+        fooBoxIsValue("SUCCESS");
+    }
 }

@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
@@ -33,6 +34,7 @@ import org.jetbrains.k2js.translate.operation.OperatorTable;
 
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.intrinsic.functions.factories.NumberConversionFIF.INTEGER_NUMBER_TYPES;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 
@@ -62,6 +64,25 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             return (JsExpression) numberRangeConstructorInvocation;
         }
     };
+
+    @NotNull
+    private static final FunctionIntrinsic INTEGER_DIVISION_INTRINSIC = new FunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(@Nullable JsExpression receiver,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context) {
+            assert receiver != null;
+            TemporaryVariable left = context.declareTemporary(receiver);
+            assert arguments.size() == 1;
+            TemporaryVariable right = context.declareTemporary(arguments.get(0));
+            JsBinaryOperation divRes = new JsBinaryOperation(JsBinaryOperator.DIV, left.reference(), right.reference());
+            JsBinaryOperation modRes = new JsBinaryOperation(JsBinaryOperator.MOD, left.reference(), right.reference());
+            JsBinaryOperation fractionalPart = new JsBinaryOperation(JsBinaryOperator.DIV, modRes, right.reference());
+            return AstUtil.newSequence(left.assignmentExpression(), right.assignmentExpression(), subtract(divRes, fractionalPart));
+        }
+    };
+
     @NotNull
     private static final NamePredicate BINARY_OPERATIONS = new NamePredicate(OperatorConventions.BINARY_OPERATION_NAMES.values());
 
@@ -77,20 +98,14 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     @NotNull
     @Override
     public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
+        if (pattern(INTEGER_NUMBER_TYPES + ".div").apply(descriptor)) {
+            return INTEGER_DIVISION_INTRINSIC;
+        }
         if (descriptor.getName().equals(Name.identifier("rangeTo"))) {
             return RANGE_TO_INTRINSIC;
         }
         final JsBinaryOperator operator = getOperator(descriptor);
-        return new FunctionIntrinsic() {
-            @NotNull
-            @Override
-            public JsExpression apply(@Nullable JsExpression receiver,
-                    @NotNull List<JsExpression> arguments,
-                    @NotNull TranslationContext context) {
-                assert arguments.size() == 1 : "Binary operator should have a receiver and one argument";
-                return new JsBinaryOperation(operator, receiver, arguments.get(0));
-            }
-        };
+        return new PrimitiveBinaryOperationFunctionIntrinsic(operator);
     }
 
     @NotNull
@@ -104,5 +119,25 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             return JsBinaryOperator.BIT_XOR;
         }
         return OperatorTable.getBinaryOperator(token);
+    }
+
+    private static class PrimitiveBinaryOperationFunctionIntrinsic extends FunctionIntrinsic {
+
+        @NotNull
+        private final JsBinaryOperator operator;
+
+        private PrimitiveBinaryOperationFunctionIntrinsic(@NotNull JsBinaryOperator operator) {
+            this.operator = operator;
+        }
+
+        @NotNull
+        @Override
+        public JsExpression apply(@Nullable JsExpression receiver,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context) {
+            assert receiver != null;
+            assert arguments.size() == 1 : "Binary operator should have a receiver and one argument";
+            return new JsBinaryOperation(operator, receiver, arguments.get(0));
+        }
     }
 }
