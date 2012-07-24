@@ -248,6 +248,12 @@ var kotlin = {set:function (receiver, key, value) {
         append: throwAbstractFunctionInvocationError("Appendable#append")
     });
 
+    Kotlin.Closeable = Kotlin.$createClass({
+        initialize: function () {
+        },
+        close: throwAbstractFunctionInvocationError("Closeable#close")
+    });
+
     Kotlin.parseInt = function (str) {
         return parseInt(str, 10);
     };
