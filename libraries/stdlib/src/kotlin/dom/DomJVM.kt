@@ -1,5 +1,5 @@
 /**
- * JVM specific API implementations using JAXB and so forth which would not be used when compiling to JS
+ * JVM specific API implementations using JAXP and so forth which would not be used when compiling to JS
  */
 package kotlin.dom
 
@@ -19,6 +19,7 @@ import javax.xml.transform.stream.StreamResult
 import org.w3c.dom.*
 import org.xml.sax.InputSource
 
+// JavaScript style properties - TODO could auto-generate these
 val Node.nodeName: String
 get() = getNodeName() ?: ""
 

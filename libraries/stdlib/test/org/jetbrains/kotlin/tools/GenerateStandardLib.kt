@@ -69,6 +69,7 @@ fun main(args: Array<String>) {
     val jsCoreDir = File(srcDir, "../../../../js/js.libraries/src/core")
     require(jsCoreDir.exists())
     generateDomAPI(File(jsCoreDir, "dom.kt"))
+    generateDomEventsAPI(File(jsCoreDir, "domEvents.kt"))
 
     val otherArrayNames = arrayList("Boolean", "Byte", "Char", "Short", "Int", "Long", "Float", "Double")
 
