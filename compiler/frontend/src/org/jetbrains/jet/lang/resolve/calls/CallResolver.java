@@ -21,6 +21,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -137,6 +138,9 @@ public class CallResolver {
 
     @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveFunctionCall(@NotNull BasicResolutionContext context) {
+
+        ProgressIndicatorProvider.checkCanceled();
+
         List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> prioritizedTasks;
         
         JetExpression calleeExpression = context.call.getCalleeExpression();

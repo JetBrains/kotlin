@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.calls;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
+import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -107,6 +108,9 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
     private static <D extends CallableDescriptor, F extends D> void doComputeTasks(@NotNull JetScope scope, @NotNull ReceiverDescriptor receiver,
             @NotNull Name name, @NotNull ResolutionTaskHolder<D, F> result,
             @NotNull BasicResolutionContext context, @NotNull CallableDescriptorCollector<? extends D> callableDescriptorCollector) {
+
+        ProgressIndicatorProvider.checkCanceled();
+
         AutoCastServiceImpl autoCastService = new AutoCastServiceImpl(context.dataFlowInfo, context.trace.getBindingContext());
         List<ReceiverDescriptor> implicitReceivers = Lists.newArrayList();
         scope.getImplicitReceiversHierarchy(implicitReceivers);

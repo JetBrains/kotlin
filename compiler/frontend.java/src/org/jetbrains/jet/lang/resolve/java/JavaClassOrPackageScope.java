@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Sets;
+import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiPackage;
@@ -27,7 +28,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * @author Stepan Koltsov
@@ -74,8 +74,11 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
             allDescriptors = Sets.newHashSet();
 
             if (resolverScopeData.psiClass != null) {
+
+                ProgressIndicatorProvider.checkCanceled();
                 allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(resolverScopeData));
 
+                ProgressIndicatorProvider.checkCanceled();
                 allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(resolverScopeData));
 
                 // TODO: Trying to hack the situation when we produce namespace descriptor for java class and still want to see inner classes
@@ -83,7 +86,7 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
                     allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
                             resolverScopeData.classOrNamespaceDescriptor, resolverScopeData.psiClass, false));
                 }
-                else  {
+                else {
                     allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
                             resolverScopeData.classOrNamespaceDescriptor, resolverScopeData.psiClass,
                             resolverScopeData.staticMembers));
@@ -117,6 +120,7 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
                     }
 
                     if (psiClass.hasModifierProperty(PsiModifier.PUBLIC)) {
+                        ProgressIndicatorProvider.checkCanceled();
                         ClassDescriptor classDescriptor = descriptorResolver
                                 .resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
                         if (classDescriptor != null) {
