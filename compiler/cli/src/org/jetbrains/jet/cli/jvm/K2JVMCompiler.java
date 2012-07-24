@@ -57,7 +57,9 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
     @Override
     @NotNull
     protected ExitCode doExecute(K2JVMCompilerArguments arguments, PrintingMessageCollector messageCollector, Disposable rootDisposable) {
-        CompilerConfiguration compilerConfiguration = createCompilerConfiguration(arguments);
+        CompilerConfiguration configuration = new CompilerConfiguration();
+        configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(arguments));
+        configuration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, getAnnotationsPath(arguments));
 
         final List<String> argumentsSourceDirs = arguments.getSourceDirs();
         if (!arguments.script &&
@@ -66,50 +68,50 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             arguments.freeArgs.isEmpty() &&
             (argumentsSourceDirs == null || argumentsSourceDirs.size() == 0)) {
 
-            ReplFromTerminal.run(rootDisposable, compilerConfiguration);
+            ReplFromTerminal.run(rootDisposable, configuration);
             return ExitCode.OK;
         }
         else if (arguments.module != null) {
             // TODO add sources from modules
         }
         else if (arguments.script) {
-            compilerConfiguration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs.get(0));
+            configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs.get(0));
         }
         else {
             // TODO ideally we'd unify to just having a single field that supports multiple files/dirs
             if (arguments.getSourceDirs() != null) {
                 for (String source : arguments.getSourceDirs()) {
-                    compilerConfiguration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, source);
+                    configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, source);
                 }
             }
             else {
                 if (arguments.src != null) {
-                    compilerConfiguration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.src);
+                    configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.src);
                 }
                 for (String freeArg : arguments.freeArgs) {
-                    compilerConfiguration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, freeArg);
+                    configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, freeArg);
                 }
             }
         }
 
-        JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, compilerConfiguration);
+        JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, configuration);
         boolean builtins = arguments.builtins;
 
-        compilerConfiguration.put(JVMConfigurationKeys.SCRIPT_PARAMETERS, arguments.script
+        configuration.put(JVMConfigurationKeys.SCRIPT_PARAMETERS, arguments.script
                                                                           ? CommandLineScriptUtils.scriptParameters()
                                                                           : Collections.<AnalyzerScriptParameter>emptyList());
-        compilerConfiguration.put(JVMConfigurationKeys.BUILTINS_SCOPE_EXTENSION_MODE_KEY,
+        configuration.put(JVMConfigurationKeys.BUILTINS_SCOPE_EXTENSION_MODE_KEY,
                                   builtins? BuiltinsScopeExtensionMode.ONLY_STANDARD_CLASSES : BuiltinsScopeExtensionMode.ALL);
-        compilerConfiguration.put(JVMConfigurationKeys.STUBS, builtins);
-        compilerConfiguration.put(JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY,
+        configuration.put(JVMConfigurationKeys.STUBS, builtins);
+        configuration.put(JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY,
                                   builtins ? BuiltinToJavaTypesMapping.DISABLED : BuiltinToJavaTypesMapping.ENABLED);
 
-        compilerConfiguration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
+        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
         messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
                                 CompilerMessageLocation.NO_LOCATION);
         try {
-            configureEnvironment(compilerConfiguration, arguments);
+            configureEnvironment(configuration, arguments);
 
             File jar = arguments.jar != null ? new File(arguments.jar) : null;
             File outputDir = arguments.outputDir != null ? new File(arguments.outputDir) : null;
@@ -169,14 +171,6 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
     @Override
     public ExitCode exec(PrintStream errStream, K2JVMCompilerArguments arguments) {
         return super.exec(errStream, arguments);
-    }
-
-    @NotNull
-    private static CompilerConfiguration createCompilerConfiguration(@NotNull K2JVMCompilerArguments arguments) {
-        CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(arguments));
-        configuration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, getAnnotationsPath(arguments));
-        return configuration;
     }
 
     @NotNull
