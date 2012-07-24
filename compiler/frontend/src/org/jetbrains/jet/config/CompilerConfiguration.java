@@ -17,39 +17,34 @@
 package org.jetbrains.jet.config;
 
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.UserDataHolderBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.*;
 
 /**
  * @author Evgeny Gerashchenko
  * @since 7/3/12
  */
 public class CompilerConfiguration {
-    private final UserDataHolderBase holder = new UserDataHolderBase();
+    private final Map<Key, Object> map = new HashMap<Key, Object>();
     private boolean readOnly = false;
 
     @Nullable
     public <T> T get(@NotNull Key<T> key) {
-        T data = holder.getUserData(key);
+        T data = (T) map.get(key);
         return data == null ? null : unmodifiable(data);
     }
 
     @NotNull
     public <T> T get(@NotNull Key<T> key, @NotNull T defaultValue) {
-        T data = holder.getUserData(key);
+        T data = (T) map.get(key);
         return data == null ? defaultValue : unmodifiable(data);
     }
 
     @NotNull
     public <T> List<T> getList(@NotNull Key<List<T>> key) {
-        List<T> data = holder.getUserData(key);
+        List<T> data = (List<T>) map.get(key);
         if (data == null) {
             return Collections.emptyList();
         }
@@ -60,24 +55,30 @@ public class CompilerConfiguration {
 
     public <T> void put(@NotNull Key<T> key, @Nullable T value) {
         checkReadOnly();
-        holder.putUserData(key, value);
+        map.put(key, value);
     }
 
     public <T> void add(@NotNull Key<List<T>> key, @NotNull T value) {
         checkReadOnly();
-        List<T> list = holder.putUserDataIfAbsent(key, new CopyOnWriteArrayList<T>());
+        if (map.get(key) == null) {
+            map.put(key, new ArrayList<T>());
+        }
+        List<T> list = (List<T>) map.get(key);
         list.add(value);
     }
 
-    public <T> void addAll(@NotNull Key<List<T>> key, @NotNull Collection<T> value) {
+    public <T> void addAll(@NotNull Key<List<T>> key, @NotNull Collection<T> values) {
         checkReadOnly();
-        List<T> list = holder.putUserDataIfAbsent(key, new CopyOnWriteArrayList<T>());
-        list.addAll(value);
+        if (map.get(key) == null) {
+            map.put(key, new ArrayList<T>());
+        }
+        List<T> list = (List<T>) map.get(key);
+        list.addAll(values);
     }
 
     public CompilerConfiguration copy() {
         CompilerConfiguration copy = new CompilerConfiguration();
-        holder.copyUserDataTo(copy.holder);
+        copy.map.putAll(map);
         return copy;
     }
 
