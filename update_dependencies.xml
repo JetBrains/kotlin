@@ -112,10 +112,10 @@
             <unzip src="dependencies/download/asm-4.0-bin.zip" dest="dependencies/download/asm">
                 <patternset>
                     <include name="asm-4.0/lib/asm-util-4.0.jar"/>
-                    <include name="asm-4.0/lib/asm-tree-4.0.jar"/>
-                    <include name="asm-4.0/lib/asm-commons-4.0.jar"/>
+                    <!--<include name="asm-4.0/lib/asm-tree-4.0.jar"/>-->
+                    <!--<include name="asm-4.0/lib/asm-commons-4.0.jar"/>-->
                     <include name="asm-4.0/lib/asm-analysis-4.0.jar"/>
-                    <include name="asm-4.0/lib/asm-4.0.jar"/>
+                    <!--<include name="asm-4.0/lib/asm-4.0.jar"/>-->
                     <include name="asm-4.0/src.zip"/>
                 </patternset>
                 <mapper type="flatten"/>
@@ -128,6 +128,7 @@
 
             <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${basedir}/dependencies/jarjar.jar"/>
 
+            <!--
             <jarjar jarfile="dependencies/jetbrains-asm-all-4.0.jar">
                 <zipfileset src="dependencies/download/asm/asm-tree-4.0.jar"/>
                 <zipfileset src="dependencies/download/asm/asm-commons-4.0.jar"/>
@@ -135,6 +136,7 @@
 
                 <rule pattern="org.objectweb.asm.**" result="org.jetbrains.asm4.@1"/>
             </jarjar>
+            -->
 
             <jarjar jarfile="dependencies/jetbrains-asm-util-4.0.jar">
                 <zipfileset src="dependencies/download/asm/asm-util-4.0.jar"/>
@@ -193,6 +195,7 @@
             <copy file="ideaSDK/lib/log4j.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/xstream.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/xpp3-1.1.4-min.jar" todir="${core}"/>
+            <copy file="ideaSDK/lib/asm4-all.jar" todir="${core}"/>
 
             <!-- TODO temporary workaround since util-rt is not packaged into intellij-core.jar -->
             <copy file="ideaSDK/lib/util.jar" todir="${core}"/>

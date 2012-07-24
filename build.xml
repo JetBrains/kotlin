@@ -24,7 +24,6 @@
         <fileset dir="${basedir}/lib" includes="**/*.jar"/>
         <fileset dir="${basedir}/dependencies" includes="jline.jar"/>
         <fileset dir="${basedir}/dependencies" includes="jansi.jar"/>
-        <fileset dir="${basedir}/dependencies" includes="jetbrains-asm-all-4.0.jar"/>
         <fileset dir="${basedir}/dependencies" includes="jetbrains-asm-util-4.0.jar"/>
         <fileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
     </path>
@@ -215,7 +214,6 @@
             <zipgroupfileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
             <zipgroupfileset dir="${basedir}/dependencies" includes="jline.jar"/>
             <zipgroupfileset dir="${basedir}/dependencies" includes="jansi.jar"/>
-            <zipgroupfileset dir="${basedir}/dependencies" includes="jetbrains-asm-all-4.0.jar"/>
             <zipgroupfileset dir="${basedir}/dependencies" includes="jetbrains-asm-util-4.0.jar"/>
             <zipgroupfileset dir="${basedir}/dependencies" includes="jetbrains-asm-analysis-4.0.jar"/>
 

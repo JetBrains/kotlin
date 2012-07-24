@@ -2,7 +2,6 @@
   <library name="intellij-core">
     <CLASSES>
       <root url="file://$PROJECT_DIR$/ideaSDK/core" />
-      <root url="jar://$PROJECT_DIR$/dependencies/jetbrains-asm-all-4.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
