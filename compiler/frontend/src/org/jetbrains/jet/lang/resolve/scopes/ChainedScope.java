@@ -166,4 +166,10 @@ public class ChainedScope implements JetScope {
         }
         return allDescriptors;
     }
+
+    @NotNull
+    @Override
+    public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
+        throw new UnsupportedOperationException();
+    }
 }

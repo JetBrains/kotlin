@@ -260,4 +260,10 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     // a generic implementation can't do this properly
     @Override
     public abstract String toString();
+
+    @NotNull
+    @Override
+    public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
+        return getAllDescriptors();
+    }
 }

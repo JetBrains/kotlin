@@ -116,6 +116,11 @@ public class ErrorUtils {
             return Collections.emptyList();
         }
 
+        @NotNull
+        @Override
+        public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
+            return Collections.emptyList();
+        }
     }
 
     private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<AnnotationDescriptor>emptyList(), Modality.OPEN, Name.special("<ERROR CLASS>")) {

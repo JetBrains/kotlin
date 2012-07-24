@@ -97,4 +97,7 @@ public interface JetScope {
      * @param result
      */
     void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result);
+
+    @NotNull
+    Collection<DeclarationDescriptor> getOwnDeclaredDescriptors();
 }

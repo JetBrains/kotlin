@@ -19,6 +19,8 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -93,7 +95,7 @@ public class DeclarationResolver {
         resolveFunctionAndPropertyHeaders();
         importsResolver.processMembersImports(rootScope);
         checkRedeclarationsInNamespaces();
-        checkClassObjectInnerClassNames();
+        checkRedeclarationsInInnerClassNames();
     }
 
 
@@ -300,22 +302,31 @@ public class DeclarationResolver {
         return declarations;
     }
 
-    private void checkClassObjectInnerClassNames() {
+    private void checkRedeclarationsInInnerClassNames() {
         for (MutableClassDescriptor classDescriptor : context.getClasses().values()) {
+            Collection<DeclarationDescriptor> allDescriptors = classDescriptor.getScopeForMemberLookup().getOwnDeclaredDescriptors();
+
             MutableClassDescriptorLite classObj = classDescriptor.getClassObjectDescriptor();
-            if (classObj == null) {
-                continue;
+            if (classObj != null) {
+                Collection<DeclarationDescriptor> classObjDescriptors = classObj.getScopeForMemberLookup().getOwnDeclaredDescriptors();
+                if (!classObjDescriptors.isEmpty()) {
+                    allDescriptors = Lists.newArrayList(allDescriptors);
+                    allDescriptors.addAll(classObjDescriptors);
+                }
             }
 
-            Collection<ClassDescriptor> myInnerClasses = classDescriptor.getInnerClasses();
-            Collection<ClassDescriptor> classObjInnerClasses = classObj.getInnerClasses();
+            Multimap<Name, DeclarationDescriptor> descriptorMap = HashMultimap.create();
+            for (DeclarationDescriptor desc : allDescriptors) {
+                if (desc instanceof ClassDescriptor) {
+                    descriptorMap.put(desc.getName(), desc);
+                }
+            }
 
-            for (ClassDescriptor myInnerClass : myInnerClasses) {
-                for (ClassDescriptor classObjInnerClass : classObjInnerClasses) {
-                    if (myInnerClass.getName().equals(classObjInnerClass.getName())) {
-                        trace.report(REDECLARATION.on(BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), myInnerClass), myInnerClass.getName().getName()));
-                        trace.report(REDECLARATION.on(BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classObjInnerClass), classObjInnerClass.getName().getName()));
-                        break;
+            for (Name name : descriptorMap.keySet()) {
+                Collection<DeclarationDescriptor> descriptors = descriptorMap.get(name);
+                if (descriptors.size() > 1) {
+                    for (DeclarationDescriptor descriptor : descriptors) {
+                        trace.report(REDECLARATION.on(BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), (ClassDescriptor)descriptor), descriptor.getName().getName()));
                     }
                 }
             }
