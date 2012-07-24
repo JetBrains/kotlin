@@ -2,6 +2,7 @@
   <library name="intellij-core">
     <CLASSES>
       <root url="file://$PROJECT_DIR$/ideaSDK/core" />
+      <root url="jar://$PROJECT_DIR$/dependencies/jetbrains-asm-all-4.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
@@ -53,13 +54,10 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/compiler/forms-compiler/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/compiler/impl/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/compiler/javac2/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/compiler/notNull/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/compiler/openapi/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/idea-ui/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/openapi/src" />
-      <root url="jar://$USER_HOME$/Downloads/picocontainer-2.10-20100209.093751-5-sources.jar!/" />
-      <root url="jar://$USER_HOME$/Downloads/picocontainer-1.3-20061227.142936-4-sources.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/asm-3.3-src.zip!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/jetbrains-asm-all-4.0-src.zip!/" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/core" recursive="false" />
   </library>

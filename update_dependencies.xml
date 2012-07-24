@@ -1,12 +1,17 @@
 <project name="Update Dependencies" default="update">
-    <property name="build.zip" value="ideaIC-117.SNAPSHOT.win.zip"/>
 
     <target name="update" depends="fetch-third-party">
-        <execute_update/>
+        <execute_update
+            base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt343/67291:id"
+            build.zip="ideaIC-120.SNAPSHOT.win.zip"
+        />
     </target>
 
     <target name="jb_update" depends="fetch-third-party">
-        <execute_update teamcity="http://buildserver.labs.intellij.net" teamcity.build="bt2560"/>
+        <execute_update
+            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt24/1481384:id"
+            build.zip="ideaIC-120.214.win.zip"
+        />
     </target>
 
     <target name="update-no-third-party">
@@ -92,17 +97,79 @@
         <get src="http://repository.jetbrains.com/remote-repos/org/fusesource/jansi/jansi/1.9/jansi-1.9-sources.jar"
              dest="dependencies/download/jansi-1.9-sources.jar" usetimestamp="true"/>
         <copy file="dependencies/download/jansi-1.9-sources.jar" tofile="dependencies/jansi-sources.jar" overwrite="true"/>
+
+
+        <!-- ASM 4 -->
+        <asm4/>
     </target>
 
-    <macrodef name="execute_update">
-        <attribute name="teamcity" default="http://teamcity.jetbrains.com"/>
+    <macrodef name="asm4">
+        <sequential>
+            <get src="http://download.forge.objectweb.org/asm/asm-4.0-bin.zip"
+                 dest="dependencies/download/asm-4.0-bin.zip" usetimestamp="true"/>
 
-        <!-- IDEA CE 11.1 branch 117 -->
-        <attribute name="teamcity.build" default="bt365"/>
+            <delete dir="dependencies/download/asm" failonerror="false"/>
+            <unzip src="dependencies/download/asm-4.0-bin.zip" dest="dependencies/download/asm">
+                <patternset>
+                    <include name="asm-4.0/lib/asm-util-4.0.jar"/>
+                    <include name="asm-4.0/lib/asm-tree-4.0.jar"/>
+                    <include name="asm-4.0/lib/asm-commons-4.0.jar"/>
+                    <include name="asm-4.0/lib/asm-analysis-4.0.jar"/>
+                    <include name="asm-4.0/lib/asm-4.0.jar"/>
+                    <include name="asm-4.0/src.zip"/>
+                </patternset>
+                <mapper type="flatten"/>
+            </unzip>
+            <unzip src="dependencies/download/asm/src.zip" dest="dependencies/download/asm/src">
+                <patternset>
+                    <include name="**/*"/>
+                </patternset>
+            </unzip>
+
+            <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${basedir}/dependencies/jarjar.jar"/>
+
+            <jarjar jarfile="dependencies/jetbrains-asm-all-4.0.jar">
+                <zipfileset src="dependencies/download/asm/asm-tree-4.0.jar"/>
+                <zipfileset src="dependencies/download/asm/asm-commons-4.0.jar"/>
+                <zipfileset src="dependencies/download/asm/asm-4.0.jar"/>
+
+                <rule pattern="org.objectweb.asm.**" result="org.jetbrains.asm4.@1"/>
+            </jarjar>
+
+            <jarjar jarfile="dependencies/jetbrains-asm-util-4.0.jar">
+                <zipfileset src="dependencies/download/asm/asm-util-4.0.jar"/>
+
+                <rule pattern="org.objectweb.asm.**" result="org.jetbrains.asm4.@1"/>
+            </jarjar>
+
+            <jarjar jarfile="dependencies/jetbrains-asm-analysis-4.0.jar">
+                <zipfileset src="dependencies/download/asm/asm-analysis-4.0.jar"/>
+
+                <rule pattern="org.objectweb.asm.**" result="org.jetbrains.asm4.@1"/>
+            </jarjar>
+
+            <replaceregexp
+                match="org.objectweb.asm"
+                replace="org.jetbrains.asm4"
+              >
+                <fileset dir="dependencies/download/asm/src/">
+                    <include name="**/*.java"/>
+                </fileset>
+            </replaceregexp>
+
+            <move file="dependencies/download/asm/src/org/objectweb/asm"
+                    tofile="dependencies/download/asm/src/org/jetbrains/asm4"/>
+
+            <zip destfile="dependencies/jetbrains-asm-all-4.0-src.zip" basedir="dependencies/download/asm/src"/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="execute_update">
+        <attribute name="base.url" default="http://teamcity.example.com"/>
+        <attribute name="build.zip" default="http://teamcity.example.com"/>
 
         <sequential>
             <property name="core" value="ideaSDK/core"/>
-            <property name="tc" value="@{teamcity}/guestAuth/repository/download/@{teamcity.build}/.lastSuccessful"/>
 
             <delete dir="ideaSDK" failonerror="false">
                 <exclude name="config/**"/>
@@ -110,18 +177,16 @@
             </delete>
 
             <mkdir dir="${core}"/>
-            <get src="${tc}/core/intellij-core.jar" dest="${core}/intellij-core.jar"/>
-            <get src="${tc}/core/annotations.jar" dest="${core}/annotations.jar"/>
-            <get src="${tc}/core/asm.jar" dest="${core}/asm.jar"/>
-            <get src="${tc}/core/asm-commons.jar" dest="${core}/asm-commons.jar"/>
-            <get src="${tc}/core/cli-10.jar" dest="${core}/cli-10.jar"/>
-            <get src="${tc}/core/guava-11.0.1.jar" dest="${core}/guava-11.0.1.jar"/>
-            <get src="${tc}/core/picocontainer.jar" dest="${core}/picocontainer.jar"/>
-            <get src="${tc}/core/trove4j.jar" dest="${core}/trove4j.jar"/>
+            <get src="@{base.url}/core/intellij-core.jar" dest="${core}/intellij-core.jar" usetimestamp="true"/>
+            <get src="@{base.url}/core/annotations.jar" dest="${core}/annotations.jar" usetimestamp="true"/>
+            <get src="@{base.url}/core/cli-parser-1.1.jar" dest="${core}/cli-parser-1.1.jar" usetimestamp="true"/>
+            <get src="@{base.url}/core/guava-12.0.jar" dest="${core}/guava-12.0.jar" usetimestamp="true"/>
+            <get src="@{base.url}/core/picocontainer.jar" dest="${core}/picocontainer.jar" usetimestamp="true"/>
+            <get src="@{base.url}/core/trove4j.jar" dest="${core}/trove4j.jar" usetimestamp="true"/>
 
-            <get src="${tc}/${build.zip}" dest="ideaSDK/${build.zip}"/>
-            <unzip src="ideaSDK/${build.zip}" dest="ideaSDK"/>
-            <delete file="ideaSDK/${build.zip}"/>
+            <get src="@{base.url}/@{build.zip}" dest="ideaSDK/@{build.zip}" usetimestamp="true"/>
+            <unzip src="ideaSDK/@{build.zip}" dest="ideaSDK"/>
+            <delete file="ideaSDK/@{build.zip}"/>
 
             <copy file="ideaSDK/lib/jdom.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/jna.jar" todir="${core}"/>
@@ -140,7 +205,7 @@
             <delete file="ideaSDK/lib/junit.jar"/>
 
             <mkdir dir="ideaSDK/sources"/>
-            <get src="${tc}/sources.zip" dest="ideaSDK/sources/sources.zip"/>
+            <get src="@{base.url}/sources.zip" dest="ideaSDK/sources/sources.zip" usetimestamp="true"/>
         </sequential>
     </macrodef>
 </project>

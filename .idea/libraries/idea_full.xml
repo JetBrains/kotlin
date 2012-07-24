@@ -140,7 +140,6 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/compiler/forms-compiler/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/compiler/impl/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/compiler/javac2/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/compiler/notNull/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/compiler/openapi/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/idea-ui/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/openapi/src" />
@@ -148,8 +147,6 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/model/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/antLayout/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/jps-builders/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/src" />
-      <root url="jar://$PROJECT_DIR$/lib/asm-3.3-src.zip!/" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/lib" recursive="false" />
   </library>
