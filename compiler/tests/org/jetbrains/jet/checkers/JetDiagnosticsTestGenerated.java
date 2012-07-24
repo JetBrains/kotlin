@@ -2675,6 +2675,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/subtyping/kt2069.kt");
             }
             
+            @TestMetadata("kt304.kt")
+            public void testKt304() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/subtyping/kt304.kt");
+            }
+            
             @TestMetadata("kt-1457.kt")
             public void testKt_1457() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/subtyping/kt-1457.kt");
