@@ -61,6 +61,8 @@ import java.util.*;
  */
 public class JetShortNamesCache extends PsiShortNamesCache {
 
+    private static final PsiMethod[] NO_METHODS = new PsiMethod[0];
+    private static final PsiField[] NO_FIELDS = new PsiField[0];
     private final Project project;
     private final JavaElementFinder javaElementFinder;
 
@@ -290,13 +292,19 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     @NotNull
     @Override
     public PsiMethod[] getMethodsByName(@NonNls @NotNull String name, @NotNull GlobalSearchScope scope) {
-        return new PsiMethod[0];
+        return NO_METHODS;
     }
 
     @NotNull
     @Override
     public PsiMethod[] getMethodsByNameIfNotMoreThan(@NonNls @NotNull String name, @NotNull GlobalSearchScope scope, int maxCount) {
-        return new PsiMethod[0];
+        return NO_METHODS;
+    }
+
+    @NotNull
+    @Override
+    public PsiField[] getFieldsByNameIfNotMoreThan(@NonNls @NotNull String s, @NotNull GlobalSearchScope scope, int i) {
+        return NO_FIELDS;
     }
 
     @Override
@@ -318,7 +326,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     @NotNull
     @Override
     public PsiField[] getFieldsByName(@NotNull @NonNls String name, @NotNull GlobalSearchScope scope) {
-        return new PsiField[0];
+        return NO_FIELDS;
     }
 
     @NotNull

@@ -109,7 +109,7 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
 
     @Override
     protected void complete(final int time) {
-        new CodeCompletionHandlerBase(type, false, false, true).invokeCompletion(getProject(), getEditor(), time, false);
+        new CodeCompletionHandlerBase(type, false, false, true).invokeCompletion(getProject(), getEditor(), time, false, false);
 
         Lookup lookup = LookupManager.getActiveLookup(myEditor);
         myItems = lookup == null ? null : lookup.getItems().toArray(LookupElement.EMPTY_ARRAY);
