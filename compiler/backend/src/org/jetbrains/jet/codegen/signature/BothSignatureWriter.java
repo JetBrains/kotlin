@@ -29,11 +29,11 @@ import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
 import org.jetbrains.jet.rt.signature.JetSignatureVariance;
 import org.jetbrains.jet.rt.signature.JetSignatureWriter;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.Method;
-import org.objectweb.asm.signature.SignatureVisitor;
-import org.objectweb.asm.signature.SignatureWriter;
-import org.objectweb.asm.util.CheckSignatureAdapter;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.Method;
+import org.jetbrains.asm4.signature.SignatureVisitor;
+import org.jetbrains.asm4.signature.SignatureWriter;
+import org.jetbrains.asm4.util.CheckSignatureAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -18,8 +18,8 @@ package org.jetbrains.jet.codegen.signature;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.Method;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.Method;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.Progress;
-import org.objectweb.asm.commons.Method;
+import org.jetbrains.asm4.commons.Method;
 
 import java.util.Collection;
 import java.util.Collections;

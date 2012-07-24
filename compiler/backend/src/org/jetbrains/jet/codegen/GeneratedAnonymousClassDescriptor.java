@@ -20,8 +20,8 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.Method;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.Method;
 
 import java.util.ArrayList;
 import java.util.List;

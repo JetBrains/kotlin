@@ -32,15 +32,15 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
-import org.objectweb.asm.commons.Method;
+import org.jetbrains.asm4.Label;
+import org.jetbrains.asm4.MethodVisitor;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
+import org.jetbrains.asm4.commons.Method;
 
 import java.util.*;
 
-import static org.objectweb.asm.Opcodes.*;
+import static org.jetbrains.asm4.Opcodes.*;
 
 /**
  * @author max

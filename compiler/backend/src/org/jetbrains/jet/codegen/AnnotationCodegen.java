@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
-import org.objectweb.asm.*;
+import org.jetbrains.asm4.*;
 
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;

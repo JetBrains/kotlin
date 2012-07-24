@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
-import org.objectweb.asm.Type;
+import org.jetbrains.asm4.Type;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -19,8 +19,8 @@ package org.jetbrains.jet.codegen.signature.kotlin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.utils.BitSetUtils;
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.MethodVisitor;
+import org.jetbrains.asm4.AnnotationVisitor;
+import org.jetbrains.asm4.MethodVisitor;
 
 import java.util.BitSet;
 

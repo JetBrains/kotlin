@@ -22,8 +22,8 @@ import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
+import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.asm4.Type;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

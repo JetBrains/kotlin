@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
-import org.objectweb.asm.Opcodes;
+import org.jetbrains.asm4.Opcodes;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;

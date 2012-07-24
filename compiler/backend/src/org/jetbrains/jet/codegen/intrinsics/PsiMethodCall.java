@@ -22,8 +22,8 @@ import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 

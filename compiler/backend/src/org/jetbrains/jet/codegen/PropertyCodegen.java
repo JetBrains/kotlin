@@ -31,11 +31,11 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.asm4.FieldVisitor;
+import org.jetbrains.asm4.MethodVisitor;
+import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.BitSet;
 

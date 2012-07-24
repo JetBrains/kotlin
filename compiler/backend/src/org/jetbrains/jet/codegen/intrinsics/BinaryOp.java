@@ -23,9 +23,9 @@ import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 

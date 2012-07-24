@@ -42,14 +42,14 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibraryNames;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.jet.lang.types.ref.ClassName;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
+import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.asm4.Type;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.*;
 
-import static org.objectweb.asm.Opcodes.*;
+import static org.jetbrains.asm4.Opcodes.*;
 
 /**
  * @author yole

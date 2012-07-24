@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 
 /**
  * @author yole

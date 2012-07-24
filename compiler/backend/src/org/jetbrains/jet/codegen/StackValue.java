@@ -27,11 +27,11 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
-import org.objectweb.asm.commons.Method;
+import org.jetbrains.asm4.Label;
+import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
+import org.jetbrains.asm4.commons.Method;
 
 import java.util.List;
 

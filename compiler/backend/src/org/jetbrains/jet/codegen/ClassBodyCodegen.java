@@ -16,23 +16,22 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.progress.ProcessCanceledException;
+import org.jetbrains.asm4.MethodVisitor;
+import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.objectweb.asm.Opcodes.ACC_ABSTRACT;
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.jetbrains.asm4.Opcodes.ACC_ABSTRACT;
+import static org.jetbrains.asm4.Opcodes.ACC_PUBLIC;
 
 /**
  * @author max

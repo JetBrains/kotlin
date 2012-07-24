@@ -18,6 +18,8 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
@@ -29,11 +31,8 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibraryNames;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.List;
 

@@ -31,8 +31,8 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 

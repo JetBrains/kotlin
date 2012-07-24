@@ -27,8 +27,8 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 
