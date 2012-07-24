@@ -158,3 +158,8 @@ public trait Enumeration<E> {
     open public fun hasMoreElements() : Boolean
     open public fun nextElement() : E
 }
+
+native
+public class Date() {
+    public fun getTime() : Int = js.noImpl
+}
