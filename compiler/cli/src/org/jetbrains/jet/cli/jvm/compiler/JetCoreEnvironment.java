@@ -16,15 +16,21 @@
 
 package org.jetbrains.jet.cli.jvm.compiler;
 
-import com.intellij.core.JavaCoreEnvironment;
+import com.intellij.core.CoreJavaFileManager;
+import com.intellij.core.JavaCoreApplicationEnvironment;
+import com.intellij.core.JavaCoreProjectEnvironment;
 import com.intellij.lang.java.JavaParserDefinition;
 import com.intellij.mock.MockApplication;
+import com.intellij.mock.MockProject;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElementFinder;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.file.impl.JavaFileManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JavaElementFinder;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
@@ -47,12 +53,7 @@ import java.util.List;
 /**
  * @author yole
  */
-public class JetCoreEnvironment extends JavaCoreEnvironment {
-    private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
-    private final CoreAnnotationsProvider annotationsProvider;
-    private final CompilerConfiguration configuration;
-    private boolean initialized = false;
-
+public class JetCoreEnvironment extends JavaCoreApplicationEnvironment {
     @NotNull
     public static JetCoreEnvironment createCoreEnvironmentForJS(Disposable disposable, @NotNull CompilerConfiguration configuration) {
         return new JetCoreEnvironment(disposable, configuration);
@@ -62,6 +63,15 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
     public static JetCoreEnvironment createCoreEnvironmentForJVM(Disposable disposable, @NotNull CompilerConfiguration configuration) {
         return new JetCoreEnvironment(disposable, configuration);
     }
+
+    private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
+    private final CoreAnnotationsProvider annotationsProvider;
+
+    private final CompilerConfiguration configuration;
+
+    private boolean initialized = false;
+
+    private final JavaCoreProjectEnvironment projectEnvironment;
 
     public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerConfiguration configuration) {
         super(parentDisposable);
@@ -75,14 +85,18 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         registerParserDefinition(new JavaParserDefinition());
         registerParserDefinition(new JetParserDefinition());
 
+        projectEnvironment = new JavaCoreProjectEnvironment(parentDisposable, this);
 
-        myProject.registerService(JetFilesProvider.class, new CliJetFilesProvider(this));
-        Extensions.getArea(myProject)
+
+        MockProject project = projectEnvironment.getProject();
+        project.registerService(JetFilesProvider.class, new CliJetFilesProvider(this));
+        project.registerService(CoreJavaFileManager.class, (CoreJavaFileManager) ServiceManager.getService(project, JavaFileManager.class));
+        Extensions.getArea(project)
                 .getExtensionPoint(PsiElementFinder.EP_NAME)
-                .registerExtension(new JavaElementFinder(myProject));
+                .registerExtension(new JavaElementFinder(project));
 
         annotationsProvider = new CoreAnnotationsProvider();
-        myProject.registerService(ExternalAnnotationsProvider.class, annotationsProvider);
+        project.registerService(ExternalAnnotationsProvider.class, annotationsProvider);
 
         for (File path : configuration.getList(JVMConfigurationKeys.CLASSPATH_KEY)) {
             addToClasspath(path);
@@ -94,7 +108,7 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
             addSources(path);
         }
 
-        JetStandardLibrary.initialize(getProject());
+        JetStandardLibrary.initialize(project);
         initialized = true;
     }
 
@@ -104,6 +118,11 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
 
     public MockApplication getApplication() {
         return myApplication;
+    }
+
+    @NotNull
+    public Project getProject() {
+        return projectEnvironment.getProject();
     }
 
     private void addExternalAnnotationsRoot(VirtualFile root) {
@@ -146,12 +165,20 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         addSources(new File(path));
     }
 
-    @Override
     public void addToClasspath(File path) {
         if (initialized) {
             throw new IllegalStateException("Cannot add class path when JetCoreEnvironment is already initialized");
         }
-        super.addToClasspath(path);
+        if (path.isFile()) {
+            projectEnvironment.addJarToClassPath(path);
+        }
+        else {
+            final VirtualFile root = getLocalFileSystem().findFileByPath(path.getAbsolutePath());
+            if (root == null) {
+                throw new IllegalArgumentException("trying to add non-existing file to classpath: " + path);
+            }
+            projectEnvironment.addSourcesToClasspath(root);
+        }
     }
 
     public List<JetFile> getSourceFiles() {
