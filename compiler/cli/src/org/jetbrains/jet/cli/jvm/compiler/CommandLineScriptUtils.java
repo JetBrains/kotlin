@@ -32,6 +32,9 @@ public class CommandLineScriptUtils {
     private static final Name ARGS_NAME = Name.identifier("args");
     private static final JetTypeName ARGS_TYPE = JetTypeName.parse("jet.Array<jet.String>");
 
+    private CommandLineScriptUtils() {
+    }
+
     public static List<AnalyzerScriptParameter> scriptParameters() {
         AnalyzerScriptParameter argsParameter = new AnalyzerScriptParameter(ARGS_NAME, ARGS_TYPE);
         return Collections.singletonList(argsParameter);

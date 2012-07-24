@@ -30,6 +30,9 @@ import java.util.Collections;
  */
 public class GenerationUtils {
 
+    private GenerationUtils() {
+    }
+
     public static ClassFileFactory compileFileGetClassFileFactoryForTest(@NotNull JetFile psiFile) {
         return compileFileGetGenerationStateForTest(psiFile).getFactory();
     }
