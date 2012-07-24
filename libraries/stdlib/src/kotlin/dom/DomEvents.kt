@@ -1,17 +1,33 @@
 package kotlin.dom
 
-import org.w3c.dom.Document
+import java.io.Closeable
 import org.w3c.dom.Node
 import org.w3c.dom.events.*
-import java.io.Closeable
 
+/**
+* Turns an event handler function into an [EventListener]
+*/
+fun eventHandler(handler: (Event) -> Unit): EventListener {
+    return EventListenerHandler(handler)
+}
 
-fun <T: Event> eventHandler(eventType: Class<T>, handler: (T) -> Unit): EventListener {
-    return object : EventListener {
-        public override fun handleEvent(e: Event?) {
-            if (e != null && eventType.isInstance(e)) {
-                handler(e as T)
-            }
+private class EventListenerHandler(val handler: (Event) -> Unit): EventListener {
+    public override fun handleEvent(e: Event?) {
+        if (e != null) {
+            handler(e)
+        }
+    }
+/*
+    TODO: needs KT-2507 fixed
+
+    public override fun toString(): String? = "EventListenerHandler($handler)"
+*/
+}
+
+fun mouseEventHandler(handler: (MouseEvent) -> Unit): EventListener {
+    return eventHandler { e ->
+        if (e is MouseEvent) {
+            handler(e)
         }
     }
 }
@@ -20,31 +36,37 @@ fun <T: Event> eventHandler(eventType: Class<T>, handler: (T) -> Unit): EventLis
  * Registers a handler on the named event
  */
 public fun Node?.on(name: String, capture: Boolean, handler: (Event) -> Unit): Closeable? {
-    return on(name, capture, javaClass<Event>(), handler)
+    return on(name, capture, eventHandler(handler))
 }
 
-public fun <T: Event> Node?.on(name: String, capture: Boolean, eventType: Class<T>, handler: (T) -> Unit): Closeable? {
+/**
+ * Registers an [EventListener] on the named event
+ */
+public fun Node?.on(name: String, capture: Boolean, listener: EventListener): Closeable? {
     return if (this is EventTarget) {
-        val target: EventTarget = this
-        val listener = eventHandler(eventType, handler)
-        target.addEventListener(name, listener, capture)
-        object: Closeable {
-            public override fun close() {
-                target.removeEventListener(name, listener, capture)
-            }
-
-            public override fun toString(): String? = "CloseableEventListener($target, $name)"
-        }
+        addEventListener(name, listener, capture)
+        CloseableEventListener(this, listener, name, capture)
     } else {
         null
     }
 }
 
+private class CloseableEventListener(val target: EventTarget, val listener: EventListener, val name: String, val capture: Boolean): Closeable {
+    public override fun close() {
+        target.removeEventListener(name, listener, capture)
+    }
+
+/*
+    TODO: needs KT-2507 fixed
+
+    public override fun toString(): String? = "CloseableEventListener($target, $name)"
+*/
+}
 
 public fun Node?.onClick(capture: Boolean = false, handler: (MouseEvent) -> Unit): Closeable? {
-    return on("click", capture, javaClass<MouseEvent>(), handler)
+    return on("click", capture, mouseEventHandler(handler))
 }
 
 public fun Node?.onDoubleClick(capture: Boolean = false, handler: (MouseEvent) -> Unit): Closeable? {
-    return on("dblclick", capture, javaClass<MouseEvent>(), handler)
+    return on("dblclick", capture, mouseEventHandler(handler))
 }

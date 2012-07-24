@@ -43,7 +43,11 @@ fun generateDomEventsAPI(file: File): Unit {
 
 
     val classes: List<Class<*>> = arrayList(javaClass<DocumentEvent>(), javaClass<Event>(),
-            javaClass<EventListener>(), javaClass<EventTarget>(),
+            // TODO see domEventsCode.kt we manually hand craft this for now
+            // to get the implementation in JS
+            //
+            // javaClass<EventListener>(),
+            javaClass<EventTarget>(),
             javaClass<MouseEvent>(), javaClass<MutationEvent>(),
             javaClass<UIEvent>())
 
@@ -77,7 +81,7 @@ import js.noImpl
 
         fun parameterTypeName(klass: Class<out Any?>?): String {
             val answer = simpleTypeName(klass)
-            return if (answer == "String" || answer.endsWith("DocumentType")) {
+            return if (answer == "String" || answer == "Event" || answer.endsWith("DocumentType")) {
                 answer + "?"
             } else answer
         }

@@ -38,12 +38,8 @@ native public trait Event {
     }
 }
 
-native public trait EventListener {
-    public fun handleEvent(arg1: Event): Unit = js.noImpl
-}
-
 native public trait EventTarget {
-    public fun dispatchEvent(arg1: Event): Boolean = js.noImpl
+    public fun dispatchEvent(arg1: Event?): Boolean = js.noImpl
     public fun addEventListener(arg1: String?, arg2: EventListener, arg3: Boolean): Unit = js.noImpl
     public fun removeEventListener(arg1: String?, arg2: EventListener, arg3: Boolean): Unit = js.noImpl
 }
