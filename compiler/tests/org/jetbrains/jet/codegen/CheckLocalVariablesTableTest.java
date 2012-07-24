@@ -25,16 +25,13 @@ import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.asm4.*;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetLanguage;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.commons.EmptyVisitor;
 
 import java.io.File;
 import java.io.IOException;
@@ -189,13 +186,17 @@ public class CheckLocalVariablesTableTest extends TestCaseWithTmpdir {
 
     @NotNull
     private List<LocalVariable> readLocalVariable(ClassReader cr, final String methodName) throws Exception {
-        class Visitor extends EmptyVisitor {
+        class Visitor extends ClassVisitor {
             List<LocalVariable> readVariables = new ArrayList<LocalVariable>();
+
+            public Visitor() {
+                super(Opcodes.ASM4);
+            }
 
             @Override
             public MethodVisitor visitMethod(int access, String name, final String desc, final String signature, String[] exceptions) {
                 if (methodName.equals(name + desc)) {
-                    return new EmptyVisitor() {
+                    return new MethodVisitor(Opcodes.ASM4) {
                         @Override
                         public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
                             readVariables.add(new LocalVariable(name, desc, index));

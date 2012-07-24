@@ -27,6 +27,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.*;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
@@ -37,11 +38,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.junit.Assert;
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.commons.EmptyVisitor;
-import org.objectweb.asm.commons.Method;
+import org.jetbrains.asm4.commons.Method;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -59,6 +56,8 @@ import java.util.regex.Pattern;
  * @see CompileJavaAgainstKotlinTest
  */
 public class WriteSignatureTest extends TestCaseWithTmpdir {
+
+    private static final AnnotationVisitor EMPTY_ANNOTATION_VISITOR = new AnnotationVisitor(Opcodes.ASM4) {};
 
     private final File ktFile;
     private JetCoreEnvironment jetCoreEnvironment;
@@ -122,16 +121,20 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
         // ugly unreadable code begin
         FileInputStream classInputStream = new FileInputStream(tmpdir + "/" + className.replace('.', '/') + ".class");
         try {
-            class Visitor extends EmptyVisitor {
+            class Visitor extends ClassVisitor {
                 ActualSignature readSignature;
-                
+
+                public Visitor() {
+                    super(Opcodes.ASM4);
+                }
+
                 @Override
                 public MethodVisitor visitMethod(int access, String name, final String desc, final String signature, String[] exceptions) {
                     if (name.equals(methodName)) {
 
                         final int parameterCount = new Method(name, desc).getArgumentTypes().length;
 
-                        return new EmptyVisitor() {
+                        return new MethodVisitor(Opcodes.ASM4) {
                             String typeParameters = "";
                             String returnType;
                             String[] parameterTypes = new String[parameterCount];
@@ -139,7 +142,7 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
                             @Override
                             public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
                                 if (desc.equals(JvmStdlibNames.JET_METHOD.getDescriptor())) {
-                                    return new EmptyVisitor() {
+                                    return new AnnotationVisitor(Opcodes.ASM4) {
                                         @Override
                                         public void visit(String name, Object value) {
                                             if (name.equals(JvmStdlibNames.JET_METHOD_TYPE_PARAMETERS_FIELD)) {
@@ -151,25 +154,25 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
                                         }
 
                                         @Override
-                                        public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-                                            return new EmptyVisitor();
+                                        public AnnotationVisitor visitAnnotation(String s, String s1) {
+                                            return EMPTY_ANNOTATION_VISITOR;
                                         }
 
                                         @Override
                                         public AnnotationVisitor visitArray(String name) {
-                                            return new EmptyVisitor();
+                                            return EMPTY_ANNOTATION_VISITOR;
                                         }
                                     };
                                 }
                                 else {
-                                    return new EmptyVisitor();
+                                    return EMPTY_ANNOTATION_VISITOR;
                                 }
                             }
 
                             @Override
                             public AnnotationVisitor visitParameterAnnotation(final int parameter, String desc, boolean visible) {
                                 if (desc.equals(JvmStdlibNames.JET_VALUE_PARAMETER.getDescriptor())) {
-                                    return new EmptyVisitor() {
+                                    return new AnnotationVisitor(Opcodes.ASM4) {
                                         @Override
                                         public void visit(String name, Object value) {
                                             if (name.equals(JvmStdlibNames.JET_VALUE_PARAMETER_TYPE_FIELD)) {
@@ -178,24 +181,24 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
                                         }
 
                                         @Override
-                                        public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-                                            return new EmptyVisitor();
+                                        public AnnotationVisitor visitAnnotation(String name, String desc) {
+                                            return EMPTY_ANNOTATION_VISITOR;
                                         }
 
                                         @Override
                                         public AnnotationVisitor visitArray(String name) {
-                                            return new EmptyVisitor();
+                                            return EMPTY_ANNOTATION_VISITOR;
                                         }
                                     };
                                 }
                                 else {
-                                    return new EmptyVisitor();
+                                    return EMPTY_ANNOTATION_VISITOR;
                                 }
                             }
 
                             @Override
                             public AnnotationVisitor visitAnnotationDefault() {
-                                return new EmptyVisitor();
+                                return EMPTY_ANNOTATION_VISITOR;
                             }
 
                             @Nullable
