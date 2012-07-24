@@ -72,7 +72,6 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             return ExitCode.OK;
         }
         else if (arguments.module != null) {
-            // TODO add sources from modules
         }
         else if (arguments.script) {
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs.get(0));
