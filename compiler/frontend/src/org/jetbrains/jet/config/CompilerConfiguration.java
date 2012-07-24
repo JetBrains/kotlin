@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -32,16 +33,18 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class CompilerConfiguration {
     private final UserDataHolderBase holder = new UserDataHolderBase();
+    private boolean readOnly = false;
 
     @Nullable
     public <T> T get(@NotNull Key<T> key) {
-        return holder.getUserData(key);
+        T data = holder.getUserData(key);
+        return data == null ? null : unmodifiable(data);
     }
 
     @NotNull
     public <T> T get(@NotNull Key<T> key, @NotNull T defaultValue) {
         T data = holder.getUserData(key);
-        return data == null ? defaultValue : data;
+        return data == null ? defaultValue : unmodifiable(data);
     }
 
     @NotNull
@@ -56,15 +59,18 @@ public class CompilerConfiguration {
     }
 
     public <T> void put(@NotNull Key<T> key, @Nullable T value) {
+        checkReadOnly();
         holder.putUserData(key, value);
     }
 
     public <T> void add(@NotNull Key<List<T>> key, @NotNull T value) {
+        checkReadOnly();
         List<T> list = holder.putUserDataIfAbsent(key, new CopyOnWriteArrayList<T>());
         list.add(value);
     }
 
     public <T> void addAll(@NotNull Key<List<T>> key, @NotNull Collection<T> value) {
+        checkReadOnly();
         List<T> list = holder.putUserDataIfAbsent(key, new CopyOnWriteArrayList<T>());
         list.addAll(value);
     }
@@ -73,5 +79,34 @@ public class CompilerConfiguration {
         CompilerConfiguration copy = new CompilerConfiguration();
         holder.copyUserDataTo(copy.holder);
         return copy;
+    }
+
+    private void checkReadOnly() {
+        if (readOnly) {
+            throw new IllegalStateException("CompilerConfiguration is read-only");
+        }
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        if (readOnly != this.readOnly) {
+            checkReadOnly();
+            this.readOnly = readOnly;
+        }
+    }
+
+    @NotNull
+    private static <T> T unmodifiable(@NotNull T object) {
+        if (object instanceof List) {
+            return (T) Collections.unmodifiableList((List) object);
+        }
+        else if (object instanceof Map) {
+            return (T) Collections.unmodifiableMap((Map) object);
+        }
+        else if (object instanceof Collection) {
+            return (T) Collections.unmodifiableCollection((Collection) object);
+        }
+        else {
+            return object;
+        }
     }
 }

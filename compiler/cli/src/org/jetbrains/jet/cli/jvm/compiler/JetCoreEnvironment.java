@@ -76,7 +76,8 @@ public class JetCoreEnvironment {
     private boolean initialized = false;
 
     public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerConfiguration configuration) {
-        this.configuration = configuration;
+        this.configuration = configuration.copy();
+        this.configuration.setReadOnly(true);
 
         this.applicationEnvironment = new JavaCoreApplicationEnvironment(parentDisposable);
         applicationEnvironment.registerFileType(JetFileType.INSTANCE, "kt");
