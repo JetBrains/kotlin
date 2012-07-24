@@ -60,17 +60,28 @@ public class ScopeProvider {
 
         WritableScope writableScope = new WritableScopeImpl(
                 JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING, "File scope for declaration resolution");
-        writableScope.importScope(resolveSession.getPackageDescriptorByFqName(FqName.ROOT).getMemberScope());
-        List<JetImportDirective> importDirectives = Lists.newArrayList();
-        resolveSession.getModuleConfiguration().addDefaultImports(importDirectives);
-        importDirectives.addAll(file.getImportDirectives());
+
+        NamespaceDescriptor rootPackageDescriptor = resolveSession.getPackageDescriptorByFqName(FqName.ROOT);
+        if (rootPackageDescriptor == null) {
+            throw new IllegalStateException("Root package not found");
+        }
+
+        writableScope.importScope(rootPackageDescriptor.getMemberScope());
+
+        // Don't import twice
+        if (!packageDescriptor.getQualifiedName().equals(FqName.ROOT)) {
+            writableScope.importScope(packageDescriptor.getMemberScope());
+        }
+
+        List<JetImportDirective> importDirectives = Lists.newArrayList(file.getImportDirectives());
+
         ImportsResolver.processImportsInFile(true, writableScope, importDirectives,
-                                             resolveSession.getPackageDescriptorByFqName(FqName.ROOT).getMemberScope(),
+                                             rootPackageDescriptor.getMemberScope(),
                                              resolveSession.getModuleConfiguration(), resolveSession.getTrace(),
                                              resolveSession.getInjector().getQualifiedExpressionResolver());
-        writableScope.importScope(packageDescriptor.getMemberScope());
 
         writableScope.changeLockLevel(WritableScope.LockLevel.READING);
+
         // TODO: Cache
         return writableScope;
     }
