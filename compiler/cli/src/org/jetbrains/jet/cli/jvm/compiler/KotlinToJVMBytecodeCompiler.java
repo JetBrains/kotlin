@@ -73,13 +73,12 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     @Nullable
-    public static ClassFileFactory compileModule(JetCoreEnvironment environment, Module moduleBuilder, File directory) {
+    public static ClassFileFactory compileModule(CompilerConfiguration configuration, Module moduleBuilder, File directory) {
         if (moduleBuilder.getSourceFiles().isEmpty()) {
             throw new CompileEnvironmentException("No source files where defined");
         }
 
-        // TODO creating environment copy each time - not good. original environment shouldn't be passed at all
-        CompilerConfiguration compilerConfiguration = environment.getConfiguration().copy();
+        CompilerConfiguration compilerConfiguration = configuration.copy();
         for (String sourceFile : moduleBuilder.getSourceFiles()) {
             File source = new File(sourceFile);
             if (!source.isAbsolute()) {
@@ -121,7 +120,7 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     public static boolean compileModules(
-            JetCoreEnvironment environment,
+            CompilerConfiguration configuration,
             @NotNull List<Module> modules,
             @NotNull File directory,
             @Nullable File jarPath,
@@ -129,7 +128,7 @@ public class KotlinToJVMBytecodeCompiler {
             boolean jarRuntime) {
 
         for (Module moduleBuilder : modules) {
-            ClassFileFactory moduleFactory = compileModule(environment, moduleBuilder, directory);
+            ClassFileFactory moduleFactory = compileModule(configuration, moduleBuilder, directory);
             if (moduleFactory == null) {
                 return false;
             }

@@ -93,7 +93,6 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             }
         }
 
-        JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, configuration);
         boolean builtins = arguments.builtins;
 
         configuration.put(JVMConfigurationKeys.SCRIPT_PARAMETERS, arguments.script
@@ -122,15 +121,17 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                 List<Module> modules = CompileEnvironmentUtil.loadModuleScript(arguments.module, messageCollector);
                 messageCollector.setVerbose(oldVerbose);
                 File directory = new File(arguments.module).getParentFile();
-                noErrors = KotlinToJVMBytecodeCompiler.compileModules(environment, modules,
+                noErrors = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules,
                                                                       directory, jar, outputDir,
                                                                       arguments.includeRuntime);
             }
             else if (arguments.script) {
                 List<String> scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size());
+                JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, configuration);
                 noErrors = KotlinToJVMBytecodeCompiler.compileAndExecuteScript(environment, scriptArgs);
             }
             else {
+                JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, configuration);
                 noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, jar, outputDir, arguments.includeRuntime);
             }
             return noErrors ? OK : COMPILATION_ERROR;

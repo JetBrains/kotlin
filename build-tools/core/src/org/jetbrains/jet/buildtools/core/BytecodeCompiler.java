@@ -57,6 +57,12 @@ public class BytecodeCompiler {
      * @return compile environment instance
      */
     private JetCoreEnvironment env(String stdlib, String[] classpath, String[] sourceRoots) {
+        CompilerConfiguration configuration = createConfiguration(stdlib, classpath, sourceRoots);
+
+        return new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), configuration);
+    }
+
+    private CompilerConfiguration createConfiguration(String stdlib, String[] classpath, String[] sourceRoots) {
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.add(CLASSPATH_KEY, PathUtil.findRtJar());
         if ((stdlib != null) && (stdlib.trim().length() > 0)) {
@@ -83,8 +89,7 @@ public class BytecodeCompiler {
 
         // lets register any compiler plugins
         configuration.addAll(CLIConfigurationKeys.COMPILER_PLUGINS, getCompilerPlugins());
-
-        return new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), configuration);
+        return configuration;
     }
 
 
@@ -173,9 +178,9 @@ public class BytecodeCompiler {
             for (Module m : modules) {
                 sourcesRoots.addAll(m.getSourceFiles());
             }
-            JetCoreEnvironment env = env(stdlib, classpath, sourcesRoots.toArray(new String[0]));
+            CompilerConfiguration configuration = createConfiguration(stdlib, classpath, sourcesRoots.toArray(new String[0]));
             File directory = new File(module).getParentFile();
-            boolean success = KotlinToJVMBytecodeCompiler.compileModules(env, modules, directory, new File(jar), null, includeRuntime);
+            boolean success = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules, directory, new File(jar), null, includeRuntime);
             if (!success) {
                 throw new CompileEnvironmentException(errorMessage(module, false));
             }
