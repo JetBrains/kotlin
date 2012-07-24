@@ -43,7 +43,6 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase
 
     private List<TypeParameterDescriptor> typeParameters;
     private Collection<JetType> supertypes = Lists.newArrayList();
-    private final Collection<ClassDescriptor> innerClasses = Lists.newArrayList();
 
     private TypeConstructor typeConstructor;
 
@@ -210,10 +209,6 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase
         return innerClassesScope;
     }
 
-    public Collection<ClassDescriptor> getInnerClasses() {
-        return innerClasses;
-    }
-
 
     public void addSupertype(@NotNull JetType supertype) {
         if (!ErrorUtils.isErrorType(supertype)) {
@@ -281,7 +276,6 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase
                 @Override
                 public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
                     getScopeForMemberLookupAsWritableScope().addClassifierDescriptor(classDescriptor);
-                    innerClasses.add(classDescriptor);
                 }
 
                 @Override

@@ -162,4 +162,10 @@ public class SubstitutingScope implements JetScope {
         }
         return allDescriptors;
     }
+
+    @NotNull
+    @Override
+    public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
+        return substitute(workerScope.getOwnDeclaredDescriptors());
+    }
 }
