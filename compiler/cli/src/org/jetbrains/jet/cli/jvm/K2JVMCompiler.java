@@ -127,11 +127,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             }
             else if (arguments.script) {
                 List<String> scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size());
-                JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, configuration);
+                JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, configuration);
                 noErrors = KotlinToJVMBytecodeCompiler.compileAndExecuteScript(environment, scriptArgs);
             }
             else {
-                JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, configuration);
+                JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, configuration);
                 noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, jar, outputDir, arguments.includeRuntime);
             }
             return noErrors ? OK : COMPILATION_ERROR;

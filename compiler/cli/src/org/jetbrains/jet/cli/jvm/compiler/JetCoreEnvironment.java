@@ -55,15 +55,6 @@ import java.util.List;
  * @author yole
  */
 public class JetCoreEnvironment {
-    @NotNull
-    public static JetCoreEnvironment createCoreEnvironmentForJS(Disposable disposable, @NotNull CompilerConfiguration configuration) {
-        return new JetCoreEnvironment(disposable, configuration);
-    }
-
-    @NotNull
-    public static JetCoreEnvironment createCoreEnvironmentForJVM(Disposable disposable, @NotNull CompilerConfiguration configuration) {
-        return new JetCoreEnvironment(disposable, configuration);
-    }
 
     private final JavaCoreApplicationEnvironment applicationEnvironment;
     private final JavaCoreProjectEnvironment projectEnvironment;

@@ -149,7 +149,7 @@ public class ResolveDescriptorsFromExternalLibraries {
         else {
             CompilerConfiguration configuration =
                     CompileCompilerDependenciesTest.compilerConfigurationForTests(ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.FULL_JDK);
-            jetCoreEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(junk, configuration);
+            jetCoreEnvironment = new JetCoreEnvironment(junk, configuration);
             if (!PathUtil.findRtJar().equals(jar)) {
                 throw new RuntimeException("rt.jar mismatch: " + jar + ", " + PathUtil.findRtJar());
             }

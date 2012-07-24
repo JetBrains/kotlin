@@ -101,7 +101,7 @@ public class CompileEnvironmentUtil {
         configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, moduleScriptFile);
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
-        JetCoreEnvironment scriptEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(disposable, configuration);
+        JetCoreEnvironment scriptEnvironment = new JetCoreEnvironment(disposable, configuration);
 
         GenerationState generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(scriptEnvironment, false);
         if (generationState == null) {

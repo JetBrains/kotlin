@@ -61,7 +61,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
-        return JetCoreEnvironment.createCoreEnvironmentForJVM(getTestRootDisposable(), new CompilerConfiguration());
+        return new JetCoreEnvironment(getTestRootDisposable(), new CompilerConfiguration());
     }
 
     @NotNull

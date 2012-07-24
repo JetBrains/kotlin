@@ -103,8 +103,7 @@ public class KotlinToJVMBytecodeCompiler {
         Disposable parentDisposable = CompileEnvironmentUtil.createMockDisposable();
         JetCoreEnvironment moduleEnvironment = null;
         try {
-            moduleEnvironment = JetCoreEnvironment.createCoreEnvironmentForJVM(parentDisposable,
-                                                                         compilerConfiguration);
+            moduleEnvironment = new JetCoreEnvironment(parentDisposable, compilerConfiguration);
 
 
             GenerationState generationState = analyzeAndGenerate(moduleEnvironment);
@@ -371,7 +370,7 @@ public class KotlinToJVMBytecodeCompiler {
                                          scriptDefinitions != null ? scriptDefinitions : Collections.<JetScriptDefinition>emptyList());
             compilerConfiguration.put(JVMConfigurationKeys.SCRIPT_PARAMETERS, scriptParameters);
 
-            JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, compilerConfiguration);
+            JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, compilerConfiguration);
 
             try {
                 JetScriptDefinitionProvider.getInstance(environment.getProject()).markFileAsScript(environment.getSourceFiles().get(0));
