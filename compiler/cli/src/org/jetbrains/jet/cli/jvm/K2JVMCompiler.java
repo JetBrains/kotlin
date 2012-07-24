@@ -149,6 +149,13 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
         return new K2JVMCompilerArguments();
     }
 
+    // TODO this method is here only to workaround KT-2498
+    @Override
+    protected void configureEnvironment(@NotNull K2JVMCompileEnvironmentConfiguration configuration,
+            @NotNull K2JVMCompilerArguments arguments) {
+        super.configureEnvironment(configuration, arguments);
+    }
+
     //TODO: Hacked! Be sure that our kotlin stuff builds correctly before you remove.
     // our compiler throws method not found error
     // probably relates to KT-1863... well, may be not
