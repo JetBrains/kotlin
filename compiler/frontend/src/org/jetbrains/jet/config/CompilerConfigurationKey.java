@@ -16,19 +16,22 @@
 
 package org.jetbrains.jet.config;
 
-import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
-
-import java.util.List;
+import com.intellij.openapi.util.Key;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Evgeny Gerashchenko
- * @since 7/9/12
+ * @since 7/24/12
  */
-public class CommonConfigurationKeys {
-    private CommonConfigurationKeys() {
+public class CompilerConfigurationKey<T> {
+    Key<T> ideaKey;
+
+    private CompilerConfigurationKey(@NotNull @NonNls String name) {
+        ideaKey = Key.create(name);
     }
 
-    public static final CompilerConfigurationKey<List<String>> SOURCE_ROOTS_KEY = CompilerConfigurationKey.create("source roots");
-
-    public static final CompilerConfigurationKey<List<JetScriptDefinition>> SCRIPT_DEFINITIONS_KEY = CompilerConfigurationKey.create("script definitions");
+    public static <T> CompilerConfigurationKey<T> create(@NotNull @NonNls String name) {
+        return new CompilerConfigurationKey<T>(name);
+    }
 }

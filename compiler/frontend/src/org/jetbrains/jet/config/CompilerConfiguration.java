@@ -31,20 +31,20 @@ public class CompilerConfiguration {
     private boolean readOnly = false;
 
     @Nullable
-    public <T> T get(@NotNull Key<T> key) {
-        T data = (T) map.get(key);
+    public <T> T get(@NotNull CompilerConfigurationKey<T> key) {
+        T data = (T) map.get(key.ideaKey);
         return data == null ? null : unmodifiable(data);
     }
 
     @NotNull
-    public <T> T get(@NotNull Key<T> key, @NotNull T defaultValue) {
-        T data = (T) map.get(key);
+    public <T> T get(@NotNull CompilerConfigurationKey<T> key, @NotNull T defaultValue) {
+        T data = (T) map.get(key.ideaKey);
         return data == null ? defaultValue : unmodifiable(data);
     }
 
     @NotNull
-    public <T> List<T> getList(@NotNull Key<List<T>> key) {
-        List<T> data = (List<T>) map.get(key);
+    public <T> List<T> getList(@NotNull CompilerConfigurationKey<List<T>> key) {
+        List<T> data = (List<T>) map.get(key.ideaKey);
         if (data == null) {
             return Collections.emptyList();
         }
@@ -53,26 +53,28 @@ public class CompilerConfiguration {
         }
     }
 
-    public <T> void put(@NotNull Key<T> key, @Nullable T value) {
+    public <T> void put(@NotNull CompilerConfigurationKey<T> key, @Nullable T value) {
         checkReadOnly();
-        map.put(key, value);
+        map.put(key.ideaKey, value);
     }
 
-    public <T> void add(@NotNull Key<List<T>> key, @NotNull T value) {
+    public <T> void add(@NotNull CompilerConfigurationKey<List<T>> key, @NotNull T value) {
         checkReadOnly();
-        if (map.get(key) == null) {
-            map.put(key, new ArrayList<T>());
+        Key<List<T>> ideaKey = key.ideaKey;
+        if (map.get(ideaKey) == null) {
+            map.put(ideaKey, new ArrayList<T>());
         }
-        List<T> list = (List<T>) map.get(key);
+        List<T> list = (List<T>) map.get(ideaKey);
         list.add(value);
     }
 
-    public <T> void addAll(@NotNull Key<List<T>> key, @NotNull Collection<T> values) {
+    public <T> void addAll(@NotNull CompilerConfigurationKey<List<T>> key, @NotNull Collection<T> values) {
         checkReadOnly();
-        if (map.get(key) == null) {
-            map.put(key, new ArrayList<T>());
+        Key<List<T>> ideaKey = key.ideaKey;
+        if (map.get(ideaKey) == null) {
+            map.put(ideaKey, new ArrayList<T>());
         }
-        List<T> list = (List<T>) map.get(key);
+        List<T> list = (List<T>) map.get(ideaKey);
         list.addAll(values);
     }
 
