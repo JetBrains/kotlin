@@ -17,14 +17,13 @@
 package org.jetbrains.jet.plugin.completion;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.CommentUtil;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
@@ -38,7 +37,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -239,6 +237,23 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         }
     }
 
+    private static class SimplePrefixMatcher extends PrefixMatcher {
+        protected SimplePrefixMatcher(String prefix) {
+            super(prefix);
+        }
+
+        @Override
+        public boolean prefixMatches(@NotNull String name) {
+            return StringUtil.startsWithIgnoreCase(name, getPrefix());
+        }
+
+        @NotNull
+        @Override
+        public PrefixMatcher cloneWithPrefix(@NotNull String prefix) {
+            return new SimplePrefixMatcher(prefix);
+        }
+    }
+
     public static class KeywordsCompletionProvider extends CompletionProvider<CompletionParameters> {
 
         private final Collection<LookupElement> elements;
@@ -266,13 +281,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         @Override
         protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
                                       @NotNull final CompletionResultSet result) {
-            result.addAllElements(Iterables.filter(elements, new Predicate<LookupElement>() {
-                @Override
-                public boolean apply(@Nullable LookupElement element) {
-                    assert element != null;
-                    return result.getPrefixMatcher().isStartMatch(element.getLookupString());
-                }
-            }));
+            result.withPrefixMatcher(new SimplePrefixMatcher(result.getPrefixMatcher().getPrefix())).addAllElements(elements);
         }
     }
 
