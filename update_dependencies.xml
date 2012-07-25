@@ -1,4 +1,5 @@
 <project name="Update Dependencies" default="update">
+    <property name="idea.sdk.fetch.needed" value="true"/>
 
     <target name="update" depends="fetch-third-party">
         <execute_update
@@ -154,22 +155,33 @@
         <attribute name="build.zip" default="ideaIC-XXX.SNAPSHOT.win.zip"/>
 
         <sequential>
+            <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
             <property name="core" value="ideaSDK/core"/>
 
-            <delete dir="ideaSDK" failonerror="false">
-                <exclude name="config/**"/>
-                <exclude name="system/**"/>
-            </delete>
+            <if>
+                <istrue value="${idea.sdk.fetch.needed}"/>
 
-            <mkdir dir="${core}"/>
-            <get src="@{base.url}/core/intellij-core.jar" dest="${core}/intellij-core.jar" usetimestamp="true"/>
-            <get src="@{base.url}/core/annotations.jar" dest="${core}/annotations.jar" usetimestamp="true"/>
-            <get src="@{base.url}/core/cli-parser-1.1.jar" dest="${core}/cli-parser-1.1.jar" usetimestamp="true"/>
-            <get src="@{base.url}/core/guava-12.0.jar" dest="${core}/guava-12.0.jar" usetimestamp="true"/>
-            <get src="@{base.url}/core/picocontainer.jar" dest="${core}/picocontainer.jar" usetimestamp="true"/>
-            <get src="@{base.url}/core/trove4j.jar" dest="${core}/trove4j.jar" usetimestamp="true"/>
+                <then>
+                    <delete dir="ideaSDK" failonerror="false">
+                        <exclude name="config/**"/>
+                        <exclude name="system/**"/>
+                    </delete>
 
-            <get src="@{base.url}/@{build.zip}" dest="ideaSDK/@{build.zip}" usetimestamp="true"/>
+                    <mkdir dir="${core}"/>
+                    <get src="@{base.url}/core/intellij-core.jar" dest="${core}/intellij-core.jar" usetimestamp="true"/>
+                    <get src="@{base.url}/core/annotations.jar" dest="${core}/annotations.jar" usetimestamp="true"/>
+                    <get src="@{base.url}/core/cli-parser-1.1.jar" dest="${core}/cli-parser-1.1.jar" usetimestamp="true"/>
+                    <get src="@{base.url}/core/guava-12.0.jar" dest="${core}/guava-12.0.jar" usetimestamp="true"/>
+                    <get src="@{base.url}/core/picocontainer.jar" dest="${core}/picocontainer.jar" usetimestamp="true"/>
+                    <get src="@{base.url}/core/trove4j.jar" dest="${core}/trove4j.jar" usetimestamp="true"/>
+
+                    <get src="@{base.url}/@{build.zip}" dest="ideaSDK/@{build.zip}" usetimestamp="true"/>
+
+                    <mkdir dir="ideaSDK/sources"/>
+                    <get src="@{base.url}/sources.zip" dest="ideaSDK/sources/sources.zip" usetimestamp="true"/>
+                </then>
+            </if>
+
             <unzip src="ideaSDK/@{build.zip}" dest="ideaSDK"/>
             <delete file="ideaSDK/@{build.zip}"/>
 
@@ -190,8 +202,6 @@
             -->
             <delete file="ideaSDK/lib/junit.jar"/>
 
-            <mkdir dir="ideaSDK/sources"/>
-            <get src="@{base.url}/sources.zip" dest="ideaSDK/sources/sources.zip" usetimestamp="true"/>
         </sequential>
     </macrodef>
 </project>
