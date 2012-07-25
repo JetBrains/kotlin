@@ -92,7 +92,7 @@
       <delete file="${compiler.version.java.bk}" quiet="true"/>
   </target>
 
-    <target name="pre_build" depends="writeVersionToTemplateFiles, cleanupArtifacts, dist, generateInjectors">
+    <target name="pre_build" depends="writeVersionToTemplateFiles, cleanupArtifacts">
     </target>
 
     <target name="zipArtifact">
