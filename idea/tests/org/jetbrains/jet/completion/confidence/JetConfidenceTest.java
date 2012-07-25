@@ -77,6 +77,7 @@ public class JetConfidenceTest extends LightCompletionTestCase {
 
     @Override
     protected void complete() {
-        new CodeCompletionHandlerBase(CompletionType.BASIC, false, true, true).invokeCompletion(getProject(), getEditor(), 0, false, false);
+        new CodeCompletionHandlerBase(CompletionType.BASIC, false, true, true).invokeCompletion(
+                getProject(), getEditor(), 0, false, true);
     }
 }
