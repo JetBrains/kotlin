@@ -31,7 +31,7 @@ public class CompletionWeigherTest extends CompletionAutoPopupTestCase {
     }
 
     public void testTemplatesAndKeywordsFirst() {
-        doTest("va", "val ... = ...", "var ... = ...", "vararg", "values", "variables");
+        doTest("va", "val ... = ...", "var ... = ...", "vararg", "private", "values", "variables");
     }
 
     public void doTest(String type, @NonNls String... expected) {
