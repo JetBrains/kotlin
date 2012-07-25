@@ -53,7 +53,7 @@ import java.util.List;
 /**
  * @author yole
  */
-public class JetCoreEnvironment extends JavaCoreApplicationEnvironment {
+public class JetCoreEnvironment {
     @NotNull
     public static JetCoreEnvironment createCoreEnvironmentForJS(Disposable disposable, @NotNull CompilerConfiguration configuration) {
         return new JetCoreEnvironment(disposable, configuration);
@@ -64,29 +64,29 @@ public class JetCoreEnvironment extends JavaCoreApplicationEnvironment {
         return new JetCoreEnvironment(disposable, configuration);
     }
 
+    private final JavaCoreApplicationEnvironment applicationEnvironment;
+    private final JavaCoreProjectEnvironment projectEnvironment;
     private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
+
     private final CoreAnnotationsProvider annotationsProvider;
 
     private final CompilerConfiguration configuration;
 
     private boolean initialized = false;
 
-    private final JavaCoreProjectEnvironment projectEnvironment;
-
     public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerConfiguration configuration) {
-        super(parentDisposable);
         this.configuration = configuration;
 
-        registerFileType(JetFileType.INSTANCE, "kt");
-        registerFileType(JetFileType.INSTANCE, "kts");
-        registerFileType(JetFileType.INSTANCE, "ktm");
-        registerFileType(JetFileType.INSTANCE, JetParser.KTSCRIPT_FILE_SUFFIX); // should be renamed to kts
-        registerFileType(JetFileType.INSTANCE, "jet");
-        registerParserDefinition(new JavaParserDefinition());
-        registerParserDefinition(new JetParserDefinition());
+        this.applicationEnvironment = new JavaCoreApplicationEnvironment(parentDisposable);
+        applicationEnvironment.registerFileType(JetFileType.INSTANCE, "kt");
+        applicationEnvironment.registerFileType(JetFileType.INSTANCE, "kts");
+        applicationEnvironment.registerFileType(JetFileType.INSTANCE, "ktm");
+        applicationEnvironment.registerFileType(JetFileType.INSTANCE, JetParser.KTSCRIPT_FILE_SUFFIX); // should be renamed to kts
+        applicationEnvironment.registerFileType(JetFileType.INSTANCE, "jet");
+        applicationEnvironment.registerParserDefinition(new JavaParserDefinition());
+        applicationEnvironment.registerParserDefinition(new JetParserDefinition());
 
-        projectEnvironment = new JavaCoreProjectEnvironment(parentDisposable, this);
-
+        projectEnvironment = new JavaCoreProjectEnvironment(parentDisposable, applicationEnvironment);
 
         MockProject project = projectEnvironment.getProject();
         project.registerService(JetFilesProvider.class, new CliJetFilesProvider(this));
@@ -116,8 +116,9 @@ public class JetCoreEnvironment extends JavaCoreApplicationEnvironment {
         return configuration;
     }
 
+    @NotNull
     public MockApplication getApplication() {
-        return myApplication;
+        return applicationEnvironment.getApplication();
     }
 
     @NotNull
@@ -139,7 +140,7 @@ public class JetCoreEnvironment extends JavaCoreApplicationEnvironment {
             }
         }
         else {
-            VirtualFile fileByPath = getLocalFileSystem().findFileByPath(file.getAbsolutePath());
+            VirtualFile fileByPath = applicationEnvironment.getLocalFileSystem().findFileByPath(file.getAbsolutePath());
             if (fileByPath != null) {
                 PsiFile psiFile = PsiManager.getInstance(getProject()).findFile(fileByPath);
                 if (psiFile instanceof JetFile) {
@@ -154,7 +155,7 @@ public class JetCoreEnvironment extends JavaCoreApplicationEnvironment {
             return;
         }
 
-        VirtualFile vFile = getLocalFileSystem().findFileByPath(path);
+        VirtualFile vFile = applicationEnvironment.getLocalFileSystem().findFileByPath(path);
         if (vFile == null) {
             throw new CompileEnvironmentException("File/directory not found: " + path);
         }
@@ -173,7 +174,7 @@ public class JetCoreEnvironment extends JavaCoreApplicationEnvironment {
             projectEnvironment.addJarToClassPath(path);
         }
         else {
-            final VirtualFile root = getLocalFileSystem().findFileByPath(path.getAbsolutePath());
+            final VirtualFile root = applicationEnvironment.getLocalFileSystem().findFileByPath(path.getAbsolutePath());
             if (root == null) {
                 throw new IllegalArgumentException("trying to add non-existing file to classpath: " + path);
             }
