@@ -89,13 +89,16 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
             configureByFileNoComplete(getBeforeFileName());
             setType(type);
 
-            complete(time);
-
             if (lookupString != null || tailText != null) {
+                complete(time);
+
                 LookupElement item = getExistentLookupElement(lookupString, tailText);
                 if (item != null) {
-                    selectItem(item, '\t');
+                    selectItem(item, '\n');
                 }
+            }
+            else {
+                forceCompleteFirst(time);
             }
 
             checkResultByFile(getAfterFileName());
@@ -163,5 +166,12 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
     @Override
     protected Sdk getProjectJDK() {
         return PluginTestCaseBase.jdkFromIdeaHome();
+    }
+
+    protected void forceCompleteFirst(int time) {
+        complete(time);
+        if (myItems != null && myItems.length > 1) {
+            selectItem(myItems[0]);
+        }
     }
 }
