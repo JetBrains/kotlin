@@ -17,7 +17,9 @@
 package org.jetbrains.jet.plugin.completion;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.CommentUtil;
 import com.intellij.codeInsight.completion.*;
@@ -28,12 +30,15 @@ import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.filters.*;
-import com.intellij.psi.filters.position.*;
+import com.intellij.psi.filters.position.FilterPattern;
+import com.intellij.psi.filters.position.LeftNeighbour;
+import com.intellij.psi.filters.position.PositionElementFilter;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -250,20 +255,25 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                     }
 
                     if (!FUNCTION_KEYWORDS.contains(keyword)) {
-                        return lookupElementBuilder.setInsertHandler(KEYWORDS_INSERT_HANDLER);
+                        return lookupElementBuilder.withInsertHandler(KEYWORDS_INSERT_HANDLER);
                     }
 
-                    return lookupElementBuilder.setInsertHandler(FUNCTION_INSERT_HANDLER);
+                    return lookupElementBuilder.withInsertHandler(FUNCTION_INSERT_HANDLER);
                 }
             });
         }
 
         @Override
         protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
-                                      @NotNull CompletionResultSet result) {
-            result.addAllElements(elements);
+                                      @NotNull final CompletionResultSet result) {
+            result.addAllElements(Iterables.filter(elements, new Predicate<LookupElement>() {
+                @Override
+                public boolean apply(@Nullable LookupElement element) {
+                    assert element != null;
+                    return result.getPrefixMatcher().isStartMatch(element.getLookupString());
+                }
+            }));
         }
-
     }
 
     public JetKeywordCompletionContributor() {
