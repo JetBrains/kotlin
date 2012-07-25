@@ -16,7 +16,9 @@
 
 package org.jetbrains.jet.plugin.search;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
@@ -31,14 +33,19 @@ import org.jetbrains.jet.lang.psi.JetClass;
  */
 public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, PsiElement> {
     @Override
-    public void processQuery(@NotNull PsiElement queryParameters, @NotNull final Processor<PsiElement> consumer) {
+    public void processQuery(@NotNull final PsiElement queryParameters, @NotNull final Processor<PsiElement> consumer) {
         if (queryParameters instanceof JetClass) {
-            final JetLightClass psiClass = JetLightClass.wrapDelegate((JetClass) queryParameters);
-            final Query<PsiClass> query = ClassInheritorsSearch.search(psiClass, true);
+            JetLightClass psiClass = ApplicationManager.getApplication().runReadAction(new Computable<JetLightClass>() {
+                @Override
+                public JetLightClass compute() {
+                    return JetLightClass.wrapDelegate((JetClass) queryParameters);
+                }
+            });
+            Query<PsiClass> query = ClassInheritorsSearch.search(psiClass, true);
             query.forEach(new Processor<PsiClass>() {
               @Override
-              public boolean process(final PsiClass pyClass) {
-                return consumer.process(pyClass);
+              public boolean process(final PsiClass clazz) {
+                return consumer.process(clazz);
               }
             });
         }
