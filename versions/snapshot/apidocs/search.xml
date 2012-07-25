@@ -601,6 +601,21 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#clear()</href>
+  <name>clear() [org.w3c.dom.Document]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#clear()</href>
+  <name>clear() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Node-extensions.html#clear()</href>
+  <name>clear() [org.w3c.dom.Node]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/String-extensions.html#codePointAt(jet.Int)</href>
   <name>codePointAt() [jet.String]</name>
   <kind>fun</kind>
@@ -1121,6 +1136,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/concurrent/java/util/concurrent/ExecutorService-extensions.html#execute(jet.Function0)</href>
+  <name>execute() [java.util.concurrent.ExecutorService]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/concurrent/java/util/concurrent/Executor-extensions.html#execute(jet.Function0)</href>
   <name>execute() [java.util.concurrent.Executor]</name>
   <kind>fun</kind>
@@ -1406,152 +1426,152 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/java/lang/Iterable-extensions.html#filterNotNullTo(L)</href>
+  <href>kotlin/java/lang/Iterable-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [java.lang.Iterable]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/java/util/Collection-extensions.html#filterNotNullTo(L)</href>
+  <href>kotlin/java/util/Collection-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [java.util.Collection]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/java/util/Iterator-extensions.html#filterNotNullTo(L)</href>
+  <href>kotlin/java/util/Iterator-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [java.util.Iterator]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/java/util/List-extensions.html#filterNotNullTo(L)</href>
+  <href>kotlin/java/util/List-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [java.util.List]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/java/util/Set-extensions.html#filterNotNullTo(L)</href>
+  <href>kotlin/java/util/Set-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [java.util.Set]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/Array-extensions.html#filterNotNullTo(L)</href>
+  <href>kotlin/jet/Array-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [jet.Array]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/BooleanArray-extensions.html#filterNotNullTo(L)</href>
+  <href>kotlin/jet/BooleanArray-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [jet.BooleanArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/ByteArray-extensions.html#filterNotNullTo(L)</href>
+  <href>kotlin/jet/ByteArray-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [jet.ByteArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/CharArray-extensions.html#filterNotNullTo(L)</href>
+  <href>kotlin/jet/CharArray-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [jet.CharArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/DoubleArray-extensions.html#filterNotNullTo(L)</href>
+  <href>kotlin/jet/DoubleArray-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [jet.DoubleArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/FloatArray-extensions.html#filterNotNullTo(L)</href>
+  <href>kotlin/jet/FloatArray-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/IntArray-extensions.html#filterNotNullTo(L)</href>
+  <href>kotlin/jet/IntArray-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [jet.IntArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/Iterable-extensions.html#filterNotNullTo(L)</href>
+  <href>kotlin/jet/Iterable-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [jet.Iterable]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/LongArray-extensions.html#filterNotNullTo(L)</href>
+  <href>kotlin/jet/LongArray-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [jet.LongArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/ShortArray-extensions.html#filterNotNullTo(L)</href>
+  <href>kotlin/jet/ShortArray-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [jet.ShortArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/java/lang/Iterable-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <href>kotlin/java/lang/Iterable-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [java.lang.Iterable]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/java/util/Collection-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <href>kotlin/java/util/Collection-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [java.util.Collection]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/java/util/Iterator-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <href>kotlin/java/util/Iterator-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [java.util.Iterator]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/java/util/List-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <href>kotlin/java/util/List-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [java.util.List]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/java/util/Set-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <href>kotlin/java/util/Set-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [java.util.Set]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/Array-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <href>kotlin/jet/Array-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [jet.Array]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/BooleanArray-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <href>kotlin/jet/BooleanArray-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [jet.BooleanArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/ByteArray-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <href>kotlin/jet/ByteArray-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [jet.ByteArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/CharArray-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <href>kotlin/jet/CharArray-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [jet.CharArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/DoubleArray-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <href>kotlin/jet/DoubleArray-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [jet.DoubleArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/FloatArray-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <href>kotlin/jet/FloatArray-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/IntArray-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <href>kotlin/jet/IntArray-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [jet.IntArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/Iterable-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <href>kotlin/jet/Iterable-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [jet.Iterable]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/LongArray-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <href>kotlin/jet/LongArray-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [jet.LongArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/ShortArray-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <href>kotlin/jet/ShortArray-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [jet.ShortArray]</name>
   <kind>fun</kind>
 </search>
@@ -2366,6 +2386,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/concurrent/java/util/concurrent/ExecutorService-extensions.html#invoke(jet.Function0)</href>
+  <name>invoke() [java.util.concurrent.ExecutorService]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/concurrent/java/util/concurrent/Executor-extensions.html#invoke(jet.Function0)</href>
+  <name>invoke() [java.util.concurrent.Executor]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/Char-extensions.html#isDefined()</href>
   <name>isDefined() [jet.Char]</name>
   <kind>fun</kind>
@@ -2538,6 +2568,11 @@
 <search>
   <href>kotlin/io/java/io/BufferedReader-extensions.html#lineIterator()</href>
   <name>lineIterator() [java.io.BufferedReader]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/File-extensions.html#listFiles(jet.Function1)</href>
+  <name>listFiles() [java.io.File]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2906,6 +2941,51 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#on(jet.String, jet.Boolean, jet.Function1)</href>
+  <name>on() [org.w3c.dom.Document]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#on(jet.String, jet.Boolean, jet.Function1)</href>
+  <name>on() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Node-extensions.html#on(jet.String, jet.Boolean, jet.Function1)</href>
+  <name>on() [org.w3c.dom.Node]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#onClick(jet.Boolean, jet.Function1)</href>
+  <name>onClick() [org.w3c.dom.Document]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#onClick(jet.Boolean, jet.Function1)</href>
+  <name>onClick() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Node-extensions.html#onClick(jet.Boolean, jet.Function1)</href>
+  <name>onClick() [org.w3c.dom.Node]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#onDoubleClick(jet.Boolean, jet.Function1)</href>
+  <name>onDoubleClick() [org.w3c.dom.Document]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#onDoubleClick(jet.Boolean, jet.Function1)</href>
+  <name>onDoubleClick() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Node-extensions.html#onDoubleClick(jet.Boolean, jet.Function1)</href>
+  <name>onDoubleClick() [org.w3c.dom.Node]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/java/util/Collection-extensions.html#orEmpty()</href>
   <name>orEmpty() [java.util.Collection]</name>
   <kind>fun</kind>
@@ -3176,6 +3256,156 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/java/lang/Iterable-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/BooleanArray-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.BooleanArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteArray-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharArray-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleArray-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.DoubleArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatArray-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.FloatArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntArray-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongArray-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortArray-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/BooleanArray-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.BooleanArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteArray-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharArray-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleArray-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.DoubleArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatArray-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.FloatArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntArray-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongArray-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortArray-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/String-extensions.html#regionMatches(jet.Boolean, jet.Int, jet.String, jet.Int, jet.Int)</href>
   <name>regionMatches() [jet.String]</name>
   <kind>fun</kind>
@@ -3371,8 +3601,23 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/java/lang/Iterable-extensions.html#sort()</href>
+  <name>sort() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#sort()</href>
+  <name>sort() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/java/util/List-extensions.html#sort()</href>
   <name>sort() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#sort()</href>
+  <name>sort() [java.util.Set]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3411,6 +3656,26 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/java/lang/Iterable-extensions.html#sortBy(jet.Function1)</href>
+  <name>sortBy() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#sortBy(jet.Function1)</href>
+  <name>sortBy() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#sortBy(jet.Function1)</href>
+  <name>sortBy() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#sortBy(jet.Function1)</href>
+  <name>sortBy() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/String-extensions.html#split(jet.Char)</href>
   <name>split() [jet.String]</name>
   <kind>fun</kind>
@@ -3438,6 +3703,11 @@
 <search>
   <href>kotlin/jet/String-extensions.html#subSequence(jet.Int, jet.Int)</href>
   <name>subSequence() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/concurrent/java/util/concurrent/ExecutorService-extensions.html#submit(jet.Function0)</href>
+  <name>submit() [java.util.concurrent.ExecutorService]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3596,77 +3866,77 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/java/lang/Iterable-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <href>kotlin/java/lang/Iterable-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [java.lang.Iterable]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/java/util/Collection-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <href>kotlin/java/util/Collection-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [java.util.Collection]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/java/util/Iterator-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <href>kotlin/java/util/Iterator-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [java.util.Iterator]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/java/util/List-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <href>kotlin/java/util/List-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [java.util.List]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/java/util/Set-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <href>kotlin/java/util/Set-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [java.util.Set]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/Array-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <href>kotlin/jet/Array-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [jet.Array]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/BooleanArray-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <href>kotlin/jet/BooleanArray-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [jet.BooleanArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/ByteArray-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <href>kotlin/jet/ByteArray-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [jet.ByteArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/CharArray-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <href>kotlin/jet/CharArray-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [jet.CharArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/DoubleArray-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <href>kotlin/jet/DoubleArray-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [jet.DoubleArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/FloatArray-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <href>kotlin/jet/FloatArray-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/IntArray-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <href>kotlin/jet/IntArray-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [jet.IntArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/Iterable-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <href>kotlin/jet/Iterable-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [jet.Iterable]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/LongArray-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <href>kotlin/jet/LongArray-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [jet.LongArray]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/ShortArray-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <href>kotlin/jet/ShortArray-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [jet.ShortArray]</name>
   <kind>fun</kind>
 </search>
@@ -4256,12 +4526,12 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#toXmlString(jet.Boolean)</href>
+  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#toXmlString()</href>
   <name>toXmlString() [org.w3c.dom.Document]</name>
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#toXmlString(jet.Boolean)</href>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#toXmlString()</href>
   <name>toXmlString() [org.w3c.dom.Element]</name>
   <kind>fun</kind>
 </search>
@@ -4271,7 +4541,7 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/dom/org/w3c/dom/Node-extensions.html#toXmlString(jet.Boolean)</href>
+  <href>kotlin/dom/org/w3c/dom/Node-extensions.html#toXmlString()</href>
   <name>toXmlString() [org.w3c.dom.Node]</name>
   <kind>fun</kind>
 </search>
@@ -4306,8 +4576,8 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jdbc/javax/sql/DataSource-extensions.html#use(jet.Function1)</href>
-  <name>use() [javax.sql.DataSource]</name>
+  <href>kotlin/jdbc/javax/sql/DataSource-extensions.html#useDataSource(jet.Function1)</href>
+  <name>useDataSource() [javax.sql.DataSource]</name>
   <kind>fun</kind>
 </search>
 <search>
