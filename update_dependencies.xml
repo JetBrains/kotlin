@@ -150,8 +150,8 @@
     </macrodef>
 
     <macrodef name="execute_update">
-        <attribute name="base.url" default="http://teamcity.example.com"/>
-        <attribute name="build.zip" default="http://teamcity.example.com"/>
+        <attribute name="base.url" default="http://teamcity.example.com/guestAuth/repository/download/btXXX/XXXX:id"/>
+        <attribute name="build.zip" default="ideaIC-XXX.SNAPSHOT.win.zip"/>
 
         <sequential>
             <property name="core" value="ideaSDK/core"/>
