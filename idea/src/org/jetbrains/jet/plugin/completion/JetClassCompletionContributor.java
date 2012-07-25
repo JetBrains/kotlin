@@ -20,12 +20,8 @@ import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
-import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
 import com.intellij.util.Consumer;
-import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JetLightClass;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -35,10 +31,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler;
-import org.jetbrains.jet.plugin.completion.weigher.JetCompletionSorting;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
-import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
 import java.util.Collection;
 
@@ -47,31 +41,32 @@ import java.util.Collection;
  */
 public class JetClassCompletionContributor extends CompletionContributor {
     public JetClassCompletionContributor() {
-        extend(CompletionType.CLASS_NAME, PlatformPatterns.psiElement(),
-               new CompletionProvider<CompletionParameters>() {
-                   @Override
-                   protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
-                                                 final @NotNull CompletionResultSet result) {
-                       final CompletionResultSet jetResult = JetCompletionSorting.addJetSorting(parameters, result);
-
-                       final PsiElement position = parameters.getPosition();
-                       if (!(position.getContainingFile() instanceof JetFile)) {
-                           return;
-                       }
-
-                       final PsiReference ref = position.getContainingFile().findReferenceAt(parameters.getOffset());
-                       if (ref instanceof JetSimpleNameReference) {
-                           addClasses(parameters, result, new Consumer<LookupElement>() {
-                               @Override
-                               public void consume(LookupElement lookupElement) {
-                                   jetResult.addElement(lookupElement);
-                               }
-                           });
-                       }
-
-                       result.stopHere();
-                   }
-               });
+        // Should be removed in new idea
+        //extend(CompletionType.CLASS_NAME, PlatformPatterns.psiElement(),
+        //       new CompletionProvider<CompletionParameters>() {
+        //           @Override
+        //           protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
+        //                                         final @NotNull CompletionResultSet result) {
+        //               final CompletionResultSet jetResult = JetCompletionSorting.addJetSorting(parameters, result);
+        //
+        //               final PsiElement position = parameters.getPosition();
+        //               if (!(position.getContainingFile() instanceof JetFile)) {
+        //                   return;
+        //               }
+        //
+        //               final PsiReference ref = position.getContainingFile().findReferenceAt(parameters.getOffset());
+        //               if (ref instanceof JetSimpleNameReference) {
+        //                   addClasses(parameters, result, new Consumer<LookupElement>() {
+        //                       @Override
+        //                       public void consume(LookupElement lookupElement) {
+        //                           jetResult.addElement(lookupElement);
+        //                       }
+        //                   });
+        //               }
+        //
+        //               result.stopHere();
+        //           }
+        //       });
     }
 
     /**

@@ -27,6 +27,7 @@ import java.io.File;
 public class JetClassCompletionTest extends JetCompletionTestBase {
 
     public void testInExpressionNoPrefix() {
+
         doTest();
     }
 
@@ -36,7 +37,7 @@ public class JetClassCompletionTest extends JetCompletionTestBase {
 
     @Override
     protected CompletionType getCompletionType(String testName, String fileText) {
-        return CompletionType.CLASS_NAME;
+        return CompletionType.BASIC;
     }
 
     @Override
