@@ -31,6 +31,15 @@ public final class IntRange implements Range<Integer>, IntIterable {
     }
 
     @Override
+    public String toString() {
+        if (count >= 0) {
+            return "" + getStart() + ".upto(" + getEnd() + ")";
+        } else {
+            return "" + getStart() + ".downto(" + getEnd() + ")";
+        }
+    }
+
+    @Override
     public boolean contains(Integer item) {
         if (item == null) return false;
         if (count >= 0) {
