@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
@@ -105,7 +106,10 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends R
             if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
                 descriptor = ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall().getResultingDescriptor();
             }
-            trace.record(REFERENCE_TARGET, reference, descriptor);
+            DeclarationDescriptor storedReference = trace.get(REFERENCE_TARGET, reference);
+            if (storedReference == null || !ErrorUtils.isError(descriptor)) {
+                trace.record(REFERENCE_TARGET, reference, descriptor);
+            }
         }
 
         @Override

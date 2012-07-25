@@ -1,0 +1,5 @@
+open class Foo() : `Bar`Bar() {
+}
+
+~Bar~open class Bar<T>() {
+}
