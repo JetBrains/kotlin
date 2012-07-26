@@ -1,6 +1,6 @@
-namespace <root>
+namespace test
 
-internal final class B : jet.Any {
-    public final /*constructor*/ fun <init>(): B
-    internal final val Obj: B.Obj
+internal final class test.B : jet.Any {
+    public final /*constructor*/ fun <init>(): test.B
+    internal final val Obj: test.B.Obj
 }

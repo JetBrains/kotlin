@@ -1,12 +1,12 @@
-namespace <root>
+namespace test
 
-internal final class B : jet.Any {
-    public final /*constructor*/ fun <init>(): B
-    internal final class B.B : jet.Any {
-        public final /*constructor*/ fun <init>(): B.B
-        internal final class B.B.C : jet.Any {
-            public final /*constructor*/ fun <init>(): B.B.C
+internal final class test.B : jet.Any {
+    public final /*constructor*/ fun <init>(): test.B
+    internal final class test.B.B : jet.Any {
+        public final /*constructor*/ fun <init>(): test.B.B
+        internal final fun foo(/*0*/ b: test.B.B.C): jet.Tuple0
+        internal final class test.B.B.C : jet.Any {
+            public final /*constructor*/ fun <init>(): test.B.B.C
         }
-        internal final fun foo(/*0*/ b: B.B.C): jet.Tuple0
     }
 }

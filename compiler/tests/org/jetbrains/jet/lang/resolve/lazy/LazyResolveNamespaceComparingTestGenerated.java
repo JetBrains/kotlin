@@ -1269,37 +1269,37 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
-            doTest("compiler/testData/lazyResolve/namespaceComparator/enum.kt");
+            doTestSinglePackage("compiler/testData/lazyResolve/namespaceComparator/enum.kt");
         }
         
         @TestMetadata("genericFunction.kt")
         public void testGenericFunction() throws Exception {
-            doTest("compiler/testData/lazyResolve/namespaceComparator/genericFunction.kt");
+            doTestSinglePackage("compiler/testData/lazyResolve/namespaceComparator/genericFunction.kt");
         }
         
         @TestMetadata("InnerClassNameClash.kt")
         public void testInnerClassNameClash() throws Exception {
-            doTest("compiler/testData/lazyResolve/namespaceComparator/InnerClassNameClash.kt");
+            doTestSinglePackage("compiler/testData/lazyResolve/namespaceComparator/InnerClassNameClash.kt");
         }
         
         @TestMetadata("innerObject.kt")
         public void testInnerObject() throws Exception {
-            doTest("compiler/testData/lazyResolve/namespaceComparator/innerObject.kt");
+            doTestSinglePackage("compiler/testData/lazyResolve/namespaceComparator/innerObject.kt");
         }
         
         @TestMetadata("packageLevelObject.kt")
         public void testPackageLevelObject() throws Exception {
-            doTest("compiler/testData/lazyResolve/namespaceComparator/packageLevelObject.kt");
+            doTestSinglePackage("compiler/testData/lazyResolve/namespaceComparator/packageLevelObject.kt");
         }
         
         @TestMetadata("simpleClass.kt")
         public void testSimpleClass() throws Exception {
-            doTest("compiler/testData/lazyResolve/namespaceComparator/simpleClass.kt");
+            doTestSinglePackage("compiler/testData/lazyResolve/namespaceComparator/simpleClass.kt");
         }
         
         @TestMetadata("varargIterator.kt")
         public void testVarargIterator() throws Exception {
-            doTest("compiler/testData/lazyResolve/namespaceComparator/varargIterator.kt");
+            doTestSinglePackage("compiler/testData/lazyResolve/namespaceComparator/varargIterator.kt");
         }
         
     }

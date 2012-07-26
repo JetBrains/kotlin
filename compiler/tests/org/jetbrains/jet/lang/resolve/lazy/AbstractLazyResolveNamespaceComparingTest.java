@@ -150,7 +150,7 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
                     new SimpleTestClassModel(new File("compiler/testData/lazyResolve/namespaceComparator"),
                                              true,
                                              extension,
-                                             "doTest")
+                                             "doTestSinglePackage")
             ),
             AbstractLazyResolveNamespaceComparingTest.class
         ).generateAndSave();
