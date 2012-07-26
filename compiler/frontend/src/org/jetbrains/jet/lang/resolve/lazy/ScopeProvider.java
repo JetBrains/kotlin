@@ -60,6 +60,7 @@ public class ScopeProvider {
 
         WritableScope writableScope = new WritableScopeImpl(
                 JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING, "File scope for declaration resolution");
+        writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
         NamespaceDescriptor rootPackageDescriptor = resolveSession.getPackageDescriptorByFqName(FqName.ROOT);
         if (rootPackageDescriptor == null) {
@@ -81,7 +82,6 @@ public class ScopeProvider {
                                              resolveSession.getInjector().getQualifiedExpressionResolver());
 
         writableScope.changeLockLevel(WritableScope.LockLevel.READING);
-
         // TODO: Cache
         return writableScope;
     }
