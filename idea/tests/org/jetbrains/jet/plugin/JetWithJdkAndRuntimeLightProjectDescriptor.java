@@ -23,8 +23,7 @@ import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
@@ -53,10 +52,9 @@ public class JetWithJdkAndRuntimeLightProjectDescriptor implements LightProjectD
 
     @Override
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @Nullable ContentEntry contentEntry) {
-        Library.ModifiableModel modifiableModel = model.getModuleLibraryTable().createLibrary("ktl").getModifiableModel();
-        VirtualFile cd = JarFileSystem.getInstance().findFileByPath(ForTestCompileRuntime.runtimeJarForTests() + "!/");
-        assert cd != null;
-        modifiableModel.addRoot(cd, OrderRootType.CLASSES);
+        Library library = model.getModuleLibraryTable().createLibrary("ktl");
+        Library.ModifiableModel modifiableModel = library.getModifiableModel();
+        modifiableModel.addRoot(VfsUtil.getUrlForLibraryRoot(ForTestCompileRuntime.runtimeJarForTests()), OrderRootType.CLASSES);
         modifiableModel.commit();
     }
 
@@ -66,9 +64,21 @@ public class JetWithJdkAndRuntimeLightProjectDescriptor implements LightProjectD
                 LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry) orderEntry;
 
                 Library library = libraryOrderEntry.getLibrary();
-                if (library != null && library.getName().equals("ktl")) {
-                    model.getModuleLibraryTable().removeLibrary(library);
-                    break;
+                if (library != null) {
+                    String libraryName = library.getName();
+                    if (libraryName != null && libraryName.equals("ktl")) {
+
+                        // Dispose attached roots
+                        Library.ModifiableModel modifiableModel = library.getModifiableModel();
+                        for (String rootUrl : library.getRootProvider().getUrls(OrderRootType.CLASSES)) {
+                            modifiableModel.removeRoot(rootUrl, OrderRootType.CLASSES);
+                        }
+                        modifiableModel.commit();
+
+                        model.getModuleLibraryTable().removeLibrary(library);
+
+                        break;
+                    }
                 }
             }
         }
