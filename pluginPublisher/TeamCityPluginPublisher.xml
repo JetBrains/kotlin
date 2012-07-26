@@ -1,5 +1,5 @@
 <project name="Plugin Publisher" default="verifyAndPublish">
-  <property name="idea.download.page.url" value="http://confluence.jetbrains.com/display/IDEADEV/IDEA+11.1+EAP"/>
+  <property name="idea.download.page.url" value="http://confluence.jetbrains.com/display/IDEADEV/IDEA+12+EAP"/>
   <property name="plugin.repository.url" value="http://www.jetbrains.com/kotlin/eap-plugin-repository"/>
 
   <property name="updatePlugins.xml" value="updatePlugins.xml"/>
@@ -8,7 +8,6 @@
   <target name="verifyAndPublish">
     <!-- IDEA Download URL -> ${download.url} -->
     <!-- Fetch from EAP page -->
-    <!--
     <loadresource property="download.url">
       <url url="${idea.download.page.url}"/>
       <filterchain>
@@ -19,8 +18,7 @@
         </tokenfilter>
       </filterchain>
     </loadresource>
-    -->
-    <property name="download.url" value="http://download.jetbrains.com/idea/ideaIC-11.1.tar.gz" />
+    <!--<property name="download.url" value="http://download.jetbrains.com/idea/ideaIC-11.1.tar.gz" />-->
 
     <!-- Download and extract IDEA -->
     <echo message="Downloading IDEA from ${download.url}"/>
