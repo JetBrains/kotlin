@@ -1905,6 +1905,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve", new File("compiler/testData/diagnostics/tests/redeclarations"), "kt", false);
             }
             
+            @TestMetadata("ConflictingExtensionProperties.kt")
+            public void testConflictingExtensionProperties() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/redeclarations/ConflictingExtensionProperties.kt");
+            }
+            
             @TestMetadata("kt2247.kt")
             public void testKt2247() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/redeclarations/kt2247.kt");
@@ -1915,9 +1920,19 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/redeclarations/kt2438.kt");
             }
             
+            @TestMetadata("kt470.kt")
+            public void testKt470() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/redeclarations/kt470.kt");
+            }
+            
             @TestMetadata("MultiFilePackageRedeclaration.kt")
             public void testMultiFilePackageRedeclaration() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/redeclarations/MultiFilePackageRedeclaration.kt");
+            }
+            
+            @TestMetadata("PropertyAndFunInClass.kt")
+            public void testPropertyAndFunInClass() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/redeclarations/PropertyAndFunInClass.kt");
             }
             
             @TestMetadata("Redeclarations.kt")
