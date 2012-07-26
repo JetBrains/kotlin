@@ -152,6 +152,7 @@
 
     <macrodef name="execute_update">
         <attribute name="base.url" default="http://teamcity.example.com/guestAuth/repository/download/btXXX/XXXX:id"/>
+        <attribute name="base.url.for.core" default="@{base.url}"/>
         <attribute name="build.zip" default="ideaIC-XXX.SNAPSHOT.win.zip"/>
 
         <sequential>
@@ -169,22 +170,22 @@
                     </delete>
 
                     <mkdir dir="${core}"/>
-                    <get src="@{base.url}/core/intellij-core.jar" dest="${core}/intellij-core.jar" usetimestamp="true"/>
+                    <get src="@{base.url.for.core}/core/intellij-core.jar" dest="${core}/intellij-core.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/annotations.jar" dest="${core}/annotations.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/cli-parser-1.1.jar" dest="${core}/cli-parser-1.1.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/guava-12.0.jar" dest="${core}/guava-12.0.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/picocontainer.jar" dest="${core}/picocontainer.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/trove4j.jar" dest="${core}/trove4j.jar" usetimestamp="true"/>
 
-                    <get src="@{base.url}/@{build.zip}" dest="ideaSDK/@{build.zip}" usetimestamp="true"/>
+                    <get src="@{base.url}/@{build.zip}" dest="dependencies/download/@{build.zip}" usetimestamp="true"/>
 
-                    <mkdir dir="ideaSDK/sources"/>
-                    <get src="@{base.url}/sources.zip" dest="ideaSDK/sources/sources.zip" usetimestamp="true"/>
+                    <get src="@{base.url}/sources.zip" dest="dependencies/download/idea-sdk-sources.zip" usetimestamp="true"/>
                 </then>
             </if>
 
-            <unzip src="ideaSDK/@{build.zip}" dest="ideaSDK"/>
-            <delete file="ideaSDK/@{build.zip}"/>
+            <unzip src="dependencies/download/@{build.zip}" dest="ideaSDK"/>
+            <mkdir dir="ideaSDK/sources"/>
+            <copy file="dependencies/download/idea-sdk-sources.zip" tofile="ideaSDK/sources/sources.zip"/>
 
             <copy file="ideaSDK/lib/jdom.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/jna.jar" todir="${core}"/>
