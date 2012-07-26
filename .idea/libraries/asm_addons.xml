@@ -1,7 +1,8 @@
 <component name="libraryTable">
-  <library name="asm-util">
+  <library name="asm-addons">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/dependencies/jetbrains-asm-util-4.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/jetbrains-asm-analysis-4.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
