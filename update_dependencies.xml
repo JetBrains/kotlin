@@ -165,6 +165,7 @@
                     <delete dir="ideaSDK" failonerror="false">
                         <exclude name="config/**"/>
                         <exclude name="system/**"/>
+                        <exclude name="system-idea/**"/>
                     </delete>
 
                     <mkdir dir="${core}"/>
