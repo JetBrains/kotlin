@@ -16,26 +16,28 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.Pair;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.KotlinTestWithEnvironmentManagement;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.test.util.NamespaceComparator;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -53,32 +55,35 @@ public class LazyResolveStdlibLoadingTest extends KotlinTestWithEnvironmentManag
     }
 
     protected void doTestForGivenFiles(
-            Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>> transform,
-            boolean includeMembersOfObject,
-            List<JetFile> files,
-            Predicate<NamespaceDescriptor> filterJetNamespace
+            List<JetFile> files
     ) {
+        Set<Name> namespaceShortNames = Sets.newLinkedHashSet();
+        for (JetFile file : files) {
+            JetNamespaceHeader header = file.getNamespaceHeader();
+            if (header != null) {
+                List<JetSimpleNameExpression> names = header.getParentNamespaceNames();
+                Name name = names.isEmpty() ? header.getNameAsName() : names.get(0).getReferencedNameAsName();
+                namespaceShortNames.add(name);
+            }
+            else {
+                throw new IllegalStateException("There's a file in stdlib that declares the default package: " + file.getName());
+            }
+        }
+
         ModuleDescriptor module = LazyResolveTestUtil.resolveEagerly(files, stdlibEnvironment);
         ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(files, stdlibEnvironment);
 
-        Pair<NamespaceDescriptor, NamespaceDescriptor> namespacesToCompare = transform.fun(Pair.create(module, lazyModule));
-
-        NamespaceComparator.assertNamespacesEqual(namespacesToCompare.first, namespacesToCompare.second,
-                                              includeMembersOfObject, filterJetNamespace);
+        for (Name name : namespaceShortNames) {
+            NamespaceDescriptor a = module.getRootNamespace().getMemberScope().getNamespace(name);
+            NamespaceDescriptor b = lazyModule.getRootNamespace().getMemberScope().getNamespace(name);
+            NamespaceComparator.assertNamespacesEqual(a, b,
+                                                      true, Predicates.<NamespaceDescriptor>alwaysTrue());
+        }
     }
 
     public void testStdLib() throws Exception {
         doTestForGivenFiles(
-                new Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>>() {
-                    @Override
-                    public Pair<NamespaceDescriptor, NamespaceDescriptor> fun(Pair<ModuleDescriptor, ModuleDescriptor> pair) {
-                        return Pair.create(pair.first.getRootNamespace(), pair.second.getRootNamespace());
-                    }
-                },
-                true,
-                //convertToJetFiles(collectKtFiles(new File("compiler/testData/lazyResolve/namespaceComparatorWithJavaMerge"))),
-                convertToJetFiles(collectKtFiles(STD_LIB_SRC)),
-                Predicates.<NamespaceDescriptor>alwaysTrue()
+                convertToJetFiles(collectKtFiles(STD_LIB_SRC))
         );
     }
 
