@@ -29,7 +29,7 @@ public class KotlinSdkProperties extends LibraryProperties<KotlinSdkProperties> 
     @NotNull private File mySdkHome;
     @NotNull private String myVersion;
 
-    public KotlinSdkProperties(@NotNull final File sdkHome, @NotNull final String version) {
+    public KotlinSdkProperties(@NotNull File sdkHome, @NotNull String version) {
         mySdkHome = sdkHome;
         myVersion = version;
     }
@@ -50,7 +50,7 @@ public class KotlinSdkProperties extends LibraryProperties<KotlinSdkProperties> 
     }
 
     @Override
-    public void loadState(@NotNull final KotlinSdkProperties state) {
+    public void loadState(@NotNull KotlinSdkProperties state) {
         mySdkHome = state.mySdkHome;
         myVersion = state.myVersion;
     }

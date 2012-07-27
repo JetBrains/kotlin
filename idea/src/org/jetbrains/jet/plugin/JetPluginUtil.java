@@ -85,7 +85,7 @@ public class JetPluginUtil {
     }
 
     @Nullable
-    public static Module getModuleForKotlinFile(@NotNull final VirtualFile file, @NotNull final Project project) {
+    public static Module getModuleForKotlinFile(@NotNull VirtualFile file, @NotNull Project project) {
         if (file.getFileType() != JetFileType.INSTANCE) return null;
         if (CompilerManager.getInstance(project).isExcludedFromCompilation(file)) return null;
         return ModuleUtil.findModuleForFile(file, project);

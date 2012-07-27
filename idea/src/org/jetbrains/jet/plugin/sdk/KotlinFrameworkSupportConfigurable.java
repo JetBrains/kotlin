@@ -49,8 +49,8 @@ public class KotlinFrameworkSupportConfigurable extends FrameworkSupportInModule
     }
 
     @Override
-    public void addSupport(@NotNull final Module module,
-                           @NotNull final ModifiableRootModel rootModel,
-                           @NotNull final ModifiableModelsProvider modifiableModelsProvider) {
+    public void addSupport(@NotNull Module module,
+                           @NotNull ModifiableRootModel rootModel,
+                           @NotNull ModifiableModelsProvider modifiableModelsProvider) {
     }
 }

@@ -44,13 +44,13 @@ public class BundledKotlinSdkLibraryCreator implements ApplicationComponent {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                final LibrariesContainer librariesContainer = LibrariesContainerFactory.createContainer((Project) null);
+                LibrariesContainer librariesContainer = LibrariesContainerFactory.createContainer((Project) null);
                 if (!bundledSdkLibraryExists(librariesContainer)) {
-                    final File bundledSDKHome = PluginPathUtil.getBundledSDKHome();
+                    File bundledSDKHome = PluginPathUtil.getBundledSDKHome();
                     if (bundledSDKHome != null) {
-                        final String version = KotlinSdkUtil.getSDKVersion(bundledSDKHome);
+                        String version = KotlinSdkUtil.getSDKVersion(bundledSDKHome);
                         if (version != null) {
-                            final NewLibraryEditor editor = new NewLibraryEditor();
+                            NewLibraryEditor editor = new NewLibraryEditor();
                             editor.setName(KotlinSdkUtil.getSDKName(bundledSDKHome, version));
                             KotlinSdkDescription.addSDKRoots(editor, bundledSDKHome);
                             librariesContainer.createLibrary(editor, LibrariesContainer.LibraryLevel.GLOBAL);
@@ -61,10 +61,10 @@ public class BundledKotlinSdkLibraryCreator implements ApplicationComponent {
         });
     }
 
-    private static boolean bundledSdkLibraryExists(@NotNull final LibrariesContainer librariesContainer) {
-        final Library[] globalLibraries = librariesContainer.getLibraries(LibrariesContainer.LibraryLevel.GLOBAL);
-        for (final Library library : globalLibraries) {
-            final File sdkHome = KotlinSdkUtil.detectSDKHome(Arrays.asList(library.getFiles(OrderRootType.CLASSES)));
+    private static boolean bundledSdkLibraryExists(@NotNull LibrariesContainer librariesContainer) {
+        Library[] globalLibraries = librariesContainer.getLibraries(LibrariesContainer.LibraryLevel.GLOBAL);
+        for (Library library : globalLibraries) {
+            File sdkHome = KotlinSdkUtil.detectSDKHome(Arrays.asList(library.getFiles(OrderRootType.CLASSES)));
             if (sdkHome != null && KotlinSdkUtil.isBundledSDK(sdkHome)) {
                 return true;
             }

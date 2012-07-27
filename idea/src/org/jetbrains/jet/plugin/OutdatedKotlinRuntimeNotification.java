@@ -55,7 +55,7 @@ public class OutdatedKotlinRuntimeNotification implements ModuleComponent {
     private final Module myModule;
     private final String mySuppressedPropertyName;
 
-    public OutdatedKotlinRuntimeNotification(final Module module) {
+    public OutdatedKotlinRuntimeNotification(Module module) {
         myModule = module;
         mySuppressedPropertyName = String.format(SUPPRESSED_PROPERTY_NAME_PATTERN, module.getName());
     }
@@ -133,7 +133,7 @@ public class OutdatedKotlinRuntimeNotification implements ModuleComponent {
     }
 
     @Nullable
-    private static String getRuntimeVersion(@Nullable final VirtualFile kotlinRuntimeJar) {
+    private static String getRuntimeVersion(@Nullable VirtualFile kotlinRuntimeJar) {
         if (kotlinRuntimeJar == null) return null;
         VirtualFile manifestFile = kotlinRuntimeJar.findFileByRelativePath(JarFile.MANIFEST_NAME);
         if (manifestFile != null) {
@@ -161,7 +161,7 @@ public class OutdatedKotlinRuntimeNotification implements ModuleComponent {
 
     @Nullable
     private VirtualFile getRuntimeFromSdk() {
-        final File runtimePath = PluginPathUtil.getRuntimePath(myModule);
+        File runtimePath = PluginPathUtil.getRuntimePath(myModule);
         return runtimePath == null ? null : PathUtil.jarFileOrDirectoryToVirtualFile(runtimePath);
     }
 

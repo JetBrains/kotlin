@@ -42,7 +42,7 @@ import java.util.jar.Manifest;
  *         Date: 19.05.12
  */
 public class KotlinSdkUtil {
-    @NotNull private static final PersistentLibraryKind<KotlinSdkProperties> KOTLIN_SDK_KIND =
+    @NotNull private static PersistentLibraryKind<KotlinSdkProperties> KOTLIN_SDK_KIND =
             new PersistentLibraryKind<KotlinSdkProperties>("KotlinSDK", false) {
                 @NotNull
                 @Override
@@ -50,50 +50,50 @@ public class KotlinSdkUtil {
                     return new KotlinSdkProperties(new File(""), "");
                 }
             };
-    @NotNull private static final String[] KOTLIN_COMPILER_JAR_ENTRY_NAMES = {
+    @NotNull private static String[] KOTLIN_COMPILER_JAR_ENTRY_NAMES = {
         "org/jetbrains/jet/cli/KotlinCompiler.class",
         "org/jetbrains/jet/cli/jvm/K2JVMCompiler.class"
     };
 
     private KotlinSdkUtil() {}
 
-    public static boolean isSDKHome(@Nullable final VirtualFile dir) {
+    public static boolean isSDKHome(@Nullable VirtualFile dir) {
         return dir != null && isSDKHome(new File(dir.getPath()));
     }
 
-    private static boolean isSDKHome(@NotNull final File dir) {
+    private static boolean isSDKHome(@NotNull File dir) {
         return dir.isDirectory() && isKotlinCompilerJar(PathUtil.getCompilerPath(dir));
     }
 
     @Nullable
-    public static String getSDKVersion(@NotNull final File sdkHome) {
-        final String buildNumber = getSDKBuildNumber(sdkHome);
+    public static String getSDKVersion(@NotNull File sdkHome) {
+        String buildNumber = getSDKBuildNumber(sdkHome);
         if (buildNumber == null) return null;
-        final int lastDotPos = buildNumber.lastIndexOf('.');
+        int lastDotPos = buildNumber.lastIndexOf('.');
         return lastDotPos == -1 ? buildNumber : buildNumber.substring(0, lastDotPos);
     }
 
     @Nullable
-    private static String getSDKBuildNumber(@NotNull final File sdkHome) {
+    private static String getSDKBuildNumber(@NotNull File sdkHome) {
         try {
             return FileUtil.loadFile(new File(sdkHome, "build.txt")).trim();
         }
-        catch (final IOException e) {
+        catch (IOException e) {
             try {
-                final File compilerJar = PathUtil.getCompilerPath(sdkHome);
+                File compilerJar = PathUtil.getCompilerPath(sdkHome);
                 return compilerJar == null ? null : getJarImplementationVersion(compilerJar);
             }
-            catch (final IOException e1) {
+            catch (IOException e1) {
                 return null;
             }
         }
     }
 
     @Nullable
-    private static String getJarImplementationVersion(@NotNull final File jar) throws IOException {
-        final JarFile jarFile = new JarFile(jar);
+    private static String getJarImplementationVersion(@NotNull File jar) throws IOException {
+        JarFile jarFile = new JarFile(jar);
         try {
-            final Manifest manifest = jarFile.getManifest();
+            Manifest manifest = jarFile.getManifest();
             return manifest == null ? null : manifest.getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_VERSION);
         }
         finally {
@@ -102,13 +102,13 @@ public class KotlinSdkUtil {
     }
 
     @Nullable
-    public static File detectSDKHome(@NotNull final List<VirtualFile> jars) {
+    public static File detectSDKHome(@NotNull List<VirtualFile> jars) {
         for (VirtualFile jar : jars) {
             jar = prepare(jar);
             if (jar == null) continue;
-            final File file = new File(jar.getPath());
+            File file = new File(jar.getPath());
             if (file.getName().equals(PathUtil.KOTLIN_COMPILER_JAR) && isKotlinCompilerJar(file)) {
-                final File sdkHome = PathUtil.getSDKHomeByCompilerPath(file);
+                File sdkHome = PathUtil.getSDKHomeByCompilerPath(file);
                 if (sdkHome != null) {
                     return sdkHome;
                 }
@@ -118,40 +118,40 @@ public class KotlinSdkUtil {
     }
 
     @Nullable
-    private static VirtualFile prepare(@NotNull final VirtualFile jar) {
+    private static VirtualFile prepare(@NotNull VirtualFile jar) {
         if (jar.getFileSystem() instanceof JarFileSystem) {
             return JarFileSystem.getInstance().getVirtualFileForJar(jar);
         }
         return jar;
     }
 
-    public static boolean isSDKConfiguredFor(@NotNull final Module module) {
+    public static boolean isSDKConfiguredFor(@NotNull Module module) {
         return getSDKHomeFor(module) != null;
     }
 
     @Nullable
-    public static File getSDKHomeFor(@NotNull final Module module) {
+    public static File getSDKHomeFor(@NotNull Module module) {
         return findSDKHome(module, new HashSet<String>(), false);
     }
 
     @Nullable
-    public static File findSDKHome(@NotNull final Module module, @NotNull final Set<String> checkedModuleNames, final boolean isDependency) {
+    public static File findSDKHome(@NotNull Module module, @NotNull Set<String> checkedModuleNames, boolean isDependency) {
         checkedModuleNames.add(module.getName());
-        for (final OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
+        for (OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
             if (orderEntry instanceof ModuleOrderEntry) {
-                final ModuleOrderEntry moduleOrderEntry = (ModuleOrderEntry)orderEntry;
-                final Module depModule = moduleOrderEntry.getModule();
+                ModuleOrderEntry moduleOrderEntry = (ModuleOrderEntry)orderEntry;
+                Module depModule = moduleOrderEntry.getModule();
                 if (depModule != null && !checkedModuleNames.contains(depModule.getName()) && isAvailable(moduleOrderEntry, isDependency)) {
-                    final File sdkHome = findSDKHome(depModule, checkedModuleNames, true);
+                    File sdkHome = findSDKHome(depModule, checkedModuleNames, true);
                     if (sdkHome != null) {
                         return sdkHome;
                     }
                 }
             }
             else if (orderEntry instanceof LibraryOrderEntry) {
-                final LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry)orderEntry;
+                LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry)orderEntry;
                 if (isAvailable(libraryOrderEntry, isDependency)) {
-                    final File sdkHome = detectSDKHome(Arrays.asList(libraryOrderEntry.getRootFiles(OrderRootType.CLASSES)));
+                    File sdkHome = detectSDKHome(Arrays.asList(libraryOrderEntry.getRootFiles(OrderRootType.CLASSES)));
                     if (sdkHome != null) {
                         return sdkHome;
                     }
@@ -161,23 +161,23 @@ public class KotlinSdkUtil {
         return null;
     }
 
-    private static boolean isAvailable(@NotNull final ExportableOrderEntry orderEntry, final boolean isDependency) {
+    private static boolean isAvailable(@NotNull ExportableOrderEntry orderEntry, boolean isDependency) {
         return !isDependency || orderEntry.isExported();
     }
 
-    private static boolean isKotlinCompilerJar(@Nullable final File jar) {
+    private static boolean isKotlinCompilerJar(@Nullable File jar) {
         try {
             return jar != null && doIsKotlinCompilerJar(jar);
         }
-        catch (final IOException e) {
+        catch (IOException e) {
             return false;
         }
     }
 
-    private static boolean doIsKotlinCompilerJar(@NotNull final File jar) throws IOException {
-        final JarFile jarFile = new JarFile(jar);
+    private static boolean doIsKotlinCompilerJar(@NotNull File jar) throws IOException {
+        JarFile jarFile = new JarFile(jar);
         try {
-            for (final String entryName : KOTLIN_COMPILER_JAR_ENTRY_NAMES) {
+            for (String entryName : KOTLIN_COMPILER_JAR_ENTRY_NAMES) {
                 if (jarFile.getJarEntry(entryName) != null) {
                     return true;
                 }
@@ -189,12 +189,12 @@ public class KotlinSdkUtil {
         }
     }
 
-    public static boolean isBundledSDK(@NotNull final File sdkHome) {
+    public static boolean isBundledSDK(@NotNull File sdkHome) {
         return sdkHome.equals(PluginPathUtil.getBundledSDKHome());
     }
 
     @NotNull
-    public static String getSDKName(@NotNull final File sdkHome, @NotNull final String version) {
+    public static String getSDKName(@NotNull File sdkHome, @NotNull String version) {
         return "Kotlin " + version + (isBundledSDK(sdkHome) ? " (bundled)" : "");
     }
 

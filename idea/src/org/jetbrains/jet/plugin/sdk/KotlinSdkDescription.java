@@ -53,26 +53,26 @@ public class KotlinSdkDescription extends CustomLibraryDescription {
 
     @Nullable
     @Override
-    public NewLibraryConfiguration createNewLibrary(@NotNull final JComponent parentComponent, @Nullable final VirtualFile contextDirectory) {
+    public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
         VirtualFile initial = findFile(System.getenv("KOTLIN_HOME"));
         if (initial == null) {
             initial = findFile(System.getProperty("kotlinHome"));
         }
 
-        final FileChooserDescriptor descriptor = new FileChooserDescriptor(false, true, false, false, false, false) {
+        FileChooserDescriptor descriptor = new FileChooserDescriptor(false, true, false, false, false, false) {
             @Override
-            public boolean isFileSelectable(@Nullable final VirtualFile file) {
+            public boolean isFileSelectable(@Nullable VirtualFile file) {
                 return super.isFileSelectable(file) && KotlinSdkUtil.isSDKHome(file);
             }
         };
         descriptor.setTitle("Kotlin SDK");
         descriptor.setDescription("Choose a directory containing Kotlin distribution");
 
-        final VirtualFile sdkHomeVFile = FileChooser.chooseFile(parentComponent, descriptor, initial);
+        VirtualFile sdkHomeVFile = FileChooser.chooseFile(parentComponent, descriptor, initial);
         if (sdkHomeVFile == null) return null;
 
         final File sdkHome = new File(sdkHomeVFile.getPath());
-        final String sdkVersion = KotlinSdkUtil.getSDKVersion(sdkHome);
+        String sdkVersion = KotlinSdkUtil.getSDKVersion(sdkHome);
         if (sdkVersion == null) {
             Messages.showErrorDialog(parentComponent,
                                      "Failed to find Kotlin SDK in the specified path: cannot determine Kotlin version.",
@@ -82,36 +82,36 @@ public class KotlinSdkDescription extends CustomLibraryDescription {
 
         return new NewLibraryConfiguration(KotlinSdkUtil.getSDKName(sdkHome, sdkVersion)) {
             @Override
-            public void addRoots(@NotNull final LibraryEditor editor) {
+            public void addRoots(@NotNull LibraryEditor editor) {
                 addSDKRoots(editor, sdkHome);
             }
         };
     }
 
     @Nullable
-    private static VirtualFile findFile(@Nullable final String path) {
+    private static VirtualFile findFile(@Nullable String path) {
         if (StringUtil.isEmptyOrSpaces(path)) return null;
         //noinspection ConstantConditions
         return LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(path));
     }
 
-    public static void addSDKRoots(@NotNull final LibraryEditor editor, @NotNull final File sdkHome) {
-        final File libDir = new File(sdkHome, "lib");
+    public static void addSDKRoots(@NotNull LibraryEditor editor, @NotNull File sdkHome) {
+        File libDir = new File(sdkHome, "lib");
         if (!libDir.isDirectory()) return;
 
-        final List<File> jars = new ArrayList<File>();
+        List<File> jars = new ArrayList<File>();
         collectJars(libDir, jars);
 
-        for (final File jar : jars) {
+        for (File jar : jars) {
             editor.addRoot(VfsUtil.getUrlForLibraryRoot(jar), OrderRootType.CLASSES);
         }
     }
 
-    private static void collectJars(@NotNull final File dir, @NotNull final List<File> jars) {
-        final File[] children = dir.listFiles();
+    private static void collectJars(@NotNull File dir, @NotNull List<File> jars) {
+        File[] children = dir.listFiles();
         if (children == null) return;
 
-        for (final File child : children) {
+        for (File child : children) {
             if (child.isDirectory()) {
                 collectJars(child, jars);
             }

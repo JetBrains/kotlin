@@ -65,9 +65,9 @@ import java.io.IOException;
 import static org.jetbrains.jet.plugin.project.JsModuleDetector.isJsModule;
 
 public class ConfigureKotlinLibraryNotificationProvider implements EditorNotifications.Provider<EditorNotificationPanel> {
-    private static final Key<EditorNotificationPanel> KEY = Key.create("configure.kotlin.library");
-    public static final String LIBRARY_NAME = "KotlinRuntime";
-    private final Project myProject;
+    private static Key<EditorNotificationPanel> KEY = Key.create("configure.kotlin.library");
+    public static String LIBRARY_NAME = "KotlinRuntime";
+    private Project myProject;
 
     @Override
     public Key<EditorNotificationPanel> getKey() {
@@ -82,7 +82,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
     @Override
     public EditorNotificationPanel createNotificationPanel(VirtualFile file) {
         try {
-            final Module module = JetPluginUtil.getModuleForKotlinFile(file, myProject);
+            Module module = JetPluginUtil.getModuleForKotlinFile(file, myProject);
             if (module == null) return null;
 
             if (isMavenModule(module) || isJsModule(module)) return null;
@@ -159,7 +159,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
     }
 
     private EditorNotificationPanel createNotificationPanel(final Module module) {
-        final EditorNotificationPanel answer = new EditorNotificationPanel();
+        EditorNotificationPanel answer = new EditorNotificationPanel();
 
         answer.setText("Kotlin is not configured for module '" + module.getName() + "'");
         answer.createActionLabel("Set up module '" + module.getName() + "' as JVM Kotlin module", new Runnable() {
@@ -247,8 +247,8 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
         });
     }
 
-    private static boolean isMavenModule(@NotNull final Module module) {
-        for (final VirtualFile root : ModuleRootManager.getInstance(module).getContentRoots()) {
+    private static boolean isMavenModule(@NotNull Module module) {
+        for (VirtualFile root : ModuleRootManager.getInstance(module).getContentRoots()) {
             if (root.findChild("pom.xml") != null) {
                 return true;
             }

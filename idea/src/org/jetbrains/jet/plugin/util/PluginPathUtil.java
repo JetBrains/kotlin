@@ -33,7 +33,7 @@ public class PluginPathUtil {
 
     @Nullable
     public static File getBundledSDKHome() {
-        final File plugin_jar_path = new File(PathUtil.getJarPathForClass(PathUtil.class));
+        File plugin_jar_path = new File(PathUtil.getJarPathForClass(PathUtil.class));
         if (!plugin_jar_path.exists()) return null;
 
         if (plugin_jar_path.getName().equals("kotlin-plugin.jar")) {
@@ -49,22 +49,22 @@ public class PluginPathUtil {
     }
 
     @Nullable
-    public static File getRuntimePath(@NotNull final Module module) {
+    public static File getRuntimePath(@NotNull Module module) {
         return PathUtil.getRuntimePath(KotlinSdkUtil.getSDKHomeFor(module));
     }
 
     @Nullable
-    public static File getJsLibJsPath(@NotNull final Module module) {
+    public static File getJsLibJsPath(@NotNull Module module) {
         return PathUtil.getJsLibJsPath(KotlinSdkUtil.getSDKHomeFor(module));
     }
 
     @Nullable
-    public static File getJsLibJarPath(@NotNull final Module module) {
+    public static File getJsLibJarPath(@NotNull Module module) {
         return PathUtil.getJsLibJarPath(KotlinSdkUtil.getSDKHomeFor(module));
     }
 
     @Nullable
-    public static File getJdkAnnotationsPath(@NotNull final Module module) {
+    public static File getJdkAnnotationsPath(@NotNull Module module) {
         return PathUtil.getJdkAnnotationsPath(KotlinSdkUtil.getSDKHomeFor(module));
     }
 }

@@ -43,16 +43,16 @@ public class KotlinSdkPresentationProvider extends LibraryPresentationProvider<K
 
     @NotNull
     @Override
-    public String getDescription(@NotNull final KotlinSdkProperties properties) {
+    public String getDescription(@NotNull KotlinSdkProperties properties) {
         return KotlinSdkUtil.getSDKName(properties.getSdkHome(), properties.getVersion());
     }
 
     @Nullable
     @Override
-    public KotlinSdkProperties detect(@NotNull final List<VirtualFile> classesRoots) {
-        final File sdkHome = KotlinSdkUtil.detectSDKHome(classesRoots);
+    public KotlinSdkProperties detect(@NotNull List<VirtualFile> classesRoots) {
+        File sdkHome = KotlinSdkUtil.detectSDKHome(classesRoots);
         if (sdkHome == null) return null;
-        final String sdkVersion = KotlinSdkUtil.getSDKVersion(sdkHome);
+        String sdkVersion = KotlinSdkUtil.getSDKVersion(sdkHome);
         return sdkVersion == null ? null : new KotlinSdkProperties(sdkHome, sdkVersion);
     }
 }

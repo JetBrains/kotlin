@@ -40,12 +40,12 @@ public class KotlinFrameworkSupportProvider extends FrameworkSupportInModuleProv
 
     @NotNull
     @Override
-    public FrameworkSupportInModuleConfigurable createConfigurable(@NotNull final FrameworkSupportModel model) {
+    public FrameworkSupportInModuleConfigurable createConfigurable(@NotNull FrameworkSupportModel model) {
         return new KotlinFrameworkSupportConfigurable();
     }
 
     @Override
-    public boolean isEnabledForModuleType(@NotNull final ModuleType type) {
+    public boolean isEnabledForModuleType(@NotNull ModuleType type) {
         return type instanceof JavaModuleType || PLUGIN_MODULE_ID.equals(type.getId()) || ANDROID_MODULE_ID.equals(type.getId());
     }
 }

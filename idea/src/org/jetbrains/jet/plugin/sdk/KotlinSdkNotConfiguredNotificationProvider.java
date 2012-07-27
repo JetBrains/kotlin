@@ -41,14 +41,14 @@ public class KotlinSdkNotConfiguredNotificationProvider implements EditorNotific
 
     @NotNull private final Project myProject;
 
-    public KotlinSdkNotConfiguredNotificationProvider(@NotNull final Project project, @NotNull final EditorNotifications notifications) {
+    public KotlinSdkNotConfiguredNotificationProvider(@NotNull Project project, @NotNull final EditorNotifications notifications) {
         myProject = project;
         project.getMessageBus().connect(project).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
             @Override
-            public void beforeRootsChange(final ModuleRootEvent event) {}
+            public void beforeRootsChange(ModuleRootEvent event) {}
 
             @Override
-            public void rootsChanged(final ModuleRootEvent event) {
+            public void rootsChanged(ModuleRootEvent event) {
                 notifications.updateAllNotifications();
             }
         });
@@ -62,29 +62,29 @@ public class KotlinSdkNotConfiguredNotificationProvider implements EditorNotific
 
     @Nullable
     @Override
-    public EditorNotificationPanel createNotificationPanel(@NotNull final VirtualFile file) {
+    public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file) {
         try {
-            final Module module = JetPluginUtil.getModuleForKotlinFile(file, myProject);
+            Module module = JetPluginUtil.getModuleForKotlinFile(file, myProject);
             if (module == null) return null;
 
             if (!KotlinSdkUtil.isSDKConfiguredFor(module)) {
                 return createNotificationPanel(module);
             }
         }
-        catch (final ProcessCanceledException ignore) {}
-        catch (final IndexNotReadyException ignore) {}
+        catch (ProcessCanceledException ignore) {}
+        catch (IndexNotReadyException ignore) {}
 
         return null;
     }
 
     @NotNull
     private static EditorNotificationPanel createNotificationPanel(@NotNull final Module module) {
-        final EditorNotificationPanel panel = new EditorNotificationPanel();
+        EditorNotificationPanel panel = new EditorNotificationPanel();
         panel.setText("Kotlin SDK is not configured for module \"" + module.getName() + "\"");
         panel.createActionLabel("Configure Kotlin SDK", new Runnable() {
             @Override
             public void run() {
-                final AddFrameworkSupportDialog dialog = AddFrameworkSupportDialog.createDialog(module);
+                AddFrameworkSupportDialog dialog = AddFrameworkSupportDialog.createDialog(module);
                 if (dialog != null) {
                     dialog.show();
                 }

@@ -30,12 +30,12 @@ public class CompilerPathUtil {
 
     @Nullable
     public static File getSDKHome() {
-        final File compilerJar = new File(PathUtil.getJarPathForClass(CompilerPathUtil.class));
+        File compilerJar = new File(PathUtil.getJarPathForClass(CompilerPathUtil.class));
         if (!compilerJar.exists()) return null;
 
         if (compilerJar.getName().equals(PathUtil.KOTLIN_COMPILER_JAR)) {
-            final File lib = compilerJar.getParentFile();
-            final File answer = lib.getParentFile();
+            File lib = compilerJar.getParentFile();
+            File answer = lib.getParentFile();
             return answer.exists() ? answer : null;
         }
 

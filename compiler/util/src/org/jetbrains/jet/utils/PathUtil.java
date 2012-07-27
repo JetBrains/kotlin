@@ -39,43 +39,43 @@ public class PathUtil {
     private PathUtil() {}
 
     @Nullable
-    public static File getRuntimePath(@Nullable final File sdkHome) {
+    public static File getRuntimePath(@Nullable File sdkHome) {
         return getFilePackedIntoLib(sdkHome, KOTLIN_RUNTIME_JAR);
     }
 
     @Nullable
-    public static File getCompilerPath(@Nullable final File sdkHome) {
+    public static File getCompilerPath(@Nullable File sdkHome) {
         return getFilePackedIntoLib(sdkHome, KOTLIN_COMPILER_JAR);
     }
 
     @Nullable
-    public static File getJsLibJsPath(@Nullable final File sdkHome) {
+    public static File getJsLibJsPath(@Nullable File sdkHome) {
         return getFilePackedIntoLib(sdkHome, JS_LIB_JS_NAME);
     }
 
     @Nullable
-    public static File getJsLibJarPath(@Nullable final File sdkHome) {
+    public static File getJsLibJarPath(@Nullable File sdkHome) {
         return getFilePackedIntoLib(sdkHome, JS_LIB_JAR_NAME);
     }
 
     @Nullable
-    public static File getJdkAnnotationsPath(@Nullable final File sdkHome) {
+    public static File getJdkAnnotationsPath(@Nullable File sdkHome) {
         return getFilePackedIntoLib(sdkHome, JDK_ANNOTATIONS_JAR);
     }
 
     @Nullable
-    private static File getFilePackedIntoLib(@Nullable final File sdkHome, @NotNull final String filePathFromLib) {
+    private static File getFilePackedIntoLib(@Nullable File sdkHome, @NotNull String filePathFromLib) {
         if (sdkHome == null) return null;
-        final File answer = new File(sdkHome, "lib/" + filePathFromLib);
+        File answer = new File(sdkHome, "lib/" + filePathFromLib);
         return answer.exists() ? answer : null;
     }
 
     @Nullable
-    public static File getSDKHomeByCompilerPath(@Nullable final File compilerPath) {
+    public static File getSDKHomeByCompilerPath(@Nullable File compilerPath) {
         if (compilerPath == null) return null;
-        final File libDir = compilerPath.getParentFile();
+        File libDir = compilerPath.getParentFile();
         if (libDir == null) return null;
-        final File sdkHome = libDir.getParentFile();
+        File sdkHome = libDir.getParentFile();
         return sdkHome != null && sdkHome.exists() ? sdkHome : null;
     }
 
@@ -96,8 +96,8 @@ public class PathUtil {
     }
 
     @NotNull
-    public static String getJarPathForClass(@NotNull final Class aClass) {
-        final String resourceRoot = PathManager.getResourceRoot(aClass, "/" + aClass.getName().replace('.', '/') + ".class");
+    public static String getJarPathForClass(@NotNull Class aClass) {
+        String resourceRoot = PathManager.getResourceRoot(aClass, "/" + aClass.getName().replace('.', '/') + ".class");
         return new File(resourceRoot).getAbsoluteFile().getAbsolutePath();
     }
 
