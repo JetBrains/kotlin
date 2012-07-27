@@ -10,7 +10,8 @@ object B {
 }
 
 class C {
-  val query = object {val status = "complete"}
+  fun ov() = "d"
+  val query = object {val status = "complete" + ov()}
 }
 
 fun box() = A.query.status == "complete" && B.query.status == "completed" && C().query.status == "completed"
