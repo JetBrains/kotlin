@@ -6,6 +6,5 @@ internal open class Aaa : jet.Any {
 }
 internal open class Bbb : Aaa {
     public final /*constructor*/ fun <init>(): Bbb
-    internal final override /*1*/ val bar: jet.Int
     internal final val  </*0*/ T : jet.Any?> bar: jet.String
 }

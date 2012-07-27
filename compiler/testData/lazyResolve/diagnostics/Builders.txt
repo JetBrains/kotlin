@@ -17,6 +17,7 @@ internal final class html.A : html.BodyTag {
     internal final override /*1*/ fun p(/*0*/ init: jet.ExtensionFunction0<html.P, jet.Tuple0>): html.P
     internal open override /*1*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: jet.String): jet.Tuple0
     invisible_fake abstract override /*1*/ fun renderAttributes(): jet.String?
+    internal open override /*1*/ fun toString(): jet.String?
     internal final override /*1*/ fun ul(/*0*/ init: jet.ExtensionFunction0<html.UL, jet.Tuple0>): html.UL
 }
 internal final class html.B : html.BodyTag {
@@ -32,6 +33,7 @@ internal final class html.B : html.BodyTag {
     internal final override /*1*/ fun p(/*0*/ init: jet.ExtensionFunction0<html.P, jet.Tuple0>): html.P
     internal open override /*1*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: jet.String): jet.Tuple0
     invisible_fake abstract override /*1*/ fun renderAttributes(): jet.String?
+    internal open override /*1*/ fun toString(): jet.String?
     internal final override /*1*/ fun ul(/*0*/ init: jet.ExtensionFunction0<html.UL, jet.Tuple0>): html.UL
 }
 internal final class html.Body : html.BodyTag {
@@ -47,6 +49,7 @@ internal final class html.Body : html.BodyTag {
     internal final override /*1*/ fun p(/*0*/ init: jet.ExtensionFunction0<html.P, jet.Tuple0>): html.P
     internal open override /*1*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: jet.String): jet.Tuple0
     invisible_fake abstract override /*1*/ fun renderAttributes(): jet.String?
+    internal open override /*1*/ fun toString(): jet.String?
     internal final override /*1*/ fun ul(/*0*/ init: jet.ExtensionFunction0<html.UL, jet.Tuple0>): html.UL
 }
 internal abstract class html.BodyTag : html.TagWithText {
@@ -62,10 +65,12 @@ internal abstract class html.BodyTag : html.TagWithText {
     internal final fun p(/*0*/ init: jet.ExtensionFunction0<html.P, jet.Tuple0>): html.P
     internal open override /*1*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: jet.String): jet.Tuple0
     invisible_fake abstract override /*1*/ fun renderAttributes(): jet.String?
+    internal open override /*1*/ fun toString(): jet.String?
     internal final fun ul(/*0*/ init: jet.ExtensionFunction0<html.UL, jet.Tuple0>): html.UL
 }
 internal abstract trait html.Element : jet.Any {
     internal abstract fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: jet.String): jet.Tuple0
+    internal open fun toString(): jet.String?
 }
 internal final class html.H1 : html.BodyTag {
     public final /*constructor*/ fun <init>(): html.H1
@@ -80,6 +85,7 @@ internal final class html.H1 : html.BodyTag {
     internal final override /*1*/ fun p(/*0*/ init: jet.ExtensionFunction0<html.P, jet.Tuple0>): html.P
     internal open override /*1*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: jet.String): jet.Tuple0
     invisible_fake abstract override /*1*/ fun renderAttributes(): jet.String?
+    internal open override /*1*/ fun toString(): jet.String?
     internal final override /*1*/ fun ul(/*0*/ init: jet.ExtensionFunction0<html.UL, jet.Tuple0>): html.UL
 }
 internal final class html.HTML : html.TagWithText {
@@ -93,6 +99,7 @@ internal final class html.HTML : html.TagWithText {
     internal final override /*1*/ val name: jet.String
     internal open override /*1*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: jet.String): jet.Tuple0
     invisible_fake abstract override /*1*/ fun renderAttributes(): jet.String?
+    internal open override /*1*/ fun toString(): jet.String?
 }
 internal final class html.Head : html.TagWithText {
     public final /*constructor*/ fun <init>(): html.Head
@@ -104,6 +111,7 @@ internal final class html.Head : html.TagWithText {
     internal open override /*1*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: jet.String): jet.Tuple0
     invisible_fake abstract override /*1*/ fun renderAttributes(): jet.String?
     internal final fun title(/*0*/ init: jet.ExtensionFunction0<html.Title, jet.Tuple0>): html.Title
+    internal open override /*1*/ fun toString(): jet.String?
 }
 internal final class html.LI : html.BodyTag {
     public final /*constructor*/ fun <init>(): html.LI
@@ -118,6 +126,7 @@ internal final class html.LI : html.BodyTag {
     internal final override /*1*/ fun p(/*0*/ init: jet.ExtensionFunction0<html.P, jet.Tuple0>): html.P
     internal open override /*1*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: jet.String): jet.Tuple0
     invisible_fake abstract override /*1*/ fun renderAttributes(): jet.String?
+    internal open override /*1*/ fun toString(): jet.String?
     internal final override /*1*/ fun ul(/*0*/ init: jet.ExtensionFunction0<html.UL, jet.Tuple0>): html.UL
 }
 internal final class html.P : html.BodyTag {
@@ -133,6 +142,7 @@ internal final class html.P : html.BodyTag {
     internal final override /*1*/ fun p(/*0*/ init: jet.ExtensionFunction0<html.P, jet.Tuple0>): html.P
     internal open override /*1*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: jet.String): jet.Tuple0
     invisible_fake abstract override /*1*/ fun renderAttributes(): jet.String?
+    internal open override /*1*/ fun toString(): jet.String?
     internal final override /*1*/ fun ul(/*0*/ init: jet.ExtensionFunction0<html.UL, jet.Tuple0>): html.UL
 }
 internal abstract class html.Tag : html.Element {
@@ -143,6 +153,7 @@ internal abstract class html.Tag : html.Element {
     internal final val name: jet.String
     internal open override /*1*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: jet.String): jet.Tuple0
     private final fun renderAttributes(): jet.String?
+    internal open override /*1*/ fun toString(): jet.String?
 }
 internal abstract class html.TagWithText : html.Tag {
     public final /*constructor*/ fun <init>(/*0*/ name: jet.String): html.TagWithText
@@ -153,11 +164,13 @@ internal abstract class html.TagWithText : html.Tag {
     internal final override /*1*/ val name: jet.String
     internal open override /*1*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: jet.String): jet.Tuple0
     invisible_fake abstract override /*1*/ fun renderAttributes(): jet.String?
+    internal open override /*1*/ fun toString(): jet.String?
 }
 internal final class html.TextElement : html.Element {
     public final /*constructor*/ fun <init>(/*0*/ text: jet.String): html.TextElement
     internal open override /*1*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: jet.String): jet.Tuple0
     internal final val text: jet.String
+    internal open override /*1*/ fun toString(): jet.String?
 }
 internal final class html.Title : html.TagWithText {
     public final /*constructor*/ fun <init>(): html.Title
@@ -168,6 +181,7 @@ internal final class html.Title : html.TagWithText {
     internal final override /*1*/ val name: jet.String
     internal open override /*1*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: jet.String): jet.Tuple0
     invisible_fake abstract override /*1*/ fun renderAttributes(): jet.String?
+    internal open override /*1*/ fun toString(): jet.String?
 }
 internal final class html.UL : html.BodyTag {
     public final /*constructor*/ fun <init>(): html.UL
@@ -183,6 +197,7 @@ internal final class html.UL : html.BodyTag {
     internal final override /*1*/ fun p(/*0*/ init: jet.ExtensionFunction0<html.P, jet.Tuple0>): html.P
     internal open override /*1*/ fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: jet.String): jet.Tuple0
     invisible_fake abstract override /*1*/ fun renderAttributes(): jet.String?
+    internal open override /*1*/ fun toString(): jet.String?
     internal final override /*1*/ fun ul(/*0*/ init: jet.ExtensionFunction0<html.UL, jet.Tuple0>): html.UL
 }
 internal final fun html(/*0*/ init: jet.ExtensionFunction0<html.HTML, jet.Tuple0>): html.HTML

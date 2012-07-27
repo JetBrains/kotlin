@@ -16,7 +16,7 @@ namespace b
 
 internal final class b.B : a.A {
     public final /*constructor*/ fun <init>(): b.B
-    invisible_fake final override /*1*/ fun bar(): jet.Tuple0
+    invisible_fake abstract override /*1*/ fun bar(): jet.Tuple0
 }
 internal final class b.NewClass : java.util.ArrayList<java.lang.Integer> {
     public final /*constructor*/ fun <init>(): b.NewClass
@@ -25,10 +25,15 @@ internal final class b.NewClass : java.util.ArrayList<java.lang.Integer> {
     public open override /*1*/ fun addAll(/*0*/ p0: java.util.Collection<out java.lang.Integer>): jet.Boolean
     public open override /*1*/ fun addAll(/*0*/ p0: jet.Int, /*1*/ p1: java.util.Collection<out java.lang.Integer>): jet.Boolean
     public open override /*1*/ fun clear(): jet.Tuple0
+    public open override /*1*/ fun clone(): jet.Any
     public open override /*1*/ fun contains(/*0*/ p0: jet.Any?): jet.Boolean
     public open override /*1*/ fun containsAll(/*0*/ p0: java.util.Collection<out jet.Any?>): jet.Boolean
     public open override /*1*/ fun ensureCapacity(/*0*/ p0: jet.Int): jet.Tuple0
+    public open override /*1*/ fun equals(/*0*/ p0: jet.Any?): jet.Boolean
+    protected open override /*1*/ fun finalize(): jet.Tuple0
     public open override /*1*/ fun get(/*0*/ p0: jet.Int): java.lang.Integer
+    public final override /*1*/ fun getClass(): java.lang.Class<out jet.Any?>?
+    public open override /*1*/ fun hashCode(): jet.Int
     public open override /*1*/ fun indexOf(/*0*/ p0: jet.Any?): jet.Int
     public open override /*1*/ fun isEmpty(): jet.Boolean
     public open override /*1*/ fun iterator(): java.util.Iterator<java.lang.Integer>
@@ -36,6 +41,8 @@ internal final class b.NewClass : java.util.ArrayList<java.lang.Integer> {
     public open override /*1*/ fun listIterator(): java.util.ListIterator<java.lang.Integer>
     public open override /*1*/ fun listIterator(/*0*/ p0: jet.Int): java.util.ListIterator<java.lang.Integer>
     protected final override /*1*/ var modCount: jet.Int
+    public final override /*1*/ fun notify(): jet.Tuple0
+    public final override /*1*/ fun notifyAll(): jet.Tuple0
     public open override /*1*/ fun remove(/*0*/ p0: jet.Any?): jet.Boolean
     public open override /*1*/ fun remove(/*0*/ p0: jet.Int): java.lang.Integer
     public open override /*1*/ fun removeAll(/*0*/ p0: java.util.Collection<out jet.Any?>): jet.Boolean
@@ -46,7 +53,11 @@ internal final class b.NewClass : java.util.ArrayList<java.lang.Integer> {
     public open override /*1*/ fun subList(/*0*/ p0: jet.Int, /*1*/ p1: jet.Int): java.util.List<java.lang.Integer>
     public open override /*1*/ fun toArray(): jet.Array<jet.Any?>
     public open override /*1*/ fun </*0*/ T : jet.Any?>toArray(/*0*/ p0: jet.Array<T>): jet.Array<T>
+    public open override /*1*/ fun toString(): jet.String
     public open override /*1*/ fun trimToSize(): jet.Tuple0
+    public final override /*1*/ fun wait(): jet.Tuple0
+    public final override /*1*/ fun wait(/*0*/ p0: jet.Long): jet.Tuple0
+    public final override /*1*/ fun wait(/*0*/ p0: jet.Long, /*1*/ p1: jet.Int): jet.Tuple0
 }
 internal final class b.Q : jet.Any {
     public final /*constructor*/ fun <init>(): b.Q

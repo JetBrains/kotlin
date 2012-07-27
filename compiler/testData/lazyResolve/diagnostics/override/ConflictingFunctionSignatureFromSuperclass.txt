@@ -7,5 +7,4 @@ internal open class Aaa : jet.Any {
 internal open class Bbb : Aaa {
     public final /*constructor*/ fun <init>(): Bbb
     internal final fun </*0*/ T : jet.Any?>foo(): jet.Int
-    internal final override /*1*/ fun foo(): jet.Int
 }

@@ -9,7 +9,7 @@ internal open class kt1805.Some : jet.Any {
 }
 internal final class kt1805.SomeSubclass : kt1805.Some {
     public final /*constructor*/ fun <init>(): kt1805.SomeSubclass
-    invisible_fake final override /*1*/ val privateField: jet.Int private get
+    invisible_fake abstract override /*1*/ val privateField: jet.Int private get
     internal final fun test(): jet.Tuple0
 }
 internal final fun test(): jet.Tuple0

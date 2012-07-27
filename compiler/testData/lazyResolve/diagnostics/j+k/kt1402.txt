@@ -1,0 +1,8 @@
+namespace <root>
+
+// <namespace name="b">
+namespace b
+
+internal final fun doSmth(/*0*/ b: a.M.Inner): a.M.Inner
+internal final fun foo(): jet.Tuple0
+// </namespace name="b">

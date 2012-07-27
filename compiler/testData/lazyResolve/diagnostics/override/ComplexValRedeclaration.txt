@@ -13,7 +13,6 @@ internal abstract class override.generics.MyAbstractClass</*0*/ T : jet.Any?> : 
 internal abstract class override.generics.MyLegalAbstractClass2</*0*/ T : jet.Any?> : override.generics.MyAbstractClass<jet.Int> {
     public final /*constructor*/ fun </*0*/ T : jet.Any?><init>(/*0*/ t: T): override.generics.MyLegalAbstractClass2<T>
     internal final val  </*0*/ R : jet.Any?> pr: T
-    internal abstract override /*1*/ val pr: jet.Int
 }
 // </namespace name="generics">
 // </namespace name="override">

@@ -21,7 +21,6 @@ internal open class b.D : jet.Any {
 }
 internal final class b.E : b.D {
     public final /*constructor*/ fun <init>(): b.E
-    invisible_fake open override /*1*/ fun self(): b.D
     internal open fun self(): b.E
     internal final fun test(): jet.Tuple0
 }

@@ -1,0 +1,8 @@
+namespace <root>
+
+// <namespace name="foo">
+namespace foo
+
+internal final val jet.Int.foo: jet.Int
+internal final val jet.Int.foo: jet.Int
+// </namespace name="foo">
