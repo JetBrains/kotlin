@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -30,9 +31,7 @@ import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaPackageScope;
@@ -45,6 +44,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -121,5 +121,22 @@ public class LazyResolveTestUtil {
         ResolveSession
                 session = new ResolveSession(project, lazyModule, moduleConfiguration, declarationProviderFactory);
         return lazyModule;
+    }
+
+    @NotNull
+    public static Set<Name> getTopLevelPackagesFromFileList(@NotNull List<JetFile> files) {
+        Set<Name> shortNames = Sets.newLinkedHashSet();
+        for (JetFile file : files) {
+            JetNamespaceHeader header = file.getNamespaceHeader();
+            if (header != null) {
+                List<JetSimpleNameExpression> names = header.getParentNamespaceNames();
+                Name name = names.isEmpty() ? header.getNameAsName() : names.get(0).getReferencedNameAsName();
+                shortNames.add(name);
+            }
+            else {
+                throw new IllegalStateException("There's a file that declares the default package: " + file.getName());
+            }
+        }
+        return shortNames;
     }
 }

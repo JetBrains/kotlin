@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
@@ -28,9 +27,7 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
@@ -57,18 +54,7 @@ public class LazyResolveStdlibLoadingTest extends KotlinTestWithEnvironmentManag
     protected void doTestForGivenFiles(
             List<JetFile> files
     ) {
-        Set<Name> namespaceShortNames = Sets.newLinkedHashSet();
-        for (JetFile file : files) {
-            JetNamespaceHeader header = file.getNamespaceHeader();
-            if (header != null) {
-                List<JetSimpleNameExpression> names = header.getParentNamespaceNames();
-                Name name = names.isEmpty() ? header.getNameAsName() : names.get(0).getReferencedNameAsName();
-                namespaceShortNames.add(name);
-            }
-            else {
-                throw new IllegalStateException("There's a file in stdlib that declares the default package: " + file.getName());
-            }
-        }
+        Set<Name> namespaceShortNames = LazyResolveTestUtil.getTopLevelPackagesFromFileList(files);
 
         ModuleDescriptor module = LazyResolveTestUtil.resolveEagerly(files, stdlibEnvironment);
         ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(files, stdlibEnvironment);
