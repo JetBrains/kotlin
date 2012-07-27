@@ -4,6 +4,18 @@ import java.sql.*
 import java.util.ArrayList
 import java.util.Collection
 import java.util.List
+import java.util.Map
+
+/**
+ * Executes the specfied block with result set and then closes it
+ */
+public fun <R> ResultSet.use(block : (ResultSet) -> R) : R {
+    try {
+        return block(this)
+    } finally {
+        this.close()
+    }
+}
 
 /**
 * Creates an iterator through a [[ResultSet]]
@@ -16,6 +28,56 @@ fun ResultSet.iterator() : Iterator<ResultSet> {
 
         public override fun next() : ResultSet = rs
     }
+}
+
+/**
+ * Returns iterable that calls to the specified mapper function for each row
+ */
+fun <T> ResultSet.getMapped(fn : (ResultSet) -> T) : jet.Iterable<T> {
+    val rs = this
+
+    val iterator = object : Iterator<T>{
+        public override val hasNext : Boolean
+            get() = rs.next()
+
+        public override fun next() : T = fn(rs)
+    }
+
+    return object : jet.Iterable<T> {
+        public override fun iterator(): Iterator<T> = iterator
+    }
+}
+
+/**
+ * Returns array with column names
+ */
+fun ResultSet.getColumnNames() : jet.Array<String> {
+    val meta = getMetaData().sure()
+    return jet.Array<String>(meta.getColumnCount(), {meta.getColumnName(it + 1) ?: it.toString()})
+}
+
+/**
+ * Return array filled with values from current row in the cursor. Values will have the same order as column's order
+ * @columnNames you can specify column names to extract otherwise all columns will be extracted
+ */
+fun ResultSet.getValues(columnNames : jet.Array<String> = getColumnNames()) : jet.Array<Any?> {
+    return jet.Array<Any?>(columnNames.size, {
+        this[columnNames[it]]
+    })
+}
+
+/**
+ * Return map filled with values from current row in the cursor. Uses column names as keys for result map.
+ * @param columnNames you can specify column names to extract otherwise all columns will be extracted
+ */
+fun ResultSet.getValuesAsMap(columnNames : jet.Array<String> = getColumnNames()) : java.util.Map<String, Any?> {
+    val result = java.util.HashMap<String, Any?>(columnNames.size)
+
+    columnNames.forEach {
+        result[it] = this[it]
+    }
+
+    return result
 }
 
 /**
@@ -47,3 +109,26 @@ fun <T> ResultSet.mapTo(result: Collection<T>, fn: (ResultSet) -> T) : Collectio
     }
     return result
 }
+
+private fun ResultSet.ensureHasRow() : ResultSet {
+    if (!next()) {
+        throw IllegalStateException("There are no rows left in cursor")
+    }
+    return this
+}
+
+/**
+ * Returns int value from the cursor at first column. May be useful to get result of count(*)
+ */
+fun ResultSet.singleInt() : Int = ensureHasRow().getInt(1)
+
+/**
+ * Returns long value from the cursor at first column.
+ */
+fun ResultSet.singleLong() : Long = ensureHasRow().getLong(1)
+
+/**
+ * Returns double value from the cursor at first column.
+ */
+fun ResultSet.singleDouble() : Double = ensureHasRow().getDouble(1)
+

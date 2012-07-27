@@ -7,6 +7,8 @@ import junit.framework.TestCase
 import org.h2.jdbcx.JdbcDataSource
 import javax.sql.DataSource
 import org.h2.jdbcx.JdbcConnectionPool
+import kotlin.nullable.forEach
+import java.sql.ResultSet
 
 public val dataSource : DataSource = createDataSource()
 
@@ -37,6 +39,50 @@ class JdbcTest : TestCase() {
         dataSource.query("select * from foo") {
             for (row in it) {
                 println("name: ${row["name"]} has id ${row["id"]}")
+            }
+        }
+    }
+
+    fun testGetValuesAsMap() {
+        dataSource.query("select * from foo") {
+            for (row in it) {
+                println(row.getValuesAsMap())
+            }
+        }
+    }
+
+    fun testStringFormat() {
+        dataSource.query(kotlin.template.StringTemplate(array("select * from foo where id = ", 1))) {
+            for (row in it) {
+                println(row.getValuesAsMap())
+            }
+        }
+    }
+
+    fun testMapIterator() {
+        val mapper = { (rs : ResultSet) ->
+            "id: ${rs["id"]}"
+        }
+
+        dataSource.query("select * from foo") {
+            for (row in it.getMapped(mapper)) {
+                println(row)
+            }
+        }
+    }
+
+    fun testCount() {
+        dataSource.query("select count(*) from foo") {
+            println("count: ${it.singleInt()}")
+        }
+    }
+
+    fun testFormatCursor() {
+        dataSource.query("select * from foo") {
+            println(it.getColumnNames().toList().makeString("\t"))
+
+            for (row in it) {
+                println(it.getValues().makeString("\t"))
             }
         }
     }
