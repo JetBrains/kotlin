@@ -64,4 +64,8 @@ public class TraitsTest extends CodegenTestCase {
     public void testTraitFuncCall() {
         blackBoxFile("traits/traitFuncCall.kt");
     }
+
+    public void testKt2541() {
+        blackBoxFile("regressions/kt2541.kt");
+    }
 }
