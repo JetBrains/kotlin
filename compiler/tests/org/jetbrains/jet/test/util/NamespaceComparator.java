@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
@@ -84,24 +85,28 @@ public class NamespaceComparator {
         return serialized;
     }
 
-    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, true, Predicates.<NamespaceDescriptor>alwaysTrue());
-    public static final Configuration RECURSIVE = new Configuration(true, true, Predicates.<NamespaceDescriptor>alwaysTrue());
-    public static final Configuration NON_RECURSIVE = new Configuration(true, false, Predicates.<NamespaceDescriptor>alwaysTrue());
+    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, Predicates.<FqNameUnsafe>alwaysTrue(), Predicates.<NamespaceDescriptor>alwaysTrue());
+    public static final Configuration RECURSIVE = new Configuration(true, Predicates.<FqNameUnsafe>alwaysTrue(), Predicates.<NamespaceDescriptor>alwaysTrue());
+    public static final Configuration NON_RECURSIVE = new Configuration(true, Predicates.<FqNameUnsafe>alwaysFalse(), Predicates.<NamespaceDescriptor>alwaysTrue());
 
     public static class Configuration {
 
         private final boolean includeObject;
-        private final boolean recursive;
+        private final Predicate<FqNameUnsafe> recurseIntoPackage;
         private final Predicate<NamespaceDescriptor> includeIntoOutput;
 
-        public Configuration(boolean includeObject, boolean recursive, Predicate<NamespaceDescriptor> includeIntoOutput) {
+        public Configuration(boolean includeObject, Predicate<FqNameUnsafe> recurseIntoPackage, Predicate<NamespaceDescriptor> includeIntoOutput) {
             this.includeObject = includeObject;
-            this.recursive = recursive;
+            this.recurseIntoPackage = recurseIntoPackage;
             this.includeIntoOutput = includeIntoOutput;
         }
 
         public Configuration filterOutput(@NotNull Predicate<NamespaceDescriptor> includeIntoOutput) {
-            return new Configuration(includeObject, recursive, includeIntoOutput);
+            return new Configuration(includeObject, recurseIntoPackage, includeIntoOutput);
+        }
+
+        public Configuration filterRecusion(@NotNull Predicate<FqNameUnsafe> recurseIntoPackage) {
+            return new Configuration(includeObject, recurseIntoPackage, includeIntoOutput);
         }
     }
 
@@ -135,7 +140,7 @@ public class NamespaceComparator {
                 functionNames.add(ad.getName());
             }
             else if (ad instanceof NamespaceDescriptor) {
-                if (conf.recursive) {
+                if (conf.recurseIntoPackage.apply(DescriptorUtils.getFQName(ad))) {
                     NamespaceDescriptor namespaceDescriptorA = (NamespaceDescriptor) ad;
                     NamespaceDescriptor namespaceDescriptorB = nsb.getMemberScope().getNamespace(namespaceDescriptorA.getName());
                     //deferred.assertNotNull("Namespace not found: " + namespaceDescriptorA.getQualifiedName(), namespaceDescriptorB);
