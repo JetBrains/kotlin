@@ -67,11 +67,9 @@ public class ScopeProvider {
             throw new IllegalStateException("Root package not found");
         }
 
-        writableScope.importScope(rootPackageDescriptor.getMemberScope());
-
         // Don't import twice
         if (!packageDescriptor.getQualifiedName().equals(FqName.ROOT)) {
-            writableScope.importScope(packageDescriptor.getMemberScope());
+            writableScope.importScope(rootPackageDescriptor.getMemberScope());
         }
 
         List<JetImportDirective> importDirectives = Lists.newArrayList(file.getImportDirectives());
@@ -80,6 +78,8 @@ public class ScopeProvider {
                                              rootPackageDescriptor.getMemberScope(),
                                              resolveSession.getModuleConfiguration(), resolveSession.getTrace(),
                                              resolveSession.getInjector().getQualifiedExpressionResolver());
+
+        writableScope.importScope(packageDescriptor.getMemberScope());
 
         writableScope.changeLockLevel(WritableScope.LockLevel.READING);
         // TODO: Cache
