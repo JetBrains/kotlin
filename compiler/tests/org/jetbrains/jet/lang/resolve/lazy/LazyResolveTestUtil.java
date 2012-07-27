@@ -134,7 +134,7 @@ public class LazyResolveTestUtil {
                 shortNames.add(name);
             }
             else {
-                throw new IllegalStateException("There's a file that declares the default package: " + file.getName());
+                throw new IllegalStateException("Scripts are not supported: " + file.getName());
             }
         }
         return shortNames;
