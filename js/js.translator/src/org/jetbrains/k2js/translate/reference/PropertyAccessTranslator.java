@@ -84,7 +84,7 @@ public abstract class PropertyAccessTranslator extends AbstractTranslator implem
         return canBePropertyGetterCall(selector, context);
     }
 
-    public static boolean canBePropertyGetterCall(@NotNull JetSimpleNameExpression expression,
+    private static boolean canBePropertyGetterCall(@NotNull JetSimpleNameExpression expression,
             @NotNull TranslationContext context) {
         return (getDescriptorForReferenceExpression
                         (context.bindingContext(), expression) instanceof PropertyDescriptor);

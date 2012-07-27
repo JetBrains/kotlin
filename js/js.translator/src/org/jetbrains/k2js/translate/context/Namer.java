@@ -85,19 +85,23 @@ public final class Namer {
         }
     }
 
-    public static String getKotlinBackingFieldName(String propertyName) {
+    @NotNull
+    public static String getKotlinBackingFieldName(@NotNull String propertyName) {
         return getNameWithPrefix(propertyName, BACKING_FIELD_PREFIX);
     }
 
-    public static String getNameForGetter(String propertyName) {
+    @NotNull
+    private static String getNameForGetter(@NotNull String propertyName) {
         return getNameWithPrefix(propertyName, GETTER_PREFIX);
     }
 
-    public static String getNameForSetter(String propertyName) {
+    @NotNull
+    private static String getNameForSetter(@NotNull String propertyName) {
         return getNameWithPrefix(propertyName, SETTER_PREFIX);
     }
 
-    private static String getNameWithPrefix(String name, String prefix) {
+    @NotNull
+    private static String getNameWithPrefix(@NotNull String name, @NotNull String prefix) {
         return prefix + name;
     }
 

@@ -56,7 +56,7 @@ public final class CallParametersResolver {
     private final ResolvedCall<? extends CallableDescriptor> resolvedCall;
     private final boolean isExtensionCall;
 
-    public CallParametersResolver(@Nullable JsExpression qualifier,
+    private CallParametersResolver(@Nullable JsExpression qualifier,
             @Nullable JsExpression callee,
             @NotNull CallableDescriptor descriptor,
             @NotNull ResolvedCall<? extends CallableDescriptor> call,

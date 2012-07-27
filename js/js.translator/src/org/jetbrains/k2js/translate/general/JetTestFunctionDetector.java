@@ -40,7 +40,7 @@ public class JetTestFunctionDetector {
     private JetTestFunctionDetector() {
     }
 
-    public static boolean isTest(@NotNull BindingContext bindingContext, @NotNull JetNamedFunction function) {
+    private static boolean isTest(@NotNull BindingContext bindingContext, @NotNull JetNamedFunction function) {
         FunctionDescriptor functionDescriptor = getNullableDescriptorForFunction(bindingContext, function);
         if (functionDescriptor == null) {
             return false;

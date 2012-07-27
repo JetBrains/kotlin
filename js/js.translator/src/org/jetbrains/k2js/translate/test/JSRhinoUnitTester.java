@@ -26,7 +26,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class JSRhinoUnitTester extends CommonUnitTester {
 
-    public static final JsNameRef TEST_FUN_REF = AstUtil.newQualifiedNameRef("JsTests.test");
+    @NotNull
+    private static final JsNameRef TEST_FUN_REF = AstUtil.newQualifiedNameRef("JsTests.test");
 
     @NotNull
     @Override

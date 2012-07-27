@@ -31,7 +31,8 @@ import java.util.List;
  */
 public final class PatternBuilder {
 
-    public static final NamePredicate JET = new NamePredicate("jet");
+    @NotNull
+    private static final NamePredicate JET = new NamePredicate("jet");
 
     private PatternBuilder() {
     }

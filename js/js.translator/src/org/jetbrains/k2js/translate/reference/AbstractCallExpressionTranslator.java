@@ -60,7 +60,7 @@ public abstract class AbstractCallExpressionTranslator extends AbstractTranslato
         this.callType = type;
     }
 
-    abstract public boolean shouldWrapVarargInArray();
+    protected abstract boolean shouldWrapVarargInArray();
 
     @NotNull
     protected List<JsExpression> translateSingleArgument(@NotNull ResolvedValueArgument actualArgument,

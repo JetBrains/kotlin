@@ -87,7 +87,7 @@ public class DangerousData {
     }
 
     @NotNull
-    private List<JetExpression> nodesToBeGeneratedBefore = Lists.newArrayList();
+    private final List<JetExpression> nodesToBeGeneratedBefore = Lists.newArrayList();
 
     @Nullable
     private JetExpression dangerousNode = null;

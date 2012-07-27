@@ -39,8 +39,10 @@ import java.util.zip.ZipFile;
  * @author Pavel Talanov
  */
 public class LibrarySourcesConfig extends Config {
+    @NotNull
     public static final Key<String> EXTERNAL_MODULE_NAME = new Key<String>("externalModule");
-    public static final String UNKNOWN_EXTERNAL_MODULE_NAME = "<unknown>";
+    @NotNull
+    private static final String UNKNOWN_EXTERNAL_MODULE_NAME = "<unknown>";
 
     private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.asJava.JetLightClass");
 

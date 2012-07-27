@@ -158,11 +158,6 @@ public final class TranslationContext {
     }
 
     @NotNull
-    public TemporaryVariable declareTemporary(@NotNull JsExpression initExpression, boolean initialize) {
-        return dynamicContext.declareTemporary(initExpression, initialize);
-    }
-
-    @NotNull
     public Namer namer() {
         return staticContext.getNamer();
     }

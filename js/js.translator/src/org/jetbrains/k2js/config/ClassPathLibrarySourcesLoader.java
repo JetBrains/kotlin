@@ -20,13 +20,14 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * A helper class to load the kotlin library sources to be compiled to JavaScript as part of a JavaScript build
  */
 public class ClassPathLibrarySourcesLoader {
-    public static final String META_INF_SERVICES_FILE = "META-INF/services/org.jetbrains.kotlin.js.librarySource";
+    @NotNull
+    private static final String META_INF_SERVICES_FILE = "META-INF/services/org.jetbrains.kotlin.js.librarySource";
     @NotNull private final Project project;
 
     public ClassPathLibrarySourcesLoader(@NotNull Project project) {

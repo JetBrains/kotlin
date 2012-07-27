@@ -26,7 +26,8 @@ import java.util.List;
  * A Config implementation which is configured with a directory to find the standard library names from
  */
 public class ClassPathLibraryDefintionsConfig extends Config {
-    public static final String META_INF_SERVICES_FILE = "META-INF/services/org.jetbrains.kotlin.js.libraryDefinitions";
+    @NotNull
+    private static final String META_INF_SERVICES_FILE = "META-INF/services/org.jetbrains.kotlin.js.libraryDefinitions";
 
     public ClassPathLibraryDefintionsConfig(@NotNull Project project, @NotNull String moduleId, @NotNull EcmaVersion version) {
         super(project, moduleId, version);

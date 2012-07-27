@@ -64,7 +64,7 @@ public final class UnaryOperationTranslator {
 
     @NotNull
     private static JsExpression translateExclExclOperator(@NotNull JetUnaryExpression expression, @NotNull TranslationContext context) {
-        TemporaryVariable cachedValue = context.declareTemporary(translateAsExpression(getBaseExpression(expression), context), false);
+        TemporaryVariable cachedValue = context.declareTemporary(translateAsExpression(getBaseExpression(expression), context));
         JsBinaryOperation initAndCheckNotNull = AstUtil.newSequence(cachedValue.assignmentExpression(),
                                                              notNullCheck(context, cachedValue.reference()));
         return new JsConditional(initAndCheckNotNull, cachedValue.reference(), context.namer().throwNPEFunctionCall());

@@ -212,6 +212,7 @@ public final class JsDescriptorUtils {
             result.add(current);
             if (current.getContainingDeclaration() instanceof NamespaceDescriptor) {
                 current = (NamespaceDescriptor) current.getContainingDeclaration();
+                //noinspection ConstantConditions
                 assert current != null;
             }
             else {

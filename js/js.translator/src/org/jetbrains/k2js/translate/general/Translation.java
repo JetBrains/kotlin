@@ -205,6 +205,7 @@ public final class Translation {
         namer.exec(program);
     }
 
+    //TODO: determine whether should throw exception
     @Nullable
     private static JsStatement generateCallToMain(@NotNull TranslationContext context, @NotNull Collection<JetFile> files,
             @NotNull List<String> arguments) throws MainFunctionNotFoundException {

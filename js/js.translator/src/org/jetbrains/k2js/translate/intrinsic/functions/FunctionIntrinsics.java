@@ -53,8 +53,8 @@ public final class FunctionIntrinsics {
         register(RangesFIF.INSTANCE);
     }
 
-    private boolean register(@NotNull FunctionIntrinsicFactory instance) {
-        return factories.add(instance);
+    private void register(@NotNull FunctionIntrinsicFactory instance) {
+        factories.add(instance);
     }
 
     @NotNull
