@@ -89,8 +89,10 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (value instanceof Short) {
             return context.program().getNumberLiteral((Short) value);
         }
-        //TODO: long and char
-        throw new AssertionError(message(expression, "Unsupported constant expression"));
+        if (value instanceof Long) {
+            throw new IllegalStateException(message(expression, "Unsupported long constant"));
+        }
+        throw new IllegalStateException(message(expression, "Unsupported constant expression"));
     }
 
     @Override
