@@ -87,7 +87,7 @@ public class LazyResolveBuiltinClassesTest extends KotlinTestWithEnvironment {
                 jetNamespaceFromJSL.getName());
 
         NamespaceComparator.compareNamespaces(jetNamespaceFromJSL, jetNamespaceFromLazy,
-                                              true, Predicates.<NamespaceDescriptor>alwaysTrue(),
+                                              NamespaceComparator.RECURSIVE,
                                               new File("compiler/testData/builtin-classes.txt"));
 
     }

@@ -53,7 +53,7 @@ public final class LoadJavaDescriptorsTest extends KotlinTestWithEnvironment {
         File tmpDir = JetTestUtils.tmpDir(expected.getName());
         NamespaceDescriptor javaNamespaceDescriptor = LoadJavaDescriptorUtil.compileJava(files, tmpDir, getTestRootDisposable());
         //NOTE: comparing namespace to file (hack)
-        NamespaceComparator.compareNamespaces(javaNamespaceDescriptor, javaNamespaceDescriptor, false, expected);
+        NamespaceComparator.compareNamespaces(javaNamespaceDescriptor, javaNamespaceDescriptor, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, expected);
     }
 
     public void testPackageLocalVisibility() throws Exception {

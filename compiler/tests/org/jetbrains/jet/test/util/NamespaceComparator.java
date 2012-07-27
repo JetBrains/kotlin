@@ -51,20 +51,10 @@ public class NamespaceComparator {
     public static void compareNamespaces(
             @NotNull NamespaceDescriptor nsa,
             @NotNull NamespaceDescriptor nsb,
-            boolean includeObject,
+            @NotNull Configuration configuration,
             @NotNull File txtFile
     ) {
-        compareNamespaces(nsa, nsb, includeObject, Predicates.<NamespaceDescriptor>alwaysTrue(), txtFile);
-    }
-
-    public static void compareNamespaces(
-            @NotNull NamespaceDescriptor nsa,
-            @NotNull NamespaceDescriptor nsb,
-            boolean includeObject,
-            @NotNull Predicate<NamespaceDescriptor> includeIntoOutput,
-            @NotNull File txtFile
-    ) {
-        String serializedFormWithDemarkedNames = assertNamespacesEqual(nsa, nsb, includeObject, includeIntoOutput);
+        String serializedFormWithDemarkedNames = assertNamespacesEqual(nsa, nsb, configuration);
         // The serializer puts "!" in front of the name because it allows for speedy sorting of members
         // see MemberComparator.normalize()
         String serialized = serializedFormWithDemarkedNames.replace("!", "");
@@ -83,23 +73,43 @@ public class NamespaceComparator {
         }
     }
 
-    public static String assertNamespacesEqual(NamespaceDescriptor nsa,
+    public static String assertNamespacesEqual(
+            NamespaceDescriptor nsa,
             NamespaceDescriptor nsb,
-            boolean includeObject,
-            Predicate<NamespaceDescriptor> includeIntoOutput) {
-        NamespaceComparator comparator = new NamespaceComparator(includeObject, includeIntoOutput);
+            @NotNull Configuration configuration
+    ) {
+        NamespaceComparator comparator = new NamespaceComparator(configuration);
         String serialized = comparator.doCompareNamespaces(nsa, nsb);
         comparator.deferred.throwFailures();
         return serialized;
     }
 
-    private final boolean includeObject;
-    private final Predicate<NamespaceDescriptor> includeIntoOutput;
+    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, true, Predicates.<NamespaceDescriptor>alwaysTrue());
+    public static final Configuration RECURSIVE = new Configuration(true, true, Predicates.<NamespaceDescriptor>alwaysTrue());
+    public static final Configuration NON_RECURSIVE = new Configuration(true, true, Predicates.<NamespaceDescriptor>alwaysTrue());
+
+    public static class Configuration {
+
+        private final boolean includeObject;
+        private final boolean recursive;
+        private final Predicate<NamespaceDescriptor> includeIntoOutput;
+
+        public Configuration(boolean includeObject, boolean recursive, Predicate<NamespaceDescriptor> includeIntoOutput) {
+            this.includeObject = includeObject;
+            this.recursive = recursive;
+            this.includeIntoOutput = includeIntoOutput;
+        }
+
+        public Configuration filterOutput(@NotNull Predicate<NamespaceDescriptor> includeIntoOutput) {
+            return new Configuration(includeObject, recursive, includeIntoOutput);
+        }
+    }
+
+    private final Configuration conf;
     private final DeferredAssertions deferred = new DeferredAssertions();
 
-    private NamespaceComparator(boolean includeObject, Predicate<NamespaceDescriptor> includeIntoOutput) {
-        this.includeObject = includeObject;
-        this.includeIntoOutput = includeIntoOutput;
+    private NamespaceComparator(@NotNull Configuration conf) {
+        this.conf = conf;
     }
 
     private String doCompareNamespaces(@NotNull NamespaceDescriptor nsa, @NotNull NamespaceDescriptor nsb) {
@@ -125,18 +135,20 @@ public class NamespaceComparator {
                 functionNames.add(ad.getName());
             }
             else if (ad instanceof NamespaceDescriptor) {
-                NamespaceDescriptor namespaceDescriptorA = (NamespaceDescriptor) ad;
-                NamespaceDescriptor namespaceDescriptorB = nsb.getMemberScope().getNamespace(namespaceDescriptorA.getName());
-                //deferred.assertNotNull("Namespace not found: " + namespaceDescriptorA.getQualifiedName(), namespaceDescriptorB);
-                if (namespaceDescriptorB == null) {
-                    System.err.println("Namespace not found: " + namespaceDescriptorA.getQualifiedName());
-                }
-                else {
-                    String comparison = doCompareNamespaces(namespaceDescriptorA, namespaceDescriptorB);
-                    if (includeIntoOutput.apply(namespaceDescriptorA)) {
-                        sb.append("// <namespace name=\"" + namespaceDescriptorA.getName() + "\">\n");
-                        sb.append(comparison);
-                        sb.append("// </namespace name=\"" + namespaceDescriptorA.getName() + "\">\n");
+                if (conf.recursive) {
+                    NamespaceDescriptor namespaceDescriptorA = (NamespaceDescriptor) ad;
+                    NamespaceDescriptor namespaceDescriptorB = nsb.getMemberScope().getNamespace(namespaceDescriptorA.getName());
+                    //deferred.assertNotNull("Namespace not found: " + namespaceDescriptorA.getQualifiedName(), namespaceDescriptorB);
+                    if (namespaceDescriptorB == null) {
+                        System.err.println("Namespace not found: " + namespaceDescriptorA.getQualifiedName());
+                    }
+                    else {
+                        String comparison = doCompareNamespaces(namespaceDescriptorA, namespaceDescriptorB);
+                        if (conf.includeIntoOutput.apply(namespaceDescriptorA)) {
+                            sb.append("// <namespace name=\"" + namespaceDescriptorA.getName() + "\">\n");
+                            sb.append(comparison);
+                            sb.append("// </namespace name=\"" + namespaceDescriptorA.getName() + "\">\n");
+                        }
                     }
                 }
             }
@@ -702,7 +714,7 @@ public class NamespaceComparator {
 
             JetScope memberScope = klass.getMemberScope(typeArguments);
             for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
-                if (!includeObject) {
+                if (!conf.includeObject) {
                     if (member.getName().getName().matches("equals|hashCode|finalize|wait|notify(All)?|toString|clone|getClass")) {
                         continue;
                     }

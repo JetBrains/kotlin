@@ -46,8 +46,7 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
     }
 
     private void doTest(
-            String testFileName,
-            boolean includeMembersOfObject
+            String testFileName
     ) throws IOException {
         List<JetFile> files = JetTestUtils
                 .createTestFiles(testFileName, FileUtil.loadFile(new File(testFileName), true),
@@ -65,21 +64,19 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
         NamespaceDescriptor actual = lazyModule.getRootNamespace().getMemberScope().getNamespace(test);
         NamespaceDescriptor expected = eagerModule.getRootNamespace().getMemberScope().getNamespace(test);
 
-        Predicate<NamespaceDescriptor> filterJetNamespace = new Predicate<NamespaceDescriptor>() {
-            @Override
-            public boolean apply(NamespaceDescriptor namespaceDescriptor) {
-                return !namespaceDescriptor.getName().equals(Name.identifier("jet"));
-            }
-        };
-
         File serializeResultsTo = new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt");
 
         NamespaceComparator.compareNamespaces(expected, actual,
-                                              includeMembersOfObject, filterJetNamespace, serializeResultsTo);
+                                              NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT.filterOutput(new Predicate<NamespaceDescriptor>() {
+                                                  @Override
+                                                  public boolean apply(NamespaceDescriptor namespaceDescriptor) {
+                                                      return !namespaceDescriptor.getName().equals(Name.identifier("jet"));
+                                                  }
+                                              }), serializeResultsTo);
     }
 
     protected void doTestSinglePackage(String testFileName) throws Exception {
-        doTest(testFileName, false);
+        doTest(testFileName);
     }
 
     public static void main(String[] args) throws IOException {

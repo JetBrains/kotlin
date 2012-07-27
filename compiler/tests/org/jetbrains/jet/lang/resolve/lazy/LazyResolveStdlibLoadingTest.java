@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
@@ -62,8 +61,7 @@ public class LazyResolveStdlibLoadingTest extends KotlinTestWithEnvironmentManag
         for (Name name : namespaceShortNames) {
             NamespaceDescriptor a = module.getRootNamespace().getMemberScope().getNamespace(name);
             NamespaceDescriptor b = lazyModule.getRootNamespace().getMemberScope().getNamespace(name);
-            NamespaceComparator.assertNamespacesEqual(a, b,
-                                                      true, Predicates.<NamespaceDescriptor>alwaysTrue());
+            NamespaceComparator.assertNamespacesEqual(a, b, NamespaceComparator.RECURSIVE);
         }
     }
 

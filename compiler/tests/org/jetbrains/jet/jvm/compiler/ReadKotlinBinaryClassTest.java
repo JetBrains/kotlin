@@ -97,7 +97,7 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
         NamespaceDescriptor namespaceFromClass = javaDescriptorResolver.resolveNamespace(FqName.topLevel(Name.identifier("test")), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
         
-        NamespaceComparator.compareNamespaces(namespaceFromSource, namespaceFromClass, false, txtFile);
+        NamespaceComparator.compareNamespaces(namespaceFromSource, namespaceFromClass, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
     }
 
     public static Test suite() {

@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -48,16 +49,24 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiag
         ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(jetFiles, getEnvironment());
 
         String path = JetTestUtils.getFilePath(new File(FileUtil.getRelativePath(TEST_DATA_DIR, testDataFile)));
-        String txtFileRelativePath = path.replaceAll("\\.kt$|\\.ktscript", ".txt");
-        File txtFile = new File("compiler/testData/lazyResolve/diagnostics/" + txtFileRelativePath);
-        NamespaceComparator.compareNamespaces(eagerModule.getRootNamespace(), lazyModule.getRootNamespace(), false,
-                                              new Predicate<NamespaceDescriptor>() {
-                                                  @Override
-                                                  public boolean apply(NamespaceDescriptor descriptor) {
-                                                      return !Name.identifier("jet").equals(descriptor.getName());
-                                                  }
-                                              },
-                                              txtFile);
+        Set<Name> names = LazyResolveTestUtil.getTopLevelPackagesFromFileList(jetFiles);
+        for (Name name : names) {
+            NamespaceDescriptor expected = eagerModule.getRootNamespace().getMemberScope().getNamespace(name);
+            NamespaceDescriptor actual = lazyModule.getRootNamespace().getMemberScope().getNamespace(name);
+
+            String txtFileRelativePath = path.replaceAll("\\.kt$|\\.ktscript", "." + name.getName() + ".txt");
+            File txtFile = new File("compiler/testData/lazyResolve/diagnostics/" + txtFileRelativePath);
+
+            NamespaceComparator.compareNamespaces(expected, actual,
+                                                  NamespaceComparator.RECURSIVE.filterOutput(new Predicate<NamespaceDescriptor>() {
+                                                      @Override
+                                                      public boolean apply(NamespaceDescriptor descriptor) {
+                                                          return !Name.identifier("jet").equals(descriptor.getName());
+                                                      }
+                                                  }),
+                                                  txtFile);
+
+        }
     }
 
     public static void main(String[] args) throws IOException {
