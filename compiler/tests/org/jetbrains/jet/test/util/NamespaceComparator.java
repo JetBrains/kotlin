@@ -86,7 +86,7 @@ public class NamespaceComparator {
 
     public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, true, Predicates.<NamespaceDescriptor>alwaysTrue());
     public static final Configuration RECURSIVE = new Configuration(true, true, Predicates.<NamespaceDescriptor>alwaysTrue());
-    public static final Configuration NON_RECURSIVE = new Configuration(true, true, Predicates.<NamespaceDescriptor>alwaysTrue());
+    public static final Configuration NON_RECURSIVE = new Configuration(true, false, Predicates.<NamespaceDescriptor>alwaysTrue());
 
     public static class Configuration {
 
