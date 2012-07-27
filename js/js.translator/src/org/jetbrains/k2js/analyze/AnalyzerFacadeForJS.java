@@ -103,6 +103,7 @@ public final class AnalyzerFacadeForJS {
         }
     }
 
+    @NotNull
     public static AnalyzeExhaust analyzeBodiesInFiles(
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull Config config,
