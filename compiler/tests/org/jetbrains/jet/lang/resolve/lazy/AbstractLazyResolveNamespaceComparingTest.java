@@ -17,13 +17,10 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.base.Predicate;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.Function;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.test.util.NamespaceComparator;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -31,6 +28,7 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.test.generator.SimpleTestClassModel;
 import org.jetbrains.jet.test.generator.TestGenerator;
+import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,9 +45,8 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
     }
 
-    protected void doTest(
+    private void doTest(
             String testFileName,
-            Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>> transform,
             boolean includeMembersOfObject
     ) throws IOException {
         List<JetFile> files = JetTestUtils
@@ -61,6 +58,13 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
                                      }
                                  });
 
+        ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(files, getEnvironment());
+        ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(files, getEnvironment());
+
+        Name test = Name.identifier("test");
+        NamespaceDescriptor actual = lazyModule.getRootNamespace().getMemberScope().getNamespace(test);
+        NamespaceDescriptor expected = eagerModule.getRootNamespace().getMemberScope().getNamespace(test);
+
         Predicate<NamespaceDescriptor> filterJetNamespace = new Predicate<NamespaceDescriptor>() {
             @Override
             public boolean apply(NamespaceDescriptor namespaceDescriptor) {
@@ -70,65 +74,12 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
 
         File serializeResultsTo = new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt");
 
-        doTestForGivenFiles(transform, includeMembersOfObject, files, filterJetNamespace, serializeResultsTo);
-    }
-
-    protected void doTestForGivenFiles(
-            Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>> transform,
-            boolean includeMembersOfObject,
-            List<JetFile> files,
-            Predicate<NamespaceDescriptor> filterJetNamespace,
-            File serializeResultsTo
-    ) {
-        ModuleDescriptor module = LazyResolveTestUtil.resolveEagerly(files, getEnvironment());
-        ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(files, getEnvironment());
-
-        Pair<NamespaceDescriptor, NamespaceDescriptor> namespacesToCompare = transform.fun(Pair.create(module, lazyModule));
-
-        NamespaceComparator.compareNamespaces(namespacesToCompare.first, namespacesToCompare.second,
+        NamespaceComparator.compareNamespaces(expected, actual,
                                               includeMembersOfObject, filterJetNamespace, serializeResultsTo);
     }
 
-    //private ModuleDescriptor resolveLazily(List<JetFile> files, ConfigurationKind configurationKind) {
-    //    ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
-    //    JetCoreEnvironmentWithDisposable environment = new JetCoreEnvironmentWithDisposable(configurationKind);
-    //    ModuleConfiguration moduleConfiguration = getEagerInjectorForTopDownAnalyzer(environment).getModuleConfiguration();
-    //    ResolveSession
-    //            session = new ResolveSession(getProject(), lazyModule, moduleConfiguration, new FileBasedDeclarationProviderFactory(files));
-    //    return lazyModule;
-    //}
-
-    protected void doTest(String testFileName) throws Exception {
-        doTest(testFileName, new Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>>() {
-            @Override
-            public Pair<NamespaceDescriptor, NamespaceDescriptor> fun(Pair<ModuleDescriptor, ModuleDescriptor> pair) {
-                return Pair.create(pair.first.getRootNamespace(), pair.second.getRootNamespace());
-            }
-        }, true);
-    }
-
     protected void doTestSinglePackage(String testFileName) throws Exception {
-        doTestSinglePackage(testFileName, false);
-    }
-
-    protected void doTestSinglePackage(String testFileName, boolean includeMembersOfObject) throws Exception {
-        doTest(testFileName, new Function<Pair<ModuleDescriptor, ModuleDescriptor>, Pair<NamespaceDescriptor, NamespaceDescriptor>>() {
-            @Override
-            public Pair<NamespaceDescriptor, NamespaceDescriptor> fun(Pair<ModuleDescriptor, ModuleDescriptor> pair) {
-                ModuleDescriptor expectedModule = pair.first;
-                ModuleDescriptor actualModule = pair.second;
-                Name test = Name.identifier("test");
-                NamespaceDescriptor actual = actualModule.getRootNamespace().getMemberScope().getNamespace(test);
-                NamespaceDescriptor expected = expectedModule.getRootNamespace().getMemberScope().getNamespace(test);
-                //NamespaceDescriptor actual = theOnlySubPackage(actualModule.getRootNamespace());
-                //NamespaceDescriptor expected = expectedModule.getRootNamespace().getMemberScope().getNamespace(actual.getName());
-                return Pair.create(expected, actual);
-            }
-        }, includeMembersOfObject);
-    }
-
-    private NamespaceDescriptor theOnlySubPackage(NamespaceDescriptor namespace) {
-        return (NamespaceDescriptor) namespace.getMemberScope().getAllDescriptors().iterator().next();
+        doTest(testFileName, false);
     }
 
     public static void main(String[] args) throws IOException {
