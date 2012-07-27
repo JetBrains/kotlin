@@ -1287,6 +1287,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             doTestSinglePackage("compiler/testData/lazyResolve/namespaceComparator/innerObject.kt");
         }
         
+        @TestMetadata("OverrideWithErrors.kt")
+        public void testOverrideWithErrors() throws Exception {
+            doTestSinglePackage("compiler/testData/lazyResolve/namespaceComparator/OverrideWithErrors.kt");
+        }
+        
         @TestMetadata("packageLevelObject.kt")
         public void testPackageLevelObject() throws Exception {
             doTestSinglePackage("compiler/testData/lazyResolve/namespaceComparator/packageLevelObject.kt");
