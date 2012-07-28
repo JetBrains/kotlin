@@ -18,7 +18,7 @@ package org.jetbrains.k2js.translate.utils;
 
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -26,7 +26,10 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Pavel Talanov
@@ -35,6 +38,10 @@ public final class JsAstUtils {
     private static final JsNameRef DEFINE_PROPERTY = new JsNameRef("defineProperty");
     public static final JsNameRef CREATE_OBJECT = new JsNameRef("create");
     private static final JsNameRef EMPTY_REF = new JsNameRef("");
+
+    private static final JsNameRef VALUE = new JsNameRef("value");
+    private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(new JsNameRef("writable"), JsLiteral.TRUE);
+    private static final JsPropertyInitializer ENUMERABLE = new JsPropertyInitializer(new JsNameRef("enumerable"), JsLiteral.TRUE);
 
     static {
         JsNameRef globalObjectReference = new JsNameRef("Object");
@@ -78,7 +85,7 @@ public final class JsAstUtils {
 
     public static JsNameRef thisQualifiedReference(@NotNull JsName name) {
         JsNameRef result = name.makeRef();
-        result.setQualifier(new JsThisRef());
+        result.setQualifier(JsLiteral.THIS);
         return result;
     }
 
@@ -172,24 +179,11 @@ public final class JsAstUtils {
     @NotNull
     public static JsFor generateForExpression(@NotNull JsVars initExpression,
             @NotNull JsExpression condition,
-            @NotNull JsExpression incrExpression,
+            @NotNull JsExpression incrementExpression,
             @NotNull JsStatement body) {
-        JsFor result = new JsFor();
-        result.setInitVars(initExpression);
-        result.setCondition(condition);
-        result.setIncrExpr(incrExpression);
+        JsFor result = new JsFor(initExpression, condition, incrementExpression);
         result.setBody(body);
         return result;
-    }
-
-    public static boolean ownsName(@NotNull JsScope scope, @NotNull JsName name) {
-        Iterator<JsName> nameIterator = scope.getAllNames();
-        while (nameIterator.hasNext()) {
-            if (nameIterator.next() == name) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @NotNull
@@ -201,13 +195,7 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsVars newVar(@NotNull JsName name, @Nullable JsExpression expr) {
-        JsVars.JsVar var = new JsVars.JsVar(name);
-        if (expr != null) {
-            var.setInitExpr(expr);
-        }
-        JsVars vars = new JsVars();
-        vars.add(var);
-        return vars;
+        return new JsVars(new JsVars.JsVar(name, expr));
     }
 
     public static void addVarDeclaration(@NotNull JsBlock block, @NotNull JsVars vars) {
@@ -220,12 +208,6 @@ public final class JsAstUtils {
         List<JsStatement> statementList = block.getStatements();
         statementList.clear();
         statementList.addAll(statements);
-    }
-
-    public static void setArguments(@NotNull JsInvocation invocation, @NotNull List<JsExpression> newArgs) {
-        List<JsExpression> arguments = invocation.getArguments();
-        assert arguments.isEmpty() : "Arguments already set.";
-        arguments.addAll(newArgs);
     }
 
     public static void setArguments(@NotNull HasArguments invocation, @NotNull List<JsExpression> newArgs) {
@@ -280,7 +262,11 @@ public final class JsAstUtils {
 
     @NotNull
     public static List<JsExpression> toStringLiteralList(@NotNull List<String> strings, @NotNull JsProgram program) {
-        ArrayList<JsExpression> result = Lists.newArrayList();
+        if (strings.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<JsExpression> result = new SmartList<JsExpression>();
         for (String str : strings) {
             result.add(program.getStringLiteral(str));
         }
@@ -291,36 +277,55 @@ public final class JsAstUtils {
     public static JsInvocation definePropertyDataDescriptor(@NotNull PropertyDescriptor descriptor,
             @NotNull JsExpression value,
             @NotNull TranslationContext context) {
-        return AstUtil.newInvocation(DEFINE_PROPERTY, new JsThisRef(),
-                                     context.program().getStringLiteral(context.getNameForDescriptor(descriptor).getIdent()),
-                                     createPropertyDataDescriptor(descriptor.isVar(), descriptor, value, context));
+        return defineProperty(context.getNameForDescriptor(descriptor).getIdent(), createPropertyDataDescriptor(descriptor, value),
+                              context);
+    }
+
+    @NotNull
+    public static JsInvocation defineProperty(@NotNull String name,
+            @NotNull JsObjectLiteral value,
+            @NotNull TranslationContext context) {
+        JsInvocation invocation = new JsInvocation(DEFINE_PROPERTY);
+        invocation.getArguments().add(JsLiteral.THIS);
+        invocation.getArguments().add(context.program().getStringLiteral(name));
+        invocation.getArguments().add(value);
+        return invocation;
     }
 
     @NotNull
     public static JsObjectLiteral createPropertyDataDescriptor(@NotNull FunctionDescriptor descriptor,
-            @NotNull JsExpression value,
-            @NotNull TranslationContext context) {
-        return createPropertyDataDescriptor(descriptor.getModality().isOverridable(), descriptor, value, context);
+            @NotNull JsExpression value) {
+        return createPropertyDataDescriptor(descriptor.getModality().isOverridable(), descriptor, value);
     }
 
     @NotNull
-    public static JsObjectLiteral createDataDescriptor(@NotNull JsExpression value, boolean writable, @NotNull TranslationContext context) {
+    public static JsObjectLiteral createDataDescriptor(@NotNull JsExpression value) {
+        return createDataDescriptor(value, false);
+    }
+
+    @NotNull
+    public static JsObjectLiteral createDataDescriptor(@NotNull JsExpression value, boolean writable) {
         JsObjectLiteral dataDescriptor = new JsObjectLiteral();
-        dataDescriptor.getPropertyInitializers().add(new JsPropertyInitializer(context.program().getStringLiteral("value"), value));
+        dataDescriptor.getPropertyInitializers().add(new JsPropertyInitializer(VALUE, value));
         if (writable) {
-            dataDescriptor.getPropertyInitializers().add(context.namer().writablePropertyDescriptorField());
+            dataDescriptor.getPropertyInitializers().add(WRITABLE);
         }
         return dataDescriptor;
     }
 
     @NotNull
+    public static JsObjectLiteral createPropertyDataDescriptor(@NotNull PropertyDescriptor descriptor,
+            @NotNull JsExpression value) {
+        return createPropertyDataDescriptor(descriptor.isVar(), descriptor, value);
+    }
+
+    @NotNull
     private static JsObjectLiteral createPropertyDataDescriptor(boolean writable,
             @NotNull DeclarationDescriptor descriptor,
-            @NotNull JsExpression value,
-            @NotNull TranslationContext context) {
-        JsObjectLiteral dataDescriptor = createDataDescriptor(value, writable, context);
+            @NotNull JsExpression value) {
+        JsObjectLiteral dataDescriptor = createDataDescriptor(value, writable);
         if (AnnotationsUtils.isEnumerable(descriptor)) {
-            dataDescriptor.getPropertyInitializers().add(context.namer().enumerablePropertyDescriptorField());
+            dataDescriptor.getPropertyInitializers().add(ENUMERABLE);
         }
         return dataDescriptor;
     }
@@ -336,12 +341,7 @@ public final class JsAstUtils {
     @NotNull
     public static JsFunction createPackage(@NotNull List<JsStatement> to, @NotNull JsScope scope) {
         JsFunction packageBlockFunction = createFunctionWithEmptyBody(scope);
-
-        JsInvocation packageBlockFunctionInvocation = encloseFunction(packageBlockFunction);
-        JsInvocation packageBlock = new JsInvocation();
-        packageBlock.setQualifier(packageBlockFunctionInvocation);
-        to.add(packageBlock.makeStmt());
-
+        to.add(new JsInvocation(EMPTY_REF, new JsInvocation(packageBlockFunction)).makeStmt());
         return packageBlockFunction;
     }
 }

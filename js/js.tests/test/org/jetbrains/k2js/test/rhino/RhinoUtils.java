@@ -123,7 +123,7 @@ public final class RhinoUtils {
             }
             checker.runChecks(context, scope);
 
-            lintIt(context, fileNames.get(fileNames.size() - 1));
+            //lintIt(context, fileNames.get(fileNames.size() - 1));
         }
         finally {
             Context.exit();

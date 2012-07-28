@@ -18,6 +18,7 @@ package org.jetbrains.k2js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -30,7 +31,6 @@ import org.jetbrains.k2js.translate.general.Translation;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.dart.compiler.util.AstUtil.newAssignment;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getDeclarationDescriptorForReceiver;
@@ -44,6 +44,18 @@ public final class TranslationUtils {
     private static final JsNameRef UNDEFINED_LITERAL = AstUtil.newQualifiedNameRef("undefined");
 
     private TranslationUtils() {
+    }
+
+    @NotNull
+    public static Pair<JsVars.JsVar, JsNameRef> createTemporaryIfNeed(@NotNull JsExpression expression,
+            @NotNull TranslationContext context) {
+        // don't create temp variable for simple expression
+        if (!(expression instanceof JsNameRef) || ((JsNameRef) expression).getQualifier() != null) {
+            return context.dynamicContext().createTemporary(expression);
+        }
+        else {
+            return new Pair<JsVars.JsVar, JsNameRef>(null, (JsNameRef) expression);
+        }
     }
 
     @NotNull
@@ -62,15 +74,14 @@ public final class TranslationUtils {
     @NotNull
     private static JsPropertyInitializer translateExtensionFunctionAsEcma5PropertyDescriptor(@NotNull JsFunction function,
             @NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context) {
-        JsObjectLiteral meta = JsAstUtils.createDataDescriptor(function, descriptor.getModality().isOverridable(), context);
+        JsObjectLiteral meta = JsAstUtils.createDataDescriptor(function, descriptor.getModality().isOverridable());
         return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), meta);
     }
 
     @NotNull
     public static JsBinaryOperation notNullCheck(@NotNull TranslationContext context,
             @NotNull JsExpression expressionToCheck) {
-        JsNullLiteral nullLiteral = context.program().getNullLiteral();
-        JsBinaryOperation notNull = inequality(expressionToCheck, nullLiteral);
+        JsBinaryOperation notNull = inequality(expressionToCheck, JsLiteral.NULL);
         JsBinaryOperation notUndefined = inequality(expressionToCheck, UNDEFINED_LITERAL);
         return and(notNull, notUndefined);
     }
@@ -78,8 +89,7 @@ public final class TranslationUtils {
     @NotNull
     public static JsBinaryOperation isNullCheck(@NotNull TranslationContext context,
             @NotNull JsExpression expressionToCheck) {
-        JsNullLiteral nullLiteral = context.program().getNullLiteral();
-        JsBinaryOperation isNull = equality(expressionToCheck, nullLiteral);
+        JsBinaryOperation isNull = equality(expressionToCheck, JsLiteral.NULL);
         JsBinaryOperation isUndefined = equality(expressionToCheck, UNDEFINED_LITERAL);
         return or(isNull, isUndefined);
     }
@@ -105,7 +115,7 @@ public final class TranslationUtils {
     public static JsNameRef backingFieldReference(@NotNull TranslationContext context,
             @NotNull PropertyDescriptor descriptor) {
         JsName backingFieldName = context.getNameForDescriptor(descriptor);
-        return qualified(backingFieldName, new JsThisRef());
+        return qualified(backingFieldName, JsLiteral.THIS);
     }
 
     @NotNull
@@ -113,7 +123,7 @@ public final class TranslationUtils {
             @NotNull PropertyDescriptor descriptor,
             @NotNull JsExpression assignTo) {
         JsNameRef backingFieldReference = backingFieldReference(context, descriptor);
-        return newAssignment(backingFieldReference, assignTo);
+        return JsAstUtils.assignment(backingFieldReference, assignTo);
     }
 
     @Nullable
@@ -158,7 +168,7 @@ public final class TranslationUtils {
                 return alias.makeRef();
             }
         }
-        return new JsThisRef();
+        return JsLiteral.THIS;
     }
 
     @NotNull
@@ -215,8 +225,8 @@ public final class TranslationUtils {
 
     public static void defineModule(@NotNull TranslationContext context, @NotNull List<JsStatement> statements,
             String moduleId) {
-        statements.add(AstUtil.newInvocation(context.namer().kotlin("defineModule"),
+        statements.add(new JsInvocation(context.namer().kotlin("defineModule"),
                                              context.program().getStringLiteral(moduleId),
-                                             context.jsScope().declareName("_").makeRef()).makeStmt());
+                                             context.scope().declareName("_").makeRef()).makeStmt());
     }
 }

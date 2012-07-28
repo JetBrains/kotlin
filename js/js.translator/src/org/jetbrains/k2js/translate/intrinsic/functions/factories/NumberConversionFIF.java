@@ -16,7 +16,7 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
-import closurecompiler.internal.com.google.common.collect.Sets;
+import com.google.common.collect.Sets;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;

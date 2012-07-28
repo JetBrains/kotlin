@@ -60,7 +60,7 @@ public class FunctionTest extends AbstractExpressionTest {
     }
 
     public void testEnclosingThis() throws Exception {
-        runFunctionOutputTest("enclosingThis.kt", Namer.getRootNamespaceName(), "box", "OK");
+        runFunctionOutputTest("enclosingThis.kt", Namer.ROOT_NAMESPACE, "box", "OK");
     }
 
 

@@ -27,9 +27,8 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToStatement;
  * @author Pavel Talanov
  */
 public final class LastExpressionMutator {
-
-    public static JsNode mutateLastExpression(@NotNull JsNode node, @NotNull Mutator mutator) {
-        return (new LastExpressionMutator(mutator)).apply(node);
+    public static JsStatement mutateLastExpression(@NotNull JsNode node, @NotNull Mutator mutator) {
+        return convertToStatement(new LastExpressionMutator(mutator).apply(node));
     }
 
     @NotNull
@@ -62,10 +61,10 @@ public final class LastExpressionMutator {
 
     @NotNull
     private JsNode applyToIf(@NotNull JsIf node) {
-        node.setThenStmt(convertToStatement(apply(node.getThenStmt())));
-        JsStatement elseStmt = node.getElseStmt();
+        node.setThenStatement(convertToStatement(apply(node.getThenStatement())));
+        JsStatement elseStmt = node.getElseStatement();
         if (elseStmt != null) {
-            node.setElseStmt(convertToStatement(apply(elseStmt)));
+            node.setElseStatement(convertToStatement(apply(elseStmt)));
         }
         return node;
     }

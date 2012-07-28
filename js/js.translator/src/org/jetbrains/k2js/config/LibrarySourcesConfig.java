@@ -42,7 +42,7 @@ public class LibrarySourcesConfig extends Config {
     @NotNull
     public static final Key<String> EXTERNAL_MODULE_NAME = new Key<String>("externalModule");
     @NotNull
-    private static final String UNKNOWN_EXTERNAL_MODULE_NAME = "<unknown>";
+    public static final String UNKNOWN_EXTERNAL_MODULE_NAME = "<unknown>";
 
     private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.asJava.JetLightClass");
 

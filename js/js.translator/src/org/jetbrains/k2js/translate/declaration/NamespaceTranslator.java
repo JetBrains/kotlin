@@ -18,7 +18,6 @@ package org.jetbrains.k2js.translate.declaration;
 
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -81,7 +80,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
 
         JsExpression value = getNamespaceDeclaration();
         if (context().isNotEcma3()) {
-            value = JsAstUtils.createDataDescriptor(value, false, context());
+            value = JsAstUtils.createDataDescriptor(value);
         }
 
         list.add(new JsPropertyInitializer(namespaceName.makeRef(), value));
@@ -113,7 +112,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
 
     @NotNull
     private JsInvocation namespaceCreateMethodInvocation() {
-        return AstUtil.newInvocation(context().namer().packageDefinitionMethodReference());
+        return new JsInvocation(context().namer().packageDefinitionMethodReference());
     }
 
     private void addIfNeed(@NotNull List<JsPropertyInitializer> declarations, @NotNull List<JsExpression> expressions) {
@@ -122,7 +121,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
             expressions.add(newObjectLiteral(declarations));
         }
         else if (context().isNotEcma3()) {
-            expressions.add(context().program().getNullLiteral());
+            expressions.add(JsLiteral.NULL);
         }
     }
 

@@ -17,13 +17,11 @@
 package org.jetbrains.k2js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 
 /**
  * @author Pavel Talanov
@@ -31,6 +29,8 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
  *         Encapuslates different types of constants and naming conventions.
  */
 public final class Namer {
+    public static final String CALLEE_NAME = "$fun";
+    public static final String ROOT_NAMESPACE = "_";
 
     private static final String INITIALIZE_METHOD_NAME = "initialize";
     private static final String CLASS_OBJECT_NAME = "createClass";
@@ -41,7 +41,6 @@ public final class Namer {
     private static final String BACKING_FIELD_PREFIX = "$";
     private static final String SUPER_METHOD_NAME = "super_init";
     private static final String KOTLIN_OBJECT_NAME = "Kotlin";
-    private static final String ROOT_NAMESPACE = "_";
     private static final String RECEIVER_PARAMETER_NAME = "receiver";
     private static final String CLASSES_OBJECT_NAME = "classes";
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
@@ -52,13 +51,8 @@ public final class Namer {
     }
 
     @NotNull
-    public static String getRootNamespaceName() {
-        return ROOT_NAMESPACE;
-    }
-
-    @NotNull
     public static JsNameRef initializeMethodReference() {
-        return AstUtil.newQualifiedNameRef(INITIALIZE_METHOD_NAME);
+        return new JsNameRef(INITIALIZE_METHOD_NAME);
     }
 
     @NotNull
@@ -125,12 +119,6 @@ public final class Namer {
     @NotNull
     private final JsName isTypeName;
 
-    @NotNull
-    private final JsPropertyInitializer writablePropertyDescriptorField;
-
-    @NotNull
-    private final JsPropertyInitializer enumerablePropertyDescriptorField;
-
     private Namer(@NotNull JsScope rootScope) {
         kotlinName = rootScope.declareName(KOTLIN_OBJECT_NAME);
         kotlinScope = new JsScope(rootScope, "Kotlin standard object");
@@ -142,10 +130,6 @@ public final class Namer {
         objectName = kotlinScope.declareName(OBJECT_OBJECT_NAME);
 
         isTypeName = kotlinScope.declareName("isType");
-
-        JsProgram program = rootScope.getProgram();
-        writablePropertyDescriptorField = new JsPropertyInitializer(program.getStringLiteral("writable"), program.getTrueLiteral());
-        enumerablePropertyDescriptorField = new JsPropertyInitializer(program.getStringLiteral("enumerable"), program.getTrueLiteral());
     }
 
     @NotNull
@@ -170,25 +154,17 @@ public final class Namer {
 
     @NotNull
     public JsExpression throwNPEFunctionCall() {
-        JsNameRef reference = AstUtil.newQualifiedNameRef(THROW_NPE_FUN_NAME);
-        JsInvocation invocation = AstUtil.newInvocation(reference);
-        return kotlin(invocation);
+        return new JsInvocation(new JsNameRef(THROW_NPE_FUN_NAME, kotlinObject()));
     }
 
     @NotNull
-    private JsExpression kotlin(@NotNull JsName name) {
-        return kotlin(name.makeRef());
+    private JsNameRef kotlin(@NotNull JsName name) {
+        return new JsNameRef(name, kotlinObject());
     }
 
     @NotNull
     public JsExpression kotlin(@NotNull String name) {
         return kotlin(kotlinScope.declareName(name));
-    }
-
-    @NotNull
-    private JsExpression kotlin(@NotNull JsExpression reference) {
-        setQualifier(reference, kotlinObject());
-        return reference;
     }
 
     @NotNull
@@ -202,16 +178,6 @@ public final class Namer {
     }
 
     @NotNull
-    public JsPropertyInitializer writablePropertyDescriptorField() {
-        return writablePropertyDescriptorField;
-    }
-
-    @NotNull
-    public JsPropertyInitializer enumerablePropertyDescriptorField() {
-        return enumerablePropertyDescriptorField;
-    }
-
-    @NotNull
         /*package*/ JsScope getKotlinScope() {
         return kotlinScope;
     }
@@ -219,10 +185,23 @@ public final class Namer {
     @NotNull
     static String generateNamespaceName(DeclarationDescriptor descriptor) {
         if (DescriptorUtils.isRootNamespace((NamespaceDescriptor) descriptor)) {
-            return getRootNamespaceName();
+            return ROOT_NAMESPACE;
         }
         else {
             return descriptor.getName().getName();
+        }
+    }
+
+    @NotNull
+    public JsInvocation classCreateInvocation(@NotNull ClassDescriptor descriptor) {
+        switch (descriptor.getKind()) {
+            case TRAIT:
+                return new JsInvocation(traitCreationMethodReference());
+            case OBJECT:
+                return new JsInvocation(objectCreationMethodReference());
+
+            default:
+                return new JsInvocation(classCreationMethodReference());
         }
     }
 }

@@ -1,9 +1,9 @@
 <project name="Kotlin" default="dist">
 
     <!-- Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build -->
-    <property name="shrink" value="true"/>
+    <property name="shrink" value="false"/>
     <!-- Set to false to disable compiler's javadoc generation. Speeds up the build -->
-    <property name="generate.javadoc" value="true"/>
+    <property name="generate.javadoc" value="false"/>
 
     <property name="output.relative" value="dist"/>
     <property name="output" value="${basedir}/${output.relative}"/>
@@ -157,7 +157,7 @@
     </jar>
     <java classname="com.google.javascript.jscomp.CommandLineRunner" failonerror="true">
       <classpath>
-        <pathelement location="${basedir}/js/js.translator/lib/closure-compiler.jar"/>
+        <pathelement location="${basedir}/js/js.tests/testLib/closure-compiler.jar"/>
       </classpath>
       <arg value="--formatting"/>
       <arg value="PRETTY_PRINT"/>
@@ -174,7 +174,7 @@
     </java>
     <java classname="com.google.javascript.jscomp.CommandLineRunner" failonerror="true">
       <classpath>
-        <pathelement location="${basedir}/js/js.translator/lib/closure-compiler.jar"/>
+        <pathelement location="${basedir}/js/js.tests/testLib/closure-compiler.jar"/>
       </classpath>
       <arg value="--formatting"/>
       <arg value="PRETTY_PRINT"/>
@@ -187,7 +187,7 @@
       <arg value="--js"/>
       <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib.js"/>
       <arg value="--js_output_file"/>
-      <arg value="${kotlin-home}/lib/kotlinLib.js"/>
+      <arg value="${kotlin-home}/lib/kotlinEcma3.js"/>
     </java>
   </target>
 

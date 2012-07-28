@@ -77,7 +77,7 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
             } else {
                 sb.append(".").append(moduleId);
             }
-            if (namespaceName != Namer.getRootNamespaceName()) {
+            if (namespaceName != Namer.ROOT_NAMESPACE) {
                 sb.append('.').append(namespaceName);
             }
             sb.append('.');

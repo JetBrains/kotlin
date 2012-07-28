@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.translate.initializer;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
@@ -82,17 +81,15 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
 
         //TODO: can be problematic to maintain
         if (context().isEcma5()) {
-            JsName ref = context().jsScope().declareName("$initializer");
+            JsName ref = context().scope().declareName("$initializer");
             initializer.setName(ref);
-            JsInvocation call = new JsInvocation();
-            call.setQualifier(AstUtil.newNameRef(AstUtil.newNameRef(ref.makeRef(), "baseInitializer"), "call"));
-            call.getArguments().add(new JsThisRef());
+            JsInvocation call = new JsInvocation(new JsNameRef("call", new JsNameRef("baseInitializer", ref.makeRef())));
+            call.getArguments().add(JsLiteral.THIS);
             call.getArguments().addAll(arguments);
             initializerStatements.add(call.makeStmt());
         }
         else {
-            JsName superMethodName = context().jsScope().declareName(Namer.superMethodName());
-            superMethodName.setObfuscatable(false);
+            JsName superMethodName = context().scope().declareName(Namer.superMethodName());
             initializerStatements.add(convertToStatement(newInvocation(thisQualifiedReference(superMethodName), arguments)));
         }
     }

@@ -22,13 +22,18 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.config.LibrarySourcesConfig;
+import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import java.util.List;
 import java.util.Set;
@@ -230,5 +235,21 @@ public final class JsDescriptorUtils {
         return propertyDescriptor.getReceiverParameter().exists() ||
                !isDefaultAccessor(propertyDescriptor.getGetter()) ||
                !isDefaultAccessor(propertyDescriptor.getSetter());
+    }
+
+    @Nullable
+    public static Name getNameIfStandardType(@NotNull JetExpression expression, @NotNull TranslationContext context) {
+        JetType type = context.bindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
+        return type != null ? getNameIfStandardType(type) : null;
+    }
+
+    @Nullable
+    public static Name getNameIfStandardType(@NotNull JetType type) {
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        if (descriptor != null && descriptor.getContainingDeclaration() == JetStandardClasses.STANDARD_CLASSES_NAMESPACE) {
+            return descriptor.getName();
+        }
+
+        return null;
     }
 }

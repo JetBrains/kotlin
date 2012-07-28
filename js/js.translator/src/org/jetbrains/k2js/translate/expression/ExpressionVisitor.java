@@ -51,48 +51,36 @@ import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.m
  * @author Pavel Talanov
  */
 public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
-
     @Override
     @NotNull
     public JsNode visitConstantExpression(@NotNull JetConstantExpression expression,
             @NotNull TranslationContext context) {
-        CompileTimeConstant<?> compileTimeValue =
-                context.bindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
+        CompileTimeConstant<?> compileTimeValue = context.bindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
         assert compileTimeValue != null;
+
         if (compileTimeValue instanceof NullValue) {
-            return context.program().getNullLiteral();
+            return JsLiteral.NULL;
         }
+
         Object value = compileTimeValue.getValue();
-        if (value instanceof Integer) {
-            return context.program().getNumberLiteral((Integer) value);
+        if (value instanceof Integer || value instanceof Short || value instanceof Byte) {
+            return context.program().getNumberLiteral(((Number) value).intValue());
         }
-        if (value instanceof Boolean) {
-            return context.program().getBooleanLiteral((Boolean) value);
+        else if (value instanceof Number) {
+            return context.program().getNumberLiteral(((Number) value).doubleValue());
+        }
+        else if (value instanceof Boolean) {
+            return JsLiteral.getBoolean((Boolean) value);
         }
 
         //TODO: test
-        if (value instanceof Float) {
-            return context.program().getNumberLiteral((Float) value);
-        }
-        if (value instanceof Double) {
-            return context.program().getNumberLiteral((Double) value);
-        }
         if (value instanceof String) {
             return context.program().getStringLiteral((String) value);
         }
         if (value instanceof Character) {
             return context.program().getStringLiteral(value.toString());
         }
-        if (value instanceof Byte) {
-            return context.program().getNumberLiteral((Byte) value);
-        }
-        if (value instanceof Short) {
-            return context.program().getNumberLiteral((Short) value);
-        }
-        if (value instanceof Long) {
-            throw new IllegalStateException(message(expression, "Unsupported long constant"));
-        }
-        throw new IllegalStateException(message(expression, "Unsupported constant expression"));
+        throw new AssertionError(message(expression, "Unsupported constant expression"));
     }
 
     @Override
@@ -164,7 +152,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (BindingUtils.isStatement(context.bindingContext(), expression)) {
             return ifStatement;
         }
-        TemporaryVariable result = context.declareTemporary(context.program().getNullLiteral());
+        TemporaryVariable result = context.declareTemporary(JsLiteral.NULL);
         AssignToExpressionMutator saveResultToTemporaryMutator =
                 new AssignToExpressionMutator(result.reference());
         JsNode mutatedIfStatement = mutateLastExpression(ifStatement, saveResultToTemporaryMutator);
@@ -185,9 +173,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     private JsIf translateAsIfStatement(@NotNull JetIfExpression expression,
             @NotNull TranslationContext context) {
         JsIf result = new JsIf();
-        result.setIfExpr(translateConditionExpression(expression.getCondition(), context));
-        result.setThenStmt(translateNullableExpressionAsNotNullStatement(expression.getThen(), context));
-        result.setElseStmt(translateElseAsStatement(expression, context));
+        result.setIfExpression(translateConditionExpression(expression.getCondition(), context));
+        result.setThenStatement(translateNullableExpressionAsNotNullStatement(expression.getThen(), context));
+        result.setElseStatement(translateElseAsStatement(expression, context));
         return result;
     }
 
