@@ -56,6 +56,7 @@ public abstract class CLICompiler<A extends CompilerArguments, C extends Compile
             return true;
         }
         catch (IllegalArgumentException e) {
+            errStream.println(e.getMessage());
             usage(errStream);
         }
         catch (Throwable t) {
