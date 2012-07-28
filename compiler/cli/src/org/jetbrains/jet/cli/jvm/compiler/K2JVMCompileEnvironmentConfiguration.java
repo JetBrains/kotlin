@@ -22,13 +22,16 @@ import org.jetbrains.jet.cli.common.CompileEnvironmentConfiguration;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
+
+import java.util.List;
 
 /**
  * @author abreslav
  */
 public class K2JVMCompileEnvironmentConfiguration extends CompileEnvironmentConfiguration {
     private final JetCoreEnvironment environment;
-    private final boolean script;
+    private final List<AnalyzerScriptParameter> scriptParameters;
     private final BuiltinsScopeExtensionMode builtinsScopeExtensionMode;
     private final boolean stubs;
     private final BuiltinToJavaTypesMapping builtinToJavaTypesMapping;
@@ -39,10 +42,10 @@ public class K2JVMCompileEnvironmentConfiguration extends CompileEnvironmentConf
      * @see Disposer
      */
     public K2JVMCompileEnvironmentConfiguration(@NotNull JetCoreEnvironment environment, @NotNull MessageCollector messageCollector,
-            boolean script, BuiltinsScopeExtensionMode builtinsScopeExtensionMode, boolean stubs, BuiltinToJavaTypesMapping builtinToJavaTypesMapping) {
+            List<AnalyzerScriptParameter> scriptParameters, BuiltinsScopeExtensionMode builtinsScopeExtensionMode, boolean stubs, BuiltinToJavaTypesMapping builtinToJavaTypesMapping) {
         super(messageCollector);
         this.environment = environment;
-        this.script = script;
+        this.scriptParameters = scriptParameters;
         this.builtinsScopeExtensionMode = builtinsScopeExtensionMode;
         this.stubs = stubs;
         this.builtinToJavaTypesMapping = builtinToJavaTypesMapping;
@@ -53,9 +56,12 @@ public class K2JVMCompileEnvironmentConfiguration extends CompileEnvironmentConf
     }
 
     public boolean isScript() {
-        return script;
+        return scriptParameters != null;
     }
 
+    public List<AnalyzerScriptParameter> getScript() {
+        return scriptParameters;
+    }
 
     public BuiltinsScopeExtensionMode getBuiltinsScopeExtensionMode() {
         return builtinsScopeExtensionMode;

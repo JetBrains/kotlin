@@ -30,14 +30,15 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.CompilerPluginContext;
-import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
+import org.jetbrains.jet.cli.common.ExitCode;
+import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.common.util.CompilerPathUtil;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
+import org.jetbrains.jet.cli.jvm.repl.ReplFromTerminal;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
@@ -50,18 +51,23 @@ import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jet.utils.Progress;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+
+import static org.jetbrains.jet.cli.common.ExitCode.COMPILATION_ERROR;
+import static org.jetbrains.jet.cli.common.ExitCode.INTERNAL_ERROR;
+import static org.jetbrains.jet.cli.common.ExitCode.OK;
 
 /**
  * @author yole
  * @author abreslav
+ * @author alex.tkachman
  */
 public class KotlinToJVMBytecodeCompiler {
 
@@ -113,7 +119,7 @@ public class KotlinToJVMBytecodeCompiler {
 
 
             K2JVMCompileEnvironmentConfiguration currentK2JVMConfiguration = new K2JVMCompileEnvironmentConfiguration(
-                    environment, configuration.getMessageCollector(), configuration.isScript(),
+                    environment, configuration.getMessageCollector(), Collections.<AnalyzerScriptParameter>emptyList(),
                     configuration.getBuiltinsScopeExtensionMode(), configuration.isStubs(),
                     configuration.getBuiltinToJavaTypesMapping());
             GenerationState generationState = analyzeAndGenerate(currentK2JVMConfiguration);
@@ -231,10 +237,28 @@ public class KotlinToJVMBytecodeCompiler {
     public static boolean compileAndExecuteScript(
             @NotNull K2JVMCompileEnvironmentConfiguration configuration,
             @NotNull List<String> scriptArgs) {
+        Class<?> scriptClass = compileScript(configuration, null);
+        if(scriptClass == null)
+            return false;
+
+        try {
+            scriptClass.getConstructor(String[].class).newInstance(new Object[]{scriptArgs.toArray(new String[0])});
+        }
+        catch (RuntimeException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Failed to evaluate script: " + e, e);
+        }
+        return true;
+    }
+
+    public static Class<?> compileScript(
+            @NotNull K2JVMCompileEnvironmentConfiguration configuration, ClassLoader parentLoader) {
 
         GenerationState generationState = analyzeAndGenerate(configuration);
         if (generationState == null) {
-            return false;
+            return null;
         }
 
         try {
@@ -244,14 +268,12 @@ public class KotlinToJVMBytecodeCompiler {
                         // TODO: add all classpath
                         CompilerPathUtil.getRuntimePath().toURI().toURL()
                 },
-                        AllModules.class.getClassLoader()));
-                Class<?> scriptClass = classLoader.loadClass(ScriptCodegen.SCRIPT_DEFAULT_CLASS_NAME.getFqName().getFqName());
-                scriptClass.getConstructor(String[].class).newInstance(new Object[]{scriptArgs.toArray(new String[0])});
+                        parentLoader == null ? AllModules.class.getClassLoader() : parentLoader));
+                return classLoader.loadClass(ScriptCodegen.SCRIPT_DEFAULT_CLASS_NAME.getFqName().getFqName());
             }
             catch (Exception e) {
                 throw new RuntimeException("Failed to evaluate script: " + e, e);
             }
-            return true;
         }
         finally {
             generationState.destroy();
@@ -260,7 +282,7 @@ public class KotlinToJVMBytecodeCompiler {
 
     @Nullable
     public static GenerationState analyzeAndGenerate(K2JVMCompileEnvironmentConfiguration configuration) {
-        return analyzeAndGenerate(configuration, configuration.isStubs());
+        return analyzeAndGenerate(configuration, configuration.isStubs(), configuration.getScript());
     }
 
     @Nullable
@@ -268,7 +290,18 @@ public class KotlinToJVMBytecodeCompiler {
             K2JVMCompileEnvironmentConfiguration configuration,
             boolean stubs
     ) {
-        AnalyzeExhaust exhaust = analyze(configuration, configuration.isScript(), stubs);
+        return analyzeAndGenerate(configuration, stubs, configuration.isScript()
+                                                        ? CommandLineScriptUtils.scriptParameters()
+                                                        : Collections.<AnalyzerScriptParameter>emptyList());
+    }
+
+    @Nullable
+    public static GenerationState analyzeAndGenerate(
+            K2JVMCompileEnvironmentConfiguration configuration,
+            boolean stubs,
+            List<AnalyzerScriptParameter> scriptParameters
+    ) {
+        AnalyzeExhaust exhaust = analyze(configuration, scriptParameters, stubs);
 
         if (exhaust == null) {
             return null;
@@ -282,13 +315,12 @@ public class KotlinToJVMBytecodeCompiler {
     @Nullable
     private static AnalyzeExhaust analyze(
             final K2JVMCompileEnvironmentConfiguration configuration,
-            boolean script, boolean stubs) {
+            final List<AnalyzerScriptParameter> scriptParameters,
+            boolean stubs) {
         final JetCoreEnvironment environment = configuration.getEnvironment();
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(configuration.getMessageCollector());
         final Predicate<PsiFile> filesToAnalyzeCompletely =
                 stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
-        final List<AnalyzerScriptParameter> scriptParameters =
-                script ? CommandLineScriptUtils.scriptParameters() : Collections.<AnalyzerScriptParameter>emptyList();
         analyzerWithCompilerReport.analyzeAndReport(
                 new Function0<AnalyzeExhaust>() {
                     @NotNull
@@ -326,12 +358,72 @@ public class KotlinToJVMBytecodeCompiler {
         generationState.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
 
         List<CompilerPlugin> plugins = configuration.getCompilerPlugins();
-        if (plugins != null) {
-            CompilerPluginContext context = new CompilerPluginContext(project, exhaust.getBindingContext(), environment.getSourceFiles());
-            for (CompilerPlugin plugin : plugins) {
-                plugin.processFiles(context);
-            }
+        CompilerPluginContext context = new CompilerPluginContext(project, exhaust.getBindingContext(), environment.getSourceFiles());
+        for (CompilerPlugin plugin : plugins) {
+            plugin.processFiles(context);
         }
         return generationState;
+    }
+
+    public static Class compileScript(
+            ClassLoader parentLoader,
+            String scriptPath,
+            List<AnalyzerScriptParameter> scriptParameters) {
+        final MessageRenderer messageRenderer = MessageRenderer.PLAIN;
+        PrintingMessageCollector messageCollector = new PrintingMessageCollector(System.err, messageRenderer, false);
+        Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
+        try {
+            CompilerConfiguration compilerConfiguration = new CompilerConfiguration();
+            compilerConfiguration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(parentLoader));
+            compilerConfiguration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, Collections.singletonList(CompilerPathUtil.getJdkAnnotationsPath()));
+            compilerConfiguration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, scriptPath);
+
+            JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, compilerConfiguration);
+            K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(
+                    environment, messageCollector, scriptParameters,
+                    BuiltinsScopeExtensionMode.ALL,
+                    false,
+                    BuiltinToJavaTypesMapping.ENABLED);
+
+            try {
+                return compileScript(configuration, parentLoader);
+            }
+            catch (CompilationException e) {
+                messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(e),
+                                        MessageUtil.psiElementToMessageLocation(e.getElement()));
+                return null;
+            }
+            catch (Throwable t) {
+                messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(t),
+                                        CompilerMessageLocation.NO_LOCATION);
+                return null;
+            }
+
+        }
+        finally {
+            messageCollector.printToErrStream();
+            Disposer.dispose(rootDisposable);
+        }
+    }
+
+    private static Collection<File> getClasspath(ClassLoader loader) {
+        return getClasspath(loader, new LinkedList<File>());
+    }
+
+    private static Collection<File> getClasspath(ClassLoader loader, LinkedList<File> files) {
+        ClassLoader parent = loader.getParent();
+        if(parent != null)
+            getClasspath(parent, files);
+
+        if(loader instanceof URLClassLoader) {
+            for (URL url : ((URLClassLoader) loader).getURLs()) {
+                String urlFile = url.getFile();
+                File file = new File(urlFile);
+                if(file.exists() && (file.isDirectory() || file.getName().endsWith(".jar"))) {
+                    files.add(file);
+                }
+            }
+        }
+        return files;
     }
 }

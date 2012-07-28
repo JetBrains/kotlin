@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -48,6 +49,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -81,7 +83,7 @@ public class TestlibTest extends CodegenTestCase {
         try {
             GenerationState generationState = KotlinToJVMBytecodeCompiler
                     .analyzeAndGenerate(new K2JVMCompileEnvironmentConfiguration(myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR,
-                                                                                 false, BuiltinsScopeExtensionMode.ALL, false,
+                                                                                 Collections.<AnalyzerScriptParameter>emptyList(), BuiltinsScopeExtensionMode.ALL, false,
                                                                                  BuiltinToJavaTypesMapping.ENABLED), false);
 
             if (generationState == null) {

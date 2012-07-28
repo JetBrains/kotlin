@@ -25,20 +25,20 @@ import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.common.util.CompilerPathUtil;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration;
-import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
+import org.jetbrains.jet.cli.jvm.compiler.*;
 import org.jetbrains.jet.cli.jvm.repl.ReplFromTerminal;
 import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.codegen.CompilationException;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.cli.common.ExitCode.*;
@@ -95,7 +95,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
         JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, compilerConfiguration);
         boolean builtins = arguments.builtins;
         K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(
-                environment, messageCollector, arguments.script,
+                environment, messageCollector, arguments.script ? CommandLineScriptUtils.scriptParameters() : Collections.<AnalyzerScriptParameter>emptyList(),
                 builtins ? BuiltinsScopeExtensionMode.ONLY_STANDARD_CLASSES : BuiltinsScopeExtensionMode.ALL,
                 builtins,
                 builtins ? BuiltinToJavaTypesMapping.DISABLED : BuiltinToJavaTypesMapping.ENABLED);

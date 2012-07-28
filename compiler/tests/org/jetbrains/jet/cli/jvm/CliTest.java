@@ -21,6 +21,10 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.ExitCode;
+import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
+import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.ref.JetTypeName;
 import org.jetbrains.jet.test.Tmpdir;
 import org.jetbrains.jet.utils.ExceptionUtils;
 import org.junit.Rule;
@@ -32,6 +36,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
 import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Stepan Koltsov
@@ -119,4 +126,20 @@ public class CliTest {
         executeCompilerCompareOutput(new String[]{ "-src", "compiler/testData/cli/ideTemplates.kt", "-output", tmpdir.getTmpDir().getPath()});
     }
 
+    @Test
+    public void testScript() {
+        LinkedList<AnalyzerScriptParameter> scriptParameters = new LinkedList<AnalyzerScriptParameter>();
+        AnalyzerScriptParameter parameter = new AnalyzerScriptParameter(Name.identifier("num"), JetTypeName.parse("jet.Int"));
+        scriptParameters.add(parameter);
+        Class aClass = KotlinToJVMBytecodeCompiler
+                .compileScript(getClass().getClassLoader(), "compiler/testData/cli/fib.ktscript", scriptParameters);
+        Assert.assertNotNull(aClass);
+
+        try {
+            aClass.getConstructor(int.class).newInstance(4);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
