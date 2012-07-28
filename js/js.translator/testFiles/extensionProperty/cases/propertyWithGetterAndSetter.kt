@@ -10,6 +10,8 @@ var Test.b : Int
         a = c - 1
     }
 
+val Test.d : Int = 44
+
 fun box() : Boolean {
     val c = Test()
     if (c.a != 0) return false;
@@ -19,5 +21,6 @@ fun box() : Boolean {
     c.b = 10;
     if (c.a != 9) return false;
     if (c.b != 27) return false;
+    if (c.d != 44) return false;
     return true;
 }

@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -93,27 +94,16 @@ public class JetStandardLibrary {
     private ClassDescriptor arrayClass;
     private ClassDescriptor iterableClass;
     private ClassDescriptor comparableClass;
-    private ClassDescriptor volatileClass;
     private ClassDescriptor throwableClass;
 
-    private JetType numberType;
     private JetType stringType;
-    private JetType volatileType;
-    private JetType nullableStringType;
-    private JetType charSequenceType;
-    private JetType nullableCharSequenceType;
-    private JetType nullableTuple0Type;
-    private JetType throwableType;
-    private JetType nullableThrowableType;
 
     private JetType tuple0Type;
 
     private EnumMap<PrimitiveType, ClassDescriptor> primitiveTypeToClass;
-    private EnumMap<PrimitiveType, ClassDescriptor> primitiveTypeToArrayClass;
     private EnumMap<PrimitiveType, JetType> primitiveTypeToJetType;
     private EnumMap<PrimitiveType, JetType> primitiveTypeToNullableJetType;
     private EnumMap<PrimitiveType, JetType> primitiveTypeToArrayJetType;
-    private EnumMap<PrimitiveType, JetType> primitiveTypeToNullableArrayJetType;
     private Map<JetType, JetType> primitiveJetTypeToJetArrayType;
     private Map<JetType, JetType> jetArrayTypeToPrimitiveJetType;
 
@@ -144,7 +134,9 @@ public class JetStandardLibrary {
             }
 
             BindingTraceContext bindingTraceContext = new BindingTraceContext();
-            WritableScopeImpl writableScope = new WritableScopeImpl(JetStandardClasses.STANDARD_CLASSES, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, RedeclarationHandler.THROW_EXCEPTION).setDebugName("Root bootstrap scope");
+            WritableScopeImpl writableScope = new WritableScopeImpl(
+                    JetStandardClasses.STANDARD_CLASSES, JetStandardClasses.STANDARD_CLASSES_NAMESPACE,
+                    RedeclarationHandler.THROW_EXCEPTION, "Root bootstrap scope");
             writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
             TopDownAnalyzer.processStandardLibraryNamespace(project, bindingTraceContext, writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, files);
 
@@ -163,37 +155,25 @@ public class JetStandardLibrary {
     }
 
     private void initStdClasses() {
-        if(libraryScope == null) {
+        if (libraryScope == null) {
             this.libraryScope = JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getMemberScope();
 
-            this.numberClass = (ClassDescriptor) libraryScope.getClassifier("Number");
-            this.stringClass = (ClassDescriptor) libraryScope.getClassifier("String");
-            this.charSequenceClass = (ClassDescriptor) libraryScope.getClassifier("CharSequence");
-            this.arrayClass = (ClassDescriptor) libraryScope.getClassifier("Array");
-            this.volatileClass = (ClassDescriptor) libraryScope.getClassifier("volatile");
-            this.throwableClass = (ClassDescriptor) libraryScope.getClassifier("Throwable");            
+            this.numberClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Number"));
+            this.stringClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("String"));
+            this.charSequenceClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("CharSequence"));
+            this.arrayClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Array"));
+            this.throwableClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Throwable"));
 
-            this.iterableClass = (ClassDescriptor) libraryScope.getClassifier("Iterable");
-            this.comparableClass = (ClassDescriptor) libraryScope.getClassifier("Comparable");
+            this.iterableClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Iterable"));
+            this.comparableClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Comparable"));
 
-            this.numberType = new JetTypeImpl(getNumber());
             this.stringType = new JetTypeImpl(getString());
-            this.charSequenceType = new JetTypeImpl(getCharSequence());
-            this.nullableCharSequenceType = TypeUtils.makeNullable(charSequenceType);
-            this.nullableStringType = TypeUtils.makeNullable(stringType);
-            this.volatileType = new JetTypeImpl(getVolatile());
-            this.throwableType = new JetTypeImpl(getThrowable());
-            this.nullableThrowableType = TypeUtils.makeNullable(throwableType);
-
             this.tuple0Type = new JetTypeImpl(JetStandardClasses.getTuple(0));
-            this.nullableTuple0Type = TypeUtils.makeNullable(tuple0Type);
-            
+
             primitiveTypeToClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
             primitiveTypeToJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
             primitiveTypeToNullableJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
-            primitiveTypeToArrayClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
             primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
-            primitiveTypeToNullableArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
             primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
             jetArrayTypeToPrimitiveJetType = new HashMap<JetType, JetType>();
 
@@ -205,16 +185,14 @@ public class JetStandardLibrary {
 
     private void makePrimitive(PrimitiveType primitiveType) {
         ClassDescriptor clazz = (ClassDescriptor) libraryScope.getClassifier(primitiveType.getTypeName());
-        ClassDescriptor arrayClazz = (ClassDescriptor) libraryScope.getClassifier(primitiveType.getTypeName() + "Array");
+        ClassDescriptor arrayClazz = (ClassDescriptor) libraryScope.getClassifier(primitiveType.getArrayTypeName());
         JetTypeImpl type = new JetTypeImpl(clazz);
         JetTypeImpl arrayType = new JetTypeImpl(arrayClazz);
 
         primitiveTypeToClass.put(primitiveType, clazz);
         primitiveTypeToJetType.put(primitiveType, type);
         primitiveTypeToNullableJetType.put(primitiveType, TypeUtils.makeNullable(type));
-        primitiveTypeToArrayClass.put(primitiveType, arrayClazz);
         primitiveTypeToArrayJetType.put(primitiveType, arrayType);
-        primitiveTypeToNullableArrayJetType.put(primitiveType, TypeUtils.makeNullable(arrayType));
         primitiveJetTypeToJetArrayType.put(type, arrayType);
         jetArrayTypeToPrimitiveJetType.put(arrayType, type);
     }
@@ -227,7 +205,6 @@ public class JetStandardLibrary {
         classDescriptors.add(stringClass);
         classDescriptors.add(charSequenceClass);
         classDescriptors.add(arrayClass);
-        classDescriptors.add(volatileClass);
         classDescriptors.add(throwableClass);
         classDescriptors.add(iterableClass);
         classDescriptors.add(comparableClass);
@@ -365,12 +342,6 @@ public class JetStandardLibrary {
     }
 
     @NotNull
-    public JetType getCharSequenceType() {
-        initStdClasses();
-        return charSequenceType;
-    }
-
-    @NotNull
     public JetType getByteType() {
         return getPrimitiveJetType(PrimitiveType.BYTE);
     }
@@ -414,56 +385,11 @@ public class JetStandardLibrary {
     }
 
     @NotNull
-    public JetType getIterableType(@NotNull JetType argument) {
-        return getIterableType(Variance.INVARIANT, argument);
-    }
-
-    @NotNull
-    public JetType getIterableType(@NotNull Variance projectionType, @NotNull JetType argument) {
-        List<TypeProjection> types = Collections.singletonList(new TypeProjection(projectionType, argument));
-        return new JetTypeImpl(
-                Collections.<AnnotationDescriptor>emptyList(),
-                getIterable().getTypeConstructor(),
-                false,
-                types,
-                getIterable().getMemberScope(types)
-        );
-    }
-
-    @NotNull
-    public JetType getNullableStringType() {
-        initStdClasses();
-        return nullableStringType;
-    }
-
-    @NotNull
-    public JetType getNullableCharSequenceType() {
-        initStdClasses();
-        return nullableCharSequenceType;
-    }
-    
-    @NotNull
-    public JetType getThrowableType() {
-        initStdClasses();
-        return throwableType;
-    }
-
-    public JetType getNullableThrowableType() {
-        initStdClasses();
-        return nullableThrowableType;
-    }
-
-    @NotNull
     public JetType getNullablePrimitiveJetType(PrimitiveType primitiveType) {
         initStdClasses();
         return primitiveTypeToNullableJetType.get(primitiveType);
     }
 
-    public JetType getNullableTuple0Type() {
-        initStdClasses();
-        return nullableTuple0Type;
-    }
-    
     @NotNull
     public JetType getPrimitiveArrayJetType(PrimitiveType primitiveType) {
         initStdClasses();
@@ -478,33 +404,13 @@ public class JetStandardLibrary {
         return primitiveJetTypeToJetArrayType.get(jetType);
     }
 
-    @NotNull
-    public ClassDescriptor getPrimitiveArrayClassDescriptor(PrimitiveType primitiveType) {
-        initStdClasses();
-        return primitiveTypeToArrayClass.get(primitiveType);
-    }
-
-
-    @NotNull
-    public JetType getNullablePrimitiveArrayJetType(PrimitiveType primitiveType) {
-        initStdClasses();
-        return primitiveTypeToNullableArrayJetType.get(primitiveType);
-    }
-
-    public ClassDescriptor getVolatile() {
-        return volatileClass;
-    }
-
-    public JetType getVolatileType() {
-        return volatileType;
-    }
-
-    public final boolean isVolatile(PropertyDescriptor descriptor) {
+    public static boolean isVolatile(PropertyDescriptor descriptor) {
         List<AnnotationDescriptor> annotations = descriptor.getOriginal().getAnnotations();
-        if(annotations != null) {
+        if (annotations != null) {
             for(AnnotationDescriptor d: annotations) {
-                if(d.getType().equals(getVolatileType()))
+                if (JetStandardLibraryNames.VOLATILE.is(d.getType())) {
                     return true;
+                }
             }
         }
         return false;
@@ -512,9 +418,5 @@ public class JetStandardLibrary {
 
     public JetType getTuple0Type() {
         return tuple0Type;
-    }
-
-    public JetType getNumberType() {
-        return numberType;
     }
 }

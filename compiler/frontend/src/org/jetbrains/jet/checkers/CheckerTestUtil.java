@@ -322,12 +322,6 @@ public class CheckerTestUtil {
 
         @NotNull
         @Override
-        public String getMessage() {
-            throw new IllegalStateException();
-        }
-
-        @NotNull
-        @Override
         public Severity getSeverity() {
             throw new IllegalStateException();
         }
@@ -349,6 +343,11 @@ public class CheckerTestUtil {
         public PsiFile getPsiFile() {
             return errorElement.getContainingFile();
         }
+
+        @Override
+        public boolean isValid() {
+            return true;
+        }
     }
     
     private static List<DiagnosticDescriptor> getSortedDiagnosticDescriptors(Collection<Diagnostic> diagnostics) {
@@ -359,7 +358,7 @@ public class CheckerTestUtil {
         DiagnosticDescriptor currentDiagnosticDescriptor = null;
         for (Diagnostic diagnostic : list) {
             List<TextRange> textRanges = diagnostic.getTextRanges();
-            if (textRanges.isEmpty()) continue;
+            if (!diagnostic.isValid()) continue;
 
             TextRange textRange = textRanges.get(0);
             if (currentDiagnosticDescriptor != null && currentDiagnosticDescriptor.equalRange(textRange)) {

@@ -19,14 +19,15 @@ package org.jetbrains.jet.checkers;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
+import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,9 +41,15 @@ public class CheckerTestUtilTest extends JetLiteFixture {
         super("diagnostics/checkerTestUtil");
     }
 
+    @Override
+    protected JetCoreEnvironment createEnvironment() {
+        return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
+    }
+
+
     protected void doTest(TheTest theTest) throws Exception {
         prepareForTest("test");
-        theTest.test(myFile);
+        theTest.test(getFile());
     }
 
     public void testEquals() throws Exception {
@@ -100,9 +107,8 @@ public class CheckerTestUtilTest extends JetLiteFixture {
 
         public void test(final @NotNull PsiFile psiFile) {
             BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(
-                    (JetFile) psiFile, JetControlFlowDataTraceFactory.EMPTY,
-                    CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR))
-                        .getBindingContext();
+                    (JetFile) psiFile,Collections.<AnalyzerScriptParameter>emptyList(), BuiltinsScopeExtensionMode.ALL)
+                    .getBindingContext();
 
             String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile)).toString();
 

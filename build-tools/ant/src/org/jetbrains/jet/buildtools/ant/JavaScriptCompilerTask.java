@@ -27,6 +27,6 @@ public class JavaScriptCompilerTask extends Task {
 
     @Override
     public void execute() {
-        log( "JavaScriptCompilerTask" );
+        log("JavaScriptCompilerTask");
     }
 }

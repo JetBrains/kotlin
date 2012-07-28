@@ -27,17 +27,16 @@ import jet.runtime.typeinfo.JetClass;
 import jet.runtime.typeinfo.JetMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.FqName;
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.*;
@@ -62,8 +61,7 @@ class DecompiledDataFactory {
     private DecompiledDataFactory(ClsFileImpl clsFile) {
         myClsFile = clsFile;
         Project project = myClsFile.getProject();
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
-                CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR), project);
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(BuiltinsScopeExtensionMode.ALL, project);
         myBindingContext = injector.getBindingTrace().getBindingContext();
         myJavaDescriptorResolver = injector.getJavaDescriptorResolver();
     }
@@ -125,9 +123,9 @@ class DecompiledDataFactory {
         return r;
     }
 
-    private void appendDescriptor(DeclarationDescriptor descriptor, String indent) {
+    private void appendDescriptor(@NotNull DeclarationDescriptor descriptor, String indent) {
         int startOffset = myBuilder.length();
-        String renderedDescriptor = DescriptorRenderer.COMPACT.render(descriptor);
+        String renderedDescriptor = DescriptorRenderer.COMPACT_WITH_MODIFIERS.render(descriptor);
         renderedDescriptor = renderedDescriptor.replace("= ...", "= " + DECOMPILED_COMMENT);
         myBuilder.append(renderedDescriptor);
         int endOffset = myBuilder.length();

@@ -45,14 +45,16 @@ public class JetFileTreeNode extends PsiFileNode {
         if (file == null) return Collections.emptyList();
         ArrayList<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
 
-        List<JetDeclaration> declarations = file.getDeclarations();
+        if (getSettings().isShowMembers()) {
+            List<JetDeclaration> declarations = file.getDeclarations();
 
-        for (JetDeclaration declaration : declarations) {
-            if (declaration instanceof JetClassOrObject) {
-                result.add(new JetClassOrObjectTreeNode(file.getProject(), (JetClassOrObject) declaration, getSettings()));
-            }
-            else if (getSettings().isShowMembers()) {
-                result.add(new JetDeclarationTreeNode(getProject(), declaration, getSettings()));
+            for (JetDeclaration declaration : declarations) {
+                if (declaration instanceof JetClassOrObject) {
+                    result.add(new JetClassOrObjectTreeNode(file.getProject(), (JetClassOrObject) declaration, getSettings()));
+                }
+                else if (getSettings().isShowMembers()) {
+                    result.add(new JetDeclarationTreeNode(getProject(), declaration, getSettings()));
+                }
             }
         }
 

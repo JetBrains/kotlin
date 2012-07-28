@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface ValueArgument {
     @Nullable
-    @JetElement.IfNotParsed
+    @IfNotParsed
     JetExpression getArgumentExpression();
 
     @Nullable

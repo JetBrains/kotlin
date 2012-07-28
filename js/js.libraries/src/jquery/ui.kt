@@ -1,8 +1,8 @@
-package jquery.ui
+package js.jquery.ui
 
 
 //jquery UI
-import jquery.JQuery
+import js.jquery.JQuery
 import js.native
 import js.Json
 

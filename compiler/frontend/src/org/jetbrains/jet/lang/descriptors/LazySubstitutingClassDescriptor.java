@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -112,22 +113,12 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public Set<ConstructorDescriptor> getConstructors() {
-        Set<ConstructorDescriptor> r = Sets.newHashSet();
+    public Collection<ConstructorDescriptor> getConstructors() {
+        Collection<ConstructorDescriptor> r = Lists.newArrayList();
         for (ConstructorDescriptor constructor : original.getConstructors()) {
             r.add((ConstructorDescriptor) constructor.substitute(getSubstitutor()));
         }
         return r;
-    }
-
-    @Override
-    public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
-        return original.getUnsubstitutedPrimaryConstructor();
-    }
-
-    @Override
-    public boolean hasConstructors() {
-        return original.hasConstructors();
     }
 
     @Override
@@ -137,7 +128,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public String getName() {
+    public Name getName() {
         return original.getName();
     }
 

@@ -1,0 +1,6 @@
+namespace test
+
+public open class test.MethodTypePTwoUpperBounds : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.MethodTypePTwoUpperBounds
+    public open fun </*0*/ T : java.lang.Cloneable? & java.lang.Runnable?>foo(): jet.Tuple0
+}

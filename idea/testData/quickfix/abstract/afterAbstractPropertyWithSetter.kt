@@ -1,5 +1,5 @@
 // "Make 'j' not abstract" "true"
 class B {
-    <caret>var j: Int
+    var j: Int = 0
         set(v: Int) {}
 }

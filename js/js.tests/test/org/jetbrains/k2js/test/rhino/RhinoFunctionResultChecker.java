@@ -17,21 +17,30 @@
 package org.jetbrains.k2js.test.rhino;
 
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.k2js.test.config.TestConfig;
+import org.jetbrains.k2js.translate.context.Namer;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
-import static org.junit.Assert.assertTrue;
+import static org.jetbrains.k2js.test.rhino.RhinoUtils.flushSystemOut;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Pavel Talanov
  */
-public final class RhinoFunctionResultChecker implements RhinoResultChecker {
+public class RhinoFunctionResultChecker implements RhinoResultChecker {
 
+    private final String moduleId;
     private final String namespaceName;
     private final String functionName;
     private final Object expectedResult;
 
     public RhinoFunctionResultChecker(@Nullable String namespaceName, String functionName, Object expectedResult) {
+        this(TestConfig.TEST_MODULE_NAME, namespaceName, functionName, expectedResult);
+    }
+
+    public RhinoFunctionResultChecker(@Nullable String moduleId, @Nullable String namespaceName, String functionName, Object expectedResult) {
+        this.moduleId = moduleId;
         this.namespaceName = namespaceName;
         this.functionName = functionName;
         this.expectedResult = expectedResult;
@@ -44,8 +53,13 @@ public final class RhinoFunctionResultChecker implements RhinoResultChecker {
     @Override
     public void runChecks(Context context, Scriptable scope) throws Exception {
         Object result = evaluateFunction(context, scope);
-        assertTrue("Result is not what expected! Expected: " + expectedResult + " Evaluated : " + result,
-                   result.equals(expectedResult));
+        flushSystemOut(context, scope);
+        assertResultValid(result, context);
+    }
+
+    protected void assertResultValid(Object result, Context context) {
+        String ecmaVersion = context.getLanguageVersion() == Context.VERSION_1_8 ? "ecma5" : "ecma3";
+        assertEquals("Result of " + namespaceName + "." + functionName + "() is not what expected (" + ecmaVersion + ")!", expectedResult, result);
         String report = namespaceName + "." + functionName + "() = " + Context.toString(result);
         System.out.println(report);
     }
@@ -54,11 +68,20 @@ public final class RhinoFunctionResultChecker implements RhinoResultChecker {
         return cx.evaluateString(scope, functionCallString(), "function call", 0, null);
     }
 
-    private String functionCallString() {
-        String result = functionName + "()";
+    protected String functionCallString() {
+        StringBuilder sb = new StringBuilder();
         if (namespaceName != null) {
-            result = namespaceName + "." + result;
+            sb.append("Kotlin.modules");
+            if (moduleId.contains(".")) {
+                sb.append("['").append(moduleId).append("']");
+            } else {
+                sb.append(".").append(moduleId);
+            }
+            if (namespaceName != Namer.getRootNamespaceName()) {
+                sb.append('.').append(namespaceName);
+            }
+            sb.append('.');
         }
-        return result;
+        return sb.append(functionName).append("()").toString();
     }
 }

@@ -1,5 +1,5 @@
 package test
 
-class MethodWithTypePP() {
-    fun <erased P, erased Q : P> f() = #()
+public class MethodWithTypePP() : java.lang.Object() {
+    public fun <P, Q : P> f() : Unit = #()
 }

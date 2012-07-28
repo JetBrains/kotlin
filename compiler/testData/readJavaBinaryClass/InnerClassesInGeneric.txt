@@ -1,13 +1,12 @@
 namespace test
 
-open class test.Outer</*0*/ P : jet.Any?, /*1*/ Q : jet.Any?> : jet.Any {
-    final /*constructor*/ fun </*0*/ P : jet.Any?, /*1*/ Q : jet.Any?><init>(): test.Outer<P, Q>
-    open class test.Outer.Inner : jet.Any {
-        final /*constructor*/ fun <init>(): test.Outer.Inner
+public open class test.InnerClassesInGeneric</*0*/ P : jet.Any?, /*1*/ Q : jet.Any?> : java.lang.Object {
+    public final /*constructor*/ fun </*0*/ P : jet.Any?, /*1*/ Q : jet.Any?><init>(): test.InnerClassesInGeneric<P, Q>
+    public open class test.InnerClassesInGeneric.Inner : java.lang.Object {
+        public final /*constructor*/ fun <init>(): test.InnerClassesInGeneric.Inner
     }
-    open class test.Outer.Inner2 : test.Outer.Inner, test.Trait<P> {
-        final /*constructor*/ fun <init>(): test.Outer.Inner2
+    public open class test.InnerClassesInGeneric.Inner2 : test.InnerClassesInGeneric.Inner, java.lang.Iterable<P> {
+        public final /*constructor*/ fun <init>(): test.InnerClassesInGeneric.Inner2
+        public open override /*1*/ fun iterator(): java.util.Iterator<P>?
     }
-}
-abstract trait test.Trait</*0*/ P : jet.Any?> : jet.Any {
 }

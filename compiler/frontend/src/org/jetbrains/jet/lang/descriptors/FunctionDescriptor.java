@@ -42,5 +42,5 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
 
     @NotNull
     @Override
-    FunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides);
+    FunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, boolean makeInvisible, Kind kind, boolean copyOverrides);
 }

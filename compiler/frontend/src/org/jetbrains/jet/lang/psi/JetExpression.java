@@ -16,32 +16,15 @@
 
 package org.jetbrains.jet.lang.psi;
 
-import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetNodeType;
 
 /**
- * @author max
+ * @author Nikolay Krasko
  */
-public abstract class JetExpression extends JetElement {
-    public JetExpression(@NotNull ASTNode node) {
-        super(node);
-    }
+public interface JetExpression extends JetElement {
+    @Override
+    void accept(@NotNull JetVisitorVoid visitor);
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitExpression(this);
-    }
-
-    @Override
-    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
-        return visitor.visitExpression(this, data);
-    }
-
-    protected JetExpression findExpressionUnder(JetNodeType type) {
-        JetContainerNode containerNode = (JetContainerNode) findChildByType(type);
-        if (containerNode == null) return null;
-
-        return containerNode.findChildByClass(JetExpression.class);
-    }
+    <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data);
 }

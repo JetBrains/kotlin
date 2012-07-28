@@ -1,0 +1,10 @@
+namespace <root>
+
+// <namespace name="a">
+namespace a
+
+// <namespace name="java">
+namespace java
+
+// </namespace name="java">
+// </namespace name="a">

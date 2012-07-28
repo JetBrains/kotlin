@@ -20,7 +20,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 /**
  * @author Stepan Koltsov

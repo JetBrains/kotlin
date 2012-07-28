@@ -20,17 +20,22 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
+import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.di.InjectorForTests;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -64,8 +69,14 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     @Override
+    protected JetCoreEnvironment createEnvironment() {
+        return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
+    }
+
+    @Override
     public void setUp() throws Exception {
         super.setUp();
+
         library          = JetStandardLibrary.getInstance();
         classDefinitions = new ClassDefinitions();
 
@@ -155,7 +166,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
     public void testTry() throws Exception {
         assertType("try {1} finally{2}", "Int");
-        assertType("try {1} catch (e : Exception) {'a'} finally{2}", "Int");
+        assertType("try {1} catch (e : Exception) {'a'} finally{2}", "Any");
+        assertType("try {1} catch (e : Exception) {2} finally{'a'}", "Int");
         assertType("try {1} catch (e : Exception) {'a'} finally{'2'}", "Any");
         assertType("try {1} catch (e : Exception) {'a'}", "Any");
         assertType("try {1} catch (e : Exception) {'a'} catch (e : Exception) {null}", "Any?");
@@ -548,14 +560,14 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     private void assertType(String expression, JetType expectedType) {
         Project project = getProject();
         JetExpression jetExpression = JetPsiFactory.createExpression(project, expression);
-        JetType type = expressionTypingServices.getType(scopeWithImports, jetExpression, TypeUtils.NO_EXPECTED_TYPE, JetTestUtils.DUMMY_TRACE);
+        JetType type = expressionTypingServices.getType(scopeWithImports, jetExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, JetTestUtils.DUMMY_TRACE);
         assertTrue(type + " != " + expectedType, type.equals(expectedType));
     }
 
     private void assertErrorType(String expression) {
         Project project = getProject();
         JetExpression jetExpression = JetPsiFactory.createExpression(project, expression);
-        JetType type = expressionTypingServices.safeGetType(scopeWithImports, jetExpression, TypeUtils.NO_EXPECTED_TYPE, JetTestUtils.DUMMY_TRACE);
+        JetType type = expressionTypingServices.safeGetType(scopeWithImports, jetExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, JetTestUtils.DUMMY_TRACE);
         assertTrue("Error type expected but " + type + " returned", ErrorUtils.isErrorType(type));
     }
 
@@ -578,16 +590,16 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     private void assertType(JetScope scope, String expression, String expectedTypeStr) {
         Project project = getProject();
         JetExpression jetExpression = JetPsiFactory.createExpression(project, expression);
-        JetType type = expressionTypingServices.getType(addImports(scope), jetExpression, TypeUtils.NO_EXPECTED_TYPE, JetTestUtils.DUMMY_TRACE);
+        JetType type = expressionTypingServices.getType(addImports(scope), jetExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, JetTestUtils.DUMMY_TRACE);
         JetType expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
         assertEquals(expectedType, type);
     }
 
     private WritableScopeImpl addImports(JetScope scope) {
-        WritableScopeImpl writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING);
+        WritableScopeImpl writableScope = new WritableScopeImpl(
+                scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
         writableScope.importScope(library.getLibraryScope());
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR), getProject());
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(BuiltinsScopeExtensionMode.ALL, getProject());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
         writableScope.importScope(javaDescriptorResolver.resolveNamespace(FqName.ROOT,
                 DescriptorSearchRule.INCLUDE_KOTLIN).getMemberScope());
@@ -648,15 +660,15 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
         public JetScope BASIC_SCOPE = new JetScopeAdapter(library.getLibraryScope()) {
             @Override
-            public ClassifierDescriptor getClassifier(@NotNull String name) {
+            public ClassifierDescriptor getClassifier(@NotNull Name name) {
                 if (CLASSES.isEmpty()) {
                     for (String classDeclaration : CLASS_DECLARATIONS) {
                         JetClass classElement = JetPsiFactory.createClass(getProject(), classDeclaration);
                         ClassDescriptor classDescriptor = resolveClassDescriptor(this, classElement);
-                        CLASSES.put(classDescriptor.getName(), classDescriptor);
+                        CLASSES.put(classDescriptor.getName().getName(), classDescriptor);
                     }
                 }
-                ClassDescriptor classDescriptor = CLASSES.get(name);
+                ClassDescriptor classDescriptor = CLASSES.get(name.getName());
                 if (classDescriptor != null) {
                     return classDescriptor;
                 }
@@ -665,7 +677,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
             @NotNull
             @Override
-            public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+            public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
                 Set<FunctionDescriptor> writableFunctionGroup = Sets.newLinkedHashSet();
                 for (String funDecl : FUNCTION_DECLARATIONS) {
                     FunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(this.getContainingDeclaration(), this, JetPsiFactory.createFunction(getProject(), funDecl), JetTestUtils.DUMMY_TRACE);
@@ -682,17 +694,19 @@ public class JetTypeCheckerTest extends JetLiteFixture {
             final ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
                     scope.getContainingDeclaration(),
                     Collections.<AnnotationDescriptor>emptyList(),
+                    Modality.FINAL,
                     JetPsiUtil.safeName(classElement.getName()));
 
             BindingTrace trace = JetTestUtils.DUMMY_TRACE;
 
             trace.record(BindingContext.CLASS, classElement, classDescriptor);
 
-            final WritableScope parameterScope = new WritableScopeImpl(scope, classDescriptor, new TraceBasedRedeclarationHandler(trace));
+            final WritableScope parameterScope = new WritableScopeImpl(
+                    scope, classDescriptor, new TraceBasedRedeclarationHandler(trace), "JetTypeCheckerTest.resolveClassDescriptor");
             parameterScope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
             // This call has side-effects on the parameterScope (fills it in)
-            List<TypeParameterDescriptor> typeParameters
+            List<TypeParameterDescriptorImpl> typeParameters
                     = descriptorResolver.resolveTypeParameters(classDescriptor, parameterScope, classElement.getTypeParameters(), JetTestUtils.DUMMY_TRACE);
             descriptorResolver.resolveGenericBounds(classElement, parameterScope, typeParameters, JetTestUtils.DUMMY_TRACE);
 
@@ -708,7 +722,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     //        }
             boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
 
-            final WritableScope memberDeclarations = new WritableScopeImpl(JetScope.EMPTY, classDescriptor, new TraceBasedRedeclarationHandler(trace));
+            final WritableScope memberDeclarations = new WritableScopeImpl(
+                    JetScope.EMPTY, classDescriptor, new TraceBasedRedeclarationHandler(trace), "JetTypeCheckerTest.resolveClassDescriptor");
             memberDeclarations.changeLockLevel(WritableScope.LockLevel.BOTH);
 
             List<JetDeclaration> declarations = classElement.getDeclarations();
@@ -752,11 +767,6 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                     constructors,
                     null
             );
-            for (JetSecondaryConstructor constructor : classElement.getSecondaryConstructors()) {
-                ConstructorDescriptorImpl functionDescriptor = descriptorResolver.resolveSecondaryConstructorDescriptor(memberDeclarations, classDescriptor, constructor, JetTestUtils.DUMMY_TRACE);
-                functionDescriptor.setReturnType(classDescriptor.getDefaultType());
-                constructors.add(functionDescriptor);
-            }
             ConstructorDescriptorImpl primaryConstructorDescriptor = descriptorResolver.resolvePrimaryConstructorDescriptor(scope, classDescriptor, classElement, JetTestUtils.DUMMY_TRACE);
             if (primaryConstructorDescriptor != null) {
                 primaryConstructorDescriptor.setReturnType(classDescriptor.getDefaultType());

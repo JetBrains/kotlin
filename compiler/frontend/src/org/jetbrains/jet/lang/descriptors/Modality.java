@@ -20,6 +20,7 @@ package org.jetbrains.jet.lang.descriptors;
  * @author abreslav
  */
 public enum Modality {
+    // THE ORDER OF ENTRIES MATTERS HERE
     FINAL(false),
     OPEN(true),
     ABSTRACT(true);
@@ -33,7 +34,7 @@ public enum Modality {
     public boolean isOverridable() {
         return overridable;
     }
-    
+
     public static Modality convertFromFlags(boolean _abstract, boolean open) {
         if (_abstract) return ABSTRACT;
         if (open) return OPEN;

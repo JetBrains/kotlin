@@ -24,15 +24,15 @@ import org.jetbrains.jet.lang.resolve.AbstractScopeAdapter;
  */
 public class JetScopeAdapter extends AbstractScopeAdapter {
     @NotNull
-    private final JetScope scope;
+    private final JetScope workerScope;
 
-    public JetScopeAdapter(@NotNull JetScope scope) {
-        this.scope = scope;
+    public JetScopeAdapter(@NotNull JetScope workerScope) {
+        this.workerScope = workerScope;
     }
 
     @NotNull
     @Override
     protected final JetScope getWorkerScope() {
-        return scope;
+        return workerScope;
     }
 }

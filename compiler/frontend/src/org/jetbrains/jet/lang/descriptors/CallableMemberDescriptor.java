@@ -28,6 +28,10 @@ public interface CallableMemberDescriptor extends CallableDescriptor, MemberDesc
     @Override
     Set<? extends CallableMemberDescriptor> getOverriddenDescriptors();
 
+    @NotNull
+    @Override
+    CallableMemberDescriptor getOriginal();
+
     void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overridden);
 
     enum Kind {
@@ -47,5 +51,5 @@ public interface CallableMemberDescriptor extends CallableDescriptor, MemberDesc
     Kind getKind();
 
     @NotNull
-    CallableMemberDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides);
+    CallableMemberDescriptor copy(DeclarationDescriptor newOwner, Modality modality, boolean makeInvisible, Kind kind, boolean copyOverrides);
 }

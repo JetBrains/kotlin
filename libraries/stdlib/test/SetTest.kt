@@ -32,6 +32,7 @@ class SetTest {
             foo.all{it.startsWith("f")}
         }
         assertEquals(1, foo.size)
+
         assertEquals(hashSet("foo"), foo)
 
         assertTrue("Filter on a Set should return a Set") {
@@ -42,12 +43,8 @@ class SetTest {
     Test fun find() {
         val x = data.find{it.startsWith("x")}
         assertNull(x)
-        fails {
-            x.sure()
-        }
 
         val f = data.find{it.startsWith("f")}
-        f.sure()
         assertEquals("foo", f)
     }
 

@@ -1,54 +1,47 @@
 package org.jetbrains.kotlin.doc.model
 
-import kotlin.*
-import kotlin.util.*
-
-import org.jetbrains.kotlin.doc.KDocConfig
-import org.jetbrains.kotlin.doc.highlighter.SyntaxHighligher
-
+import java.io.File
 import java.util.*
+import org.jetbrains.jet.internal.com.intellij.openapi.vfs.local.CoreLocalVirtualFile
+import org.jetbrains.jet.internal.com.intellij.psi.PsiDirectory
+import org.jetbrains.jet.internal.com.intellij.psi.PsiElement
+import org.jetbrains.jet.internal.com.intellij.psi.PsiFile
+import org.jetbrains.jet.internal.com.intellij.psi.PsiFileSystemItem
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor
+import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.resolve.BindingContextUtils
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.pegdown.PegDownProcessor
-import org.pegdown.LinkRenderer
-import org.pegdown.ast.WikiLinkNode
-import org.pegdown.LinkRenderer.Rendering
-import org.pegdown.ast.RefLinkNode
-import org.pegdown.ast.AutoLinkNode
-import org.pegdown.ast.ExpLinkNode
-import org.pegdown.Extensions
-import org.jetbrains.kotlin.doc.templates.KDocTemplate
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl
-import org.jetbrains.jet.lang.descriptors.Visibility
-import org.jetbrains.jet.lang.descriptors.ClassKind
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiDirectory
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils.LineAndColumn
-import com.intellij.psi.PsiFileSystemItem
-import java.io.File
-
+import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.resolve.BindingContextUtils
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
+import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.kotlin.doc.*
+import org.jetbrains.kotlin.doc.highlighter.SyntaxHighligher
+import org.jetbrains.kotlin.doc.templates.KDocTemplate
+import org.pegdown.Extensions
+import org.pegdown.LinkRenderer
+import org.pegdown.LinkRenderer.Rendering
+import org.pegdown.PegDownProcessor
+import org.pegdown.ast.AutoLinkNode
+import org.pegdown.ast.ExpLinkNode
+import org.pegdown.ast.RefLinkNode
+import org.pegdown.ast.WikiLinkNode
 
 /**
- * Returns the collection of functions with duplicate function names filtered out
- * so only the first one is included
- */
+* Returns the collection of functions with duplicate function names filtered out
+* so only the first one is included
+*/
 fun filterDuplicateNames(functions: Collection<KFunction>): Collection<KFunction> {
     var lastName = ""
     return functions.filter{
@@ -66,7 +59,7 @@ fun qualifiedName(descriptor: DeclarationDescriptor?): String {
         return ""
     } else {
         val parent = containerName(descriptor)
-        var name = descriptor.getName() ?: ""
+        var name = descriptor.getName()?.getName() ?: ""
         if (name.startsWith("<")) {
             name = ""
         }
@@ -174,7 +167,10 @@ abstract class KClassOrPackage(model: KModel, declarationDescriptor: Declaration
     }
 }
 
-class KModel(var context: BindingContext, val config: KDocConfig) {
+// htmlPath does not include "html-src" prefix
+class SourceInfo(val psi: JetFile, val relativePath: String, val htmlPath: String)
+
+class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs: List<File>, val sources: List<JetFile>) {
     // TODO generates java.lang.NoSuchMethodError: kotlin.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
     //val packages = sortedMap<String,KPackage>()
     public val packageMap: SortedMap<String, KPackage> = TreeMap<String, KPackage>()
@@ -207,35 +203,47 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
 
     private val readMeDirsScanned = HashSet<String>()
 
-    /**
-     * Returns the root project directory for calculating relative source links
-     */
-    fun projectRootDir(): String {
-        if (_projectRootDir == null) {
-            val rootDir = config.projectRootDir
-            _projectRootDir = if (rootDir == null) {
-                warning("KDocConfig does not have a projectRootDir defined so we cannot generate relative source Hrefs")
-                ""
-            } else {
-                File(rootDir).getCanonicalPath() ?: ""
+
+
+    val sourcesInfo: List<SourceInfo>
+    ;{
+
+        val normalizedSourceDirs: List<String> =
+        sourceDirs.map { file -> file.getCanonicalPath()!! }
+
+        private fun relativePath(psiFile: PsiFile): String {
+            val file = File((psiFile.getVirtualFile() as CoreLocalVirtualFile).getPath()).getCanonicalFile()!!
+            val filePath = file.getPath()!!
+            for (sourceDirPath in normalizedSourceDirs) {
+                if (filePath.startsWith(sourceDirPath) && filePath.length() > sourceDirPath.length()) {
+                    return filePath.substring(sourceDirPath.length + 1)
+                }
             }
+            throw Exception("$file is not a child of any source roots $normalizedSourceDirs")
         }
-        return _projectRootDir ?: ""
+
+        sourcesInfo = sources.map { source ->
+            val relativePath = relativePath(source)
+            val htmlPath = relativePath.replaceFirst("\\.kt$", "") + ".html"
+            SourceInfo(source, relativePath, htmlPath)
+        }
     }
 
+    private val sourceInfoByFile = sourcesInfo.toHashMapMappingToKey<JetFile, SourceInfo> { sourceInfo -> sourceInfo.psi }
 
-    /** Loads the model from the given set of source files */
-    fun load(sources: List<JetFile?>): Unit {
+    fun sourceInfoByFile(file: JetFile) = sourceInfoByFile.get(file)!!
+
+
+    ;{
+        /** Loads the model from the given set of source files */
         val allNamespaces = HashSet<NamespaceDescriptor>()
         for (source in sources) {
-            if (source != null) {
-                // We retrieve a descriptor by a PSI element from the context
-                val namespaceDescriptor = BindingContextUtils.namespaceDescriptor(context, source)
-                if (namespaceDescriptor != null) {
-                    allNamespaces.add(namespaceDescriptor);
-                } else {
-                    warning("No NamespaceDescriptor for source $source")
-                }
+            // We retrieve a descriptor by a PSI element from the context
+            val namespaceDescriptor = BindingContextUtils.namespaceDescriptor(context, source)
+            if (namespaceDescriptor != null) {
+                allNamespaces.add(namespaceDescriptor);
+            } else {
+                warning("No NamespaceDescriptor for source $source")
             }
         }
         val allClasses = HashSet<KClass>()
@@ -253,6 +261,26 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             }
         }
     }
+
+
+
+
+    /**
+    * Returns the root project directory for calculating relative source links
+    */
+    fun projectRootDir(): String {
+        if (_projectRootDir == null) {
+            val rootDir = config.projectRootDir
+            _projectRootDir = if (rootDir == null) {
+                warning("KDocConfig does not have a projectRootDir defined so we cannot generate relative source Hrefs")
+                ""
+            } else {
+                File(rootDir).getCanonicalPath() ?: ""
+            }
+        }
+        return _projectRootDir ?: ""
+    }
+
 
     /* Returns the package for the given name or null if it does not exist */
     fun getPackage(name: String): KPackage? = packageMap.get(name)
@@ -326,13 +354,15 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             // lets remove the root project directory
             val rootDir = projectRootDir()
             val canonicalFile = File(filePath).getCanonicalPath() ?: ""
-            val relativeFile = if (rootDir != null && canonicalFile.startsWith(rootDir))
-                canonicalFile.substring(rootDir.length()) else canonicalFile
-            if (relativeFile != null) {
-                val cleanRoot = root.trimTrailing("/")
-                val cleanPath = relativeFile.trimLeading("/")
-                return "$cleanRoot/$cleanPath$lineLinkText$sourceLine"
-            }
+            //println("=========== root dir for filePath: $canonicalFile is $rootDir")
+            val relativeFile =
+                if (canonicalFile.startsWith(rootDir))
+                    canonicalFile.substring(rootDir.length())
+                else
+                    canonicalFile
+            val cleanRoot = root.trimTrailing("/")
+            val cleanPath = relativeFile.trimLeading("/")
+            return "$cleanRoot/$cleanPath$lineLinkText$sourceLine"
         }
         return null
     }
@@ -355,7 +385,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             val descriptors = scope.getAllDescriptors()
             for (descriptor in descriptors) {
                 if (descriptor is PropertyDescriptor) {
-                    val name = descriptor.getName()
+                    val name = descriptor.getName().getName()
                     val returnType = getType(descriptor.getReturnType())
                     if (returnType != null) {
                         val receiver = descriptor.getReceiverParameter()
@@ -383,7 +413,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
     protected fun createFunction(owner: KClassOrPackage, descriptor: CallableDescriptor): KFunction? {
         val returnType = getType(descriptor.getReturnType())
         if (returnType != null) {
-            val name = descriptor.getName() ?: "null"
+            val name = descriptor.getName().getName()
             val parameters = ArrayList<KParameter>()
             val params = descriptor.getValueParameters()
             for (param in params) {
@@ -420,7 +450,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
     }
 
     protected fun createTypeParameter(descriptor: TypeParameterDescriptor): KTypeParameter? {
-        val name = descriptor.getName()
+        val name = descriptor.getName().getName()
         val answer = KTypeParameter(name, descriptor, this)
         configureComments(answer, descriptor)
         return answer
@@ -429,7 +459,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
     protected fun createParameter(descriptor: ValueParameterDescriptor): KParameter? {
         val returnType = getType(descriptor.getReturnType())
         if (returnType != null) {
-            val name = descriptor.getName()
+            val name = descriptor.getName().getName()
             val answer = KParameter(descriptor, name, returnType)
             configureComments(answer, descriptor)
             return answer
@@ -461,7 +491,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
     }
 
 
-    protected fun getPsiElement(descriptor: DeclarationDescriptor): PsiElement? {
+    fun getPsiElement(descriptor: DeclarationDescriptor): PsiElement? {
         return try {
             BindingContextUtils.descriptorToDeclaration(context, descriptor)
         } catch (e: Throwable) {
@@ -484,31 +514,27 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             var text = node?.getText() ?: ""
             // lets remove the comment tokens
             val lines = text.trim().split("\\n")
-            if (lines != null) {
-                // lets remove the /** ... * ... */ tokens
-                val buffer = StringBuilder()
-                val last = lines.size - 1
-                for (i in 0.upto(last)) {
-                    var text = lines[i] ?: ""
-                    text = text.trim()
-                    if (i == 0) {
-                        text = text.trimLeading("/**").trimLeading("/*")
-                    } else {
-                        buffer.append("\n")
-                    }
-                    if (i >= last) {
-                        text = text.trimTrailing("*/")
-                    } else if (i > 0) {
-                        text = text.trimLeading("* ")
-                        if (text == "*") text = ""
-                    }
-                    text = processMacros(text, psiElement)
-                    buffer.append(text)
+            // lets remove the /** ... * ... */ tokens
+            val buffer = StringBuilder()
+            val last = lines.size - 1
+            for (i in 0.upto(last)) {
+                var text = lines[i] ?: ""
+                text = text.trim()
+                if (i == 0) {
+                    text = text.trimLeading("/**").trimLeading("/*")
+                } else {
+                    buffer.append("\n")
                 }
-                return buffer.toString() ?: ""
-            } else {
-                return text
+                if (i >= last) {
+                    text = text.trimTrailing("*/")
+                } else if (i > 0) {
+                    text = text.trimLeading("* ")
+                    if (text == "*") text = ""
+                }
+                text = processMacros(text, psiElement)
+                buffer.append(text)
             }
+            return buffer.toString() ?: ""
         }
         return ""
     }
@@ -525,7 +551,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                 // TODO we could default the test function name to match that of the
                 // source code function if folks adopted a convention of naming the test method after the
                 // method its acting as a demo/test for
-                if (words != null && words.size > 1) {
+                if (words.size > 1) {
                     val includeFile = words[0].sure()
                     val fnName = words[1].sure()
                     val content = findFunctionInclude(psiElement, includeFile, fnName)
@@ -626,22 +652,20 @@ $highlight"""
 
         // lets try resolve the include name relative to this file
         val paths = relativeName.split("/")
-        if (paths != null) {
-            val size = paths.size
-            for (i in 0.upto(size - 2)) {
-                val path = paths[i]
-                if (path == ".") continue
-                else if (path == "..") dir = dir?.getParent()
-                else if (path != null) dir = dir?.findSubdirectory(path)
-            }
-            val name = paths[size - 1]
-            if (dir != null && name != null) {
-                val file = dir?.findFile(name)
-                if (file != null) {
-                    return file
-                } else {
-                    warning("could not find file $relativeName in $dir with name $name")
-                }
+        val size = paths.size
+        for (i in 0.upto(size - 2)) {
+            val path = paths[i]
+            if (path == ".") continue
+            else if (path == "..") dir = dir?.getParent()
+            else dir = dir?.findSubdirectory(path)
+        }
+        val name = paths[size - 1]
+        if (dir != null) {
+            val file = dir?.findFile(name)
+            if (file != null) {
+                return file
+            } else {
+                warning("could not find file $relativeName in $dir with name $name")
             }
         }
         return null
@@ -670,30 +694,28 @@ $highlight"""
         // TODO warning this only works for top level classes
         // a better algorithm is to walk down each dot path dealing with nested packages/classes
         val idx = qualifiedName.lastIndexOf('.')
-        val pkgName = if (idx >= 0) qualifiedName.substring(0, idx) ?: "" else ""
+        val pkgName = if (idx >= 0) qualifiedName.substring(0, idx) else ""
         val pkg = getPackage(pkgName)
         if (pkg != null) {
-            val simpleName = if (idx >= 0) qualifiedName.substring(idx + 1) ?: "" else qualifiedName
+            val simpleName = if (idx >= 0) qualifiedName.substring(idx + 1) else qualifiedName
             return pkg.classMap.get(simpleName)
         }
         return null
     }
 
     fun getClass(classElement: ClassDescriptor): KClass? {
-        val name = classElement.getName()
-        if (name != null) {
-            var dec: DeclarationDescriptor? = classElement.getContainingDeclaration()
-            while (dec != null) {
-                val container = dec
-                if (container is NamespaceDescriptor) {
-                    val pkg = getPackage(container)
-                    return pkg.getClass(name, classElement)
-                } else {
-                    dec = dec?.getContainingDeclaration()
-                }
+        val name = classElement.getName().getName()
+        var dec: DeclarationDescriptor? = classElement.getContainingDeclaration()
+        while (dec != null) {
+            val container = dec
+            if (container is NamespaceDescriptor) {
+                val pkg = getPackage(container)
+                return pkg.getClass(classElement)
+            } else {
+                dec = dec?.getContainingDeclaration()
             }
-            warning("no package found for class $name")
         }
+        warning("no package found for class $name")
         return null
     }
 
@@ -935,11 +957,15 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
 
     fun toString() = "KPackage($name)"
 
-    fun getClass(name: String, descriptor: ClassDescriptor): KClass {
+    fun getClass(descriptor: ClassDescriptor): KClass {
+        val name = descriptor.getName().getName()
         var created = false
         val klass = classMap.getOrPut(name) {
             created = true
-            KClass(this, descriptor, name)
+            val psiFile = model.getPsiElement(descriptor)?.getContainingFile()
+            val jetFile = psiFile as? JetFile
+            val sourceInfo = if (jetFile != null) model.sourceInfoByFile(jetFile) else null
+            KClass(this, descriptor, sourceInfo)
         }
         if (created) {
             // sometimes we may have source files for a package in different source directories
@@ -971,9 +997,7 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
     get() {
         val answer = ArrayList<String>()
         for (n in name.split("\\.")) {
-            if (n != null) {
-                answer.add(n)
-            }
+            answer.add(n)
         }
         return answer;
     }
@@ -1017,10 +1041,12 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
     }
 
     fun packageFunctions() = functions.filter{ it.extensionClass == null }
+
+    fun packageProperties() = properties.filter{ it.extensionClass == null && it.isPublic() }
 }
 
 class KType(val jetType: JetType, model: KModel, val klass: KClass?, val arguments: List<KType> = ArrayList<KType>())
-: KNamed(klass?.name ?: jetType.toString(), model, jetType.getConstructor().getDeclarationDescriptor().sure()) {
+: KNamed(klass?.name ?: jetType.toString().sure(), model, jetType.getConstructor().getDeclarationDescriptor().sure()) {
     {
         if (klass != null) {
             this.wikiDescription = klass.wikiDescription
@@ -1042,15 +1068,20 @@ class KType(val jetType: JetType, model: KModel, val klass: KClass?, val argumen
     get() = jetType.isNullable()
 }
 
-class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
-        val simpleName: String,
-        var group: String = "Other",
-        var annotations: List<KAnnotation> = arrayList<KAnnotation>(),
-        var typeParameters: List<KTypeParameter> = arrayList<KTypeParameter>(),
-        var since: String = "",
-        var authors: List<String> = arrayList<String>(),
-        var baseClasses: List<KType> = arrayList<KType>(),
-        var nestedClasses: List<KClass> = arrayList<KClass>()): KClassOrPackage(pkg.model, descriptor), Comparable<KClass> {
+class KClass(
+        val pkg: KPackage,
+        val descriptor: ClassDescriptor,
+        val sourceInfo: SourceInfo?)
+    : KClassOrPackage(pkg.model, descriptor), Comparable<KClass>
+{
+    val simpleName = descriptor.getName().getName()
+    var group: String = "Other"
+    var annotations: List<KAnnotation> = arrayList<KAnnotation>()
+    var typeParameters: List<KTypeParameter> = arrayList<KTypeParameter>()
+    var since: String = ""
+    var authors: List<String> = arrayList<String>()
+    var baseClasses: List<KType> = arrayList<KType>()
+    var nestedClasses: List<KClass> = arrayList<KClass>()
 
     public override fun compareTo(other: KClass): Int = name.compareTo(other.name)
 
@@ -1099,7 +1130,7 @@ class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
         return $url
     }
 
-    public val name: String = pkg.qualifiedName(simpleName)
+    public val name: String = pkg.qualifiedName(descriptor.getName().getName())
 
     public val packageName: String = pkg.name
 
@@ -1173,6 +1204,11 @@ class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, 
     fun isVar(): Boolean = descriptor.isVar()
 
     fun kind(): String = if (isVar()) "var" else "val"
+
+    fun isPublic(): Boolean {
+        val visibility = descriptor.getVisibility()
+        return visibility.isPublicAPI()
+    }
 
     fun toString() = "property $name"
 }

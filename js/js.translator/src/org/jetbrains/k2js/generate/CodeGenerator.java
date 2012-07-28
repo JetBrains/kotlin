@@ -19,53 +19,21 @@ package org.jetbrains.k2js.generate;
 import com.google.dart.compiler.backend.js.JsSourceGenerationVisitor;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.google.dart.compiler.util.DefaultTextOutput;
-import com.google.dart.compiler.util.TextOutput;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 /**
  * @author Pavel.Talanov
  */
 public final class CodeGenerator {
 
-    @NotNull
-    private final TextOutput output = new DefaultTextOutput(false);
-
-    public CodeGenerator() {
-    }
-
-    public static void toFile(@NotNull String outputFile, @NotNull JsProgram program) throws IOException {
-        CodeGenerator generator = new CodeGenerator();
-        generator.generateToFile(program, new File(outputFile));
+    private CodeGenerator() {
     }
 
     @NotNull
-    public static String toString(@NotNull JsProgram program) {
-        return (new CodeGenerator()).generateToString(program);
-    }
-
-    public void generateToFile(@NotNull JsProgram program, @NotNull File file) throws IOException {
-        generateCode(program);
-        FileWriter writer = new FileWriter(file);
-        try {
-            writer.write(output.toString());
-        } finally {
-            writer.close();
-        }
-    }
-
-    @NotNull
-    public String generateToString(@NotNull JsProgram program) {
-        generateCode(program);
-        return output.toString();
-    }
-
-    private void generateCode(@NotNull JsProgram program) {
-        JsSourceGenerationVisitor sourceGenerator =
-                new JsSourceGenerationVisitor(output);
+    public static String generateProgramToString(@NotNull JsProgram program) {
+        DefaultTextOutput output = new DefaultTextOutput(false);
+        JsSourceGenerationVisitor sourceGenerator = new JsSourceGenerationVisitor(output);
         program.traverse(sourceGenerator, null);
+        return output.toString();
     }
 }

@@ -29,7 +29,7 @@ import org.jetbrains.k2js.translate.reference.AccessTranslator;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.isVariableReassignment;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.isAssignment;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.isIntrinsicOperation;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.hasCorrespondingFunctionIntrinsic;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRightExpression;
 
 /**
@@ -46,7 +46,7 @@ public abstract class AssignmentTranslator extends AbstractTranslator {
     @NotNull
     public static JsExpression translate(@NotNull JetBinaryExpression expression,
                                          @NotNull TranslationContext context) {
-        if (isIntrinsicOperation(context, expression)) {
+        if (hasCorrespondingFunctionIntrinsic(context, expression)) {
             return IntrinsicAssignmentTranslator.doTranslate(expression, context);
         }
         return OverloadedAssignmentTranslator.doTranslate(expression, context);

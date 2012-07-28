@@ -1,35 +1,35 @@
 fun foo() {
   f(a)
-  f<foo>(a)
-  f<foo>
+  g<bar>(a)
+  h<baz>
   (a)
-  f {s}
-  f;
+  i {s}
+  j;
   {s}
-  f {
+  k {
     s
   }
-  f(a) {
+  l(a) {
     s
   }
-  f(a);
+  m(a);
   {
     s
   }
-  f<a>(a) {
+  n<a>(a) {
     s
   }
-  f<a>(a);
+  o<a>(a);
   {
     s
   }
-  f(foo<a, b>)
-  f(foo<a, b>(a))
-  f(foo<a, 1, b>(a))
-  f(foo<a, (1 + 2), b>(a))
-  f(foo<a, 1 + 2, b>(a))
-  f(foo<a, 1 * 2, b>(a))
-  f(foo<a, *, b>(a))
-  f(foo<a, "", b>(a))
-  foo<*>()
+  p(qux<a, b>)
+  q(quux<a, b>(a))
+  r(corge<a, 1, b>(a))
+  s(grault<a, (1 + 2), b>(a))
+  t(garply<a, 1 + 2, b>(a))
+  u(waldo<a, 1 * 2, b>(a))
+  v(fred<a, *, b>(a))
+  w(plugh<a, "", b>(a))
+  xyzzy<*>()
 }

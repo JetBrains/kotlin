@@ -19,7 +19,7 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.objectweb.asm.Type;
+import org.jetbrains.asm4.Type;
 
 import java.util.Collections;
 import java.util.List;

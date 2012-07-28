@@ -16,40 +16,65 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.io.StringRef;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetClassElementType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Nikolay Krasko
  */
-public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetClassStub<JetClass> {
-
+public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetClassStub {
     private final StringRef qualifiedName;
     private final StringRef name;
+    private final StringRef[] superNames;
+    private final boolean isTrait;
+    private final boolean isEnumEntry;
+    private final boolean isAnnotation;
 
     public PsiJetClassStubImpl(
             JetClassElementType type,
-            final StubElement parent,
+            StubElement parent,
             @Nullable final String qualifiedName,
-            final String name) {
-
-        this(type, parent, StringRef.fromString(qualifiedName), StringRef.fromString(name));
+            String name,
+            List<String> superNames,
+            boolean isTrait, boolean isEnumEntry, boolean isAnnotation) {
+        this(type, parent, StringRef.fromString(qualifiedName), StringRef.fromString(name), wrapStrings(superNames),
+             isTrait, isEnumEntry, isAnnotation);
     }
 
     public PsiJetClassStubImpl(
             JetClassElementType type,
-            final StubElement parent,
-            final StringRef qualifiedName,
-            final StringRef name) {
-
+            StubElement parent,
+            StringRef qualifiedName,
+            StringRef name,
+            StringRef[] superNames,
+            boolean isTrait, boolean isEnumEntry,
+            boolean isAnnotation) {
         super(parent, type);
         this.qualifiedName = qualifiedName;
         this.name = name;
+        this.superNames = superNames;
+        this.isTrait = isTrait;
+        this.isEnumEntry = isEnumEntry;
+        this.isAnnotation = isAnnotation;
+    }
+
+    private static StringRef[] wrapStrings(List<String> names) {
+        StringRef[] refs = new StringRef[names.size()];
+        for (int i = 0; i < names.size(); i++) {
+            refs[i] = StringRef.fromString(names.get(i));
+        }
+        return refs;
     }
 
     @Override
@@ -58,17 +83,58 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     }
 
     @Override
-    public boolean isDeprecated() {
-        return false;
+    public boolean isTrait() {
+        return isTrait;
     }
 
     @Override
-    public boolean hasDeprecatedAnnotation() {
-        return false;
+    public boolean isAnnotation() {
+        return isAnnotation;
+    }
+
+    @Override
+    public boolean isEnumEntry() {
+        return isEnumEntry;
     }
 
     @Override
     public String getName() {
         return StringRef.toString(name);
+    }
+
+    @NotNull
+    @Override
+    public List<String> getSuperNames() {
+        List<String> result = new ArrayList<String>();
+        for (StringRef ref : superNames) {
+            result.add(ref.toString());
+        }
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("PsiJetClassStubImpl[");
+
+        if (isEnumEntry()) {
+            builder.append("enumEntry ");
+        }
+
+        if (isTrait()) {
+            builder.append("trait ");
+        }
+
+        if (isAnnotation()) {
+            builder.append("isAnnotation ");
+        }
+
+        builder.append("name=").append(getName());
+        builder.append(" fqn=").append(getQualifiedName());
+        builder.append(" superNames=").append("[").append(StringUtil.join(ArrayUtil.toStringArray(getSuperNames()))).append("]");
+
+        builder.append("]");
+
+        return builder.toString();
     }
 }

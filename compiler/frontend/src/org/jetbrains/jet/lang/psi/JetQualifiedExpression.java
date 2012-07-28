@@ -26,7 +26,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author max
  */
-public abstract class JetQualifiedExpression extends JetExpression {
+public abstract class JetQualifiedExpression extends JetExpressionImpl {
     public JetQualifiedExpression(@NotNull ASTNode node) {
         super(node);
     }

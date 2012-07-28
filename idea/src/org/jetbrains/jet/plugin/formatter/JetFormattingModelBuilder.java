@@ -73,7 +73,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .around(TokenSet.create(ANDAND, OROR)).spaceIf(jetCommonSettings.SPACE_AROUND_LOGICAL_OPERATORS)
                 .around(TokenSet.create(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ)).spaceIf(jetCommonSettings.SPACE_AROUND_EQUALITY_OPERATORS)
                 .aroundInside(TokenSet.create(LT, GT, LTEQ, GTEQ), BINARY_EXPRESSION).spaceIf(jetCommonSettings.SPACE_AROUND_RELATIONAL_OPERATORS)
-                .around(TokenSet.create(PLUS, MINUS)).spaceIf(jetCommonSettings.SPACE_AROUND_ADDITIVE_OPERATORS)
+                .aroundInside(TokenSet.create(PLUS, MINUS), BINARY_EXPRESSION).spaceIf(jetCommonSettings.SPACE_AROUND_ADDITIVE_OPERATORS)
                 .aroundInside(TokenSet.create(MUL, DIV, PERC), BINARY_EXPRESSION).spaceIf(jetCommonSettings.SPACE_AROUND_MULTIPLICATIVE_OPERATORS)
                 .around(TokenSet.create(PLUSPLUS, MINUSMINUS, EXCLEXCL, MINUS, PLUS, EXCL)).spaceIf(jetCommonSettings.SPACE_AROUND_UNARY_OPERATOR)
                 .around(RANGE).spaceIf(jetSettings.SPACE_AROUND_RANGE)
@@ -81,16 +81,21 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .beforeInside(BLOCK, FUN).spaceIf(jetCommonSettings.SPACE_BEFORE_METHOD_LBRACE)
 
                 // TODO: Ask for better API
+                // Type of the declaration colon
                 .beforeInside(COLON, PROPERTY).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
                 .afterInside(COLON, PROPERTY).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
-                .beforeInside(COLON, CLASS).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
-                .afterInside(COLON, CLASS).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
                 .beforeInside(COLON, FUN).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
                 .afterInside(COLON, FUN).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
-                .beforeInside(COLON, TYPE_PARAMETER).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
-                .afterInside(COLON, TYPE_PARAMETER).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
                 .beforeInside(COLON, VALUE_PARAMETER).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
                 .afterInside(COLON, VALUE_PARAMETER).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
+
+                // Extends or constraint colon
+                .beforeInside(COLON, TYPE_CONSTRAINT).spaceIf(jetSettings.SPACE_BEFORE_EXTEND_COLON)
+                .afterInside(COLON, TYPE_CONSTRAINT).spaceIf(jetSettings.SPACE_AFTER_EXTEND_COLON)
+                .beforeInside(COLON, CLASS).spaceIf(jetSettings.SPACE_BEFORE_EXTEND_COLON)
+                .afterInside(COLON, CLASS).spaceIf(jetSettings.SPACE_AFTER_EXTEND_COLON)
+                .beforeInside(COLON, TYPE_PARAMETER).spaceIf(jetSettings.SPACE_BEFORE_EXTEND_COLON)
+                .afterInside(COLON, TYPE_PARAMETER).spaceIf(jetSettings.SPACE_AFTER_EXTEND_COLON)
                 ;
     }
 

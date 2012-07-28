@@ -27,9 +27,11 @@ import com.intellij.psi.util.PsiTreeUtil;
 import jet.runtime.typeinfo.JetValueParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.kt.JetValueParameterAnnotation;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.ArrayList;
@@ -135,9 +137,9 @@ class JetFromJavaDescriptorHelper {
             FqName classFQN = new FqName(containingClass.getQualifiedName());
 
             if (classFQN != null) {
-                if (QualifiedNamesUtil.fqnToShortName(classFQN).equals(JvmAbi.PACKAGE_CLASS)) {
+                if (QualifiedNamesUtil.fqnToShortName(classFQN).getName().equals(JvmAbi.PACKAGE_CLASS)) {
                     FqName classParentFQN = QualifiedNamesUtil.withoutLastSegment(classFQN);
-                    return QualifiedNamesUtil.combine(classParentFQN, method.getName());
+                    return QualifiedNamesUtil.combine(classParentFQN, Name.identifier(method.getName()));
                 }
             }
         }
@@ -164,16 +166,13 @@ class JetFromJavaDescriptorHelper {
 
             // Should be parameter with JetValueParameter.receiver == true
             for (PsiParameter parameter : psiMethod.getParameterList().getParameters()) {
-                PsiModifierList modifierList = parameter.getModifierList();
-                if (modifierList != null) {
-                    for (PsiAnnotation psiAnnotation : modifierList.getAnnotations()) {
-                        if (!JetValueParameter.class.getCanonicalName().equals(psiAnnotation.getQualifiedName())) {
-                            continue;
-                        }
+                for (PsiAnnotation psiAnnotation : JavaDescriptorResolver.getAllAnnotations(parameter)) {
+                    if (!JetValueParameter.class.getCanonicalName().equals(psiAnnotation.getQualifiedName())) {
+                        continue;
+                    }
 
-                        if (filterPredicate.apply(new JetValueParameterAnnotation(psiAnnotation))) {
-                            selectedMethods.add(psiMethod);
-                        }
+                    if (filterPredicate.apply(new JetValueParameterAnnotation(psiAnnotation))) {
+                        selectedMethods.add(psiMethod);
                     }
                 }
             }

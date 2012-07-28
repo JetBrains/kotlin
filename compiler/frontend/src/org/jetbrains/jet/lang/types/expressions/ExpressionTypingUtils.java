@@ -26,10 +26,15 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetImportDirective;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -45,7 +50,6 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.RESULT_TYPE_MISMATCH;
@@ -67,17 +71,18 @@ public class ExpressionTypingUtils {
 
     @Nullable
     protected static ExpressionReceiver getExpressionReceiver(@NotNull ExpressionTypingFacade facade, @NotNull JetExpression expression, ExpressionTypingContext context) {
-        return getExpressionReceiver(expression, facade.getType(expression, context));
+        return getExpressionReceiver(expression, facade.getTypeInfo(expression, context).getType());
     }
 
     @NotNull
     protected static ExpressionReceiver safeGetExpressionReceiver(@NotNull ExpressionTypingFacade facade, @NotNull JetExpression expression, ExpressionTypingContext context) {
-        return new ExpressionReceiver(expression, facade.safeGetType(expression, context));
+        return new ExpressionReceiver(expression, facade.safeGetTypeInfo(expression, context).getType());
     }
 
     @NotNull
-    public static WritableScopeImpl newWritableScopeImpl(ExpressionTypingContext context) {
-        WritableScopeImpl scope = new WritableScopeImpl(context.scope, context.scope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(context.trace));
+    public static WritableScopeImpl newWritableScopeImpl(ExpressionTypingContext context, @NotNull String scopeDebugName) {
+        WritableScopeImpl scope = new WritableScopeImpl(
+                context.scope, context.scope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(context.trace), scopeDebugName);
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
         return scope;
     }
@@ -86,7 +91,7 @@ public class ExpressionTypingUtils {
         return JetTypeChecker.INSTANCE.isSubtypeOf(type, JetStandardLibrary.getInstance().getBooleanType());
     }
 
-    public static boolean ensureBooleanResult(JetExpression operationSign, String name, JetType resultType, ExpressionTypingContext context) {
+    public static boolean ensureBooleanResult(JetExpression operationSign, Name name, JetType resultType, ExpressionTypingContext context) {
         return ensureBooleanResultWithCustomSubject(operationSign, resultType, "'" + name + "'", context);
     }
 
@@ -134,10 +139,10 @@ public class ExpressionTypingUtils {
 
     public static void checkWrappingInRef(JetSimpleNameExpression expression, ExpressionTypingContext context) {
         VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorIfAny(context.trace.getBindingContext(), expression, true);
-        if (variable != null && variable.isVar()) {
+        if (variable != null) {
             DeclarationDescriptor containingDeclaration = variable.getContainingDeclaration();
             if (context.scope.getContainingDeclaration() != containingDeclaration && containingDeclaration instanceof CallableDescriptor) {
-                context.trace.record(MUST_BE_WRAPPED_IN_A_REF, variable);
+                context.trace.record(CAPTURED_IN_CLOSURE, variable);
             }
         }
     }
@@ -156,13 +161,9 @@ public class ExpressionTypingUtils {
         ExpressionReceiver expressionReceiver = new ExpressionReceiver(expression, variableDescriptor.getType());
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 expressionTypingServices,
-                new HashMap<JetPattern, DataFlowInfo>(),
-                new HashMap<JetPattern, List<VariableDescriptor>>(),
-                new LabelResolver(),
                 new BindingTraceContext(),
                 scope,
                 DataFlowInfo.EMPTY,
-                TypeUtils.NO_EXPECTED_TYPE,
                 TypeUtils.NO_EXPECTED_TYPE,
                 false
         );
@@ -231,21 +232,20 @@ public class ExpressionTypingUtils {
             @NotNull JetType receiverType,
             @NotNull CallableDescriptor receiverArgument
     ) {
-        ConstraintSystem constraintSystem = new ConstraintSystemWithPriorities(ConstraintResolutionListener.DO_NOTHING);
+        ConstraintSystem constraintSystem = new ConstraintSystemImpl();
         for (TypeParameterDescriptor typeParameterDescriptor : receiverArgument.getTypeParameters()) {
             constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT);
         }
 
         ReceiverDescriptor receiverParameter = receiverArgument.getReceiverParameter();
         if (expectedReceiver.exists() && receiverParameter.exists()) {
-            constraintSystem.addSubtypingConstraint(ConstraintType.RECEIVER.assertSubtyping(receiverType, receiverParameter.getType()));
+            constraintSystem.addSupertypeConstraint(receiverParameter.getType(), receiverType, ConstraintPosition.RECEIVER_POSITION);
         }
         else if (expectedReceiver.exists() || receiverParameter.exists()) {
             // Only one of receivers exist
             return false;
         }
 
-        ConstraintSystemSolution solution = constraintSystem.solve();
-        return solution.getStatus().isSuccessful();
+        return constraintSystem.isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem);
     }
 }

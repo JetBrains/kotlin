@@ -33,10 +33,17 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JetMethod {
-    int KIND_REGULAR = 0;
-    int KIND_PROPERTY = 1;
-    
-    int kind() default KIND_REGULAR;
+    /**
+     * @deprecated use flags instead
+     */
+    @Deprecated
+    int kind() default 0;
+
+    /**
+     * See JvmStdlibNames
+     * @return flags for method
+     */
+    int flags() default 0;
     
     /**
      * @return type projections or empty

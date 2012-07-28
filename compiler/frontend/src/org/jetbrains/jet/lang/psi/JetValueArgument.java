@@ -27,7 +27,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author max
  */
-public class JetValueArgument extends JetElement implements ValueArgument {
+public class JetValueArgument extends JetElementImpl implements ValueArgument {
     public JetValueArgument(@NotNull ASTNode node) {
         super(node);
     }

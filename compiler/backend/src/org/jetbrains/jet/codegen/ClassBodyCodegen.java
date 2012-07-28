@@ -16,21 +16,22 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.asm4.MethodVisitor;
+import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.objectweb.asm.Opcodes.ACC_ABSTRACT;
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.jetbrains.asm4.Opcodes.ACC_ABSTRACT;
+import static org.jetbrains.asm4.Opcodes.ACC_PUBLIC;
 
 /**
  * @author max
@@ -83,23 +84,10 @@ public abstract class ClassBodyCodegen {
     }
 
     protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration, FunctionCodegen functionCodegen) {
-        if (declaration instanceof JetProperty) {
-            propertyCodegen.gen((JetProperty) declaration);
+        if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
+            state.getInjector().getMemberCodegen().generateFunctionOrProperty(
+                    (JetTypeParameterListOwner) declaration, context, v);
         }
-        else if (declaration instanceof JetNamedFunction) {
-            try {
-                genNamedFunction((JetNamedFunction) declaration, functionCodegen);
-            }
-            catch(CompilationException e) {
-                throw e;
-            } catch (RuntimeException e) {
-                throw new RuntimeException("Error generating method " + myClass.getName() + "." + declaration.getName() + " in " + context, e);
-            }
-        }
-    }
-
-    protected void genNamedFunction(JetNamedFunction declaration, FunctionCodegen functionCodegen) {
-        functionCodegen.gen(declaration);
     }
 
     private void generatePrimaryConstructorProperties(PropertyCodegen propertyCodegen, JetClassOrObject origin) {
@@ -109,7 +97,7 @@ public abstract class ClassBodyCodegen {
             if (p.getValOrVarNode() != null) {
                 PropertyDescriptor propertyDescriptor = state.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, p);
                 if (propertyDescriptor != null) {
-                    if(!isAnnotation) {
+                    if (!isAnnotation) {
                         propertyCodegen.generateDefaultGetter(propertyDescriptor, ACC_PUBLIC, p);
                         if (propertyDescriptor.isVar()) {
                             propertyCodegen.generateDefaultSetter(propertyDescriptor, ACC_PUBLIC, origin);
@@ -121,7 +109,7 @@ public abstract class ClassBodyCodegen {
                             if (!propertyDescriptor.isVar()) {
                                 modifiers |= Opcodes.ACC_FINAL;
                             }
-                            if(state.getInjector().getJetStandardLibrary().isVolatile(propertyDescriptor)) {
+                            if (JetStandardLibrary.isVolatile(propertyDescriptor)) {
                                 modifiers |= Opcodes.ACC_VOLATILE;
                             }
                             Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);

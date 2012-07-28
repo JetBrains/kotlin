@@ -64,7 +64,7 @@ public class DataFlowInfo {
     }
 
     @NotNull
-    private Nullability getNullability(@NotNull DataFlowValue a) {
+    public Nullability getNullability(@NotNull DataFlowValue a) {
         if (!a.isStableIdentifier()) return a.getImmanentNullability();
         Nullability nullability = nullabilityInfo.get(a);
         if (nullability == null) {
@@ -109,7 +109,7 @@ public class DataFlowInfo {
 
         boolean changed = false;
         changed |= putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB));
-        changed |= putNullability(builder, b, nullabilityOfA.refine(nullabilityOfA));
+        changed |= putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA));
         return changed ? new DataFlowInfo(ImmutableMap.copyOf(builder), typeInfo) : this;
     }
 
@@ -181,7 +181,7 @@ public class DataFlowInfo {
 
         ListMultimap<DataFlowValue, JetType> newTypeInfo = Multimaps.newListMultimap(Maps.<DataFlowValue, Collection<JetType>>newHashMap(), CommonSuppliers.<JetType>getArrayListSupplier());
 
-        Set<DataFlowValue> keys = newTypeInfo.keySet();
+        Set<DataFlowValue> keys = Sets.newHashSet(typeInfo.keySet());
         keys.retainAll(other.typeInfo.keySet());
 
         for (DataFlowValue key : keys) {

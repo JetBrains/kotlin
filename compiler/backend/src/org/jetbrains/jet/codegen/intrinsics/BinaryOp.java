@@ -23,9 +23,9 @@ import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -40,9 +40,9 @@ public class BinaryOp implements IntrinsicMethod {
     }
 
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
         boolean nullable = expectedType.getSort() == Type.OBJECT;
-        if(nullable) {
+        if (nullable) {
             expectedType = JetTypeMapper.unboxType(expectedType);
         }
         if (arguments.size() == 1) {
@@ -58,7 +58,7 @@ public class BinaryOp implements IntrinsicMethod {
         }
         v.visitInsn(expectedType.getOpcode(opcode));
 
-        if(nullable) {
+        if (nullable) {
             StackValue.onStack(expectedType).put(expectedType = JetTypeMapper.boxType(expectedType), v);
         }
         return StackValue.onStack(expectedType);

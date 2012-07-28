@@ -16,14 +16,18 @@
 
 package org.jetbrains.jet.lang.psi;
 
+import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.CheckUtil;
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
@@ -36,7 +40,8 @@ import java.util.Set;
  */
 public class JetPsiUtil {
 
-    public static final String NO_NAME_PROVIDED = "<no name provided>";
+    public static final Name NO_NAME_PROVIDED = Name.special("<no name provided>");
+    public static final Name ROOT_NAMESPACE_NAME = Name.special("<root namespace>");
 
     private JetPsiUtil() {
     }
@@ -65,8 +70,8 @@ public class JetPsiUtil {
     }
 
     @NotNull
-    public static String safeName(String name) {
-        return name == null ? NO_NAME_PROVIDED : name;
+    public static Name safeName(@Nullable String name) {
+        return name == null ? NO_NAME_PROVIDED : Name.identifier(name);
     }
 
     @NotNull
@@ -141,7 +146,12 @@ public class JetPsiUtil {
     }
 
     public static FqName getFQName(JetFile file) {
-        return getFQName(file.getNamespaceHeader());
+        if (file.isScript()) {
+            return FqName.ROOT;
+        }
+        else {
+            return getFQName(file.getNamespaceHeader());
+        }
     }
 
     @Nullable
@@ -155,8 +165,8 @@ public class JetPsiUtil {
             return getFQName(objectDeclaration);
         }
 
-        String functionName = namedDeclaration.getName();
-        if (functionName == null) {
+        Name name = namedDeclaration.getNameAsName();
+        if (name == null) {
             return null;
         }
 
@@ -170,7 +180,7 @@ public class JetPsiUtil {
         if (parent instanceof JetFile) {
             firstPart = getFQName((JetFile) parent);
         }
-        else if (parent instanceof JetNamedDeclaration) {
+        else if (parent instanceof JetNamedFunction || parent instanceof JetClass || parent instanceof JetObjectDeclaration) {
             firstPart = getFQName((JetNamedDeclaration) parent);
         }
 
@@ -178,10 +188,10 @@ public class JetPsiUtil {
             return null;
         }
 
-        return firstPart.child(functionName);
+        return firstPart.child(name);
     }
 
-    @Nullable @JetElement.IfNotParsed
+    @Nullable @IfNotParsed
     public static ImportPath getImportPath(JetImportDirective importDirective) {
         final JetExpression importedReference = importDirective.getImportedReference();
         if (importedReference == null) {
@@ -194,7 +204,7 @@ public class JetPsiUtil {
 
     @NotNull
     private static FqName makeFQName(@NotNull FqName prefix, @NotNull JetClassOrObject jetClass) {
-        return prefix.child(jetClass.getName());
+        return prefix.child(Name.identifier(jetClass.getName()));
     }
 
     public static boolean isIrrefutable(JetWhenEntry entry) {
@@ -239,6 +249,17 @@ public class JetPsiUtil {
                 return parent;
             }
         }
+        if (parent instanceof JetTryExpression) {
+            JetTryExpression tryExpression = (JetTryExpression) parent;
+            if (tryExpression.getTryBlock() == block) {
+                return parent;
+            }
+            for (JetCatchClause clause : tryExpression.getCatchClauses()) {
+                if (clause.getCatchBody() == block) {
+                    return parent;
+                }
+            }
+        }
         return null;
     }
 
@@ -254,6 +275,9 @@ public class JetPsiUtil {
             }
             if (expression == null) {
                 expression = getDirectParentOfTypeForBlock(block, JetFunctionLiteral.class);
+            }
+            if (expression == null) {
+                expression = getDirectParentOfTypeForBlock(block, JetTryExpression.class);
             }
             if (expression != null) {
                 return isImplicitlyUsed(expression);
@@ -276,7 +300,7 @@ public class JetPsiUtil {
     }
 
     @Nullable
-    public static String getAliasName(@NotNull JetImportDirective importDirective) {
+    public static Name getAliasName(@NotNull JetImportDirective importDirective) {
         String aliasName = importDirective.getAliasName();
         JetExpression importedReference = importDirective.getImportedReference();
         if (importedReference == null) {
@@ -286,7 +310,9 @@ public class JetPsiUtil {
         if (aliasName == null) {
             aliasName = referenceExpression != null ? referenceExpression.getReferencedName() : null;
         }
-        return aliasName;
+
+        //noinspection ConstantConditions
+        return StringUtil.isNotEmpty(aliasName) ? Name.identifier(aliasName) : null;
     }
 
     @Nullable
@@ -306,6 +332,22 @@ public class JetPsiUtil {
             return false;
         }
 
-        return "Unit".equals(typeReference.getText());
+        return JetStandardClasses.UNIT_ALIAS.getName().equals(typeReference.getText());
+    }
+
+    public static boolean isSafeCall(@NotNull Call call) {
+        ASTNode callOperationNode = call.getCallOperationNode();
+        return callOperationNode != null && callOperationNode.getElementType() == JetTokens.SAFE_ACCESS;
+    }
+
+    public static boolean isFunctionLiteralWithoutDeclaredParameterTypes(JetExpression expression) {
+        if (!(expression instanceof JetFunctionLiteralExpression)) return false;
+        JetFunctionLiteralExpression functionLiteral = (JetFunctionLiteralExpression) expression;
+        for (JetParameter parameter : functionLiteral.getValueParameters()) {
+            if (parameter.getTypeReference() != null) {
+                return false;
+            }
+        }
+        return true;
     }
 }

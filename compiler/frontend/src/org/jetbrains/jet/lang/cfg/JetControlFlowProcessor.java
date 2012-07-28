@@ -21,13 +21,21 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator;
+import org.jetbrains.jet.lang.cfg.pseudocode.LocalDeclarationInstruction;
+import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
+import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.resolve.constants.BooleanValue;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Iterator;
@@ -45,12 +53,21 @@ public class JetControlFlowProcessor {
     private final JetControlFlowBuilder builder;
     private final BindingTrace trace;
 
-    public JetControlFlowProcessor(BindingTrace trace, JetControlFlowBuilder builder) {
-        this.builder = builder;
+    public JetControlFlowProcessor(BindingTrace trace) {
+        this.builder = new JetControlFlowInstructionsGenerator();
         this.trace = trace;
     }
 
-    public void generate(@NotNull JetDeclaration subroutine) {
+    public Pseudocode generatePseudocode(@NotNull JetDeclaration subroutine) {
+        Pseudocode pseudocode = generate(subroutine);
+        ((PseudocodeImpl)pseudocode).postProcess();
+        for (LocalDeclarationInstruction localDeclarationInstruction : pseudocode.getLocalDeclarations()) {
+            ((PseudocodeImpl)localDeclarationInstruction.getBody()).postProcess();
+        }
+        return pseudocode;
+    }
+
+    private Pseudocode generate(@NotNull JetDeclaration subroutine) {
         builder.enterSubroutine(subroutine);
         if (subroutine instanceof JetDeclarationWithBody) {
             JetDeclarationWithBody declarationWithBody = (JetDeclarationWithBody) subroutine;
@@ -67,7 +84,7 @@ public class JetControlFlowProcessor {
         else {
             subroutine.accept(new CFPVisitor(false));
         }
-        builder.exitSubroutine(subroutine);
+        return builder.exitSubroutine(subroutine);
     }
 
     private void processLocalDeclaration(@NotNull JetDeclaration subroutine) {
@@ -225,7 +242,7 @@ public class JetControlFlowProcessor {
             }
         }
 
-        @Override
+        @SuppressWarnings("SuspiciousMethodCalls") @Override
         public void visitBinaryExpression(JetBinaryExpression expression) {
             IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
             JetExpression right = expression.getRight();
@@ -463,7 +480,15 @@ public class JetControlFlowProcessor {
             if (condition != null) {
                 value(condition, true);
             }
-            builder.jumpOnFalse(loopInfo.getExitPoint());
+            boolean conditionIsTrueConstant = false;
+            if (condition instanceof JetConstantExpression && condition.getNode().getElementType() == JetNodeTypes.BOOLEAN_CONSTANT) {
+                if (BooleanValue.TRUE == new CompileTimeConstantResolver().getBooleanValue(condition.getText(), JetStandardLibrary.getInstance().getBooleanType())) {
+                    conditionIsTrueConstant = true;
+                }
+            }
+            if (!conditionIsTrueConstant) {
+                builder.jumpOnFalse(loopInfo.getExitPoint());
+            }
 
             builder.bindLabel(loopInfo.getBodyEntryPoint());
             JetExpression body = expression.getBody();
@@ -595,7 +620,7 @@ public class JetControlFlowProcessor {
             if (subroutine instanceof JetFunctionLiteralExpression) {
                 subroutine = ((JetFunctionLiteralExpression) subroutine).getFunctionLiteral();
             }
-            if (subroutine instanceof JetFunction || subroutine instanceof JetPropertyAccessor || subroutine instanceof JetSecondaryConstructor) {
+            if (subroutine instanceof JetFunction || subroutine instanceof JetPropertyAccessor) {
                 if (returnedExpression == null) {
                     builder.returnNoValue(expression, subroutine);
                 }
@@ -825,7 +850,7 @@ public class JetControlFlowProcessor {
                 }
             }
             builder.bindLabel(doneLabel);
-            boolean isWhenExhaust = WhenChecker.isWhenExhaust(expression, trace);
+            boolean isWhenExhaust = WhenChecker.isWhenExhaustive(expression, trace);
             if (!hasElseOrIrrefutableBranch && !isWhenExhaust) {
                 trace.report(NO_ELSE_IN_WHEN.on(expression));
             }
@@ -852,9 +877,6 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitObjectDeclaration(JetObjectDeclaration objectDeclaration) {
-//            for (JetDelegationSpecifier delegationSpecifier : objectDeclaration.getDelegationSpecifiers()) {
-//                value(delegationSpecifier, inCondition);
-//            }
             visitClassOrObject(objectDeclaration);
         }
 
@@ -878,7 +900,7 @@ public class JetControlFlowProcessor {
         public void visitAnonymousInitializer(JetClassInitializer classInitializer) {
             value(classInitializer.getBody(), inCondition);
         }
-        
+
         private void visitClassOrObject(JetClassOrObject classOrObject) {
             for (JetDelegationSpecifier specifier : classOrObject.getDelegationSpecifiers()) {
                 value(specifier, inCondition);
@@ -911,6 +933,11 @@ public class JetControlFlowProcessor {
             for (ValueArgument valueArgument : valueArguments) {
                 value(valueArgument.getArgumentExpression(), inCondition);
             }
+        }
+
+        @Override
+        public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
+            value(specifier.getDelegateExpression(), inCondition);
         }
 
         @Override

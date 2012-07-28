@@ -16,22 +16,28 @@
 
 package org.jetbrains.jet.lang.psi.stubs;
 
-import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.stubs.NamedStub;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClass;
+
+import java.util.List;
 
 /**
  * @author Nikolay Krasko
  */
-public interface PsiJetClassStub<T extends JetClass> extends StubElement<T> {
+public interface PsiJetClassStub extends NamedStub<JetClass> {
     @NonNls
     @Nullable
     String getQualifiedName();
 
-    @Nullable
-    String getName();
+    boolean isTrait();
 
-    boolean isDeprecated();
-    boolean hasDeprecatedAnnotation();
+    boolean isAnnotation();
+
+    boolean isEnumEntry();
+
+    @NotNull
+    List<String> getSuperNames();
 }

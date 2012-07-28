@@ -21,6 +21,8 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
@@ -37,24 +39,24 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
 /**
  * @author abreslav
  */
-public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements FunctionDescriptor {
+public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRootImpl implements FunctionDescriptor {
 
     protected List<TypeParameterDescriptor> typeParameters;
     protected List<ValueParameterDescriptor> unsubstitutedValueParameters;
     protected JetType unsubstitutedReturnType;
-    private ReceiverDescriptor receiver;
+    private ReceiverDescriptor receiverParameter;
     protected ReceiverDescriptor expectedThisObject;
 
     protected Modality modality;
     protected Visibility visibility;
-    protected final Set<FunctionDescriptor> overriddenFunctions = Sets.newLinkedHashSet();
+    protected final Set<FunctionDescriptor> overriddenFunctions = Sets.newLinkedHashSet(); // LinkedHashSet is essential here
     private final FunctionDescriptor original;
     private final Kind kind;
 
     protected FunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull String name,
+            @NotNull Name name,
             Kind kind) {
         super(containingDeclaration, annotations, name);
         this.original = this;
@@ -65,7 +67,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull FunctionDescriptor original,
             @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull String name,
+            @NotNull Name name,
             Kind kind) {
         super(containingDeclaration, annotations, name);
         this.original = original;
@@ -73,30 +75,31 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
     }
 
     protected FunctionDescriptorImpl initialize(
-            @Nullable JetType receiverType,
+            @Nullable JetType receiverParameterType,
             @NotNull ReceiverDescriptor expectedThisObject,
-            @NotNull List<TypeParameterDescriptor> typeParameters,
+            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
             @Nullable Modality modality,
             @NotNull Visibility visibility) {
-        this.typeParameters = typeParameters;
+        this.typeParameters = Lists.newArrayList(typeParameters);
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         this.modality = modality;
         this.visibility = visibility;
-        this.receiver = receiverType == null ? NO_RECEIVER : new ExtensionReceiver(this, receiverType);
+        this.receiverParameter = receiverParameterType == null ? NO_RECEIVER : new ExtensionReceiver(this, receiverParameterType);
         this.expectedThisObject = expectedThisObject;
         
         for (int i = 0; i < typeParameters.size(); ++i) {
-            if (typeParameters.get(i).getIndex() != i) {
-                throw new IllegalStateException();
+            TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
+            if (typeParameterDescriptor.getIndex() != i) {
+                throw new IllegalStateException(typeParameterDescriptor + " index is " + typeParameterDescriptor.getIndex() + " but position is " + i);
             }
         }
 
         for (int i = 0; i < unsubstitutedValueParameters.size(); ++i) {
             // TODO fill me
-            int firstValueParameterOffset = 0; // receiver.exists() ? 1 : 0;
+            int firstValueParameterOffset = 0; // receiverParameter.exists() ? 1 : 0;
             ValueParameterDescriptor valueParameterDescriptor = unsubstitutedValueParameters.get(i);
             if (valueParameterDescriptor.getIndex() != i + firstValueParameterOffset) {
                 throw new IllegalStateException(valueParameterDescriptor + "index is " + valueParameterDescriptor.getIndex() + " but position is " + i);
@@ -111,13 +114,17 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
     }
 
     public void setReturnType(@NotNull JetType unsubstitutedReturnType) {
+        if (this.unsubstitutedReturnType != null) {
+            // TODO: uncomment and fix tests
+            //throw new IllegalStateException("returnType already set");
+        }
         this.unsubstitutedReturnType = unsubstitutedReturnType;
     }
 
     @NotNull
     @Override
     public ReceiverDescriptor getReceiverParameter() {
-        return receiver;
+        return receiverParameter;
     }
 
     @NotNull
@@ -182,20 +189,20 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
         if (originalSubstitutor.isEmpty()) {
             return this;
         }
-        return doSubstitute(originalSubstitutor, getContainingDeclaration(), modality, true, true, getKind());
+        return doSubstitute(originalSubstitutor, getContainingDeclaration(), modality, visibility, true, true, getKind());
     }
 
     protected FunctionDescriptor doSubstitute(TypeSubstitutor originalSubstitutor,
-            DeclarationDescriptor newOwner, Modality newModality, boolean preserveOriginal, boolean copyOverrides, Kind kind) {
+            DeclarationDescriptor newOwner, Modality newModality, Visibility newVisibility, boolean preserveOriginal, boolean copyOverrides, Kind kind) {
         FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner, preserveOriginal, kind);
 
         List<TypeParameterDescriptor> substitutedTypeParameters = Lists.newArrayList();
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(getTypeParameters(), originalSubstitutor, substitutedDescriptor, substitutedTypeParameters);
 
-        JetType substitutedReceiverType = null;
-        if (receiver.exists()) {
-            substitutedReceiverType = substitutor.substitute(getReceiverParameter().getType(), Variance.IN_VARIANCE);
-            if (substitutedReceiverType == null) {
+        JetType substitutedReceiverParameterType = null;
+        if (receiverParameter.exists()) {
+            substitutedReceiverParameterType = substitutor.substitute(getReceiverParameter().getType(), Variance.IN_VARIANCE);
+            if (substitutedReceiverParameterType == null) {
                 return null;
             }
         }
@@ -220,17 +227,17 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
         }
 
         substitutedDescriptor.initialize(
-                substitutedReceiverType,
+                substitutedReceiverParameterType,
                 substitutedExpectedThis,
                 substitutedTypeParameters,
                 substitutedValueParameters,
                 substitutedReturnType,
                 newModality,
-                visibility
+                newVisibility
         );
         if (copyOverrides) {
             for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
-                substitutedDescriptor.addOverriddenDescriptor(overriddenFunction.substitute(substitutor));
+                OverridingUtil.bindOverride(substitutedDescriptor, overriddenFunction.substitute(substitutor));
             }
         }
         return substitutedDescriptor;

@@ -1,6 +1,6 @@
 namespace test
 
-open class test.NotNullMethod : jet.Any {
-    final /*constructor*/ fun <init>(): test.NotNullMethod
-    open fun hi(): jet.String
+public open class test.NotNullMethod : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.NotNullMethod
+    public open fun hi(): jet.String
 }

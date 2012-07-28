@@ -1,2 +1,2 @@
 // "Make 'foo' not abstract" "true"
-<caret>abstract fun foo()
+<caret>abstract fun foo() {}

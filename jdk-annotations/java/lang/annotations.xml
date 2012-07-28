@@ -1,0 +1,12 @@
+<root>
+  <item name='java.lang.Iterable java.util.Iterator<T> iterator()'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun iterator() : Iterator&lt;T&gt;&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.lang.Object java.lang.Object clone()'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun clone() : Any&quot;"/>
+    </annotation>
+  </item>
+</root>

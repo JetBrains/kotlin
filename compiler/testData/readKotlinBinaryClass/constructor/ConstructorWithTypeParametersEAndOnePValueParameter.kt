@@ -1,3 +1,3 @@
 package test
 
-class OneTypeParameterErased<P, erased Q>(q: Q)
+class OneTypeParameterErased<P, Q>(q: Q)

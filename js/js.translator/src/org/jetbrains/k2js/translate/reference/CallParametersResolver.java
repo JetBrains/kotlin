@@ -19,12 +19,16 @@ package org.jetbrains.k2js.translate.reference;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCallWithTrace;
+import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
 
 /**
  * @author Pavel Talanov
@@ -32,10 +36,10 @@ import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 public final class CallParametersResolver {
 
     public static CallParameters resolveCallParameters(@Nullable JsExpression qualifier,
-                                                       @Nullable JsExpression callee,
-                                                       @NotNull CallableDescriptor descriptor,
-                                                       @NotNull ResolvedCall<? extends CallableDescriptor> call,
-                                                       @NotNull TranslationContext context) {
+            @Nullable JsExpression callee,
+            @NotNull CallableDescriptor descriptor,
+            @NotNull ResolvedCall<? extends CallableDescriptor> call,
+            @NotNull TranslationContext context) {
         return (new CallParametersResolver(qualifier, callee, descriptor, call, context)).resolve();
     }
 
@@ -52,11 +56,11 @@ public final class CallParametersResolver {
     private final ResolvedCall<? extends CallableDescriptor> resolvedCall;
     private final boolean isExtensionCall;
 
-    public CallParametersResolver(@Nullable JsExpression qualifier,
-                                  @Nullable JsExpression callee,
-                                  @NotNull CallableDescriptor descriptor,
-                                  @NotNull ResolvedCall<? extends CallableDescriptor> call,
-                                  @NotNull TranslationContext context) {
+    private CallParametersResolver(@Nullable JsExpression qualifier,
+            @Nullable JsExpression callee,
+            @NotNull CallableDescriptor descriptor,
+            @NotNull ResolvedCall<? extends CallableDescriptor> call,
+            @NotNull TranslationContext context) {
         this.qualifier = qualifier;
         this.callee = callee;
         this.descriptor = descriptor;
@@ -78,22 +82,11 @@ public final class CallParametersResolver {
         if (callee != null) {
             return callee;
         }
-        if (!isVariableAsFunction(descriptor)) {
+        if (!(resolvedCall instanceof VariableAsFunctionResolvedCall)) {
             return ReferenceTranslator.translateAsLocalNameReference(descriptor, context);
         }
-        VariableDescriptor variableDescriptor =
-            getVariableDescriptorForVariableAsFunction((VariableAsFunctionDescriptor)descriptor);
-        if (variableDescriptor instanceof PropertyDescriptor) {
-            return getterCall((PropertyDescriptor)variableDescriptor);
-        }
-        return ReferenceTranslator.translateAsLocalNameReference(variableDescriptor, context);
-    }
-
-    //TODO: inspect
-    @NotNull
-    private JsExpression getterCall(@NotNull PropertyDescriptor variableDescriptor) {
-        //TODO: call type?
-        return PropertyAccessTranslator.translateAsPropertyGetterCall(variableDescriptor, resolvedCall, context);
+        ResolvedCallWithTrace<FunctionDescriptor> call = ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall();
+        return CallBuilder.build(context).resolvedCall(call).translate();
     }
 
     @Nullable
@@ -113,7 +106,7 @@ public final class CallParametersResolver {
         if (qualifier != null) {
             return qualifier;
         }
-        DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(descriptor);
+        DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(resolvedCall.getResultingDescriptor());
         assert expectedReceiverDescriptor != null;
         return TranslationUtils.getThisObject(context, expectedReceiverDescriptor);
     }

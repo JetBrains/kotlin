@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -32,7 +33,7 @@ public class LocalVariableDescriptor extends VariableDescriptorImpl {
     public LocalVariableDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull String name,
+            @NotNull Name name,
             @Nullable JetType type,
             boolean mutable) {
         super(containingDeclaration, annotations, name, type);

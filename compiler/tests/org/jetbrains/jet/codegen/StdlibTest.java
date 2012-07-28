@@ -16,9 +16,14 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.CompileCompilerDependenciesTest;
+import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.junit.Test;
 
 import java.io.File;
 import java.lang.annotation.*;
@@ -28,8 +33,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import org.junit.Test;
-
 /**
  * @author alex.tkachman
  */
@@ -37,23 +40,29 @@ public class StdlibTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithFullJdk();
-        myEnvironment.addToClasspath(ForTestCompileRuntime.runtimeJarForTests());
         File junitJar = new File("libraries/lib/junit-4.9.jar");
 
         if (!junitJar.exists()) {
             throw new AssertionError();
         }
 
-        myEnvironment.addToClasspath(junitJar);
+        if (myEnvironment != null) {
+            throw new IllegalStateException("must not set up myEnvironemnt twice");
+        }
+        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), CompileCompilerDependenciesTest.compilerConfigurationForTests(
+                ConfigurationKind.ALL, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar(), junitJar));
     }
 
     @Override
-    protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens) throws MalformedURLException {
-        return new GeneratedClassLoader(
-                codegens,
-                new URLClassLoader(new URL[]{ForTestCompileRuntime.runtimeJarForTests().toURI().toURL()},
-                                   getClass().getClassLoader()));
+    protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens) {
+        try {
+            return new GeneratedClassLoader(
+                    codegens,
+                    new URLClassLoader(new URL[]{ForTestCompileRuntime.runtimeJarForTests().toURI().toURL()},
+                                       getClass().getClassLoader()));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void testKt533 () {
@@ -69,7 +78,7 @@ public class StdlibTest extends CodegenTestCase {
     }
 
     public void testKt789 () {
-//        blackBoxFile("regressions/kt789.jet");
+        blackBoxFile("regressions/kt789.jet");
     }
 
     public void testKt828 () {
@@ -148,7 +157,7 @@ public class StdlibTest extends CodegenTestCase {
         GeneratedClassLoader loader = createClassLoader(codegens);
 
         try {
-            String fqName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(myFile), true).replace("/", ".");
+            String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFiles.getPsiFile())).getFqName().getFqName();
             Class<?> namespaceClass = loader.loadClass(fqName);
             Method method = namespaceClass.getMethod("box", Method.class);
             method.setAccessible(true);
@@ -317,5 +326,18 @@ public class StdlibTest extends CodegenTestCase {
         assertEquals(2, invoke1.length);
         assertEquals(invoke1[0].value(), RetentionPolicy.RUNTIME);
         assertEquals(invoke1[1].value(), RetentionPolicy.SOURCE);
+    }
+
+    public void testInvokeAnnotationMethod() {
+        blackBoxFile("regressions/kt1932.kt");
+    }
+
+
+    public void testKt1800() {
+        blackBoxFile("regressions/kt1800.kt");
+    }
+
+    public void testUptoDownto() {
+        blackBoxFile("uptoDownto.kt");
     }
 }

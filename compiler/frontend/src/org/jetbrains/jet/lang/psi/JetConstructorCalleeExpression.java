@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author abreslav
  */
-public class JetConstructorCalleeExpression extends JetExpression {
+public class JetConstructorCalleeExpression extends JetExpressionImpl {
     public JetConstructorCalleeExpression(@NotNull ASTNode node) {
         super(node);
     }

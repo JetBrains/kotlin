@@ -1,10 +1,10 @@
 namespace test
 
-final class test.Subclass : test.BaseClass {
-    final /*constructor*/ fun <init>(): test.Subclass
-    final val exactly: jet.Int
+internal open class test.BaseClass : jet.Any {
+    public final /*constructor*/ fun <init>(): test.BaseClass
+    internal final val exactly: jet.Int
 }
-open class test.BaseClass : jet.Any {
-    final /*constructor*/ fun <init>(): test.BaseClass
-    final val exactly: jet.Int
+internal final class test.Subclass : test.BaseClass {
+    public final /*constructor*/ fun <init>(): test.Subclass
+    internal final override /*1*/ val exactly: jet.Int
 }

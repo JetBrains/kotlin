@@ -36,9 +36,6 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             return;
         }
         DeclarationDescriptor target = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
-        if (target instanceof VariableAsFunctionDescriptor) {
-            target = ((VariableAsFunctionDescriptor)target).getVariableDescriptor();
-        }
         if (!(target instanceof PropertyDescriptor)) {
             return;
         }
@@ -71,11 +68,8 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             Boolean backingFieldRequired = bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
             highlightProperty(nameIdentifier, propertyDescriptor, Boolean.TRUE.equals(backingFieldRequired));
         }
-    }
 
-    @Override
-    public void visitJetElement(@NotNull JetElement element) {
-        element.acceptChildren(this);
+        super.visitParameter(parameter);
     }
 
     private void highlightProperty(@NotNull PsiElement elementToHighlight,

@@ -16,17 +16,16 @@
 
 package org.jetbrains.k2js.test.semantics;
 
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.mozilla.javascript.JavaScriptException;
 
 /**
  * @author Pavel Talanov
  *         <p/>
- *         This class contains tests that do not fall in any particular category
- *         most probably because that functionality has very little support
+ *         A messy class where all new tests go before they are sorted which never happens.
  */
 public final class MiscTest extends AbstractExpressionTest {
-
 
     public MiscTest() {
         super("misc/");
@@ -37,12 +36,12 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testIntRange() throws Exception {
-        checkFooBoxIsTrue("intRange.kt");
+        fooBoxTest();
     }
 
 
     public void testSafecallComputesExpressionOnlyOnce() throws Exception {
-        checkFooBoxIsTrue("safecallComputesExpressionOnlyOnce.kt");
+        fooBoxTest();
     }
 
     public void testClassWithoutNamespace() throws Exception {
@@ -51,7 +50,7 @@ public final class MiscTest extends AbstractExpressionTest {
 
     public void testIfElseAsExpressionWithThrow() throws Exception {
         try {
-            checkFooBoxIsTrue("ifAsExpressionWithThrow.kt");
+            fooBoxTest();
             fail();
         }
         catch (JavaScriptException e) {
@@ -59,7 +58,11 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testKt1052_2() throws Exception {
-        checkFooBoxIsTrue("KT-1052-2.kt");
+        checkFooBoxIsTrue("KT-1052-2.kt", EcmaVersion.all());
+    }
+
+    public void testKt2314() throws Exception {
+        checkFooBoxIsTrue("KT-2314.kt", EcmaVersion.all());
     }
 
     public void testKt1052() throws Exception {
@@ -68,7 +71,7 @@ public final class MiscTest extends AbstractExpressionTest {
 
 
     public void testKt740_1() throws Exception {
-        checkFooBoxIsTrue("KT-740.kt");
+        checkFooBoxIsTrue("KT-740.kt", EcmaVersion.all());
     }
 
     public void testKt740_2() throws Exception {
@@ -76,15 +79,15 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testKt1361_1() throws Exception {
-        checkFooBoxIsTrue("KT-1361-1.kt");
+        checkFooBoxIsTrue("KT-1361-1.kt", EcmaVersion.all());
     }
 
     public void testKt1361_2() throws Exception {
-        checkFooBoxIsTrue("KT-1361-2.kt");
+        checkFooBoxIsTrue("KT-1361-2.kt", EcmaVersion.all());
     }
 
     public void testKt817() throws Exception {
-        checkFooBoxIsTrue("KT-817.kt");
+        checkFooBoxIsTrue("KT-817.kt", EcmaVersion.all());
     }
 
     public void testKt740_3() throws Exception {
@@ -92,34 +95,73 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testFunInConstructor() throws Exception {
-        checkFooBoxIsTrue("funInConstructor.kt");
+        fooBoxTest();
     }
 
     public void testFunInConstructorBlock() throws Exception {
-        checkFooBoxIsTrue("funInConstructorBlock.kt");
+        fooBoxTest();
     }
 
     public void testPropertyAsFunCalledOnConstructor() throws Exception {
-        checkFooBoxIsTrue("propertyAsFunCalledOnConstructor.kt");
+        fooBoxTest();
     }
 
     public void testNamespacePropertyCalledAsFun() throws Exception {
-        checkFooBoxIsTrue("namespacePropertyCalledAsFun.kt");
+        fooBoxTest();
     }
 
     public void testExtensionLiteralCreatedAtNamespaceLevel() throws Exception {
-        checkFooBoxIsTrue("extensionLiteralCreatedAtNamespaceLevel.kt");
+        fooBoxTest();
     }
 
     public void testTemporaryVariableCreatedInNamespaceInitializer() throws Exception {
-        checkFooBoxIsTrue("temporaryVariableCreatedInNamespaceInitializer.kt");
+        fooBoxTest();
     }
 
     public void testWhenReturnedWithoutBlock() throws Exception {
-        checkFooBoxIsTrue("whenReturnedWithoutBlock.kt");
+        fooBoxTest();
     }
 
     public void testElvis() throws Exception {
-        checkFooBoxIsTrue("elvis.kt");
+        fooBoxTest();
+    }
+
+    public void testExtensionLiteralCalledInsideExtensionFunction() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testKt1865() throws Exception {
+        checkFooBoxIsTrue("KT-1865.kt", EcmaVersion.all());
+    }
+
+    public void testMainFunInNestedNamespace() throws Exception {
+        checkOutput("mainFunInNestedNamespace.kt", "ayee");
+    }
+
+
+    public void testPropertiesWithExplicitlyDefinedAccessorsWithoutBodies() throws Exception {
+        fooBoxTest();
+    }
+
+
+    public void testExclExcl() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testExclExclResultIsComputedOnce() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testLazyPropertyGetterNotCalledOnStart() throws Exception {
+        checkOutput("lazyProperty.kt", "Hello, world! Gotcha 3");
+    }
+
+    public void testExclExclThrows() throws Exception {
+        try {
+            fooBoxTest();
+            fail();
+        }
+        catch (JavaScriptException e) {
+        }
     }
 }

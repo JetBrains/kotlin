@@ -16,7 +16,21 @@
 
 package org.jetbrains.jet.di;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+
 /**
 * @author abreslav
 */
-interface Expression {}
+interface Expression {
+    @NotNull
+    String renderAsCode();
+
+    @NotNull
+    Collection<DiType> getTypesToImport();
+
+    @Nullable
+    DiType getType();
+}

@@ -1,5 +1,5 @@
 package test
 
-final class MethosWithPRefTP() {
-    fun <erased P> f(p0: P?) = #()
+public final class MethosWithPRefTP() : java.lang.Object() {
+    public fun <P> f(p0: P?) : Unit = #()
 }

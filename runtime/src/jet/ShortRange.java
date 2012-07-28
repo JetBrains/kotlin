@@ -31,7 +31,7 @@ public final class ShortRange implements Range<Short>, ShortIterable {
     }
 
     public ShortIterator step(int step) {
-        if(step < 0)
+        if (step < 0)
             return new MyIterator(getEnd(), -count, -step);
         else
             return new MyIterator(start, count, step);
@@ -89,7 +89,7 @@ public final class ShortRange implements Range<Short>, ShortIterable {
         public MyIterator(short startValue, int count, int step) {
             cur = startValue;
             this.step = step;
-            if(count < 0) {
+            if (count < 0) {
                 reversed = true;
                 count = -count;
                 startValue += count;
@@ -108,7 +108,7 @@ public final class ShortRange implements Range<Short>, ShortIterable {
         @Override
         public short nextShort() {
             count -= step;
-            if(reversed) {
+            if (reversed) {
                 cur -= step;
                 return (short) (cur + step);
             }

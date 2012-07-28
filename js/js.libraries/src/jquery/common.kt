@@ -1,73 +1,72 @@
-package jquery;
+package js.jquery;
 
-import js.*;
-import js.DomElement
+import js.dom.core.Element
 
 native
-class JQuery() {
-    fun addClass(className : String) : JQuery = js.noImpl;
-    fun addClass(f : DomElement.(Int, String)->String) = js.noImpl;
+public public class JQuery() {
+    public fun addClass(className : String) : JQuery = js.noImpl;
+    public fun addClass(f : Element.(Int, String)->String) = js.noImpl;
 
-    fun attr(attrName : String) = "";
-    fun attr(attrName : String, value : String) = this;
+    public fun attr(attrName : String) = "";
+    public fun attr(attrName : String, value : String) = this;
 
-    fun html() : String = "";
-    fun html(s : String) = this;
-    fun html(f : DomElement.(Int, String)->String) = this;
+    public fun html() : String = "";
+    public fun html(s : String) = this;
+    public fun html(f : Element.(Int, String)->String) = this;
 
 
-    fun hasClass(className : String) = true
-    fun removeClass(className : String) = this
-    fun height() = 0
-    fun width() = 0
+    public fun hasClass(className : String) = true
+    public fun removeClass(className : String) = this
+    public fun height() = 0
+    public fun width() = 0
 
-    fun click() = this;
+    public fun click() = this;
 
-    fun mousedown(handler : DomElement.(MouseEvent)->Unit) = this;
-    fun mouseup(handler : DomElement.(MouseEvent)->Unit) = this;
-    fun mousemove(handler : DomElement.(MouseEvent)->Unit) = this;
+    public fun mousedown(handler : Element.(MouseEvent)->Unit) = this;
+    public fun mouseup(handler : Element.(MouseEvent)->Unit) = this;
+    public fun mousemove(handler : Element.(MouseEvent)->Unit) = this;
 
-    fun dblclick(handler : DomElement.(MouseClickEvent)->Unit) = this;
-    fun click(handler : DomElement.(MouseClickEvent)->Unit) = this;
+    public fun dblclick(handler : Element.(MouseClickEvent)->Unit) = this;
+    public fun click(handler : Element.(MouseClickEvent)->Unit) = this;
 
-    fun load(handler : DomElement.()->Unit) = this;
-    fun change(handler : DomElement.()->Unit) = this;
+    public fun load(handler : Element.()->Unit) = this;
+    public fun change(handler : Element.()->Unit) = this;
 
-    fun append(str : String) = this;
-    fun ready(handler : ()->Unit) = this;
-    fun text(text : String) = this;
-    fun slideUp() = this;
-    fun hover(handlerInOut : DomElement.() -> Unit) = this;
-    fun hover(handlerIn : DomElement.() -> Unit, handlerOut : DomElement.() -> Unit) = this;
-    fun next() : JQuery = js.noImpl
-    fun parent() : JQuery = js.noImpl
-    fun `val`() : String? = js.noImpl
+    public fun append(str : String) = this;
+    public fun ready(handler : ()->Unit) = this;
+    public fun text(text : String) = this;
+    public fun slideUp() = this;
+    public fun hover(handlerInOut : Element.() -> Unit) = this;
+    public fun hover(handlerIn : Element.() -> Unit, handlerOut : Element.() -> Unit) = this;
+    public fun next() : JQuery = js.noImpl
+    public fun parent() : JQuery = js.noImpl
+    public fun `val`() : String? = js.noImpl
 }
 
 native
-open class MouseEvent() {
-    val pageX : Double = 0.0;
-    val pageY : Double = 0.0;
-    fun preventDefault() {}
-    fun isDefaultPrevented() : Boolean = true;
+open public class MouseEvent() {
+    public val pageX : Double = 0.0;
+    public val pageY : Double = 0.0;
+    public fun preventDefault() {}
+    public fun isDefaultPrevented() : Boolean = true;
 }
 
 native
-class MouseClickEvent() : MouseEvent() {
+public class MouseClickEvent() : MouseEvent() {
     val which : Int = 0;
 }
 
 
 
 native("$")
-fun jq(selector : String) = JQuery();
+public fun jq(selector : String) = JQuery();
 native("$")
-fun jq(selector : String, context : DomElement) = JQuery();
+public fun jq(selector : String, context : Element) = JQuery();
 native("$")
-fun jq(callback : () -> Unit) = JQuery();
+public fun jq(callback : () -> Unit) = JQuery();
 native("$")
-fun jq(obj : JQuery) = JQuery();
+public fun jq(obj : JQuery) = JQuery();
 native("$")
-fun jq(el : DomElement) = JQuery();
+public fun jq(el : Element) = JQuery();
 native("$")
-fun jq() = JQuery();
+public fun jq() = JQuery();

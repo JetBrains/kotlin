@@ -29,9 +29,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetMainDetector;
+import org.jetbrains.jet.plugin.project.JsModuleDetector;
 
 /**
  * @author yole
@@ -57,6 +59,10 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
             return null;
         }
 
+        if (JsModuleDetector.isJsModule(module)) {
+            return null;
+        }
+
         FqName startClassFQName = getStartClassFQName(location);
         if (startClassFQName == null) {
             return null;
@@ -73,7 +79,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
             if (JetMainDetector.hasMain(jetFile.getDeclarations())) {
                 mySourceElement = jetFile;
                 FqName fqName = JetPsiUtil.getFQName(jetFile);
-                return fqName.child(JvmAbi.PACKAGE_CLASS);
+                return fqName.child(Name.identifier(JvmAbi.PACKAGE_CLASS));
             }
         }
 
@@ -109,7 +115,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         for (RunnerAndConfigurationSettings existingConfiguration : existingConfigurations) {
             if (existingConfiguration.getType() instanceof JetRunConfigurationType) {
                 JetRunConfiguration jetConfiguration = (JetRunConfiguration)existingConfiguration.getConfiguration();
-                if (Comparing.equal(jetConfiguration.settings().getMainClassName(), startClassFQName.getFqName())) {
+                if (Comparing.equal(jetConfiguration.getRunClass(), startClassFQName.getFqName())) {
                     if (Comparing.equal(location.getModule(), jetConfiguration.getConfigurationModule().getModule())) {
                         return existingConfiguration;
                     }

@@ -24,8 +24,8 @@ import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -33,6 +33,6 @@ import java.util.List;
  * @author yole
  */
 public interface IntrinsicMethod extends Callable {
-    StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, @Nullable PsiElement element,
+    StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, @Nullable PsiElement element,
             @Nullable List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state);
 }

@@ -34,8 +34,8 @@ public class PositioningStrategy<E extends PsiElement> {
         return markElement(element);
     }
 
-    protected boolean hasSyntaxError(@NotNull E element) {
-        return element.getLastChild() instanceof PsiErrorElement;
+    public boolean isValid(@NotNull E element) {
+        return true;
     }
 
     @NotNull

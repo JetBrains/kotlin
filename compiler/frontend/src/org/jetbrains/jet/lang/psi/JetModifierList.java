@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetModifierList extends JetElement {
+public class JetModifierList extends JetElementImpl {
     public JetModifierList(@NotNull ASTNode node) {
         super(node);
     }

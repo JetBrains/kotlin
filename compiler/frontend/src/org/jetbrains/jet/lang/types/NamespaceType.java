@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.List;
@@ -29,11 +30,11 @@ import java.util.List;
  * @author abreslav
  */
 public class NamespaceType implements JetType {
-    private final String name;
+    private final Name name;
     @NotNull
     private final JetScope memberScope;
 
-    public NamespaceType(@NotNull String name, @NotNull JetScope memberScope) {
+    public NamespaceType(@NotNull Name name, @NotNull JetScope memberScope) {
         this.name = name;
         this.memberScope = memberScope;
     }

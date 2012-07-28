@@ -1,0 +1,5 @@
+// expected: rv: 19
+// param: aa: jet.Long: 17
+// param: bb: jet.Int: 2
+
+aa + bb

@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collections;
@@ -32,13 +33,15 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     private final boolean isPrimary;
 
+    private static final Name NAME = Name.special("<init>");
+
     public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull List<AnnotationDescriptor> annotations, boolean isPrimary) {
-        super(containingDeclaration, annotations, "<init>", Kind.DECLARATION);
+        super(containingDeclaration, annotations, NAME, Kind.DECLARATION);
         this.isPrimary = isPrimary;
     }
 
     public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull ConstructorDescriptor original, @NotNull List<AnnotationDescriptor> annotations, boolean isPrimary) {
-        super(containingDeclaration, original, annotations, "<init>", Kind.DECLARATION);
+        super(containingDeclaration, original, annotations, NAME, Kind.DECLARATION);
         this.isPrimary = isPrimary;
     }
 
@@ -53,12 +56,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     }
 
     @NotNull
-    private static ReceiverDescriptor getExpectedThisObject(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof ConstructorDescriptor) {
-            ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) descriptor;
-            ClassDescriptor classDescriptor = constructorDescriptor.getContainingDeclaration();
-            return getExpectedThisObject(classDescriptor);
-        }
+    private static ReceiverDescriptor getExpectedThisObject(@NotNull ClassDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         return DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration);
     }
@@ -110,7 +108,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     @NotNull
     @Override
-    public ConstructorDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides) {
+    public ConstructorDescriptor copy(DeclarationDescriptor newOwner, Modality modality, boolean makeInvisible, Kind kind, boolean copyOverrides) {
         throw new UnsupportedOperationException("Constructors should not be copied for overriding");
     }
 }

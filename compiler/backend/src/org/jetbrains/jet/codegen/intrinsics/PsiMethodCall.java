@@ -22,8 +22,8 @@ import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public class PsiMethodCall implements IntrinsicMethod {
     }
 
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element,
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element,
             List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
         final CallableMethod callableMethod = state.getInjector().getJetTypeMapper().mapToCallableMethod(myMethod, false, OwnerKind.IMPLEMENTATION);
         codegen.invokeMethodWithArguments(callableMethod, (JetCallExpression) element, receiver);

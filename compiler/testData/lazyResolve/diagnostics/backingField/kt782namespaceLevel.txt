@@ -1,0 +1,11 @@
+namespace <root>
+
+// <namespace name="kt782">
+namespace kt782
+
+internal final val w: jet.Int
+internal final val x: jet.Int
+internal final val y: jet.Int
+internal final val z: jet.Int
+internal final fun foo(): jet.Tuple0
+// </namespace name="kt782">

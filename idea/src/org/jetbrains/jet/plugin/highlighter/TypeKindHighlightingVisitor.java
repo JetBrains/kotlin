@@ -21,54 +21,36 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 
 /**
  * @author Evgeny Gerashchenko
  * @since 3/29/12
  */
-class TypeKindHighlightingVisitor extends HighlightingVisitor {
-    protected TypeKindHighlightingVisitor(AnnotationHolder holder) {
-        super(holder);
-    }
-
-    @Override
-    public void visitAnnotationEntry(JetAnnotationEntry annotationEntry) {
-        JetTypeReference typeReference = annotationEntry.getTypeReference();
-        if (typeReference == null) return;
-        JetTypeElement typeElement = typeReference.getTypeElement();
-        if (!(typeElement instanceof JetUserType)) return;
-        JetUserType userType = (JetUserType)typeElement;
-        if (userType.getQualifier() != null) return;
-        JetSimpleNameExpression referenceExpression = userType.getReferenceExpression();
-        if (referenceExpression != null) {
-            holder.createInfoAnnotation(referenceExpression.getNode(), null).setTextAttributes(JetHighlightingColors.ANNOTATION);
-        }
-    }
-
-    private void visitNameExpression(JetExpression expression) {
-        PsiReference ref = expression.getReference();
-        if (ref == null) return;
-        if (JetPsiChecker.isNamesHighlightingEnabled()) {
-            PsiElement target = ref.resolve();
-            if (target instanceof JetClass) {
-                highlightClassByKind((JetClass)target, expression);
-            }
-            else if (target instanceof JetTypeParameter) {
-                JetPsiChecker.highlightName(holder, expression, JetHighlightingColors.TYPE_PARAMETER);
-            }
-        }
+class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
+    TypeKindHighlightingVisitor(AnnotationHolder holder, BindingContext bindingContext) {
+        super(holder, bindingContext);
     }
 
     @Override
     public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
-        visitNameExpression(expression);
-    }
+        PsiReference ref = expression.getReference();
+        if (ref == null) return;
+        if (JetPsiChecker.isNamesHighlightingEnabled()) {
+            DeclarationDescriptor referenceTarget = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
+            if (referenceTarget instanceof ConstructorDescriptor) {
+                referenceTarget = referenceTarget.getContainingDeclaration();
+            }
 
-    @Override
-    public void visitQualifiedExpression(JetQualifiedExpression expression) {
-        visitNameExpression(expression);
+            if (referenceTarget instanceof ClassDescriptor) {
+                highlightClassByKind((ClassDescriptor) referenceTarget, expression);
+            }
+            else if (referenceTarget instanceof TypeParameterDescriptor) {
+                JetPsiChecker.highlightName(holder, expression, JetHighlightingColors.TYPE_PARAMETER);
+            }
+        }
     }
 
     @Override
@@ -77,31 +59,32 @@ class TypeKindHighlightingVisitor extends HighlightingVisitor {
         if (identifier != null) {
             JetPsiChecker.highlightName(holder, identifier, JetHighlightingColors.TYPE_PARAMETER);
         }
+        super.visitTypeParameter(parameter);
     }
 
     @Override
     public void visitClass(JetClass klass) {
         PsiElement identifier = klass.getNameIdentifier();
-        if (identifier != null) {
-            highlightClassByKind(klass, identifier);
+        ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, klass);
+        if (identifier != null && classDescriptor != null) {
+            highlightClassByKind(classDescriptor, identifier);
         }
+        super.visitClass(klass);
     }
 
-    private void highlightClassByKind(@NotNull JetClass klass, @NotNull PsiElement whatToHighlight) {
-        TextAttributesKey textAttributes = JetHighlightingColors.CLASS;
-        if (klass.isTrait()) {
-            textAttributes = JetHighlightingColors.TRAIT;
-        }
-        else {
-            JetModifierList modifierList = klass.getModifierList();
-            if (modifierList != null) {
-                if (modifierList.hasModifier(JetTokens.ANNOTATION_KEYWORD)) {
-                    textAttributes = JetHighlightingColors.ANNOTATION;
-                }
-                else if (modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
-                    textAttributes = JetHighlightingColors.ABSTRACT_CLASS;
-                }
-            }
+    private void highlightClassByKind(@NotNull ClassDescriptor classDescriptor, @NotNull PsiElement whatToHighlight) {
+        TextAttributesKey textAttributes;
+        switch (classDescriptor.getKind()) {
+            case TRAIT:
+                textAttributes = JetHighlightingColors.TRAIT;
+                break;
+            case ANNOTATION_CLASS:
+                textAttributes = JetHighlightingColors.ANNOTATION;
+                break;
+            default:
+                textAttributes = classDescriptor.getModality() == Modality.ABSTRACT
+                                 ? JetHighlightingColors.ABSTRACT_CLASS
+                                 : JetHighlightingColors.CLASS;
         }
         JetPsiChecker.highlightName(holder, whatToHighlight, textAttributes);
     }

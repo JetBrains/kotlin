@@ -33,11 +33,6 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     @Override
-    public void visitJetElement(@NotNull JetElement element) {
-        element.acceptChildren(this);
-    }
-
-    @Override
     public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
         DeclarationDescriptor target = bindingContext.get(REFERENCE_TARGET, expression);
         if (target == null) {
@@ -86,19 +81,17 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     private void highlightVariable(@NotNull PsiElement elementToHighlight, @NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof VariableAsFunctionDescriptor) {
-            descriptor = ((VariableAsFunctionDescriptor)descriptor).getVariableDescriptor();
-            //noinspection ConstantConditions
-            if (descriptor == null) return;
-        }
         if (descriptor instanceof VariableDescriptor) {
             VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
             if (variableDescriptor.isVar()) {
                 JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.MUTABLE_VARIABLE);
             }
 
-            if (Boolean.TRUE.equals(bindingContext.get(MUST_BE_WRAPPED_IN_A_REF, variableDescriptor))) {
-                holder.createInfoAnnotation(elementToHighlight, "Wrapped into a reference object to be modified when captured in a closure").setTextAttributes(
+            if (Boolean.TRUE.equals(bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor))) {
+                String msg = ((VariableDescriptor) descriptor).isVar()
+                             ? "Wrapped into a reference object to be modified when captured in a closure"
+                             : "Value captured in a closure";
+                holder.createInfoAnnotation(elementToHighlight, msg).setTextAttributes(
                     JetHighlightingColors.WRAPPED_INTO_REF);
             }
 

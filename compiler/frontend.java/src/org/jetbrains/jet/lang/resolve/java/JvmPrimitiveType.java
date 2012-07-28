@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
-import org.objectweb.asm.Type;
+import org.jetbrains.asm4.Type;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,11 +48,11 @@ public enum JvmPrimitiveType {
     private JvmPrimitiveType(PrimitiveType primitiveType, String name, String wrapperClassName, Type asmType) {
         this.primitiveType = primitiveType;
         this.name = name;
-        this.wrapper = new JvmClassName(wrapperClassName);
+        this.wrapper = JvmClassName.byFqNameWithoutInnerClasses(wrapperClassName);
         this.asmType = asmType;
         this.jvmLetter = asmType.getDescriptor().charAt(0);
         this.asmArrayType = makeArrayType(asmType);
-        this.iterator = new JvmClassName("jet." + primitiveType.getTypeName() + "Iterator");
+        this.iterator = JvmClassName.byFqNameWithoutInnerClasses("jet." + primitiveType.getTypeName() + "Iterator");
     }
     
     private static Type makeArrayType(Type type) {

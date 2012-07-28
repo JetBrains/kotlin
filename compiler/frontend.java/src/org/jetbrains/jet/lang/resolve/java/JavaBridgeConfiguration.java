@@ -18,15 +18,14 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -34,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * @author abreslav
@@ -51,7 +49,7 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
     @NotNull
     private ModuleConfiguration delegateConfiguration;
     @NotNull
-    private CompilerSpecialMode mode;
+    private BuiltinsScopeExtensionMode builtinsScopeExtensionMode;
 
     @Inject
     public void setProject(@NotNull Project project) {
@@ -64,13 +62,13 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
     }
 
     @Inject
-    public void setMode(@NotNull CompilerSpecialMode mode) {
-        this.mode = mode;
+    public void setBuiltinsScopeExtensionMode(@NotNull BuiltinsScopeExtensionMode builtinsScopeExtensionMode) {
+        this.builtinsScopeExtensionMode = builtinsScopeExtensionMode;
     }
 
     @PostConstruct
     public void init() {
-        this.delegateConfiguration = DefaultModuleConfiguration.createStandardConfiguration(project, mode == CompilerSpecialMode.BUILTINS);
+        this.delegateConfiguration = DefaultModuleConfiguration.createStandardConfiguration(project, builtinsScopeExtensionMode);
     }
 
 

@@ -23,8 +23,8 @@ import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -40,8 +40,8 @@ public class UpTo implements IntrinsicMethod {
     }
 
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
-        if(arguments.size()==1) {
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
+        if (arguments.size()==1) {
             final Type leftType = receiver.type;
             final Type rightType = codegen.expressionType(arguments.get(0));
             receiver.put(Type.INT_TYPE, v);

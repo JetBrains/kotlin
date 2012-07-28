@@ -21,11 +21,11 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.jetbrains.asm4.AnnotationVisitor;
+import org.jetbrains.asm4.ClassVisitor;
+import org.jetbrains.asm4.FieldVisitor;
+import org.jetbrains.asm4.MethodVisitor;
+import org.jetbrains.asm4.Opcodes;
 
 public abstract class ClassBuilder {
     public static class Concrete extends ClassBuilder {

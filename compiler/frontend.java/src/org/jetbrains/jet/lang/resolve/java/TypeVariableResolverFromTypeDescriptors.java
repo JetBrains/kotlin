@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -64,7 +63,7 @@ public class TypeVariableResolverFromTypeDescriptors implements TypeVariableReso
             @NotNull DeclarationDescriptor owner,
             @NotNull String context) {
         for (TypeParameterDescriptor typeParameter : typeParameters) {
-            if (typeParameter.getName().equals(name)) {
+            if (typeParameter.getName().getName().equals(name)) {
                 return typeParameter;
             }
         }

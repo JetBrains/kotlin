@@ -1,0 +1,56 @@
+{section}
+{column:width=512px}
+h3. What is [Kotlin]?
+"Project [Kotlin]" is a codename for a statically typed programming language compiled to JVM byte code and JavaScript.
+It is developed by [JetBrains|http://jetbrains.com] and distributed under [Apache 2 Open Source License|http://www.apache.org/licenses/LICENSE-2.0.html].
+{note:title=Kotlin is Under Development}Please report bugs to our [Issue Tracker|http://youtrack.jetbrains.com/issues/KT]{note}
+See our [*blog*|http://blog.jetbrains.com/kotlin/]. Follow us on [*Twitter*|http://twitter.com/#!/project_kotlin]. Join our [*forum*|http://devnet.jetbrains.net/community/kotlin].
+h3. Hello, world!
+{jet}
+package hello
+
+fun main(args : Array<String>) {
+  println("Hello, world!")
+}
+{jet}
+h3. More Examples
+[Kotlin Web Demo|http://kotlin-demo.jetbrains.com] offers many runnable example programs.
+You can also *write your own programs* right in the browser and run them on JVM or JavaScript platform.
+h3. Documentation
+The [Getting Started] page describes the set-up process.
+The [Docs Home] page will guide you through the documentation.
+*New*: Documentation for the [Kotlin standard APIs|http://jetbrains.github.com/kotlin/apidoc/stdlib/].
+See this presentation for the introduction:
+{widget:url=http://www.slideshare.net/abreslav/kotlin-devoxx-2011}
+[*Slides* and *video* from StrangeLoop 2011|http://www.infoq.com/presentations/The-Kotlin-Programming-Language]
+h3. Source Code
+Check out the sources on [GitHub|http://github.com/jetbrains/kotlin].
+Sources are distributed under *Apache 2* license.
+Nightly builds can be downloaded from our [build server|http://teamcity.jetbrains.com/viewType.html?buildTypeId=bt345&tab=buildTypeStatusDiv&guest=1]. 
+You can also use [http://www.jetbrains.com/kotlin/eap-plugin-repository/updatePlugins.xml] to set up a *plugin repository* in IntelliJ IDEA.
+{info}
+The IDE plugin requires the latest EAP build of [IntelliJ IDEA 11.1|http://eap.jetbrains.com/idea].
+{info}
+
+h3. Kontributions
+* [stdlib|https://github.com/JetBrains/kotlin/tree/master/stdlib] by James Strachan
+* [Ant, Maven etc integration|https://github.com/JetBrains/kotlin/tree/master/build-tools] by Evgeny Goldin
+* [Aztec|https://github.com/kondratovich/aztec] by Andrew Kondratovich
+* [Be the next Kontributor!|http://blog.jetbrains.com/kotlin/2012/03/contributing-to-kotlin/]
+{column}
+{column}
+h3. IDE
+{widget:width=500|url=http://www.youtube.com/watch?v=0jBPcIPVihI}
+
+h3. Recommended reading
+* [The Kotlin Journey by Hadi Hariri|http://hadihariri.com/2012/02/17/the-kotlin-journey-part-i-getting-things-set-up/]
+* [Kotlin: The Language of the Month (Dr. Dobb's)|http://drdobbs.com/jvm/232600839]
+* [Язык программирования Kotlin|http://www.osp.ru/os/2011/09/13011550/] (in Russian)
+
+h3. Twitter
+{widget:url=http://search.twitter.com/search?q=kotlin%20OR%20project_kotlin%20-kotlin_ru|width=500}
+
+h3. Kotlin Events
+{widget:width=500px|height=300px|url=https://www.google.com/calendar/embed?mode=AGENDA&showPrint=0&showCalendars=0&showTitle=0&src=nvijaubrlepgko0alipqhpmtj8%40group.calendar.google.com&ctz=Europe/Moscow}
+{column}
+{section}

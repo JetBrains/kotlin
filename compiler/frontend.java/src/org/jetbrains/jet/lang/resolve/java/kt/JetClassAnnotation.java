@@ -20,12 +20,16 @@ import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.utils.BitSetUtils;
+
+import java.util.BitSet;
 
 /**
  * @author Stepan Koltsov
  */
-public class JetClassAnnotation extends PsiAnnotationWrapper {
+public class JetClassAnnotation extends PsiAnnotationWithFlags {
 
     public JetClassAnnotation(@Nullable PsiAnnotation psiAnnotation) {
         super(psiAnnotation);
@@ -38,9 +42,19 @@ public class JetClassAnnotation extends PsiAnnotationWrapper {
         }
         return signature;
     }
+
+
+    private BitSet flags = null;
+    @NotNull
+    public BitSet flags() {
+        if (flags == null) {
+            flags = BitSetUtils.toBitSet(getIntAttribute(JvmStdlibNames.JET_CLASS_FLAGS_FIELD, JvmStdlibNames.FLAGS_DEFAULT_VALUE));
+        }
+        return flags;
+    }
     
     @NotNull
     public static JetClassAnnotation get(PsiClass psiClass) {
-        return new JetClassAnnotation(psiClass.getModifierList().findAnnotation(JvmStdlibNames.JET_CLASS.getFqName().getFqName()));
+        return new JetClassAnnotation(JavaDescriptorResolver.findAnnotation(psiClass, JvmStdlibNames.JET_CLASS.getFqName().getFqName()));
     }
 }

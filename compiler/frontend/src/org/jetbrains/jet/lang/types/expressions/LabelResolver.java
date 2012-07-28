@@ -25,23 +25,25 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.LABEL_TARGET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
 /**
 * @author abreslav
 */
 public class LabelResolver {
 
-    private final Map<String, Stack<JetElement>> labeledElements = new HashMap<String, Stack<JetElement>>();
+    private final Map<LabelName, Stack<JetElement>> labeledElements = new HashMap<LabelName, Stack<JetElement>>();
 
     public LabelResolver() {}
 
-    public void enterLabeledElement(@NotNull String labelName, @NotNull JetExpression labeledExpression) {
+    public void enterLabeledElement(@NotNull LabelName labelName, @NotNull JetExpression labeledExpression) {
         JetExpression deparenthesized = JetPsiUtil.deparenthesize(labeledExpression);
         if (deparenthesized != null) {
             Stack<JetElement> stack = labeledElements.get(labelName);
@@ -56,8 +58,8 @@ public class LabelResolver {
     public void exitLabeledElement(@NotNull JetExpression expression) {
         JetExpression deparenthesized = JetPsiUtil.deparenthesize(expression);
         // TODO : really suboptimal
-        for (Iterator<Map.Entry<String, Stack<JetElement>>> mapIter = labeledElements.entrySet().iterator(); mapIter.hasNext(); ) {
-            Map.Entry<String, Stack<JetElement>> entry = mapIter.next();
+        for (Iterator<Map.Entry<LabelName,Stack<JetElement>>> mapIter = labeledElements.entrySet().iterator(); mapIter.hasNext(); ) {
+            Map.Entry<LabelName, Stack<JetElement>> entry = mapIter.next();
             Stack<JetElement> stack = entry.getValue();
             for (Iterator<JetElement> stackIter = stack.iterator(); stackIter.hasNext(); ) {
                 JetElement recorded = stackIter.next();
@@ -72,7 +74,7 @@ public class LabelResolver {
     }
 
     @Nullable
-    private JetElement resolveControlLabel(@NotNull String labelName, @NotNull JetSimpleNameExpression labelExpression, boolean reportUnresolved, ExpressionTypingContext context) {
+    private JetElement resolveControlLabel(@NotNull LabelName labelName, @NotNull JetSimpleNameExpression labelExpression, boolean reportUnresolved, ExpressionTypingContext context) {
         Collection<DeclarationDescriptor> declarationsByLabel = context.scope.getDeclarationsByLabel(labelName);
         int size = declarationsByLabel.size();
 
@@ -99,14 +101,13 @@ public class LabelResolver {
     public JetElement resolveLabel(JetLabelQualifiedExpression expression, ExpressionTypingContext context) {
         JetSimpleNameExpression labelElement = expression.getTargetLabel();
         if (labelElement != null) {
-            String labelName = expression.getLabelName();
-            assert labelName != null;
+            LabelName labelName = new LabelName(expression.getLabelName());
             return resolveControlLabel(labelName, labelElement, true, context);
         }
         return null;
     }
 
-    private JetElement resolveNamedLabel(@NotNull String labelName, @NotNull JetSimpleNameExpression labelExpression, boolean reportUnresolved, ExpressionTypingContext context) {
+    private JetElement resolveNamedLabel(@NotNull LabelName labelName, @NotNull JetSimpleNameExpression labelExpression, boolean reportUnresolved, ExpressionTypingContext context) {
         Stack<JetElement> stack = labeledElements.get(labelName);
         if (stack == null || stack.isEmpty()) {
             if (reportUnresolved) {
@@ -123,7 +124,8 @@ public class LabelResolver {
         return result;
     }
 
-    public ReceiverDescriptor resolveThisLabel(JetReferenceExpression thisReference, JetSimpleNameExpression targetLabel, ExpressionTypingContext context, ReceiverDescriptor thisReceiver, String labelName) {
+    public ReceiverDescriptor resolveThisLabel(JetReferenceExpression thisReference, JetSimpleNameExpression targetLabel,
+            ExpressionTypingContext context, ReceiverDescriptor thisReceiver, LabelName labelName) {
         Collection<DeclarationDescriptor> declarationsByLabel = context.scope.getDeclarationsByLabel(labelName);
         int size = declarationsByLabel.size();
         assert targetLabel != null;
@@ -138,10 +140,10 @@ public class LabelResolver {
                 thisReceiver = functionDescriptor.getReceiverParameter();
             }
             else {
-                throw new UnsupportedOperationException(); // TODO
+                throw new UnsupportedOperationException("Unsupported descriptor: " + declarationDescriptor); // TODO
             }
             PsiElement element = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), declarationDescriptor);
-            assert element != null;
+            assert element != null : "No PSI element for descriptor: " + declarationDescriptor;
             context.trace.record(LABEL_TARGET, targetLabel, element);
             context.trace.record(REFERENCE_TARGET, thisReference, declarationDescriptor);
         }

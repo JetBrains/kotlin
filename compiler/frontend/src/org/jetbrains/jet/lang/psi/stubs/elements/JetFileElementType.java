@@ -16,6 +16,9 @@
 
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
+import com.intellij.lang.*;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBuilder;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
@@ -23,6 +26,8 @@ import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.util.io.StringRef;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.parsing.JetParser;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFileStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetFileStubImpl;
 import org.jetbrains.jet.plugin.JetLanguage;
@@ -33,7 +38,7 @@ import java.io.IOException;
  * @author Nikolay Krasko
  */
 public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
-    public static final int STUB_VERSION = 3;
+    public static final int STUB_VERSION = 17;
 
     public JetFileElementType() {
         super("jet.FILE", JetLanguage.INSTANCE);
@@ -58,13 +63,25 @@ public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
     public void serialize(final PsiJetFileStub stub, final StubOutputStream dataStream)
             throws IOException {
         dataStream.writeName(stub.getPackageName());
+        dataStream.writeBoolean(stub.isScript());
     }
 
     @Override
     public PsiJetFileStub deserialize(final StubInputStream dataStream, final StubElement parentStub) throws IOException {
         StringRef packName = dataStream.readName();
-        return new PsiJetFileStubImpl(null, packName);
+        boolean isScript = dataStream.readBoolean();
+        return new PsiJetFileStubImpl(null, packName, isScript);
     }
+
+    @Override
+    protected ASTNode doParseContents(@NotNull final ASTNode chameleon, @NotNull final PsiElement psi) {
+        final Project project = psi.getProject();
+        Language languageForParser = getLanguageForParser(psi);
+        final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, null, languageForParser, chameleon.getChars());
+        final JetParser parser = (JetParser) LanguageParserDefinitions.INSTANCE.forLanguage(languageForParser).createParser(project);
+        return parser.parse(this, builder, psi.getContainingFile()).getFirstChildNode();
+    }
+
 
     @Override
     public void indexStub(final PsiJetFileStub stub, final IndexSink sink) {

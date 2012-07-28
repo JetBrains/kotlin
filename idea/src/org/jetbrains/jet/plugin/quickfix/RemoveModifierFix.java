@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.intellij.extapi.psi.ASTDelegatePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -26,7 +27,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.psi.JetModifierListOwner;
 import org.jetbrains.jet.lexer.JetKeywordToken;
@@ -70,9 +70,9 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
         removeModifierFromList(modifierList, modifier);
         if (modifierList.getFirstChild() == null) {
             PsiElement whiteSpace = modifierList.getNextSibling();
-            assert element instanceof JetElement;
-            ((JetElement) element).deleteChildInternal(modifierList.getNode());
-            QuickFixUtil.removePossiblyWhiteSpace((JetElement) element, whiteSpace);
+            assert element instanceof ASTDelegatePsiElement;
+            ((ASTDelegatePsiElement) element).deleteChildInternal(modifierList.getNode());
+            QuickFixUtil.removePossiblyWhiteSpace((ASTDelegatePsiElement) element, whiteSpace);
         }
         return element;
     }

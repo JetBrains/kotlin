@@ -19,31 +19,49 @@ package org.jetbrains.jet.lang.psi.stubs.impl;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 /**
  * @author Nikolay Krasko
  */
-public class PsiJetFunctionStubImpl extends StubBase<JetFunction> implements PsiJetFunctionStub<JetFunction> {
+public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implements PsiJetFunctionStub {
 
     private final StringRef nameRef;
     private final boolean isTopLevel;
     private final boolean isExtension;
-    
-    public PsiJetFunctionStubImpl(@NotNull IStubElementType elementType, @NotNull StubElement parent,
-                                  @Nullable String name, boolean isTopLevel, boolean isExtension) {
-        this(elementType, parent, StringRef.fromString(name), isTopLevel, isExtension);
+    private final FqName topFQName;
+
+    public PsiJetFunctionStubImpl(
+            @NotNull IStubElementType elementType,
+            @NotNull StubElement parent,
+            @Nullable String name,
+            boolean isTopLevel,
+            @Nullable FqName topFQName,
+            boolean isExtension) {
+        this(elementType, parent, StringRef.fromString(name), isTopLevel, topFQName, isExtension);
     }
 
-    public PsiJetFunctionStubImpl(@NotNull IStubElementType elementType, @NotNull StubElement parent,
-                                  @Nullable StringRef nameRef, boolean isTopLevel, boolean  isExtension) {
+    public PsiJetFunctionStubImpl(
+            @NotNull IStubElementType elementType,
+            @NotNull StubElement parent,
+            @Nullable StringRef nameRef,
+            boolean isTopLevel,
+            @Nullable FqName topFQName,
+            boolean isExtension) {
         super(parent, elementType);
 
+        if (isTopLevel && topFQName == null) {
+            throw new IllegalArgumentException("topFQName shouldn't be null for top level functions");
+        }
+
         this.nameRef = nameRef;
+        this.topFQName = topFQName;
         this.isTopLevel = isTopLevel;
         this.isExtension = isExtension;
     }
@@ -51,6 +69,12 @@ public class PsiJetFunctionStubImpl extends StubBase<JetFunction> implements Psi
     @Override
     public String getName() {
         return StringRef.toString(nameRef);
+    }
+
+    @Nullable
+    @Override
+    public FqName getTopFQName() {
+        return topFQName;
     }
 
     @Override
@@ -67,6 +91,27 @@ public class PsiJetFunctionStubImpl extends StubBase<JetFunction> implements Psi
     @Override
     public String[] getAnnotations() {
         // TODO (stubs)
-        return new String[0];
+        return ArrayUtil.EMPTY_STRING_ARRAY;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("PsiJetFunctionStubImpl[");
+
+        if (isTopLevel()) {
+            assert topFQName != null;
+            builder.append("top ").append("topFQName=").append(topFQName.toString()).append(" ");
+        }
+
+        if (isExtension()) {
+            builder.append("ext ");
+        }
+
+        builder.append("name=").append(getName());
+
+        builder.append("]");
+
+        return builder.toString();
     }
 }

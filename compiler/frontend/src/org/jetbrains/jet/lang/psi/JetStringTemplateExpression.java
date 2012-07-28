@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author abreslav
  */
-public class JetStringTemplateExpression extends JetExpression {
+public class JetStringTemplateExpression extends JetExpressionImpl {
     public JetStringTemplateExpression(@NotNull ASTNode node) {
         super(node);
     }

@@ -45,7 +45,7 @@ public class ClassReceiver implements ThisReceiverDescriptor {
 
     @NotNull
     @Override
-    public DeclarationDescriptor getDeclarationDescriptor() {
+    public ClassDescriptor getDeclarationDescriptor() {
         return classDescriptor;
     }
 

@@ -28,38 +28,39 @@ public final class StandardClassesTest extends SingleFileTranslationTest {
     }
 
     public void testArray() throws Exception {
-        checkFooBoxIsTrue("array.kt");
+        fooBoxTest();
     }
 
 
     public void testArrayAccess() throws Exception {
-        checkFooBoxIsTrue("arrayAccess.kt");
+        fooBoxTest();
     }
 
 
     public void testArrayIsFilledWithNulls() throws Exception {
-        checkFooBoxIsTrue("arrayIsFilledWithNulls.kt");
+        fooBoxTest();
     }
 
 
     public void testArrayFunctionConstructor() throws Exception {
-        checkFooBoxIsTrue("arrayFunctionConstructor.kt");
+        fooBoxTest();
     }
 
 
     public void testArraySize() throws Exception {
-        checkFooBoxIsTrue("arraySize.kt");
+        fooBoxTest();
     }
 
     //TODO: this feature in not supported for some time
     //TODO: support it. Probably configurable.
-//    (expected = JavaScriptException.class)
-//    public void arrayThrowsExceptionOnOOBaccess() throws Exception {
-//        checkFooBoxIsTrue("arrayThrowsExceptionOnOOBaccess.kt");
-//    }
+    //    (expected = JavaScriptException.class)
+    //    public void arrayThrowsExceptionOnOOBaccess() throws Exception {
+    //        fooBoxTest();
+    //    }
 
 
+    //TODO: fails on ecma 5 because of ArrayIterator declaration: ecma 5 expects hasNext to be property while it is a function
     public void testArraysIterator() throws Exception {
-        checkFooBoxIsTrue("arraysIterator.kt");
+        fooBoxTest(failOnEcma5());
     }
 }

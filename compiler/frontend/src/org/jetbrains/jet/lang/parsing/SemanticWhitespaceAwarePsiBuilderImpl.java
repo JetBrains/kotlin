@@ -55,7 +55,8 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
 
             if (previousToken == JetTokens.BLOCK_COMMENT
                     || previousToken == JetTokens.DOC_COMMENT
-                    || previousToken == JetTokens.EOL_COMMENT) {
+                    || previousToken == JetTokens.EOL_COMMENT
+                    || previousToken == SHEBANG_COMMENT) {
                 continue;
             }
 

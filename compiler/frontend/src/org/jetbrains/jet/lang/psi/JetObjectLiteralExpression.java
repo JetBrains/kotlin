@@ -23,7 +23,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author max
  */
-public class JetObjectLiteralExpression extends JetExpression {
+public class JetObjectLiteralExpression extends JetExpressionImpl {
     public JetObjectLiteralExpression(@NotNull ASTNode node) {
         super(node);
     }

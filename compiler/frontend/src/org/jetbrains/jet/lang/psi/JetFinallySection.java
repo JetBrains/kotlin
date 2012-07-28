@@ -23,7 +23,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author max
  */
-public class JetFinallySection extends JetElement {
+public class JetFinallySection extends JetElementImpl {
     public JetFinallySection(@NotNull ASTNode node) {
         super(node);
     }

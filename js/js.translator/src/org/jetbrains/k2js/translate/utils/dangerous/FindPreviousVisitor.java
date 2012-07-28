@@ -20,7 +20,6 @@ import com.google.common.collect.Maps;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.k2js.translate.utils.PsiUtils;
 
 import java.util.Map;
 
@@ -60,6 +59,7 @@ public final class FindPreviousVisitor extends JetTreeVisitor<DangerousData> {
         return null;
     }
 
+    //TODO: return value not used, wtf?
     private static boolean addElement(@NotNull JetElement element, @NotNull DangerousData data) {
         if (element instanceof JetExpression) {
             data.getNodesToBeGeneratedBefore().add((JetExpression)element);

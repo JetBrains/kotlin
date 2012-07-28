@@ -20,7 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collections;
 
@@ -28,7 +30,7 @@ import java.util.Collections;
  * @author alex.tkachman
  */
 public class ExpressionAsFunctionDescriptor extends FunctionDescriptorImpl {
-    public ExpressionAsFunctionDescriptor(DeclarationDescriptor containingDeclaration, String name) {
+    public ExpressionAsFunctionDescriptor(DeclarationDescriptor containingDeclaration, Name name) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), name, Kind.DECLARATION);
     }
 
@@ -39,7 +41,7 @@ public class ExpressionAsFunctionDescriptor extends FunctionDescriptorImpl {
 
     @NotNull
     @Override
-    public FunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides) {
+    public FunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, boolean makeInvisible, Kind kind, boolean copyOverrides) {
         throw new IllegalStateException();
     }
 }

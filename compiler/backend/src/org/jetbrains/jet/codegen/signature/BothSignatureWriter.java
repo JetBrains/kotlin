@@ -23,16 +23,17 @@ import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.java.JetSignatureUtils;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
 import org.jetbrains.jet.rt.signature.JetSignatureVariance;
 import org.jetbrains.jet.rt.signature.JetSignatureWriter;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.Method;
-import org.objectweb.asm.signature.SignatureVisitor;
-import org.objectweb.asm.signature.SignatureWriter;
-import org.objectweb.asm.util.CheckSignatureAdapter;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.Method;
+import org.jetbrains.asm4.signature.SignatureVisitor;
+import org.jetbrains.asm4.signature.SignatureWriter;
+import org.jetbrains.asm4.util.CheckSignatureAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -264,9 +265,9 @@ public class BothSignatureWriter {
         pop();
     }
 
-    public void writeTypeVariable(final String name, boolean nullable, Type asmType) {
-        signatureVisitor().visitTypeVariable(name);
-        jetSignatureWriter.visitTypeVariable(name, nullable);
+    public void writeTypeVariable(final Name name, boolean nullable, Type asmType) {
+        signatureVisitor().visitTypeVariable(name.getName());
+        jetSignatureWriter.visitTypeVariable(name.getName(), nullable);
         generic = true;
         writeAsmType0(asmType);
     }

@@ -24,6 +24,7 @@ import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.List;
 
@@ -78,8 +79,25 @@ public class JetNamespaceHeader extends JetReferenceExpression {
         return nameIdentifier == null ? "" : nameIdentifier.getText();
     }
 
+    @NotNull
+    public Name getNameAsName() {
+        PsiElement nameIdentifier = getNameIdentifier();
+        return nameIdentifier == null ? JetPsiUtil.ROOT_NAMESPACE_NAME : Name.identifier(nameIdentifier.getText());
+    }
+
     public boolean isRoot() {
         return getName().length() == 0;
+    }
+
+    public String getQualifiedName() {
+        StringBuilder builder = new StringBuilder();
+        for (JetSimpleNameExpression e : findChildrenByClass(JetSimpleNameExpression.class)) {
+            if (builder.length() > 0) {
+                builder.append(".");
+            }
+            builder.append(e.getReferencedName());
+        }
+        return builder.toString();
     }
 }
 

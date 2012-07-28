@@ -16,10 +16,10 @@ fun test(<warning>l</warning> : java.util.List<Int>) {
 
   val <warning>f</warning> : java.io.File? = null
 
-  Collections.<error>emptyList</error>
-  Collections.emptyList<Int>
+  Collections.<error><error>emptyList</error></error>
+  Collections.<error>emptyList<Int></error>
   Collections.emptyList<Int>()
-  Collections.<error>emptyList()</error>
+  Collections.<error>emptyList</error>()
 
   Collections.singleton<Int>(1) : Set<Int>?
   Collections.singleton<Int>(<error>1.0</error>)
@@ -33,7 +33,7 @@ fun test(<warning>l</warning> : java.util.List<Int>) {
     // ...
   }
   catch(e: Exception) {
-    System.out?.println(e.getMessage())
+    System.out.println(e.getMessage())
   }
 
   PrintStream("sdf")

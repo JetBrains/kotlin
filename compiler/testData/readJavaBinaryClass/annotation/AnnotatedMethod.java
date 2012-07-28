@@ -1,12 +1,6 @@
 package test;
 
-import java.lang.annotation.*;
-
-@Retention(RetentionPolicy.CLASS)
-@interface Aaa {
-}
-
-class HasAnnotatedMethod {
-    @Aaa
+public class AnnotatedMethod {
+    @Deprecated
     public void f() { }
 }

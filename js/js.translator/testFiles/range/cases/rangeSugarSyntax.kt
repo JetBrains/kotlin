@@ -22,16 +22,9 @@ fun box() : Boolean {
     for (i in oneToFive) {
         sum += i;
     }
-    for (i in oneToFive) {
-        print(i)
-    }
 
     if (sum != 15) return false;
 
     return true;
 
-}
-
-fun main() {
-    box()
 }

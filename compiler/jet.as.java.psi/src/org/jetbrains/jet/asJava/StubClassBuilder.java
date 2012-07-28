@@ -28,10 +28,10 @@ import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.MethodVisitor;
+import org.jetbrains.asm4.ClassReader;
+import org.jetbrains.asm4.ClassVisitor;
+import org.jetbrains.asm4.FieldVisitor;
+import org.jetbrains.asm4.MethodVisitor;
 
 import java.util.List;
 

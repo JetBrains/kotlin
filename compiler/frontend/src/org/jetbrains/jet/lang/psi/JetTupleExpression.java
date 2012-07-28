@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetTupleExpression extends JetExpression {
+public class JetTupleExpression extends JetExpressionImpl {
     public JetTupleExpression(@NotNull ASTNode node) {
         super(node);
     }

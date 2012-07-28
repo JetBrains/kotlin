@@ -17,21 +17,24 @@
 package org.jetbrains.k2js.translate.utils;
 
 import com.google.common.collect.Lists;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
-import org.jetbrains.k2js.translate.context.Namer;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.k2js.config.LibrarySourcesConfig;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.isNotAny;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getSuperclassDescriptors;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 
 /**
  * @author Pavel Talanov
@@ -49,44 +52,12 @@ public final class JsDescriptorUtils {
         return (valueParametersCount(functionDescriptor) > 0);
     }
 
-    public static boolean isEquals(@NotNull FunctionDescriptor functionDescriptor) {
-        return (functionDescriptor.getName().equals(OperatorConventions.EQUALS));
-    }
-
     public static boolean isCompareTo(@NotNull FunctionDescriptor functionDescriptor) {
         return (functionDescriptor.getName().equals(OperatorConventions.COMPARE_TO));
     }
 
     public static boolean isConstructorDescriptor(@NotNull CallableDescriptor descriptor) {
         return (descriptor instanceof ConstructorDescriptor);
-    }
-
-    @NotNull
-    public static FunctionDescriptor getFunctionByName(@NotNull JetScope scope,
-                                                       @NotNull String name) {
-        Set<FunctionDescriptor> functionDescriptors = scope.getFunctions(name);
-        assert functionDescriptors.size() == 1 :
-            "In scope " + scope + " supposed to be exactly one " + name + " function.\n" +
-            "Found: " + functionDescriptors.size();
-        //noinspection LoopStatementThatDoesntLoop
-        for (FunctionDescriptor descriptor : functionDescriptors) {
-            return descriptor;
-        }
-        throw new AssertionError("In scope " + scope
-                                 + " supposed to be exactly one " + name + " function.");
-    }
-
-    //TODO: some strange stuff happening to this method
-    //TODO: inspect
-    @NotNull
-    public static PropertyDescriptor getPropertyByName(@NotNull JetScope scope,
-                                                       @NotNull String name) {
-        Set<VariableDescriptor> variables = scope.getProperties(name);
-        assert variables.size() == 1 : "Actual size: " + variables.size();
-        VariableDescriptor variable = variables.iterator().next();
-        PropertyDescriptor descriptor = (PropertyDescriptor)variable;
-        assert descriptor != null : "Must have a descriptor.";
-        return descriptor;
     }
 
     @Nullable
@@ -99,44 +70,9 @@ public final class JsDescriptorUtils {
         return null;
     }
 
-    @NotNull
-    public static List<ClassDescriptor> getSuperclassDescriptors(@NotNull ClassDescriptor classDescriptor) {
-        Collection<? extends JetType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
-        List<ClassDescriptor> superClassDescriptors = new ArrayList<ClassDescriptor>();
-        for (JetType type : superclassTypes) {
-            ClassDescriptor result = getClassDescriptorForType(type);
-            if (isNotAny(result)) {
-                superClassDescriptors.add(result);
-            }
-        }
-        return superClassDescriptors;
-    }
-
     @Nullable
     public static ClassDescriptor getSuperclass(@NotNull ClassDescriptor classDescriptor) {
         return findAncestorClass(getSuperclassDescriptors(classDescriptor));
-    }
-
-    @NotNull
-    public static ClassDescriptor getClassDescriptorForType(@NotNull JetType type) {
-        DeclarationDescriptor superClassDescriptor =
-            type.getConstructor().getDeclarationDescriptor();
-        assert superClassDescriptor instanceof ClassDescriptor
-            : "Superclass descriptor of a type should be of type ClassDescriptor";
-        return (ClassDescriptor)superClassDescriptor;
-    }
-
-    @NotNull
-    public static VariableDescriptor getVariableDescriptorForVariableAsFunction
-        (@NotNull VariableAsFunctionDescriptor descriptor) {
-        VariableDescriptor functionVariable = descriptor.getVariableDescriptor();
-        assert functionVariable != null;
-        return functionVariable;
-    }
-
-
-    public static boolean isVariableAsFunction(@Nullable DeclarationDescriptor referencedDescriptor) {
-        return referencedDescriptor instanceof VariableAsFunctionDescriptor;
     }
 
     @NotNull
@@ -146,18 +82,8 @@ public final class JsDescriptorUtils {
         return containing;
     }
 
-    public static boolean isExtensionFunction(@NotNull CallableDescriptor functionDescriptor) {
+    public static boolean isExtension(@NotNull CallableDescriptor functionDescriptor) {
         return (functionDescriptor.getReceiverParameter().exists());
-    }
-
-    @NotNull
-    public static String getNameForNamespace(@NotNull NamespaceDescriptor descriptor) {
-        if (descriptor.getContainingDeclaration() instanceof ModuleDescriptor) {
-            return Namer.getRootNamespaceName();
-        }
-        else {
-            return descriptor.getName();
-        }
     }
 
     //TODO: why callable descriptor
@@ -172,9 +98,9 @@ public final class JsDescriptorUtils {
 
     @NotNull
     public static DeclarationDescriptor getDeclarationDescriptorForReceiver
-        (@NotNull ReceiverDescriptor receiverParameter) {
+            (@NotNull ReceiverDescriptor receiverParameter) {
         DeclarationDescriptor declarationDescriptor =
-            receiverParameter.getType().getConstructor().getDeclarationDescriptor();
+                receiverParameter.getType().getConstructor().getDeclarationDescriptor();
         //TODO: WHY assert?
         assert declarationDescriptor != null;
         return declarationDescriptor.getOriginal();
@@ -194,31 +120,34 @@ public final class JsDescriptorUtils {
     public static ClassDescriptor getContainingClass(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor containing = descriptor.getContainingDeclaration();
         while (containing != null) {
-            if (containing instanceof ClassDescriptor) {
-                return (ClassDescriptor)containing;
+            if (containing instanceof ClassDescriptor && !isClassObject(containing)) {
+                return (ClassDescriptor) containing;
             }
             containing = containing.getContainingDeclaration();
         }
         return null;
     }
 
-    @NotNull
-    public static List<ClassDescriptor> getAllClassesDefinedInNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        List<ClassDescriptor> classDescriptors = Lists.newArrayList();
-        for (DeclarationDescriptor descriptor : getContainedDescriptorsWhichAreNotPredefined(namespaceDescriptor)) {
-            if (descriptor instanceof ClassDescriptor) {
-                classDescriptors.add((ClassDescriptor)descriptor);
-            }
+    @Nullable
+    public static NamespaceDescriptor getContainingNamespace(@NotNull DeclarationDescriptor descriptor) {
+        return DescriptorUtils.getParentOfType(descriptor, NamespaceDescriptor.class);
+    }
+
+    public static boolean isStandardDeclaration(@NotNull DeclarationDescriptor descriptor) {
+        NamespaceDescriptor namespace = getContainingNamespace(descriptor);
+        if (namespace == null) {
+            return false;
         }
-        return classDescriptors;
+        return namespace.equals(JetStandardLibrary.getInstance().getLibraryScope().getContainingDeclaration());
     }
 
     @NotNull
-    public static List<NamespaceDescriptor> getNestedNamespaces(@NotNull NamespaceDescriptor namespaceDescriptor) {
+    public static List<NamespaceDescriptor> getNestedNamespaces(@NotNull NamespaceDescriptor namespaceDescriptor,
+            @NotNull BindingContext context) {
         List<NamespaceDescriptor> result = Lists.newArrayList();
-        for (DeclarationDescriptor descriptor : getContainedDescriptorsWhichAreNotPredefined(namespaceDescriptor)) {
+        for (DeclarationDescriptor descriptor : getContainedDescriptorsWhichAreNotPredefined(namespaceDescriptor, context)) {
             if (descriptor instanceof NamespaceDescriptor) {
-                result.add((NamespaceDescriptor)descriptor);
+                result.add((NamespaceDescriptor) descriptor);
             }
         }
         return result;
@@ -237,10 +166,22 @@ public final class JsDescriptorUtils {
     }
 
     @NotNull
-    public static List<DeclarationDescriptor> getContainedDescriptorsWhichAreNotPredefined(@NotNull NamespaceDescriptor namespace) {
+    public static List<DeclarationDescriptor> getContainedDescriptorsWhichAreNotPredefined(@NotNull NamespaceDescriptor namespace,
+            @NotNull BindingContext context) {
         List<DeclarationDescriptor> result = Lists.newArrayList();
         for (DeclarationDescriptor descriptor : namespace.getMemberScope().getAllDescriptors()) {
             if (!AnnotationsUtils.isPredefinedObject(descriptor)) {
+                // namespace may be defined in multiple files
+                if (!(descriptor instanceof NamespaceDescriptor)) {
+                    PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(context, descriptor);
+                    if (psiElement != null) {
+                        PsiFile file = psiElement.getContainingFile();
+                        if (file.getUserData(LibrarySourcesConfig.EXTERNAL_MODULE_NAME) != null) {
+                            continue;
+                        }
+                    }
+                }
+
                 result.add(descriptor);
             }
         }
@@ -248,11 +189,11 @@ public final class JsDescriptorUtils {
     }
 
     //TODO: at the moment this check is very ineffective
-    public static boolean isNamespaceEmpty(@NotNull NamespaceDescriptor namespace) {
-        List<DeclarationDescriptor> containedDescriptors = getContainedDescriptorsWhichAreNotPredefined(namespace);
+    public static boolean isNamespaceEmpty(@NotNull NamespaceDescriptor namespace, @NotNull BindingContext context) {
+        List<DeclarationDescriptor> containedDescriptors = getContainedDescriptorsWhichAreNotPredefined(namespace, context);
         for (DeclarationDescriptor descriptor : containedDescriptors) {
             if (descriptor instanceof NamespaceDescriptor) {
-                if (!isNamespaceEmpty((NamespaceDescriptor)descriptor)) {
+                if (!isNamespaceEmpty((NamespaceDescriptor) descriptor, context)) {
                     return false;
                 }
             }
@@ -270,7 +211,8 @@ public final class JsDescriptorUtils {
         while (!(current.getContainingDeclaration() instanceof ModuleDescriptor)) {
             result.add(current);
             if (current.getContainingDeclaration() instanceof NamespaceDescriptor) {
-                current = (NamespaceDescriptor)current.getContainingDeclaration();
+                current = (NamespaceDescriptor) current.getContainingDeclaration();
+                //noinspection ConstantConditions
                 assert current != null;
             }
             else {
@@ -280,16 +222,13 @@ public final class JsDescriptorUtils {
         return result;
     }
 
-    @Nullable
-    public static ClassDescriptor getClassDescriptorForMethod(@NotNull SimpleFunctionDescriptor functionDescriptor) {
-        if (!functionDescriptor.getExpectedThisObject().exists()) {
-            return null;
-        }
-        ClassifierDescriptor descriptor =
-            functionDescriptor.getExpectedThisObject().getType().getConstructor().getDeclarationDescriptor();
-        if (descriptor instanceof ClassDescriptor) {
-            return (ClassDescriptor)descriptor.getOriginal();
-        }
-        return null;
+    private static boolean isDefaultAccessor(@Nullable PropertyAccessorDescriptor accessorDescriptor) {
+        return accessorDescriptor == null || accessorDescriptor.isDefault();
+    }
+
+    public static boolean isAsPrivate(@NotNull PropertyDescriptor propertyDescriptor) {
+        return propertyDescriptor.getReceiverParameter().exists() ||
+               !isDefaultAccessor(propertyDescriptor.getGetter()) ||
+               !isDefaultAccessor(propertyDescriptor.getSetter());
     }
 }

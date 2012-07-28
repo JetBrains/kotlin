@@ -60,7 +60,7 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
     }
 
     public ByteIterator step(int step) {
-        if(step < 0)
+        if (step < 0)
             return new MyIterator(getEnd(), -count, -step);
         else
             return new MyIterator(start, count, step);
@@ -89,7 +89,7 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
         public MyIterator(byte startValue, int count, int step) {
             cur = startValue;
             this.step = step;
-            if(count < 0) {
+            if (count < 0) {
                 reversed = true;
                 count = -count;
                 startValue += count;
@@ -108,7 +108,7 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
         @Override
         public byte nextByte() {
             count -= step;
-            if(reversed) {
+            if (reversed) {
                 cur -= step;
                 return (byte) (cur + step);
             }

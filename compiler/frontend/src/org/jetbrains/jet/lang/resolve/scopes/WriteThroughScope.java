@@ -22,6 +22,8 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.name.LabelName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
@@ -34,14 +36,15 @@ public class WriteThroughScope extends WritableScopeWithImports {
     private final WritableScope writableWorker;
     private Collection<DeclarationDescriptor> allDescriptors;
 
-    public WriteThroughScope(@NotNull JetScope outerScope, @NotNull WritableScope scope, @NotNull RedeclarationHandler redeclarationHandler) {
-        super(outerScope, redeclarationHandler);
+    public WriteThroughScope(@NotNull JetScope outerScope, @NotNull WritableScope scope,
+            @NotNull RedeclarationHandler redeclarationHandler, @NotNull String debugName) {
+        super(outerScope, redeclarationHandler, debugName);
         this.writableWorker = scope;
     }
 
     @Override
     @Nullable
-    public PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName) {
+    public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
         checkMayRead();
 
         return writableWorker.getPropertyByFieldReference(fieldName);
@@ -49,7 +52,7 @@ public class WriteThroughScope extends WritableScopeWithImports {
 
     @Override
     @NotNull
-    public Collection<DeclarationDescriptor> getDeclarationsByLabel(String labelName) {
+    public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
         checkMayRead();
 
         return writableWorker.getDeclarationsByLabel(labelName);
@@ -73,7 +76,7 @@ public class WriteThroughScope extends WritableScopeWithImports {
 
     @Override
     @NotNull
-    public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+    public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
         checkMayRead();
 
         Set<FunctionDescriptor> result = Sets.newLinkedHashSet();
@@ -89,7 +92,7 @@ public class WriteThroughScope extends WritableScopeWithImports {
 
     @Override
     @NotNull
-    public Set<VariableDescriptor> getProperties(@NotNull String name) {
+    public Set<VariableDescriptor> getProperties(@NotNull Name name) {
         checkMayRead();
 
         Set<VariableDescriptor> properties = Sets.newLinkedHashSet();
@@ -101,7 +104,7 @@ public class WriteThroughScope extends WritableScopeWithImports {
 
     @Override
     @Nullable
-    public VariableDescriptor getLocalVariable(@NotNull String name) {
+    public VariableDescriptor getLocalVariable(@NotNull Name name) {
         checkMayRead();
 
         VariableDescriptor variable = writableWorker.getLocalVariable(name);
@@ -115,7 +118,7 @@ public class WriteThroughScope extends WritableScopeWithImports {
 
     @Override
     @Nullable
-    public NamespaceDescriptor getNamespace(@NotNull String name) {
+    public NamespaceDescriptor getNamespace(@NotNull Name name) {
         checkMayRead();
 
         NamespaceDescriptor namespace = writableWorker.getNamespace(name);
@@ -129,7 +132,7 @@ public class WriteThroughScope extends WritableScopeWithImports {
 
     @Override
     @Nullable
-    public ClassifierDescriptor getClassifier(@NotNull String name) {
+    public ClassifierDescriptor getClassifier(@NotNull Name name) {
         checkMayRead();
 
         ClassifierDescriptor classifier = writableWorker.getClassifier(name);
@@ -142,7 +145,7 @@ public class WriteThroughScope extends WritableScopeWithImports {
     }
 
     @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull String name) {
+    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
         checkMayRead();
 
         ClassDescriptor objectDescriptor = writableWorker.getObjectDescriptor(name);
@@ -216,28 +219,28 @@ public class WriteThroughScope extends WritableScopeWithImports {
     }
 
     @Override
-    public void addClassifierAlias(@NotNull String name, @NotNull ClassifierDescriptor classifierDescriptor) {
+    public void addClassifierAlias(@NotNull Name name, @NotNull ClassifierDescriptor classifierDescriptor) {
         checkMayWrite();
 
         writableWorker.addClassifierAlias(name, classifierDescriptor);
     }
 
     @Override
-    public void addNamespaceAlias(@NotNull String name, @NotNull NamespaceDescriptor namespaceDescriptor) {
+    public void addNamespaceAlias(@NotNull Name name, @NotNull NamespaceDescriptor namespaceDescriptor) {
         checkMayWrite();
 
         writableWorker.addNamespaceAlias(name, namespaceDescriptor);
     }
 
     @Override
-    public void addVariableAlias(@NotNull String name, @NotNull VariableDescriptor variableDescriptor) {
+    public void addVariableAlias(@NotNull Name name, @NotNull VariableDescriptor variableDescriptor) {
         checkMayWrite();
         
         writableWorker.addVariableAlias(name, variableDescriptor);
     }
 
     @Override
-    public void addFunctionAlias(@NotNull String name, @NotNull FunctionDescriptor functionDescriptor) {
+    public void addFunctionAlias(@NotNull Name name, @NotNull FunctionDescriptor functionDescriptor) {
         checkMayWrite();
 
         writableWorker.addFunctionAlias(name, functionDescriptor);
@@ -252,7 +255,7 @@ public class WriteThroughScope extends WritableScopeWithImports {
 
     @Override
     @Nullable
-    public NamespaceDescriptor getDeclaredNamespace(@NotNull String name) {
+    public NamespaceDescriptor getDeclaredNamespace(@NotNull Name name) {
         checkMayRead();
 
         return writableWorker.getDeclaredNamespace(name);
@@ -260,7 +263,7 @@ public class WriteThroughScope extends WritableScopeWithImports {
 
     @NotNull
     @Override
-    public Multimap<String, DeclarationDescriptor> getDeclaredDescriptorsAccessibleBySimpleName() {
+    public Multimap<Name, DeclarationDescriptor> getDeclaredDescriptorsAccessibleBySimpleName() {
         return writableWorker.getDeclaredDescriptorsAccessibleBySimpleName();
     }
 

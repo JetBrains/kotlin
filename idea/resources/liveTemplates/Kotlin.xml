@@ -42,7 +42,7 @@
     <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.iter"
               name="iter" toReformat="true" toShortenFQNames="true"
               value="for ($VAR$ in $ITERABLE$) {&#10;$END$&#10;}">
-        <variable alwaysStopAt="true" defaultValue="" expression="kotlinIterableVariable()" name="ITERABLE" />
+        <variable alwaysStopAt="true" defaultValue="&quot;iterable&quot;" expression="kotlinIterableVariable()" name="ITERABLE" />
         <variable alwaysStopAt="true" defaultValue="&quot;i&quot;" expression="kotlinSuggestVariableName()" name="VAR" />
         <context>
             <option name="KOTLIN_STATEMENT" value="true" />

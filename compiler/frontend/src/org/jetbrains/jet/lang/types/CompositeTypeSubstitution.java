@@ -21,16 +21,16 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author abreslav
  */
-public class CompositeTypeSubstitution implements TypeSubstitutor.TypeSubstitution {
-    private final TypeSubstitutor.TypeSubstitution[] inner;
+public class CompositeTypeSubstitution implements TypeSubstitution {
+    private final TypeSubstitution[] inner;
 
-    public CompositeTypeSubstitution(@NotNull TypeSubstitutor.TypeSubstitution... inner) {
+    public CompositeTypeSubstitution(@NotNull TypeSubstitution... inner) {
         this.inner = inner;
     }
 
     @Override
     public TypeProjection get(TypeConstructor key) {
-        for (TypeSubstitutor.TypeSubstitution substitution : inner) {
+        for (TypeSubstitution substitution : inner) {
             TypeProjection value = substitution.get(key);
             if (value != null) return value;
         }
@@ -39,7 +39,7 @@ public class CompositeTypeSubstitution implements TypeSubstitutor.TypeSubstituti
 
     @Override
     public boolean isEmpty() {
-        for (TypeSubstitutor.TypeSubstitution substitution : inner) {
+        for (TypeSubstitution substitution : inner) {
             if (!substitution.isEmpty()) return false;
         }
         return true;
@@ -48,7 +48,7 @@ public class CompositeTypeSubstitution implements TypeSubstitutor.TypeSubstituti
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        for (TypeSubstitutor.TypeSubstitution substitution : inner) {
+        for (TypeSubstitution substitution : inner) {
             builder.append(substitution).append(" * ");
         }
         return builder.toString();

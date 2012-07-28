@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.diagnostics;
 /**
  * @author abreslav
  */
-public class AbstractDiagnosticFactory {
+public abstract class AbstractDiagnosticFactory {
 
     private String name = null;
     

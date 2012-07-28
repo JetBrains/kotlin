@@ -18,20 +18,21 @@ package org.jetbrains.jet.lang.psi.stubs.elements;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
-import com.intellij.psi.impl.java.stubs.StubPsiFactory;
-import com.intellij.psi.stubs.ILightStubElementType;
-import com.intellij.psi.stubs.PsiFileStub;
+import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetBlockExpression;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
+import org.jetbrains.jet.lang.psi.JetWithExpressionInitializer;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 /**
  * @author Nikolay Krasko
  */
-public abstract class JetStubElementType<StubT extends StubElement, PsiT extends PsiElement>
-        extends ILightStubElementType<StubT, PsiT> {
+public abstract class JetStubElementType<StubT extends StubElement, PsiT extends PsiElement> extends IStubElementType<StubT, PsiT> {
 
     public JetStubElementType(@NotNull @NonNls String debugName) {
         super(debugName, JetLanguage.INSTANCE);
@@ -39,21 +40,36 @@ public abstract class JetStubElementType<StubT extends StubElement, PsiT extends
 
     public abstract PsiT createPsiFromAst(@NotNull ASTNode node);
 
-    protected StubPsiFactory getPsiFactory(StubT stub) {
-        return getFileStub(stub).getPsiFactory();
-    }
-
-    private PsiJavaFileStub getFileStub(StubT stub) {
-        StubElement parent = stub;
-        while (!(parent instanceof PsiFileStub)) {
-            parent = parent.getParentStub();
-        }
-
-        return (PsiJavaFileStub)parent;
-    }
-
     @Override
     public String getExternalId() {
         return "jet." + toString();
+    }
+
+    @Override
+    public boolean shouldCreateStub(ASTNode node) {
+        PsiElement psi = node.getPsi();
+
+        // Do not create stubs inside function literals
+        if (PsiTreeUtil.getParentOfType(psi, JetFunctionLiteral.class) != null) {
+            return false;
+        }
+
+        // Don't create stubs if declaration is inside function or property accessor with block
+        JetBlockExpression blockExpression = PsiTreeUtil.getParentOfType(psi, JetBlockExpression.class);
+        if (blockExpression != null) {
+            return false;
+        }
+
+        // Don't create stubs if declaration is inside other declaration with expression initializer
+        @SuppressWarnings("unchecked") JetWithExpressionInitializer withInitializer =
+                PsiTreeUtil.getParentOfType(psi, JetWithExpressionInitializer.class, true, JetBlockExpression.class);
+        if (withInitializer != null) {
+            JetExpression initializer = withInitializer.getInitializer();
+            if (PsiTreeUtil.isAncestor(initializer, psi, true)) {
+                return false;
+            }
+        }
+
+        return super.shouldCreateStub(node);
     }
 }

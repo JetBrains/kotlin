@@ -29,14 +29,28 @@ import org.jetbrains.jet.plugin.JetBundle;
 
 /**
  * @author svtk
+ * @author slukjanov aka Frostman
  */
 public class ReplaceCallFix implements IntentionAction {
     private final boolean toSafe;
 
-    public ReplaceCallFix(boolean toSafe) {
-        this.toSafe = toSafe;
+    private ReplaceCallFix(boolean safe) {
+        this.toSafe = safe;
     }
 
+    /**
+     * @return quickfix for replacing dot call with toSafe (?.) call
+     */
+    public static ReplaceCallFix toSafeCall() {
+        return new ReplaceCallFix(true);
+    }
+
+    /**
+     * @return quickfix for replacing unnecessary toSafe (?.) call with dot call
+     */
+    public static ReplaceCallFix toDotCallFromSafeCall() {
+        return new ReplaceCallFix(false);
+    }
 
     @NotNull
     @Override
@@ -47,7 +61,7 @@ public class ReplaceCallFix implements IntentionAction {
     @NotNull
     @Override
     public String getFamilyName() {
-        return toSafe ? JetBundle.message("replace.with.safe.call") : JetBundle.message("replace.with.dot.call");
+        return getText();
     }
 
     @Override
@@ -56,11 +70,6 @@ public class ReplaceCallFix implements IntentionAction {
             return getCallExpression(editor, (JetFile) file) != null;
         }
         return false;
-    }
-
-    private JetQualifiedExpression getCallExpression(@NotNull Editor editor, @NotNull JetFile file) {
-        final PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
-        return PsiTreeUtil.getParentOfType(elementAtCaret, toSafe ? JetDotQualifiedExpression.class : JetSafeQualifiedExpression.class);
     }
 
     @Override
@@ -80,5 +89,14 @@ public class ReplaceCallFix implements IntentionAction {
     @Override
     public boolean startInWriteAction() {
         return true;
+    }
+
+    private JetQualifiedExpression getCallExpression(@NotNull Editor editor, @NotNull JetFile file) {
+        final PsiElement elementAtCaret = getElementAtCaret(editor, file);
+        return PsiTreeUtil.getParentOfType(elementAtCaret, toSafe ? JetDotQualifiedExpression.class : JetSafeQualifiedExpression.class);
+    }
+
+    private static PsiElement getElementAtCaret(Editor editor, PsiFile file) {
+        return file.findElementAt(editor.getCaretModel().getOffset());
     }
 }

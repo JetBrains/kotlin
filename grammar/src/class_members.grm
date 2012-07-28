@@ -4,12 +4,6 @@ h3. Class members
 
 /*
 class Example(a : Foo, i : Int) : Bar(i), Some {
-  // constrtuctors:
-  public this(a : Foo) : this(a, 0)
-
-  public this(a : Foo) : Bar(5), Some(a) {
-    // code
-  }
 
   // functions
   abstract fun foo(a : Bar)
@@ -55,11 +49,6 @@ classObject
 /**
 bq. See [Class objects|Classes and Inheritance#Class objects]
 */
-
-[undocumented]
-constructor
-  : modifiers "this" valueParameters (":" initializer{","}) block?
-  ;
 
 valueParameters
   : "(" functionParameter{","}? ")" // default values

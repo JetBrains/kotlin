@@ -24,7 +24,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author abreslav
  */
-public class JetTuplePatternEntry extends JetElement {
+public class JetTuplePatternEntry extends JetElementImpl {
     public JetTuplePatternEntry(@NotNull ASTNode node) {
         super(node);
     }

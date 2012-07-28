@@ -96,7 +96,7 @@ public class JetSignatureReader {
                 pos = end + 1;
 
                 c = signature.charAt(pos);
-                if (c == 'L' || c == '[' || c == 'T' || c == '?') {
+                if (c == 'L' || c == 'M' || c == '[' || c == 'T' || c == '?') {
                     pos = parseType(signature, pos, parameterVisitor.visitClassBound());
                 }
 
@@ -181,7 +181,7 @@ public class JetSignatureReader {
                 start = pos;
                 visited = false;
                 inner = false;
-                for (;;) {
+                while (true) {
                     switch (c = signature.charAt(pos++)) {
                         case '.':
                         case ';':
@@ -212,7 +212,7 @@ public class JetSignatureReader {
                                 v.visitClassType(name, nullable, forceReal);
                             }
                             visited = true;
-                            top: for (;;) {
+                            top: while (true) {
                                 switch (c = signature.charAt(pos)) {
                                     case '>':
                                         break top;

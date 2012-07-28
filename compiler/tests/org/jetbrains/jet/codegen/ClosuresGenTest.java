@@ -16,10 +16,19 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.ConfigurationKind;
+
 /**
  * @author max
  */
 public class ClosuresGenTest extends CodegenTestCase {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    }
+
     public void testSimplestClosure() throws Exception {
         blackBoxFile("classes/simplestClosure.jet");
 //        System.out.println(generateToText());
@@ -52,5 +61,9 @@ public class ClosuresGenTest extends CodegenTestCase {
 
     public void testEnclosingThis() throws Exception {
         blackBoxFile("classes/enclosingThis.jet");
+    }
+
+    public void testKt2151() {
+        blackBoxFile("regressions/kt2151.kt");
     }
 }

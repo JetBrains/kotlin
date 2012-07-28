@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetAnnotation extends JetElement {
+public class JetAnnotation extends JetElementImpl {
     public JetAnnotation(@NotNull ASTNode node) {
         super(node);
     }

@@ -1,4 +1,4 @@
 package test;
 
-final class ClassWithTypeParameter<P, Q extends P> {
+public final class ClassWithTypePP<P, Q extends P> {
 }

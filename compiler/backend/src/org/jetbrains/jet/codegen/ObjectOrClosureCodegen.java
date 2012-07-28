@@ -16,12 +16,14 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.asm4.Type;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -37,7 +39,7 @@ public class ObjectOrClosureCodegen {
     protected final ExpressionCodegen exprContext;
     protected final CodegenContext context;
     protected ClassBuilder cv = null;
-    public String name = null;
+    public JvmClassName name = null;
     protected Map<DeclarationDescriptor, EnclosedValueDescriptor> closure = new LinkedHashMap<DeclarationDescriptor, EnclosedValueDescriptor>();
     public JetDelegatorToSuperCall superCall;
 
@@ -47,7 +49,7 @@ public class ObjectOrClosureCodegen {
         this.state = state;
     }
 
-    public StackValue lookupInContext(DeclarationDescriptor d, StackValue result) {
+    public StackValue lookupInContext(DeclarationDescriptor d, @Nullable StackValue result) {
         EnclosedValueDescriptor answer = closure.get(d);
         if (answer != null) {
             StackValue innerValue = answer.getInnerValue();
@@ -66,7 +68,9 @@ public class ObjectOrClosureCodegen {
 
             StackValue outerValue = StackValue.local(idx, type);
             final String fieldName = "$" + vd.getName();
-            StackValue innerValue = sharedVarType != null ? StackValue.fieldForSharedVar(localType, name, fieldName) : StackValue.field(type, name, fieldName, false);
+            StackValue innerValue = sharedVarType != null
+                    ? StackValue.fieldForSharedVar(localType, name, fieldName)
+                    : StackValue.field(type, name, fieldName, false);
 
             cv.newField(null, Opcodes.ACC_PUBLIC, fieldName, type.getDescriptor(), null, null);
 
@@ -76,15 +80,15 @@ public class ObjectOrClosureCodegen {
             return innerValue;
         }
 
-        if(CodegenUtil.isNamedFun(d, state.getBindingContext()) && d.getContainingDeclaration() instanceof FunctionDescriptor) {
+        if (CodegenUtil.isNamedFun(d, state.getBindingContext()) && d.getContainingDeclaration() instanceof FunctionDescriptor) {
             FunctionDescriptor vd = (FunctionDescriptor) d;
 
             final int idx = exprContext.lookupLocal(vd);
             if (idx < 0) return null;
 
             JetElement expression = (JetElement) BindingContextUtils.callableDescriptorToDeclaration(state.getBindingContext(), vd);
-            String cn = state.getInjector().getJetTypeMapper().getClosureAnnotator().classNameForAnonymousClass(expression);
-            Type localType = Type.getObjectType(cn);
+            JvmClassName cn = state.getInjector().getJetTypeMapper().getClosureAnnotator().classNameForAnonymousClass(expression);
+            Type localType = cn.getAsmType();
 
             StackValue outerValue = StackValue.local(idx, localType);
             final String fieldName = "$" + vd.getName();
@@ -98,16 +102,16 @@ public class ObjectOrClosureCodegen {
             return innerValue;
         }
 
-        if(d instanceof FunctionDescriptor) {
+        if (d instanceof FunctionDescriptor) {
             // we are looking for receiver
             FunctionDescriptor fd = (FunctionDescriptor) d;
 
             // we generate method
-            assert context instanceof CodegenContext.ReceiverContext;
+            assert context instanceof CodegenContexts.ReceiverContext;
 
-            CodegenContext.ReceiverContext fcontext = (CodegenContext.ReceiverContext) context;
+            CodegenContexts.ReceiverContext fcontext = (CodegenContexts.ReceiverContext) context;
 
-            if(fcontext.getReceiverDescriptor() != fd)
+            if (fcontext.getReceiverDescriptor() != fd)
                 return null;
 
             Type type = state.getInjector().getJetTypeMapper().mapType(fcontext.getReceiverDescriptor().getReceiverParameter().getType(), MapTypeMode.VALUE);

@@ -17,14 +17,17 @@
 package org.jetbrains.jet.plugin;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.compiler.CompilerManager;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
@@ -38,12 +41,6 @@ import java.util.LinkedList;
  */
 public class JetPluginUtil {
     @NotNull
-    public static FqName computeTypeFullName(@NotNull JetType type) {
-        ClassDescriptor clazz = (ClassDescriptor) type.getConstructor().getDeclarationDescriptor();
-        return DescriptorUtils.getFQName(clazz).toSafe();
-    }
-
-    @NotNull
     private static LinkedList<String> computeTypeFullNameList(JetType type) {
         if (type instanceof DeferredType) {
             type = ((DeferredType)type).getActualType();
@@ -52,11 +49,11 @@ public class JetPluginUtil {
 
         LinkedList<String> fullName = Lists.newLinkedList();
         while (declarationDescriptor != null && !(declarationDescriptor instanceof ModuleDescriptor)) {
-            fullName.addFirst(declarationDescriptor.getName());
+            fullName.addFirst(declarationDescriptor.getName().getName());
             declarationDescriptor = declarationDescriptor.getContainingDeclaration();
         }
         assert fullName.size() > 0;
-        if (JavaDescriptorResolver.JAVA_ROOT.equals(fullName.getFirst())) {
+        if (JavaDescriptorResolver.JAVA_ROOT.getName().equals(fullName.getFirst())) {
             fullName.removeFirst();
         }
         return fullName;
@@ -85,5 +82,12 @@ public class JetPluginUtil {
             assert declaration != null;
         }
         return libraryScope == ((NamespaceDescriptor) declaration).getMemberScope();
+    }
+
+    @Nullable
+    public static Module getModuleForKotlinFile(@NotNull VirtualFile file, @NotNull Project project) {
+        if (file.getFileType() != JetFileType.INSTANCE) return null;
+        if (CompilerManager.getInstance(project).isExcludedFromCompilation(file)) return null;
+        return ModuleUtil.findModuleForFile(file, project);
     }
 }

@@ -46,34 +46,41 @@ public class JetParserDefinition implements ParserDefinition {
         }*/
     }
 
+    @Override
     @NotNull
     public Lexer createLexer(Project project) {
         return new JetLexer();
     }
 
+    @Override
     public PsiParser createParser(Project project) {
         return new JetParser();
     }
 
+    @Override
     public IFileElementType getFileNodeType() {
         return JetStubElementTypes.FILE;
     }
 
+    @Override
     @NotNull
     public TokenSet getWhitespaceTokens() {
         return JetTokens.WHITESPACES;
     }
 
+    @Override
     @NotNull
     public TokenSet getCommentTokens() {
         return JetTokens.COMMENTS;
     }
 
+    @Override
     @NotNull
     public TokenSet getStringLiteralElements() {
         return JetTokens.STRINGS;
     }
 
+    @Override
     @NotNull
     public PsiElement createElement(ASTNode astNode) {
         if (astNode.getElementType() instanceof JetStubElementType) {
@@ -83,10 +90,12 @@ public class JetParserDefinition implements ParserDefinition {
         return ((JetNodeType) astNode.getElementType()).createPsi(astNode);
     }
 
+    @Override
     public PsiFile createFile(FileViewProvider fileViewProvider) {
         return new JetFile(fileViewProvider);
     }
 
+    @Override
     public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode astNode, ASTNode astNode1) {
         return SpaceRequirements.MAY;
     }

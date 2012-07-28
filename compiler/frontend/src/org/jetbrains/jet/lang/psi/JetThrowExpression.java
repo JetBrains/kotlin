@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author max
  */
-public class JetThrowExpression extends JetExpression {
+public class JetThrowExpression extends JetExpressionImpl {
     public JetThrowExpression(@NotNull ASTNode node) {
         super(node);
     }

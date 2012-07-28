@@ -17,15 +17,21 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
+import java.util.BitSet;
 import java.util.Collections;
+import java.util.Collection;
+import java.util.Random;
 
 /**
  * @author abreslav
@@ -35,8 +41,14 @@ public class CodegenUtil {
     private CodegenUtil() {
     }
 
+    private static final Random RANDOM = new Random(55L);
+
     public static boolean isInterface(DeclarationDescriptor descriptor) {
-        return descriptor instanceof ClassDescriptor && ((ClassDescriptor)descriptor).getKind() == ClassKind.TRAIT;
+        if (descriptor instanceof ClassDescriptor) {
+            final ClassKind kind = ((ClassDescriptor) descriptor).getKind();
+            return kind == ClassKind.TRAIT || kind == ClassKind.ANNOTATION_CLASS;
+        }
+        return false;
     }
 
     public static boolean isInterface(JetType type) {
@@ -48,12 +60,12 @@ public class CodegenUtil {
         SimpleFunctionDescriptorImpl invokeDescriptor = new SimpleFunctionDescriptorImpl(
                 fd.getExpectedThisObject().exists() ? JetStandardClasses.getReceiverFunction(arity) : JetStandardClasses.getFunction(arity),
                 Collections.<AnnotationDescriptor>emptyList(),
-                "invoke",
+                Name.identifier("invoke"),
                 CallableMemberDescriptor.Kind.DECLARATION);
 
         invokeDescriptor.initialize(fd.getReceiverParameter().exists() ? fd.getReceiverParameter().getType() : null,
                                    fd.getExpectedThisObject(),
-                                   Collections.<TypeParameterDescriptor>emptyList(),
+                                   Collections.<TypeParameterDescriptorImpl>emptyList(),
                                    fd.getValueParameters(),
                                    fd.getReturnType(),
                                    Modality.FINAL,
@@ -68,12 +80,43 @@ public class CodegenUtil {
                 !(myClass.getParent() instanceof JetClassObject);
     }
 
-
-    public static boolean isNamedFun(DeclarationDescriptor fd, BindingContext bindingContext) {
+    public static boolean isLocalFun(DeclarationDescriptor fd, BindingContext bindingContext) {
         PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, fd);
-        if(psiElement instanceof JetNamedFunction) {
+        if (psiElement instanceof JetNamedFunction && psiElement.getParent() instanceof JetBlockExpression) {
             return true;
         }
         return false;
+    }
+
+
+    public static boolean isNamedFun(DeclarationDescriptor fd, BindingContext bindingContext) {
+        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, fd);
+        if (psiElement instanceof JetNamedFunction) {
+            return true;
+        }
+        return false;
+    }
+
+    public static String generateTmpVariableName(Collection<String> existingNames) {
+        String prefix = "tmp";
+        int i = RANDOM.nextInt(Integer.MAX_VALUE);
+        String name = prefix + i;
+        while (existingNames.contains(name)) {
+            i++;
+            name = prefix + i;
+        }
+        return name;
+    }
+
+
+    public static @NotNull BitSet getFlagsForVisibility(@NotNull Visibility visibility) {
+        BitSet flags = new BitSet();
+        if (visibility == Visibilities.INTERNAL) {
+            flags.set(JvmStdlibNames.FLAG_INTERNAL_BIT);
+        }
+        else if (visibility == Visibilities.PRIVATE) {
+            flags.set(JvmStdlibNames.FLAG_PRIVATE_BIT);
+        }
+        return flags;
     }
 }

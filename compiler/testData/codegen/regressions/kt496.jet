@@ -80,7 +80,7 @@ fun box() : String {
     if(test2()) return "test2 failed"
     if(test3() != 2) return "test3 failed"
     System.out?.println(test4())
-    if(test4() != 3) return "test4 failed"
+    if(test4() != 0) return "test4 failed"
     if(test5() != 11) return "test5 failed"
     if(test6() != 10) return "test6 failed"
 

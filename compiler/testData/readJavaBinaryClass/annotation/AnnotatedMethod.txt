@@ -1,9 +1,6 @@
 namespace test
 
-open class test.HasAnnotatedMethod : jet.Any {
-    final /*constructor*/ fun <init>(): test.HasAnnotatedMethod
-    open test.Aaa() fun f(): jet.Tuple0
-}
-final annotation class test.Aaa : jet.Any {
-    final /*constructor*/ fun <init>(): test.Aaa
+public open class test.AnnotatedMethod : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.AnnotatedMethod
+    public open java.lang.Deprecated() fun f(): jet.Tuple0
 }

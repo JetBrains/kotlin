@@ -21,10 +21,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import javax.inject.Inject;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -34,6 +32,7 @@ import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -46,59 +45,49 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
  */
 public class DeclarationsChecker {
     @NotNull
-    private TopDownAnalysisContext context;
-    @NotNull
     private BindingTrace trace;
-
-
-    @Inject
-    public void setContext(@NotNull TopDownAnalysisContext context) {
-        this.context = context;
-    }
 
     @Inject
     public void setTrace(@NotNull BindingTrace trace) {
         this.trace = trace;
     }
 
-
-
-    public void process() {
-        Map<JetClass, MutableClassDescriptor> classes = context.getClasses();
+    public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
+        Map<JetClass, MutableClassDescriptor> classes = bodiesResolveContext.getClasses();
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
             JetClass aClass = entry.getKey();
             MutableClassDescriptor classDescriptor = entry.getValue();
-            if (!context.completeAnalysisNeeded(aClass)) continue;
+            if (!bodiesResolveContext.completeAnalysisNeeded(aClass)) continue;
 
             checkClass(aClass, classDescriptor);
             checkModifiers(aClass.getModifierList(), classDescriptor);
         }
 
-        Map<JetObjectDeclaration, MutableClassDescriptor> objects = context.getObjects();
+        Map<JetObjectDeclaration, MutableClassDescriptor> objects = bodiesResolveContext.getObjects();
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : objects.entrySet()) {
             JetObjectDeclaration objectDeclaration = entry.getKey();
             MutableClassDescriptor objectDescriptor = entry.getValue();
 
-            if (!context.completeAnalysisNeeded(objectDeclaration)) continue;
+            if (!bodiesResolveContext.completeAnalysisNeeded(objectDeclaration)) continue;
             checkObject(objectDeclaration, objectDescriptor);
         }
 
-        Map<JetNamedFunction, SimpleFunctionDescriptor> functions = context.getFunctions();
+        Map<JetNamedFunction, SimpleFunctionDescriptor> functions = bodiesResolveContext.getFunctions();
         for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : functions.entrySet()) {
             JetNamedFunction function = entry.getKey();
             SimpleFunctionDescriptor functionDescriptor = entry.getValue();
 
-            if (!context.completeAnalysisNeeded(function)) continue;
+            if (!bodiesResolveContext.completeAnalysisNeeded(function)) continue;
             checkFunction(function, functionDescriptor);
             checkModifiers(function.getModifierList(), functionDescriptor);
         }
 
-        Map<JetProperty, PropertyDescriptor> properties = context.getProperties();
+        Map<JetProperty, PropertyDescriptor> properties = bodiesResolveContext.getProperties();
         for (Map.Entry<JetProperty, PropertyDescriptor> entry : properties.entrySet()) {
             JetProperty property = entry.getKey();
             PropertyDescriptor propertyDescriptor = entry.getValue();
 
-            if (!context.completeAnalysisNeeded(property)) continue;
+            if (!bodiesResolveContext.completeAnalysisNeeded(property)) continue;
             checkProperty(property, propertyDescriptor);
             checkModifiers(property.getModifierList(), propertyDescriptor);
         }
@@ -132,8 +121,7 @@ public class DeclarationsChecker {
     }
 
     private void checkOpenMembers(MutableClassDescriptor classDescriptor) {
-        for (CallableMemberDescriptor memberDescriptor : classDescriptor.getCallableMembers()) {
-
+        for (CallableMemberDescriptor memberDescriptor : classDescriptor.getDeclaredCallableMembers()) {
             JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), memberDescriptor);
             if (member != null && classDescriptor.getModality() == Modality.FINAL && member.hasModifier(JetTokens.OPEN_KEYWORD)) {
                 trace.report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member));
@@ -181,7 +169,7 @@ public class DeclarationsChecker {
             if (!(classDescriptor.getModality() == Modality.ABSTRACT) && classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
                 JetClass classElement = (JetClass) BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
                 String name = property.getName();
-                trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, name != null ? name : "", classDescriptor, classElement));
+                trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, name != null ? name : "", classDescriptor));
                 return;
             }
             if (classDescriptor.getKind() == ClassKind.TRAIT) {
@@ -213,7 +201,13 @@ public class DeclarationsChecker {
         JetPropertyAccessor setter = property.getSetter();
         boolean hasAccessorImplementation = (getter != null && getter.getBodyExpression() != null) ||
                                             (setter != null && setter.getBodyExpression() != null);
-        if (propertyDescriptor.getModality() == Modality.ABSTRACT) return;
+
+        if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
+            if (property.getInitializer() == null && property.getPropertyTypeRef() == null) {
+                trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
+            }
+            return;
+        }
 
         boolean inTrait = classDescriptor != null && classDescriptor.getKind() == ClassKind.TRAIT;
         JetExpression initializer = property.getInitializer();
@@ -223,13 +217,19 @@ public class DeclarationsChecker {
             trace.report(BACKING_FIELD_IN_TRAIT.on(property));
         }
         if (initializer == null) {
+            boolean error = false;
             if (backingFieldRequired && !inTrait && !trace.getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor)) {
                 if (classDescriptor == null || hasAccessorImplementation) {
+                    error = true;
                     trace.report(MUST_BE_INITIALIZED.on(property));
                 }
                 else {
+                    error = true;
                     trace.report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property));
                 }
+            }
+            if (!error && property.getPropertyTypeRef() == null) {
+                trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
             }
             return;
         }
@@ -252,7 +252,7 @@ public class DeclarationsChecker {
             boolean inAbstractClass = classDescriptor.getModality() == Modality.ABSTRACT;
             if (hasAbstractModifier && !inAbstractClass && !inTrait && !inEnum) {
                 JetClass classElement = (JetClass) BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
-                trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.getName(), classDescriptor, classElement));
+                trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.getName().getName(), classDescriptor));
             }
             if (hasAbstractModifier && inTrait) {
                 trace.report(ABSTRACT_MODIFIER_IN_TRAIT.on(function));
@@ -318,8 +318,7 @@ public class DeclarationsChecker {
             }
         }
 
-        checkCompatibility(modifierList, Lists.newArrayList(JetTokens.PRIVATE_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PUBLIC_KEYWORD, JetTokens.INTERNAL_KEYWORD),
-                           Lists.<JetToken>newArrayList(JetTokens.PROTECTED_KEYWORD, JetTokens.INTERNAL_KEYWORD));
+        checkCompatibility(modifierList, Lists.newArrayList(JetTokens.PRIVATE_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PUBLIC_KEYWORD, JetTokens.INTERNAL_KEYWORD));
     }
 
     private void checkCompatibility(@Nullable JetModifierList modifierList, Collection<JetKeywordToken> availableModifiers, Collection<JetToken>... availableCombinations) {
@@ -378,7 +377,7 @@ public class DeclarationsChecker {
 
         DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration().getContainingDeclaration();
         assert declaration instanceof ClassDescriptor;
-        ClassDescriptor enumClass = (ClassDescriptor) declaration;
+        ClassDescriptorFromSource enumClass = (ClassDescriptorFromSource) declaration;
         assert enumClass.getKind() == ClassKind.ENUM_CLASS;
 
         List<JetDelegationSpecifier> delegationSpecifiers = aClass.getDelegationSpecifiers();

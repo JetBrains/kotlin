@@ -1,11 +1,11 @@
 package org.jetbrains.kotlin.doc.highlighter
 
-import com.intellij.psi.*
-import com.intellij.psi.tree.IElementType
-import com.intellij.psi.tree.TokenSet
 import java.util.HashMap
 import java.util.Map
 import kotlin.template.HtmlFormatter
+import org.jetbrains.jet.internal.com.intellij.psi.*
+import org.jetbrains.jet.internal.com.intellij.psi.tree.IElementType
+import org.jetbrains.jet.internal.com.intellij.psi.tree.TokenSet
 import org.jetbrains.jet.lexer.*
 
 fun main(args: Array<String>) {
@@ -53,7 +53,7 @@ class SyntaxHighligher() {
                 if (token is JetKeywordToken) {
                     style = "keyword"
                 } else if (token == JetTokens.IDENTIFIER) {
-                    val types = JetTokens.SOFT_KEYWORDS?.getTypes()
+                    val types = JetTokens.SOFT_KEYWORDS.getTypes()
                     if (types != null) {
                         for (softKeyword in types) {
                             if (softKeyword is JetKeywordToken) {

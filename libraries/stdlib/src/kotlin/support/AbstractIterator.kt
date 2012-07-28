@@ -2,11 +2,15 @@ package kotlin.support
 
 import java.util.NoSuchElementException
 
-enum class State {
-    Ready
-    NotReady
-    Done
-    Failed
+// TODO should not need this - its here for the JS stuff
+import java.lang.UnsupportedOperationException
+
+// not using an enum for now as JS generation doesn't support it
+object State {
+    val Ready = 0
+    val NotReady = 1
+    val Done = 2
+    val Failed = 3
 }
 
 /**
@@ -14,7 +18,7 @@ enum class State {
  * to implement the iterator, calling [[done()]] when the iteration is complete.
  */
 public abstract class AbstractIterator<T>: java.util.Iterator<T> {
-    private var state: State = State.NotReady
+    private var state = State.NotReady
     private var next: T? = null
 
     override fun hasNext(): Boolean {
@@ -108,7 +112,7 @@ class CompositeIterator<T>(vararg iterators: java.util.Iterator<T>): AbstractIte
             val iter = currentIter
             if (iter != null) {
                 if (iter.hasNext()) {
-                    setNext(iter.next())
+                    setNext(iter.next()!!)
                     return
                 } else {
                     currentIter = null

@@ -1,4 +1,4 @@
-var Int.v : Int
+var Int.v: Int
     get() {
         <caret>
     }

@@ -59,52 +59,37 @@
                     </execution>
                 </executions>
             </plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<phase>test</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>hello.namespace</mainClass>
+				</configuration>
+			</plugin>
         </plugins>
     </build>
 
     <repositories>
         <repository>
-            <id>jetbrains-release</id>
-            <url>http://repository.jetbrains.com/releases</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>jetbrains-snapshots</id>
-            <url>http://repository.jetbrains.com/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <id>jetbrains-all</id>
+            <url>http://repository.jetbrains.com/all</url>
         </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
-            <id>jetbrains-release</id>
-            <url>http://repository.jetbrains.com/releases</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>jetbrains-snapshots</id>
-            <url>http://repository.jetbrains.com/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <id>jetbrains-all</id>
+            <url>http://repository.jetbrains.com/all</url>
         </pluginRepository>
     </pluginRepositories>
+
 </project>

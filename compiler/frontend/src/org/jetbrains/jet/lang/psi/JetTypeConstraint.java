@@ -26,7 +26,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author max
  */
-public class JetTypeConstraint extends JetElement {
+public class JetTypeConstraint extends JetElementImpl {
     public JetTypeConstraint(@NotNull ASTNode node) {
         super(node);
     }

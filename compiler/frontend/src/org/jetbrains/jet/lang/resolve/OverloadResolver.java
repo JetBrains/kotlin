@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
@@ -25,12 +26,12 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Map;
-
-import static org.jetbrains.jet.lang.resolve.BindingContext.DELEGATED;
+import java.util.Set;
 
 /**
  * @author Stepan Koltsov
@@ -70,12 +71,12 @@ public class OverloadResolver {
         checkOverloadsInANamespace(inNamespaces);
     }
 
-    private static class Key extends Pair<String, String> {
-        Key(String namespace, String name) {
+    private static class Key extends Pair<String, Name> {
+        Key(String namespace, Name name) {
             super(namespace, name);
         }
         
-        Key(NamespaceDescriptor namespaceDescriptor, String name) {
+        Key(NamespaceDescriptor namespaceDescriptor, Name name) {
             this(DescriptorUtils.getFQName(namespaceDescriptor).getFqName(), name);
         }
 
@@ -83,7 +84,7 @@ public class OverloadResolver {
             return first;
         }
 
-        public String getFunctionName() {
+        public Name getFunctionName() {
             return second;
         }
     }
@@ -106,7 +107,7 @@ public class OverloadResolver {
                 ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
                 inClasses.put(classDescriptor, klass.getConstructors());
             }
-            else {
+            else if (!(containingDeclaration instanceof FunctionDescriptor)) {
                 throw new IllegalStateException();
             }
         }
@@ -142,7 +143,7 @@ public class OverloadResolver {
             checkOverloadsWithSameName(e.getKey().getFunctionName(), e.getValue(), e.getKey().getNamespace());
         }
     }
-    
+
     private String nameForErrorMessage(ClassDescriptor classDescriptor, JetClassOrObject jetClass) {
         String name = jetClass.getName();
         if (name != null) {
@@ -150,7 +151,7 @@ public class OverloadResolver {
         }
         if (jetClass instanceof JetObjectDeclaration) {
             // must be class object
-            name = classDescriptor.getContainingDeclaration().getName();
+            name = classDescriptor.getContainingDeclaration().getName().getName();
             return "class object " + name;
         }
         // safe
@@ -161,9 +162,9 @@ public class OverloadResolver {
             MutableClassDescriptor classDescriptor, JetClassOrObject klass,
             Collection<ConstructorDescriptor> nestedClassConstructors
     ) {
-        MultiMap<String, CallableMemberDescriptor> functionsByName = MultiMap.create();
+        MultiMap<Name, CallableMemberDescriptor> functionsByName = MultiMap.create();
         
-        for (CallableMemberDescriptor function : classDescriptor.getCallableMembers()) {
+        for (CallableMemberDescriptor function : classDescriptor.getDeclaredCallableMembers()) {
             functionsByName.putValue(function.getName(), function);
         }
         
@@ -171,7 +172,7 @@ public class OverloadResolver {
             functionsByName.putValue(nestedClassConstructor.getContainingDeclaration().getName(), nestedClassConstructor);
         }
         
-        for (Map.Entry<String, Collection<CallableMemberDescriptor>> e : functionsByName.entrySet()) {
+        for (Map.Entry<Name, Collection<CallableMemberDescriptor>> e : functionsByName.entrySet()) {
             checkOverloadsWithSameName(e.getKey(), e.getValue(), nameForErrorMessage(classDescriptor, klass));
         }
 
@@ -179,12 +180,18 @@ public class OverloadResolver {
 
     }
     
-    private void checkOverloadsWithSameName(String name, Collection<CallableMemberDescriptor> functions, @NotNull String functionContainer) {
+    private void checkOverloadsWithSameName(@NotNull Name name, Collection<CallableMemberDescriptor> functions, @NotNull String functionContainer) {
         if (functions.size() == 1) {
             // microoptimization
             return;
         }
-        
+        Set<Pair<JetDeclaration, CallableMemberDescriptor>> redeclarations = findRedeclarations(functions);
+        reportRedeclarations(functionContainer, redeclarations);
+    }
+
+    @NotNull
+    private Set<Pair<JetDeclaration, CallableMemberDescriptor>> findRedeclarations(@NotNull Collection<CallableMemberDescriptor> functions) {
+        Set<Pair<JetDeclaration, CallableMemberDescriptor>> redeclarations = Sets.newHashSet();
         for (CallableMemberDescriptor member : functions) {
             for (CallableMemberDescriptor member2 : functions) {
                 if (member == member2) {
@@ -193,21 +200,26 @@ public class OverloadResolver {
 
                 OverloadUtil.OverloadCompatibilityInfo overloadable = OverloadUtil.isOverloadable(member, member2);
                 if (!overloadable.isSuccess()) {
-                    JetDeclaration jetDeclaration = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), member);
-                    if (jetDeclaration == null) {
-                        assert trace.get(DELEGATED, member);
-                        return;
-                    }
-
-                    if (member instanceof PropertyDescriptor) {
-                        trace.report(Errors.REDECLARATION.on(BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), member), member.getName()));
-                    }
-                    else {
-                        trace.report(Errors.CONFLICTING_OVERLOADS.on(jetDeclaration, member, functionContainer));
-                    }
+                    JetDeclaration jetDeclaration = (JetDeclaration) BindingContextUtils
+                            .descriptorToDeclaration(trace.getBindingContext(), member);
+                    redeclarations.add(Pair.create(jetDeclaration, member));
                 }
             }
         }
+        return redeclarations;
     }
 
+    private void reportRedeclarations(@NotNull String functionContainer,
+            @NotNull Set<Pair<JetDeclaration, CallableMemberDescriptor>> redeclarations) {
+        for (Pair<JetDeclaration, CallableMemberDescriptor> redeclaration : redeclarations) {
+            CallableMemberDescriptor memberDescriptor = redeclaration.getSecond();
+            JetDeclaration jetDeclaration = redeclaration.getFirst();
+            if (memberDescriptor instanceof PropertyDescriptor) {
+                trace.report(Errors.REDECLARATION.on(jetDeclaration, memberDescriptor.getName().getName()));
+            }
+            else {
+                trace.report(Errors.CONFLICTING_OVERLOADS.on(jetDeclaration, memberDescriptor, functionContainer));
+            }
+        }
+    }
 }

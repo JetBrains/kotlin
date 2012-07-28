@@ -23,8 +23,8 @@ import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -33,13 +33,15 @@ import java.util.List;
  */
 public class Concat implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
-        codegen.generateStringBuilderConstructor();
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
         if (receiver == null || receiver == StackValue.none()) {                                                     // LHS + RHS
+            codegen.generateStringBuilderConstructor();
             codegen.invokeAppend(arguments.get(0));                                // StringBuilder(LHS)
             codegen.invokeAppend(arguments.get(1));
         }
         else {                                    // LHS.plus(RHS)
+            receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+            codegen.generateStringBuilderConstructor();
             v.swap();                                                              // StringBuilder LHS
             codegen.invokeAppendMethod(expectedType);  // StringBuilder(LHS)
             codegen.invokeAppend(arguments.get(0));

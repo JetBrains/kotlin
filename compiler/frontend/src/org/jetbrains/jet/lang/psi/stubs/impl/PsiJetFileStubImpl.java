@@ -16,12 +16,12 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.impl.java.stubs.StubPsiFactory;
 import com.intellij.psi.stubs.PsiFileStubImpl;
+import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFileStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 /**
  * @author Nikolay Krasko
@@ -29,12 +29,16 @@ import org.jetbrains.jet.lang.psi.stubs.PsiJetFileStub;
 public class PsiJetFileStubImpl extends PsiFileStubImpl<JetFile> implements PsiJetFileStub {
 
     private final StringRef packageName;
-    private StubPsiFactory psiFactory;
+    private final boolean isScript;
 
-    public PsiJetFileStubImpl(JetFile jetFile, StringRef packageName) {
+    public PsiJetFileStubImpl(JetFile jetFile, StringRef packageName, boolean isScript) {
         super(jetFile);
-
         this.packageName = packageName;
+        this.isScript = isScript;
+    }
+
+    public PsiJetFileStubImpl(JetFile jetFile, String packageName, boolean isScript) {
+        this(jetFile, StringRef.fromString(packageName), isScript);
     }
 
     @Override
@@ -43,17 +47,25 @@ public class PsiJetFileStubImpl extends PsiFileStubImpl<JetFile> implements PsiJ
     }
 
     @Override
-    public StubPsiFactory getPsiFactory() {
-        return psiFactory;
+    public boolean isScript() {
+        return isScript;
     }
 
     @Override
-    public void setPsiFactory(StubPsiFactory factory) {
-        psiFactory = factory;
+    public IStubFileElementType getType() {
+        return JetStubElementTypes.FILE;
     }
 
     @Override
-    public PsiClass[] getClasses() {
-        return new PsiClass[0];  //To change body of implemented methods use File | Settings | File Templates.
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("PsiJetFileStubImpl[");
+
+
+        builder.append("package=").append(getPackageName());
+        builder.append("]");
+
+        return builder.toString();
     }
 }

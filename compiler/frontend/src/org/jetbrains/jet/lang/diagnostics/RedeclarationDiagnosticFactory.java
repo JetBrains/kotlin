@@ -16,45 +16,40 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+
+import java.util.List;
 
 /**
 * @author abreslav
 */
-public class RedeclarationDiagnosticFactory extends AbstractDiagnosticFactory {
-    
-    private final String name;
-    final Severity severity;
-    private final String messagePrefix;
+public class RedeclarationDiagnosticFactory extends DiagnosticFactory1<PsiElement, String> {
+    private static final PositioningStrategy<PsiElement> POSITION_REDECLARATION = new PositioningStrategy<PsiElement>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull PsiElement element) {
+            if (element instanceof JetNamedDeclaration) {
+                PsiElement nameIdentifier = ((JetNamedDeclaration) element).getNameIdentifier();
+                if (nameIdentifier != null) {
+                    return markElement(nameIdentifier);
+                }
+            }
+            else if (element instanceof JetFile) {
+                JetFile file = (JetFile) element;
+                PsiElement nameIdentifier = file.getNamespaceHeader().getNameIdentifier();
+                if (nameIdentifier != null) {
+                    return markElement(nameIdentifier);
+                }
+            }
+            return markElement(element);
+        }
+    };
 
-    public static final RedeclarationDiagnosticFactory REDECLARATION = new RedeclarationDiagnosticFactory(
-            "REDECLARATION", Severity.ERROR, "Redeclaration: ");
-    public static final RedeclarationDiagnosticFactory NAME_SHADOWING = new RedeclarationDiagnosticFactory(
-            "NAME_SHADOWING", Severity.WARNING, "Name shadowed: ");
-
-    public RedeclarationDiagnosticFactory(String name, Severity severity, String messagePrefix) {
-        this.name = name;
-        this.severity = severity;
-        this.messagePrefix = messagePrefix;
-    }
-
-    public RedeclarationDiagnostic on(@NotNull PsiElement duplicatingElement, @NotNull String name) {
-        return new RedeclarationDiagnostic.SimpleRedeclarationDiagnostic(duplicatingElement, name, this);
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return name;
-    }
-    
-    public String makeMessage(String identifier) {
-        return messagePrefix + identifier;
-    }
-
-    @Override
-    public String toString() {
-        return getName();
+    public RedeclarationDiagnosticFactory(Severity severity) {
+        super(severity, POSITION_REDECLARATION);
     }
 }

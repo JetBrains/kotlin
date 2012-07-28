@@ -15,7 +15,6 @@ class foo {
 
         type foo = bar
 
-        this() : this(a, b, c), Foo<T>(bar)
     }
 
     class Bar {
@@ -49,7 +48,6 @@ class foo {
 
         type foo = bar
 
-        this() : this(a, b, c), Foo<T>(bar)
     }
 
     fun foo()
@@ -59,12 +57,6 @@ class foo {
     var f
 
     type foo = bar
-
-    this() : this(a, b, c), Foo<T>(bar)
-
-    this() : this(a, b, c), Foo<T>(bar) {
-
-    }
 
     class object {
 

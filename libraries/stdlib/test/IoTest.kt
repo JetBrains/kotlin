@@ -71,4 +71,19 @@ class IoTest() : TestCase() {
 
     assertEquals(arrayList("Hello", "World"), list)
   }
+  
+  fun testListFiles() {
+    val dir = File.createTempFile("temp", System.nanoTime().toString())!!
+    dir.delete()
+    dir.mkdir()
+    
+    File.createTempFile("temp", "1.kt", dir)
+    File.createTempFile("temp", "2.java", dir)
+    File.createTempFile("temp", "3.kt", dir)
+    
+    val result = dir.listFiles { it.getName()!!.endsWith(".kt") }
+    
+    assertNotNull(result)
+    assertEquals(result!!.size, 2)
+  }
 }

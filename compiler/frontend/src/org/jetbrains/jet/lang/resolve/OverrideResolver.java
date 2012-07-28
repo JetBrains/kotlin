@@ -16,7 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.collect.*;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.LinkedMultiMap;
@@ -26,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -36,8 +41,7 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
-import static org.jetbrains.jet.lang.resolve.BindingContext.DELEGATED;
+import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
 
 /**
  * @author abreslav
@@ -68,25 +72,17 @@ public class OverrideResolver {
 
     public void process() {
         //all created fake descriptors are stored to resolve visibility on them later
-        Set<CallableMemberDescriptor> fakeOverrides = Sets.newHashSet();
-        generateOverrides(fakeOverrides);
-
-        //functions and properties visibility can be inherited when overriding, so for overridden members
-        //it can be resolved only after overrides resolve is finished
-        resolveUnknownVisibilityForMembers(fakeOverrides);
-
-        //invisible overridden descriptors are saved for proper error reporting
-        Multimap<CallableDescriptor, CallableDescriptor> invisibleOverriddenDescriptors = LinkedHashMultimap.create();
-        removeInvisibleOverriddenDescriptors(invisibleOverriddenDescriptors);
+        generateOverrides();
 
         checkVisibility();
-        checkOverrides(invisibleOverriddenDescriptors);
+        checkOverrides();
+        checkParameterOverridesForAllClasses();
     }
 
     /**
      * Generate fake overrides and add overridden descriptors to existing descriptors.
      */
-    private void generateOverrides(@NotNull Set<CallableMemberDescriptor> fakeOverrides) {
+    private void generateOverrides() {
         Set<MutableClassDescriptor> ourClasses = new HashSet<MutableClassDescriptor>();
         ourClasses.addAll(context.getClasses().values());
         ourClasses.addAll(context.getObjects().values());
@@ -94,12 +90,13 @@ public class OverrideResolver {
         Set<ClassifierDescriptor> processed = new HashSet<ClassifierDescriptor>();
 
         for (MutableClassDescriptor clazz : ourClasses) {
-            generateOverridesInAClass(clazz, processed, ourClasses, fakeOverrides);
+            generateOverridesInAClass(clazz, processed, ourClasses);
         }
     }
 
-    private void generateOverridesInAClass(@NotNull final MutableClassDescriptor classDescriptor, @NotNull Set<ClassifierDescriptor> processed,
-            @NotNull Set<MutableClassDescriptor> ourClasses, @NotNull Set<CallableMemberDescriptor> fakeOverrides) {
+    private void generateOverridesInAClass(@NotNull final MutableClassDescriptor classDescriptor,
+            @NotNull Set<ClassifierDescriptor> processed,
+            @NotNull Set<MutableClassDescriptor> ourClasses) {
         if (!processed.add(classDescriptor)) {
             return;
         }
@@ -112,33 +109,41 @@ public class OverrideResolver {
         for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
             ClassDescriptor superclass = (ClassDescriptor) supertype.getConstructor().getDeclarationDescriptor();
             if (superclass instanceof MutableClassDescriptor) {
-                generateOverridesInAClass((MutableClassDescriptor) superclass, processed, ourClasses, fakeOverrides);
+                generateOverridesInAClass((MutableClassDescriptor) superclass, processed, ourClasses);
             }
         }
 
-        List<CallableMemberDescriptor> functionsFromSupertypes = getDescriptorsFromSupertypes(classDescriptor);
+        doGenerateOverridesInAClass(classDescriptor);
+    }
 
-        MultiMap<String, CallableMemberDescriptor> functionsFromSupertypesByName = groupDescriptorsByName(functionsFromSupertypes);
+    private void doGenerateOverridesInAClass(final MutableClassDescriptor classDescriptor) {
+        List<CallableMemberDescriptor> membersFromSupertypes = getCallableMembersFromSupertypes(classDescriptor);
 
-        MultiMap<String, CallableMemberDescriptor> functionsFromCurrentByName = groupDescriptorsByName(classDescriptor.getCallableMembers());
+        MultiMap<Name, CallableMemberDescriptor> membersFromSupertypesByName = groupDescriptorsByName(membersFromSupertypes);
 
-        Set<String> functionNames = new LinkedHashSet<String>();
-        functionNames.addAll(functionsFromSupertypesByName.keySet());
-        functionNames.addAll(functionsFromCurrentByName.keySet());
-        
-        for (String functionName : functionNames) {
-            generateOverridesInFunctionGroup(functionName, fakeOverrides,
-                    functionsFromSupertypesByName.get(functionName),
-                    functionsFromCurrentByName.get(functionName),
+        MultiMap<Name, CallableMemberDescriptor> membersFromCurrentByName = groupDescriptorsByName(classDescriptor.getDeclaredCallableMembers());
+
+        Set<Name> memberNames = new LinkedHashSet<Name>();
+        memberNames.addAll(membersFromSupertypesByName.keySet());
+        memberNames.addAll(membersFromCurrentByName.keySet());
+
+        for (Name memberName : memberNames) {
+            Collection<CallableMemberDescriptor> fromSupertypes = membersFromSupertypesByName.get(memberName);
+            Collection<CallableMemberDescriptor> fromCurrent = membersFromCurrentByName.get(memberName);
+
+            generateOverridesInFunctionGroup(
+                    memberName,
+                    fromSupertypes,
+                    fromCurrent,
                     classDescriptor,
                     new DescriptorSink() {
                         @Override
                         public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
                             if (fakeOverride instanceof PropertyDescriptor) {
-                                classDescriptor.getScopeForMemberLookupAsWritableScope().addPropertyDescriptor((PropertyDescriptor) fakeOverride);
+                                classDescriptor.getBuilder().addPropertyDescriptor((PropertyDescriptor) fakeOverride);
                             }
                             else if (fakeOverride instanceof SimpleFunctionDescriptor) {
-                                classDescriptor.getScopeForMemberLookupAsWritableScope().addFunctionDescriptor((SimpleFunctionDescriptor) fakeOverride);
+                                classDescriptor.getBuilder().addFunctionDescriptor((SimpleFunctionDescriptor) fakeOverride);
                             }
                             else {
                                 throw new IllegalStateException(fakeOverride.getClass().getName());
@@ -147,13 +152,24 @@ public class OverrideResolver {
 
                         @Override
                         public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
-                            JetDeclaration jetProperty = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), fromCurrent);
-                            trace.report(Errors.CONFLICTING_OVERLOADS.on(jetProperty, fromCurrent, fromCurrent.getContainingDeclaration().getName()));
+                            JetDeclaration declaration = (JetDeclaration) BindingContextUtils
+                                    .descriptorToDeclaration(trace.getBindingContext(), fromCurrent);
+                            trace.report(Errors.CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().getName()));
                         }
                     });
         }
+        for (CallableMemberDescriptor memberDescriptor : classDescriptor.getAllCallableMembers()) {
+            JetDeclaration declaration = null;
+            if (memberDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), memberDescriptor);
+                if (element instanceof JetDeclaration) {
+                    declaration = (JetDeclaration) element;
+                }
+            }
+            resolveUnknownVisibilityForMember(declaration, memberDescriptor, trace);
+        }
     }
-    
+
     public interface DescriptorSink {
         void addToScope(@NotNull CallableMemberDescriptor fakeOverride);
         
@@ -161,51 +177,136 @@ public class OverrideResolver {
     }
     
     public static void generateOverridesInFunctionGroup(
-            @NotNull String name,
-            @Nullable Set<CallableMemberDescriptor> fakeOverrides,
-            @NotNull Collection<? extends CallableMemberDescriptor> functionsFromSupertypes,
-            @NotNull Collection<? extends CallableMemberDescriptor> functionsFromCurrent,
+            @NotNull Name name, //DO NOT DELETE THIS PARAMETER: needed to make sure all descriptors have the same name
+            @NotNull Collection<? extends CallableMemberDescriptor> membersFromSupertypes,
+            @NotNull Collection<? extends CallableMemberDescriptor> membersFromCurrent,
             @NotNull ClassDescriptor current,
-            @NotNull DescriptorSink sink) {
-        
-        List<CallableMemberDescriptor> fakeOverrideList = Lists.newArrayList();
+            @NotNull DescriptorSink sink
+    ) {
+        List<CallableMemberDescriptor> notOverridden = Lists.newArrayList(membersFromSupertypes);
 
-        for (CallableMemberDescriptor functionFromSupertype : functionsFromSupertypes) {
-            boolean overrides = false;
-            
-            for (CallableMemberDescriptor functionFromCurrent : functionsFromCurrent) {
-                OverridingUtil.OverrideCompatibilityInfo.Result result = OverridingUtil.isOverridableBy(functionFromSupertype, functionFromCurrent).getResult();
-                if (result == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE) {
-                    functionFromCurrent.addOverriddenDescriptor(functionFromSupertype);
-                    overrides = true;
-                }
-                else if (result == OverridingUtil.OverrideCompatibilityInfo.Result.CONFLICT) {
-                    sink.conflict(functionFromSupertype, functionFromCurrent);
-                }
-            }
-            
-            for (CallableMemberDescriptor fakeOverride : fakeOverrideList) {
-                if (OverridingUtil.isOverridableBy(functionFromSupertype, fakeOverride).getResult() == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE) {
-                    fakeOverride.addOverriddenDescriptor(functionFromSupertype);
-                    overrides = true;
-                }
-            }
+        for (CallableMemberDescriptor fromCurrent : membersFromCurrent) {
+            extractAndBindOverridesForMember(fromCurrent, notOverridden, current, sink);
+        }
 
-            if (!overrides) {
-                CallableMemberDescriptor fakeOverride = functionFromSupertype.copy(current, false, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
-                fakeOverride.addOverriddenDescriptor(functionFromSupertype);
-                fakeOverrideList.add(fakeOverride);
-                if (fakeOverrides != null) {
-                    fakeOverrides.add(fakeOverride);
-                }
-                sink.addToScope(fakeOverride);
+        bindFakeOverrides(current, notOverridden, sink);
+    }
+
+    private static void extractAndBindOverridesForMember(
+            @NotNull CallableMemberDescriptor fromCurrent,
+            @NotNull List<CallableMemberDescriptor> notOverridden, @NotNull ClassDescriptor current,
+            @NotNull DescriptorSink sink
+    ) {
+        for (Iterator<CallableMemberDescriptor> iterator = notOverridden.iterator(); iterator.hasNext(); ) {
+            CallableMemberDescriptor fromSupertype = iterator.next();
+            OverridingUtil.OverrideCompatibilityInfo.Result result =
+                    OverridingUtil.isOverridableBy(fromSupertype, fromCurrent).getResult();
+
+            boolean isVisible = Visibilities.isVisible(fromSupertype, current);
+            switch (result) {
+                case OVERRIDABLE:
+                    if (isVisible) {
+                        OverridingUtil.bindOverride(fromCurrent, fromSupertype);
+                    }
+                    iterator.remove();
+                    break;
+                case CONFLICT:
+                    if (isVisible) {
+                        sink.conflict(fromSupertype, fromCurrent);
+                    }
+                    iterator.remove();
+                    break;
+                case INCOMPATIBLE:
+                    break;
             }
         }
     }
 
+    private static void bindFakeOverrides(
+            @NotNull ClassDescriptor current,
+            @NotNull List<CallableMemberDescriptor> notOverridden,
+            @NotNull DescriptorSink sink
+    ) {
+        Queue<CallableMemberDescriptor> fromSuperQueue = new LinkedList<CallableMemberDescriptor>(notOverridden);
+        while (!fromSuperQueue.isEmpty()) {
+            CallableMemberDescriptor notOverriddenFromSuper = fromSuperQueue.remove();
+            Collection<CallableMemberDescriptor> overridables = extractMembersOverridableBy(notOverriddenFromSuper, fromSuperQueue, sink);
+            bindFakeOverride(notOverriddenFromSuper, overridables, current, sink);
+        }
+    }
 
-    private static <T extends DeclarationDescriptor> MultiMap<String, T> groupDescriptorsByName(Collection<T> properties) {
-        MultiMap<String, T> r = new LinkedMultiMap<String, T>();
+    private static void bindFakeOverride(
+            @NotNull CallableMemberDescriptor notOverriddenFromSuper,
+            @NotNull Collection<CallableMemberDescriptor> overridables,
+            @NotNull ClassDescriptor current,
+            @NotNull DescriptorSink sink
+    ) {
+        Collection<CallableMemberDescriptor> visibleOverridables = filterVisible(current, overridables);
+        Modality modality = getMinimalModality(visibleOverridables);
+        boolean allInvisible = visibleOverridables.isEmpty();
+        Collection<CallableMemberDescriptor> effectiveOverridden = allInvisible ? overridables : visibleOverridables;
+        CallableMemberDescriptor fakeOverride =
+                notOverriddenFromSuper.copy(current, modality, allInvisible, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
+        for (CallableMemberDescriptor descriptor : effectiveOverridden) {
+            OverridingUtil.bindOverride(fakeOverride, descriptor);
+        }
+        sink.addToScope(fakeOverride);
+    }
+
+    @NotNull
+    private static Modality getMinimalModality(@NotNull Collection<CallableMemberDescriptor> descriptors) {
+        Modality modality = Modality.ABSTRACT;
+        for (CallableMemberDescriptor descriptor : descriptors) {
+            if (descriptor.getModality().compareTo(modality) < 0) {
+                modality = descriptor.getModality();
+            }
+        }
+        return modality;
+    }
+
+    @NotNull
+    private static Collection<CallableMemberDescriptor> filterVisible(
+            @NotNull final ClassDescriptor current,
+            @NotNull Collection<CallableMemberDescriptor> toFilter
+    ) {
+        return Collections2.filter(toFilter, new Predicate<CallableMemberDescriptor>() {
+            @Override
+            public boolean apply(@Nullable CallableMemberDescriptor descriptor) {
+                return Visibilities.isVisible(descriptor, current);
+            }
+        });
+    }
+
+    @NotNull
+    private static Collection<CallableMemberDescriptor> extractMembersOverridableBy(
+            @NotNull CallableMemberDescriptor overrider,
+            @NotNull Queue<CallableMemberDescriptor> extractFrom,
+            @NotNull DescriptorSink sink
+    ) {
+        Collection<CallableMemberDescriptor> overridable = Lists.newArrayList();
+        overridable.add(overrider);
+        for (Iterator<CallableMemberDescriptor> iterator = extractFrom.iterator(); iterator.hasNext(); ) {
+            CallableMemberDescriptor candidate = iterator.next();
+            OverridingUtil.OverrideCompatibilityInfo.Result result =
+                    OverridingUtil.isOverridableBy(candidate, overrider).getResult();
+            switch (result) {
+                case OVERRIDABLE:
+                    overridable.add(candidate);
+                    iterator.remove();
+                    break;
+                case CONFLICT:
+                    sink.conflict(overrider, candidate);
+                    iterator.remove();
+                    break;
+                case INCOMPATIBLE:
+                    break;
+            }
+        }
+        return overridable;
+    }
+
+    private static <T extends DeclarationDescriptor> MultiMap<Name, T> groupDescriptorsByName(Collection<T> properties) {
+        MultiMap<Name, T> r = new LinkedMultiMap<Name, T>();
         for (T property : properties) {
             r.putValue(property.getName(), property);
         }
@@ -213,16 +314,15 @@ public class OverrideResolver {
     }
 
 
-    private static List<CallableMemberDescriptor> getDescriptorsFromSupertypes(ClassDescriptor classDescriptor) {
+    private static List<CallableMemberDescriptor> getCallableMembersFromSupertypes(ClassDescriptor classDescriptor) {
         Set<CallableMemberDescriptor> r = Sets.newLinkedHashSet();
         for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
-            r.addAll(getDescriptorsOfType(supertype.getMemberScope()));
+            r.addAll(getCallableMembersFromType(supertype.getMemberScope()));
         }
         return new ArrayList<CallableMemberDescriptor>(r);
     }
 
-    private static <T extends DeclarationDescriptor> List<CallableMemberDescriptor> getDescriptorsOfType(
-            JetScope scope) {
+    private static List<CallableMemberDescriptor> getCallableMembersFromType(JetScope scope) {
         List<CallableMemberDescriptor> r = Lists.newArrayList();
         for (DeclarationDescriptor decl : scope.getAllDescriptors()) {
             if (decl instanceof PropertyDescriptor || decl instanceof SimpleFunctionDescriptor) {
@@ -232,22 +332,21 @@ public class OverrideResolver {
         return r;
     }
 
-    private void checkOverrides(@NotNull Multimap<CallableDescriptor, CallableDescriptor> invisibleOverriddenDescriptors) {
+    private void checkOverrides() {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            checkOverridesInAClass(entry.getValue(), entry.getKey(), invisibleOverriddenDescriptors);
+            checkOverridesInAClass(entry.getValue(), entry.getKey());
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
-            checkOverridesInAClass(entry.getValue(), entry.getKey(), invisibleOverriddenDescriptors);
+            checkOverridesInAClass(entry.getValue(), entry.getKey());
         }
     }
 
-    protected void checkOverridesInAClass(@NotNull MutableClassDescriptor classDescriptor, @NotNull JetClassOrObject klass,
-            @NotNull Multimap<CallableDescriptor, CallableDescriptor> invisibleOverriddenDescriptors) {
+    protected void checkOverridesInAClass(@NotNull MutableClassDescriptor classDescriptor, @NotNull JetClassOrObject klass) {
         if (topDownAnalysisParameters.isAnalyzingBootstrapLibrary()) return;
 
         // Check overrides for internal consistency
-        for (CallableMemberDescriptor member : classDescriptor.getCallableMembers()) {
-            checkOverrideForMember(member, invisibleOverriddenDescriptors);
+        for (CallableMemberDescriptor member : classDescriptor.getDeclaredCallableMembers()) {
+            checkOverrideForMember(member);
         }
 
         // Check if everything that must be overridden, actually is
@@ -258,10 +357,10 @@ public class OverrideResolver {
 
         PsiElement nameIdentifier = null;
         if (klass instanceof JetClass) {
-            nameIdentifier = ((JetClass) klass).getNameIdentifier();
+            nameIdentifier = klass.getNameIdentifier();
         }
         else if (klass instanceof JetObjectDeclaration) {
-            nameIdentifier = ((JetObjectDeclaration) klass).getNameIdentifier();
+            nameIdentifier = klass.getNameIdentifier();
             if (nameIdentifier == null) {
                 nameIdentifier = ((JetObjectDeclaration) klass).getObjectKeyword();
             }
@@ -285,43 +384,42 @@ public class OverrideResolver {
     }
 
     public static void collectMissingImplementations(MutableClassDescriptor classDescriptor, Set<CallableMemberDescriptor> abstractNoImpl, Set<CallableMemberDescriptor> manyImpl) {
-        
-        for (DeclarationDescriptor descriptor : classDescriptor.getScopeForMemberLookup().getAllDescriptors()) {
-            if (descriptor instanceof CallableMemberDescriptor) {
-                collectMissingImplementations((CallableMemberDescriptor) descriptor, abstractNoImpl, manyImpl);
-            }
+        for (CallableMemberDescriptor descriptor : classDescriptor.getAllCallableMembers()) {
+            collectMissingImplementations(descriptor, abstractNoImpl, manyImpl);
         }
     }
 
-    private static void collectMissingImplementations(CallableMemberDescriptor descriptor, Set<CallableMemberDescriptor> abstractNoImpl, Set<CallableMemberDescriptor> manyImpl) {
-        if (descriptor.getKind().isReal()) {
-            if (descriptor.getModality() == Modality.ABSTRACT) {
-                //abstractNoImpl.add(descriptor);
+    private static void collectMissingImplementations(
+            @NotNull CallableMemberDescriptor descriptor,
+            @NotNull Set<CallableMemberDescriptor> abstractNoImpl,
+            @NotNull Set<CallableMemberDescriptor> manyImpl
+    ) {
+        if (descriptor.getKind().isReal()) return;
+
+        Collection<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(descriptor);
+        if (overriddenDeclarations.size() == 0) {
+            throw new IllegalStateException("A 'fake override' must override something");
+        }
+
+        List<CallableMemberDescriptor> nonAbstractManyImpl = Lists.newArrayList();
+        Set<CallableMemberDescriptor> filteredOverriddenDeclarations = OverridingUtil.filterOverrides(Sets.newHashSet(overriddenDeclarations));
+
+        boolean allSuperAbstract = true;
+        for (CallableMemberDescriptor overridden : filteredOverriddenDeclarations) {
+            if (overridden.getModality() != Modality.ABSTRACT) {
+                if (descriptor.getVisibility() != Visibilities.INVISIBLE_FAKE) {
+                    nonAbstractManyImpl.add(overridden);
+                }
+                allSuperAbstract = false;
             }
         }
-        else {
-            Collection<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverridenDeclarations(descriptor);
-            if (overriddenDeclarations.size() == 0) {
-                throw new IllegalStateException();
-            }
-            else if (overriddenDeclarations.size() == 1) {
-                CallableMemberDescriptor single = overriddenDeclarations.iterator().next();
-                if (single.getModality() == Modality.ABSTRACT) {
-                    abstractNoImpl.add(single);
-                }
-            }
-            else {
-                List<CallableMemberDescriptor> nonAbstractManyImpl = Lists.newArrayList();
-                for (CallableMemberDescriptor overridden : overriddenDeclarations) {
-                    if (overridden.getModality() != Modality.ABSTRACT) {
-                        nonAbstractManyImpl.add(overridden);
-                    }
-                }
-                if (nonAbstractManyImpl.size() > 1) {
-                    manyImpl.addAll(nonAbstractManyImpl);
-                }
-            }
+        if (nonAbstractManyImpl.size() > 1) {
+            manyImpl.addAll(nonAbstractManyImpl);
         }
+        else if (allSuperAbstract) {
+            abstractNoImpl.addAll(overriddenDeclarations);
+        }
+
     }
 
     public static Multimap<CallableMemberDescriptor, CallableMemberDescriptor> collectSuperMethods(MutableClassDescriptor classDescriptor) {
@@ -345,8 +443,8 @@ public class OverrideResolver {
             for (CallableMemberDescriptor another : filteredMembers) {
 //                if (one == another) continue;
                 factoredMembers.put(one, one);
-                if (OverridingUtil.isOverridableBy(one, another).getResult() == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
-                        || OverridingUtil.isOverridableBy(another, one).getResult() == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE) {
+                if (OverridingUtil.isOverridableBy(one, another).getResult() == OVERRIDABLE
+                        || OverridingUtil.isOverridableBy(another, one).getResult() == OVERRIDABLE) {
                     factoredMembers.put(one, another);
                 }
             }
@@ -354,11 +452,15 @@ public class OverrideResolver {
         return factoredMembers;
     }
 
-    private void checkOverrideForMember(@NotNull CallableMemberDescriptor declared,
-            @NotNull Multimap<CallableDescriptor, CallableDescriptor> invisibleOverriddenDescriptors) {
+    private void checkOverrideForMember(@NotNull CallableMemberDescriptor declared) {
         JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
         if (member == null) {
-            assert trace.get(DELEGATED, declared);
+            if (declared.getKind() != CallableMemberDescriptor.Kind.DELEGATION) {
+                throw new IllegalStateException(
+                        "decriptor is not resolved to declaration" +
+                        " and it is not delegate: " + declared + ", DELEGATED: " +
+                        (declared.getKind() == CallableMemberDescriptor.Kind.DELEGATION));
+            }
             return;
         }
 
@@ -393,10 +495,16 @@ public class OverrideResolver {
                 }
             }
         }
+
         if (hasOverrideModifier && declared.getOverriddenDescriptors().size() == 0) {
-            if (!invisibleOverriddenDescriptors.get(declared).isEmpty()) {
-                CallableDescriptor descriptor = invisibleOverriddenDescriptors.values().iterator().next();
-                trace.report(CANNOT_OVERRIDE_INVISIBLE_MEMBER.on(member, declared, descriptor, descriptor.getContainingDeclaration()));
+            DeclarationDescriptor containingDeclaration = declared.getContainingDeclaration();
+            assert containingDeclaration instanceof ClassDescriptor : "Overrides may only be resolved in a class, but " + declared + " comes from " + containingDeclaration;
+            ClassDescriptor declaringClass = (ClassDescriptor) containingDeclaration;
+
+            CallableMemberDescriptor invisibleOverriddenDescriptor = findInvisibleOverriddenDescriptor(declared, declaringClass);
+            if (invisibleOverriddenDescriptor != null) {
+                trace.report(CANNOT_OVERRIDE_INVISIBLE_MEMBER.on(member, declared, invisibleOverriddenDescriptor,
+                                                                 invisibleOverriddenDescriptor.getContainingDeclaration()));
             }
             else {
                 trace.report(NOTHING_TO_OVERRIDE.on(member, declared));
@@ -409,6 +517,94 @@ public class OverrideResolver {
         }
     }
 
+    private CallableMemberDescriptor findInvisibleOverriddenDescriptor(CallableMemberDescriptor declared, ClassDescriptor declaringClass) {
+        CallableMemberDescriptor invisibleOverride = null;
+        outer:
+        for (JetType supertype : declaringClass.getTypeConstructor().getSupertypes()) {
+            Set<CallableMemberDescriptor> all = Sets.newLinkedHashSet();
+            all.addAll(supertype.getMemberScope().getFunctions(declared.getName()));
+            all.addAll((Set) supertype.getMemberScope().getProperties(declared.getName()));
+            for (CallableMemberDescriptor fromSuper : all) {
+                if (OverridingUtil.isOverridableBy(fromSuper, declared).getResult() == OVERRIDABLE) {
+                    invisibleOverride = fromSuper;
+                    if (Visibilities.isVisible(fromSuper, declared)) {
+                        throw new IllegalStateException("Descriptor " + fromSuper + "is overridable by " + declared + " and visible but does not appear in its getOverriddenDescriptors()");
+                    }
+                    break outer;
+                }
+            }
+        }
+        return invisibleOverride;
+    }
+
+    private void checkParameterOverridesForAllClasses() {
+        List<MutableClassDescriptor> allClasses = Lists.newArrayList(context.getClasses().values());
+        allClasses.addAll(context.getObjects().values());
+        for (MutableClassDescriptor classDescriptor : allClasses) {
+            Collection<CallableMemberDescriptor> members = classDescriptor.getAllCallableMembers();
+            for (CallableMemberDescriptor member : members) {
+                checkOverridesForParameters(member);
+            }
+        }
+    }
+
+    private void checkOverridesForParameters(CallableMemberDescriptor declared) {
+        boolean fakeOverride = declared.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
+        if (!fakeOverride) {
+            // No check if the function is not marked as 'override'
+            JetModifierListOwner declaration =
+                    (JetModifierListOwner) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
+            if (!declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
+                return;
+            }
+        }
+
+        // Let p1 be a parameter of the overriding function
+        // Let p2 be a parameter of the function being overridden
+        // Then
+        //  a) p1 is not allowed to have a default value declared
+        //  b) p1 must have the same name as p2
+        for (ValueParameterDescriptor parameterFromSubclass : declared.getValueParameters()) {
+            JetParameter parameter =
+                    fakeOverride ? null :
+                            (JetParameter) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), parameterFromSubclass);
+
+            JetClassOrObject classElement = fakeOverride ? (JetClassOrObject) BindingContextUtils
+                    .descriptorToDeclaration(trace.getBindingContext(), declared.getContainingDeclaration()) : null;
+
+            if (parameterFromSubclass.declaresDefaultValue() && !fakeOverride) {
+                trace.report(DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE.on(parameter));
+            }
+
+            boolean superWithDefault = false;
+            for (ValueParameterDescriptor parameterFromSuperclass : parameterFromSubclass.getOverriddenDescriptors()) {
+                if (parameterFromSuperclass.declaresDefaultValue()) {
+                    if (!superWithDefault) {
+                        superWithDefault = true;
+                    }
+                    else {
+                        if (fakeOverride) {
+                            trace.report(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE.on(classElement, parameterFromSubclass));
+                        }
+                        else {
+                            trace.report(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES.on(parameter, parameterFromSubclass));
+                        }
+                        break;
+                    }
+                }
+
+                if (!parameterFromSuperclass.getName().equals(parameterFromSubclass.getName())) {
+                    if (fakeOverride) {
+                        trace.report(DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES.on(classElement, declared.getOverriddenDescriptors(), parameterFromSuperclass.getIndex() + 1));
+                    }
+                    else {
+                        trace.report(PARAMETER_NAME_CHANGED_ON_OVERRIDE.on(parameter, (ClassDescriptor) parameterFromSuperclass.getContainingDeclaration().getContainingDeclaration(), parameterFromSuperclass));
+                    }
+                }
+            }
+        }
+    }
+
     private boolean checkPropertyKind(CallableMemberDescriptor descriptor, boolean isVar) {
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
@@ -417,24 +613,8 @@ public class OverrideResolver {
         return false;
     }
 
-    private void resolveUnknownVisibilityForMembers(@NotNull Set<CallableMemberDescriptor> fakeOverrides) {
-        for (CallableMemberDescriptor override : fakeOverrides) {
-            resolveUnknownVisibilityForMember(null, override);
-        }
-        for (Map.Entry<JetDeclaration, CallableMemberDescriptor> entry : context.getMembers().entrySet()) {
-            resolveUnknownVisibilityForMember(entry.getKey(), entry.getValue());
-        }
-        for (PropertyDescriptor propertyDescriptor : context.getProperties().values()) {
-            for (PropertyAccessorDescriptor accessor : propertyDescriptor.getAccessors()) {
-                if (accessor != null && accessor.getVisibility() == Visibilities.INHERITED) {
-                    accessor.setVisibility(propertyDescriptor.getVisibility());
-                }
-            }
-        }
-    }
-
-    private void resolveUnknownVisibilityForMember(@Nullable JetDeclaration member, @NotNull CallableMemberDescriptor memberDescriptor) {
-        resolveUnknownVisibilityForOverriddenDescriptors(memberDescriptor.getOverriddenDescriptors());
+    public static void resolveUnknownVisibilityForMember(@Nullable JetDeclaration member, @NotNull CallableMemberDescriptor memberDescriptor, @NotNull BindingTrace trace) {
+        resolveUnknownVisibilityForOverriddenDescriptors(memberDescriptor.getOverriddenDescriptors(), trace);
         if (memberDescriptor.getVisibility() != Visibilities.INHERITED) {
             return;
         }
@@ -449,38 +629,31 @@ public class OverrideResolver {
 
         if (memberDescriptor instanceof PropertyDescriptor) {
             ((PropertyDescriptor)memberDescriptor).setVisibility(visibility);
-        }
-        else {
-            assert memberDescriptor instanceof FunctionDescriptorImpl;
-            ((FunctionDescriptorImpl)memberDescriptor).setVisibility(visibility);
-        }
-    }
-
-    private void removeInvisibleOverriddenDescriptors(@NotNull Multimap<CallableDescriptor, CallableDescriptor> invisibleOverriddenDescriptors) {
-        for (CallableMemberDescriptor memberDescriptor : context.getMembers().values()) {
-            Set<? extends CallableDescriptor> overriddenDescriptors = memberDescriptor.getOverriddenDescriptors();
-            for (Iterator<? extends CallableDescriptor> iterator = overriddenDescriptors.iterator(); iterator.hasNext(); ) {
-                CallableDescriptor superDescriptor = iterator.next();
-                if (!Visibilities.isVisible(superDescriptor, memberDescriptor)) {
-                    invisibleOverriddenDescriptors.put(memberDescriptor, superDescriptor);
-                    iterator.remove();
-                }
+            for (PropertyAccessorDescriptor accessor : ((PropertyDescriptor) memberDescriptor).getAccessors()) {
+                resolveUnknownVisibilityForMember(null, accessor, trace);
             }
         }
+        else if (memberDescriptor instanceof FunctionDescriptorImpl) {
+            ((FunctionDescriptorImpl)memberDescriptor).setVisibility(visibility);
+        }
+        else {
+            assert memberDescriptor instanceof PropertyAccessorDescriptor;
+            ((PropertyAccessorDescriptor) memberDescriptor).setVisibility(visibility);
+        }
     }
 
-    private void resolveUnknownVisibilityForOverriddenDescriptors(@NotNull Collection<? extends CallableMemberDescriptor> descriptors) {
+    private static void resolveUnknownVisibilityForOverriddenDescriptors(@NotNull Collection<? extends CallableMemberDescriptor> descriptors, @NotNull BindingTrace trace) {
         for (CallableMemberDescriptor descriptor : descriptors) {
             if (descriptor.getVisibility() == Visibilities.INHERITED) {
                 PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), descriptor);
                 JetDeclaration declaration = (element instanceof JetDeclaration) ? (JetDeclaration) element : null;
-                resolveUnknownVisibilityForMember(declaration, descriptor);
+                resolveUnknownVisibilityForMember(declaration, descriptor, trace);
             }
         }
     }
 
     @Nullable
-    private Visibility findMaxVisibility(@NotNull Collection<? extends CallableMemberDescriptor> descriptors) {
+    private static Visibility findMaxVisibility(@NotNull Collection<? extends CallableMemberDescriptor> descriptors) {
         if (descriptors.isEmpty()) {
             return Visibilities.INTERNAL;
         }

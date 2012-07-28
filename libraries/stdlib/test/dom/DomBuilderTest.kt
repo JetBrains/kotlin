@@ -1,16 +1,13 @@
 package test.dom
 
-import kotlin.*
 import kotlin.dom.*
-import kotlin.util.*
 import kotlin.test.*
 import org.w3c.dom.*
-import junit.framework.TestCase
+import org.junit.Test as test
 
-class DomBuilderTest() : TestCase() {
+class DomBuilderTest() {
 
-
-    fun testBuildDocument() {
+    test fun buildDocument() {
         var doc = createDocument()
 
         assertTrue {
@@ -60,7 +57,7 @@ class DomBuilderTest() : TestCase() {
         assertEquals(1, doc["#id2"].size())
         assertEquals(1, doc["#id3"].size())
 
-        val root = doc.rootElement
+        val root = doc.documentElement
         if (root == null) {
             fail("No root!")
         } else {
@@ -120,7 +117,7 @@ class DomBuilderTest() : TestCase() {
         } else {
             fail("Not an Element $grandChild")
         }
-        val children = doc.rootElement.children()
+        val children = doc.documentElement.children()
         val xml = nodesToXmlString(children)
         println("root element has children: ${xml}")
         assertEquals(1, children.size())

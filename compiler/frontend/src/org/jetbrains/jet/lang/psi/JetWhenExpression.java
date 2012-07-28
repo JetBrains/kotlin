@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class JetWhenExpression extends JetExpression {
+public class JetWhenExpression extends JetExpressionImpl {
     public JetWhenExpression(@NotNull ASTNode node) {
         super(node);
     }

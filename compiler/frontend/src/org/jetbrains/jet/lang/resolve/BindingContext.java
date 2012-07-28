@@ -23,9 +23,11 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
@@ -33,6 +35,7 @@ import org.jetbrains.jet.util.Box;
 import org.jetbrains.jet.util.slicedmap.*;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import static org.jetbrains.jet.util.slicedmap.RewritePolicy.DO_NOTHING;
 
@@ -40,16 +43,39 @@ import static org.jetbrains.jet.util.slicedmap.RewritePolicy.DO_NOTHING;
  * @author abreslav
  */
 public interface BindingContext {
+    BindingContext EMPTY = new BindingContext() {
+        @Override
+        public Collection<Diagnostic> getDiagnostics() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
+            return Collections.emptyList();
+        }
+    };
+
     WritableSlice<JetAnnotationEntry, AnnotationDescriptor> ANNOTATION = Slices.createSimpleSlice();
 
     WritableSlice<JetExpression, CompileTimeConstant<?>> COMPILE_TIME_VALUE = Slices.createSimpleSlice();
     WritableSlice<JetTypeReference, JetType> TYPE = Slices.createSimpleSlice();
     WritableSlice<JetExpression, JetType> EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>(DO_NOTHING);
+    WritableSlice<JetExpression, DataFlowInfo> EXPRESSION_DATA_FLOW_INFO = new BasicWritableSlice<JetExpression, DataFlowInfo>(DO_NOTHING);
 
     WritableSlice<JetReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>(DO_NOTHING);
     WritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>> RESOLVED_CALL = new BasicWritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>>(DO_NOTHING);
 
     WritableSlice<JetReferenceExpression, Collection<? extends DeclarationDescriptor>> AMBIGUOUS_REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, Collection<? extends DeclarationDescriptor>>(DO_NOTHING);
+
+    WritableSlice<CallKey, OverloadResolutionResults<FunctionDescriptor>> RESOLUTION_RESULTS_FOR_FUNCTION = Slices.createSimpleSlice();
+    WritableSlice<CallKey, OverloadResolutionResults<VariableDescriptor>> RESOLUTION_RESULTS_FOR_PROPERTY = Slices.createSimpleSlice();
+    WritableSlice<JetExpression, DelegatingBindingTrace> TRACE_DELTAS_CACHE = Slices.createSimpleSlice();
 
     WritableSlice<JetExpression, FunctionDescriptor> LOOP_RANGE_ITERATOR = Slices.createSimpleSlice();
     WritableSlice<JetExpression, CallableDescriptor> LOOP_RANGE_HAS_NEXT = Slices.createSimpleSlice();
@@ -61,7 +87,10 @@ public interface BindingContext {
     WritableSlice<JetExpression, JetType> AUTOCAST = Slices.createSimpleSlice();
 
     /** A scope where type of expression has been resolved */
+    WritableSlice<JetTypeReference, JetScope> TYPE_RESOLUTION_SCOPE = Slices.createSimpleSlice();
     WritableSlice<JetExpression, JetScope> RESOLUTION_SCOPE = Slices.createSimpleSlice();
+
+    WritableSlice<ScriptDescriptor, JetScope> SCRIPT_SCOPE = Slices.createSimpleSlice();
 
     /** Collected during analyze, used in IDE in auto-cast completion */
     WritableSlice<JetExpression, DataFlowInfo> NON_DEFAULT_EXPRESSION_DATA_FLOW = Slices.createSimpleSlice();
@@ -73,9 +102,8 @@ public interface BindingContext {
     /** Has type of current expression has been already resolved */
     WritableSlice<JetExpression, Boolean> PROCESSED = Slices.createSimpleSetSlice();
     WritableSlice<JetElement, Boolean> STATEMENT = Slices.createRemovableSetSlice();
-    WritableSlice<CallableMemberDescriptor, Boolean> DELEGATED = Slices.createRemovableSetSlice();
 
-    WritableSlice<VariableDescriptor, Boolean> MUST_BE_WRAPPED_IN_A_REF = Slices.createSimpleSetSlice();
+    WritableSlice<VariableDescriptor, Boolean> CAPTURED_IN_CLOSURE = Slices.createSimpleSetSlice();
     
 //    enum DeferredTypeKey {DEFERRED_TYPE_KEY}
 //    WritableSlice<DeferredTypeKey, Collection<DeferredType>> DEFERRED_TYPES = Slices.createSimpleSlice();
@@ -128,6 +156,7 @@ public interface BindingContext {
 
     WritableSlice<PsiElement, NamespaceDescriptor> NAMESPACE = Slices.<PsiElement, NamespaceDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
     WritableSlice<PsiElement, ClassDescriptor> CLASS = Slices.<PsiElement, ClassDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
+    WritableSlice<PsiElement, ScriptDescriptor> SCRIPT = Slices.<PsiElement, ScriptDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
     WritableSlice<JetTypeParameter, TypeParameterDescriptor> TYPE_PARAMETER = Slices.<JetTypeParameter, TypeParameterDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
     /** @see BindingContextUtils#recordFunctionDeclarationToDescriptor(BindingTrace, PsiElement, SimpleFunctionDescriptor)} */
     WritableSlice<PsiElement, SimpleFunctionDescriptor> FUNCTION = Slices.<PsiElement, SimpleFunctionDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();

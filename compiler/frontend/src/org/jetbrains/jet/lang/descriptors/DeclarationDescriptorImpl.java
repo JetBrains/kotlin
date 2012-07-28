@@ -17,35 +17,29 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotatedImpl;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.List;
 
 /**
- * @author abreslav
+ * @author Stepan Koltsov
  */
 public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements Named, DeclarationDescriptor {
 
-    private final String name;
-    private final DeclarationDescriptor containingDeclaration;
+    @NotNull
+    private final Name name;
 
-    public DeclarationDescriptorImpl(@Nullable DeclarationDescriptor containingDeclaration, @NotNull List<AnnotationDescriptor> annotations, @NotNull String name) {
+    public DeclarationDescriptorImpl(@NotNull List<AnnotationDescriptor> annotations, @NotNull Name name) {
         super(annotations);
-
-        if (name.length() == 0) {
-            throw new IllegalArgumentException("descriptor name cannot be empty string");
-        }
-
         this.name = name;
-        this.containingDeclaration = containingDeclaration;
     }
 
     @NotNull
     @Override
-    public String getName() {
+    public Name getName() {
         return name;
     }
 
@@ -56,11 +50,6 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
     }
 
     @Override
-    public DeclarationDescriptor getContainingDeclaration() {
-        return containingDeclaration;
-    }
-
-    @Override
     public void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor) {
         accept(visitor, null);
     }
@@ -68,7 +57,7 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
     @Override
     public String toString() {
         try {
-            return DescriptorRenderer.TEXT.render(this) + "[" + getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(this)) + "]";
+            return DescriptorRenderer.DEBUG_TEXT.render(this) + "[" + getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(this)) + "]";
         } catch (Throwable e) {
             // DescriptionRenderer may throw if this is not yet completely initialized
             // It is very inconvenient while debugging

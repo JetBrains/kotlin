@@ -1,6 +1,6 @@
 namespace test
 
-open class test.ModifierOpen : jet.Any {
-    final /*constructor*/ fun <init>(): test.ModifierOpen
-    open fun abs(): jet.Int
+internal open class test.ModifierOpen : jet.Any {
+    public final /*constructor*/ fun <init>(): test.ModifierOpen
+    internal open fun abs(): jet.Int
 }

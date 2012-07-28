@@ -39,4 +39,8 @@ public class ReceiverDescriptorVisitor<R, D> {
     public R visitClassReceiver(ClassReceiver receiver, D data) {
         return null;
     }
+
+    public R visitScriptReceiver(ScriptReceiver receiver, D data) {
+        return null;
+    }
 }

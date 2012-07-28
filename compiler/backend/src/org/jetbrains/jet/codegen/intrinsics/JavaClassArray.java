@@ -30,8 +30,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.VarargValueArgument;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 import java.util.Map;
@@ -43,7 +43,7 @@ public class JavaClassArray implements IntrinsicMethod {
     @Override
     public StackValue generate(ExpressionCodegen codegen,
                                InstructionAdapter v,
-                               Type expectedType,
+                               @NotNull Type expectedType,
                                @Nullable PsiElement element,
                                @Nullable List<JetExpression> arguments,
                                StackValue receiver,

@@ -1,6 +1,6 @@
 package test;
 
-class Outer {
-    class Inner {
+public class InnerClass {
+    public class Inner {
     }
 }

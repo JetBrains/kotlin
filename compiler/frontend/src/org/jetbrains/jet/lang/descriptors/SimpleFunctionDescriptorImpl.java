@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -36,7 +36,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
     public SimpleFunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull String name,
+            @NotNull Name name,
             Kind kind) {
         super(containingDeclaration, annotations, name, kind);
     }
@@ -45,21 +45,21 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull SimpleFunctionDescriptor original,
             @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull String name,
+            @NotNull Name name,
             Kind kind) {
         super(containingDeclaration, original, annotations, name, kind);
     }
 
     public SimpleFunctionDescriptorImpl initialize(
-            @Nullable JetType receiverType,
+            @Nullable JetType receiverParameterType,
             @NotNull ReceiverDescriptor expectedThisObject,
-            @NotNull List<TypeParameterDescriptor> typeParameters,
+            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
             @Nullable Modality modality,
             @NotNull Visibility visibility,
             boolean isInline) {
-        super.initialize(receiverType, expectedThisObject, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType, modality, visibility);
+        super.initialize(receiverParameterType, expectedThisObject, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType, modality, visibility);
         this.isInline = isInline;
         return this;
     }
@@ -93,9 +93,8 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
 
     @NotNull
     @Override
-    public SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides) {
-        SimpleFunctionDescriptorImpl copy = (SimpleFunctionDescriptorImpl)doSubstitute(TypeSubstitutor.EMPTY, newOwner, DescriptorUtils
-            .convertModality(modality, makeNonAbstract), false, copyOverrides, kind);
+    public SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, boolean makeInvisible, Kind kind, boolean copyOverrides) {
+        SimpleFunctionDescriptorImpl copy = (SimpleFunctionDescriptorImpl)doSubstitute(TypeSubstitutor.EMPTY, newOwner, modality, makeInvisible ? Visibilities.INVISIBLE_FAKE : visibility, false, copyOverrides, kind);
         copy.isInline = isInline;
         return copy;
     }

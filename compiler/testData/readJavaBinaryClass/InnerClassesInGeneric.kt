@@ -1,11 +1,12 @@
 package test
 
-trait Trait<erased P>
-
-open class Outer<erased P, erased Q>() {
-    open class Inner() {
+public open class InnerClassesInGeneric<P, Q>() : java.lang.Object() {
+    public open class Inner() : java.lang.Object() {
     }
     
-    open class Inner2() : Inner(), Trait<P> {
+    public open class Inner2() : Inner(), java.lang.Iterable<P> {
+        override fun iterator() : java.util.Iterator<P>? {
+            throw UnsupportedOperationException()
+        }
     }
 }

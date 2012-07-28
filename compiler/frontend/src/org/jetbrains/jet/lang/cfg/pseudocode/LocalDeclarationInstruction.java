@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetElement;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,6 +39,12 @@ public class LocalDeclarationInstruction extends InstructionWithNext {
 
     public Pseudocode getBody() {
         return body;
+    }
+
+    @NotNull
+    @Override
+    public JetDeclaration getElement() {
+        return (JetDeclaration) super.getElement();
     }
 
     @NotNull

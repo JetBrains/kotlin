@@ -24,7 +24,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author max
  */
-public class JetClassObject extends JetDeclaration implements JetStatementExpression {
+public class JetClassObject extends JetDeclarationImpl implements JetStatementExpression {
     public JetClassObject(@NotNull ASTNode node) {
         super(node);
     }

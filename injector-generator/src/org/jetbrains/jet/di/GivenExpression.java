@@ -16,14 +16,44 @@
 
 package org.jetbrains.jet.di;
 
+import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+
 /**
 * @author abreslav
 */
 class GivenExpression implements Expression {
     private final String expression;
+    private final Collection<DiType> typesToImport;
 
-    GivenExpression(String expression) {
+
+    public GivenExpression(@NotNull String expression) {
+        this(expression, Collections.<DiType>emptyList());
+    }
+
+    public GivenExpression(@NotNull String expression, @NotNull DiType... typesToImport) {
+        this(expression, Arrays.asList(typesToImport));
+    }
+
+    public GivenExpression(@NotNull String expression, @NotNull Class<?>... typesToImport) {
+        this(expression, convertClassesToDiTypes(typesToImport));
+    }
+
+    private static Collection<DiType> convertClassesToDiTypes(Class<?>[] typesToImport) {
+        Collection<DiType> types = Lists.newArrayList();
+        for (Class<?> aClass : typesToImport) {
+            types.add(new DiType(aClass));
+        }
+        return types;
+    }
+
+    public GivenExpression(@NotNull String expression, @NotNull Collection<DiType> typesToImport) {
         this.expression = expression;
+        this.typesToImport = typesToImport;
     }
 
     public String getExpression() {
@@ -32,6 +62,22 @@ class GivenExpression implements Expression {
 
     @Override
     public String toString() {
+        return "given<" + expression + ">";
+    }
+
+    public DiType getType() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public String renderAsCode() {
         return expression;
+    }
+
+    @NotNull
+    @Override
+    public Collection<DiType> getTypesToImport() {
+        return typesToImport;
     }
 }

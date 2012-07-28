@@ -1,8 +1,8 @@
 namespace test
 
-open class test.Outer : jet.Any {
-    final /*constructor*/ fun <init>(): test.Outer
-    open class test.Outer.Inner : jet.Any {
-        final /*constructor*/ fun <init>(): test.Outer.Inner
+public open class test.InnerClass : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.InnerClass
+    public open class test.InnerClass.Inner : java.lang.Object {
+        public final /*constructor*/ fun <init>(): test.InnerClass.Inner
     }
 }

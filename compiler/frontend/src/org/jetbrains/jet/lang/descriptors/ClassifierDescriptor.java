@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.types.TypeConstructor;
 /**
  * @author abreslav
  */
-public interface ClassifierDescriptor extends DeclarationDescriptor {
+public interface ClassifierDescriptor extends DeclarationDescriptorNonRoot {
     @NotNull
     TypeConstructor getTypeConstructor();
 

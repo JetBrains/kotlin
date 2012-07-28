@@ -16,11 +16,14 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.util.slicedmap.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +39,9 @@ public class DelegatingBindingTrace implements BindingTrace {
     private final BindingContext bindingContext = new BindingContext() {
         @Override
         public Collection<Diagnostic> getDiagnostics() {
-            throw new UnsupportedOperationException(); // TODO
+            ArrayList<Diagnostic> mergedDiagnostics = new ArrayList<Diagnostic>(diagnostics);
+            mergedDiagnostics.addAll(parentContext.getDiagnostics());
+            return mergedDiagnostics;
         }
 
         @Override
@@ -57,6 +62,7 @@ public class DelegatingBindingTrace implements BindingTrace {
     }
 
     @Override
+    @NotNull
     public BindingContext getBindingContext() {
         return bindingContext;
     }
@@ -78,9 +84,10 @@ public class DelegatingBindingTrace implements BindingTrace {
             assert value != null;
             if (value.equals(true)) return value;
         }
-        else {
-            if (value != null) return value;
+        else if (value != null) {
+            return value;
         }
+
         return parentContext.get(slice, key);
     }
 
@@ -97,15 +104,24 @@ public class DelegatingBindingTrace implements BindingTrace {
         return result;
     }
 
-    public void addAllMyDataTo(BindingTrace trace) {
+    public void addAllMyDataTo(@NotNull BindingTrace trace) {
+        addAllMyDataTo(trace, null, true);
+    }
+
+    public void addAllMyDataTo(@NotNull BindingTrace trace, @Nullable Predicate<WritableSlice> filter, boolean commitDiagnostics) {
         for (Map.Entry<SlicedMapKey<?, ?>, ?> entry : map) {
             SlicedMapKey slicedMapKey = entry.getKey();
             Object value = entry.getValue();
 
-            //noinspection unchecked
-            trace.record(slicedMapKey.getSlice(), slicedMapKey.getKey(), value);
+            WritableSlice slice = slicedMapKey.getSlice();
+            if (filter == null || filter.apply(slice)) {
+                //noinspection unchecked
+                trace.record(slice, slicedMapKey.getKey(), value);
+            }
         }
-        
+
+        if (!commitDiagnostics) return;
+
         for (Diagnostic diagnostic : diagnostics) {
             trace.report(diagnostic);
         }

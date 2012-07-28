@@ -1,6 +1,6 @@
 package test;
 
-final class TwoFields {
-    int a;
-    short b;
+public final class TwoFields {
+    public int a;
+    public short b;
 }

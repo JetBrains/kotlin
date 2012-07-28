@@ -10,15 +10,6 @@ import java.util.*
 //
 
 /**
- * Returns a new List containing the results of applying the given *transform* function to each element in this collection
- *
- * @includeFunctionBody ../../test/CollectionTest.kt map
- */
-public inline fun <T, R> java.util.Collection<T>.map(transform : (T) -> R) : java.util.List<R> {
-    return mapTo(java.util.ArrayList<R>(this.size), transform)
-}
-
-/**
  * Transforms each element of this collection with the given *transform* function and
  * adds each return value to the given *results* collection
  */

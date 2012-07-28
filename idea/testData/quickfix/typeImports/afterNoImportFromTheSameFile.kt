@@ -1,7 +1,7 @@
-// "Add return type declaration" "true"
+// "Specify type explicitly" "true"
 
 class A() {}
 
 class B() {
-    public val <caret>a : A = A()
+    public val <caret>a: A = A()
 }

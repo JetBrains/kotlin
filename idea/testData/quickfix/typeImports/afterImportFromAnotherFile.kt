@@ -1,9 +1,9 @@
-// "Add return type declaration" "true"
+// "Specify type explicitly" "true"
 
 package a
 
 import b.B
 
 class A() {
-    public val <caret>a : B = b.foo()
+    public val <caret>a: B = b.foo()
 }

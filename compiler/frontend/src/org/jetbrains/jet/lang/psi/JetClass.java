@@ -17,8 +17,13 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.StubBasedPsiElement;
+import com.intellij.navigation.ItemPresentation;
+import com.intellij.navigation.ItemPresentationProviders;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,40 +32,30 @@ import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * @author max
  */
-public class JetClass extends JetTypeParameterListOwner
-        implements JetClassOrObject, JetModifierListOwner, StubBasedPsiElement<PsiJetClassStub<?>> {
-
-    private PsiJetClassStub stub;
+public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> implements JetClassOrObject {
 
     public JetClass(@NotNull ASTNode node) {
         super(node);
     }
 
-    // TODO (stubs)
-//    public JetClass(final PsiJetClassStub stub) {
-//        this.stub = stub;
-//    }
+    public JetClass(@NotNull final PsiJetClassStub stub) {
+        super(stub, JetStubElementTypes.CLASS);
+    }
 
+    @NotNull
     @Override
     public List<JetDeclaration> getDeclarations() {
         JetClassBody body = (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
         if (body == null) return Collections.emptyList();
 
         return body.getDeclarations();
-    }
-
-    @NotNull
-    public List<JetSecondaryConstructor> getSecondaryConstructors() {
-        JetClassBody body = (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
-        if (body == null) return Collections.emptyList();
-
-        return body.getSecondaryConstructors();
     }
 
     @Override
@@ -103,6 +98,7 @@ public class JetClass extends JetTypeParameterListOwner
         return (JetModifierList) findChildByType(JetNodeTypes.PRIMARY_CONSTRUCTOR_MODIFIER_LIST);
     }
 
+    @Override
     @NotNull
     public List<JetClassInitializer> getAnonymousInitializers() {
         JetClassBody body = getBody();
@@ -111,6 +107,7 @@ public class JetClass extends JetTypeParameterListOwner
         return body.getAnonymousInitializers();
     }
 
+    @Override
     public boolean hasPrimaryConstructor() {
         return getPrimaryConstructorParameterList() != null;
     }
@@ -140,27 +137,116 @@ public class JetClass extends JetTypeParameterListOwner
     }
 
     public boolean isTrait() {
+        PsiJetClassStub stub = getStub();
+        if (stub != null) {
+            return stub.isTrait();
+        }
+
         return findChildByType(JetTokens.TRAIT_KEYWORD) != null;
     }
 
     public boolean isAnnotation() {
+        PsiJetClassStub stub = getStub();
+        if (stub != null) {
+            return stub.isAnnotation();
+        }
+
         return hasModifier(JetTokens.ANNOTATION_KEYWORD);
     }
 
+    @NotNull
     @Override
     public IStubElementType getElementType() {
-        // TODO (stubs)
         return JetStubElementTypes.CLASS;
-    }
-
-    @Override
-    public PsiJetClassStub<?> getStub() {
-        // TODO (stubs)
-        return null;
     }
 
     @Override
     public void delete() throws IncorrectOperationException {
         JetPsiUtil.deleteClass(this);
+    }
+
+    @Override
+    public boolean isEquivalentTo(PsiElement another) {
+        if (super.isEquivalentTo(another)) {
+            return true;
+        }
+        if (another instanceof JetClass) {
+            String fq1 = getQualifiedName();
+            String fq2 = ((JetClass) another).getQualifiedName();
+            return fq1 != null && fq2 != null && fq1.equals(fq2);
+        }
+        return false;
+    }
+
+    @Nullable
+    private String getQualifiedName() {
+        PsiJetClassStub stub = getStub();
+        if (stub != null) {
+            return stub.getQualifiedName();
+        }
+
+        List<String> parts = new ArrayList<String>();
+        JetClassOrObject current = this;
+        while (current != null) {
+            parts.add(current.getName());
+            current = PsiTreeUtil.getParentOfType(current, JetClassOrObject.class);
+        }
+        PsiFile file = getContainingFile();
+        if (!(file instanceof JetFile)) return null;
+        String fileQualifiedName = ((JetFile) file).getNamespaceHeader().getQualifiedName();
+        if (!fileQualifiedName.isEmpty()) {
+            parts.add(fileQualifiedName);
+        }
+        Collections.reverse(parts);
+        return StringUtil.join(parts, ".");
+    }
+
+    /**
+     * Returns the list of unqualified names that are indexed as the superclass names of this class. For the names that might be imported
+     * via an aliased import, includes both the original and the aliased name (reference resolution during inheritor search will sort this out).
+     *
+     * @return the list of possible superclass names
+     */
+    @NotNull
+    public List<String> getSuperNames() {
+        PsiJetClassStub stub = getStub();
+        if (stub != null) {
+            return stub.getSuperNames();
+        }
+
+        final List<JetDelegationSpecifier> specifiers = getDelegationSpecifiers();
+        if (specifiers.size() == 0) return Collections.emptyList();
+        List<String> result = new ArrayList<String>();
+        for (JetDelegationSpecifier specifier : specifiers) {
+            final JetUserType superType = specifier.getTypeAsUserType();
+            if (superType != null) {
+                final String referencedName = superType.getReferencedName();
+                if (referencedName != null) {
+                    addSuperName(result, referencedName);
+                }
+            }
+        }
+        return result;
+    }
+
+    private void addSuperName(List<String> result, String referencedName) {
+        result.add(referencedName);
+        if (getContainingFile() instanceof JetFile) {
+            final JetImportDirective directive = ((JetFile) getContainingFile()).findImportByAlias(referencedName);
+            if (directive != null) {
+                JetExpression reference = directive.getImportedReference();
+                while (reference instanceof JetDotQualifiedExpression) {
+                    reference = ((JetDotQualifiedExpression) reference).getSelectorExpression();
+                }
+                if (reference instanceof JetSimpleNameExpression) {
+                    result.add(((JetSimpleNameExpression) reference).getReferencedName());
+                }
+            }
+        }
+    }
+
+    @Override
+    public ItemPresentation getPresentation() {
+        return ItemPresentationProviders.getItemPresentation(this);
     }
 }

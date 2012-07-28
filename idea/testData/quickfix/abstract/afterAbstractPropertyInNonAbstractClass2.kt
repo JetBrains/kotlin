@@ -1,4 +1,4 @@
 // "Make 'i' not abstract" "true"
 class A() {
-    <caret>var i : Int
+    var i : Int = 0
 }

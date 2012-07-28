@@ -23,8 +23,11 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
-import org.jetbrains.jet.cli.CompilerArguments;
-import org.jetbrains.jet.cli.KotlinCompiler;
+import org.jetbrains.jet.cli.common.CLICompiler;
+import org.jetbrains.jet.cli.common.CompilerArguments;
+import org.jetbrains.jet.cli.common.ExitCode;
+import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
+import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments;
 
 import java.io.File;
 import java.io.IOException;
@@ -108,11 +111,11 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
 
         configureCompilerArguments(arguments);
 
-        final KotlinCompiler compiler = createCompiler();
+        final CLICompiler compiler = createCompiler();
 
         printCompilerArgumentsIfDebugEnabled(arguments, compiler);
 
-        final KotlinCompiler.ExitCode exitCode = compiler.exec(System.err, arguments);
+        final ExitCode exitCode = compiler.exec(System.err, arguments);
 
         switch (exitCode) {
             case COMPILATION_ERROR:
@@ -123,7 +126,7 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         }
     }
 
-    private void printCompilerArgumentsIfDebugEnabled(CompilerArguments arguments, KotlinCompiler compiler) {
+    private void printCompilerArgumentsIfDebugEnabled(CompilerArguments arguments, CLICompiler compiler) {
         if (getLog().isDebugEnabled()) {
             getLog().debug("Invoking compiler " + compiler + " with arguments:");
             try {
@@ -142,8 +145,8 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         }
     }
 
-    protected KotlinCompiler createCompiler() {
-        return new KotlinCompiler();
+    protected CLICompiler createCompiler() {
+        return new K2JVMCompiler();
     }
 
     /**
@@ -151,7 +154,7 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
      * such as for KDoc
      */
     protected CompilerArguments createCompilerArguments() {
-        return new CompilerArguments();
+        return new K2JVMCompilerArguments();
     }
 
     /**
@@ -159,10 +162,10 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
      */
     protected abstract void configureCompilerArguments(CompilerArguments arguments) throws MojoExecutionException;
 
-    protected void configureBaseCompilerArguments(Log log, CompilerArguments arguments, String module,
+    protected void configureBaseCompilerArguments(Log log, K2JVMCompilerArguments arguments, String module,
                                                   List<String> sources, List<String> classpath, String output) throws MojoExecutionException {
         // don't include runtime, it should be in maven dependencies
-        arguments.mode = "stdlib";
+        arguments.noStdlib = true;
 
         final ArrayList<String> classpathList = new ArrayList<String>();
 
@@ -202,8 +205,9 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         log.info("Classes directory is " + output);
         arguments.setOutputDir(output);
 
-        arguments.jdkHeaders = getJdkHeaders().getPath();
-        log.debug("Using jdk headers from " + arguments.jdkHeaders);
+        arguments.noJdkAnnotations = true;
+        arguments.annotations = getJdkAnnotations().getPath();
+        log.debug("Using jdk annotations from " + arguments.annotations);
     }
 
     // TODO: Make a better runtime detection or get rid of it entirely
@@ -221,37 +225,37 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         return null;
     }
 
-    private File jdkHeadersPath;
+    private File jdkAnnotationsPath;
 
-    protected File getJdkHeaders() {
-        if (jdkHeadersPath != null)
-            return jdkHeadersPath;
+    protected File getJdkAnnotations() {
+        if (jdkAnnotationsPath != null)
+            return jdkAnnotationsPath;
 
         try {
-            jdkHeadersPath = extractJdkHeaders();
+            jdkAnnotationsPath = extractJdkAnnotations();
 
-            if (jdkHeadersPath == null)
-                throw new RuntimeException("Can't find kotlin jdk headers in maven plugin resources");
+            if (jdkAnnotationsPath == null)
+                throw new RuntimeException("Can't find kotlin jdk annotations in maven plugin resources");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return jdkHeadersPath;
+        return jdkAnnotationsPath;
     }
 
-    private File extractJdkHeaders() throws IOException {
-        final String kotlin_jdk_headers = "kotlin-jdk-headers.jar";
+    private File extractJdkAnnotations() throws IOException {
+        final String kotlin_jdk_annotations = "kotlin-jdk-annotations.jar";
 
-        final URL jdkHeadersResource = Resources.getResource(kotlin_jdk_headers);
-        if (jdkHeadersResource == null)
+        final URL jdkAnnotationsResource = Resources.getResource(kotlin_jdk_annotations);
+        if (jdkAnnotationsResource == null)
             return null;
 
-        final File jdkHeadersTempDir = Files.createTempDir();
-        jdkHeadersTempDir.deleteOnExit();
+        final File jdkAnnotationsTempDir = Files.createTempDir();
+        jdkAnnotationsTempDir.deleteOnExit();
 
-        final File jdkHeadersFile = new File(jdkHeadersTempDir, kotlin_jdk_headers);
-        Files.copy(Resources.newInputStreamSupplier(jdkHeadersResource), jdkHeadersFile);
+        final File jdkAnnotationsFile = new File(jdkAnnotationsTempDir, kotlin_jdk_annotations);
+        Files.copy(Resources.newInputStreamSupplier(jdkAnnotationsResource), jdkAnnotationsFile);
 
-        return jdkHeadersFile;
+        return jdkAnnotationsFile;
     }
 }

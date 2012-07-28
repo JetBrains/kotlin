@@ -17,8 +17,8 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.util.TraceClassVisitor;
+import org.jetbrains.asm4.ClassWriter;
+import org.jetbrains.asm4.util.TraceClassVisitor;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

@@ -25,4 +25,5 @@ public interface Module {
     String getModuleName();
     List<String> getSourceFiles();
     List<String> getClasspathRoots();
+    List<String> getAnnotationsRoots();
 }

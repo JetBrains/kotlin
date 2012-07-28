@@ -62,6 +62,11 @@ public class AutoCastUtils {
             }
 
             @Override
+            public List<ReceiverDescriptor> visitScriptReceiver(ScriptReceiver receiver, Object data) {
+                return Collections.emptyList();
+            }
+
+            @Override
             public List<ReceiverDescriptor> visitExpressionReceiver(ExpressionReceiver receiver, Object data) {
 //                JetExpression expression = receiver.getExpression();
 //                VariableDescriptor variableDescriptor = DataFlowValueFactory.getVariableDescriptorFromSimpleName(bindingContext, expression);
@@ -75,7 +80,7 @@ public class AutoCastUtils {
 //                else if (expression instanceof JetThisExpression) {
 //                    return castThis(dataFlowInfo, receiver);
 //                }
-                DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(receiver.getExpression(),receiver.getType(),
+                DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(receiver.getExpression(), receiver.getType(),
                                                                                                 bindingContext);
                 List<ReceiverDescriptor> result = Lists.newArrayList();
                 for (JetType possibleType : dataFlowInfo.getPossibleTypes(dataFlowValue)) {

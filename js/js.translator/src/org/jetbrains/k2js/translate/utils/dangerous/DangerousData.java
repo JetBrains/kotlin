@@ -41,13 +41,13 @@ public class DangerousData {
 
     @NotNull
     public static DangerousData collect(@NotNull JetExpression expression, @NotNull TranslationContext context) {
-        if (cantContainDangerousElements(expression, context)) {
+        if (cantContainDangerousElements(expression)) {
             return emptyData();
         }
         return doCollectData(expression, context);
     }
 
-    private static boolean cantContainDangerousElements(@NotNull JetElement element, @NotNull TranslationContext context) {
+    private static boolean cantContainDangerousElements(@NotNull JetElement element) {
         if (element instanceof JetBlockExpression) {
             return true;
         }
@@ -87,7 +87,7 @@ public class DangerousData {
     }
 
     @NotNull
-    private List<JetExpression> nodesToBeGeneratedBefore = Lists.newArrayList();
+    private final List<JetExpression> nodesToBeGeneratedBefore = Lists.newArrayList();
 
     @Nullable
     private JetExpression dangerousNode = null;
@@ -103,11 +103,6 @@ public class DangerousData {
     @NotNull
     public List<JetExpression> getNodesToBeGeneratedBefore() {
         return nodesToBeGeneratedBefore;
-    }
-
-    @SuppressWarnings("NullableProblems")
-    public void setNodesToBeGeneratedBefore(@NotNull List<JetExpression> nodesToBeGeneratedBefore) {
-        this.nodesToBeGeneratedBefore = nodesToBeGeneratedBefore;
     }
 
     public boolean exists() {

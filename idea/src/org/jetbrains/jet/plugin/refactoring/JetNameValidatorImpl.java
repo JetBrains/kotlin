@@ -20,8 +20,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.TipsManager;
+import org.jetbrains.jet.cli.jvm.compiler.TipsManager;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
@@ -107,7 +108,7 @@ public class JetNameValidatorImpl implements JetNameValidator {
                 Collection<DeclarationDescriptor> variants =
                         TipsManager.getVariantsNoReceiver(expression, myBindingContext);
                 for (DeclarationDescriptor variant : variants) {
-                    if (variant.getName().equals(name)) {
+                    if (variant.getName().getName().equals(name) && variant instanceof VariableDescriptor) {
                         result.set(false);
                         return;
                     }

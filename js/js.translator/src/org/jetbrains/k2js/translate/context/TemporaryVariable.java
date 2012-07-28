@@ -31,10 +31,13 @@ public final class TemporaryVariable {
     private final JsExpression assignmentExpression;
     @NotNull
     private final JsName variableName;
+    @NotNull
+    private final JsExpression initExpression;
 
     /*package*/ TemporaryVariable(@NotNull JsName temporaryName, @NotNull JsExpression initExpression) {
         this.variableName = temporaryName;
-        this.assignmentExpression = AstUtil.newAssignment(variableName.makeRef(), initExpression);
+        this.initExpression = initExpression;
+        this.assignmentExpression = AstUtil.newAssignment(variableName.makeRef(), this.initExpression);
     }
 
     @NotNull
@@ -50,5 +53,10 @@ public final class TemporaryVariable {
     @NotNull
     public JsExpression assignmentExpression() {
         return assignmentExpression;
+    }
+
+    @NotNull
+    public JsExpression initExpression() {
+        return initExpression;
     }
 }

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author abreslav
  */
-public class JetPattern extends JetElement {
+public class JetPattern extends JetElementImpl {
     public JetPattern(@NotNull ASTNode node) {
         super(node);
     }

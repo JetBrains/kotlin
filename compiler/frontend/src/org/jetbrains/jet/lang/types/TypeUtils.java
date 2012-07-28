@@ -16,17 +16,15 @@
 
 package org.jetbrains.jet.lang.types;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintResolutionListener;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemSolution;
@@ -36,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
-import org.jetbrains.jet.util.CommonSuppliers;
 
 import java.util.*;
 
@@ -44,40 +41,6 @@ import java.util.*;
  * @author abreslav
  */
 public class TypeUtils {
-    public static final JetType FORBIDDEN = new JetType() {
-        @NotNull
-        @Override
-        public TypeConstructor getConstructor() {
-            throw new UnsupportedOperationException(); // TODO
-        }
-
-        @NotNull
-        @Override
-        public List<TypeProjection> getArguments() {
-            throw new UnsupportedOperationException(); // TODO
-        }
-
-        @Override
-        public boolean isNullable() {
-            throw new UnsupportedOperationException(); // TODO
-        }
-
-        @NotNull
-        @Override
-        public JetScope getMemberScope() {
-            throw new UnsupportedOperationException(); // TODO
-        }
-
-        @Override
-        public List<AnnotationDescriptor> getAnnotations() {
-            throw new UnsupportedOperationException(); // TODO
-        }
-
-        @Override
-        public String toString() {
-            return "FORBIDDEN";
-        }
-    };
     public static final JetType NO_EXPECTED_TYPE = new JetType() {
         @NotNull
         @Override
@@ -140,7 +103,9 @@ public class TypeUtils {
 
     @Nullable
     public static JetType intersect(@NotNull JetTypeChecker typeChecker, @NotNull Set<JetType> types) {
-        assert !types.isEmpty();
+        if (types.isEmpty()) {
+            return JetStandardClasses.getNullableAnyType();
+        }
 
         if (types.size() == 1) {
             return types.iterator().next();
@@ -193,12 +158,8 @@ public class TypeUtils {
 
 
         List<AnnotationDescriptor> noAnnotations = Collections.<AnnotationDescriptor>emptyList();
-        TypeConstructor constructor = new TypeConstructorImpl(
-                null,
+        TypeConstructor constructor = new IntersectionTypeConstructor(
                 noAnnotations,
-                false,
-                makeDebugNameForIntersectionType(resultingTypes).toString(),
-                Collections.<TypeParameterDescriptor>emptyList(),
                 resultingTypes);
 
         JetScope[] scopes = new JetScope[resultingTypes.size()];
@@ -267,20 +228,6 @@ public class TypeUtils {
                 processAllTypeParameters(projection.getType(), projection.getProjectionKind(), result);
             }
         }
-    }
-
-    private static StringBuilder makeDebugNameForIntersectionType(Iterable<JetType> resultingTypes) {
-        StringBuilder debugName = new StringBuilder("{");
-        for (Iterator<JetType> iterator = resultingTypes.iterator(); iterator.hasNext(); ) {
-            JetType type = iterator.next();
-
-            debugName.append(type.toString());
-            if (iterator.hasNext()) {
-                debugName.append(" & ");
-            }
-        }
-        debugName.append("}");
-        return debugName;
     }
 
     public static boolean canHaveSubtypes(JetTypeChecker typeChecker, JetType type) {
@@ -369,7 +316,7 @@ public class TypeUtils {
     @NotNull
     public static JetType makeUnsubstitutedType(ClassDescriptor classDescriptor, JetScope unsubstitutedMemberScope) {
         if (ErrorUtils.isError(classDescriptor)) {
-            return ErrorUtils.createErrorType("This is very helpful diagnostics message");
+            return ErrorUtils.createErrorType("Unsubstituted type for " + classDescriptor);
         }
         List<TypeProjection> arguments = getDefaultTypeProjections(classDescriptor.getTypeConstructor().getParameters());
         return new JetTypeImpl(
@@ -397,80 +344,6 @@ public class TypeUtils {
             result.add(parameterDescriptor.getDefaultType());
         }
         return result;
-    }
-
-    @NotNull
-    public static Map<TypeConstructor, TypeProjection> buildSubstitutionContext(@NotNull  JetType context) {
-        return buildSubstitutionContext(context.getConstructor().getParameters(), context.getArguments());
-    }
-
-    /**
-     * Builds a context with all the supertypes' parameters substituted
-     */
-    @NotNull
-    public static TypeSubstitutor buildDeepSubstitutor(@NotNull JetType type) {
-        Map<TypeConstructor, TypeProjection> substitution = Maps.newHashMap();
-        TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitution);
-        // we use the mutability of the map here
-        fillInDeepSubstitutor(type, typeSubstitutor, substitution, null);
-        return typeSubstitutor;
-    }
-
-    @NotNull
-    public static Multimap<TypeConstructor, TypeProjection> buildDeepSubstitutionMultimap(@NotNull JetType type) {
-        Multimap<TypeConstructor, TypeProjection> fullSubstitution = CommonSuppliers.newLinkedHashSetHashSetMultimap();
-        Map<TypeConstructor, TypeProjection> substitution = Maps.newHashMap();
-        TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitution);
-        // we use the mutability of the map here
-        fillInDeepSubstitutor(type, typeSubstitutor, substitution, fullSubstitution);
-        return fullSubstitution;
-    }
-
-    // we use the mutability of the substitution map here
-    private static void fillInDeepSubstitutor(@NotNull JetType context, @NotNull TypeSubstitutor substitutor, @NotNull Map<TypeConstructor, TypeProjection> substitution, @Nullable Multimap<TypeConstructor, TypeProjection> fullSubstitution) {
-        List<TypeParameterDescriptor> parameters = context.getConstructor().getParameters();
-        List<TypeProjection> arguments = context.getArguments();
-        
-        if (parameters.size() != arguments.size()) {
-            throw new IllegalStateException();
-        }
-        
-        for (int i = 0; i < arguments.size(); i++) {
-            TypeProjection argument = arguments.get(i);
-            TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
-
-            JetType substitute = substitutor.substitute(argument.getType(), Variance.INVARIANT);
-            assert substitute != null;
-            TypeProjection substitutedTypeProjection = new TypeProjection(argument.getProjectionKind(), substitute);
-            substitution.put(typeParameterDescriptor.getTypeConstructor(), substitutedTypeProjection);
-            if (fullSubstitution != null) {
-                fullSubstitution.put(typeParameterDescriptor.getTypeConstructor(), substitutedTypeProjection);
-            }
-        }
-        if (JetStandardClasses.isNothingOrNullableNothing(context)) return;
-        for (JetType supertype : context.getConstructor().getSupertypes()) {
-            fillInDeepSubstitutor(supertype, substitutor, substitution, fullSubstitution);
-        }
-    }
-
-    @NotNull
-    public static Map<TypeConstructor, TypeProjection> buildSubstitutionContext(@NotNull List<TypeParameterDescriptor> parameters, @NotNull List<TypeProjection> contextArguments) {
-        Map<TypeConstructor, TypeProjection> parameterValues = new HashMap<TypeConstructor, TypeProjection>();
-        fillInSubstitutionContext(parameters, contextArguments, parameterValues);
-        return parameterValues;
-    }
-
-    private static void fillInSubstitutionContext(List<TypeParameterDescriptor> parameters, List<TypeProjection> contextArguments, Map<TypeConstructor, TypeProjection> parameterValues) {
-        for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
-            TypeParameterDescriptor parameter = parameters.get(i);
-            TypeProjection value = contextArguments.get(i);
-            parameterValues.put(parameter.getTypeConstructor(), value);
-        }
-    }
-
-    @NotNull
-    public static TypeProjection makeStarProjection(@NotNull TypeParameterDescriptor parameterDescriptor) {
-        return new TypeProjection(Variance.OUT_VARIANCE, parameterDescriptor.getUpperBoundsAsType());
     }
 
     private static void collectImmediateSupertypes(@NotNull JetType type, @NotNull Collection<JetType> result) {
@@ -529,21 +402,74 @@ public class TypeUtils {
         return null;
     }
 
-    public static boolean hasUnsubstitutedTypeParameters(JetType type) {
-        if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
-            return true;
-        }
+    @NotNull
+    public static JetType substituteParameters(@NotNull ClassDescriptor clazz, @NotNull List<JetType> actualTypeParameters) {
+        List<TypeParameterDescriptor> clazzTypeParameters = clazz.getTypeConstructor().getParameters();
 
-        for(TypeProjection proj : type.getArguments()) {
-            if(hasUnsubstitutedTypeParameters(proj.getType())) {
-                return true;
-            }
+        if (clazzTypeParameters.size() != actualTypeParameters.size()) {
+            throw new IllegalArgumentException("type parameter counts do not match: " + clazz + ", " + actualTypeParameters);
         }
+        
+        Map<TypeConstructor, TypeProjection> substitutions = Maps.newHashMap();
+        
+        for (int i = 0; i < clazzTypeParameters.size(); ++i) {
+            TypeConstructor typeConstructor = clazzTypeParameters.get(i).getTypeConstructor();
+            TypeProjection typeProjection = new TypeProjection(actualTypeParameters.get(i));
+            substitutions.put(typeConstructor, typeProjection);
+        }
+        
+        return TypeSubstitutor.create(substitutions).substitute(clazz.getDefaultType(), Variance.INVARIANT);
+    }
 
-        return false;
+    private static void addAllClassDescriptors(@NotNull JetType type, @NotNull Set<ClassDescriptor> set) {
+        ClassDescriptor cd = getClassDescriptor(type);
+        if (cd != null) {
+            set.add(cd);
+        }
+        for (TypeProjection projection : type.getArguments()) {
+            addAllClassDescriptors(projection.getType(), set);
+        }
+    }
+
+    @NotNull
+    public static List<ClassDescriptor> getAllClassDescriptors(@NotNull JetType type) {
+        Set<ClassDescriptor> classDescriptors = new HashSet<ClassDescriptor>();
+        addAllClassDescriptors(type, classDescriptors);
+        return new ArrayList<ClassDescriptor>(classDescriptors);
     }
 
     public static boolean equalTypes(@NotNull JetType a, @NotNull JetType b) {
         return JetTypeChecker.INSTANCE.isSubtypeOf(a, b) && JetTypeChecker.INSTANCE.isSubtypeOf(b, a);
+    }
+
+    public static boolean typeConstructorUsedInType(@NotNull TypeConstructor key, @NotNull JetType value) {
+        if (value.getConstructor() == key) return true;
+        for (TypeProjection projection : value.getArguments()) {
+            if (typeConstructorUsedInType(key, projection.getType())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean dependsOnTypeParameters(@NotNull JetType type, @NotNull Collection<TypeParameterDescriptor> typeParameters) {
+        return dependsOnTypeParameterConstructors(type, Collections2
+                .transform(typeParameters, new Function<TypeParameterDescriptor, TypeConstructor>() {
+                    @Override
+                    public TypeConstructor apply(@Nullable TypeParameterDescriptor typeParameterDescriptor) {
+                        assert typeParameterDescriptor != null;
+                        return typeParameterDescriptor.getTypeConstructor();
+                    }
+                }));
+    }
+
+    public static boolean dependsOnTypeParameterConstructors(@NotNull JetType type, @NotNull Collection<TypeConstructor> typeParameterConstructors) {
+        if (typeParameterConstructors.contains(type.getConstructor())) return true;
+        for (TypeProjection typeProjection : type.getArguments()) {
+            if (dependsOnTypeParameterConstructors(typeProjection.getType(), typeParameterConstructors)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

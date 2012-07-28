@@ -39,10 +39,6 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitDeclaration(classObject, data);
     }
 
-    public R visitConstructor(JetSecondaryConstructor constructor, D data) {
-        return visitDeclaration(constructor, data);
-    }
-
     public R visitNamedFunction(JetNamedFunction function, D data) {
         return visitNamedDeclaration(function, data);
     }
@@ -58,6 +54,10 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
     public R visitJetFile(JetFile file, D data) {
         visitFile(file);
         return null;
+    }
+
+    public R visitScript(JetScript script, D data) {
+        return visitDeclaration(script, data);
     }
 
     public R visitImportDirective(JetImportDirective importDirective, D data) {
@@ -272,7 +272,7 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitExpression(expression, data);
     }
 
-    public R visitIdeTemplateExpression(JetIdeTemplateExpression expression, D data) {
+    public R visitIdeTemplate(JetIdeTemplate expression, D data) {
         return null;
     }
 

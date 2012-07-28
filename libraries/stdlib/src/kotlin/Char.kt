@@ -25,3 +25,12 @@ public inline fun Char.isJavaLetterOrDigit(): Boolean = Character.isJavaLetterOr
  */
 public inline fun Char.isWhitespace(): Boolean = Character.isWhitespace(this)
 
+/**
+ * Returns true if this character is upper case
+ */
+public inline fun Char.isUpperCase(): Boolean = Character.isUpperCase(this)
+
+/**
+ * Returns true if this character is lower case
+ */
+public inline fun Char.isLowerCase(): Boolean = Character.isLowerCase(this)

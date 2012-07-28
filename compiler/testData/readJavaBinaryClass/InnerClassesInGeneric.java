@@ -1,12 +1,14 @@
 package test;
 
-interface Trait<P> {
-}
+import java.lang.UnsupportedOperationException;
 
-class Outer<P, Q> {
-    class Inner {
+public class InnerClassesInGeneric<P, Q> {
+    public class Inner {
     }
     
-    class Inner2 extends Inner implements Trait<P> {
+    public class Inner2 extends Inner implements Iterable<P> {
+        public java.util.Iterator<P> iterator() {
+            throw new UnsupportedOperationException();
+        }
     }
 }

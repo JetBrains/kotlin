@@ -1,0 +1,7 @@
+namespace test
+
+internal abstract trait test.Bar : jet.Any {
+}
+internal abstract trait test.Foo : jet.Any {
+}
+internal final fun </*0*/ T : test.Bar & test.Foo>foo(): jet.Tuple0

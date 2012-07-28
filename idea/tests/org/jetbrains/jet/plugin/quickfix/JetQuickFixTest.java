@@ -20,20 +20,25 @@ import com.google.common.collect.Lists;
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
+import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.Severity;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.highlighter.IdeErrorMessages;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.testing.ConfigRuntimeUtil;
+import org.jetbrains.jet.testing.InTextDirectivesUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author svtk
@@ -60,6 +65,18 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
                 return false;
             }
         };
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        try {
+            super.tearDown();
+        } catch (RuntimeException exception) {
+            // TODO: Fix inability to free pointer for runtimejar in JetWithJdkAndRuntimeLightProjectDescriptor
+            if (!(exception.getMessage().contains("runtimejar") && exception.getMessage().contains("Virtual pointer hasn't been disposed"))) {
+                throw exception;
+            }
+        }
     }
 
     public static Test suite() {
@@ -97,6 +114,7 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
         return JetTestCaseBuilder.getHomeDirectory() + "/idea/testData/quickfix/";
     }
 
+    @Override
     public String getName() {
         return "test" + name.replaceFirst(name.substring(0, 1), name.substring(0, 1).toUpperCase());
     }
@@ -111,10 +129,39 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
 
         try {
             doSingleTest(name.substring("before".length()) + ".kt");
+            checkForUnexpectedErrors();
         } finally {
             if (isWithRuntime) {
                 ConfigRuntimeUtil.unConfigureKotlinRuntime(getModule(), getProjectJDK());
             }
+        }
+    }
+
+    private static void checkForUnexpectedErrors() {
+        AnalyzeExhaust exhaust = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) getFile());
+        Collection<Diagnostic> diagnostics = exhaust.getBindingContext().getDiagnostics();
+
+        if (diagnostics.size() != 0) {
+            String[] expectedErrorStrings = InTextDirectivesUtils.findListWithPrefix("// ERROR:", getFile().getText());
+
+            System.out.println(getFile().getText());
+
+            Collection<String> expectedErrors = new HashSet<String>(Arrays.asList(expectedErrorStrings));
+
+            StringBuilder builder = new StringBuilder();
+            boolean hasErrors = false;
+
+            for (Diagnostic diagnostic : diagnostics) {
+                if (diagnostic.getSeverity() == Severity.ERROR) {
+                    String errorText = IdeErrorMessages.RENDERER.render(diagnostic);
+                    if (!expectedErrors.contains(errorText)) {
+                        hasErrors = true;
+                        builder.append("// ERROR: ").append(errorText).append("\n");
+                    }
+                }
+            }
+
+            Assert.assertFalse("There should be no unexpected errors after applying fix (Use \"// ERROR:\" directive): \n" + builder.toString(), hasErrors);
         }
     }
 

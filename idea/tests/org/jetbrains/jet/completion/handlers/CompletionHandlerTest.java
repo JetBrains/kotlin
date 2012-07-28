@@ -18,8 +18,12 @@ package org.jetbrains.jet.completion.handlers;
 
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.completion.LightCompletionTestCase;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementPresentation;
+import com.intellij.codeInsight.lookup.LookupManager;
+import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.openapi.projectRoots.Sdk;
+import junit.framework.Assert;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
@@ -31,7 +35,11 @@ import java.io.File;
 public class CompletionHandlerTest extends LightCompletionTestCase {
 
     public void testClassCompletionImport() {
-        doTest(CompletionType.CLASS_NAME, 1, "SortedSet");
+        doTest(CompletionType.BASIC, 2, "SortedSet", null);
+    }
+
+    public void testNonStandardArray() {
+        doTest(CompletionType.BASIC, 2, "Array", "java.lang.reflect");
     }
 
     public void testNoParamsFunction() {
@@ -64,25 +72,82 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
         doTest();
     }
 
-    public void doTest() {
-        doTest(CompletionType.BASIC, 2, null);
+    public void testHigherOrderFunction() {
+        doTest();
     }
 
-    public void doTest(CompletionType type, int time, @Nullable String completeItem) {
+    public void testHigherOrderFunctionWithArg() {
+        doTest(CompletionType.BASIC, 2, "filterNot", null);
+    }
+
+    public void doTest() {
+        doTest(CompletionType.BASIC, 2, null, null);
+    }
+
+    public void doTest(CompletionType type, int time, @Nullable String lookupString, @Nullable String tailText) {
         try {
             configureByFileNoComplete(getBeforeFileName());
             setType(type);
 
-            complete(time);
+            if (lookupString != null || tailText != null) {
+                complete(time);
 
-            if (completeItem != null) {
-                selectItem(LookupElementBuilder.create(completeItem), '\t');
+                LookupElement item = getExistentLookupElement(lookupString, tailText);
+                if (item != null) {
+                    selectItem(item, '\n');
+                }
+            }
+            else {
+                forceCompleteFirst(time);
             }
 
             checkResultByFile(getAfterFileName());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new AssertionError(e);
         }
+    }
+
+    @Nullable
+    public static LookupElement getExistentLookupElement(@Nullable String lookupString, @Nullable String tailText) {
+        final LookupImpl lookup = (LookupImpl) LookupManager.getInstance(getProject()).getActiveLookup();
+        LookupElement foundElement = null;
+
+        if (lookup != null) {
+            final LookupElementPresentation presentation = new LookupElementPresentation();
+
+            for (LookupElement lookupElement : lookup.getItems()) {
+                boolean lookupOk;
+
+                if (lookupString != null) {
+                    lookupOk = (lookupElement.getLookupString().contains(lookupString));
+                }
+                else {
+                    lookupOk = true;
+                }
+
+                boolean tailOk;
+
+                if (tailText != null) {
+                    lookupElement.renderElement(presentation);
+                    String itemTailText = presentation.getTailText();
+                    tailOk = itemTailText != null && itemTailText.contains(tailText);
+                }
+                else {
+                    tailOk = true;
+                }
+
+
+                if (lookupOk && tailOk) {
+                    if (foundElement != null) {
+                        Assert.fail("Several elements satisfy to completion restrictions");
+                    }
+                    foundElement = lookupElement;
+                }
+            }
+        }
+
+        return foundElement;
     }
 
     protected String getBeforeFileName() {
@@ -101,5 +166,12 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
     @Override
     protected Sdk getProjectJDK() {
         return PluginTestCaseBase.jdkFromIdeaHome();
+    }
+
+    protected void forceCompleteFirst(int time) {
+        complete(time);
+        if (myItems != null && myItems.length > 1) {
+            selectItem(myItems[0]);
+        }
     }
 }

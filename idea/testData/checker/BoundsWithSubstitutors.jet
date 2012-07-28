@@ -8,6 +8,6 @@
 
     class X<A, B : A>()
 
-    val b = X<Any, X<A<C>, C>>
-    val b0 = X<Any, <error>Any?</error>>
-    val b1 = X<Any, X<A<C>, <error>String</error>>>
+    val b = X<Any, X<A<C>, C>>()
+    val b0 = X<Any, <error>Any?</error>>()
+    val b1 = X<Any, X<A<C>, <error>String</error>>>()

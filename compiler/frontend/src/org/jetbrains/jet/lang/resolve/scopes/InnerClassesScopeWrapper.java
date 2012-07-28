@@ -24,6 +24,9 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.resolve.AbstractScopeAdapter;
+import org.jetbrains.jet.lang.resolve.name.LabelName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
@@ -32,11 +35,17 @@ import java.util.List;
 /**
  * @author svtk
  */
-public class InnerClassesScopeWrapper extends JetScopeImpl {
+public class InnerClassesScopeWrapper extends AbstractScopeAdapter {
     private final JetScope actualScope;
 
     public InnerClassesScopeWrapper(JetScope actualScope) {
         this.actualScope = actualScope;
+    }
+
+    @NotNull
+    @Override
+    protected JetScope getWorkerScope() {
+        return actualScope;
     }
 
     private boolean isClass(DeclarationDescriptor descriptor) {
@@ -44,7 +53,7 @@ public class InnerClassesScopeWrapper extends JetScopeImpl {
     }
 
     @Override
-    public ClassifierDescriptor getClassifier(@NotNull String name) {
+    public ClassifierDescriptor getClassifier(@NotNull Name name) {
         ClassifierDescriptor classifier = actualScope.getClassifier(name);
         if (isClass(classifier)) return classifier;
         return null;
@@ -52,13 +61,7 @@ public class InnerClassesScopeWrapper extends JetScopeImpl {
 
     @NotNull
     @Override
-    public DeclarationDescriptor getContainingDeclaration() {
-        return actualScope.getContainingDeclaration();
-    }
-
-    @NotNull
-    @Override
-    public Collection<DeclarationDescriptor> getDeclarationsByLabel(String labelName) {
+    public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
         Collection<DeclarationDescriptor> declarationsByLabel = actualScope.getDeclarationsByLabel(labelName);
         return Collections2.filter(declarationsByLabel, new Predicate<DeclarationDescriptor>() {
             @Override
@@ -83,11 +86,16 @@ public class InnerClassesScopeWrapper extends JetScopeImpl {
     @NotNull
     @Override
     public ReceiverDescriptor getImplicitReceiver() {
-        return actualScope.getImplicitReceiver();
+        return ReceiverDescriptor.NO_RECEIVER;
     }
 
     @Override
     public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
-        actualScope.getImplicitReceiversHierarchy(result);
+        // Do nothing
+    }
+
+    @Override
+    public String toString() {
+        return "Classes from " + actualScope;
     }
 }

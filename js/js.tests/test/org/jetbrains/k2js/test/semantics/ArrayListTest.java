@@ -28,32 +28,36 @@ public final class ArrayListTest extends JavaClassesTest {
     }
 
     public void testEmptyList() throws Exception {
-        checkFooBoxIsTrue("emptyList.kt");
+        fooBoxTest();
     }
 
     public void testAccess() throws Exception {
-        checkFooBoxIsTrue("access.kt");
+        fooBoxTest();
     }
 
     public void testIsEmpty() throws Exception {
-        checkFooBoxIsTrue("isEmpty.kt");
+        fooBoxTest();
     }
 
     public void testArrayAccess() throws Exception {
-        checkFooBoxIsTrue("arrayAccess.kt");
+        fooBoxTest();
     }
 
     public void testIterate() throws Exception {
-        checkFooBoxIsTrue("iterate.kt");
+        fooBoxTest();
     }
 
     public void testRemove() throws Exception {
-        checkFooBoxIsTrue("remove.kt");
+        fooBoxTest();
+    }
+
+    public void testToArray() throws Exception {
+        fooBoxTest();
     }
 
     public void testIndexOOB() throws Exception {
         try {
-            checkFooBoxIsTrue("indexOOB.kt");
+            fooBoxTest();
             fail();
         } catch (JavaScriptException e) {
 

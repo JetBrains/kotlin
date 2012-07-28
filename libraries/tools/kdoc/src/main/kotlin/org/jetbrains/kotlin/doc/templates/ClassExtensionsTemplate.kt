@@ -1,15 +1,10 @@
 package org.jetbrains.kotlin.doc.templates
 
-import kotlin.*
-import org.jetbrains.kotlin.template.*
-import kotlin.io.*
-import kotlin.util.*
 import java.util.*
-import org.jetbrains.kotlin.doc.model.KModel
-import org.jetbrains.kotlin.doc.model.KPackage
 import org.jetbrains.kotlin.doc.model.KClass
 import org.jetbrains.kotlin.doc.model.KFunction
-import org.jetbrains.kotlin.doc.model.KAnnotation
+import org.jetbrains.kotlin.doc.model.KModel
+import org.jetbrains.kotlin.doc.model.KPackage
 import org.jetbrains.kotlin.doc.model.KProperty
 
 class ClassExtensionsTemplate(m: KModel, p: KPackage, k: KClass,

@@ -22,9 +22,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -36,9 +36,8 @@ import java.util.*;
 /**
  * @author Stepan Koltsov
  */
-public class MutableClassDescriptorLite extends MutableDeclarationDescriptor implements ClassDescriptor, NamespaceLikeBuilder {
-    private ConstructorDescriptor primaryConstructor;
-    private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
+public abstract class MutableClassDescriptorLite extends ClassDescriptorBase
+        implements WithDeferredResolve {
 
     private List<AnnotationDescriptor> annotations = Lists.newArrayList();
 
@@ -52,7 +51,6 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
 
     private MutableClassDescriptorLite classObjectDescriptor;
     private JetType classObjectType;
-    private JetType defaultType;
     private final ClassKind kind;
 
     private JetScope scopeForMemberLookup;
@@ -60,11 +58,47 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
 
     private ClassReceiver implicitReceiver;
 
-    public MutableClassDescriptorLite(@NotNull DeclarationDescriptor containingDeclaration, ClassKind kind) {
-        super(containingDeclaration);
+    private Name name;
+    private final DeclarationDescriptor containingDeclaration;
+
+    public MutableClassDescriptorLite(@NotNull DeclarationDescriptor containingDeclaration,
+                                      @NotNull ClassKind kind) {
+        this.containingDeclaration = containingDeclaration;
         this.kind = kind;
     }
 
+    @Override
+    public void forceResolve() {
+
+    }
+
+    @Override
+    public boolean isAlreadyResolved() {
+        return false;
+    }
+
+    @NotNull
+    @Override
+    public DeclarationDescriptor getContainingDeclaration() {
+        return containingDeclaration;
+    }
+
+    @NotNull
+    @Override
+    public Name getName() {
+        return name;
+    }
+
+    public void setName(@NotNull Name name) {
+        assert this.name == null : this.name;
+        this.name = name;
+    }
+
+    @NotNull
+    @Override
+    public DeclarationDescriptor getOriginal() {
+        return this;
+    }
 
     private static boolean isStatic(DeclarationDescriptor declarationDescriptor) {
         if (declarationDescriptor instanceof NamespaceDescriptor) {
@@ -78,29 +112,6 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
             return false;
         }
     }
-
-
-    @NotNull
-    @Override
-    public DeclarationDescriptor getOwnerForChildren() {
-        return this;
-    }
-
-    @Override
-    public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
-        if (this.classObjectDescriptor != null) return ClassObjectStatus.DUPLICATE;
-        if (!isStatic(this.getContainingDeclaration())) {
-            return ClassObjectStatus.NOT_ALLOWED;
-        }
-        assert classObjectDescriptor.getKind() == ClassKind.OBJECT;
-        this.classObjectDescriptor = classObjectDescriptor;
-
-        return ClassObjectStatus.OK;
-    }
-
-
-
-
 
     @NotNull
     @Override
@@ -118,50 +129,21 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
         this.typeConstructor = new TypeConstructorImpl(
                 this,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO : pass annotations from the class?
-                !modality.isOverridable(),
-                getName(),
+                !getModality().isOverridable(),
+                getName().getName(),
                 typeParameters,
                 supertypes);
-        for (FunctionDescriptor functionDescriptor : constructors) {
-            ((ConstructorDescriptorImpl) functionDescriptor).setReturnType(getDefaultType());
-        }
     }
 
-    public WritableScope getScopeForMemberLookupAsWritableScope() {
+    private WritableScope getScopeForMemberLookupAsWritableScope() {
         // hack
         return (WritableScope) scopeForMemberLookup;
     }
 
-    @NotNull
-    @Override
-    public JetScope getMemberScope(List<TypeProjection> typeArguments) {
-        assert typeArguments.size() == typeConstructor.getParameters().size();
-        if (typeArguments.isEmpty()) return scopeForMemberLookup;
-
-        List<TypeParameterDescriptor> typeParameters = getTypeConstructor().getParameters();
-        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(typeParameters, typeArguments);
-        return new SubstitutingScope(scopeForMemberLookup, TypeSubstitutor.create(substitutionContext));
-    }
-
-
-    @NotNull
-    @Override
-    public Set<ConstructorDescriptor> getConstructors() {
-        return constructors;
-    }
 
     @NotNull
     public JetScope getScopeForMemberLookup() {
         return scopeForMemberLookup;
-    }
-
-    @NotNull
-    @Override
-    public ClassDescriptor substitute(TypeSubstitutor substitutor) {
-        if (substitutor.isEmpty()) {
-            return this;
-        }
-        return new LazySubstitutingClassDescriptor(this, substitutor);
     }
 
     @Override
@@ -177,11 +159,6 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
         return true;
     }
 
-
-    @Override
-    public boolean hasConstructors() {
-        return !constructors.isEmpty();
-    }
 
     @NotNull
     @Override
@@ -218,55 +195,13 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
     }
 
 
-    public void setPrimaryConstructor(@NotNull ConstructorDescriptor constructorDescriptor, BindingTrace trace) {
-        assert this.primaryConstructor == null : "Primary constructor assigned twice " + this;
-        this.primaryConstructor = constructorDescriptor;
-        addConstructor(constructorDescriptor, trace);
-    }
-
-    @Override
-    @Nullable
-    public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
-        return primaryConstructor;
-    }
-
-    public void addConstructor(@NotNull ConstructorDescriptor constructorDescriptor, @Nullable BindingTrace trace) {
-        assert constructorDescriptor.getContainingDeclaration() == this;
-        constructors.add(constructorDescriptor);
-        if (defaultType != null) {
-            ((ConstructorDescriptorImpl) constructorDescriptor).setReturnType(getDefaultType());
-        }
-    }
-
-    @NotNull
-    @Override
-    public JetType getDefaultType() {
-        if (defaultType == null) {
-            defaultType = TypeUtils.makeUnsubstitutedType(this, scopeForMemberLookup);
-        }
-        return defaultType;
-    }
-
     @Override
     @Nullable
     public MutableClassDescriptorLite getClassObjectDescriptor() {
         return classObjectDescriptor;
     }
 
-    @Override
-    public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
-        getScopeForMemberLookupAsWritableScope().addPropertyDescriptor(propertyDescriptor);
-    }
 
-    @Override
-    public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
-        getScopeForMemberLookupAsWritableScope().addFunctionDescriptor(functionDescriptor);
-    }
-
-    @Override
-    public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
-        getScopeForMemberLookupAsWritableScope().addClassifierDescriptor(classDescriptor);
-    }
 
     @NotNull
     @Override
@@ -274,10 +209,6 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
         return innerClassesScope;
     }
 
-    @Override
-    public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
-        getScopeForMemberLookupAsWritableScope().addObjectDescriptor(objectDescriptor);
-    }
 
     public void addSupertype(@NotNull JetType supertype) {
         if (!ErrorUtils.isErrorType(supertype)) {
@@ -324,16 +255,66 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
     }
 
     @Override
-    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
-        return visitor.visitClassDescriptor(this, data);
-    }
-
-    @Override
     public List<AnnotationDescriptor> getAnnotations() {
         return annotations;
     }
 
     public void setAnnotations(List<AnnotationDescriptor> annotations) {
         this.annotations = annotations;
+    }
+
+    private NamespaceLikeBuilder builder = null;
+    public NamespaceLikeBuilder getBuilder() {
+        if (builder == null) {
+            builder = new NamespaceLikeBuilderDummy() {
+                @NotNull
+                @Override
+                public DeclarationDescriptor getOwnerForChildren() {
+                    return MutableClassDescriptorLite.this;
+                }
+
+                @Override
+                public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
+                    getScopeForMemberLookupAsWritableScope().addClassifierDescriptor(classDescriptor);
+                }
+
+                @Override
+                public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
+                    getScopeForMemberLookupAsWritableScope().addObjectDescriptor(objectDescriptor);
+                }
+
+                @Override
+                public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
+                    getScopeForMemberLookupAsWritableScope().addFunctionDescriptor(functionDescriptor);
+                }
+
+                @Override
+                public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
+                    getScopeForMemberLookupAsWritableScope().addPropertyDescriptor(propertyDescriptor);
+                }
+
+                @Override
+                public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
+                    if (getKind() == ClassKind.OBJECT) {
+                        return ClassObjectStatus.NOT_ALLOWED;
+                    }
+
+                    if (MutableClassDescriptorLite.this.classObjectDescriptor != null) {
+                        return ClassObjectStatus.DUPLICATE;
+                    }
+
+                    if (!isStatic(MutableClassDescriptorLite.this.getContainingDeclaration())) {
+                        return ClassObjectStatus.NOT_ALLOWED;
+                    }
+
+                    assert classObjectDescriptor.getKind() == ClassKind.OBJECT;
+                    MutableClassDescriptorLite.this.classObjectDescriptor = classObjectDescriptor;
+
+                    return ClassObjectStatus.OK;
+                }
+            };
+        }
+
+        return builder;
     }
 }

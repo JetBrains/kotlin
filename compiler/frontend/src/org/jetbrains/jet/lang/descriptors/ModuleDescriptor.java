@@ -17,7 +17,9 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collections;
@@ -26,21 +28,34 @@ import java.util.Collections;
  * @author abreslav
  */
 public class ModuleDescriptor extends DeclarationDescriptorImpl implements ClassOrNamespaceDescriptor, NamespaceDescriptorParent {
-    private NamespaceDescriptor rootNs;
+    private NamespaceDescriptor rootNamepsace;
 
-    public ModuleDescriptor(String name) {
-        super(null, Collections.<AnnotationDescriptor>emptyList(), name);
-    }
-
-    public void setRootNs(@NotNull NamespaceDescriptor rootNs) {
-        if (this.rootNs != null) {
-            throw new IllegalStateException();
+    public ModuleDescriptor(@NotNull Name name) {
+        super(Collections.<AnnotationDescriptor>emptyList(), name);
+        if (!name.isSpecial()) {
+            throw new IllegalArgumentException("module name must be special: " + name);
         }
-        this.rootNs = rootNs;
     }
 
-    public NamespaceDescriptorImpl getRootNs() {
-        return (NamespaceDescriptorImpl) rootNs;
+    public void setRootNamespace(@NotNull NamespaceDescriptor rootNs) {
+        if (this.rootNamepsace != null) {
+            throw new IllegalStateException("setRootNamespace() is called twice");
+        }
+        this.rootNamepsace = rootNs;
+    }
+
+    @Override
+    @Nullable
+    public DeclarationDescriptor getContainingDeclaration() {
+        return null;
+    }
+
+    public NamespaceDescriptor getRootNamespace() {
+        return rootNamepsace;
+    }
+
+    public NamespaceDescriptorImpl getRootNamespaceDescriptorImpl() {
+        return (NamespaceDescriptorImpl) rootNamepsace;
     }
 
     @NotNull
@@ -60,7 +75,7 @@ public class ModuleDescriptor extends DeclarationDescriptorImpl implements Class
         if (namespaceDescriptor.getContainingDeclaration() != this) {
             throw new IllegalStateException();
         }
-        setRootNs(namespaceDescriptor);
+        setRootNamespace(namespaceDescriptor);
     }
 
 }

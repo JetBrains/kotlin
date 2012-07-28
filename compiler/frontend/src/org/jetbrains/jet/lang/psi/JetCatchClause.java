@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetCatchClause extends JetElement {
+public class JetCatchClause extends JetElementImpl {
     public JetCatchClause(@NotNull ASTNode node) {
         super(node);
     }

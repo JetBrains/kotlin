@@ -28,20 +28,32 @@ public final class RangeTest extends SingleFileTranslationTest {
     }
 
     public void testExplicitRange() throws Exception {
-        checkFooBoxIsTrue("explicitRange.kt");
+        fooBoxTest();
     }
 
 
     public void testRangeSugarSyntax() throws Exception {
-        checkFooBoxIsTrue("rangeSugarSyntax.kt");
+        fooBoxTest();
     }
 
 
     public void testIntInRange() throws Exception {
-        checkFooBoxIsTrue("intInRange.kt");
+        fooBoxTest();
     }
 
     public void testIteratingOverRanges() throws Exception {
-        checkFooBoxIsTrue("iteratingOverRanges.kt");
+        fooBoxTest();
+    }
+
+    public void testIntUpTo() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testIntDownTo() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testUpToDownToDoNotIterate() throws Exception {
+        fooBoxTest();
     }
 }

@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.util.slicedmap;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
@@ -85,6 +87,13 @@ public class BasicWritableSlice<K, V> implements WritableSlice<K, V> {
     @Override
     public boolean isCollective() {
         return isCollective;
+    }
+
+    public void setDebugName(@NotNull String debugName) {
+        if (this.debugName != null) {
+            throw new IllegalStateException("Debug name already set for " + this);
+        }
+        this.debugName = debugName;
     }
 
     @Override

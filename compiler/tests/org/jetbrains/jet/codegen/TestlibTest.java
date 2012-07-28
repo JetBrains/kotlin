@@ -16,28 +16,34 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.vfs.local.CoreLocalFileSystem;
 import gnu.trove.THashSet;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
+import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration;
+import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.jet.compiler.KotlinToJVMBytecodeCompiler;
-import org.jetbrains.jet.compiler.messages.MessageCollector;
+import org.jetbrains.jet.config.CommonConfigurationKeys;
+import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.parsing.JetParsingTest;
+import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -49,6 +55,8 @@ import java.util.Set;
  */
 public class TestlibTest extends CodegenTestCase {
 
+    private File junitJar;
+
     public static Test suite() {
         return new TestlibTest().buildSuite();
     }
@@ -57,42 +65,24 @@ public class TestlibTest extends CodegenTestCase {
         try {
             setUp();
             return doBuildSuite();
-        } catch (RuntimeException e) {
-            throw e;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtils.rethrow(e);
         }
         finally {
             try {
                 tearDown();
-            } catch (RuntimeException e) {
-                throw e;
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw ExceptionUtils.rethrow(e);
             }
         }
     }
 
     private TestSuite doBuildSuite() {
         try {
-            PrintStream err = System.err;
-            CompilerDependencies compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR);
-            File junitJar = new File("libraries/lib/junit-4.9.jar");
-
-            if (!junitJar.exists()) {
-                throw new AssertionError();
-            }
-
-            myEnvironment.addToClasspath(junitJar);
-
-            myEnvironment.addToClasspath(compilerDependencies.getRuntimeJar());
-
-            CoreLocalFileSystem localFileSystem = myEnvironment.getLocalFileSystem();
-            myEnvironment.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/stdlib/test"));
-            myEnvironment.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/kunit/src"));
-
             GenerationState generationState = KotlinToJVMBytecodeCompiler
-                    .analyzeAndGenerate(myEnvironment, compilerDependencies, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, false);
+                    .analyzeAndGenerate(new K2JVMCompileEnvironmentConfiguration(myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR,
+                                                                                 false, BuiltinsScopeExtensionMode.ALL, false,
+                                                                                 BuiltinToJavaTypesMapping.ENABLED), false);
 
             if (generationState == null) {
                 throw new RuntimeException("There were compilation errors");
@@ -110,7 +100,7 @@ public class TestlibTest extends CodegenTestCase {
             try {
                 for(JetFile jetFile : myEnvironment.getSourceFiles()) {
                     for(JetDeclaration decl : jetFile.getDeclarations()) {
-                        if(decl instanceof JetClass) {
+                        if (decl instanceof JetClass) {
                             JetClass jetClass = (JetClass) decl;
 
                             ClassDescriptor descriptor = (ClassDescriptor) generationState.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, jetClass);
@@ -123,14 +113,27 @@ public class TestlibTest extends CodegenTestCase {
                                     String name = typeMapper.mapType(descriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName();
                                     System.out.println(name);
                                     Class<TestCase> aClass = (Class<TestCase>) loader.loadClass(name.replace('/', '.'));
-                                    if((aClass.getModifiers() & Modifier.ABSTRACT) == 0
+                                    if ((aClass.getModifiers() & Modifier.ABSTRACT) == 0
                                      && (aClass.getModifiers() & Modifier.PUBLIC) != 0) {
                                         try {
                                             Constructor<TestCase> constructor = aClass.getConstructor();
-                                            if(constructor != null && (constructor.getModifiers() & Modifier.PUBLIC) != 0) {
+                                            if (constructor != null && (constructor.getModifiers() & Modifier.PUBLIC) != 0) {
                                                 suite.addTestSuite(aClass);
                                             }
                                         }
+                                        //catch (final VerifyError e) {
+                                        //    suite.addTest(new TestCase(aClass.getName()) {
+                                        //        @Override
+                                        //        public int countTestCases() {
+                                        //            return 1;
+                                        //        }
+                                        //
+                                        //        @Override
+                                        //        public void run(TestResult result) {
+                                        //            result.addError(this, new RuntimeException(e));
+                                        //        }
+                                        //    });
+                                        //}
                                         catch (NoSuchMethodException e) {
                                         }
                                     }
@@ -146,17 +149,25 @@ public class TestlibTest extends CodegenTestCase {
             }
 
             return suite;
-
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw ExceptionUtils.rethrow(e);
         }
     }
     
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithFullJdk();
+        CompilerConfiguration configuration = CompileCompilerDependenciesTest.compilerConfigurationForTests(ConfigurationKind.ALL,
+                                                                                                            TestJdkKind.FULL_JDK);
+        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, JetTestUtils.getAnnotationsJar());
+
+        junitJar = new File("libraries/lib/junit-4.9.jar");
+        assertTrue(junitJar.exists());
+        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, junitJar);
+
+        configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetParsingTest.getTestDataDir() + "/../../libraries/stdlib/test");
+        configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetParsingTest.getTestDataDir() + "/../../libraries/kunit/src");
+
+        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
     }
 }

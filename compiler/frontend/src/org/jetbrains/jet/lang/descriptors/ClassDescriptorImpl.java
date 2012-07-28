@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
@@ -31,23 +32,26 @@ import java.util.*;
 /**
  * @author abreslav
  */
-public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements ClassDescriptor {
+public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implements ClassDescriptorFromSource {
     private TypeConstructor typeConstructor;
 
     private JetScope memberDeclarations;
     private Set<ConstructorDescriptor> constructors;
     private ConstructorDescriptor primaryConstructor;
     private ReceiverDescriptor implicitReceiver;
+    private final Modality modality;
 
     public ClassDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull String name) {
+            @NotNull Modality modality,
+            @NotNull Name name) {
         super(containingDeclaration, annotations, name);
+        this.modality = modality;
     }
 
     public final ClassDescriptorImpl initialize(boolean sealed,
-                                            @NotNull List<TypeParameterDescriptor> typeParameters,
+                                            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
                                             @NotNull Collection<JetType> supertypes,
                                             @NotNull JetScope memberDeclarations,
                                             @NotNull Set<ConstructorDescriptor> constructors,
@@ -56,13 +60,13 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     }
 
     public final ClassDescriptorImpl initialize(boolean sealed,
-                                                @NotNull List<TypeParameterDescriptor> typeParameters,
+                                                @NotNull List<? extends TypeParameterDescriptor> typeParameters,
                                                 @NotNull Collection<JetType> supertypes,
                                                 @NotNull JetScope memberDeclarations,
                                                 @NotNull Set<ConstructorDescriptor> constructors,
                                                 @Nullable ConstructorDescriptor primaryConstructor,
                                                 @Nullable JetType superclassType) {
-        this.typeConstructor = new TypeConstructorImpl(this, getAnnotations(), sealed, getName(), typeParameters, supertypes);
+        this.typeConstructor = new TypeConstructorImpl(this, getAnnotations(), sealed, getName().getName(), typeParameters, supertypes);
         this.memberDeclarations = memberDeclarations;
         this.constructors = constructors;
         this.primaryConstructor = primaryConstructor;
@@ -97,7 +101,8 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
         if (typeConstructor.getParameters().isEmpty()) {
             return  memberDeclarations;
         }
-        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(typeConstructor.getParameters(), typeArguments);
+        Map<TypeConstructor, TypeProjection> substitutionContext = SubstitutionUtils
+                .buildSubstitutionContext(typeConstructor.getParameters(), typeArguments);
         return new SubstitutingScope(memberDeclarations, TypeSubstitutor.create(substitutionContext));
     }
 
@@ -109,7 +114,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
 
     @NotNull
     @Override
-    public Set<ConstructorDescriptor> getConstructors() {
+    public Collection<ConstructorDescriptor> getConstructors() {
         return constructors;
     }
 
@@ -151,14 +156,9 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     }
 
     @Override
-    public boolean hasConstructors() {
-        return !constructors.isEmpty();
-    }
-
-    @Override
     @NotNull
     public Modality getModality() {
-        return Modality.FINAL;
+        return modality;
     }
 
     @NotNull

@@ -17,9 +17,9 @@ class FileInput : IIterator<Byte>, JavaCloseableWrapper {
   private var next : Int
   private var nextUsed = false
 
-  this(file : File) : JavaCloseableWrapper(stream) { // implicitly throws IOException
-    stream = FileInputStream(file) // throws IOException
-  }
+  //this(file : File) : JavaCloseableWrapper(stream) { // implicitly throws IOException
+  //  stream = FileInputStream(file) // throws IOException
+  //}
 
   override fun next() {
     if (!nextUsed) {
@@ -43,9 +43,9 @@ class FileInput : IIterator<Byte>, JavaCloseableWrapper {
 class FileOutput : IAdder<Byte>, JavaCloseableWrapper {
   private val stream : OutputStream
 
-  this(file : File) : JavaCloseableWrapper(stream) {
-    stream = FileOutputStream(file)
-  }
+  //this(file : File) : JavaCloseableWrapper(stream) {
+  //  stream = FileOutputStream(file)
+  //}
 
   override fun add(item : Byte) {
     stream.write(item)

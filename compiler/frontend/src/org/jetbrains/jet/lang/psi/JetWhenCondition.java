@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author abreslav
  */
-public abstract class JetWhenCondition extends JetElement {
+public abstract class JetWhenCondition extends JetElementImpl {
     public JetWhenCondition(@NotNull ASTNode node) {
         super(node);
     }

@@ -1,0 +1,55 @@
+== A ==
+trait A {
+    fun foo() : Int
+}
+---------------------
+l0:
+    <START>    NEXT:[<END>]     PREV:[]
+l1:
+    <END>      NEXT:[<SINK>]    PREV:[<START>]
+error:
+    <ERROR>    NEXT:[<SINK>]    PREV:[]
+sink:
+    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+=====================
+== B ==
+class B : A {
+    override fun foo() = 10
+}
+---------------------
+l0:
+    <START>                                   NEXT:[unsupported(DELEGATOR_SUPER_CLASS : A)]    PREV:[]
+    unsupported(DELEGATOR_SUPER_CLASS : A)    NEXT:[<END>]                                     PREV:[<START>]
+l1:
+    <END>                                     NEXT:[<SINK>]                                    PREV:[unsupported(DELEGATOR_SUPER_CLASS : A)]
+error:
+    <ERROR>                                   NEXT:[<SINK>]                                    PREV:[]
+sink:
+    <SINK>                                    NEXT:[]                                          PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+fun foo(b: B) : Int {
+    val o = object : A by b {}
+    return o.foo()
+}
+---------------------
+l0:
+    <START>                          NEXT:[v(b: B)]                          PREV:[]
+    v(b: B)                          NEXT:[w(b)]                             PREV:[<START>]
+    w(b)                             NEXT:[v(val o = object : A by b {})]    PREV:[v(b: B)]
+    v(val o = object : A by b {})    NEXT:[r(b)]                             PREV:[w(b)]
+    r(b)                             NEXT:[r(object : A by b {})]            PREV:[v(val o = object : A by b {})]
+    r(object : A by b {})            NEXT:[w(o)]                             PREV:[r(b)]
+    w(o)                             NEXT:[r(o)]                             PREV:[r(object : A by b {})]
+    r(o)                             NEXT:[r(foo)]                           PREV:[w(o)]
+    r(foo)                           NEXT:[r(foo())]                         PREV:[r(o)]
+    r(foo())                         NEXT:[r(o.foo())]                       PREV:[r(foo)]
+    r(o.foo())                       NEXT:[ret(*) l1]                        PREV:[r(foo())]
+    ret(*) l1                        NEXT:[<END>]                            PREV:[r(o.foo())]
+l1:
+    <END>                            NEXT:[<SINK>]                           PREV:[ret(*) l1]
+error:
+    <ERROR>                          NEXT:[<SINK>]                           PREV:[]
+sink:
+    <SINK>                           NEXT:[]                                 PREV:[<ERROR>, <END>]
+=====================

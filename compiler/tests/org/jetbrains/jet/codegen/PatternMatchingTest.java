@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import jet.Tuple2;
+import org.jetbrains.jet.ConfigurationKind;
 
 import java.lang.reflect.Method;
 
@@ -24,6 +25,13 @@ import java.lang.reflect.Method;
  * @author yole
  */
 public class PatternMatchingTest extends CodegenTestCase {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    }
+
     @Override
     protected String getPrefix() {
         return "patternMatching";
@@ -145,5 +153,21 @@ public class PatternMatchingTest extends CodegenTestCase {
         assertEquals("bit", foo.invoke(null, 0));
         assertEquals("bit", foo.invoke(null, 1));
         assertEquals("something", foo.invoke(null, 2));
+    }
+
+    public void testNullableWhen() throws Exception {  // KT-2148
+        blackBoxFile("patternMatching/nullableWhen.kt");
+    }
+
+    public void testKt2466() throws Exception {
+        blackBoxFile("patternMatching/kt2466.kt");
+    }
+
+    public void testMatchNotNullAgainstNullable() throws Exception {
+        blackBoxFile("patternMatching/matchNotNullAgainstNullable.kt");
+    }
+
+    public void testKt2457() throws Exception {
+        blackBoxFile("regressions/kt2457.kt");
     }
 }

@@ -40,14 +40,15 @@ public final class ExamplesTest extends SingleFileTranslationTest {
     }
 
     public static Test suite() throws Exception {
-        return TranslatorTestCaseBuilder.suiteForDirectory(BasicTest.pathToTestFilesRoot() + "examples/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
-            @NotNull
-            @Override
-            public Test createTest(@NotNull String filename) {
-                ExamplesTest examplesTest = new ExamplesTest(filename);
-                examplesTest.setName(filename);
-                return examplesTest;
-            }
-        });
+        return TranslatorTestCaseBuilder
+                .suiteForDirectory(BasicTest.pathToTestFilesRoot() + "examples/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
+                    @NotNull
+                    @Override
+                    public Test createTest(@NotNull String filename) {
+                        ExamplesTest examplesTest = new ExamplesTest(filename);
+                        examplesTest.setName(filename);
+                        return examplesTest;
+                    }
+                });
     }
 }

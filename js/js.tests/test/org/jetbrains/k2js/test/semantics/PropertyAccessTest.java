@@ -16,7 +16,14 @@
 
 package org.jetbrains.k2js.test.semantics;
 
+import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
+import org.jetbrains.k2js.test.utils.JsTestUtils;
+
+import java.util.EnumSet;
+import java.util.List;
 
 /**
  * @author Pavel Talanov
@@ -28,12 +35,12 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
     }
 
     public void testAccessToInstanceProperty() throws Exception {
-        checkFooBoxIsTrue("accessToInstanceProperty.kt");
+        fooBoxTest();
     }
 
 
     public void testTwoClassesWithProperties() throws Exception {
-        checkFooBoxIsTrue("twoClassesWithProperties.kt");
+        fooBoxTest();
     }
 
 
@@ -43,34 +50,56 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
 
 
     public void testCustomGetter() throws Exception {
-        checkFooBoxIsTrue("customGetter.kt");
+        fooBoxTest();
     }
 
 
     public void testCustomSetter() throws Exception {
-        checkFooBoxIsTrue("customSetter.kt");
+        fooBoxTest();
     }
 
     public void testNamespacePropertyInitializer() throws Exception {
-        checkFooBoxIsTrue("namespacePropertyInitializer.kt");
+        fooBoxTest();
     }
 
 
     public void testNamespacePropertySet() throws Exception {
-        checkFooBoxIsTrue("namespacePropertySet.kt");
+        fooBoxTest();
     }
 
     public void testNamespaceCustomAccessors() throws Exception {
-        checkFooBoxIsTrue("namespaceCustomAccessors.kt");
+        fooBoxTest();
     }
 
 
     public void testClassUsesNamespaceProperties() throws Exception {
-        checkFooBoxIsTrue("classUsesNamespaceProperties.kt");
+        fooBoxTest();
     }
 
     public void testExtensionLiteralSafeCall() throws Exception {
-        checkFooBoxIsTrue("extensionLiteralSafeCall.kt");
+        fooBoxTest();
     }
 
+    public void testInitInstanceProperties() throws Exception {
+        fooBoxTest(EnumSet.of(EcmaVersion.v5));
+    }
+
+    public void testEnumerable() throws Exception {
+        fooBoxTest(JsTestUtils.successOnEcmaV5());
+    }
+
+    public void testOverloadedOverriddenFunctionPropertyName() throws Exception {
+        //fooBoxTest(JsTestUtils.successOnEcmaV5());
+        //fooBoxTest();
+    }
+
+    @Override
+    @NotNull
+    protected List<String> additionalJSFiles(@NotNull EcmaVersion ecmaVersion) {
+        List<String> result = Lists.newArrayList(super.additionalJSFiles(ecmaVersion));
+        if (getName().equals("testEnumerable")) {
+            result.add(pathToTestFiles() + "enumerate.js");
+        }
+        return result;
+    }
 }

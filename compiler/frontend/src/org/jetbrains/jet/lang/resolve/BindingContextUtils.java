@@ -20,15 +20,8 @@ import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableAsFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
 
@@ -50,21 +43,21 @@ public class BindingContextUtils {
             if (declarationDescriptor instanceof CallableMemberDescriptor) {
                 CallableMemberDescriptor callable = (CallableMemberDescriptor) declarationDescriptor;
                 if (callable.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
-                    throw new IllegalStateException("non-declaration descriptors should be filtered out earler: " + callable);
+                    throw new IllegalStateException("non-declaration descriptors should be filtered out earlier: " + callable);
                 }
             }
-            if (declarationDescriptor instanceof VariableAsFunctionDescriptor) {
-                VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) declarationDescriptor;
-                if (descriptor.getOriginal() != descriptor) {
-                    throw new IllegalStateException("original should be resolved earlier: " + descriptor);
-                }
-            }
+            //if (declarationDescriptor instanceof VariableAsFunctionDescriptor) {
+            //    VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) declarationDescriptor;
+            //    if (descriptor.getOriginal() != descriptor) {
+            //        throw new IllegalStateException("original should be resolved earlier: " + descriptor);
+            //    }
+            //}
             return declarationDescriptor.getOriginal();
         }
     };
 
-    static final ReadOnlySlice<DeclarationDescriptor, PsiElement> DESCRIPTOR_TO_DECLARATION =
-            Slices.<DeclarationDescriptor, PsiElement>sliceBuilder().setKeyNormalizer(DECLARATION_DESCRIPTOR_NORMALIZER).build();
+    /*package*/ static final ReadOnlySlice<DeclarationDescriptor, PsiElement> DESCRIPTOR_TO_DECLARATION =
+            Slices.<DeclarationDescriptor, PsiElement>sliceBuilder().setKeyNormalizer(DECLARATION_DESCRIPTOR_NORMALIZER).setDebugName("DESCRIPTOR_TO_DECLARATION").build();
 
     @Nullable
     public static PsiElement resolveToDeclarationPsiElement(@NotNull BindingContext bindingContext, @Nullable JetReferenceExpression referenceExpression) {
@@ -76,11 +69,6 @@ public class BindingContextUtils {
         PsiElement element = descriptorToDeclaration(bindingContext, declarationDescriptor);
         if (element != null) {
             return element;
-        }
-
-        // TODO: Need to have a valid stubs for standard classes
-        if (referenceExpression != null && JetStandardClasses.getAllStandardClasses().contains(declarationDescriptor)) {
-            return referenceExpression.getContainingFile();
         }
 
         return null;
@@ -96,11 +84,6 @@ public class BindingContextUtils {
         List<PsiElement> elements = descriptorToDeclarations(bindingContext, declarationDescriptor);
         if (elements.size() > 0) {
             return elements;
-        }
-
-        // TODO: Need to have a valid stubs for standard classes
-        if (referenceExpression != null && JetStandardClasses.getAllStandardClasses().contains(declarationDescriptor)) {
-            return Lists.<PsiElement>newArrayList(referenceExpression.getContainingFile());
         }
 
         return Lists.newArrayList();
@@ -121,9 +104,6 @@ public class BindingContextUtils {
         }
         if (descriptor instanceof VariableDescriptor) {
             return (VariableDescriptor) descriptor;
-        }
-        if (descriptor instanceof VariableAsFunctionDescriptor) {
-            return ((VariableAsFunctionDescriptor) descriptor).getVariableDescriptor();
         }
         return null;
     }
@@ -178,7 +158,7 @@ public class BindingContextUtils {
                 // TODO evil code
                 throw new IllegalStateException(
                         "cannot find declaration: fake descriptor" +
-                                " has more then one overriden descriptor: " + callable);
+                                " has more then one overridden descriptor: " + callable);
             }
 
             return callableDescriptorToDeclaration(context, overriddenDescriptors.iterator().next());
@@ -190,9 +170,9 @@ public class BindingContextUtils {
     private static List<PsiElement> callableDescriptorToDeclarations(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
         if (callable.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
             List<PsiElement> r = new ArrayList<PsiElement>();
-            Set<? extends CallableMemberDescriptor> overridenDescriptors = callable.getOverriddenDescriptors();
-            for (CallableMemberDescriptor overriden : overridenDescriptors) {
-                r.addAll(callableDescriptorToDeclarations(context, overriden));
+            Set<? extends CallableMemberDescriptor> overriddenDescriptors = callable.getOverriddenDescriptors();
+            for (CallableMemberDescriptor overridden : overriddenDescriptors) {
+                r.addAll(callableDescriptorToDeclarations(context, overridden));
             }
             return r;
         }

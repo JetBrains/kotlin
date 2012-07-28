@@ -18,30 +18,22 @@ package org.jetbrains.k2js.analyze;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
-import org.jetbrains.jet.lang.DefaultModuleConfiguration;
-import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.k2js.config.Config;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Pavel Talanov
@@ -53,44 +45,81 @@ public final class AnalyzerFacadeForJS {
 
     @NotNull
     public static BindingContext analyzeFilesAndCheckErrors(@NotNull List<JetFile> files,
-                                                            @NotNull Config config) {
-        BindingContext bindingContext = analyzeFiles(files, config);
-        checkForErrors(withJsLibAdded(files, config), bindingContext);
+            @NotNull Config config) {
+        BindingContext bindingContext = analyzeFiles(files, Predicates.<PsiFile>alwaysTrue(), config).getBindingContext();
+        checkForErrors(Config.withJsLibAdded(files, config), bindingContext);
         return bindingContext;
     }
 
+
+    //NOTE: web demo related method
+    @SuppressWarnings("UnusedDeclaration")
     @NotNull
-    public static BindingContext analyzeFiles(@NotNull Collection<JetFile> files,
-                                              @NotNull Config config) {
-        Project project = config.getProject();
-        BindingTraceContext bindingTraceContext = new BindingTraceContext();
-
-        final ModuleDescriptor owner = new ModuleDescriptor("<module>");
-
-        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
-            notLibFiles(config.getLibFiles()), false, false);
-
-        InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
-            project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
-            JetControlFlowDataTraceFactory.EMPTY, JsConfiguration.jsLibConfiguration(project));
-
-        injector.getTopDownAnalyzer().analyzeFiles(withJsLibAdded(files, config));
-        return bindingTraceContext.getBindingContext();
+    public static BindingContext analyzeFiles(@NotNull Collection<JetFile> files, @NotNull Config config) {
+        return analyzeFiles(files, Predicates.<PsiFile>alwaysTrue(), config).getBindingContext();
     }
 
-    private static void checkForErrors(@NotNull Collection<JetFile> allFiles, @NotNull BindingContext bindingContext) {
-        AnalyzingUtils.throwExceptionOnErrors(bindingContext);
-        for (JetFile file : allFiles) {
-            AnalyzingUtils.checkForSyntacticErrors(file);
+    @NotNull
+    public static AnalyzeExhaust analyzeFiles(
+            @NotNull Collection<JetFile> files,
+            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely, @NotNull Config config) {
+        return analyzeFiles(files, filesToAnalyzeCompletely, config, false);
+    }
+
+    //TODO: refactor
+    @NotNull
+    public static AnalyzeExhaust analyzeFiles(
+            @NotNull Collection<JetFile> files,
+            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely, @NotNull Config config,
+            boolean storeContextForBodiesResolve) {
+        Project project = config.getProject();
+
+        final ModuleDescriptor owner = new ModuleDescriptor(Name.special("<module>"));
+
+        Predicate<PsiFile> completely = Predicates.and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
+
+        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
+                completely, false, false, Collections.<AnalyzerScriptParameter>emptyList());
+
+        BindingContext libraryBindingContext = config.getLibraryBindingContext();
+        BindingTrace trace = libraryBindingContext == null ?
+                             new ObservableBindingTrace(new BindingTraceContext()) :
+                             new DelegatingBindingTrace(libraryBindingContext);
+        InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
+                project, topDownAnalysisParameters, trace, owner,
+                new JsConfiguration(project, libraryBindingContext));
+        try {
+            Collection<JetFile> allFiles = libraryBindingContext != null ?
+                                           files :
+                                           Config.withJsLibAdded(files, config);
+            injector.getTopDownAnalyzer().analyzeFiles(allFiles, Collections.<AnalyzerScriptParameter>emptyList());
+            BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
+                                                        new CachedBodiesResolveContext(injector.getTopDownAnalysisContext()) :
+                                                        null;
+            return AnalyzeExhaust.success(trace.getBindingContext(), bodiesResolveContext);
+        }
+        finally {
+            injector.destroy();
         }
     }
 
     @NotNull
-    public static Collection<JetFile> withJsLibAdded(@NotNull Collection<JetFile> files, @NotNull Config config) {
-        Set<JetFile> allFiles = Sets.newHashSet();
-        allFiles.addAll(toOriginal(files));
-        allFiles.addAll(toOriginal(config.getLibFiles()));
-        return allFiles;
+    public static AnalyzeExhaust analyzeBodiesInFiles(
+            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
+            @NotNull Config config,
+            @NotNull BindingTrace traceContext,
+            @NotNull BodiesResolveContext bodiesResolveContext) {
+        Predicate<PsiFile> completely = Predicates.and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
+
+        return AnalyzerFacadeForEverything.analyzeBodiesInFilesWithJavaIntegration(
+                config.getProject(), Collections.<AnalyzerScriptParameter>emptyList(), completely, traceContext, bodiesResolveContext);
+    }
+
+    public static void checkForErrors(@NotNull Collection<JetFile> allFiles, @NotNull BindingContext bindingContext) {
+        AnalyzingUtils.throwExceptionOnErrors(bindingContext);
+        for (JetFile file : allFiles) {
+            AnalyzingUtils.checkForSyntacticErrors(file);
+        }
     }
 
     @NotNull
@@ -103,62 +132,5 @@ public final class AnalyzerFacadeForJS {
                 return notLibFile;
             }
         };
-    }
-
-    @NotNull
-    private static Collection<JetFile> toOriginal(@NotNull Collection<JetFile> files) {
-        Collection<JetFile> result = Lists.newArrayList();
-        for (JetFile file : files) {
-            result.add(file);
-        }
-        return result;
-    }
-
-    //TODO: exclude?
-    @NotNull
-    public static BindingContext analyzeNamespace(@NotNull JetFile file) {
-        BindingTraceContext bindingTraceContext = new BindingTraceContext();
-        Project project = file.getProject();
-
-        final ModuleDescriptor owner = new ModuleDescriptor("<module>");
-
-        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
-            Predicates.<PsiFile>alwaysTrue(), false, false);
-
-        InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
-            project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
-            JetControlFlowDataTraceFactory.EMPTY, JsConfiguration.jsLibConfiguration(project));
-
-        injector.getTopDownAnalyzer().analyzeFiles(Collections.singletonList(file));
-        return bindingTraceContext.getBindingContext();
-    }
-
-    private static final class JsConfiguration implements ModuleConfiguration {
-
-        @NotNull
-        private final Project project;
-
-        public static JsConfiguration jsLibConfiguration(@NotNull Project project) {
-            return new JsConfiguration(project);
-        }
-
-        private JsConfiguration(@NotNull Project project) {
-            this.project = project;
-        }
-
-        @Override
-        public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
-            //TODO: these thing should not be hard-coded like that
-            directives.add(JetPsiFactory.createImportDirective(project, new ImportPath("js.*")));
-            directives.add(JetPsiFactory.createImportDirective(project, new ImportPath(JetStandardClasses.STANDARD_CLASSES_FQNAME, true)));
-            directives.add(JetPsiFactory.createImportDirective(project, new ImportPath("kotlin.*")));
-        }
-
-        @Override
-        public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor,
-                                         @NotNull WritableScope namespaceMemberScope) {
-            DefaultModuleConfiguration.createStandardConfiguration(project, true)
-                .extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
-        }
     }
 }

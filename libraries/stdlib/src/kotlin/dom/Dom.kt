@@ -2,60 +2,60 @@ package kotlin.dom
 
 import kotlin.*
 import kotlin.support.*
-import kotlin.util.*
 import java.util.*
 import org.w3c.dom.*
 
+// TODO should not need this - its here for the JS stuff
+import java.lang.IllegalArgumentException
+import java.lang.IndexOutOfBoundsException
 
 // Properties
 
-val Document?.rootElement : Element?
-get() = if (this != null) this.getDocumentElement() else null
-
+private fun emptyElementList(): List<Element> = Collections.emptyList<Element>()!!
+private fun emptyNodeList(): List<Node> = Collections.emptyList<Node>()!!
 
 var Node.text : String
 get() {
-    if (this is Element) {
-        return this.text
-    } else {
-        return this.getNodeValue() ?: ""
-    }
-}
-set(value) {
-    if (this is Element) {
-        this.text = value
-    } else {
-        this.setNodeValue(value)
-    }
-}
-
-var Element.text : String
-get() {
-    val buffer = StringBuilder()
-    val nodeList = this.getChildNodes()
-    if (nodeList != null) {
-        var i = 0
-        val size = nodeList.getLength()
-        while (i < size) {
-            val node = nodeList.item(i)
-            if (node != null) {
-                if (node.isText()) {
-                    buffer.append(node.getNodeValue())
+    return textContent
+/*
+    if (this.nodeType == Node.ELEMENT_NODE) {
+        val buffer = StringBuilder()
+        val nodeList = this.childNodes
+        if (nodeList != null) {
+            var i = 0
+            val size = nodeList.length
+            while (i < size) {
+                val node = nodeList.item(i)
+                if (node != null) {
+                    if (node.isText()) {
+                        buffer.append(node.nodeValue)
+                    }
                 }
+                i++
             }
-            i++
         }
+        return buffer.toString().sure()
+    } else {
+        return this.nodeValue
     }
-    return buffer.toString().sure()
+*/
 }
 set(value) {
-    // lets remove all the previous text nodes first
-    for (node in children()) {
-        if (node.isText()) {
-            removeChild(node)
+    textContent = value
+    /*
+    if (nodeType == Node.ELEMENT_NODE) {
+        val element = this as Element
+        // lets remove all the previous text nodes first
+        for (node in element.children()) {
+            if (node.isText()) {
+                removeChild(node)
+            }
         }
+        element.addText(value)
+    } else {
+        nodeValue = value
     }
-    addText(value)
+    */
 }
 
 var Element.id : String
@@ -77,24 +77,6 @@ set(value) {
     this.setAttribute("class", value)
 }
 
-var Element.classSet : Set<String>
-get() {
-    val answer = LinkedHashSet<String>()
-    val array = this.classes.split("""\s""")
-    for (s in array) {
-        if (s != null && s.size > 0) {
-            answer.add(s)
-        }
-    }
-    return answer
-}
-set(value) {
-    this.classes = value.makeString(" ")
-}
-
-
-// Helper methods
-
 /** Returns true if the element has the given CSS class style in its 'class' attribute */
 fun Element.hasClass(cssClass: String): Boolean {
     val c = this.classes
@@ -103,25 +85,106 @@ fun Element.hasClass(cssClass: String): Boolean {
     else false
 }
 
-/** Adds the given CSS class to this element's 'class' attribute */
-fun Element.addClass(cssClass: String): Boolean {
-    val classSet = this.classSet
-    val answer = classSet.add(cssClass)
-    if (answer) {
-        this.classSet = classSet
-    }
-    return answer
+
+/** Returns the children of the element as a list */
+inline fun Element?.children(): List<Node> {
+    return this?.childNodes.toList()
 }
 
-/** Removes the given CSS class to this element's 'class' attribute */
-fun Element.removeClass(cssClass: String): Boolean {
-    val classSet = this.classSet
-    val answer = classSet.remove(cssClass)
-    if (answer) {
-        this.classSet = classSet
-    }
-    return answer
+/** The child elements of this document */
+val Document?.elements : List<Element>
+get() = this?.getElementsByTagName("*").toElementList()
+
+/** The child elements of this elements */
+val Element?.elements : List<Element>
+get() = this?.getElementsByTagName("*").toElementList()
+
+
+/** Returns all the child elements given the local element name */
+inline fun Element?.elements(localName: String): List<Element> {
+    return this?.getElementsByTagName(localName).toElementList()
 }
+
+/** Returns all the elements given the local element name */
+inline fun Document?.elements(localName: String): List<Element> {
+    return this?.getElementsByTagName(localName).toElementList()
+}
+
+/** Returns all the child elements given the namespace URI and local element name */
+inline fun Element?.elements(namespaceUri: String, localName: String): List<Element> {
+    return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
+}
+
+/** Returns all the elements given the namespace URI and local element name */
+inline fun Document?.elements(namespaceUri: String, localName: String): List<Element> {
+    return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
+}
+
+inline fun NodeList?.toList(): List<Node> {
+    return if (this == null) {
+        // TODO the following is easier to convert to JS
+        emptyNodeList()
+    }
+    else {
+        NodeListAsList(this)
+    }
+}
+
+inline fun NodeList?.toElementList(): List<Element> {
+    return if (this == null) {
+        // TODO the following is easier to convert to JS
+        //emptyElementList()
+        ArrayList<Element>()
+    }
+    else {
+        ElementListAsList(this)
+    }
+}
+
+/** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
+fun Document?.get(selector: String): List<Element> {
+    val root = this?.documentElement
+    return if (root != null) {
+        if (selector == "*") {
+            elements
+        } else if (selector.startsWith(".")) {
+            elements.filter{ it.hasClass(selector.substring(1)) }.toList()
+        } else if (selector.startsWith("#")) {
+            val id = selector.substring(1)
+            val element = this?.getElementById(id)
+            return if (element != null)
+                arrayList<Element>(element)
+            else
+                emptyElementList()
+        } else {
+            //  assume its a vanilla element name
+            elements(selector)
+        }
+    } else {
+        emptyElementList()
+    }
+}
+
+/** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
+fun Element.get(selector: String): List<Element> {
+    return if (selector == "*") {
+        elements
+    } else if (selector.startsWith(".")) {
+        elements.filter{ it.hasClass(selector.substring(1)) }.toList()
+    } else if (selector.startsWith("#")) {
+        val element = this.ownerDocument?.getElementById(selector.substring(1))
+        return if (element != null)
+            arrayList<Element>(element)
+        else
+            emptyElementList()
+    } else {
+        //  assume its a vanilla element name
+        elements(selector)
+    }
+}
+
+
+// Helper methods
 
 /** TODO this approach generates compiler errors...
 
@@ -154,174 +217,6 @@ fun Element.removeClass(varargs cssClasses: Array<String>): Boolean {
 }
 */
 
-/** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
-fun Document?.get(selector: String): List<Element> {
-    val root = this?.getDocumentElement()
-    return if (root != null) {
-        if (selector == "*") {
-            elements
-        } else if (selector.startsWith(".")) {
-            elements.filter{ it.hasClass(selector.substring(1)) }.toList()
-        } else if (selector.startsWith("#")) {
-            val id = selector.substring(1)
-            val element = this?.getElementById(id)
-            return if (element != null)
-                Collections.singletonList(element).sure() as List<Element>
-            else
-                Collections.EMPTY_LIST.sure() as List<Element>
-        } else {
-            //  assume its a vanilla element name
-            elements(selector)
-        }
-    } else {
-        Collections.EMPTY_LIST as List<Element>
-    }
-}
-
-/** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
-fun Element.get(selector: String): List<Element> {
-    return if (selector == "*") {
-        elements
-    } else if (selector.startsWith(".")) {
-        elements.filter{ it.hasClass(selector.substring(1)) }.toList()
-    } else if (selector.startsWith("#")) {
-        val element = this.getOwnerDocument()?.getElementById(selector.substring(1))
-        return if (element != null)
-            Collections.singletonList(element).sure() as List<Element>
-        else
-            Collections.EMPTY_LIST.sure() as List<Element>
-    } else {
-        //  assume its a vanilla element name
-        elements(selector)
-    }
-}
-
-/** Returns an [[Iterator]] over the next siblings of this node */
-fun Node.nextSiblings() : Iterator<Node> = NextSiblingIterator(this)
-
-class NextSiblingIterator(var node: Node) : AbstractIterator<Node>() {
-
-    override fun computeNext(): Unit {
-        val next = node.getNextSibling()
-        if (next != null) {
-            setNext(next)
-        } else {
-            done()
-        }
-    }
-}
-/** Returns an [[Iterator]] over the next siblings of this node */
-fun Node.previousSiblings() : Iterator<Node> = PreviousSiblingIterator(this)
-
-class PreviousSiblingIterator(var node: Node) : AbstractIterator<Node>() {
-
-    override fun computeNext(): Unit {
-        val next = node.getPreviousSibling()
-        if (next != null) {
-            setNext(next)
-        } else {
-            done()
-        }
-    }
-}
-
-/** Returns true if this node is a Text node or a CDATA node */
-fun Node.isText(): Boolean {
-    val nodeType = getNodeType()
-    return nodeType == Node.TEXT_NODE || nodeType == Node.CDATA_SECTION_NODE
-}
-
-/** Returns an [[Iterator]] of all the next [[Element]] siblings */
-fun Node.nextElements(): Iterator<Element> = nextSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
-
-/** Returns an [[Iterator]] of all the previous [[Element]] siblings */
-fun Node.previousElements(): Iterator<Element> = previousSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
-
-/** Returns the attribute value or empty string if its not present */
-inline fun Element.attribute(name: String): String {
-    return this.getAttribute(name) ?: ""
-}
-
-/** Returns the children of the element as a list */
-inline fun Element?.children(): List<Node> {
-    return this?.getChildNodes().toList()
-}
-
-/** The child elements of this document */
-val Document?.elements : List<Element>
-get() = this?.getElementsByTagName("*").toElementList()
-
-/** The child elements of this elements */
-val Element?.elements : List<Element>
-get() = this?.getElementsByTagName("*").toElementList()
-
-
-/** Returns all the child elements given the local element name */
-inline fun Element?.elements(localName: String?): List<Element> {
-    return this?.getElementsByTagName(localName).toElementList()
-}
-
-/** Returns all the elements given the local element name */
-inline fun Document?.elements(localName: String?): List<Element> {
-    return this?.getElementsByTagName(localName).toElementList()
-}
-
-/** Returns all the child elements given the namespace URI and local element name */
-inline fun Element?.elements(namespaceUri: String?, localName: String?): List<Element> {
-    return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
-}
-
-/** Returns all the elements given the namespace URI and local element name */
-inline fun Document?.elements(namespaceUri: String?, localName: String?): List<Element> {
-    return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
-}
-
-val NodeList?.head : Node?
-get() = if (this != null && this.getLength() > 0) this.item(0) else null
-
-val NodeList?.first : Node?
-get() = this.head
-
-val NodeList?.tail : Node?
-get() {
-    if (this == null) {
-        return null
-    } else {
-        val s = this.getLength()
-        return if (s > 0) this.item(s - 1) else null
-    }
-}
-
-val NodeList?.last : Node?
-get() = this.tail
-
-
-inline fun NodeList?.toList(): List<Node> {
-    return if (this == null) {
-        Collections.EMPTY_LIST as List<Node>
-    }
-    else {
-        NodeListAsList(this)
-    }
-}
-
-inline fun NodeList?.toElementList(): List<Element> {
-    return if (this == null) {
-        Collections.EMPTY_LIST as List<Element>
-    }
-    else {
-        ElementListAsList(this)
-    }
-}
-
-/** Converts the node list to an XML String */
-fun NodeList?.toXmlString(xmlDeclaration: Boolean = false): String {
-    return if (this == null)
-        "" else {
-        nodesToXmlString(this.toList(), xmlDeclaration)
-    }
-}
-
 class NodeListAsList(val nodeList: NodeList): AbstractList<Node>() {
     override fun get(index: Int): Node {
         val node = nodeList.item(index)
@@ -332,27 +227,118 @@ class NodeListAsList(val nodeList: NodeList): AbstractList<Node>() {
         }
     }
 
-    override fun size(): Int = nodeList.getLength()
+    override fun size(): Int = nodeList.length
 }
 
 class ElementListAsList(val nodeList: NodeList): AbstractList<Element>() {
     override fun get(index: Int): Element {
         val node = nodeList.item(index)
-        if (node is Element) {
-            return node
+        if (node == null) {
+            throw IndexOutOfBoundsException("NodeList does not contain a node at index: " + index)
+        } else if (node.nodeType == Node.ELEMENT_NODE) {
+            return node as Element
         } else {
-            if (node == null) {
-                throw IndexOutOfBoundsException("NodeList does not contain a node at index: " + index)
-            } else {
-                throw IllegalArgumentException("Node is not an Element as expected but is $node")
-            }
+            throw IllegalArgumentException("Node is not an Element as expected but is $node")
         }
     }
 
-    override fun size(): Int = nodeList.getLength()
+    override fun size(): Int = nodeList.length
 
 }
 
+/** Removes all the children from this node */
+fun Node.clear(): Unit {
+    while (true) {
+        val child = firstChild
+        if (child == null) {
+            return
+        } else {
+            removeChild(child)
+        }
+    }
+}
+
+/** Returns an [[Iterator]] over the next siblings of this node */
+fun Node.nextSiblings() : Iterator<Node> = NextSiblingIterator(this)
+
+class NextSiblingIterator(var node: Node) : AbstractIterator<Node>() {
+
+    override fun computeNext(): Unit {
+        val nextValue = node.nextSibling
+        if (nextValue != null) {
+            setNext(nextValue)
+            node = nextValue
+        } else {
+            done()
+        }
+    }
+}
+
+/** Returns an [[Iterator]] over the next siblings of this node */
+fun Node.previousSiblings() : Iterator<Node> = PreviousSiblingIterator(this)
+
+class PreviousSiblingIterator(var node: Node) : AbstractIterator<Node>() {
+
+    override fun computeNext(): Unit {
+        val nextValue = node.previousSibling
+        if (nextValue != null) {
+            setNext(nextValue)
+            node = nextValue
+        } else {
+            done()
+        }
+    }
+}
+
+/** Returns true if this node is a Text node or a CDATA node */
+fun Node.isText(): Boolean {
+    val nt = nodeType
+    return nt == Node.TEXT_NODE || nt == Node.CDATA_SECTION_NODE
+}
+
+/** Returns the attribute value or empty string if its not present */
+inline fun Element.attribute(name: String): String {
+    return this.getAttribute(name) ?: ""
+}
+
+val NodeList?.head : Node?
+get() = if (this != null && this.length > 0) this.item(0) else null
+
+val NodeList?.first : Node?
+get() = this.head
+
+val NodeList?.tail : Node?
+get() {
+    if (this == null) {
+        return null
+    } else {
+        val s = this.length
+        return if (s > 0) this.item(s - 1) else null
+    }
+}
+
+val NodeList?.last : Node?
+get() = this.tail
+
+
+/** Converts the node list to an XML String */
+fun NodeList?.toXmlString(xmlDeclaration: Boolean = false): String {
+    return if (this == null)
+        "" else {
+        nodesToXmlString(this.toList(), xmlDeclaration)
+    }
+}
+
+/** Converts the collection of nodes to an XML String */
+public fun nodesToXmlString(nodes: java.lang.Iterable<Node>, xmlDeclaration: Boolean = false): String {
+    // TODO this should work...
+    // return this.map<Node,String>{it.toXmlString()}.makeString("")
+    val builder = StringBuilder()
+    for (n in nodes) {
+        builder.append(n.toXmlString(xmlDeclaration))
+    }
+    return builder.toString().sure()
+}
 
 // Syntax sugar
 
@@ -390,8 +376,8 @@ fun Element.createElement(name: String, doc: Document? = null, init: Element.()-
 
 /** Returns the owner document of the element or uses the provided document */
 fun Node.ownerDocument(doc: Document? = null): Document {
-    val answer = if (this is Document) this as Document
-    else if (doc == null) this.getOwnerDocument()
+    val answer = if (this != null && this.nodeType == Node.DOCUMENT_NODE) this as Document
+    else if (doc == null) this.ownerDocument
     else doc
 
     if (answer == null) {
@@ -424,7 +410,7 @@ Adds a newly created text node to an element which either already has an owner D
 */
 fun Element.addText(text: String?, doc: Document? = null): Element {
     if (text != null) {
-        val child = ownerDocument(doc).createTextNode(text)
+        val child = this.ownerDocument(doc).createTextNode(text)
         this.appendChild(child)
     }
     return this

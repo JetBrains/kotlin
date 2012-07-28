@@ -1,6 +1,6 @@
 package js
 
 native
-class Date() {
-    fun getTime() : Int = js.noImpl
+public class Date() {
+    public fun getTime() : Int = js.noImpl
 }

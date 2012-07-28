@@ -17,13 +17,14 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 /**
  * @author Nikolay Krasko
  */
 public final class ImportPath {
-    final @NotNull FqName fqName;
-    final boolean isAllUnder;
+    private final @NotNull FqName fqName;
+    private final boolean isAllUnder;
 
     public ImportPath(@NotNull FqName fqName, boolean isAllUnder) {
         this.fqName = fqName;
@@ -43,6 +44,11 @@ public final class ImportPath {
 
     public String getPathStr() {
         return fqName.getFqName() + (isAllUnder ? ".*" : "");
+    }
+
+    @Override
+    public String toString() {
+        return getPathStr();
     }
 
     @NotNull

@@ -20,6 +20,8 @@ import com.google.common.base.Predicate;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
  * Various junk that cannot be placed into context (yet).
  *
@@ -30,14 +32,18 @@ public class TopDownAnalysisParameters {
     private final Predicate<PsiFile> analyzeCompletely;
     private final boolean analyzingBootstrapLibrary;
     private final boolean declaredLocally;
+    @NotNull
+    private final List<AnalyzerScriptParameter> scriptParameters;
 
     public TopDownAnalysisParameters(
             @NotNull Predicate<PsiFile> analyzeCompletely,
             boolean analyzingBootstrapLibrary,
-            boolean declaredLocally) {
+            boolean declaredLocally,
+            @NotNull List<AnalyzerScriptParameter> scriptParameters) {
         this.analyzeCompletely = analyzeCompletely;
         this.analyzingBootstrapLibrary = analyzingBootstrapLibrary;
         this.declaredLocally = declaredLocally;
+        this.scriptParameters = scriptParameters;
     }
 
     @NotNull
@@ -51,5 +57,10 @@ public class TopDownAnalysisParameters {
 
     public boolean isDeclaredLocally() {
         return declaredLocally;
+    }
+
+    @NotNull
+    public List<AnalyzerScriptParameter> getScriptParameters() {
+        return scriptParameters;
     }
 }

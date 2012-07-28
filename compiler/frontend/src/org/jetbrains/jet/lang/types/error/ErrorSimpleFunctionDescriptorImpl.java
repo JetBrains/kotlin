@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 
 import java.util.Collections;
@@ -33,7 +34,7 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
     private final ErrorUtils.ErrorScope ownerScope;
 
     public ErrorSimpleFunctionDescriptorImpl(ErrorUtils.ErrorScope ownerScope) {
-        super(ErrorUtils.getErrorClass(), Collections.<AnnotationDescriptor>emptyList(), "<ERROR FUNCTION>", Kind.DECLARATION);
+        super(ErrorUtils.getErrorClass(), Collections.<AnnotationDescriptor>emptyList(), Name.special("<ERROR FUNCTION>"), Kind.DECLARATION);
         this.ownerScope = ownerScope;
     }
 
@@ -44,7 +45,7 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
 
     @NotNull
     @Override
-    public SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides) {
+    public SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, boolean makeInvisible, Kind kind, boolean copyOverrides) {
         return this;
     }
 

@@ -1,0 +1,7 @@
+open class Aaa() {
+    val bar = 1
+}
+
+open class Bbb() : Aaa() {
+    <!CONFLICTING_OVERLOADS!>val <T> bar<!> = "aa"
+}

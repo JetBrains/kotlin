@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author max
  */
-public class JetContainerNode extends JetElement {
+public class JetContainerNode extends JetElementImpl {
     public JetContainerNode(@NotNull ASTNode node) {
         super(node);
     }

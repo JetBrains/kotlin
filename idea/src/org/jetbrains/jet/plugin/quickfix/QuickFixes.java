@@ -20,7 +20,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.intellij.codeInsight.intention.IntentionAction;
 import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
-import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler;
 
@@ -113,8 +112,6 @@ public class QuickFixes {
         factories.put(REDUNDANT_MODIFIER_IN_GETTER, removeRedundantModifierFactory);
         factories.put(ILLEGAL_MODIFIER, removeModifierFactory);
 
-        factories.put(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, AddReturnTypeFix.createFactory());
-
         JetIntentionActionFactory changeToBackingFieldFactory = ChangeToBackingFieldFix.createFactory();
         factories.put(INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER, changeToBackingFieldFactory);
         factories.put(INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER, changeToBackingFieldFactory);
@@ -122,7 +119,8 @@ public class QuickFixes {
         JetIntentionActionFactory unresolvedReferenceFactory = ImportClassAndFunFix.createFactory();
         factories.put(UNRESOLVED_REFERENCE, unresolvedReferenceFactory);
 
-        factories.put(SUPERTYPE_NOT_INITIALIZED_DEFAULT, ChangeToInvocationFix.createFactory());
+        factories.put(SUPERTYPE_NOT_INITIALIZED_DEFAULT, ChangeToConstructorInvocationFix.createFactory());
+        factories.put(FUNCTION_CALL_EXPECTED, ChangeToFunctionInvocationFix.createFactory());
         
         factories.put(CANNOT_CHANGE_ACCESS_PRIVILEGE, ChangeVisibilityModifierFix.createFactory());
         factories.put(CANNOT_WEAKEN_ACCESS_PRIVILEGE, ChangeVisibilityModifierFix.createFactory());
@@ -135,7 +133,12 @@ public class QuickFixes {
         actions.put(VAL_WITH_SETTER, changeVariableMutabilityFix);
         actions.put(VAL_REASSIGNMENT, changeVariableMutabilityFix);
 
-        actions.put(UNNECESSARY_SAFE_CALL, new ReplaceCallFix(false));
-        actions.put(UNSAFE_CALL, new ReplaceCallFix(true));
+        actions.put(UNNECESSARY_SAFE_CALL, ReplaceCallFix.toDotCallFromSafeCall());
+        actions.put(UNSAFE_CALL, ReplaceCallFix.toSafeCall());
+
+        actions.put(UNSAFE_CALL, ExclExclCallFix.introduceExclExclCall());
+        actions.put(UNNECESSARY_NOT_NULL_ASSERTION, ExclExclCallFix.removeExclExclCall());
+
+        actions.put(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, new SpecifyTypeExplicitlyFix());
     }
 }

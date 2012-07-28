@@ -1,7 +1,5 @@
 package test
 
-annotation class Aaa
-
-open class HasAnnotatedMethod() {
-    open Aaa fun f(): Unit { }
+public open class AnnotatedMethod() : java.lang.Object() {
+    public open Deprecated fun f(): Unit { }
 }

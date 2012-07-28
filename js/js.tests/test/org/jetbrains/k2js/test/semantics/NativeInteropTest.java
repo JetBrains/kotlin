@@ -18,8 +18,8 @@ package org.jetbrains.k2js.test.semantics;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
-import org.jetbrains.k2js.test.utils.JsTestUtils;
 
 import java.util.List;
 
@@ -32,33 +32,47 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
     private static final String NATIVE = "native/";
 
     public NativeInteropTest() {
-        super("native/");
+        super(NATIVE);
     }
 
+    @NotNull
     @Override
-    protected List<String> additionalJSFiles() {
-        List<String> result = Lists.newArrayList(super.additionalJSFiles());
-        result.addAll(JsTestUtils.getAllFilesInDir(pathToTestFiles() + NATIVE));
+    protected List<String> additionalJSFiles(@NotNull EcmaVersion ecmaVersion) {
+        List<String> result = Lists.newArrayList(super.additionalJSFiles(ecmaVersion));
+        result.add(pathToTestFiles() + NATIVE + "/" + getTestName(true) + ".js");
+        //result.addAll(JsTestUtils.getAllFilesInDir(pathToTestFiles() + NATIVE));
         return result;
     }
 
     public void testSimple() throws Exception {
-        checkFooBoxIsTrue("simple.kt");
+        fooBoxTest();
     }
 
     public void testClass() throws Exception {
-        checkFooBoxIsTrue("class.kt");
+        fooBoxTest();
     }
 
     public void testVararg() throws Exception {
-        checkFooBoxIsTrue("vararg.kt");
+        fooBoxTest();
     }
 
     public void testUndefined() throws Exception {
-        checkFooBoxIsTrue("undefined.kt");
+        fooBoxTest();
     }
 
     public void testKt1519() throws Exception {
-        checkFooBoxIsTrue("KT-1519.kt");
+        fooBoxTest();
+    }
+
+    public void testClassObject() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testSimpleUndefined() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testKt2209() throws Exception {
+        fooBoxTest();
     }
 }

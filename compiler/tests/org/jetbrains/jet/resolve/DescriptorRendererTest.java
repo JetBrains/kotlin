@@ -18,22 +18,24 @@ package org.jetbrains.jet.resolve;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.impl.DocumentImpl;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
+import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -41,6 +43,12 @@ import java.util.List;
  * @since 4/6/12
  */
 public class DescriptorRendererTest extends JetLiteFixture {
+
+    @Override
+    protected JetCoreEnvironment createEnvironment() {
+        return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
+    }
+
     public void testGlobalProperties() throws IOException {
         doTest();
     }
@@ -53,11 +61,23 @@ public class DescriptorRendererTest extends JetLiteFixture {
         doTest();
     }
 
+    public void testEnum() throws IOException {
+        doTest();
+    }
+
     public void testTupleTypes() throws IOException {
         doTest();
     }
 
     public void testFunctionTypes() throws IOException {
+        doTest();
+    }
+
+    public void testErrorType() throws IOException {
+        doTest();
+    }
+
+    public void testInheritedMembersVisibility() throws IOException {
         doTest();
     }
 
@@ -68,11 +88,11 @@ public class DescriptorRendererTest extends JetLiteFixture {
 
     private void doTest() throws IOException {
         String fileName = getTestName(false) + ".kt";
-        JetFile psiFile = createPsiFile(fileName, loadFile(fileName));
+        JetFile psiFile = createPsiFile(null, fileName, loadFile(fileName));
         AnalyzeExhaust analyzeExhaust =
                 AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(
-                        (JetFile) psiFile, JetControlFlowDataTraceFactory.EMPTY,
-                        CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR));
+                        (JetFile) psiFile, Collections.<AnalyzerScriptParameter>emptyList(),
+                        BuiltinsScopeExtensionMode.ALL);
         final BindingContext bindingContext = analyzeExhaust.getBindingContext();
         final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();
         psiFile.acceptChildren(new JetVisitorVoid() {

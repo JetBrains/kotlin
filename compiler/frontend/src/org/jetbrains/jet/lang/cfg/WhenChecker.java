@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -34,7 +35,7 @@ import java.util.Set;
  * @author svtk
  */
 public class WhenChecker {
-    public static boolean isWhenExhaust(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
+    public static boolean isWhenExhaustive(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
         JetExpression subjectExpression = expression.getSubjectExpression();
         if (subjectExpression == null) return false;
         JetType type = trace.get(BindingContext.EXPRESSION_TYPE, subjectExpression);
@@ -46,7 +47,7 @@ public class WhenChecker {
         ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
         assert classObjectDescriptor != null;
         JetScope memberScope = classObjectDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
-        Set<ClassDescriptor> objectDescriptors = memberScope.getObjectDescriptors();
+        Collection<ClassDescriptor> objectDescriptors = memberScope.getObjectDescriptors();
         boolean isExhaust = true;
         boolean notEmpty = false;
         for (ClassDescriptor descriptor : objectDescriptors) {

@@ -25,8 +25,8 @@ import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -41,12 +41,12 @@ public class Increment implements IntrinsicMethod {
     }
 
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
         boolean nullable = expectedType.getSort() == Type.OBJECT;
-        if(nullable) {
+        if (nullable) {
             expectedType = JetTypeMapper.unboxType(expectedType);
         }
-        if(arguments.size() > 0) {
+        if (arguments.size() > 0) {
             JetExpression operand = arguments.get(0);
             while(operand instanceof JetParenthesizedExpression) {
                 operand = ((JetParenthesizedExpression)operand).getExpression();
@@ -63,7 +63,7 @@ public class Increment implements IntrinsicMethod {
 
             value.put(expectedType, v);
             plusMinus(v, expectedType);
-            value.store(v);
+            value.store(expectedType, v);
             value.put(expectedType, v);
         }
         else {

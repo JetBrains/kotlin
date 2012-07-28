@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -29,13 +30,13 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl implements VariableDescriptor {
+public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRootImpl implements VariableDescriptor {
     private JetType outType;
 
     public VariableDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull String name,
+            @NotNull Name name,
             @Nullable JetType outType) {
         super(containingDeclaration, annotations, name);
 
@@ -45,10 +46,10 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl i
     protected VariableDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull String name
+            @NotNull Name name
     )
     {
-        super(containingDeclaration, annotations, name);
+        this(containingDeclaration, annotations, name, null);
     }
 
     @NotNull
@@ -98,6 +99,7 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl i
         return ReceiverDescriptor.NO_RECEIVER;
     }
 
+    @NotNull
     @Override
     public JetType getReturnType() {
         return getType();

@@ -20,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.LabelName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.error.ErrorSimpleFunctionDescriptorImpl;
@@ -32,7 +34,7 @@ import java.util.*;
  */
 public class ErrorUtils {
 
-    private static final ModuleDescriptor ERROR_MODULE = new ModuleDescriptor("<ERROR MODULE>");
+    private static final ModuleDescriptor ERROR_MODULE = new ModuleDescriptor(Name.special("<ERROR MODULE>"));
 
 
     public static class ErrorScope implements JetScope {
@@ -44,12 +46,12 @@ public class ErrorUtils {
         }
 
         @Override
-        public ClassifierDescriptor getClassifier(@NotNull String name) {
+        public ClassifierDescriptor getClassifier(@NotNull Name name) {
             return ERROR_CLASS;
         }
 
         @Override
-        public ClassDescriptor getObjectDescriptor(@NotNull String name) {
+        public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
             return ERROR_CLASS;
         }
 
@@ -61,17 +63,17 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Set<VariableDescriptor> getProperties(@NotNull String name) {
+        public Set<VariableDescriptor> getProperties(@NotNull Name name) {
             return ERROR_PROPERTY_GROUP;
         }
 
         @Override
-        public VariableDescriptor getLocalVariable(@NotNull String name) {
+        public VariableDescriptor getLocalVariable(@NotNull Name name) {
             return ERROR_PROPERTY;
         }
 
         @Override
-        public NamespaceDescriptor getNamespace(@NotNull String name) {
+        public NamespaceDescriptor getNamespace(@NotNull Name name) {
             return null; // TODO : review
         }
 
@@ -87,7 +89,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+        public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
             return Collections.<FunctionDescriptor>singleton(createErrorFunction(this));
         }
 
@@ -99,12 +101,12 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<DeclarationDescriptor> getDeclarationsByLabel(String labelName) {
+        public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
             return Collections.emptyList();
         }
 
         @Override
-        public PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName) {
+        public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
             return null; // TODO : review
         }
 
@@ -114,12 +116,17 @@ public class ErrorUtils {
             return Collections.emptyList();
         }
 
-    }
-
-    private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<AnnotationDescriptor>emptyList(), "<ERROR CLASS>") {
         @NotNull
         @Override
-        public Set<ConstructorDescriptor> getConstructors() {
+        public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
+            return Collections.emptyList();
+        }
+    }
+
+    private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<AnnotationDescriptor>emptyList(), Modality.OPEN, Name.special("<ERROR CLASS>")) {
+        @NotNull
+        @Override
+        public Collection<ConstructorDescriptor> getConstructors() {
             return ERROR_CONSTRUCTOR_GROUP;
         }
 
@@ -158,7 +165,7 @@ public class ErrorUtils {
             false,
             null,
             ReceiverDescriptor.NO_RECEIVER,
-            "<ERROR PROPERTY>",
+            Name.special("<ERROR PROPERTY>"),
             ERROR_PROPERTY_TYPE,
             CallableMemberDescriptor.Kind.DECLARATION);
     private static final Set<VariableDescriptor> ERROR_PROPERTY_GROUP = Collections.singleton(ERROR_PROPERTY);
@@ -168,7 +175,7 @@ public class ErrorUtils {
         function.initialize(
                 null,
                 ReceiverDescriptor.NO_RECEIVER,
-                Collections.<TypeParameterDescriptor>emptyList(), // TODO
+                Collections.<TypeParameterDescriptorImpl>emptyList(), // TODO
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
                 createErrorType("<ERROR FUNCTION RETURN TYPE>"),
                 Modality.OPEN,
@@ -197,7 +204,7 @@ public class ErrorUtils {
                     functionDescriptor,
                     i,
                     Collections.<AnnotationDescriptor>emptyList(),
-                    "<ERROR VALUE_PARAMETER>",
+                    Name.special("<ERROR VALUE_PARAMETER>"),
                     true,
                     ERROR_PARAMETER_TYPE,
                     false,
@@ -221,7 +228,7 @@ public class ErrorUtils {
     }
 
     private static JetType createErrorTypeWithCustomDebugName(JetScope memberScope, String debugName) {
-        return new ErrorTypeImpl(new TypeConstructorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false, debugName, Collections.<TypeParameterDescriptor>emptyList(), Collections.singleton(JetStandardClasses.getAnyType())), memberScope);
+        return new ErrorTypeImpl(new TypeConstructorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false, debugName, Collections.<TypeParameterDescriptorImpl>emptyList(), Collections.singleton(JetStandardClasses.getAnyType())), memberScope);
     }
 
     public static JetType createWrongVarianceErrorType(TypeProjection value) {
@@ -239,7 +246,8 @@ public class ErrorUtils {
     public static boolean isErrorType(@NotNull JetType type) {
         return type != TypeUtils.NO_EXPECTED_TYPE && !(type instanceof NamespaceType) &&
                (
-                    (type instanceof DeferredType && ((DeferredType) type).getActualType() == null) ||
+                    (type instanceof DeferredType && (((DeferredType) type).getActualType() == null
+                                                      || isErrorType(((DeferredType) type).getActualType()))) ||
                     type instanceof ErrorTypeImpl ||
                     isError(type.getConstructor())
                );

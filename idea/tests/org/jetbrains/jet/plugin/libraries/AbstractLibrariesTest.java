@@ -25,12 +25,14 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
+import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.testFramework.PlatformTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.KotlinCompiler;
+import org.jetbrains.jet.cli.common.ExitCode;
+import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
-import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Evgeny Gerashchenko
@@ -47,7 +49,20 @@ public abstract class AbstractLibrariesTest extends PlatformTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        File libraryIoDir = createTempDir("libraries_");
+        final VirtualFile baseDir = getProject().getBaseDir();
+        assertNotNull(baseDir);
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    libraryDir = baseDir.createChildDirectory(this, "lib");
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
         VirtualFile testDataDir = LocalFileSystem.getInstance().findFileByPath(TEST_DATA_PATH);
         assertNotNull(testDataDir);
         VfsUtilCore.visitChildrenRecursively(testDataDir, new VirtualFileVisitor() {
@@ -60,11 +75,15 @@ public abstract class AbstractLibrariesTest extends PlatformTestCase {
         });
         librarySourceDir = LocalFileSystem.getInstance().findFileByPath(TEST_DATA_PATH + "/library");
         assertNotNull(librarySourceDir);
-        KotlinCompiler.ExitCode compilerExec =
-                new KotlinCompiler().exec(System.out, "-src", librarySourceDir.getPath(), "-output", libraryIoDir.getAbsolutePath());
-        assertEquals(KotlinCompiler.ExitCode.OK, compilerExec);
-        libraryDir = LocalFileSystem.getInstance().findFileByIoFile(libraryIoDir);
+
+
+        ExitCode compilerExec =
+                new K2JVMCompiler().exec(System.out, "-src", librarySourceDir.getPath(), "-output", libraryDir.getPath());
+        assertEquals(ExitCode.OK, compilerExec);
         assertNotNull(libraryDir);
+
+        ((NewVirtualFile)libraryDir).markDirtyRecursively();
+        libraryDir.refresh(false, true);
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override

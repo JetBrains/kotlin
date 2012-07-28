@@ -32,7 +32,7 @@ public class JetFileType extends LanguageFileType {
         @NotNull
         @Override
         protected Icon compute() {
-            return IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin16x16.png");
+            return IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin_file.png");
         }
     };
 
@@ -40,21 +40,25 @@ public class JetFileType extends LanguageFileType {
         super(JetLanguage.INSTANCE);
     }
 
+    @Override
     @NotNull
     public String getName() {
-        return "Kotlin";
+        return JetLanguage.NAME;
     }
 
+    @Override
     @NotNull
     public String getDescription() {
-        return "Kotlin";
+        return getName();
     }
 
+    @Override
     @NotNull
     public String getDefaultExtension() {
         return "kt";
     }
 
+    @Override
     public Icon getIcon() {
         return myIcon.getValue();
     }

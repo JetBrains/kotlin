@@ -82,16 +82,8 @@ public class JetDelegatorToSuperCall extends JetDelegationSpecifier implements J
 
     @Override
     public JetTypeArgumentList getTypeArgumentList() {
-        JetTypeReference typeReference = getTypeReference();
-        if (typeReference == null) {
-            return null;
-        }
-        JetTypeElement typeElement = typeReference.getTypeElement();
-        if (typeElement instanceof JetUserType) {
-            JetUserType userType = (JetUserType) typeElement;
-            return userType.getTypeArgumentList();
-        }
-        return null;
+        final JetUserType userType = getTypeAsUserType();
+        return userType != null ? userType.getTypeArgumentList() : null;
     }
 
 }

@@ -1,5 +1,5 @@
 package test
 
-open class Outer<erased P>() {
-    open class Inner<erased Q : P>()
+public open class InnerClassReferencesOuterTP<P>() : java.lang.Object() {
+    public open class Inner<Q : P>() : java.lang.Object()
 }

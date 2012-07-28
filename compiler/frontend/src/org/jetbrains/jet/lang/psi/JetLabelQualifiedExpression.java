@@ -24,7 +24,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author abreslav
  */
-public class JetLabelQualifiedExpression extends JetExpression {
+public class JetLabelQualifiedExpression extends JetExpressionImpl {
 
     public JetLabelQualifiedExpression(@NotNull ASTNode node) {
         super(node);

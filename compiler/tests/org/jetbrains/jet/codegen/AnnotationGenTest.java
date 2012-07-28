@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import jet.JetObject;
+import org.jetbrains.jet.ConfigurationKind;
 
 import java.lang.annotation.*;
 import java.lang.reflect.Constructor;
@@ -24,6 +25,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class AnnotationGenTest extends CodegenTestCase {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    }
+
     public void testPropField() throws NoSuchFieldException, NoSuchMethodException {
         loadText("[Deprecated] var x = 0");
         Class aClass = generateNamespaceClass();

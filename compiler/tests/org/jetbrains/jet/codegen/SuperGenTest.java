@@ -16,7 +16,16 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.ConfigurationKind;
+
 public class SuperGenTest extends CodegenTestCase {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    }
+
     public void testBasicProperty () {
         blackBoxFile("/super/basicproperty.jet");
 //        System.out.println(generateToText());

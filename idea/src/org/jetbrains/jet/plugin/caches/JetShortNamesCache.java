@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.caches;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
@@ -36,7 +35,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JavaElementFinder;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
@@ -47,7 +50,6 @@ import org.jetbrains.jet.plugin.stubindex.JetExtensionFunctionNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetShortClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetShortFunctionNameIndex;
-import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.*;
 
@@ -59,6 +61,8 @@ import java.util.*;
  */
 public class JetShortNamesCache extends PsiShortNamesCache {
 
+    private static final PsiMethod[] NO_METHODS = new PsiMethod[0];
+    private static final PsiField[] NO_FIELDS = new PsiField[0];
     private final Project project;
     private final JavaElementFinder javaElementFinder;
 
@@ -78,24 +82,26 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     }
 
     /**
-     * Return class names form jet sources in given scope which should be visible as java classes.
+     * Return class names form jet sources in given scope which should be visible as Java classes.
      */
     @NotNull
     @Override
     public PsiClass[] getClassesByName(@NotNull @NonNls String name, @NotNull GlobalSearchScope scope) {
         // Quick check for classes from getAllClassNames()
-        Collection<String> classNames = JetShortClassNameIndex.getInstance().getAllKeys(project);
-        if (!classNames.contains(name)) {
+        Collection<JetClassOrObject> classOrObjects = JetShortClassNameIndex.getInstance().get(name, project, scope);
+        if (classOrObjects.isEmpty()) {
             return new PsiClass[0];
         }
 
         List<PsiClass> result = new ArrayList<PsiClass>();
-
-        for (String fqName : JetFullClassNameIndex.getInstance().getAllKeys(project)) {
-            if (QualifiedNamesUtil.fqnToShortName(new FqName(fqName)).equals(name)) {
-                PsiClass psiClass = javaElementFinder.findClass(fqName, scope);
-                if (psiClass != null) {
-                    result.add(psiClass);
+        for (JetClassOrObject classOrObject : classOrObjects) {
+            if (classOrObject instanceof JetNamedDeclaration) {
+                FqName fqName = JetPsiUtil.getFQName((JetNamedDeclaration) classOrObject);
+                if (fqName != null && fqName.shortName().getName().equals(name)) {
+                    PsiClass psiClass = javaElementFinder.findClass(fqName.getFqName(), scope);
+                    if (psiClass != null) {
+                        result.add(psiClass);
+                    }
                 }
             }
         }
@@ -126,17 +132,6 @@ public class JetShortNamesCache extends PsiShortNamesCache {
                                        }));
 
         return standardTypes;
-    }
-
-    @NotNull
-    public Collection<FqName> getFQNamesByName(@NotNull final String name, JetFile file, @NotNull GlobalSearchScope scope) {
-        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
-        return Collections2.filter(context.getKeys(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR), new Predicate<FqName>() {
-            @Override
-            public boolean apply(@Nullable FqName fqName) {
-                return fqName != null && QualifiedNamesUtil.isShortNameForFQN(name, fqName);
-            }
-        });
     }
 
     /**
@@ -274,16 +269,42 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         return resultDescriptors;
     }
 
+    public Collection<ClassDescriptor> getJetClassesDescriptors(
+            @NotNull Condition<String> acceptedShortNameCondition,
+            @NotNull JetFile jetFile
+    ) {
+        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile).getBindingContext();
+        Collection<ClassDescriptor> classDescriptors = new ArrayList<ClassDescriptor>();
+
+        for (String fqName : JetFullClassNameIndex.getInstance().getAllKeys(project)) {
+            FqName classFQName = new FqName(fqName);
+            if (acceptedShortNameCondition.value(classFQName.shortName().getName())) {
+                ClassDescriptor descriptor = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, classFQName);
+                if (descriptor != null) {
+                    classDescriptors.add(descriptor);
+                }
+            }
+        }
+
+        return classDescriptors;
+    }
+
     @NotNull
     @Override
     public PsiMethod[] getMethodsByName(@NonNls @NotNull String name, @NotNull GlobalSearchScope scope) {
-        return new PsiMethod[0];
+        return NO_METHODS;
     }
 
     @NotNull
     @Override
     public PsiMethod[] getMethodsByNameIfNotMoreThan(@NonNls @NotNull String name, @NotNull GlobalSearchScope scope, int maxCount) {
-        return new PsiMethod[0];
+        return NO_METHODS;
+    }
+
+    @NotNull
+    @Override
+    public PsiField[] getFieldsByNameIfNotMoreThan(@NonNls @NotNull String s, @NotNull GlobalSearchScope scope, int i) {
+        return NO_FIELDS;
     }
 
     @Override
@@ -305,7 +326,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     @NotNull
     @Override
     public PsiField[] getFieldsByName(@NotNull @NonNls String name, @NotNull GlobalSearchScope scope) {
-        return new PsiField[0];
+        return NO_FIELDS;
     }
 
     @NotNull

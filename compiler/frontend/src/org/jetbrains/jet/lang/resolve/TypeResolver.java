@@ -18,7 +18,10 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -33,7 +36,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.diagnostics.Errors.UNSUPPORTED;
+import static org.jetbrains.jet.lang.diagnostics.Errors.WRONG_NUMBER_OF_TYPE_ARGUMENTS;
 
 /**
  * @author abreslav
@@ -69,6 +73,7 @@ public class TypeResolver {
         JetTypeElement typeElement = typeReference.getTypeElement();
         JetType type = resolveTypeElement(scope, annotations, typeElement, false, trace, checkBounds);
         trace.record(BindingContext.TYPE, typeReference, type);
+        trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, typeReference, scope);
 
         return type;
     }
@@ -125,7 +130,7 @@ public class TypeResolver {
                         int expectedArgumentCount = parameters.size();
                         int actualArgumentCount = arguments.size();
                         if (ErrorUtils.isError(typeConstructor)) {
-                            result[0] = ErrorUtils.createErrorType("??");
+                            result[0] = ErrorUtils.createErrorType("[Error type: " + typeConstructor + "]");
                         }
                         else {
                             if (actualArgumentCount != expectedArgumentCount) {
@@ -243,7 +248,7 @@ public class TypeResolver {
                 List<TypeParameterDescriptor> parameters = constructor.getParameters();
                 if (parameters.size() > i) {
                     TypeParameterDescriptor parameterDescriptor = parameters.get(i);
-                    arguments.add(TypeUtils.makeStarProjection(parameterDescriptor));
+                    arguments.add(SubstitutionUtils.makeStarProjection(parameterDescriptor));
                 }
                 else {
                     arguments.add(new TypeProjection(Variance.OUT_VARIANCE, ErrorUtils.createErrorType("*")));

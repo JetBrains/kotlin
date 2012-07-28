@@ -20,65 +20,79 @@
 package org.jetbrains.jet.utils;
 
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PathUtil {
+
+    public static final String JS_LIB_JAR_NAME = "kotlin-jslib.jar";
+    public static final String JS_LIB_JS_NAME = "kotlinLib.js";
+    public static final String JDK_ANNOTATIONS_JAR = "kotlin-jdk-annotations.jar";
+    public static final String KOTLIN_COMPILER_JAR = "kotlin-compiler.jar";
+    public static final String KOTLIN_RUNTIME_JAR = "kotlin-runtime.jar";
+
     private PathUtil() {}
 
-    public static File getDefaultCompilerPath() {
-        File plugin_jar_path = new File(getJarPathForClass(PathUtil.class));
-
-        if (!plugin_jar_path.exists()) return null;
-
-        if (plugin_jar_path.getName().equals("kotlin-plugin.jar")) {
-            File lib = plugin_jar_path.getParentFile();
-            File pluginHome = lib.getParentFile();
-
-            File answer = new File(pluginHome, "kotlinc");
-
-            return answer.exists() ? answer : null;
-        }
-
-        if (plugin_jar_path.getName().equals("kotlin-compiler.jar")) {
-            File lib = plugin_jar_path.getParentFile();
-            File answer = lib.getParentFile();
-            return answer.exists() ? answer : null;
-        }
-        
-        File current = new File("").getAbsoluteFile(); // CWD
-
-        do {
-            File atDevHome = new File(current, "dist/kotlinc");
-            if (atDevHome.exists()) return atDevHome;
-            current = current.getParentFile();
-        } while (current != null);
-
-        return null;
+    @Nullable
+    public static File getRuntimePath(@Nullable File sdkHome) {
+        return getFilePackedIntoLib(sdkHome, KOTLIN_RUNTIME_JAR);
     }
 
     @Nullable
-    public static File getDefaultRuntimePath() {
-        File compilerPath = getDefaultCompilerPath();
-        if (compilerPath == null) return null;
+    public static File getCompilerPath(@Nullable File sdkHome) {
+        return getFilePackedIntoLib(sdkHome, KOTLIN_COMPILER_JAR);
+    }
 
-        File answer = new File(compilerPath, "lib/kotlin-runtime.jar");
+    @Nullable
+    public static File getJsLibJsPath(@Nullable File sdkHome) {
+        return getFilePackedIntoLib(sdkHome, JS_LIB_JS_NAME);
+    }
 
+    @Nullable
+    public static File getJsLibJarPath(@Nullable File sdkHome) {
+        return getFilePackedIntoLib(sdkHome, JS_LIB_JAR_NAME);
+    }
+
+    @Nullable
+    public static File getJdkAnnotationsPath(@Nullable File sdkHome) {
+        return getFilePackedIntoLib(sdkHome, JDK_ANNOTATIONS_JAR);
+    }
+
+    @Nullable
+    private static File getFilePackedIntoLib(@Nullable File sdkHome, @NotNull String filePathFromLib) {
+        if (sdkHome == null) return null;
+        File answer = new File(sdkHome, "lib/" + filePathFromLib);
         return answer.exists() ? answer : null;
     }
 
-    public static File getAltHeadersPath() {
-        File compilerPath = getDefaultCompilerPath();
+    @Nullable
+    public static File getSDKHomeByCompilerPath(@Nullable File compilerPath) {
         if (compilerPath == null) return null;
+        File libDir = compilerPath.getParentFile();
+        if (libDir == null) return null;
+        File sdkHome = libDir.getParentFile();
+        return sdkHome != null && sdkHome.exists() ? sdkHome : null;
+    }
 
-        File answer = new File(compilerPath, "lib/alt/kotlin-jdk-headers.jar");
-        return answer.exists() ? answer : null;
+    @NotNull
+    public static VirtualFile jarFileOrDirectoryToVirtualFile(@NotNull File file) {
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                return VirtualFileManager.getInstance()
+                        .findFileByUrl("file://" + FileUtil.toSystemIndependentName(file.getAbsolutePath()));
+            }
+            else {
+                return VirtualFileManager.getInstance().findFileByUrl("jar://" + FileUtil.toSystemIndependentName(file.getAbsolutePath()) + "!/");
+            }
+        }
+        else {
+            throw new IllegalStateException("Path " + file + " does not exist.");
+        }
     }
 
     @NotNull
@@ -87,25 +101,31 @@ public class PathUtil {
         return new File(resourceRoot).getAbsoluteFile().getAbsolutePath();
     }
 
-    public static List<VirtualFile> getAltHeadersRoots() {
-        List<VirtualFile> roots = new ArrayList<VirtualFile>();
-
-        File alts = getAltHeadersPath();
-
-        if (alts != null) {
-            for (File root : alts.listFiles()) {
-                VirtualFile jarRoot = jarFileToVirtualFile(root);
-                roots.add(jarRoot);
-            }
+    public static File findRtJar() {
+        String javaHome = System.getProperty("java.home");
+        if ("jre".equals(new File(javaHome).getName())) {
+            javaHome = new File(javaHome).getParent();
         }
-        return roots;
+
+        File rtJar = findRtJar(javaHome);
+
+        if (rtJar == null || !rtJar.exists()) {
+            throw new IllegalArgumentException("No JDK rt.jar found under " + javaHome);
+        }
+
+        return rtJar;
     }
 
-    @NotNull
-    public static VirtualFile jarFileToVirtualFile(@NotNull File file) {
-        if (!file.exists() || !file.isFile()) {
-            throw new IllegalStateException("file must exist and be regular to be converted to virtual file: " + file);
+    private static File findRtJar(String javaHome) {
+        File rtJar = new File(javaHome, "jre/lib/rt.jar");
+        if (rtJar.exists()) {
+            return rtJar;
         }
-        return VirtualFileManager.getInstance().findFileByUrl("jar://" + file.getPath() + "!/");
+
+        File classesJar = new File(new File(javaHome).getParentFile().getAbsolutePath(), "Classes/classes.jar");
+        if (classesJar.exists()) {
+            return classesJar;
+        }
+        return null;
     }
 }

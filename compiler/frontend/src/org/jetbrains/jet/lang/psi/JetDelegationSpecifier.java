@@ -24,7 +24,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author max
  */
-public class JetDelegationSpecifier extends JetElement{
+public class JetDelegationSpecifier extends JetElementImpl {
     public JetDelegationSpecifier(@NotNull ASTNode node) {
         super(node);
     }
@@ -42,5 +42,17 @@ public class JetDelegationSpecifier extends JetElement{
     @Nullable
     public JetTypeReference getTypeReference() {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
+    }
+
+    @Nullable
+    public JetUserType getTypeAsUserType() {
+        final JetTypeReference reference = getTypeReference();
+        if (reference != null) {
+            final JetTypeElement element = reference.getTypeElement();
+            if (element instanceof JetUserType) {
+                return ((JetUserType) element);
+            }
+        }
+        return null;
     }
 }

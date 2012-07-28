@@ -1,0 +1,25 @@
+<html>
+<head>
+
+</head>
+<body>
+<h1>Kotlin Sample</h1>
+
+<div id="foo">
+</div>
+
+<script type="text/javascript" src="src/js/jquery.js"></script>
+<script type="text/javascript" src="target/js/kotlin-lib-ecma3.js"></script>
+<script type="text/javascript" src="target/js/kotlin-lib.js"></script>
+<script type="text/javascript" src="target/js/browser-example.js"></script>
+
+<!--
+    TODO ideally we should be able to code generate this entry point if we can discover
+    any annotated methods with documentReady
+-->
+<script  type="text/javascript">
+    $(document).ready(Kotlin.modules['browser-example'].sample.myApp)
+</script>
+
+</body>
+</html>

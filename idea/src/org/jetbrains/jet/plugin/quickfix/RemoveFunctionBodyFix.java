@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.intellij.extapi.psi.ASTDelegatePsiElement;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -25,7 +26,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -61,25 +61,27 @@ public class RemoveFunctionBodyFix extends JetIntentionAction<JetFunction> {
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         JetFunction function = (JetFunction) element.copy();
+        assert function instanceof ASTDelegatePsiElement;
+        ASTDelegatePsiElement functionElementWithAst = (ASTDelegatePsiElement) function;
         JetExpression bodyExpression = function.getBodyExpression();
         assert bodyExpression != null;
         if (function.hasBlockBody()) {
             PsiElement prevElement = bodyExpression.getPrevSibling();
-            QuickFixUtil.removePossiblyWhiteSpace(function, prevElement);
-            function.deleteChildInternal(bodyExpression.getNode());
+            QuickFixUtil.removePossiblyWhiteSpace(functionElementWithAst, prevElement);
+            functionElementWithAst.deleteChildInternal(bodyExpression.getNode());
         }
         else {
             PsiElement prevElement = bodyExpression.getPrevSibling();
             PsiElement prevPrevElement = prevElement.getPrevSibling();
-            QuickFixUtil.removePossiblyWhiteSpace(function, prevElement);
-            removePossiblyEquationSign(function, prevElement);
-            removePossiblyEquationSign(function, prevPrevElement);
-            function.deleteChildInternal(bodyExpression.getNode());
+            QuickFixUtil.removePossiblyWhiteSpace(functionElementWithAst, prevElement);
+            removePossiblyEquationSign(functionElementWithAst, prevElement);
+            removePossiblyEquationSign(functionElementWithAst, prevPrevElement);
+            functionElementWithAst.deleteChildInternal(bodyExpression.getNode());
         }
         element.replace(function);
     }
 
-    private static boolean removePossiblyEquationSign(@NotNull JetElement element, @Nullable PsiElement possiblyEq) {
+    private static boolean removePossiblyEquationSign(@NotNull ASTDelegatePsiElement element, @Nullable PsiElement possiblyEq) {
         if (possiblyEq instanceof LeafPsiElement && ((LeafPsiElement)possiblyEq).getElementType() == JetTokens.EQ) {
             QuickFixUtil.removePossiblyWhiteSpace(element, possiblyEq.getNextSibling());
             element.deleteChildInternal(possiblyEq.getNode());

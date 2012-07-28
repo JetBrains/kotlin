@@ -19,6 +19,8 @@ package org.jetbrains.jet.lang.resolve.scopes;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.name.LabelName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
@@ -40,7 +42,7 @@ public class ChainedScope implements JetScope {
     }
 
     @Override
-    public ClassifierDescriptor getClassifier(@NotNull String name) {
+    public ClassifierDescriptor getClassifier(@NotNull Name name) {
         for (JetScope scope : scopeChain) {
             ClassifierDescriptor classifier = scope.getClassifier(name);
             if (classifier != null) return classifier;
@@ -49,7 +51,7 @@ public class ChainedScope implements JetScope {
     }
 
     @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull String name) {
+    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
         for (JetScope scope : scopeChain) {
             ClassDescriptor objectDescriptor = scope.getObjectDescriptor(name);
             if (objectDescriptor != null) return objectDescriptor;
@@ -68,7 +70,7 @@ public class ChainedScope implements JetScope {
     }
 
     @Override
-    public NamespaceDescriptor getNamespace(@NotNull String name) {
+    public NamespaceDescriptor getNamespace(@NotNull Name name) {
         for (JetScope jetScope : scopeChain) {
             NamespaceDescriptor namespace = jetScope.getNamespace(name);
             if (namespace != null) {
@@ -80,7 +82,7 @@ public class ChainedScope implements JetScope {
 
     @NotNull
     @Override
-    public Set<VariableDescriptor> getProperties(@NotNull String name) {
+    public Set<VariableDescriptor> getProperties(@NotNull Name name) {
         Set<VariableDescriptor> properties = Sets.newLinkedHashSet();
         for (JetScope jetScope : scopeChain) {
             properties.addAll(jetScope.getProperties(name));
@@ -89,7 +91,7 @@ public class ChainedScope implements JetScope {
     }
 
     @Override
-    public VariableDescriptor getLocalVariable(@NotNull String name) {
+    public VariableDescriptor getLocalVariable(@NotNull Name name) {
         for (JetScope jetScope : scopeChain) {
             VariableDescriptor variable = jetScope.getLocalVariable(name);
             if (variable != null) {
@@ -101,7 +103,7 @@ public class ChainedScope implements JetScope {
 
     @NotNull
     @Override
-    public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+    public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
         if (scopeChain.length == 0) {
             return Collections.emptySet();
         }
@@ -134,7 +136,7 @@ public class ChainedScope implements JetScope {
 
     @NotNull
     @Override
-    public Collection<DeclarationDescriptor> getDeclarationsByLabel(String labelName) {
+    public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
         for (JetScope jetScope : scopeChain) {
             Collection<DeclarationDescriptor> declarationsByLabel = jetScope.getDeclarationsByLabel(labelName);
             if (!declarationsByLabel.isEmpty()) return declarationsByLabel; // TODO : merge?
@@ -143,7 +145,7 @@ public class ChainedScope implements JetScope {
     }
 
     @Override
-    public PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName) {
+    public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
         for (JetScope jetScope : scopeChain) {
             PropertyDescriptor propertyByFieldReference = jetScope.getPropertyByFieldReference(fieldName);
             if (propertyByFieldReference != null) {
@@ -163,5 +165,11 @@ public class ChainedScope implements JetScope {
             }
         }
         return allDescriptors;
+    }
+
+    @NotNull
+    @Override
+    public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
+        throw new UnsupportedOperationException();
     }
 }

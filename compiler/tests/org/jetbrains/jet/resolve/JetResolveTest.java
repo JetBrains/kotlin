@@ -24,22 +24,21 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.di.InjectorForTests;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -103,10 +102,10 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         nameToDeclaration.put("java::java.lang.Number", java_lang_Number);
         nameToDeclaration.put("java::java.lang.Number.intValue()", java_lang_Number.findMethodsByName("intValue", true)[0]);
 
-        return new ExpectedResolveData(nameToDescriptor, nameToDeclaration) {
+        return new ExpectedResolveData(nameToDescriptor, nameToDeclaration, getEnvironment()) {
             @Override
             protected JetFile createJetFile(String fileName, String text) {
-                return createCheckAndReturnPsiFile(fileName, text);
+                return createCheckAndReturnPsiFile(fileName, null, text);
             }
         };
     }
@@ -126,9 +125,8 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     @NotNull
     private PsiClass findClass(String qualifiedName) {
         Project project = getProject();
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR), project);
-        return injector.getPsiClassFinderForJvm().findPsiClass(new FqName(qualifiedName), PsiClassFinder.RuntimeClassesHandleMode.THROW);
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(BuiltinsScopeExtensionMode.ALL, project);
+        return injector.getPsiClassFinder().findPsiClass(new FqName(qualifiedName), PsiClassFinder.RuntimeClassesHandleMode.THROW);
     }
 
     @NotNull
@@ -145,7 +143,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
 
         CallResolver callResolver = new InjectorForTests(getProject()).getCallResolver();
         OverloadResolutionResults<FunctionDescriptor> functions = callResolver.resolveExactSignature(
-                classDescriptor.getMemberScope(typeArguments), ReceiverDescriptor.NO_RECEIVER, name, parameterTypeList);
+                classDescriptor.getMemberScope(typeArguments), ReceiverDescriptor.NO_RECEIVER, Name.identifier(name), parameterTypeList);
         for (ResolvedCall<? extends FunctionDescriptor> resolvedCall : functions.getResultingCalls()) {
             List<ValueParameterDescriptor> unsubstitutedValueParameters = resolvedCall.getResultingDescriptor().getValueParameters();
             for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {

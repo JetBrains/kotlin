@@ -31,7 +31,7 @@ public class JetCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
 
     @Override
     public String getConfigurableDisplayName() {
-        return "Kotlin";
+        return JetLanguage.NAME;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class JetCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
     @NotNull
     @Override
     public Configurable createSettingsPage(CodeStyleSettings settings, CodeStyleSettings originalSettings) {
-        return new CodeStyleAbstractConfigurable(settings, originalSettings, "Kotlin") {
+        return new CodeStyleAbstractConfigurable(settings, originalSettings, JetLanguage.NAME) {
             @Override
             protected CodeStyleAbstractPanel createPanel(CodeStyleSettings settings) {
                 return new TabbedLanguageCodeStylePanel(JetLanguage.INSTANCE, getCurrentSettings(), settings) {

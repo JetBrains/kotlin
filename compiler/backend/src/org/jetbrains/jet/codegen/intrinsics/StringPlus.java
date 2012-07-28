@@ -23,8 +23,8 @@ import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -33,8 +33,8 @@ import java.util.List;
  */
 public class StringPlus implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
-        if(receiver == null || receiver == StackValue.none()) {
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
+        if (receiver == null || receiver == StackValue.none()) {
             codegen.gen(arguments.get(0)).put(JetTypeMapper.JL_STRING_TYPE, v);
             codegen.gen(arguments.get(1)).put(JetTypeMapper.TYPE_OBJECT, v);
         }

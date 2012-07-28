@@ -8,7 +8,7 @@ class SomeTest : Test {
     public override fun test() {
         throw UnsupportedOperationException()
     }
-    protected override val testProp : Int = 0
+    protected override val testProp: Int = 0
 
     /**
     * test

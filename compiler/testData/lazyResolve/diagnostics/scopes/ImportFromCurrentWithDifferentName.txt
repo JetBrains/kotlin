@@ -1,0 +1,9 @@
+namespace <root>
+
+// <namespace name="a">
+namespace a
+
+internal final class a.A : jet.Any {
+    public final /*constructor*/ fun <init>(): a.A
+}
+// </namespace name="a">

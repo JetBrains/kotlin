@@ -16,7 +16,15 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.ConfigurationKind;
+
 public class SafeRefTest extends CodegenTestCase {
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    }
+
     public void test247 () throws Exception {
         blackBoxFile("regressions/kt247.jet");
     }

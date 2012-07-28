@@ -19,27 +19,28 @@
  */
 package org.jetbrains.jet.codegen;
 
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.Method;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.Method;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GeneratedAnonymousClassDescriptor {
-    private final String classname;
+    private final JvmClassName classname;
     private Method constructor;
     private final Type captureThis;
     private final Type captureReceiver;
     private List<StackValue> args = new ArrayList<StackValue>();
 
-    public GeneratedAnonymousClassDescriptor(String classname, Method constructor, Type captureThis, Type captureReceiver) {
+    public GeneratedAnonymousClassDescriptor(JvmClassName classname, Method constructor, Type captureThis, Type captureReceiver) {
         this.classname = classname;
         this.constructor = constructor;
         this.captureThis = captureThis;
         this.captureReceiver = captureReceiver;
     }
 
-    public String getClassname() {
+    public JvmClassName getClassname() {
         return classname;
     }
 

@@ -18,8 +18,11 @@ package org.jetbrains.jet.codegen.signature.kotlin;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.MethodVisitor;
+import org.jetbrains.jet.utils.BitSetUtils;
+import org.jetbrains.asm4.AnnotationVisitor;
+import org.jetbrains.asm4.MethodVisitor;
+
+import java.util.BitSet;
 
 /**
  * @author Stepan Koltsov
@@ -30,13 +33,14 @@ public class JetMethodAnnotationWriter {
     private JetMethodAnnotationWriter(AnnotationVisitor av) {
         this.av = av;
     }
-    
-    public void writeKind(int kind) {
-        if (kind != JvmStdlibNames.JET_METHOD_KIND_DEFAULT) {
-            av.visit(JvmStdlibNames.JET_METHOD_KIND_FIELD, kind);
+
+    public void writeFlags(BitSet flags) {
+        int flagsValue = BitSetUtils.toInt(flags);
+        if (flagsValue != JvmStdlibNames.FLAGS_DEFAULT_VALUE) {
+            av.visit(JvmStdlibNames.JET_METHOD_FLAGS_FIELD, flagsValue);
         }
     }
-    
+
     public void writeTypeParameters(@NotNull String typeParameters) {
         if (typeParameters.length() > 0) {
             av.visit(JvmStdlibNames.JET_METHOD_TYPE_PARAMETERS_FIELD, typeParameters);

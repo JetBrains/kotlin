@@ -28,6 +28,10 @@
         </dependency>
     </dependencies>
 
+    <properties>
+        <project-root>${basedir}/../../../</project-root>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -47,12 +51,13 @@
                         <ignorePackage>sun</ignorePackage>
                         <ignorePackage>java</ignorePackage>
                         <ignorePackage>jet</ignorePackage>
+                        <ignorePackage>js</ignorePackage>
                         <ignorePackage>junit</ignorePackage>
                         <ignorePackage>org</ignorePackage>
                         <ignorePackage>kotlin.support</ignorePackage>
                         <ignorePackage>kotlin.properties</ignorePackage>
                     </ignorePackages>
-                    <sourceRootHref>https://github.com/JetBrains/kotlin/tree/master</sourceRootHref>
+                    <sourceRootHref>https://github.com/JetBrains/kotlin/blob/master</sourceRootHref>
                     <projectRootDir>${project-root}</projectRootDir>
                     <packageDescriptionFiles>
                         <kotlin.swing>${project-root}/libraries/kotlin-swing/ReadMe.md</kotlin.swing>
@@ -60,6 +65,7 @@
                     <packageSummaryText>
                         <kotlin>Core API</kotlin>
                         <kotlin.beans>Functions for working with Java Beans</kotlin.beans>
+                        <kotlin.browser>API to access the web browser DOM and windows</kotlin.browser>
                         <kotlin.concurrent>Concurrent programing API</kotlin.concurrent>
                         <kotlin.dom>Functions for working with the W3C DOM</kotlin.dom>
                         <kotlin.io>IO API for working with files and streams</kotlin.io>
@@ -77,7 +83,7 @@
                 <executions>
                     <execution>
                         <id>apidoc</id>
-                        <phase>install</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>apidoc</goal>
                         </goals>

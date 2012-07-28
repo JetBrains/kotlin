@@ -16,7 +16,7 @@ JetFile: RootNamespace.jet
     PsiWhiteSpace('\n\n')
     TYPE_PARAMETER_LIST
       <empty list>
-  PsiErrorElement:Expecting namespace or top level declaration
+  PsiErrorElement:Expecting package directive or top level declaration
     PsiElement(package)('package')
   PsiWhiteSpace(' ')
   MODIFIER_LIST
@@ -31,7 +31,7 @@ JetFile: RootNamespace.jet
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('bar')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting namespace or top level declaration
+  PsiErrorElement:Expecting package directive or top level declaration
     PsiElement(LBRACE)('{')
   PsiWhiteSpace('\n  ')
   FUN
@@ -130,5 +130,5 @@ JetFile: RootNamespace.jet
       PsiWhiteSpace('\n  ')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
-  PsiErrorElement:Expecting namespace or top level declaration
+  PsiErrorElement:Expecting package directive or top level declaration
     PsiElement(RBRACE)('}')

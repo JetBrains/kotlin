@@ -16,30 +16,27 @@
 
 package org.jetbrains.k2js.translate.reference;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.backend.js.ast.JsNew;
+import com.google.common.collect.Lists;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableAsFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.calls.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
+import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
+import org.jetbrains.k2js.translate.utils.ErrorReportingUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.reference.CallParametersResolver.resolveCallParameters;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isConstructorDescriptor;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isConstructorDescriptor;
 
 /**
  * @author Pavel Talanov
@@ -58,11 +55,11 @@ public final class CallTranslator extends AbstractTranslator {
     private final CallParameters callParameters;
 
     /*package*/ CallTranslator(@Nullable JsExpression receiver, @Nullable JsExpression callee,
-                               @NotNull List<JsExpression> arguments,
-                               @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall,
-                               @NotNull CallableDescriptor descriptorToCall,
-                               @NotNull CallType callType,
-                               @NotNull TranslationContext context) {
+            @NotNull List<JsExpression> arguments,
+            @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall,
+            @NotNull CallableDescriptor descriptorToCall,
+            @NotNull CallType callType,
+            @NotNull TranslationContext context) {
         super(context);
         this.arguments = arguments;
         this.resolvedCall = resolvedCall;
@@ -91,12 +88,29 @@ public final class CallTranslator extends AbstractTranslator {
         if (isExpressionAsFunction()) {
             return expressionAsFunctionCall();
         }
+        if (isInvoke()) {
+            return invokeCall();
+        }
         return methodCall(getThisObjectOrQualifier());
+    }
+
+    //TODO:
+    private boolean isInvoke() {
+        return descriptor.getName().getName().equals("invoke");
+    }
+
+    @NotNull
+    private JsExpression invokeCall() {
+        JsInvocation callMethodInvocation = generateCallMethodInvocation();
+        List<JsExpression> parameters = Lists.<JsExpression>newArrayList(context().program().getNullLiteral());
+        parameters.addAll(arguments);
+        setArguments(callMethodInvocation, parameters);
+        return callMethodInvocation;
     }
 
     private boolean isExpressionAsFunction() {
         return descriptor instanceof ExpressionAsFunctionDescriptor ||
-               descriptor instanceof VariableAsFunctionDescriptor;
+               resolvedCall instanceof VariableAsFunctionResolvedCall;
     }
 
     @NotNull
@@ -105,14 +119,24 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     private boolean isIntrinsic() {
-        return context().intrinsics().isIntrinsic(descriptor);
+        if (descriptor instanceof FunctionDescriptor) {
+            FunctionIntrinsic intrinsic = context().intrinsics().getFunctionIntrinsics().getIntrinsic((FunctionDescriptor) descriptor);
+            return intrinsic.exists();
+        }
+        return false;
     }
 
     @NotNull
     private JsExpression intrinsicInvocation() {
         assert descriptor instanceof FunctionDescriptor;
-        Intrinsic intrinsic = context().intrinsics().getFunctionIntrinsic((FunctionDescriptor)descriptor);
-        return intrinsic.apply(callParameters.getThisObject(), arguments, context());
+        try {
+            FunctionIntrinsic intrinsic = context().intrinsics().getFunctionIntrinsics().getIntrinsic((FunctionDescriptor) descriptor);
+            assert intrinsic.exists();
+            return intrinsic.apply(callParameters.getThisOrReceiverOrNull(), arguments, context());
+        }
+        catch (RuntimeException e) {
+            throw ErrorReportingUtils.reportErrorWithLocation(e, descriptor, bindingContext());
+        }
     }
 
     private boolean isConstructor() {
@@ -122,9 +146,20 @@ public final class CallTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression constructorCall() {
         JsExpression constructorReference = translateAsFunctionWithNoThisObject(descriptor);
-        JsNew constructorCall = new JsNew(constructorReference);
-        setArguments(constructorCall, arguments);
+        JsExpression constructorCall = createConstructorCallExpression(constructorReference);
+        assert constructorCall instanceof HasArguments : "Constructor call should be expression with arguments.";
+        ((HasArguments) constructorCall).getArguments().addAll(arguments);
         return constructorCall;
+    }
+
+    @NotNull
+    private JsExpression createConstructorCallExpression(@NotNull JsExpression constructorReference) {
+        if (context().isEcma5() && !AnnotationsUtils.isNativeObject(resolvedCall.getCandidateDescriptor())) {
+            return AstUtil.newInvocation(constructorReference);
+        }
+        else {
+            return new JsNew(constructorReference);
+        }
     }
 
     @NotNull
@@ -142,7 +177,7 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     private boolean isExtensionFunctionLiteral() {
-        boolean isLiteral = descriptor instanceof VariableAsFunctionDescriptor
+        boolean isLiteral = isInvoke()
                             || descriptor instanceof ExpressionAsFunctionDescriptor;
         return isExtensionFunction() && isLiteral;
     }
@@ -169,7 +204,7 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     private JsInvocation generateCallMethodInvocation() {
-        JsNameRef callMethodNameRef = AstUtil.newQualifiedNameRef("call");
+        JsNameRef callMethodNameRef = new JsNameRef("call");
         JsInvocation callMethodInvocation = new JsInvocation();
         callMethodInvocation.setQualifier(callMethodNameRef);
         setQualifier(callMethodInvocation, callParameters.getFunctionReference());
@@ -216,17 +251,45 @@ public final class CallTranslator extends AbstractTranslator {
             @NotNull
             @Override
             public JsExpression construct(@Nullable JsExpression receiver) {
-                JsExpression callee = callParameters.getFunctionReference();
-                if (receiver != null) {
-                    setQualifier(callee, receiver);
+                JsExpression qualifiedCallee = getQualifiedCallee(receiver);
+
+                if (isEcma5PropertyAccess()) {
+                    return ecma5PropertyAccess(qualifiedCallee);
                 }
-                return newInvocation(callee, arguments);
+
+                return newInvocation(qualifiedCallee, arguments);
             }
         }, context());
     }
 
+    @NotNull
+    private JsExpression ecma5PropertyAccess(@NotNull JsExpression callee) {
+        if (descriptor instanceof PropertyGetterDescriptor) {
+            assert arguments.isEmpty();
+            return callee;
+        }
+        else {
+            assert descriptor instanceof PropertySetterDescriptor;
+            assert arguments.size() == 1;
+            return assignment(callee, arguments.get(0));
+        }
+    }
+
+    private boolean isEcma5PropertyAccess() {
+        return context().isEcma5() && descriptor instanceof PropertyAccessorDescriptor;
+    }
+
+    @NotNull
+    private JsExpression getQualifiedCallee(@Nullable JsExpression receiver) {
+        JsExpression callee = callParameters.getFunctionReference();
+        if (receiver != null) {
+            setQualifier(callee, receiver);
+        }
+        return callee;
+    }
+
     @Nullable
-    JsExpression getThisObjectOrQualifier() {
+    private JsExpression getThisObjectOrQualifier() {
         JsExpression thisObject = callParameters.getThisObject();
         if (thisObject != null) {
             return thisObject;

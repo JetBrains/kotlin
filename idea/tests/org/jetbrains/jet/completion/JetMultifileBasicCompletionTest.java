@@ -43,6 +43,11 @@ public class JetMultifileBasicCompletionTest extends JetCompletionMultiTestBase 
         doFileTest();
     }
 
+    public void testJavaInnerClasses() throws Exception {
+        String fileName = getTestName(false);
+        doFileTest(1, new String[] {fileName + ".kt", fileName + ".java"});
+    }
+
     public void testNotImportedExtensionFunction() throws Exception {
         doFileTest();
     }

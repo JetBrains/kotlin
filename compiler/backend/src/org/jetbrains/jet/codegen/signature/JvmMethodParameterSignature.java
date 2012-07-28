@@ -17,7 +17,7 @@
 package org.jetbrains.jet.codegen.signature;
 
 import org.jetbrains.annotations.NotNull;
-import org.objectweb.asm.Type;
+import org.jetbrains.asm4.Type;
 
 /**
  * @author Stepan Koltsov

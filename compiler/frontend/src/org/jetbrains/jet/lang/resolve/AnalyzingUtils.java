@@ -16,22 +16,17 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.base.Predicate;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetIdeTemplate;
+import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -39,13 +34,19 @@ import java.util.List;
  */
 public class AnalyzingUtils {
 
-    public static void checkForSyntacticErrors(@NotNull PsiElement root) {
-        root.acceptChildren(new PsiElementVisitor() {
-            @Override
-            public void visitElement(PsiElement element) {
-                element.acceptChildren(this);
-            }
+    public abstract static class PsiErrorElementVisitor extends JetVisitorVoid {
+        @Override
+        public void visitElement(PsiElement element) {
+            element.acceptChildren(this);
+        }
 
+        @Override
+        public abstract void visitErrorElement(PsiErrorElement element);
+    }
+
+
+    public static void checkForSyntacticErrors(@NotNull PsiElement root) {
+        root.acceptChildren(new PsiErrorElementVisitor() {
             @Override
             public void visitErrorElement(PsiErrorElement element) {
                 throw new IllegalArgumentException(element.getErrorDescription() + "; looking at " + element.getNode().getElementType() + " '" + element.getText() + DiagnosticUtils.atLocation(element));
@@ -55,12 +56,7 @@ public class AnalyzingUtils {
     
     public static List<PsiErrorElement> getSyntaxErrorRanges(@NotNull PsiElement root) {
         final ArrayList<PsiErrorElement> r = new ArrayList<PsiErrorElement>();
-        root.acceptChildren(new PsiElementVisitor() {
-            @Override
-            public void visitElement(PsiElement element) {
-                element.acceptChildren(this);
-            }
-
+        root.acceptChildren(new PsiErrorElementVisitor() {
             @Override
             public void visitErrorElement(PsiErrorElement element) {
                 r.add(element);

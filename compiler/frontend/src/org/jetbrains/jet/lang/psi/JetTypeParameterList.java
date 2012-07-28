@@ -17,21 +17,34 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeParameterListStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * @author max
  */
-public class JetTypeParameterList extends JetElement {
+public class JetTypeParameterList extends JetElementImplStub<PsiJetTypeParameterListStub> {
     public JetTypeParameterList(@NotNull ASTNode node) {
         super(node);
     }
 
+    public JetTypeParameterList(@NotNull PsiJetTypeParameterListStub stub, @NotNull IStubElementType nodeType) {
+        super(stub, nodeType);
+    }
+
     public List<JetTypeParameter> getParameters() {
-        return findChildrenByType(JetNodeTypes.TYPE_PARAMETER);
+        return Arrays.asList(getStubOrPsiChildren(JetStubElementTypes.TYPE_PARAMETER, JetTypeParameter.ARRAY_FACTORY));
+    }
+
+    @NotNull
+    @Override
+    public IStubElementType getElementType() {
+        return JetStubElementTypes.TYPE_PARAMETER_LIST;
     }
 
     @Override

@@ -33,7 +33,7 @@ import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintType.PARA
 /**
  * @author abreslav
  */
-public class ConstraintSystemWithPriorities implements ConstraintSystem {
+public class ConstraintSystemWithPriorities {
 
     public static final Comparator<SubtypingConstraint> SUBTYPING_CONSTRAINT_ORDER = new Comparator<SubtypingConstraint>() {
         @Override
@@ -49,7 +49,7 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
         }
         final TypeProjection projection = new TypeProjection(type);
 
-        return TypeSubstitutor.create(new TypeSubstitutor.TypeSubstitution() {
+        return TypeSubstitutor.create(new TypeSubstitution() {
             @Override
             public TypeProjection get(TypeConstructor key) {
                 if (constructors.contains(key)) {
@@ -107,7 +107,6 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
         return typeValue;
     }
 
-    @Override
     public void registerTypeVariable(@NotNull TypeParameterDescriptor typeParameterDescriptor, @NotNull Variance positionVariance) {
         assert !unknownTypes.containsKey(typeParameterDescriptor);
         TypeValue typeValue = new TypeValue(typeParameterDescriptor, positionVariance);
@@ -124,7 +123,6 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
         return unknownType;
     }
 
-    @Override
     public void addSubtypingConstraint(@NotNull SubtypingConstraint constraint) {
         constraintQueue.add(constraint);
     }
@@ -143,7 +141,7 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
                 return expandEqualityConstraint(aValue, bValue);
             }
 
-            @Override
+            @SuppressWarnings("SuspiciousMethodCalls") @Override
             public boolean assertEqualTypeConstructors(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
                 return a.equals(b)
                        || unknownTypes.containsKey(a.getDeclarationDescriptor())
@@ -258,7 +256,6 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
         return true;
     }
 
-    @Override
     @NotNull
     public ConstraintSystemSolution solve() {
         Solution solution = new Solution();
@@ -484,7 +481,7 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
     }
 
     public class Solution implements ConstraintSystemSolution {
-        private final TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(new TypeSubstitutor.TypeSubstitution() {
+        private final TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(new TypeSubstitution() {
             @Override
             public TypeProjection get(TypeConstructor key) {
                 DeclarationDescriptor declarationDescriptor = key.getDeclarationDescriptor();

@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TimeUtils;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,6 +35,8 @@ import java.util.jar.JarOutputStream;
  * @author Stepan Koltsov
  */
 abstract class ForTestCompileSomething {
+
+    public static final boolean ACTUALLY_COMPILE = !"false".equals(System.getenv("kotlin.tests.actually.compile"));
 
     @NotNull
     private final String jarName;
@@ -57,7 +60,7 @@ abstract class ForTestCompileSomething {
 
             FileOutputStream stdlibJar = new FileOutputStream(jarFile);
             try {
-                JarOutputStream jarOutputStream = new JarOutputStream(stdlibJar);
+                JarOutputStream jarOutputStream = new JarOutputStream(new BufferedOutputStream(stdlibJar));
                 try {
                     copyToJar(classesDir, jarOutputStream);
                 }
@@ -77,7 +80,7 @@ abstract class ForTestCompileSomething {
         }
     }
 
-    private static void copyToJar(File root, JarOutputStream os) throws IOException {
+    static void copyToJar(File root, JarOutputStream os) throws IOException {
         Stack<Pair<String, File>> toCopy = new Stack<Pair<String, File>>();
         toCopy.add(new Pair<String, File>("", root));
         while (!toCopy.empty()) {

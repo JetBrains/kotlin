@@ -21,8 +21,10 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetTreeVisitor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -48,11 +50,13 @@ public class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
     @Override
     public Void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression,
                                           @NotNull ClosureContext context) {
+        //TODO: this gets as dirty as it can be, should clean up and test more or use different approach
         expression.acceptChildren(this, context);
         DeclarationDescriptor descriptor = BindingUtils.getNullableDescriptorForReferenceExpression(bindingContext, expression);
         if (!(descriptor instanceof VariableDescriptor)) {
             return null;
         }
+
         VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
         PsiElement variableDeclaration = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
         if (variableDeclaration == null) {
@@ -61,6 +65,13 @@ public class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
         if (PsiTreeUtil.isAncestor(functionElement, variableDeclaration, false)) {
             return null;
         }
+        boolean isProperty = variableDescriptor instanceof PropertyDescriptor;
+        if (!isProperty && !variableDescriptor.isVar() && variableDeclaration instanceof JetProperty) {
+            context.put(variableDescriptor);
+            return null;
+        }
+
+
         boolean isLoopParameter = variableDeclaration.getNode().getElementType().equals(JetNodeTypes.LOOP_PARAMETER);
         if (isLoopParameter) {
             context.put(variableDescriptor);

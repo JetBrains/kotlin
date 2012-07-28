@@ -1,53 +1,44 @@
 package org.jetbrains.kotlin.doc
 
-import java.io.File
 import java.io.PrintStream
-import org.jetbrains.jet.cli.CompilerArguments
-import org.jetbrains.jet.cli.KotlinCompiler
-import org.jetbrains.jet.compiler.CompileEnvironment
-import org.jetbrains.kotlin.doc.highlighter.HtmlCompilerPlugin
+import org.jetbrains.jet.cli.common.CLICompiler
+import org.jetbrains.jet.cli.jvm.K2JVMCompiler
+import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
+import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration
 
 /**
 * Main for running the KDocCompiler
 */
 fun main(args: Array<String?>): Unit {
-    KotlinCompiler.doMain(KDocCompiler(), args);
+    CLICompiler.doMain(KDocCompiler(), args);
 }
 
 /**
- * A version of the [[KotlinCompiler]] which includes the [[KDoc]] compiler plugin and allows
+ * A version of the [[K2JVMCompiler]] which includes the [[KDoc]] compiler plugin and allows
  * command line validation or for the configuration to be provided via [[KDocArguments]]
  */
-class KDocCompiler() : KotlinCompiler() {
+class KDocCompiler() : K2JVMCompiler() {
 
-    protected override fun configureEnvironment(environment : CompileEnvironment?, arguments : CompilerArguments?) {
-        super.configureEnvironment(environment, arguments)
-        val coreEnvironment = environment?.getEnvironment()
+    protected override fun configureEnvironment(configuration : K2JVMCompileEnvironmentConfiguration, arguments : K2JVMCompilerArguments) {
+        super.configureEnvironment(configuration, arguments)
+        val coreEnvironment = configuration.getEnvironment()
         if (coreEnvironment != null) {
-            val kdoc = KDoc()
-
-            if (arguments is KDocArguments) {
-                kdoc.config = arguments.apply()
-            }
-            val plugins = coreEnvironment.getCompilerPlugins().orEmpty()
-/*
-            val sourcePlugin = HtmlCompilerPlugin()
-            plugins.add(sourcePlugin)
-*/
+            val kdoc = KDoc(arguments as KDocArguments)
+            val plugins = configuration.getCompilerPlugins()
             plugins.add(kdoc);
         }
     }
 
-    protected override fun createArguments() : CompilerArguments? {
+    protected override fun createArguments() : K2JVMCompilerArguments {
         return KDocArguments()
     }
 
-    protected override fun usage(target : PrintStream?) {
-        target?.println("Usage: KDocCompiler -docOutput <docOutputDir> [-output <outputDir>|-jar <jarFileName>] [-stdlib <path to runtime.jar>] [-src <filename or dirname>|-module <module file>] [-includeRuntime]");
+    protected override fun usage(target : PrintStream) {
+        target.println("Usage: KDocCompiler -docOutput <docOutputDir> [-output <outputDir>|-jar <jarFileName>] [-stdlib <path to runtime.jar>] [-src <filename or dirname>|-module <module file>] [-includeRuntime]");
     }
 }
 
-class KDocArguments() : CompilerArguments() {
+class KDocArguments() : K2JVMCompilerArguments() {
 
     public var docConfig: KDocConfig = KDocConfig()
 

@@ -25,7 +25,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author abreslav
  */
-public class JetWhenEntry extends JetElement {
+public class JetWhenEntry extends JetElementImpl {
     public JetWhenEntry(@NotNull ASTNode node) {
         super(node);
     }

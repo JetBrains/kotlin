@@ -10,11 +10,11 @@
     <property name="plugin.xml.bk" value="${plugin.xml}.bk"/>
     <property name="plugin.xml.versioned" value="${plugin.xml}.versioned" />
 
-    <property name="compiler.version.java" value="compiler/cli/src/org/jetbrains/jet/cli/CompilerVersion.java"/>
+    <property name="compiler.version.java" value="compiler/cli/src/org/jetbrains/jet/cli/common/CompilerVersion.java"/>
     <property name="compiler.version.java.bk" value="${compiler.version.java}.bk"/>
     <property name="compiler.version.java.versioned" value="${compiler.version.java}.versioned" />
 
-    <property name="plugin.verifier" value="${basedir}/PluginVerifier/plugin-verifier-1.0-SNAPSHOT.jar"/>
+    <property name="plugin.verifier" value="${basedir}/dependencies/plugin-verifier.jar"/>
     <property name="plugin.zip" value="${artifact.output.path}/kotlin-plugin-${build.number}.zip" />
 
     <macrodef name="echoprop">
@@ -33,14 +33,6 @@
     <echoprop prop="user.name"/>
     <echoprop prop="user.home"/>
     <echoprop prop="user.dir"/>
-
-    <target name="unzipDependencies">
-        <unzip dest="ideaSDK">
-            <fileset dir="ideaSDK" includes="ideaIC*.zip"/>
-        </unzip>
-
-        <delete dir="ideaSDK" includes="ideaIC*.zip"/>
-    </target>
 
     <target name="cleanupArtifacts">
         <delete dir="${artifact.output.path}" includes="*"/>
@@ -100,7 +92,7 @@
       <delete file="${compiler.version.java.bk}" quiet="true"/>
   </target>
 
-    <target name="pre_build" depends="writeVersionToTemplateFiles, cleanupArtifacts, unzipDependencies, dist, generateInjectors">
+    <target name="pre_build" depends="writeVersionToTemplateFiles, cleanupArtifacts">
     </target>
 
     <target name="zipArtifact">

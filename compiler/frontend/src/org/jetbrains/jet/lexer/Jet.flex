@@ -31,7 +31,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
     private final Stack<State> states = new Stack<State>();
     private int lBraceCount;
-
+    
     private int commentStart;
     private int commentDepth;
 
@@ -84,6 +84,7 @@ FIELD_IDENTIFIER = \${IDENTIFIER}
 LABEL_IDENTIFIER = \@{IDENTIFIER}
 
 EOL_COMMENT="/""/"[^\n]*
+SHEBANG_COMMENT="#!"[^\n]*
 
 INTEGER_LITERAL={DECIMAL_INTEGER_LITERAL}|{HEX_INTEGER_LITERAL}|{BIN_INTEGER_LITERAL}
 DECIMAL_INTEGER_LITERAL=(0|([1-9]({DIGIT})*))
@@ -212,6 +213,15 @@ LONG_TEMPLATE_ENTRY_END=\}
 ({WHITE_SPACE_CHAR})+ { return JetTokens.WHITE_SPACE; }
 
 {EOL_COMMENT} { return JetTokens.EOL_COMMENT; }
+{SHEBANG_COMMENT} {
+            if (zzCurrentPos == 0) {
+                return JetTokens.SHEBANG_COMMENT;
+            }
+            else {
+                yypushback(yylength() - 1);
+                return JetTokens.HASH;
+            }
+          }
 
 {INTEGER_LITERAL}\.\. { yypushback(2); return JetTokens.INTEGER_LITERAL; }
 {INTEGER_LITERAL} { return JetTokens.INTEGER_LITERAL; }

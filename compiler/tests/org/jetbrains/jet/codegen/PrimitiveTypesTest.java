@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.ConfigurationKind;
+
 import java.lang.reflect.Method;
 
 /**
@@ -23,6 +25,13 @@ import java.lang.reflect.Method;
  * @author alex.tkachman
  */
 public class PrimitiveTypesTest extends CodegenTestCase {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    }
+
     public void testPlus() throws Exception {
         loadText("fun f(a: Int, b: Int): Int { return a + b }");
 
@@ -328,7 +337,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testKt737() throws Exception {
         loadText("fun box() = if(3.compareTo(2) != 1) \"fail\" else if(5.toByte().compareTo(10.toLong()) >= 0) \"fail\" else \"OK\"");
-        assertEquals("OK", blackBox());
+        blackBox();
     }
 
     public void testKt665() throws Exception {
@@ -422,5 +431,13 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testKt1508 () {
         blackBoxFile("regressions/kt1508.kt");
+    }
+
+    public void testKt1634() {
+        blackBoxFile("regressions/kt1634.kt");
+    }
+
+    public void testKt1397() {
+        blackBoxFile("regressions/kt1397.kt");
     }
 }

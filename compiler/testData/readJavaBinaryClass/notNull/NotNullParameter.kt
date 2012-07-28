@@ -1,5 +1,5 @@
 package test
 
-open class NotNullParameter() {
-    open fun hi(p0: String): Unit { }
+public open class NotNullParameter() : java.lang.Object() {
+    public open fun hi(p0: String): Unit { }
 }

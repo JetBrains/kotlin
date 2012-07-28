@@ -16,37 +16,74 @@
 
 package org.jetbrains.jet.plugin.project;
 
-import com.intellij.openapi.fileTypes.FileTypes;
+import com.google.common.collect.Lists;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.JetFile;
+
+import java.util.List;
 
 /**
  * @author Pavel Talanov
- *
- * This class has utility functions to determine whether the project (or module) is js project.
+ *         <p/>
+ *         This class has utility functions to determine whether the project (or module) is js project.
  */
 public final class JsModuleDetector {
-
-    public static final String INDICATION_FILE_NAME = ".kotlin-js";
-
     private JsModuleDetector() {
     }
 
-    public static boolean isJsProject(@NotNull Project project) {
-        return findIndicationFileInContextRoots(project) != null;
+    public static boolean isJsModule(@NotNull Module module) {
+        return K2JSModuleComponent.getInstance(module).isJavaScriptModule();
+    }
+
+    public static boolean isJsModule(@NotNull JetFile file) {
+        VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();
+        if (virtualFile != null) {
+            Module module = ProjectRootManager.getInstance(file.getProject()).getFileIndex().getModuleForFile(virtualFile);
+            if (module != null) {
+                return isJsModule(module);
+            }
+        }
+
+        return false;
+    }
+
+    @NotNull
+    public static Pair<List<String>, String> getLibLocationAndTargetForProject(@NotNull Project project) {
+        Module module = getJSModule(project);
+        if (module == null) {
+            return Pair.empty();
+        }
+        else {
+            return getLibLocationAndTargetForProject(module);
+        }
+    }
+
+    @NotNull
+    public static Pair<List<String>, String> getLibLocationAndTargetForProject(@NotNull Module module) {
+        K2JSModuleComponent jsModuleComponent = K2JSModuleComponent.getInstance(module);
+        String pathToJavaScriptLibrary = jsModuleComponent.getPathToJavaScriptLibrary();
+        String basePath = ModuleRootManager.getInstance(module).getContentRoots()[0].getPath();
+        List<String> pathsToJSLib = Lists.newArrayList();
+        if (pathToJavaScriptLibrary != null) {
+            pathsToJSLib.add(basePath + pathToJavaScriptLibrary);
+        }
+        return Pair.create(pathsToJSLib, jsModuleComponent.getEcmaVersion().toString());
     }
 
     @Nullable
-    public static VirtualFile findIndicationFileInContextRoots(@NotNull Project project) {
-        VirtualFile[] roots = ProjectRootManager.getInstance(project).getContentRoots();
-        for (VirtualFile root : roots) {
-            for (VirtualFile child : root.getChildren()) {
-                if (child.getFileType().equals(FileTypes.PLAIN_TEXT) && child.getName().equals(INDICATION_FILE_NAME)) {
-                    return child;
-                }
+    private static Module getJSModule(@NotNull Project project) {
+        Module[] modules = ModuleManager.getInstance(project).getModules();
+        for (Module module : modules) {
+            if (isJsModule(module)) {
+                return module;
             }
         }
         return null;

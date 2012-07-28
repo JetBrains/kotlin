@@ -17,8 +17,14 @@
 package org.jetbrains.jet.plugin;
 
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
+import com.intellij.openapi.roots.AnnotationOrderRootType;
+import com.intellij.openapi.vfs.JarFileSystem;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 
 /**
  * @author yole
@@ -32,6 +38,12 @@ public class PluginTestCaseBase {
     }
 
     public static Sdk jdkFromIdeaHome() {
-        return new JavaSdkImpl().createJdk("JDK", "compiler/testData/mockJDK-1.7/jre", true);
+        Sdk sdk = new JavaSdkImpl().createJdk("JDK", "compiler/testData/mockJDK-1.7/jre", true);
+        SdkModificator modificator = sdk.getSdkModificator();
+        VirtualFile file = LocalFileSystem.getInstance().findFileByIoFile(ForTestPackJdkAnnotations.jdkAnnotationsForTests());
+        assert file != null;
+        modificator.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(file), AnnotationOrderRootType.getInstance());
+        modificator.commitChanges();
+        return sdk;
     }
 }

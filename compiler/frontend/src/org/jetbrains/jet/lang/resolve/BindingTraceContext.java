@@ -59,6 +59,10 @@ public class BindingTraceContext implements BindingTrace {
         diagnostics.add(diagnostic);
     }
 
+    public void clearDiagnostics() {
+        diagnostics.clear();
+    }
+
     @Override
     public BindingContext getBindingContext() {
         return bindingContext;

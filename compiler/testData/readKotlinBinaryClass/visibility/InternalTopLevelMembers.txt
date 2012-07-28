@@ -1,0 +1,4 @@
+namespace test
+
+internal final val x: jet.Int
+internal final fun f(): jet.Int

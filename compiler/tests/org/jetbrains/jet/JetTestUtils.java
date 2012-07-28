@@ -17,33 +17,45 @@
 package org.jetbrains.jet;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.impl.PsiFileFactoryImpl;
+import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.TestCase;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
-import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnostic;
+import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.test.TestMetadata;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.SlicedMap;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
+import org.junit.Assert;
 
+import javax.tools.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -101,9 +113,8 @@ public class JetTestUtils {
 
         @Override
         public void report(@NotNull Diagnostic diagnostic) {
-            if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
-                UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic)diagnostic;
-                throw new IllegalStateException("Unresolved: " + unresolvedReferenceDiagnostic.getPsiElement().getText());
+            if (diagnostic.getFactory() instanceof UnresolvedReferenceDiagnosticFactory) {
+                throw new IllegalStateException("Unresolved: " + diagnostic.getPsiElement().getText());
             }
         }
     };
@@ -153,32 +164,48 @@ public class JetTestUtils {
         @Override
         public void report(@NotNull Diagnostic diagnostic) {
             if (diagnostic.getSeverity() == Severity.ERROR) {
-                throw new IllegalStateException(diagnostic.getMessage());
+                throw new IllegalStateException(DefaultErrorMessages.RENDERER.render(diagnostic));
             }
         }
     };
 
-    public static AnalyzeExhaust analyzeFile(@NotNull JetFile namespace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
-        return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(namespace, flowDataTraceFactory,
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR));
+    private JetTestUtils() {
     }
 
-    public static JetCoreEnvironment createEnvironmentWithMockJdk(Disposable disposable) {
-        return createEnvironmentWithMockJdk(disposable, CompilerSpecialMode.REGULAR);
+    public static AnalyzeExhaust analyzeFile(@NotNull JetFile namespace, @NotNull BuiltinsScopeExtensionMode builtinsScopeExtensionMode) {
+        return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(namespace, Collections.<AnalyzerScriptParameter>emptyList(),
+                                                                      builtinsScopeExtensionMode);
     }
 
-    public static JetCoreEnvironment createEnvironmentWithMockJdk(Disposable disposable, @NotNull CompilerSpecialMode compilerSpecialMode) {
-        JetCoreEnvironment environment = new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.compilerDependenciesForTests(compilerSpecialMode));
-        final File rtJar = new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
-        environment.addToClasspath(rtJar);
-        environment.addToClasspath(getAnnotationsJar());
-        return environment;
+    public static JetCoreEnvironment createEnvironmentWithFullJdk(Disposable disposable) {
+        return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable,
+                                                                         ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
+    }
+
+    public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable) {
+        return createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, ConfigurationKind.ALL);
+    }
+
+    public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable, @NotNull ConfigurationKind configurationKind) {
+        return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, configurationKind, TestJdkKind.MOCK_JDK);
+    }
+
+    public static JetCoreEnvironment createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+            @NotNull Disposable disposable,
+            @NotNull ConfigurationKind configurationKind,
+            @NotNull TestJdkKind jdkKind
+    ) {
+        return new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.compilerConfigurationForTests(
+                configurationKind, jdkKind, getAnnotationsJar()));
+    }
+
+    public static File findMockJdkRtJar() {
+        return new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
     }
 
     public static File getAnnotationsJar() {
         return new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/annotations.jar");
     }
-
 
     public static void mkdirs(File file) throws IOException {
         if (file.isDirectory()) {
@@ -225,7 +252,35 @@ public class JetTestUtils {
         filesToDelete.add(file);
     }
 
+    public static void rmrf(File file) {
+        if (file == null) {
+            return;
+        }
+        if (!FileUtil.delete(file)) {
+            throw new RuntimeException("failed to delete " + file);
+        }
+    }
+
     public static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
+
+    public static PsiFile createFile(@NonNls String name, String text, @NotNull Project project) {
+        LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);
+        virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
+        return ((PsiFileFactoryImpl) PsiFileFactory.getInstance(project)).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
+    }
+
+    public static String doLoadFile(String myFullDataPath, String name) throws IOException {
+        String fullName = myFullDataPath + File.separatorChar + name;
+        return doLoadFile(new File(fullName));
+    }
+
+    public static String doLoadFile(@NotNull File file) throws IOException {
+        return FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim();
+    }
+
+    public static String getFilePath(File file) {
+        return file.getPath().replaceAll("\\\\", "/");
+    }
 
     public interface TestFileFactory<F> {
         F create(String fileName, String text);
@@ -293,4 +348,65 @@ public class JetTestUtils {
         result.delete(result.length() - 1, result.length());
         return result.toString();
     }
+
+    public static void compileJavaFile(@NotNull File file, @NotNull File outputDirectory) throws IOException {
+        JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
+        StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(null, Locale.ENGLISH, Charset.forName("utf-8"));
+        try {
+            Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(Collections.singleton(file));
+            List<String> options = Arrays.asList(
+                    "-d", outputDirectory.getPath()
+            );
+            JavaCompiler.CompilationTask task = javaCompiler.getTask(null, fileManager, null, options, null, javaFileObjectsFromFiles);
+
+            Assert.assertTrue(task.call());
+        } finally {
+            fileManager.close();
+        }
+    }
+
+    public static void assertAllTestsPresentByMetadata(
+            @NotNull Class<?> testCaseClass,
+            @NotNull String generatorClassFqName,
+            @NotNull File testDataDir,
+            @NotNull String extension,
+            boolean recursive
+    ) {
+        TestMetadata testClassMetadata = testCaseClass.getAnnotation(TestMetadata.class);
+        Assert.assertNotNull("No metadata for class: " + testCaseClass, testClassMetadata);
+        String rootPath = testClassMetadata.value();
+        File rootFile = new File(rootPath);
+
+
+        Set<String> filePaths = Sets.newHashSet();
+        for (Method method : testCaseClass.getDeclaredMethods()) {
+            TestMetadata testMetadata = method.getAnnotation(TestMetadata.class);
+            if (testMetadata != null) {
+                filePaths.add(testMetadata.value());
+            }
+        }
+        File[] files = testDataDir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    if (recursive) {
+                        assertAllTestsPresentByMetadata(testCaseClass, generatorClassFqName, file, extension, recursive);
+                    }
+                }
+                else {
+                    if (file.getName().endsWith("." + extension)) {
+                        String relativePath = FileUtil.getRelativePath(rootFile, file);
+                        if (!filePaths.contains(relativePath)) {
+                            String generatorClassSimpleName = generatorClassFqName.substring(generatorClassFqName.lastIndexOf(".") + 1);
+                            Assert.fail("Test data file missing from the generated test class: " +
+                                                        file +
+                                                        "\nPlease re-run the generator: " + generatorClassFqName +
+                                                        "(" + generatorClassSimpleName + ".java:1)");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }

@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -26,24 +27,24 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescriptorImpl implements NamespaceDescriptor {
+public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescriptorNonRootImpl implements NamespaceDescriptor {
     private NamespaceType namespaceType;
 
     public AbstractNamespaceDescriptorImpl(
             @NotNull NamespaceDescriptorParent containingDeclaration,
             List<AnnotationDescriptor> annotations,
-            @NotNull String name) {
+            @NotNull Name name) {
 
         super(containingDeclaration, annotations, name);
 
         boolean rootAccordingToContainer = containingDeclaration instanceof ModuleDescriptor;
-        boolean rootAccordingToName = name.startsWith("<");
-        if (rootAccordingToContainer != rootAccordingToName) {
+        if (rootAccordingToContainer != name.isSpecial()) {
             throw new IllegalStateException("something is wrong, name: " + name + ", container: " + containingDeclaration);
         }
     }
 
     @Override
+    @NotNull
     public NamespaceDescriptorParent getContainingDeclaration() {
         return (NamespaceDescriptorParent) super.getContainingDeclaration();
     }

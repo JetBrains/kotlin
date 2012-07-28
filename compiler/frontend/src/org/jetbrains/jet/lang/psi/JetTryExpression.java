@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetTryExpression extends JetExpression {
+public class JetTryExpression extends JetExpressionImpl {
     public JetTryExpression(@NotNull ASTNode node) {
         super(node);
     }

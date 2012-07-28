@@ -102,6 +102,11 @@ class ClsWrapperStubPsiFactory extends StubPsiFactory {
         if (origin == null) return delegate.createMethod(stub);
 
         return new ClsMethodImpl(stub) {
+            @Override
+            public PsiElement getMirror() {
+                return origin;
+            }
+
             @NotNull
             @Override
             public PsiElement getNavigationElement() {

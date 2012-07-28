@@ -1,5 +1,5 @@
 package test
 
-class FinalFieldAsVal() {
-    val f: Int = 1
+public class FinalFieldAsVal() : java.lang.Object() {
+    public val f: Int = 1
 }

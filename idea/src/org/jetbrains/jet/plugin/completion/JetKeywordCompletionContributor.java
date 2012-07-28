@@ -23,6 +23,7 @@ import com.intellij.codeInsight.CommentUtil;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
@@ -58,7 +59,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
     private final static InsertHandler<LookupElement> KEYWORDS_INSERT_HANDLER = new JetKeywordInsertHandler();
     private final static InsertHandler<LookupElement> FUNCTION_INSERT_HANDLER = new JetFunctionInsertHandler(
-            JetFunctionInsertHandler.CaretPosition.AFTER_BRACKETS);
+            JetFunctionInsertHandler.CaretPosition.AFTER_BRACKETS, JetFunctionInsertHandler.BracketType.PARENTHESIS);
 
     private final static ElementFilter GENERAL_FILTER = new NotFilter(new OrFilter(
             new CommentFilter(), // or
@@ -131,7 +132,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
             //noinspection unchecked
-            return PsiTreeUtil.getParentOfType(context, JetFile.class, false, JetClassBody.class, JetBlockExpression.class) != null &&
+            return PsiTreeUtil.getParentOfType(context, JetFile.class, false, JetClassBody.class, JetBlockExpression.class, JetFunction.class) != null &&
                    PsiTreeUtil.getParentOfType(context, JetParameterList.class, JetTypeParameterList.class) == null;
         }
 
@@ -196,15 +197,31 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         }
     }
 
-    private static class InPropertyFilter implements ElementFilter {
+    private static class InPropertyBodyFilter implements ElementFilter {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
-            return PsiTreeUtil.getParentOfType(context, JetProperty.class, false) != null;
+            if (!(element instanceof PsiElement)) return false;
+            JetProperty property = PsiTreeUtil.getParentOfType(context, JetProperty.class, false);
+            return property != null && isAfterName(property, (PsiElement) element);
         }
 
         @Override
         public boolean isClassAcceptable(Class hintClass) {
             return true;
+        }
+
+        private static boolean isAfterName(@NotNull JetProperty property, @NotNull PsiElement element) {
+            for (PsiElement child = property.getFirstChild(); child != null; child = child.getNextSibling()) {
+                if (PsiTreeUtil.isAncestor(child, element, false)) {
+                    break;
+                }
+
+                if (child.getNode().getElementType() == IDENTIFIER) {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 
@@ -217,6 +234,23 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         @Override
         public boolean isClassAcceptable(Class hintClass) {
             return true;
+        }
+    }
+
+    private static class SimplePrefixMatcher extends PrefixMatcher {
+        protected SimplePrefixMatcher(String prefix) {
+            super(prefix);
+        }
+
+        @Override
+        public boolean prefixMatches(@NotNull String name) {
+            return StringUtil.startsWithIgnoreCase(name, getPrefix());
+        }
+
+        @NotNull
+        @Override
+        public PrefixMatcher cloneWithPrefix(@NotNull String prefix) {
+            return new SimplePrefixMatcher(prefix);
         }
     }
 
@@ -236,20 +270,19 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                     }
 
                     if (!FUNCTION_KEYWORDS.contains(keyword)) {
-                        return lookupElementBuilder.setInsertHandler(KEYWORDS_INSERT_HANDLER);
+                        return lookupElementBuilder.withInsertHandler(KEYWORDS_INSERT_HANDLER);
                     }
 
-                    return lookupElementBuilder.setInsertHandler(FUNCTION_INSERT_HANDLER);
+                    return lookupElementBuilder.withInsertHandler(FUNCTION_INSERT_HANDLER);
                 }
             });
         }
 
         @Override
         protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
-                                      @NotNull CompletionResultSet result) {
-            result.addAllElements(elements);
+                                      @NotNull final CompletionResultSet result) {
+            result.withPrefixMatcher(new SimplePrefixMatcher(result.getPrefixMatcher().getPrefix())).addAllElements(elements);
         }
-
     }
 
     public JetKeywordCompletionContributor() {
@@ -284,7 +317,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                                         TYPE_KEYWORD,
                                         VARARG_KEYWORD, WHERE_KEYWORD);
 
-        registerScopeKeywordsCompletion(new InPropertyFilter(),
+        registerScopeKeywordsCompletion(new InPropertyBodyFilter(),
                                         ELSE_KEYWORD, FALSE_KEYWORD,
                                         NULL_KEYWORD, THIS_KEYWORD, TRUE_KEYWORD);
 
@@ -307,7 +340,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                                         FUN_TEMPLATE, VAL_SIMPLE_TEMPLATE, VAR_SIMPLE_TEMPLATE,
                                         TRAIT_TEMPLATE, CLASS_TEMPLATE, FOR_TEMPLATE,
                                         WHEN_TEMPLATE, WHILE_TEMPLATE, DO_WHILE_TEMPLATE, ENUM_CLASS_TEMPLATE);
-        registerScopeKeywordsCompletion(new InPropertyFilter(),
+        registerScopeKeywordsCompletion(new InPropertyBodyFilter(),
                                         IF_ELSE_ONELINE_TEMPLATE, WHEN_TEMPLATE);
         registerScopeKeywordsCompletion(new AfterClassInClassBodyFilter(), false,
                                         CLASS_OBJECT_WITHOUT_CLASS_TEMPLATE);

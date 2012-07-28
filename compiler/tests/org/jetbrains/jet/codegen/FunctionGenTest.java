@@ -16,6 +16,15 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.CompileCompilerDependenciesTest;
+import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -23,6 +32,12 @@ import java.lang.reflect.Method;
  * @author alex.tkachman
  */
 public class FunctionGenTest extends CodegenTestCase {
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    }
+
     public void testDefaultArgs() throws Exception {
         blackBoxFile("functions/defaultargs.jet");
 //        System.out.println(generateToText());
@@ -79,7 +94,7 @@ public class FunctionGenTest extends CodegenTestCase {
     }
 
     public void testKt785 () {
-//        blackBoxFile("regressions/kt785.jet");
+        blackBoxFile("regressions/kt785.jet");
     }
 
     public void testKt873 () {
@@ -100,5 +115,36 @@ public class FunctionGenTest extends CodegenTestCase {
 
     public void testLocalFunction () throws InvocationTargetException, IllegalAccessException {
         blackBoxFile("functions/localFunction.kt");
+    }
+
+    public void testInvoke() {
+        blackBoxFile("functions/invoke.kt");
+    }
+
+    public void test2481() {
+        blackBoxFile("regressions/kt2481.kt");
+    }
+
+    public static class WithJavaFunctionGenTest extends CodegenTestCase {
+        private void blackBoxFileWithJava(@NotNull String ktFile) throws Exception {
+            File javaClassesTempDirectory = new File(FileUtil.getTempDirectory(), "java-classes");
+            JetTestUtils.mkdirs(javaClassesTempDirectory);
+            JetTestUtils.compileJavaFile(
+                    new File("compiler/testData/codegen/" + ktFile.replaceFirst("\\.kt$", ".java")),
+                    javaClassesTempDirectory);
+
+            myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), CompileCompilerDependenciesTest.compilerConfigurationForTests(
+                    ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
+
+            blackBoxFile(ktFile);
+        }
+
+        public void testReferencesStaticInnerClassMethod() throws Exception {
+            blackBoxFileWithJava("functions/referencesStaticInnerClassMethod.kt");
+        }
+
+        public void testReferencesStaticInnerClassMethodTwoLevels() throws Exception {
+            blackBoxFileWithJava("functions/referencesStaticInnerClassMethodL2.kt");
+        }
     }
 }

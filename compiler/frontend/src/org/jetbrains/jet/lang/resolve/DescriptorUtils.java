@@ -23,14 +23,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFunction;
-import org.jetbrains.jet.lang.psi.JetSecondaryConstructor;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
 
@@ -38,32 +38,9 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
  * @author abreslav
  */
 public class DescriptorUtils {
-    public static boolean definesItsOwnThis(@NotNull DeclarationDescriptor descriptor) {
-        return descriptor.accept(new DeclarationDescriptorVisitor<Boolean, Void>() {
-            @Override
-            public Boolean visitDeclarationDescriptor(DeclarationDescriptor descriptor, Void data) {
-                return false;
-            }
-
-            @Override
-            public Boolean visitFunctionDescriptor(FunctionDescriptor descriptor, Void data) {
-                return descriptor.getReceiverParameter().exists();
-            }
-
-            @Override
-            public Boolean visitClassDescriptor(ClassDescriptor descriptor, Void data) {
-                return true;
-            }
-
-            @Override
-            public Boolean visitPropertyDescriptor(PropertyDescriptor descriptor, Void data) {
-                return descriptor.getReceiverParameter().exists();
-            }
-        }, null);
-    }
 
     @NotNull
-    public static <Descriptor extends CallableDescriptor> Descriptor substituteBounds(@NotNull Descriptor functionDescriptor) {
+    public static <D extends CallableDescriptor> D substituteBounds(@NotNull D functionDescriptor) {
         final List<TypeParameterDescriptor> typeParameters = functionDescriptor.getTypeParameters();
         if (typeParameters.isEmpty()) return functionDescriptor;
         final Map<TypeConstructor, TypeParameterDescriptor> typeConstructors = Maps.newHashMap();
@@ -71,7 +48,7 @@ public class DescriptorUtils {
             typeConstructors.put(typeParameter.getTypeConstructor(), typeParameter);
         }
         //noinspection unchecked
-        return (Descriptor) functionDescriptor.substitute(new TypeSubstitutor(TypeSubstitutor.TypeSubstitution.EMPTY) {
+        return (D) functionDescriptor.substitute(new TypeSubstitutor(TypeSubstitution.EMPTY) {
             @Override
             public boolean inRange(@NotNull TypeConstructor typeConstructor) {
                 return typeConstructors.containsKey(typeConstructor);
@@ -117,22 +94,6 @@ public class DescriptorUtils {
         });
     }
     
-    public static List<ValueParameterDescriptor> copyValueParameters(DeclarationDescriptor newOwner, List<ValueParameterDescriptor> parameters) {
-        List<ValueParameterDescriptor> result = Lists.newArrayList();
-        for (ValueParameterDescriptor parameter : parameters) {
-            result.add(parameter.copy(newOwner));
-        }
-        return result;
-    }
-
-    public static List<TypeParameterDescriptor> copyTypeParameters(DeclarationDescriptor newOwner, List<TypeParameterDescriptor> parameters) {
-        List<TypeParameterDescriptor> result = Lists.newArrayList();
-        for (TypeParameterDescriptor parameter : parameters) {
-            result.add(parameter.copy(newOwner));
-        }
-        return result;
-    }
-    
     public static Modality convertModality(Modality modality, boolean makeNonAbstract) {
         if (makeNonAbstract && modality == Modality.ABSTRACT) return Modality.OPEN;
         return modality;
@@ -143,6 +104,10 @@ public class DescriptorUtils {
         if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
             return classDescriptor.getImplicitReceiver();
+        }
+        else if (containingDeclaration instanceof ScriptDescriptor) {
+            ScriptDescriptor scriptDescriptor = (ScriptDescriptor) containingDeclaration;
+            return scriptDescriptor.getImplicitReceiver();
         }
         return NO_RECEIVER;
     }
@@ -189,10 +154,10 @@ public class DescriptorUtils {
         if (containingDeclaration == null) {
             if (descriptor instanceof NamespaceDescriptor) {
                 // TODO: namespace must always have parent
-                if (descriptor.getName().equals("jet")) {
-                    return FqNameUnsafe.topLevel("jet");
+                if (descriptor.getName().equals(Name.identifier("jet"))) {
+                    return FqNameUnsafe.topLevel(Name.identifier("jet"));
                 }
-                if (descriptor.getName().equals("<java_root>")) {
+                if (descriptor.getName().equals(Name.special("<java_root>"))) {
                     return FqName.ROOT.toUnsafe();
                 }
             }
@@ -238,7 +203,7 @@ public class DescriptorUtils {
     }
 
     @Nullable
-    public static VariableDescriptor filterNonExtensionProperty(Set<VariableDescriptor> variables) {
+    public static VariableDescriptor filterNonExtensionProperty(Collection<VariableDescriptor> variables) {
         for (VariableDescriptor variable : variables) {
             if (!variable.getReceiverParameter().exists()) {
                 return variable;
@@ -257,9 +222,6 @@ public class DescriptorUtils {
             else {
                 expectedType = TypeUtils.NO_EXPECTED_TYPE;
             }
-        }
-        else if (function instanceof JetSecondaryConstructor) {
-            expectedType = JetStandardClasses.getUnitType();
         }
         else {
             expectedType = descriptor.getReturnType();
@@ -314,17 +276,72 @@ public class DescriptorUtils {
         return namespaceDescriptor.getContainingDeclaration() instanceof ModuleDescriptor;
     }
 
+    @NotNull
+    public static List<DeclarationDescriptor> getPathWithoutRootNsAndModule(@NotNull DeclarationDescriptor descriptor) {
+        List<DeclarationDescriptor> path = Lists.newArrayList();
+        DeclarationDescriptor current = descriptor;
+        while (true) {
+            if (current instanceof NamespaceDescriptor && isRootNamespace((NamespaceDescriptor) current)) {
+                return Lists.reverse(path);
+            }
+            path.add(current);
+            current = current.getContainingDeclaration();
+        }
+    }
+
     public static boolean isClassObject(@NotNull DeclarationDescriptor descriptor) {
-        if(descriptor instanceof ClassDescriptor) {
+        if (descriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-            if(classDescriptor.getKind() == ClassKind.OBJECT) {
-                if(classDescriptor.getContainingDeclaration() instanceof ClassDescriptor) {
+            if (classDescriptor.getKind() == ClassKind.OBJECT) {
+                if (classDescriptor.getContainingDeclaration() instanceof ClassDescriptor) {
                     ClassDescriptor containingDeclaration = (ClassDescriptor) classDescriptor.getContainingDeclaration();
-                    if(classDescriptor.getDefaultType().equals(containingDeclaration.getClassObjectType())) {
+                    if (classDescriptor.getDefaultType().equals(containingDeclaration.getClassObjectType())) {
                         return true;
                     }
                 }
             }
+        }
+        return false;
+    }
+
+    @NotNull
+    public static List<ClassDescriptor> getSuperclassDescriptors(@NotNull ClassDescriptor classDescriptor) {
+        Collection<? extends JetType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
+        List<ClassDescriptor> superClassDescriptors = new ArrayList<ClassDescriptor>();
+        for (JetType type : superclassTypes) {
+            ClassDescriptor result = getClassDescriptorForType(type);
+            if (isNotAny(result)) {
+                superClassDescriptors.add(result);
+            }
+        }
+        return superClassDescriptors;
+    }
+
+    @NotNull
+    public static ClassDescriptor getClassDescriptorForType(@NotNull JetType type) {
+        DeclarationDescriptor superClassDescriptor =
+            type.getConstructor().getDeclarationDescriptor();
+        assert superClassDescriptor instanceof ClassDescriptor
+            : "Superclass descriptor of a type should be of type ClassDescriptor";
+        return (ClassDescriptor)superClassDescriptor;
+    }
+
+    public static boolean isNotAny(@NotNull DeclarationDescriptor superClassDescriptor) {
+        return !superClassDescriptor.equals(JetStandardClasses.getAny());
+    }
+
+    public static boolean inStaticContext(@NotNull DeclarationDescriptor descriptor) {
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (containingDeclaration instanceof NamespaceDescriptor) {
+            return true;
+        }
+        if (containingDeclaration instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
+
+            if (classDescriptor.getKind() == ClassKind.OBJECT) {
+                return inStaticContext(classDescriptor.getContainingDeclaration());
+            }
+
         }
         return false;
     }

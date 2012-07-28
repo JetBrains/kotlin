@@ -1,3 +1,0 @@
-class Z() {
-    <warning>this(x : Int) : this() {}</warning>
-}

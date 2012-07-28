@@ -28,30 +28,30 @@ public final class DangerousTest extends SingleFileTranslationTest {
     }
 
     public void testIfAsFunArgument() throws Exception {
-        checkFooBoxIsTrue("ifAsFunArgument.kt");
+        fooBoxTest();
     }
 
     public void testIfAsPlusArgument() throws Exception {
-        checkFooBoxIsTrue("ifAsPlusArgument.kt");
+        fooBoxTest();
     }
 
     public void testWhenAsMinusArgument() throws Exception {
-        checkFooBoxIsTrue("whenAsMinusArgument.kt");
+        fooBoxTest();
     }
 
     public void testEvaluationOrder() throws Exception {
-        checkFooBoxIsTrue("evaluationOrder.kt");
+        fooBoxTest();
     }
 
     public void testDangerousInsideDangerous() throws Exception {
-        checkFooBoxIsTrue("dangerousInsideDangerous.kt");
+        fooBoxTest();
     }
 
     public void test2dangerousInExpression() throws Exception {
-        checkFooBoxIsTrue("2dangerousInExpression.kt");
+        fooBoxTest();
     }
 
     public void testDangerousInline() throws Exception {
-        checkFooBoxIsTrue("dangerousInline.kt");
+        fooBoxTest();
     }
 }

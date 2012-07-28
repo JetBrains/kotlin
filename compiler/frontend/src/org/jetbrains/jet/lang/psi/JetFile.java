@@ -20,24 +20,26 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.extapi.psi.PsiFileBase;
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubTree;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetFileStub;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.util.List;
 
-public class JetFile extends PsiFileBase {
+public class JetFile extends PsiFileBase implements JetDeclarationContainer {
     public JetFile(FileViewProvider viewProvider) {
         super(viewProvider, JetLanguage.INSTANCE);
     }
 
+    @Override
     @NotNull
     public FileType getFileType() {
         return JetFileType.INSTANCE;
@@ -48,6 +50,8 @@ public class JetFile extends PsiFileBase {
         return "JetFile: " + getName();
     }
 
+    @NotNull
+    @Override
     public List<JetDeclaration> getDeclarations() {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, JetDeclaration.class);
     }
@@ -56,9 +60,46 @@ public class JetFile extends PsiFileBase {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, JetImportDirective.class);
     }
 
-    @NotNull
+    @Nullable
+    public JetImportDirective findImportByAlias(@NotNull String name) {
+        for (JetImportDirective directive : getImportDirectives()) {
+            if (name.equals(directive.getAliasName())) {
+                return directive;
+            }
+        }
+        return null;
+    }
+
+    // scripts has no namespace header
+    @Nullable
     public JetNamespaceHeader getNamespaceHeader() {
-        return (JetNamespaceHeader) getNode().findChildByType(JetNodeTypes.NAMESPACE_HEADER).getPsi();
+        ASTNode ast = getNode().findChildByType(JetNodeTypes.NAMESPACE_HEADER);
+        return ast != null ? (JetNamespaceHeader) ast.getPsi() : null;
+    }
+
+    @Nullable
+    public String getPackageName() {
+        PsiJetFileStub stub = (PsiJetFileStub)getStub();
+        if (stub != null) {
+            return stub.getPackageName();
+        }
+
+        JetNamespaceHeader statement = getNamespaceHeader();
+        return statement != null ? statement.getQualifiedName() : null;
+    }
+
+    @Nullable
+    public JetScript getScript() {
+        return PsiTreeUtil.getChildOfType(this, JetScript.class);
+    }
+
+    public boolean isScript() {
+        PsiJetFileStub stub = (PsiJetFileStub)getStub();
+        if (stub != null) {
+            return stub.isScript();
+        }
+
+        return getScript() != null;
     }
 
     @NotNull
@@ -75,20 +116,5 @@ public class JetFile extends PsiFileBase {
         else {
             visitor.visitFile(this);
         }
-    }
-
-    @Override
-    public StubElement getStub() {
-        return super.getStub();    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public StubTree calcStubTree() {
-        return super.calcStubTree();    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public StubTree getStubTree() {
-        return super.getStubTree();    //To change body of overridden methods use File | Settings | File Templates.
     }
 }

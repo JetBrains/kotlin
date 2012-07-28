@@ -26,13 +26,13 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
+import org.jetbrains.k2js.translate.intrinsic.functions.factories.ArrayFIF;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getClassDescriptorForType;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 import static org.jetbrains.k2js.translate.utils.TemporariesUtils.temporariesInitialization;
@@ -44,18 +44,18 @@ public final class ArrayForTranslator extends ForTranslator {
 
     @NotNull
     public static JsStatement doTranslate(@NotNull JetForExpression expression,
-                                          @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         return (new ArrayForTranslator(expression, context).translate());
     }
 
     public static boolean isApplicable(@NotNull JetForExpression expression,
-                                       @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         JetExpression loopRange = getLoopRange(expression);
         JetType rangeType = BindingUtils.getTypeForExpression(context.bindingContext(), loopRange);
         //TODO: better check
         //TODO: IMPORTANT!
-        return getClassDescriptorForType(rangeType).getName().equals("Array")
-               || getClassDescriptorForType(rangeType).getName().equals("IntArray");
+        return getClassDescriptorForType(rangeType).getName().getName().equals("Array")
+               || getClassDescriptorForType(rangeType).getName().getName().equals("IntArray");
     }
 
     @NotNull
@@ -70,10 +70,10 @@ public final class ArrayForTranslator extends ForTranslator {
     private ArrayForTranslator(@NotNull JetForExpression forExpression, @NotNull TranslationContext context) {
         super(forExpression, context);
         loopRange = context.declareTemporary(Translation.translateAsExpression(getLoopRange(expression), context));
-        Intrinsic lengthPropertyIntrinsic = context().intrinsics().getLengthPropertyIntrinsic();
-        JsExpression length = lengthPropertyIntrinsic.apply(loopRange.reference(),
-                                                            Collections.<JsExpression>emptyList(),
-                                                            context());
+
+        JsExpression length = ArrayFIF.ARRAY_LENGTH_INTRINSIC.apply(loopRange.reference(),
+                                                                    Collections.<JsExpression>emptyList(),
+                                                                    context());
         end = context().declareTemporary(length);
         index = context().declareTemporary(program().getNumberLiteral(0));
     }

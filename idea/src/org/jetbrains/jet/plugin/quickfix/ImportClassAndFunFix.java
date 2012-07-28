@@ -30,28 +30,33 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.search.DelegatingGlobalSearchScope;
+import com.intellij.psi.PsiMember;
+import com.intellij.psi.PsiModifier;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.asJava.JetLightClass;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.actions.JetAddImportAction;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
+import org.jetbrains.jet.plugin.project.JsModuleDetector;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -100,8 +105,10 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
             }
         });
     }
-    
-    private static Collection<FqName> getJetTopLevelFunctions(@NotNull String referenceName, JetSimpleNameExpression expression, @NotNull Project project) {
+
+    private static Collection<FqName> getJetTopLevelFunctions(@NotNull String referenceName,
+            JetSimpleNameExpression expression,
+            @NotNull Project project) {
         JetShortNamesCache namesCache = JetCacheManager.getInstance(project).getNamesCache();
         Collection<FunctionDescriptor> topLevelFunctions = namesCache.getTopLevelFunctionDescriptorsByName(
                 referenceName,
@@ -146,33 +153,77 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
      * Searches for possible class names in kotlin context and java facade.
      */
     public static Collection<FqName> getClassNames(@NotNull String referenceName, @NotNull JetFile file) {
-        final GlobalSearchScope scope = GlobalSearchScope.allScope(file.getProject());
         Set<FqName> possibleResolveNames = Sets.newHashSet();
-        possibleResolveNames.addAll(JetCacheManager.getInstance(file.getProject()).getNamesCache().getFQNamesByName(referenceName, file, scope));
-        possibleResolveNames.addAll(getJavaClasses(referenceName, file.getProject(), scope));
+
+        if (!JsModuleDetector.isJsModule(file)) {
+            possibleResolveNames.addAll(getClassesFromCache(referenceName, file));
+        }
+        else {
+            possibleResolveNames.addAll(getJetClasses(referenceName, file));
+        }
 
         // TODO: Do appropriate sorting
         return Lists.newArrayList(possibleResolveNames);
     }
 
-    private static Collection<FqName> getJavaClasses(@NotNull final String typeName, @NotNull Project project, final GlobalSearchScope scope) {
-        PsiShortNamesCache cache = PsiShortNamesCache.getInstance(project);
+    private static Collection<FqName> getClassesFromCache(@NotNull final String typeName, @NotNull JetFile file) {
+        PsiShortNamesCache cache = JetCacheManager.getInstance(file.getProject()).getShortNamesCache(file);
 
-        PsiClass[] classes = cache.getClassesByName(typeName, new DelegatingGlobalSearchScope(scope) {
+        PsiClass[] classes = cache.getClassesByName(typeName, GlobalSearchScope.allScope(file.getProject()));
+
+        Collection<PsiClass> accessibleClasses = Collections2.filter(Lists.newArrayList(classes), new Predicate<PsiClass>() {
             @Override
-            public boolean contains(@NotNull VirtualFile file) {
-                return myBaseScope.contains(file) && file.getFileType() != JetFileType.INSTANCE;
+            public boolean apply(PsiClass psiClass) {
+                assert psiClass != null;
+                return isAccessible(psiClass);
             }
         });
 
-        return Collections2.transform(Lists.newArrayList(classes), new Function<PsiClass, FqName>() {
+        return Collections2.transform(accessibleClasses, new Function<PsiClass, FqName>() {
             @Nullable
             @Override
             public FqName apply(@Nullable PsiClass javaClass) {
                 assert javaClass != null;
-                return new FqName(javaClass.getQualifiedName());
+                String qualifiedName = javaClass.getQualifiedName();
+                assert qualifiedName != null;
+                return new FqName(qualifiedName);
             }
         });
+    }
+
+    private static Collection<FqName> getJetClasses(@NotNull final String typeName, @NotNull JetFile file) {
+        JetShortNamesCache cache = JetCacheManager.getInstance(file.getProject()).getNamesCache();
+        Collection<ClassDescriptor> descriptors = cache.getJetClassesDescriptors(new Condition<String>() {
+            @Override
+            public boolean value(String s) {
+                return typeName.equals(s);
+            }
+        }, file);
+
+        return Collections2.transform(descriptors, new Function<ClassDescriptor, FqName>() {
+            @Override
+            public FqName apply(ClassDescriptor descriptor) {
+                return DescriptorUtils.getFQName(descriptor).toSafe();
+            }
+        });
+    }
+
+    private static boolean isAccessible(PsiMember member) {
+        if (member instanceof JetLightClass) {
+            // TODO: Now light classes losing accessibility information
+            JetLightClass lightClass = (JetLightClass) member;
+            BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) lightClass.getContainingFile()).getBindingContext();
+            ClassDescriptor descriptor = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, lightClass.getFqName());
+
+            if (descriptor != null) {
+                return descriptor.getVisibility() == Visibilities.PUBLIC || descriptor.getVisibility() == Visibilities.INTERNAL;
+            }
+            else {
+                assert false : "Descriptor of the class isn't found in the binding context";
+            }
+        }
+
+        return member.hasModifierProperty(PsiModifier.PUBLIC) || member.hasModifierProperty(PsiModifier.PROTECTED);
     }
 
     @Override
@@ -220,7 +271,8 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
     }
 
     @Override
-    public void invoke(@NotNull final Project project, @NotNull final Editor editor, final PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull final Project project, @NotNull final Editor editor, final PsiFile file)
+            throws IncorrectOperationException {
         CommandProcessor.getInstance().runUndoTransparentAction(new Runnable() {
             @Override
             public void run() {

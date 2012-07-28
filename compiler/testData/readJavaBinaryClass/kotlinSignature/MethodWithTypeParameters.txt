@@ -1,0 +1,6 @@
+namespace test
+
+public open class test.MethodWithTypeParameters : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.MethodWithTypeParameters
+    public open fun </*0*/ A : jet.Any?, /*1*/ B : java.lang.Runnable & java.util.List<java.lang.Cloneable>>foo(/*0*/ p0: A, /*1*/ p1: java.util.List<out B>, /*2*/ p2: java.util.List<in jet.String?>): jet.Tuple0
+}

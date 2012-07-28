@@ -21,14 +21,26 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
  * @author abreslav
  */
-public class JetTypeProjection extends JetDeclaration {
+public class JetTypeProjection extends JetElementImpl implements JetModifierListOwner {
     public JetTypeProjection(@NotNull ASTNode node) {
         super(node);
+    }
+
+    @Override
+    public JetModifierList getModifierList() {
+        return (JetModifierList) findChildByType(JetNodeTypes.MODIFIER_LIST);
+    }
+
+    @Override
+    public boolean hasModifier(JetToken modifier) {
+        JetModifierList modifierList = getModifierList();
+        return modifierList != null && modifierList.hasModifier(modifier);
     }
 
     @NotNull

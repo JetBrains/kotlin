@@ -20,7 +20,7 @@ import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.completion.JavaPsiClassReferenceElement;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 
 /**
@@ -35,8 +35,10 @@ public class JetJavaClassInsertHandler implements InsertHandler<JavaPsiClassRefe
     @Override
     public void handleInsert(final InsertionContext context, final JavaPsiClassReferenceElement item) {
         if (context.getFile() instanceof JetFile) {
-            final JetFile jetFile = (JetFile) context.getFile();
-            ImportInsertHelper.addImportDirective(new FqName(item.getQualifiedName()), jetFile);
+            ImportInsertHelper.addImportDirectiveOrChangeToFqName(new FqName(item.getQualifiedName()),
+                                                                  (JetFile) context.getFile(),
+                                                                  context.getStartOffset(),
+                                                                  item.getObject());
         }
 
         // check annotation

@@ -2,7 +2,7 @@ package test;
 
 import java.util.ArrayList;
 
-class JavaBeanVarOfGenericType<P> {
-    ArrayList<P> getCharacters() { return null; }
-    void setCharacters(ArrayList<P> characters) { }
+public class JavaBeanVarOfGenericType<P> {
+    public ArrayList<P> getCharacters() { return null; }
+    public void setCharacters(ArrayList<P> characters) { }
 }

@@ -937,40 +937,7 @@ JetFile: HashMap.jet
       PsiWhiteSpace('\n\n\n  ')
       PsiComment(EOL_COMMENT)('// where !(K : IHashable)')
       PsiWhiteSpace('\n  ')
-      CONSTRUCTOR
-        PsiElement(this)('this')
-        VALUE_PARAMETER_LIST
-          PsiElement(LPAR)('(')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        INITIALIZER_LIST
-          THIS_CALL
-            THIS_CONSTRUCTOR_REFERENCE
-              PsiElement(this)('this')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                CALL_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('JavaObjectHashingStrategy')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('K')
-                    PsiElement(GT)('>')
-                  VALUE_ARGUMENT_LIST
-                    PsiElement(LPAR)('(')
-                    PsiElement(RPAR)(')')
-              PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BLOCK
-          PsiElement(LBRACE)('{')
-          PsiElement(RBRACE)('}')
+      PsiComment(EOL_COMMENT)('//this() : this(JavaObjectHashingStrategy<K>()) {}')
       PsiWhiteSpace('\n\n  ')
       PsiComment(EOL_COMMENT)('//this() where (K : IHashable) : this(DefaultHashingStrategy<K>()) {}')
       PsiWhiteSpace('\n  ')

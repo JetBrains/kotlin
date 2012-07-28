@@ -16,29 +16,48 @@
 
 package org.jetbrains.jet.plugin.project;
 
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 
 /**
  * @author Pavel Talanov
  */
 public final class AnalyzerFacadeProvider {
 
+    private final static Logger LOG = Logger.getInstance(AnalyzerFacade.class);
+
     private AnalyzerFacadeProvider() {
     }
 
     @NotNull
     public static AnalyzerFacade getAnalyzerFacadeForFile(@NotNull JetFile file) {
-        return getAnalyzerFacadeForProject(file.getProject());
+        VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();
+        if (virtualFile == null) {
+            return getDefaultAnalyzerFacade();
+        }
+        Module moduleForFile = ProjectFileIndex.SERVICE.getInstance(file.getProject()).getModuleForFile(virtualFile);
+        if (moduleForFile == null) {
+            return getDefaultAnalyzerFacade();
+        }
+        return getAnalyzerFacadeForModule(moduleForFile);
     }
 
     @NotNull
-    public static AnalyzerFacade getAnalyzerFacadeForProject(@NotNull Project project) {
-        if (JsModuleDetector.isJsProject(project)) {
+    private static AnalyzerFacade getDefaultAnalyzerFacade() {
+        //TODO: should deal with situations when we can't determine whether to use java or js backend more carefully
+        LOG.info("Using default analyzer facade");
+        return AnalyzerFacadeForJVM.INSTANCE;
+    }
+
+    @NotNull
+    private static AnalyzerFacade getAnalyzerFacadeForModule(@NotNull Module module) {
+        if (JsModuleDetector.isJsModule(module)) {
             return JSAnalyzerFacadeForIDEA.INSTANCE;
         }
         return AnalyzerFacadeForJVM.INSTANCE;

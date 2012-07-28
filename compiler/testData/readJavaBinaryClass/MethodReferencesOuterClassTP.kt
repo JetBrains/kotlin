@@ -1,7 +1,7 @@
 package test
 
-class Outer<erased P>() {
-    class Inner() {
-        fun f<erased Q : P>() {}
+public class MethodReferencesOuterClassTP<P>() : java.lang.Object() {
+    public class Inner() : java.lang.Object() {
+        public fun f<Q : P>() {}
     }
 }

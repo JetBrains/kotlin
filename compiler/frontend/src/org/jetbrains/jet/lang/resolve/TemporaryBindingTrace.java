@@ -16,25 +16,33 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Predicate;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
+
 /**
  * @author abreslav
  */
 public class TemporaryBindingTrace extends DelegatingBindingTrace {
 
-    public static TemporaryBindingTrace create(BindingTrace trace) {
+    public static TemporaryBindingTrace create(@NotNull BindingTrace trace) {
         return new TemporaryBindingTrace(trace);
     }
 
-    private final BindingTrace trace;
+    protected final BindingTrace trace;
 
-
-    private TemporaryBindingTrace(BindingTrace trace) {
+    protected TemporaryBindingTrace(@NotNull BindingTrace trace) {
         super(trace.getBindingContext());
         this.trace = trace;
     }
 
     public void commit() {
         addAllMyDataTo(trace);
+        clear();
+    }
+
+    public void commit(@NotNull Predicate<WritableSlice> filter, boolean commitDiagnostics) {
+        addAllMyDataTo(trace, filter, commitDiagnostics);
         clear();
     }
 }

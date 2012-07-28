@@ -12,43 +12,53 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project-root>${project.basedir}/../../..</project-root>
+        <project-root>../../..</project-root>
 
         <asm.version>3.3.1</asm.version>
         <dart.name>dart-r3300</dart.name>
         <guava.version>11.0.2</guava.version>
         <junit-version>4.10</junit-version>
         <kotlin-maven-plugin.version>0.2.3.8</kotlin-maven-plugin.version>
-        <kotlin-sdk>${project-root}/dist/kotlinc</kotlin-sdk>
+        <kotlin-dist>${project-root}/dist</kotlin-dist>
+        <kotlin-js-lib-srcdir>${project-root}/js/js.libraries/src</kotlin-js-lib-srcdir>
+        <kotlin-sdk>${kotlin-dist}/kotlinc</kotlin-sdk>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
         <pegdown.version>1.1.0</pegdown.version>
         <surefire-version>2.5</surefire-version>
         <exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
+        <selenium.version>2.25.0</selenium.version>
     </properties>
+
+    <prerequisites>
+        <maven>3.0.3</maven>
+    </prerequisites>
 
     <distributionManagement>
         <repository>
             <uniqueVersion>false</uniqueVersion>
-            <id>jetbrains-kotlin-release</id>
-            <name>jetbrains-kotlin-release</name>
-            <url>http://repository.jetbrains.com/kotlin-release</url>
+            <id>jetbrains-kotlin</id>
+            <name>jetbrains-kotlin</name>
+            <url>http://repository.jetbrains.com/kotlin</url>
             <layout>default</layout>
         </repository>
         <snapshotRepository>
             <uniqueVersion>false</uniqueVersion>
-            <id>jetbrains-kotlin-snapshots</id>
-            <name>jetbrains-kotlin-snapshots</name>
-            <url>http://repository.jetbrains.com/kotlin-snapshots</url>
+            <id>jetbrains-kotlin</id>
+            <name>jetbrains-kotlin</name>
+            <url>http://repository.jetbrains.com/kotlin</url>
             <layout>default</layout>
         </snapshotRepository>
     </distributionManagement>
 
     <modules>
-        <module>tools/kotlin-install</module>
+        <module>tools/kotlin-compiler</module>
         <module>tools/runtime</module>
         <module>tools/kotlin-maven-plugin</module>
+        <module>tools/kotlin-js-library</module>
+        <module>tools/kotlin-js-tests</module>
+        <module>tools/kotlin-js-tests-junit</module>
         <module>tools/kdoc</module>
         <module>tools/kdoc-maven-plugin</module>
 
@@ -62,6 +72,7 @@
 
         <module>examples/kotlin-java-example</module>
         <module>examples/js-example</module>
+        <module>examples/browser-example</module>
     </modules>
 
     <dependencies>

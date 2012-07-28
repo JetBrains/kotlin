@@ -25,6 +25,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 
 import java.util.List;
 
@@ -33,6 +38,25 @@ import java.util.List;
  */
 public class DiagnosticUtils {
     private DiagnosticUtils() {
+    }
+
+    public static String atLocation(BindingContext bindingContext, DeclarationDescriptor descriptor) {
+        PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
+        if (element == null) {
+            element = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor.getOriginal());
+        }
+        if (element == null && descriptor instanceof ASTNode) {
+            element = DiagnosticUtils.getClosestPsiElement((ASTNode) descriptor);
+        }
+        if (element != null) {
+            return DiagnosticUtils.atLocation(element);
+        } else {
+            return "unknown location";
+        }
+    }
+
+    public static String atLocation(JetExpression expression) {
+        return atLocation(expression.getNode());
     }
 
     public static String atLocation(@NotNull PsiElement element) {
@@ -73,18 +97,23 @@ public class DiagnosticUtils {
     public static String atLocation(PsiFile file, TextRange textRange, Document document) {
         int offset = textRange.getStartOffset();
         VirtualFile virtualFile = file.getVirtualFile();
-        String pathSuffix = virtualFile == null ? "" : " in " + virtualFile.getPath();
+        String pathSuffix = " in " + (virtualFile == null ? file.getName() : virtualFile.getPath());
         return offsetToLineAndColumn(document, offset).toString() + pathSuffix;
     }
 
     @NotNull
     public static LineAndColumn getLineAndColumn(@NotNull Diagnostic diagnostic) {
         PsiFile file = diagnostic.getPsiFile();
-        Document document = file.getViewProvider().getDocument();
         List<TextRange> textRanges = diagnostic.getTextRanges();
         if (textRanges.isEmpty()) return LineAndColumn.NONE;
         TextRange firstRange = textRanges.iterator().next();
-        return offsetToLineAndColumn(document, firstRange.getStartOffset());
+        return getLineAndColumnInPsiFile(file, firstRange);
+    }
+
+    @NotNull
+    public static LineAndColumn getLineAndColumnInPsiFile(PsiFile file, TextRange range) {
+        Document document = file.getViewProvider().getDocument();
+        return offsetToLineAndColumn(document, range.getStartOffset());
     }
 
     @NotNull

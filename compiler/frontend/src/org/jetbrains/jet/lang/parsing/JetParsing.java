@@ -57,13 +57,13 @@ public class JetParsing extends AbstractJetParsing {
     /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, FUN_KEYWORD, LPAR, CAPITALIZED_THIS_KEYWORD, HASH);
     private static final TokenSet RECEIVER_TYPE_TERMINATORS = TokenSet.create(DOT, SAFE_ACCESS);
 
-    public static JetParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
+    static JetParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
         JetParsing jetParsing = new JetParsing(builder);
         jetParsing.myExpressionParsing = new JetExpressionParsing(builder, jetParsing);
         return jetParsing;
     }
 
-    public static JetParsing createForByClause(final SemanticWhitespaceAwarePsiBuilder builder) {
+    private static JetParsing createForByClause(final SemanticWhitespaceAwarePsiBuilder builder) {
         final SemanticWhitespaceAwarePsiBuilderForByClause builderForByClause = new SemanticWhitespaceAwarePsiBuilderForByClause(builder);
         JetParsing jetParsing = new JetParsing(builderForByClause);
         jetParsing.myExpressionParsing = new JetExpressionParsing(builderForByClause, jetParsing) {
@@ -94,13 +94,28 @@ public class JetParsing extends AbstractJetParsing {
      *   : preamble toplevelObject[| import]* [eof]
      *   ;
      */
-    public void parseFile() {
+    void parseFile() {
         PsiBuilder.Marker fileMarker = mark();
 
         parsePreamble();
 
         parseToplevelDeclarations(false);
 
+        fileMarker.done(JET_FILE);
+    }
+
+    void parseScript() {
+        PsiBuilder.Marker fileMarker = mark();
+        PsiBuilder.Marker scriptMarker = mark();
+
+        parseImportDirectives();
+
+        PsiBuilder.Marker blockMarker = mark();
+
+        myExpressionParsing.parseStatements();
+
+        blockMarker.done(BLOCK);
+        scriptMarker.done(SCRIPT);
         fileMarker.done(JET_FILE);
     }
 
@@ -155,10 +170,7 @@ public class JetParsing extends AbstractJetParsing {
         }
         namespaceHeader.done(NAMESPACE_HEADER);
 
-        // TODO: Duplicate with parsing imports in parseToplevelDeclarations
-        while (at(IMPORT_KEYWORD)) {
-            parseImportDirective();
-        }
+        parseImportDirectives();
     }
 
     /* SimpleName{"."} */
@@ -236,6 +248,13 @@ public class JetParsing extends AbstractJetParsing {
         importDirective.done(IMPORT_DIRECTIVE);
     }
 
+    private void parseImportDirectives() {
+        // TODO: Duplicate with parsing imports in parseToplevelDeclarations
+        while (at(IMPORT_KEYWORD)) {
+            parseImportDirective();
+        }
+    }
+
     private void handleUselessRename() {
         if (at(AS_KEYWORD)) {
             PsiBuilder.Marker as = mark();
@@ -286,7 +305,7 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         if (declType == null) {
-            errorAndAdvance("Expecting namespace or top level declaration");
+            errorAndAdvance("Expecting package directive or top level declaration");
             decl.drop();
         }
         else {
@@ -297,7 +316,7 @@ public class JetParsing extends AbstractJetParsing {
     /*
      * (modifier | attribute)*
      */
-    public boolean parseModifierList(JetNodeType nodeType, boolean allowShortAnnotations) {
+    boolean parseModifierList(JetNodeType nodeType, boolean allowShortAnnotations) {
         return parseModifierList(nodeType, null, allowShortAnnotations);
     }
 
@@ -306,7 +325,7 @@ public class JetParsing extends AbstractJetParsing {
      *
      * Feeds modifiers (not attributes) into the passed consumer, if it is not null
      */
-    public boolean parseModifierList(JetNodeType nodeType, Consumer<IElementType> tokenConsumer, boolean allowShortAnnotations) {
+    boolean parseModifierList(JetNodeType nodeType, @Nullable Consumer<IElementType> tokenConsumer, boolean allowShortAnnotations) {
         PsiBuilder.Marker list = mark();
         boolean empty = true;
         while (!eof()) {
@@ -336,8 +355,10 @@ public class JetParsing extends AbstractJetParsing {
      *   : annotation*
      *   ;
      */
-    public void parseAnnotations(boolean allowShortAnnotations) {
-        while (parseAnnotation(allowShortAnnotations));
+    void parseAnnotations(boolean allowShortAnnotations) {
+        while (true) {
+            if (!(parseAnnotation(allowShortAnnotations))) break;
+        }
     }
 
     /*
@@ -417,7 +438,7 @@ public class JetParsing extends AbstractJetParsing {
      *       (classBody? | enumClassBody)
      *   ;
      */
-    public IElementType parseClass(boolean enumClass) {
+    IElementType parseClass(boolean enumClass) {
         assert _atSet(CLASS_KEYWORD, TRAIT_KEYWORD);
         advance(); // CLASS_KEYWORD or TRAIT_KEYWORD
 
@@ -630,9 +651,6 @@ public class JetParsing extends AbstractJetParsing {
         else if (keywordToken == TYPE_KEYWORD) {
             declType = parseTypeDef();
         }
-        else if (keywordToken == THIS_KEYWORD) {
-            declType = parseConstructor();
-        }
         else if (keywordToken == OBJECT_KEYWORD) {
             parseObject(true, true);
             declType = OBJECT_DECLARATION;
@@ -649,7 +667,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : "object" SimpleName? ":" delegationSpecifier{","}? classBody?
      *   ;
      */
-    public void parseObject(boolean named, boolean optionalBody) {
+    void parseObject(boolean named, boolean optionalBody) {
         assert _at(OBJECT_KEYWORD);
 
         advance(); // OBJECT_KEYWORD
@@ -686,34 +704,6 @@ public class JetParsing extends AbstractJetParsing {
                 parseClassBody();
             }
         }
-    }
-
-    /*
-     * constructor
-     *   : modifiers "this" functionParameters (":" initializer{","}) block?
-     *   ;
-     */
-    private JetNodeType parseConstructor() {
-        assert _at(THIS_KEYWORD);
-
-        advance(); // THIS_KEYWORD
-
-        parseValueParameterList(false, TokenSet.create(COLON, LBRACE, SEMICOLON));
-
-        if (at(COLON)) {
-            advance(); // COLON
-
-            parseInitializerList();
-        }
-
-        if (at(LBRACE)) {
-            parseBlock();
-        }
-        else {
-            consumeIf(SEMICOLON);
-        }
-
-        return CONSTRUCTOR;
     }
 
     /*
@@ -785,7 +775,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : modifiers "type" SimpleName (typeParameters typeConstraints)? "=" type
      *   ;
      */
-    public JetNodeType parseTypeDef() {
+    JetNodeType parseTypeDef() {
         assert _at(TYPE_KEYWORD);
 
         advance(); // TYPE_KEYWORD
@@ -815,11 +805,11 @@ public class JetParsing extends AbstractJetParsing {
      *       (getter? setter? | setter? getter?) SEMI?
      *   ;
      */
-    public JetNodeType parseProperty() {
+    private IElementType parseProperty() {
         return parseProperty(false);
     }
 
-    public JetNodeType parseProperty(boolean local) {
+    IElementType parseProperty(boolean local) {
         if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) {
             advance(); // VAL_KEYWORD or VAR_KEYWORD
         }
@@ -829,7 +819,7 @@ public class JetParsing extends AbstractJetParsing {
 
         boolean typeParametersDeclared = at(LT) && parseTypeParameterList(TokenSet.create(IDENTIFIER, EQ, COLON, SEMICOLON));
 
-        TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, CLASS_KEYWORD);
+        TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, RBRACE, SEMICOLON, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, CLASS_KEYWORD);
 
         myBuilder.disableJoiningComplexTokens();
 
@@ -970,7 +960,7 @@ public class JetParsing extends AbstractJetParsing {
      *       functionBody?
      *   ;
      */
-    public IElementType parseFunction() {
+    IElementType parseFunction() {
         assert _at(FUN_KEYWORD);
 
         advance(); // FUN_KEYWORD
@@ -1086,7 +1076,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : "{" (expressions)* "}"
      *   ;
      */
-    public void parseBlock() {
+    void parseBlock() {
         PsiBuilder.Marker block = mark();
 
         myBuilder.enableNewlines();
@@ -1303,11 +1293,11 @@ public class JetParsing extends AbstractJetParsing {
      * nullableType
      *   : typeDescriptor "?"
      */
-    public void parseTypeRef() {
+    void parseTypeRef() {
         parseTypeRef(TokenSet.EMPTY);
     }
 
-    public void parseTypeRef(TokenSet extraRecoverySet) {
+    void parseTypeRef(TokenSet extraRecoverySet) {
         PsiBuilder.Marker typeRefMarker = parseTypeRefContents(extraRecoverySet);
         typeRefMarker.done(TYPE_REFERENCE);
     }
@@ -1461,7 +1451,7 @@ public class JetParsing extends AbstractJetParsing {
     /*
      *  (optionalProjection type){","}
      */
-    public PsiBuilder.Marker parseTypeArgumentList() {
+    private PsiBuilder.Marker parseTypeArgumentList() {
         if (!at(LT)) return null;
 
         PsiBuilder.Marker list = mark();
@@ -1472,7 +1462,7 @@ public class JetParsing extends AbstractJetParsing {
         return list;
     }
 
-    public boolean tryParseTypeArgumentList(TokenSet extraRecoverySet) {
+    boolean tryParseTypeArgumentList(TokenSet extraRecoverySet) {
         myBuilder.disableNewlines();
         advance(); // LT
 
@@ -1605,7 +1595,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : parameter ("=" element)?
      *   ;
      */
-    public void parseValueParameterList(boolean isFunctionTypeContents, TokenSet recoverySet) {
+    void parseValueParameterList(boolean isFunctionTypeContents, TokenSet recoverySet) {
         PsiBuilder.Marker parameters = mark();
 
         myBuilder.disableNewlines();
@@ -1734,10 +1724,6 @@ public class JetParsing extends AbstractJetParsing {
 
         public TokenDetector(JetKeywordToken token) {
             this.tokens = TokenSet.create(token);
-        }
-
-        public TokenDetector(TokenSet tokens) {
-            this.tokens = tokens;
         }
 
         @Override

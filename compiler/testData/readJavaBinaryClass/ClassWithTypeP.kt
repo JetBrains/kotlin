@@ -1,4 +1,4 @@
 package test
 
-class ClassWithTypeParameter<erased P>() {
+public class ClassWithTypeP<P>() : java.lang.Object() {
 }

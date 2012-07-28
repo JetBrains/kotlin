@@ -2,7 +2,7 @@
   <configuration default="false" name="IDEA" type="Application" factoryName="Application">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
     <option name="MAIN_CLASS_NAME" value="com.intellij.idea.Main" />
-    <option name="VM_PARAMETERS" value="-Xmx800m -XX:ReservedCodeCacheSize=64m -XX:MaxPermSize=450m -ea -Didea.is.internal=true -Didea.debug.mode=true -Didea.system.path=../system-idea -Didea.config.path=../config -Dapple.laf.useScreenMenuBar=true -Dplugin.path=$PROJECT_DIR$/out/artifacts/Kotlin" />
+    <option name="VM_PARAMETERS" value="-Xmx800m -XX:ReservedCodeCacheSize=64m -XX:MaxPermSize=450m -XX:+HeapDumpOnOutOfMemoryError -ea -Didea.is.internal=true -Didea.debug.mode=true -Didea.system.path=../system-idea -Didea.config.path=../config -Dapple.laf.useScreenMenuBar=true -Dplugin.path=$PROJECT_DIR$/out/artifacts/Kotlin" />
     <option name="PROGRAM_PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/ideaSDK/bin" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -17,11 +17,29 @@
       <option name="TRANSPORT" value="0" />
       <option name="LOCAL" value="true" />
     </RunnerSettings>
+    <RunnerSettings RunnerId="JavaRebel">
+      <option name="bootstrapPath" />
+      <option name="jrebelArgs" value="" />
+      <option name="loggingEnabled" value="false" />
+      <option name="useBootstrapDefaults" value="true" />
+    </RunnerSettings>
+    <RunnerSettings RunnerId="JavaRebel Debug">
+      <option name="bootstrapPath" />
+      <option name="debugPort" value="" />
+      <option name="jrebelArgs" value="" />
+      <option name="loggingEnabled" value="false" />
+      <option name="transport" value="0" />
+      <option name="useBootstrapDefaults" value="true" />
+      <option name="DEBUG_PORT" value="" />
+      <option name="TRANSPORT" value="0" />
+      <option name="LOCAL" value="true" />
+    </RunnerSettings>
     <RunnerSettings RunnerId="Profile ">
-      <option name="myExternalizedOptions" />
+      <option name="myExternalizedOptions" value="&#13;&#10;additional-options2=onexit\=snapshot&#13;&#10;" />
     </RunnerSettings>
     <RunnerSettings RunnerId="Run" />
     <ConfigurationWrapper RunnerId="Debug" />
+    <ConfigurationWrapper RunnerId="Profile " />
     <ConfigurationWrapper RunnerId="Run" />
     <method>
       <option name="BuildArtifacts" enabled="true">

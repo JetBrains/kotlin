@@ -1,4 +1,4 @@
 package test
 
-class ClassWithTypePRefSelf<erased P : java.lang.Enum<P>?>() {
+public class ClassWithTypePRefSelf<P : java.lang.Enum<P>?>() : java.lang.Object() {
 }

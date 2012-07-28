@@ -34,7 +34,8 @@ class DomTest {
         val e = doc.createElement("foo")!!
         e + "hello"
 
-        println("element after text ${e.toXmlString()}")
+        val xml = e.toXmlString()
+        println("element after text ${xml}")
 
         assertEquals("hello", e.text)
 
@@ -44,7 +45,8 @@ class DomTest {
     fun assertCssClass(e: Element, value: String?): Unit {
         val cl = e.classes
         val cl2 = e.getAttribute("class")
-        println("element ${e.toXmlString()} has cssClass `${cl}` class attr `${cl2}`")
+        val xml = e.toXmlString()
+        println("element ${xml} has cssClass `${cl}` class attr `${cl2}`")
 
         assertEquals(value, cl, "value of element.cssClass")
         assertEquals(value, cl2, "value of element.getAttribute(\"class\")")

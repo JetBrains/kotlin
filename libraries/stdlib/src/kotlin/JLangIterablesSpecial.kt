@@ -5,6 +5,8 @@ import java.util.Collection
 import java.util.List
 import java.util.AbstractList
 import java.util.Iterator
+import java.util.Comparator
+import java.util.ArrayList
 
 /**
  * Count the number of elements in collection.
@@ -23,6 +25,12 @@ public fun <T> java.lang.Iterable<T>.count() : Int {
   }
   return number
 }
+
+private fun <T> countTo(n: Int): (T) -> Boolean {
+  var count = 0
+  return { ++count; count <= n }
+}
+
 
 /**
  * Get the first element in the collection.
@@ -78,7 +86,7 @@ public fun <T> java.lang.Iterable<T>.contains(item : T) : Boolean {
   }
 
   for (var elem in this) {
-    if (elem.equals(item)) {
+    if (elem == item) {
       return true
     }
   }
@@ -87,36 +95,28 @@ public fun <T> java.lang.Iterable<T>.contains(item : T) : Boolean {
 }
 
 /**
- * Convert collection of arbitrary elements to collection of tuples of the index and the element
+ * Convert collection of arbitrary elements to a List of tuples of the index and the element
+ *
+ * @includeFunctionBody ../../test/ListTest.kt withIndices
  */
-public fun <T> java.lang.Iterable<T>.withIndices() : java.lang.Iterable<#(Int, T)> {
-    return object : java.lang.Iterable<#(Int, T)> {
-        public override fun iterator(): java.util.Iterator<#(Int, T)> {
-            // TODO explicit typecast as a workaround for KT-1457, should be removed when it is fixed
-            return NumberedIterator<T>(this@withIndices.iterator().sure()) as java.util.Iterator<#(Int, T)>
-        }
+public fun <T> java.lang.Iterable<T>.withIndices(): java.util.List<#(Int, T)> {
+    val answer = ArrayList<#(Int, T)>()
+    var nextIndex = 0
+    for (e in this) {
+        answer.add(#(nextIndex, e))
+        nextIndex++
     }
+    return answer
 }
 
-private class NumberedIterator<TT>(private val sourceIterator : java.util.Iterator<TT>) : java.util.Iterator<#(Int, TT)> {
-    private var nextIndex = 0
+public inline fun <in T: Comparable<T>> java.lang.Iterable<T>.sort() : List<T> {
+    val list = toList()
+    java.util.Collections.sort(list)
+    return list
+}
 
-    public override fun remove() {
-        try {
-            sourceIterator.remove()
-            nextIndex--;
-        } catch (e : UnsupportedOperationException) {
-            throw e
-        }
-    }
-
-    public override fun hasNext(): Boolean {
-        return sourceIterator.hasNext();
-    }
-
-    public override fun next(): #(Int, TT) {
-        val result = #(nextIndex, sourceIterator.next())
-        nextIndex++
-        return result
-    }
+public inline fun <in T> java.lang.Iterable<T>.sort(comparator: java.util.Comparator<T>) : List<T> {
+    val list = toList()
+    java.util.Collections.sort(list, comparator)
+    return list
 }

@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -55,17 +57,22 @@ public class ClassFileFactory {
         return answer;
     }
 
-    ClassBuilder forAnonymousSubclass(String className) {
-        return newVisitor(className + ".class");
+    ClassBuilder forAnonymousSubclass(@NotNull JvmClassName className) {
+        return newVisitor(className.getInternalName() + ".class");
     }
 
-    NamespaceCodegen forNamespace(JetFile file) {
+    NamespaceCodegen forNamespace(final FqName fqName, Collection<JetFile> files) {
         assert !isDone : "Already done!";
-        FqName fqName = JetPsiUtil.getFQName(file);
         NamespaceCodegen codegen = ns2codegen.get(fqName);
         if (codegen == null) {
-            final ClassBuilder builder = newVisitor(NamespaceCodegen.getJVMClassName(fqName, true) + ".class");
-            codegen = new NamespaceCodegen(builder, fqName, state, file.getContainingFile());
+            ClassBuilderOnDemand onDemand = new ClassBuilderOnDemand() {
+                @NotNull
+                @Override
+                protected ClassBuilder createClassBuilder() {
+                    return newVisitor(NamespaceCodegen.getJVMClassNameForKotlinNs(fqName).getInternalName() + ".class");
+                }
+            };
+            codegen = new NamespaceCodegen(onDemand, fqName, state, files);
             ns2codegen.put(fqName, codegen);
         }
 

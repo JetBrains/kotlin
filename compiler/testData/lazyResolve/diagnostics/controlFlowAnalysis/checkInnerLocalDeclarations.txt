@@ -1,0 +1,7 @@
+namespace <root>
+
+// <namespace name="c">
+namespace c
+
+internal final fun test(): jet.Tuple0
+// </namespace name="c">

@@ -19,7 +19,7 @@ package org.jetbrains.jet.asJava;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.file.PsiPackageImpl;
-import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 /**
  * TODO: make more accurate wrapper

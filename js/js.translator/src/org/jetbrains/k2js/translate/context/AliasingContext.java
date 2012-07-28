@@ -30,7 +30,8 @@ import java.util.Map;
  */
 public class AliasingContext {
 
-    private static AliasingContext ROOT = new AliasingContext(null) {
+    @NotNull
+    private static final AliasingContext ROOT = new AliasingContext(null) {
         @Override
         public JsName getAliasForThis(@NotNull DeclarationDescriptor descriptor) {
             return null;

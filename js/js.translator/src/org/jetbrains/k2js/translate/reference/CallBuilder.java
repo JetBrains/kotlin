@@ -21,6 +21,10 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.ExplicitReceiverKind;
+import org.jetbrains.jet.lang.resolve.calls.ResolutionCandidate;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -103,7 +107,10 @@ public final class CallBuilder {
     private CallTranslator finish() {
         if (resolvedCall == null) {
             assert descriptor != null;
-            resolvedCall = ResolvedCallImpl.create(descriptor);
+            resolvedCall = ResolvedCallImpl.create(ResolutionCandidate.create(descriptor, descriptor.getExpectedThisObject(),
+                                                                              descriptor.getReceiverParameter(),
+                                                                              ExplicitReceiverKind.THIS_OBJECT, false),
+                                                   TemporaryBindingTrace.create(new BindingTraceContext()));
         }
         if (descriptor == null) {
             descriptor = resolvedCall.getCandidateDescriptor().getOriginal();

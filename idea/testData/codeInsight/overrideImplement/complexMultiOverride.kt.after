@@ -6,11 +6,11 @@ open class Base<A, B, C>() {
 
 class C : Base<String, C, Unit>() {
 
-    override fun bar(value : () -> Unit) : (String) -> Unit {
+    override fun bar(value: () -> Unit): (String) -> Unit {
         return super<Base>.bar(value)
     }
-    override fun foo(value : C) : C {
+    override fun foo(value: C): C {
         return super<Base>.foo(value)
     }
-    override val method : (String?) -> String = ?
+    override val method: (String?) -> String = ?
 }

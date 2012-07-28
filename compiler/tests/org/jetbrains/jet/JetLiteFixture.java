@@ -17,36 +17,27 @@
 package org.jetbrains.jet;
 
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.TestDataFile;
-import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.jet.compiler.CompileEnvironmentUtil;
-import org.jetbrains.jet.compiler.JetCoreEnvironment;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
-import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
+import org.junit.Assert;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
  * @author abreslav
  */
-public abstract class JetLiteFixture extends UsefulTestCase {
+public abstract class JetLiteFixture extends KotlinTestWithEnvironment {
     @NonNls
     protected final String myFullDataPath;
-    protected JetFile myFile;
-    protected JetCoreEnvironment myEnvironment;
+    private JetFile myFile;
+
 
     public JetLiteFixture(@NonNls String dataPath) {
         myFullDataPath = getTestDataPath() + "/" + dataPath;
@@ -56,65 +47,43 @@ public abstract class JetLiteFixture extends UsefulTestCase {
         myFullDataPath = getTestDataPath();
     }
 
-    protected String getTestDataPath() {
-        return JetTestCaseBuilder.getTestDataPathBase();
+    protected JetFile getFile() {
+        return myFile;
     }
 
-    public Project getProject() {
-        return myEnvironment.getProject();
+    protected String getTestDataPath() {
+        return JetTestCaseBuilder.getTestDataPathBase();
     }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdk();
-    }
-
-    protected void createEnvironmentWithMockJdk() {
-        myEnvironment = JetTestUtils.createEnvironmentWithMockJdk(getTestRootDisposable());
-    }
-
-    protected void createEnvironmentWithFullJdk() {
-        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(),
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR));
-        final File rtJar = CompileEnvironmentUtil.findRtJar();
-        myEnvironment.addToClasspath(rtJar);
     }
 
     @Override
     protected void tearDown() throws Exception {
         myFile = null;
-        myEnvironment = null;
         super.tearDown();
     }
 
     protected String loadFile(@NonNls @TestDataFile String name) throws IOException {
-        return doLoadFile(myFullDataPath, name);
+        return JetTestUtils.doLoadFile(myFullDataPath, name);
     }
 
-    protected static String doLoadFile(String myFullDataPath, String name) throws IOException {
-        String fullName = myFullDataPath + File.separatorChar + name;
-        String text = FileUtil.loadFile(new File(fullName), CharsetToolkit.UTF8).trim();
-        text = StringUtil.convertLineSeparators(text);
-        return text;
-    }
-
-    protected JetFile createPsiFile(String name, String text) {
-        return (JetFile) createFile(name + ".jet", text);
+    protected JetFile createPsiFile(@Nullable String testName, @Nullable String fileName, String text) {
+        if (fileName == null) {
+            Assert.assertNotNull(testName);
+            fileName = testName + ".jet";
+        }
+        return (JetFile) JetTestUtils.createFile(fileName, text, getProject());
     }
 
     protected JetFile loadPsiFile(String name) {
         try {
-            return createPsiFile(name, loadFile(name));
+            return createPsiFile(name, null, loadFile(name));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    protected PsiFile createFile(@NonNls String name, String text) {
-        LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);
-        virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
-        return ((PsiFileFactoryImpl) PsiFileFactory.getInstance(myEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
     }
 
     protected static void ensureParsed(PsiFile file) {
@@ -132,11 +101,11 @@ public abstract class JetLiteFixture extends UsefulTestCase {
     }
 
     protected void createAndCheckPsiFile(String name, String text) {
-        myFile = createCheckAndReturnPsiFile(name, text);
+        myFile = createCheckAndReturnPsiFile(name, null, text);
     }
 
-    protected JetFile createCheckAndReturnPsiFile(String name, String text) {
-        JetFile myFile = createPsiFile(name, text);
+    protected JetFile createCheckAndReturnPsiFile(String testName, String fileName, String text) {
+        JetFile myFile = createPsiFile(testName, fileName, text);
         ensureParsed(myFile);
         assertEquals("light virtual file text mismatch", text, ((LightVirtualFile) myFile.getVirtualFile()).getContent().toString());
         assertEquals("virtual file text mismatch", text, LoadTextUtil.loadText(myFile.getVirtualFile()));

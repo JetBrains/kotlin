@@ -18,11 +18,16 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
@@ -31,15 +36,43 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class JetObjectDeclaration extends JetNamedDeclaration implements JetClassOrObject  {
+public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectStub> implements JetClassOrObject  {
     public JetObjectDeclaration(@NotNull ASTNode node) {
         super(node);
     }
 
+    public JetObjectDeclaration(@NotNull PsiJetObjectStub stub) {
+        super(stub, JetStubElementTypes.OBJECT_DECLARATION);
+    }
+
+    @NotNull
+    @Override
+    public IStubElementType getElementType() {
+        return JetStubElementTypes.OBJECT_DECLARATION;
+    }
+
     @Override
     public String getName() {
+        PsiJetObjectStub stub = getStub();
+        if (stub != null) {
+            return stub.getName();
+        }
+
         JetObjectDeclarationName nameAsDeclaration = getNameAsDeclaration();
         return nameAsDeclaration == null ? null : nameAsDeclaration.getName();
+    }
+
+    /**
+     * Could be null for anonymous objects and object declared inside functions
+     * @return
+     */
+    public FqName getFqName() {
+        PsiJetObjectStub stub = getStub();
+        if (stub != null) {
+            return stub.getFQName();
+        }
+
+        return JetPsiUtil.getFQName(this);
     }
 
     @Override
@@ -54,9 +87,32 @@ public class JetObjectDeclaration extends JetNamedDeclaration implements JetClas
         return nameAsDeclaration == null ? null : nameAsDeclaration.setName(name);
     }
 
+    @Override
     @Nullable
     public JetObjectDeclarationName getNameAsDeclaration() {
         return (JetObjectDeclarationName) findChildByType(JetNodeTypes.OBJECT_DECLARATION_NAME);
+    }
+
+    @Override
+    @Nullable
+    public JetModifierList getModifierList() {
+        PsiElement parent = getParent();
+        if (isClassObject(parent)) {
+            assert parent instanceof JetDeclaration;
+            return ((JetDeclaration)parent).getModifierList();
+        }
+        return (JetModifierList) findChildByType(JetNodeTypes.MODIFIER_LIST);
+    }
+
+
+    private static boolean isClassObject(@NotNull PsiElement parent) {
+        return parent.getNode().getElementType().equals(JetNodeTypes.CLASS_OBJECT);
+    }
+
+    @Override
+    public boolean hasModifier(JetToken modifier) {
+        JetModifierList modifierList = getModifierList();
+        return modifierList != null && modifierList.hasModifier(modifier);
     }
 
     @Override
@@ -123,4 +179,9 @@ public class JetObjectDeclaration extends JetNamedDeclaration implements JetClas
     public void delete() throws IncorrectOperationException {
         JetPsiUtil.deleteClass(this);
     }
+
+    //@Override
+    //public ItemPresentation getPresentation() {
+    //    return ItemPresentationProviders.getItemPresentation(this);
+    //}
 }

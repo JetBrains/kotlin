@@ -17,22 +17,17 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Sets;
+import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * @author Stepan Koltsov
@@ -62,13 +57,13 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
 
     @NotNull
     @Override
-    public Set<VariableDescriptor> getProperties(@NotNull String name) {
+    public Collection<VariableDescriptor> getProperties(@NotNull Name name) {
         return semanticServices.getDescriptorResolver().resolveFieldGroupByName(name, resolverScopeData);
     }
 
     @NotNull
     @Override
-    public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+    public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
         return semanticServices.getDescriptorResolver().resolveFunctionGroup(name, resolverScopeData);
     }
 
@@ -79,12 +74,23 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
             allDescriptors = Sets.newHashSet();
 
             if (resolverScopeData.psiClass != null) {
+
+                ProgressIndicatorProvider.checkCanceled();
                 allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(resolverScopeData));
 
+                ProgressIndicatorProvider.checkCanceled();
                 allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(resolverScopeData));
 
-                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
-                        resolverScopeData.classOrNamespaceDescriptor, resolverScopeData.psiClass, resolverScopeData.staticMembers));
+                // TODO: Trying to hack the situation when we produce namespace descriptor for java class and still want to see inner classes
+                if (getContainingDeclaration() instanceof JavaNamespaceDescriptor) {
+                    allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
+                            resolverScopeData.classOrNamespaceDescriptor, resolverScopeData.psiClass, false));
+                }
+                else {
+                    allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
+                            resolverScopeData.classOrNamespaceDescriptor, resolverScopeData.psiClass,
+                            resolverScopeData.staticMembers));
+                }
             }
 
             if (resolverScopeData.psiPackage != null) {
@@ -114,6 +120,7 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
                     }
 
                     if (psiClass.hasModifierProperty(PsiModifier.PUBLIC)) {
+                        ProgressIndicatorProvider.checkCanceled();
                         ClassDescriptor classDescriptor = descriptorResolver
                                 .resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
                         if (classDescriptor != null) {

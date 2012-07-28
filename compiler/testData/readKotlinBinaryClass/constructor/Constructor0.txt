@@ -1,5 +1,5 @@
 namespace test
 
-final class test.ClassWithConstructor0 : jet.Any {
-    final /*constructor*/ fun <init>(): test.ClassWithConstructor0
+internal final class test.ClassWithConstructor0 : jet.Any {
+    public final /*constructor*/ fun <init>(): test.ClassWithConstructor0
 }

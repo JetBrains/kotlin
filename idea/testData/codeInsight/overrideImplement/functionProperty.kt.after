@@ -5,6 +5,6 @@ trait A {
 
 fun some() : A {
     return object : A {
-        override val method : () -> Unit? = ?
+        override val method: () -> Unit? = ?
     }
 }

@@ -31,7 +31,7 @@ public final class LongRange implements Range<Long>, LongIterable {
     }
 
     public LongIterator step(long step) {
-        if(step < 0)
+        if (step < 0)
             return new MyIterator(getEnd(), -count, -step);
         else
             return new MyIterator(start, count, step);
@@ -89,7 +89,7 @@ public final class LongRange implements Range<Long>, LongIterable {
         public MyIterator(long startValue, long count, long step) {
             cur = startValue;
             this.step = step;
-            if(count < 0) {
+            if (count < 0) {
                 reversed = true;
                 count = -count;
                 startValue += count;
@@ -108,7 +108,7 @@ public final class LongRange implements Range<Long>, LongIterable {
         @Override
         public long nextLong() {
             count -= step;
-            if(reversed) {
+            if (reversed) {
                 cur -= step;
                 return (cur + step);
             }

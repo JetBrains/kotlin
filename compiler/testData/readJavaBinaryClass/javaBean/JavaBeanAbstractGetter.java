@@ -1,5 +1,5 @@
 package test;
 
-interface JavaBeanAbstractGetter {
-    int getRed();
+public interface JavaBeanAbstractGetter {
+    public int getRed();
 }

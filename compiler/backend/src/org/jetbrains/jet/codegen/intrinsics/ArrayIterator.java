@@ -18,6 +18,8 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
@@ -29,10 +31,8 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibraryNames;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -41,21 +41,19 @@ import java.util.List;
  */
 public class ArrayIterator implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
         receiver.put(JetTypeMapper.TYPE_OBJECT, v);
         JetCallExpression call = (JetCallExpression) element;
         FunctionDescriptor funDescriptor = (FunctionDescriptor) codegen.getBindingContext().get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) call.getCalleeExpression());
         ClassDescriptor containingDeclaration = (ClassDescriptor) funDescriptor.getContainingDeclaration().getOriginal();
-        JetStandardLibrary standardLibrary = codegen.getState().getInjector().getJetStandardLibrary();
-        if(containingDeclaration.equals(standardLibrary.getArray())) {
+        if (JetStandardLibraryNames.ARRAY.is(containingDeclaration)) {
             v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Ljava/lang/Object;)Ljet/Iterator;");
             return StackValue.onStack(JetTypeMapper.TYPE_ITERATOR);
         }
         else {
             for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
                 PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-                ClassDescriptor arrayClass = standardLibrary.getPrimitiveArrayClassDescriptor(primitiveType);
-                if (containingDeclaration.equals(arrayClass)) {
+                if (primitiveType.getArrayClassName().is(containingDeclaration)) {
                     String methodSignature = "([" + jvmPrimitiveType.getJvmLetter() + ")" + jvmPrimitiveType.getIterator().getDescriptor();
                     v.invokestatic("jet/runtime/ArrayIterator", "iterator", methodSignature);
                     return StackValue.onStack(jvmPrimitiveType.getIterator().getAsmType());

@@ -30,7 +30,7 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getClassDescriptorForType;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 import static org.jetbrains.k2js.translate.utils.TemporariesUtils.temporariesInitialization;
@@ -52,7 +52,7 @@ public final class RangeForTranslator extends ForTranslator {
         JetType rangeType = BindingUtils.getTypeForExpression(context.bindingContext(), loopRange);
         //TODO: better check
         //TODO: long range?
-        return getClassDescriptorForType(rangeType).getName().equals("IntRange");
+        return getClassDescriptorForType(rangeType).getName().getName().equals("IntRange");
     }
 
     @NotNull

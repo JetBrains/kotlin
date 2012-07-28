@@ -1,5 +1,5 @@
 package test;
 
-class JavaBeanVal {
-    String getColor() { return ""; }
+public class JavaBeanVal {
+    public String getColor() { return ""; }
 }

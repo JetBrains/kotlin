@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
@@ -45,7 +46,7 @@ public class ImportsResolver {
     @NotNull
     private QualifiedExpressionResolver qualifiedExpressionResolver;
     @NotNull
-    private ObservableBindingTrace trace;
+    private BindingTrace trace;
 
     @Inject
     public void setContext(@NotNull TopDownAnalysisContext context) {
@@ -58,7 +59,7 @@ public class ImportsResolver {
     }
 
     @Inject
-    public void setTrace(@NotNull ObservableBindingTrace trace) {
+    public void setTrace(@NotNull BindingTrace trace) {
         this.trace = trace;
     }
 
@@ -67,57 +68,79 @@ public class ImportsResolver {
         this.qualifiedExpressionResolver = qualifiedExpressionResolver;
     }
 
-    public void processTypeImports() {
-        processImports(true);
+    public void processTypeImports(@NotNull JetScope rootScope) {
+        processImports(true, rootScope);
     }
 
-    public void processMembersImports() {
-        processImports(false);
+    public void processMembersImports(@NotNull JetScope rootScope) {
+        processImports(false, rootScope);
     }
 
-    private void processImports(boolean onlyClasses) {
-        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace); //not to trace errors of default imports
+    private void processImports(boolean onlyClasses, @NotNull JetScope rootScope) {
         for (JetFile file : context.getNamespaceDescriptors().keySet()) {
-            JetScope rootScope = context.getRootScope();
             WritableScope namespaceScope = context.getNamespaceScopes().get(file);
-            Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(namespaceScope);
-            if (!onlyClasses) {
-                namespaceScope.clearImports();
-            }
-            Map<JetImportDirective, DeclarationDescriptor> resolvedDirectives = Maps.newHashMap();
-            Collection<JetImportDirective> defaultImportDirectives = Lists.newArrayList();
-            configuration.addDefaultImports(defaultImportDirectives);
-            for (JetImportDirective defaultImportDirective : defaultImportDirectives) {
-                qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, namespaceScope, delayedImporter, temporaryTrace, onlyClasses);
-            }
+            processImportsInFile(onlyClasses, namespaceScope, file.getImportDirectives(), rootScope);
+        }
+        for (JetScript script : context.getScripts().keySet()) {
+            WritableScope scriptScope = context.getScriptScopes().get(script);
+            processImportsInFile(onlyClasses, scriptScope, script.getImportDirectives(), rootScope);
+        }
+    }
 
-            List<JetImportDirective> importDirectives = file.getImportDirectives();
+    private void processImportsInFile(boolean classes, WritableScope scope, List<JetImportDirective> directives, JetScope rootScope) {
+        processImportsInFile(classes, scope, directives, rootScope, configuration, trace, qualifiedExpressionResolver);
+    }
+
+    public static void processImportsInFile(
+            boolean onlyClasses,
+            @NotNull WritableScope namespaceScope,
+            @NotNull List<JetImportDirective> importDirectives,
+            @NotNull JetScope rootScope,
+            @NotNull ModuleConfiguration configuration,
+            @NotNull BindingTrace trace,
+            @NotNull QualifiedExpressionResolver qualifiedExpressionResolver
+    ) {
+
+        Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(namespaceScope);
+        if (!onlyClasses) {
+            namespaceScope.clearImports();
+        }
+        Map<JetImportDirective, DeclarationDescriptor> resolvedDirectives = Maps.newHashMap();
+        Collection<JetImportDirective> defaultImportDirectives = Lists.newArrayList();
+        configuration.addDefaultImports(defaultImportDirectives);
+        for (JetImportDirective defaultImportDirective : defaultImportDirectives) {
+            TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace); //not to trace errors of default imports
+            qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, namespaceScope, delayedImporter, temporaryTrace, onlyClasses);
+        }
+
+        for (JetImportDirective importDirective : importDirectives) {
+            Collection<? extends DeclarationDescriptor> descriptors =
+                qualifiedExpressionResolver.processImportReference(importDirective, rootScope, namespaceScope, delayedImporter, trace, onlyClasses);
+            if (descriptors.size() == 1) {
+                resolvedDirectives.put(importDirective, descriptors.iterator().next());
+            }
+        }
+        delayedImporter.processImports();
+
+        if (!onlyClasses) {
             for (JetImportDirective importDirective : importDirectives) {
-                Collection<? extends DeclarationDescriptor> descriptors =
-                    qualifiedExpressionResolver.processImportReference(importDirective, rootScope, namespaceScope, delayedImporter, trace, onlyClasses);
-                if (descriptors.size() == 1) {
-                    resolvedDirectives.put(importDirective, descriptors.iterator().next());
-                }
-            }
-            delayedImporter.processImports();
-
-            if (!onlyClasses) {
-                for (JetImportDirective importDirective : importDirectives) {
-                    reportUselessImport(importDirective, namespaceScope, resolvedDirectives);
-                }
+                reportUselessImport(importDirective, namespaceScope, resolvedDirectives, trace);
             }
         }
     }
 
-    private void reportUselessImport(@NotNull JetImportDirective importDirective,
-                                     @NotNull WritableScope namespaceScope,
-                                     @NotNull Map<JetImportDirective, DeclarationDescriptor> resolvedDirectives) {
+    private static void reportUselessImport(
+        @NotNull JetImportDirective importDirective,
+        @NotNull WritableScope namespaceScope,
+        @NotNull Map<JetImportDirective, DeclarationDescriptor> resolvedDirectives,
+        @NotNull BindingTrace trace
+    ) {
 
         JetExpression importedReference = importDirective.getImportedReference();
         if (importedReference == null || !resolvedDirectives.containsKey(importDirective)) {
             return;
         }
-        String aliasName = JetPsiUtil.getAliasName(importDirective);
+        Name aliasName = JetPsiUtil.getAliasName(importDirective);
         if (aliasName == null) {
             return;
         }

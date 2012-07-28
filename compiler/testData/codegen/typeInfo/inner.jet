@@ -10,5 +10,5 @@ class Box<T>() {
 }
 
 fun box(): String {
-  return Box<String>.inner().isT("OK")
+  return Box<String>().inner().isT("OK")
 }

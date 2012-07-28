@@ -16,12 +16,10 @@
 
 package org.jetbrains.jet.codegen.forTestCompile;
 
-import com.google.common.io.Files;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.cli.KotlinCompiler;
+import org.jetbrains.jet.cli.common.ExitCode;
+import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.junit.Assert;
 
 import javax.tools.JavaCompiler;
@@ -29,12 +27,9 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarOutputStream;
 
 /**
  * Compile stdlib.jar that can be used in tests
@@ -63,12 +58,12 @@ public class ForTestCompileRuntime {
     }
 
     private static void compileStdlib(File destdir) throws IOException {
-        KotlinCompiler.ExitCode exitCode = new KotlinCompiler().exec(System.err,
+        ExitCode exitCode = new K2JVMCompiler().exec(System.err,
                 "-output", destdir.getPath(),
                 "-src", "./libraries/stdlib/src",
-                "-mode", "stdlib",
+                "-noStdlib",
                 "-classpath", "out/production/runtime");
-        if (exitCode != KotlinCompiler.ExitCode.OK) {
+        if (exitCode != ExitCode.OK) {
             throw new IllegalStateException("stdlib for test compilation failed: " + exitCode);
         }
     }
@@ -90,7 +85,15 @@ public class ForTestCompileRuntime {
     }
     
     private static void compileJavaPartOfBuiltins(File destdir) throws IOException {
-        JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
+        if (true) {
+            FileUtil.copyDir(new File("out/production/runtime"), destdir);
+        }
+        else {
+            doCompileJavaPartOfBuiltins(destdir);
+        }
+    }
+
+    private static void doCompileJavaPartOfBuiltins(File destdir) throws IOException {JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
 
         StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(null, Locale.ENGLISH, Charset.forName("utf-8"));
         try {
@@ -110,7 +113,7 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File runtimeJarForTests() {
-        return Runtime.runtime.getJarFile();
+        return ForTestCompileSomething.ACTUALLY_COMPILE ? Runtime.runtime.getJarFile() : new File("dist/kotlinc/lib/kotlin-runtime.jar");
     }
 
 }

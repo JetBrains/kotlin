@@ -1,7 +1,7 @@
 namespace test
 
-final class test.TwoFields : jet.Any {
-    final /*constructor*/ fun <init>(): test.TwoFields
-    final var a: jet.Int
-    final var b: jet.Short
+public final class test.TwoFields : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.TwoFields
+    public final var a: jet.Int
+    public final var b: jet.Short
 }

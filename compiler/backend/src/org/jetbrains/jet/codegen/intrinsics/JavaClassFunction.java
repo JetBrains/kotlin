@@ -25,8 +25,8 @@ import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class JavaClassFunction implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, @Nullable PsiElement element,
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, @Nullable PsiElement element,
             @Nullable List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
         JetCallExpression call = (JetCallExpression) element;
         ResolvedCall<? extends CallableDescriptor> resolvedCall = codegen.getBindingContext().get(BindingContext.RESOLVED_CALL, call.getCalleeExpression());

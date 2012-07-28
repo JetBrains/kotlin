@@ -35,7 +35,7 @@ public class KeywordsHandlerTest extends LightCompletionTestCase {
 
     public void testNoSpaceAfter() throws IOException {
         configureFromFileText("Test.kt", "fun test() { nul<caret> }");
-        complete();
+        forceCompleteFirst();
         checkResultByText("fun test() { null<caret> }");
     }
 
@@ -63,6 +63,13 @@ public class KeywordsHandlerTest extends LightCompletionTestCase {
         configureByFile(getTestName(false) + ".kt");
         complete();
         checkResultByFile(getTestName(false) + "_after.kt");
+    }
+
+    protected void forceCompleteFirst() {
+        complete();
+        if (myItems != null && myItems.length > 1) {
+            selectItem(myItems[0]);
+        }
     }
 
     @Override

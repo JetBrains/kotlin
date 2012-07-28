@@ -94,10 +94,13 @@ public class OverridingUtil {
     @NotNull
     public static OverrideCompatibilityInfo isOverridableBy(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
         if (superDescriptor instanceof FunctionDescriptor) {
-            if (subDescriptor instanceof PropertyDescriptor) return OverrideCompatibilityInfo.memberKindMismatch();
+            if (!(subDescriptor instanceof FunctionDescriptor)) return OverrideCompatibilityInfo.memberKindMismatch();
         }
-        if (superDescriptor instanceof PropertyDescriptor) {
-            if (subDescriptor instanceof FunctionDescriptor) return OverrideCompatibilityInfo.memberKindMismatch();
+        else if (superDescriptor instanceof PropertyDescriptor) {
+            if (!(subDescriptor instanceof PropertyDescriptor)) return OverrideCompatibilityInfo.memberKindMismatch();
+        }
+        else {
+            throw new IllegalArgumentException("This type of CallableDescriptor cannot be checked for overridability: " + superDescriptor);
         }
 
         // TODO: check outside of this method
@@ -182,7 +185,8 @@ public class OverridingUtil {
                 JetType superValueParameter = superValueParameters.get(i);
                 JetType subValueParameter = subValueParameters.get(i);
 
-                if (!JetTypeChecker.INSTANCE.equalTypes(superValueParameter, subValueParameter, axioms)) {
+                boolean bothErrors = ErrorUtils.isErrorType(superValueParameter) && ErrorUtils.isErrorType(subValueParameter);
+                if (!bothErrors && !JetTypeChecker.INSTANCE.equalTypes(superValueParameter, subValueParameter, axioms)) {
                     return OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameter, subValueParameter, OverrideCompatibilityInfo.Result.INCOMPATIBLE);
                 }
             }
@@ -244,17 +248,17 @@ public class OverridingUtil {
     }
 
     /**
-     * Get overriden descriptors that are declarations or delegations.
+     * Get overridden descriptors that are declarations or delegations.
      *
      * @see CallableMemberDescriptor.Kind#isReal()
      */
-    public static Collection<CallableMemberDescriptor> getOverridenDeclarations(CallableMemberDescriptor descriptor) {
+    public static Collection<CallableMemberDescriptor> getOverriddenDeclarations(CallableMemberDescriptor descriptor) {
         Map<ClassDescriptor, CallableMemberDescriptor> result = Maps.newHashMap();
-        getOverridenDeclarations(descriptor, result);
+        getOverriddenDeclarations(descriptor, result);
         return result.values();
     }
 
-    private static void getOverridenDeclarations(CallableMemberDescriptor descriptor, Map<ClassDescriptor, CallableMemberDescriptor> r) {
+    private static void getOverriddenDeclarations(CallableMemberDescriptor descriptor, Map<ClassDescriptor, CallableMemberDescriptor> r) {
         if (descriptor.getKind().isReal()) {
             r.put((ClassDescriptor) descriptor.getContainingDeclaration(), descriptor);
         }
@@ -262,9 +266,20 @@ public class OverridingUtil {
             if (descriptor.getOverriddenDescriptors().isEmpty()) {
                 throw new IllegalStateException();
             }
-            for (CallableMemberDescriptor overriden : descriptor.getOverriddenDescriptors()) {
-                getOverridenDeclarations(overriden, r);
+            for (CallableMemberDescriptor overridden : descriptor.getOverriddenDescriptors()) {
+                getOverriddenDeclarations(overridden, r);
             }
+        }
+    }
+
+    public static void bindOverride(CallableMemberDescriptor fromCurrent, CallableMemberDescriptor fromSupertype) {
+        fromCurrent.addOverriddenDescriptor(fromSupertype);
+
+        for (ValueParameterDescriptor parameterFromCurrent : fromCurrent.getValueParameters()) {
+            assert parameterFromCurrent.getIndex() < fromSupertype.getValueParameters().size()
+                    : "An override relation between functions implies that they have the same number of value parameters";
+            ValueParameterDescriptor parameterFromSupertype = fromSupertype.getValueParameters().get(parameterFromCurrent.getIndex());
+            parameterFromCurrent.addOverriddenDescriptor(parameterFromSupertype);
         }
     }
 

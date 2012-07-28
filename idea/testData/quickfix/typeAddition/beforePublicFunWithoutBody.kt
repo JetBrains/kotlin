@@ -1,4 +1,5 @@
-// "Add return type declaration" "false"
+// "Specify return type explicitly" "false"
+// ERROR: Function 'foo' without a body must be abstract
 package a
 
 class A() {

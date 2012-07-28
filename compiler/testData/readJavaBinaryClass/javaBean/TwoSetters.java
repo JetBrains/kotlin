@@ -1,6 +1,6 @@
 package test;
 
-class TwoSetters {
-    void setSize(String size) { }
-    void setSize(int size) { }
+public class TwoSetters {
+    public void setSize(String size) { }
+    public void setSize(int size) { }
 }

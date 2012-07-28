@@ -1,4 +1,4 @@
-fun <erased T : Any> T?.iterator() = object {
+fun <T : Any> T?.iterator() = object {
     var hasNext = this@iterator != null
       private set
 

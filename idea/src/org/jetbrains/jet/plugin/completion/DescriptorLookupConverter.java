@@ -20,9 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.Iconable;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -30,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
 import org.jetbrains.jet.plugin.completion.handlers.JetClassInsertHandler;
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
@@ -43,10 +42,13 @@ import java.util.List;
 public final class DescriptorLookupConverter {
 
     private final static JetFunctionInsertHandler EMPTY_FUNCTION_HANDLER = new JetFunctionInsertHandler(
-            JetFunctionInsertHandler.CaretPosition.AFTER_BRACKETS);
+            JetFunctionInsertHandler.CaretPosition.AFTER_BRACKETS, JetFunctionInsertHandler.BracketType.PARENTHESIS);
 
-    private final static JetFunctionInsertHandler PARAMS_FUNCTION_HANDLER = new JetFunctionInsertHandler(
-            JetFunctionInsertHandler.CaretPosition.IN_BRACKETS);
+    private final static JetFunctionInsertHandler PARAMS_PARENTHESIS_FUNCTION_HANDLER = new JetFunctionInsertHandler(
+            JetFunctionInsertHandler.CaretPosition.IN_BRACKETS, JetFunctionInsertHandler.BracketType.PARENTHESIS);
+
+    private final static JetFunctionInsertHandler PARAMS_BRACES_FUNCTION_HANDLER = new JetFunctionInsertHandler(
+            JetFunctionInsertHandler.CaretPosition.IN_BRACKETS, JetFunctionInsertHandler.BracketType.BRACES);
 
     private DescriptorLookupConverter() {}
 
@@ -55,28 +57,24 @@ public final class DescriptorLookupConverter {
             @NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration) {
 
         LookupElementBuilder element = LookupElementBuilder.create(
-                new JetLookupObject(descriptor, bindingContext, declaration), descriptor.getName());
+                new JetLookupObject(descriptor, bindingContext, declaration), descriptor.getName().getName());
+
+        String presentableText = descriptor.getName().getName();
         String typeText = "";
         String tailText = "";
-        boolean tailTextGrayed = false;
+        boolean tailTextGrayed = true;
 
         if (descriptor instanceof FunctionDescriptor) {
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
             JetType returnType = functionDescriptor.getReturnType();
             typeText = DescriptorRenderer.TEXT.renderType(returnType);
-
-            tailText = "(" + StringUtil.join(functionDescriptor.getValueParameters(), new Function<ValueParameterDescriptor, String>() {
-                @Override
-                public String fun(ValueParameterDescriptor valueParameterDescriptor) {
-                    return valueParameterDescriptor.getName() + ":" +
-                           DescriptorRenderer.TEXT.renderType(valueParameterDescriptor.getType());
-                }
-            }, ",") + ")";
+            presentableText += DescriptorRenderer.TEXT.renderFunctionParameters(functionDescriptor);
 
             boolean extensionFunction = functionDescriptor.getReceiverParameter().exists();
             DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-            if (extensionFunction && containingDeclaration != null) {
-                tailText += " defined in " + DescriptorUtils.getFQName(containingDeclaration);
+            if (containingDeclaration != null && extensionFunction) {
+                tailText += " for " + DescriptorRenderer.TEXT.renderType(functionDescriptor.getReceiverParameter().getType());
+                tailText += " in " + DescriptorUtils.getFQName(containingDeclaration);
             }
 
             // TODO: A special case when it's impossible to resolve type parameters from arguments. Need '<' caret '>'
@@ -85,7 +83,12 @@ public final class DescriptorLookupConverter {
                 element = element.setInsertHandler(EMPTY_FUNCTION_HANDLER);
             }
             else {
-                element = element.setInsertHandler(PARAMS_FUNCTION_HANDLER);
+                if (functionDescriptor.getValueParameters().size() == 1
+                        && JetStandardClasses.isFunctionType(functionDescriptor.getValueParameters().get(0).getType())) {
+                    element = element.setInsertHandler(PARAMS_BRACES_FUNCTION_HANDLER);
+                } else {
+                    element = element.setInsertHandler(PARAMS_PARENTHESIS_FUNCTION_HANDLER);
+                }
             }
         }
         else if (descriptor instanceof VariableDescriptor) {
@@ -103,7 +106,7 @@ public final class DescriptorLookupConverter {
             typeText = DescriptorRenderer.TEXT.render(descriptor);
         }
 
-        element = element.setTailText(tailText, tailTextGrayed).setTypeText(typeText);
+        element = element.setTailText(tailText, tailTextGrayed).setTypeText(typeText).setPresentableText(presentableText);
         element = element.setIcon(JetDescriptorIconProvider.getIcon(descriptor, Iconable.ICON_FLAG_VISIBILITY));
 
         return element;

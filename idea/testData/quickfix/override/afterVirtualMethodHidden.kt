@@ -1,6 +1,6 @@
 // "Add 'override' modifier" "true"
 open class A() {
-    fun foo() {}
+    open fun foo() {}
 }
 
 class B() : A() {

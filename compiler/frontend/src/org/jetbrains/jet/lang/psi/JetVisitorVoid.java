@@ -38,10 +38,6 @@ public class JetVisitorVoid extends PsiElementVisitor {
         visitDeclaration(classObject);
     }
 
-    public void visitConstructor(JetSecondaryConstructor constructor) {
-        visitDeclaration(constructor);
-    }
-
     public void visitNamedFunction(JetNamedFunction function) {
         visitNamedDeclaration(function);
     }
@@ -56,6 +52,10 @@ public class JetVisitorVoid extends PsiElementVisitor {
 
     public void visitJetFile(JetFile file) {
         visitFile(file);
+    }
+
+    public void visitScript(JetScript script) {
+        visitDeclaration(script);
     }
 
     public void visitImportDirective(JetImportDirective importDirective) {
@@ -270,7 +270,7 @@ public class JetVisitorVoid extends PsiElementVisitor {
         visitExpression(expression);
     }
 
-    public void visitIdeTemplateExpression(JetIdeTemplateExpression expression) {
+    public void visitIdeTemplate(JetIdeTemplate expression) {
     }
 
     public void visitCatchSection(JetCatchClause catchClause) {

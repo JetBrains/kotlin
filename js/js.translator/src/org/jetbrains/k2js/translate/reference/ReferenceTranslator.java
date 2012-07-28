@@ -37,13 +37,13 @@ public final class ReferenceTranslator {
 
     @NotNull
     public static JsExpression translateSimpleName(@NotNull JetSimpleNameExpression expression,
-                                                   @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         return getAccessTranslator(expression, context).translateAsGet();
     }
 
     @NotNull
     public static JsExpression translateAsFQReference(@NotNull DeclarationDescriptor referencedDescriptor,
-                                                      @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         JsExpression qualifier = context.getQualifierForDescriptor(referencedDescriptor);
         if (qualifier == null) {
             return translateAsLocalNameReference(referencedDescriptor, context);
@@ -54,21 +54,21 @@ public final class ReferenceTranslator {
 
     @NotNull
     public static JsExpression translateAsLocalNameReference(@NotNull DeclarationDescriptor referencedDescriptor,
-                                                             @NotNull TranslationContext context) {
-        JsName referencedName = context.getNameForDescriptor(referencedDescriptor);
-        return referencedName.makeRef();
+            @NotNull TranslationContext context) {
+        //Preconditions.checkNotNull(referencedDescriptor, "No referencedDescriptor available");
+        return context.getNameForDescriptor(referencedDescriptor).makeRef();
     }
 
     @NotNull
     public static AccessTranslator getAccessTranslator(@NotNull JetSimpleNameExpression referenceExpression,
-                                                       @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         return getAccessTranslator(referenceExpression, null, context);
     }
 
     @NotNull
     public static AccessTranslator getAccessTranslator(@NotNull JetSimpleNameExpression referenceExpression,
-                                                       @Nullable JsExpression receiver,
-                                                       @NotNull TranslationContext context) {
+            @Nullable JsExpression receiver,
+            @NotNull TranslationContext context) {
         if (isBackingFieldReference(referenceExpression)) {
             return BackingFieldAccessTranslator.newInstance(referenceExpression, context);
         }

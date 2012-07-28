@@ -26,11 +26,11 @@ public final class StringTest extends AbstractExpressionTest {
     }
 
     public void testStringConstant() throws Exception {
-        checkFooBoxIsTrue("stringConstant.kt");
+        fooBoxTest();
     }
 
     public void testStringAssignment() throws Exception {
-        checkFooBoxIsTrue("stringAssignment.kt");
+        fooBoxTest();
     }
 
     public void testIntInTemplate() throws Exception {
@@ -45,7 +45,19 @@ public final class StringTest extends AbstractExpressionTest {
         runFunctionOutputTest("multipleExpressionsInTemplate.kt", "foo", "box", "left = 3\nright = 2\nsum = 5\n");
     }
 
-    public void testToStringMethod() throws Exception {
-        checkFooBoxIsTrue("objectToStringCallInTemplate.kt");
+    public void testObjectToStringCallInTemplate() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testStringNotEqualToNumber() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testKt2227() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testKt2227_2() throws Exception {
+        fooBoxTest();
     }
 }

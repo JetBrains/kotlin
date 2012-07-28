@@ -16,18 +16,17 @@
 
 package org.jetbrains.jet.lang.psi;
 
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.List;
 
 /**
  * @author max
  */
-public interface JetClassOrObject extends PsiElement {
-    List<JetDeclaration> getDeclarations();
-
+public interface JetClassOrObject extends PsiNameIdentifierOwner, JetDeclarationContainer {
     @Nullable
     JetDelegationSpecifierList getDelegationSpecifierList();
 
@@ -41,7 +40,7 @@ public interface JetClassOrObject extends PsiElement {
     boolean hasPrimaryConstructor();
 
     @Nullable
-    String getName();
+    Name getNameAsName();
 
     @Nullable
     JetModifierList getModifierList();

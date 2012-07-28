@@ -30,7 +30,7 @@ import javax.swing.*;
  */
 public final class JetDescriptorIconProvider {
 
-    private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.plugin.compiler.JetCompiler");
+    private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.plugin.JetDescriptorIconProvider");
 
     private JetDescriptorIconProvider() {
     }
@@ -55,7 +55,7 @@ public final class JetDescriptorIconProvider {
                 return PlatformIcons.PUBLIC_ICON;
             }
 
-            if (visibility == Visibilities.PROTECTED || visibility == Visibilities.INTERNAL_PROTECTED) {
+            if (visibility == Visibilities.PROTECTED) {
                 return PlatformIcons.PROTECTED_ICON;
             }
 
@@ -76,6 +76,11 @@ public final class JetDescriptorIconProvider {
             return PlatformIcons.PACKAGE_OPEN_ICON;
         }
         if (descriptor instanceof FunctionDescriptor) {
+            FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+            if (functionDescriptor.getReceiverParameter().exists()) {
+                return JetIcons.EXTENSION_FUNCTION;
+            }
+
             return descriptor.getContainingDeclaration() instanceof ClassDescriptor ?
                    PlatformIcons.METHOD_ICON : JetIcons.FUNCTION;
         }
@@ -92,7 +97,7 @@ public final class JetDescriptorIconProvider {
                 case OBJECT:
                     return JetIcons.OBJECT;
                 case CLASS:
-                    return PlatformIcons.CLASS_ICON;
+                    return JetIcons.CLASS;
                 default:
                     LOG.warn("No icon for descriptor: " + descriptor);
                     return null;
@@ -103,11 +108,11 @@ public final class JetDescriptorIconProvider {
         }
 
         if (descriptor instanceof LocalVariableDescriptor) {
-            return ((LocalVariableDescriptor)descriptor).isVar() ? JetIcons.VAR : JetIcons.VAL;
+            return ((VariableDescriptor) descriptor).isVar() ? JetIcons.VAR : JetIcons.VAL;
         }
 
         if (descriptor instanceof PropertyDescriptor) {
-            return ((PropertyDescriptor)descriptor).isVar() ? JetIcons.FIELD_VAR : JetIcons.FIELD_VAL;
+            return ((VariableDescriptor) descriptor).isVar() ? JetIcons.FIELD_VAR : JetIcons.FIELD_VAL;
         }
 
         if (descriptor instanceof TypeParameterDescriptor) {

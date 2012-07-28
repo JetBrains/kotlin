@@ -31,7 +31,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.TipsManager;
+import org.jetbrains.jet.cli.jvm.compiler.TipsManager;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
+import org.jetbrains.jet.plugin.completion.weigher.JetCompletionSorting;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
@@ -64,6 +65,7 @@ public class JetCompletionContributor extends CompletionContributor {
                    protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
                            @NotNull CompletionResultSet result) {
                        result.restartCompletionWhenNothingMatches();
+                       result = JetCompletionSorting.addJetSorting(parameters, result);
 
                        CompletionSession session = new CompletionSession();
                        session.customInvocationCount = parameters.getInvocationCount();
@@ -354,7 +356,7 @@ public class JetCompletionContributor extends CompletionContributor {
                     return false;
                 }
 
-                return result.getPrefixMatcher().prefixMatches(descriptor.getName()) && isVisibleDescriptor(descriptor, session);
+                return result.getPrefixMatcher().prefixMatches(descriptor.getName().getName()) && isVisibleDescriptor(descriptor, session);
             }
         });
 

@@ -19,15 +19,16 @@ package org.jetbrains.jet.completion;
 import com.intellij.codeInsight.completion.CodeCompletionHandlerBase;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.completion.LightCompletionTestCase;
+import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupManager;
-import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.testing.ConfigRuntimeUtil;
 import org.jetbrains.jet.testing.InTextDirectivesUtils;
+import org.jetbrains.jet.utils.ExceptionUtils;
 
 /**
  * @author Nikolay.Krasko
@@ -71,7 +72,7 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
                     myItems = new LookupElement[0];
                 }
 
-                ExpectedCompletionUtils.assertContainsRenderedItems(expected, myItems);
+                ExpectedCompletionUtils.assertContainsRenderedItems(expected, myItems, completionUtils.isWithOrder(fileText));
                 ExpectedCompletionUtils.assertNotContainsRenderedItems(unexpected, myItems);
 
                 if (itemsNumber != null) {
@@ -89,7 +90,7 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
             }
         }
         catch (Exception e) {
-            throw new AssertionError(e);
+            throw ExceptionUtils.rethrow(e);
         }
     }
 
@@ -108,9 +109,9 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
 
     @Override
     protected void complete(final int time) {
-        new CodeCompletionHandlerBase(type, false, false, true).invokeCompletion(getProject(), getEditor(), time, false);
+        new CodeCompletionHandlerBase(type, false, false, true).invokeCompletion(getProject(), getEditor(), time, false, false);
 
-        LookupImpl lookup = (LookupImpl)LookupManager.getActiveLookup(myEditor);
+        Lookup lookup = LookupManager.getActiveLookup(myEditor);
         myItems = lookup == null ? null : lookup.getItems().toArray(LookupElement.EMPTY_ARRAY);
         myPrefix = lookup == null ? null : lookup.itemPattern(lookup.getItems().get(0));
     }

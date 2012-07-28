@@ -27,17 +27,20 @@ public abstract class JetCompletionMultiTestBase extends CompletionTestCase {
 
     /**
      * @param completionLevel {@see CompletionParameters.getInvocationCount()} javadoc
+     * @param fileNameList
      * @throws Exception
      */
-    protected void doFileTest(int completionLevel) {
+    protected void doFileTest(int completionLevel, String[] fileNameList) {
         try {
-            configureByFiles(null, getFileNameList());
+            configureByFiles(null, fileNameList);
             complete(completionLevel);
 
             final String fileText = getFile().getText();
             final ExpectedCompletionUtils completionUtils = new ExpectedCompletionUtils();
 
-            ExpectedCompletionUtils.assertContainsRenderedItems(completionUtils.itemsShouldExist(fileText), myItems);
+            ExpectedCompletionUtils.assertContainsRenderedItems(
+                    completionUtils.itemsShouldExist(fileText), myItems, completionUtils.isWithOrder(fileText));
+
             ExpectedCompletionUtils.assertNotContainsRenderedItems(completionUtils.itemsShouldAbsent(fileText), myItems);
 
             Integer itemsNumber = completionUtils.getExpectedNumber(fileText);
@@ -49,7 +52,11 @@ public abstract class JetCompletionMultiTestBase extends CompletionTestCase {
         }
     }
 
+    protected void doFileTest(int completionLevel) {
+        doFileTest(completionLevel, getFileNameList());
+    }
+
     protected void doFileTest() {
-        doFileTest(1);
+        doFileTest(1, getFileNameList());
     }
 }

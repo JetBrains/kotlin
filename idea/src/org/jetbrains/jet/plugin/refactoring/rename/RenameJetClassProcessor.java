@@ -16,10 +16,8 @@
 
 package org.jetbrains.jet.plugin.refactoring.rename;
 
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.rename.RenamePsiElementProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;

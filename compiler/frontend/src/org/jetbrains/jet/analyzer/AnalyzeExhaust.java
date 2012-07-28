@@ -19,6 +19,7 @@ package org.jetbrains.jet.analyzer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 /**
@@ -27,32 +28,39 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 public class AnalyzeExhaust {
     @NotNull
     private final BindingContext bindingContext;
-    private final JetStandardLibrary standardLibrary;
     private final Throwable error;
 
+    @Nullable
+    private final BodiesResolveContext bodiesResolveContext;
+
     private AnalyzeExhaust(@NotNull BindingContext bindingContext,
-            @Nullable JetStandardLibrary standardLibrary, @Nullable Throwable error) {
+            @Nullable BodiesResolveContext bodiesResolveContext, @Nullable Throwable error) {
         this.bindingContext = bindingContext;
-        this.standardLibrary = standardLibrary;
         this.error = error;
+        this.bodiesResolveContext = bodiesResolveContext;
     }
 
-    public static AnalyzeExhaust success(@NotNull BindingContext bindingContext, @NotNull JetStandardLibrary standardLibrary) {
-        return new AnalyzeExhaust(bindingContext, standardLibrary, null);
+    public static AnalyzeExhaust success(@NotNull BindingContext bindingContext) {
+        return new AnalyzeExhaust(bindingContext, null, null);
+    }
+
+    public static AnalyzeExhaust success(@NotNull BindingContext bindingContext,
+            BodiesResolveContext bodiesResolveContext) {
+        return new AnalyzeExhaust(bindingContext, bodiesResolveContext, null);
     }
 
     public static AnalyzeExhaust error(@NotNull BindingContext bindingContext, @NotNull Throwable error) {
         return new AnalyzeExhaust(bindingContext, null, error);
     }
 
-    @NotNull
-    public BindingContext getBindingContext() {
-        return bindingContext;
+    @Nullable
+    public BodiesResolveContext getBodiesResolveContext() {
+        return bodiesResolveContext;
     }
 
     @NotNull
-    public JetStandardLibrary getStandardLibrary() {
-        return standardLibrary;
+    public BindingContext getBindingContext() {
+        return bindingContext;
     }
 
     @NotNull

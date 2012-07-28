@@ -20,25 +20,34 @@ import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.utils.BitSetUtils;
+
+import java.util.BitSet;
 
 /**
  * @author Stepan Koltsov
  */
-public class JetMethodAnnotation extends PsiAnnotationWrapper {
+public class JetMethodAnnotation extends PsiAnnotationWithFlags {
 
     public JetMethodAnnotation(@Nullable PsiAnnotation psiAnnotation) {
         super(psiAnnotation);
     }
     
-    private int kind;
-    private boolean kindInitialized;
-    public int kind() {
-        if (!kindInitialized) {
-            kind = getIntAttribute(JvmStdlibNames.JET_METHOD_KIND_FIELD, JvmStdlibNames.JET_METHOD_KIND_DEFAULT);
-            kindInitialized = true;
+    private BitSet flags = null;
+    @NotNull
+    public BitSet flags() {
+        if (flags == null) {
+            int flagsValue = getIntAttribute(JvmStdlibNames.JET_METHOD_FLAGS_FIELD, JvmStdlibNames.FLAGS_DEFAULT_VALUE);
+            if (flagsValue == JvmStdlibNames.FLAGS_DEFAULT_VALUE) {
+                // for compatibility
+                flagsValue = getIntAttribute(JvmStdlibNames.JET_METHOD_KIND_FIELD, JvmStdlibNames.FLAGS_DEFAULT_VALUE);
+            }
+
+            flags = BitSetUtils.toBitSet(flagsValue);
         }
-        return kind;
+        return flags;
     }
 
     private String typeParameters;
@@ -80,6 +89,6 @@ public class JetMethodAnnotation extends PsiAnnotationWrapper {
     }
 
     public static JetMethodAnnotation get(PsiMethod psiMethod) {
-        return new JetMethodAnnotation(psiMethod.getModifierList().findAnnotation(JvmStdlibNames.JET_METHOD.getFqName().getFqName()));
+        return new JetMethodAnnotation(JavaDescriptorResolver.findAnnotation(psiMethod, JvmStdlibNames.JET_METHOD.getFqName().getFqName()));
     }
 }

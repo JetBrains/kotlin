@@ -16,70 +16,16 @@
 
 package org.jetbrains.jet.lang.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.Language;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.NavigatablePsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetLanguage;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
- * @author max
+ * @author Nikolay Krasko
  */
-public class JetElement extends ASTWrapperPsiElement {
-    public JetElement(@NotNull ASTNode node) {
-        super(node);
-    }
+public interface JetElement extends NavigatablePsiElement {
+    <D> void acceptChildren(@NotNull JetTreeVisitor<D> visitor, D data);
 
-    /**
-     * Comes along with @Nullable to indicate null is only possible if parsing error present
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.METHOD})
-    public static @interface IfNotParsed {}
+    void accept(@NotNull JetVisitorVoid visitor);
 
-    @NotNull
-    @Override
-    public Language getLanguage() {
-        return JetLanguage.INSTANCE;
-    }
-
-    @Override
-    public String toString() {
-        return getNode().getElementType().toString();
-    }
-
-    @Override
-    public final void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof JetVisitorVoid) {
-            accept((JetVisitorVoid) visitor);
-        }
-        else {
-            visitor.visitElement(this);
-        }
-    }
-
-    public <D> void acceptChildren(@NotNull JetTreeVisitor<D> visitor, D data) {
-        PsiElement child = getFirstChild();
-        while (child != null) {
-            if (child instanceof JetElement) {
-                ((JetElement) child).accept(visitor, data);
-            }
-            child = child.getNextSibling();
-        }
-    }
-
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitJetElement(this);
-    }
-    
-    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
-        return visitor.visitJetElement(this, data);
-    }
+    <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data);
 }

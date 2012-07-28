@@ -1,4 +1,4 @@
 package test;
 
-final class ClassWithTypeParameter<P> {
+public final class ClassWithTypeP<P> {
 }

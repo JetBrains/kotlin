@@ -24,7 +24,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author abreslav
  */
-public abstract class JetLoopExpression extends JetExpression implements JetStatementExpression {
+public abstract class JetLoopExpression extends JetExpressionImpl implements JetStatementExpression {
     public JetLoopExpression(@NotNull ASTNode node) {
         super(node);
     }

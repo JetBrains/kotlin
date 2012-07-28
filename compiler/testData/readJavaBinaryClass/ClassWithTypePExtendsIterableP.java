@@ -1,4 +1,4 @@
 package test;
 
-abstract class ClassTypeTypePRefSuper<P> implements java.lang.Iterable<P> {
+public abstract class ClassWithTypePExtendsIterableP<P> implements java.lang.Iterable<P> {
 }

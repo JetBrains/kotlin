@@ -25,7 +25,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author max
  */
-public class JetImportDirective extends JetElement {
+public class JetImportDirective extends JetElementImpl {
     public JetImportDirective(@NotNull ASTNode node) {
         super(node);
     }

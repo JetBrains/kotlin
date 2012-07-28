@@ -7,39 +7,18 @@ import java.lang.*;
 
 
 native
-val noImpl : Nothing = throw Exception();
+public val noImpl : Nothing = throw Exception();
 
 library("println")
-fun println() {}
+public fun println() {}
 library("println")
-fun println(s : Any?) {}
+public fun println(s : Any?) {}
 library("print")
-fun print(s : Any?) {}
+public fun print(s : Any?) {}
 //TODO: consistent parseInt
 library("parseInt")
-fun parseInt(s : String) : Int = js.noImpl
+public fun parseInt(s : String) : Int = js.noImpl
 library
-fun safeParseInt(s : String) : Int? = js.noImpl
+public fun safeParseInt(s : String) : Int? = js.noImpl
 library
-fun safeParseDouble(s : String) : Double? = js.noImpl
-library
-open class Exception() : Throwable() {}
-library
-class NumberFormatException() : Exception() {}
-
-native
-fun setTimeout(callback : ()-> Unit) {}
-native
-fun setTimeout(callback : ()-> Unit, ms : Int) {}
-native
-fun setInterval(callback : ()-> Unit, ms : Int) {}
-native
-fun setInterval(callback : ()-> Unit) {}
-
-
-native
-open class DomElement() {
-    val offsetLeft = 0.0;
-    val offsetTop = 0.0;
-    val offsetParent : DomElement? = DomElement();
-}
+public fun safeParseDouble(s : String) : Double? = js.noImpl

@@ -2,6 +2,6 @@
 
 package test;
 
-class MyException {
-    MyException(String message, Throwable cause) {}
+public class MyException {
+    public MyException(String message, Throwable cause) {}
 }

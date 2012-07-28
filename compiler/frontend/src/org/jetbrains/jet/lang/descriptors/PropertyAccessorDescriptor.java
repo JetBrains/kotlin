@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.descriptors;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -29,7 +30,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorImpl implements FunctionDescriptor, MemberDescriptor {
+public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorNonRootImpl implements FunctionDescriptor, MemberDescriptor {
 
     private final boolean hasBody;
     private final boolean isDefault;
@@ -43,7 +44,7 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
             @NotNull Visibility visibility,
             @NotNull PropertyDescriptor correspondingProperty,
             @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull String name,
+            @NotNull Name name,
             boolean hasBody,
             boolean isDefault,
             Kind kind) {
@@ -71,9 +72,7 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
 
     @NotNull
     @Override
-    public PropertyAccessorDescriptor getOriginal() {
-        return (PropertyAccessorDescriptor) super.getOriginal();
-    }
+    public abstract PropertyAccessorDescriptor getOriginal();
 
     @NotNull
     @Override
@@ -122,7 +121,7 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
 
     @NotNull
     @Override
-    public PropertyAccessorDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides) {
+    public PropertyAccessorDescriptor copy(DeclarationDescriptor newOwner, Modality modality, boolean makeInvisible, Kind kind, boolean copyOverrides) {
         throw new UnsupportedOperationException("Accessors must be copied by the corresponding property");
     }
 

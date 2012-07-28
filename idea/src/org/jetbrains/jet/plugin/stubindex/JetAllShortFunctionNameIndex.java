@@ -30,6 +30,7 @@ import java.util.Collection;
  */
 public class JetAllShortFunctionNameIndex extends StringStubIndexExtension<JetNamedFunction> {
     private static final JetShortClassNameIndex ourInstance = new JetShortClassNameIndex();
+
     public static JetShortClassNameIndex getInstance() {
         return ourInstance;
     }

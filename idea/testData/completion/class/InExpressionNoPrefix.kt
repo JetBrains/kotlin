@@ -1,6 +1,6 @@
 class Test {
     fun test() {
-        <caret>
+        val some : <caret>
     }
 }
 

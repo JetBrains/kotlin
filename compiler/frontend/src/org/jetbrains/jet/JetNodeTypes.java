@@ -30,27 +30,25 @@ public interface JetNodeTypes {
 
     IElementType CLASS     = JetStubElementTypes.CLASS;
     IElementType FUN       = JetStubElementTypes.FUNCTION;
-
-    JetNodeType PROPERTY   = new JetNodeType("PROPERTY", JetProperty.class);
+    IElementType PROPERTY  = JetStubElementTypes.PROPERTY;
 
     JetNodeType TYPEDEF    = new JetNodeType("TYPEDEF", JetTypedef.class);
-    JetNodeType OBJECT_DECLARATION = new JetNodeType("OBJECT_DECLARATION", JetObjectDeclaration.class);
+    IElementType OBJECT_DECLARATION = JetStubElementTypes.OBJECT_DECLARATION;
     JetNodeType OBJECT_DECLARATION_NAME = new JetNodeType("OBJECT_DECLARATION_NAME", JetObjectDeclarationName.class);
 
     JetNodeType CLASS_OBJECT          = new JetNodeType("CLASS_OBJECT", JetClassObject.class);
-    JetNodeType CONSTRUCTOR           = new JetNodeType("CONSTRUCTOR", JetSecondaryConstructor.class);
-    JetNodeType ENUM_ENTRY            = new JetNodeType("ENUM_ENTRY", JetEnumEntry.class);
+    IElementType ENUM_ENTRY            = JetStubElementTypes.ENUM_ENTRY;
     JetNodeType ANONYMOUS_INITIALIZER = new JetNodeType("ANONYMOUS_INITIALIZER", JetClassInitializer.class);
 
-    JetNodeType TYPE_PARAMETER_LIST                 = new JetNodeType("TYPE_PARAMETER_LIST", JetTypeParameterList.class);
-    JetNodeType TYPE_PARAMETER                      = new JetNodeType("TYPE_PARAMETER", JetTypeParameter.class);
+    IElementType TYPE_PARAMETER_LIST                 = JetStubElementTypes.TYPE_PARAMETER_LIST;
+    IElementType TYPE_PARAMETER                      = JetStubElementTypes.TYPE_PARAMETER;
     JetNodeType DELEGATION_SPECIFIER_LIST           = new JetNodeType("DELEGATION_SPECIFIER_LIST", JetDelegationSpecifierList.class);
     JetNodeType DELEGATOR_BY                        = new JetNodeType("DELEGATOR_BY", JetDelegatorByExpressionSpecifier.class);
     JetNodeType DELEGATOR_SUPER_CALL                = new JetNodeType("DELEGATOR_SUPER_CALL", JetDelegatorToSuperCall.class);
     JetNodeType DELEGATOR_SUPER_CLASS               = new JetNodeType("DELEGATOR_SUPER_CLASS", JetDelegatorToSuperClass.class);
     JetNodeType CONSTRUCTOR_CALLEE                  = new JetNodeType("CONSTRUCTOR_CALLEE", JetConstructorCalleeExpression.class);
-    JetNodeType VALUE_PARAMETER_LIST                = new JetNodeType("VALUE_PARAMETER_LIST", JetParameterList.class);
-    JetNodeType VALUE_PARAMETER                     = new JetNodeType("VALUE_PARAMETER", JetParameter.class);
+    IElementType VALUE_PARAMETER_LIST               = JetStubElementTypes.VALUE_PARAMETER_LIST;
+    IElementType VALUE_PARAMETER                    = JetStubElementTypes.VALUE_PARAMETER;
 
     JetNodeType CLASS_BODY                          = new JetNodeType("CLASS_BODY", JetClassBody.class);
     JetNodeType IMPORT_DIRECTIVE                    = new JetNodeType("IMPORT_DIRECTIVE", JetImportDirective.class);
@@ -161,6 +159,7 @@ public interface JetNodeTypes {
     JetNodeType WHEN_CONDITION_EXPRESSION = new JetNodeType("WHEN_CONDITION_WITH_EXPRESSION", JetWhenConditionWithExpression.class);
 
     JetNodeType NAMESPACE_HEADER = new JetNodeType("NAMESPACE_HEADER", JetNamespaceHeader.class);
+    JetNodeType SCRIPT = new JetNodeType("SCRIPT", JetScript.class);
 
-    JetNodeType IDE_TEMPLATE_EXPRESSION   = new JetNodeType("IDE_TEMPLATE_EXPRESSION", JetIdeTemplateExpression.class);
+    JetNodeType IDE_TEMPLATE_EXPRESSION   = new JetNodeType("IDE_TEMPLATE_EXPRESSION", JetIdeTemplate.class);
 }

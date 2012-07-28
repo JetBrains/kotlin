@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.k2js.translate.context.Namer;
 
 import java.util.Collections;
 import java.util.List;
@@ -94,6 +93,10 @@ public final class PsiUtils {
         return (binaryExpression.getOperationToken() == JetTokens.NOT_IN);
     }
 
+    public static boolean isNegatedOperation(@NotNull JetBinaryExpression binaryExpression) {
+        return (binaryExpression.getOperationToken() == JetTokens.EXCLEQ) || isNotInOperation(binaryExpression);
+    }
+
     private static boolean isInOperation(@NotNull JetBinaryExpression binaryExpression) {
         return (binaryExpression.getOperationToken() == JetTokens.IN_KEYWORD);
     }
@@ -141,17 +144,6 @@ public final class PsiUtils {
         JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
         assert nameAsDeclaration != null;
         return nameAsDeclaration;
-    }
-
-    @NotNull
-    public static String getNamespaceName(@NotNull JetFile psiFile) {
-        JetNamespaceHeader namespaceHeader = psiFile.getNamespaceHeader();
-        String name = namespaceHeader.getName();
-        assert name != null : "NamespaceHeader must have a name";
-        if (name.isEmpty()) {
-            return Namer.getRootNamespaceName();
-        }
-        return name;
     }
 
     @NotNull

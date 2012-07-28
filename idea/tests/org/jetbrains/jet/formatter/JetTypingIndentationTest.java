@@ -49,8 +49,11 @@ public class JetTypingIndentationTest extends LightCodeInsightTestCase {
         doFileNewlineTest();
     }
 
-    // TODO
-    public void enabletestFunctionBlock() {
+    public void testFunctionBlock() {
+        doFileNewlineTest();
+    }
+
+    public void testFunctionWithInference() {
         doFileNewlineTest();
     }
 
@@ -59,6 +62,10 @@ public class JetTypingIndentationTest extends LightCodeInsightTestCase {
     }
 
     public void testNotFirstParameter() {
+        doFileNewlineTest();
+    }
+
+    public void testPropertyWithInference() {
         doFileNewlineTest();
     }
 

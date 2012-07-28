@@ -1,47 +1,202 @@
 <project name="Update Dependencies" default="update">
-    <property name="build.zip" value="ideaIC-117.SNAPSHOT.win.zip"/>
+    <property name="idea.sdk.fetch.needed" value="true"/>
 
-    <target name="update">
-        <execute_update/>
+    <target name="update" depends="fetch-third-party">
+        <execute_update
+            base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt343/67291:id"
+            build.zip="ideaIC-120.SNAPSHOT.win.zip"
+        />
     </target>
 
-    <target name="jb_update">
-        <execute_update teamcity="http://buildserver.labs.intellij.net" teamcity.build="bt2560"/>
+    <target name="jb_update" depends="fetch-third-party">
+        <execute_update
+            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt24/1481384:id"
+            build.zip="ideaIC-120.214.win.zip"
+        />
     </target>
+
+    <target name="fetch-third-party">
+        <mkdir dir="dependencies"/>
+        <mkdir dir="dependencies/download"/>
+
+        <!-- ProGuard -->
+        <get src="http://heanet.dl.sourceforge.net/project/proguard/proguard%20beta/4.8beta/proguard4.8beta1.zip"
+             dest="dependencies/download/proguard4.8beta1.zip" usetimestamp="true"/>
+
+        <delete file="dependencies/proguard.jar" failonerror="false"/>
+        <unzip src="dependencies/download/proguard4.8beta1.zip" dest="dependencies">
+            <patternset>
+                <include name="proguard4.8beta1/lib/proguard.jar"/>
+            </patternset>
+            <mapper type="flatten"/>
+        </unzip>
+
+        <!-- ant contrib -->
+        <get src="http://heanet.dl.sourceforge.net/project/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3-bin.zip"
+             dest="dependencies/download/ant-contrib-1.0b3-bin.zip" usetimestamp="true"/>
+
+        <delete file="dependencies/ant-contrib.jar" failonerror="false"/>
+        <unzip src="dependencies/download/ant-contrib-1.0b3-bin.zip" dest="dependencies">
+            <patternset>
+                <include name="ant-contrib/ant-contrib-1.0b3.jar"/>
+            </patternset>
+            <mapper type="merge" to="ant-contrib.jar"/>
+        </unzip>
+
+        <!-- JarJar -->
+        <get src="http://jarjar.googlecode.com/files/jarjar-1.2.jar" dest="dependencies/download/jarjar-1.2.jar" usetimestamp="true"/>
+        <copy file="dependencies/download/jarjar-1.2.jar" tofile="dependencies/jarjar.jar" overwrite="true"/>
+
+        <!-- PluginVerifier -->
+        <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/.lastPinned/plugin-verifier-1.0-SNAPSHOT.jar"
+             dest="dependencies/download/plugin-verifier-1.0-SNAPSHOT.jar" usetimestamp="true"/>
+        <copy file="dependencies/download/plugin-verifier-1.0-SNAPSHOT.jar" tofile="dependencies/plugin-verifier.jar" overwrite="true"/>
+
+        <!-- ant 1.7.0 -->
+        <get src="http://archive.apache.org/dist/ant/binaries/apache-ant-1.7.0-bin.tar.gz"
+             dest="dependencies/download/apache-ant-1.7.0-bin.tar.gz" usetimestamp="true"/>
+
+        <delete file="dependencies/ant.jar" failonerror="false"/>
+        <untar src="dependencies/download/apache-ant-1.7.0-bin.tar.gz" dest="dependencies" compression="gzip">
+            <patternset>
+                <include name="apache-ant-1.7.0/lib/ant.jar"/>
+            </patternset>
+            <mapper type="flatten"/>
+        </untar>
+
+        <delete dir="dependencies/ant" failonerror="false"/>
+        <untar src="dependencies/download/apache-ant-1.7.0-bin.tar.gz" dest="dependencies" compression="gzip"/>
+        <move file="dependencies/apache-ant-1.7.0" tofile="dependencies/ant"/>
+
+        <!-- dx.jar -->
+        <get src="http://repository.jetbrains.com/remote-repos/com/google/android/tools/dx/1.7/dx-1.7.jar"
+             dest="dependencies/download/dx-1.7.jar" usetimestamp="true"/>
+        <copy file="dependencies/download/dx-1.7.jar" tofile="dependencies/dx.jar" overwrite="true"/>
+
+        <get src="http://repository.jetbrains.com/remote-repos/com/google/android/tools/dx/1.7/dx-1.7-sources.jar"
+             dest="dependencies/download/dx-1.7-sources.jar" usetimestamp="true"/>
+        <copy file="dependencies/download/dx-1.7-sources.jar" tofile="dependencies/dx-sources.jar" overwrite="true"/>
+
+        <!-- jline -->
+        <get src="http://repository.jetbrains.com/remote-repos/jline/jline/2.6/jline-2.6.jar"
+             dest="dependencies/download/jline-2.6.jar" usetimestamp="true"/>
+        <copy file="dependencies/download/jline-2.6.jar" tofile="dependencies/jline.jar" overwrite="true"/>
+
+        <get src="http://repository.jetbrains.com/remote-repos/jline/jline/2.6/jline-2.6-sources.jar"
+             dest="dependencies/download/jline-2.6-sources.jar" usetimestamp="true"/>
+        <copy file="dependencies/download/jline-2.6-sources.jar" tofile="dependencies/jline-sources.jar" overwrite="true"/>
+
+        <!-- jansi -->
+        <get src="http://repository.jetbrains.com/remote-repos/org/fusesource/jansi/jansi/1.9/jansi-1.9.jar"
+             dest="dependencies/download/jansi-1.9.jar" usetimestamp="true"/>
+        <copy file="dependencies/download/jansi-1.9.jar" tofile="dependencies/jansi.jar" overwrite="true"/>
+
+        <get src="http://repository.jetbrains.com/remote-repos/org/fusesource/jansi/jansi/1.9/jansi-1.9-sources.jar"
+             dest="dependencies/download/jansi-1.9-sources.jar" usetimestamp="true"/>
+        <copy file="dependencies/download/jansi-1.9-sources.jar" tofile="dependencies/jansi-sources.jar" overwrite="true"/>
+
+        <!-- ASM 4 -->
+        <get-asm4-and-rename-packages/>
+    </target>
+
+    <macrodef name="get-asm4-and-rename-packages">
+        <sequential>
+            <!-- Download vanilla ASM 4.0 & unzip the needed jars and sources -->
+            <get src="http://download.forge.objectweb.org/asm/asm-4.0-bin.zip"
+                 dest="dependencies/download/asm-4.0-bin.zip" usetimestamp="true"/>
+
+            <delete dir="dependencies/download/asm" failonerror="false"/>
+            <unzip src="dependencies/download/asm-4.0-bin.zip" dest="dependencies/download/asm">
+                <patternset>
+                    <include name="asm-4.0/lib/asm-util-4.0.jar"/>
+                    <include name="asm-4.0/lib/asm-analysis-4.0.jar"/>
+                    <include name="asm-4.0/src.zip"/>
+                </patternset>
+                <mapper type="flatten"/>
+            </unzip>
+
+            <!-- Rename packages in the jars -->
+            <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${basedir}/dependencies/jarjar.jar"/>
+
+            <jarjar jarfile="dependencies/jetbrains-asm-util-4.0.jar">
+                <zipfileset src="dependencies/download/asm/asm-util-4.0.jar"/>
+
+                <rule pattern="org.objectweb.asm.**" result="org.jetbrains.asm4.@1"/>
+            </jarjar>
+
+            <jarjar jarfile="dependencies/jetbrains-asm-analysis-4.0.jar">
+                <zipfileset src="dependencies/download/asm/asm-analysis-4.0.jar"/>
+
+                <rule pattern="org.objectweb.asm.**" result="org.jetbrains.asm4.@1"/>
+            </jarjar>
+
+            <!-- Rename packages in the sources -->
+            <unzip src="dependencies/download/asm/src.zip" dest="dependencies/download/asm/src">
+                <patternset>
+                    <include name="**/*"/>
+                </patternset>
+            </unzip>
+
+            <replaceregexp match="org.objectweb.asm" replace="org.jetbrains.asm4">
+                <fileset dir="dependencies/download/asm/src/">
+                    <include name="**/*.java"/>
+                </fileset>
+            </replaceregexp>
+
+            <move file="dependencies/download/asm/src/org/objectweb/asm"
+                    tofile="dependencies/download/asm/src/org/jetbrains/asm4"/>
+
+            <zip destfile="dependencies/jetbrains-asm-all-4.0-src.zip" basedir="dependencies/download/asm/src"/>
+        </sequential>
+    </macrodef>
 
     <macrodef name="execute_update">
-        <attribute name="teamcity" default="http://teamcity.jetbrains.com"/>
-        <attribute name="teamcity.build" default="bt365"/> <!-- IDEA CE 11.1 branch 117 -->
+        <attribute name="base.url" default="http://teamcity.example.com/guestAuth/repository/download/btXXX/XXXX:id"/>
+        <attribute name="base.url.for.core" default="@{base.url}"/>
+        <attribute name="build.zip" default="ideaIC-XXX.SNAPSHOT.win.zip"/>
+
         <sequential>
-            <delete dir="PluginVerifier" failonerror="false" />
-            <delete file="PluginVerifier" failonerror="false" />
-            <mkdir dir="PluginVerifier" />
-
-            <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/.lastPinned/plugin-verifier-1.0-SNAPSHOT.jar" dest="PluginVerifier"/>
-
+            <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
             <property name="core" value="ideaSDK/core"/>
-            <property name="tc" value="@{teamcity}/guestAuth/repository/download/@{teamcity.build}/.lastSuccessful"/>
 
-            <delete dir="ideaSDK" failonerror="false">
-                <exclude name="config/**"/>
-                <exclude name="system/**"/>
-            </delete>
-            <mkdir dir="${core}"/>
-            <get src="${tc}/core/intellij-core.jar" dest="${core}"/>
-            <get src="${tc}/core/annotations.jar" dest="${core}"/>
-            <get src="${tc}/core/asm.jar" dest="${core}"/>
-            <get src="${tc}/core/asm-commons.jar" dest="${core}"/>
-            <get src="${tc}/core/cli-10.jar" dest="${core}"/>
-            <get src="${tc}/core/guava-11.0.1.jar" dest="${core}"/>
-            <get src="${tc}/core/picocontainer.jar" dest="${core}"/>
-            <get src="${tc}/core/trove4j.jar" dest="${core}"/>
+            <if>
+                <istrue value="${idea.sdk.fetch.needed}"/>
 
-            <get src="${tc}/${build.zip}" dest="ideaSDK"/>
-            <unzip src="ideaSDK/${build.zip}" dest="ideaSDK"/>
-            <delete file="ideaSDK/${build.zip}"/>
+                <then>
+                    <delete dir="ideaSDK" failonerror="false">
+                        <exclude name="config/**"/>
+                        <exclude name="system/**"/>
+                        <exclude name="system-idea/**"/>
+                    </delete>
+
+                    <mkdir dir="${core}"/>
+                    <get src="@{base.url.for.core}/core/intellij-core.jar" dest="${core}/intellij-core.jar" usetimestamp="true"/>
+                    <get src="@{base.url}/core/annotations.jar" dest="${core}/annotations.jar" usetimestamp="true"/>
+                    <get src="@{base.url}/core/cli-parser-1.1.jar" dest="${core}/cli-parser-1.1.jar" usetimestamp="true"/>
+                    <get src="@{base.url}/core/guava-12.0.jar" dest="${core}/guava-12.0.jar" usetimestamp="true"/>
+                    <get src="@{base.url}/core/picocontainer.jar" dest="${core}/picocontainer.jar" usetimestamp="true"/>
+                    <get src="@{base.url}/core/trove4j.jar" dest="${core}/trove4j.jar" usetimestamp="true"/>
+
+                    <get src="@{base.url}/@{build.zip}" dest="dependencies/download/@{build.zip}" usetimestamp="true"/>
+
+                    <get src="@{base.url}/sources.zip" dest="dependencies/download/idea-sdk-sources.zip" usetimestamp="true"/>
+                </then>
+            </if>
+
+            <unzip src="dependencies/download/@{build.zip}" dest="ideaSDK"/>
+            <mkdir dir="ideaSDK/sources"/>
+            <copy file="dependencies/download/idea-sdk-sources.zip" tofile="ideaSDK/sources/sources.zip"/>
+
+            <copy file="ideaSDK/lib/jdom.jar" todir="${core}"/>
+            <copy file="ideaSDK/lib/jna.jar" todir="${core}"/>
+            <copy file="ideaSDK/lib/log4j.jar" todir="${core}"/>
+            <copy file="ideaSDK/lib/xstream.jar" todir="${core}"/>
+            <copy file="ideaSDK/lib/xpp3-1.1.4-min.jar" todir="${core}"/>
+            <copy file="ideaSDK/lib/asm4-all.jar" todir="${core}"/>
 
             <!-- TODO temporary workaround since util-rt is not packaged into intellij-core.jar -->
             <copy file="ideaSDK/lib/util.jar" todir="${core}"/>
+
             <!--
                  This one needs to be deleted because otherwise it gets onto the classpath
                  together with junit-4.10.jar and the classloading goes crazy that breaks
@@ -49,8 +204,6 @@
             -->
             <delete file="ideaSDK/lib/junit.jar"/>
 
-            <mkdir dir="ideaSDK/sources"/>
-            <get src="${tc}/sources.zip" dest="ideaSDK/sources"/>
         </sequential>
     </macrodef>
 </project>

@@ -16,24 +16,27 @@
 
 package org.jetbrains.jet.types;
 
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
+import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForTests;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,13 +46,18 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
     private JetDefaultModalityModifiersTestCase tc = new JetDefaultModalityModifiersTestCase();
 
     @Override
+    protected JetCoreEnvironment createEnvironment() {
+        return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
+    }
+
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         tc.setUp();
     }
 
     public class JetDefaultModalityModifiersTestCase  {
-        private ModuleDescriptor root = new ModuleDescriptor("test_root");
+        private ModuleDescriptor root = new ModuleDescriptor(Name.special("<test_root>"));
         private DescriptorResolver descriptorResolver;
         private JetScope scope;
 
@@ -66,10 +74,11 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
             JetDeclaration aClass = declarations.get(0);
             assert aClass instanceof JetClass;
             AnalyzeExhaust bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(file,
-                                                JetControlFlowDataTraceFactory.EMPTY,
-                                                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR));
+                    Collections.<AnalyzerScriptParameter>emptyList(),
+                    BuiltinsScopeExtensionMode.ALL);
             DeclarationDescriptor classDescriptor = bindingContext.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
-            WritableScopeImpl scope = new WritableScopeImpl(libraryScope, root, RedeclarationHandler.DO_NOTHING);
+            WritableScopeImpl scope = new WritableScopeImpl(
+                    libraryScope, root, RedeclarationHandler.DO_NOTHING, "JetDefaultModalityModifiersTest");
             assert classDescriptor instanceof ClassifierDescriptor;
             scope.addClassifierDescriptor((ClassifierDescriptor) classDescriptor);
             scope.changeLockLevel(WritableScope.LockLevel.READING);
@@ -77,7 +86,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         private MutableClassDescriptor createClassDescriptor(ClassKind kind, JetClass aClass) {
-            MutableClassDescriptor classDescriptor = new MutableClassDescriptor(JetTestUtils.DUMMY_TRACE, root, scope, kind);
+            MutableClassDescriptor classDescriptor = new MutableClassDescriptor(root, scope, kind, Name.identifier(aClass.getName()));
             descriptorResolver.resolveMutableClassDescriptor(aClass, classDescriptor, JetTestUtils.DUMMY_TRACE);
             return classDescriptor;
         }

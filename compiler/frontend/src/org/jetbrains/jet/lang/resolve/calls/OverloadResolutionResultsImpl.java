@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.calls;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -27,42 +28,51 @@ import java.util.Collections;
 */
 /*package*/ class OverloadResolutionResultsImpl<D extends CallableDescriptor> implements OverloadResolutionResults<D> {
 
-    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> success(@NotNull ResolvedCallImpl<D> descriptor) {
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> success(@NotNull ResolvedCallWithTrace<D> descriptor) {
         return new OverloadResolutionResultsImpl<D>(Code.SUCCESS, Collections.singleton(descriptor));
     }
 
     public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> nameNotFound() {
-        return new OverloadResolutionResultsImpl<D>(Code.NAME_NOT_FOUND, Collections.<ResolvedCallImpl<D>>emptyList());
+        return new OverloadResolutionResultsImpl<D>(Code.NAME_NOT_FOUND, Collections.<ResolvedCallWithTrace<D>>emptyList());
     }
 
-    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> singleFailedCandidate(ResolvedCallImpl<D> candidate) {
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> singleFailedCandidate(ResolvedCallWithTrace<D> candidate) {
         return new OverloadResolutionResultsImpl<D>(Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH, Collections.singleton(candidate));
     }
-    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> manyFailedCandidates(Collection<ResolvedCallImpl<D>> failedCandidates) {
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> manyFailedCandidates(Collection<ResolvedCallWithTrace<D>> failedCandidates) {
         return new OverloadResolutionResultsImpl<D>(Code.MANY_FAILED_CANDIDATES, failedCandidates);
     }
 
-    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> ambiguity(Collection<ResolvedCallImpl<D>> descriptors) {
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> ambiguity(Collection<ResolvedCallWithTrace<D>> descriptors) {
         return new OverloadResolutionResultsImpl<D>(Code.AMBIGUITY, descriptors);
     }
 
-    private final Collection<ResolvedCallImpl<D>> results;
-    private final Code resultCode;
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> incompleteTypeInference(Collection<ResolvedCallWithTrace<D>> descriptors) {
+        return new OverloadResolutionResultsImpl<D>(Code.INCOMPLETE_TYPE_INFERENCE, descriptors);
+    }
 
-    private OverloadResolutionResultsImpl(@NotNull Code resultCode, @NotNull Collection<ResolvedCallImpl<D>> results) {
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> incompleteTypeInference(ResolvedCallWithTrace<D> descriptor) {
+        return new OverloadResolutionResultsImpl<D>(Code.INCOMPLETE_TYPE_INFERENCE, Collections.singleton(descriptor));
+    }
+
+    private final Collection<ResolvedCallWithTrace<D>> results;
+    private final Code resultCode;
+    private TemporaryBindingTrace trace;
+
+    private OverloadResolutionResultsImpl(@NotNull Code resultCode, @NotNull Collection<ResolvedCallWithTrace<D>> results) {
         this.results = results;
         this.resultCode = resultCode;
     }
 
     @Override
     @NotNull
-    public Collection<ResolvedCallImpl<D>> getResultingCalls() {
+    public Collection<ResolvedCallWithTrace<D>> getResultingCalls() {
         return results;
     }
 
     @Override
     @NotNull
-    public ResolvedCallImpl<D> getResultingCall() {
+    public ResolvedCallWithTrace<D> getResultingCall() {
         assert isSingleResult();
         return results.iterator().next();
     }
@@ -102,4 +112,13 @@ import java.util.Collections;
 //    public OverloadResolutionResultsImpl<D> newContents(@NotNull Collection<D> functionDescriptors) {
 //        return new OverloadResolutionResultsImpl<D>(resultCode, functionDescriptors);
 //    }
+
+    public TemporaryBindingTrace getTrace() {
+        return trace;
+    }
+
+    public OverloadResolutionResultsImpl<D> setTrace(TemporaryBindingTrace trace) {
+        this.trace = trace;
+        return this;
+    }
 }

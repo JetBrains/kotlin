@@ -48,6 +48,12 @@ public class DelegatingCall implements Call {
         return delegate.getExplicitReceiver();
     }
 
+    @NotNull
+    @Override
+    public ReceiverDescriptor getThisObject() {
+        return delegate.getThisObject();
+    }
+
     @Override
     @Nullable
     public JetExpression getCalleeExpression() {
@@ -88,5 +94,11 @@ public class DelegatingCall implements Call {
     @Override
     public PsiElement getCallElement() {
         return delegate.getCallElement();
+    }
+
+    @NotNull
+    @Override
+    public CallType getCallType() {
+        return delegate.getCallType();
     }
 }

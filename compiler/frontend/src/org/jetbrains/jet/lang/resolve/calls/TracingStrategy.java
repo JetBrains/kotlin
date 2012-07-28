@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.inference.SolutionStatus;
+import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -34,14 +34,18 @@ import java.util.List;
 */
 /*package*/ interface TracingStrategy {
     TracingStrategy EMPTY = new TracingStrategy() {
+
         @Override
-        public <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCallImpl<D> resolvedCall) {}
+        public <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCallWithTrace<D> resolvedCall) {}
+
+        @Override
+        public <D extends CallableDescriptor> void bindResolvedCall(@NotNull BindingTrace trace, @NotNull ResolvedCallWithTrace<D> resolvedCall) {}
 
         @Override
         public void unresolvedReference(@NotNull BindingTrace trace) {}
 
         @Override
-        public <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<ResolvedCallImpl<D>> candidates) {}
+        public <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<ResolvedCallWithTrace<D>> candidates) {}
 
         @Override
         public void missingReceiver(@NotNull BindingTrace trace, @NotNull ReceiverDescriptor expectedReceiver) {}
@@ -59,19 +63,16 @@ import java.util.List;
         public void wrongNumberOfTypeArguments(@NotNull BindingTrace trace, int expectedTypeArgumentCount) {}
 
         @Override
-        public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallImpl<D>> descriptors) {}
+        public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> descriptors) {}
 
         @Override
-        public <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallImpl<D>> descriptors) {}
+        public <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> descriptors) {}
 
         @Override
         public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {}
 
         @Override
-        public void typeInferenceFailed(@NotNull BindingTrace trace, SolutionStatus status) {}
-
-        @Override
-        public void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type) {}
+        public void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type, boolean isCallForImplicitInvoke) {}
 
         @Override
         public void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull JetType type) {}
@@ -81,13 +82,21 @@ import java.util.List;
 
         @Override
         public void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor descriptor) {}
+
+        @Override
+        public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData) {}
+
+        @Override
+        public void upperBoundViolated(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData) {}
     };
 
-    <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCallImpl<D> resolvedCall);
+    <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCallWithTrace<D> resolvedCall);
+
+    <D extends CallableDescriptor> void bindResolvedCall(@NotNull BindingTrace trace, @NotNull ResolvedCallWithTrace<D> resolvedCall);
 
     void unresolvedReference(@NotNull BindingTrace trace);
 
-    <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<ResolvedCallImpl<D>> candidates);
+    <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<ResolvedCallWithTrace<D>> candidates);
 
     void missingReceiver(@NotNull BindingTrace trace, @NotNull ReceiverDescriptor expectedReceiver);
 
@@ -99,19 +108,21 @@ import java.util.List;
 
     void wrongNumberOfTypeArguments(@NotNull BindingTrace trace, int expectedTypeArgumentCount);
 
-    <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallImpl<D>> descriptors);
+    <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> descriptors);
 
-    <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallImpl<D>> descriptors);
+    <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> descriptors);
 
     void instantiationOfAbstractClass(@NotNull BindingTrace trace);
 
-    void typeInferenceFailed(@NotNull BindingTrace trace, SolutionStatus status);
-
-    void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type);
+    void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type, boolean isCallForImplicitInvoke);
 
     void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull JetType type);
 
     void danglingFunctionLiteralArgumentSuspected(@NotNull BindingTrace trace, @NotNull List<JetExpression> functionLiteralArguments);
 
     void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor descriptor);
+
+    void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData);
+
+    void upperBoundViolated(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData);
 }

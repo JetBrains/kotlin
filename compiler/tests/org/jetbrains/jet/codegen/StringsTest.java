@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.ConfigurationKind;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -24,6 +26,12 @@ import java.lang.reflect.Method;
  * @author alex.tkachman
  */
 public class StringsTest extends CodegenTestCase {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    }
 
     public void testAnyToString () throws InvocationTargetException, IllegalAccessException {
         loadText("fun foo(x: Any) = x.toString()");

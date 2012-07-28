@@ -1,4 +1,4 @@
 namespace test
 
-abstract trait test.Trtrtr : jet.Any {
+internal abstract trait test.Trtrtr : jet.Any {
 }

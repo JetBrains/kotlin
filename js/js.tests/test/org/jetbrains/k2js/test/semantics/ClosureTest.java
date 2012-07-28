@@ -28,6 +28,14 @@ public final class ClosureTest extends SingleFileTranslationTest {
     }
 
     public void testIteratingCallbacks() throws Exception {
-        checkFooBoxIsTrue("iteratingCallbacks.kt");
+        fooBoxTest();
+    }
+
+    public void testLocalParameterInCallback() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testClosureReferencingMember() throws Exception {
+        fooBoxTest();
     }
 }

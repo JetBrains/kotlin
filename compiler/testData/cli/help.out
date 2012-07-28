@@ -1,0 +1,18 @@
+Usage: org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
+  -jar [String] jar file name
+  -src [String] source file or directory
+  -classpath [String] classpath to use when compiling
+  -annotations [String] paths to external annotations
+  -includeRuntime [flag] include Kotlin runtime in to resulting jar
+  -noJdk [flag] don't include Java runtime into classpath
+  -noStdlib [flag] don't include Kotlin runtime into classpath
+  -noJdkAnnotations [flag] don't include JDK external annotations into classpath
+  -builtins [flag] compile builtin classes (internal)
+  -output [String] output directory
+  -module [String] module to compile
+  -script [flag] evaluate script
+  -tags [flag] Demarcate each compilation message (error, warning, etc) with an open and close tag
+  -verbose [flag] Enable verbose logging output
+  -version [flag] Display compiler version
+  -help (-h) [flag] show help
+INTERNAL_ERROR

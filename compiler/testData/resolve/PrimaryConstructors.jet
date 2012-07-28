@@ -1,5 +1,4 @@
 class A(~a~val a : Int) {
-    this() {`$a`a}
     ~b~val b = `$a`a
     ~f~fun f() = `$a`a
 }
@@ -11,19 +10,11 @@ fun test() {
     a.`f`f()`:kotlin::Int`
 }
 
-package Jet65 {
-
-  class Foo(~bar~var bar : Int, ~barr~barr : Int, ~barrr~val barrr : Int) {
-    {
-      `$bar`bar = 1
-      `barr`barr = 1
-      `$barrr`barrr = 1
-    }
-
-    this(~s.bar~val bar : Int) : this(1, 1, 1) {
-      `s.bar`bar = 1
-      this.`$bar`bar
-    }
+class Foo(~bar~var bar : Int, ~barr~barr : Int, ~barrr~val barrr : Int) {
+  {
+    `$bar`bar = 1
+    `barr`barr = 1
+    `$barrr`barrr = 1
   }
 
 }

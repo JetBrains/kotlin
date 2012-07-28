@@ -16,9 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -30,45 +28,54 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import javax.inject.Inject;
 import java.io.PrintStream;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author abreslav
  */
-public class TopDownAnalysisContext {
+public class TopDownAnalysisContext implements BodiesResolveContext {
 
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects = Maps.newLinkedHashMap();
-    protected final Map<JetFile, WritableScope> namespaceScopes = Maps.newHashMap();
-    private JetScope rootScope;
     protected final Map<JetFile, NamespaceDescriptorImpl> namespaceDescriptors = Maps.newHashMap();
 
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
     private final Map<JetNamedFunction, SimpleFunctionDescriptor> functions = Maps.newLinkedHashMap();
-    private final Map<JetSecondaryConstructor, ConstructorDescriptor> constructors = Maps.newLinkedHashMap();
     private final Map<JetProperty, PropertyDescriptor> properties = Maps.newLinkedHashMap();
     private final Map<JetParameter, PropertyDescriptor> primaryConstructorParameterProperties = Maps.newHashMap();
     private Map<JetDeclaration, CallableMemberDescriptor> members = null;
+
+    // File scopes - package scope extended with imports
+    protected final Map<JetFile, WritableScope> namespaceScopes = Maps.newHashMap();
+
+    public final Map<JetDeclarationContainer, WithDeferredResolve> forDeferredResolver = Maps.newHashMap();
+
+    public final Map<JetDeclarationContainer, JetScope> normalScope = Maps.newHashMap();
+
+    private final Map<JetScript, ScriptDescriptor> scripts = Maps.newLinkedHashMap();
+    private final Map<JetScript, WritableScope> scriptScopes = Maps.newHashMap();
 
     private StringBuilder debugOutput;
 
 
     private TopDownAnalysisParameters topDownAnalysisParameters;
 
+    @Override
     @Inject
     public void setTopDownAnalysisParameters(TopDownAnalysisParameters topDownAnalysisParameters) {
         this.topDownAnalysisParameters = topDownAnalysisParameters;
     }
 
-
-
+    public TopDownAnalysisParameters getTopDownAnalysisParameters() {
+        return topDownAnalysisParameters;
+    }
 
     public void debug(Object message) {
         if (debugOutput != null) {
             debugOutput.append(message).append("\n");
         }
     }
-    
+
+    @SuppressWarnings("UnusedDeclaration")
     /*package*/ void enableDebugOutput() {
         if (debugOutput == null) {
             debugOutput = new StringBuilder();
@@ -81,6 +88,7 @@ public class TopDownAnalysisContext {
         }
     }
 
+    @Override
     public boolean completeAnalysisNeeded(@NotNull PsiElement element) {
         PsiFile containingFile = element.getContainingFile();
         boolean result = containingFile != null && topDownAnalysisParameters.getAnalyzeCompletely().apply(containingFile);
@@ -90,10 +98,12 @@ public class TopDownAnalysisContext {
         return result;
     }
 
+    @Override
     public Map<JetClass, MutableClassDescriptor> getClasses() {
         return classes;
     }
 
+    @Override
     public Map<JetObjectDeclaration, MutableClassDescriptor> getObjects() {
         return objects;
     }
@@ -102,36 +112,37 @@ public class TopDownAnalysisContext {
         return namespaceScopes;
     }
 
-    public void setRootScope(@NotNull JetScope scope) {
-        assert rootScope == null;
-        rootScope = scope;
-    }
-
-    @NotNull
-    public JetScope getRootScope() {
-        return rootScope;
-    }
-
     public Map<JetFile, NamespaceDescriptorImpl> getNamespaceDescriptors() {
         return namespaceDescriptors;
+    }
+
+    @Override
+    @NotNull
+    public Map<JetScript, ScriptDescriptor> getScripts() {
+        return scripts;
+    }
+
+    @Override
+    @NotNull
+    public Map<JetScript, WritableScope> getScriptScopes() {
+        return scriptScopes;
     }
 
     public Map<JetParameter, PropertyDescriptor> getPrimaryConstructorParameterProperties() {
         return primaryConstructorParameterProperties;
     }
 
-    public Map<JetSecondaryConstructor, ConstructorDescriptor> getConstructors() {
-        return constructors;
-    }
-
+    @Override
     public Map<JetProperty, PropertyDescriptor> getProperties() {
         return properties;
     }
 
+    @Override
     public Map<JetDeclaration, JetScope> getDeclaringScopes() {
         return declaringScopes;
     }
 
+    @Override
     public Map<JetNamedFunction, SimpleFunctionDescriptor> getFunctions() {
         return functions;
     }

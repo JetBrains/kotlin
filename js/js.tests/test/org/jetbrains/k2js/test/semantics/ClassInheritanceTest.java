@@ -32,31 +32,31 @@ public final class ClassInheritanceTest extends SingleFileTranslationTest {
     }
 
     public void testMethodOverride() throws Exception {
-        checkFooBoxIsTrue("methodOverride.kt");
+        fooBoxTest();
     }
 
     public void testInitializationOrder() throws Exception {
-        checkFooBoxIsTrue("initializationOrder.kt");
+        fooBoxTest();
     }
 
     public void testComplexInitializationOrder() throws Exception {
-        checkFooBoxIsTrue("complexInitializationOrder.kt");
+        fooBoxTest();
     }
 
     public void testValuePassedToAncestorConstructor() throws Exception {
-        checkFooBoxIsTrue("valuePassedToAncestorConstructor.kt");
+        fooBoxTest();
     }
 
     public void testBaseClassDefinedAfterDerived() throws Exception {
-        checkFooBoxIsTrue("baseClassDefinedAfterDerived.kt");
+        fooBoxTest();
     }
 
     public void testDefinitionOrder() throws Exception {
-        checkFooBoxIsTrue("definitionOrder.kt");
+        fooBoxTest();
     }
 
     public void testAbstractVarOverride() throws Exception {
-        checkFooBoxIsTrue("abstractVarOverride.kt");
+        fooBoxTest();
     }
 }
 

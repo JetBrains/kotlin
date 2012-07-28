@@ -16,12 +16,18 @@
 
 package org.jetbrains.k2js.config;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.k2js.translate.test.JSTester;
+import org.jetbrains.k2js.translate.test.QUnitTester;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,37 +38,133 @@ import java.util.List;
 public abstract class Config {
 
     @NotNull
-    protected static final List<String> LIB_FILE_NAMES = Arrays.asList(
-        "/core/annotations.kt",
-        "/jquery/common.kt",
-        "/jquery/ui.kt",
-        "/core/javautil.kt",
-        "/core/javalang.kt",
-        "/core/date.kt",
-        "/core/core.kt",
-        "/core/math.kt",
-        "/core/json.kt",
-        "/raphael/raphael.kt",
-        "/html5/canvas.kt",
-        "/html5/files.kt",
-        "/html5/image.kt",
-        "/stdlib/JUMaps.kt"
+    public static Config getEmptyConfig(@NotNull Project project, @NotNull EcmaVersion ecmaVersion) {
+        return new Config(project, "main", ecmaVersion) {
+            @NotNull
+            @Override
+            protected List<JetFile> generateLibFiles() {
+                return Collections.emptyList();
+            }
+        };
+    }
+
+    //NOTE: used by mvn build
+    @SuppressWarnings("UnusedDeclaration")
+    @NotNull
+    public static Config getEmptyConfig(@NotNull Project project) {
+        return getEmptyConfig(project, EcmaVersion.defaultVersion());
+    }
+
+    @NotNull
+    public static final List<String> LIB_FILES_WITH_DECLARATIONS = Arrays.asList(
+            "/core/annotations.kt",
+            "/core/core.kt",
+            "/core/date.kt",
+            "/core/dom.kt",
+            "/core/javaio.kt",
+            "/core/javalang.kt",
+            "/core/javautil.kt",
+            "/core/json.kt",
+            "/core/kotlin.kt",
+            "/core/math.kt",
+            "/core/string.kt",
+            "/dom/domcore.kt",
+            "/dom/html/htmlcore.kt",
+            "/dom/html5/canvas.kt",
+            "/dom/html/window.kt",
+            "/jquery/common.kt",
+            "/jquery/ui.kt",
+            "/junit/core.kt",
+            "/qunit/core.kt",
+            "/stdlib/browser.kt"
     );
 
-    protected static final String LIBRARIES_LOCATION = "js/js.libraries/src";
+    @NotNull
+    public static final List<String> LIB_FILES_WITH_CODE = Arrays.asList(
+            "/core/javautilCode.kt"
+    );
+
+    @NotNull
+    public static final List<String> LIB_FILE_NAMES = Lists.newArrayList();
+
+    static {
+        LIB_FILE_NAMES.addAll(LIB_FILES_WITH_DECLARATIONS);
+        LIB_FILE_NAMES.addAll(LIB_FILES_WITH_CODE);
+    }
+
+    /**
+     * the library files which depend on the STDLIB files to be able to compile
+     */
+    @NotNull
+    public static final List<String> LIB_FILE_NAMES_DEPENDENT_ON_STDLIB = Arrays.asList(
+            "/core/stringsCode.kt",
+            "/stdlib/domCode.kt",
+            "/stdlib/jutilCode.kt",
+            "/stdlib/JUMapsCode.kt",
+            "/stdlib/testCode.kt"
+    );
+
+    public static final String LIBRARIES_LOCATION = "js/js.libraries/src";
+
+    /**
+     * The file names in the standard library to compile
+     */
+    @NotNull
+    public static final List<String> STDLIB_FILE_NAMES = Arrays.asList(
+            "/kotlin/Preconditions.kt",
+            "/kotlin/Iterators.kt",
+            "/kotlin/JUtil.kt",
+            "/kotlin/JUtilCollections.kt",
+            "/kotlin/JUtilMaps.kt",
+            "/kotlin/JLangIterables.kt",
+            "/kotlin/JLangIterablesLazy.kt",
+            "/kotlin/JLangIterablesSpecial.kt",
+            "/generated/ArraysFromJLangIterables.kt",
+            "/generated/ArraysFromJLangIterablesLazy.kt",
+            "/generated/ArraysFromJUtilCollections.kt",
+            "/generated/JUtilIteratorsFromJLangIterables.kt",
+            "/generated/JUtilIterablesFromJUtilCollections.kt",
+            "/kotlin/support/AbstractIterator.kt",
+            "/kotlin/Standard.kt",
+            "/kotlin/Strings.kt",
+            "/kotlin/dom/Dom.kt",
+            "/kotlin/test/Test.kt"
+    );
+
+    /**
+     * The location of the stdlib sources
+     */
+    public static final String STDLIB_LOCATION = "libraries/stdlib/src";
 
     @NotNull
     private final Project project;
     @Nullable
     private List<JetFile> libFiles = null;
+    @NotNull
+    private final EcmaVersion target;
 
-    public Config(@NotNull Project project) {
+    @NotNull
+    private final String moduleId;
+
+    public Config(@NotNull Project project, @NotNull String moduleId, @NotNull EcmaVersion ecmaVersion) {
         this.project = project;
+        this.target = ecmaVersion;
+        this.moduleId = moduleId;
     }
 
     @NotNull
     public Project getProject() {
         return project;
+    }
+
+    @NotNull
+    public EcmaVersion getTarget() {
+        return target;
+    }
+
+    @NotNull
+    public String getModuleId() {
+        return moduleId;
     }
 
     @NotNull
@@ -74,5 +176,24 @@ public abstract class Config {
             libFiles = generateLibFiles();
         }
         return libFiles;
+    }
+
+    @Nullable
+    public BindingContext getLibraryBindingContext() {
+        return null;
+    }
+
+    @NotNull
+    public static Collection<JetFile> withJsLibAdded(@NotNull Collection<JetFile> files, @NotNull Config config) {
+        Collection<JetFile> allFiles = Lists.newArrayList();
+        allFiles.addAll(files);
+        allFiles.addAll(config.getLibFiles());
+        return allFiles;
+    }
+
+    //TODO: should be null by default I suppose but we can't communicate it to K2JSCompiler atm
+    @Nullable
+    public JSTester getTester() {
+        return new QUnitTester();
     }
 }

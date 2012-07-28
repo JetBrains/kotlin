@@ -20,21 +20,30 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
-import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lexer.JetTokens;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author max
  */
-public class JetNamedFunction extends JetFunction implements StubBasedPsiElement<PsiJetFunctionStub<?>> {
+public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFunctionStub> implements JetFunction, JetWithExpressionInitializer {
     public JetNamedFunction(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public JetNamedFunction(@NotNull PsiJetFunctionStub stub) {
+        super(stub, JetStubElementTypes.FUNCTION);
     }
 
     @Override
@@ -69,63 +78,117 @@ public class JetNamedFunction extends JetFunction implements StubBasedPsiElement
         return findChildByType(JetTokens.EQ);
     }
 
-    @NotNull
-    public JetElement getStartOfSignatureElement() {
-        return this;
-    }
-
-    @NotNull
-    public JetElement getEndOfSignatureElement() {
-        JetElement r = getReturnTypeRef();
-        if (r != null) {
-            return r;
-        }
-        
-        r = getValueParameterList();
-        if (r != null) {
-            return r;
-        }
-
-        // otherwise it is an error
-
-        return this;
+    @Override
+    @Nullable
+    public JetExpression getInitializer() {
+        return PsiTreeUtil.getNextSiblingOfType(getEqualsToken(), JetExpression.class);
     }
 
     /**
-     * Returns full qualified name for function "package_fqn.function_name"
-     * Not null for top level functions.
-     * @return
-     */
+    * Returns full qualified name for function "package_fqn.function_name"
+    * Not null for top level functions.
+    * @return
+    */
     @Nullable
     public FqName getQualifiedName() {
         final PsiJetFunctionStub stub = getStub();
         if (stub != null) {
-            // TODO (stubs): return stub.getQualifiedName();
+            return stub.getTopFQName();
         }
 
         PsiElement parent = getParent();
         if (parent instanceof JetFile) {
+            // fqname is different in scripts
+            if (((JetFile) parent).getNamespaceHeader() == null) {
+                return null;
+            }
             JetFile jetFile = (JetFile) parent;
             final FqName fileFQN = JetPsiUtil.getFQName(jetFile);
-            return fileFQN.child(getName());
+            return fileFQN.child(getNameAsName());
         }
 
         return null;
     }
 
+    @NotNull
     @Override
     public IStubElementType getElementType() {
         return JetStubElementTypes.FUNCTION;
     }
     
     @Override
-    public PsiJetFunctionStub<?> getStub() {
-        // TODO (stubs)
+    public ItemPresentation getPresentation() {
+        return ItemPresentationProviders.getItemPresentation(this);
+    }
+
+    @Override
+    @Nullable
+    public JetParameterList getValueParameterList() {
+        return (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);
+    }
+
+    @Override
+    @NotNull
+    public List<JetParameter> getValueParameters() {
+        JetParameterList list = getValueParameterList();
+        return list != null ? list.getParameters() : Collections.<JetParameter>emptyList();
+    }
+
+    @Override
+    @Nullable
+    public JetExpression getBodyExpression() {
+        return findChildByClass(JetExpression.class);
+    }
+
+    @Override
+    public boolean hasDeclaredReturnType() {
+        return getReturnTypeRef() != null;
+    }
+
+    @Override
+    @Nullable
+    public JetTypeReference getReceiverTypeRef() {
+        PsiElement child = getFirstChild();
+        while (child != null) {
+            IElementType tt = child.getNode().getElementType();
+            if (tt == JetTokens.LPAR || tt == JetTokens.COLON) break;
+            if (child instanceof JetTypeReference) {
+                return (JetTypeReference) child;
+            }
+            child = child.getNextSibling();
+        }
+
         return null;
     }
 
     @Override
-    public ItemPresentation getPresentation() {
-        return ItemPresentationProviders.getItemPresentation(this);
+    @Nullable
+    public JetTypeReference getReturnTypeRef() {
+        boolean colonPassed = false;
+        PsiElement child = getFirstChild();
+        while (child != null) {
+            IElementType tt = child.getNode().getElementType();
+            if (tt == JetTokens.COLON) {
+                colonPassed = true;
+            }
+            if (colonPassed && child instanceof JetTypeReference) {
+                return (JetTypeReference) child;
+            }
+            child = child.getNextSibling();
+        }
+
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public JetElement asElement() {
+        return this;
+    }
+
+    @Override
+    public boolean isLocal() {
+        PsiElement parent = getParent();
+        return !(parent instanceof JetFile || parent instanceof JetClassBody || parent instanceof JetNamespaceBody);
     }
 }

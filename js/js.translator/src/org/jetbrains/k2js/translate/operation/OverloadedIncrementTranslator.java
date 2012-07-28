@@ -17,14 +17,13 @@
 package org.jetbrains.k2js.translate.operation;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.reference.CallBuilder;
 
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMethodReferenceForOverloadedOperation;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 
 /**
  * @author Pavel Talanov
@@ -32,20 +31,24 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMethodRefer
 public final class OverloadedIncrementTranslator extends IncrementTranslator {
 
     @NotNull
-    private final JsNameRef operationReference;
+    private final FunctionDescriptor operationDescriptor;
 
     /*package*/ OverloadedIncrementTranslator(@NotNull JetUnaryExpression expression,
                                               @NotNull TranslationContext context) {
         super(expression, context);
-        this.operationReference = getMethodReferenceForOverloadedOperation(context, expression);
+        FunctionDescriptor functionDescriptor = getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
+        assert functionDescriptor != null : "Descriptor should not be null for overloaded increment expression.";
+        this.operationDescriptor = functionDescriptor;
     }
 
 
     @Override
     @NotNull
     protected JsExpression operationExpression(@NotNull JsExpression receiver) {
-        setQualifier(operationReference, receiver);
-        return AstUtil.newInvocation(operationReference);
+        return CallBuilder.build(context())
+                .receiver(receiver)
+                .descriptor(operationDescriptor)
+                .translate();
     }
 
 }

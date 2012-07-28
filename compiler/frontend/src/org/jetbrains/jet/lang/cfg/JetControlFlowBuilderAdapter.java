@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.cfg;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.psi.*;
 
 import java.util.List;
@@ -157,9 +158,9 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     }
 
     @Override
-    public void exitSubroutine(@NotNull JetDeclaration subroutine) {
+    public Pseudocode exitSubroutine(@NotNull JetDeclaration subroutine) {
         assert builder != null;
-        builder.exitSubroutine(subroutine);
+        return builder.exitSubroutine(subroutine);
     }
 
     @NotNull

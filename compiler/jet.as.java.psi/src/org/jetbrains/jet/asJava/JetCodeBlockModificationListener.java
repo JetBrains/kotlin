@@ -40,6 +40,7 @@ public class JetCodeBlockModificationListener implements PsiTreeChangePreprocess
 
     @Override
     public void treeChanged(final PsiTreeChangeEventImpl event) {
+        if (!(event.getFile() instanceof JetFile)) return;
         switch (event.getCode()) {
             case BEFORE_CHILDREN_CHANGE:
             case BEFORE_PROPERTY_CHANGE:
