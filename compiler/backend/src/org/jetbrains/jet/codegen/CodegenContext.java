@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -212,7 +213,7 @@ public abstract class CodegenContext {
         if (descriptor instanceof SimpleFunctionDescriptor) {
             SimpleFunctionDescriptorImpl myAccessor = new SimpleFunctionDescriptorImpl(contextDescriptor,
                     Collections.<AnnotationDescriptor>emptyList(),
-                    Name.identifier(descriptor.getName() + "$bridge$" + accessors.size()),
+                    Name.identifier(descriptor.getName() + "$b$" + getHierarchyCount() + "$" + accessors.size()),
                     CallableMemberDescriptor.Kind.DECLARATION);
             FunctionDescriptor fd = (SimpleFunctionDescriptor) descriptor;
             myAccessor.initialize(fd.getReceiverParameter().exists() ? fd.getReceiverParameter().getType() : null,
@@ -257,6 +258,18 @@ public abstract class CodegenContext {
         }
         accessors.put(descriptor, accessor);
         return accessor;
+    }
+
+    private int getHierarchyCount() {
+        ClassifierDescriptor descriptor = getThisDescriptor();
+        int c = 0;
+        while(true) {
+            Collection<? extends JetType> supertypes = descriptor.getDefaultType().getConstructor().getSupertypes();
+            if(supertypes.isEmpty())
+                return c;
+            c++;
+            descriptor = supertypes.iterator().next().getConstructor().getDeclarationDescriptor();
+        }
     }
 
     public StackValue getReceiverExpression(JetTypeMapper typeMapper) {

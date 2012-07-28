@@ -1363,9 +1363,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 PsiElement enclosingElement = bindingContext.get(BindingContext.LABEL_TARGET, superExpression.getTargetLabel());
                 ClassDescriptor enclosed = (ClassDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, enclosingElement);
                 if (!CodegenUtil.isInterface(fd.getContainingDeclaration())) {
-                    if (enclosed != null && enclosed != context.getThisDescriptor()) {
+                    if(enclosed == null) {
+                        enclosed = (ClassDescriptor) fd.getContainingDeclaration();
+                    }
+                    if (enclosed != context.getThisDescriptor()) {
                         CodegenContext c = context;
-                        while(c.getContextDescriptor() != enclosed) {
+                        while(!(c instanceof CodegenContexts.ClassContext) || !DescriptorUtils.isSubclass(c.getThisDescriptor(), enclosed)) {
                             c = c.getParentContext();
                         }
                         fd = (FunctionDescriptor) c.getAccessor(fd);
