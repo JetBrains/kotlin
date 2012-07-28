@@ -152,10 +152,12 @@ public abstract class CLICompiler<A extends CompilerArguments> {
             ExitCode rc = compiler.exec(System.out, args);
             if (rc != OK) {
                 System.err.println("exec() finished with " + rc + " return code");
-                //System.err.println("Command line arguments: ");
-                //for (String arg : args) {
-                //    System.err.println(arg);
-                //}
+                if (Boolean.parseBoolean(System.getProperty("kotlin.print.cmd.args"))) {
+                    System.err.println("Command line arguments: ");
+                    for (String arg : args) {
+                        System.err.println(arg);
+                    }
+                }
                 System.exit(rc.getCode());
             }
         }
