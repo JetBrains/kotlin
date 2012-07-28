@@ -36,7 +36,6 @@ import java.util.List;
  * @author Pavel Talanov
  */
 public final class CallBuilder {
-
     public static CallBuilder build(@NotNull TranslationContext context) {
         return new CallBuilder(context);
     }
@@ -123,6 +122,4 @@ public final class CallBuilder {
     public JsExpression translate() {
         return finish().translate();
     }
-
-
 }

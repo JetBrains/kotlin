@@ -10,25 +10,25 @@ public trait Iterable<T> {
 }
 
 library
-open public class Exception() : Throwable() {}
+open public class Exception(message:String? = null) : Throwable() {}
 
 library("splitString")
 public fun String.split(regex : String) : Array<String> = js.noImpl
 
 library
-public class IllegalArgumentException(message: String = "") : Exception() {}
+public class IllegalArgumentException(message: String? = null) : Exception() {}
 
 library
-public class IllegalStateException(message: String = "") : Exception() {}
+public class IllegalStateException(message: String? = null) : Exception() {}
 
 library
-public class IndexOutOfBoundsException(message: String = "") : Exception() {}
+public class IndexOutOfBoundsException(message: String? = null) : Exception() {}
 
 library
-public class UnsupportedOperationException(message: String = "") : Exception() {}
+public class UnsupportedOperationException(message: String? = null) : Exception() {}
 
 library
-public class NumberFormatException(message: String = "") : Exception() {}
+public class NumberFormatException(message: String? = null) : Exception() {}
 
 library
 public trait Runnable {

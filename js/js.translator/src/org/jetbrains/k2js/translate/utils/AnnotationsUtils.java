@@ -112,15 +112,6 @@ public final class AnnotationsUtils {
         return hasAnnotationOrInsideAnnotatedClass(descriptor, PredefinedAnnotation.LIBRARY);
     }
 
-    public static boolean isPredefinedObject(@NotNull DeclarationDescriptor descriptor) {
-        for (PredefinedAnnotation annotation : PredefinedAnnotation.values()) {
-            if (hasAnnotationOrInsideAnnotatedClass(descriptor, annotation)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static boolean hasAnnotationOrInsideAnnotatedClass(@NotNull DeclarationDescriptor descriptor,
             @NotNull PredefinedAnnotation annotation) {
         return hasAnnotationOrInsideAnnotatedClass(descriptor, annotation.getFQName());

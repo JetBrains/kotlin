@@ -20,7 +20,6 @@ import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.config.Config;
@@ -29,6 +28,7 @@ import org.jetbrains.k2js.facade.exceptions.MainFunctionNotFoundException;
 import org.jetbrains.k2js.facade.exceptions.TranslationException;
 import org.jetbrains.k2js.facade.exceptions.TranslationInternalException;
 import org.jetbrains.k2js.facade.exceptions.UnsupportedFeatureException;
+import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.StaticContext;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.declaration.ClassAliasingMap;
@@ -39,12 +39,10 @@ import org.jetbrains.k2js.translate.expression.FunctionTranslator;
 import org.jetbrains.k2js.translate.expression.PatternTranslator;
 import org.jetbrains.k2js.translate.expression.WhenTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
-import org.jetbrains.k2js.translate.initializer.NamespaceInitializerTranslator;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
 import org.jetbrains.k2js.translate.test.JSTestGenerator;
 import org.jetbrains.k2js.translate.test.JSTester;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 import org.jetbrains.k2js.translate.utils.dangerous.DangerousData;
 import org.jetbrains.k2js.translate.utils.dangerous.DangerousTranslator;
 
@@ -55,7 +53,6 @@ import java.util.List;
 import static org.jetbrains.jet.plugin.JetMainDetector.getMainFunction;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.toStringLiteralList;
 import static org.jetbrains.k2js.translate.utils.dangerous.DangerousData.collect;
 
 /**
@@ -76,7 +73,7 @@ public final class Translation {
     }
 
     @NotNull
-    public static List<JsStatement> translateFiles(@NotNull Collection<JetFile> files, @NotNull TranslationContext context) {
+    private static List<JsStatement> translateFiles(@NotNull Collection<JetFile> files, @NotNull TranslationContext context) {
         return NamespaceDeclarationTranslator.translateFiles(files, context);
     }
 
@@ -84,7 +81,7 @@ public final class Translation {
     public static JsExpression translateClassDeclaration(@NotNull JetClass classDeclaration,
             @NotNull ClassAliasingMap classAliasingMap,
             @NotNull TranslationContext context) {
-        return ClassTranslator.generateClassCreationExpression(classDeclaration, classAliasingMap, context);
+        return ClassTranslator.generateClassCreation(classDeclaration, classAliasingMap, context);
     }
 
     @NotNull
@@ -126,22 +123,14 @@ public final class Translation {
     @NotNull
     public static JsNode translateWhenExpression(@NotNull JetWhenExpression expression,
             @NotNull TranslationContext context) {
-        return WhenTranslator.translateWhenExpression(expression, context);
+        return WhenTranslator.translate(expression, context);
     }
 
     //TODO: see if generate*Initializer methods fit somewhere else
     @NotNull
     public static JsFunction generateClassInitializerMethod(@NotNull JetClassOrObject classDeclaration,
             @NotNull TranslationContext context) {
-        final ClassInitializerTranslator classInitializerTranslator = new ClassInitializerTranslator(classDeclaration, context);
-        return classInitializerTranslator.generateInitializeMethod();
-    }
-
-    @NotNull
-    public static JsFunction generateNamespaceInitializerMethod(@NotNull NamespaceDescriptor namespace,
-            @NotNull TranslationContext context) {
-        final NamespaceInitializerTranslator namespaceInitializerTranslator = new NamespaceInitializerTranslator(namespace, context);
-        return namespaceInitializerTranslator.generateInitializeMethod();
+        return new ClassInitializerTranslator(classDeclaration, context).generateInitializeMethod();
     }
 
     @NotNull
@@ -170,13 +159,13 @@ public final class Translation {
         JsBlock block = program.getGlobalBlock();
 
         JsFunction rootFunction = JsAstUtils.createPackage(block.getStatements(), program.getScope());
-        JsBlock rootBlock = rootFunction.getBody();
-        List<JsStatement> statements = rootBlock.getStatements();
+        List<JsStatement> statements = rootFunction.getBody().getStatements();
         statements.add(program.getStringLiteral("use strict").makeStmt());
 
-        TranslationContext context = TranslationContext.rootContext(staticContext);
+        TranslationContext context = TranslationContext.rootFunctionContext(staticContext, rootFunction);
+        staticContext.getLiteralFunctionTranslator().setRootContext(context);
         statements.addAll(translateFiles(files, context));
-        TranslationUtils.defineModule(context, statements, config.getModuleId());
+        defineModule(context, statements, config.getModuleId());
 
         if (mainCallParameters.shouldBeGenerated()) {
             JsStatement statement = generateCallToMain(context, files, mainCallParameters.arguments());
@@ -184,8 +173,16 @@ public final class Translation {
                 statements.add(statement);
             }
         }
-        mayBeGenerateTests(files, config, rootBlock, context);
+        mayBeGenerateTests(files, config, rootFunction.getBody(), context);
         return context.program();
+    }
+
+    private static void defineModule(@NotNull TranslationContext context, @NotNull List<JsStatement> statements, @NotNull String moduleId) {
+        JsName rootNamespaceName = context.scope().findName(Namer.ROOT_NAMESPACE);
+        if (rootNamespaceName != null) {
+            statements.add(new JsInvocation(context.namer().kotlin("defineModule"), context.program().getStringLiteral(moduleId),
+                                            rootNamespaceName.makeRef()).makeStmt());
+        }
     }
 
     private static void mayBeGenerateTests(@NotNull Collection<JetFile> files, @NotNull Config config,
@@ -198,7 +195,6 @@ public final class Translation {
         }
     }
 
-    //TODO: determine whether should throw exception
     @Nullable
     private static JsStatement generateCallToMain(@NotNull TranslationContext context, @NotNull Collection<JetFile> files,
             @NotNull List<String> arguments) throws MainFunctionNotFoundException {

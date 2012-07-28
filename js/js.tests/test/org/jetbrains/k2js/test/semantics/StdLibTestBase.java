@@ -17,21 +17,17 @@
  */
 package org.jetbrains.k2js.test.semantics;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.js.K2JSCompiler;
 import org.jetbrains.jet.cli.js.K2JSCompilerArguments;
-import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.test.utils.LibraryFilePathsUtil;
 
-import javax.annotation.Nullable;
 import java.io.File;
-import java.util.EnumSet;
 import java.util.List;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
@@ -41,13 +37,13 @@ abstract class StdLibTestBase extends SingleFileTranslationTest {
         super("stdlib/");
     }
 
-    protected void performStdLibTest(@NotNull EnumSet<EcmaVersion> ecmaVersions,
+    protected void performStdLibTest(@NotNull Iterable<EcmaVersion> ecmaVersions,
             @NotNull String sourceDir, @NotNull String... stdLibFiles) throws Exception {
         List<String> files = constructFilesToCompileList(sourceDir, stdLibFiles);
         compileFiles(ecmaVersions, files);
     }
 
-    private void compileFiles(@NotNull EnumSet<EcmaVersion> ecmaVersions, @NotNull List<String> files) throws Exception {
+    private void compileFiles(@NotNull Iterable<EcmaVersion> ecmaVersions, @NotNull List<String> files) throws Exception {
         List<String> libFiles = LibraryFilePathsUtil.getBasicLibraryFiles();
         for (EcmaVersion version : ecmaVersions) {
             String outputFilePath = getOutputFilePath(getTestName(false) + ".compiler.kt", version);

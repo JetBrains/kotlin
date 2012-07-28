@@ -23,5 +23,5 @@ import org.mozilla.javascript.Scriptable;
  * @author Pavel Talanov
  */
 public interface RhinoResultChecker {
-    public void runChecks(Context context, Scriptable scope) throws Exception;
+    void runChecks(Context context, Scriptable scope) throws Exception;
 }

@@ -20,13 +20,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.psi.JetTreeVisitor;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
@@ -34,49 +29,93 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 /**
  * @author Pavel Talanov
  */
-public class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
-
+class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
     @NotNull
     private final BindingContext bindingContext;
     @NotNull
-    private final JetElement functionElement;
+    private final PsiElement functionElement;
 
-    /*package*/ CaptureClosureVisitor(@NotNull JetElement functionElement, @NotNull BindingContext bindingContext) {
+    /*package*/ CaptureClosureVisitor(@NotNull PsiElement functionElement, @NotNull BindingContext bindingContext) {
         this.bindingContext = bindingContext;
         this.functionElement = functionElement;
+    }
 
+    @Override
+    public Void visitJetElement(JetElement element, ClosureContext data) {
+        if (element instanceof JetValueArgument) {
+            JetExpression expression = ((JetValueArgument) element).getArgumentExpression();
+            if (expression != null) {
+                expression.accept(this, data);
+            }
+        }
+        else if (!(element instanceof JetNamedFunction)) {
+            return super.visitJetElement(element, data);
+        }
+
+        return null;
     }
 
     @Override
     public Void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression,
-                                          @NotNull ClosureContext context) {
-        //TODO: this gets as dirty as it can be, should clean up and test more or use different approach
-        expression.acceptChildren(this, context);
+            @NotNull ClosureContext context) {
+        if (expression.getNode().getElementType() == JetNodeTypes.OPERATION_REFERENCE) {
+            return null;
+        }
+
         DeclarationDescriptor descriptor = BindingUtils.getNullableDescriptorForReferenceExpression(bindingContext, expression);
         if (!(descriptor instanceof VariableDescriptor)) {
+            if (descriptor instanceof SimpleFunctionDescriptor && !descriptor.getName().isSpecial()) {
+                checkOuterClassDescriptor(descriptor, context);
+            }
             return null;
         }
 
         VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
-        PsiElement variableDeclaration = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
-        if (variableDeclaration == null) {
-            return null;
-        }
-        if (PsiTreeUtil.isAncestor(functionElement, variableDeclaration, false)) {
-            return null;
-        }
-        boolean isProperty = variableDescriptor instanceof PropertyDescriptor;
-        if (!isProperty && !variableDescriptor.isVar() && variableDeclaration instanceof JetProperty) {
-            context.put(variableDescriptor);
-            return null;
-        }
-
-
-        boolean isLoopParameter = variableDeclaration.getNode().getElementType().equals(JetNodeTypes.LOOP_PARAMETER);
-        if (isLoopParameter) {
+        if (captured(variableDescriptor, context)) {
             context.put(variableDescriptor);
         }
+
         return null;
     }
 
+    public boolean captured(VariableDescriptor descriptor, ClosureContext context) {
+        PsiElement variableDeclaration = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
+        if (variableDeclaration == null) {
+            // "it" doesn't have declaration
+            return false;
+        }
+
+        if (PsiTreeUtil.isAncestor(functionElement, variableDeclaration, false)) {
+            if (descriptor instanceof LocalVariableDescriptor) {
+                // todo modification of outer local variable
+                //context.setHasLocalVariables();
+            }
+            return false;
+        }
+
+        if (descriptor instanceof ValueParameterDescriptor) {
+            return true;
+        }
+
+        boolean isProperty = descriptor instanceof PropertyDescriptor;
+        if (isProperty) {
+            checkOuterClassDescriptor(descriptor, context);
+            return false;
+        }
+
+        if (!descriptor.isVar() && variableDeclaration instanceof JetProperty) {
+            return true;
+        }
+
+        return variableDeclaration.getNode().getElementType().equals(JetNodeTypes.LOOP_PARAMETER);
+    }
+
+    private static void checkOuterClassDescriptor(DeclarationDescriptor descriptor, ClosureContext context) {
+        if (context.outerClassDescriptor == null) {
+            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+            if (containingDeclaration instanceof ClassDescriptor) {
+                context.outerClassDescriptor = (ClassDescriptor) containingDeclaration;
+            }
+        }
+    }
 }

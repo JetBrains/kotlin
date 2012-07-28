@@ -20,7 +20,6 @@ import com.google.common.collect.Sets;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -35,7 +34,6 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.subtract;
 
 /**
  * @author Pavel Talanov
@@ -88,7 +86,7 @@ public final class NumberConversionFIF extends CompositeFIF {
             assert arguments.isEmpty();
             TemporaryVariable toConvert = context.declareTemporary(receiver);
             JsBinaryOperation fractional = new JsBinaryOperation(JsBinaryOperator.MOD, toConvert.reference(), context.program().getNumberLiteral(1));
-            return AstUtil.newSequence(toConvert.assignmentExpression(), subtract(toConvert.reference(), fractional));
+            return new JsBinaryOperation(JsBinaryOperator.COMMA, toConvert.assignmentExpression(), fractional);
         }
     };
     @NotNull

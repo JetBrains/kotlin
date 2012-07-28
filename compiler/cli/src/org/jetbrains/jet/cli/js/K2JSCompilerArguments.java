@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.CompilerArguments;
 import org.jetbrains.k2js.facade.MainCallParameters;
 
+import java.util.ArrayList;
+
 /**
  * @author Pavel Talanov
  */
@@ -36,9 +38,6 @@ public class K2JSCompilerArguments extends CompilerArguments {
     //NOTE: may well be a subject to change soon
     @Argument(value = "libraryFiles", description = "Path to zipped lib sources or kotlin files")
     public String[] libraryFiles;
-
-    @Argument(value = "libraryDirectories", description = "Path to directory containing source kotlin files")
-    public String[] libraryDirectories;
 
     @Argument(value = "sourceFiles", description = "Source files (dir or file)")
     public String[] sourceFiles;

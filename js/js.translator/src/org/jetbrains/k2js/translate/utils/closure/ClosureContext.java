@@ -16,8 +16,10 @@
 
 package org.jetbrains.k2js.translate.utils.closure;
 
-import com.google.common.collect.Sets;
+import com.intellij.util.containers.OrderedSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 
 import java.util.Collection;
@@ -27,9 +29,21 @@ import java.util.Set;
  * @author Pavel Talanov
  */
 public final class ClosureContext {
-
     @NotNull
-    private final Set<VariableDescriptor> descriptors = Sets.newHashSet();
+    private final Set<VariableDescriptor> descriptors = new OrderedSet<VariableDescriptor>();
+
+    private boolean hasLocalVariables;
+
+    @Nullable
+    public ClassDescriptor outerClassDescriptor;
+
+    public boolean hasLocalVariables() {
+        return hasLocalVariables;
+    }
+
+    void setHasLocalVariables() {
+        hasLocalVariables = true;
+    }
 
     /*package*/ void put(@NotNull VariableDescriptor descriptor) {
         descriptors.add(descriptor);

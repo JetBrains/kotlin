@@ -14,32 +14,41 @@
  * limitations under the License.
  */
 
+"use strict";
+
+// todo inlined
+String.prototype.startsWith = function (s) {
+  return this.indexOf(s) === 0;
+};
+
+String.prototype.endsWith = function (s) {
+  return this.indexOf(s, this.length - s.length) !== -1;
+};
+
+String.prototype.contains = function (s) {
+  return this.indexOf(s) !== -1;
+};
+
 // todo org.jetbrains.k2js.test.semantics.WebDemoExamples2Test#testBuilder
 var kotlin = {set:function (receiver, key, value) {
     return receiver.put(key, value);
 }};
 
 (function () {
-    "use strict";
-
     Kotlin.equals = function (obj1, obj2) {
-        if ((obj1 === null)|| (obj1 === undefined)) return obj2 === null;
-        if (typeof obj1 == "object") {
-            if (obj1.equals !== undefined) {
-                return obj1.equals(obj2);
-            }
+        if (obj1 === null || obj1 === undefined) {
+            return obj2 === null;
         }
+
+        if (typeof obj1 == "object" && obj1.equals !== undefined) {
+            return obj1.equals(obj2);
+        }
+
         return obj1 === obj2;
     };
 
     Kotlin.array = function (args) {
-        var answer = [];
-        if (args !== null && args !== undefined) {
-            for (var i = 0, n = args.length; i < n; ++i) {
-                answer[i] = args[i]
-            }
-        }
-        return answer;
+        return args === null || args === undefined ? [] : args.slice();
     };
 
     Kotlin.intUpto = function (from, limit) {
@@ -51,20 +60,20 @@ var kotlin = {set:function (receiver, key, value) {
     };
 
     Kotlin.modules = {};
-    Kotlin.Exceptions = {};
+
     Kotlin.Exception = Kotlin.$createClass();
     Kotlin.RuntimeException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.Exceptions.IndexOutOfBounds = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.Exceptions.NullPointerException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.Exceptions.NoSuchElementException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.Exceptions.IllegalArgumentException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.Exceptions.IllegalStateException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.Exceptions.IndexOutOfBoundsException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.Exceptions.UnsupportedOperationException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.Exceptions.IOException = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.IndexOutOfBounds = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.NullPointerException = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.NoSuchElementException = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.IllegalArgumentException = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.IllegalStateException = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.IndexOutOfBoundsException = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.UnsupportedOperationException = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.IOException = Kotlin.$createClass(Kotlin.Exception);
 
     Kotlin.throwNPE = function () {
-        throw Kotlin.$new(Kotlin.Exceptions.NullPointerException)();
+        throw Kotlin.$new(Kotlin.NullPointerException)();
     };
 
     function throwAbstractFunctionInvocationError(funName) {
@@ -108,55 +117,6 @@ var kotlin = {set:function (receiver, key, value) {
         },
         next: function () {
             return this.list.get(this.index++);
-        },
-        get_hasNext: function () {
-            return this.index < this.size;
-        }
-    });
-
-    Kotlin.AbstractCollection = Kotlin.$createClass({
-        isEmpty: function () {
-            return this.size() == 0;
-        },
-        addAll: function (collection) {
-            var it = collection.iterator();
-            while (it.get_hasNext()) {
-                this.add(it.next());
-            }
-        },
-        equals: function (o) {
-            if (o === null || o === undefined) return false;
-            if (this.size() === o.size()) {
-                var iter1 = this.iterator();
-                var iter2 = o.iterator();
-                while (true) {
-                    var hn1 = iter1.get_hasNext();
-                    var hn2 = iter2.get_hasNext();
-                    if (hn1 != hn2) return false;
-                    if (!hn2)
-                        return true;
-                    else {
-                        var o1 = iter1.next();
-                        var o2 = iter2.next();
-                        if (!Kotlin.equals(o1, o2)) return false;
-                    }
-                }
-            }
-            return false;
-        },
-        toString: function() {
-            var builder = "[";
-            var iter = this.iterator();
-            var first = true;
-            while (iter.get_hasNext()) {
-                if (first)
-                    first = false;
-                else
-                    builder += ", ";
-                builder += iter.next();
-            }
-            builder += "]";
-            return builder;
         }
     });
 
@@ -219,6 +179,7 @@ var kotlin = {set:function (receiver, key, value) {
             return this.toArray();
         }
     });
+
     Kotlin.ArrayList = Kotlin.$createClass(Kotlin.AbstractList, {
         initialize: function () {
             this.array = [];
@@ -318,7 +279,7 @@ var kotlin = {set:function (receiver, key, value) {
     };
 
     Kotlin.safeParseDouble = function(str) {
-        var r = parseFloat(str, 10);
+        var r = parseFloat(str);
         return isNaN(r) ? null : r;
     };
 
@@ -341,16 +302,16 @@ var kotlin = {set:function (receiver, key, value) {
         };
 
         return {
-            out:function () {
+            out: function () {
                 return {
-                    print:print,
-                    println:println
+                    print: print,
+                    println: println
                 };
             },
-            output:function () {
+            output: function () {
                 return output;
             },
-            flush:function () {
+            flush: function () {
                 output = "";
             }
         };
@@ -496,12 +457,11 @@ var kotlin = {set:function (receiver, key, value) {
     };
 
     Kotlin.arrayFromFun = function (size, initFun) {
-        var res = [];
-        var i = size;
-        while (i > 0) {
-            res[--i] = initFun(i);
+        var result = new Array(size);
+        for (var i = 0; i < size; i++) {
+            result[i] = initFun(i);
         }
-        return res;
+        return result;
     };
 
     Kotlin.arrayIndices = function (arr) {
@@ -550,502 +510,51 @@ var kotlin = {set:function (receiver, key, value) {
         return obj;
     };
 
-    (function () {
-        var FUNCTION = "function";
-
-        var arrayRemoveAt = (typeof Array.prototype.splice == FUNCTION) ?
-                function (arr, idx) {
-                    arr.splice(idx, 1);
-                } :
-
-                function (arr, idx) {
-                    var itemsAfterDeleted, i, len;
-                    if (idx === arr.length - 1) {
-                        arr.length = idx;
-                    }
-                    else {
-                        itemsAfterDeleted = arr.slice(idx + 1);
-                        arr.length = idx;
-                        for (i = 0, len = itemsAfterDeleted.length; i < len; ++i) {
-                            arr[idx + i] = itemsAfterDeleted[i];
-                        }
-                    }
-                };
-
-        function hashObject(obj) {
-            var hashCode;
-            if (typeof obj == "string") {
-                return obj;
-            } else if (typeof obj.hashCode == FUNCTION) {
-                // Check the hashCode method really has returned a string
-                hashCode = obj.hashCode();
-                return (typeof hashCode == "string") ? hashCode : hashObject(hashCode);
-            } else if (typeof obj.toString == FUNCTION) {
-                return obj.toString();
-            }
-            else {
-                try {
-                    return String(obj);
-                } catch (ex) {
-                    // For host objects (such as ActiveObjects in IE) that have no toString() method and throw an error when
-                    // passed to String()
-                    return Object.prototype.toString.call(obj);
-                }
-            }
+    // native concat doesn't work for arguments
+    Kotlin.concat = function (a, b) {
+        var r = new Array(a.length + b.length);
+        var i = 0;
+        var n = a.length;
+        for (; i < n; i++) {
+            r[i] = a[i];
         }
-
-        function equals_fixedValueHasEquals(fixedValue, variableValue) {
-            return fixedValue.equals(variableValue);
+        n = b.length;
+        for (var j = 0; j < n;) {
+            r[i++] = b[j++];
         }
-
-        function equals_fixedValueNoEquals(fixedValue, variableValue) {
-            return (typeof variableValue.equals == FUNCTION) ?
-                    variableValue.equals(fixedValue) : (fixedValue === variableValue);
-        }
-
-        function createKeyValCheck(kvStr) {
-            return function (kv) {
-                if (kv === null) {
-                    throw new Error("null is not a valid " + kvStr);
-                } else if (typeof kv == "undefined") {
-                    throw new Error(kvStr + " must not be undefined");
-                }
-            };
-        }
-
-        var checkKey = createKeyValCheck("key"), checkValue = createKeyValCheck("value");
-
-        /*----------------------------------------------------------------------------------------------------------------*/
-
-        function Bucket(hash, firstKey, firstValue, equalityFunction) {
-            this[0] = hash;
-            this.entries = [];
-            this.addEntry(firstKey, firstValue);
-
-            if (equalityFunction !== null) {
-                this.getEqualityFunction = function () {
-                    return equalityFunction;
-                };
-            }
-        }
-
-        var EXISTENCE = 0, ENTRY = 1, ENTRY_INDEX_AND_VALUE = 2;
-
-        function createBucketSearcher(mode) {
-            return function (key) {
-                var i = this.entries.length, entry, equals = this.getEqualityFunction(key);
-                while (i--) {
-                    entry = this.entries[i];
-                    if (equals(key, entry[0])) {
-                        switch (mode) {
-                            case EXISTENCE:
-                                return true;
-                            case ENTRY:
-                                return entry;
-                            case ENTRY_INDEX_AND_VALUE:
-                                return [ i, entry[1] ];
-                        }
-                    }
-                }
-                return false;
-            };
-        }
-
-        function createBucketLister(entryProperty) {
-            return function (aggregatedArr) {
-                var startIndex = aggregatedArr.length;
-                for (var i = 0, len = this.entries.length; i < len; ++i) {
-                    aggregatedArr[startIndex + i] = this.entries[i][entryProperty];
-                }
-            };
-        }
-
-        Bucket.prototype = {
-            getEqualityFunction:function (searchValue) {
-                return (typeof searchValue.equals == FUNCTION) ? equals_fixedValueHasEquals : equals_fixedValueNoEquals;
-            },
-
-            getEntryForKey:createBucketSearcher(ENTRY),
-
-            getEntryAndIndexForKey:createBucketSearcher(ENTRY_INDEX_AND_VALUE),
-
-            removeEntryForKey:function (key) {
-                var result = this.getEntryAndIndexForKey(key);
-                if (result) {
-                    arrayRemoveAt(this.entries, result[0]);
-                    return result[1];
-                }
-                return null;
-            },
-
-            addEntry:function (key, value) {
-                this.entries[this.entries.length] = [key, value];
-            },
-
-            keys:createBucketLister(0),
-
-            values:createBucketLister(1),
-
-            getEntries:function (entries) {
-                var startIndex = entries.length;
-                for (var i = 0, len = this.entries.length; i < len; ++i) {
-                    // Clone the entry stored in the bucket before adding to array
-                    entries[startIndex + i] = this.entries[i].slice(0);
-                }
-            },
-
-            containsKey:createBucketSearcher(EXISTENCE),
-
-            containsValue:function (value) {
-                var i = this.entries.length;
-                while (i--) {
-                    if (value === this.entries[i][1]) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        };
-
-        /*----------------------------------------------------------------------------------------------------------------*/
-
-        // Supporting functions for searching hashtable buckets
-
-        function searchBuckets(buckets, hash) {
-            var i = buckets.length, bucket;
-            while (i--) {
-                bucket = buckets[i];
-                if (hash === bucket[0]) {
-                    return i;
-                }
-            }
-            return null;
-        }
-
-        function getBucketForHash(bucketsByHash, hash) {
-            var bucket = bucketsByHash[hash];
-
-            // Check that this is a genuine bucket and not something inherited from the bucketsByHash's prototype
-            return ( bucket && (bucket instanceof Bucket) ) ? bucket : null;
-        }
-
-        /*----------------------------------------------------------------------------------------------------------------*/
-
-        var Hashtable = function (hashingFunctionParam, equalityFunctionParam) {
-            var that = this;
-            var buckets = [];
-            var bucketsByHash = {};
-
-            var hashingFunction = (typeof hashingFunctionParam == FUNCTION) ? hashingFunctionParam : hashObject;
-            var equalityFunction = (typeof equalityFunctionParam == FUNCTION) ? equalityFunctionParam : null;
-
-            this.put = function (key, value) {
-                checkKey(key);
-                checkValue(value);
-                var hash = hashingFunction(key), bucket, bucketEntry, oldValue = null;
-
-                // Check if a bucket exists for the bucket key
-                bucket = getBucketForHash(bucketsByHash, hash);
-                if (bucket) {
-                    // Check this bucket to see if it already contains this key
-                    bucketEntry = bucket.getEntryForKey(key);
-                    if (bucketEntry) {
-                        // This bucket entry is the current mapping of key to value, so replace old value and we're done.
-                        oldValue = bucketEntry[1];
-                        bucketEntry[1] = value;
-                    }
-                    else {
-                        // The bucket does not contain an entry for this key, so add one
-                        bucket.addEntry(key, value);
-                    }
-                }
-                else {
-                    // No bucket exists for the key, so create one and put our key/value mapping in
-                    bucket = new Bucket(hash, key, value, equalityFunction);
-                    buckets[buckets.length] = bucket;
-                    bucketsByHash[hash] = bucket;
-                }
-                return oldValue;
-            };
-
-            this.get = function (key) {
-                checkKey(key);
-
-                var hash = hashingFunction(key);
-
-                // Check if a bucket exists for the bucket key
-                var bucket = getBucketForHash(bucketsByHash, hash);
-                if (bucket) {
-                    // Check this bucket to see if it contains this key
-                    var bucketEntry = bucket.getEntryForKey(key);
-                    if (bucketEntry) {
-                        // This bucket entry is the current mapping of key to value, so return the value.
-                        return bucketEntry[1];
-                    }
-                }
-                return null;
-            };
-
-            this.containsKey = function (key) {
-                checkKey(key);
-                var bucketKey = hashingFunction(key);
-
-                // Check if a bucket exists for the bucket key
-                var bucket = getBucketForHash(bucketsByHash, bucketKey);
-
-                return bucket ? bucket.containsKey(key) : false;
-            };
-
-            this.containsValue = function (value) {
-                checkValue(value);
-                var i = buckets.length;
-                while (i--) {
-                    if (buckets[i].containsValue(value)) {
-                        return true;
-                    }
-                }
-                return false;
-            };
-
-            this.clear = function () {
-                buckets.length = 0;
-                bucketsByHash = {};
-            };
-
-            this.isEmpty = function () {
-                return !buckets.length;
-            };
-
-            var createBucketAggregator = function (bucketFuncName) {
-                return function () {
-                    var aggregated = [], i = buckets.length;
-                    while (i--) {
-                        buckets[i][bucketFuncName](aggregated);
-                    }
-                    return aggregated;
-                };
-            };
-
-            this._keys = createBucketAggregator("keys");
-            this._values = createBucketAggregator("values");
-            this._entries = createBucketAggregator("getEntries");
-
-            this.values = function() {
-                var values = this._values();
-                var i = values.length
-                var result = Kotlin.$new(Kotlin.ArrayList)();
-                while (--i) {
-                    result.add(values[i]);
-                }
-                return result;
-            };
-
-            this.remove = function (key) {
-                checkKey(key);
-
-                var hash = hashingFunction(key), bucketIndex, oldValue = null;
-
-                // Check if a bucket exists for the bucket key
-                var bucket = getBucketForHash(bucketsByHash, hash);
-
-                if (bucket) {
-                    // Remove entry from this bucket for this key
-                    oldValue = bucket.removeEntryForKey(key);
-                    if (oldValue !== null) {
-                        // Entry was removed, so check if bucket is empty
-                        if (!bucket.entries.length) {
-                            // Bucket is empty, so remove it from the bucket collections
-                            bucketIndex = searchBuckets(buckets, hash);
-                            arrayRemoveAt(buckets, bucketIndex);
-                            delete bucketsByHash[hash];
-                        }
-                    }
-                }
-                return oldValue;
-            };
-
-            this.size = function () {
-                var total = 0, i = buckets.length;
-                while (i--) {
-                    total += buckets[i].entries.length;
-                }
-                return total;
-            };
-
-            this.each = function (callback) {
-                var entries = that.entries(), i = entries.length, entry;
-                while (i--) {
-                    entry = entries[i];
-                    callback(entry[0], entry[1]);
-                }
-            };
-
-
-            this.putAll = function (hashtable, conflictCallback) {
-                var entries = hashtable.entries();
-                var entry, key, value, thisValue, i = entries.length;
-                var hasConflictCallback = (typeof conflictCallback == FUNCTION);
-                while (i--) {
-                    entry = entries[i];
-                    key = entry[0];
-                    value = entry[1];
-
-                    // Check for a conflict. The default behaviour is to overwrite the value for an existing key
-                    if (hasConflictCallback && (thisValue = that.get(key))) {
-                        value = conflictCallback(key, thisValue, value);
-                    }
-                    that.put(key, value);
-                }
-            };
-
-            this.clone = function () {
-                var clone = new Hashtable(hashingFunctionParam, equalityFunctionParam);
-                clone.putAll(that);
-                return clone;
-            };
-
-            this.keySet = function () {
-                var res = Kotlin.$new(Kotlin.HashSet)();
-                var keys = this._keys();
-                var i = keys.length;
-                while (i--) {
-                    res.add(keys[i]);
-                }
-                return res;
-            };
-        };
-
-        Kotlin.HashTable = Hashtable;
-    })();
-
-    Kotlin.HashMap = Kotlin.$createClass({
-                                             initialize: function () {
-                                                 Kotlin.HashTable.call(this);
-                                             }
-                                         });
-
-    (function () {
-        function HashSet(hashingFunction, equalityFunction) {
-            var hashTable = new Kotlin.HashTable(hashingFunction, equalityFunction);
-
-            this.add = function (o) {
-                hashTable.put(o, true);
-            };
-
-            this.addAll = function (arr) {
-                var i = arr.length;
-                while (i--) {
-                    hashTable.put(arr[i], true);
-                }
-            };
-
-            this.values = function () {
-                return hashTable._keys();
-            };
-
-            this.iterator = function () {
-                return Kotlin.arrayIterator(this.values());
-            };
-
-            this.remove = function (o) {
-                return hashTable.remove(o) ? o : null;
-            };
-
-            this.contains = function (o) {
-                return hashTable.containsKey(o);
-            };
-
-            this.clear = function () {
-                hashTable.clear();
-            };
-
-            this.size = function () {
-                return hashTable.size();
-            };
-
-            this.isEmpty = function () {
-                return hashTable.isEmpty();
-            };
-
-            this.clone = function () {
-                var h = new HashSet(hashingFunction, equalityFunction);
-                h.addAll(hashTable.keys());
-                return h;
-            };
-
-            this.equals = function (o) {
-                if (o === null || o === undefined) return false;
-                if (this.size() === o.size()) {
-                    var iter1 = this.iterator();
-                    var iter2 = o.iterator();
-                    while (true) {
-                        var hn1 = iter1.get_hasNext();
-                        var hn2 = iter2.get_hasNext();
-                        if (hn1 != hn2) return false;
-                        if (!hn2)
-                            return true;
-                        else {
-                            var o1 = iter1.next();
-                            var o2 = iter2.next();
-                            if (!Kotlin.equals(o1, o2)) return false;
-                        }
-                    }
-                }
-                return false;
-            };
-
-            this.toString = function() {
-                var builder = "[";
-                var iter = this.iterator();
-                var first = true;
-                while (iter.get_hasNext()) {
-                    if (first)
-                        first = false;
-                    else
-                        builder += ", ";
-                    builder += iter.next();
-                }
-                builder += "]";
-                return builder;
-            };
-
-            this.intersection = function (hashSet) {
-                var intersection = new HashSet(hashingFunction, equalityFunction);
-                var values = hashSet.values(), i = values.length, val;
-                while (i--) {
-                    val = values[i];
-                    if (hashTable.containsKey(val)) {
-                        intersection.add(val);
-                    }
-                }
-                return intersection;
-            };
-
-            this.union = function (hashSet) {
-                var union = this.clone();
-                var values = hashSet.values(), i = values.length, val;
-                while (i--) {
-                    val = values[i];
-                    if (!hashTable.containsKey(val)) {
-                        union.add(val);
-                    }
-                }
-                return union;
-            };
-
-            this.isSubsetOf = function (hashSet) {
-                var values = hashTable.keys(), i = values.length;
-                while (i--) {
-                    if (!hashSet.contains(values[i])) {
-                        return false;
-                    }
-                }
-                return true;
-            };
-        }
-
-        Kotlin.HashSet = Kotlin.$createClass({initialize: function () {
-            HashSet.call(this);
-        }});
-    }());
+        return r;
+    }
 })();
+
+Kotlin.assignOwner = function(f, o) {
+  f.o = o;
+  return f;
+};
+
+// we cannot use Function.bind, because if we bind with null self, but call with not null — fun must receive passed not null self
+// test case: WebDemoExamples2Test.testBuilder
+Kotlin.b0 = function (f, self, value) {
+    return function () {
+        return f.call(self !== null ? self : this, value);
+    }
+};
+Kotlin.b1 = function (f, self, values) {
+    return function () {
+        return f.apply(self !== null ? self : this, values);
+    }
+};
+Kotlin.b2 = function (f, self, values) {
+    return function () {
+        return f.apply(self !== null ? self : this, Kotlin.concat(values, arguments));
+    }
+};
+Kotlin.b3 = function (f, self) {
+    return function () {
+        return f.call(self)
+    }
+};
+Kotlin.b4 = function (f, self) {
+    return function () {
+        return f.apply(self, Kotlin.argumentsToArrayLike(arguments));
+    }
+};

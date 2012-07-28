@@ -22,7 +22,7 @@ public final class IdentifierClashTest extends AbstractExpressionTest {
         super("identifierClash/");
     }
 
-    public void TODO_testUseVariableOfNameOfFunction() throws Exception {
+    public void testUseVariableOfNameOfFunction() throws Exception {
         fooBoxTest();
     }
 

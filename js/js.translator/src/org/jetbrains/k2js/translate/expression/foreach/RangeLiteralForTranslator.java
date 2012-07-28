@@ -86,7 +86,7 @@ public final class RangeLiteralForTranslator extends ForTranslator {
                                                   getCondition(),
                                                   getIncrExpression(),
                                                   translateOriginalBodyExpression()));
-        return newBlock(blockStatements);
+        return new JsBlock(blockStatements);
     }
 
     @NotNull
@@ -101,6 +101,6 @@ public final class RangeLiteralForTranslator extends ForTranslator {
 
     @NotNull
     private JsExpression getIncrExpression() {
-        return new JsPrefixOperation(JsUnaryOperator.INC, parameterName.makeRef());
+        return new JsPostfixOperation(JsUnaryOperator.INC, parameterName.makeRef());
     }
 }

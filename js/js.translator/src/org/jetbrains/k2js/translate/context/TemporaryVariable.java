@@ -20,24 +20,21 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 /**
  * @author Pavel Talanov
  */
-public final class TemporaryVariable {
-
-    @NotNull
+public class TemporaryVariable {
+    @Nullable
     private final JsExpression assignmentExpression;
     @NotNull
     private final JsName variableName;
-    @NotNull
-    private final JsExpression initExpression;
 
-    /*package*/ TemporaryVariable(@NotNull JsName temporaryName, @NotNull JsExpression initExpression) {
+    /*package*/ TemporaryVariable(@NotNull JsName temporaryName, @Nullable JsExpression initExpression) {
         this.variableName = temporaryName;
-        this.initExpression = initExpression;
-        this.assignmentExpression = JsAstUtils.assignment(variableName.makeRef(), this.initExpression);
+        this.assignmentExpression = initExpression == null ? null : JsAstUtils.assignment(variableName.makeRef(), initExpression);
     }
 
     @NotNull
@@ -52,11 +49,7 @@ public final class TemporaryVariable {
 
     @NotNull
     public JsExpression assignmentExpression() {
+        assert assignmentExpression != null;
         return assignmentExpression;
-    }
-
-    @NotNull
-    public JsExpression initExpression() {
-        return initExpression;
     }
 }

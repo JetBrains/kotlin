@@ -31,7 +31,7 @@ import java.io.File;
 public class PathUtil {
 
     public static final String JS_LIB_JAR_NAME = "kotlin-jslib.jar";
-    public static final String JS_LIB_JS_NAME = "kotlinEcma3.js";
+    public static final String JS_LIB_JS_NAME = "kotlinLib.js";
     public static final String JDK_ANNOTATIONS_JAR = "kotlin-jdk-annotations.jar";
     public static final String KOTLIN_COMPILER_JAR = "kotlin-compiler.jar";
     public static final String KOTLIN_RUNTIME_JAR = "kotlin-runtime.jar";

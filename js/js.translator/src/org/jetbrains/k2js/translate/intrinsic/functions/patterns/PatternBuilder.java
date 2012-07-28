@@ -80,7 +80,7 @@ public final class PatternBuilder {
                 try {
                     return doApply(descriptor);
                 }
-                catch (IllegalArgumentException e) {
+                catch (IllegalArgumentException ignored) {
                     return false;
                 }
             }
