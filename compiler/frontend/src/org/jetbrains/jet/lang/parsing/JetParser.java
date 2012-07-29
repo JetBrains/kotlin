@@ -27,7 +27,11 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
 public class JetParser implements PsiParser {
-    public static final String KTSCRIPT_FILE_SUFFIX = "ktscript";
+    private JetParserDefinition parserDefinition;
+
+    public JetParser(JetParserDefinition parserDefinition) {
+        this.parserDefinition = parserDefinition;
+    }
 
     @Override
     @NotNull
@@ -39,7 +43,7 @@ public class JetParser implements PsiParser {
     @NotNull
     public ASTNode parse(IElementType iElementType, PsiBuilder psiBuilder, PsiFile psiFile) {
         JetParsing jetParsing = JetParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
-        if (psiFile.getName().endsWith("." + KTSCRIPT_FILE_SUFFIX)) {
+        if (parserDefinition.isScript(psiFile)) {
             jetParsing.parseScript();
         }
         else {
@@ -47,5 +51,4 @@ public class JetParser implements PsiParser {
         }
         return psiBuilder.getTreeBuilt();
     }
-
 }

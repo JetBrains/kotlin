@@ -17,8 +17,15 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.lang.parsing.JetParserDefinition;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * @author Stepan Koltsov
@@ -86,4 +93,18 @@ public class ScriptGenTest extends CodegenTestCase {
         blackBoxFile("script/empty.ktscript");
     }
 
+    public void testLanguage() {
+        JetParserDefinition.getInstance().addScriptDefinition(new JetScriptDefinition(".lang.kt", new AnalyzerScriptParameter("num","jet.Int")));
+        loadFile("script/fib.lang.kt");
+        final Class aClass = loadClass("Script", generateClassesInFile());
+        try {
+            Constructor constructor = aClass.getConstructor(int.class);
+            Field result = aClass.getField("result");
+            Object script = constructor.newInstance(5);
+            assertEquals(8,result.get(script));
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
