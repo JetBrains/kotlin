@@ -149,22 +149,30 @@ public abstract class CLICompiler<A extends CompilerArguments, C extends Compile
      * Useful main for derived command line tools
      */
     public static void doMain(@NotNull CLICompiler compiler, @NotNull String[] args) {
+        ExitCode exitCode = doDoMain(compiler, args);
+        if (exitCode != OK) {
+            System.exit(exitCode.getCode());
+        }
+    }
+
+    @NotNull
+    public static ExitCode doDoMain(CLICompiler compiler, String[] args) {
         try {
             ExitCode rc = compiler.exec(System.out, args);
             if (rc != OK) {
                 System.err.println("exec() finished with " + rc + " return code");
-                if (Boolean.parseBoolean(System.getProperty("kotlin.print.cmd.args"))) {
-                    System.err.println("Command line arguments: ");
-                    for (String arg : args) {
-                        System.err.println(arg);
-                    }
-                }
-                System.exit(rc.getCode());
             }
+            if (Boolean.parseBoolean(System.getProperty("kotlin.print.cmd.args"))) {
+                System.out.println("Command line arguments:");
+                for (String arg : args) {
+                    System.out.println(arg);
+                }
+            }
+            return rc;
         }
         catch (CompileEnvironmentException e) {
             System.err.println(e.getMessage());
-            System.exit(INTERNAL_ERROR.getCode());
+            return INTERNAL_ERROR;
         }
     }
 }

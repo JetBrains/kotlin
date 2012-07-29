@@ -17,9 +17,9 @@
 package org.jetbrains.jet.cli.jvm;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.test.Tmpdir;
 import org.jetbrains.jet.utils.ExceptionUtils;
@@ -48,9 +48,8 @@ public class CliTest {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         PrintStream origOut = System.out;
         try {
-            // we change System.out because scripts ignore passed OutputStream and write to System.out
             System.setOut(new PrintStream(bytes));
-            ExitCode exitCode = new K2JVMCompiler().exec(System.out, args);
+            ExitCode exitCode = CLICompiler.doDoMain(new K2JVMCompiler(), args);
             return bytes.toString("utf-8") + exitCode + "\n";
         }
         catch (Exception e) {
@@ -106,7 +105,7 @@ public class CliTest {
 
     @Test
     public void help() throws Exception {
-        executeCompilerCompareOutput(new String[] {"--help"});
+        executeCompilerCompareOutput(new String[] {"-help"});
     }
 
     @Test
@@ -117,6 +116,17 @@ public class CliTest {
     @Test
     public void ideTemplates() {
         executeCompilerCompareOutput(new String[]{ "-src", "compiler/testData/cli/ideTemplates.kt", "-output", tmpdir.getTmpDir().getPath()});
+    }
+
+    @Test
+    public void wrongArgument() {
+        executeCompilerCompareOutput(new String[] { "-wrongArgument" });
+    }
+
+    @Test
+    public void printArguments() {
+        System.setProperty("kotlin.print.cmd.args", "true");
+        executeCompilerCompareOutput(new String[] {"-script", "compiler/testData/cli/hello.ktscript"});
     }
 
 }
