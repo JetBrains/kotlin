@@ -256,7 +256,7 @@ public class ScriptCodegen {
 
         String name = file.getName();
         name = name.substring(0, name.length()-scriptDefinition.getExtension().length());
-        int index = name.lastIndexOf(File.separatorChar);
+        int index = name.lastIndexOf('/');
         if(index != -1)
             name = name.substring(index+1);
         name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
