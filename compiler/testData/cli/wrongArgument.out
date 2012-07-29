@@ -1,3 +1,4 @@
+Invalid argument: -wrongArgument
 Usage: org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
   -jar [String] jar file name
   -src [String] source file or directory
@@ -15,4 +16,4 @@ Usage: org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
   -verbose [flag] Enable verbose logging output
   -version [flag] Display compiler version
   -help (-h) [flag] show help
-OK
+INTERNAL_ERROR
