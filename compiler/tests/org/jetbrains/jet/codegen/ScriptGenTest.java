@@ -96,7 +96,22 @@ public class ScriptGenTest extends CodegenTestCase {
     public void testLanguage() {
         JetParserDefinition.getInstance().addScriptDefinition(new JetScriptDefinition(".lang.kt", new AnalyzerScriptParameter("num","jet.Int")));
         loadFile("script/fib.lang.kt");
-        final Class aClass = loadClass("Script", generateClassesInFile());
+        final Class aClass = loadClass("Fib", generateClassesInFile());
+        try {
+            Constructor constructor = aClass.getConstructor(int.class);
+            Field result = aClass.getField("result");
+            Object script = constructor.newInstance(5);
+            assertEquals(8,result.get(script));
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void testLanguageWithPackage() {
+        JetParserDefinition.getInstance().addScriptDefinition(new JetScriptDefinition(".lang.kt", new AnalyzerScriptParameter("num","jet.Int")));
+        loadFile("script/fibWithPackage.lang.kt");
+        final Class aClass = loadClass("test.FibWithPackage", generateClassesInFile());
         try {
             Constructor constructor = aClass.getConstructor(int.class);
             Field result = aClass.getField("result");

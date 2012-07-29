@@ -143,7 +143,8 @@ public class GenerationState {
     public void compileCorrectFiles(@NotNull CompilationErrorHandler errorHandler) {
         for (JetFile file : this.files) {
             if (file.isScript()) {
-                injector.getClosureAnnotator().registerClassNameForScript(file.getScript(), ScriptCodegen.SCRIPT_DEFAULT_CLASS_NAME);
+                String name = ScriptCodegen.classNameForScript(file);
+                injector.getClosureAnnotator().registerClassNameForScript(file.getScript(), JvmClassName.byInternalName(name));
             }
         }
 

@@ -23,9 +23,9 @@ import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetScript;
-import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner;
+import org.jetbrains.jet.lang.parsing.JetParserDefinition;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JdkNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
@@ -35,6 +35,7 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -248,5 +249,21 @@ public class ScriptCodegen {
 
     public String getScriptFieldName(@NotNull ScriptDescriptor scriptDescriptor) {
         return "script$" + getScriptIndex(scriptDescriptor);
+    }
+
+    public static String classNameForScript(JetFile file) {
+        JetScriptDefinition scriptDefinition = JetParserDefinition.getInstance().findScriptDefinition(file);
+
+        String name = file.getName();
+        name = name.substring(0, name.length()-scriptDefinition.getExtension().length());
+        int index = name.lastIndexOf(File.separatorChar);
+        if(index != -1)
+            name = name.substring(index+1);
+        name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+        JetNamespaceHeader header = file.getNamespaceHeader();
+        if(header != null && header.getName().length() > 0) {
+            name = header.getName().replace('.','/') + "/" + name;
+        }
+        return name;
     }
 }

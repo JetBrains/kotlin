@@ -106,8 +106,23 @@ public class JetParsing extends AbstractJetParsing {
 
     void parseScript() {
         PsiBuilder.Marker fileMarker = mark();
-        PsiBuilder.Marker scriptMarker = mark();
 
+        PsiBuilder.Marker namespaceHeader = mark();
+        parseModifierList(MODIFIER_LIST, true);
+
+        if (at(PACKAGE_KEYWORD)) {
+            advance(); // PACKAGE_KEYWORD
+
+            parseNamespaceName();
+
+            consumeIf(SEMICOLON);
+            namespaceHeader.done(NAMESPACE_HEADER);
+        }
+        else {
+            namespaceHeader.rollbackTo();
+        }
+
+        PsiBuilder.Marker scriptMarker = mark();
         parseImportDirectives();
 
         PsiBuilder.Marker blockMarker = mark();

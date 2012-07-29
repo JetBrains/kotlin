@@ -261,7 +261,8 @@ public class KotlinToJVMBytecodeCompiler {
                         CompilerPathUtil.getRuntimePath().toURI().toURL()
                 },
                         parentLoader == null ? AllModules.class.getClassLoader() : parentLoader));
-                return classLoader.loadClass(ScriptCodegen.SCRIPT_DEFAULT_CLASS_NAME.getFqName().getFqName());
+                JetFile scriptFile = configuration.getEnvironment().getSourceFiles().get(0);
+                return classLoader.loadClass(ScriptCodegen.classNameForScript(scriptFile));
             }
             catch (Exception e) {
                 throw new RuntimeException("Failed to evaluate script: " + e, e);
