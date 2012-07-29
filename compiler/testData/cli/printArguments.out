@@ -1,5 +1,5 @@
 hello
-Command line arguments: 
+Command line arguments:
 -script
 compiler/testData/cli/hello.ktscript
 OK
