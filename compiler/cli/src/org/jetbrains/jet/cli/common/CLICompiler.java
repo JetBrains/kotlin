@@ -155,7 +155,7 @@ public abstract class CLICompiler<A extends CompilerArguments> {
     }
 
     @NotNull
-    public static ExitCode doDoMain(CLICompiler compiler, String[] args) {
+    public static ExitCode doDoMain(@NotNull CLICompiler compiler, @NotNull String[] args) {
         try {
             ExitCode rc = compiler.exec(System.out, args);
             if (rc != OK) {
