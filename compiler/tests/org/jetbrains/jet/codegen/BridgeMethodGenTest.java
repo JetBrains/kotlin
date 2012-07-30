@@ -134,4 +134,9 @@ public class BridgeMethodGenTest extends CodegenTestCase {
         createEnvironmentWithFullJdk();
         blackBoxFile("regressions/kt2498.kt");
     }
+
+    public void testKt1939() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("regressions/kt1939.kt");
+    }
 }
