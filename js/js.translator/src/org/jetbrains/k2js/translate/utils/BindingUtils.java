@@ -76,14 +76,6 @@ public final class BindingUtils {
     }
 
     @NotNull
-    public static JetClass getClassForDescriptor(@NotNull BindingContext context,
-            @NotNull ClassDescriptor descriptor) {
-        PsiElement result = BindingContextUtils.classDescriptorToDeclaration(context, descriptor);
-        assert result instanceof JetClass : message(context, descriptor, "JetClass not found for " + descriptor);
-        return (JetClass) result;
-    }
-
-    @NotNull
     public static JetFunction getFunctionForDescriptor(@NotNull BindingContext context,
             @NotNull SimpleFunctionDescriptor descriptor) {
         PsiElement result = BindingContextUtils.callableDescriptorToDeclaration(context, descriptor);
