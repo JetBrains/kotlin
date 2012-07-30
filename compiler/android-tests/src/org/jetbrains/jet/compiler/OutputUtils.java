@@ -31,11 +31,10 @@ import java.util.regex.Pattern;
 
 public class OutputUtils {
 
-    private final static Pattern EMULATOR_PATTERN = Pattern.compile("emulator-([0-9])*");
     private final static Pattern EMULATOR_PROCESS_PATTERN = Pattern.compile("\\w*[\\s]+([0-9]*) .* java .* emulator .*");
 
-    public static boolean isResultOk(String output) {
-        return !(output.contains("BUILD FAILED") || output.contains("Build failed"));
+    public static boolean isBuildFailed(String output) {
+        return output.contains("BUILD FAILED") || output.contains("Build failed");
     }
 
     public static void checkResult(RunResult result) {
@@ -44,38 +43,6 @@ public class OutputUtils {
         }
     }
 
-    public static void stopRedundantEmulators(PathManager pathManager) {
-        GeneralCommandLine commandLineForListOfDevices = new GeneralCommandLine();
-        String adbCmdName = SystemInfo.isWindows ? "adb.exe" : "adb";
-        commandLineForListOfDevices.setExePath(pathManager.getPlatformToolsFolderInAndroidSdk() + "/" + adbCmdName);
-        commandLineForListOfDevices.addParameter("devices");
-        RunResult runResult = RunUtils.execute(commandLineForListOfDevices);
-        checkResult(runResult);
-
-        Matcher matcher = EMULATOR_PATTERN.matcher(runResult.getOutput());
-        while (matcher.find()) {
-            System.out.println("Stopping redundant emulator...");
-            GeneralCommandLine commandLineForStoppingEmulators = new GeneralCommandLine();
-            if (SystemInfo.isWindows) {
-                commandLineForStoppingEmulators.setExePath("taskkill");
-                commandLineForStoppingEmulators.addParameter("/F");
-                commandLineForStoppingEmulators.addParameter("/IM");
-                commandLineForStoppingEmulators.addParameter("emulator-arm.exe");
-                checkResult(RunUtils.execute(commandLineForStoppingEmulators));
-                break;
-            }
-            else {
-                commandLineForStoppingEmulators.setExePath(pathManager.getPlatformToolsFolderInAndroidSdk() + "/adb");
-                commandLineForStoppingEmulators.addParameter("-s");
-                commandLineForStoppingEmulators.addParameter(matcher.group());
-                commandLineForStoppingEmulators.addParameter("emu");
-                commandLineForStoppingEmulators.addParameter("kill");
-                checkResult(RunUtils.execute(commandLineForStoppingEmulators));
-            }
-        }
-        checkResult(RunUtils.execute(commandLineForListOfDevices));
-    }
-    
     @Nullable
     public static String getPidFromPsCommand(String output) {
         if (!output.isEmpty()) {

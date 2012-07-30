@@ -139,7 +139,7 @@ public class RunUtils {
         }
         else {
             String output = builderToString(stdOut) + builderToString(stdErr);
-            if (!OutputUtils.isResultOk(output)) {
+            if (OutputUtils.isBuildFailed(output)) {
                 return new RunResult(false, output);
             }
             return new RunResult(true, output);
