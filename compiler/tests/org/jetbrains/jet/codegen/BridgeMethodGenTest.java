@@ -55,6 +55,11 @@ public class BridgeMethodGenTest extends CodegenTestCase {
         blackBoxFile("bridges/methodFromTrait.kt");
     }
 
+    public void testOverrideAbstractProperty() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("bridges/overrideAbstractProperty.kt");
+    }
+
     public void testSimple() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("bridges/simple.kt");
