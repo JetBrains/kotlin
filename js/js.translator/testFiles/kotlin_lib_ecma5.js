@@ -83,15 +83,20 @@ var Kotlin = Object.create(null);
     Kotlin.createObject = function (bases, initializer, properties) {
         var o = Object.create(computeProto2(bases, properties), properties || undefined);
         if (initializer !== null) {
+            if (bases !== null) {
+                Object.defineProperty(initializer, "baseInitializer", {value: Array.isArray(bases) ? bases[0].initializer : bases.initializer});
+            }
             initializer.call(o);
         }
+        Object.seal(o);
         return o;
     };
 
     function createClass(bases, initializer, properties, isClass) {
         var proto;
-        var baseInitializer = null;
+        var baseInitializer;
         if (bases === null) {
+            baseInitializer = null;
             proto = !isClass && properties === null ? null : Object.create(null, properties || undefined);
         }
         else if (!Array.isArray(bases)) {
@@ -99,9 +104,9 @@ var Kotlin = Object.create(null);
             proto = !isClass && properties === null ? bases.proto : Object.create(bases.proto, properties || undefined);
         }
         else {
-            proto = computeProto(bases, properties);
             // first is superclass, other are traits
             baseInitializer = bases[0].initializer;
+            proto = computeProto(bases, properties);
             // all bases are traits without properties
             if (proto === null && isClass) {
                 proto = Object.create(null, properties || undefined);
