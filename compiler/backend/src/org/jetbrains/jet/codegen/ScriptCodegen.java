@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
@@ -25,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JdkNames;
@@ -252,13 +254,19 @@ public class ScriptCodegen {
     }
 
     public static String classNameForScript(JetFile file) {
-        JetScriptDefinition scriptDefinition = JetParserDefinition.getInstance().findScriptDefinition(file);
+        JetScriptDefinition scriptDefinition = JetScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file);
 
         String name = file.getName();
-        name = name.substring(0, name.length()-scriptDefinition.getExtension().length());
         int index = name.lastIndexOf('/');
         if(index != -1)
             name = name.substring(index+1);
+        if(name.endsWith(scriptDefinition.getExtension()))
+            name = name.substring(0, name.length()-scriptDefinition.getExtension().length());
+        else {
+            index = name.indexOf('.');
+            if(index != -1)
+                name = name.substring(0,index);
+        }
         name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
         JetNamespaceHeader header = file.getNamespaceHeader();
         if(header != null && header.getName().length() > 0) {

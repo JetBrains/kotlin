@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.components.ServiceManager;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 
 import java.lang.reflect.Constructor;
@@ -31,6 +33,9 @@ import java.util.List;
  * @author Stepan Koltsov
  */
 public class ScriptGenTest extends CodegenTestCase {
+
+    public static final JetScriptDefinition FIB_SCRIPT_DEFINITION =
+            new JetScriptDefinition(".lang.kt", new AnalyzerScriptParameter("num", "jet.Int"));
 
     @Override
     protected void setUp() throws Exception {
@@ -94,7 +99,7 @@ public class ScriptGenTest extends CodegenTestCase {
     }
 
     public void testLanguage() {
-        JetParserDefinition.getInstance().addScriptDefinition(new JetScriptDefinition(".lang.kt", new AnalyzerScriptParameter("num","jet.Int")));
+        JetScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(FIB_SCRIPT_DEFINITION);
         loadFile("script/fib.lang.kt");
         final Class aClass = loadClass("Fib", generateClassesInFile());
         try {
@@ -109,7 +114,7 @@ public class ScriptGenTest extends CodegenTestCase {
     }
 
     public void testLanguageWithPackage() {
-        JetParserDefinition.getInstance().addScriptDefinition(new JetScriptDefinition(".lang.kt", new AnalyzerScriptParameter("num","jet.Int")));
+        JetScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(FIB_SCRIPT_DEFINITION);
         loadFile("script/fibWithPackage.lang.kt");
         final Class aClass = loadClass("test.FibWithPackage", generateClassesInFile());
         try {

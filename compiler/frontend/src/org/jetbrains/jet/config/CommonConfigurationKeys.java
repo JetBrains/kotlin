@@ -17,6 +17,8 @@
 package org.jetbrains.jet.config;
 
 import com.intellij.openapi.util.Key;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 
 import java.io.File;
 import java.util.List;
@@ -30,4 +32,6 @@ public class CommonConfigurationKeys {
     }
 
     public static final Key<List<String>> SOURCE_ROOTS_KEY = Key.create("source roots");
+
+    public static final Key<List<JetScriptDefinition>> SCRIPT_DEFINITIONS_KEY = Key.create("script definitions");
 }

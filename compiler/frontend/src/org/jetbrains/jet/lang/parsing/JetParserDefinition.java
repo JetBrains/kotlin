@@ -50,13 +50,7 @@ import java.util.Map;
 public class JetParserDefinition implements ParserDefinition {
     public static final String KTSCRIPT_FILE_SUFFIX = "ktscript";
 
-    private HashMap<String,JetScriptDefinition> scripts = new HashMap<String, JetScriptDefinition>();
-
     public JetParserDefinition() {
-        // .ktscript will take parameters explicitly specified on compilation
-        JetScriptDefinition standardScript = new JetScriptDefinition(".ktscript", Collections.<AnalyzerScriptParameter>emptyList());
-        addScriptDefinition(standardScript);
-
         //todo: ApplicationManager.getApplication() is null during JetParsingTest setting up
 
         /*if (!ApplicationManager.getApplication().isCommandLine()) {
@@ -76,7 +70,7 @@ public class JetParserDefinition implements ParserDefinition {
 
     @Override
     public PsiParser createParser(Project project) {
-        return new JetParser(this);
+        return new JetParser(project);
     }
 
     @Override
@@ -120,22 +114,5 @@ public class JetParserDefinition implements ParserDefinition {
     @Override
     public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode astNode, ASTNode astNode1) {
         return SpaceRequirements.MAY;
-    }
-
-    public JetScriptDefinition findScriptDefinition(PsiFile psiFile) {
-        String name = psiFile.getName();
-        for (Map.Entry<String, JetScriptDefinition> e : scripts.entrySet()) {
-            if(name.endsWith(e.getKey()))
-                return e.getValue();
-        }
-        return null;
-    }
-
-    public boolean isScript(PsiFile psiFile) {
-        return findScriptDefinition(psiFile) != null;
-    }
-
-    public void addScriptDefinition(@NotNull JetScriptDefinition scriptDefinition) {
-        scripts.put(scriptDefinition.getExtension(), scriptDefinition);
     }
 }

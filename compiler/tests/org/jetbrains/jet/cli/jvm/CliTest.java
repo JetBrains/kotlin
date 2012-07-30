@@ -22,6 +22,7 @@ import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ref.JetTypeName;
@@ -37,6 +38,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -132,7 +134,58 @@ public class CliTest {
         AnalyzerScriptParameter parameter = new AnalyzerScriptParameter(Name.identifier("num"), JetTypeName.parse("jet.Int"));
         scriptParameters.add(parameter);
         Class aClass = KotlinToJVMBytecodeCompiler
-                .compileScript(getClass().getClassLoader(), "compiler/testData/cli/fib.ktscript", scriptParameters);
+                .compileScript(getClass().getClassLoader(), "compiler/testData/cli/fib.ktscript", scriptParameters, null);
+        Assert.assertNotNull(aClass);
+
+        try {
+            aClass.getConstructor(int.class).newInstance(4);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testScriptStandardExt() {
+        LinkedList<AnalyzerScriptParameter> scriptParameters = new LinkedList<AnalyzerScriptParameter>();
+        AnalyzerScriptParameter parameter = new AnalyzerScriptParameter(Name.identifier("num"), JetTypeName.parse("jet.Int"));
+        scriptParameters.add(parameter);
+        Class aClass = KotlinToJVMBytecodeCompiler
+                .compileScript(getClass().getClassLoader(), "compiler/testData/cli/fib.kt", scriptParameters, null);
+        Assert.assertNotNull(aClass);
+
+        try {
+            aClass.getConstructor(int.class).newInstance(4);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testScriptWithoutScriptDefinition() {
+        LinkedList<AnalyzerScriptParameter> scriptParameters = new LinkedList<AnalyzerScriptParameter>();
+        AnalyzerScriptParameter parameter = new AnalyzerScriptParameter(Name.identifier("num"), JetTypeName.parse("jet.Int"));
+        scriptParameters.add(parameter);
+        Class aClass = KotlinToJVMBytecodeCompiler
+                .compileScript(getClass().getClassLoader(), "compiler/testData/cli/fib.fib.kt", scriptParameters, null);
+        Assert.assertNotNull(aClass);
+
+        try {
+            aClass.getConstructor(int.class).newInstance(4);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testScriptWithScriptDefinition() {
+        LinkedList<AnalyzerScriptParameter> scriptParameters = new LinkedList<AnalyzerScriptParameter>();
+        AnalyzerScriptParameter parameter = new AnalyzerScriptParameter(Name.identifier("num"), JetTypeName.parse("jet.Int"));
+        scriptParameters.add(parameter);
+        Class aClass = KotlinToJVMBytecodeCompiler
+                .compileScript(getClass().getClassLoader(), "compiler/testData/cli/fib.fib.kt", null, Arrays.asList(new JetScriptDefinition(".fib.kt",scriptParameters)));
         Assert.assertNotNull(aClass);
 
         try {

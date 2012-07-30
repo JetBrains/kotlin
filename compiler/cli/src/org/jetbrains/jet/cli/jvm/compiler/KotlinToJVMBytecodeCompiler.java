@@ -37,6 +37,9 @@ import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
+import org.jetbrains.jet.lang.parsing.JetParserDefinition;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
@@ -361,24 +364,29 @@ public class KotlinToJVMBytecodeCompiler {
     public static Class compileScript(
             ClassLoader parentLoader,
             String scriptPath,
-            List<AnalyzerScriptParameter> scriptParameters) {
+            @Nullable List<AnalyzerScriptParameter> scriptParameters,
+            @Nullable List<JetScriptDefinition> scriptDefinitions) {
         final MessageRenderer messageRenderer = MessageRenderer.PLAIN;
         PrintingMessageCollector messageCollector = new PrintingMessageCollector(System.err, messageRenderer, false);
         Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
         try {
             CompilerConfiguration compilerConfiguration = new CompilerConfiguration();
             compilerConfiguration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(parentLoader));
-            compilerConfiguration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, Collections.singletonList(CompilerPathUtil.getJdkAnnotationsPath()));
+            compilerConfiguration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, Collections.singletonList(
+                    CompilerPathUtil.getJdkAnnotationsPath()));
             compilerConfiguration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, scriptPath);
+            compilerConfiguration.addAll(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY,
+                                         scriptDefinitions != null ? scriptDefinitions : Collections.<JetScriptDefinition>emptyList());
 
             JetCoreEnvironment environment = JetCoreEnvironment.createCoreEnvironmentForJVM(rootDisposable, compilerConfiguration);
             K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(
-                    environment, messageCollector, scriptParameters,
+                    environment, messageCollector, scriptParameters != null ? scriptParameters : Collections.<AnalyzerScriptParameter>emptyList(),
                     BuiltinsScopeExtensionMode.ALL,
                     false,
                     BuiltinToJavaTypesMapping.ENABLED);
 
             try {
+                JetScriptDefinitionProvider.getInstance(environment.getProject()).markFileAsScript(environment.getSourceFiles().get(0));
                 return compileScript(configuration, parentLoader);
             }
             catch (CompilationException e) {
