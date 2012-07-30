@@ -100,9 +100,7 @@ public final class StandardClasses {
     }
 
     private static void declareJetObjects(@NotNull StandardClasses standardClasses) {
-
-        standardClasses.declare().forFQ("jet.Iterator").kotlinClass("ArrayIteratorIntrinsic")
-                .methods("next").properties("hasNext");
+        standardClasses.declare().forFQ("jet.Iterator").kotlinClass("Iterator").methods("next").properties("hasNext");
 
         standardClasses.declare().forFQ("jet.IntRange").kotlinClass("NumberRange")
                 .methods("iterator", "contains").properties("start", "size", "end", "reversed");

@@ -52,7 +52,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     private final LabelGenerator localLabelGenerator = new LabelGenerator('c');
 
     @NotNull
-    private final THashMap<JetClass, FinalListItem> openClassToItem = new THashMap<JetClass, FinalListItem>();
+    private final THashMap<ClassDescriptor, FinalListItem> openClassDescriptorToItem = new THashMap<ClassDescriptor, FinalListItem>();
 
     private final TLinkedList<FinalListItem> openList = new TLinkedList<FinalListItem>();
     private final List<Pair<JetClassOrObject, JsInvocation>> finalList = new ArrayList<Pair<JetClassOrObject, JsInvocation>>();
@@ -75,16 +75,14 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     private final class OpenClassRefProvider implements ClassAliasingMap {
         @Override
         @Nullable
-        public JsNameRef get(JetClass declaration, JetClassOrObject referencedDeclaration) {
-            FinalListItem item = openClassToItem.get(declaration);
+        public JsNameRef get(ClassDescriptor descriptor, ClassDescriptor referencedDescriptor) {
+            FinalListItem item = openClassDescriptorToItem.get(descriptor);
             // class declared in library
             if (item == null) {
                 return null;
             }
 
-            // final items generated using another aliasing map, see generateFinalClassDeclarations
-            assert referencedDeclaration instanceof JetClass;
-            addAfter(item, openClassToItem.get(referencedDeclaration));
+            addAfter(item, openClassDescriptorToItem.get(referencedDescriptor));
             return item.label;
         }
 
@@ -156,8 +154,8 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     private void generateFinalClassDeclarations() {
         ClassAliasingMap aliasingMap = new ClassAliasingMap() {
             @Override
-            public JsNameRef get(JetClass declaration, JetClassOrObject referencedDeclaration) {
-                FinalListItem item = openClassToItem.get(declaration);
+            public JsNameRef get(ClassDescriptor descriptor, ClassDescriptor referencedDescriptor) {
+                FinalListItem item = openClassDescriptorToItem.get(descriptor);
                 return item == null ? null : item.qualifiedLabel;
             }
         };
@@ -198,7 +196,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
             JsNameRef labelRef = dummyFunction.getScope().declareName(label).makeRef();
             FinalListItem item = new FinalListItem((JetClass) declaration, labelRef, new JsNameRef(labelRef.getIdent(), declarationsObjectRef));
             openList.add(item);
-            openClassToItem.put(item.declaration, item);
+            openClassDescriptorToItem.put(descriptor, item);
 
             value = item.qualifiedLabel;
         }

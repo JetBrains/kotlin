@@ -159,4 +159,8 @@ public final class MiscTest extends AbstractExpressionTest {
         catch (JavaScriptException e) {
         }
     }
+
+    public void testInheritFromJetIterator() throws Exception {
+        fooBoxTest();
+    }
 }

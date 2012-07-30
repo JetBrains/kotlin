@@ -32,7 +32,6 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -224,7 +223,7 @@ public final class ClassTranslator extends AbstractTranslator {
     private JsExpression getClassReference(@NotNull ClassDescriptor superClassDescriptor) {
         // aliasing here is needed for the declaration generation step
         if (aliasingMap != null) {
-            JsNameRef name = aliasingMap.get(BindingUtils.getClassForDescriptor(bindingContext(), superClassDescriptor), classDeclaration);
+            JsNameRef name = aliasingMap.get(superClassDescriptor, descriptor);
             if (name != null) {
                 return name;
             }
