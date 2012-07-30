@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 /**
  * Stores information about resolved descriptor and position of that descriptor.
@@ -77,10 +78,18 @@ public final class JetLookupObject {
 
         // Same descriptor - same lookup element
         if (descriptor != null && other.descriptor != null) {
-            assert context == other.context : "Can't compare descriptors from different binding context";
-
-            if (descriptor.equals(other.descriptor)) {
-                return true;
+            if (context == other.context) {
+                if (descriptor.equals(other.descriptor)) {
+                    return true;
+                }
+            }
+            else {
+                String descriptorText = DescriptorRenderer.TEXT.render(descriptor);
+                @SuppressWarnings("ConstantConditions")
+                String otherDescriptorText = DescriptorRenderer.TEXT.render(other.descriptor);
+                if (descriptorText.equals(otherDescriptorText)) {
+                    return true;
+                }
             }
         }
 
