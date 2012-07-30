@@ -115,8 +115,8 @@ public class ScriptGenTest extends CodegenTestCase {
 
     public void testLanguageWithPackage() {
         JetScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(FIB_SCRIPT_DEFINITION);
-        loadFile("script/fibWithPackage.lang.kt");
-        final Class aClass = loadClass("test.FibWithPackage", generateClassesInFile());
+        loadFile("script/fibwp.lang.kt");
+        final Class aClass = loadClass("test.Fibwp", generateClassesInFile());
         try {
             Constructor constructor = aClass.getConstructor(int.class);
             Field result = aClass.getField("result");
