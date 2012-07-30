@@ -61,6 +61,14 @@ public class LiteralFunctionTranslator {
 
         fun.getBody().getStatements().addAll(translateFunctionBody(descriptor, declaration, funContext).getStatements());
 
+        InnerFunctionTranslator translator = null;
+        if (!asInner) {
+            translator = new InnerFunctionTranslator(declaration, descriptor, funContext, fun);
+            if (translator.isLocalVariablesAffected()) {
+                asInner = true;
+            }
+        }
+
         if (asInner) {
             FunctionTranslator.addParameters(fun.getParameters(), descriptor, funContext);
             if (funContext.thisAliasProvider() instanceof TraceableThisAliasProvider) {
@@ -73,10 +81,11 @@ public class LiteralFunctionTranslator {
                 }
             }
 
+
             return fun;
         }
 
-        return translate(new InnerFunctionTranslator(declaration, descriptor, funContext, fun), fun);
+        return translate(translator, fun);
     }
 
     private JsFunction createFunction() {
@@ -85,13 +94,14 @@ public class LiteralFunctionTranslator {
 
     public JsExpression translate(@NotNull ClassDescriptor containingClass,
             @NotNull JetClassOrObject declaration,
+            @NotNull ClassDescriptor descriptor,
             @NotNull ClassTranslator classTranslator) {
         JsFunction fun = createFunction();
         JsName outerThisName = fun.getScope().declareName("$this");
         TranslationContext funContext = createThisTraceableContext(containingClass, fun, outerThisName.makeRef());
 
         fun.getBody().getStatements().add(new JsReturn(classTranslator.translateClassOrObjectCreation(funContext)));
-        return translate(new InnerObjectTranslator(declaration, funContext, fun), fun);
+        return translate(new InnerObjectTranslator(declaration, descriptor, funContext, fun), fun);
     }
 
     private JsExpression translate(@NotNull InnerDeclarationTranslator translator, @NotNull JsFunction fun) {

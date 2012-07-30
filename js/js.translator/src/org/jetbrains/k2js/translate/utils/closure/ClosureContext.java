@@ -37,7 +37,7 @@ public final class ClosureContext {
     @Nullable
     public ClassDescriptor outerClassDescriptor;
 
-    public boolean hasLocalVariables() {
+    public boolean isLocalVariablesAffected() {
         return hasLocalVariables;
     }
 

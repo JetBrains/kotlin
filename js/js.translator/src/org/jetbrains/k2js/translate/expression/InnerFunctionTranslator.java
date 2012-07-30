@@ -17,8 +17,12 @@ class InnerFunctionTranslator extends InnerDeclarationTranslator {
             @NotNull FunctionDescriptor descriptor,
             @NotNull TranslationContext context,
             @NotNull JsFunction fun) {
-        super(declaration, context, fun);
+        super(declaration, descriptor, context, fun);
         this.descriptor = descriptor;
+    }
+
+    public boolean isLocalVariablesAffected() {
+        return closureContext.isLocalVariablesAffected();
     }
 
     @Override

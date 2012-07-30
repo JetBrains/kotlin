@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Map;
@@ -50,7 +51,10 @@ public class AliasingContext {
         @Nullable
         @Override
         public JsExpression get(@NotNull ResolvedCall<?> call) {
-            return call.getThisObject().exists() ? JsLiteral.THIS : null;
+            ReceiverDescriptor callThisObject = call.getThisObject();
+            return callThisObject.exists() && (callThisObject instanceof ClassReceiver || callThisObject instanceof ExtensionReceiver)
+                   ? JsLiteral.THIS
+                   : null;
         }
     };
 

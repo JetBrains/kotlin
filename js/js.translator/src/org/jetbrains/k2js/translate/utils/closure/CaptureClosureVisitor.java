@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.translate.utils.closure;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -33,11 +32,11 @@ class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
     @NotNull
     private final BindingContext bindingContext;
     @NotNull
-    private final PsiElement functionElement;
+    private final DeclarationDescriptor functionDescriptor;
 
-    /*package*/ CaptureClosureVisitor(@NotNull PsiElement functionElement, @NotNull BindingContext bindingContext) {
+    /*package*/ CaptureClosureVisitor(@NotNull DeclarationDescriptor descriptor, @NotNull BindingContext bindingContext) {
         this.bindingContext = bindingContext;
-        this.functionElement = functionElement;
+        functionDescriptor = descriptor;
     }
 
     @Override
@@ -78,37 +77,51 @@ class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
         return null;
     }
 
-    public boolean captured(VariableDescriptor descriptor, ClosureContext context) {
+    private boolean captured(VariableDescriptor descriptor, ClosureContext context) {
+        if (descriptor instanceof PropertyDescriptor) {
+            checkOuterClassDescriptor(descriptor, context);
+            return false;
+        }
+
+        // is not working, try test life — init is captured, but this method returns false
+        //if (bindingContext.get(BindingContext.CAPTURED_IN_CLOSURE, descriptor) != Boolean.TRUE) {
+        //    return false;
+        //}
+        
+        if (isAncestor(functionDescriptor, descriptor)) {
+            return false;
+        }
+
+        if (descriptor instanceof LocalVariableDescriptor && descriptor.isVar()) {
+            // todo modification of outer local variable
+            context.setHasLocalVariables();
+            return true;
+        }
+
         PsiElement variableDeclaration = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
         if (variableDeclaration == null) {
             // "it" doesn't have declaration
             return false;
         }
 
-        if (PsiTreeUtil.isAncestor(functionElement, variableDeclaration, false)) {
-            if (descriptor instanceof LocalVariableDescriptor) {
-                // todo modification of outer local variable
-                //context.setHasLocalVariables();
-            }
-            return false;
-        }
-
-        if (descriptor instanceof ValueParameterDescriptor) {
-            return true;
-        }
-
-        boolean isProperty = descriptor instanceof PropertyDescriptor;
-        if (isProperty) {
-            checkOuterClassDescriptor(descriptor, context);
-            return false;
-        }
-
-        if (!descriptor.isVar() && variableDeclaration instanceof JetProperty) {
-            return true;
-        }
-
-        return variableDeclaration.getNode().getElementType().equals(JetNodeTypes.LOOP_PARAMETER);
+        return descriptor instanceof ValueParameterDescriptor ||
+               (!descriptor.isVar() && variableDeclaration instanceof JetProperty) ||
+               variableDeclaration.getNode().getElementType().equals(JetNodeTypes.LOOP_PARAMETER);
     }
+
+    // differs from DescriptorUtils — fails if reach NamespaceDescriptor
+    public static boolean isAncestor(@NotNull DeclarationDescriptor ancestor,
+            @NotNull DeclarationDescriptor declarationDescriptor) {
+        DeclarationDescriptor descriptor = declarationDescriptor.getContainingDeclaration();
+        while (descriptor != null && !(descriptor instanceof NamespaceDescriptor)) {
+            if (ancestor == descriptor) {
+                return true;
+            }
+            descriptor = descriptor.getContainingDeclaration();
+        }
+        return false;
+    }
+
 
     private static void checkOuterClassDescriptor(DeclarationDescriptor descriptor, ClosureContext context) {
         if (context.outerClassDescriptor == null) {

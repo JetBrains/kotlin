@@ -37,7 +37,7 @@ public class FunctionTest extends AbstractExpressionTest {
     }
 
     public void testAdderClosure() throws Exception {
-        //fooBoxTest();
+        fooBoxTest();
     }
 
     public void testLoopClosure() throws Exception {

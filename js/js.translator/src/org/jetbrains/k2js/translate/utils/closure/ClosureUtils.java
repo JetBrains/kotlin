@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.translate.utils.closure;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
@@ -28,8 +29,8 @@ public final class ClosureUtils {
     }
 
     @NotNull
-    public static ClosureContext captureClosure(@NotNull BindingContext bindingContext, @NotNull JetElement element) {
-        CaptureClosureVisitor captureClosureVisitor = new CaptureClosureVisitor(element, bindingContext);
+    public static ClosureContext captureClosure(@NotNull BindingContext bindingContext, @NotNull JetElement element, @NotNull DeclarationDescriptor descriptor) {
+        CaptureClosureVisitor captureClosureVisitor = new CaptureClosureVisitor(descriptor, bindingContext);
         ClosureContext closureContext = new ClosureContext();
         element.accept(captureClosureVisitor, closureContext);
         return closureContext;

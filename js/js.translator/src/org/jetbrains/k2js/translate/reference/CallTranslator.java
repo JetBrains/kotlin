@@ -73,8 +73,8 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
         /*package*/ JsExpression translate() {
-        // todo: temp hack, wait
-        final JsExpression a = callParameters.getThisObject();
+        // todo: temp hack, wait KT-2323
+        JsExpression a = callParameters.getThisObject();
         if (a instanceof JsNameRef) {
             JsNameRef ref = (JsNameRef) a;
             if (ref.getIdent().equals("classes") && ref.getQualifier() instanceof JsNameRef && ((JsNameRef) ref.getQualifier()).getIdent().equals("Components")) {

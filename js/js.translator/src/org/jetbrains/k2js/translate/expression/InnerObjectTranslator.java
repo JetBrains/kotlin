@@ -2,13 +2,14 @@ package org.jetbrains.k2js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.k2js.translate.context.TraceableThisAliasProvider;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 class InnerObjectTranslator extends InnerDeclarationTranslator {
-    public InnerObjectTranslator(@NotNull JetElement declaration, @NotNull TranslationContext context, @NotNull JsFunction fun) {
-        super(declaration, context, fun);
+    public InnerObjectTranslator(@NotNull JetClassOrObject declaration, @NotNull ClassDescriptor descriptor, @NotNull TranslationContext context, @NotNull JsFunction fun) {
+        super(declaration, descriptor, context, fun);
     }
 
     @Override

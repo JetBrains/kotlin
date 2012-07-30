@@ -3,6 +3,7 @@ package org.jetbrains.k2js.translate.expression;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
@@ -18,9 +19,12 @@ abstract class InnerDeclarationTranslator {
     protected final TranslationContext context;
     protected final JsFunction fun;
 
-    public InnerDeclarationTranslator(@NotNull JetElement declaration, @NotNull TranslationContext context, @NotNull JsFunction fun) {
+    public InnerDeclarationTranslator(@NotNull JetElement declaration,
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull TranslationContext context,
+            @NotNull JsFunction fun) {
         this.context = context;
-        closureContext = ClosureUtils.captureClosure(this.context.bindingContext(), declaration);
+        closureContext = ClosureUtils.captureClosure(context.bindingContext(), declaration, descriptor);
         this.fun = fun;
     }
 
