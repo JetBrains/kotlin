@@ -101,7 +101,10 @@ public class FunctionCodegen {
 
         Modality modality = functionDescriptor.getModality();
         if (modality == Modality.FINAL) {
-            flags |= ACC_FINAL;
+            DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
+            if (!(containingDeclaration instanceof ClassDescriptor) || ((ClassDescriptor)containingDeclaration).getKind() != ClassKind.TRAIT) {
+                flags |= ACC_FINAL;
+            }
         }
 
         OwnerKind kind = context.getContextKind();
