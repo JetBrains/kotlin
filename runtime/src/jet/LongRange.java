@@ -46,6 +46,26 @@ public final class LongRange implements Range<Long>, LongIterable {
         return item <= start && item > start + count;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        LongRange range = (LongRange) o;
+        return count == range.count && start == range.start;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (start ^ (start >>> 32));
+        result = 31 * result + (int) (count ^ (count >>> 32));
+        return result;
+    }
+
     public boolean getIsReversed() {
         return count < 0;
     }

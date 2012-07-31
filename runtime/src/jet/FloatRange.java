@@ -37,6 +37,27 @@ public final class FloatRange implements Range<Float> {
         return item <= start && item > start + size;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        FloatRange range = (FloatRange) o;
+
+        return Float.compare(range.size, size) == 0 && Float.compare(range.start, start) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (start != +0.0f ? Float.floatToIntBits(start) : 0);
+        result = 31 * result + (size != +0.0f ? Float.floatToIntBits(size) : 0);
+        return result;
+    }
+
     public FloatIterator step(float step) {
         if (step < 0)
             return new MyIterator(getEnd(), -size, -step);
