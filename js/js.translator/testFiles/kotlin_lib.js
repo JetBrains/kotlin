@@ -23,7 +23,17 @@ var kotlin = {set:function (receiver, key, value) {
     "use strict";
 
     Kotlin.equals = function (obj1, obj2) {
-        if ((obj1 === null)|| (obj1 === undefined)) return obj2 === null;
+        if ((obj1 === null) || (obj1 === undefined)) return obj2 === null;
+        if (obj1 instanceof Array) {
+            if (!(obj2 instanceof Array)) return false;
+            if (obj1.length != obj2.length) return false;
+            for (var i = 0; i < obj1.length; i++) {
+                if (!Kotlin.equals(obj1[i], obj2[i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
         if (typeof obj1 == "object") {
             if (obj1.equals !== undefined) {
                 return obj1.equals(obj2);
