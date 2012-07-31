@@ -13,6 +13,9 @@ val Collection<*>.empty : Boolean
 val Collection<*>.indices : IntRange
     get() = 0..size-1
 
+val Int.indices: IntRange
+    get() = 0..this-1
+
 /**
  * Converts the collection to an array
  */

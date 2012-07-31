@@ -366,6 +366,11 @@ class CollectionTest {
         assertEquals(1, indices.end)
         assertEquals(2, indices.size)
         assertFalse(indices.isReversed)
+
+        val sizeIndices = data.size.indices
+        assertEquals(0, sizeIndices.start)
+        assertEquals(1, sizeIndices.end)
+        assertEquals(2, sizeIndices.size)
     }
 
     test fun contains() {
