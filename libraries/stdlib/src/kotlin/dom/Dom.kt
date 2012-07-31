@@ -376,7 +376,7 @@ fun Element.createElement(name: String, doc: Document? = null, init: Element.()-
 
 /** Returns the owner document of the element or uses the provided document */
 fun Node.ownerDocument(doc: Document? = null): Document {
-    val answer = if (this != null && this.nodeType == Node.DOCUMENT_NODE) this as Document
+    val answer = if (this.nodeType == Node.DOCUMENT_NODE) this as Document
     else if (doc == null) this.ownerDocument
     else doc
 
