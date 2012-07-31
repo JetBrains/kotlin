@@ -132,8 +132,13 @@ public class CliTest {
 
     @Test
     public void printArguments() {
-        System.setProperty("kotlin.print.cmd.args", "true");
-        executeCompilerCompareOutput(new String[] {"-script", "compiler/testData/cli/hello.ktscript"});
+        try {
+            System.setProperty("kotlin.print.cmd.args", "true");
+            executeCompilerCompareOutput(new String[] {"-script", "compiler/testData/cli/hello.ktscript"});
+        }
+        finally {
+            System.clearProperty("kotlin.print.cmd.args");
+        }
     }
 
     @Test
