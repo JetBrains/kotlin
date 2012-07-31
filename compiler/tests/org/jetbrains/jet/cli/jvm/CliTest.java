@@ -56,7 +56,7 @@ public class CliTest {
         PrintStream origOut = System.out;
         try {
             System.setOut(new PrintStream(bytes));
-            ExitCode exitCode = CLICompiler.doDoMain(new K2JVMCompiler(), args);
+            ExitCode exitCode = CLICompiler.doMainNoExit(new K2JVMCompiler(), args);
             return bytes.toString("utf-8") + exitCode + "\n";
         }
         catch (Exception e) {

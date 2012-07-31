@@ -148,14 +148,14 @@ public abstract class CLICompiler<A extends CompilerArguments> {
      * Useful main for derived command line tools
      */
     public static void doMain(@NotNull CLICompiler compiler, @NotNull String[] args) {
-        ExitCode exitCode = doDoMain(compiler, args);
+        ExitCode exitCode = doMainNoExit(compiler, args);
         if (exitCode != OK) {
             System.exit(exitCode.getCode());
         }
     }
 
     @NotNull
-    public static ExitCode doDoMain(@NotNull CLICompiler compiler, @NotNull String[] args) {
+    public static ExitCode doMainNoExit(@NotNull CLICompiler compiler, @NotNull String[] args) {
         try {
             ExitCode rc = compiler.exec(System.out, args);
             if (rc != OK) {
