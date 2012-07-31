@@ -47,8 +47,6 @@ import java.util.concurrent.ConcurrentMap;
  */
 @Deprecated
 public class CoreAnnotationsProvider extends ExternalAnnotationsProvider {
-    static int loadDocumentCount = 0;
-
     static {
         // This is an ugly workaround for JDOM 1.1 used from application started from Ant 1.8 without forking
         System.setProperty("javax.xml.parsers.SAXParserFactory", "com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl");
@@ -150,7 +148,6 @@ public class CoreAnnotationsProvider extends ExternalAnnotationsProvider {
             Document document;
             try {
                 //noinspection ConstantConditions
-                System.out.println("loadDocument count = " + (loadDocumentCount++));
                 document = JDOMUtil.loadDocument(escapeAttributes(StreamUtil.readText(file.getVirtualFile().getInputStream())));
             }
             catch (IOException e) {
