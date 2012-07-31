@@ -20,11 +20,13 @@
 package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.fileChooser.FileTextField;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
@@ -53,9 +55,7 @@ import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetPluginUtil;
-import org.jetbrains.jet.plugin.sdk.KotlinSdkUtil;
-import org.jetbrains.jet.plugin.util.PluginPathUtil;
+import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
@@ -65,9 +65,10 @@ import java.io.IOException;
 import static org.jetbrains.jet.plugin.project.JsModuleDetector.isJsModule;
 
 public class ConfigureKotlinLibraryNotificationProvider implements EditorNotifications.Provider<EditorNotificationPanel> {
-    private static Key<EditorNotificationPanel> KEY = Key.create("configure.kotlin.library");
-    public static String LIBRARY_NAME = "KotlinRuntime";
-    private Project myProject;
+    private static final Key<EditorNotificationPanel> KEY = Key.create("configure.kotlin.library");
+    public static final String LIBRARY_NAME = "KotlinRuntime";
+    public static final String KOTLIN_RUNTIME_JAR = "kotlin-runtime.jar";
+    private final Project myProject;
 
     @Override
     public Key<EditorNotificationPanel> getKey() {
@@ -82,12 +83,16 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
     @Override
     public EditorNotificationPanel createNotificationPanel(VirtualFile file) {
         try {
-            Module module = JetPluginUtil.getModuleForKotlinFile(file, myProject);
+            if (file.getFileType() != JetFileType.INSTANCE) return null;
+
+            if (CompilerManager.getInstance(myProject).isExcludedFromCompilation(file)) return null;
+
+            final Module module = ModuleUtil.findModuleForFile(file, myProject);
             if (module == null) return null;
 
-            if (isMavenModule(module) || isJsModule(module)) return null;
+            if (isMavenModule(module)) return null;
 
-            if (!KotlinSdkUtil.isSDKConfiguredFor(module)) return null;
+            if (isJsModule(module)) return null;
 
             GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
             if (JavaPsiFacade.getInstance(myProject).findClass("jet.JetObject", scope) == null) {
@@ -105,20 +110,20 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
         return null;
     }
 
-    private Library findOrCreateRuntimeLibrary(@NotNull Module module) {
+    private Library findOrCreateRuntimeLibrary() {
         LibraryTable table = ProjectLibraryTable.getInstance(myProject);
         Library kotlinRuntime = table.getLibraryByName(LIBRARY_NAME);
         if (kotlinRuntime != null) {
             for (VirtualFile root : kotlinRuntime.getFiles(OrderRootType.CLASSES)) {
-                if (root.getName().equals(PathUtil.KOTLIN_RUNTIME_JAR)) {
+                if (root.getName().equals(KOTLIN_RUNTIME_JAR)) {
                     return kotlinRuntime;
                 }
             }
         }
 
-        File runtimePath = PluginPathUtil.getRuntimePath(module);
+        File runtimePath = PathUtil.getDefaultRuntimePath();
         if (runtimePath == null) {
-            Messages.showErrorDialog(myProject, "\"kotlin-runtime.jar\" is not found. Make sure Kotlin SDK is configured for module \"" + module.getName() + "\".",
+            Messages.showErrorDialog(myProject, "kotlin-runtime.jar is not found. Make sure plugin is properly installed.",
                                      "No Runtime Found");
             return null;
         }
@@ -146,7 +151,6 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
 
         final Library finalKotlinRuntime = kotlinRuntime;
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
             public void run() {
                 Library.ModifiableModel model = finalKotlinRuntime.getModifiableModel();
                 model.addRoot(VfsUtil.getUrlForLibraryRoot(targetJar), OrderRootType.CLASSES);
@@ -159,7 +163,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
     }
 
     private EditorNotificationPanel createNotificationPanel(final Module module) {
-        EditorNotificationPanel answer = new EditorNotificationPanel();
+        final EditorNotificationPanel answer = new EditorNotificationPanel();
 
         answer.setText("Kotlin is not configured for module '" + module.getName() + "'");
         answer.createActionLabel("Set up module '" + module.getName() + "' as JVM Kotlin module", new Runnable() {
@@ -192,7 +196,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                Library library = findOrCreateRuntimeLibrary(module);
+                Library library = findOrCreateRuntimeLibrary();
                 if (library != null) {
                     ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
                     if (model.findLibraryOrderEntry(library) == null) {
@@ -214,7 +218,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
     /* package */ static void addJdkAnnotations(Module module) {
         Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
         assert sdk != null;
-        File annotationsIoFile = PluginPathUtil.getJdkAnnotationsPath(module);
+        File annotationsIoFile = PathUtil.getJdkAnnotationsPath();
         if (annotationsIoFile != null) {
             VirtualFile jdkAnnotationsJar = LocalFileSystem.getInstance().findFileByIoFile(annotationsIoFile);
             if (jdkAnnotationsJar != null) {
@@ -249,10 +253,9 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
 
     private static boolean isMavenModule(@NotNull Module module) {
         for (VirtualFile root : ModuleRootManager.getInstance(module).getContentRoots()) {
-            if (root.findChild("pom.xml") != null) {
-                return true;
-            }
+            if (root.findChild("pom.xml") != null) return true;
         }
+
         return false;
     }
 

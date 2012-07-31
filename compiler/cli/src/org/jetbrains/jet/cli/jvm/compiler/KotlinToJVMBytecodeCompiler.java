@@ -32,7 +32,6 @@ import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.CompilerPluginContext;
 import org.jetbrains.jet.cli.common.messages.*;
-import org.jetbrains.jet.cli.common.util.CompilerPathUtil;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
@@ -49,6 +48,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetMainDetector;
 import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jet.utils.Progress;
 
 import java.io.File;
@@ -250,7 +250,7 @@ public class KotlinToJVMBytecodeCompiler {
             try {
                 GeneratedClassLoader classLoader = new GeneratedClassLoader(factory, new URLClassLoader(new URL[]{
                         // TODO: add all classpath
-                        CompilerPathUtil.getRuntimePath().toURI().toURL()
+                        PathUtil.getDefaultRuntimePath().toURI().toURL()
                 },
                         parentLoader == null ? AllModules.class.getClassLoader() : parentLoader));
                 JetFile scriptFile = environment.getSourceFiles().get(0);
@@ -364,7 +364,7 @@ public class KotlinToJVMBytecodeCompiler {
             compilerConfiguration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
             compilerConfiguration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(parentLoader));
             compilerConfiguration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, Collections.singletonList(
-                    CompilerPathUtil.getJdkAnnotationsPath()));
+                    PathUtil.getJdkAnnotationsPath()));
             compilerConfiguration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, scriptPath);
             compilerConfiguration.addAll(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY,
                                          scriptDefinitions != null ? scriptDefinitions : Collections.<JetScriptDefinition>emptyList());

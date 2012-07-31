@@ -25,8 +25,10 @@ import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.common.messages.*;
-import org.jetbrains.jet.cli.common.util.CompilerPathUtil;
-import org.jetbrains.jet.cli.jvm.compiler.*;
+import org.jetbrains.jet.cli.jvm.compiler.CommandLineScriptUtils;
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.cli.jvm.repl.ReplFromTerminal;
 import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.codegen.CompilationException;
@@ -180,7 +182,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             classpath.add(PathUtil.findRtJar());
         }
         if (!arguments.noStdlib) {
-            classpath.add(CompilerPathUtil.getRuntimePath());
+            classpath.add(PathUtil.getDefaultRuntimePath());
         }
         if (arguments.classpath != null) {
             for (String element : Splitter.on(File.pathSeparatorChar).split(arguments.classpath)) {
@@ -194,7 +196,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
     private static List<File> getAnnotationsPath(@NotNull K2JVMCompilerArguments arguments) {
         List<File> annotationsPath = Lists.newArrayList();
         if (!arguments.noJdkAnnotations) {
-            annotationsPath.add(CompilerPathUtil.getJdkAnnotationsPath());
+            annotationsPath.add(PathUtil.getJdkAnnotationsPath());
         }
         if (arguments.annotations != null) {
             for (String element : Splitter.on(File.pathSeparatorChar).split(arguments.annotations)) {

@@ -8,12 +8,6 @@
 
   <depends optional="true">JUnit</depends>
 
-  <application-components>
-    <component>
-      <implementation-class>org.jetbrains.jet.plugin.sdk.BundledKotlinSdkLibraryCreator</implementation-class>
-    </component>
-  </application-components>
-
   <project-components>
       <component>
           <implementation-class>org.jetbrains.jet.plugin.JetStandardLibraryInitializer</implementation-class>
@@ -30,14 +24,14 @@
       <component>
           <implementation-class>org.jetbrains.jet.plugin.highlighter.DeclarationHintSupport</implementation-class>
       </component>
+      <component>
+        <implementation-class>org.jetbrains.jet.plugin.OutdatedKotlinRuntimeNotification</implementation-class>
+      </component>
   </project-components>
 
   <module-components>
     <component>
       <implementation-class>org.jetbrains.jet.plugin.project.K2JSModuleComponent</implementation-class>
-    </component>
-    <component>
-      <implementation-class>org.jetbrains.jet.plugin.OutdatedKotlinRuntimeNotification</implementation-class>
     </component>
   </module-components>
 
@@ -84,10 +78,6 @@
                       serviceImplementation="org.jetbrains.jet.plugin.extAnnotations.IdeaExternalAnnotationsProvider"/>
 
       <errorHandler implementation="org.jetbrains.jet.plugin.reporter.KotlinReportSubmitter"/>
-
-      <framework.type implementation="org.jetbrains.jet.plugin.sdk.KotlinFrameworkType"/>
-      <library.presentationProvider implementation="org.jetbrains.jet.plugin.sdk.KotlinSdkPresentationProvider"/>
-      <editorNotificationProvider implementation="org.jetbrains.jet.plugin.sdk.KotlinSdkNotConfiguredNotificationProvider"/>
 
       <internalFileTemplate name="Kotlin File"/>
       <internalFileTemplate name="Kotlin Class"/>

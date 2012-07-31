@@ -27,56 +27,82 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PathUtil {
 
     public static final String JS_LIB_JAR_NAME = "kotlin-jslib.jar";
     public static final String JS_LIB_JS_NAME = "kotlinLib.js";
     public static final String JDK_ANNOTATIONS_JAR = "kotlin-jdk-annotations.jar";
-    public static final String KOTLIN_COMPILER_JAR = "kotlin-compiler.jar";
-    public static final String KOTLIN_RUNTIME_JAR = "kotlin-runtime.jar";
 
     private PathUtil() {}
 
-    @Nullable
-    public static File getRuntimePath(@Nullable File sdkHome) {
-        return getFilePackedIntoLib(sdkHome, KOTLIN_RUNTIME_JAR);
+    public static File getDefaultCompilerPath() {
+        File plugin_jar_path = new File(getJarPathForClass(PathUtil.class));
+
+        if (!plugin_jar_path.exists()) return null;
+
+        if (plugin_jar_path.getName().equals("kotlin-plugin.jar")) {
+            File lib = plugin_jar_path.getParentFile();
+            File pluginHome = lib.getParentFile();
+
+            File answer = new File(pluginHome, "kotlinc");
+
+            return answer.exists() ? answer : null;
+        }
+
+        if (plugin_jar_path.getName().equals("kotlin-compiler.jar")) {
+            File lib = plugin_jar_path.getParentFile();
+            File answer = lib.getParentFile();
+            return answer.exists() ? answer : null;
+        }
+        
+        File current = new File("").getAbsoluteFile(); // CWD
+
+        do {
+            File atDevHome = new File(current, "dist/kotlinc");
+            if (atDevHome.exists()) return atDevHome;
+            current = current.getParentFile();
+        } while (current != null);
+
+        return null;
     }
 
     @Nullable
-    public static File getCompilerPath(@Nullable File sdkHome) {
-        return getFilePackedIntoLib(sdkHome, KOTLIN_COMPILER_JAR);
+    public static File getDefaultRuntimePath() {
+        return getFilePackedIntoLib("kotlin-runtime.jar");
     }
 
     @Nullable
-    public static File getJsLibJsPath(@Nullable File sdkHome) {
-        return getFilePackedIntoLib(sdkHome, JS_LIB_JS_NAME);
+    public static File getDefaultJsLibJsPath() {
+        return getFilePackedIntoLib(JS_LIB_JS_NAME);
     }
 
     @Nullable
-    public static File getJsLibJarPath(@Nullable File sdkHome) {
-        return getFilePackedIntoLib(sdkHome, JS_LIB_JAR_NAME);
+    public static File getDefaultJsLibJarPath() {
+        return getFilePackedIntoLib(JS_LIB_JAR_NAME);
     }
 
     @Nullable
-    public static File getJdkAnnotationsPath(@Nullable File sdkHome) {
-        return getFilePackedIntoLib(sdkHome, JDK_ANNOTATIONS_JAR);
-    }
+    private static File getFilePackedIntoLib(@NotNull String filePathFromLib) {
+        File compilerPath = getDefaultCompilerPath();
+        if (compilerPath == null) return null;
 
-    @Nullable
-    private static File getFilePackedIntoLib(@Nullable File sdkHome, @NotNull String filePathFromLib) {
-        if (sdkHome == null) return null;
-        File answer = new File(sdkHome, "lib/" + filePathFromLib);
+        File answer = new File(compilerPath, "lib/" + filePathFromLib);
+
         return answer.exists() ? answer : null;
     }
 
     @Nullable
-    public static File getSDKHomeByCompilerPath(@Nullable File compilerPath) {
-        if (compilerPath == null) return null;
-        File libDir = compilerPath.getParentFile();
-        if (libDir == null) return null;
-        File sdkHome = libDir.getParentFile();
-        return sdkHome != null && sdkHome.exists() ? sdkHome : null;
+    public static File getJdkAnnotationsPath() {
+        return getFilePackedIntoLib(JDK_ANNOTATIONS_JAR);
+    }
+
+    @NotNull
+    public static String getJarPathForClass(@NotNull Class aClass) {
+        String resourceRoot = PathManager.getResourceRoot(aClass, "/" + aClass.getName().replace('.', '/') + ".class");
+        return new File(resourceRoot).getAbsoluteFile().getAbsolutePath();
     }
 
     @NotNull
@@ -93,12 +119,6 @@ public class PathUtil {
         else {
             throw new IllegalStateException("Path " + file + " does not exist.");
         }
-    }
-
-    @NotNull
-    public static String getJarPathForClass(@NotNull Class aClass) {
-        String resourceRoot = PathManager.getResourceRoot(aClass, "/" + aClass.getName().replace('.', '/') + ".class");
-        return new File(resourceRoot).getAbsoluteFile().getAbsolutePath();
     }
 
     public static File findRtJar() {

@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.cli.common.util.CompilerPathUtil;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
@@ -89,12 +88,12 @@ public class CompileEnvironmentUtil {
             }
         };
         CompilerConfiguration configuration = new CompilerConfiguration();
-        File defaultRuntimePath = CompilerPathUtil.getRuntimePath();
+        File defaultRuntimePath = PathUtil.getDefaultRuntimePath();
         if (defaultRuntimePath != null) {
             configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, defaultRuntimePath);
         }
         configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.findRtJar());
-        File jdkAnnotationsPath = CompilerPathUtil.getJdkAnnotationsPath();
+        File jdkAnnotationsPath = PathUtil.getJdkAnnotationsPath();
         if (jdkAnnotationsPath != null) {
             configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, jdkAnnotationsPath);
         }
@@ -123,7 +122,7 @@ public class CompileEnvironmentUtil {
     }
 
     private static List<Module> runDefineModules(String moduleFile, ClassFileFactory factory) {
-        File stdlibJar = CompilerPathUtil.getRuntimePath();
+        File stdlibJar = PathUtil.getDefaultRuntimePath();
         GeneratedClassLoader loader;
         if (stdlibJar != null) {
             try {
