@@ -16,7 +16,6 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.mozilla.javascript.JavaScriptException;
 
@@ -26,7 +25,6 @@ import org.mozilla.javascript.JavaScriptException;
  *         A messy class where all new tests go before they are sorted which never happens.
  */
 public final class MiscTest extends AbstractExpressionTest {
-
     public MiscTest() {
         super("misc/");
     }
@@ -39,13 +37,12 @@ public final class MiscTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
-
     public void testSafecallComputesExpressionOnlyOnce() throws Exception {
         fooBoxTest();
     }
 
     public void testClassWithoutNamespace() throws Exception {
-        runFunctionOutputTest("classWithoutNamespace.kt", Namer.getRootNamespaceName(), "box", true);
+        runFunctionOutputTest("classWithoutNamespace.kt", Namer.ROOT_NAMESPACE, "box", true);
     }
 
     public void testIfElseAsExpressionWithThrow() throws Exception {
@@ -53,16 +50,16 @@ public final class MiscTest extends AbstractExpressionTest {
             fooBoxTest();
             fail();
         }
-        catch (JavaScriptException e) {
+        catch (JavaScriptException ignored) {
         }
     }
 
     public void testKt1052_2() throws Exception {
-        checkFooBoxIsTrue("KT-1052-2.kt", EcmaVersion.all());
+        checkFooBoxIsTrue("KT-1052-2.kt");
     }
 
     public void testKt2314() throws Exception {
-        checkFooBoxIsTrue("KT-2314.kt", EcmaVersion.all());
+        checkFooBoxIsTrue("KT-2314.kt");
     }
 
     public void testKt1052() throws Exception {
@@ -71,7 +68,7 @@ public final class MiscTest extends AbstractExpressionTest {
 
 
     public void testKt740_1() throws Exception {
-        checkFooBoxIsTrue("KT-740.kt", EcmaVersion.all());
+        checkFooBoxIsTrue("KT-740.kt");
     }
 
     public void testKt740_2() throws Exception {
@@ -79,15 +76,15 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testKt1361_1() throws Exception {
-        checkFooBoxIsTrue("KT-1361-1.kt", EcmaVersion.all());
+        checkFooBoxIsTrue("KT-1361-1.kt");
     }
 
     public void testKt1361_2() throws Exception {
-        checkFooBoxIsTrue("KT-1361-2.kt", EcmaVersion.all());
+        checkFooBoxIsTrue("KT-1361-2.kt");
     }
 
     public void testKt817() throws Exception {
-        checkFooBoxIsTrue("KT-817.kt", EcmaVersion.all());
+        checkFooBoxIsTrue("KT-817.kt");
     }
 
     public void testKt740_3() throws Exception {
@@ -131,18 +128,16 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testKt1865() throws Exception {
-        checkFooBoxIsTrue("KT-1865.kt", EcmaVersion.all());
+        checkFooBoxIsTrue("KT-1865.kt");
     }
 
     public void testMainFunInNestedNamespace() throws Exception {
         checkOutput("mainFunInNestedNamespace.kt", "ayee");
     }
 
-
     public void testPropertiesWithExplicitlyDefinedAccessorsWithoutBodies() throws Exception {
         fooBoxTest();
     }
-
 
     public void testExclExcl() throws Exception {
         fooBoxTest();
@@ -163,5 +158,9 @@ public final class MiscTest extends AbstractExpressionTest {
         }
         catch (JavaScriptException e) {
         }
+    }
+
+    public void testInheritFromJetIterator() throws Exception {
+        fooBoxTest();
     }
 }

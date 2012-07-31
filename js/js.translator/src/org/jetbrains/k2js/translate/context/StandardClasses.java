@@ -100,9 +100,7 @@ public final class StandardClasses {
     }
 
     private static void declareJetObjects(@NotNull StandardClasses standardClasses) {
-
-        standardClasses.declare().forFQ("jet.Iterator").kotlinClass("ArrayIteratorIntrinsic")
-                .methods("next").properties("hasNext");
+        standardClasses.declare().forFQ("jet.Iterator").kotlinClass("Iterator").methods("next").properties("hasNext");
 
         standardClasses.declare().forFQ("jet.IntRange").kotlinClass("NumberRange")
                 .methods("iterator", "contains").properties("start", "size", "end", "reversed");
@@ -132,7 +130,6 @@ public final class StandardClasses {
     private void declareTopLevelObjectInScope(@NotNull JsScope scope, @NotNull Map<FqNameUnsafe, JsName> map,
                                               @NotNull FqNameUnsafe fullQualifiedName, @NotNull String name) {
         JsName declaredName = scope.declareName(name);
-        declaredName.setObfuscatable(false);
         map.put(fullQualifiedName, declaredName);
         scopeMap.put(fullQualifiedName, new JsScope(scope, "scope for " + name));
     }
@@ -147,9 +144,7 @@ public final class StandardClasses {
         JsScope classScope = scopeMap.get(fullQualifiedClassName);
         assert classScope != null;
         FqNameUnsafe fullQualifiedMethodName = fullQualifiedClassName.child(Name.guess(shortMethodName));
-        JsName declaredName = classScope.declareName(javascriptName);
-        declaredName.setObfuscatable(false);
-        standardObjects.put(fullQualifiedMethodName, declaredName);
+        standardObjects.put(fullQualifiedMethodName, classScope.declareName(javascriptName));
     }
 
     private void declareMethods(@NotNull FqNameUnsafe classFQName,

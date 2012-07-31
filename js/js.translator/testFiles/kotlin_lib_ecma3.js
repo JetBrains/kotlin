@@ -1,10 +1,10 @@
-/* Prototype JavaScript framework, version 1.6.1
-* (c) 2005-2009 Sam Stephenson
-*
-* Prototype is freely distributable under the terms of an MIT-style license.
-* For details, see the Prototype web site: http://www.prototypejs.org/
-*
-*--------------------------------------------------------------------------*/
+/*  Prototype JavaScript framework, version 1.6.1
+ *  (c) 2005-2009 Sam Stephenson
+ *
+ *  Prototype is freely distributable under the terms of an MIT-style license.
+ *  For details, see the Prototype web site: http://www.prototypejs.org/
+ *
+ *--------------------------------------------------------------------------*/
 var Kotlin = {};
 
 (function () {
@@ -55,8 +55,6 @@ var Kotlin = {};
     })();
 
     Object.extend(Function.prototype, (function () {
-        var slice = Array.prototype.slice;
-
         function update(array, args) {
             var arrayLength = array.length, length = args.length;
             while (length--) array[arrayLength + length] = args[length];
@@ -71,7 +69,7 @@ var Kotlin = {};
         }
 
         function bindAsEventListener(context) {
-            var __method = this, args = slice.call(arguments, 1);
+            var __method = this, args = Array.prototype.slice.call(arguments, 1);
             return function (event) {
                 var a = update([event || window.event], args);
                 return __method.apply(context, a);
@@ -94,7 +92,7 @@ var Kotlin = {};
     })());
 
     Kotlin.isType = function (object, klass) {
-        if (object === null) {
+        if (object === null || object === undefined) {
             return false;
         }
 
@@ -126,7 +124,9 @@ var Kotlin = {};
         }
     })();
 
-    Kotlin.definePackage = Kotlin.createTrait;
+    Kotlin.definePackage = function (members) {
+        return members === null ? {} : members;
+    };
 
     Kotlin.createClass = (function () {
         var METHODS = {addMethods: addMethods};
@@ -228,8 +228,8 @@ var Kotlin = {};
     };
 
     Kotlin.defineModule = function (id, module) {
-        if ((id in Kotlin.modules) && (id !== "JS_TESTS")) {
-            throw Kotlin.$new(Kotlin.Exceptions.IllegalArgumentException)();
+        if (id in Kotlin.modules) {
+            throw Kotlin.$new(Kotlin.IllegalArgumentException)();
         }
 
         Kotlin.modules[id] = module;

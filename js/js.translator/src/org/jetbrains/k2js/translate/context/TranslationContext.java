@@ -22,9 +22,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.Named;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.k2js.config.EcmaVersion;
+import org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 
 import java.util.Map;
@@ -36,8 +37,7 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForEl
  *         <p/>
  *         All the info about the state of the translation process.
  */
-public final class TranslationContext {
-
+public class TranslationContext {
     @NotNull
     private final DynamicContext dynamicContext;
     @NotNull
@@ -46,34 +46,53 @@ public final class TranslationContext {
     private final AliasingContext aliasingContext;
 
     @NotNull
-    public static TranslationContext rootContext(@NotNull StaticContext staticContext) {
-        JsProgram program = staticContext.getProgram();
-        JsBlock globalBlock = program.getGlobalBlock();
-        DynamicContext rootDynamicContext = DynamicContext.rootContext(staticContext.getRootScope(), globalBlock);
+    public static TranslationContext rootFunctionContext(@NotNull StaticContext staticContext, JsFunction rootFunction) {
+        DynamicContext rootDynamicContext =
+                DynamicContext.rootContext(rootFunction.getScope(), rootFunction.getBody());
         AliasingContext rootAliasingContext = AliasingContext.getCleanContext();
-        return new TranslationContext(staticContext,
-                                      rootDynamicContext, rootAliasingContext);
+        return new TranslationContext(staticContext, rootDynamicContext, rootAliasingContext);
     }
 
     public boolean isEcma5() {
         return staticContext.isEcma5();
     }
 
-    public boolean isNotEcma3() {
-        return staticContext.getEcmaVersion() != EcmaVersion.v3;
-    }
-
     private TranslationContext(@NotNull StaticContext staticContext,
-                               @NotNull DynamicContext dynamicContext,
-                               @NotNull AliasingContext context) {
+            @NotNull DynamicContext dynamicContext,
+            @NotNull AliasingContext aliasingContext) {
         this.dynamicContext = dynamicContext;
         this.staticContext = staticContext;
-        aliasingContext = context;
+        this.aliasingContext = aliasingContext;
+    }
+
+    private TranslationContext(@NotNull TranslationContext parent, @NotNull AliasingContext aliasingContext) {
+        dynamicContext = parent.dynamicContext;
+        staticContext = parent.staticContext;
+        this.aliasingContext = aliasingContext;
+    }
+
+    public DynamicContext dynamicContext() {
+        return dynamicContext;
     }
 
     @NotNull
-    public TranslationContext contextWithScope(@NotNull NamingScope newScope, @NotNull JsBlock block) {
+    private TranslationContext contextWithScope(@NotNull JsScope newScope, @NotNull JsBlock block) {
+        return contextWithScope(newScope, block, aliasingContext);
+    }
+
+    @NotNull
+    public TranslationContext contextWithScope(@NotNull JsFunction fun) {
+        return contextWithScope(fun, aliasingContext);
+    }
+
+    @NotNull
+    protected TranslationContext contextWithScope(@NotNull JsScope newScope, @NotNull JsBlock block, @NotNull AliasingContext aliasingContext) {
         return new TranslationContext(staticContext, DynamicContext.newContext(newScope, block), aliasingContext);
+    }
+
+    @NotNull
+    public TranslationContext contextWithScope(@NotNull JsFunction fun, @NotNull AliasingContext aliasingContext) {
+        return contextWithScope(fun.getScope(), fun.getBody(), aliasingContext);
     }
 
     @NotNull
@@ -86,25 +105,19 @@ public final class TranslationContext {
         return contextWithScope(getScopeForDescriptor(descriptor), getBlockForDescriptor(descriptor));
     }
 
-    //TODO: consider passing a function here
-    @NotNull
-    public TranslationContext innerContextWithGivenScopeAndBlock(@NotNull JsScope scope, @NotNull JsBlock block) {
-        return contextWithScope(dynamicContext.getScope().innerScope(scope), block);
-    }
-
     @NotNull
     public TranslationContext innerContextWithThisAliased(@NotNull DeclarationDescriptor correspondingDescriptor, @NotNull JsName alias) {
-        return new TranslationContext(staticContext, dynamicContext, aliasingContext.withThisAliased(correspondingDescriptor, alias));
+        return new TranslationContext(this, aliasingContext.inner(correspondingDescriptor, alias));
     }
 
     @NotNull
     public TranslationContext innerContextWithAliasesForExpressions(@NotNull Map<JetExpression, JsName> aliases) {
-        return new TranslationContext(staticContext, dynamicContext, aliasingContext.withAliasesForExpressions(aliases));
+        return new TranslationContext(this, aliasingContext.withAliasesForExpressions(aliases));
     }
 
     @NotNull
     public TranslationContext innerContextWithDescriptorsAliased(@NotNull Map<DeclarationDescriptor, JsName> aliases) {
-        return new TranslationContext(staticContext, dynamicContext, aliasingContext.withDescriptorsAliased(aliases));
+        return new TranslationContext(this, aliasingContext.withDescriptorsAliased(aliases));
     }
 
     @NotNull
@@ -128,7 +141,7 @@ public final class TranslationContext {
     }
 
     @NotNull
-    public NamingScope getScopeForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+    public JsScope getScopeForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         return staticContext.getScopeForDescriptor(descriptor);
     }
 
@@ -147,13 +160,18 @@ public final class TranslationContext {
         return staticContext.getNameForDescriptor(descriptor);
     }
 
+    @NotNull
+    public JsStringLiteral nameToLiteral(@NotNull Named named) {
+        return program().getStringLiteral(named.getName().getName());
+    }
+
     @Nullable
     public JsNameRef getQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         return staticContext.getQualifierForDescriptor(descriptor);
     }
 
     @NotNull
-    public TemporaryVariable declareTemporary(@NotNull JsExpression initExpression) {
+    public TemporaryVariable declareTemporary(@Nullable JsExpression initExpression) {
         return dynamicContext.declareTemporary(initExpression);
     }
 
@@ -173,13 +191,18 @@ public final class TranslationContext {
     }
 
     @NotNull
-    public JsScope jsScope() {
-        return dynamicContext.jsScope();
+    public JsScope scope() {
+        return dynamicContext.getScope();
     }
 
     @NotNull
     public AliasingContext aliasingContext() {
         return aliasingContext;
+    }
+
+    @NotNull
+    public LiteralFunctionTranslator literalFunctionTranslator() {
+        return staticContext.getLiteralFunctionTranslator();
     }
 
     @NotNull
@@ -189,5 +212,16 @@ public final class TranslationContext {
 
     public void addStatementToCurrentBlock(@NotNull JsStatement statement) {
         dynamicContext.jsBlock().getStatements().add(statement);
+    }
+
+    @NotNull
+    public AliasingContext.ThisAliasProvider thisAliasProvider() {
+        return aliasingContext().thisAliasProvider;
+    }
+
+    @NotNull
+    public JsExpression getThisObject(@NotNull DeclarationDescriptor descriptor) {
+        JsNameRef ref = thisAliasProvider().get(descriptor);
+        return ref == null ? JsLiteral.THIS : ref;
     }
 }

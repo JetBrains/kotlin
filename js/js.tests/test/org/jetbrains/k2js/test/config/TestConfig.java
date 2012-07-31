@@ -41,7 +41,6 @@ public class TestConfig extends Config {
         }
     };
 
-    //NOTE: hard-coded in kotlin-lib files
     @NotNull
     public static final String TEST_MODULE_NAME = "JS_TESTS";
     @NotNull

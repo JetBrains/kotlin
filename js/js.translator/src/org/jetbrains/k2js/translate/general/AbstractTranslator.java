@@ -25,7 +25,6 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
  * @author Pavel Talanov
  */
 public abstract class AbstractTranslator {
-
     @NotNull
     private final TranslationContext context;
 

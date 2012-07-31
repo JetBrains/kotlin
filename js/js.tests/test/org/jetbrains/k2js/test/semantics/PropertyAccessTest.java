@@ -22,14 +22,12 @@ import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.test.utils.JsTestUtils;
 
-import java.util.EnumSet;
 import java.util.List;
 
 /**
  * @author Pavel Talanov
  */
 public final class PropertyAccessTest extends SingleFileTranslationTest {
-
     public PropertyAccessTest() {
         super("propertyAccess/");
     }
@@ -38,21 +36,17 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-
     public void testTwoClassesWithProperties() throws Exception {
         fooBoxTest();
     }
-
 
     public void testSetter() throws Exception {
         runFunctionOutputTest("setter.kt", "foo", "f", 99.0);
     }
 
-
     public void testCustomGetter() throws Exception {
         fooBoxTest();
     }
-
 
     public void testCustomSetter() throws Exception {
         fooBoxTest();
@@ -62,7 +56,6 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-
     public void testNamespacePropertySet() throws Exception {
         fooBoxTest();
     }
@@ -70,7 +63,6 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
     public void testNamespaceCustomAccessors() throws Exception {
         fooBoxTest();
     }
-
 
     public void testClassUsesNamespaceProperties() throws Exception {
         fooBoxTest();
@@ -81,7 +73,7 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
     }
 
     public void testInitInstanceProperties() throws Exception {
-        fooBoxTest(EnumSet.of(EcmaVersion.v5));
+        fooBoxTest(JsTestUtils.successOnEcmaV5());
     }
 
     public void testEnumerable() throws Exception {
@@ -89,8 +81,7 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
     }
 
     public void testOverloadedOverriddenFunctionPropertyName() throws Exception {
-        //fooBoxTest(JsTestUtils.successOnEcmaV5());
-        //fooBoxTest();
+        fooBoxTest(JsTestUtils.successOnEcmaV5());
     }
 
     @Override

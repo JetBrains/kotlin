@@ -16,8 +16,8 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.patterns;
 
-import closurecompiler.internal.com.google.common.collect.Lists;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -30,7 +30,6 @@ import java.util.List;
  * @author Pavel Talanov
  */
 public final class NamePredicate implements Predicate<Name> {
-
     @NotNull
     public static final NamePredicate PRIMITIVE_NUMBERS = new NamePredicate("Int", "Double", "Float", "Long", "Short", "Byte");
 
