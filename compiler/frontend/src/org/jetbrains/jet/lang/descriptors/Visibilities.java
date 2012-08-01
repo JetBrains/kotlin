@@ -21,7 +21,6 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.OverridingUtil;
 
 import java.util.Map;
 import java.util.Set;
@@ -111,7 +110,7 @@ public class Visibilities {
     private Visibilities() {
     }
 
-    public static boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
+    public static boolean isVisible(@Nullable DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
         DeclarationDescriptorWithVisibility parent = what;
         while (parent != null) {
             if (parent.getVisibility() == LOCAL) {
@@ -135,6 +134,7 @@ public class Visibilities {
     }
 
     /*package*/
+    @Nullable
     static Integer compareLocal(@NotNull Visibility first, @NotNull Visibility second) {
         if (first == second) return 0;
         Integer firstIndex = ORDERED_VISIBILITIES.get(first);
