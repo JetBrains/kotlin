@@ -46,17 +46,17 @@ import java.util.Map;
  * @since 6/5/12
  */
 class AlternativeSignatureData {
-    private JetNamedFunction altFunDeclaration;
-    private PsiMethodWrapper method;
+    private final JetNamedFunction altFunDeclaration;
+    private final PsiMethodWrapper method;
 
-    private boolean none;
+    private final boolean none;
     private String error;
 
     private JavaDescriptorResolver.ValueParameterDescriptors altValueParameters;
     private JetType altReturnType;
     private List<TypeParameterDescriptor> altTypeParameters;
 
-    private Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters =
+    private final Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters =
             new HashMap<TypeParameterDescriptor, TypeParameterDescriptorImpl>();
 
     AlternativeSignatureData(
@@ -67,9 +67,12 @@ class AlternativeSignatureData {
         String signature = method.getSignatureAnnotation().signature();
         if (signature.isEmpty()) {
             none = true;
+            altFunDeclaration = null;
+            this.method = null;
             return;
         }
 
+        none = false;
         this.method = method;
         Project project = method.getPsiMethod().getProject();
         altFunDeclaration = JetPsiFactory.createFunction(project, signature);
