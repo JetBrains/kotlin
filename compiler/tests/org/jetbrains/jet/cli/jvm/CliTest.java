@@ -32,11 +32,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.PrintStream;
-import java.io.StringReader;
+import java.io.*;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -111,6 +107,16 @@ public class CliTest {
     }
 
     @Test
+    public void diagnosticsOrder() throws Exception {
+        String[] args = {
+                "-src", "compiler/testData/cli/diagnosticsOrder1.kt"
+                        + File.pathSeparator
+                        + "compiler/testData/cli/diagnosticsOrder2.kt",
+                "-output", tmpdir.getTmpDir().getPath()};
+        executeCompilerCompareOutput(args);
+    }
+
+    @Test
     public void help() throws Exception {
         executeCompilerCompareOutput(new String[] {"-help"});
     }
@@ -175,22 +181,6 @@ public class CliTest {
         }
     }
 
-    @Test
-    public void testScriptWithoutScriptDefinition() {
-        LinkedList<AnalyzerScriptParameter> scriptParameters = new LinkedList<AnalyzerScriptParameter>();
-        AnalyzerScriptParameter parameter = new AnalyzerScriptParameter(Name.identifier("num"), JetTypeName.parse("jet.Int"));
-        scriptParameters.add(parameter);
-        Class aClass = KotlinToJVMBytecodeCompiler
-                .compileScript(getClass().getClassLoader(), "compiler/testData/cli/fib.fib.kt", scriptParameters, null);
-        Assert.assertNotNull(aClass);
-
-        try {
-            aClass.getConstructor(int.class).newInstance(4);
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Test
     public void testScriptWithScriptDefinition() {
