@@ -44,6 +44,7 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetMainDetector;
@@ -254,7 +255,7 @@ public class KotlinToJVMBytecodeCompiler {
                 },
                         parentLoader == null ? AllModules.class.getClassLoader() : parentLoader));
                 JetFile scriptFile = environment.getSourceFiles().get(0);
-                return classLoader.loadClass(ScriptCodegen.classNameForScript(scriptFile));
+                return classLoader.loadClass(ScriptNameUtil.classNameForScript(scriptFile));
             }
             catch (Exception e) {
                 throw new RuntimeException("Failed to evaluate script: " + e, e);

@@ -17,18 +17,15 @@
 package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.parsing.JetParserDefinition;
-import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
-import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.java.JdkNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.asm4.MethodVisitor;
@@ -37,17 +34,12 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import javax.inject.Inject;
-import java.io.File;
 import java.util.List;
 
 /**
  * @author Stepan Koltsov
  */
 public class ScriptCodegen {
-
-    public static final JvmClassName SCRIPT_DEFAULT_CLASS_NAME = JvmClassName.byInternalName("Script");
-
-    public static final String LAST_EXPRESSION_VALUE_FIELD_NAME = "rv";
 
     @NotNull
     private GenerationState state;
@@ -99,7 +91,7 @@ public class ScriptCodegen {
 
     public void generate(JetScript scriptDeclaration) {
 
-        ScriptDescriptor scriptDescriptor = (ScriptDescriptor) state.getBindingContext().get(BindingContext.SCRIPT, scriptDeclaration);
+        ScriptDescriptor scriptDescriptor = state.getBindingContext().get(BindingContext.SCRIPT, scriptDeclaration);
 
         ClassDescriptor classDescriptorForScript = closureAnnotator.classDescriptorForScriptDescriptor(scriptDescriptor);
 
@@ -134,7 +126,7 @@ public class ScriptCodegen {
 
         Type blockType = jetTypeMapper.mapType(scriptDescriptor.getReturnType(), MapTypeMode.VALUE);
 
-        classBuilder.newField(null, Opcodes.ACC_PUBLIC, LAST_EXPRESSION_VALUE_FIELD_NAME, blockType.getDescriptor(), null, null);
+        classBuilder.newField(null, Opcodes.ACC_PUBLIC|Opcodes.ACC_FINAL, ScriptNameUtil.LAST_EXPRESSION_VALUE_FIELD_NAME, blockType.getDescriptor(), null, null);
 
         JvmMethodSignature jvmSignature = jetTypeMapper.mapScriptSignature(scriptDescriptor, importedScripts);
 
@@ -196,7 +188,7 @@ public class ScriptCodegen {
         StackValue stackValue = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, context, state).gen(scriptDeclaration.getBlockExpression());
         if (stackValue.type != Type.VOID_TYPE) {
             stackValue.put(stackValue.type, instructionAdapter);
-            instructionAdapter.putfield(className.getInternalName(), LAST_EXPRESSION_VALUE_FIELD_NAME, blockType.getDescriptor());
+            instructionAdapter.putfield(className.getInternalName(), ScriptNameUtil.LAST_EXPRESSION_VALUE_FIELD_NAME, blockType.getDescriptor());
         }
 
         instructionAdapter.areturn(Type.VOID_TYPE);
@@ -213,7 +205,7 @@ public class ScriptCodegen {
 
         for (ValueParameterDescriptor parameter : script.getValueParameters()) {
             Type parameterType = jetTypeMapper.mapType(parameter.getType(), MapTypeMode.VALUE);
-            int access = Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL;
+            int access = Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL;
             classBuilder.newField(null, access, parameter.getName().getIdentifier(), parameterType.getDescriptor(), null, null);
         }
     }
@@ -251,27 +243,5 @@ public class ScriptCodegen {
 
     public String getScriptFieldName(@NotNull ScriptDescriptor scriptDescriptor) {
         return "script$" + getScriptIndex(scriptDescriptor);
-    }
-
-    public static String classNameForScript(JetFile file) {
-        JetScriptDefinition scriptDefinition = JetScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file);
-
-        String name = file.getName();
-        int index = name.lastIndexOf('/');
-        if(index != -1)
-            name = name.substring(index+1);
-        if(name.endsWith(scriptDefinition.getExtension()))
-            name = name.substring(0, name.length()-scriptDefinition.getExtension().length());
-        else {
-            index = name.indexOf('.');
-            if(index != -1)
-                name = name.substring(0,index);
-        }
-        name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
-        JetNamespaceHeader header = file.getNamespaceHeader();
-        if(header != null && header.getName().length() > 0) {
-            name = header.getName().replace('.','/') + "/" + name;
-        }
-        return name;
     }
 }

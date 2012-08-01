@@ -108,6 +108,7 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker fileMarker = mark();
 
         PsiBuilder.Marker namespaceHeader = mark();
+        PsiBuilder.Marker firstEntry = mark();
         parseModifierList(MODIFIER_LIST, true);
 
         if (at(PACKAGE_KEYWORD)) {
@@ -115,12 +116,13 @@ public class JetParsing extends AbstractJetParsing {
 
             parseNamespaceName();
 
+            firstEntry.drop();
             consumeIf(SEMICOLON);
-            namespaceHeader.done(NAMESPACE_HEADER);
         }
         else {
-            namespaceHeader.rollbackTo();
+            firstEntry.rollbackTo();
         }
+        namespaceHeader.done(NAMESPACE_HEADER);
 
         PsiBuilder.Marker scriptMarker = mark();
         parseImportDirectives();

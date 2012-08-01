@@ -8,3 +8,4 @@ fun fib(n: Int): Int {
 }
 
 val result = fib(num)
+12

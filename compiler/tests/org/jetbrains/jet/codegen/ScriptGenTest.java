@@ -127,4 +127,22 @@ public class ScriptGenTest extends CodegenTestCase {
             throw new RuntimeException(e);
         }
     }
+
+    public void testDependentScripts() {
+        JetScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(FIB_SCRIPT_DEFINITION);
+        loadFiles("script/fibwp.lang.kt", "script/fibwprunner.ktscript");
+        System.out.println(generateToText());
+        final Class aClass = loadClass("Fibwprunner", generateClassesInFile());
+        try {
+            Constructor constructor = aClass.getConstructor();
+            Field result = aClass.getField("result");
+            Field rv = aClass.getField("rv");
+            Object script = constructor.newInstance();
+            assertEquals(12,rv.get(script));
+            assertEquals(8,result.get(script));
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

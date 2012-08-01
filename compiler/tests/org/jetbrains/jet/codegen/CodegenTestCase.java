@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
+import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
@@ -188,7 +189,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
         try {
             if (myFiles.isScript()) {
-                String scriptClassName = ScriptCodegen.classNameForScript(myFiles.getPsiFile());
+                String scriptClassName = ScriptNameUtil.classNameForScript(myFiles.getPsiFile());
                 Class<?> scriptClass = loader.loadClass(scriptClassName);
 
                 Constructor constructor = getConstructor(scriptClass, state.getScriptConstructorMethod());
