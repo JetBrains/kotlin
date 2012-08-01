@@ -605,6 +605,8 @@ public class CallResolver {
     private <D extends CallableDescriptor, F extends D> void performResolutionForCandidateCall(@NotNull CallResolutionContext<D, F> context,
             @NotNull ResolutionTask<D, F> task) {
 
+        ProgressIndicatorProvider.checkCanceled();
+
         ResolvedCallImpl<D> candidateCall = context.candidateCall;
         D candidate = candidateCall.getCandidateDescriptor();
 
