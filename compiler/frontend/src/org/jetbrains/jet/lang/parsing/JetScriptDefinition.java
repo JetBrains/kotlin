@@ -16,18 +16,36 @@
 
 package org.jetbrains.jet.lang.parsing;
 
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class JetScriptDefinition {
     private final String extension;
     private final List<AnalyzerScriptParameter> parameters;
+    private final List<ImportPath> imports;
+
+    public JetScriptDefinition(String extension, List<AnalyzerScriptParameter> scriptParameters, @Nullable List<String> imports) {
+        this.extension = extension;
+        parameters = scriptParameters == null ? Collections.<AnalyzerScriptParameter>emptyList() : scriptParameters;
+        this.imports = imports == null || imports.isEmpty() ? Collections.<ImportPath>emptyList() : importPaths(imports);
+    }
+
+    private static List<ImportPath> importPaths(List<String> imports) {
+        ArrayList<ImportPath> paths = new ArrayList<ImportPath>(imports.size());
+        for (String anImport : imports) {
+            paths.add(new ImportPath(anImport));
+        }
+        return paths;
+    }
 
     public JetScriptDefinition(String extension, List<AnalyzerScriptParameter> scriptParameters) {
-        this.extension = extension;
-        parameters = scriptParameters;
+        this(extension, scriptParameters, null);
     }
 
     public JetScriptDefinition(String extension, AnalyzerScriptParameter... scriptParameters) {
@@ -40,5 +58,9 @@ public class JetScriptDefinition {
 
     public String getExtension() {
         return extension;
+    }
+
+    public List<ImportPath> getImports() {
+        return imports;
     }
 }

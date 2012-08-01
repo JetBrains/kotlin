@@ -29,7 +29,7 @@ public class JetScriptDefinitionProvider {
     private final HashMap<String,JetScriptDefinition> scripts = new HashMap<String, JetScriptDefinition>();
     private final HashSet<PsiFile> scriptsFiles = new HashSet<PsiFile>();
 
-    private static JetScriptDefinition standardScript = new JetScriptDefinition(".ktscript", Collections.<AnalyzerScriptParameter>emptyList());
+    private static final JetScriptDefinition standardScript = new JetScriptDefinition(".ktscript", Collections.<AnalyzerScriptParameter>emptyList());
 
     public JetScriptDefinitionProvider() {
         // .ktscript will take analyzer parameters explicitly specified on compilation

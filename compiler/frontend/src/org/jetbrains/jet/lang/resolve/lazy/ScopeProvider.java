@@ -21,7 +21,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.parsing.JetParserDefinition;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -72,7 +76,7 @@ public class ScopeProvider {
             writableScope.importScope(rootPackageDescriptor.getMemberScope());
         }
 
-        List<JetImportDirective> importDirectives = Lists.newArrayList(file.getImportDirectives());
+        List<JetImportDirective> importDirectives = getFileImports(file);
 
         ImportsResolver.processImportsInFile(true, writableScope, importDirectives,
                                              rootPackageDescriptor.getMemberScope(),
@@ -84,6 +88,22 @@ public class ScopeProvider {
         writableScope.changeLockLevel(WritableScope.LockLevel.READING);
         // TODO: Cache
         return writableScope;
+    }
+
+    public static List<JetImportDirective> getFileImports(JetFile file) {
+        List<JetImportDirective> fileImports = file.getImportDirectives();
+        List<JetImportDirective> importDirectives = Lists.newArrayList();
+        if(file.isScript()) {
+            JetScriptDefinition definition = JetScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file);
+            List<ImportPath> imports = definition.getImports();
+            if(!imports.isEmpty()) {
+                for (ImportPath importPath : imports) {
+                    importDirectives.add(JetPsiFactory.createImportDirective(file.getProject(), importPath));
+                }
+            }
+        }
+        importDirectives.addAll(fileImports);
+        return importDirectives;
     }
 
     @NotNull
