@@ -19,6 +19,7 @@ package org.jetbrains.jet.cli.jvm;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.text.StringUtil;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
@@ -40,6 +41,7 @@ import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -87,7 +89,9 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             }
             else {
                 if (arguments.src != null) {
-                    configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.src);
+                    List<String> sourcePathsSplitByPathSeparator
+                            = Arrays.asList(arguments.src.split(StringUtil.escapeToRegexp(File.pathSeparator)));
+                    configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, sourcePathsSplitByPathSeparator);
                 }
                 for (String freeArg : arguments.freeArgs) {
                     configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, freeArg);
