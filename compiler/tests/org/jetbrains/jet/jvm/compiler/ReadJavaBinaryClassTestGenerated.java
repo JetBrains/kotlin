@@ -32,6 +32,11 @@ public class ReadJavaBinaryClassTestGenerated extends AbstractReadJavaBinaryClas
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.jvm.compiler.AbstractReadJavaBinaryClassTest", new File("compiler/testData/readJavaBinaryClass"), "java", false);
     }
     
+    @TestMetadata("ArrayTypeVariance.java")
+    public void testArrayTypeVariance() throws Exception {
+        doTest("compiler/testData/readJavaBinaryClass/ArrayTypeVariance.java");
+    }
+    
     @TestMetadata("ClassDoesNotOverrideMethod.java")
     public void testClassDoesNotOverrideMethod() throws Exception {
         doTest("compiler/testData/readJavaBinaryClass/ClassDoesNotOverrideMethod.java");

@@ -116,7 +116,7 @@ public class JavaTypeTransformer {
     @NotNull
     public JetType transformToType(@NotNull PsiType javaType, @NotNull final TypeUsage howThisTypeIsUsed,
             @NotNull final TypeVariableResolver typeVariableResolver) {
-        return javaType.accept(new PsiTypeVisitor<JetType>() {
+        JetType result = javaType.accept(new PsiTypeVisitor<JetType>() {
             @Override
             public JetType visitClassType(PsiClassType classType) {
                 PsiClassType.ClassResolveResult classResolveResult = classType.resolveGenerics();
@@ -218,8 +218,16 @@ public class JavaTypeTransformer {
                         return TypeUtils.makeNullable(jetType);
                 }
 
+                Variance variance;
+                if (howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT && !(arrayType instanceof PsiEllipsisType)) {
+                    variance = Variance.OUT_VARIANCE;
+                }
+                else {
+                    variance = Variance.INVARIANT;
+                }
+
                 JetType type = transformToType(componentType, typeVariableResolver);
-                return TypeUtils.makeNullable(JetStandardLibrary.getInstance().getArrayType(type));
+                return TypeUtils.makeNullable(JetStandardLibrary.getInstance().getArrayType(variance, type));
             }
 
             @Override
@@ -227,6 +235,7 @@ public class JavaTypeTransformer {
                 throw new UnsupportedOperationException("Unsupported type: " + type.getPresentableText()); // TODO
             }
         });
+        return result;
     }
 
     public Map<String, JetType> getPrimitiveTypesMap() {

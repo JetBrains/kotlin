@@ -86,7 +86,7 @@
   </item>
   <item name='java.util.ArrayList T[] toArray(T[])'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;T&gt;) : Array&lt;T&gt;&quot;"/>
+      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List boolean add(E)'>
@@ -166,7 +166,7 @@
   </item>
   <item name='java.util.List T[] toArray(T[])'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;T&gt;) : Array&lt;T&gt;&quot;"/>
+      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.HashSet boolean add(E)'>
@@ -216,7 +216,7 @@
   </item>
   <item name='java.util.Collection T[] toArray(T[])'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;T&gt;) : Array&lt;T&gt;&quot;"/>
+      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Map.Entry K getKey()'>
@@ -301,7 +301,7 @@
   </item>
   <item name='java.util.Set T[] toArray(T[])'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;T&gt;) : Array&lt;T&gt;&quot;"/>
+      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractCollection boolean add(E)'>
@@ -341,7 +341,7 @@
   </item>
   <item name='java.util.AbstractCollection T[] toArray(T[])'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;T&gt;) : Array&lt;T&gt;&quot;"/>
+      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Enumeration E nextElement()'>
@@ -556,7 +556,7 @@
   </item>
   <item name='java.util.LinkedList T[] toArray(T[])'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;T&gt;) : Array&lt;T&gt;&quot;"/>
+      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Iterator E next()'>
