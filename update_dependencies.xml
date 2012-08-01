@@ -3,7 +3,7 @@
 
     <target name="update" depends="fetch-third-party">
         <execute_update
-            base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt343/67291:id"
+            base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt343/67709:id"
             build.zip="ideaIC-120.SNAPSHOT.win.zip"
         />
     </target>
