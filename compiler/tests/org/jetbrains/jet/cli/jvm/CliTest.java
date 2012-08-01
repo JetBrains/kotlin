@@ -117,6 +117,14 @@ public class CliTest {
     }
 
     @Test
+    public void multipleTextRangesInDiagnosticsOrder() throws Exception {
+        String[] args = {
+                "-src", "compiler/testData/cli/multipleTextRangesInDiagnosticsOrder.kt",
+                "-output", tmpdir.getTmpDir().getPath()};
+        executeCompilerCompareOutput(args);
+    }
+
+    @Test
     public void help() throws Exception {
         executeCompilerCompareOutput(new String[] {"-help"});
     }

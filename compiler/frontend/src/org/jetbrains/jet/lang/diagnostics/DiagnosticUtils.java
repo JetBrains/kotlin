@@ -26,17 +26,29 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * @author abreslav
  */
 public class DiagnosticUtils {
+    @NotNull
+    public static final Comparator<TextRange> TEXT_RANGE_COMPARATOR = new Comparator<TextRange>() {
+        @Override
+        public int compare(TextRange o1, TextRange o2) {
+            if (o1.getStartOffset() != o2.getStartOffset()) {
+                return o1.getStartOffset() - o2.getStartOffset();
+            }
+            return o1.getEndOffset() - o2.getEndOffset();
+        }
+    };
+
     private DiagnosticUtils() {
     }
 
@@ -106,7 +118,7 @@ public class DiagnosticUtils {
         PsiFile file = diagnostic.getPsiFile();
         List<TextRange> textRanges = diagnostic.getTextRanges();
         if (textRanges.isEmpty()) return LineAndColumn.NONE;
-        TextRange firstRange = textRanges.iterator().next();
+        TextRange firstRange = firstRange(textRanges);
         return getLineAndColumnInPsiFile(file, firstRange);
     }
 
@@ -140,6 +152,11 @@ public class DiagnosticUtils {
             }
             throw new RuntimeException(e);
         }
+    }
+
+    @NotNull
+    public static TextRange firstRange(@NotNull List<TextRange> ranges) {
+        return Collections.min(ranges, TEXT_RANGE_COMPARATOR);
     }
 
     public static final class LineAndColumn {

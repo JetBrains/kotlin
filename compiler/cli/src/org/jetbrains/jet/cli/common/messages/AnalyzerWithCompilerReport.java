@@ -46,17 +46,6 @@ import java.util.List;
 public final class AnalyzerWithCompilerReport {
 
     @NotNull
-    private static final Comparator<TextRange> TEXT_RANGE_COMPARATOR = new Comparator<TextRange>() {
-        @Override
-        public int compare(TextRange o1, TextRange o2) {
-            if (o1.getStartOffset() != o2.getStartOffset()) {
-                return o1.getStartOffset() - o2.getStartOffset();
-            }
-            return o1.getEndOffset() - o2.getEndOffset();
-        }
-    };
-
-    @NotNull
     private static CompilerMessageSeverity convertSeverity(@NotNull Severity severity) {
         switch (severity) {
             case INFO:
@@ -143,11 +132,11 @@ public final class AnalyzerWithCompilerReport {
                 String path2 = d2.getPsiFile().getViewProvider().getVirtualFile().getPath();
                 if (!path1.equals(path2)) return path1.compareTo(path2);
 
-                TextRange range1 = d1.getTextRanges().iterator().next();
-                TextRange range2 = d2.getTextRanges().iterator().next();
+                TextRange range1 = DiagnosticUtils.firstRange(d1.getTextRanges());
+                TextRange range2 = DiagnosticUtils.firstRange(d2.getTextRanges());
 
                 if (!range1.equals(range2)) {
-                    return TEXT_RANGE_COMPARATOR.compare(range1, range2);
+                    return DiagnosticUtils.TEXT_RANGE_COMPARATOR.compare(range1, range2);
                 }
 
                 return d1.getFactory().getName().compareTo(d2.getFactory().getName());
