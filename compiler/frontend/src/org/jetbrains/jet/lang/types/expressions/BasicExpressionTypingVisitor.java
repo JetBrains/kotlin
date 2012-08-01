@@ -793,18 +793,16 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         JetSimpleNameExpression operationSign = expression.getOperationReference();
 
+        IElementType operationType = operationSign.getReferencedNameElementType();
         // If it's a labeled expression
-        if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
-            String referencedName = operationSign.getReferencedName();
-            referencedName = referencedName == null ? " <?>" : referencedName;
-            context.labelResolver.enterLabeledElement(new LabelName(referencedName.substring(1)), baseExpression);
-            // TODO : Some processing for the label?
-            JetTypeInfo typeInfo = facade.getTypeInfo(baseExpression, context, isStatement);
-            context.labelResolver.exitLabeledElement(baseExpression);
-            return DataFlowUtils.checkType(typeInfo.getType(), expression, context, typeInfo.getDataFlowInfo());
+        if (JetTokens.LABELS.contains(operationType)) {
+            return visitLabeledExpression(expression, context, isStatement);
         }
 
-        IElementType operationType = operationSign.getReferencedNameElementType();
+        // Special case for expr!!
+        if (operationType == JetTokens.EXCLEXCL) {
+            return visitExclExclExpression(expression, context);
+        }
 
         // Type check the base expression
         JetTypeInfo typeInfo = facade.getTypeInfo(baseExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
@@ -813,18 +811,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return typeInfo;
         }
         DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
-
-        // Special case for expr!!
-        if (operationType == JetTokens.EXCLEXCL) {
-            if (isKnownToBeNotNull(baseExpression, context)) {
-                context.trace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, type));
-            }
-            else {
-                DataFlowValue value = DataFlowValueFactory.INSTANCE.createDataFlowValue(baseExpression, type, context.trace.getBindingContext());
-                dataFlowInfo = dataFlowInfo.disequate(value, DataFlowValue.NULL);
-            }
-            return DataFlowUtils.checkType(TypeUtils.makeNotNullable(type), expression, context, dataFlowInfo);
-        }
 
         // Conventions for unary operations
         Name name = OperatorConventions.UNARY_OPERATION_NAMES.get(operationType);
@@ -880,6 +866,51 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             result = returnType;
         }
         return DataFlowUtils.checkType(result, expression, context, dataFlowInfo);
+    }
+
+    private JetTypeInfo visitExclExclExpression(@NotNull JetUnaryExpression expression, @NotNull ExpressionTypingContext context) {
+        JetExpression baseExpression = expression.getBaseExpression();
+        assert baseExpression != null;
+        JetSimpleNameExpression operationSign = expression.getOperationReference();
+        assert operationSign.getReferencedNameElementType() == JetTokens.EXCLEXCL;
+
+        JetType expectedType;
+        if (context.expectedType != NO_EXPECTED_TYPE) {
+            expectedType = TypeUtils.makeNullable(context.expectedType);
+        }
+        else {
+            expectedType = NO_EXPECTED_TYPE;
+        }
+        JetTypeInfo typeInfo = facade.getTypeInfo(baseExpression, context.replaceExpectedType(expectedType));
+        JetType type = typeInfo.getType();
+        if (type == null) {
+            return typeInfo;
+        }
+        DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
+        if (isKnownToBeNotNull(baseExpression, context)) {
+            context.trace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, type));
+        }
+        else {
+            DataFlowValue value = DataFlowValueFactory.INSTANCE.createDataFlowValue(baseExpression, type, context.trace.getBindingContext());
+            dataFlowInfo = dataFlowInfo.disequate(value, DataFlowValue.NULL);
+        }
+        return JetTypeInfo.create(TypeUtils.makeNotNullable(type), dataFlowInfo);
+    }
+
+    private JetTypeInfo visitLabeledExpression(@NotNull JetUnaryExpression expression, @NotNull ExpressionTypingContext context,
+            boolean isStatement) {
+        JetExpression baseExpression = expression.getBaseExpression();
+        assert baseExpression != null;
+        JetSimpleNameExpression operationSign = expression.getOperationReference();
+        assert JetTokens.LABELS.contains(operationSign.getReferencedNameElementType());
+
+        String referencedName = operationSign.getReferencedName();
+        referencedName = referencedName == null ? " <?>" : referencedName;
+        context.labelResolver.enterLabeledElement(new LabelName(referencedName.substring(1)), baseExpression);
+        // TODO : Some processing for the label?
+        JetTypeInfo typeInfo = facade.getTypeInfo(baseExpression, context, isStatement);
+        context.labelResolver.exitLabeledElement(baseExpression);
+        return DataFlowUtils.checkType(typeInfo.getType(), expression, context, typeInfo.getDataFlowInfo());
     }
 
     private boolean isKnownToBeNotNull(JetExpression expression, ExpressionTypingContext context) {
