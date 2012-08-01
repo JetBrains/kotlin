@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
+import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
@@ -30,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -39,7 +41,7 @@ import java.util.List;
  */
 public class DiagnosticUtils {
     @NotNull
-    public static final Comparator<TextRange> TEXT_RANGE_COMPARATOR = new Comparator<TextRange>() {
+    private static final Comparator<TextRange> TEXT_RANGE_COMPARATOR = new Comparator<TextRange>() {
         @Override
         public int compare(TextRange o1, TextRange o2) {
             if (o1.getStartOffset() != o2.getStartOffset()) {
@@ -155,8 +157,32 @@ public class DiagnosticUtils {
     }
 
     @NotNull
-    public static TextRange firstRange(@NotNull List<TextRange> ranges) {
+    private static TextRange firstRange(@NotNull List<TextRange> ranges) {
         return Collections.min(ranges, TEXT_RANGE_COMPARATOR);
+    }
+
+    @NotNull
+    public static List<Diagnostic> sortedDiagnostics(@NotNull Collection<Diagnostic> diagnostics) {
+        Comparator<Diagnostic> diagnosticComparator = new Comparator<Diagnostic>() {
+            @Override
+            public int compare(Diagnostic d1, Diagnostic d2) {
+                String path1 = d1.getPsiFile().getViewProvider().getVirtualFile().getPath();
+                String path2 = d2.getPsiFile().getViewProvider().getVirtualFile().getPath();
+                if (!path1.equals(path2)) return path1.compareTo(path2);
+
+                TextRange range1 = firstRange(d1.getTextRanges());
+                TextRange range2 = firstRange(d2.getTextRanges());
+
+                if (!range1.equals(range2)) {
+                    return TEXT_RANGE_COMPARATOR.compare(range1, range2);
+                }
+
+                return d1.getFactory().getName().compareTo(d2.getFactory().getName());
+            }
+        };
+        List<Diagnostic> result = Lists.newArrayList(diagnostics);
+        Collections.sort(result, diagnosticComparator);
+        return result;
     }
 
     public static final class LineAndColumn {
