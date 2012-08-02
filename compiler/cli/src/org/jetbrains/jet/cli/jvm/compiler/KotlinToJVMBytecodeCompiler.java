@@ -407,13 +407,7 @@ public class KotlinToJVMBytecodeCompiler {
 
         if(loader instanceof URLClassLoader) {
             for (URL url : ((URLClassLoader) loader).getURLs()) {
-                String urlFile;
-                try {
-                    urlFile = url.toURI().getPath();
-                }
-                catch (URISyntaxException e) {
-                    throw ExceptionUtils.rethrow(e); 
-                }
+                String urlFile = url.getPath();
                 File file = new File(urlFile);
                 if(file.exists() && (file.isDirectory() || file.getName().endsWith(".jar"))) {
                     files.add(file);
