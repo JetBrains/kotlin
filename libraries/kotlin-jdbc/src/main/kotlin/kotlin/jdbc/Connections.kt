@@ -3,9 +3,47 @@ package kotlin.jdbc
 import java.sql.*
 import kotlin.template.StringTemplate
 import java.math.BigDecimal
+import java.util.Map
+import java.util.Properties
+
+private fun Map<String, String>.toProperties() : Properties {
+    val p = Properties()
+
+    this.keySet().forEach {
+        p.put(it, this[it])
+    }
+
+    return p
+}
 
 /**
- * Helper method to process a statement on this collection
+ * create connection for the specified jdbc url with no credentials
+ */
+fun getConnection(url : String) : Connection = DriverManager.getConnection(url).sure()
+
+/**
+ * create connection for the specified jdbc url and properties
+ */
+fun getConnection(url : String, info : Map<String, String>) : Connection = DriverManager.getConnection(url, info.toProperties())!!
+
+/**
+ * create connection for the specified jdbc url and credentials
+ */
+fun getConnection(url : String, user : String, password : String) : Connection = DriverManager.getConnection(url, user, password)!!
+
+/**
+ * Executes specified block with connection and close connection after this
+ */
+fun Connection.use(block : (Connection) -> Any?) : Unit {
+    try {
+        block(this)
+    } finally {
+        this.close()
+    }
+}
+
+/**
+ * Helper method to process a statement on this connection
  */
 fun <T> Connection.statement(block: (Statement) -> T): T {
     val statement = createStatement()
