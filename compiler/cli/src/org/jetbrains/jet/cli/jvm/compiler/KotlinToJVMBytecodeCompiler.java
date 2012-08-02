@@ -42,9 +42,9 @@ import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
+import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetMainDetector;
@@ -407,13 +407,17 @@ public class KotlinToJVMBytecodeCompiler {
 
         if(loader instanceof URLClassLoader) {
             for (URL url : ((URLClassLoader) loader).getURLs()) {
-                String urlFile;
-                try {
-                    urlFile = url.toURI().getPath();
+                String urlFile = url.getFile();
+
+                if (urlFile.contains("%")) {
+                    try {
+                        urlFile = url.toURI().getPath();
+                    }
+                    catch (URISyntaxException e) {
+                        throw ExceptionUtils.rethrow(e);
+                    }
                 }
-                catch (URISyntaxException e) {
-                    throw ExceptionUtils.rethrow(e);
-                }
+
                 File file = new File(urlFile);
                 if(file.exists() && (file.isDirectory() || file.getName().endsWith(".jar"))) {
                     files.add(file);

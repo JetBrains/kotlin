@@ -186,6 +186,7 @@
             <unzip src="dependencies/download/@{build.zip}" dest="ideaSDK"/>
 
             <!-- Copy win files to the place where idea expect them to see. See com.intellij.openapi.util.io.win32.IdeaWin32 -->
+            <!-- TODO: Remove when build will depend on IDEA from 02.08.2012 or later -->
             <mkdir dir="ideaSDK/bin/win"/>
             <copy todir="ideaSDK/bin/win">
               <filelist dir="ideaSDK/bin" files="IdeaWin32.dll,IdeaWin64.dll"/>
