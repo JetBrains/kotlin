@@ -164,4 +164,20 @@ public class ScriptGenTest extends CodegenTestCase {
             throw new RuntimeException(e);
         }
     }
+
+    public void testScriptWhereMethodHasClosure() {
+        JetScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(FIB_SCRIPT_DEFINITION);
+        loadFile("script/methodWithClosure.lang.kt");
+        final Class aClass = loadClass("MethodWithClosure", generateClassesInFile());
+        try {
+            Constructor constructor = aClass.getConstructor(int.class);
+            Object script = constructor.newInstance(239);
+            Method fib = aClass.getMethod("method");
+            Object invoke = fib.invoke(script);
+            assertEquals(239, ((Integer)invoke)/2);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
