@@ -1,22 +1,15 @@
 package test.kotlin.jdbc.experiment1
 
-import kotlin.template. *
-import kotlin.jdbc. *
-import kotlin.test. *
-import kotlin.util. *
+import kotlin.jdbc.*
+import kotlin.template.*
+import kotlin.test.*
+import org.junit.Test as test
+import test.kotlin.jdbc.*
 
-import test.kotlin.jdbc. *
-
-import junit.framework.TestCase
-import javax.sql.DataSource
-
-import java.sql. *
-
-
-class JdbcTemplateTest : TestCase() {
+class JdbcTemplateTest {
     //val dataSource = createDataSource()
 
-    fun testTemplateInsert() {
+    test fun templateInsert() {
         val id = 3
         val name = "Stepan"
 

@@ -1,14 +1,11 @@
 package test.kotlin.jdbc
 
-import kotlin.jdbc. *
-import kotlin.test. *
-
-import junit.framework.TestCase
-import org.h2.jdbcx.JdbcDataSource
-import javax.sql.DataSource
-import org.h2.jdbcx.JdbcConnectionPool
-import kotlin.nullable.forEach
 import java.sql.ResultSet
+import javax.sql.DataSource
+import kotlin.jdbc.*
+import kotlin.test.*
+import org.h2.jdbcx.JdbcConnectionPool
+import org.junit.Test as test
 
 public val dataSource : DataSource = createDataSource()
 
@@ -25,8 +22,8 @@ fun createDataSource() : DataSource {
     }
 }
 
-class JdbcTest : TestCase() {
-    fun testQueryWithIndexColumnAccess() {
+class JdbcTest {
+    test fun queryWithIndexColumnAccess() {
         dataSource.query("select * from foo") {
             for (row in it) {
                 println("id ${row[1]} and name: ${row[2]}")
@@ -34,7 +31,7 @@ class JdbcTest : TestCase() {
         }
     }
 
-    fun testQueryWithNamedColumnAccess() {
+    test fun queryWithNamedColumnAccess() {
         // query using names
         dataSource.query("select * from foo") {
             for (row in it) {
@@ -43,7 +40,7 @@ class JdbcTest : TestCase() {
         }
     }
 
-    fun testGetValuesAsMap() {
+    test fun getValuesAsMap() {
         dataSource.query("select * from foo") {
             for (row in it) {
                 println(row.getValuesAsMap())
@@ -51,7 +48,7 @@ class JdbcTest : TestCase() {
         }
     }
 
-    fun testStringFormat() {
+    test fun stringFormat() {
         dataSource.query(kotlin.template.StringTemplate(array("select * from foo where id = ", 1))) {
             for (row in it) {
                 println(row.getValuesAsMap())
@@ -59,7 +56,7 @@ class JdbcTest : TestCase() {
         }
     }
 
-    fun testMapIterator() {
+    test fun mapIterator() {
         val mapper = { (rs : ResultSet) ->
             "id: ${rs["id"]}"
         }
@@ -71,13 +68,13 @@ class JdbcTest : TestCase() {
         }
     }
 
-    fun testCount() {
+    test fun count() {
         dataSource.query("select count(*) from foo") {
             println("count: ${it.singleInt()}")
         }
     }
 
-    fun testFormatCursor() {
+    test fun formatCursor() {
         dataSource.query("select * from foo") {
             println(it.getColumnNames().toList().makeString("\t"))
 
