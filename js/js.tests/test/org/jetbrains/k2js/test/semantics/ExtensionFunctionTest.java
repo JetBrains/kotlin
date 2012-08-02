@@ -78,4 +78,16 @@ public final class ExtensionFunctionTest extends SingleFileTranslationTest {
     public void testExtensionFunctionCalledFromFor() throws Exception {
         fooBoxTest();
     }
+
+    public void testImplicitReceiverInExtension() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testExtensionForSuperclass() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testSuperClassMemberInExtension() throws Exception {
+        fooBoxTest();
+    }
 }

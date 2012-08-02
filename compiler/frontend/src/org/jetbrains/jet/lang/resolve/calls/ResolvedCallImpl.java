@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,9 +121,22 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         return resultingDescriptor == null ? candidateDescriptor : resultingDescriptor;
     }
 
-    public ResolvedCallImpl<D> setResultingDescriptor(@NotNull D resultingDescriptor) {
-        this.resultingDescriptor = resultingDescriptor;
-        return this;
+    public void setResultingSubstitutor(@NotNull TypeSubstitutor substitutor) {
+        resultingDescriptor = (D) candidateDescriptor.substitute(substitutor);
+        assert resultingDescriptor != null : candidateDescriptor;
+
+        Map<ValueParameterDescriptor, ValueParameterDescriptor> parameterMap = Maps.newHashMap();
+        for (ValueParameterDescriptor valueParameterDescriptor : resultingDescriptor.getValueParameters()) {
+            parameterMap.put(valueParameterDescriptor.getOriginal(), valueParameterDescriptor);
+        }
+
+        Map<ValueParameterDescriptor, ResolvedValueArgument> originalValueArguments = Maps.newHashMap(valueArguments);
+        valueArguments.clear();
+        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : originalValueArguments.entrySet()) {
+            ValueParameterDescriptor substitutedVersion = parameterMap.get(entry.getKey().getOriginal());
+            assert substitutedVersion != null : entry.getKey();
+            valueArguments.put(substitutedVersion, entry.getValue());
+        }
     }
 
     public void recordTypeArgument(@NotNull TypeParameterDescriptor typeParameter, @NotNull JetType typeArgument) {

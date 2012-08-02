@@ -22,12 +22,21 @@ package org.jetbrains.jet.lang.parsing;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.file.impl.JavaFileManager;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
 public class JetParser implements PsiParser {
-    public static final String KTSCRIPT_FILE_SUFFIX = "ktscript";
+
+    public static final String STD_SCRIPT_EXT = "." + JetParserDefinition.KTSCRIPT_FILE_SUFFIX;
+    private final JetScriptDefinitionProvider scriptDefinitionProvider;
+
+    public JetParser(Project project) {
+        scriptDefinitionProvider = JetScriptDefinitionProvider.getInstance(project);
+    }
 
     @Override
     @NotNull
@@ -39,7 +48,7 @@ public class JetParser implements PsiParser {
     @NotNull
     public ASTNode parse(IElementType iElementType, PsiBuilder psiBuilder, PsiFile psiFile) {
         JetParsing jetParsing = JetParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
-        if (psiFile.getName().endsWith("." + KTSCRIPT_FILE_SUFFIX)) {
+        if (scriptDefinitionProvider != null && scriptDefinitionProvider.isScript(psiFile) || psiFile.getName().endsWith(STD_SCRIPT_EXT)) {
             jetParsing.parseScript();
         }
         else {
@@ -47,5 +56,4 @@ public class JetParser implements PsiParser {
         }
         return psiBuilder.getTreeBuilt();
     }
-
 }

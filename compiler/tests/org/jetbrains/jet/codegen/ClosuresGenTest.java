@@ -66,4 +66,8 @@ public class ClosuresGenTest extends CodegenTestCase {
     public void testKt2151() {
         blackBoxFile("regressions/kt2151.kt");
     }
+
+    public void testRecursiveClosure() {
+        blackBoxFile("classes/recursiveClosure.kt");
+    }
 }

@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.Progress;
 import org.jetbrains.asm4.commons.Method;
@@ -143,7 +144,8 @@ public class GenerationState {
     public void compileCorrectFiles(@NotNull CompilationErrorHandler errorHandler) {
         for (JetFile file : this.files) {
             if (file.isScript()) {
-                injector.getClosureAnnotator().registerClassNameForScript(file.getScript(), ScriptCodegen.SCRIPT_DEFAULT_CLASS_NAME);
+                String name = ScriptNameUtil.classNameForScript(file);
+                injector.getClosureAnnotator().registerClassNameForScript(file.getScript(), JvmClassName.byInternalName(name));
             }
         }
 

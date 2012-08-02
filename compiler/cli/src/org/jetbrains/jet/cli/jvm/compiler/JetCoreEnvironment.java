@@ -38,6 +38,7 @@ import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.parsing.JetParser;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.extAnnotations.CoreAnnotationsProvider;
@@ -54,15 +55,6 @@ import java.util.List;
  * @author yole
  */
 public class JetCoreEnvironment {
-    @NotNull
-    public static JetCoreEnvironment createCoreEnvironmentForJS(Disposable disposable, @NotNull CompilerConfiguration configuration) {
-        return new JetCoreEnvironment(disposable, configuration);
-    }
-
-    @NotNull
-    public static JetCoreEnvironment createCoreEnvironmentForJVM(Disposable disposable, @NotNull CompilerConfiguration configuration) {
-        return new JetCoreEnvironment(disposable, configuration);
-    }
 
     private final JavaCoreApplicationEnvironment applicationEnvironment;
     private final JavaCoreProjectEnvironment projectEnvironment;
@@ -75,13 +67,14 @@ public class JetCoreEnvironment {
     private boolean initialized = false;
 
     public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerConfiguration configuration) {
-        this.configuration = configuration;
+        this.configuration = configuration.copy();
+        this.configuration.setReadOnly(true);
 
         this.applicationEnvironment = new JavaCoreApplicationEnvironment(parentDisposable);
         applicationEnvironment.registerFileType(JetFileType.INSTANCE, "kt");
         applicationEnvironment.registerFileType(JetFileType.INSTANCE, "kts");
         applicationEnvironment.registerFileType(JetFileType.INSTANCE, "ktm");
-        applicationEnvironment.registerFileType(JetFileType.INSTANCE, JetParser.KTSCRIPT_FILE_SUFFIX); // should be renamed to kts
+        applicationEnvironment.registerFileType(JetFileType.INSTANCE, JetParserDefinition.KTSCRIPT_FILE_SUFFIX); // should be renamed to kts
         applicationEnvironment.registerFileType(JetFileType.INSTANCE, "jet");
         applicationEnvironment.registerParserDefinition(new JavaParserDefinition());
         applicationEnvironment.registerParserDefinition(new JetParserDefinition());
@@ -89,6 +82,7 @@ public class JetCoreEnvironment {
         projectEnvironment = new JavaCoreProjectEnvironment(parentDisposable, applicationEnvironment);
 
         MockProject project = projectEnvironment.getProject();
+        project.registerService(JetScriptDefinitionProvider.class, new JetScriptDefinitionProvider());
         project.registerService(JetFilesProvider.class, new CliJetFilesProvider(this));
         project.registerService(CoreJavaFileManager.class, (CoreJavaFileManager) ServiceManager.getService(project, JavaFileManager.class));
         Extensions.getArea(project)
@@ -107,6 +101,8 @@ public class JetCoreEnvironment {
         for (String path : configuration.getList(CommonConfigurationKeys.SOURCE_ROOTS_KEY)) {
             addSources(path);
         }
+
+        JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY));
 
         JetStandardLibrary.initialize(project);
         initialized = true;

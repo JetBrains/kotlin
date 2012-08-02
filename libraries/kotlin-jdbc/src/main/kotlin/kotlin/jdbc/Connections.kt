@@ -6,16 +6,6 @@ import java.math.BigDecimal
 import java.util.Map
 import java.util.Properties
 
-private fun Map<String, String>.toProperties() : Properties {
-    val p = Properties()
-
-    this.keySet().forEach {
-        p.put(it, this[it])
-    }
-
-    return p
-}
-
 /**
  * create connection for the specified jdbc url with no credentials
  */
@@ -34,9 +24,9 @@ fun getConnection(url : String, user : String, password : String) : Connection =
 /**
  * Executes specified block with connection and close connection after this
  */
-fun Connection.use(block : (Connection) -> Any?) : Unit {
+fun <T> Connection.use(block : (Connection) -> T) : T {
     try {
-        block(this)
+        return block(this)
     } finally {
         this.close()
     }

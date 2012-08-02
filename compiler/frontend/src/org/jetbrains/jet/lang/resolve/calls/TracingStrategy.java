@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
@@ -84,7 +85,8 @@ import java.util.List;
         public void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor descriptor) {}
 
         @Override
-        public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData) {}
+        public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData,
+                @NotNull ConstraintSystem systemWithoutExpectedTypeConstraint) {}
 
         @Override
         public void upperBoundViolated(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData) {}
@@ -122,7 +124,8 @@ import java.util.List;
 
     void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor descriptor);
 
-    void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData);
+    void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData,
+            @NotNull ConstraintSystem systemWithoutExpectedTypeConstraint);
 
     void upperBoundViolated(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData);
 }

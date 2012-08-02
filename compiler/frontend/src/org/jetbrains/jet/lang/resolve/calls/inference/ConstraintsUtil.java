@@ -151,7 +151,7 @@ public class ConstraintsUtil {
         return true;
     }
 
-    public static boolean checkBoundsAreSatisfied(ConstraintSystem constraintSystem) {
+    public static boolean checkBoundsAreSatisfied(@NotNull ConstraintSystem constraintSystem) {
         for (TypeParameterDescriptor typeVariable : constraintSystem.getTypeVariables()) {
             JetType type = getValue(constraintSystem.getTypeConstraints(typeVariable));
             JetType upperBound = typeVariable.getUpperBoundsAsType();

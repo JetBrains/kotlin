@@ -109,7 +109,11 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     @NotNull
     public ConstraintSystem copy() {
         ConstraintSystemImpl newConstraintSystem = new ConstraintSystemImpl();
-        newConstraintSystem.typeParameterConstraints.putAll(typeParameterConstraints);
+        for (Map.Entry<TypeParameterDescriptor, TypeConstraintsImpl> entry : typeParameterConstraints.entrySet()) {
+            TypeParameterDescriptor typeParameter = entry.getKey();
+            TypeConstraintsImpl typeConstraints = entry.getValue();
+            newConstraintSystem.typeParameterConstraints.put(typeParameter, typeConstraints.copy());
+        }
         newConstraintSystem.errorConstraintPositions.addAll(errorConstraintPositions);
         newConstraintSystem.hasErrorInConstrainingTypes = hasErrorInConstrainingTypes;
         return newConstraintSystem;

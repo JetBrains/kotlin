@@ -78,6 +78,20 @@ public class TypeConstraintsImpl implements TypeConstraints {
         return exactBounds;
     }
 
+    /*package*/ TypeConstraintsImpl copy() {
+        TypeConstraintsImpl typeConstraints = new TypeConstraintsImpl(varianceOfPosition);
+        for (JetType upperBound : upperBounds) {
+            typeConstraints.upperBounds.add(upperBound);
+        }
+        for (JetType lowerBound : lowerBounds) {
+            typeConstraints.lowerBounds.add(lowerBound);
+        }
+        for (JetType exactBound : exactBounds) {
+            typeConstraints.exactBounds.add(exactBound);
+        }
+        return typeConstraints;
+    }
+
     public static enum ConstraintKind {
         SUB_TYPE, SUPER_TYPE, EQUAL;
 

@@ -16,7 +16,10 @@
 
 package org.jetbrains.jet.cli.jvm;
 
-import com.intellij.openapi.util.Key;
+import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
+import org.jetbrains.jet.config.CompilerConfigurationKey;
+import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 
 import java.io.File;
 import java.util.List;
@@ -29,6 +32,13 @@ public class JVMConfigurationKeys {
     private JVMConfigurationKeys() {
     }
 
-    public static final Key<List<File>> CLASSPATH_KEY = Key.create("classpath");
-    public static final Key<List<File>> ANNOTATIONS_PATH_KEY = Key.create("annotations path");
+    public static final CompilerConfigurationKey<List<File>> CLASSPATH_KEY = CompilerConfigurationKey.create("classpath");
+    public static final CompilerConfigurationKey<List<File>> ANNOTATIONS_PATH_KEY = CompilerConfigurationKey.create("annotations path");
+
+    public static final CompilerConfigurationKey<List<AnalyzerScriptParameter>> SCRIPT_PARAMETERS = CompilerConfigurationKey.create("script");
+    public static final CompilerConfigurationKey<BuiltinsScopeExtensionMode> BUILTINS_SCOPE_EXTENSION_MODE_KEY =
+            CompilerConfigurationKey.create("builtins scope extension mode");
+    public static final CompilerConfigurationKey<Boolean> STUBS = CompilerConfigurationKey.create("stubs");
+    public static final CompilerConfigurationKey<BuiltinToJavaTypesMapping> BUILTIN_TO_JAVA_TYPES_MAPPING_KEY =
+            CompilerConfigurationKey.create("builtin to java types mapping");
 }

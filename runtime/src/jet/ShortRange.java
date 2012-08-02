@@ -46,6 +46,26 @@ public final class ShortRange implements Range<Short>, ShortIterable {
         return item <= start && item > start + count;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        ShortRange range = (ShortRange) o;
+        return count == range.count && start == range.start;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) start;
+        result = 31 * result + count;
+        return result;
+    }
+
     public boolean getIsReversed() {
         return count < 0;
     }

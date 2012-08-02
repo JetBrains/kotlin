@@ -20,6 +20,7 @@
 package org.jetbrains.jet.lang.parsing;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
@@ -34,16 +35,31 @@ import org.jetbrains.jet.JetNodeType;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementType;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
+import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.ref.JetTypeName;
 import org.jetbrains.jet.lexer.JetLexer;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.JetLanguage;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JetParserDefinition implements ParserDefinition {
+    public static final String KTSCRIPT_FILE_SUFFIX = "ktscript";
 
     public JetParserDefinition() {
         //todo: ApplicationManager.getApplication() is null during JetParsingTest setting up
 
         /*if (!ApplicationManager.getApplication().isCommandLine()) {
         }*/
+    }
+
+    @NotNull
+    public static JetParserDefinition getInstance() {
+        return (JetParserDefinition)LanguageParserDefinitions.INSTANCE.forLanguage(JetLanguage.INSTANCE);
     }
 
     @Override
@@ -54,7 +70,7 @@ public class JetParserDefinition implements ParserDefinition {
 
     @Override
     public PsiParser createParser(Project project) {
-        return new JetParser();
+        return new JetParser(project);
     }
 
     @Override

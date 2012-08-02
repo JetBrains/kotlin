@@ -193,12 +193,6 @@ public class TypeHierarchyResolver {
             declaration.accept(new JetVisitorVoid() {
                 @Override
                 public void visitJetFile(JetFile file) {
-                    if (file.isScript()) {
-                        JetScript script = file.getScript();
-                        scriptHeaderResolver.processScriptHierarchy(script, outerScope);
-                        return;
-                    }
-
                     NamespaceDescriptorImpl namespaceDescriptor = namespaceFactory.createNamespaceDescriptorPathIfNeeded(
                             file, outerScope, RedeclarationHandler.DO_NOTHING);
                     context.getNamespaceDescriptors().put(file, namespaceDescriptor);
@@ -207,6 +201,10 @@ public class TypeHierarchyResolver {
                                                                              new TraceBasedRedeclarationHandler(trace), "namespace");
                     namespaceScope.changeLockLevel(WritableScope.LockLevel.BOTH);
                     context.getNamespaceScopes().put(file, namespaceScope);
+
+                    if(file.isScript()) {
+                        scriptHeaderResolver.processScriptHierarchy(file.getScript(), namespaceScope);
+                    }
 
                     prepareForDeferredCall(namespaceScope, namespaceDescriptor, file);
                 }

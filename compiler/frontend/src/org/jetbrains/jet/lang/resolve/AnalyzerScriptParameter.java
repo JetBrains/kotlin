@@ -34,6 +34,10 @@ public class AnalyzerScriptParameter {
         this.type = type;
     }
 
+    public AnalyzerScriptParameter(@NotNull String name, @NotNull String type) {
+        this(Name.identifier(name), JetTypeName.parse(type));
+    }
+
     @NotNull
     public Name getName() {
         return name;

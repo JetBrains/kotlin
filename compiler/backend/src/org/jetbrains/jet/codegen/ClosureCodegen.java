@@ -146,7 +146,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         if (enclosingType == null)
             captureThis = null;
 
-        final Method constructor = generateConstructor(funClass, fun);
+        final Method constructor = generateConstructor(funClass, fun, funDescriptor);
 
         if (captureThis != null) {
             cv.newField(fun, ACC_FINAL, "this$0", enclosingType.getDescriptor(), null, null);
@@ -160,6 +160,9 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
         final GeneratedAnonymousClassDescriptor answer = new GeneratedAnonymousClassDescriptor(name, constructor, captureThis, captureReceiver);
         for (DeclarationDescriptor descriptor : closure.keySet()) {
+            if (descriptor == funDescriptor) {
+                continue;
+            }
             if (descriptor instanceof VariableDescriptor) {
                 final EnclosedValueDescriptor valueDescriptor = closure.get(descriptor);
                 answer.addArg(valueDescriptor.getOuterValue());
@@ -253,13 +256,16 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         }
     }
 
-    private Method generateConstructor(JvmClassName funClass, PsiElement fun) {
+    private Method generateConstructor(JvmClassName funClass, JetExpression fun, FunctionDescriptor funDescriptor) {
         int argCount = captureThis != null ? 1 : 0;
         argCount += (captureReceiver != null ? 1 : 0);
 
         ArrayList<DeclarationDescriptor> variableDescriptors = new ArrayList<DeclarationDescriptor>();
         
         for (DeclarationDescriptor descriptor : closure.keySet()) {
+            if (descriptor == funDescriptor) {
+                continue;
+            }
             if (descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
                 argCount++;
                 variableDescriptors.add(descriptor);
@@ -284,7 +290,13 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
             argTypes[i++] = captureReceiver;
         }
 
+        boolean putFieldForMyself = false;
+
         for (DeclarationDescriptor descriptor : closure.keySet()) {
+            if (descriptor == funDescriptor) {
+                putFieldForMyself = true;
+                continue;
+            }
             if (descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
                 final Type sharedVarType = state.getInjector().getJetTypeMapper().getSharedVarType(descriptor);
                 final Type type;
@@ -333,6 +345,14 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                 }
                 i += type.getSize();
 
+                StackValue.field(type, name, fieldName, false).store(type, iv);
+            }
+
+            if (putFieldForMyself) {
+                Type type = name.getAsmType();
+                String fieldName = "$" + funDescriptor.getName();
+                iv.load(0, type);
+                iv.dup();
                 StackValue.field(type, name, fieldName, false).store(type, iv);
             }
 

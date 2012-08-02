@@ -30,6 +30,6 @@ fun main(args : Array<String>) {
         }
     }
 
-    val <!UNUSED_VARIABLE!>f<!> : String = <!TYPE_MISMATCH!>a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>
+    val <!UNUSED_VARIABLE!>f<!> : String = <!TYPE_MISMATCH!>a<!><!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
     <!TYPE_MISMATCH!>a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!> : String
 }

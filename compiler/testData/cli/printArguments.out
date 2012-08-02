@@ -1,0 +1,5 @@
+hello
+Command line arguments:
+-script
+compiler/testData/cli/hello.ktscript
+OK

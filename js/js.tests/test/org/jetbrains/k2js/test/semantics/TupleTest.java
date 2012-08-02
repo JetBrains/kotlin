@@ -36,6 +36,10 @@ public final class TupleTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
+    public void testTuplesEquals() throws Exception {
+        fooBoxTest();
+    }
+
 
 }
 

@@ -348,9 +348,6 @@ public class CallResolver {
         ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
         assert constraintSystem != null;
 
-        constraintSystem.addSubtypingConstraint(descriptor.getReturnType(), context.expectedType,
-                                                 ConstraintPosition.EXPECTED_TYPE_POSITION);
-
         TypeSubstitutor substituteDontCare = ConstraintSystemWithPriorities
             .makeConstantSubstitutor(resolvedCall.getCandidateDescriptor().getTypeParameters(), ConstraintSystemImpl.DONT_CARE);
 
@@ -375,22 +372,27 @@ public class CallResolver {
             }
         }
 
+        ConstraintSystem constraintSystemWithoutExpectedTypeConstraint = constraintSystem.copy();
+        constraintSystem.addSubtypingConstraint(descriptor.getReturnType(), context.expectedType,
+                                                 ConstraintPosition.EXPECTED_TYPE_POSITION);
+
 
         if (!constraintSystem.isSuccessful()) {
+            if (constraintSystemWithoutExpectedTypeConstraint.isSuccessful()) {
+                resolvedCall.setResultingSubstitutor(constraintSystemWithoutExpectedTypeConstraint.getResultingSubstitutor());
+            }
             List<JetType> argumentTypes = checkValueArgumentTypes(context, resolvedCall, context.trace).argumentTypes;
             JetType receiverType = resolvedCall.getReceiverArgument().exists() ? resolvedCall.getReceiverArgument().getType() : null;
             tracing.typeInferenceFailed(context.trace,
-                                        InferenceErrorData.create(descriptor, constraintSystem, argumentTypes, receiverType, context.expectedType));
+                                        InferenceErrorData
+                                                .create(descriptor, constraintSystem, argumentTypes, receiverType, context.expectedType),
+                                        constraintSystemWithoutExpectedTypeConstraint);
             resolvedCall.addStatus(ResolutionStatus.TYPE_INFERENCE_ERROR);
             failed.add(resolvedCall);
             return;
         }
 
-        D substitute = (D) descriptor.substitute(constraintSystem.getResultingSubstitutor());
-        assert substitute != null;
-        replaceValueParametersWithSubstitutedOnes(resolvedCall, substitute);
-        resolvedCall.setResultingDescriptor(substitute); //replacement
-
+        resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor());
         // Here we type check the arguments with inferred types expected
         checkValueArgumentTypes(context, resolvedCall, context.trace);
 
@@ -670,10 +672,7 @@ public class CallResolver {
 
                 Map<TypeConstructor, TypeProjection>
                         substitutionContext = FunctionDescriptorUtil.createSubstitutionContext((FunctionDescriptor)candidate, typeArguments);
-                D substitutedDescriptor = (D) candidate.substitute(TypeSubstitutor.create(substitutionContext));
-
-                candidateCall.setResultingDescriptor(substitutedDescriptor);
-                replaceValueParametersWithSubstitutedOnes(candidateCall, substitutedDescriptor);
+                candidateCall.setResultingSubstitutor(TypeSubstitutor.create(substitutionContext));
 
                 List<TypeParameterDescriptor> typeParameters = candidateCall.getCandidateDescriptor().getTypeParameters();
                 for (int i = 0; i < typeParameters.size(); i++) {
@@ -756,14 +755,14 @@ public class CallResolver {
                                                      ConstraintPosition.RECEIVER_POSITION);
         }
 
-        ConstraintSystem constraintBuilderWithRightTypeParameters = constraintsSystem.replaceTypeVariables(new Function<TypeParameterDescriptor, TypeParameterDescriptor>() {
+        ConstraintSystem constraintSystemWithRightTypeParameters = constraintsSystem.replaceTypeVariables(new Function<TypeParameterDescriptor, TypeParameterDescriptor>() {
             @Override
             public TypeParameterDescriptor apply(@Nullable TypeParameterDescriptor typeParameterDescriptor) {
                 assert typeParameterDescriptor != null;
                 return candidate.getTypeParameters().get(typeParameterDescriptor.getIndex());
             }
         });
-        candidateCall.setConstraintSystem(constraintBuilderWithRightTypeParameters);
+        candidateCall.setConstraintSystem(constraintSystemWithRightTypeParameters);
 
 
         // Solution
@@ -777,7 +776,8 @@ public class CallResolver {
             List<JetType> argumentTypes = checkingResult.argumentTypes;
             JetType receiverType = candidateCall.getReceiverArgument().exists() ? candidateCall.getReceiverArgument().getType() : null;
             context.tracing.typeInferenceFailed(context.trace,
-                InferenceErrorData.create(candidate, constraintBuilderWithRightTypeParameters, argumentTypes, receiverType, context.expectedType));
+                InferenceErrorData.create(candidate, constraintSystemWithRightTypeParameters, argumentTypes, receiverType, context.expectedType),
+                constraintSystemWithRightTypeParameters);
             return TYPE_INFERENCE_ERROR.combine(argumentsStatus);
         }
     }
@@ -852,23 +852,7 @@ public class CallResolver {
         }
     }
 
-    private static <D extends CallableDescriptor> void replaceValueParametersWithSubstitutedOnes(
-            ResolvedCallImpl<D> candidateCall, @NotNull D substitutedDescriptor) {
 
-        Map<ValueParameterDescriptor, ValueParameterDescriptor> parameterMap = Maps.newHashMap();
-        for (ValueParameterDescriptor valueParameterDescriptor : substitutedDescriptor.getValueParameters()) {
-            parameterMap.put(valueParameterDescriptor.getOriginal(), valueParameterDescriptor);
-        }
-
-        Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = candidateCall.getValueArguments();
-        Map<ValueParameterDescriptor, ResolvedValueArgument> originalValueArguments = Maps.newHashMap(valueArguments);
-        valueArguments.clear();
-        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : originalValueArguments.entrySet()) {
-            ValueParameterDescriptor substitutedVersion = parameterMap.get(entry.getKey().getOriginal());
-            assert substitutedVersion != null : entry.getKey();
-            valueArguments.put(substitutedVersion, entry.getValue());
-        }
-    }
 
     private <D extends CallableDescriptor, F extends D> ValueArgumentsCheckingResult checkAllValueArguments(CallResolutionContext<D, F> context) {
         ValueArgumentsCheckingResult checkingResult = checkValueArgumentTypes(context, context.candidateCall);

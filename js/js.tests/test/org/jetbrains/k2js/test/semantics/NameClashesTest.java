@@ -31,4 +31,10 @@ public final class NameClashesTest extends SingleFileTranslationTest {
     public void testMethodOverload() throws Exception {
         fooBoxTest();
     }
+
+    //TODO:
+    @SuppressWarnings("UnusedDeclaration")
+    public void TODO_testDifferenceInCapitalization() throws Exception {
+        fooBoxTest();
+    }
 }

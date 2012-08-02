@@ -9,4 +9,14 @@
       <val name="value" val="&quot;fun clone() : Any&quot;"/>
     </annotation>
   </item>
+  <item name='java.lang.Thread java.lang.Thread currentThread()'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun currentThread() : Thread&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.lang.CharSequence java.lang.String toString()'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun toString() : String&quot;"/>
+    </annotation>
+  </item>
 </root>

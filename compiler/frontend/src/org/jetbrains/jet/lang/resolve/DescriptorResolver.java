@@ -875,7 +875,7 @@ public class DescriptorResolver {
         return getterDescriptor;
     }
 
-    private PropertyGetterDescriptor createDefaultGetter(PropertyDescriptor propertyDescriptor) {
+    public static PropertyGetterDescriptor createDefaultGetter(PropertyDescriptor propertyDescriptor) {
         PropertyGetterDescriptor getterDescriptor;
         getterDescriptor = new PropertyGetterDescriptor(
                 propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getModality(),

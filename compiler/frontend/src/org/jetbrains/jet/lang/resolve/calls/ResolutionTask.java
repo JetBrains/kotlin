@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -238,15 +239,20 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends R
         }
 
         @Override
-        public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData data) {
+        public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData data, @NotNull ConstraintSystem systemWithoutExpectedTypeConstraint) {
             ConstraintSystem constraintSystem = data.constraintSystem;
             assert !constraintSystem.isSuccessful();
             if (constraintSystem.hasErrorInConstrainingTypes()) {
                 return;
             }
-            if (constraintSystem.hasExpectedTypeMismatch()) {
+            boolean successfulWithoutExpectedTypeConstraint = systemWithoutExpectedTypeConstraint.isSuccessful();
+            if (constraintSystem.hasExpectedTypeMismatch() || successfulWithoutExpectedTypeConstraint) {
                 JetType returnType = data.descriptor.getReturnType();
                 assert returnType != null;
+                if (successfulWithoutExpectedTypeConstraint) {
+                    returnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(returnType, Variance.INVARIANT);
+                    assert returnType != null;
+                }
                 trace.report(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(reference, returnType, data.expectedType));
             }
             else if (constraintSystem.hasTypeConstructorMismatch()) {

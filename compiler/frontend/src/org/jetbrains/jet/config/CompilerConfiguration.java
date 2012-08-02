@@ -17,30 +17,34 @@
 package org.jetbrains.jet.config;
 
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.UserDataHolderBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.*;
 
 /**
  * @author Evgeny Gerashchenko
  * @since 7/3/12
  */
 public class CompilerConfiguration {
-    private final UserDataHolderBase holder = new UserDataHolderBase();
+    private final Map<Key, Object> map = new HashMap<Key, Object>();
+    private boolean readOnly = false;
 
     @Nullable
-    public <T> T get(@NotNull Key<T> key) {
-        return holder.getUserData(key);
+    public <T> T get(@NotNull CompilerConfigurationKey<T> key) {
+        T data = (T) map.get(key.ideaKey);
+        return data == null ? null : unmodifiable(data);
     }
 
     @NotNull
-    public <T> List<T> getList(@NotNull Key<List<T>> key) {
-        List<T> data = holder.getUserData(key);
+    public <T> T get(@NotNull CompilerConfigurationKey<T> key, @NotNull T defaultValue) {
+        T data = (T) map.get(key.ideaKey);
+        return data == null ? defaultValue : unmodifiable(data);
+    }
+
+    @NotNull
+    public <T> List<T> getList(@NotNull CompilerConfigurationKey<List<T>> key) {
+        List<T> data = (List<T>) map.get(key.ideaKey);
         if (data == null) {
             return Collections.emptyList();
         }
@@ -49,23 +53,63 @@ public class CompilerConfiguration {
         }
     }
 
-    public <T> void put(@NotNull Key<T> key, @Nullable T value) {
-        holder.putUserData(key, value);
+    public <T> void put(@NotNull CompilerConfigurationKey<T> key, @Nullable T value) {
+        checkReadOnly();
+        map.put(key.ideaKey, value);
     }
 
-    public <T> void add(@NotNull Key<List<T>> key, @NotNull T value) {
-        List<T> list = holder.putUserDataIfAbsent(key, new CopyOnWriteArrayList<T>());
+    public <T> void add(@NotNull CompilerConfigurationKey<List<T>> key, @NotNull T value) {
+        checkReadOnly();
+        Key<List<T>> ideaKey = key.ideaKey;
+        if (map.get(ideaKey) == null) {
+            map.put(ideaKey, new ArrayList<T>());
+        }
+        List<T> list = (List<T>) map.get(ideaKey);
         list.add(value);
     }
 
-    public <T> void addAll(@NotNull Key<List<T>> key, @NotNull Collection<T> value) {
-        List<T> list = holder.putUserDataIfAbsent(key, new CopyOnWriteArrayList<T>());
-        list.addAll(value);
+    public <T> void addAll(@NotNull CompilerConfigurationKey<List<T>> key, @NotNull Collection<T> values) {
+        checkReadOnly();
+        Key<List<T>> ideaKey = key.ideaKey;
+        if (map.get(ideaKey) == null) {
+            map.put(ideaKey, new ArrayList<T>());
+        }
+        List<T> list = (List<T>) map.get(ideaKey);
+        list.addAll(values);
     }
 
     public CompilerConfiguration copy() {
         CompilerConfiguration copy = new CompilerConfiguration();
-        holder.copyUserDataTo(copy.holder);
+        copy.map.putAll(map);
         return copy;
+    }
+
+    private void checkReadOnly() {
+        if (readOnly) {
+            throw new IllegalStateException("CompilerConfiguration is read-only");
+        }
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        if (readOnly != this.readOnly) {
+            checkReadOnly();
+            this.readOnly = readOnly;
+        }
+    }
+
+    @NotNull
+    private static <T> T unmodifiable(@NotNull T object) {
+        if (object instanceof List) {
+            return (T) Collections.unmodifiableList((List) object);
+        }
+        else if (object instanceof Map) {
+            return (T) Collections.unmodifiableMap((Map) object);
+        }
+        else if (object instanceof Collection) {
+            return (T) Collections.unmodifiableCollection((Collection) object);
+        }
+        else {
+            return object;
+        }
     }
 }

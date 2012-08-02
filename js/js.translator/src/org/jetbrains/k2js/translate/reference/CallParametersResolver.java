@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getDeclarationDescriptorForExtensionCallReceiver;
 
 /**
  * @author Pavel Talanov
@@ -106,8 +106,7 @@ public final class CallParametersResolver {
         if (qualifier != null) {
             return qualifier;
         }
-        DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(resolvedCall.getResultingDescriptor());
-        assert expectedReceiverDescriptor != null;
-        return TranslationUtils.getThisObject(context, expectedReceiverDescriptor);
+        DeclarationDescriptor receiverDescriptor = getDeclarationDescriptorForExtensionCallReceiver(resolvedCall);
+        return TranslationUtils.getThisObject(context, receiverDescriptor);
     }
 }

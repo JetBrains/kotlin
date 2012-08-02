@@ -33,9 +33,9 @@ public final class IntRange implements Range<Integer>, IntIterable {
     @Override
     public String toString() {
         if (count >= 0) {
-            return "" + getStart() + ".upto(" + getEnd() + ")";
+            return getStart() + ".upto(" + getEnd() + ")";
         } else {
-            return "" + getStart() + ".downto(" + getEnd() + ")";
+            return getStart() + ".downto(" + getEnd() + ")";
         }
     }
 
@@ -46,6 +46,26 @@ public final class IntRange implements Range<Integer>, IntIterable {
             return item >= start && item < start + count;
         }
         return item <= start && item > start + count;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        IntRange range = (IntRange) o;
+        return count == range.count && start == range.start;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = start;
+        result = 31 * result + count;
+        return result;
     }
 
     public IntIterator step(int step) {

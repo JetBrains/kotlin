@@ -21,30 +21,23 @@ import com.intellij.openapi.util.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.psi.JetScript;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ScriptReceiver;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.expressions.CoercionStrategy;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.ref.JetTypeName;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import java.util.*;
 
 /**
  * @author Stepan Koltsov
@@ -120,14 +113,17 @@ public class ScriptHeaderResolver {
     }
 
     public void processScriptHierarchy(@NotNull JetScript script, @NotNull JetScope outerScope) {
-        NamespaceDescriptorImpl ns = namespaceFactory.createNamespaceDescriptorPathIfNeeded(FqName.ROOT);
+        JetFile file = (JetFile) script.getContainingFile();
+        JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
+        FqName fqName = namespaceHeader != null ? new FqName(namespaceHeader.getQualifiedName()) : FqName.ROOT;
+        NamespaceDescriptorImpl ns = namespaceFactory.createNamespaceDescriptorPathIfNeeded(fqName);
 
         Integer priority = script.getUserData(PRIORITY_KEY);
         if (priority == null) {
             priority = 0;
         }
 
-        ScriptDescriptor scriptDescriptor = new ScriptDescriptor(ns, priority);
+        ScriptDescriptor scriptDescriptor = new ScriptDescriptor(ns, priority, script, outerScope);
         //WriteThroughScope scriptScope = new WriteThroughScope(
         //        outerScope, ns.getMemberScope(), new TraceBasedRedeclarationHandler(trace));
         WritableScopeImpl scriptScope = new WritableScopeImpl(outerScope, scriptDescriptor, RedeclarationHandler.DO_NOTHING, "script");
@@ -135,7 +131,10 @@ public class ScriptHeaderResolver {
 
         context.getScriptScopes().put(script, scriptScope);
         context.getScripts().put(script, scriptDescriptor);
+
         trace.record(BindingContext.SCRIPT, script, scriptDescriptor);
+
+        ((WritableScope)outerScope).addClassifierDescriptor(scriptDescriptor.getClassDescriptor());
     }
 
     public void resolveScriptDeclarations() {
@@ -148,8 +147,15 @@ public class ScriptHeaderResolver {
 
             scope.setImplicitReceiver(descriptor.getImplicitReceiver());
 
+            JetFile file = (JetFile) declaration.getContainingFile();
+            JetScriptDefinition scriptDefinition = JetScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file);
+
             int index = 0;
-            for (AnalyzerScriptParameter scriptParameter : topDownAnalysisParameters.getScriptParameters()) {
+            List<AnalyzerScriptParameter> scriptParameters = !scriptDefinition.getScriptParameters().isEmpty()
+                                                       ? scriptDefinition.getScriptParameters()
+                                                       : topDownAnalysisParameters.getScriptParameters();
+
+            for (AnalyzerScriptParameter scriptParameter : scriptParameters) {
                 ValueParameterDescriptor parameter = resolveScriptParameter(scriptParameter, index, descriptor);
                 valueParameters.add(parameter);
                 scope.addVariableDescriptor(parameter);
@@ -159,5 +165,4 @@ public class ScriptHeaderResolver {
             descriptor.setValueParameters(valueParameters);
         }
     }
-
 }

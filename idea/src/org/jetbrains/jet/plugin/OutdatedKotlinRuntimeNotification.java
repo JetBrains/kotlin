@@ -14,16 +14,19 @@ package org.jetbrains.jet.plugin;/*
  * limitations under the License.
  */
 
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.ide.plugins.PluginManager;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleComponent;
-import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.components.AbstractProjectComponent;
+import com.intellij.openapi.extensions.PluginId;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.ui.Messages;
@@ -35,7 +38,6 @@ import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.quickfix.ConfigureKotlinLibraryNotificationProvider;
-import org.jetbrains.jet.plugin.util.PluginPathUtil;
 import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.event.HyperlinkEvent;
@@ -48,40 +50,36 @@ import java.util.jar.JarFile;
  * @author Evgeny Gerashchenko
  * @since 5/22/12
  */
-public class OutdatedKotlinRuntimeNotification implements ModuleComponent {
+public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent {
     private static final String UNKNOWN_VERSION = "UNKNOWN";
-    private static final String SUPPRESSED_PROPERTY_NAME_PATTERN = "oudtdated.runtime.suppressed.plugin.version[%s]";
+    private static final String SUPPRESSED_PROPERTY_NAME = "oudtdated.runtime.suppressed.plugin.version";
 
-    private final Module myModule;
-    private final String mySuppressedPropertyName;
-
-    public OutdatedKotlinRuntimeNotification(Module module) {
-        myModule = module;
-        mySuppressedPropertyName = String.format(SUPPRESSED_PROPERTY_NAME_PATTERN, module.getName());
+    public OutdatedKotlinRuntimeNotification(final Project project) {
+        super(project);
     }
 
     @Override
     public void projectOpened() {
         if (ApplicationManager.getApplication().isInternal()) return;
-        String runtimeVersion = getRuntimeVersion(getKotlinRuntimeJar());
+        String runtimeVersion = getRuntimeVersion();
+        final String pluginVersion = getPluginVersion();
         if (runtimeVersion == null) return; // runtime is not present in project
-        final String sdkVersion = getRuntimeVersion(getRuntimeFromSdk());
-        if (sdkVersion == null || "snapshot".equals(sdkVersion)) return; // plugin is run from sources or SDK is not configured for the module, can't compare versions
+        if ("@snapshot@".equals(pluginVersion)) return; // plugin is run from sources, can't compare versions
 
         // user already clicked suppress
-        if (sdkVersion.equals(PropertiesComponent.getInstance(myModule.getProject()).getValue(mySuppressedPropertyName))) return;
+        if (pluginVersion.equals(PropertiesComponent.getInstance(myProject).getValue(SUPPRESSED_PROPERTY_NAME))) return;
 
         boolean isRuntimeOutdated = "snapshot".equals(runtimeVersion)
                                     || UNKNOWN_VERSION.equals(runtimeVersion)
-                                    || runtimeVersion.startsWith("internal-") != sdkVersion.startsWith("internal-")
-                                    || VersionComparatorUtil.compare(sdkVersion, runtimeVersion) > 0;
+                                    || runtimeVersion.startsWith("internal-") != pluginVersion.startsWith("internal-")
+                                    || VersionComparatorUtil.compare(pluginVersion, runtimeVersion) > 0;
 
         if (!isRuntimeOutdated) return;
 
-        String message = String.format("<p>Your version of Kotlin runtime library in module \"%s\" is %s, while Kotlin SDK version in this module is %s." +
+        String message = String.format("<p>Your version of Kotlin runtime library is %s, while plugin version is %s." +
                                        " Runtime library should be updated to avoid compatibility problems.</p>" +
                                        "<p><a href=\"update\">Update Runtime</a> <a href=\"ignore\">Ignore</a></p>",
-                                       myModule.getName(), UNKNOWN_VERSION.equals(runtimeVersion) ? "older than 0.1.2296" : runtimeVersion, sdkVersion);
+                                       UNKNOWN_VERSION.equals(runtimeVersion) ? "older than 0.1.2296" : runtimeVersion, pluginVersion);
         Notifications.Bus.notify(new Notification("Outdated Kotlin Runtime", "Outdated Kotlin Runtime",
                                                   message,
                                                   NotificationType.WARNING, new NotificationListener() {
@@ -92,7 +90,7 @@ public class OutdatedKotlinRuntimeNotification implements ModuleComponent {
                         updateRuntime();
                     }
                     else if ("ignore".equals(event.getDescription())) {
-                        PropertiesComponent.getInstance(myModule.getProject()).setValue(mySuppressedPropertyName, sdkVersion);
+                        PropertiesComponent.getInstance(myProject).setValue(SUPPRESSED_PROPERTY_NAME, pluginVersion);
                     }
                     else {
                         throw new AssertionError();
@@ -100,17 +98,16 @@ public class OutdatedKotlinRuntimeNotification implements ModuleComponent {
                     notification.expire();
                 }
             }
-        }), myModule.getProject());
-    }
+        }), myProject);
+}
 
     private void updateRuntime() {
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
-                File runtimePath = PluginPathUtil.getRuntimePath(myModule);
+                File runtimePath = PathUtil.getDefaultRuntimePath();
                 if (runtimePath == null) {
-                    Messages.showErrorDialog(myModule.getProject(),
-                                             "\"kotlin-runtime.jar\" is not found. Make sure Kotlin SDK is configured for module \"" + myModule.getName() + "\".",
+                    Messages.showErrorDialog(myProject, "kotlin-runtime.jar is not found. Make sure plugin is properly installed.",
                                              "No Runtime Found");
                     return;
                 }
@@ -133,7 +130,8 @@ public class OutdatedKotlinRuntimeNotification implements ModuleComponent {
     }
 
     @Nullable
-    private static String getRuntimeVersion(@Nullable VirtualFile kotlinRuntimeJar) {
+    private String getRuntimeVersion() {
+        VirtualFile kotlinRuntimeJar = getKotlinRuntimeJar();
         if (kotlinRuntimeJar == null) return null;
         VirtualFile manifestFile = kotlinRuntimeJar.findFileByRelativePath(JarFile.MANIFEST_NAME);
         if (manifestFile != null) {
@@ -147,11 +145,11 @@ public class OutdatedKotlinRuntimeNotification implements ModuleComponent {
 
     @Nullable
     private VirtualFile getKotlinRuntimeJar() {
-        LibraryTable table = ModuleRootManager.getInstance(myModule).getModifiableModel().getModuleLibraryTable();
+        LibraryTable table = ProjectLibraryTable.getInstance(myProject);
         Library kotlinRuntime = table.getLibraryByName(ConfigureKotlinLibraryNotificationProvider.LIBRARY_NAME);
         if (kotlinRuntime != null) {
             for (VirtualFile root : kotlinRuntime.getFiles(OrderRootType.CLASSES)) {
-                if (root.getName().equals(PathUtil.KOTLIN_RUNTIME_JAR)) {
+                if (root.getName().equals(ConfigureKotlinLibraryNotificationProvider.KOTLIN_RUNTIME_JAR)) {
                     return root;
                 }
             }
@@ -159,27 +157,10 @@ public class OutdatedKotlinRuntimeNotification implements ModuleComponent {
         return null;
     }
 
-    @Nullable
-    private VirtualFile getRuntimeFromSdk() {
-        File runtimePath = PluginPathUtil.getRuntimePath(myModule);
-        return runtimePath == null ? null : PathUtil.jarFileOrDirectoryToVirtualFile(runtimePath);
-    }
-
-    @Override
-    public void moduleAdded() {}
-
-    @Override
-    public void projectClosed() {}
-
-    @Override
-    public void initComponent() {}
-
-    @Override
-    public void disposeComponent() {}
-
     @NotNull
-    @Override
-    public String getComponentName() {
-        return getClass().getName();
+    private static String getPluginVersion() {
+        IdeaPluginDescriptor plugin = PluginManager.getPlugin(PluginId.getId("org.jetbrains.kotlin"));
+        assert plugin != null : "How can it be? Kotlin plugin is available, but its component is running. Complete nonsense.";
+        return plugin.getVersion();
     }
 }

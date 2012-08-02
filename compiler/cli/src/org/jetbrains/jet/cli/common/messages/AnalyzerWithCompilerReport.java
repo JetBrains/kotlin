@@ -35,6 +35,8 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 
 import java.util.Collection;
 
+import static org.jetbrains.jet.lang.diagnostics.DiagnosticUtils.sortedDiagnostics;
+
 /**
  * @author Pavel Talanov
  */
@@ -111,7 +113,7 @@ public final class AnalyzerWithCompilerReport {
 
     public static boolean reportDiagnostics(@NotNull BindingContext bindingContext, @NotNull MessageCollector messageCollector) {
         boolean hasErrors = false;
-        for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
+        for (Diagnostic diagnostic : sortedDiagnostics(bindingContext.getDiagnostics())) {
             hasErrors |= reportDiagnostic(diagnostic, messageCollector);
         }
         return hasErrors;

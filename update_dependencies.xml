@@ -3,15 +3,15 @@
 
     <target name="update" depends="fetch-third-party">
         <execute_update
-            base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt343/67291:id"
+            base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt343/67709:id"
             build.zip="ideaIC-120.SNAPSHOT.win.zip"
         />
     </target>
 
     <target name="jb_update" depends="fetch-third-party">
         <execute_update
-            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt24/1481384:id"
-            build.zip="ideaIC-120.214.win.zip"
+            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt662/1492288:id"
+            build.zip="ideaIC-120.SNAPSHOT.win.zip"
         />
     </target>
 
@@ -184,6 +184,14 @@
             </if>
 
             <unzip src="dependencies/download/@{build.zip}" dest="ideaSDK"/>
+
+            <!-- Copy win files to the place where idea expect them to see. See com.intellij.openapi.util.io.win32.IdeaWin32 -->
+            <!-- TODO: Remove when build will depend on IDEA from 02.08.2012 or later -->
+            <mkdir dir="ideaSDK/bin/win"/>
+            <copy todir="ideaSDK/bin/win">
+              <filelist dir="ideaSDK/bin" files="IdeaWin32.dll,IdeaWin64.dll"/>
+            </copy>
+
             <mkdir dir="ideaSDK/sources"/>
             <copy file="dependencies/download/idea-sdk-sources.zip" tofile="ideaSDK/sources/sources.zip"/>
 

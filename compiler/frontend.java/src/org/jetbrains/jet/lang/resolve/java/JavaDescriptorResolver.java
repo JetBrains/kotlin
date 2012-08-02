@@ -851,7 +851,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             outType = semanticServices.getTypeTransformer().transformToType(typeFromAnnotation, typeVariableResolver);
         }
         else {
-            outType = semanticServices.getTypeTransformer().transformToType(psiType, typeVariableResolver);
+            outType = semanticServices.getTypeTransformer().transformToType(psiType, JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT, typeVariableResolver);
         }
 
         JetType varargElementType;

@@ -23,10 +23,9 @@ import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetScript;
-import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.java.JdkNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.asm4.MethodVisitor;
@@ -41,10 +40,6 @@ import java.util.List;
  * @author Stepan Koltsov
  */
 public class ScriptCodegen {
-
-    public static final JvmClassName SCRIPT_DEFAULT_CLASS_NAME = JvmClassName.byInternalName("Script");
-
-    public static final String LAST_EXPRESSION_VALUE_FIELD_NAME = "rv";
 
     @NotNull
     private GenerationState state;
@@ -96,7 +91,7 @@ public class ScriptCodegen {
 
     public void generate(JetScript scriptDeclaration) {
 
-        ScriptDescriptor scriptDescriptor = (ScriptDescriptor) state.getBindingContext().get(BindingContext.SCRIPT, scriptDeclaration);
+        ScriptDescriptor scriptDescriptor = state.getBindingContext().get(BindingContext.SCRIPT, scriptDeclaration);
 
         ClassDescriptor classDescriptorForScript = closureAnnotator.classDescriptorForScriptDescriptor(scriptDescriptor);
 
@@ -131,7 +126,7 @@ public class ScriptCodegen {
 
         Type blockType = jetTypeMapper.mapType(scriptDescriptor.getReturnType(), MapTypeMode.VALUE);
 
-        classBuilder.newField(null, Opcodes.ACC_PUBLIC, LAST_EXPRESSION_VALUE_FIELD_NAME, blockType.getDescriptor(), null, null);
+        classBuilder.newField(null, Opcodes.ACC_PUBLIC|Opcodes.ACC_FINAL, ScriptNameUtil.LAST_EXPRESSION_VALUE_FIELD_NAME, blockType.getDescriptor(), null, null);
 
         JvmMethodSignature jvmSignature = jetTypeMapper.mapScriptSignature(scriptDescriptor, importedScripts);
 
@@ -193,7 +188,7 @@ public class ScriptCodegen {
         StackValue stackValue = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, context, state).gen(scriptDeclaration.getBlockExpression());
         if (stackValue.type != Type.VOID_TYPE) {
             stackValue.put(stackValue.type, instructionAdapter);
-            instructionAdapter.putfield(className.getInternalName(), LAST_EXPRESSION_VALUE_FIELD_NAME, blockType.getDescriptor());
+            instructionAdapter.putfield(className.getInternalName(), ScriptNameUtil.LAST_EXPRESSION_VALUE_FIELD_NAME, blockType.getDescriptor());
         }
 
         instructionAdapter.areturn(Type.VOID_TYPE);
@@ -210,7 +205,7 @@ public class ScriptCodegen {
 
         for (ValueParameterDescriptor parameter : script.getValueParameters()) {
             Type parameterType = jetTypeMapper.mapType(parameter.getType(), MapTypeMode.VALUE);
-            int access = Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL;
+            int access = Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL;
             classBuilder.newField(null, access, parameter.getName().getIdentifier(), parameterType.getDescriptor(), null, null);
         }
     }

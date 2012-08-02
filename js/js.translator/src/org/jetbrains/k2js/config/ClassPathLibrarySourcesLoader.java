@@ -26,9 +26,12 @@ import java.util.List;
  * A helper class to load the kotlin library sources to be compiled to JavaScript as part of a JavaScript build
  */
 public class ClassPathLibrarySourcesLoader {
+
+    // used by maven build
     @NotNull
-    private static final String META_INF_SERVICES_FILE = "META-INF/services/org.jetbrains.kotlin.js.librarySource";
-    @NotNull private final Project project;
+    public static final String META_INF_SERVICES_FILE = "META-INF/services/org.jetbrains.kotlin.js.librarySource";
+    @NotNull
+    private final Project project;
 
     public ClassPathLibrarySourcesLoader(@NotNull Project project) {
         this.project = project;

@@ -187,4 +187,12 @@ class MapTest {
     }
     */
 
+    test fun toProperties() {
+        val map = hashMap("a" to "A", "b" to "B")
+        val prop = map.toProperties()
+        assertEquals(2, prop.size)
+        assertEquals("A", prop.getProperty("a", "fail"))
+        assertEquals("B", prop.getProperty("b", "fail"))
+    }
+
 }

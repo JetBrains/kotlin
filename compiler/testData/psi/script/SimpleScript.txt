@@ -1,4 +1,6 @@
 JetFile: SimpleScript.ktscript
+  NAMESPACE_HEADER
+    <empty list>
   SCRIPT
     BLOCK
       CALL_EXPRESSION

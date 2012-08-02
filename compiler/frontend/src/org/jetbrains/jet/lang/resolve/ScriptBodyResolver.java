@@ -81,7 +81,7 @@ public class ScriptBodyResolver {
             if (returnType == null) {
                 returnType = ErrorUtils.createErrorType("getBlockReturnedType returned null");
             }
-            descriptor.initialize(returnType);
+            descriptor.initialize(returnType, declaration, trace.getBindingContext());
         }
     }
 

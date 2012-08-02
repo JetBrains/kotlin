@@ -37,6 +37,31 @@ public final class DoubleRange implements Range<Double> {
         return item <= start && item > start + size;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        DoubleRange range = (DoubleRange) o;
+
+        return Double.compare(range.size, size) == 0 && Double.compare(range.start, start) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        temp = start != +0.0d ? Double.doubleToLongBits(start) : 0L;
+        result = (int) (temp ^ (temp >>> 32));
+        temp = size != +0.0d ? Double.doubleToLongBits(size) : 0L;
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
     public DoubleIterator step(double step) {
         if (step < 0)
             return new MyIterator(getEnd(), -size, -step);

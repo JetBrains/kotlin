@@ -299,6 +299,7 @@
                     -outjars '${kotlin-home}/lib/kotlin-compiler.jar'
 
                     -dontwarn org.jetbrains.jet.internal.com.intellij.util.**
+                    -dontwarn org.jetbrains.jet.internal.com.intellij.codeInsight.**
 
                     -libraryjars '${rtjar}'
 

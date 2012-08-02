@@ -24,15 +24,14 @@ import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -79,10 +78,7 @@ public class TestlibTest extends CodegenTestCase {
 
     private TestSuite doBuildSuite() {
         try {
-            GenerationState generationState = KotlinToJVMBytecodeCompiler
-                    .analyzeAndGenerate(new K2JVMCompileEnvironmentConfiguration(myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR,
-                                                                                 false, BuiltinsScopeExtensionMode.ALL, false,
-                                                                                 BuiltinToJavaTypesMapping.ENABLED), false);
+            GenerationState generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(myEnvironment, false);
 
             if (generationState == null) {
                 throw new RuntimeException("There were compilation errors");
@@ -167,6 +163,7 @@ public class TestlibTest extends CodegenTestCase {
 
         configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetParsingTest.getTestDataDir() + "/../../libraries/stdlib/test");
         configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetParsingTest.getTestDataDir() + "/../../libraries/kunit/src");
+        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
 
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
     }

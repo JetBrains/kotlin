@@ -26,9 +26,9 @@ import org.jetbrains.jet.cli.common.messages.MessageRenderer;
 import org.jetbrains.jet.cli.common.messages.PrintingMessageCollector;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
+import org.jetbrains.jet.config.CompilerConfiguration;
 
 import java.io.PrintStream;
-import java.util.List;
 
 import static org.jetbrains.jet.cli.common.ExitCode.INTERNAL_ERROR;
 import static org.jetbrains.jet.cli.common.ExitCode.OK;
@@ -36,7 +36,7 @@ import static org.jetbrains.jet.cli.common.ExitCode.OK;
 /**
  * @author Pavel Talanov
  */
-public abstract class CLICompiler<A extends CompilerArguments, C extends CompileEnvironmentConfiguration> {
+public abstract class CLICompiler<A extends CompilerArguments> {
 
     @NotNull
     public ExitCode exec(@NotNull PrintStream errStream, @NotNull String... args) {
@@ -56,6 +56,7 @@ public abstract class CLICompiler<A extends CompilerArguments, C extends Compile
             return true;
         }
         catch (IllegalArgumentException e) {
+            errStream.println(e.getMessage());
             usage(errStream);
         }
         catch (Throwable t) {
@@ -90,9 +91,8 @@ public abstract class CLICompiler<A extends CompilerArguments, C extends Compile
      * based tools to customise their own plugins
      */
     //TODO: add parameter annotations when KT-1863 is resolved
-    protected void configureEnvironment(@NotNull C configuration, @NotNull A arguments) {
-        List<CompilerPlugin> plugins = arguments.getCompilerPlugins();
-        configuration.getCompilerPlugins().addAll(plugins);
+    protected void configureEnvironment(@NotNull CompilerConfiguration configuration, @NotNull A arguments) {
+        configuration.addAll(CLIConfigurationKeys.COMPILER_PLUGINS, arguments.getCompilerPlugins());
     }
 
     @NotNull
@@ -148,20 +148,30 @@ public abstract class CLICompiler<A extends CompilerArguments, C extends Compile
      * Useful main for derived command line tools
      */
     public static void doMain(@NotNull CLICompiler compiler, @NotNull String[] args) {
+        ExitCode exitCode = doMainNoExit(compiler, args);
+        if (exitCode != OK) {
+            System.exit(exitCode.getCode());
+        }
+    }
+
+    @NotNull
+    public static ExitCode doMainNoExit(@NotNull CLICompiler compiler, @NotNull String[] args) {
         try {
             ExitCode rc = compiler.exec(System.out, args);
             if (rc != OK) {
                 System.err.println("exec() finished with " + rc + " return code");
-                //System.err.println("Command line arguments: ");
-                //for (String arg : args) {
-                //    System.err.println(arg);
-                //}
-                System.exit(rc.getCode());
             }
+            if (Boolean.parseBoolean(System.getProperty("kotlin.print.cmd.args"))) {
+                System.out.println("Command line arguments:");
+                for (String arg : args) {
+                    System.out.println(arg);
+                }
+            }
+            return rc;
         }
         catch (CompileEnvironmentException e) {
             System.err.println(e.getMessage());
-            System.exit(INTERNAL_ERROR.getCode());
+            return INTERNAL_ERROR;
         }
     }
 }
