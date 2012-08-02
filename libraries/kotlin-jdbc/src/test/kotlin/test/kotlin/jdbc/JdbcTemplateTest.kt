@@ -27,7 +27,7 @@ class JdbcTemplateTest {
         val names = dataSource.query(
         StringTemplate(array("select * from foo where id = ", id))
         ) {
-            it.map{ it["name"] }
+            it.map{ it["name"] }.toList()
         }
 
         println("Found names $names")

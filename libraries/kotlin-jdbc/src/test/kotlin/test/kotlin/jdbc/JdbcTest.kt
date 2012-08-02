@@ -62,7 +62,7 @@ class JdbcTest {
         }
 
         dataSource.query("select * from foo") {
-            for (row in it.getMapped(mapper)) {
+            for (row in it.map(mapper)) {
                 println(row)
             }
         }

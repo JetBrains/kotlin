@@ -33,7 +33,7 @@ fun ResultSet.iterator() : Iterator<ResultSet> {
 /**
  * Returns iterable that calls to the specified mapper function for each row
  */
-fun <T> ResultSet.getMapped(fn : (ResultSet) -> T) : jet.Iterable<T> {
+fun <T> ResultSet.map(fn : (ResultSet) -> T) : jet.Iterable<T> {
     val rs = this
 
     val iterator = object : Iterator<T>{
@@ -89,26 +89,6 @@ fun ResultSet.get(columnId: Int): Any? = this.getObject(columnId)
  * Returns the value at the given column name
  */
 fun ResultSet.get(columnName: String): Any? = this.getObject(columnName)
-
-/**
- * Maps the collection of rows to some value
- */
-fun <T> ResultSet.map(fn: (ResultSet) -> T) : List<T> {
-    val answer = ArrayList<T>()
-    mapTo(answer, fn)
-    return answer
-}
-
-/**
- * Maps the collection of rows to some value and adds it to the result collection
- */
-fun <T> ResultSet.mapTo(result: Collection<T>, fn: (ResultSet) -> T) : Collection<T> {
-    for (row in this) {
-        val element = fn(row)
-        result.add(element)
-    }
-    return result
-}
 
 private fun ResultSet.ensureHasRow() : ResultSet {
     if (!next()) {
