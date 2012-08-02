@@ -7,6 +7,7 @@ import java.util.Map
 import java.util.Map.Entry as JEntry
 import java.util.SortedMap
 import java.util.TreeMap
+import java.util.Properties
 
 // Map APIs
 
@@ -30,6 +31,19 @@ public inline fun <K,V> java.util.Map<K,V>.toSortedMap(): SortedMap<K,V> = toMap
  */
 public inline fun <K,V> java.util.Map<K,V>.toSortedMap(comparator: Comparator<K>): SortedMap<K,V> = toMap<K,V>(TreeMap(comparator)) as SortedMap<K,V>
 
+
+/**
+ * Converts this [[Map]] to a [[Properties]] object
+ *
+ * @includeFunctionBody ../../test/MapTest.kt toProperties
+ */
+public inline fun Map<String, String>.toProperties(): Properties {
+    val answer = Properties()
+    for (e in this) {
+        answer.put(e.key, e.value)
+    }
+    return answer
+}
 
 /**
  * Returns a new List containing the results of applying the given *transform* function to each [[Map.Entry]] in this [[Map]]

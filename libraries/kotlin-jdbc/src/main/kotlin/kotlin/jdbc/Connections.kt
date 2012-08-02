@@ -6,16 +6,6 @@ import java.math.BigDecimal
 import java.util.Map
 import java.util.Properties
 
-private fun Map<String, String>.toProperties() : Properties {
-    val p = Properties()
-
-    this.keySet().forEach {
-        p.put(it, this[it])
-    }
-
-    return p
-}
-
 /**
  * create connection for the specified jdbc url with no credentials
  */
