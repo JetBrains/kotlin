@@ -68,6 +68,15 @@ class JdbcTest {
         }
     }
 
+    test fun map() {
+        dataSource.query("select * from foo") {
+            val rows = it.map { "id: ${it["id"]}" }
+            for (row in rows) {
+                println(row)
+            }
+        }
+    }
+
     test fun count() {
         dataSource.query("select count(*) from foo") {
             println("count: ${it.singleInt()}")
