@@ -28,7 +28,6 @@ import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.CompilerPluginContext;
 import org.jetbrains.jet.cli.common.messages.*;
@@ -407,7 +406,13 @@ public class KotlinToJVMBytecodeCompiler {
 
         if(loader instanceof URLClassLoader) {
             for (URL url : ((URLClassLoader) loader).getURLs()) {
-                String urlFile = url.getPath();
+                String urlFile;
+                try {
+                    urlFile = url.toURI().getPath();
+                }
+                catch (URISyntaxException e) {
+                    throw ExceptionUtils.rethrow(e);
+                }
                 File file = new File(urlFile);
                 if(file.exists() && (file.isDirectory() || file.getName().endsWith(".jar"))) {
                     files.add(file);
