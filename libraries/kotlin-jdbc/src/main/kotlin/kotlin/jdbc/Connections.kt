@@ -24,9 +24,9 @@ fun getConnection(url : String, user : String, password : String) : Connection =
 /**
  * Executes specified block with connection and close connection after this
  */
-fun Connection.use(block : (Connection) -> Any?) : Unit {
+fun <T> Connection.use(block : (Connection) -> T) : T {
     try {
-        block(this)
+        return block(this)
     } finally {
         this.close()
     }
