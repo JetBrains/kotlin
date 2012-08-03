@@ -39,6 +39,13 @@ public final class CharRange implements Range<Character>, CharIterable {
         return item <= start && item > start + count;
     }
 
+    public boolean contains(char item) {
+        if (count >= 0) {
+            return item >= start && item < start + count;
+        }
+        return item <= start && item > start + count;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

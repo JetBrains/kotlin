@@ -46,6 +46,13 @@ public final class ShortRange implements Range<Short>, ShortIterable {
         return item <= start && item > start + count;
     }
 
+    public boolean contains(short item) {
+        if (count >= 0) {
+            return item >= start && item < start + count;
+        }
+        return item <= start && item > start + count;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -71,6 +71,20 @@ public class JetTypeMapper {
     public static final Type ARRAY_GENERIC_TYPE = Type.getType(Object[].class);
     public static final Type TUPLE0_TYPE = Type.getObjectType("jet/Tuple0");
 
+    public static final Type TYPE_ITERATOR = Type.getObjectType("jet/Iterator");
+    public static final Type TYPE_INT_RANGE = Type.getObjectType("jet/IntRange");
+    public static final Type TYPE_SHARED_VAR = Type.getObjectType("jet/runtime/SharedVar$Object");
+    public static final Type TYPE_SHARED_INT = Type.getObjectType("jet/runtime/SharedVar$Int");
+    public static final Type TYPE_SHARED_DOUBLE = Type.getObjectType("jet/runtime/SharedVar$Double");
+    public static final Type TYPE_SHARED_FLOAT = Type.getObjectType("jet/runtime/SharedVar$Float");
+    public static final Type TYPE_SHARED_BYTE = Type.getObjectType("jet/runtime/SharedVar$Byte");
+    public static final Type TYPE_SHARED_SHORT = Type.getObjectType("jet/runtime/SharedVar$Short");
+    public static final Type TYPE_SHARED_CHAR = Type.getObjectType("jet/runtime/SharedVar$Char");
+    public static final Type TYPE_SHARED_LONG = Type.getObjectType("jet/runtime/SharedVar$Long");
+    public static final Type TYPE_SHARED_BOOLEAN = Type.getObjectType("jet/runtime/SharedVar$Boolean");
+    public static final Type TYPE_FUNCTION0 = Type.getObjectType("jet/Function0");
+    public static final Type TYPE_FUNCTION1 = Type.getObjectType("jet/Function1");
+
     private JetStandardLibrary standardLibrary1;
     public BindingContext bindingContext;
     private ClosureAnnotator closureAnnotator;
@@ -147,20 +161,6 @@ public class JetTypeMapper {
 
     private final HashMap<KnownTypeKey, Type> knowTypes = Maps.newHashMap();
 
-
-    public static final Type TYPE_ITERATOR = Type.getObjectType("jet/Iterator");
-    public static final Type TYPE_INT_RANGE = Type.getObjectType("jet/IntRange");
-    public static final Type TYPE_SHARED_VAR = Type.getObjectType("jet/runtime/SharedVar$Object");
-    public static final Type TYPE_SHARED_INT = Type.getObjectType("jet/runtime/SharedVar$Int");
-    public static final Type TYPE_SHARED_DOUBLE = Type.getObjectType("jet/runtime/SharedVar$Double");
-    public static final Type TYPE_SHARED_FLOAT = Type.getObjectType("jet/runtime/SharedVar$Float");
-    public static final Type TYPE_SHARED_BYTE = Type.getObjectType("jet/runtime/SharedVar$Byte");
-    public static final Type TYPE_SHARED_SHORT = Type.getObjectType("jet/runtime/SharedVar$Short");
-    public static final Type TYPE_SHARED_CHAR = Type.getObjectType("jet/runtime/SharedVar$Char");
-    public static final Type TYPE_SHARED_LONG = Type.getObjectType("jet/runtime/SharedVar$Long");
-    public static final Type TYPE_SHARED_BOOLEAN = Type.getObjectType("jet/runtime/SharedVar$Boolean");
-    public static final Type TYPE_FUNCTION0 = Type.getObjectType("jet/Function0");
-    public static final Type TYPE_FUNCTION1 = Type.getObjectType("jet/Function1");
 
     public static boolean isIntPrimitive(Type type) {
         return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE;

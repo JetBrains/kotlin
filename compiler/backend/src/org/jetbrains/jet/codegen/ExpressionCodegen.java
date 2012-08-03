@@ -1881,9 +1881,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             StackValue leftValue = gen(expr);
             FunctionDescriptor op = (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
             assert op != null;
-            leftValue.put(asmType(op.getValueParameters().get(0).getType()), v);
-            genToJVMStack(expression.getRight());
-            v.swap();
+            Type type = asmType(op.getValueParameters().get(0).getType());
+            if(type.getSize() == 1) {
+                leftValue.put(type, v);
+                genToJVMStack(expression.getRight());
+                v.swap();
+            }
+            else {
+                leftValue.put(type, v);
+                genToJVMStack(expression.getRight());
+                v.dupX2();
+                v.pop();
+            }
             invokeFunctionNoParams(op, Type.BOOLEAN_TYPE, v);
         }
         return StackValue.onStack(Type.BOOLEAN_TYPE);

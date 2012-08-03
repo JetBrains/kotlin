@@ -39,6 +39,13 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
         return item <= start && item > start + count;
     }
 
+    public boolean contains(byte item) {
+        if (count >= 0) {
+            return item >= start && item < start + count;
+        }
+        return item <= start && item > start + count;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -48,6 +48,13 @@ public final class IntRange implements Range<Integer>, IntIterable {
         return item <= start && item > start + count;
     }
 
+    public boolean contains(int item) {
+        if (count >= 0) {
+            return item >= start && item < start + count;
+        }
+        return item <= start && item > start + count;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
