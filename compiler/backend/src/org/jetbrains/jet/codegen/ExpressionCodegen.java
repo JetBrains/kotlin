@@ -244,7 +244,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     @Override
     public StackValue visitIfExpression(JetIfExpression expression, StackValue receiver) {
         Type asmType = expressionType(expression);
-        StackValue condition = gen(expression.getCondition());
 
         JetExpression thenExpression = expression.getThen();
         JetExpression elseExpression = expression.getElse();
@@ -261,16 +260,19 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 StackValue.putTuple0Instance(v);
                 return StackValue.onStack(asmType);
             }
+            StackValue condition = gen(expression.getCondition());
             return generateSingleBranchIf(condition, elseExpression, false);
         }
         else {
             if (isEmptyExpression(elseExpression)) {
+                StackValue condition = gen(expression.getCondition());
                 return generateSingleBranchIf(condition, thenExpression, true);
             }
         }
 
 
         Label elseLabel = new Label();
+        StackValue condition = gen(expression.getCondition());
         condition.condJump(elseLabel, true, v);   // == 0, i.e. false
 
         Label end = new Label();
