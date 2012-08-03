@@ -241,4 +241,10 @@ public class PropertyGenTest extends CodegenTestCase {
         createEnvironmentWithFullJdk();
         blackBoxFile("regressions/kt1714_minimal.kt");
     }
+
+    public void testKt2509() throws Exception {
+        createEnvironmentWithFullJdk();
+        blackBoxFile("regressions/kt2509.kt");
+    }
+
 }
