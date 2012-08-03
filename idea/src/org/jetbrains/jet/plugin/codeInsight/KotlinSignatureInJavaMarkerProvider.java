@@ -20,6 +20,10 @@ import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
+import com.intellij.codeInsight.navigation.NavigationUtil;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +56,34 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     };
     private static final GutterIconNavigationHandler<PsiMethod> NAVIGATION_HANDLER = new GutterIconNavigationHandler<PsiMethod>() {
         @Override
-        public void navigate(MouseEvent e, PsiMethod elt) {
+        public void navigate(MouseEvent e, PsiMethod element) {
+            if (e.getClickCount() != 1 || e.getButton() != MouseEvent.BUTTON1) return;
+
+            PsiAnnotation annotation = findKotlinSignatureAnnotation(element);
+            assert annotation != null;
+            if (annotation.getContainingFile() == element.getContainingFile()) {
+                // not external, go to
+                for (PsiNameValuePair pair : annotation.getParameterList().getAttributes()) {
+                    if (pair.getName() == null || "value".equals(pair.getName())) {
+                        PsiAnnotationMemberValue value = pair.getValue();
+                        if (value != null) {
+                            PsiElement firstChild = value.getFirstChild();
+                            VirtualFile virtualFile = value.getContainingFile().getVirtualFile();
+                            if (firstChild != null && firstChild.getNode().getElementType() == JavaTokenType.STRING_LITERAL
+                                && virtualFile != null) {
+                                new OpenFileDescriptor(value.getProject(), virtualFile, value.getTextOffset() + 1).navigate(true);
+                            }
+                            else {
+                                NavigationUtil.activateFileWithPsiElement(value);
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                // TODO open external annotations editor
+                Messages.showInfoMessage(element.getProject(), "Can't edit external annotation yet", "External Annotation");
+            }
         }
     };
 
