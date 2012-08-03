@@ -1,3 +1,4 @@
+//KT-943 Type inference failed
 package maze
 
 //+JDK
