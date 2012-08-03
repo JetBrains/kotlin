@@ -41,9 +41,6 @@ public class TestConfig extends Config {
         }
     };
 
-    //NOTE: hard-coded in kotlin-lib files
-    @NotNull
-    public static final String TEST_MODULE_NAME = "JS_TESTS";
     @NotNull
     private final List<JetFile> jsLibFiles;
     @NotNull
@@ -51,7 +48,7 @@ public class TestConfig extends Config {
 
     public TestConfig(@NotNull Project project, @NotNull EcmaVersion version,
             @NotNull List<JetFile> files, @NotNull BindingContext context) {
-        super(project, TEST_MODULE_NAME, version);
+        super(project, REWRITABLE_MODULE_NAME, version);
         jsLibFiles = files;
         libraryContext = context;
     }
