@@ -177,6 +177,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     public StackValue gen(JetElement expr) {
+        if (expr instanceof JetExpression) {
+            JetExpression expression = (JetExpression) expr;
+            CompileTimeConstant<?> constant = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression);
+            if (constant != null) {
+                return StackValue.constant(constant.getValue(), expressionType(expression));
+            }
+        }
         return genQualified(StackValue.none(), expr);
     }
 
