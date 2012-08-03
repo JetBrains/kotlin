@@ -305,13 +305,13 @@ public class CallResolver {
 
     private <D extends CallableDescriptor> OverloadResolutionResults<D> completeTypeInferenceDependentOnExpectedType(
             @NotNull BasicResolutionContext context,
-            @NotNull OverloadResolutionResults<D> results,
+            @NotNull OverloadResolutionResults<D> resultsWithIncompleteTypeInference,
             @NotNull TracingStrategy tracing
     ) {
-        if (results.getResultCode() != OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE) return results;
+        if (resultsWithIncompleteTypeInference.getResultCode() != OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE) return resultsWithIncompleteTypeInference;
         Set<ResolvedCallWithTrace<D>> successful = Sets.newLinkedHashSet();
         Set<ResolvedCallWithTrace<D>> failed = Sets.newLinkedHashSet();
-        for (ResolvedCall<? extends D> call : results.getResultingCalls()) {
+        for (ResolvedCall<? extends D> call : resultsWithIncompleteTypeInference.getResultingCalls()) {
             if (!(call instanceof ResolvedCallImpl)) continue;
             ResolvedCallImpl<D> resolvedCall = (ResolvedCallImpl<D>) call;
             if (!resolvedCall.hasUnknownTypeParameters()) {
@@ -325,16 +325,20 @@ public class CallResolver {
             }
             completeTypeInferenceDependentOnExpectedTypeForCall(resolvedCall, context, tracing, successful, failed);
         }
-        if (results.getResultingCalls().size() > 1) {
+        if (resultsWithIncompleteTypeInference.getResultingCalls().size() > 1) {
             for (ResolvedCallWithTrace<D> call : successful) {
                 if (call instanceof ResolvedCallImpl) {
-                    ((ResolvedCallImpl)call).addStatus(ResolutionStatus.OTHER_ERROR);
+                    ((ResolvedCallImpl)call).addStatus(ResolutionStatus.TYPE_INFERENCE_ERROR);
                     failed.add(call);
                 }
             }
             successful.clear();
         }
-        return computeResultAndReportErrors(context.trace, tracing, successful, failed);
+        OverloadResolutionResultsImpl<D> results = computeResultAndReportErrors(context.trace, tracing, successful, failed);
+        if (!results.isSingleResult()) {
+            checkTypesWithNoCallee(context);
+        }
+        return results;
     }
 
     private <D extends CallableDescriptor> void completeTypeInferenceDependentOnExpectedTypeForCall(ResolvedCallImpl<D> resolvedCall,
@@ -381,9 +385,9 @@ public class CallResolver {
             if (constraintSystemWithoutExpectedTypeConstraint.isSuccessful()) {
                 resolvedCall.setResultingSubstitutor(constraintSystemWithoutExpectedTypeConstraint.getResultingSubstitutor());
             }
-            List<JetType> argumentTypes = checkValueArgumentTypes(context, resolvedCall, context.trace).argumentTypes;
+            List<JetType> argumentTypes = checkValueArgumentTypes(context, resolvedCall, resolvedCall.getTrace()).argumentTypes;
             JetType receiverType = resolvedCall.getReceiverArgument().exists() ? resolvedCall.getReceiverArgument().getType() : null;
-            tracing.typeInferenceFailed(context.trace,
+            tracing.typeInferenceFailed(resolvedCall.getTrace(),
                                         InferenceErrorData
                                                 .create(descriptor, constraintSystem, argumentTypes, receiverType, context.expectedType),
                                         constraintSystemWithoutExpectedTypeConstraint);
@@ -394,9 +398,9 @@ public class CallResolver {
 
         resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor());
         // Here we type check the arguments with inferred types expected
-        checkValueArgumentTypes(context, resolvedCall, context.trace);
+        checkValueArgumentTypes(context, resolvedCall, resolvedCall.getTrace());
 
-        checkBounds(resolvedCall, constraintSystem, context.trace, tracing);
+        checkBounds(resolvedCall, constraintSystem, resolvedCall.getTrace(), tracing);
         resolvedCall.setHasUnknownTypeParameters(false);
         if (resolvedCall.getStatus().isSuccess() || resolvedCall.getStatus() == ResolutionStatus.UNKNOWN_STATUS) {
             resolvedCall.addStatus(ResolutionStatus.SUCCESS);
@@ -768,20 +772,25 @@ public class CallResolver {
 
 
         // Solution
-        if (!constraintsSystem.hasContradiction()) {
+        boolean hasContradiction = constraintsSystem.hasContradiction();
+        boolean boundsAreSatisfied = ConstraintsUtil.checkBoundsAreSatisfied(constraintsSystem);
+        if (!hasContradiction && boundsAreSatisfied) {
             candidateCall.setHasUnknownTypeParameters(true);
             return SUCCESS;
         }
-        else {
-            ValueArgumentsCheckingResult checkingResult = checkAllValueArguments(context);
-            ResolutionStatus argumentsStatus = checkingResult.status;
-            List<JetType> argumentTypes = checkingResult.argumentTypes;
-            JetType receiverType = candidateCall.getReceiverArgument().exists() ? candidateCall.getReceiverArgument().getType() : null;
-            context.tracing.typeInferenceFailed(context.trace,
-                InferenceErrorData.create(candidate, constraintSystemWithRightTypeParameters, argumentTypes, receiverType, context.expectedType),
-                constraintSystemWithRightTypeParameters);
-            return TYPE_INFERENCE_ERROR.combine(argumentsStatus);
+        ValueArgumentsCheckingResult checkingResult = checkAllValueArguments(context);
+        ResolutionStatus argumentsStatus = checkingResult.status;
+        List<JetType> argumentTypes = checkingResult.argumentTypes;
+        JetType receiverType = candidateCall.getReceiverArgument().exists() ? candidateCall.getReceiverArgument().getType() : null;
+        InferenceErrorData inferenceErrorData = InferenceErrorData
+                .create(candidate, constraintSystemWithRightTypeParameters, argumentTypes, receiverType, context.expectedType);
+        if (hasContradiction) {
+            context.tracing.typeInferenceFailed(candidateCall.getTrace(), inferenceErrorData, constraintSystemWithRightTypeParameters);
         }
+        else {
+            context.tracing.upperBoundViolated(candidateCall.getTrace(), inferenceErrorData);
+        }
+        return TYPE_INFERENCE_ERROR.combine(argumentsStatus);
     }
 
     private boolean addConstraintForValueArgument(ValueArgument valueArgument,
