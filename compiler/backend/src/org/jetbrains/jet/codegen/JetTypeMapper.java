@@ -66,6 +66,7 @@ public class JetTypeMapper {
     public static final Type JL_CHAR_SEQUENCE_TYPE = Type.getObjectType("java/lang/CharSequence");
     private static final Type JL_COMPARABLE_TYPE = Type.getObjectType("java/lang/Comparable");
     public static final Type JL_CLASS_TYPE = Type.getObjectType("java/lang/Class");
+    public static final Type JL_BOOLEAN_TYPE = Type.getObjectType("java/lang/Boolean");
 
     public static final Type ARRAY_GENERIC_TYPE = Type.getType(Object[].class);
     public static final Type TUPLE0_TYPE = Type.getObjectType("jet/Tuple0");
