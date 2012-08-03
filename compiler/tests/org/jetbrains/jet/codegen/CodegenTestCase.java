@@ -220,9 +220,15 @@ public abstract class CodegenTestCase extends UsefulTestCase {
             else {
                 String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFiles.getPsiFiles().get(0))).getFqName().getFqName();
                 Class<?> namespaceClass = loader.loadClass(fqName);
-                Method method = namespaceClass.getMethod("box");
-                r = (String) method.invoke(null);
-                assertEquals("OK", r);
+                try {
+                    Method method = namespaceClass.getMethod("box");
+                    r = (String) method.invoke(null);
+                    assertEquals("OK", r);
+                }
+                catch (NoSuchMethodException e) {
+                    Method method = namespaceClass.getMethod("main",String[].class);
+                    method.invoke(null,new Object[]{new String[0]});
+                }
             }
         } catch (Error e) {
             System.out.println(generateToText());
