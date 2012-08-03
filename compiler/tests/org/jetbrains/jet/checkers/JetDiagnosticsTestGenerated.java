@@ -1269,6 +1269,16 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inference/dependOnExpectedType.kt");
             }
             
+            @TestMetadata("dependantOnVariance.kt")
+            public void testDependantOnVariance() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inference/dependantOnVariance.kt");
+            }
+            
+            @TestMetadata("dependantOnVarianceNullable.kt")
+            public void testDependantOnVarianceNullable() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inference/dependantOnVarianceNullable.kt");
+            }
+            
             @TestMetadata("hasErrorInConstrainingTypes.kt")
             public void testHasErrorInConstrainingTypes() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inference/hasErrorInConstrainingTypes.kt");

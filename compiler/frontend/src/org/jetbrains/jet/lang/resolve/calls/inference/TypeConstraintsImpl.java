@@ -93,22 +93,6 @@ public class TypeConstraintsImpl implements TypeConstraints {
     }
 
     public static enum ConstraintKind {
-        SUB_TYPE, SUPER_TYPE, EQUAL;
-
-        @NotNull
-        static ConstraintKind fromVariance(@NotNull Variance variance) {
-            ConstraintKind constraintKind = null;
-            switch (variance) {
-                case INVARIANT:
-                    constraintKind = EQUAL;
-                    break;
-                case OUT_VARIANCE:
-                    constraintKind = SUPER_TYPE;
-                    break;
-                case IN_VARIANCE:
-                    constraintKind = SUB_TYPE;
-            }
-            return constraintKind;
-        }
+        SUB_TYPE, SUPER_TYPE, EQUAL
     }
 }

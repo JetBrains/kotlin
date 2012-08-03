@@ -30,6 +30,9 @@ import org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.Constr
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.ConstraintKind.*;
+import static org.jetbrains.jet.lang.types.Variance.*;
+
 /**
  * @author svtk
  */
@@ -137,12 +140,12 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
     @Override
     public void addSubtypingConstraint(@NotNull JetType subjectType, @Nullable JetType constrainingType, @NotNull ConstraintPosition constraintPosition) {
-        addConstraint(ConstraintKind.SUB_TYPE, subjectType, constrainingType, constraintPosition);
+        addConstraint(SUB_TYPE, subjectType, constrainingType, constraintPosition);
     }
 
     @Override
     public void addSupertypeConstraint(@NotNull JetType subjectType, @Nullable JetType constrainingType, @NotNull ConstraintPosition constraintPosition) {
-        addConstraint(ConstraintKind.SUPER_TYPE, subjectType, constrainingType, constraintPosition);
+        addConstraint(SUPER_TYPE, subjectType, constrainingType, constraintPosition);
     }
 
     private void addConstraint(@NotNull ConstraintKind constraintKind,
@@ -210,10 +213,98 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         List<TypeProjection> constrainingArguments = constrainingType.getArguments();
         List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
         for (int i = 0; i < subjectArguments.size(); i++) {
-            //todo constrainingArguments.get(i).getType() -> type projections
-            addConstraint(ConstraintKind.fromVariance(parameters.get(i).getVariance()), subjectArguments.get(i).getType(),
-                          constrainingArguments.get(i).getType(), constraintPosition);
+            Variance typeParameterVariance = parameters.get(i).getVariance();
+            TypeProjection subjectArgument = subjectArguments.get(i);
+            TypeProjection constrainingArgument = constrainingArguments.get(i);
+
+            ConstraintKind typeParameterConstraintKind = getTypeParameterConstraintKind(typeParameterVariance,
+                subjectArgument, constrainingArgument, constraintKind);
+
+            addConstraint(typeParameterConstraintKind, subjectArgument.getType(), constrainingArgument.getType(), constraintPosition);
         }
+    }
+
+    /**
+     * Determines what constraint (supertype, subtype or equal) should be generated for type parameter {@code T} in a constraint like (in this example subtype one): <br/>
+     * {@code MyClass<in/out/- A> <: MyClass<in/out/- B>}, where {@code MyClass<in/out/- T>} is declared. <br/>
+     *
+     * The parameters description is given according to the example above.
+     * @param typeParameterVariance declared variance of T
+     * @param subjectTypeProjection {@code in/out/- A}
+     * @param constrainingTypeProjection {@code in/out/- B}
+     * @param upperConstraintKind kind of the constraint {@code MyClass<...A>  <: MyClass<...B>} (subtype in this example).
+     * @return kind of constraint to be generated: {@code A <: B} (subtype), {@code A >: B} (supertype) or {@code A = B} (equal).
+     */
+    @NotNull
+    private static ConstraintKind getTypeParameterConstraintKind(
+            @NotNull Variance typeParameterVariance,
+            @NotNull TypeProjection subjectTypeProjection,
+            @NotNull TypeProjection constrainingTypeProjection,
+            @NotNull ConstraintKind upperConstraintKind
+    ) {
+        // If variance of type parameter is non-trivial, it should be taken into consideration to infer result constraint type.
+        // Otherwise when type parameter declared as INVARIANT, there might be non-trivial use-site variance of a supertype.
+        //
+        // Example: Let class MyClass<T> is declared.
+        //
+        // If super type has 'out' projection:
+        // MyClass<A> <: MyClass<out B>,
+        // then constraint A <: B can be generated.
+        //
+        // If super type has 'in' projection:
+        // MyClass<A> <: MyClass<in B>,
+        // then constraint A >: B can be generated.
+        //
+        // Otherwise constraint A = B should be generated.
+
+        Variance varianceForTypeParameter;
+        if (typeParameterVariance != INVARIANT) {
+            varianceForTypeParameter = typeParameterVariance;
+        }
+        else if (upperConstraintKind == SUB_TYPE) {
+            varianceForTypeParameter = constrainingTypeProjection.getProjectionKind();
+        }
+        else if (upperConstraintKind == SUPER_TYPE) {
+            varianceForTypeParameter = subjectTypeProjection.getProjectionKind();
+        }
+        else {
+            varianceForTypeParameter = INVARIANT;
+        }
+
+        return getTypeParameterConstraintKind(varianceForTypeParameter, upperConstraintKind);
+    }
+
+    /**
+     * Let class {@code MyClass<T, out R, in S>} is declared.<br/><br/>
+     *
+     * If upperConstraintKind is SUB_TYPE:
+     * {@code MyClass<A, B, C> <: MyClass<D, E, F>}, <br/>
+     * then constraints {@code A = D, B <: E, C >: F} are generated. <br/><br/>
+     *
+     * If upperConstraintKind is SUPER_TYPE:
+     * {@code MyClass<A, B, C> >: MyClass<D, E, F>}, <br/>
+     * then constraints {@code A = D, B >: E, C <: F} are generated. <br/><br/>
+     *
+     * If upperConstraintKind is EQUAL:
+     * {@code MyClass<A, B, C> = MyClass<D, E, F>}, <br/>
+     * then equality constraints {@code A = D, B = E, C = F} are generated. <br/><br/>
+     *
+     * Method getTypeParameterConstraintKind gets upperConstraintKind and variance of type parameter
+     * (INVARIANT for T, OUT_VARIANCE for R in example above) and returns kind of constraint for corresponding type parameter.
+     */
+    @NotNull
+    private static ConstraintKind getTypeParameterConstraintKind(
+            @NotNull Variance typeParameterVariance,
+            @NotNull ConstraintKind upperConstraintKind
+    ) {
+        if (upperConstraintKind == EQUAL || typeParameterVariance == INVARIANT) {
+            return EQUAL;
+        }
+        if ((upperConstraintKind == SUPER_TYPE && typeParameterVariance == OUT_VARIANCE) ||
+            (upperConstraintKind == SUB_TYPE   && typeParameterVariance == IN_VARIANCE)) {
+            return SUPER_TYPE;
+        }
+        return SUB_TYPE;
     }
 
     @NotNull
