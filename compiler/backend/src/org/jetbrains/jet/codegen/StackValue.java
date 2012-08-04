@@ -447,7 +447,7 @@ public abstract class StackValue {
                 putTuple0Instance(v);
                 return;
             }
-            if (type != Type.BOOLEAN_TYPE && type.equals(JetTypeMapper.TYPE_OBJECT) && type.equals(JetTypeMapper.JL_BOOLEAN_TYPE)) {
+            if (type != Type.BOOLEAN_TYPE && !type.equals(JetTypeMapper.TYPE_OBJECT) && !type.equals(JetTypeMapper.JL_BOOLEAN_TYPE)) {
                 throw new UnsupportedOperationException("don't know how to put a compare as a non-boolean type " + type);
             }
             putAsBoolean(v);
@@ -534,10 +534,12 @@ public abstract class StackValue {
                 myOperand.put(type, v);    // the operand will remove itself from the stack if needed
                 return;
             }
-            if (type != Type.BOOLEAN_TYPE) {
+            if (type != Type.BOOLEAN_TYPE && !type.equals(JetTypeMapper.TYPE_OBJECT) && !type.equals(JetTypeMapper.JL_BOOLEAN_TYPE)) {
                 throw new UnsupportedOperationException("don't know how to put a compare as a non-boolean type");
             }
             putAsBoolean(v);
+            if(type != Type.BOOLEAN_TYPE)
+                box(Type.BOOLEAN_TYPE,type,v);
         }
 
         @Override
