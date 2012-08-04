@@ -26,11 +26,8 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
-import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.asm4.Opcodes;
 
@@ -51,6 +48,7 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod DOWN_TO = new UpTo(false);
     private static final IntrinsicMethod INC = new Increment(1);
     private static final IntrinsicMethod DEC = new Increment(-1);
+    private static final IntrinsicMethod HASH_CODE = new HashCode();
 
     private static final List<Name> PRIMITIVE_TYPES = ImmutableList.of(Name.identifier("Boolean"), Name.identifier("Byte"), Name.identifier("Char"), Name.identifier("Short"), Name.identifier("Int"), Name.identifier("Float"), Name.identifier("Long"), Name.identifier("Double"));
     private static final List<Name> PRIMITIVE_NUMBER_TYPES = ImmutableList.of(Name.identifier("Byte"), Name.identifier("Char"), Name.identifier("Short"), Name.identifier("Int"), Name.identifier("Float"), Name.identifier("Long"), Name.identifier("Double"));
@@ -100,6 +98,8 @@ public class IntrinsicMethods {
             declareIntrinsicFunction(type, Name.identifier("downto"), 1, DOWN_TO);
             declareIntrinsicFunction(type, Name.identifier("inc"), 0, INC);
             declareIntrinsicFunction(type, Name.identifier("dec"), 0, DEC);
+            declareIntrinsicFunction(type, Name.identifier("hashCode"), 0, HASH_CODE);
+            declareIntrinsicFunction(type, Name.identifier("equals"), 1, EQUALS);
         }
 
         declareBinaryOp(Name.identifier("plus"), Opcodes.IADD);
