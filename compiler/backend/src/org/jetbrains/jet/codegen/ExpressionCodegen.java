@@ -1062,20 +1062,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER && contextKind() != OwnerKind.TRAIT_IMPL ;
             JetExpression r = getReceiverForSelector(expression);
             final boolean isSuper = r instanceof JetSuperExpression;
-            if (propertyDescriptor.getVisibility() == Visibilities.PRIVATE
-                    && !DescriptorUtils.isClassObject(propertyDescriptor.getContainingDeclaration())
-                    && propertyDescriptor.getContainingDeclaration() instanceof ClassDescriptor) {
-                if (context.getClassOrNamespaceDescriptor() != propertyDescriptor.getContainingDeclaration()) {
-                    DeclarationDescriptor enclosed = propertyDescriptor.getContainingDeclaration();
-                    if (enclosed != null && enclosed != context.getThisDescriptor()) {
-                        CodegenContext c = context;
-                        while(c.getContextDescriptor() != enclosed) {
-                            c = c.getParentContext();
-                        }
-                        propertyDescriptor = (PropertyDescriptor) c.getAccessor(propertyDescriptor);
-                    }
-                }
-            }
+            propertyDescriptor = accessablePropertyDescriptor(propertyDescriptor);
             final StackValue.Property iValue = intermediateValueForProperty(propertyDescriptor, directToField, isSuper ? (JetSuperExpression)r : null);
             if (!directToField && resolvedCall != null && !isSuper) {
                 receiver.put(propertyDescriptor.getReceiverParameter().exists() || isStatic
@@ -1235,13 +1222,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         boolean isInsideClass = !isFakeOverride && (((containingDeclaration == context.getThisDescriptor()) ||
                                  (context.getParentContext() instanceof CodegenContexts.NamespaceContext) && context.getParentContext().getContextDescriptor() == containingDeclaration)
                                 && contextKind() != OwnerKind.TRAIT_IMPL);
-        Method getter;
-        Method setter;
-        if (forceField) {
-            getter = null;
-            setter = null;
-        }
-        else {
+        Method getter = null;
+        Method setter = null;
+        if (!forceField) {
             //noinspection ConstantConditions
             if (isInsideClass && (propertyDescriptor.getGetter() == null || propertyDescriptor.getGetter().isDefault() && propertyDescriptor.getGetter().getModality() == Modality.FINAL)) {
                 getter = null;
@@ -1261,6 +1244,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                         }
                     }
                 }
+                else {
+                    propertyDescriptor = accessablePropertyDescriptor(propertyDescriptor);
+                }
+
                 getter = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
 
                 if (propertyDescriptor.getGetter() == null) {
@@ -1312,6 +1299,25 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         return StackValue.property(propertyDescriptor.getName().getName(), owner, ownerParam, asmType(propertyDescriptor.getType()), isStatic, isInterface, isSuper, getter, setter, invokeOpcode);
+    }
+
+    private PropertyDescriptor accessablePropertyDescriptor(PropertyDescriptor propertyDescriptor) {
+        if ((propertyDescriptor.getVisibility() == Visibilities.PRIVATE ||(propertyDescriptor.getSetter() != null && propertyDescriptor.getSetter().getVisibility() == Visibilities.PRIVATE))
+                && !DescriptorUtils.isClassObject(propertyDescriptor.getContainingDeclaration())
+                && propertyDescriptor.getContainingDeclaration() instanceof ClassDescriptor) {
+            if (context.getClassOrNamespaceDescriptor() != propertyDescriptor.getContainingDeclaration()) {
+                DeclarationDescriptor enclosed = propertyDescriptor.getContainingDeclaration();
+                if (enclosed != context.getThisDescriptor()) {
+                    CodegenContext c = context;
+                    while(c != null && c.getContextDescriptor() != enclosed) {
+                        c = c.getParentContext();
+                    }
+                    if(c != null)
+                        propertyDescriptor = (PropertyDescriptor) c.getAccessor(propertyDescriptor);
+                }
+            }
+        }
+        return propertyDescriptor;
     }
 
     static boolean isOverrideForTrait(CallableMemberDescriptor propertyDescriptor) {

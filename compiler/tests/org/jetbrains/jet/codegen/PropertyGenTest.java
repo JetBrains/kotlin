@@ -227,6 +227,11 @@ public class PropertyGenTest extends CodegenTestCase {
         blackBoxFile("regressions/kt1398.kt");
     }
 
+    public void testKt2331() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("regressions/kt2331.kt");
+    }
+
     public void testKt1482_2279() throws Exception {
         createEnvironmentWithFullJdk();
         blackBoxFile("regressions/kt1482_2279.kt");

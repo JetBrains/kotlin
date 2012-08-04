@@ -193,8 +193,8 @@ public abstract class CodegenContext {
                                   fd.getTypeParameters(),
                                   fd.getValueParameters(),
                                   fd.getReturnType(),
-                                  fd.getModality(),
-                                  fd.getVisibility(),
+                                  Modality.FINAL,
+                                  Visibilities.PUBLIC,
                                   /*isInline = */ false);
             accessor = myAccessor;
         }
@@ -202,8 +202,8 @@ public abstract class CodegenContext {
             PropertyDescriptor pd = (PropertyDescriptor) descriptor;
             PropertyDescriptor myAccessor = new PropertyDescriptor(contextDescriptor,
                     Collections.<AnnotationDescriptor>emptyList(),
-                    pd.getModality(),
-                    pd.getVisibility(),
+                    Modality.FINAL,
+                    Visibilities.PUBLIC,
                     pd.isVar(),
                     pd.isObjectDeclaration(),
                     Name.identifier(pd.getName() + "$b$" + getHierarchyCount() + "$" + accessors.size()),
@@ -213,15 +213,18 @@ public abstract class CodegenContext {
             myAccessor.setType(pd.getType(), Collections.<TypeParameterDescriptorImpl>emptyList(), pd.getExpectedThisObject(), receiverType);
 
             PropertyGetterDescriptor pgd = new PropertyGetterDescriptor(
-                        myAccessor, Collections.<AnnotationDescriptor>emptyList(), myAccessor.getModality(),
-                        myAccessor.getVisibility(),
+                        myAccessor, Collections.<AnnotationDescriptor>emptyList(),
+                        Modality.FINAL,
+                        Visibilities.PUBLIC,
                     false, false, CallableMemberDescriptor.Kind.DECLARATION);
             pgd.initialize(myAccessor.getType());
 
             PropertySetterDescriptor psd = new PropertySetterDescriptor(
-                    myAccessor, Collections.<AnnotationDescriptor>emptyList(), myAccessor.getModality(),
-                        myAccessor.getVisibility(),
+                    myAccessor, Collections.<AnnotationDescriptor>emptyList(),
+                        Modality.FINAL,
+                        Visibilities.PUBLIC,
                     false, false, CallableMemberDescriptor.Kind.DECLARATION);
+
             myAccessor.initialize(pgd, psd);
             accessor = myAccessor;
         }
@@ -235,10 +238,11 @@ public abstract class CodegenContext {
     private int getHierarchyCount() {
         ClassDescriptor descriptor = getThisDescriptor();
         int c = 0;
-        while(true) {
+        while(descriptor != null) {
             Collection<? extends JetType> supertypes = descriptor.getDefaultType().getConstructor().getSupertypes();
-            if (supertypes.isEmpty())
-                return c;
+            if (supertypes.isEmpty()) {
+                break;
+            }
             c++;
             for (JetType supertype : supertypes) {
                 descriptor = (ClassDescriptor) supertype.getConstructor().getDeclarationDescriptor();
@@ -247,6 +251,7 @@ public abstract class CodegenContext {
                 }
             }
         }
+        return c;
     }
 
     public StackValue getReceiverExpression(JetTypeMapper typeMapper) {
