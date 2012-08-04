@@ -223,22 +223,19 @@ public class NamespaceCodegen {
             @Override
             public void doSomething(@NotNull ClassBuilder v) {
                 MethodVisitor mv = v.newMethod(namespace, ACC_PUBLIC | ACC_STATIC, "<clinit>", "()V", null, null);
-                for (JetFile file : files) {
-                    if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-                        mv.visitCode();
+                if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+                    mv.visitCode();
 
-                        FrameMap frameMap = new FrameMap();
-                        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, CodegenContexts.STATIC, state);
+                    FrameMap frameMap = new FrameMap();
+                    ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, CodegenContexts.STATIC, state);
 
+                    for (JetFile file : files) {
                         for (JetDeclaration declaration : file.getDeclarations()) {
                             if (declaration instanceof JetProperty) {
                                 final JetExpression initializer = ((JetProperty) declaration).getInitializer();
                                 if (initializer != null && !(initializer instanceof JetConstantExpression)) {
                                     final PropertyDescriptor descriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, declaration);
                                     assert descriptor != null;
-                                    if (descriptor.getReceiverParameter().exists()) {
-                                        continue;
-                                    }
                                     codegen.genToJVMStack(initializer);
                                     StackValue.Property propValue = codegen.intermediateValueForProperty(descriptor, true, null);
                                     propValue.store(propValue.type, new InstructionAdapter(mv));
@@ -246,9 +243,7 @@ public class NamespaceCodegen {
                             }
                         }
                     }
-                }
 
-                if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
                     mv.visitInsn(RETURN);
                     FunctionCodegen.endVisit(mv, "static initializer for namespace", namespace);
                     mv.visitEnd();
