@@ -1,4 +1,4 @@
-fun box(args) : String {
+fun box() : String {
         val map = java.util.TreeMap<String, String>()
         map["a"] = "1"
         map["b"] = "2"
