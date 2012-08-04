@@ -2567,18 +2567,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if (isArray) {
             gen(args.get(0), Type.INT_TYPE);
             v.newarray(boxType(asmType(arrayType.getArguments().get(0).getType())));
-/*
-            JetType elementType = typeMapper.getGenericsElementType(arrayType);
-            if (elementType != null) {
-                generateTypeInfo(elementType, null);
-                gen(args.get(0), Type.INT_TYPE);
-                v.invokevirtual("jet/TypeInfo", "newArray", "(I)[Ljava/lang/Object;");
-            }
-            else {
-                gen(args.get(0), Type.INT_TYPE);
-                v.newarray(boxType(asmType(arrayType.getArguments().get(0).getType())));
-            }
-*/
         }
         else {
             Type type = typeMapper.mapType(arrayType, MapTypeMode.VALUE);
