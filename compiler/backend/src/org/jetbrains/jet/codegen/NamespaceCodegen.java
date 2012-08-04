@@ -117,23 +117,21 @@ public class NamespaceCodegen {
     }
 
     private void generate(JetFile file, boolean multiFile) {
+        NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty) {
-                NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
                 final CodegenContext context = CodegenContexts.STATIC.intoNamespace(descriptor);
                 state.getInjector().getMemberCodegen().generateFunctionOrProperty(
                         (JetTypeParameterListOwner) declaration, context, v.getClassBuilder());
             }
             else if (declaration instanceof JetNamedFunction) {
                 if (!multiFile) {
-                    NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
                     final CodegenContext context = CodegenContexts.STATIC.intoNamespace(descriptor);
                     state.getInjector().getMemberCodegen().generateFunctionOrProperty(
                             (JetTypeParameterListOwner) declaration, context, v.getClassBuilder());
                 }
             }
             else if (declaration instanceof JetClassOrObject) {
-                NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
                 final CodegenContext context = CodegenContexts.STATIC.intoNamespace(descriptor);
                 state.getInjector().getClassCodegen().generate(context, (JetClassOrObject) declaration);
             }
@@ -169,7 +167,6 @@ public class NamespaceCodegen {
 
                 for (JetDeclaration declaration : file.getDeclarations()) {
                     if (declaration instanceof JetNamedFunction) {
-                        NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
                         {
                             final CodegenContext context = CodegenContexts.STATIC.intoNamespace(descriptor);
                             state.getInjector().getMemberCodegen().generateFunctionOrProperty((JetTypeParameterListOwner) declaration, context, builder);
