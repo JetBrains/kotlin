@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.ACC_ABSTRACT;
+import static org.jetbrains.asm4.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.asm4.Opcodes.ACC_PUBLIC;
 
 /**
@@ -98,14 +99,17 @@ public abstract class ClassBodyCodegen {
                 PropertyDescriptor propertyDescriptor = state.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, p);
                 if (propertyDescriptor != null) {
                     if (!isAnnotation) {
-                        propertyCodegen.generateDefaultGetter(propertyDescriptor, ACC_PUBLIC, p);
-                        if (propertyDescriptor.isVar()) {
-                            propertyCodegen.generateDefaultSetter(propertyDescriptor, ACC_PUBLIC, origin);
+                        int accessModifiers = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0);
+                        if((accessModifiers & ACC_PRIVATE) == 0) {
+                            propertyCodegen.generateDefaultGetter(propertyDescriptor, accessModifiers, p);
+                            if (propertyDescriptor.isVar()) {
+                                propertyCodegen.generateDefaultSetter(propertyDescriptor, accessModifiers, origin);
+                            }
                         }
 
                         //noinspection ConstantConditions
                         if (!(kind instanceof OwnerKind.DelegateKind) && state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
-                            int modifiers = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0);
+                            int modifiers = accessModifiers;
                             if (!propertyDescriptor.isVar()) {
                                 modifiers |= Opcodes.ACC_FINAL;
                             }

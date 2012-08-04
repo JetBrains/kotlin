@@ -232,6 +232,27 @@ public class PropertyGenTest extends CodegenTestCase {
         blackBoxFile("regressions/kt2331.kt");
     }
 
+    public void testKt1846() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        loadFile("regressions/kt1846.kt");
+        final Class aClass = loadImplementationClass(generateClassesInFile(), "A");
+        try {
+            Method v1 = aClass.getMethod("getV1");
+            System.out.println(generateToText());
+            fail();
+        }
+        catch (NoSuchMethodException e) {
+            try {
+                Method v1 = aClass.getMethod("setV1");
+                System.out.println(generateToText());
+                fail();
+            }
+            catch (NoSuchMethodException ee) {
+                //
+            }
+        }
+    }
+
     public void testKt1482_2279() throws Exception {
         createEnvironmentWithFullJdk();
         blackBoxFile("regressions/kt1482_2279.kt");
