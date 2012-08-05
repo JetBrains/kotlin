@@ -97,16 +97,6 @@ public class JetPsiUtil {
         return rootElements;
     }
 
-    @Nullable
-    public static JetNamedFunction getSurroundingFunction(@Nullable PsiElement element) {
-        while (element != null) {
-            if (element instanceof JetNamedFunction) return (JetNamedFunction) element;
-            if (element instanceof JetClassOrObject || element instanceof JetFile) return null;
-            element = element.getParent();
-        }
-        return null;
-    }
-
     @NotNull
     public static String unquoteIdentifier(@NotNull String quoted) {
         if (quoted.indexOf('`') < 0) {
@@ -135,23 +125,9 @@ public class JetPsiUtil {
         }
     }
 
-    private static FqName getFQName(JetNamespaceHeader header) {
-        StringBuilder builder = new StringBuilder();
-        for (JetSimpleNameExpression nameExpression : header.getParentNamespaceNames()) {
-            builder.append(nameExpression.getReferencedName());
-            builder.append(".");
-        }
-        builder.append(header.getName());
-        return new FqName(builder.toString());
-    }
-
     public static FqName getFQName(JetFile file) {
-        if (file.isScript()) {
-            return FqName.ROOT;
-        }
-        else {
-            return getFQName(file.getNamespaceHeader());
-        }
+        JetNamespaceHeader header = file.getNamespaceHeader();
+        return header != null ? header.getFqName() : FqName.ROOT;
     }
 
     @Nullable
@@ -200,11 +176,6 @@ public class JetPsiUtil {
 
         final String text = importedReference.getText();
         return new ImportPath(text.replaceAll(" ", "") + (importDirective.isAllUnder() ? ".*" : ""));
-    }
-
-    @NotNull
-    private static FqName makeFQName(@NotNull FqName prefix, @NotNull JetClassOrObject jetClass) {
-        return prefix.child(Name.identifier(jetClass.getName()));
     }
 
     public static boolean isIrrefutable(JetWhenEntry entry) {

@@ -24,6 +24,7 @@ import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.List;
@@ -89,9 +90,30 @@ public class JetNamespaceHeader extends JetReferenceExpression {
         return getName().length() == 0;
     }
 
+    @NotNull
+    public FqName getFqName() {
+        String qualifiedName = getQualifiedName();
+        return qualifiedName.isEmpty() ? FqName.ROOT : new FqName(qualifiedName);
+    }
+
+    @NotNull
+    public FqName getParentFqName(JetReferenceExpression nameExpression) {
+        String parentQualifiedName = getQualifiedNameParentOf(nameExpression);
+        return parentQualifiedName.isEmpty() ? FqName.ROOT : new FqName(parentQualifiedName);
+    }
+
+    @NotNull
     public String getQualifiedName() {
+        return getQualifiedNameParentOf(null);
+    }
+
+    private String getQualifiedNameParentOf(@Nullable JetReferenceExpression nameExpression) {
         StringBuilder builder = new StringBuilder();
         for (JetSimpleNameExpression e : findChildrenByClass(JetSimpleNameExpression.class)) {
+            if (e == nameExpression) {
+                break;
+            }
+
             if (builder.length() > 0) {
                 builder.append(".");
             }
