@@ -82,8 +82,9 @@ public class SpecialFiles {
         excludedFiles.add("classObjectMethod.jet"); // Commented
         excludedFiles.add("kt1592.kt"); // Codegen don't execute blackBoxFile() on it
 
-        excludedFiles.add("box.kt"); // MultiFileTest not supported yet
+        excludedFiles.add("box.kt");      // MultiFileTest not supported yet
         excludedFiles.add("kt2060_1.kt"); // MultiFileTest not supported yet
+        excludedFiles.add("kt2257_1.kt"); // MultiFileTest not supported yet
 
         excludedFiles.add("kt684.jet"); // StackOverflow with StringBuilder (escape())
 
