@@ -135,8 +135,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetType safeReturnType = returnType == null ? ErrorUtils.createErrorType("<return type>") : returnType;
         functionDescriptor.setReturnType(safeReturnType);
 
-        boolean hasDeclaredValueParameters = functionLiteral.getValueParameterList() != null;
-        if (!hasDeclaredValueParameters && functionTypeExpected) {
+        if (!functionLiteral.hasDeclaredReturnType() && functionTypeExpected) {
             JetType expectedReturnType = JetStandardClasses.getReturnTypeFromFunctionType(expectedType);
             if (JetStandardClasses.isUnit(expectedReturnType)) {
                 functionDescriptor.setReturnType(JetStandardClasses.getUnitType());
