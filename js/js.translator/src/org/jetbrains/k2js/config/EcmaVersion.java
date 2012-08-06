@@ -37,9 +37,4 @@ public enum EcmaVersion {
     public static EcmaVersion defaultVersion() {
         return v3;
     }
-
-    @NotNull
-    public static EnumSet<EcmaVersion> all() {
-        return EnumSet.allOf(EcmaVersion.class);
-    }
 }

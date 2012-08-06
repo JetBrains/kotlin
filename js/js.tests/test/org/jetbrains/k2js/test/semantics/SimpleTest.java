@@ -18,7 +18,6 @@ package org.jetbrains.k2js.test.semantics;
 
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.BasicTest;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
@@ -39,7 +38,7 @@ public final class SimpleTest extends SingleFileTranslationTest {
 
     @Override
     public void runTest() throws Exception {
-        checkFooBoxIsTrue(filename, EcmaVersion.all());
+        checkFooBoxIsTrue(filename, DEFAULT_ECMA_VERSIONS);
     }
 
     public static Test suite() throws Exception {

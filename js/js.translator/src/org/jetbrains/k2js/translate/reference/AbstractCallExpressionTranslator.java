@@ -30,7 +30,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDefaultArgument;
@@ -40,7 +40,6 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCallFor
  * @author Pavel Talanov
  */
 public abstract class AbstractCallExpressionTranslator extends AbstractTranslator {
-
     @NotNull
     protected final JetCallExpression expression;
     @NotNull
@@ -71,13 +70,13 @@ public abstract class AbstractCallExpressionTranslator extends AbstractTranslato
         }
         if (actualArgument instanceof DefaultValueArgument) {
             JetExpression defaultArgument = getDefaultArgument(bindingContext(), parameterDescriptor);
-            return Arrays.asList(Translation.translateAsExpression(defaultArgument, context()));
+            return Collections.singletonList(Translation.translateAsExpression(defaultArgument, context()));
         }
         assert actualArgument instanceof ExpressionValueArgument;
         assert valueArguments.size() == 1;
         JetExpression argumentExpression = valueArguments.get(0).getArgumentExpression();
         assert argumentExpression != null;
-        return Arrays.asList(Translation.translateAsExpression(argumentExpression, context()));
+        return Collections.singletonList(Translation.translateAsExpression(argumentExpression, context()));
     }
 
     @NotNull
@@ -96,8 +95,6 @@ public abstract class AbstractCallExpressionTranslator extends AbstractTranslato
 
     @NotNull
     private static List<JsExpression> wrapInArrayLiteral(@NotNull List<JsExpression> translatedArgs) {
-        JsArrayLiteral argsWrappedInArray = new JsArrayLiteral();
-        argsWrappedInArray.getExpressions().addAll(translatedArgs);
-        return Arrays.<JsExpression>asList(argsWrappedInArray);
+        return Collections.<JsExpression>singletonList(new JsArrayLiteral(translatedArgs));
     }
 }

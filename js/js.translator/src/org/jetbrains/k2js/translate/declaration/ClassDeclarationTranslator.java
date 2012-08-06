@@ -17,6 +17,8 @@
 package org.jetbrains.k2js.translate.declaration;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.openapi.util.Pair;
+import com.intellij.util.SmartList;
 import gnu.trove.THashMap;
 import gnu.trove.TLinkable;
 import gnu.trove.TLinkableAdaptor;
@@ -26,18 +28,20 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.k2js.translate.LabelGenerator;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.utils.JsAstUtils;
+import org.jetbrains.k2js.translate.initializer.InitializerUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
 import static org.jetbrains.k2js.translate.general.Translation.translateClassDeclaration;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
 import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.message;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.newBlock;
 
 /**
  * @author Pavel Talanov
@@ -45,43 +49,44 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.newBlock;
  *         Generates a big block where are all the classes(objects representing them) are created.
  */
 public final class ClassDeclarationTranslator extends AbstractTranslator {
-    private int localNameCounter;
+    private final LabelGenerator localLabelGenerator = new LabelGenerator('c');
 
     @NotNull
-    private final THashMap<JetClass, ListItem> openClassToItem = new THashMap<JetClass, ListItem>();
+    private final THashMap<ClassDescriptor, FinalListItem> openClassDescriptorToItem = new THashMap<ClassDescriptor, FinalListItem>();
 
-    private final TLinkedList<ListItem> openList = new TLinkedList<ListItem>();
-    private final List<ListItem> finalList = new ArrayList<ListItem>();
+    private final TLinkedList<FinalListItem> openList = new TLinkedList<FinalListItem>();
+    private final List<Pair<JetClassOrObject, JsInvocation>> finalList = new ArrayList<Pair<JetClassOrObject, JsInvocation>>();
 
     @NotNull
     private final JsFunction dummyFunction;
 
-    private final JsName declarationsObject;
-    private final JsVars.JsVar classesVar;
+    private final JsNameRef declarationsObjectRef;
+    private final JsVar classesVar;
 
     public ClassDeclarationTranslator(@NotNull TranslationContext context) {
         super(context);
 
         dummyFunction = new JsFunction(context.scope());
-        declarationsObject = context().scope().declareName(Namer.nameForClassesVariable());
+        JsName declarationsObject = context().scope().declareName(Namer.nameForClassesVariable());
         classesVar = new JsVars.JsVar(declarationsObject);
+        declarationsObjectRef = declarationsObject.makeRef();
     }
 
     private final class OpenClassRefProvider implements ClassAliasingMap {
         @Override
         @Nullable
-        public JsNameRef get(JetClass declaration, JetClass referencedDeclaration) {
-            ListItem item = openClassToItem.get(declaration);
+        public JsNameRef get(ClassDescriptor descriptor, ClassDescriptor referencedDescriptor) {
+            FinalListItem item = openClassDescriptorToItem.get(descriptor);
             // class declared in library
             if (item == null) {
                 return null;
             }
 
-            addAfter(item, openClassToItem.get(referencedDeclaration));
+            addAfter(item, openClassDescriptorToItem.get(referencedDescriptor));
             return item.label;
         }
 
-        private void addAfter(@NotNull ListItem item, @NotNull ListItem referencedItem) {
+        private void addAfter(@NotNull FinalListItem item, @NotNull FinalListItem referencedItem) {
             for (TLinkable link = item.getNext(); link != null; link = link.getNext()) {
                 if (link == referencedItem) {
                     return;
@@ -89,65 +94,55 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
             }
 
             openList.remove(referencedItem);
-            openList.addBefore((ListItem) item.getNext(), referencedItem);
+            openList.addBefore((FinalListItem) item.getNext(), referencedItem);
         }
     }
 
-    private final class FinalClassRefProvider implements ClassAliasingMap {
-        @Override
-        public JsNameRef get(JetClass declaration, JetClass referencedDeclaration) {
-            ListItem item = openClassToItem.get(declaration);
-            return item == null ? null : item.label;
-        }
-    }
-
-    private static class ListItem extends TLinkableAdaptor {
+    private static class FinalListItem extends TLinkableAdaptor {
         private final JetClass declaration;
         private final JsNameRef label;
+        private final JsNameRef qualifiedLabel;
 
         private JsExpression translatedDeclaration;
 
-        private ListItem(JetClass declaration, JsNameRef label) {
+        private FinalListItem(JetClass declaration, JsNameRef label, JsNameRef qualifiedLabel) {
             this.declaration = declaration;
             this.label = label;
+            this.qualifiedLabel = qualifiedLabel;
         }
     }
 
     @NotNull
-    public JsVars getDeclarationsStatement() {
-        JsVars vars = new JsVars();
-        vars.add(classesVar);
-        return vars;
+    public JsVars.JsVar getDeclaration() {
+        return classesVar;
     }
 
     public void generateDeclarations() {
-        JsObjectLiteral valueLiteral = new JsObjectLiteral();
-        JsVars vars = new JsVars();
-        List<JsPropertyInitializer> propertyInitializers = valueLiteral.getPropertyInitializers();
+        List<JsVar> vars = new SmartList<JsVar>();
+        List<JsPropertyInitializer> propertyInitializers = new SmartList<JsPropertyInitializer>();
 
         generateOpenClassDeclarations(vars, propertyInitializers);
-        generateFinalClassDeclarations(vars, propertyInitializers);
+        generateFinalClassDeclarations();
 
         if (vars.isEmpty()) {
-            classesVar.setInitExpression(valueLiteral);
+            if (!propertyInitializers.isEmpty()) {
+                classesVar.setInitExpression(new JsObjectLiteral(propertyInitializers));
+            }
             return;
         }
 
-        List<JsStatement> result = new ArrayList<JsStatement>();
-        result.add(vars);
-        result.add(new JsReturn(valueLiteral));
-        dummyFunction.setBody(newBlock(result));
+        dummyFunction.setBody(new JsBlock(new JsVars(vars, true), new JsReturn(new JsObjectLiteral(propertyInitializers))));
         classesVar.setInitExpression(new JsInvocation(dummyFunction));
     }
 
-    private void generateOpenClassDeclarations(@NotNull JsVars vars, @NotNull List<JsPropertyInitializer> propertyInitializers) {
+    private void generateOpenClassDeclarations(@NotNull List<JsVar> vars, @NotNull List<JsPropertyInitializer> propertyInitializers) {
         ClassAliasingMap classAliasingMap = new OpenClassRefProvider();
         // first pass: set up list order
-        for (ListItem item : openList) {
+        for (FinalListItem item : openList) {
             item.translatedDeclaration = translateClassDeclaration(item.declaration, classAliasingMap, context());
         }
         // second pass: generate
-        for (ListItem item : openList) {
+        for (FinalListItem item : openList) {
             JsExpression translatedDeclaration = item.translatedDeclaration;
             if (translatedDeclaration == null) {
                 throw new IllegalStateException(message(item.declaration, "Could not translate class declaration)"));
@@ -156,24 +151,31 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         }
     }
 
-    private void generateFinalClassDeclarations(@NotNull JsVars vars, @NotNull List<JsPropertyInitializer> propertyInitializers) {
-        ClassAliasingMap classAliasingMap = new FinalClassRefProvider();
-        for (ListItem item : finalList) {
-            generate(item, propertyInitializers, translateClassDeclaration(item.declaration, classAliasingMap, context()), vars);
+    private void generateFinalClassDeclarations() {
+        ClassAliasingMap aliasingMap = new ClassAliasingMap() {
+            @Override
+            public JsNameRef get(ClassDescriptor descriptor, ClassDescriptor referencedDescriptor) {
+                FinalListItem item = openClassDescriptorToItem.get(descriptor);
+                return item == null ? null : item.qualifiedLabel;
+            }
+        };
+
+        for (Pair<JetClassOrObject, JsInvocation> item : finalList) {
+            new ClassTranslator(item.first, aliasingMap, context()).translateClassOrObjectCreation(item.second);
         }
     }
 
-    private static void generate(@NotNull ListItem item,
+    private static void generate(@NotNull FinalListItem item,
             @NotNull List<JsPropertyInitializer> propertyInitializers,
             @NotNull JsExpression definition,
-            @NotNull JsVars vars) {
+            @NotNull List<JsVar> vars) {
         JsExpression value;
         if (item.label.getName() == null) {
             value = definition;
         }
         else {
             assert item.label.getName() != null;
-            vars.add(new JsVars.JsVar(item.label.getName(), definition));
+            vars.add(new JsVar(item.label.getName(), definition));
             value = item.label;
         }
 
@@ -181,38 +183,24 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public JsPropertyInitializer translateAndGetClassNameToClassObject(@NotNull JetClass declaration) {
+    public JsPropertyInitializer translate(@NotNull JetClassOrObject declaration) {
         ClassDescriptor descriptor = getClassDescriptor(context().bindingContext(), declaration);
-
-        JsNameRef labelRef;
-        String label = 'c' + Integer.toString(localNameCounter++, 36);
-        boolean isFinal = descriptor.getModality() == Modality.FINAL;
-        if (isFinal) {
-            labelRef = new JsNameRef(label);
-        }
-        else {
-            labelRef = dummyFunction.getScope().declareName(label).makeRef();
-        }
-
-        ListItem item = new ListItem(declaration, labelRef);
-        if (isFinal) {
-            finalList.add(item);
-        }
-        else {
-            openList.add(item);
-            openClassToItem.put(declaration, item);
-        }
-
-        JsNameRef qualifiedLabelRef = new JsNameRef(labelRef.getIdent());
-        qualifiedLabelRef.setQualifier(declarationsObject.makeRef());
         JsExpression value;
-        if (context().isEcma5()) {
-            value = JsAstUtils.createDataDescriptor(qualifiedLabelRef);
+        if (descriptor.getModality() == Modality.FINAL) {
+            JsInvocation invocation = context().namer().classCreateInvocation(descriptor);
+            finalList.add(new Pair<JetClassOrObject, JsInvocation>(declaration, invocation));
+            value = invocation;
         }
         else {
-            value = qualifiedLabelRef;
+            String label = localLabelGenerator.generate();
+            JsNameRef labelRef = dummyFunction.getScope().declareName(label).makeRef();
+            FinalListItem item = new FinalListItem((JetClass) declaration, labelRef, new JsNameRef(labelRef.getIdent(), declarationsObjectRef));
+            openList.add(item);
+            openClassDescriptorToItem.put(descriptor, item);
+
+            value = item.qualifiedLabel;
         }
 
-        return new JsPropertyInitializer(context().program().getStringLiteral(descriptor.getName().getName()), value);
+        return InitializerUtils.createPropertyInitializer(descriptor, value, context());
     }
 }

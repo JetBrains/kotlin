@@ -19,6 +19,7 @@ package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsArrayAccess;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -91,8 +92,8 @@ public final class ArrayFIF extends CompositeFIF {
         add(pattern(ARRAYS, "get"), GET_INTRINSIC);
         add(pattern(ARRAYS, "set"), SET_INTRINSIC);
         add(pattern(ARRAYS, "<get-size>"), ARRAY_LENGTH_INTRINSIC);
-        add(pattern(ARRAYS, "<get-indices>"), new CallStandardMethodIntrinsic("Kotlin.arrayIndices", true, 0));
-        add(pattern(ARRAYS, "iterator"), new CallStandardMethodIntrinsic("Kotlin.arrayIterator", true, 0));
-        add(pattern(ARRAYS, "<init>"), new CallStandardMethodIntrinsic("Kotlin.arrayFromFun", false, 2));
+        add(pattern(ARRAYS, "<get-indices>"), new CallStandardMethodIntrinsic(new JsNameRef("arrayIndices", "Kotlin"), true, 0));
+        add(pattern(ARRAYS, "iterator"), new CallStandardMethodIntrinsic(new JsNameRef("arrayIterator", "Kotlin"), true, 0));
+        add(pattern(ARRAYS, "<init>"), new CallStandardMethodIntrinsic(new JsNameRef("arrayFromFun", "Kotlin"), false, 2));
     }
 }

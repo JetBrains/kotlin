@@ -16,7 +16,6 @@
 
 package org.jetbrains.k2js.translate.utils;
 
-import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +27,6 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -53,17 +51,11 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsPropertyInitializer newNamedMethod(@NotNull JsName name, @NotNull JsFunction function) {
-        JsNameRef methodName = name.makeRef();
-        return new JsPropertyInitializer(methodName, function);
-    }
-
-    @NotNull
     public static JsStatement convertToStatement(@NotNull JsNode jsNode) {
         assert (jsNode instanceof JsExpression) || (jsNode instanceof JsStatement)
                 : "Unexpected node of type: " + jsNode.getClass().toString();
         if (jsNode instanceof JsExpression) {
-            return new JsExprStmt((JsExpression) jsNode);
+            return ((JsExpression) jsNode).makeStmt();
         }
         return (JsStatement) jsNode;
     }
@@ -73,27 +65,13 @@ public final class JsAstUtils {
         if (jsNode instanceof JsBlock) {
             return (JsBlock) jsNode;
         }
-        JsStatement jsStatement = convertToStatement(jsNode);
-        return new JsBlock(jsStatement);
+        return new JsBlock(convertToStatement(jsNode));
     }
 
     @NotNull
     public static JsExpression convertToExpression(@NotNull JsNode jsNode) {
         assert jsNode instanceof JsExpression : "Unexpected node of type: " + jsNode.getClass().toString();
         return (JsExpression) jsNode;
-    }
-
-    public static JsNameRef thisQualifiedReference(@NotNull JsName name) {
-        JsNameRef result = name.makeRef();
-        result.setQualifier(JsLiteral.THIS);
-        return result;
-    }
-
-    @NotNull
-    public static JsBlock newBlock(List<JsStatement> statements) {
-        JsBlock result = new JsBlock();
-        setStatements(result, statements);
-        return result;
     }
 
     @NotNull
@@ -128,12 +106,6 @@ public final class JsAstUtils {
         else {
             setQualifier(qualifier, receiver);
         }
-    }
-
-    public static JsNameRef qualified(@NotNull JsName selector, @Nullable JsExpression qualifier) {
-        JsNameRef reference = selector.makeRef();
-        setQualifier(reference, qualifier);
-        return reference;
     }
 
     @NotNull
@@ -187,27 +159,14 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsObjectLiteral newObjectLiteral(@NotNull List<JsPropertyInitializer> propertyList) {
-        JsObjectLiteral jsObjectLiteral = new JsObjectLiteral();
-        jsObjectLiteral.getPropertyInitializers().addAll(propertyList);
-        return jsObjectLiteral;
-    }
-
-    @NotNull
     public static JsVars newVar(@NotNull JsName name, @Nullable JsExpression expr) {
         return new JsVars(new JsVars.JsVar(name, expr));
     }
 
-    public static void addVarDeclaration(@NotNull JsBlock block, @NotNull JsVars vars) {
-        LinkedList<JsStatement> statementLinkedList = Lists.newLinkedList(block.getStatements());
-        statementLinkedList.offer(vars);
-        setStatements(block, statementLinkedList);
-    }
-
-    private static void setStatements(@NotNull JsBlock block, @NotNull List<JsStatement> statements) {
-        List<JsStatement> statementList = block.getStatements();
-        statementList.clear();
-        statementList.addAll(statements);
+    public static void setArguments(@NotNull JsInvocation invocation, @NotNull List<JsExpression> newArgs) {
+        List<JsExpression> arguments = invocation.getArguments();
+        assert arguments.isEmpty() : "Arguments already set.";
+        arguments.addAll(newArgs);
     }
 
     public static void setArguments(@NotNull HasArguments invocation, @NotNull List<JsExpression> newArgs) {
@@ -226,20 +185,6 @@ public final class JsAstUtils {
         parameters.addAll(newParams);
     }
 
-    public static void setParameters(@NotNull JsFunction function, JsParameter... arguments) {
-        setParameters(function, Arrays.asList(arguments));
-    }
-
-    @NotNull
-    public static JsInvocation newInvocation(@NotNull JsExpression target, List<JsExpression> params) {
-        JsInvocation invoke = new JsInvocation();
-        invoke.setQualifier(target);
-        for (JsExpression expr : params) {
-            invoke.getArguments().add(expr);
-        }
-        return invoke;
-    }
-
     @NotNull
     public static JsExpression newSequence(@NotNull List<JsExpression> expressions) {
         assert !expressions.isEmpty();
@@ -255,9 +200,7 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsFunction createFunctionWithEmptyBody(@NotNull JsScope parent) {
-        JsFunction correspondingFunction = new JsFunction(parent);
-        correspondingFunction.setBody(new JsBlock());
-        return correspondingFunction;
+        return new JsFunction(parent, new JsBlock());
     }
 
     @NotNull
@@ -328,14 +271,6 @@ public final class JsAstUtils {
             dataDescriptor.getPropertyInitializers().add(ENUMERABLE);
         }
         return dataDescriptor;
-    }
-
-    @NotNull
-    public static JsInvocation encloseFunction(@NotNull JsFunction function) {
-        JsInvocation blockFunctionInvocation = new JsInvocation();
-        blockFunctionInvocation.setQualifier(EMPTY_REF);
-        blockFunctionInvocation.getArguments().add(function);
-        return blockFunctionInvocation;
     }
 
     @NotNull

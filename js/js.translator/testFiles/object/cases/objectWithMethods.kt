@@ -5,16 +5,13 @@ val a = object {
     fun b() = 2
 }
 
-fun box() : Boolean {
-
-
+fun box(): Boolean {
     if (a.c() != 3) {
         return false;
     }
     if (a.b() != 2) {
         return false;
     }
-
 
     return true;
 }

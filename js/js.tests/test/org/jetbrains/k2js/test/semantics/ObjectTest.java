@@ -22,7 +22,6 @@ import org.jetbrains.k2js.test.SingleFileTranslationTest;
  * @author Pavel Talanov
  */
 public final class ObjectTest extends SingleFileTranslationTest {
-
     public ObjectTest() {
         super("object/");
     }
@@ -31,12 +30,7 @@ public final class ObjectTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-
     public void testObjectDeclaration() throws Exception {
-        fooBoxTest();
-    }
-
-    public void testObjectDeclarationWithVars() throws Exception {
         fooBoxTest();
     }
 
@@ -48,9 +42,11 @@ public final class ObjectTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-
     public void testObjectInheritingFromATrait() throws Exception {
         fooBoxTest();
     }
 
+    public void testObjectInheritingFromClass() throws Exception {
+        fooBoxTest();
+    }
 }

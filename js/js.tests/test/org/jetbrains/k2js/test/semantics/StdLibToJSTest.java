@@ -16,14 +16,12 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import org.jetbrains.k2js.config.EcmaVersion;
-
 /**
  */
 public class StdLibToJSTest extends StdLibTestBase {
 
     public void testCompileJavaScriptFiles() throws Exception {
-        performStdLibTest(EcmaVersion.all(),
+        performStdLibTest(DEFAULT_ECMA_VERSIONS,
                           "libraries/stdlib/src");
     }
 }

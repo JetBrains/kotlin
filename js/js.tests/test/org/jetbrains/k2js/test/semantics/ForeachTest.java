@@ -20,7 +20,6 @@ package org.jetbrains.k2js.test.semantics;
  * @author Pavel Talanov
  */
 public final class ForeachTest extends AbstractExpressionTest {
-
     public ForeachTest() {
         super("for/");
     }
@@ -30,6 +29,10 @@ public final class ForeachTest extends AbstractExpressionTest {
     }
 
     public void testForOnEmptyArray() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testForOnIterator() throws Exception {
         fooBoxTest();
     }
 }

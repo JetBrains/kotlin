@@ -134,8 +134,8 @@ class A() : BodyTag("a") {
   }
 }
 
-fun html(init : HTML.() -> Unit) : HTML {
-  val html = HTML()
-  html.init()
-  return html
+fun html(init: HTML.() -> Unit): HTML {
+    val html = HTML()
+    html.init()
+    return html
 }

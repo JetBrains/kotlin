@@ -54,8 +54,8 @@ public final class NumberConversionFIF extends CompositeFIF {
     private static final NamePredicate FLOATING_POINT_CONVERSIONS = new NamePredicate(OperatorConventions.FLOAT, OperatorConventions.DOUBLE);
 
     @NotNull
-    private static final NamePredicate INTEGER_CONVERSIONS = new NamePredicate(OperatorConventions.INT, OperatorConventions.SHORT,
-                                                                           OperatorConventions.BYTE);
+    private static final NamePredicate INTEGER_CONVERSIONS =
+            new NamePredicate(OperatorConventions.INT, OperatorConventions.SHORT, OperatorConventions.BYTE);
 
     @NotNull
     private static final FunctionIntrinsic RETURN_RECEIVER = new FunctionIntrinsic() {

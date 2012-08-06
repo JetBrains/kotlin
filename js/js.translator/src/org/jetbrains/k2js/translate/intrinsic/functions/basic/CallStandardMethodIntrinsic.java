@@ -16,10 +16,10 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.basic;
 
-import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.util.AstUtil;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -27,20 +27,18 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.atLocation;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.newInvocation;
 
 /**
  * @author Pavel Talanov
  */
 public final class CallStandardMethodIntrinsic extends FunctionIntrinsic {
-
     @NotNull
-    private final String methodName;
+    private final JsNameRef methodName;
 
     private final boolean receiverShouldBeNotNull;
     private final int expectedParamsNumber;
 
-    public CallStandardMethodIntrinsic(@NotNull String methodName, boolean receiverShouldBeNotNull, int expectedParamsNumber) {
+    public CallStandardMethodIntrinsic(@NotNull JsNameRef methodName, boolean receiverShouldBeNotNull, int expectedParamsNumber) {
         this.methodName = methodName;
         this.receiverShouldBeNotNull = receiverShouldBeNotNull;
         this.expectedParamsNumber = expectedParamsNumber;
@@ -53,21 +51,19 @@ public final class CallStandardMethodIntrinsic extends FunctionIntrinsic {
             @NotNull TranslationContext context) {
         assert (receiver != null == receiverShouldBeNotNull);
         assert arguments.size() == expectedParamsNumber : errorMessage(receiver, arguments);
-        JsNameRef iteratorFunName = AstUtil.newQualifiedNameRef(methodName);
-        return newInvocation(iteratorFunName, composeArguments(receiver, arguments));
+        return new JsInvocation(methodName, composeArguments(receiver, arguments));
     }
 
     @NotNull
     private String errorMessage(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments) {
         return "Incorrect number of arguments " + arguments.size() + " when expected " + expectedParamsNumber + " on method " + methodName + " " +
-                                                          atLocation(receiver, arguments);
+               atLocation(receiver, arguments);
     }
 
     @NotNull
     private static List<JsExpression> composeArguments(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments) {
         if (receiver != null) {
-            List<JsExpression> args = Lists.newArrayList();
-            args.add(receiver);
+            List<JsExpression> args = new SmartList<JsExpression>(receiver);
             args.addAll(arguments);
             return args;
         }

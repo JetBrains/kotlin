@@ -17,22 +17,22 @@
 package org.jetbrains.k2js.translate.utils.closure;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 
 /**
  * @author Pavel Talanov
  */
 public final class ClosureUtils {
-
     private ClosureUtils() {
     }
 
     @NotNull
-    public static ClosureContext captureClosure(@NotNull TranslationContext context, @NotNull JetElement function) {
-        CaptureClosureVisitor captureClosureVisitor = new CaptureClosureVisitor(function, context.bindingContext());
+    public static ClosureContext captureClosure(@NotNull BindingContext bindingContext, @NotNull JetElement element, @NotNull DeclarationDescriptor descriptor) {
+        CaptureClosureVisitor captureClosureVisitor = new CaptureClosureVisitor(descriptor, bindingContext);
         ClosureContext closureContext = new ClosureContext();
-        function.accept(captureClosureVisitor, closureContext);
+        element.accept(captureClosureVisitor, closureContext);
         return closureContext;
     }
 }

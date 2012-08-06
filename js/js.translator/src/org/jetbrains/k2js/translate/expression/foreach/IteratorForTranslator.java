@@ -18,6 +18,7 @@ package org.jetbrains.k2js.translate.expression.foreach;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.openapi.util.Pair;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
@@ -25,13 +26,20 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetForExpression;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
+
+import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.createTemporaryIfNeed;
 
 /**
  * @author Pavel Talanov
@@ -43,17 +51,38 @@ public final class IteratorForTranslator extends ForTranslator {
     @NotNull
     public static JsStatement doTranslate(@NotNull JetForExpression expression,
                                           @NotNull TranslationContext context) {
-        return (new IteratorForTranslator(expression, context).translate());
+        return (new IteratorForTranslator(expression, context)).translate();
     }
 
     private IteratorForTranslator(@NotNull JetForExpression forExpression, @NotNull TranslationContext context) {
         super(forExpression, context);
-        iterator = context.dynamicContext().createTemporary(iteratorMethodInvocation());
+
+        JetExpression rangeExpression = getLoopRange(expression);
+        JsExpression iteratorProvider = Translation.translateAsExpression(rangeExpression, context());
+        iterator = createTemporaryIfNeed(isIteratorItself(rangeExpression)
+                                         ? iteratorProvider
+                                         : translateMethodInvocation(iteratorProvider,
+                                                                     getIteratorFunction(bindingContext(), rangeExpression)), context);
+    }
+
+    private boolean isIteratorItself(JetExpression expression) {
+        JetType type = context().bindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
+        if (type == null) {
+            return false;
+        }
+
+        Name name = JsDescriptorUtils.getNameIfStandardType(type);
+        return name != null && name.getName().equals("Iterator");
     }
 
     @NotNull
     private JsBlock translate() {
-        return new JsBlock(new JsVars(iterator.first), new JsWhile(hasNextMethodInvocation(), translateBody(nextMethodInvocation())));
+        List<JsStatement> statements = new SmartList<JsStatement>();
+        if (iterator.first != null) {
+            statements.add(new JsVars(iterator.first));
+        }
+        statements.add(new JsWhile(hasNextMethodInvocation(), translateBody(nextMethodInvocation())));
+        return new JsBlock(statements);
     }
 
     @NotNull
@@ -71,26 +100,13 @@ public final class IteratorForTranslator extends ForTranslator {
         // develar: I don't know, why hasNext called as function for PropertyDescriptor, our JS side define it as property and all other code translate it as property
         JsNameRef hasNext = new JsNameRef(Namer.getNameForAccessor("hasNext", true, context().isEcma5()));
         hasNext.setQualifier(iterator.second);
-        if (context().isEcma5()) {
-            return hasNext;
-        }
-        else {
-            return new JsInvocation(hasNext);
-        }
+        return context().isEcma5() ? hasNext : new JsInvocation(hasNext);
     }
 
     // kotlin iterator define hasNext as property, but java util as function, our js side expects as property
     private static boolean isJavaUtilIterator(CallableDescriptor descriptor) {
         DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
         return declaration.getName().getName().equals("Iterator");
-    }
-
-    @NotNull
-    private JsExpression iteratorMethodInvocation() {
-        JetExpression rangeExpression = getLoopRange(expression);
-        JsExpression range = Translation.translateAsExpression(rangeExpression, context());
-        FunctionDescriptor iteratorFunction = getIteratorFunction(bindingContext(), rangeExpression);
-        return translateMethodInvocation(range, iteratorFunction);
     }
 
     @NotNull

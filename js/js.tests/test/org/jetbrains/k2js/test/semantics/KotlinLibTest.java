@@ -27,7 +27,6 @@ import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
  * @author Pavel Talanov
  */
 public final class KotlinLibTest extends SingleFileTranslationTest {
-
     public KotlinLibTest() {
         super("kotlinLib/");
     }
@@ -36,21 +35,17 @@ public final class KotlinLibTest extends SingleFileTranslationTest {
         runJavascriptTest("namespace.js");
     }
 
-
     public void testNamespaceHasDeclaredClasses() throws Exception {
         runJavascriptTest("namespaceWithClasses.js");
     }
-
 
     public void testIsSameType() throws Exception {
         runJavascriptTest("isSameType.js");
     }
 
-
     public void testIsAncestorType() throws Exception {
         runJavascriptTest("isAncestorType.js");
     }
-
 
     public void testIsComplexTest() throws Exception {
         runJavascriptTest("isComplexTest.js");
@@ -75,5 +70,4 @@ public final class KotlinLibTest extends SingleFileTranslationTest {
     protected boolean shouldCreateOut() {
         return false;
     }
-
 }

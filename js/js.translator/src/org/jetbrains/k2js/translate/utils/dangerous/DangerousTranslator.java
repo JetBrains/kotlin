@@ -34,17 +34,14 @@ import java.util.Map;
  * @author Pavel Talanov
  */
 public final class DangerousTranslator extends AbstractTranslator {
-
+    @NotNull
+    private final DangerousData data;
 
     @NotNull
     public static JsNode translate(@NotNull DangerousData data, @NotNull TranslationContext context) {
         assert data.exists();
-        DangerousTranslator translator = new DangerousTranslator(data, context);
-        return translator.translate();
+        return new DangerousTranslator(data, context).translate();
     }
-
-    @NotNull
-    private final DangerousData data;
 
     private DangerousTranslator(@NotNull DangerousData data, @NotNull TranslationContext context) {
         super(context);
