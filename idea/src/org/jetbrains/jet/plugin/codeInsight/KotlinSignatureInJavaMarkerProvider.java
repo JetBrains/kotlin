@@ -27,6 +27,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.EditorSettings;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -147,6 +148,13 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             assert editorFactory != null;
             Document document = editorFactory.createDocument(previousSignature);
             editor = editorFactory.createEditor(document, method.getProject(), JetFileType.INSTANCE, false);
+            EditorSettings settings = editor.getSettings();
+            settings.setVirtualSpace(false);
+            settings.setLineMarkerAreaShown(false);
+            settings.setFoldingOutlineShown(false);
+            settings.setRightMarginShown(false);
+            settings.setAdditionalPageAtBottom(false);
+            settings.setAdditionalLinesCount(0);
             init();
         }
 
