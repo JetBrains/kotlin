@@ -17,12 +17,19 @@
 package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.codeHighlighting.Pass;
+import com.intellij.codeInsight.ExternalAnnotationsManager;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationUtil;
+import com.intellij.openapi.application.Result;
+import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.util.Function;
@@ -30,8 +37,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetIcons;
 
+import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;
@@ -46,14 +55,12 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         public String fun(PsiElement element) {
             PsiAnnotation annotation = findKotlinSignatureAnnotation(element);
             assert annotation != null;
-            PsiAnnotationMemberValue value = annotation.getParameterList().getAttributes()[0].getValue();
-            String signature = value == null ? "null" : value instanceof PsiLiteralExpression
-                                                        ? ((PsiLiteralExpression) value).getValue().toString()
-                                                        : value.getText();
+            String signature = getKotlinSignature(annotation);
             return "Alternative Kotlin signature is available for this method:\n"
                    + signature;
         }
     };
+
     private static final GutterIconNavigationHandler<PsiMethod> NAVIGATION_HANDLER = new GutterIconNavigationHandler<PsiMethod>() {
         @Override
         public void navigate(MouseEvent e, PsiMethod element) {
@@ -81,11 +88,13 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
                 }
             }
             else {
-                // TODO open external annotations editor
-                Messages.showInfoMessage(element.getProject(), "Can't edit external annotation yet", "External Annotation");
+                // TODO check if annotations are editable
+                DialogWrapper dialogWrapper = new EditSignatureDialog(element);
+                dialogWrapper.show();
             }
         }
     };
+    private static final String KOTLIN_SIGNATURE_ANNOTATION = JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().getFqName();
 
     @Nullable
     private static PsiAnnotation findKotlinSignatureAnnotation(@NotNull PsiElement element) {
@@ -94,10 +103,19 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
                                     ? (PsiMethod) element.getOriginalElement()
                                     : (PsiMethod) element;
         PsiAnnotation annotation =
-                JavaDescriptorResolver.findAnnotation(annotationOwner, JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().getFqName());
+                JavaDescriptorResolver.findAnnotation(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
         if (annotation == null) return null;
         if (annotation.getParameterList().getAttributes().length == 0) return null;
         return annotation;
+    }
+
+    @NotNull
+    private static String getKotlinSignature(@NotNull PsiAnnotation kotlinSignatureAnnotation) {
+        PsiNameValuePair pair = kotlinSignatureAnnotation.getParameterList().getAttributes()[0];
+        PsiAnnotationMemberValue value = pair.getValue();
+        return value == null ? "null" : value instanceof PsiLiteralExpression
+                                        ? ((PsiLiteralExpression) value).getValue().toString()
+                                        : value.getText();
     }
 
     @Override
@@ -112,5 +130,56 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
 
     @Override
     public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
+    }
+
+    private static class EditSignatureDialog extends DialogWrapper {
+        private final Editor editor;
+        private final PsiMethod method;
+        private final String previousSignature;
+
+        public EditSignatureDialog(PsiMethod method) {
+            super(method.getProject());
+            this.method = method;
+            PsiAnnotation kotlinSignatureAnnotation = findKotlinSignatureAnnotation(this.method);
+            assert kotlinSignatureAnnotation != null;
+            previousSignature = getKotlinSignature(kotlinSignatureAnnotation);
+            EditorFactory editorFactory = EditorFactory.getInstance();
+            assert editorFactory != null;
+            Document document = editorFactory.createDocument(previousSignature);
+            editor = editorFactory.createEditor(document, method.getProject(), JetFileType.INSTANCE, false);
+            init();
+        }
+
+        @Override
+        protected void dispose() {
+            super.dispose();
+            EditorFactory editorFactory = EditorFactory.getInstance();
+            assert editorFactory != null;
+            editorFactory.releaseEditor(editor);
+        }
+
+        @Override
+        protected JComponent createCenterPanel() {
+            return editor.getComponent();
+        }
+
+        @Override
+        protected void doOKAction() {
+            super.doOKAction();
+            String newSignature = editor.getDocument().getText();
+            if (previousSignature.equals(newSignature)) return;
+            final Project project = method.getProject();
+            final PsiNameValuePair[] nameValuePairs = JavaPsiFacade.getElementFactory(project).createAnnotationFromText(
+                    "@" + KOTLIN_SIGNATURE_ANNOTATION + "(value=\"" + newSignature + "\")", null).getParameterList().getAttributes();
+
+            new WriteCommandAction(project){
+                @Override
+                protected void run(final Result result) throws Throwable {
+                    ExternalAnnotationsManager.getInstance(project).deannotate(method, KOTLIN_SIGNATURE_ANNOTATION);
+                    ExternalAnnotationsManager.getInstance(project).annotateExternally(
+                            method, KOTLIN_SIGNATURE_ANNOTATION, method.getContainingFile(), nameValuePairs);
+                }
+            }.execute();
+        }
     }
 }
