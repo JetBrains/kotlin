@@ -18,13 +18,11 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
 
 /**
  * @author max
  */
-public class JetWhileExpression extends JetLoopExpression {
+public class JetWhileExpression extends JetWhileExpressionBase {
     public JetWhileExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -37,10 +35,5 @@ public class JetWhileExpression extends JetLoopExpression {
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitWhileExpression(this, data);
-    }
-
-    @Nullable @IfNotParsed
-    public JetExpression getCondition() {
-        return findExpressionUnder(JetNodeTypes.CONDITION);
     }
 }
