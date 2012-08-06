@@ -1425,7 +1425,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             for (ValueArgument argument : expression.getValueArguments()) {
                 args.add(argument.getArgumentExpression());
             }
-            return intrinsic.generate(this, v, expressionType(expression), expression, args, receiver, state);
+            Type callType = typeMapper.mapType(resolvedCall.getCandidateDescriptor().getReturnType(),MapTypeMode.VALUE);
+            Type exprType = expressionType(expression);
+            StackValue stackValue = intrinsic.generate(this, v, callType, expression, args, receiver, state);
+            stackValue.put(exprType,v);
+            return StackValue.onStack(exprType);
         }
     }
 

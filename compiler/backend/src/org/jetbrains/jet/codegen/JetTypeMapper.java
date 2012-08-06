@@ -84,7 +84,6 @@ public class JetTypeMapper {
     public static final Type TYPE_FUNCTION0 = Type.getObjectType("jet/Function0");
     public static final Type TYPE_FUNCTION1 = Type.getObjectType("jet/Function1");
 
-    private JetStandardLibrary standardLibrary1;
     public BindingContext bindingContext;
     private ClosureAnnotator closureAnnotator;
     private boolean mapBuiltinsToJava;
