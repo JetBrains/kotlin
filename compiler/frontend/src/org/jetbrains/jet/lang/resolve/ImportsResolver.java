@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -80,7 +79,7 @@ public class ImportsResolver {
     private void processImports(boolean onlyClasses, @NotNull JetScope rootScope) {
         for (JetFile file : context.getNamespaceDescriptors().keySet()) {
             WritableScope namespaceScope = context.getNamespaceScopes().get(file);
-            processImportsInFile(onlyClasses, namespaceScope, ScopeProvider.getFileImports(file), rootScope);
+            processImportsInFile(onlyClasses, namespaceScope, Lists.newArrayList(file.getImportDirectives()), rootScope);
         }
         for (JetScript script : context.getScripts().keySet()) {
             WritableScope scriptScope = context.getScriptScopes().get(script);

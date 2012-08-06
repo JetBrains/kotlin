@@ -28,12 +28,10 @@ import java.util.List;
 public class JetScriptDefinition {
     private final String extension;
     private final List<AnalyzerScriptParameter> parameters;
-    private final List<ImportPath> imports;
 
-    public JetScriptDefinition(String extension, List<AnalyzerScriptParameter> scriptParameters, @Nullable List<String> imports) {
+    public JetScriptDefinition(String extension, List<AnalyzerScriptParameter> scriptParameters) {
         this.extension = extension;
         parameters = scriptParameters == null ? Collections.<AnalyzerScriptParameter>emptyList() : scriptParameters;
-        this.imports = imports == null || imports.isEmpty() ? Collections.<ImportPath>emptyList() : importPaths(imports);
     }
 
     private static List<ImportPath> importPaths(List<String> imports) {
@@ -42,10 +40,6 @@ public class JetScriptDefinition {
             paths.add(new ImportPath(anImport));
         }
         return paths;
-    }
-
-    public JetScriptDefinition(String extension, List<AnalyzerScriptParameter> scriptParameters) {
-        this(extension, scriptParameters, null);
     }
 
     public JetScriptDefinition(String extension, AnalyzerScriptParameter... scriptParameters) {
@@ -58,9 +52,5 @@ public class JetScriptDefinition {
 
     public String getExtension() {
         return extension;
-    }
-
-    public List<ImportPath> getImports() {
-        return imports;
     }
 }
