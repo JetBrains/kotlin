@@ -466,6 +466,7 @@ public class FunctionCodegen {
                 List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
                 for (int i = 0; i < paramDescrs.size(); i++) {
                     int size = argTypes[i + (hasReceiver ? 1 : 0)].getSize();
+                    frameMap.enter(paramDescrs.get(i),size);
                     var += size;
                 }
 

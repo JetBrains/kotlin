@@ -133,6 +133,10 @@ public class FunctionGenTest extends CodegenTestCase {
         blackBoxFile("regressions/kt1739.kt");
     }
 
+    public void testKt2271() {
+        blackBoxFile("regressions/kt2271.kt");
+    }
+
     public static class WithJavaFunctionGenTest extends CodegenTestCase {
         private void blackBoxFileWithJava(@NotNull String ktFile) throws Exception {
             File javaClassesTempDirectory = new File(FileUtil.getTempDirectory(), "java-classes");
