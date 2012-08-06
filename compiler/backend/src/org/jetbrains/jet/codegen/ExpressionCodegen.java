@@ -1881,10 +1881,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     private StackValue generateIn(JetBinaryExpression expression) {
         JetExpression expr = expression.getLeft();
+        boolean inverted = expression.getOperationReference().getReferencedNameElementType() == JetTokens.NOT_IN;
         if (isIntRangeExpr(expression.getRight())) {
             StackValue leftValue = StackValue.expression(Type.INT_TYPE, expression.getLeft(), this);
             JetBinaryExpression rangeExpression = (JetBinaryExpression) expression.getRight();
-            boolean inverted = expression.getOperationReference().getReferencedNameElementType() == JetTokens.NOT_IN;
             getInIntRange(leftValue, rangeExpression, inverted);
         }
         else {
@@ -1904,6 +1904,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 v.pop();
             }
             invokeFunctionNoParams(op, Type.BOOLEAN_TYPE, v);
+            if (inverted) {
+                invertBoolean();
+            }
         }
         return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
@@ -1943,8 +1946,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         v.and(Type.INT_TYPE);
         if (inverted) {
-            v.iconst(1);
-            v.xor(Type.INT_TYPE);
+            invertBoolean();
         }
     }
 
@@ -2042,8 +2044,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if (!leftNullable) {
             v.invokevirtual("java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
             if (opToken == JetTokens.EXCLEQ) {
-                v.iconst(1);
-                v.xor(Type.INT_TYPE);
+                invertBoolean();
             }
         }
         else {
@@ -2055,8 +2056,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 v.ifnull(leftNull);
                 v.invokevirtual("java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
                 if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
-                    v.iconst(1);
-                    v.xor(Type.INT_TYPE);
+                    invertBoolean();
                 }
                 Label end = new Label();
                 v.goTo(end);
@@ -2080,8 +2080,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 v.ifnull(leftNull);
                 v.invokevirtual("java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
                 if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
-                    v.iconst(1);
-                    v.xor(Type.INT_TYPE);
+                    invertBoolean();
                 }
                 Label end = new Label();
                 v.goTo(end);
@@ -3035,14 +3034,18 @@ The "returned" value of try expression with no finally is either the last expres
             while (rangeExpression instanceof JetParenthesizedExpression) {
                 rangeExpression = ((JetParenthesizedExpression)rangeExpression).getExpression();
             }
+            boolean inverted = conditionInRange.getOperationReference().getReferencedNameElementType() == JetTokens.NOT_IN;
             if (isIntRangeExpr(rangeExpression)) {
-                getInIntRange(new StackValue.Local(subjectLocal, subjectType), (JetBinaryExpression) rangeExpression, conditionInRange.getOperationReference().getReferencedNameElementType() == JetTokens.NOT_IN);
+                getInIntRange(new StackValue.Local(subjectLocal, subjectType), (JetBinaryExpression) rangeExpression, inverted);
             }
             else {
                 FunctionDescriptor op = (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, conditionInRange.getOperationReference());
                 genToJVMStack(rangeExpression);
                 new StackValue.Local(subjectLocal, subjectType).put(TYPE_OBJECT, v);
                 invokeFunctionNoParams(op, Type.BOOLEAN_TYPE, v);
+                if(inverted) {
+                    invertBoolean();
+                }
             }
             return StackValue.onStack(Type.BOOLEAN_TYPE);
         }
@@ -3063,6 +3066,11 @@ The "returned" value of try expression with no finally is either the last expres
         return generatePatternMatch(pattern, isNegated,
                                     subjectLocal == -1 ? null : StackValue.local(subjectLocal, subjectType),
                                     subjectIsNullable, nextEntry);
+    }
+
+    private void invertBoolean() {
+        v.iconst(1);
+        v.xor(Type.INT_TYPE);
     }
 
     private boolean isIntRangeExpr(JetExpression rangeExpression) {
