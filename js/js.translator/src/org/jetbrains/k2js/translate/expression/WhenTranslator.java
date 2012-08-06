@@ -16,9 +16,8 @@
 
 package org.jetbrains.k2js.translate.expression;
 
-import closurecompiler.internal.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
@@ -62,7 +61,7 @@ public final class WhenTranslator extends AbstractTranslator {
         JsExpression expressionToMatch = translateExpressionToMatch(whenExpression);
         this.expressionToMatch = expressionToMatch != null ? context.declareTemporary(expressionToMatch) : null;
         this.dummyCounter = context.declareTemporary(program().getNumberLiteral(0));
-        this.result = context.declareTemporary(program().getNullLiteral());
+        this.result = context.declareTemporary(JsLiteral.NULL);
     }
 
     @NotNull
@@ -92,11 +91,7 @@ public final class WhenTranslator extends AbstractTranslator {
 
     @NotNull
     private JsFor generateDummyFor() {
-        JsFor result = new JsFor();
-        result.setInitExpr(generateInitExpressions());
-        result.setIncrExpr(generateIncrementStatement());
-        result.setCondition(generateConditionStatement());
-        return result;
+        return new JsFor(generateInitExpressions(), generateIncrementStatement(), generateConditionStatement());
     }
 
     @NotNull
@@ -182,7 +177,7 @@ public final class WhenTranslator extends AbstractTranslator {
 
     @NotNull
     private static JsStatement addDummyBreakIfNeed(@NotNull JsStatement statement) {
-        return statement instanceof JsReturn ? statement : AstUtil.newBlock(statement, new JsBreak());
+        return statement instanceof JsReturn ? statement : new JsBlock(statement, new JsBreak());
     }
 
     @NotNull

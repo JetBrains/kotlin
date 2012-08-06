@@ -17,8 +17,8 @@
 package org.jetbrains.k2js.translate.utils;
 
 import com.google.common.collect.Lists;
-import com.google.dart.compiler.Source;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.common.SourceInfo;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,9 +75,9 @@ public final class ErrorReportingUtils {
         List<JsExpression> list = Lists.newArrayList(expression);
         list.addAll(arguments);
         for (JsExpression value : arguments) {
-            Source source = value.getSource();
-            if (source != null) {
-                return "at " + source + " " + value.getSourceLine() + ":" + value.getSourceColumn();
+            SourceInfo info = value.getSourceInfo();
+            if (info != null) {
+                return "at " + info.getSource().getUri() + " " + info.getLine() + ":" + info.getColumn();
             }
         }
         return "at unknown location";

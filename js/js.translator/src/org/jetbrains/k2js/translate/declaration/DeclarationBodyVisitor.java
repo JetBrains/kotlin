@@ -89,7 +89,7 @@ public final class DeclarationBodyVisitor extends TranslatorVisitor<List<JsPrope
         if (context.isEcma5()) {
             FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
             JsExpression methodBodyExpression = methodAsPropertyInitializer.getValueExpr();
-            methodAsPropertyInitializer.setValueExpr(JsAstUtils.createPropertyDataDescriptor(descriptor, methodBodyExpression, context));
+            methodAsPropertyInitializer.setValueExpr(JsAstUtils.createPropertyDataDescriptor(descriptor, methodBodyExpression));
         }
         return Collections.singletonList(methodAsPropertyInitializer);
     }

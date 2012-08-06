@@ -18,7 +18,6 @@ package org.jetbrains.k2js.translate.reference;
 
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -102,7 +101,7 @@ public final class CallTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression invokeCall() {
         JsInvocation callMethodInvocation = generateCallMethodInvocation();
-        List<JsExpression> parameters = Lists.<JsExpression>newArrayList(context().program().getNullLiteral());
+        List<JsExpression> parameters = Lists.<JsExpression>newArrayList(JsLiteral.NULL);
         parameters.addAll(arguments);
         setArguments(callMethodInvocation, parameters);
         return callMethodInvocation;
@@ -155,7 +154,7 @@ public final class CallTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression createConstructorCallExpression(@NotNull JsExpression constructorReference) {
         if (context().isEcma5() && !AnnotationsUtils.isNativeObject(resolvedCall.getCandidateDescriptor())) {
-            return AstUtil.newInvocation(constructorReference);
+            return new JsInvocation(constructorReference);
         }
         else {
             return new JsNew(constructorReference);

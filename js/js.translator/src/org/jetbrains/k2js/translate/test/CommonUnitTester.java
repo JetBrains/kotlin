@@ -16,13 +16,8 @@
 
 package org.jetbrains.k2js.translate.test;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsFunction;
-import com.google.dart.compiler.backend.js.ast.JsStringLiteral;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
-
-import static com.google.dart.compiler.util.AstUtil.newBlock;
-import static com.google.dart.compiler.util.AstUtil.newInvocation;
 
 /**
  * @author Pavel Talanov
@@ -32,9 +27,9 @@ public abstract class CommonUnitTester extends JSTester {
     @Override
     public void constructTestMethodInvocation(@NotNull JsExpression functionToTestCall,
             @NotNull JsStringLiteral testName) {
-        JsFunction functionToTest = new JsFunction(getContext().jsScope());
-        functionToTest.setBody(newBlock(functionToTestCall.makeStmt()));
-        getBlock().getStatements().add(newInvocation(getTestMethodRef(), testName, functionToTest).makeStmt());
+        JsFunction functionToTest = new JsFunction(getContext().scope());
+        functionToTest.setBody(new JsBlock(functionToTestCall.makeStmt()));
+        getBlock().getStatements().add(new JsInvocation(getTestMethodRef(), testName, functionToTest).makeStmt());
     }
 
     @NotNull

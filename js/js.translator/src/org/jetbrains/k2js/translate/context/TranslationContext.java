@@ -36,8 +36,7 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForEl
  *         <p/>
  *         All the info about the state of the translation process.
  */
-public final class TranslationContext {
-
+public class TranslationContext {
     @NotNull
     private final DynamicContext dynamicContext;
     @NotNull
@@ -71,8 +70,12 @@ public final class TranslationContext {
         aliasingContext = context;
     }
 
+    public DynamicContext dynamicContext() {
+        return dynamicContext;
+    }
+
     @NotNull
-    public TranslationContext contextWithScope(@NotNull NamingScope newScope, @NotNull JsBlock block) {
+    public TranslationContext contextWithScope(@NotNull JsScope newScope, @NotNull JsBlock block) {
         return new TranslationContext(staticContext, DynamicContext.newContext(newScope, block), aliasingContext);
     }
 
@@ -89,7 +92,7 @@ public final class TranslationContext {
     //TODO: consider passing a function here
     @NotNull
     public TranslationContext innerContextWithGivenScopeAndBlock(@NotNull JsScope scope, @NotNull JsBlock block) {
-        return contextWithScope(dynamicContext.getScope().innerScope(scope), block);
+        return contextWithScope(scope, block);
     }
 
     @NotNull
@@ -128,7 +131,7 @@ public final class TranslationContext {
     }
 
     @NotNull
-    public NamingScope getScopeForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+    public JsScope getScopeForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         return staticContext.getScopeForDescriptor(descriptor);
     }
 
@@ -173,8 +176,8 @@ public final class TranslationContext {
     }
 
     @NotNull
-    public JsScope jsScope() {
-        return dynamicContext.jsScope();
+    public JsScope scope() {
+        return dynamicContext.getScope();
     }
 
     @NotNull

@@ -18,7 +18,6 @@ package org.jetbrains.k2js.translate.expression.foreach;
 
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetForExpression;
@@ -92,7 +91,7 @@ public final class ArrayForTranslator extends ForTranslator {
         JsArrayAccess arrayAccess = new JsArrayAccess(loopRange.reference(), index.reference());
         JsStatement currentVar = newVar(parameterName, arrayAccess);
         JsStatement realBody = translateOriginalBodyExpression();
-        return AstUtil.newBlock(currentVar, realBody);
+        return new JsBlock(currentVar, realBody);
     }
 
     @NotNull

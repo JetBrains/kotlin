@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
@@ -83,7 +84,7 @@ public final class StringTemplateTranslator extends AbstractTranslator {
             JsExpression translatedExpression = Translation.translateAsExpression(entryExpression, context());
             JsNameRef toString = AstUtil.newQualifiedNameRef("toString");
             setQualifier(toString, translatedExpression);
-            append(AstUtil.newInvocation(toString));
+            append(new JsInvocation(toString));
         }
 
         @Override
