@@ -325,15 +325,6 @@ public class CallResolver {
             }
             completeTypeInferenceDependentOnExpectedTypeForCall(resolvedCall, context, tracing, successful, failed);
         }
-        if (resultsWithIncompleteTypeInference.getResultingCalls().size() > 1) {
-            for (ResolvedCallWithTrace<D> call : successful) {
-                if (call instanceof ResolvedCallImpl) {
-                    ((ResolvedCallImpl)call).addStatus(ResolutionStatus.TYPE_INFERENCE_ERROR);
-                    failed.add(call);
-                }
-            }
-            successful.clear();
-        }
         OverloadResolutionResultsImpl<D> results = computeResultAndReportErrors(context.trace, tracing, successful, failed);
         if (!results.isSingleResult()) {
             checkTypesWithNoCallee(context);

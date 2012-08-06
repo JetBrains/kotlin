@@ -1309,6 +1309,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inference/mapFunction.kt");
             }
             
+            @TestMetadata("mostSpecificAfterInference.kt")
+            public void testMostSpecificAfterInference() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inference/mostSpecificAfterInference.kt");
+            }
+            
             @TestMetadata("NoInferenceFromDeclaredBounds.kt")
             public void testNoInferenceFromDeclaredBounds() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inference/NoInferenceFromDeclaredBounds.kt");
