@@ -21,11 +21,14 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Assert;
+import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.ClassFileFactory;
+import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.compiler.PathManager;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
@@ -53,6 +56,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
 
     private JetCoreEnvironment environmentWithMockJdk = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_ONLY);
     private JetCoreEnvironment environmentWithFullJdk = JetTestUtils.createEnvironmentWithFullJdk(myTestRootDisposable);
+    private JetCoreEnvironment environmentWithFullJdkAndJUnit;
     
     private final Pattern packagePattern = Pattern.compile("package (.*)");
 
@@ -64,6 +68,16 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
 
     private CodegenTestsOnAndroidGenerator(PathManager pathManager) {
         this.pathManager = pathManager;
+
+        File junitJar = new File("libraries/lib/junit-4.9.jar");
+
+        if (!junitJar.exists()) {
+            throw new AssertionError();
+        }
+
+        environmentWithFullJdkAndJUnit = new JetCoreEnvironment(myTestRootDisposable, CompileCompilerDependenciesTest.compilerConfigurationForTests(
+                ConfigurationKind.ALL, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar(), junitJar));
+
     }
 
     private void generateOutputFiles() throws Throwable {
@@ -120,6 +134,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         Assert.assertNotNull("Folder with testData is empty: " + dir.getAbsolutePath(), files);
         Set<String> excludedFiles = SpecialFiles.getExcludedFiles();
         Set<String> filesCompiledWithoutStdLib = SpecialFiles.getFilesCompiledWithoutStdLib();
+        Set<String> filesCompiledWithJUnit = SpecialFiles.getFilesCompiledWithJUnit();
         for (File file : files) {
             if (excludedFiles.contains(file.getName())) {
                 continue;
@@ -137,6 +152,9 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                     final ClassFileFactory factory;
                     if (filesCompiledWithoutStdLib.contains(file.getName())) {
                         factory = getFactoryFromText(file.getAbsolutePath(), text, environmentWithMockJdk);
+                    }
+                    else if (filesCompiledWithJUnit.contains(file.getName())) {
+                        factory = getFactoryFromText(file.getAbsolutePath(), text, environmentWithFullJdkAndJUnit);
                     }
                     else {
                         factory = getFactoryFromText(file.getAbsolutePath(), text, environmentWithFullJdk);
