@@ -36,8 +36,6 @@ import java.util.List;
  *         Base class representing a configuration of translator.
  */
 public abstract class Config {
-
-    //NOTE: hard-coded in kotlin-lib files
     //NOTE: a hacky solution to be able to rerun code samples with lib loaded only once: used by tests and web demo
     @NotNull
     public static final String REWRITABLE_MODULE_NAME = "JS_TESTS";

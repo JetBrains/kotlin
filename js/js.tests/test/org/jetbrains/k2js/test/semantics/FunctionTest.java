@@ -16,13 +16,10 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import org.jetbrains.k2js.translate.context.Namer;
-
 /**
  * @author Pavel Talanov
  */
 public class FunctionTest extends AbstractExpressionTest {
-
     public FunctionTest() {
         super("function/");
     }
@@ -60,41 +57,34 @@ public class FunctionTest extends AbstractExpressionTest {
     }
 
     public void testEnclosingThis() throws Exception {
-        runFunctionOutputTest("enclosingThis.kt", Namer.getRootNamespaceName(), "box", "OK");
+        runFunctionOutputTest("enclosingThis.kt", "foo", "box", "OK");
     }
-
 
     public void testImplicitItParameter() throws Exception {
         fooBoxTest();
     }
 
-
     public void testDefaultParameters() throws Exception {
         fooBoxTest();
     }
-
 
     public void testFunctionLiteralAsLastParameter() throws Exception {
         fooBoxTest();
     }
 
-
     public void testNamedArguments() throws Exception {
         fooBoxTest();
     }
 
-
     public void testExpressionAsFunction() throws Exception {
         fooBoxTest();
     }
-
 
     public void testVararg() throws Exception {
         fooBoxTest();
     }
 
     public void testKT921() throws Exception {
-
         checkOutput("KT-921.kt", "1, end\n" +
                                  "1, 2, end\n" +
                                  "1, 2, 3, end\n" +
@@ -107,6 +97,10 @@ public class FunctionTest extends AbstractExpressionTest {
     }
 
     public void testFunctionInsideFunction() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testCallFunInInit() throws Exception {
         fooBoxTest();
     }
 }

@@ -16,10 +16,10 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
-import closurecompiler.internal.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsArrayAccess;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.util.AstUtil;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -29,6 +29,7 @@ import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInPropertyInt
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.CallStandardMethodIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.List;
 
@@ -76,8 +77,8 @@ public final class ArrayFIF extends CompositeFIF {
             assert arguments.size() == 2 : "Array set expression must have two arguments.";
             JsExpression indexExpression = arguments.get(0);
             JsExpression value = arguments.get(1);
-            JsArrayAccess arrayAccess = AstUtil.newArrayAccess(receiver, indexExpression);
-            return AstUtil.newAssignment(arrayAccess, value);
+            JsArrayAccess arrayAccess = new JsArrayAccess(receiver, indexExpression);
+            return JsAstUtils.assignment(arrayAccess, value);
         }
     };
 
@@ -91,8 +92,8 @@ public final class ArrayFIF extends CompositeFIF {
         add(pattern(ARRAYS, "get"), GET_INTRINSIC);
         add(pattern(ARRAYS, "set"), SET_INTRINSIC);
         add(pattern(ARRAYS, "<get-size>"), ARRAY_LENGTH_INTRINSIC);
-        add(pattern(ARRAYS, "<get-indices>"), new CallStandardMethodIntrinsic("Kotlin.arrayIndices", true, 0));
-        add(pattern(ARRAYS, "iterator"), new CallStandardMethodIntrinsic("Kotlin.arrayIterator", true, 0));
-        add(pattern(ARRAYS, "<init>"), new CallStandardMethodIntrinsic("Kotlin.arrayFromFun", false, 2));
+        add(pattern(ARRAYS, "<get-indices>"), new CallStandardMethodIntrinsic(new JsNameRef("arrayIndices", "Kotlin"), true, 0));
+        add(pattern(ARRAYS, "iterator"), new CallStandardMethodIntrinsic(new JsNameRef("arrayIterator", "Kotlin"), true, 0));
+        add(pattern(ARRAYS, "<init>"), new CallStandardMethodIntrinsic(new JsNameRef("arrayFromFun", "Kotlin"), false, 2));
     }
 }

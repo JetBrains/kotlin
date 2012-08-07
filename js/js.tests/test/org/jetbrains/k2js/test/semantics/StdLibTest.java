@@ -41,7 +41,7 @@ public final class StdLibTest extends SingleFileTranslationTest {
     }
 
     public void testBrowserDocumentAccessCompiles() throws Exception {
-        generateJavaScriptFiles("browserDocumentAccess.kt", MainCallParameters.noCall(), EcmaVersion.all());
+        generateJavaScriptFiles("browserDocumentAccess.kt", MainCallParameters.noCall(), DEFAULT_ECMA_VERSIONS);
     }
 
     @Override

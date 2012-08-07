@@ -16,12 +16,8 @@
 
 package org.jetbrains.k2js.facade;
 
-import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -30,20 +26,7 @@ import java.util.StringTokenizer;
  * @author Pavel Talanov
  */
 public final class FacadeUtils {
-
     private FacadeUtils() {
-    }
-
-    public static void writeCodeToFile(@NotNull String outputPath, @NotNull String programCode) throws IOException {
-        File file = new File(outputPath);
-        FileUtil.createParentDirs(file);
-        FileWriter writer = new FileWriter(file);
-        try {
-            writer.write(programCode);
-        }
-        finally {
-            writer.close();
-        }
     }
 
     @NotNull

@@ -16,120 +16,114 @@
 
 package org.jetbrains.k2js.translate.declaration;
 
-import com.google.common.collect.Lists;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.backend.js.ast.JsObjectLiteral;
-import com.google.dart.compiler.backend.js.ast.JsStatement;
-import com.google.dart.compiler.util.AstUtil;
+import com.google.dart.compiler.backend.js.ast.*;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
-import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getAllNonNativeNamespaceDescriptors;
+import static com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
 
 /**
  * @author Pavel Talanov
  */
 public final class NamespaceDeclarationTranslator extends AbstractTranslator {
+    private final Iterable<JetFile> files;
+    private final Map<NamespaceDescriptor,NamespaceTranslator> descriptorToTranslator =
+            new LinkedHashMap<NamespaceDescriptor, NamespaceTranslator>();
 
     public static List<JsStatement> translateFiles(@NotNull Collection<JetFile> files, @NotNull TranslationContext context) {
-        Set<NamespaceDescriptor> namespaceDescriptorSet = getAllNonNativeNamespaceDescriptors(context.bindingContext(), files);
-        return (new NamespaceDeclarationTranslator(Lists.newArrayList(namespaceDescriptorSet), context)).translate();
+        return new NamespaceDeclarationTranslator(files, context).translate();
     }
 
-    @NotNull
-    private final ClassDeclarationTranslator classDeclarationTranslator;
-    @NotNull
-    private final List<NamespaceDescriptor> namespaceDescriptors;
-
-    private NamespaceDeclarationTranslator(@NotNull List<NamespaceDescriptor> namespaceDescriptors,
-                                           @NotNull TranslationContext context) {
+    private NamespaceDeclarationTranslator(@NotNull Iterable<JetFile> files, @NotNull TranslationContext context) {
         super(context);
-        this.namespaceDescriptors = namespaceDescriptors;
-        classDeclarationTranslator = new ClassDeclarationTranslator(context);
+
+        this.files = files;
     }
 
     @NotNull
     private List<JsStatement> translate() {
-        List<JsStatement> result = new ArrayList<JsStatement>();
-        result.add(classDeclarationTranslator.getDeclarationsStatement());
-        namespacesDeclarations(result);
-        classDeclarationTranslator.generateDeclarations();
-        return result;
-    }
+        // predictable order
+        Map<NamespaceDescriptor, List<JsExpression>> descriptorToDefineInvocation = new THashMap<NamespaceDescriptor, List<JsExpression>>();
+        JsObjectLiteral rootNamespaceDefinition = null;
 
-    private void namespacesDeclarations(List<JsStatement> statements) {
-        List<NamespaceTranslator> namespaceTranslators = getTranslatorsForNonEmptyNamespaces();
-        declarationStatements(namespaceTranslators, statements);
-        initializeStatements(namespaceTranslators, statements);
-    }
+        ClassDeclarationTranslator classDeclarationTranslator = new ClassDeclarationTranslator(context());
+        for (JetFile file : files) {
+            NamespaceDescriptor descriptor = context().bindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
+            assert descriptor != null;
+            NamespaceTranslator translator = descriptorToTranslator.get(descriptor);
+            if (translator == null) {
+                if (rootNamespaceDefinition == null) {
+                    rootNamespaceDefinition = getRootPackage(descriptorToDefineInvocation, descriptor);
+                }
+                translator = new NamespaceTranslator(descriptor, classDeclarationTranslator, context());
+                descriptorToTranslator.put(descriptor, translator);
+            }
 
-    @NotNull
-    private List<NamespaceTranslator> getTranslatorsForNonEmptyNamespaces() {
-        List<NamespaceTranslator> namespaceTranslators = Lists.newArrayList();
-        for (NamespaceDescriptor descriptor : filterNonEmptyNamespaces(filterTopLevelAndRootNamespaces(namespaceDescriptors))) {
-            namespaceTranslators.add(new NamespaceTranslator(descriptor, classDeclarationTranslator, context()));
+            translator.translate(file);
         }
-        return namespaceTranslators;
-    }
 
-    private void declarationStatements(@NotNull List<NamespaceTranslator> namespaceTranslators,
-            @NotNull List<JsStatement> statements) {
-        JsObjectLiteral objectLiteral = new JsObjectLiteral();
-        JsNameRef packageMapNameRef = context().jsScope().declareName("_").makeRef();
-        JsExpression packageMapValue;
-        if (context().isNotEcma3()) {
-            packageMapValue = AstUtil.newInvocation(JsAstUtils.CREATE_OBJECT, context().program().getNullLiteral(), objectLiteral);
+        if (rootNamespaceDefinition == null) {
+            return Collections.emptyList();
+        }
+
+        JsVars vars = new JsVars(true);
+        List<JsStatement> result;
+        if (context().isEcma5()) {
+            result = Collections.<JsStatement>singletonList(vars);
         }
         else {
-            packageMapValue = objectLiteral;
+            result = new ArrayList<JsStatement>();
+            result.add(vars);
         }
-        statements.add(JsAstUtils.newVar(packageMapNameRef.getName(), packageMapValue));
 
-        for (NamespaceTranslator translator : namespaceTranslators) {
-            translator.addNamespaceDeclaration(objectLiteral.getPropertyInitializers());
+        classDeclarationTranslator.generateDeclarations();
+        for (NamespaceTranslator translator : descriptorToTranslator.values()) {
+            translator.add(descriptorToDefineInvocation, result);
         }
-    }
 
-    private static void initializeStatements(@NotNull List<NamespaceTranslator> namespaceTranslators,
-            @NotNull List<JsStatement> statements) {
-        for (NamespaceTranslator translator : namespaceTranslators) {
-            for (JsExpression expression : translator.getInitializers()) {
-                statements.add(expression.makeStmt());
-            }
-        }
-    }
-
-    @NotNull
-    private static List<NamespaceDescriptor> filterTopLevelAndRootNamespaces(@NotNull List<NamespaceDescriptor> namespaceDescriptors) {
-        List<NamespaceDescriptor> result = Lists.newArrayList();
-        for (NamespaceDescriptor descriptor : namespaceDescriptors) {
-            if (DescriptorUtils.isTopLevelNamespace(descriptor) || DescriptorUtils.isRootNamespace(descriptor)) {
-                result.add(descriptor);
-            }
-        }
+        vars.addIfHasInitializer(context().literalFunctionTranslator().getDeclaration());
+        vars.addIfHasInitializer(classDeclarationTranslator.getDeclaration());
+        vars.addIfHasInitializer(getDeclaration(rootNamespaceDefinition));
         return result;
     }
 
-    @NotNull
-    private List<NamespaceDescriptor> filterNonEmptyNamespaces(@NotNull List<NamespaceDescriptor> namespaceDescriptors) {
-        List<NamespaceDescriptor> result = Lists.newArrayList();
-        for (NamespaceDescriptor descriptor : namespaceDescriptors) {
-            if (!JsDescriptorUtils.isNamespaceEmpty(descriptor, context().bindingContext())) {
-                result.add(descriptor);
-            }
+    private JsObjectLiteral getRootPackage(Map<NamespaceDescriptor, List<JsExpression>> descriptorToDefineInvocation,
+            NamespaceDescriptor descriptor) {
+        NamespaceDescriptor rootNamespace = descriptor;
+        while (rootNamespace.getContainingDeclaration() instanceof NamespaceDescriptor) {
+            rootNamespace = (NamespaceDescriptor) rootNamespace.getContainingDeclaration();
         }
-        return result;
+
+        List<JsExpression> args;
+        JsObjectLiteral rootNamespaceDefinition = new JsObjectLiteral(true);
+        if (context().isEcma5()) {
+            args = Arrays.<JsExpression>asList(JsLiteral.NULL, rootNamespaceDefinition);
+        }
+        else {
+            args = Collections.<JsExpression>singletonList(rootNamespaceDefinition);
+        }
+
+        descriptorToDefineInvocation.put(rootNamespace, args);
+        return rootNamespaceDefinition;
+    }
+
+    private JsVar getDeclaration(@NotNull JsObjectLiteral rootNamespaceDefinition) {
+        JsExpression packageMapValue;
+        if (context().isEcma5()) {
+            packageMapValue = new JsInvocation(JsAstUtils.CREATE_OBJECT, JsLiteral.NULL, rootNamespaceDefinition);
+        }
+        else {
+            packageMapValue = rootNamespaceDefinition;
+        }
+        return new JsVar(context().scope().declareName(Namer.getRootNamespaceName()), packageMapValue);
     }
 }

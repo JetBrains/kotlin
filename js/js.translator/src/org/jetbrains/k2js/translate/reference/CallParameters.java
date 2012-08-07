@@ -24,13 +24,10 @@ import org.jetbrains.annotations.Nullable;
  * @author Pavel Talanov
  */
 public final class CallParameters {
-
     @Nullable
     private final JsExpression receiver;
-
     @NotNull
     private final JsExpression functionReference;
-
     @Nullable
     private final JsExpression thisObject;
 

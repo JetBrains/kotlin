@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -36,7 +35,6 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.getTypeReference;
  * @author Pavel Talanov
  */
 public final class PatternTranslator extends AbstractTranslator {
-
     @NotNull
     public static PatternTranslator newInstance(@NotNull TranslationContext context) {
         return new PatternTranslator(context);
@@ -85,8 +83,7 @@ public final class PatternTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression translateAsIsCheck(@NotNull JsExpression expressionToMatch,
                                             @NotNull JetTypePattern pattern) {
-        JsInvocation isCheck = AstUtil.newInvocation(context().namer().isOperationReference(),
-                                                     expressionToMatch, getClassReference(pattern));
+        JsInvocation isCheck = new JsInvocation(context().namer().isOperationReference(), expressionToMatch, getClassReference(pattern));
         if (isNullable(pattern)) {
             return addNullCheck(expressionToMatch, isCheck);
         }
@@ -108,8 +105,8 @@ public final class PatternTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsExpression addNullCheck(@NotNull JsExpression expressionToMatch, @NotNull JsInvocation isCheck) {
-        return or(TranslationUtils.isNullCheck(context(), expressionToMatch), isCheck);
+    private static JsExpression addNullCheck(@NotNull JsExpression expressionToMatch, @NotNull JsInvocation isCheck) {
+        return or(TranslationUtils.isNullCheck(expressionToMatch), isCheck);
     }
 
     private boolean isNullable(JetTypePattern pattern) {
@@ -134,15 +131,15 @@ public final class PatternTranslator extends AbstractTranslator {
         JsExpression expressionToMatchAgainst = translateExpressionForExpressionPattern(pattern);
         JsBinaryOperation eq = equality(expressionToMatch, expressionToMatchAgainst);
         // Uncaught TypeError: Cannot convert object to primitive value
-        if (context().isEcma5()) {
-            if (expressionToMatchAgainst instanceof JsNumberLiteral ||
-                expressionToMatchAgainst instanceof JsStringLiteral ||
-                expressionToMatchAgainst instanceof JsBooleanLiteral) {
-                JsNameRef valueOf = new JsNameRef("valueOf");
-                valueOf.setQualifier(expressionToMatch);
-                return and(valueOf, eq);
-            }
-        }
+        //if (context().isEcma5()) {
+        //    if (expressionToMatchAgainst instanceof JsNumberLiteral ||
+        //        expressionToMatchAgainst instanceof JsStringLiteral ||
+        //        expressionToMatchAgainst instanceof JsLiteral.JsBooleanLiteral) {
+        //        JsNameRef valueOf = new JsNameRef("valueOf");
+        //        valueOf.setQualifier(expressionToMatch);
+        //        return and(valueOf, eq);
+        //    }
+        //}
 
         return eq;
     }

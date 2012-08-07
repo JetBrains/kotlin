@@ -22,7 +22,6 @@ import org.mozilla.javascript.JavaScriptException;
  * @author Pavel Talanov
  */
 public final class ArrayListTest extends JavaClassesTest {
-
     public ArrayListTest() {
         super("arrayList/");
     }
@@ -59,8 +58,8 @@ public final class ArrayListTest extends JavaClassesTest {
         try {
             fooBoxTest();
             fail();
-        } catch (JavaScriptException e) {
-
+        }
+        catch (JavaScriptException ignored) {
         }
     }
 }

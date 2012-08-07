@@ -16,11 +16,8 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
-import closurecompiler.internal.com.google.common.collect.Sets;
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.util.AstUtil;
+import com.google.common.collect.Sets;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -35,6 +32,7 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.subtract;
 
 /**
@@ -56,8 +54,8 @@ public final class NumberConversionFIF extends CompositeFIF {
     private static final NamePredicate FLOATING_POINT_CONVERSIONS = new NamePredicate(OperatorConventions.FLOAT, OperatorConventions.DOUBLE);
 
     @NotNull
-    private static final NamePredicate INTEGER_CONVERSIONS = new NamePredicate(OperatorConventions.INT, OperatorConventions.SHORT,
-                                                                           OperatorConventions.BYTE);
+    private static final NamePredicate INTEGER_CONVERSIONS =
+            new NamePredicate(OperatorConventions.INT, OperatorConventions.SHORT, OperatorConventions.BYTE);
 
     @NotNull
     private static final FunctionIntrinsic RETURN_RECEIVER = new FunctionIntrinsic() {
@@ -86,9 +84,10 @@ public final class NumberConversionFIF extends CompositeFIF {
                 @NotNull TranslationContext context) {
             assert receiver != null;
             assert arguments.isEmpty();
-            TemporaryVariable toConvert = context.declareTemporary(receiver);
-            JsBinaryOperation fractional = new JsBinaryOperation(JsBinaryOperator.MOD, toConvert.reference(), context.program().getNumberLiteral(1));
-            return AstUtil.newSequence(toConvert.assignmentExpression(), subtract(toConvert.reference(), fractional));
+            JsNameRef toConvertReference = context.declareTemporary(null).reference();
+            JsBinaryOperation fractional =
+                    new JsBinaryOperation(JsBinaryOperator.MOD, toConvertReference, context.program().getNumberLiteral(1));
+            return subtract(assignment(toConvertReference, receiver), fractional);
         }
     };
     @NotNull

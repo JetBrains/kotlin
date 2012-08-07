@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsLiteral;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
@@ -26,21 +27,18 @@ import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
-
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getDeclarationDescriptorForExtensionCallReceiver;
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
 /**
  * @author Pavel Talanov
  */
 public final class CallParametersResolver {
-
     public static CallParameters resolveCallParameters(@Nullable JsExpression qualifier,
             @Nullable JsExpression callee,
             @NotNull CallableDescriptor descriptor,
             @NotNull ResolvedCall<? extends CallableDescriptor> call,
             @NotNull TranslationContext context) {
-        return (new CallParametersResolver(qualifier, callee, descriptor, call, context)).resolve();
+        return new CallParametersResolver(qualifier, callee, descriptor, call, context).resolve();
     }
 
     // the actual qualifier for the call at the call site
@@ -72,9 +70,7 @@ public final class CallParametersResolver {
     @NotNull
     private CallParameters resolve() {
         JsExpression receiver = isExtensionCall ? getExtensionFunctionCallReceiver() : null;
-        JsExpression functionReference = getFunctionReference();
-        JsExpression thisObject = getThisObject();
-        return new CallParameters(receiver, functionReference, thisObject);
+        return new CallParameters(receiver, getFunctionReference(), getThisObject());
     }
 
     @NotNull
@@ -94,11 +90,7 @@ public final class CallParametersResolver {
         if (qualifier != null && !isExtensionCall) {
             return qualifier;
         }
-        JsExpression result = TranslationUtils.resolveThisObjectForResolvedCall(resolvedCall, context);
-        if (result != null) {
-            return result;
-        }
-        return null;
+        return context.thisAliasProvider().get(resolvedCall);
     }
 
     @NotNull
@@ -106,7 +98,7 @@ public final class CallParametersResolver {
         if (qualifier != null) {
             return qualifier;
         }
-        DeclarationDescriptor receiverDescriptor = getDeclarationDescriptorForExtensionCallReceiver(resolvedCall);
-        return TranslationUtils.getThisObject(context, receiverDescriptor);
+        DeclarationDescriptor receiverDescriptor = JsDescriptorUtils.getDeclarationDescriptorForExtensionCallReceiver(resolvedCall);
+        return context.getThisObject(receiverDescriptor);
     }
 }

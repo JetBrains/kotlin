@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-var foo = Kotlin.definePackage({box:function(){
-  return !false;
+var foo = Kotlin.definePackage({initialize: function () {
+}, box: function () {
+    return !false;
 }
-});
+                                 });
 
 function test() {
     return foo.box()

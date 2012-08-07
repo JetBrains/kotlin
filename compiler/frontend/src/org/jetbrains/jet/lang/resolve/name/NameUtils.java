@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 public class NameUtils {
 
     public static boolean isValidIdentified(@NotNull String name) {
-        return name.length() > 0 && !name.startsWith("<") && !name.contains(".") && !name.contains("/");
+        return !name.isEmpty() && !name.startsWith("<") && !name.contains(".") && !name.contains("/");
     }
 
     public static void requireIdentifier(@NotNull String name) {
@@ -32,5 +32,4 @@ public class NameUtils {
             throw new IllegalArgumentException("invalid identifier: " + name);
         }
     }
-
 }

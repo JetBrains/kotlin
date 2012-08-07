@@ -50,5 +50,4 @@ public final class OverloadedIncrementTranslator extends IncrementTranslator {
                 .descriptor(operationDescriptor)
                 .translate();
     }
-
 }
