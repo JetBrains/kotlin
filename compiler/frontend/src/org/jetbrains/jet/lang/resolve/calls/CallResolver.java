@@ -591,7 +591,7 @@ public class CallResolver {
         
         OverloadResolutionResultsImpl<F> results = computeResultAndReportErrors(task.trace, task.tracing, successfulCandidates,
                                                                                 failedCandidates);
-        if (!results.isSingleResult() && results.getResultCode() != OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE) {
+        if (!results.isSingleResult() && !results.isIncomplete()) {
             checkTypesWithNoCallee(task.toBasic());
         }
         return results;
@@ -1033,7 +1033,7 @@ public class CallResolver {
                     }
                     if (!thisLevel.isEmpty()) {
                         OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false);
-                        if (results.isSuccess()) {
+                        if (results.isSingleResult()) {
                             results.getResultingCall().getTrace().commit();
                             return OverloadResolutionResultsImpl.singleFailedCandidate(results.getResultingCall());
                         }
@@ -1058,9 +1058,6 @@ public class CallResolver {
 
             ResolvedCallWithTrace<D> failed = failedCandidates.iterator().next();
             failed.getTrace().commit();
-            if (failed.getStatus() != ResolutionStatus.STRONG_ERROR && failed.hasUnknownTypeParameters()) {
-                return OverloadResolutionResultsImpl.incompleteTypeInference(failed);
-            }
             return OverloadResolutionResultsImpl.singleFailedCandidate(failed);
         }
         else {
@@ -1078,13 +1075,9 @@ public class CallResolver {
 
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> chooseAndReportMaximallySpecific(Set<ResolvedCallWithTrace<D>> candidates, boolean discriminateGenerics) {
         if (candidates.size() != 1) {
-            boolean dirty = false;
             Set<ResolvedCallWithTrace<D>> cleanCandidates = Sets.newLinkedHashSet(candidates);
             for (Iterator<ResolvedCallWithTrace<D>> iterator = cleanCandidates.iterator(); iterator.hasNext(); ) {
                 ResolvedCallWithTrace<D> candidate = iterator.next();
-                if (candidate.hasUnknownTypeParameters()) {
-                    dirty = true;
-                }
                 if (candidate.isDirty()) {
                     iterator.remove();
                 }
@@ -1107,10 +1100,6 @@ public class CallResolver {
 
             Set<ResolvedCallWithTrace<D>> noOverrides = OverridingUtil.filterOverrides(candidates, MAP_TO_RESULT);
 
-            if (dirty) {
-                return OverloadResolutionResultsImpl.incompleteTypeInference(candidates);
-            }
-
             return OverloadResolutionResultsImpl.ambiguity(noOverrides);
         }
         else {
@@ -1118,9 +1107,6 @@ public class CallResolver {
 
             TemporaryBindingTrace temporaryTrace = result.getTrace();
             temporaryTrace.commit();
-            if (result.hasUnknownTypeParameters()) {
-                return OverloadResolutionResultsImpl.incompleteTypeInference(result);
-            }
 
             return OverloadResolutionResultsImpl.success(result);
         }
