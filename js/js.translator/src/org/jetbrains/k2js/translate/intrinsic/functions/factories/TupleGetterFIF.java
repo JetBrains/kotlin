@@ -16,8 +16,8 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
-import closurecompiler.internal.com.google.common.collect.Lists;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
