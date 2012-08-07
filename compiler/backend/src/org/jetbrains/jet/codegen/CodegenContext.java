@@ -20,9 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
@@ -43,9 +41,6 @@ public abstract class CodegenContext {
     private final CodegenContext parentContext;
     public  final ObjectOrClosureCodegen closure;
 
-    HashMap<JetType,Integer> typeInfoConstants;
-    HashMap<Integer,JetType> reverseTypeInfoConstants;
-    int typeInfoConstantsCount;
     HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors;
 
     protected StackValue outerExpression;
@@ -183,75 +178,16 @@ public abstract class CodegenContext {
         if (accessor != null) { return accessor; }
 
         if (descriptor instanceof SimpleFunctionDescriptor) {
-            SimpleFunctionDescriptorImpl myAccessor = new SimpleFunctionDescriptorImpl(contextDescriptor,
-                    Collections.<AnnotationDescriptor>emptyList(),
-                    Name.identifier(descriptor.getName() + "$b$" + getHierarchyCount() + "$" + accessors.size()),
-                    CallableMemberDescriptor.Kind.DECLARATION);
-            FunctionDescriptor fd = (SimpleFunctionDescriptor) descriptor;
-            myAccessor.initialize(fd.getReceiverParameter().exists() ? fd.getReceiverParameter().getType() : null,
-                                  fd.getExpectedThisObject(),
-                                  fd.getTypeParameters(),
-                                  fd.getValueParameters(),
-                                  fd.getReturnType(),
-                                  Modality.FINAL,
-                                  Visibilities.PUBLIC,
-                                  /*isInline = */ false);
-            accessor = myAccessor;
+            accessor = new AccessorForFunctionDescriptor(descriptor, contextDescriptor, accessors.size());
         }
         else if (descriptor instanceof PropertyDescriptor) {
-            PropertyDescriptor pd = (PropertyDescriptor) descriptor;
-            PropertyDescriptor myAccessor = new PropertyDescriptor(contextDescriptor,
-                    Collections.<AnnotationDescriptor>emptyList(),
-                    Modality.FINAL,
-                    Visibilities.PUBLIC,
-                    pd.isVar(),
-                    pd.isObjectDeclaration(),
-                    Name.identifier(pd.getName() + "$b$" + getHierarchyCount() + "$" + accessors.size()),
-                    CallableMemberDescriptor.Kind.DECLARATION
-            );
-            JetType receiverType = pd.getReceiverParameter().exists() ? pd.getReceiverParameter().getType() : null;
-            myAccessor.setType(pd.getType(), Collections.<TypeParameterDescriptorImpl>emptyList(), pd.getExpectedThisObject(), receiverType);
-
-            PropertyGetterDescriptor pgd = new PropertyGetterDescriptor(
-                        myAccessor, Collections.<AnnotationDescriptor>emptyList(),
-                        Modality.FINAL,
-                        Visibilities.PUBLIC,
-                    false, false, CallableMemberDescriptor.Kind.DECLARATION);
-            pgd.initialize(myAccessor.getType());
-
-            PropertySetterDescriptor psd = new PropertySetterDescriptor(
-                    myAccessor, Collections.<AnnotationDescriptor>emptyList(),
-                        Modality.FINAL,
-                        Visibilities.PUBLIC,
-                    false, false, CallableMemberDescriptor.Kind.DECLARATION);
-
-            myAccessor.initialize(pgd, psd);
-            accessor = myAccessor;
+            accessor = new AccessorForPropertyDescriptor((PropertyDescriptor) descriptor, contextDescriptor,accessors.size());
         }
         else {
             throw new UnsupportedOperationException();
         }
         accessors.put(descriptor, accessor);
         return accessor;
-    }
-
-    private int getHierarchyCount() {
-        ClassDescriptor descriptor = getThisDescriptor();
-        int c = 0;
-        while(descriptor != null) {
-            Collection<? extends JetType> supertypes = descriptor.getDefaultType().getConstructor().getSupertypes();
-            if (supertypes.isEmpty()) {
-                break;
-            }
-            c++;
-            for (JetType supertype : supertypes) {
-                descriptor = (ClassDescriptor) supertype.getConstructor().getDeclarationDescriptor();
-                if (descriptor.getKind() == ClassKind.CLASS) {
-                    break;
-                }
-            }
-        }
-        return c;
     }
 
     public StackValue getReceiverExpression(JetTypeMapper typeMapper) {

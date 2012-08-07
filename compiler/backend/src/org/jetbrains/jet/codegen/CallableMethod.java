@@ -67,7 +67,7 @@ public class CallableMethod implements Callable {
         return owner;
     }
 
-    @NotNull
+    @Nullable
     public JvmClassName getDefaultImplParam() {
         return defaultImplParam;
     }
@@ -96,6 +96,7 @@ public class CallableMethod implements Callable {
         v.visitMethodInsn(getInvokeOpcode(), owner.getInternalName(), getSignature().getAsmMethod().getName(), getSignature().getAsmMethod().getDescriptor());
     }
 
+    @Nullable
     public Type getGenerateCalleeType() {
         return generateCalleeType;
     }
@@ -120,10 +121,6 @@ public class CallableMethod implements Callable {
 
     public boolean isNeedsThis() {
         return thisClass != null && generateCalleeType == null;
-    }
-
-    public boolean isNeedsReceiver() {
-        return receiverParameterType != null;
     }
 
     public Type getReturnType() {

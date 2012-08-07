@@ -274,10 +274,9 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 BuiltinsScopeExtensionMode.ALL);
         analyzeExhaust.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
-        GenerationState state = new GenerationState(myEnvironment.getProject(), classBuilderFactory, analyzeExhaust, myFiles.getPsiFiles());
-        state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
-        alreadyGenerated = state;
-        return state;
+        alreadyGenerated = new GenerationState(myEnvironment.getProject(), classBuilderFactory, analyzeExhaust, myFiles.getPsiFiles());
+        alreadyGenerated.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
+        return alreadyGenerated;
     }
 
     protected Class generateNamespaceClass() {
