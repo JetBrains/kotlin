@@ -344,7 +344,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 Method method = typeMapper.mapGetterSignature(bridge, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
                 JvmPropertyAccessorSignature originalSignature = typeMapper.mapGetterSignature(original, OwnerKind.IMPLEMENTATION);
                 Method originalMethod = originalSignature.getJvmMethodSignature().getAsmMethod();
-                MethodVisitor mv = v.newMethod(null, ACC_BRIDGE | ACC_STATIC, method.getName(), method.getDescriptor(), null, null);
+                MethodVisitor mv = v.newMethod(null, ACC_BRIDGE | ACC_SYNTHETIC | ACC_STATIC, method.getName(), method.getDescriptor(), null, null);
                 PropertyCodegen.generateJetPropertyAnnotation(mv, originalSignature.getPropertyTypeKotlinSignature(),
                                                               originalSignature.getJvmMethodSignature().getKotlinTypeParameter(),
                                                               original, ((PropertyDescriptor) entry.getValue()).getGetter().getVisibility());
