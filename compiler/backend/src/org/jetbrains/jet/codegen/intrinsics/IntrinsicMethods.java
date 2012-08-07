@@ -44,8 +44,7 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod UNARY_PLUS = new UnaryPlus();
     private static final IntrinsicMethod NUMBER_CAST = new NumberCast();
     private static final IntrinsicMethod INV = new Inv();
-    private static final IntrinsicMethod UP_TO = new UpTo(true);
-    private static final IntrinsicMethod DOWN_TO = new UpTo(false);
+    private static final IntrinsicMethod RANGE_TO = new RangeTo();
     private static final IntrinsicMethod INC = new Increment(1);
     private static final IntrinsicMethod DEC = new Increment(-1);
     private static final IntrinsicMethod HASH_CODE = new HashCode();
@@ -93,9 +92,7 @@ public class IntrinsicMethods {
             declareIntrinsicFunction(type, Name.identifier("plus"), 0, UNARY_PLUS);
             declareIntrinsicFunction(type, Name.identifier("minus"), 0, UNARY_MINUS);
             declareIntrinsicFunction(type, Name.identifier("inv"), 0, INV);
-            declareIntrinsicFunction(type, Name.identifier("rangeTo"), 1, UP_TO);
-            declareIntrinsicFunction(type, Name.identifier("upto"), 1, UP_TO);
-            declareIntrinsicFunction(type, Name.identifier("downto"), 1, DOWN_TO);
+            declareIntrinsicFunction(type, Name.identifier("rangeTo"), 1, RANGE_TO);
             declareIntrinsicFunction(type, Name.identifier("inc"), 0, INC);
             declareIntrinsicFunction(type, Name.identifier("dec"), 0, DEC);
             declareIntrinsicFunction(type, Name.identifier("hashCode"), 0, HASH_CODE);

@@ -50,7 +50,6 @@ public final class FunctionIntrinsics {
         register(ArrayFIF.INSTANCE);
         register(TopLevelFIF.INSTANCE);
         register(NumberConversionFIF.INSTANCE);
-        register(RangesFIF.INSTANCE);
     }
 
     private void register(@NotNull FunctionIntrinsicFactory instance) {

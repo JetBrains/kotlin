@@ -54,13 +54,6 @@ public final class jet.Byte : jet.Number, jet.Comparable<jet.Byte> {
     public final fun div(/*0*/ other: jet.Int): jet.Int
     public final fun div(/*0*/ other: jet.Long): jet.Long
     public final fun div(/*0*/ other: jet.Short): jet.Int
-    public final fun downto(/*0*/ other: jet.Byte): jet.ByteRange
-    public final fun downto(/*0*/ other: jet.Char): jet.CharRange
-    public final fun downto(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun downto(/*0*/ other: jet.Float): jet.FloatRange
-    public final fun downto(/*0*/ other: jet.Int): jet.IntRange
-    public final fun downto(/*0*/ other: jet.Long): jet.LongRange
-    public final fun downto(/*0*/ other: jet.Short): jet.ShortRange
     public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public open override /*1*/ fun hashCode(): jet.Int
     public final fun inc(): jet.Byte
@@ -108,13 +101,6 @@ public final class jet.Byte : jet.Number, jet.Comparable<jet.Byte> {
     public open override /*1*/ fun toInt(): jet.Int
     public open override /*1*/ fun toLong(): jet.Long
     public open override /*1*/ fun toShort(): jet.Short
-    public final fun upto(/*0*/ other: jet.Byte): jet.ByteRange
-    public final fun upto(/*0*/ other: jet.Char): jet.CharRange
-    public final fun upto(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun upto(/*0*/ other: jet.Float): jet.FloatRange
-    public final fun upto(/*0*/ other: jet.Int): jet.IntRange
-    public final fun upto(/*0*/ other: jet.Long): jet.LongRange
-    public final fun upto(/*0*/ other: jet.Short): jet.ShortRange
 }
 public final class jet.ByteArray : jet.Any {
     public final /*constructor*/ fun <init>(/*0*/ size: jet.Int): jet.ByteArray
@@ -161,13 +147,6 @@ public final class jet.Char : jet.Number, jet.Comparable<jet.Char> {
     public final fun div(/*0*/ other: jet.Int): jet.Int
     public final fun div(/*0*/ other: jet.Long): jet.Long
     public final fun div(/*0*/ other: jet.Short): jet.Int
-    public final fun downto(/*0*/ other: jet.Byte): jet.CharRange
-    public final fun downto(/*0*/ other: jet.Char): jet.CharRange
-    public final fun downto(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun downto(/*0*/ other: jet.Float): jet.FloatRange
-    public final fun downto(/*0*/ other: jet.Int): jet.IntRange
-    public final fun downto(/*0*/ other: jet.Long): jet.LongRange
-    public final fun downto(/*0*/ other: jet.Short): jet.ShortRange
     public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public open override /*1*/ fun hashCode(): jet.Int
     public final fun inc(): jet.Char
@@ -212,13 +191,6 @@ public final class jet.Char : jet.Number, jet.Comparable<jet.Char> {
     public open override /*1*/ fun toInt(): jet.Int
     public open override /*1*/ fun toLong(): jet.Long
     public open override /*1*/ fun toShort(): jet.Short
-    public final fun upto(/*0*/ other: jet.Byte): jet.CharRange
-    public final fun upto(/*0*/ other: jet.Char): jet.CharRange
-    public final fun upto(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun upto(/*0*/ other: jet.Float): jet.FloatRange
-    public final fun upto(/*0*/ other: jet.Int): jet.IntRange
-    public final fun upto(/*0*/ other: jet.Long): jet.LongRange
-    public final fun upto(/*0*/ other: jet.Short): jet.ShortRange
 }
 public final class jet.CharArray : jet.Any {
     public final /*constructor*/ fun <init>(/*0*/ size: jet.Int): jet.CharArray
@@ -274,13 +246,6 @@ public final class jet.Double : jet.Number, jet.Comparable<jet.Double> {
     public final fun div(/*0*/ other: jet.Int): jet.Double
     public final fun div(/*0*/ other: jet.Long): jet.Double
     public final fun div(/*0*/ other: jet.Short): jet.Double
-    public final fun downto(/*0*/ other: jet.Byte): jet.DoubleRange
-    public final fun downto(/*0*/ other: jet.Char): jet.DoubleRange
-    public final fun downto(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun downto(/*0*/ other: jet.Float): jet.DoubleRange
-    public final fun downto(/*0*/ other: jet.Int): jet.DoubleRange
-    public final fun downto(/*0*/ other: jet.Long): jet.DoubleRange
-    public final fun downto(/*0*/ other: jet.Short): jet.DoubleRange
     public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public open override /*1*/ fun hashCode(): jet.Int
     public final fun inc(): jet.Double
@@ -327,13 +292,6 @@ public final class jet.Double : jet.Number, jet.Comparable<jet.Double> {
     public open override /*1*/ fun toInt(): jet.Int
     public open override /*1*/ fun toLong(): jet.Long
     public open override /*1*/ fun toShort(): jet.Short
-    public final fun upto(/*0*/ other: jet.Byte): jet.DoubleRange
-    public final fun upto(/*0*/ other: jet.Char): jet.DoubleRange
-    public final fun upto(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun upto(/*0*/ other: jet.Float): jet.DoubleRange
-    public final fun upto(/*0*/ other: jet.Int): jet.DoubleRange
-    public final fun upto(/*0*/ other: jet.Long): jet.DoubleRange
-    public final fun upto(/*0*/ other: jet.Short): jet.DoubleRange
 }
 public final class jet.DoubleArray : jet.Any {
     public final /*constructor*/ fun <init>(/*0*/ size: jet.Int): jet.DoubleArray
@@ -471,13 +429,6 @@ public final class jet.Float : jet.Number, jet.Comparable<jet.Float> {
     public final fun div(/*0*/ other: jet.Int): jet.Float
     public final fun div(/*0*/ other: jet.Long): jet.Float
     public final fun div(/*0*/ other: jet.Short): jet.Float
-    public final fun downto(/*0*/ other: jet.Byte): jet.FloatRange
-    public final fun downto(/*0*/ other: jet.Char): jet.FloatRange
-    public final fun downto(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun downto(/*0*/ other: jet.Float): jet.FloatRange
-    public final fun downto(/*0*/ other: jet.Int): jet.FloatRange
-    public final fun downto(/*0*/ other: jet.Long): jet.DoubleRange
-    public final fun downto(/*0*/ other: jet.Short): jet.FloatRange
     public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public open override /*1*/ fun hashCode(): jet.Int
     public final fun inc(): jet.Float
@@ -525,13 +476,6 @@ public final class jet.Float : jet.Number, jet.Comparable<jet.Float> {
     public open override /*1*/ fun toInt(): jet.Int
     public open override /*1*/ fun toLong(): jet.Long
     public open override /*1*/ fun toShort(): jet.Short
-    public final fun upto(/*0*/ other: jet.Byte): jet.FloatRange
-    public final fun upto(/*0*/ other: jet.Char): jet.FloatRange
-    public final fun upto(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun upto(/*0*/ other: jet.Float): jet.FloatRange
-    public final fun upto(/*0*/ other: jet.Int): jet.FloatRange
-    public final fun upto(/*0*/ other: jet.Long): jet.DoubleRange
-    public final fun upto(/*0*/ other: jet.Short): jet.FloatRange
 }
 public final class jet.FloatArray : jet.Any {
     public final /*constructor*/ fun <init>(/*0*/ size: jet.Int): jet.FloatArray
@@ -674,13 +618,6 @@ public final class jet.Int : jet.Number, jet.Comparable<jet.Int> {
     public final fun div(/*0*/ other: jet.Int): jet.Int
     public final fun div(/*0*/ other: jet.Long): jet.Long
     public final fun div(/*0*/ other: jet.Short): jet.Int
-    public final fun downto(/*0*/ other: jet.Byte): jet.IntRange
-    public final fun downto(/*0*/ other: jet.Char): jet.IntRange
-    public final fun downto(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun downto(/*0*/ other: jet.Float): jet.FloatRange
-    public final fun downto(/*0*/ other: jet.Int): jet.IntRange
-    public final fun downto(/*0*/ other: jet.Long): jet.LongRange
-    public final fun downto(/*0*/ other: jet.Short): jet.IntRange
     public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public open override /*1*/ fun hashCode(): jet.Int
     public final fun inc(): jet.Int
@@ -732,13 +669,6 @@ public final class jet.Int : jet.Number, jet.Comparable<jet.Int> {
     public open override /*1*/ fun toInt(): jet.Int
     public open override /*1*/ fun toLong(): jet.Long
     public open override /*1*/ fun toShort(): jet.Short
-    public final fun upto(/*0*/ other: jet.Byte): jet.IntRange
-    public final fun upto(/*0*/ other: jet.Char): jet.IntRange
-    public final fun upto(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun upto(/*0*/ other: jet.Float): jet.FloatRange
-    public final fun upto(/*0*/ other: jet.Int): jet.IntRange
-    public final fun upto(/*0*/ other: jet.Long): jet.LongRange
-    public final fun upto(/*0*/ other: jet.Short): jet.IntRange
     public final fun ushr(/*0*/ bits: jet.Int): jet.Int
     public final fun xor(/*0*/ other: jet.Int): jet.Int
 }
@@ -796,13 +726,6 @@ public final class jet.Long : jet.Number, jet.Comparable<jet.Long> {
     public final fun div(/*0*/ other: jet.Int): jet.Long
     public final fun div(/*0*/ other: jet.Long): jet.Long
     public final fun div(/*0*/ other: jet.Short): jet.Long
-    public final fun downto(/*0*/ other: jet.Byte): jet.LongRange
-    public final fun downto(/*0*/ other: jet.Char): jet.LongRange
-    public final fun downto(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun downto(/*0*/ other: jet.Float): jet.FloatRange
-    public final fun downto(/*0*/ other: jet.Int): jet.LongRange
-    public final fun downto(/*0*/ other: jet.Long): jet.LongRange
-    public final fun downto(/*0*/ other: jet.Short): jet.LongRange
     public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public open override /*1*/ fun hashCode(): jet.Int
     public final fun inc(): jet.Long
@@ -854,13 +777,6 @@ public final class jet.Long : jet.Number, jet.Comparable<jet.Long> {
     public open override /*1*/ fun toInt(): jet.Int
     public open override /*1*/ fun toLong(): jet.Long
     public open override /*1*/ fun toShort(): jet.Short
-    public final fun upto(/*0*/ other: jet.Byte): jet.LongRange
-    public final fun upto(/*0*/ other: jet.Char): jet.LongRange
-    public final fun upto(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun upto(/*0*/ other: jet.Float): jet.FloatRange
-    public final fun upto(/*0*/ other: jet.Int): jet.LongRange
-    public final fun upto(/*0*/ other: jet.Long): jet.LongRange
-    public final fun upto(/*0*/ other: jet.Short): jet.LongRange
     public final fun ushr(/*0*/ bits: jet.Int): jet.Long
     public final fun xor(/*0*/ other: jet.Long): jet.Long
 }
@@ -928,13 +844,6 @@ public final class jet.Short : jet.Number, jet.Comparable<jet.Short> {
     public final fun div(/*0*/ other: jet.Int): jet.Int
     public final fun div(/*0*/ other: jet.Long): jet.Long
     public final fun div(/*0*/ other: jet.Short): jet.Int
-    public final fun downto(/*0*/ other: jet.Byte): jet.ShortRange
-    public final fun downto(/*0*/ other: jet.Char): jet.ShortRange
-    public final fun downto(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun downto(/*0*/ other: jet.Float): jet.FloatRange
-    public final fun downto(/*0*/ other: jet.Int): jet.IntRange
-    public final fun downto(/*0*/ other: jet.Long): jet.LongRange
-    public final fun downto(/*0*/ other: jet.Short): jet.ShortRange
     public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public open override /*1*/ fun hashCode(): jet.Int
     public final fun inc(): jet.Short
@@ -982,13 +891,6 @@ public final class jet.Short : jet.Number, jet.Comparable<jet.Short> {
     public open override /*1*/ fun toInt(): jet.Int
     public open override /*1*/ fun toLong(): jet.Long
     public open override /*1*/ fun toShort(): jet.Short
-    public final fun upto(/*0*/ other: jet.Byte): jet.ShortRange
-    public final fun upto(/*0*/ other: jet.Char): jet.ShortRange
-    public final fun upto(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun upto(/*0*/ other: jet.Float): jet.FloatRange
-    public final fun upto(/*0*/ other: jet.Int): jet.IntRange
-    public final fun upto(/*0*/ other: jet.Long): jet.LongRange
-    public final fun upto(/*0*/ other: jet.Short): jet.ShortRange
 }
 public final class jet.ShortArray : jet.Any {
     public final /*constructor*/ fun <init>(/*0*/ size: jet.Int): jet.ShortArray
