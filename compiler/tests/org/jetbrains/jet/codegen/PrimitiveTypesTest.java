@@ -401,10 +401,6 @@ public class PrimitiveTypesTest extends CodegenTestCase {
         blackBoxFile("regressions/kt765.kt");
     }
 
-    public void testKt930 () {
-        blackBoxFile("regressions/kt930.kt");
-    }
-
     public void testKt944 () {
         blackBoxFile("regressions/kt944.kt");
     }

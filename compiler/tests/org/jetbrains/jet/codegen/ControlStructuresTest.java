@@ -313,7 +313,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testKt1076() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
         blackBoxFile("regressions/kt1076.kt");
     }
 

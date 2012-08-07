@@ -1,6 +1,6 @@
 fun box() : String {
  var cnt = 0
- for (len in 4 downto 1) {
+ for (len in 4 downTo 1) {
     cnt++
  }
 

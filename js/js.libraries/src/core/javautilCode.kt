@@ -29,7 +29,7 @@ public object Collections {
 
     public fun <T> reverse(list: List<T>): Unit {
         val size = list.size()
-        for (i in 0.upto(size / 2)) {
+        for (i in 0.rangeTo(size / 2)) {
             val i2 = size - i
             val tmp = list[i]
             list[i] = list[i2]

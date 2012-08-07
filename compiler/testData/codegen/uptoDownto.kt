@@ -21,12 +21,12 @@ fun box(): String {
     }
     sb.append(";")
 
-    for (i in 0 downto 0) {
+    for (i in 0 downTo 0) {
         ap(i)
     }
     sb.append(";")
 
-    for (i in 1 downto 0) {
+    for (i in 1 downTo 0) {
         ap(i)
     }
 

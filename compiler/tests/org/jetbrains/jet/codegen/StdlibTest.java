@@ -345,6 +345,10 @@ public class StdlibTest extends CodegenTestCase {
         blackBoxFile("uptoDownto.kt");
     }
 
+    public void testKt930 () {
+        blackBoxFile("regressions/kt930.kt");
+    }
+
     public void test1733() {
         blackBoxFile("regressions/kt1733.kt");
     }

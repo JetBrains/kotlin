@@ -5,7 +5,7 @@ import kotlin.test.*
 
 class RangeTest {
     test fun upRange() {
-        val range = 0.upto(9)
+        val range = 0.rangeTo(9)
         println("Have created up range: $range")
         assertEquals(10, range.size)
         assertTrue(range.contains(0))
@@ -15,7 +15,7 @@ class RangeTest {
     }
 
     test fun downRange() {
-        val range = 9.downto(0)
+        val range = 9.downTo(0)
         println("Have created down range: $range")
         assertEquals(10, range.size)
         assertTrue(range.contains(0))
