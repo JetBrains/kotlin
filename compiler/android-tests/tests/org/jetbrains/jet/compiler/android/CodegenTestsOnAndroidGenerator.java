@@ -32,7 +32,7 @@ import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.compiler.PathManager;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.test.generator.Printer;
+import org.jetbrains.jet.utils.Printer;
 
 import java.io.File;
 import java.io.IOException;

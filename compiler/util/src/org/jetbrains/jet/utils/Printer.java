@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.test.generator;
+package org.jetbrains.jet.utils;
 
 import org.jetbrains.annotations.NotNull;
 

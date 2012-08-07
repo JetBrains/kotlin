@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.utils.Printer;
 
 import java.io.File;
 import java.io.IOException;
