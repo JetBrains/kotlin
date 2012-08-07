@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.translate.expression.foreach;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
@@ -42,7 +41,7 @@ public final class IteratorForTranslator extends ForTranslator {
 
     @NotNull
     public static JsStatement doTranslate(@NotNull JetForExpression expression,
-                                          @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         return (new IteratorForTranslator(expression, context).translate());
     }
 
@@ -58,7 +57,7 @@ public final class IteratorForTranslator extends ForTranslator {
     private JsBlock translate() {
         JsBlock bodyBlock = generateCycleBody();
         JsWhile cycle = new JsWhile(hasNextMethodInvocation(), bodyBlock);
-        return AstUtil.newBlock(iterator.assignmentExpression().makeStmt(), cycle);
+        return new JsBlock(iterator.assignmentExpression().makeStmt(), cycle);
     }
 
     //TODO: check whether complex logic with blocks is needed
@@ -94,7 +93,7 @@ public final class IteratorForTranslator extends ForTranslator {
 
     @NotNull
     private JsExpression translateMethodInvocation(@Nullable JsExpression receiver,
-                                                   @NotNull CallableDescriptor descriptor) {
+            @NotNull CallableDescriptor descriptor) {
         return CallBuilder.build(context())
                 .receiver(receiver)
                 .descriptor(descriptor)

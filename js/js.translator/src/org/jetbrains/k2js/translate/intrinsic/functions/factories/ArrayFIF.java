@@ -19,7 +19,6 @@ package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsArrayAccess;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -29,6 +28,7 @@ import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInPropertyInt
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.CallStandardMethodIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.List;
 
@@ -76,8 +76,8 @@ public final class ArrayFIF extends CompositeFIF {
             assert arguments.size() == 2 : "Array set expression must have two arguments.";
             JsExpression indexExpression = arguments.get(0);
             JsExpression value = arguments.get(1);
-            JsArrayAccess arrayAccess = AstUtil.newArrayAccess(receiver, indexExpression);
-            return AstUtil.newAssignment(arrayAccess, value);
+            JsArrayAccess arrayAccess = new JsArrayAccess(receiver, indexExpression);
+            return JsAstUtils.assignment(arrayAccess, value);
         }
     };
 

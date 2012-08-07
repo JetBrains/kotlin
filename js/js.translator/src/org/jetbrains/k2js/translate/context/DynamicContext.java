@@ -26,22 +26,22 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.newVar;
 public final class DynamicContext {
 
     @NotNull
-    public static DynamicContext rootContext(@NotNull NamingScope rootScope, @NotNull JsBlock globalBlock) {
+    public static DynamicContext rootContext(@NotNull JsScope rootScope, @NotNull JsBlock globalBlock) {
         return new DynamicContext(rootScope, globalBlock);
     }
 
     @NotNull
-    public static DynamicContext newContext(@NotNull NamingScope scope, @NotNull JsBlock block) {
+    public static DynamicContext newContext(@NotNull JsScope scope, @NotNull JsBlock block) {
         return new DynamicContext(scope, block);
     }
 
     @NotNull
-    private final NamingScope currentScope;
+    private final JsScope currentScope;
 
     @NotNull
     private final JsBlock currentBlock;
 
-    private DynamicContext(@NotNull NamingScope scope, @NotNull JsBlock block) {
+    private DynamicContext(@NotNull JsScope scope, @NotNull JsBlock block) {
         this.currentScope = scope;
         this.currentBlock = block;
     }
@@ -60,12 +60,7 @@ public final class DynamicContext {
     }
 
     @NotNull
-    public JsScope jsScope() {
-        return currentScope.jsScope();
-    }
-
-    @NotNull
-    public NamingScope getScope() {
+    public JsScope getScope() {
         return currentScope;
     }
 

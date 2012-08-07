@@ -16,8 +16,7 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import closurecompiler.internal.com.google.common.collect.Lists;
-import com.google.dart.compiler.util.Maps;
+import com.google.common.collect.Lists;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.Config;
@@ -29,6 +28,7 @@ import org.jetbrains.k2js.test.config.TestConfigWithUnitTests;
 import org.jetbrains.k2js.test.rhino.RhinoSystemOutputChecker;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -101,6 +101,6 @@ public abstract class JsUnitTestBase extends MultipleFilesTranslationTest {
 
     @Override
     protected Map<String, Object> getRhinoTestVariables() throws Exception {
-        return Maps.<String, Object>create("jsTestReporter", JS_UNIT_TEST_REPORTER);
+        return Collections.<String, Object>singletonMap("jsTestReporter", JS_UNIT_TEST_REPORTER);
     }
 }

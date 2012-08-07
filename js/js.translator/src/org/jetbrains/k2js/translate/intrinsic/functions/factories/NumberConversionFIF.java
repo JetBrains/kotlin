@@ -20,12 +20,11 @@ import com.google.common.collect.Sets;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.util.AstUtil;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
-import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
@@ -35,6 +34,7 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.subtract;
 
 /**
@@ -86,9 +86,10 @@ public final class NumberConversionFIF extends CompositeFIF {
                 @NotNull TranslationContext context) {
             assert receiver != null;
             assert arguments.isEmpty();
-            TemporaryVariable toConvert = context.declareTemporary(receiver);
-            JsBinaryOperation fractional = new JsBinaryOperation(JsBinaryOperator.MOD, toConvert.reference(), context.program().getNumberLiteral(1));
-            return AstUtil.newSequence(toConvert.assignmentExpression(), subtract(toConvert.reference(), fractional));
+            JsNameRef toConvertReference = context.declareTemporary(null).reference();
+            JsBinaryOperation fractional =
+                    new JsBinaryOperation(JsBinaryOperator.MOD, toConvertReference, context.program().getNumberLiteral(1));
+            return subtract(assignment(toConvertReference, receiver), fractional);
         }
     };
     @NotNull

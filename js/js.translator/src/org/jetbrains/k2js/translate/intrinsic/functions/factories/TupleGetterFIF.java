@@ -18,8 +18,8 @@ package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
+import com.google.dart.compiler.backend.js.ast.JsArrayAccess;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -78,7 +78,7 @@ public enum TupleGetterFIF implements FunctionIntrinsicFactory {
                     @NotNull List<JsExpression> arguments,
                     @NotNull TranslationContext context) {
                 assert arguments.isEmpty() : "Tuple access expression should not have any arguments.";
-                return AstUtil.newArrayAccess(receiver, context.program().getNumberLiteral(elementIndex));
+                return new JsArrayAccess(receiver, context.program().getNumberLiteral(elementIndex));
             }
         };
     }

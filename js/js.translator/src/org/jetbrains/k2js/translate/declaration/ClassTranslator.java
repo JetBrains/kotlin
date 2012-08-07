@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.translate.declaration;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -39,7 +38,8 @@ import java.util.List;
 import static com.google.dart.compiler.util.AstUtil.newSequence;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.findAncestorClass;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getContainingClass;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.getQualifiedReference;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.getThisObject;
@@ -123,13 +123,13 @@ public final class ClassTranslator extends AbstractTranslator {
     @NotNull
     private JsInvocation classCreateMethodInvocation() {
         if (isObject()) {
-            return AstUtil.newInvocation(context().namer().objectCreationMethodReference());
+            return new JsInvocation(context().namer().objectCreationMethodReference());
         }
         else if (isTrait() && !context().isEcma5()) {
-            return AstUtil.newInvocation(context().namer().traitCreationMethodReference());
+            return new JsInvocation(context().namer().traitCreationMethodReference());
         }
         else {
-            return AstUtil.newInvocation(context().namer().classCreationMethodReference());
+            return new JsInvocation(context().namer().classCreationMethodReference());
         }
     }
 
@@ -156,7 +156,7 @@ public final class ClassTranslator extends AbstractTranslator {
             }
         }
         else if (context().isEcma5()) {
-            jsClassDeclaration.getArguments().add(context().program().getNullLiteral());
+            jsClassDeclaration.getArguments().add(JsLiteral.NULL);
         }
 
         propertyList.addAll(translatePropertiesAsConstructorParameters(classDeclarationContext));
@@ -172,7 +172,7 @@ public final class ClassTranslator extends AbstractTranslator {
         List<JsExpression> expressions = jsClassDeclaration.getArguments();
         if (context().isEcma5()) {
             if (superClassReferences.isEmpty()) {
-                jsClassDeclaration.getArguments().add(context().program().getNullLiteral());
+                jsClassDeclaration.getArguments().add(JsLiteral.NULL);
                 return;
             }
             else if (superClassReferences.size() > 1) {

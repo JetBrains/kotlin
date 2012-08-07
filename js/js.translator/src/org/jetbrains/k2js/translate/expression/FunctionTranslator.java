@@ -111,7 +111,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
     private TranslationContext getFunctionBodyContextForExtensionFunction() {
         TranslationContext contextWithFunctionBodyBlock = getContextWithFunctionBodyBlock();
-        extensionFunctionReceiverName = contextWithFunctionBodyBlock.jsScope().declareName(Namer.getReceiverParameterName());
+        extensionFunctionReceiverName = contextWithFunctionBodyBlock.scope().declareName(Namer.getReceiverParameterName());
         DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(descriptor);
         assert expectedReceiverDescriptor != null;
         return contextWithFunctionBodyBlock.innerContextWithThisAliased(expectedReceiverDescriptor, extensionFunctionReceiverName);
@@ -175,8 +175,8 @@ public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression wrapInClosureCaptureExpression(@NotNull JsExpression wrappedExpression,
             @NotNull ClosureContext closureContext) {
-        JsFunction dummyFunction = new JsFunction(context().jsScope());
-        JsInvocation dummyFunctionInvocation = AstUtil.newInvocation(dummyFunction);
+        JsFunction dummyFunction = new JsFunction(context().scope());
+        JsInvocation dummyFunctionInvocation = new JsInvocation(dummyFunction);
         for (VariableDescriptor variableDescriptor : closureContext.getDescriptors()) {
             dummyFunction.getParameters().add(new JsParameter(context().getNameForDescriptor(variableDescriptor)));
             dummyFunctionInvocation.getArguments().add(ReferenceTranslator.translateAsLocalNameReference(variableDescriptor, context()));
@@ -185,7 +185,7 @@ public final class FunctionTranslator extends AbstractTranslator {
                 dummyFunctionInvocation.getArguments().add(aliasForContainingClassThis.initExpression());
             }
         }
-        dummyFunction.setBody(AstUtil.newBlock(new JsReturn(wrappedExpression)));
+        dummyFunction.setBody(new JsBlock(new JsReturn(wrappedExpression)));
         return dummyFunctionInvocation;
     }
 

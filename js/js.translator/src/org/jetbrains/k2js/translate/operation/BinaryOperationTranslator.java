@@ -16,10 +16,7 @@
 
 package org.jetbrains.k2js.translate.operation;
 
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
-import com.google.dart.compiler.backend.js.ast.JsConditional;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -121,7 +118,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     private JsExpression translateAsElvisOperator(@NotNull JetBinaryExpression expression) {
         JsExpression translatedLeft = translateLeftExpression(context(), expression);
         JsExpression translatedRight = translateRightExpression(context(), expression);
-        JsBinaryOperation leftIsNotNull = JsAstUtils.inequality(translatedLeft, program().getNullLiteral());
+        JsBinaryOperation leftIsNotNull = JsAstUtils.inequality(translatedLeft, JsLiteral.NULL);
         return new JsConditional(leftIsNotNull, translatedLeft, translatedRight);
     }
 

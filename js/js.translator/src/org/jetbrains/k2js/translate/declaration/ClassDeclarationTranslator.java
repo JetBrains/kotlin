@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.translate.declaration;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
 import gnu.trove.THashMap;
 import gnu.trove.TLinkable;
 import gnu.trove.TLinkableAdaptor;
@@ -35,7 +34,6 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
 import static org.jetbrains.k2js.translate.general.Translation.translateClassDeclaration;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
 import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.message;
@@ -59,13 +57,13 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     private final JsFunction dummyFunction;
 
     private final JsName declarationsObject;
-    private final JsVar classesVar;
+    private final JsVars.JsVar classesVar;
 
     public ClassDeclarationTranslator(@NotNull TranslationContext context) {
         super(context);
 
-        dummyFunction = new JsFunction(context.jsScope());
-        declarationsObject = context().jsScope().declareName(Namer.nameForClassesVariable());
+        dummyFunction = new JsFunction(context.scope());
+        declarationsObject = context().scope().declareName(Namer.nameForClassesVariable());
         classesVar = new JsVars.JsVar(declarationsObject);
     }
 
@@ -131,7 +129,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         generateFinalClassDeclarations(vars, propertyInitializers);
 
         if (vars.isEmpty()) {
-            classesVar.setInitExpr(valueLiteral);
+            classesVar.setInitExpression(valueLiteral);
             return;
         }
 
@@ -139,7 +137,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         result.add(vars);
         result.add(new JsReturn(valueLiteral));
         dummyFunction.setBody(newBlock(result));
-        classesVar.setInitExpr(AstUtil.newInvocation(dummyFunction));
+        classesVar.setInitExpression(new JsInvocation(dummyFunction));
     }
 
     private void generateOpenClassDeclarations(@NotNull JsVars vars, @NotNull List<JsPropertyInitializer> propertyInitializers) {
@@ -175,7 +173,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         }
         else {
             assert item.label.getName() != null;
-            vars.add(new JsVar(item.label.getName(), definition));
+            vars.add(new JsVars.JsVar(item.label.getName(), definition));
             value = item.label;
         }
 
@@ -209,7 +207,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         qualifiedLabelRef.setQualifier(declarationsObject.makeRef());
         JsExpression value;
         if (context().isEcma5()) {
-            value = JsAstUtils.createDataDescriptor(qualifiedLabelRef, false, context());
+            value = JsAstUtils.createDataDescriptor(qualifiedLabelRef);
         }
         else {
             value = qualifiedLabelRef;

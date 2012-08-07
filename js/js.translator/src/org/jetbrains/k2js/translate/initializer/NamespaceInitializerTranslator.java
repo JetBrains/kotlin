@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.translate.initializer;
 
 import com.google.dart.compiler.backend.js.ast.JsFunction;
-import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
 import com.google.dart.compiler.backend.js.ast.JsStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -43,7 +42,7 @@ public final class NamespaceInitializerTranslator {
 
     @NotNull
     public JsFunction generateInitializeMethod() {
-        JsFunction result = JsAstUtils.createFunctionWithEmptyBody(namespaceContext.jsScope());
+        JsFunction result = JsAstUtils.createFunctionWithEmptyBody(namespaceContext.scope());
         TranslationContext namespaceInitializerContext
                 = namespaceContext.innerContextWithGivenScopeAndBlock(result.getScope(), result.getBody());
 

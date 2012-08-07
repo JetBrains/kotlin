@@ -16,8 +16,6 @@
 
 package org.jetbrains.k2js.translate.general;
 
-import com.google.dart.compiler.backend.js.JsNamer;
-import com.google.dart.compiler.backend.js.JsPrettyNamer;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -186,7 +184,6 @@ public final class Translation {
             }
         }
         mayBeGenerateTests(files, config, rootBlock, context);
-        performSimpleNameMangling(context.program());
         return context.program();
     }
 
@@ -198,11 +195,6 @@ public final class Translation {
             JSTestGenerator.generateTestCalls(context, files, tester);
             tester.deinitialize();
         }
-    }
-
-    private static void performSimpleNameMangling(@NotNull JsProgram program) {
-        JsNamer namer = new JsPrettyNamer();
-        namer.exec(program);
     }
 
     //TODO: determine whether should throw exception
@@ -229,8 +221,7 @@ public final class Translation {
 
     private static void setArguments(@NotNull TranslationContext context, @NotNull List<String> arguments,
             @NotNull JsInvocation translatedCall) {
-        JsArrayLiteral arrayLiteral = new JsArrayLiteral();
-        arrayLiteral.getExpressions().addAll(toStringLiteralList(arguments, context.program()));
+        JsArrayLiteral arrayLiteral = new JsArrayLiteral(toStringLiteralList(arguments, context.program()));
         JsAstUtils.setArguments(translatedCall, Collections.<JsExpression>singletonList(arrayLiteral));
     }
 }
