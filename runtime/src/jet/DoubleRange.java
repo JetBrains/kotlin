@@ -23,6 +23,8 @@ public final class DoubleRange implements Range<Double> {
     private final double start;
     private final double size;
 
+    public static final DoubleRange empty = new DoubleRange(0, 0);
+
     public DoubleRange(double startValue, double size) {
         this.start = startValue;
         this.size = size;
