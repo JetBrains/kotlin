@@ -49,7 +49,7 @@ public final class RangeTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-    public void testUpToDoesNotIterate() throws Exception {
+    public void testRangeToDoesNotIterate() throws Exception {
         fooBoxTest();
     }
 }
