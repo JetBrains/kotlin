@@ -24,10 +24,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.jet.lang.resolve.scopes.*;
 
 import java.util.Collections;
 
@@ -44,12 +41,14 @@ public class LazyPackageDescriptor extends AbstractNamespaceDescriptorImpl imple
             @NotNull PackageMemberDeclarationProvider declarationProvider
     ) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), name);
+
         WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Package scope");
         resolveSession.getModuleConfiguration().extendNamespaceScope(resolveSession.getTrace(), this, scope);
-        LazyPackageMemberScope lazyPackageMemberScope = new LazyPackageMemberScope(resolveSession, declarationProvider, this);
-        scope.importScope(lazyPackageMemberScope);
         scope.changeLockLevel(WritableScope.LockLevel.READING);
-        this.memberScope = scope;
+
+        LazyPackageMemberScope lazyPackageMemberScope = new LazyPackageMemberScope(resolveSession, declarationProvider, this);
+
+        this.memberScope = new ChainedScope(containingDeclaration, lazyPackageMemberScope, scope);
     }
 
     @NotNull

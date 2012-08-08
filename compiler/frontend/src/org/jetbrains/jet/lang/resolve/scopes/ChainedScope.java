@@ -118,7 +118,7 @@ public class ChainedScope implements JetScope {
     @NotNull
     @Override
     public ReceiverDescriptor getImplicitReceiver() {
-        throw new UnsupportedOperationException(); // TODO
+        return ReceiverDescriptor.NO_RECEIVER;
     }
 
     @Override
