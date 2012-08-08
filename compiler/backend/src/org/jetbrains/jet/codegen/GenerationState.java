@@ -19,10 +19,10 @@
  */
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.di.InjectorForJvmCodegen;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -30,11 +30,10 @@ import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.Progress;
-import org.jetbrains.asm4.commons.Method;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -42,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 
 public class GenerationState {
-    private final Project project;
     private final Progress progress;
     @NotNull
     private final AnalyzeExhaust analyzeExhaust;
@@ -60,20 +58,19 @@ public class GenerationState {
     private Method scriptConstructorMethod;
 
 
-    public GenerationState(Project project, ClassBuilderFactory builderFactory, AnalyzeExhaust analyzeExhaust, List<JetFile> files) {
-        this(project, builderFactory, Progress.DEAF, analyzeExhaust, files, BuiltinToJavaTypesMapping.ENABLED);
+    public GenerationState(ClassBuilderFactory builderFactory, AnalyzeExhaust analyzeExhaust, List<JetFile> files) {
+        this(builderFactory, Progress.DEAF, analyzeExhaust, files, BuiltinToJavaTypesMapping.ENABLED);
     }
 
-    public GenerationState(Project project, ClassBuilderFactory builderFactory, Progress progress,
+    public GenerationState(ClassBuilderFactory builderFactory, Progress progress,
             @NotNull AnalyzeExhaust exhaust, @NotNull List<JetFile> files, @NotNull BuiltinToJavaTypesMapping builtinToJavaTypesMapping) {
-        this.project = project;
         this.progress = progress;
         this.analyzeExhaust = exhaust;
         this.files = files;
         this.classBuilderMode = builderFactory.getClassBuilderMode();
         this.injector = new InjectorForJvmCodegen(
                 analyzeExhaust.getBindingContext(),
-                this.files, project, builtinToJavaTypesMapping, builderFactory.getClassBuilderMode(), this, builderFactory);
+                this.files, builtinToJavaTypesMapping, builderFactory.getClassBuilderMode(), this, builderFactory);
     }
 
     private void markUsed() {

@@ -20,7 +20,6 @@ package org.jetbrains.jet.di;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import java.util.List;
 import org.jetbrains.jet.lang.psi.JetFile;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
 import org.jetbrains.jet.codegen.GenerationState;
@@ -40,7 +39,6 @@ public class InjectorForJvmCodegen {
 
     private final BindingContext bindingContext;
     private final List<JetFile> listOfJetFile;
-    private final Project project;
     private final BuiltinToJavaTypesMapping builtinToJavaTypesMapping;
     private final ClassBuilderMode classBuilderMode;
     private final GenerationState generationState;
@@ -56,7 +54,6 @@ public class InjectorForJvmCodegen {
     public InjectorForJvmCodegen(
         @NotNull BindingContext bindingContext,
         @NotNull List<JetFile> listOfJetFile,
-        @NotNull Project project,
         @NotNull BuiltinToJavaTypesMapping builtinToJavaTypesMapping,
         @NotNull ClassBuilderMode classBuilderMode,
         @NotNull GenerationState generationState,
@@ -64,7 +61,6 @@ public class InjectorForJvmCodegen {
     ) {
         this.bindingContext = bindingContext;
         this.listOfJetFile = listOfJetFile;
-        this.project = project;
         this.builtinToJavaTypesMapping = builtinToJavaTypesMapping;
         this.classBuilderMode = classBuilderMode;
         this.generationState = generationState;
@@ -91,8 +87,6 @@ public class InjectorForJvmCodegen {
         this.scriptCodegen.setJetTypeMapper(jetTypeMapper);
         this.scriptCodegen.setMemberCodegen(memberCodegen);
         this.scriptCodegen.setState(generationState);
-
-        this.intrinsics.setMyProject(project);
 
         this.classFileFactory.setBuilderFactory(classBuilderFactory);
         this.classFileFactory.setState(generationState);

@@ -339,7 +339,7 @@ public class KotlinToJVMBytecodeCompiler {
                 environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(CompilerMessageSeverity.LOGGING, message, CompilerMessageLocation.NO_LOCATION);
             }
         };
-        GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs), backendProgress,
+        GenerationState generationState = new GenerationState(ClassBuilderFactories.binaries(stubs), backendProgress,
                                                               exhaust, environment.getSourceFiles(),
                                                               environment.getConfiguration().get(
                                                                       JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY,

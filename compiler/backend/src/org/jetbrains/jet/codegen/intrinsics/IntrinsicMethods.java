@@ -65,16 +65,10 @@ public class IntrinsicMethods {
     public static final String KOTLIN_ARRAYS_ARRAY = "kotlin.arrays.array";
     public static final String KOTLIN_JAVA_CLASS_PROPERTY = "kotlin.javaClass.property";
 
-    private Project myProject;
     private final Map<String, IntrinsicMethod> namedMethods = new HashMap<String, IntrinsicMethod>();
     private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();
     private final IntrinsicsMap intrinsicsMap = new IntrinsicsMap();
 
-
-    @Inject
-    public void setMyProject(Project myProject) {
-        this.myProject = myProject;
-    }
 
     @PostConstruct
     public void init() {
