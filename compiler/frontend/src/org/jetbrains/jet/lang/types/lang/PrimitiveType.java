@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.types.lang;
 
+import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ref.ClassName;
@@ -34,6 +35,8 @@ public enum PrimitiveType {
     LONG("Long"),
     DOUBLE("Double"),
     ;
+
+    public static final ImmutableSet<PrimitiveType> NUMBER_TYPES = ImmutableSet.of(CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE);
     
     private final Name typeName;
     private final Name arrayTypeName;
