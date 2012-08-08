@@ -517,7 +517,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
             // lets remove the /** ... * ... */ tokens
             val buffer = StringBuilder()
             val last = lines.size - 1
-            for (i in 0.upto(last)) {
+            for (i in 0.rangeTo(last)) {
                 var text = lines[i] ?: ""
                 text = text.trim()
                 if (i == 0) {
@@ -630,7 +630,7 @@ $highlight"""
                 break
             }
             var count = 1
-            for (i in 0.upto(remaining.size - 1)) {
+            for (i in 0.rangeTo(remaining.size - 1)) {
                 val ch = remaining[i]
                 if (ch == '{') count ++
                 else if (ch == '}') {
@@ -653,7 +653,7 @@ $highlight"""
         // lets try resolve the include name relative to this file
         val paths = relativeName.split("/")
         val size = paths.size
-        for (i in 0.upto(size - 2)) {
+        for (i in 0.rangeTo(size - 2)) {
             val path = paths[i]
             if (path == ".") continue
             else if (path == "..") dir = dir?.getParent()

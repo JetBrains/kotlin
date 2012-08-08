@@ -33,9 +33,9 @@ public final class IntRange implements Range<Integer>, IntIterable {
     @Override
     public String toString() {
         if (count >= 0) {
-            return getStart() + ".upto(" + getEnd() + ")";
+            return getStart() + ".rangeTo(" + getEnd() + ")";
         } else {
-            return getStart() + ".downto(" + getEnd() + ")";
+            return getStart() + ".downTo(" + getEnd() + ")";
         }
     }
 
