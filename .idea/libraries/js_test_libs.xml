@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="js-test-libs">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/js/js.tests/testLib/closure-compiler.jar!/" />
+      <root url="jar://$PROJECT_DIR$/js/js.tests/testLib/rhino-1.7R4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/js/js.tests/testLib/src/rhino-1.7R4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
