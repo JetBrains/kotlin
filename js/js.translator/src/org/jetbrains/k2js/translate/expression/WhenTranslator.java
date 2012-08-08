@@ -91,7 +91,7 @@ public final class WhenTranslator extends AbstractTranslator {
 
     @NotNull
     private JsFor generateDummyFor() {
-        return new JsFor(generateInitExpressions(), generateIncrementStatement(), generateConditionStatement());
+        return new JsFor(generateInitExpressions(), generateConditionStatement(), generateIncrementStatement());
     }
 
     @NotNull
