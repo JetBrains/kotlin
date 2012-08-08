@@ -27,13 +27,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PathUtil {
 
     public static final String JS_LIB_JAR_NAME = "kotlin-jslib.jar";
-    public static final String JS_LIB_JS_NAME = "kotlinLib.js";
+    public static final String JS_LIB_JS_NAME = "kotlinEcma3.js";
     public static final String JDK_ANNOTATIONS_JAR = "kotlin-jdk-annotations.jar";
 
     private PathUtil() {}
