@@ -444,4 +444,8 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     public void testKt2275() {
         blackBoxFile("regressions/kt2275.kt");
     }
+
+    public void testEmptyRanges() throws Exception {
+        blackBoxFile("emptyRanges.kt");
+    }
 }

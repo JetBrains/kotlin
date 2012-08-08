@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen.intrinsics;
 
 import com.google.common.collect.ImmutableList;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Opcodes;
@@ -25,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,6 +140,12 @@ public class IntrinsicMethods {
         declareIntrinsicProperty(Name.identifier("CharSequence"), Name.identifier("length"), new StringLength());
         declareIntrinsicProperty(Name.identifier("String"), Name.identifier("length"), new StringLength());
 
+        for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
+            intrinsicsMap.registerIntrinsic(
+                    JetStandardClasses.STANDARD_CLASSES_FQNAME.child(type.getRangeTypeName()).toUnsafe().child(JetPsiUtil.NO_NAME_PROVIDED),
+                    Name.identifier("EMPTY"), -1, new EmptyRange(type));
+        }
+
         declareArrayMethods();
     }
 
@@ -228,5 +233,4 @@ public class IntrinsicMethods {
         }
         return intrinsicMethod;
     }
-
 }
