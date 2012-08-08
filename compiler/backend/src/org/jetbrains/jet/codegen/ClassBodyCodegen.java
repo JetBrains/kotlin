@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.asm4.FieldVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
@@ -117,7 +118,8 @@ public abstract class ClassBodyCodegen {
                                 modifiers |= Opcodes.ACC_VOLATILE;
                             }
                             Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
-                            v.newField(p, modifiers, p.getName(), type.getDescriptor(), null, null);
+                            FieldVisitor fieldVisitor = v.newField(p, modifiers, p.getName(), type.getDescriptor(), null, null);
+                            AnnotationCodegen.forField(fieldVisitor, state.getInjector().getJetTypeMapper()).genAnnotations(propertyDescriptor);
                         }
                     }
                     else {

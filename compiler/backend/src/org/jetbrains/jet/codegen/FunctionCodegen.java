@@ -170,8 +170,9 @@ public class FunctionCodegen {
                         av.visitEnd();
                     }
                     for(int i = 0; i != paramDescrs.size(); ++i) {
-                        JetValueParameterAnnotationWriter av = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i + start);
                         ValueParameterDescriptor parameterDescriptor = paramDescrs.get(i);
+                        AnnotationCodegen.forParameter(i, mv, state.getInjector().getJetTypeMapper()).genAnnotations(parameterDescriptor);
+                        JetValueParameterAnnotationWriter av = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i + start);
                         av.writeName(parameterDescriptor.getName().getName());
                         av.writeHasDefaultValue(parameterDescriptor.declaresDefaultValue());
                         av.writeNullable(parameterDescriptor.getType().isNullable());

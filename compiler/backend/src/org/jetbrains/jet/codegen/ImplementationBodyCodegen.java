@@ -594,6 +594,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             for (ValueParameterDescriptor valueParameter : constructorDescriptor.getValueParameters()) {
+                AnnotationCodegen.forParameter(i, mv, state.getInjector().getJetTypeMapper()).genAnnotations(valueParameter);
                 JetValueParameterAnnotationWriter jetValueParameterAnnotation = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i);
                 jetValueParameterAnnotation.writeName(valueParameter.getName().getName());
                 jetValueParameterAnnotation.writeHasDefaultValue(valueParameter.declaresDefaultValue());
