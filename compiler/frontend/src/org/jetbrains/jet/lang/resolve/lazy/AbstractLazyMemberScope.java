@@ -42,6 +42,8 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     protected boolean allDescriptorsComputed = false;
 
     private final Map<Name, ClassDescriptor> classDescriptors = Maps.newHashMap();
+    private final Map<Name, ClassDescriptor> objectDescriptors = Maps.newHashMap();
+
     private final Map<Name, Set<FunctionDescriptor>> functionDescriptors = Maps.newHashMap();
     private final Map<Name, Set<VariableDescriptor>> propertyDescriptors = Maps.newHashMap();
 
@@ -58,8 +60,8 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     }
 
     @Nullable
-    private ClassDescriptor getClassOrObjectDescriptor(@NotNull Name name, boolean object) {
-        ClassDescriptor known = classDescriptors.get(name);
+    private ClassDescriptor getClassOrObjectDescriptor(@NotNull Map<Name, ClassDescriptor> cache, @NotNull Name name, boolean object) {
+        ClassDescriptor known = cache.get(name);
         if (known != null) return known;
 
         if (allDescriptorsComputed) return null;
@@ -72,7 +74,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         ClassDescriptor classDescriptor = new LazyClassDescriptor(resolveSession, thisDescriptor, name,
                                                                   JetClassInfoUtil.createClassLikeInfo(classOrObjectDeclaration));
 
-        classDescriptors.put(name, classDescriptor);
+        cache.put(name, classDescriptor);
         if (!object) {
             allDescriptors.add(classDescriptor);
         }
@@ -82,13 +84,13 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        return getClassOrObjectDescriptor(name, false);
+        return getClassOrObjectDescriptor(classDescriptors, name, false);
     }
 
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
         // TODO: We shouldn't really allow objects in classes...
-        return getClassOrObjectDescriptor(name, true);
+        return getClassOrObjectDescriptor(objectDescriptors, name, true);
     }
 
     @NotNull
@@ -170,7 +172,14 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @NotNull
     @Override
     public Collection<ClassDescriptor> getObjectDescriptors() {
-        throw new UnsupportedOperationException(); // TODO
+        for (JetDeclaration declaration : declarationProvider.getAllDeclarations()) {
+            if (declaration instanceof JetObjectDeclaration) {
+                JetObjectDeclaration objectDeclaration = (JetObjectDeclaration) declaration;
+                getObjectDescriptor(objectDeclaration.getNameAsName());
+            }
+        }
+
+        return objectDescriptors.values();
     }
 
     @Override

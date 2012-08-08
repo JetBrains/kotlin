@@ -1269,9 +1269,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
     @TestMetadata("compiler/testData/lazyResolve/namespaceComparator")
     public static class NamespaceComparator extends AbstractLazyResolveNamespaceComparingTest {
         public void testAllFilesPresentInNamespaceComparator() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(),
-                                                         "org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest",
-                                                         new File("compiler/testData/lazyResolve/namespaceComparator"), "kt", false);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest", new File("compiler/testData/lazyResolve/namespaceComparator"), "kt", false);
         }
         
         @TestMetadata("enum.kt")
@@ -1292,6 +1290,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("innerObject.kt")
         public void testInnerObject() throws Exception {
             doTestSinglePackage("compiler/testData/lazyResolve/namespaceComparator/innerObject.kt");
+        }
+        
+        @TestMetadata("objectInClass.kt")
+        public void testObjectInClass() throws Exception {
+            doTestSinglePackage("compiler/testData/lazyResolve/namespaceComparator/objectInClass.kt");
         }
         
         @TestMetadata("objectMembers.kt")

@@ -41,7 +41,8 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.FQNAME_TO_CLASS_DESCRIPTOR;
+import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
 
 /**
  * @author abreslav
@@ -228,6 +229,7 @@ public class TypeHierarchyResolver {
                 @Override
                 public void visitObjectDeclaration(JetObjectDeclaration declaration) {
                     final MutableClassDescriptor objectDescriptor = createClassDescriptorForObject(declaration, owner, outerScope);
+                    owner.addObjectDescriptor(objectDescriptor);
                     trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(declaration), objectDescriptor);
                 }
 
@@ -307,7 +309,6 @@ public class TypeHierarchyResolver {
                     prepareForDeferredCall(classScope, mutableClassDescriptor, declaration);
 
                     createPrimaryConstructorForObject(declaration, mutableClassDescriptor);
-                    owner.addObjectDescriptor(mutableClassDescriptor);
                     trace.record(BindingContext.CLASS, declaration, mutableClassDescriptor);
                     return mutableClassDescriptor;
                 }
