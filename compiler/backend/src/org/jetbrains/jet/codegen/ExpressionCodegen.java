@@ -2717,25 +2717,38 @@ The "returned" value of try expression with no finally is either the last expres
 (or blocks).
          */
         JetFinallySection finallyBlock = expression.getFinallyBlock();
+        FinallyBlockStackElement finallyBlockStackElement = null;
         if (finallyBlock != null) {
-            blockStackElements.push(new FinallyBlockStackElement(expression));
+            finallyBlockStackElement = new FinallyBlockStackElement(expression);
+            blockStackElements.push(finallyBlockStackElement);
         }
 
         JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
         Type expectedAsmType = asmType(jetType);
-        
+
         Label tryStart = new Label();
         v.mark(tryStart);
         v.nop(); // prevent verify error on empty try
+
         gen(expression.getTryBlock(), expectedAsmType);
+
+        int savedValue = myFrameMap.enterTemp(expectedAsmType.getSize());
+        v.store(savedValue, expectedAsmType);
+
         Label tryEnd = new Label();
         v.mark(tryEnd);
         if (finallyBlock != null) {
+            blockStackElements.pop();
             gen(finallyBlock.getFinalExpression(), Type.VOID_TYPE);
+            blockStackElements.push(finallyBlockStackElement);
         }
         Label end = new Label();
-        v.goTo(end);         // TODO don't generate goto if there's no code following try/catch
-        for (JetCatchClause clause : expression.getCatchClauses()) {
+        v.goTo(end);
+
+        List<JetCatchClause> clauses = expression.getCatchClauses();
+        for (int i = 0, size = clauses.size(); i < size; i++) {
+            JetCatchClause clause = clauses.get(i);
+
             Label clauseStart = new Label();
             v.mark(clauseStart);
 
@@ -2748,28 +2761,45 @@ The "returned" value of try expression with no finally is either the last expres
 
             gen(clause.getCatchBody(), expectedAsmType);
 
+            v.store(savedValue, expectedAsmType);
+
             myFrameMap.leave(descriptor);
 
             if (finallyBlock != null) {
+                blockStackElements.pop();
                 gen(finallyBlock.getFinalExpression(), Type.VOID_TYPE);
+                blockStackElements.push(finallyBlockStackElement);
             }
 
-            v.goTo(end);     // TODO don't generate goto if there's no code following try/catch
+            if (i != size - 1 || finallyBlock != null) {
+                v.goTo(end);
+            }
 
             v.visitTryCatchBlock(tryStart, tryEnd, clauseStart, descriptorType.getInternalName());
         }
+
         if (finallyBlock != null) {
             Label finallyStart = new Label();
             v.mark(finallyStart);
 
+            int savedException = myFrameMap.enterTemp();
+            v.store(savedException, TYPE_THROWABLE);
+
+            blockStackElements.pop();
             gen(finallyBlock.getFinalExpression(), Type.VOID_TYPE);
+            blockStackElements.push(finallyBlockStackElement);
+
+            v.load(savedException, TYPE_THROWABLE);
+            myFrameMap.leaveTemp();
 
             v.athrow();
 
             v.visitTryCatchBlock(tryStart, tryEnd, finallyStart, null);
         }
         v.mark(end);
-        v.nop();
+
+        v.load(savedValue, expectedAsmType);
+        myFrameMap.leaveTemp(expectedAsmType.getSize());
 
         if (finallyBlock != null) {
             blockStackElements.pop();
