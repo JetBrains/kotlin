@@ -743,11 +743,11 @@ public class NamespaceComparator {
                 memberStrings.add(memberSb.toString());
             }
 
-            //for (DeclarationDescriptor object : memberScope.getObjectDescriptors()) {
-            //    StringBuilder objectSb = new StringBuilder();
-            //    new FullContentSerialier(objectSb).serialize(object);
-            //    memberStrings.add(objectSb.toString());
-            //}
+            for (DeclarationDescriptor object : memberScope.getObjectDescriptors()) {
+                StringBuilder objectSb = new StringBuilder();
+                new FullContentSerialier(objectSb).serialize(object);
+                memberStrings.add(objectSb.toString());
+            }
 
             Collections.sort(memberStrings, new MemberComparator());
 

@@ -1287,11 +1287,6 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             doTestSinglePackage("compiler/testData/lazyResolve/namespaceComparator/InnerClassNameClash.kt");
         }
         
-        @TestMetadata("innerObject.kt")
-        public void testInnerObject() throws Exception {
-            doTestSinglePackage("compiler/testData/lazyResolve/namespaceComparator/innerObject.kt");
-        }
-        
         @TestMetadata("objectInClass.kt")
         public void testObjectInClass() throws Exception {
             doTestSinglePackage("compiler/testData/lazyResolve/namespaceComparator/objectInClass.kt");
