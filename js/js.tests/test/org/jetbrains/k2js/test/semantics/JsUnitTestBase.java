@@ -94,9 +94,13 @@ public abstract class JsUnitTestBase extends MultipleFilesTranslationTest {
         @SuppressWarnings("JUnitTestCaseWithNoTests") JsUnitTestBase runner = new JsUnitTestBase() {
 
         };
-        runner.setUp();
-        runner.runTestFile(testFile);
-        runner.tearDown();
+        try {
+            runner.setUp();
+            runner.runTestFile(testFile);
+        }
+        finally {
+            runner.tearDown();
+        }
     }
 
     @Override
