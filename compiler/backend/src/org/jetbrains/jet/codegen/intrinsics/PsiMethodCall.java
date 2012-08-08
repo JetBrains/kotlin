@@ -32,16 +32,16 @@ import java.util.List;
  * @author alex.tkachman
  */
 public class PsiMethodCall implements IntrinsicMethod {
-    private final SimpleFunctionDescriptor myMethod;
+    private final SimpleFunctionDescriptor method;
 
     public PsiMethodCall(SimpleFunctionDescriptor method) {
-        myMethod = method;
+        this.method = method;
     }
 
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element,
             List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
-        final CallableMethod callableMethod = state.getInjector().getJetTypeMapper().mapToCallableMethod(myMethod, false, OwnerKind.IMPLEMENTATION);
+        final CallableMethod callableMethod = state.getInjector().getJetTypeMapper().mapToCallableMethod(method, false, OwnerKind.IMPLEMENTATION);
         codegen.invokeMethodWithArguments(callableMethod, (JetCallExpression) element, receiver);
         return StackValue.onStack(callableMethod.getSignature().getAsmMethod().getReturnType());
     }
