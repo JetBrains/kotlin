@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.asm4.FieldVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
@@ -25,14 +24,12 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.ACC_ABSTRACT;
-import static org.jetbrains.asm4.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.asm4.Opcodes.ACC_PUBLIC;
 
 /**
@@ -100,26 +97,10 @@ public abstract class ClassBodyCodegen {
                 PropertyDescriptor propertyDescriptor = state.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, p);
                 if (propertyDescriptor != null) {
                     if (!isAnnotation) {
-                        int accessModifiers = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0);
-                        if((accessModifiers & ACC_PRIVATE) == 0) {
-                            propertyCodegen.generateDefaultGetter(propertyDescriptor, accessModifiers, p);
-                            if (propertyDescriptor.isVar()) {
-                                propertyCodegen.generateDefaultSetter(propertyDescriptor, accessModifiers, origin);
-                            }
-                        }
-
-                        //noinspection ConstantConditions
-                        if (!(kind instanceof OwnerKind.DelegateKind) && state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
-                            int modifiers = accessModifiers;
-                            if (!propertyDescriptor.isVar()) {
-                                modifiers |= Opcodes.ACC_FINAL;
-                            }
-                            if (JetStandardLibrary.isVolatile(propertyDescriptor)) {
-                                modifiers |= Opcodes.ACC_VOLATILE;
-                            }
-                            Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
-                            FieldVisitor fieldVisitor = v.newField(p, modifiers, p.getName(), type.getDescriptor(), null, null);
-                            AnnotationCodegen.forField(fieldVisitor, state.getInjector().getJetTypeMapper()).genAnnotations(propertyDescriptor);
+                        propertyCodegen.generateBackingField(p, propertyDescriptor);
+                        propertyCodegen.generateDefaultGetter(propertyDescriptor, JetTypeMapper.getAccessModifiers(propertyDescriptor,0), p);
+                        if (propertyDescriptor.isVar()) {
+                            propertyCodegen.generateDefaultSetter(propertyDescriptor, JetTypeMapper.getAccessModifiers(propertyDescriptor,0), p);
                         }
                     }
                     else {

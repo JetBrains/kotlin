@@ -372,7 +372,7 @@ public class DescriptorResolver {
         return constructorDescriptor;
     }
 
-    final class UpperBoundCheckerTask {
+    static final class UpperBoundCheckerTask {
         JetTypeReference upperBound;
         JetType upperBoundType;
         boolean isClassObjectConstraint;
@@ -834,7 +834,7 @@ public class DescriptorResolver {
         return setterDescriptor;
     }
 
-    private PropertySetterDescriptor createDefaultSetter(PropertyDescriptor propertyDescriptor) {
+    public static PropertySetterDescriptor createDefaultSetter(PropertyDescriptor propertyDescriptor) {
         PropertySetterDescriptor setterDescriptor;
         setterDescriptor = new PropertySetterDescriptor(
                 propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getModality(),

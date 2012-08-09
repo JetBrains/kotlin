@@ -41,6 +41,7 @@ import java.util.BitSet;
 
 /**
  * @author max
+ * @author alex.tkachman
  */
 public class PropertyCodegen {
     private final GenerationState state;
@@ -75,14 +76,14 @@ public class PropertyCodegen {
         }
     }
 
-    private void generateBackingField(JetProperty p, PropertyDescriptor propertyDescriptor) {
+    public void generateBackingField(PsiElement p, PropertyDescriptor propertyDescriptor) {
         if (state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
             DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
             if (CodegenUtil.isInterface(containingDeclaration))
                 return;
 
             Object value = null;
-            final JetExpression initializer = p.getInitializer();
+            final JetExpression initializer = p instanceof JetProperty ? ((JetProperty)p).getInitializer() : null;
             if (initializer != null) {
                 if (initializer instanceof JetConstantExpression) {
                     CompileTimeConstant<?> compileTimeValue = state.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, initializer);
@@ -91,11 +92,10 @@ public class PropertyCodegen {
             }
             int modifiers;
             if (kind == OwnerKind.NAMESPACE) {
-                int access = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0);
-                modifiers = access | Opcodes.ACC_STATIC;
+                modifiers = Opcodes.ACC_STATIC;
             }
             else {
-                modifiers = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0);
+                modifiers = Opcodes.ACC_PRIVATE;
             }
             if (!propertyDescriptor.isVar()) {
                 modifiers |= Opcodes.ACC_FINAL;
@@ -104,7 +104,7 @@ public class PropertyCodegen {
                 modifiers |= Opcodes.ACC_VOLATILE;
             }
             Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
-            FieldVisitor fieldVisitor = v.newField(p, modifiers, p.getName(), type.getDescriptor(), null, value);
+            FieldVisitor fieldVisitor = v.newField(p, modifiers, propertyDescriptor.getName().getName(), type.getDescriptor(), null, value);
             AnnotationCodegen.forField(fieldVisitor, state.getInjector().getJetTypeMapper()).genAnnotations(propertyDescriptor);
         }
     }
@@ -150,7 +150,8 @@ public class PropertyCodegen {
 
     private void generateDefaultGetter(JetProperty p) {
         final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, p);
-        int flags = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0) | (propertyDescriptor.getModality() == Modality.ABSTRACT ? Opcodes.ACC_ABSTRACT : 0);
+        assert propertyDescriptor != null;
+        int flags = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0) | (propertyDescriptor.getModality() == Modality.ABSTRACT ? Opcodes.ACC_ABSTRACT : (propertyDescriptor.getModality() == Modality.FINAL ? Opcodes.ACC_FINAL : 0));
         generateDefaultGetter(propertyDescriptor, flags, p);
     }
 

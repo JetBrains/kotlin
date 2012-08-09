@@ -1002,7 +1002,7 @@ public class JetTypeMapper {
                 return defaultFlags;
             }
             if (p.getContainingDeclaration() instanceof NamespaceDescriptor) {
-                return ACC_PROTECTED;
+                return 0;
             }
             return ACC_PRIVATE;
         }

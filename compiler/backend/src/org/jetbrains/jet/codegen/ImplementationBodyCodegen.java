@@ -1027,18 +1027,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
             }
         }
-
-        for (JetParameter p : toClass.getPrimaryConstructorParameters()) {
-            if (p.getValOrVarNode() != null) {
-                PropertyDescriptor propertyDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, p);
-                if (propertyDescriptor != null) {
-                    propertyCodegen.generateDefaultGetter(propertyDescriptor, ACC_PUBLIC, p);
-                    if (propertyDescriptor.isVar()) {
-                        propertyCodegen.generateDefaultSetter(propertyDescriptor, ACC_PUBLIC, p);
-                    }
-                }
-            }
-        }
     }
 
     @Nullable
