@@ -46,6 +46,11 @@ public class Printer {
         }
     }
 
+    public void printlnWithNoIndent(Object... objects) {
+        printWithNoIndent(objects);
+        out.append("\n");
+    }
+
     public void pushIndent() {
         indent += INDENTATION_UNIT;
     }
