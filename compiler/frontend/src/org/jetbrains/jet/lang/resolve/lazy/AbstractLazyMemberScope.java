@@ -69,10 +69,11 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         JetClassOrObject classOrObjectDeclaration = declarationProvider.getClassOrObjectDeclaration(name);
         if (classOrObjectDeclaration == null) return null;
 
-        if (object != classOrObjectDeclaration instanceof JetObjectDeclaration) return null;
+        // TODO: when enum entries with constructors are dropped, replace with declaresObjectOrEnumConstant()
+        if (object != mayDeclareObject(classOrObjectDeclaration)) return null;
 
         ClassDescriptor classDescriptor = new LazyClassDescriptor(resolveSession, thisDescriptor, name,
-                                                                  JetClassInfoUtil.createClassLikeInfo(classOrObjectDeclaration));
+                                                      JetClassInfoUtil.createClassLikeInfo(classOrObjectDeclaration));
 
         cache.put(name, classDescriptor);
         if (!object) {
@@ -82,6 +83,17 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         return classDescriptor;
     }
 
+    private static boolean mayDeclareObject(JetClassOrObject declaration) {
+        return declaration instanceof JetObjectDeclaration || declaration instanceof JetEnumEntry;
+    }
+
+    protected static boolean declaresObjectOrEnumConstant(JetClassOrObject declaration) {
+        if (declaration instanceof JetObjectDeclaration) {
+            return true;
+        }
+        return declaration instanceof JetEnumEntry && !declaration.hasPrimaryConstructor();
+    }
+
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
         return getClassOrObjectDescriptor(classDescriptors, name, false);
@@ -89,7 +101,6 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        // TODO: We shouldn't really allow objects in classes...
         return getClassOrObjectDescriptor(objectDescriptors, name, true);
     }
 
@@ -147,14 +158,13 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
         // Objects are also properties
         JetClassOrObject classOrObjectDeclaration = declarationProvider.getClassOrObjectDeclaration(name);
-        if (classOrObjectDeclaration instanceof JetObjectDeclaration) {
-            JetObjectDeclaration objectDeclaration = (JetObjectDeclaration) classOrObjectDeclaration;
+        if (declaresObjectOrEnumConstant(classOrObjectDeclaration)) {
             ClassDescriptor classifier = getObjectDescriptor(name);
             if (classifier == null) {
                 throw new IllegalStateException("Object declaration " + name + " found in the DeclarationProvider " + declarationProvider + " but not in the scope " + this);
             }
             VariableDescriptor propertyDescriptor = resolveSession.getInjector().getDescriptorResolver()
-                    .resolveObjectDeclaration(thisDescriptor, objectDeclaration, classifier, resolveSession.getTrace());
+                    .resolveObjectDeclaration(thisDescriptor, classOrObjectDeclaration, classifier, resolveSession.getTrace());
             result.add(propertyDescriptor);
         }
 
@@ -209,6 +219,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                     Name name = jetEnumEntry.getNameAsName();
                     if (name != null) {
                         getProperties(name);
+                        getObjectDescriptor(name);
                     }
                 }
                 else if (declaration instanceof JetObjectDeclaration) {

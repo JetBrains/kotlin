@@ -182,22 +182,6 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             }
         }
 
-        // Enum entries
-        JetClassOrObject classOrObjectDeclaration = declarationProvider.getClassOrObjectDeclaration(name);
-        if (classOrObjectDeclaration instanceof JetEnumEntry) {
-            // TODO: This code seems to be wrong, but it mimics the present behavior of eager resolve
-            JetEnumEntry jetEnumEntry = (JetEnumEntry) classOrObjectDeclaration;
-            if (!jetEnumEntry.hasPrimaryConstructor()) {
-                VariableDescriptor propertyDescriptor = resolveSession.getInjector().getDescriptorResolver()
-                        .resolveObjectDeclarationAsPropertyDescriptor(thisDescriptor,
-                                                                      jetEnumEntry,
-                                                                      resolveSession.getClassDescriptor(jetEnumEntry),
-                                                                      resolveSession.getTrace());
-                result.add(propertyDescriptor);
-            }
-
-        }
-
         // Members from supertypes
         Collection<PropertyDescriptor> fromSupertypes = Lists.newArrayList();
         for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
@@ -264,9 +248,14 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     @Nullable
     public ConstructorDescriptor getPrimaryConstructor() {
         if (!primaryConstructorResolved) {
-            if (EnumSet.of(ClassKind.CLASS, ClassKind.ANNOTATION_CLASS, ClassKind.OBJECT, ClassKind.ENUM_CLASS).contains(thisDescriptor.getKind())) {
+            Set<ClassKind> generateConstructorsFor =
+                    EnumSet.of(ClassKind.CLASS, ClassKind.ANNOTATION_CLASS, ClassKind.OBJECT, ClassKind.ENUM_CLASS, ClassKind.ENUM_ENTRY);
+            if (generateConstructorsFor.contains(thisDescriptor.getKind())) {
                 JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
-                if (thisDescriptor.getKind() != ClassKind.OBJECT) {
+                if (
+                        thisDescriptor.getKind() != ClassKind.OBJECT // a fake class object of an enum class
+                        && !declaresObjectOrEnumConstant(classOrObject) // normal objects and enum entries with no constructors
+                ) {
                     JetClass jetClass = (JetClass) classOrObject;
                     ConstructorDescriptorImpl constructor = resolveSession.getInjector().getDescriptorResolver()
                             .resolvePrimaryConstructorDescriptor(thisDescriptor.getScopeForClassHeaderResolution(),
