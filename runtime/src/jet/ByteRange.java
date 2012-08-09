@@ -93,10 +93,6 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
             return new MyIterator(start, count, step);
     }
 
-    public ByteRange minus() {
-        return new ByteRange(getEnd(), -count);
-    }
-
     @Override
     public ByteIterator iterator() {
         return new MyIterator(start, count, 1);

@@ -83,10 +83,6 @@ public final class FloatRange implements Range<Float> {
         return size < 0 ? -size : size;
     }
 
-    public FloatRange minus() {
-        return new FloatRange(getEnd(), -size);
-    }
-
     public static FloatRange count(int length) {
         return new FloatRange(0, length);
     }

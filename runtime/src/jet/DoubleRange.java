@@ -87,10 +87,6 @@ public final class DoubleRange implements Range<Double> {
         return size < 0 ? -size : size;
     }
 
-    public DoubleRange minus() {
-        return new DoubleRange(getEnd(), -size);
-    }
-
     public static DoubleRange count(int length) {
         return new DoubleRange(0, length);
     }

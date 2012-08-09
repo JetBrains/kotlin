@@ -93,10 +93,6 @@ public final class LongRange implements Range<Long>, LongIterable {
         return count < 0 ? -count : count;
     }
 
-    public LongRange minus() {
-        return new LongRange(getEnd(), -count);
-    }
-
     @Override
     public LongIterator iterator() {
         return new MyIterator(start, count, 1);

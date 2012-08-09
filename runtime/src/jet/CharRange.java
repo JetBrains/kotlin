@@ -86,10 +86,6 @@ public final class CharRange implements Range<Character>, CharIterable {
         return count < 0 ? -count : count;
     }
 
-    public CharRange minus() {
-        return new CharRange(getEnd(), -count);
-    }
-
     public CharIterator step(int step) {
         if (step < 0)
             return new MyIterator(getEnd(), -count, -step);

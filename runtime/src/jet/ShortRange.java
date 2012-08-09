@@ -93,10 +93,6 @@ public final class ShortRange implements Range<Short>, ShortIterable {
         return count < 0 ? -count : count;
     }
 
-    public ShortRange minus() {
-        return new ShortRange(getEnd(), -count);
-    }
-
     @Override
     public ShortIterator iterator() {
         return new MyIterator(start, count, 1);

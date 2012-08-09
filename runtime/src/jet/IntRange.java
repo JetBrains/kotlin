@@ -102,10 +102,6 @@ public final class IntRange implements Range<Integer>, IntIterable {
         return count < 0 ? -count : count;
     }
 
-    public IntRange minus() {
-        return new IntRange(getEnd(), -count);
-    }
-
     @Override
     public IntIterator iterator() {
         return new MyIterator(start, count, 1);
