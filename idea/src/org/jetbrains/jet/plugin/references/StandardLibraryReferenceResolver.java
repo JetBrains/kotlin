@@ -117,15 +117,23 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
 
     @Nullable
     private DeclarationDescriptor findCurrentDescriptor(@NotNull DeclarationDescriptor originalDescriptor) {
+        DeclarationDescriptor parent = originalDescriptor.getContainingDeclaration();
         if (originalDescriptor instanceof ClassDescriptor) {
-            return bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFQName(originalDescriptor).toSafe());
+            if (((ClassDescriptor) originalDescriptor).getKind() == ClassKind.OBJECT) {
+                if (parent == null) return null;
+                parent = findCurrentDescriptor(parent);
+                if (parent == null) return null;
+                return ((ClassDescriptor) parent).getClassObjectDescriptor();
+            }
+            else {
+                return bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFQName(originalDescriptor).toSafe());
+            }
         }
         else if (originalDescriptor instanceof NamespaceDescriptor) {
             return bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
                                       DescriptorUtils.getFQName(originalDescriptor).toSafe());
         }
         else {
-            DeclarationDescriptor parent = originalDescriptor.getContainingDeclaration();
             if (parent == null) return null;
             parent = findCurrentDescriptor(parent);
             JetScope memberScope;
