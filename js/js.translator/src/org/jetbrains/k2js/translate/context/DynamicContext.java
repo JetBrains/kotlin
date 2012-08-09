@@ -17,14 +17,14 @@
 package org.jetbrains.k2js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.addVarDeclaration;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.newVar;
+import static com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
 
 //TODO: consider renaming to scoping context
 public final class DynamicContext {
-
     @NotNull
     public static DynamicContext rootContext(@NotNull JsScope rootScope, @NotNull JsBlock globalBlock) {
         return new DynamicContext(rootScope, globalBlock);
@@ -41,6 +41,9 @@ public final class DynamicContext {
     @NotNull
     private final JsBlock currentBlock;
 
+    @Nullable
+    private JsVars vars;
+
     private DynamicContext(@NotNull JsScope scope, @NotNull JsBlock block) {
         this.currentScope = scope;
         this.currentBlock = block;
@@ -52,11 +55,21 @@ public final class DynamicContext {
     }
 
     @NotNull
-    public TemporaryVariable declareTemporary(@NotNull JsExpression initExpression) {
+    public TemporaryVariable declareTemporary(@Nullable JsExpression initExpression) {
+        if (vars == null) {
+            vars = new JsVars();
+            currentBlock.getStatements().add(vars);
+        }
+
         JsName temporaryName = currentScope.declareTemporary();
-        JsVars temporaryDeclaration = newVar(temporaryName, /*no value for init expression */ null);
-        addVarDeclaration(jsBlock(), temporaryDeclaration);
+        vars.add(new JsVar(temporaryName, null));
         return new TemporaryVariable(temporaryName, initExpression);
+    }
+
+    @NotNull
+    public Pair<JsVar, JsNameRef> createTemporary(@Nullable JsExpression initExpression) {
+        JsVar var = new JsVar(currentScope.declareTemporary(), initExpression);
+        return new Pair<JsVar, JsNameRef>(var, var.getName().makeRef());
     }
 
     @NotNull
