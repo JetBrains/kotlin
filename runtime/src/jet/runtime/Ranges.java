@@ -378,16 +378,16 @@ public class Ranges {
 
                 if (resType.equals("FloatRange") || resType.equals("DoubleRange")) {
                     System.out.println("\npublic static " + resType + " rangeTo(" + t1 + " from, " + t2 + " to) {\n" +
-                                       "    return new " + resType + "(from, to-from);\n" +
+                                       "    return new " + resType + "(from, to - from);\n" +
                                        "}");
                 }
                 else {
                     System.out.println("\npublic static " + resType + " rangeTo(" + t1 + " from, " + t2 + " to) {" +
-                                       "\n  if(from > to) {\n" +
+                                       "\n  if (from > to) {\n" +
                                        "    return " + resType + ".EMPTY;\n" +
                                        "  }\n" +
                                        "  else {\n" +
-                                       "    return new " + resType + "(from, to-from+1);\n" +
+                                       "    return new " + resType + "(from, to - from + 1);\n" +
                                        "  }\n" +
                                        "}");
                 }
