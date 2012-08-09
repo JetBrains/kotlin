@@ -31,6 +31,19 @@ public final class DoubleRange implements Range<Double> {
     }
 
     @Override
+    public String toString() {
+        if (size == 0.0) {
+            return "<empty range>";
+        }
+        else if (size > 0) {
+            return getStart() + ".rangeTo(" + getEnd() + ")";
+        }
+        else {
+            return getStart() + ".downTo(" + getEnd() + ")";
+        }
+    }
+
+    @Override
     public boolean contains(Double item) {
         if (item == null) return false;
         if (size >= 0) {

@@ -31,6 +31,19 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
     }
 
     @Override
+    public String toString() {
+        if (count == 0) {
+            return "<empty range>";
+        }
+        else if (count > 0) {
+            return getStart() + ".rangeTo(" + getEnd() + ")";
+        }
+        else {
+            return getStart() + ".downTo(" + getEnd() + ")";
+        }
+    }
+
+    @Override
     public boolean contains(Byte item) {
         if (item == null) return false;
         if (count >= 0) {

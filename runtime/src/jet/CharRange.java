@@ -31,6 +31,19 @@ public final class CharRange implements Range<Character>, CharIterable {
     }
 
     @Override
+    public String toString() {
+        if (count == 0) {
+            return "<empty range>";
+        }
+        else if (count > 0) {
+            return getStart() + ".rangeTo(" + getEnd() + ")";
+        }
+        else {
+            return getStart() + ".downTo(" + getEnd() + ")";
+        }
+    }
+
+    @Override
     public boolean contains(Character item) {
         if (item == null) return false;
         if (count >= 0) {

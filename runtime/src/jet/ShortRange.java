@@ -30,6 +30,19 @@ public final class ShortRange implements Range<Short>, ShortIterable {
         this.count = count;
     }
 
+    @Override
+    public String toString() {
+        if (count == 0) {
+            return "<empty range>";
+        }
+        else if (count > 0) {
+            return getStart() + ".rangeTo(" + getEnd() + ")";
+        }
+        else {
+            return getStart() + ".downTo(" + getEnd() + ")";
+        }
+    }
+
     public ShortIterator step(int step) {
         if (step < 0)
             return new MyIterator(getEnd(), -count, -step);

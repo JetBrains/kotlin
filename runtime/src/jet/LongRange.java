@@ -30,6 +30,20 @@ public final class LongRange implements Range<Long>, LongIterable {
         this.count = count;
     }
 
+    @Override
+    public String toString() {
+        if (count == 0) {
+            return "<empty range>";
+        }
+        else if (count > 0) {
+            return getStart() + ".rangeTo(" + getEnd() + ")";
+        }
+        else {
+            return getStart() + ".downTo(" + getEnd() + ")";
+        }
+    }
+
+
     public LongIterator step(long step) {
         if (step < 0)
             return new MyIterator(getEnd(), -count, -step);
