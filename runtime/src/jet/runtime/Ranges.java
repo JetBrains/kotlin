@@ -30,7 +30,7 @@ public class Ranges {
 
     public static ByteRange rangeTo(byte from, byte to) {
         if (from > to) {
-            return ByteRange.empty;
+            return ByteRange.EMPTY;
         }
         else {
             return new ByteRange(from, to - from + 1);
@@ -39,7 +39,7 @@ public class Ranges {
 
     public static ShortRange rangeTo(byte from, short to) {
         if (from > to) {
-            return ShortRange.empty;
+            return ShortRange.EMPTY;
         }
         else {
             return new ShortRange(from, to - from + 1);
@@ -48,7 +48,7 @@ public class Ranges {
 
     public static IntRange rangeTo(byte from, int to) {
         if (from > to) {
-            return IntRange.empty;
+            return IntRange.EMPTY;
         }
         else {
             return new IntRange(from, to - from + 1);
@@ -57,7 +57,7 @@ public class Ranges {
 
     public static LongRange rangeTo(byte from, long to) {
         if (from > to) {
-            return LongRange.empty;
+            return LongRange.EMPTY;
         }
         else {
             return new LongRange(from, to - from + 1);
@@ -74,7 +74,7 @@ public class Ranges {
 
     public static CharRange rangeTo(byte from, char to) {
         if (from > to) {
-            return CharRange.empty;
+            return CharRange.EMPTY;
         }
         else {
             return new CharRange((char) from, to - from + 1);
@@ -83,7 +83,7 @@ public class Ranges {
 
     public static ShortRange rangeTo(short from, byte to) {
         if (from > to) {
-            return ShortRange.empty;
+            return ShortRange.EMPTY;
         }
         else {
             return new ShortRange(from, to - from + 1);
@@ -92,7 +92,7 @@ public class Ranges {
 
     public static ShortRange rangeTo(short from, short to) {
         if (from > to) {
-            return ShortRange.empty;
+            return ShortRange.EMPTY;
         }
         else {
             return new ShortRange(from, to - from + 1);
@@ -101,7 +101,7 @@ public class Ranges {
 
     public static IntRange rangeTo(short from, int to) {
         if (from > to) {
-            return IntRange.empty;
+            return IntRange.EMPTY;
         }
         else {
             return new IntRange(from, to - from + 1);
@@ -110,7 +110,7 @@ public class Ranges {
 
     public static LongRange rangeTo(short from, long to) {
         if (from > to) {
-            return LongRange.empty;
+            return LongRange.EMPTY;
         }
         else {
             return new LongRange(from, to - from + 1);
@@ -127,7 +127,7 @@ public class Ranges {
 
     public static ShortRange rangeTo(short from, char to) {
         if (from > to) {
-            return ShortRange.empty;
+            return ShortRange.EMPTY;
         }
         else {
             return new ShortRange(from, to - from + 1);
@@ -136,7 +136,7 @@ public class Ranges {
 
     public static IntRange rangeTo(int from, byte to) {
         if (from > to) {
-            return IntRange.empty;
+            return IntRange.EMPTY;
         }
         else {
             return new IntRange(from, to - from + 1);
@@ -145,7 +145,7 @@ public class Ranges {
 
     public static IntRange rangeTo(int from, short to) {
         if (from > to) {
-            return IntRange.empty;
+            return IntRange.EMPTY;
         }
         else {
             return new IntRange(from, to - from + 1);
@@ -154,7 +154,7 @@ public class Ranges {
 
     public static IntRange rangeTo(int from, int to) {
         if (from > to) {
-            return IntRange.empty;
+            return IntRange.EMPTY;
         }
         else {
             return new IntRange(from, to - from + 1);
@@ -163,7 +163,7 @@ public class Ranges {
 
     public static LongRange rangeTo(int from, long to) {
         if (from > to) {
-            return LongRange.empty;
+            return LongRange.EMPTY;
         }
         else {
             return new LongRange(from, to - from + 1);
@@ -180,7 +180,7 @@ public class Ranges {
 
     public static IntRange rangeTo(int from, char to) {
         if (from > to) {
-            return IntRange.empty;
+            return IntRange.EMPTY;
         }
         else {
             return new IntRange(from, to - from + 1);
@@ -189,7 +189,7 @@ public class Ranges {
 
     public static LongRange rangeTo(long from, byte to) {
         if (from > to) {
-            return LongRange.empty;
+            return LongRange.EMPTY;
         }
         else {
             return new LongRange(from, to - from + 1);
@@ -198,7 +198,7 @@ public class Ranges {
 
     public static LongRange rangeTo(long from, short to) {
         if (from > to) {
-            return LongRange.empty;
+            return LongRange.EMPTY;
         }
         else {
             return new LongRange(from, to - from + 1);
@@ -207,7 +207,7 @@ public class Ranges {
 
     public static LongRange rangeTo(long from, int to) {
         if (from > to) {
-            return LongRange.empty;
+            return LongRange.EMPTY;
         }
         else {
             return new LongRange(from, to - from + 1);
@@ -216,7 +216,7 @@ public class Ranges {
 
     public static LongRange rangeTo(long from, long to) {
         if (from > to) {
-            return LongRange.empty;
+            return LongRange.EMPTY;
         }
         else {
             return new LongRange(from, to - from + 1);
@@ -233,7 +233,7 @@ public class Ranges {
 
     public static LongRange rangeTo(long from, char to) {
         if (from > to) {
-            return LongRange.empty;
+            return LongRange.EMPTY;
         }
         else {
             return new LongRange(from, to - from + 1);
@@ -298,7 +298,7 @@ public class Ranges {
 
     public static CharRange rangeTo(char from, byte to) {
         if (from > to) {
-            return CharRange.empty;
+            return CharRange.EMPTY;
         }
         else {
             return new CharRange(from, to - from + 1);
@@ -307,7 +307,7 @@ public class Ranges {
 
     public static ShortRange rangeTo(char from, short to) {
         if (from > to) {
-            return ShortRange.empty;
+            return ShortRange.EMPTY;
         }
         else {
             return new ShortRange((short) from, to - from + 1);
@@ -316,7 +316,7 @@ public class Ranges {
 
     public static IntRange rangeTo(char from, int to) {
         if (from > to) {
-            return IntRange.empty;
+            return IntRange.EMPTY;
         }
         else {
             return new IntRange(from, to - from + 1);
@@ -325,7 +325,7 @@ public class Ranges {
 
     public static LongRange rangeTo(char from, long to) {
         if (from > to) {
-            return LongRange.empty;
+            return LongRange.EMPTY;
         }
         else {
             return new LongRange(from, to - from + 1);
@@ -342,7 +342,7 @@ public class Ranges {
 
     public static CharRange rangeTo(char from, char to) {
         if (from > to) {
-            return CharRange.empty;
+            return CharRange.EMPTY;
         }
         else {
             return new CharRange(from, to - from + 1);
@@ -384,7 +384,7 @@ public class Ranges {
                 else {
                     System.out.println("\npublic static " + resType + " rangeTo(" + t1 + " from, " + t2 + " to) {" +
                                        "\n  if(from > to) {\n" +
-                                       "    return " + resType + ".empty;\n" +
+                                       "    return " + resType + ".EMPTY;\n" +
                                        "  }\n" +
                                        "  else {\n" +
                                        "    return new " + resType + "(from, to-from+1);\n" +

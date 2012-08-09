@@ -50,7 +50,7 @@ public class EmptyRange implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state) {
         JvmClassName name = JvmClassName.byFqNameWithoutInnerClasses(elementType.getRangeClassName().getFqName());
-        v.getstatic(name.toString(), "empty", "L" + name + ";");
+        v.getstatic(name.toString(), "EMPTY", "L" + name + ";");
         return StackValue.onStack(expectedType);
     }
 }

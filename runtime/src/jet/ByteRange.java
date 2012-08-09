@@ -23,7 +23,7 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
     private final byte start;
     private final int count;
 
-    public static final ByteRange empty = new ByteRange((byte) 0,0);
+    public static final ByteRange EMPTY = new ByteRange((byte) 0,0);
 
     public ByteRange(byte startValue, int count) {
         this.start = startValue;

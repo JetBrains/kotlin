@@ -23,7 +23,7 @@ public final class CharRange implements Range<Character>, CharIterable {
     private final char start;
     private final int count;
 
-    public static final CharRange empty = new CharRange((char) 0,0);
+    public static final CharRange EMPTY = new CharRange((char) 0,0);
 
     public CharRange(char startValue, int count) {
         this.start = startValue;

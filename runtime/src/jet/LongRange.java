@@ -23,7 +23,7 @@ public final class LongRange implements Range<Long>, LongIterable {
     private final long start;
     private final long count;
 
-    public static final LongRange empty = new LongRange(0L,0L);
+    public static final LongRange EMPTY = new LongRange(0L,0L);
 
     public LongRange(long startValue, long count) {
         this.start = startValue;

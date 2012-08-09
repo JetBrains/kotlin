@@ -23,7 +23,7 @@ public final class ShortRange implements Range<Short>, ShortIterable {
     private final short start;
     private final int count;
 
-    public static final ShortRange empty = new ShortRange((short) 0,0);
+    public static final ShortRange EMPTY = new ShortRange((short) 0,0);
 
     public ShortRange(short startValue, int count) {
         this.start = startValue;

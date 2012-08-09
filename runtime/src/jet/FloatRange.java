@@ -23,7 +23,7 @@ public final class FloatRange implements Range<Float> {
     private final float start;
     private final float size;
 
-    public static final FloatRange empty = new FloatRange(0, 0);
+    public static final FloatRange EMPTY = new FloatRange(0, 0);
 
     public FloatRange(float startValue, float size) {
         this.start = startValue;
