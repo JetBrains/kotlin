@@ -7,23 +7,23 @@ package kotlin
 
 
 public inline fun Byte.downTo(to: Byte): ByteRange {
-    return if (this >= to) ByteRange(this, to - this - 1) else ByteRange(0, 0)
+    return if (this >= to) ByteRange(this, to - this - 1) else ByteRange.EMPTY
 }
 
 public inline fun Byte.downTo(to: Char): CharRange {
-    return if (this >= to) CharRange(this.toChar(), to - this - 1) else CharRange(0.toChar(), 0)
+    return if (this >= to) CharRange(this.toChar(), to - this - 1) else CharRange.EMPTY
 }
 
 public inline fun Byte.downTo(to: Short): ShortRange {
-    return if (this >= to) ShortRange(this.toShort(), to - this - 1) else ShortRange(0, 0)
+    return if (this >= to) ShortRange(this.toShort(), to - this - 1) else ShortRange.EMPTY
 }
 
 public inline fun Byte.downTo(to: Int): IntRange {
-    return if (this >= to) IntRange(this.toInt(), to - this - 1) else IntRange(0, 0)
+    return if (this >= to) IntRange(this.toInt(), to - this - 1) else IntRange.EMPTY
 }
 
 public inline fun Byte.downTo(to: Long): LongRange {
-    return if (this >= to) LongRange(this.toLong(), to - this - 1) else LongRange(0, 0)
+    return if (this >= to) LongRange(this.toLong(), to - this - 1) else LongRange.EMPTY
 }
 
 public inline fun Byte.downTo(to: Float): FloatRange {
@@ -35,23 +35,23 @@ public inline fun Byte.downTo(to: Double): DoubleRange {
 }
 
 public inline fun Char.downTo(to: Byte): CharRange {
-    return if (this >= to) CharRange(this, to - this - 1) else CharRange(0.toChar(), 0)
+    return if (this >= to) CharRange(this, to - this - 1) else CharRange.EMPTY
 }
 
 public inline fun Char.downTo(to: Char): CharRange {
-    return if (this >= to) CharRange(this, to - this - 1) else CharRange(0.toChar(), 0)
+    return if (this >= to) CharRange(this, to - this - 1) else CharRange.EMPTY
 }
 
 public inline fun Char.downTo(to: Short): ShortRange {
-    return if (this >= to) ShortRange(this.toShort(), to - this - 1) else ShortRange(0, 0)
+    return if (this >= to) ShortRange(this.toShort(), to - this - 1) else ShortRange.EMPTY
 }
 
 public inline fun Char.downTo(to: Int): IntRange {
-    return if (this >= to) IntRange(this.toInt(), to - this - 1) else IntRange(0, 0)
+    return if (this >= to) IntRange(this.toInt(), to - this - 1) else IntRange.EMPTY
 }
 
 public inline fun Char.downTo(to: Long): LongRange {
-    return if (this >= to) LongRange(this.toLong(), to - this - 1) else LongRange(0, 0)
+    return if (this >= to) LongRange(this.toLong(), to - this - 1) else LongRange.EMPTY
 }
 
 public inline fun Char.downTo(to: Float): FloatRange {
@@ -63,23 +63,23 @@ public inline fun Char.downTo(to: Double): DoubleRange {
 }
 
 public inline fun Short.downTo(to: Byte): ShortRange {
-    return if (this >= to) ShortRange(this, to - this - 1) else ShortRange(0, 0)
+    return if (this >= to) ShortRange(this, to - this - 1) else ShortRange.EMPTY
 }
 
 public inline fun Short.downTo(to: Char): ShortRange {
-    return if (this >= to) ShortRange(this, to - this - 1) else ShortRange(0, 0)
+    return if (this >= to) ShortRange(this, to - this - 1) else ShortRange.EMPTY
 }
 
 public inline fun Short.downTo(to: Short): ShortRange {
-    return if (this >= to) ShortRange(this, to - this - 1) else ShortRange(0, 0)
+    return if (this >= to) ShortRange(this, to - this - 1) else ShortRange.EMPTY
 }
 
 public inline fun Short.downTo(to: Int): IntRange {
-    return if (this >= to) IntRange(this.toInt(), to - this - 1) else IntRange(0, 0)
+    return if (this >= to) IntRange(this.toInt(), to - this - 1) else IntRange.EMPTY
 }
 
 public inline fun Short.downTo(to: Long): LongRange {
-    return if (this >= to) LongRange(this.toLong(), to - this - 1) else LongRange(0, 0)
+    return if (this >= to) LongRange(this.toLong(), to - this - 1) else LongRange.EMPTY
 }
 
 public inline fun Short.downTo(to: Float): FloatRange {
@@ -91,23 +91,23 @@ public inline fun Short.downTo(to: Double): DoubleRange {
 }
 
 public inline fun Int.downTo(to: Byte): IntRange {
-    return if (this >= to) IntRange(this, to - this - 1) else IntRange(0, 0)
+    return if (this >= to) IntRange(this, to - this - 1) else IntRange.EMPTY
 }
 
 public inline fun Int.downTo(to: Char): IntRange {
-    return if (this >= to) IntRange(this, to - this - 1) else IntRange(0, 0)
+    return if (this >= to) IntRange(this, to - this - 1) else IntRange.EMPTY
 }
 
 public inline fun Int.downTo(to: Short): IntRange {
-    return if (this >= to) IntRange(this, to - this - 1) else IntRange(0, 0)
+    return if (this >= to) IntRange(this, to - this - 1) else IntRange.EMPTY
 }
 
 public inline fun Int.downTo(to: Int): IntRange {
-    return if (this >= to) IntRange(this, to - this - 1) else IntRange(0, 0)
+    return if (this >= to) IntRange(this, to - this - 1) else IntRange.EMPTY
 }
 
 public inline fun Int.downTo(to: Long): LongRange {
-    return if (this >= to) LongRange(this.toLong(), to - this - 1) else LongRange(0, 0)
+    return if (this >= to) LongRange(this.toLong(), to - this - 1) else LongRange.EMPTY
 }
 
 public inline fun Int.downTo(to: Float): FloatRange {
@@ -119,23 +119,23 @@ public inline fun Int.downTo(to: Double): DoubleRange {
 }
 
 public inline fun Long.downTo(to: Byte): LongRange {
-    return if (this >= to) LongRange(this, to - this - 1) else LongRange(0, 0)
+    return if (this >= to) LongRange(this, to - this - 1) else LongRange.EMPTY
 }
 
 public inline fun Long.downTo(to: Char): LongRange {
-    return if (this >= to) LongRange(this, to - this - 1) else LongRange(0, 0)
+    return if (this >= to) LongRange(this, to - this - 1) else LongRange.EMPTY
 }
 
 public inline fun Long.downTo(to: Short): LongRange {
-    return if (this >= to) LongRange(this, to - this - 1) else LongRange(0, 0)
+    return if (this >= to) LongRange(this, to - this - 1) else LongRange.EMPTY
 }
 
 public inline fun Long.downTo(to: Int): LongRange {
-    return if (this >= to) LongRange(this, to - this - 1) else LongRange(0, 0)
+    return if (this >= to) LongRange(this, to - this - 1) else LongRange.EMPTY
 }
 
 public inline fun Long.downTo(to: Long): LongRange {
-    return if (this >= to) LongRange(this, to - this - 1) else LongRange(0, 0)
+    return if (this >= to) LongRange(this, to - this - 1) else LongRange.EMPTY
 }
 
 public inline fun Long.downTo(to: Float): FloatRange {

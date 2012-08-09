@@ -28,10 +28,9 @@ public inline fun $fromType.downTo(to: $toType): $rangeType {
     return $rangeType($fromExpr, to - this)
 }""")
         } else {
-            // TODO use empty range constant, which is not available yet (KT-2583)
             writer.println("""
 public inline fun $fromType.downTo(to: $toType): $rangeType {
-    return if (this >= to) $rangeType($fromExpr, to - this - 1) else $rangeType(${if (elementType == "Char") "0.toChar()" else "0"}, 0)
+    return if (this >= to) $rangeType($fromExpr, to - this - 1) else $rangeType.EMPTY
 }""")
         }
     }
