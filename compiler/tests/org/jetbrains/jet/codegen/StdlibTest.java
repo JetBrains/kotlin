@@ -373,4 +373,8 @@ public class StdlibTest extends CodegenTestCase {
     public void testKt2246() {
         blackBoxFile("regressions/kt2246.kt");
     }
+
+    public void testKt2596() {
+        blackBoxFile("regressions/kt2596.kt");
+    }
 }

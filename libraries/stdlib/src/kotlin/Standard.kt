@@ -6,11 +6,6 @@ import java.util.HashSet
 import java.util.LinkedList
 
 /**
-Helper to make jet.Iterator usable in for
-*/
-public inline fun <T> Iterator<T>.iterator() : Iterator<T> = this
-
-/**
 Helper to make java.util.Iterator usable in for
 */
 public inline fun <T> java.util.Iterator<T>.iterator() : java.util.Iterator<T> = this
