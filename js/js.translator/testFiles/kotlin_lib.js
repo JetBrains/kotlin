@@ -107,9 +107,6 @@ var kotlin = {set:function (receiver, key, value) {
         },
         get_hasNext: function () {
             return this.index < this.size;
-        },
-        hasNext: function () {
-            return this.index < this.size;
         }
     });
 
@@ -173,21 +170,63 @@ var kotlin = {set:function (receiver, key, value) {
         }
     });
 
-    Kotlin.AbstractList = Kotlin.$createClass(Kotlin.AbstractCollection, {
+    Kotlin.Collection = Kotlin.$createClass();
+
+    Kotlin.AbstractList = Kotlin.$createClass(Kotlin.Collection, {
         iterator: function () {
             return Kotlin.$new(ListIterator)(this);
         },
         isEmpty: function () {
-            return this.size() == 0;
+            return this.size() === 0;
+        },
+        addAll: function (collection) {
+            var it = collection.iterator();
+            var i = this.$size;
+            while (i-- > 0) {
+                this.add(it.next());
+            }
         },
         remove: function (o) {
             var index = this.indexOf(o);
-            if (index != -1) {
+            if (index !== -1) {
                 this.removeAt(index);
             }
         },
         contains: function (o) {
-            return this.indexOf(o) != -1;
+            return this.indexOf(o) !== -1;
+        },
+        equals: function (o) {
+            if (this.$size === o.$size) {
+                var iterator1 = this.iterator();
+                var iterator2 = o.iterator();
+                var i = this.$size;
+                while (i-- > 0) {
+                    if (!Kotlin.equals(iterator1.next(), iterator2.next())) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        },
+        toString: function () {
+            var builder = "[";
+            var iterator = this.iterator();
+            var first = true;
+            var i = this.$size;
+            while (i-- > 0) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                    builder += ", ";
+                }
+                builder += iterator.next();
+            }
+            builder += "]";
+            return builder;
+        },
+        toJSON: function () {
+            return this.toArray();
         }
     });
     Kotlin.ArrayList = Kotlin.$createClass(Kotlin.AbstractList, {
@@ -197,13 +236,13 @@ var kotlin = {set:function (receiver, key, value) {
         },
         get: function (index) {
             if (index < 0 || index >= this.$size) {
-                throw Kotlin.Exceptions.IndexOutOfBounds;
+                throw Kotlin.IndexOutOfBounds;
             }
             return this.array[index];
         },
         set: function (index, value) {
             if (index < 0 || index >= this.$size) {
-                throw Kotlin.Exceptions.IndexOutOfBounds;
+                throw Kotlin.IndexOutOfBounds;
             }
             this.array[index] = value;
         },
@@ -221,6 +260,15 @@ var kotlin = {set:function (receiver, key, value) {
         },
         addAt: function (index, element) {
             this.array.splice(index, 0, element);
+            this.$size++;
+        },
+        addAll: function (collection) {
+            var it = collection.iterator();
+            for (var i = this.$size, n = collection.size(); n-- > 0;) {
+                this.array[i++] = it.next();
+            }
+
+            this.$size += collection.size();
         },
         removeAt: function (index) {
             this.array.splice(index, 1);
@@ -237,6 +285,12 @@ var kotlin = {set:function (receiver, key, value) {
                 }
             }
             return -1;
+        },
+        toString: function () {
+            return "[" + this.array.join(", ") + "]";
+        },
+        toJSON: function () {
+            return this.array;
         }
     });
 
