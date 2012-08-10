@@ -16,10 +16,8 @@
 
 package org.jetbrains.k2js.translate.operation;
 
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsConditional;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -35,14 +33,13 @@ import static org.jetbrains.k2js.translate.general.Translation.translateAsExpres
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getBaseExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.notNullCheck;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.notNullConditionalTestExpression;
 
 /**
  * @author Pavel Talanov
  */
 
 public final class UnaryOperationTranslator {
-
     private UnaryOperationTranslator() {
     }
 
@@ -65,9 +62,7 @@ public final class UnaryOperationTranslator {
     @NotNull
     private static JsExpression translateExclExclOperator(@NotNull JetUnaryExpression expression, @NotNull TranslationContext context) {
         TemporaryVariable cachedValue = context.declareTemporary(translateAsExpression(getBaseExpression(expression), context));
-        JsBinaryOperation initAndCheckNotNull = AstUtil.newSequence(cachedValue.assignmentExpression(),
-                                                             notNullCheck(context, cachedValue.reference()));
-        return new JsConditional(initAndCheckNotNull, cachedValue.reference(), context.namer().throwNPEFunctionCall());
+        return new JsConditional(notNullConditionalTestExpression(cachedValue), cachedValue.reference(), context.namer().throwNPEFunctionCall());
     }
 
     @NotNull
