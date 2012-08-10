@@ -1,6 +1,6 @@
-class A(var a : Int) {
+class A(var a: Int) {
     {
-        $a=3
+        $a = 3
     }
 }
 

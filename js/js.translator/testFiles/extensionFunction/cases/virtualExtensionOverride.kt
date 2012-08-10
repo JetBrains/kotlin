@@ -1,16 +1,16 @@
 package foo
 
-open class A(var a : Int) {
+open class A(var a: Int) {
 
-    open fun Int.modify() : Int {
+    open fun Int.modify(): Int {
         return this * 3;
     }
 
     fun eval() = a.modify();
 }
 
-class B(a : Int) : A(a) {
-    override fun Int.modify() : Int {
+class B(a: Int): A(a) {
+    override fun Int.modify(): Int {
         return this - 2;
     }
 }
