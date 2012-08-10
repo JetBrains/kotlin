@@ -216,4 +216,15 @@ public class TranslationContext {
     public void addStatementToCurrentBlock(@NotNull JsStatement statement) {
         dynamicContext.jsBlock().getStatements().add(statement);
     }
+
+    @NotNull
+    public AliasingContext.ThisAliasProvider thisAliasProvider() {
+        return aliasingContext().thisAliasProvider;
+    }
+
+    @NotNull
+    public JsExpression getThisObject(@NotNull DeclarationDescriptor descriptor) {
+        JsNameRef ref = thisAliasProvider().get(descriptor);
+        return ref == null ? JsLiteral.THIS : ref;
+    }
 }
