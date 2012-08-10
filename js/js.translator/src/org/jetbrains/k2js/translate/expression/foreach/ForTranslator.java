@@ -22,7 +22,6 @@ import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetForExpression;
-import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
@@ -64,14 +63,14 @@ public abstract class ForTranslator extends AbstractTranslator {
 
     @NotNull
     private JsName declareParameter() {
-        JetParameter loopParameter = getLoopParameter(expression);
-        return context().getNameForElement(loopParameter);
+        return context().getNameForElement(getLoopParameter(expression));
     }
 
     @NotNull
     protected JsStatement translateOriginalBodyExpression() {
         return Translation.translateAsStatement(getLoopBody(expression), context());
     }
+
     @NotNull
     protected JsStatement translateBody(JsExpression itemValue) {
         JsStatement currentVar = newVar(parameterName, itemValue);
