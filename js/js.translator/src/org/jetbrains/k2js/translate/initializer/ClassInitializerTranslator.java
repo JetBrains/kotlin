@@ -81,7 +81,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
 
         //TODO: can be problematic to maintain
         if (context().isEcma5()) {
-            JsName ref = context().scope().declareName("$initializer");
+            JsName ref = context().scope().declareName(Namer.CALLEE_NAME);
             initializer.setName(ref);
             JsInvocation call = new JsInvocation(new JsNameRef("call", new JsNameRef("baseInitializer", ref.makeRef())));
             call.getArguments().add(JsLiteral.THIS);
