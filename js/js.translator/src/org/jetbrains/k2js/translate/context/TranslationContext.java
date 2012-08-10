@@ -58,16 +58,18 @@ public class TranslationContext {
         return staticContext.isEcma5();
     }
 
-    public boolean isNotEcma3() {
-        return staticContext.getEcmaVersion() != EcmaVersion.v3;
-    }
-
     private TranslationContext(@NotNull StaticContext staticContext,
-                               @NotNull DynamicContext dynamicContext,
-                               @NotNull AliasingContext context) {
+            @NotNull DynamicContext dynamicContext,
+            @NotNull AliasingContext aliasingContext) {
         this.dynamicContext = dynamicContext;
         this.staticContext = staticContext;
-        aliasingContext = context;
+        this.aliasingContext = aliasingContext;
+    }
+
+    private TranslationContext(@NotNull TranslationContext parent, @NotNull AliasingContext aliasingContext) {
+        dynamicContext = parent.dynamicContext;
+        staticContext = parent.staticContext;
+        this.aliasingContext = aliasingContext;
     }
 
     public DynamicContext dynamicContext() {
@@ -75,8 +77,23 @@ public class TranslationContext {
     }
 
     @NotNull
-    public TranslationContext contextWithScope(@NotNull JsScope newScope, @NotNull JsBlock block) {
+    private TranslationContext contextWithScope(@NotNull JsScope newScope, @NotNull JsBlock block) {
+        return contextWithScope(newScope, block, aliasingContext);
+    }
+
+    @NotNull
+    public TranslationContext contextWithScope(@NotNull JsFunction fun) {
+        return contextWithScope(fun, aliasingContext);
+    }
+
+    @NotNull
+    protected TranslationContext contextWithScope(@NotNull JsScope newScope, @NotNull JsBlock block, @NotNull AliasingContext aliasingContext) {
         return new TranslationContext(staticContext, DynamicContext.newContext(newScope, block), aliasingContext);
+    }
+
+    @NotNull
+    public TranslationContext contextWithScope(@NotNull JsFunction fun, @NotNull AliasingContext aliasingContext) {
+        return contextWithScope(fun.getScope(), fun.getBody(), aliasingContext);
     }
 
     @NotNull
@@ -89,25 +106,19 @@ public class TranslationContext {
         return contextWithScope(getScopeForDescriptor(descriptor), getBlockForDescriptor(descriptor));
     }
 
-    //TODO: consider passing a function here
-    @NotNull
-    public TranslationContext innerContextWithGivenScopeAndBlock(@NotNull JsScope scope, @NotNull JsBlock block) {
-        return contextWithScope(scope, block);
-    }
-
     @NotNull
     public TranslationContext innerContextWithThisAliased(@NotNull DeclarationDescriptor correspondingDescriptor, @NotNull JsName alias) {
-        return new TranslationContext(staticContext, dynamicContext, aliasingContext.withThisAliased(correspondingDescriptor, alias));
+        return new TranslationContext(this, aliasingContext.inner(correspondingDescriptor, alias));
     }
 
     @NotNull
     public TranslationContext innerContextWithAliasesForExpressions(@NotNull Map<JetExpression, JsName> aliases) {
-        return new TranslationContext(staticContext, dynamicContext, aliasingContext.withAliasesForExpressions(aliases));
+        return new TranslationContext(this, aliasingContext.withAliasesForExpressions(aliases));
     }
 
     @NotNull
     public TranslationContext innerContextWithDescriptorsAliased(@NotNull Map<DeclarationDescriptor, JsName> aliases) {
-        return new TranslationContext(staticContext, dynamicContext, aliasingContext.withDescriptorsAliased(aliases));
+        return new TranslationContext(this, aliasingContext.withDescriptorsAliased(aliases));
     }
 
     @NotNull
