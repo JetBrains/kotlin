@@ -30,6 +30,7 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiNameValuePair;
 import com.intellij.ui.awt.RelativePoint;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import javax.swing.*;
@@ -49,22 +50,31 @@ class EditSignatureBalloon {
     private final String previousSignature;
     private final Balloon balloon;
 
-    public EditSignatureBalloon(PsiMethod method, String previousSignature) {
+    public EditSignatureBalloon(@NotNull PsiMethod method, @NotNull String previousSignature) {
         this.method = method;
         this.previousSignature = previousSignature;
 
-        EditorFactory editorFactory = EditorFactory.getInstance();
-        assert editorFactory != null;
-        Document document = editorFactory.createDocument(previousSignature);
-        editor = editorFactory.createEditor(document, method.getProject(), JetFileType.INSTANCE, false);
-        EditorSettings settings = editor.getSettings();
-        settings.setVirtualSpace(false);
-        settings.setLineMarkerAreaShown(false);
-        settings.setFoldingOutlineShown(false);
-        settings.setRightMarginShown(false);
-        settings.setAdditionalPageAtBottom(false);
-        settings.setAdditionalLinesCount(0);
+        editor = createEditor();
+        JPanel panel = createBalloonPanel();
+        balloon = createBalloon(panel);
+    }
 
+    private Balloon createBalloon(JPanel panel) {
+        BalloonBuilder builder = JBPopupFactory.getInstance().createDialogBalloonBuilder(panel, "Kotlin signature");
+        builder.setHideOnClickOutside(true);
+        builder.setHideOnKeyOutside(true);
+
+        Balloon balloon = builder.createBalloon();
+        balloon.addListener(new JBPopupAdapter() {
+            @Override
+            public void onClosed(LightweightWindowEvent event) {
+                dispose();
+            }
+        });
+        return balloon;
+    }
+
+    private JPanel createBalloonPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(editor.getComponent(), BorderLayout.CENTER);
 
@@ -75,22 +85,27 @@ class EditSignatureBalloon {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                save();
-                balloon.hide();
+                saveAndHide();
             }
         });
+        return panel;
+    }
 
-        BalloonBuilder builder = JBPopupFactory.getInstance().createDialogBalloonBuilder(panel, "Kotlin signature");
-        builder.setHideOnClickOutside(true);
-        builder.setHideOnKeyOutside(true);
+    private Editor createEditor() {
+        EditorFactory editorFactory = EditorFactory.getInstance();
+        assert editorFactory != null;
+        Document document = editorFactory.createDocument(this.previousSignature);
 
-        balloon = builder.createBalloon();
-        balloon.addListener(new JBPopupAdapter() {
-            @Override
-            public void onClosed(LightweightWindowEvent event) {
-                dispose();
-            }
-        });
+        Editor editor = editorFactory.createEditor(document, this.method.getProject(), JetFileType.INSTANCE, false);
+        EditorSettings settings = editor.getSettings();
+        settings.setVirtualSpace(false);
+        settings.setLineMarkerAreaShown(false);
+        settings.setFoldingOutlineShown(false);
+        settings.setRightMarginShown(false);
+        settings.setAdditionalPageAtBottom(false);
+        settings.setAdditionalLinesCount(0);
+
+        return editor;
     }
 
     public void show(MouseEvent e) {
@@ -104,7 +119,7 @@ class EditSignatureBalloon {
         editorFactory.releaseEditor(editor);
     }
 
-    private void save() {
+    private void saveAndHide() {
         String newSignature = editor.getDocument().getText();
         if (previousSignature.equals(newSignature)) return;
         final Project project = method.getProject();
@@ -120,5 +135,7 @@ class EditSignatureBalloon {
                         method, KotlinSignatureInJavaMarkerProvider.KOTLIN_SIGNATURE_ANNOTATION, method.getContainingFile(), nameValuePairs);
             }
         }.execute();
+
+        balloon.hide();
     }
 }
