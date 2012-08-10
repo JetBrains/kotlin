@@ -110,6 +110,10 @@ public class BodyResolver {
         this.declarationsChecker = declarationsChecker;
     }
 
+    @Inject
+    public void setContext(@NotNull BodiesResolveContext context) {
+        this.context = context;
+    }
 
     private void resolveBehaviorDeclarationBodies(@NotNull BodiesResolveContext bodiesResolveContext) {
         // Initialize context
@@ -132,10 +136,14 @@ public class BodyResolver {
     }
 
     public void resolveBodies(@NotNull BodiesResolveContext bodiesResolveContext) {
-        resolveBehaviorDeclarationBodies(bodiesResolveContext);
-        controlFlowAnalyzer.process(bodiesResolveContext);
-        declarationsChecker.process(bodiesResolveContext);
+        context = bodiesResolveContext;
+        resolveBodies();
+    }
 
+    public void resolveBodies() {
+        resolveBehaviorDeclarationBodies(context);
+        controlFlowAnalyzer.process(context);
+        declarationsChecker.process(context);
     }
 
     private void resolveDelegationSpecifierLists() {
@@ -482,7 +490,7 @@ public class BodyResolver {
         }
     }
 
-    private void resolveFunctionBody(
+    public void resolveFunctionBody(
             @NotNull BindingTrace trace,
             @NotNull JetDeclarationWithBody function,
             @NotNull FunctionDescriptor functionDescriptor,
