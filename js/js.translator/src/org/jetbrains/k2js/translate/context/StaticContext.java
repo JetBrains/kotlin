@@ -30,6 +30,7 @@ import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.LibrarySourcesConfig;
 import org.jetbrains.k2js.translate.context.generator.Generator;
 import org.jetbrains.k2js.translate.context.generator.Rule;
+import org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
@@ -81,11 +82,15 @@ public final class StaticContext {
     private final Generator<JsNameRef> qualifiers = new QualifierGenerator();
     @NotNull
     private final Generator<Boolean> qualifierIsNull = new QualifierIsNullGenerator();
+
     @NotNull
     private final Map<JsScope, JsFunction> scopeToFunction = Maps.newHashMap();
 
     @NotNull
     private final EcmaVersion ecmaVersion;
+
+    @NotNull
+    private final LiteralFunctionTranslator literalFunctionTranslator = new LiteralFunctionTranslator();
 
     //TODO: too many parameters in constructor
     private StaticContext(@NotNull JsProgram program, @NotNull BindingContext bindingContext,
@@ -98,6 +103,11 @@ public final class StaticContext {
         this.rootScope = rootScope;
         this.standardClasses = standardClasses;
         this.ecmaVersion = ecmaVersion;
+    }
+
+    @NotNull
+    public LiteralFunctionTranslator getLiteralFunctionTranslator() {
+        return literalFunctionTranslator;
     }
 
     public boolean isEcma5() {
@@ -434,7 +444,7 @@ public final class StaticContext {
                         }
                         else if (result == qualifier && result.getIdent().equals("kotlin")) {
                             // todo WebDemoExamples2Test#testBuilder, package "kotlin" from kotlin/js/js.libraries/src/stdlib/JUMaps.kt must be inlined
-                            return qualifier;
+                          //  return qualifier;
                         }
                     }
 
