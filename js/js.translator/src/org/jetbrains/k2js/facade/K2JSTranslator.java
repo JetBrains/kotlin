@@ -18,6 +18,7 @@ package org.jetbrains.k2js.facade;
 
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -28,13 +29,13 @@ import org.jetbrains.k2js.facade.exceptions.TranslationException;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.jetbrains.k2js.config.Config.withJsLibAdded;
 import static org.jetbrains.k2js.facade.FacadeUtils.parseString;
-import static org.jetbrains.k2js.facade.FacadeUtils.writeCodeToFile;
 import static org.jetbrains.k2js.generate.CodeGenerator.generateProgramToString;
 
 /**
@@ -52,8 +53,8 @@ public final class K2JSTranslator {
             @NotNull String outputPath,
             @NotNull Config config) throws TranslationException, IOException {
         K2JSTranslator translator = new K2JSTranslator(config);
-        String programCode = translator.generateProgramCode(files, mainCall) + "\n";
-        writeCodeToFile(outputPath, programCode);
+        String programCode = translator.generateProgramCode(files, mainCall);
+        FileUtil.writeToFile(new File(outputPath), programCode);
     }
 
     @NotNull
