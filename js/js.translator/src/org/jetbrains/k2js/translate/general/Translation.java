@@ -125,7 +125,7 @@ public final class Translation {
     @NotNull
     public static JsNode translateWhenExpression(@NotNull JetWhenExpression expression,
             @NotNull TranslationContext context) {
-        return WhenTranslator.translateWhenExpression(expression, context);
+        return WhenTranslator.translate(expression, context);
     }
 
     //TODO: see if generate*Initializer methods fit somewhere else

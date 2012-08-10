@@ -39,7 +39,7 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 public final class WhenTranslator extends AbstractTranslator {
 
     @NotNull
-    public static JsNode translateWhenExpression(@NotNull JetWhenExpression expression, @NotNull TranslationContext context) {
+    public static JsNode translate(@NotNull JetWhenExpression expression, @NotNull TranslationContext context) {
         WhenTranslator translator = new WhenTranslator(expression, context);
         return translator.translate();
     }
