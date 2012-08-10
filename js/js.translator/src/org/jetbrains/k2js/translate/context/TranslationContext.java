@@ -173,8 +173,9 @@ public class TranslationContext {
         return staticContext.getQualifierForDescriptor(descriptor);
     }
 
+    //TODO: review all invocation with notnull parameters
     @NotNull
-    public TemporaryVariable declareTemporary(@NotNull JsExpression initExpression) {
+    public TemporaryVariable declareTemporary(@Nullable JsExpression initExpression) {
         return dynamicContext.declareTemporary(initExpression);
     }
 
