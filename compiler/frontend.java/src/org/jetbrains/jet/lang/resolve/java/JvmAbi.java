@@ -30,4 +30,7 @@ public class JvmAbi {
 
     public static final JvmClassName JETBRAINS_NOT_NULL_ANNOTATION =
             JvmClassName.byFqNameWithoutInnerClasses("org.jetbrains.annotations.NotNull");
+
+    private JvmAbi() {
+    }
 }

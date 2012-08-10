@@ -18,7 +18,6 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -30,8 +29,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
-import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -67,20 +64,6 @@ public class ClosureAnnotator {
     public void init() {
         mapFilesToNamespaces(files);
         prepareAnonymousClasses();
-        prepareClassObjectsForBuiltinRanges();
-    }
-
-    private void prepareClassObjectsForBuiltinRanges() {
-        // this is needed for range classes because they have class objects with
-        // intrinsic members
-        JetScope stdLibraryScope = JetStandardLibrary.getInstance().getLibraryScope();
-        for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
-            ClassDescriptor klass = (ClassDescriptor) stdLibraryScope.getClassifier(type.getRangeTypeName());
-            String rangeInternalName = JvmClassName.byFqNameWithoutInnerClasses(
-                    JetStandardClasses.STANDARD_CLASSES_FQNAME.child(type.getRangeTypeName())).getInternalName();
-            JvmClassName classObjectInternalName = JvmClassName.byInternalName(rangeInternalName + JvmAbi.CLASS_OBJECT_SUFFIX);
-            classNamesForClassDescriptor.put(klass.getClassObjectDescriptor(), classObjectInternalName);
-        }
     }
 
 
@@ -238,8 +221,8 @@ public class ClosureAnnotator {
     }
 
     private class MyJetVisitorVoid extends JetVisitorVoid {
-        private LinkedList<ClassDescriptor> classStack = new LinkedList<ClassDescriptor>();
-        private LinkedList<String> nameStack = new LinkedList<String>();
+        private final LinkedList<ClassDescriptor> classStack = new LinkedList<ClassDescriptor>();
+        private final LinkedList<String> nameStack = new LinkedList<String>();
 
         private void recordEnclosing(ClassDescriptor classDescriptor) {
             if (classStack.size() > 0) {
@@ -397,7 +380,9 @@ public class ClosureAnnotator {
             else if (containingDeclaration instanceof NamespaceDescriptor) {
                 String peek = nameStack.peek();
                 if (peek.isEmpty()) { peek = "namespace"; }
-                else { peek = peek + "/namespace"; }
+                else {
+                    peek += "/namespace";
+                }
                 nameStack.push(peek + '$' + function.getName());
                 super.visitNamedFunction(function);
                 nameStack.pop();
@@ -424,11 +409,6 @@ public class ClosureAnnotator {
 
     @NotNull
     public JvmClassName classNameForClassDescriptor(@NotNull ClassDescriptor classDescriptor) {
-        return classNamesForClassDescriptor.get(classDescriptor);
-    }
-
-    @Nullable
-    public JvmClassName classNameForClassDescriptorIfDefined(@NotNull ClassDescriptor classDescriptor) {
         return classNamesForClassDescriptor.get(classDescriptor);
     }
 }

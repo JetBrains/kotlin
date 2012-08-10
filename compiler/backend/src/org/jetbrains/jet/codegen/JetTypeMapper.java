@@ -341,6 +341,9 @@ public class JetTypeMapper {
                     if (containingKlass.getKind() == ClassKind.ENUM_CLASS) {
                         return getFQName(containingKlass);
                     }
+                    else {
+                        return getFQName(containingKlass) + JvmAbi.CLASS_OBJECT_SUFFIX;
+                    }
                 }
             }
             else if (klass.getKind() == ClassKind.ENUM_ENTRY) {
