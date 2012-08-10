@@ -17,12 +17,10 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.LinkedMultiMap;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
@@ -396,31 +394,131 @@ public class OverrideResolver {
             @NotNull Set<CallableMemberDescriptor> manyImpl
     ) {
         if (descriptor.getKind().isReal()) return;
+        if (descriptor.getVisibility() == Visibilities.INVISIBLE_FAKE) return;
 
-        Collection<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(descriptor);
-        if (overriddenDeclarations.size() == 0) {
+        Collection<? extends CallableMemberDescriptor> directOverridden = descriptor.getOverriddenDescriptors();
+        if (directOverridden.size() == 0) {
             throw new IllegalStateException("A 'fake override' must override something");
         }
 
-        List<CallableMemberDescriptor> nonAbstractManyImpl = Lists.newArrayList();
-        Set<CallableMemberDescriptor> filteredOverriddenDeclarations = OverridingUtil.filterOverrides(Sets.newHashSet(overriddenDeclarations));
+        // collects map from the directly overridden descriptor to the set of declarations:
+        // -- if directly overridden is not fake, the set consists of one element: this directly overridden
+        // -- if it's fake, overridden declarations (non-fake) of this descriptor are collected
+        Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> overriddenDeclarationsByDirectParent = collectOverriddenDeclarations(directOverridden);
 
-        boolean allSuperAbstract = true;
-        for (CallableMemberDescriptor overridden : filteredOverriddenDeclarations) {
-            if (overridden.getModality() != Modality.ABSTRACT) {
-                if (descriptor.getVisibility() != Visibilities.INVISIBLE_FAKE) {
-                    nonAbstractManyImpl.add(overridden);
-                }
-                allSuperAbstract = false;
+        List<CallableMemberDescriptor> allOverriddenDeclarations = ContainerUtil.flatten(overriddenDeclarationsByDirectParent.values());
+        Set<CallableMemberDescriptor> allFilteredOverriddenDeclarations = OverridingUtil.filterOverrides(Sets.newHashSet(allOverriddenDeclarations));
+
+        Set<CallableMemberDescriptor> relevantDirectlyOverridden =
+                getRelevantDirectlyOverridden(overriddenDeclarationsByDirectParent, allFilteredOverriddenDeclarations);
+
+        int implCount = countImplementations(relevantDirectlyOverridden);
+        if (implCount == 0) {
+            collectDescriptorsByModality(allFilteredOverriddenDeclarations, abstractNoImpl, Modality.ABSTRACT);
+        }
+        else if (implCount > 1) {
+            collectDescriptorsByModality(allFilteredOverriddenDeclarations, manyImpl, Modality.OPEN, Modality.FINAL);
+        }
+    }
+
+    private static int countImplementations(@NotNull Set<CallableMemberDescriptor> relevantDirectlyOverridden) {
+        int implCount = 0;
+        for (CallableMemberDescriptor overriddenDescriptor : relevantDirectlyOverridden) {
+            if (overriddenDescriptor.getModality() != Modality.ABSTRACT) {
+                implCount++;
             }
         }
-        if (nonAbstractManyImpl.size() > 1) {
-            manyImpl.addAll(nonAbstractManyImpl);
-        }
-        else if (allSuperAbstract) {
-            abstractNoImpl.addAll(overriddenDeclarations);
-        }
+        return implCount;
+    }
 
+    private static void collectDescriptorsByModality(
+            @NotNull Set<CallableMemberDescriptor> allOverriddenDeclarations,
+            @NotNull Set<CallableMemberDescriptor> result,
+            Modality... modalities
+    ) {
+        Set<Modality> modalitySet = Sets.newHashSet(modalities);
+        for (CallableMemberDescriptor overridden : allOverriddenDeclarations) {
+            if (modalitySet.contains(overridden.getModality())) {
+                result.add(overridden);
+            }
+        }
+    }
+
+    @NotNull
+    private static Set<CallableMemberDescriptor> getRelevantDirectlyOverridden(
+            @NotNull Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> overriddenByParent,
+            @NotNull Set<CallableMemberDescriptor> allFilteredOverriddenDeclarations
+    ) {
+        /* Let the following class hierarchy is declared:
+
+        trait A { fun foo() = 1 }
+        trait B : A
+        trait C : A
+        trait D : A { override fun foo() = 2 }
+        trait E : B, C, D {}
+
+        Traits B and C have fake descriptors for function foo.
+        The map 'overriddenByParent' is:
+        { 'foo in B' (fake) -> { 'foo in A' }, 'foo in C' (fake) -> { 'foo in A' }, 'foo in D' -> { 'foo in D'} }
+        This is a map from directly overridden descriptors (functions 'foo' in B, C, D in this example) to the set of declarations (non-fake),
+        that are overridden by this descriptor.
+
+        The goal is to leave only relevant directly overridden descriptors to count implementations of our fake function on them.
+        In the example above there is no error (trait E inherits only one implementation of 'foo' (from D), because this implementation is more precise).
+        So only 'foo in D' is relevant.
+
+        Directly overridden descriptor is not relevant if it doesn't add any more appropriate non-fake declarations of the concerned function.
+        More precisely directly overridden descriptor is not relevant if:
+        - it's declaration set is a subset of declaration set for other directly overridden descriptor
+        ('foo in B' is not relevant because it's declaration set is a subset of 'foo in C' function's declaration set)
+        - each member of it's declaration set is overridden by a member of other declaration set
+        ('foo in C' is not relevant, because 'foo in A' is overridden by 'foo in D', so 'foo in A' is not appropriate non-fake declaration for 'foo')
+
+        For the last condition allFilteredOverriddenDeclarations helps (for the example above it's { 'foo in A' } only): each declaration set
+        is compared with allFilteredOverriddenDeclarations, if they have no intersection, this means declaration set has only functions that
+        are overridden by some other function and corresponding directly overridden descriptor is not relevant.
+        */
+
+        Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> relevantOverriddenByParent = Maps.newHashMap(overriddenByParent);
+
+        for (Map.Entry<CallableMemberDescriptor, Set<CallableMemberDescriptor>> entry : overriddenByParent.entrySet()) {
+            CallableMemberDescriptor directlyOverridden = entry.getKey();
+            Set<CallableMemberDescriptor> declarationSet = entry.getValue();
+            if (!isRelevant(declarationSet, relevantOverriddenByParent.values(), allFilteredOverriddenDeclarations)) {
+                relevantOverriddenByParent.remove(directlyOverridden);
+            }
+        }
+        return relevantOverriddenByParent.keySet();
+    }
+
+    private static boolean isRelevant(
+            @NotNull Set<CallableMemberDescriptor> declarationSet,
+            @NotNull Collection<Set<CallableMemberDescriptor>> allDeclarationSets,
+            @NotNull Set<CallableMemberDescriptor> allFilteredOverriddenDeclarations
+    ) {
+        for (Set<CallableMemberDescriptor> otherSet : allDeclarationSets) {
+            if (otherSet == declarationSet) continue;
+            if (otherSet.containsAll(declarationSet)) return false;
+            if (Collections.disjoint(allFilteredOverriddenDeclarations, declarationSet)) return false;
+        }
+        return true;
+    }
+
+    @NotNull
+    private static Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> collectOverriddenDeclarations(
+            @NotNull Collection<? extends CallableMemberDescriptor> directOverriddenDescriptors
+    ) {
+        Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> overriddenDeclarationsByDirectParent = Maps.newHashMap();
+        for (CallableMemberDescriptor descriptor : directOverriddenDescriptors) {
+            Collection<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(descriptor);
+            Set<CallableMemberDescriptor> filteredOverrides = OverridingUtil.filterOverrides(Sets.newHashSet(overriddenDeclarations));
+            Set<CallableMemberDescriptor> overridden = Sets.newHashSet();
+            for (CallableMemberDescriptor memberDescriptor : filteredOverrides) {
+                overridden.add(memberDescriptor.getOriginal());
+            }
+            overriddenDeclarationsByDirectParent.put(descriptor, overridden);
+        }
+        return overriddenDeclarationsByDirectParent;
     }
 
     public static Multimap<CallableMemberDescriptor, CallableMemberDescriptor> collectSuperMethods(MutableClassDescriptor classDescriptor) {

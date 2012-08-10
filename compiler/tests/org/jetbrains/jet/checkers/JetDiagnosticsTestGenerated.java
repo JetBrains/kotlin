@@ -1982,6 +1982,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/override/ParameterDefaultValues-DefaultValueFromOnlyOneSupertype.kt");
             }
             
+            @TestMetadata("ParentInheritsManyImplementations.kt")
+            public void testParentInheritsManyImplementations() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/override/ParentInheritsManyImplementations.kt");
+            }
+            
             @TestMetadata("ProtectedAndPrivateFromSupertypes.kt")
             public void testProtectedAndPrivateFromSupertypes() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/override/ProtectedAndPrivateFromSupertypes.kt");
