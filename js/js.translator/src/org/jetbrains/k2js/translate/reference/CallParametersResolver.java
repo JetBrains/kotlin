@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getDeclarationDescriptorForExtensionCallReceiver;
 
@@ -34,7 +33,6 @@ import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getDeclaratio
  * @author Pavel Talanov
  */
 public final class CallParametersResolver {
-
     public static CallParameters resolveCallParameters(@Nullable JsExpression qualifier,
             @Nullable JsExpression callee,
             @NotNull CallableDescriptor descriptor,
@@ -94,11 +92,7 @@ public final class CallParametersResolver {
         if (qualifier != null && !isExtensionCall) {
             return qualifier;
         }
-        JsExpression result = TranslationUtils.resolveThisObjectForResolvedCall(resolvedCall, context);
-        if (result != null) {
-            return result;
-        }
-        return null;
+        return context.thisAliasProvider().get(resolvedCall);
     }
 
     @NotNull
@@ -107,6 +101,6 @@ public final class CallParametersResolver {
             return qualifier;
         }
         DeclarationDescriptor receiverDescriptor = getDeclarationDescriptorForExtensionCallReceiver(resolvedCall);
-        return TranslationUtils.getThisObject(context, receiverDescriptor);
+        return context.getThisObject(receiverDescriptor);
     }
 }

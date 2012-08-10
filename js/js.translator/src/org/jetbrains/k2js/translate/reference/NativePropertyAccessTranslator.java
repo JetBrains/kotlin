@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.qualified;
@@ -108,7 +107,7 @@ public final class NativePropertyAccessTranslator extends PropertyAccessTranslat
         if (expectedThisDescriptor == null) {
             return null;
         }
-        return TranslationUtils.getThisObject(context(), expectedThisDescriptor);
+        return context().getThisObject(expectedThisDescriptor);
     }
 
     @NotNull
