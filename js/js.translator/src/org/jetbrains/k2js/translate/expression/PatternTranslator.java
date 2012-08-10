@@ -16,7 +16,10 @@
 
 package org.jetbrains.k2js.translate.expression;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.JsName;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -131,19 +134,7 @@ public final class PatternTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression translateExpressionPattern(@NotNull JsExpression expressionToMatch, JetExpressionPattern pattern) {
         JsExpression expressionToMatchAgainst = translateExpressionForExpressionPattern(pattern);
-        JsBinaryOperation eq = equality(expressionToMatch, expressionToMatchAgainst);
-        // Uncaught TypeError: Cannot convert object to primitive value
-        if (context().isEcma5()) {
-            if (expressionToMatchAgainst instanceof JsNumberLiteral ||
-                expressionToMatchAgainst instanceof JsStringLiteral ||
-                expressionToMatchAgainst instanceof JsLiteral.JsBooleanLiteral) {
-                JsNameRef valueOf = new JsNameRef("valueOf");
-                valueOf.setQualifier(expressionToMatch);
-                return and(valueOf, eq);
-            }
-        }
-
-        return eq;
+        return equality(expressionToMatch, expressionToMatchAgainst);
     }
 
     @NotNull
