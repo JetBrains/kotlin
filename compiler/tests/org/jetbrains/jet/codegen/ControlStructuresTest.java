@@ -391,4 +391,14 @@ public class ControlStructuresTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("controlStructures/tryCatchFinallyChain.kt");
     }
+
+    public void testKt2597() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("regressions/kt2597.kt");
+    }
+
+    public void testKt2598() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("regressions/kt2598.kt");
+    }
 }

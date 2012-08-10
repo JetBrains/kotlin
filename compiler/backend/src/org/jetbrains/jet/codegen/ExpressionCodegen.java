@@ -687,14 +687,26 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private StackValue generateSingleBranchIf(StackValue condition, JetExpression expression, boolean inverse) {
+        Type expressionType = expressionType(expression);
+        Type targetType = expressionType;
+        if (!expressionType.equals(TUPLE0_TYPE)) {
+            targetType = TYPE_OBJECT;
+        }
+
+        Label elseLabel = new Label();
+        condition.condJump(elseLabel, inverse, v);
+
+        gen(expression, expressionType);
+        StackValue.coerce(expressionType, targetType, v);
+
         Label end = new Label();
+        v.goTo(end);
 
-        condition.condJump(end, inverse, v);
-
-        gen(expression, Type.VOID_TYPE);
+        v.mark(elseLabel);
+        StackValue.putTuple0Instance(v);
 
         v.mark(end);
-        return StackValue.none();
+        return StackValue.onStack(targetType);
     }
 
     @Override

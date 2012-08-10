@@ -242,6 +242,10 @@ public abstract class StackValue {
             else
                 v.iconst(0);
         }
+        else if (toType.equals(JetTypeMapper.TUPLE0_TYPE) && !fromType.equals(JetTypeMapper.TUPLE0_TYPE)) {
+            pop(fromType, v);
+            putTuple0Instance(v);
+        }
         else if (toType.getSort() == Type.OBJECT && fromType.equals(JetTypeMapper.TYPE_OBJECT) || toType.getSort() == Type.ARRAY) {
                 v.checkcast(toType);
         }
