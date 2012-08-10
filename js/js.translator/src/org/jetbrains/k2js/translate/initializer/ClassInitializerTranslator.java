@@ -64,7 +64,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         // for properties declared as constructor parameters
         setParameters(result, translatePrimaryConstructorParameters());
         mayBeAddCallToSuperMethod(result);
-        initializerStatements.addAll(new InitializerVisitor().traverseClass(classDeclaration, context()));
+        (new InitializerVisitor(initializerStatements)).traverseClass(classDeclaration, context());
         result.getBody().getStatements().addAll(initializerStatements);
         return result;
     }

@@ -16,31 +16,28 @@
 
 package org.jetbrains.k2js.translate.initializer;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsFunction;
-import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
-import com.google.dart.compiler.backend.js.ast.JsStatement;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.Named;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.k2js.translate.context.Namer;
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.declaration.ClassTranslator;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
+import java.util.List;
+
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.assignmentToBackingField;
 
 /**
  * @author Pavel Talanov
  */
 public final class InitializerUtils {
-
     private InitializerUtils() {
-    }
-
-    @NotNull
-    public static JsPropertyInitializer generateInitializeMethod(@NotNull JsFunction initializerFunction) {
-        JsPropertyInitializer initializer = new JsPropertyInitializer(Namer.initializeMethodReference());
-        initializer.setValueExpr(initializerFunction);
-        return initializer;
     }
 
     @NotNull
@@ -53,5 +50,39 @@ public final class InitializerUtils {
         else {
             return assignmentToBackingField(context, descriptor, value).makeStmt();
         }
+    }
+
+    public static void generate(@NotNull JetObjectDeclaration declaration,
+            @NotNull List<JsStatement> initializers,
+            @Nullable List<JsPropertyInitializer> definitions,
+            @NotNull TranslationContext context) {
+        ClassDescriptor descriptor = getClassDescriptor(context.bindingContext(), declaration);
+        JsExpression value = ClassTranslator.generateClassCreation(declaration, descriptor, context);
+        if (definitions != null && value instanceof JsLiteral) {
+            definitions.add(createPropertyInitializer(descriptor, value, context));
+        }
+        else {
+            initializers.add(create(descriptor, value, context));
+        }
+    }
+
+    public static JsStatement create(Named named, JsExpression value, TranslationContext context) {
+        JsExpression expression;
+        if (context.isEcma5()) {
+            expression = JsAstUtils.defineProperty(named.getName().getName(), JsAstUtils.createDataDescriptor(value), context);
+        }
+        else {
+            expression = assignment(new JsNameRef(named.getName().getName(), JsLiteral.THIS), value);
+        }
+        return expression.makeStmt();
+    }
+
+
+    public static JsExpression toDataDescriptor(JsExpression value, TranslationContext context) {
+        return context.isEcma5() ? JsAstUtils.createDataDescriptor(value) : value;
+    }
+
+    public static JsPropertyInitializer createPropertyInitializer(Named named, JsExpression value, TranslationContext context) {
+        return new JsPropertyInitializer(context.nameToLiteral(named), toDataDescriptor(value, context));
     }
 }
