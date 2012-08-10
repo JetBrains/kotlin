@@ -17,36 +17,20 @@
 package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.codeHighlighting.Pass;
-import com.intellij.codeInsight.ExternalAnnotationsManager;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationUtil;
-import com.intellij.openapi.application.Result;
-import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.EditorSettings;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.*;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.*;
-import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
-import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetIcons;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;
@@ -96,12 +80,12 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             else {
                 // TODO check if annotations are editable
 
-                new EditSignatureBalloon(element).show(e);
+                new EditSignatureBalloon(element, getKotlinSignature(annotation)).show(e);
             }
         }
     };
 
-    private static final String KOTLIN_SIGNATURE_ANNOTATION = JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().getFqName();
+    static final String KOTLIN_SIGNATURE_ANNOTATION = JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().getFqName();
 
     @Nullable
     private static PsiAnnotation findKotlinSignatureAnnotation(@NotNull PsiElement element) {
@@ -137,86 +121,5 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
 
     @Override
     public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
-    }
-
-    @SuppressWarnings("SSBasedInspection")
-    private static class EditSignatureBalloon {
-        private final JPanel panel;
-        private final Editor editor;
-        private final PsiMethod method;
-        private final String previousSignature;
-        private final Balloon balloon;
-
-        public EditSignatureBalloon(PsiMethod method) {
-            panel = new JPanel(new BorderLayout());
-            this.method = method;
-            PsiAnnotation kotlinSignatureAnnotation = findKotlinSignatureAnnotation(this.method);
-            assert kotlinSignatureAnnotation != null;
-            previousSignature = getKotlinSignature(kotlinSignatureAnnotation);
-            EditorFactory editorFactory = EditorFactory.getInstance();
-            assert editorFactory != null;
-            Document document = editorFactory.createDocument(previousSignature);
-            editor = editorFactory.createEditor(document, method.getProject(), JetFileType.INSTANCE, false);
-            EditorSettings settings = editor.getSettings();
-            settings.setVirtualSpace(false);
-            settings.setLineMarkerAreaShown(false);
-            settings.setFoldingOutlineShown(false);
-            settings.setRightMarginShown(false);
-            settings.setAdditionalPageAtBottom(false);
-            settings.setAdditionalLinesCount(0);
-            panel.add(editor.getComponent(), BorderLayout.CENTER);
-
-            JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-            JButton saveButton = new JButton("Save");
-            toolbar.add(saveButton);
-            panel.add(toolbar, BorderLayout.SOUTH);
-            saveButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    save();
-                    balloon.hide();
-                }
-            });
-
-            BalloonBuilder builder = JBPopupFactory.getInstance().createDialogBalloonBuilder(panel, "Kotlin signature");
-            builder.setHideOnClickOutside(true);
-            builder.setHideOnKeyOutside(true);
-
-            balloon = builder.createBalloon();
-            balloon.addListener(new JBPopupAdapter() {
-                @Override
-                public void onClosed(LightweightWindowEvent event) {
-                    dispose();
-                }
-            });
-        }
-
-        public void show(MouseEvent e) {
-            balloon.show(new RelativePoint(e), Balloon.Position.above);
-            IdeFocusManager.getInstance(editor.getProject()).requestFocus(editor.getContentComponent(), false);
-        }
-
-        private void dispose() {
-            EditorFactory editorFactory = EditorFactory.getInstance();
-            assert editorFactory != null;
-            editorFactory.releaseEditor(editor);
-        }
-
-        private void save() {
-            String newSignature = editor.getDocument().getText();
-            if (previousSignature.equals(newSignature)) return;
-            final Project project = method.getProject();
-            final PsiNameValuePair[] nameValuePairs = JavaPsiFacade.getElementFactory(project).createAnnotationFromText(
-                    "@" + KOTLIN_SIGNATURE_ANNOTATION + "(value=\"" + newSignature + "\")", null).getParameterList().getAttributes();
-
-            new WriteCommandAction(project){
-                @Override
-                protected void run(final Result result) throws Throwable {
-                    ExternalAnnotationsManager.getInstance(project).deannotate(method, KOTLIN_SIGNATURE_ANNOTATION);
-                    ExternalAnnotationsManager.getInstance(project).annotateExternally(
-                            method, KOTLIN_SIGNATURE_ANNOTATION, method.getContainingFile(), nameValuePairs);
-                }
-            }.execute();
-        }
     }
 }
