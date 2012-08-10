@@ -196,9 +196,7 @@ public final class CallTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression constructExtensionLiteralCall(@NotNull JsExpression realReceiver) {
         List<JsExpression> callArguments = generateExtensionCallArgumentList(realReceiver);
-        JsInvocation callMethodInvocation = generateCallMethodInvocation();
-        setArguments(callMethodInvocation, callArguments);
-        return callMethodInvocation;
+        return new JsInvocation(new JsNameRef("call", callParameters.getFunctionReference()), callArguments);
     }
 
     @NotNull
@@ -233,7 +231,7 @@ public final class CallTranslator extends AbstractTranslator {
         List<JsExpression> argumentList = generateExtensionCallArgumentList(receiver);
         JsExpression functionReference = callParameters.getFunctionReference();
         setQualifier(functionReference, getThisObjectOrQualifier());
-        return newInvocation(functionReference, argumentList);
+        return new JsInvocation(functionReference, argumentList);
     }
 
     @NotNull
@@ -256,7 +254,7 @@ public final class CallTranslator extends AbstractTranslator {
                     return ecma5PropertyAccess(qualifiedCallee);
                 }
 
-                return newInvocation(qualifiedCallee, arguments);
+                return new JsInvocation(qualifiedCallee, arguments);
             }
         }, context());
     }

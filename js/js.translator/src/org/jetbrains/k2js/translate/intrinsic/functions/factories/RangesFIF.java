@@ -16,6 +16,7 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.CallStandardMethodIntrinsic;
 
@@ -30,7 +31,7 @@ public final class RangesFIF extends CompositeFIF {
     public static final FunctionIntrinsicFactory INSTANCE = new RangesFIF();
 
     private RangesFIF() {
-        add(pattern("Int.upto"), new CallStandardMethodIntrinsic("Kotlin.intUpto", true, 1));
-        add(pattern("Int.downto"), new CallStandardMethodIntrinsic("Kotlin.intDownto", true, 1));
+        add(pattern("Int.upto"), new CallStandardMethodIntrinsic(new JsNameRef("intUpto", "Kotlin"), true, 1));
+        add(pattern("Int.downto"), new CallStandardMethodIntrinsic(new JsNameRef("intDownto", "Kotlin"), true, 1));
     }
 }

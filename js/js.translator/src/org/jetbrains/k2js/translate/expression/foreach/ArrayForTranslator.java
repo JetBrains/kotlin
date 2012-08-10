@@ -82,7 +82,7 @@ public final class ArrayForTranslator extends ForTranslator {
         List<JsStatement> blockStatements = Lists.newArrayList();
         blockStatements.add(temporariesInitialization(loopRange, end).makeStmt());
         blockStatements.add(generateForExpression(getInitExpression(), getCondition(), getIncrementExpression(), getBody()));
-        return newBlock(blockStatements);
+        return new JsBlock(blockStatements);
     }
 
 

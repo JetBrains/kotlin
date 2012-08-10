@@ -102,7 +102,7 @@ public final class TranslationUtils {
     public static JsNameRef backingFieldReference(@NotNull TranslationContext context,
             @NotNull PropertyDescriptor descriptor) {
         JsName backingFieldName = context.getNameForDescriptor(descriptor);
-        return qualified(backingFieldName, JsLiteral.THIS);
+        return new JsNameRef(backingFieldName, JsLiteral.THIS);
     }
 
     @NotNull
@@ -110,7 +110,7 @@ public final class TranslationUtils {
             @NotNull PropertyDescriptor descriptor,
             @NotNull JsExpression assignTo) {
         JsNameRef backingFieldReference = backingFieldReference(context, descriptor);
-        return JsAstUtils.assignment(backingFieldReference, assignTo);
+        return assignment(backingFieldReference, assignTo);
     }
 
     @Nullable
@@ -125,37 +125,8 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsNameRef getQualifiedReference(@NotNull TranslationContext context,
-            @NotNull DeclarationDescriptor descriptor) {
-        JsName name = context.getNameForDescriptor(descriptor);
-        JsNameRef reference = name.makeRef();
-        JsNameRef qualifier = context.getQualifierForDescriptor(descriptor);
-        if (qualifier != null) {
-            setQualifier(reference, qualifier);
-        }
-        return reference;
-    }
-
-    //TODO: refactor
-    @NotNull
-    public static JsExpression getThisObject(@NotNull TranslationContext context,
-            @NotNull DeclarationDescriptor correspondingDeclaration) {
-        if (correspondingDeclaration instanceof ClassDescriptor) {
-            JsName alias = context.aliasingContext().getAliasForThis(correspondingDeclaration);
-            if (alias != null) {
-                return alias.makeRef();
-            }
-        }
-        if (correspondingDeclaration instanceof CallableDescriptor) {
-            DeclarationDescriptor receiverDescriptor =
-                    getExpectedReceiverDescriptor((CallableDescriptor) correspondingDeclaration);
-            assert receiverDescriptor != null;
-            JsName alias = context.aliasingContext().getAliasForThis(receiverDescriptor);
-            if (alias != null) {
-                return alias.makeRef();
-            }
-        }
-        return JsLiteral.THIS;
+    public static JsNameRef getQualifiedReference(@NotNull TranslationContext context, @NotNull DeclarationDescriptor descriptor) {
+        return new JsNameRef(context.getNameForDescriptor(descriptor), context.getQualifierForDescriptor(descriptor));
     }
 
     @NotNull

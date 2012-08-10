@@ -67,7 +67,7 @@ public final class WhenTranslator extends AbstractTranslator {
     @NotNull
     JsNode translate() {
         JsFor resultingFor = generateDummyFor();
-        resultingFor.setBody(newBlock(translateEntries()));
+        resultingFor.setBody(new JsBlock(translateEntries()));
         context().addStatementToCurrentBlock(resultingFor);
         return result.reference();
     }

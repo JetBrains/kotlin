@@ -18,13 +18,13 @@ package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsName;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.qualified;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.isBackingFieldReference;
 
 /**
@@ -49,7 +49,7 @@ public final class ReferenceTranslator {
             return translateAsLocalNameReference(referencedDescriptor, context);
         }
         JsName referencedName = context.getNameForDescriptor(referencedDescriptor);
-        return qualified(referencedName, qualifier);
+        return new JsNameRef(referencedName, qualifier);
     }
 
     @NotNull

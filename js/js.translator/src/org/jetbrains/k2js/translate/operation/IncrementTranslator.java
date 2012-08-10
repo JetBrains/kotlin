@@ -17,6 +17,8 @@
 package org.jetbrains.k2js.translate.operation;
 
 import com.google.common.collect.Lists;
+import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
+import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
@@ -89,7 +91,7 @@ public abstract class IncrementTranslator extends AbstractTranslator {
         JsExpression getExpression = accessTranslator.translateAsGet();
         JsExpression reassignment = variableReassignment(getExpression);
         JsExpression getNewValue = accessTranslator.translateAsGet();
-        return AstUtil.newSequence(reassignment, getNewValue);
+        return new JsBinaryOperation(JsBinaryOperator.COMMA, reassignment, getNewValue);
     }
 
     //TODO: decide if this expression can be optimised in case of direct access (not property)
