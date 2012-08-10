@@ -118,6 +118,12 @@ public class ChainedScope implements JetScope {
     @NotNull
     @Override
     public ReceiverDescriptor getImplicitReceiver() {
+        for (JetScope scope : scopeChain) {
+            if (scope.getImplicitReceiver() != ReceiverDescriptor.NO_RECEIVER) {
+                return scope.getImplicitReceiver();
+            }
+        }
+
         return ReceiverDescriptor.NO_RECEIVER;
     }
 
