@@ -414,6 +414,8 @@ public class JetStandardClasses {
         if (annotations.isEmpty() && arguments.isEmpty()) {
             return getUnitType();
         }
+        if(arguments.size() > MAX_TUPLE_ORDER)
+            return ErrorUtils.createErrorType("Illegal tuple size");
         ClassDescriptor tuple = getTuple(arguments.size());
         List<TypeProjection> typeArguments = toProjections(arguments);
         return new JetTypeImpl(annotations, tuple.getTypeConstructor(), false, typeArguments, tuple.getMemberScope(typeArguments));
