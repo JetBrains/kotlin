@@ -16,16 +16,19 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
 import org.jetbrains.jet.lang.psi.JetDelegatorByExpressionSpecifier;
 import org.jetbrains.jet.lang.types.JetType;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -34,6 +37,17 @@ import java.util.Collection;
 public class DelegationResolver {
 
     private DelegationResolver() {}
+
+    private static final Predicate<CallableMemberDescriptor> DELEGATION_PREDICATE = new Predicate<CallableMemberDescriptor>() {
+        private final Predicate<Visibility> visibilityPredicate = Predicates.in(
+                /*TODO should be Visibilities.INTERNAL_VISIBLITIES?*/
+                Arrays.asList(Visibilities.PRIVATE, Visibilities.LOCAL));
+
+        @Override
+        public boolean apply(@Nullable CallableMemberDescriptor descriptor) {
+            return descriptor != null && !visibilityPredicate.apply(descriptor.getVisibility()) && descriptor.getModality() == Modality.ABSTRACT;
+        }
+    };
 
     public static void addDelegatedMembers(@NotNull BindingTrace trace, @NotNull JetClassOrObject jetClass, @NotNull MutableClassDescriptor classDescriptor) {
         for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
@@ -45,15 +59,22 @@ public class DelegationResolver {
                     Collection<CallableMemberDescriptor> callableDescriptors = (Collection) Collections2.filter(
                             type.getMemberScope().getAllDescriptors(),
                             Predicates.instanceOf(CallableMemberDescriptor.class));
+                    callableDescriptors = Collections2.filter(callableDescriptors, DELEGATION_PREDICATE);
+
                     Collection<CallableMemberDescriptor> descriptors = generateDelegatedMembers(classDescriptor, callableDescriptors);
+                    outer:
                     for (CallableMemberDescriptor descriptor : descriptors) {
+                        for (CallableMemberDescriptor existingDescriptor : classDescriptor.getAllCallableMembers()) {
+                            if (OverridingUtil.isOverridableBy(existingDescriptor, descriptor).getResult() == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE) {
+                                continue outer;
+                            }
+                        }
+
                         if (descriptor instanceof PropertyDescriptor) {
-                            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-                            classDescriptor.getBuilder().addPropertyDescriptor(propertyDescriptor);
+                            classDescriptor.getBuilder().addPropertyDescriptor((PropertyDescriptor) descriptor);
                         }
                         else if (descriptor instanceof SimpleFunctionDescriptor) {
-                            SimpleFunctionDescriptor functionDescriptor = (SimpleFunctionDescriptor) descriptor;
-                            classDescriptor.getBuilder().addFunctionDescriptor(functionDescriptor);
+                            classDescriptor.getBuilder().addFunctionDescriptor((SimpleFunctionDescriptor) descriptor);
                         }
                     }
                 }
@@ -64,12 +85,10 @@ public class DelegationResolver {
     public static <T extends CallableMemberDescriptor> Collection<T> generateDelegatedMembers(DeclarationDescriptor newOwner, Collection<T> delegatedDescriptors) {
         Collection<CallableMemberDescriptor> result = Lists.newArrayList();
         for (CallableMemberDescriptor memberDescriptor : delegatedDescriptors) {
-            if (memberDescriptor.getModality().isOverridable()) {
-                Modality modality = DescriptorUtils.convertModality(memberDescriptor.getModality(), true);
-                CallableMemberDescriptor copy =
-                        memberDescriptor.copy(newOwner, modality, false, CallableMemberDescriptor.Kind.DELEGATION, true);
-                result.add(copy);
-            }
+            Modality modality = DescriptorUtils.convertModality(memberDescriptor.getModality(), true);
+            CallableMemberDescriptor copy =
+                    memberDescriptor.copy(newOwner, modality, false, CallableMemberDescriptor.Kind.DELEGATION, true);
+            result.add(copy);
         }
         //noinspection unchecked
         return (Collection) result;

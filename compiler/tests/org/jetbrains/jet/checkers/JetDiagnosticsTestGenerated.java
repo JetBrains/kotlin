@@ -187,6 +187,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         public void testDelegation_ScopeInitializationOrder() throws Exception {
             doTest("compiler/testData/diagnostics/tests/Delegation_ScopeInitializationOrder.kt");
         }
+
+        @TestMetadata("DelegationToJavaIface.kt")
+        public void testDelegationToJavaIface() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/DelegationToJavaIface.kt");
+        }
         
         @TestMetadata("DiamondFunction.kt")
         public void testDiamondFunction() throws Exception {
