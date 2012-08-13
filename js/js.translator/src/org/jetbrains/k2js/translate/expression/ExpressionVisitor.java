@@ -147,17 +147,29 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitIfExpression(@NotNull JetIfExpression expression, @NotNull TranslationContext context) {
-        JsIf ifStatement = translateAsIfStatement(expression, context);
-        if (BindingUtils.isStatement(context.bindingContext(), expression)) {
-            return ifStatement;
+        JsExpression testExpression = translateConditionExpression(expression.getCondition(), context);
+        JetExpression thenExpression = expression.getThen();
+        JetExpression elseExpression = expression.getElse();
+        assert thenExpression != null;
+        JsNode thenNode = thenExpression.accept(this, context);
+        JsNode elseNode = elseExpression == null ? null : elseExpression.accept(this, context);
+
+        boolean isKotlinStatement = BindingUtils.isStatement(context.bindingContext(), expression);
+        boolean canBeJsExpression = thenNode instanceof JsExpression && elseNode instanceof JsExpression;
+        if (!isKotlinStatement && canBeJsExpression) {
+            return new JsConditional(testExpression, convertToExpression(thenNode), convertToExpression(elseNode));
         }
-        TemporaryVariable result = context.declareTemporary(JsLiteral.NULL);
-        AssignToExpressionMutator saveResultToTemporaryMutator =
-                new AssignToExpressionMutator(result.reference());
-        JsNode mutatedIfStatement = mutateLastExpression(ifStatement, saveResultToTemporaryMutator);
-        JsStatement resultingStatement = convertToStatement(mutatedIfStatement);
-        context.addStatementToCurrentBlock(resultingStatement);
-        return result.reference();
+        else {
+            JsIf ifStatement = new JsIf(testExpression, convertToStatement(thenNode), elseNode == null ? null : convertToStatement(elseNode));
+            if (isKotlinStatement) {
+                return ifStatement;
+            }
+
+            TemporaryVariable result = context.declareTemporary(null);
+            AssignToExpressionMutator saveResultToTemporaryMutator = new AssignToExpressionMutator(result.reference());
+            context.addStatementToCurrentBlock(mutateLastExpression(ifStatement, saveResultToTemporaryMutator));
+            return result.reference();
+        }
     }
 
     @Override
@@ -167,26 +179,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return ReferenceTranslator.translateSimpleName(expression, context);
     }
 
-
-    @NotNull
-    private JsIf translateAsIfStatement(@NotNull JetIfExpression expression,
-            @NotNull TranslationContext context) {
-        JsIf result = new JsIf();
-        result.setIfExpression(translateConditionExpression(expression.getCondition(), context));
-        result.setThenStatement(translateNullableExpressionAsNotNullStatement(expression.getThen(), context));
-        result.setElseStatement(translateElseAsStatement(expression, context));
-        return result;
-    }
-
-    @Nullable
-    private JsStatement translateElseAsStatement(@NotNull JetIfExpression expression,
-            @NotNull TranslationContext context) {
-        JetExpression jetElse = expression.getElse();
-        if (jetElse == null) {
-            return null;
-        }
-        return convertToStatement(jetElse.accept(this, context));
-    }
 
     @NotNull
     private JsStatement translateNullableExpressionAsNotNullStatement(@Nullable JetExpression nullableExpression,
