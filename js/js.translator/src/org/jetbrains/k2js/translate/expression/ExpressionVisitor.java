@@ -214,20 +214,19 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return convertToExpression(expression.accept(this, context));
     }
 
-    //NOTE: since JsWhile and JsDoWhile do not have an ancestor, cannot avoid duplication here
     @Override
     @NotNull
     public JsNode visitWhileExpression(@NotNull JetWhileExpression expression, @NotNull TranslationContext context) {
-        JsWhile result = new JsWhile();
-        result.setCondition(translateConditionExpression(expression.getCondition(), context));
-        result.setBody(translateNullableExpressionAsNotNullStatement(expression.getBody(), context));
-        return result;
+        return createWhile(new JsWhile(), expression, context);
     }
 
     @Override
     @NotNull
     public JsNode visitDoWhileExpression(@NotNull JetDoWhileExpression expression, @NotNull TranslationContext context) {
-        JsDoWhile result = new JsDoWhile();
+        return createWhile(new JsDoWhile(), expression, context);
+    }
+
+    private JsNode createWhile(@NotNull JsWhile result, @NotNull JetWhileExpressionBase expression, @NotNull TranslationContext context) {
         result.setCondition(translateConditionExpression(expression.getCondition(), context));
         result.setBody(translateNullableExpressionAsNotNullStatement(expression.getBody(), context));
         return result;
