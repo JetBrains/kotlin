@@ -53,4 +53,7 @@ public final class ObjectTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
+    public void testObjectInheritingFromClass() throws Exception {
+        fooBoxTest();
+    }
 }
