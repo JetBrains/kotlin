@@ -139,7 +139,7 @@ public class TopDownAnalyzer {
         overloadResolver.process();
 
         if (!topDownAnalysisParameters.isAnalyzingBootstrapLibrary()) {
-            bodyResolver.resolveBodies(context);
+            bodyResolver.resolveBodies();
         }
 
         context.debug("Exit");

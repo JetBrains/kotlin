@@ -135,11 +135,6 @@ public class BodyResolver {
         }
     }
 
-    public void resolveBodies(@NotNull BodiesResolveContext bodiesResolveContext) {
-        context = bodiesResolveContext;
-        resolveBodies();
-    }
-
     public void resolveBodies() {
         resolveBehaviorDeclarationBodies(context);
         controlFlowAnalyzer.process(context);
