@@ -249,9 +249,8 @@ public final class CallTranslator extends AbstractTranslator {
             @Override
             public JsExpression construct(@Nullable JsExpression receiver) {
                 JsExpression qualifiedCallee = getQualifiedCallee(receiver);
-
-                if (isEcma5PropertyAccess()) {
-                    return ecma5PropertyAccess(qualifiedCallee);
+                if (isDirectPropertyAccess()) {
+                    return directPropertyAccess(qualifiedCallee);
                 }
 
                 return new JsInvocation(qualifiedCallee, arguments);
@@ -260,7 +259,7 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsExpression ecma5PropertyAccess(@NotNull JsExpression callee) {
+    private JsExpression directPropertyAccess(@NotNull JsExpression callee) {
         if (descriptor instanceof PropertyGetterDescriptor) {
             assert arguments.isEmpty();
             return callee;
@@ -272,8 +271,9 @@ public final class CallTranslator extends AbstractTranslator {
         }
     }
 
-    private boolean isEcma5PropertyAccess() {
-        return context().isEcma5() && descriptor instanceof PropertyAccessorDescriptor;
+    private boolean isDirectPropertyAccess() {
+        return descriptor instanceof PropertyAccessorDescriptor &&
+               (context().isEcma5() || ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty().isObjectDeclaration());
     }
 
     @NotNull
