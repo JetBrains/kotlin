@@ -34,13 +34,15 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JavaElementFinder;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
-import org.jetbrains.jet.lang.resolve.lazy.LazyBindingContextUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -159,8 +161,6 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             @NotNull GlobalSearchScope scope
     ) {
         JetFile jetFile = (JetFile) expression.getContainingFile();
-        final ResolveSession resolveSessionForFile = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile(jetFile);
-        LazyBindingContextUtils.getExpressionBindingContext(resolveSessionForFile, expression);
         BindingContext context = WholeProjectAnalyzerFacade.getLazyResolveContext(jetFile, expression);
         JetScope jetScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
 
@@ -187,7 +187,8 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
         Collection<JetNamedFunction> jetNamedFunctions = JetShortFunctionNameIndex.getInstance().get(name, project, scope);
         for (JetNamedFunction jetNamedFunction : jetNamedFunctions) {
-            FunctionDescriptor functionDescriptor = (FunctionDescriptor) resolveSessionForFile.resolveToDescriptor(jetNamedFunction);
+            ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile)jetNamedFunction.getContainingFile());
+            FunctionDescriptor functionDescriptor = (FunctionDescriptor) resolveSession.resolveToDescriptor(jetNamedFunction);
             result.add(functionDescriptor);
         }
 
