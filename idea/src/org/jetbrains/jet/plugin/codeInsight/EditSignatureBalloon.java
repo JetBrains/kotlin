@@ -17,20 +17,22 @@
 package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.codeInsight.ExternalAnnotationsManager;
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.EditorSettings;
+import com.intellij.openapi.editor.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.*;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiNameValuePair;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import javax.swing.*;
@@ -108,8 +110,23 @@ class EditSignatureBalloon {
         return editor;
     }
 
+    private int getLineY(@Nullable DataContext dataContext) {
+        if (dataContext != null) {
+            Editor mainEditor = PlatformDataKeys.EDITOR.getData(dataContext);
+            Document document = PsiDocumentManager.getInstance(method.getProject()).getDocument(method.getContainingFile());
+            if (mainEditor != null && document != null) {
+                int lineNumber = document.getLineNumber(method.getTextOffset());
+                return mainEditor.logicalPositionToXY(new LogicalPosition(lineNumber, 0)).y;
+            }
+        }
+        return Integer.MAX_VALUE;
+    }
+
     public void show(MouseEvent e) {
-        balloon.show(new RelativePoint(e), Balloon.Position.above);
+        Point eventPoint = e.getPoint();
+        int lineY = getLineY(DataManager.getInstance().getDataContext(e.getComponent()));
+        Point point = new Point(eventPoint.x, Math.min(lineY, eventPoint.y));
+        balloon.show(new RelativePoint(e.getComponent(), point), Balloon.Position.above);
         IdeFocusManager.getInstance(editor.getProject()).requestFocus(editor.getContentComponent(), false);
     }
 
