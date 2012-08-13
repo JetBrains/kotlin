@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 
@@ -66,19 +67,22 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsBinaryOperation notNullCheck(@NotNull TranslationContext context,
-            @NotNull JsExpression expressionToCheck) {
-        JsBinaryOperation notNull = inequality(expressionToCheck, JsLiteral.NULL);
-        JsBinaryOperation notUndefined = inequality(expressionToCheck, UNDEFINED_LITERAL);
-        return and(notNull, notUndefined);
+    public static JsBinaryOperation isNullCheck(@NotNull JsExpression expressionToCheck) {
+        return nullCheck(expressionToCheck, false);
     }
 
     @NotNull
-    public static JsBinaryOperation isNullCheck(@NotNull TranslationContext context,
-            @NotNull JsExpression expressionToCheck) {
-        JsBinaryOperation isNull = equality(expressionToCheck, JsLiteral.NULL);
-        JsBinaryOperation isUndefined = equality(expressionToCheck, UNDEFINED_LITERAL);
-        return or(isNull, isUndefined);
+    public static JsBinaryOperation notNullConditionalTestExpression(@NotNull TemporaryVariable cachedValue) {
+        return and(inequality(cachedValue.assignmentExpression(), JsLiteral.NULL),
+                   inequality(cachedValue.reference(), JsLiteral.UNDEFINED));
+    }
+
+    @NotNull
+    public static JsBinaryOperation nullCheck(@NotNull JsExpression expressionToCheck, boolean isNegated) {
+        JsBinaryOperator operator = isNegated ? JsBinaryOperator.REF_NEQ : JsBinaryOperator.REF_EQ;
+        return new JsBinaryOperation(isNegated ? JsBinaryOperator.AND : JsBinaryOperator.OR,
+                                     new JsBinaryOperation(operator, expressionToCheck, JsLiteral.NULL),
+                                     new JsBinaryOperation(operator, expressionToCheck, JsLiteral.UNDEFINED));
     }
 
     @NotNull
