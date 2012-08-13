@@ -51,7 +51,7 @@ public final class TranslationUtils {
             @NotNull FunctionDescriptor descriptor,
             @NotNull TranslationContext context) {
         if (JsDescriptorUtils.isExtension(descriptor)) {
-            return translateExtensionFunctionAsEcma5PropertyDescriptor(function, descriptor, context);
+            return translateExtensionFunctionAsEcma5DataDescriptor(function, descriptor, context);
         }
         else {
             JsStringLiteral getOrSet = context.program().getStringLiteral(descriptor instanceof PropertyGetterDescriptor ? "get" : "set");
@@ -60,7 +60,7 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    private static JsPropertyInitializer translateExtensionFunctionAsEcma5PropertyDescriptor(@NotNull JsFunction function,
+    private static JsPropertyInitializer translateExtensionFunctionAsEcma5DataDescriptor(@NotNull JsFunction function,
             @NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context) {
         JsObjectLiteral meta = JsAstUtils.createDataDescriptor(function, descriptor.getModality().isOverridable());
         return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), meta);
