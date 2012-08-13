@@ -17,13 +17,13 @@
 package org.jetbrains.k2js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
@@ -33,16 +33,11 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getDeclarationDescriptorForReceiver;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
 
 /**
  * @author Pavel Talanov
  */
 public final class TranslationUtils {
-
-    private static final JsNameRef UNDEFINED_LITERAL = AstUtil.newQualifiedNameRef("undefined");
-
     private TranslationUtils() {
     }
 
@@ -129,9 +124,17 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsNameRef getQualifiedReference(@NotNull TranslationContext context, @NotNull DeclarationDescriptor descriptor) {
-        return new JsNameRef(context.getNameForDescriptor(descriptor), context.getQualifierForDescriptor(descriptor));
+    public static JsNameRef getQualifiedReference(@NotNull TranslationContext context,
+            @NotNull DeclarationDescriptor descriptor) {
+        JsName name = context.getNameForDescriptor(descriptor);
+        JsNameRef reference = name.makeRef();
+        JsNameRef qualifier = context.getQualifierForDescriptor(descriptor);
+        if (qualifier != null) {
+            setQualifier(reference, qualifier);
+        }
+        return reference;
     }
+
 
     @NotNull
     public static List<JsExpression> translateExpressionList(@NotNull TranslationContext context,
@@ -172,23 +175,5 @@ public final class TranslationUtils {
         if (context.intrinsics().getFunctionIntrinsics().getIntrinsic(operationDescriptor).exists()) return true;
 
         return false;
-    }
-
-    @Nullable
-    public static JsExpression resolveThisObjectForResolvedCall(@NotNull ResolvedCall<?> call,
-            @NotNull TranslationContext context) {
-        ReceiverDescriptor thisObject = call.getThisObject();
-        if (!thisObject.exists()) {
-            return null;
-        }
-        DeclarationDescriptor expectedThisDescriptor = getDeclarationDescriptorForReceiver(thisObject);
-        return getThisObject(context, expectedThisDescriptor);
-    }
-
-    public static void defineModule(@NotNull TranslationContext context, @NotNull List<JsStatement> statements,
-            String moduleId) {
-        statements.add(new JsInvocation(context.namer().kotlin("defineModule"),
-                                             context.program().getStringLiteral(moduleId),
-                                             context.scope().declareName("_").makeRef()).makeStmt());
     }
 }
