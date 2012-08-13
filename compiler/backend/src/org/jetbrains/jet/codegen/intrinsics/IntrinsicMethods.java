@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -63,6 +64,8 @@ public class IntrinsicMethods {
     public static final String KOTLIN_JAVA_CLASS_FUNCTION = "kotlin.javaClass.function";
     public static final String KOTLIN_ARRAYS_ARRAY = "kotlin.arrays.array";
     public static final String KOTLIN_JAVA_CLASS_PROPERTY = "kotlin.javaClass.property";
+    public static final EnumValues ENUM_VALUES = new EnumValues();
+    public static final EnumValueOf ENUM_VALUE_OF = new EnumValueOf();
 
     private final Map<String, IntrinsicMethod> namedMethods = new HashMap<String, IntrinsicMethod>();
     private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();
@@ -112,6 +115,9 @@ public class IntrinsicMethods {
         declareIntrinsicFunction(Name.identifier("String"), Name.identifier("plus"), 1, new Concat());
         declareIntrinsicFunction(Name.identifier("CharSequence"), Name.identifier("get"), 1, new StringGetChar());
         declareIntrinsicFunction(Name.identifier("String"), Name.identifier("get"), 1, new StringGetChar());
+
+        intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("name"), 0, new EnumName());
+        intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("ordinal"), 0, new EnumOrdinal());
 
         intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("toString"), 0, new ToString());
         intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("equals"), 1, EQUALS);
@@ -219,6 +225,15 @@ public class IntrinsicMethods {
                     return new PsiMethodCall(functionDescriptor);
                 }
             }
+
+            if(isEnumClassObject(functionDescriptor.getContainingDeclaration())) {
+                if("values".equals(functionDescriptor.getName().getName())) {
+                    return ENUM_VALUES;
+                }
+                if("valueOf".equals(functionDescriptor.getName().getName())) {
+                    return ENUM_VALUE_OF;
+                }
+            }
         }
 
         List<AnnotationDescriptor> annotations = descriptor.getAnnotations();
@@ -232,5 +247,19 @@ public class IntrinsicMethods {
             }
         }
         return intrinsicMethod;
+    }
+
+    private static boolean isEnumClassObject(DeclarationDescriptor declaration) {
+        if(declaration instanceof ClassDescriptor) {
+            ClassDescriptor descriptor = (ClassDescriptor) declaration;
+            if(descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
+                ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
+                //noinspection ConstantConditions
+                if(containingDeclaration != null && containingDeclaration.getClassObjectDescriptor() != null && containingDeclaration.getClassObjectDescriptor().equals(descriptor)) {
+                    return true;
+                }
+            }
+        }
+        return false;  //To change body of created methods use File | Settings | File Templates.
     }
 }

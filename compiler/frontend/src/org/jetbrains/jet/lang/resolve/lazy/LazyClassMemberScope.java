@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -141,6 +142,26 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         generateFakeOverrides(name, fromSupertypes, result, FunctionDescriptor.class);
     }
 
+    private void generateEnumClassObjectMethods() {
+        DeclarationDescriptor containingDeclaration = thisDescriptor.getContainingDeclaration();
+        if(containingDeclaration instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
+            if(classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
+                if(classDescriptor.getClassObjectDescriptor() == thisDescriptor) {
+                    SimpleFunctionDescriptor valuesMethod = DescriptorResolver
+                            .createEnumClassObjectValuesMethod(classDescriptor, thisDescriptor, resolveSession.getTrace());
+                    functionDescriptors.put(valuesMethod.getName(), Collections.<FunctionDescriptor>singleton(valuesMethod));
+                    allDescriptors.add(valuesMethod);
+                    SimpleFunctionDescriptor valueOfMethod = DescriptorResolver.createEnumClassObjectValueOfMethod(classDescriptor,
+                                                                                                            thisDescriptor,
+                                                                                                            resolveSession.getTrace());
+                    functionDescriptors.put(valueOfMethod.getName(), Collections.<FunctionDescriptor>singleton(valueOfMethod));
+                    allDescriptors.add(valueOfMethod);
+                }
+            }
+        }
+    }
+
     @NotNull
     @Override
     public Set<VariableDescriptor> getProperties(@NotNull Name name) {
@@ -226,6 +247,8 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                 // Nothing else is inherited
             }
         }
+
+        generateEnumClassObjectMethods();
     }
 
     @Override

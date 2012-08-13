@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibraryNames;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.jet.lang.types.ref.ClassName;
@@ -61,6 +62,7 @@ public class JetTypeMapper {
     public static final Type JL_NUMBER_TYPE = Type.getObjectType("java/lang/Number");
     public static final Type JL_STRING_BUILDER = Type.getObjectType("java/lang/StringBuilder");
     public static final Type JL_STRING_TYPE = Type.getObjectType("java/lang/String");
+    public static final Type JL_ENUM_TYPE = Type.getObjectType("java/lang/Enum");
     public static final Type JL_CHAR_SEQUENCE_TYPE = Type.getObjectType("java/lang/CharSequence");
     private static final Type JL_COMPARABLE_TYPE = Type.getObjectType("java/lang/Comparable");
     public static final Type JL_CLASS_TYPE = Type.getObjectType("java/lang/Class");
@@ -141,6 +143,7 @@ public class JetTypeMapper {
             register(JetStandardLibraryNames.CHAR_SEQUENCE, JL_CHAR_SEQUENCE_TYPE, JL_CHAR_SEQUENCE_TYPE);
             register(JetStandardLibraryNames.THROWABLE, TYPE_THROWABLE, TYPE_THROWABLE);
             register(JetStandardLibraryNames.COMPARABLE, JL_COMPARABLE_TYPE, JL_COMPARABLE_TYPE);
+            register(JetStandardLibraryNames.ENUM, JL_ENUM_TYPE, JL_ENUM_TYPE);
 
             for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
                 PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
@@ -941,9 +944,19 @@ public class JetTypeMapper {
 
         signatureWriter.writeParametersStart();
 
+        ClassDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (hasThis0) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.THIS0);
-            mapType(closureAnnotator.getEclosingClassDescriptor(descriptor.getContainingDeclaration()).getDefaultType(), signatureWriter, MapTypeMode.VALUE);
+            mapType(closureAnnotator.getEclosingClassDescriptor(containingDeclaration).getDefaultType(), signatureWriter, MapTypeMode.VALUE);
+            signatureWriter.writeParameterTypeEnd();
+        }
+
+        if(containingDeclaration.getKind() == ClassKind.ENUM_CLASS) {
+            signatureWriter.writeParameterType(JvmMethodParameterKind.ENUM_NAME);
+            mapType(JetStandardLibrary.getInstance().getStringType(), signatureWriter, MapTypeMode.VALUE);
+            signatureWriter.writeParameterTypeEnd();
+            signatureWriter.writeParameterType(JvmMethodParameterKind.ENUM_ORDINAL);
+            mapType(JetStandardLibrary.getInstance().getIntType(), signatureWriter, MapTypeMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
         }
 
@@ -1046,6 +1059,7 @@ public class JetTypeMapper {
                 || className.getFqName().getFqName().equals("java.lang.CharSequence")
                 || className.getFqName().getFqName().equals("java.lang.Object")
                 || className.getFqName().getFqName().equals("java.lang.Number")
+                || className.getFqName().getFqName().equals("java.lang.Enum")
                 || className.getFqName().getFqName().equals("java.lang.Comparable");
     }
 

@@ -27,4 +27,6 @@ public enum JvmMethodParameterKind {
     THIS0,
     RECEIVER,
     SHARED_VAR,
+    ENUM_NAME,
+    ENUM_ORDINAL,
 }

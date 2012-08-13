@@ -3,6 +3,6 @@
 
 package testData.libraries
 
-[public final class Color {
+[public final enum class Color : jet.Enum<testData.libraries.Color> {
     [internal final val rgb : jet.Int] /* compiled code */
 }]

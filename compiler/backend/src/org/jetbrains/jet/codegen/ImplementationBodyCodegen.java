@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.utils.BitSetUtils;
 import org.jetbrains.asm4.AnnotationVisitor;
@@ -54,6 +55,7 @@ import static org.jetbrains.asm4.Opcodes.*;
  * @author alex.tkachman
  */
 public class ImplementationBodyCodegen extends ClassBodyCodegen {
+    public static final String VALUES = "$VALUES";
     private JetDelegationSpecifier superCall;
     private String superClass;
     @Nullable // null means java/lang/Object
@@ -78,6 +80,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         boolean isFinal = false;
         boolean isStatic = false;
         boolean isAnnotation = false;
+        boolean isEnum = false;
 
         if (myClass instanceof JetClass) {
             JetClass jetClass = (JetClass) myClass;
@@ -87,12 +90,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 isAbstract = true;
                 isInterface = true;
             }
-            if (jetClass.isAnnotation()) {
+            else if (jetClass.isAnnotation()) {
                 isAbstract = true;
                 isInterface = true;
                 isAnnotation = true;
                 signature.getInterfaces().add(JdkNames.JLA_ANNOTATION.getInternalName());
             }
+            else if (jetClass.hasModifier(JetTokens.ENUM_KEYWORD)) {
+                isEnum = true;
+            }
+
             if (!jetClass.hasModifier(JetTokens.OPEN_KEYWORD) && !isAbstract) {
                 isFinal = true;
             }
@@ -120,6 +127,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         if (isAnnotation) {
             access |= ACC_ANNOTATION;
+        }
+        if (isEnum) {
+            access |= ACC_ENUM;
         }
         v.defineClass(myClass, V1_6,
                 access,
@@ -270,6 +280,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
             }
         }
+
+        if(superClassType == null) {
+            if (myClass instanceof JetClass && ((JetClass) myClass).hasModifier(JetTokens.ENUM_KEYWORD)) {
+                superClassType = JetStandardLibrary.getInstance().getEnumType(descriptor.getDefaultType());
+                superClass = typeMapper.mapType(superClassType,MapTypeMode.VALUE).getInternalName();
+            }
+        }
     }
 
     @Override
@@ -293,6 +310,38 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         generateTraitMethods();
 
         generateAccessors();
+
+        generateEnumMethods();
+    }
+
+    private void generateEnumMethods() {
+        if(myEnumConstants.size() > 0) {
+            {
+                Type type = typeMapper.mapType(JetStandardLibrary.getInstance().getArrayType(descriptor.getDefaultType()), MapTypeMode.IMPL);
+
+                MethodVisitor mv =
+                        v.newMethod(myClass, ACC_PUBLIC | ACC_STATIC, "values", "()" + type.getDescriptor(), null, null);
+                mv.visitCode();
+                mv.visitFieldInsn(GETSTATIC, typeMapper.mapType(descriptor.getDefaultType(),MapTypeMode.VALUE).getInternalName(), VALUES, type.getDescriptor());
+                mv.visitMethodInsn(INVOKEVIRTUAL, type.getInternalName(), "clone", "()Ljava/lang/Object;");
+                mv.visitTypeInsn(CHECKCAST, type.getInternalName());
+                mv.visitInsn(ARETURN);
+                FunctionCodegen.endVisit(mv,"values()",myClass);
+            }
+            {
+                Type type = typeMapper.mapType(descriptor.getDefaultType(), MapTypeMode.IMPL);
+
+                MethodVisitor mv =
+                        v.newMethod(myClass, ACC_PUBLIC | ACC_STATIC, "valueOf", "(Ljava/lang/String;)" + type.getDescriptor(), null, null);
+                mv.visitCode();
+                mv.visitLdcInsn(type);
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitMethodInsn(INVOKESTATIC, "java/lang/Enum", "valueOf", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;");
+                mv.visitTypeInsn(CHECKCAST, type.getInternalName());
+                mv.visitInsn(ARETURN);
+                FunctionCodegen.endVisit(mv,"values()",myClass);
+            }
+        }
     }
 
     private void generateAccessors() {
@@ -593,6 +642,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 i++;
             }
 
+            if(myClass instanceof JetClass && ((JetClass)myClass).hasModifier(JetTokens.ENUM_KEYWORD)) {
+                i += 2;
+            }
+
             for (ValueParameterDescriptor valueParameter : constructorDescriptor.getValueParameters()) {
                 AnnotationCodegen.forParameter(i, mv, state.getInjector().getJetTypeMapper()).genAnnotations(valueParameter);
                 JetValueParameterAnnotationWriter jetValueParameterAnnotation = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i);
@@ -641,7 +694,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (superCall == null) {
             iv.load(0, Type.getType("L" + superClass + ";"));
-            iv.invokespecial(superClass, "<init>", "()V");
+            if(descriptor.getKind() == ClassKind.ENUM_CLASS) {
+                iv.load(1, JetTypeMapper.JL_STRING_TYPE);
+                iv.load(2, Type.INT_TYPE);
+                iv.invokespecial(superClass, "<init>", "(Ljava/lang/String;I)V");
+            }
+            else {
+                iv.invokespecial(superClass, "<init>", "()V");
+            }
         }
         else if (superCall instanceof JetDelegatorToSuperClass) {
             iv.load(0, Type.getType("L" + superClass + ";"));
@@ -865,6 +925,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ClassDescriptor classDecl = constructorDescriptor.getContainingDeclaration();
 
         iv.load(0, TYPE_OBJECT);
+        if(classDecl.getKind() == ClassKind.ENUM_CLASS) {
+            iv.load(1, JetTypeMapper.TYPE_OBJECT);
+            iv.load(2, Type.INT_TYPE);
+        }
 
         if (classDecl.getContainingDeclaration() instanceof ClassDescriptor) {
             iv.load(frameMap.getOuterThisIndex(), typeMapper.mapType(((ClassDescriptor) descriptor.getContainingDeclaration()).getDefaultType(), MapTypeMode.IMPL));
@@ -895,7 +959,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         else if (declaration instanceof JetEnumEntry && !((JetEnumEntry) declaration).hasPrimaryConstructor()) {
             String name = declaration.getName();
             final String desc = "L" + typeMapper.mapType(descriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName() + ";";
-            v.newField(declaration, ACC_PUBLIC | ACC_STATIC | ACC_FINAL, name, desc, null, null);
+            v.newField(declaration, ACC_PUBLIC | ACC_ENUM | ACC_STATIC | ACC_FINAL, name, desc, null, null);
             if (myEnumConstants.isEmpty()) {
                 staticInitializerChunks.add(new CodeChunk() {
                     @Override
@@ -913,19 +977,40 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private final List<JetEnumEntry> myEnumConstants = new ArrayList<JetEnumEntry>();
 
-    private void initializeEnumConstants(InstructionAdapter v) {
-        ExpressionCodegen codegen = new ExpressionCodegen(v, new FrameMap(), Type.VOID_TYPE, context, state);
+    private void initializeEnumConstants(InstructionAdapter iv) {
+        ExpressionCodegen codegen = new ExpressionCodegen(iv, new FrameMap(), Type.VOID_TYPE, context, state);
+        int ordinal = -1;
+        JetType myType = descriptor.getDefaultType();
+        Type myAsmType = typeMapper.mapType(myType, MapTypeMode.IMPL);
+
+        assert myEnumConstants.size() > 0;
+        JetType arrayType = JetStandardLibrary.getInstance().getArrayType(myType);
+        Type arrayAsmType = typeMapper.mapType(arrayType, MapTypeMode.IMPL);
+        v.newField(myClass, ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, "$VALUES", arrayAsmType.getDescriptor(), null, null);
+
+        iv.iconst(myEnumConstants.size());
+        iv.newarray(myAsmType);
+        iv.dup();
+
         for (JetEnumEntry enumConstant : myEnumConstants) {
+            ordinal++;
+
+            iv.dup();
+            iv.iconst(ordinal);
+
             // TODO type and constructor parameters
-            String implClass = typeMapper.mapType(descriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName();
+            String implClass = typeMapper.mapType(myType, MapTypeMode.IMPL).getInternalName();
 
             final List<JetDelegationSpecifier> delegationSpecifiers = enumConstant.getDelegationSpecifiers();
             if (delegationSpecifiers.size() > 1) {
                 throw new UnsupportedOperationException("multiple delegation specifiers for enum constant not supported");
             }
 
-            v.anew(Type.getObjectType(implClass));
-            v.dup();
+            iv.anew(Type.getObjectType(implClass));
+            iv.dup();
+
+            iv.aconst(enumConstant.getName());
+            iv.iconst(ordinal);
 
             if (delegationSpecifiers.size() == 1) {
                 final JetDelegationSpecifier specifier = delegationSpecifiers.get(0);
@@ -940,10 +1025,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
             }
             else {
-                v.invokespecial(implClass, "<init>", "()V");
+                iv.invokespecial(implClass, "<init>", "(Ljava/lang/String;I)V");
             }
-            v.putstatic(implClass, enumConstant.getName(), "L" + implClass + ";");
+            iv.dup();
+            iv.putstatic(implClass, enumConstant.getName(), "L" + implClass + ";");
+            iv.astore(TYPE_OBJECT);
         }
+        iv.putstatic(myAsmType.getClassName(), "$VALUES", arrayAsmType.getDescriptor());
     }
 
     public static void generateInitializers(@NotNull ExpressionCodegen codegen, @NotNull InstructionAdapter iv, @NotNull List<JetDeclaration> declarations,

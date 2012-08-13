@@ -24,5 +24,8 @@ public class JdkNames {
     public static final JvmClassName JL_OBJECT = JvmClassName.byInternalName("java/lang/Object");
     public static final JvmClassName JL_STRING = JvmClassName.byInternalName("java/lang/String");
     public static final JvmClassName JLA_ANNOTATION = JvmClassName.byInternalName("java/lang/annotation/Annotation");
+    public static final JvmClassName JLA_ENUM = JvmClassName.byInternalName("java/lang/Enum");
 
+    private JdkNames() {
+    }
 }

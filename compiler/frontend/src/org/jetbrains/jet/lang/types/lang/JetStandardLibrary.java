@@ -95,6 +95,7 @@ public class JetStandardLibrary {
     private ClassDescriptor iterableClass;
     private ClassDescriptor comparableClass;
     private ClassDescriptor throwableClass;
+    private ClassDescriptor enumClass;
 
     private JetType stringType;
 
@@ -115,7 +116,8 @@ public class JetStandardLibrary {
                 "Ranges.jet",
                 "Iterables.jet",
                 "Iterators.jet",
-                "Arrays.jet"
+                "Arrays.jet",
+                "Enum.jet"
         );
         try {
             List<JetFile> files = new LinkedList<JetFile>();
@@ -163,6 +165,7 @@ public class JetStandardLibrary {
             this.charSequenceClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("CharSequence"));
             this.arrayClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Array"));
             this.throwableClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Throwable"));
+            this.enumClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Enum"));
 
             this.iterableClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Iterable"));
             this.comparableClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Comparable"));
@@ -208,6 +211,7 @@ public class JetStandardLibrary {
         classDescriptors.add(throwableClass);
         classDescriptors.add(iterableClass);
         classDescriptors.add(comparableClass);
+        classDescriptors.add(enumClass);
 
         return classDescriptors;
     }
@@ -301,6 +305,12 @@ public class JetStandardLibrary {
     }
 
     @NotNull
+    public ClassDescriptor getEnum() {
+        initStdClasses();
+        return enumClass;
+    }
+
+    @NotNull
     public JetType getPrimitiveJetType(PrimitiveType primitiveType) {
         return primitiveTypeToJetType.get(primitiveType);
     }
@@ -357,6 +367,11 @@ public class JetStandardLibrary {
     }
 
     @NotNull
+    public JetType getEnumType(@NotNull JetType argument) {
+        return getEnumType(Variance.INVARIANT, argument);
+    }
+
+    @NotNull
     public JetType getArrayType(@NotNull Variance projectionType, @NotNull JetType argument) {
         List<TypeProjection> types = Collections.singletonList(new TypeProjection(projectionType, argument));
         return new JetTypeImpl(
@@ -368,6 +383,18 @@ public class JetStandardLibrary {
         );
     }
     
+    @NotNull
+    public JetType getEnumType(@NotNull Variance projectionType, @NotNull JetType argument) {
+        List<TypeProjection> types = Collections.singletonList(new TypeProjection(projectionType, argument));
+        return new JetTypeImpl(
+                Collections.<AnnotationDescriptor>emptyList(),
+                getEnum().getTypeConstructor(),
+                false,
+                types,
+                getEnum().getMemberScope(types)
+        );
+    }
+
     @NotNull
     public JetType getArrayElementType(@NotNull JetType arrayType) {
         // make non-null?

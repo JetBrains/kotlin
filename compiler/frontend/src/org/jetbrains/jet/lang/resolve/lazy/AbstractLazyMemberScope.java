@@ -44,7 +44,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     private final Map<Name, ClassDescriptor> classDescriptors = Maps.newHashMap();
     private final Map<Name, ClassDescriptor> objectDescriptors = Maps.newHashMap();
 
-    private final Map<Name, Set<FunctionDescriptor>> functionDescriptors = Maps.newHashMap();
+    protected final Map<Name, Set<FunctionDescriptor>> functionDescriptors = Maps.newHashMap();
     private final Map<Name, Set<VariableDescriptor>> propertyDescriptors = Maps.newHashMap();
 
     protected final List<DeclarationDescriptor> allDescriptors = Lists.newArrayList();

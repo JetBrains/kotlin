@@ -329,6 +329,11 @@ public final class jet.DoubleRange : jet.Range<jet.Double> {
         public final val EMPTY: jet.DoubleRange
     }
 }
+public abstract class jet.Enum</*0*/ E : jet.Enum<E>> : jet.Any {
+    public final /*constructor*/ fun </*0*/ E : jet.Enum<E>><init>(/*0*/ name: jet.String, /*1*/ ordinal: jet.Int): jet.Enum<E>
+    public final fun name(): jet.String
+    public final fun ordinal(): jet.Int
+}
 public abstract class jet.ExtensionFunction0</*0*/ in T : jet.Any?, /*1*/ out R : jet.Any?> : jet.Any {
     public final /*constructor*/ fun </*0*/ in T : jet.Any?, /*1*/ out R : jet.Any?><init>(): jet.ExtensionFunction0<T, R>
     public abstract fun T.invoke(): R
