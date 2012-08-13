@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.caches;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiClass;
@@ -39,6 +40,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
+import org.jetbrains.jet.lang.resolve.lazy.LazyBindingContextUtils;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -155,22 +158,25 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             @NotNull JetSimpleNameExpression expression,
             @NotNull GlobalSearchScope scope
     ) {
-        HashSet<FunctionDescriptor> result = new HashSet<FunctionDescriptor>();
-
         JetFile jetFile = (JetFile) expression.getContainingFile();
-        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile).getBindingContext();
+        final ResolveSession resolveSessionForFile = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile(jetFile);
+        LazyBindingContextUtils.getExpressionBindingContext(resolveSessionForFile, expression);
+        BindingContext context = WholeProjectAnalyzerFacade.getLazyResolveContext(jetFile, expression);
         JetScope jetScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
 
         if (jetScope == null) {
-            return result;
+            return Collections.emptyList();
         }
+
+        Set<FunctionDescriptor> result = Sets.newHashSet();
 
         Collection<PsiMethod> topLevelFunctionPrototypes = JetFromJavaDescriptorHelper.getTopLevelFunctionPrototypesByName(name, project, scope);
         for (PsiMethod method : topLevelFunctionPrototypes) {
             FqName functionFQN = JetFromJavaDescriptorHelper.getJetTopLevelDeclarationFQN(method);
             if (functionFQN != null) {
                 JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, new ImportPath(functionFQN, false));
-                Collection<? extends DeclarationDescriptor> declarationDescriptors = new QualifiedExpressionResolver().analyseImportReference(importDirective, jetScope, new BindingTraceContext());
+                Collection<? extends DeclarationDescriptor> declarationDescriptors = new QualifiedExpressionResolver().analyseImportReference(
+                        importDirective, jetScope, new BindingTraceContext());
                 for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
                     if (declarationDescriptor instanceof FunctionDescriptor) {
                         result.add((FunctionDescriptor) declarationDescriptor);
@@ -181,10 +187,8 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
         Collection<JetNamedFunction> jetNamedFunctions = JetShortFunctionNameIndex.getInstance().get(name, project, scope);
         for (JetNamedFunction jetNamedFunction : jetNamedFunctions) {
-            SimpleFunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, jetNamedFunction);
-            if (functionDescriptor != null) {
-                result.add(functionDescriptor);
-            }
+            FunctionDescriptor functionDescriptor = (FunctionDescriptor) resolveSessionForFile.resolveToDescriptor(jetNamedFunction);
+            result.add(functionDescriptor);
         }
 
         return result;
@@ -224,7 +228,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
         JetFile jetFile = (JetFile) expression.getContainingFile();
 
-        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile).getBindingContext();
+        BindingContext context = WholeProjectAnalyzerFacade.getLazyResolveContext(jetFile, expression);
         JetExpression receiverExpression = expression.getReceiverExpression();
 
         if (receiverExpression != null) {
@@ -273,7 +277,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             @NotNull Condition<String> acceptedShortNameCondition,
             @NotNull JetFile jetFile
     ) {
-        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile).getBindingContext();
+        BindingContext context = WholeProjectAnalyzerFacade.getLazyResolveContext(jetFile, null);
         Collection<ClassDescriptor> classDescriptors = new ArrayList<ClassDescriptor>();
 
         for (String fqName : JetFullClassNameIndex.getInstance().getAllKeys(project)) {

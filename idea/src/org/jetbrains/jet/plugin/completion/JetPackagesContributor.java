@@ -71,12 +71,11 @@ public class JetPackagesContributor extends CompletionContributor {
                            int prefixLength = parameters.getOffset() - simpleNameReference.getExpression().getTextOffset();
                            result = result.withPrefixMatcher(new PlainPrefixMatcher(name.substring(0, prefixLength)));
 
-                           BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(
-                                   (JetFile)namespaceHeader.getContainingFile())
-                                   .getBindingContext();
+                           BindingContext bindingContext = WholeProjectAnalyzerFacade.getLazyResolveContext(
+                                   (JetFile) namespaceHeader.getContainingFile(), simpleNameReference.getExpression());
 
                            for (LookupElement variant : DescriptorLookupConverter.collectLookupElements(
-                                   bindingContext, TipsManager.getReferenceVariants(namespaceHeader, bindingContext))) {
+                                   bindingContext, TipsManager.getPackageReferenceVariants(simpleNameReference.getExpression(), bindingContext))) {
                                if (!variant.getLookupString().contains(DUMMY_IDENTIFIER)) {
                                    result.addElement(variant);
                                }
@@ -92,5 +91,6 @@ public class JetPackagesContributor extends CompletionContributor {
     public void beforeCompletion(@NotNull CompletionInitializationContext context) {
         // Will need to filter this dummy identifier to avoid showing it in completion
         context.setDummyIdentifier(DUMMY_IDENTIFIER);
+        // context.setDummyIdentifier(CompletionInitializationContext.DUMMY_IDENTIFIER);
     }
 }

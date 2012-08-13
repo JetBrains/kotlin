@@ -17,25 +17,41 @@
 package org.jetbrains.jet.plugin.project;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
+import org.jetbrains.jet.lang.resolve.lazy.LazyBindingContextUtils;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 
 import static org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache.analyzeFileWithCache;
+import static org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache.getLazyResolveSession;
 
 /**
  * @author abreslav
  */
 public final class WholeProjectAnalyzerFacade {
 
-    /**
-     * Forbid creating
-     */
     private WholeProjectAnalyzerFacade() {
     }
 
     @NotNull
     public static AnalyzeExhaust analyzeProjectWithCacheOnAFile(@NotNull JetFile file) {
         return analyzeFileWithCache(file, JetFilesProvider.getInstance(file.getProject()).sampleToAllFilesInModule());
+    }
+
+    @NotNull
+    public static ResolveSession getLazyResolveSessionForFile(@NotNull JetFile file) {
+        return getLazyResolveSession(file);
+    }
+
+    @NotNull
+    public static BindingContext getLazyResolveContext(@NotNull JetFile file, @Nullable JetExpression expression) {
+        ResolveSession resolveSession = getLazyResolveSessionForFile(file);
+        return expression != null ?
+               LazyBindingContextUtils.getExpressionBindingContext(resolveSession, expression) :
+               resolveSession.getBindingContext();
     }
 }

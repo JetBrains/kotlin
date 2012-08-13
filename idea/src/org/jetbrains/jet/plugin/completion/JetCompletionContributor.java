@@ -77,20 +77,18 @@ public class JetCompletionContributor extends CompletionContributor {
 
                        JetSimpleNameReference jetReference = getJetReference(parameters);
                        if (jetReference != null) {
-
-                           BindingContext jetContext =
-                                   WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile)position.getContainingFile())
-                                           .getBindingContext();
+                           BindingContext jetContext = WholeProjectAnalyzerFacade.getLazyResolveContext(
+                                   (JetFile) position.getContainingFile(), jetReference.getExpression());
 
                            JetScope scope = jetContext.get(BindingContext.RESOLUTION_SCOPE, jetReference.getExpression());
                            session.inDescriptor = scope != null ? scope.getContainingDeclaration() : null;
 
-                           completeForReference(parameters, result, position, jetReference, session);
+                           completeForReference(parameters, result, position, jetReference, session, jetContext);
 
                            if (!session.isSomethingAdded && session.customInvocationCount == 0) {
                                // Rerun completion if nothing was found
                                session.customInvocationCount = 1;
-                               completeForReference(parameters, result, position, jetReference, session);
+                               completeForReference(parameters, result, position, jetReference, session, jetContext);
                            }
                        }
 
@@ -105,18 +103,18 @@ public class JetCompletionContributor extends CompletionContributor {
             @NotNull CompletionResultSet result,
             @NotNull PsiElement position,
             @NotNull JetSimpleNameReference jetReference,
-            @NotNull CompletionSession session
-    ) {
+            @NotNull CompletionSession session,
+            BindingContext jetContext) {
         if (isOnlyKeywordCompletion(position)) {
             return;
         }
 
         if (shouldRunTypeCompletionOnly(position, jetReference)) {
             if (session.customInvocationCount > 0) {
-                addClasses(parameters, result, session);
+                addClasses(parameters, result, session, jetContext);
             }
             else {
-                for (LookupElement variant : getReferenceVariants(jetReference, result, session)) {
+                for (LookupElement variant : getReferenceVariants(jetReference, result, session, jetContext)) {
                     if (isTypeDeclaration(variant)) {
                         addCheckedCompletionToResult(result, variant, session);
                     }
@@ -126,7 +124,7 @@ public class JetCompletionContributor extends CompletionContributor {
             return;
         }
 
-        for (LookupElement variant : getReferenceVariants(jetReference, result, session)) {
+        for (LookupElement variant : getReferenceVariants(jetReference, result, session, jetContext)) {
             addCheckedCompletionToResult(result, variant, session);
         }
 
@@ -144,7 +142,7 @@ public class JetCompletionContributor extends CompletionContributor {
         }
 
         if (shouldRunTopLevelCompletion(parameters, session)) {
-            addClasses(parameters, result, session);
+            addClasses(parameters, result, session, jetContext);
             addJetTopLevelFunctions(jetReference.getExpression(), result, position, session);
         }
 
@@ -157,12 +155,12 @@ public class JetCompletionContributor extends CompletionContributor {
         return PsiTreeUtil.getParentOfType(position, JetModifierList.class) != null;
     }
 
-    private static void addJetExtensions(JetSimpleNameExpression expression, CompletionResultSet result, PsiElement position) {
+    private static void addJetExtensions(@NotNull JetSimpleNameExpression expression, @NotNull CompletionResultSet result, @NotNull PsiElement position) {
         final PrefixMatcher prefixMatcher = result.getPrefixMatcher();
         JetShortNamesCache namesCache = JetCacheManager.getInstance(position.getProject()).getNamesCache();
         Condition<String> matchPrefixCondition = new Condition<String>() {
             @Override
-            public boolean value(String callableName) {
+            public boolean value(@NotNull String callableName) {
                 return prefixMatcher.prefixMatches(callableName);
             }
         };
@@ -170,8 +168,8 @@ public class JetCompletionContributor extends CompletionContributor {
         Collection<DeclarationDescriptor> jetCallableExtensions = namesCache.getJetCallableExtensions(
                 matchPrefixCondition, expression, GlobalSearchScope.allScope(position.getProject()));
 
-        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile)position.getContainingFile())
-                .getBindingContext();
+        BindingContext context = WholeProjectAnalyzerFacade.getLazyResolveContext(
+                (JetFile) position.getContainingFile(), expression);
 
         for (DeclarationDescriptor jetCallableExtension : jetCallableExtensions) {
             result.addElement(DescriptorLookupConverter.createLookupElement(context, jetCallableExtension));
@@ -192,11 +190,10 @@ public class JetCompletionContributor extends CompletionContributor {
         return false;
     }
 
-    private static void addJetTopLevelFunctions(JetSimpleNameExpression expression,
+    private static void addJetTopLevelFunctions(@NotNull JetSimpleNameExpression expression,
             @NotNull CompletionResultSet result,
             @NotNull PsiElement position,
             @NotNull CompletionSession session) {
-
         String actualPrefix = result.getPrefixMatcher().getPrefix();
 
         Project project = position.getProject();
@@ -205,8 +202,8 @@ public class JetCompletionContributor extends CompletionContributor {
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
         Collection<String> functionNames = namesCache.getAllTopLevelFunctionNames();
 
-        BindingContext resolutionContext =
-                WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile)position.getContainingFile()).getBindingContext();
+        BindingContext resolutionContext = WholeProjectAnalyzerFacade.getLazyResolveContext(
+                (JetFile) position.getContainingFile(), expression);
 
         for (String name : functionNames) {
             if (name.contains(actualPrefix)) {
@@ -223,9 +220,9 @@ public class JetCompletionContributor extends CompletionContributor {
     private static void addClasses(
             @NotNull CompletionParameters parameters,
             @NotNull final CompletionResultSet result,
-            @NotNull final CompletionSession session
-    ) {
-        JetClassCompletionContributor.addClasses(parameters, result, new Consumer<LookupElement>() {
+            @NotNull final CompletionSession session,
+            BindingContext jetContext) {
+        JetClassCompletionContributor.addClasses(parameters, result, jetContext, new Consumer<LookupElement>() {
             @Override
             public void consume(@NotNull LookupElement element) {
                 addCompletionToResult(result, element, session);
@@ -233,7 +230,7 @@ public class JetCompletionContributor extends CompletionContributor {
         });
     }
 
-    private static boolean shouldRunTypeCompletionOnly(PsiElement position, JetSimpleNameReference jetReference) {
+    private static boolean shouldRunTypeCompletionOnly(PsiElement position, @NotNull JetSimpleNameReference jetReference) {
         // Check that completion in the type annotation context and if there's a qualified
         // expression we are at first of it
         JetTypeReference typeReference = PsiTreeUtil.getParentOfType(position, JetTypeReference.class);
@@ -245,7 +242,7 @@ public class JetCompletionContributor extends CompletionContributor {
         return false;
     }
 
-    private static boolean shouldRunTopLevelCompletion(@NotNull CompletionParameters parameters, CompletionSession session) {
+    private static boolean shouldRunTopLevelCompletion(@NotNull CompletionParameters parameters, @NotNull CompletionSession session) {
         if (session.customInvocationCount == 0) {
             return false;
         }
@@ -263,7 +260,7 @@ public class JetCompletionContributor extends CompletionContributor {
         return false;
     }
 
-    private static boolean shouldRunExtensionsCompletion(CompletionParameters parameters, String prefix, CompletionSession session) {
+    private static boolean shouldRunExtensionsCompletion(@NotNull CompletionParameters parameters, @NotNull String prefix, @NotNull CompletionSession session) {
         if (session.customInvocationCount == 0 && prefix.length() < 3) {
             return false;
         }
@@ -312,7 +309,7 @@ public class JetCompletionContributor extends CompletionContributor {
         session.isSomethingAdded = true;
     }
 
-    private static boolean isVisibleElement(LookupElement element, CompletionSession session) {
+    private static boolean isVisibleElement(@NotNull LookupElement element, @NotNull CompletionSession session) {
         if (session.inDescriptor != null) {
             if (element.getObject() instanceof JetLookupObject) {
                 JetLookupObject jetObject = (JetLookupObject)element.getObject();
@@ -324,14 +321,16 @@ public class JetCompletionContributor extends CompletionContributor {
         return true;
     }
 
-    private static boolean isVisibleDescriptor(DeclarationDescriptor descriptor, CompletionSession session) {
+    private static boolean isVisibleDescriptor(DeclarationDescriptor descriptor, @NotNull CompletionSession session) {
         if (session.customInvocationCount >= 2) {
             // Show everything if user insist on showing completion list
             return true;
         }
 
         if (descriptor instanceof DeclarationDescriptorWithVisibility) {
-            return Visibilities.isVisible((DeclarationDescriptorWithVisibility)descriptor, session.inDescriptor);
+            if (session.inDescriptor != null) {
+                return Visibilities.isVisible((DeclarationDescriptorWithVisibility)descriptor, session.inDescriptor);
+            }
         }
 
         return true;
@@ -341,13 +340,10 @@ public class JetCompletionContributor extends CompletionContributor {
     private static LookupElement[] getReferenceVariants(
             @NotNull JetSimpleNameReference reference,
             @NotNull final CompletionResultSet result,
-            @NotNull final CompletionSession session
+            @NotNull final CompletionSession session,
+            BindingContext jetContext
     ) {
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(
-                (JetFile)reference.getExpression().getContainingFile())
-                .getBindingContext();
-
-        Collection<DeclarationDescriptor> descriptors = TipsManager.getReferenceVariants(reference.getExpression(), bindingContext);
+        Collection<DeclarationDescriptor> descriptors = TipsManager.getReferenceVariants(reference.getExpression(), jetContext);
 
         Collection<DeclarationDescriptor> checkedDescriptors = Collections2.filter(descriptors, new Predicate<DeclarationDescriptor>() {
             @Override
@@ -360,6 +356,6 @@ public class JetCompletionContributor extends CompletionContributor {
             }
         });
 
-        return DescriptorLookupConverter.collectLookupElements(bindingContext, checkedDescriptors);
+        return DescriptorLookupConverter.collectLookupElements(jetContext, checkedDescriptors);
     }
 }

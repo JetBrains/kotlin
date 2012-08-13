@@ -21,18 +21,23 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JetLightClass;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 
 import java.util.Collection;
 
@@ -40,34 +45,7 @@ import java.util.Collection;
  * @author Nikolay Krasko
  */
 public class JetClassCompletionContributor extends CompletionContributor {
-    public JetClassCompletionContributor() {
-        // Should be removed in new idea
-        //extend(CompletionType.CLASS_NAME, PlatformPatterns.psiElement(),
-        //       new CompletionProvider<CompletionParameters>() {
-        //           @Override
-        //           protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
-        //                                         final @NotNull CompletionResultSet result) {
-        //               final CompletionResultSet jetResult = JetCompletionSorting.addJetSorting(parameters, result);
-        //
-        //               final PsiElement position = parameters.getPosition();
-        //               if (!(position.getContainingFile() instanceof JetFile)) {
-        //                   return;
-        //               }
-        //
-        //               final PsiReference ref = position.getContainingFile().findReferenceAt(parameters.getOffset());
-        //               if (ref instanceof JetSimpleNameReference) {
-        //                   addClasses(parameters, result, new Consumer<LookupElement>() {
-        //                       @Override
-        //                       public void consume(LookupElement lookupElement) {
-        //                           jetResult.addElement(lookupElement);
-        //                       }
-        //                   });
-        //               }
-        //
-        //               result.stopHere();
-        //           }
-        //       });
-    }
+    public JetClassCompletionContributor() {}
 
     /**
      * Jet classes will be added as java completions for unification
@@ -75,17 +53,14 @@ public class JetClassCompletionContributor extends CompletionContributor {
     static void addClasses(
             @NotNull final CompletionParameters parameters,
             @NotNull final CompletionResultSet result,
+            @NotNull final BindingContext jetContext,
             @NotNull final Consumer<LookupElement> consumer
     ) {
         CompletionResultSet tempResult = result.withPrefixMatcher(CompletionUtil.findReferenceOrAlphanumericPrefix(parameters));
 
-        // TODO: Make icon for standard types
         final Collection<DeclarationDescriptor> jetOnlyClasses = JetShortNamesCache.getJetOnlyTypes();
-        final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(
-                (JetFile)parameters.getPosition().getContainingFile()).getBindingContext();
-
         for (DeclarationDescriptor jetOnlyClass : jetOnlyClasses) {
-            consumer.consume(DescriptorLookupConverter.createLookupElement(bindingContext, jetOnlyClass));
+            consumer.consume(DescriptorLookupConverter.createLookupElement(jetContext, jetOnlyClass));
         }
 
         if (!JsModuleDetector.isJsModule((JetFile)parameters.getOriginalFile())) {
@@ -99,8 +74,8 @@ public class JetClassCompletionContributor extends CompletionContributor {
                             if (lookupElement instanceof JavaPsiClassReferenceElement) {
                                 JavaPsiClassReferenceElement javaPsiReferenceElement = (JavaPsiClassReferenceElement) lookupElement;
 
-                                PsiClass object = javaPsiReferenceElement.getObject();
-                                if (addAsJetLookupElement(object, bindingContext, consumer)) {
+                                PsiClass psiClass = javaPsiReferenceElement.getObject();
+                                if (addAsJetLookupElement(parameters, psiClass, consumer)) {
                                     return;
                                 }
 
@@ -124,20 +99,30 @@ public class JetClassCompletionContributor extends CompletionContributor {
                     (JetFile) parameters.getOriginalFile());
 
             for (ClassDescriptor descriptor : descriptors) {
-                consumer.consume(DescriptorLookupConverter.createLookupElement(bindingContext, descriptor));
+                consumer.consume(DescriptorLookupConverter.createLookupElement(jetContext, descriptor));
             }
         }
     }
 
-    private static boolean addAsJetLookupElement(PsiClass aClass, BindingContext bindingContext, Consumer<LookupElement> consumer) {
+    private static boolean addAsJetLookupElement(CompletionParameters parameters, PsiClass aClass, Consumer<LookupElement> consumer) {
         if (aClass instanceof JetLightClass) {
-            ClassDescriptor descriptor = bindingContext.get(
-                    BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, ((JetLightClass)aClass).getFqName());
+            Project project = parameters.getPosition().getProject();
+            PsiFile completionFile = parameters.getPosition().getContainingFile();
 
-            if (descriptor != null) {
-                LookupElement element = DescriptorLookupConverter.createLookupElement(bindingContext, descriptor);
-                consumer.consume(element);
-                return true;
+            Collection<JetClassOrObject> classOrObjects =
+                    JetFullClassNameIndex.getInstance().get(aClass.getQualifiedName(), project, GlobalSearchScope.allScope(project));
+
+            for (JetClassOrObject classOrObject : classOrObjects) {
+                if (classOrObject.getContainingFile().getOriginalFile().equals(aClass.getContainingFile())) {
+                    PsiFile fileOfClass = completionFile.getOriginalFile().equals(aClass.getContainingFile()) ? completionFile : aClass.getContainingFile();
+
+                    ResolveSession resolveSessionForFile = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) fileOfClass);
+                    ClassDescriptor descriptor = resolveSessionForFile.getClassDescriptor(classOrObject);
+
+                    LookupElement element = DescriptorLookupConverter.createLookupElement(resolveSessionForFile.getBindingContext(), descriptor);
+                    consumer.consume(element);
+                    return true;
+                }
             }
         }
 
