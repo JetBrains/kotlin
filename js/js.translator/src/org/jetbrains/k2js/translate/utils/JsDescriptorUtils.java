@@ -140,7 +140,7 @@ public final class JsDescriptorUtils {
     }
 
     public static boolean isAsPrivate(@NotNull PropertyDescriptor propertyDescriptor) {
-        return propertyDescriptor.getReceiverParameter().exists() ||
+        return isExtension(propertyDescriptor) ||
                !isDefaultAccessor(propertyDescriptor.getGetter()) ||
                !isDefaultAccessor(propertyDescriptor.getSetter());
     }
