@@ -95,7 +95,7 @@ public class CompileMavenGeneratedJSLibrary extends SingleFileTranslationTest {
             arguments.outputFile = getOutputFilePath(getTestName(false) + ".compiler.kt", version);
             arguments.sourceFiles = files.toArray(new String[files.size()]);
             arguments.verbose = true;
-            arguments.libraryDirectories = new String[] {generatedJsDefinitionsDir};
+            arguments.libraryFiles = new String[] {generatedJsDefinitionsDir};
             System.out.println("Compiling with version: " + version + " to: " + arguments.outputFile);
             ExitCode answer = compiler.exec(System.out, arguments);
             assertEquals("Compile failed", ExitCode.OK, answer);
