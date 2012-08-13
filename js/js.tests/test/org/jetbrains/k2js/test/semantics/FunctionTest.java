@@ -16,8 +16,6 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import org.jetbrains.k2js.translate.context.Namer;
-
 /**
  * @author Pavel Talanov
  */
@@ -60,7 +58,7 @@ public class FunctionTest extends AbstractExpressionTest {
     }
 
     public void testEnclosingThis() throws Exception {
-        runFunctionOutputTest("enclosingThis.kt", Namer.getRootNamespaceName(), "box", "OK");
+        runFunctionOutputTest("enclosingThis.kt", "foo", "box", "OK");
     }
 
 
@@ -107,6 +105,10 @@ public class FunctionTest extends AbstractExpressionTest {
     }
 
     public void testFunctionInsideFunction() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testCallFunInInit() throws Exception {
         fooBoxTest();
     }
 }
