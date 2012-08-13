@@ -16,7 +16,6 @@
 
 package org.jetbrains.k2js.translate.reference;
 
-import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.reference.CallParametersResolver.resolveCallParameters;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isConstructorDescriptor;
 
 /**
@@ -100,11 +100,14 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression invokeCall() {
-        JsInvocation callMethodInvocation = generateCallMethodInvocation();
-        List<JsExpression> parameters = Lists.<JsExpression>newArrayList(JsLiteral.NULL);
-        parameters.addAll(arguments);
-        setArguments(callMethodInvocation, parameters);
-        return callMethodInvocation;
+        JsExpression thisExpression = callParameters.getThisObject();
+        if (thisExpression == null) {
+            return new JsInvocation(callParameters.getFunctionReference(), arguments);
+        }
+        JsInvocation call = new JsInvocation(new JsNameRef("call", callParameters.getFunctionReference()));
+        call.getArguments().add(thisExpression);
+        call.getArguments().addAll(arguments);
+        return call;
     }
 
     private boolean isExpressionAsFunction() {
@@ -197,15 +200,6 @@ public final class CallTranslator extends AbstractTranslator {
     private JsExpression constructExtensionLiteralCall(@NotNull JsExpression realReceiver) {
         List<JsExpression> callArguments = generateExtensionCallArgumentList(realReceiver);
         return new JsInvocation(new JsNameRef("call", callParameters.getFunctionReference()), callArguments);
-    }
-
-    @NotNull
-    private JsInvocation generateCallMethodInvocation() {
-        JsNameRef callMethodNameRef = new JsNameRef("call");
-        JsInvocation callMethodInvocation = new JsInvocation();
-        callMethodInvocation.setQualifier(callMethodNameRef);
-        setQualifier(callMethodInvocation, callParameters.getFunctionReference());
-        return callMethodInvocation;
     }
 
     @SuppressWarnings("UnnecessaryLocalVariable")
