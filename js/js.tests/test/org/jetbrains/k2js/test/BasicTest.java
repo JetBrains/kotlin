@@ -51,8 +51,6 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     private static final String OUT = "out/";
     private static final String EXPECTED = "expected/";
 
-    public static final String JSLINT_LIB = pathToTestFilesRoot() + "jslint.js";
-
     @NotNull
     private String mainDirectory = "";
 
