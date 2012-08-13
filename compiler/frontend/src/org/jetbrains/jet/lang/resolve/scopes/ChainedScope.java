@@ -33,11 +33,17 @@ import java.util.Set;
  */
 public class ChainedScope implements JetScope {
     private final DeclarationDescriptor containingDeclaration;
+    private final ReceiverDescriptor implicitReceiver;
     private final JetScope[] scopeChain;
     private Collection<DeclarationDescriptor> allDescriptors;
 
     public ChainedScope(DeclarationDescriptor containingDeclaration, JetScope... scopes) {
+        this(containingDeclaration, ReceiverDescriptor.NO_RECEIVER, scopes);
+    }
+
+    public ChainedScope(DeclarationDescriptor containingDeclaration, ReceiverDescriptor implicitReceiver, JetScope... scopes) {
         this.containingDeclaration = containingDeclaration;
+        this.implicitReceiver = implicitReceiver;
         scopeChain = scopes.clone();
     }
 
@@ -118,13 +124,7 @@ public class ChainedScope implements JetScope {
     @NotNull
     @Override
     public ReceiverDescriptor getImplicitReceiver() {
-        for (JetScope scope : scopeChain) {
-            if (scope.getImplicitReceiver() != ReceiverDescriptor.NO_RECEIVER) {
-                return scope.getImplicitReceiver();
-            }
-        }
-
-        return ReceiverDescriptor.NO_RECEIVER;
+        return implicitReceiver;
     }
 
     @Override

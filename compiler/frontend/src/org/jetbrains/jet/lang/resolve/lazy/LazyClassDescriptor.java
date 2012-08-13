@@ -148,7 +148,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             scope.addLabeledDeclaration(this);
             scope.changeLockLevel(WritableScope.LockLevel.READING);
 
-            scopeForMemberDeclarationResolution = new ChainedScope(this, scope, getScopeForMemberLookup(), getScopeForClassHeaderResolution());
+            scopeForMemberDeclarationResolution = new ChainedScope(this, getScopeForMemberLookup().getImplicitReceiver(),
+                                                                   scope, getScopeForMemberLookup(), getScopeForClassHeaderResolution());
         }
         return scopeForMemberDeclarationResolution;
     }
