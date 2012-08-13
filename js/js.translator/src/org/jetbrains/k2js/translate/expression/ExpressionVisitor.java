@@ -377,7 +377,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitObjectLiteralExpression(@NotNull JetObjectLiteralExpression expression,
             @NotNull TranslationContext context) {
-        return ClassTranslator.generateObjectLiteralExpression(expression, context);
+        return ClassTranslator.generateObjectLiteral(expression, context);
     }
 
     @Override
@@ -387,7 +387,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         JetObjectDeclarationName objectDeclarationName = getObjectDeclarationName(expression);
         DeclarationDescriptor descriptor = getDescriptorForElement(context.bindingContext(), objectDeclarationName);
         JsName propertyName = context.getNameForDescriptor(descriptor);
-        JsExpression value = ClassTranslator.generateClassCreationExpression(expression, context);
+        JsExpression value = ClassTranslator.generateClassCreation(expression, context);
         return newVar(propertyName, value);
     }
 
