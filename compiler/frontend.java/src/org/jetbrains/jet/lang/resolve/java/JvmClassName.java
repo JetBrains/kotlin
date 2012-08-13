@@ -26,13 +26,6 @@ import org.jetbrains.asm4.Type;
 public class JvmClassName {
 
     @NotNull
-    private final String internalName;
-
-    private JvmClassName(@NotNull String internalName) {
-        this.internalName = internalName;
-    }
-
-    @NotNull
     public static JvmClassName byInternalName(@NotNull String internalName) {
         return new JvmClassName(internalName);
     }
@@ -47,7 +40,7 @@ public class JvmClassName {
     }
 
     /**
-     * WARNING: fq name is cannot be uniquely mapped to JVM class name.
+     * WARNING: fq name cannot be uniquely mapped to JVM class name.
      */
     @NotNull
     public static JvmClassName byFqNameWithoutInnerClasses(@NotNull FqName fqName) {
@@ -62,8 +55,16 @@ public class JvmClassName {
     }
 
 
+    @NotNull
+    private final String internalName;
 
-    private transient FqName fqName;
+    private FqName fqName;
+    private String descriptor;
+    private Type asmType;
+
+    private JvmClassName(@NotNull String internalName) {
+        this.internalName = internalName;
+    }
 
     @NotNull
     public FqName getFqName() {
@@ -73,15 +74,11 @@ public class JvmClassName {
         return fqName;
     }
 
-
-
     @NotNull
     public String getInternalName() {
         return internalName;
     }
     
-    private transient String descriptor;
-
     @NotNull
     public String getDescriptor() {
         if (descriptor == null) {
@@ -94,8 +91,6 @@ public class JvmClassName {
         return descriptor;
     }
     
-    private transient Type asmType;
-
     @NotNull
     public Type getAsmType() {
         if (asmType == null) {
