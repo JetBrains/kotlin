@@ -76,7 +76,10 @@ public class CompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir {
         compileA();
         compileB();
 
-        URLClassLoader classLoader = new URLClassLoader(new URL[]{ aDir.toURI().toURL(), bDir.toURI().toURL() });
+        URLClassLoader classLoader = new URLClassLoader(
+                new URL[]{ aDir.toURI().toURL(), bDir.toURI().toURL() },
+                CompileKotlinAgainstKotlinTest.class.getClassLoader()
+        );
         Class<?> clazz = classLoader.loadClass("bbb.namespace");
         Method main = clazz.getMethod("main", new Class[] { String[].class });
         main.invoke(null, new Object[] { new String[0] });
