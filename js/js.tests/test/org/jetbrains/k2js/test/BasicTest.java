@@ -42,6 +42,8 @@ import static org.jetbrains.k2js.test.utils.JsTestUtils.convertFileNameToDotJsFi
  * @author Pavel Talanov
  */
 public abstract class BasicTest extends KotlinTestWithEnvironment {
+    // predictable order of ecma version in tests
+    protected static final Iterable<EcmaVersion> DEFAULT_ECMA_VERSIONS = Lists.newArrayList(EcmaVersion.v5, EcmaVersion.v3);
 
     private static final boolean DELETE_OUT = false;
     private static final String TEST_FILES = "js/js.translator/testFiles/";
