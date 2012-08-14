@@ -18,6 +18,8 @@ package org.jetbrains.jet.compiler.android;
 
 import junit.framework.TestCase;
 
+import java.lang.String;
+import java.lang.Throwable;
 import java.lang.reflect.Method;
 
 /**
@@ -31,7 +33,19 @@ public class AbstractCodegenTestCaseOnAndroid extends TestCase {
             Class clazz;
             clazz = Class.forName(filePath.replaceAll("\\\\|-|\\.|/", "_") + ".namespace");
             Method method;
-            method = clazz.getMethod("box");
+            try {
+                method = clazz.getMethod("box");
+            }
+            catch (NoSuchMethodException e) {
+                try {
+                    method = clazz.getMethod("main", String[].class);
+                }
+                catch(Throwable e) {
+                    throw new RuntimeException("File: " + filePath, e);
+                }
+                method.invoke(null);
+                return;
+            }
             assertEquals("OK", method.invoke(null));
         }
         catch (Throwable e) {
