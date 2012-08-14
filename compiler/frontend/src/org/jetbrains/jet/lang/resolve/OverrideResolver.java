@@ -514,7 +514,7 @@ public class OverrideResolver {
             Set<CallableMemberDescriptor> filteredOverrides = OverridingUtil.filterOverrides(Sets.newHashSet(overriddenDeclarations));
             Set<CallableMemberDescriptor> overridden = Sets.newHashSet();
             for (CallableMemberDescriptor memberDescriptor : filteredOverrides) {
-                overridden.add(memberDescriptor.getOriginal());
+                overridden.add(memberDescriptor);
             }
             overriddenDeclarationsByDirectParent.put(descriptor, overridden);
         }
