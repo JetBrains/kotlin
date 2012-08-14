@@ -119,7 +119,7 @@ public class JetClassCompletionContributor extends CompletionContributor {
             for (JetClassOrObject classOrObject : classOrObjects) {
                 if (classOrObject.getContainingFile().getOriginalFile().equals(aClass.getContainingFile())) {
                     Collection<ClassDescriptor> classDescriptors = ResolveSessionUtils.getClassDescriptorsByFqName(
-                            resolveSession,((JetLightClass) aClass).getFqName());
+                            resolveSession, ((JetLightClass) aClass).getFqName());
                     for (ClassDescriptor descriptor : classDescriptors) {
                         consumer.consume(DescriptorLookupConverter.createLookupElement(resolveSession, context, descriptor));
                     }
