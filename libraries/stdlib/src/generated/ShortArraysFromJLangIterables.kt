@@ -155,12 +155,12 @@ public inline fun ShortArray.foldRight(initial: Short, operation: (Short, Short)
  */
 public inline fun ShortArray.reduce(operation: (Short, Short) -> Short): Short {
     val iterator = this.iterator().sure()
-    if (!iterator.hasNext) {
+    if (!iterator.hasNext()) {
         throw UnsupportedOperationException("Empty iterable can't be reduced")
     }
 
     var result: Short = iterator.next() //compiler doesn't understand that result will initialized anyway
-    while (iterator.hasNext) {
+    while (iterator.hasNext()) {
         result = operation(result, iterator.next())
     }
 

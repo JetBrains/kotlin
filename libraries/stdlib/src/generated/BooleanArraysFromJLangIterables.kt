@@ -155,12 +155,12 @@ public inline fun BooleanArray.foldRight(initial: Boolean, operation: (Boolean, 
  */
 public inline fun BooleanArray.reduce(operation: (Boolean, Boolean) -> Boolean): Boolean {
     val iterator = this.iterator().sure()
-    if (!iterator.hasNext) {
+    if (!iterator.hasNext()) {
         throw UnsupportedOperationException("Empty iterable can't be reduced")
     }
 
     var result: Boolean = iterator.next() //compiler doesn't understand that result will initialized anyway
-    while (iterator.hasNext) {
+    while (iterator.hasNext()) {
         result = operation(result, iterator.next())
     }
 

@@ -5,12 +5,12 @@ import org.junit.Test as test
 
 fun <T> checkContent(val iter : Iterator<T>, val length : Int, val value : (Int) -> T) {
     var idx = 0
-    while (idx != length && iter.hasNext) {
+    while (idx != length && iter.hasNext()) {
         assertEquals(value(idx++), iter.next(), "Invalid element")
     }
 
     assertEquals(length, idx, "Invalid length")
-    assertFalse(iter.hasNext, "Invalid length (hasNext)")
+    assertFalse(iter.hasNext(), "Invalid length (hasNext())")
 }
 
 class ArraysTest {

@@ -35,8 +35,7 @@ abstract class FunctionalList<T>(public val size: Int) {
             return head
         }
 
-        override val hasNext: Boolean
-        get() = !cur.empty
+        override fun hasNext(): Boolean = !cur.empty
     }
 
     class object {

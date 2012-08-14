@@ -33,7 +33,7 @@ public abstract trait jet.BooleanIterable : jet.Iterable<jet.Boolean> {
 }
 public abstract class jet.BooleanIterator : jet.Iterator<jet.Boolean> {
     public final /*constructor*/ fun <init>(): jet.BooleanIterator
-    public abstract override /*1*/ val hasNext: jet.Boolean
+    public abstract override /*1*/ fun hasNext(): jet.Boolean
     public open override /*1*/ fun next(): jet.Boolean
     public abstract fun nextBoolean(): jet.Boolean
 }
@@ -115,7 +115,7 @@ public abstract trait jet.ByteIterable : jet.Iterable<jet.Byte> {
 }
 public abstract class jet.ByteIterator : jet.Iterator<jet.Byte> {
     public final /*constructor*/ fun <init>(): jet.ByteIterator
-    public abstract override /*1*/ val hasNext: jet.Boolean
+    public abstract override /*1*/ fun hasNext(): jet.Boolean
     public open override /*1*/ fun next(): jet.Byte
     public abstract fun nextByte(): jet.Byte
 }
@@ -208,7 +208,7 @@ public abstract trait jet.CharIterable : jet.Iterable<jet.Char> {
 }
 public abstract class jet.CharIterator : jet.Iterator<jet.Char> {
     public final /*constructor*/ fun <init>(): jet.CharIterator
-    public abstract override /*1*/ val hasNext: jet.Boolean
+    public abstract override /*1*/ fun hasNext(): jet.Boolean
     public open override /*1*/ fun next(): jet.Char
     public abstract fun nextChar(): jet.Char
 }
@@ -312,7 +312,7 @@ public abstract trait jet.DoubleIterable : jet.Iterable<jet.Double> {
 }
 public abstract class jet.DoubleIterator : jet.Iterator<jet.Double> {
     public final /*constructor*/ fun <init>(): jet.DoubleIterator
-    public abstract override /*1*/ val hasNext: jet.Boolean
+    public abstract override /*1*/ fun hasNext(): jet.Boolean
     public open override /*1*/ fun next(): jet.Double
     public abstract fun nextDouble(): jet.Double
 }
@@ -504,7 +504,7 @@ public abstract trait jet.FloatIterable : jet.Iterable<jet.Float> {
 }
 public abstract class jet.FloatIterator : jet.Iterator<jet.Float> {
     public final /*constructor*/ fun <init>(): jet.FloatIterator
-    public abstract override /*1*/ val hasNext: jet.Boolean
+    public abstract override /*1*/ fun hasNext(): jet.Boolean
     public open override /*1*/ fun next(): jet.Float
     public abstract fun nextFloat(): jet.Float
 }
@@ -702,7 +702,7 @@ public abstract trait jet.IntIterable : jet.Iterable<jet.Int> {
 }
 public abstract class jet.IntIterator : jet.Iterator<jet.Int> {
     public final /*constructor*/ fun <init>(): jet.IntIterator
-    public abstract override /*1*/ val hasNext: jet.Boolean
+    public abstract override /*1*/ fun hasNext(): jet.Boolean
     public open override /*1*/ fun next(): jet.Int
     public abstract fun nextInt(): jet.Int
 }
@@ -725,7 +725,7 @@ public abstract trait jet.Iterable</*0*/ out T : jet.Any?> : jet.Any {
     public abstract fun iterator(): jet.Iterator<T>
 }
 public abstract trait jet.Iterator</*0*/ out T : jet.Any?> : jet.Any {
-    public abstract val hasNext: jet.Boolean
+    public abstract fun hasNext(): jet.Boolean
     public abstract fun next(): T
 }
 public final class jet.Long : jet.Number, jet.Comparable<jet.Long> {
@@ -813,7 +813,7 @@ public abstract trait jet.LongIterable : jet.Iterable<jet.Long> {
 }
 public abstract class jet.LongIterator : jet.Iterator<jet.Long> {
     public final /*constructor*/ fun <init>(): jet.LongIterator
-    public abstract override /*1*/ val hasNext: jet.Boolean
+    public abstract override /*1*/ fun hasNext(): jet.Boolean
     public open override /*1*/ fun next(): jet.Long
     public abstract fun nextLong(): jet.Long
 }
@@ -928,7 +928,7 @@ public abstract trait jet.ShortIterable : jet.Iterable<jet.Short> {
 }
 public abstract class jet.ShortIterator : jet.Iterator<jet.Short> {
     public final /*constructor*/ fun <init>(): jet.ShortIterator
-    public abstract override /*1*/ val hasNext: jet.Boolean
+    public abstract override /*1*/ fun hasNext(): jet.Boolean
     public open override /*1*/ fun next(): jet.Short
     public abstract fun nextShort(): jet.Short
 }

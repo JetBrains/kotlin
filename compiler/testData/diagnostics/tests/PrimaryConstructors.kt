@@ -21,7 +21,7 @@ class MyIterable<T> : Iterable<T>
 
     class MyIterator : Iterator<T>
     {
-        override val hasNext: Boolean = false
+        override fun hasNext(): Boolean = false
         override fun next(): T {
             throw UnsupportedOperationException()
         }

@@ -155,12 +155,12 @@ public inline fun <T> Array<T>.foldRight(initial: T, operation: (T, T) -> T): T 
  */
 public inline fun <T> Array<T>.reduce(operation: (T, T) -> T): T {
     val iterator = this.iterator().sure()
-    if (!iterator.hasNext) {
+    if (!iterator.hasNext()) {
         throw UnsupportedOperationException("Empty iterable can't be reduced")
     }
 
     var result: T = iterator.next() //compiler doesn't understand that result will initialized anyway
-    while (iterator.hasNext) {
+    while (iterator.hasNext()) {
         result = operation(result, iterator.next())
     }
 

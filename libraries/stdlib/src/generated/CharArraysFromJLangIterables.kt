@@ -155,12 +155,12 @@ public inline fun CharArray.foldRight(initial: Char, operation: (Char, Char) -> 
  */
 public inline fun CharArray.reduce(operation: (Char, Char) -> Char): Char {
     val iterator = this.iterator().sure()
-    if (!iterator.hasNext) {
+    if (!iterator.hasNext()) {
         throw UnsupportedOperationException("Empty iterable can't be reduced")
     }
 
     var result: Char = iterator.next() //compiler doesn't understand that result will initialized anyway
-    while (iterator.hasNext) {
+    while (iterator.hasNext()) {
         result = operation(result, iterator.next())
     }
 

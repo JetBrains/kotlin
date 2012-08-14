@@ -172,8 +172,7 @@ public inline fun <T: Closeable, R> T.use(block: (T)-> R) : R {
 /** Returns an [Iterator] of bytes over an input stream */
 public fun InputStream.iterator() : ByteIterator =
 object: ByteIterator() {
-    override val hasNext : Boolean
-    get() = available() > 0
+    override fun hasNext() : Boolean = available() > 0
 
     public override fun nextByte() : Byte = read().toByte()
 }
@@ -215,7 +214,7 @@ public inline fun Writer.buffered(bufferSize: Int = defaultBufferSize): Buffered
 public inline fun Reader.forEachLine(block: (String) -> Any): Unit {
     this.use{
         val iter = buffered().lineIterator()
-        while (iter.hasNext) {
+        while (iter.hasNext()) {
             val elem = iter.next()
             block(elem)
         }
@@ -238,8 +237,7 @@ class LineIterator(val reader: BufferedReader) : Iterator<String> {
     private var nextValue: String? = null
     private var done = false
 
-    override val hasNext: Boolean
-    get() {
+    override fun hasNext(): Boolean {
         if (nextValue == null && !done) {
             nextValue = reader.readLine()
             if (nextValue == null) done = true
@@ -248,7 +246,7 @@ class LineIterator(val reader: BufferedReader) : Iterator<String> {
     }
 
     public override fun next(): String {
-        if (!hasNext) {
+        if (!hasNext()) {
             throw NoSuchElementException()
         }
         val answer = nextValue

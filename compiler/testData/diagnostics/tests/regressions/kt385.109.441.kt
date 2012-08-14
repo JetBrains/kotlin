@@ -5,11 +5,11 @@
 import java.util.*
 import jet.Iterator
 
-fun <T> Iterator<T>.foreach(operation: (element: T) -> Unit)  : Unit = while(hasNext) operation(next())
+fun <T> Iterator<T>.foreach(operation: (element: T) -> Unit)  : Unit = while(hasNext()) operation(next())
 
 fun <T> Iterator<T>.foreach(operation: (index: Int, element: T) -> Unit) : Unit {
     var k = 0
-    while(hasNext)
+    while(hasNext())
         operation(k++, next())
 }
 

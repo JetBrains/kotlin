@@ -38,8 +38,7 @@ public inline fun CharSequence.iterator() : CharIterator = object: jet.CharItera
 
     public override fun nextChar(): Char = get(index++)
 
-    public override val hasNext: Boolean
-    get() = index < length
+    public override fun hasNext(): Boolean = index < length
 }
 
 /** Returns the string if it is not null or the empty string if its null */

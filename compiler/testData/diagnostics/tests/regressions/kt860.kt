@@ -6,7 +6,7 @@ import java.util.*
 import jet.Iterator
 
 fun <T, U: Collection<in T>> Iterator<T>.to(container: U) : U {
-    while(hasNext)
+    while(hasNext())
         container.add(next())
     return container
 }

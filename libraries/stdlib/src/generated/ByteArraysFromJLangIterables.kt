@@ -155,12 +155,12 @@ public inline fun ByteArray.foldRight(initial: Byte, operation: (Byte, Byte) -> 
  */
 public inline fun ByteArray.reduce(operation: (Byte, Byte) -> Byte): Byte {
     val iterator = this.iterator().sure()
-    if (!iterator.hasNext) {
+    if (!iterator.hasNext()) {
         throw UnsupportedOperationException("Empty iterable can't be reduced")
     }
 
     var result: Byte = iterator.next() //compiler doesn't understand that result will initialized anyway
-    while (iterator.hasNext) {
+    while (iterator.hasNext()) {
         result = operation(result, iterator.next())
     }
 
