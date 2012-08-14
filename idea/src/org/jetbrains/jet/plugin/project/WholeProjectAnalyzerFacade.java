@@ -26,9 +26,6 @@ import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.lazy.LazyBindingContextUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 
-import static org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache.analyzeFileWithCache;
-import static org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache.getLazyResolveSession;
-
 /**
  * @author abreslav
  */
@@ -39,12 +36,12 @@ public final class WholeProjectAnalyzerFacade {
 
     @NotNull
     public static AnalyzeExhaust analyzeProjectWithCacheOnAFile(@NotNull JetFile file) {
-        return analyzeFileWithCache(file, JetFilesProvider.getInstance(file.getProject()).sampleToAllFilesInModule());
+        return AnalyzerFacadeWithCache.analyzeFileWithCache(file, JetFilesProvider.getInstance(file.getProject()).sampleToAllFilesInModule());
     }
 
     @NotNull
     public static ResolveSession getLazyResolveSessionForFile(@NotNull JetFile file) {
-        return getLazyResolveSession(file);
+        return AnalyzerFacadeWithCache.getLazyResolveSession(file);
     }
 
     @NotNull

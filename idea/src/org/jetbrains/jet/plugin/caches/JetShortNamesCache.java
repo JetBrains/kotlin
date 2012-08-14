@@ -21,10 +21,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.util.ArrayUtil;
@@ -34,17 +31,16 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JavaElementFinder;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
+import org.jetbrains.jet.lang.resolve.lazy.LazyBindingContextUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
@@ -158,13 +154,13 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     public Collection<FunctionDescriptor> getTopLevelFunctionDescriptorsByName(
             @NotNull String name,
             @NotNull JetSimpleNameExpression expression,
+            @NotNull ResolveSession resolveSession,
             @NotNull GlobalSearchScope scope
     ) {
-        JetFile jetFile = (JetFile) expression.getContainingFile();
-        BindingContext context = WholeProjectAnalyzerFacade.getLazyResolveContext(jetFile, expression);
+        BindingContext context = LazyBindingContextUtils.getExpressionBindingContext(resolveSession, expression);
         JetScope jetScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
 
-        if (jetScope == null) {
+        if (jetScope == null || name.isEmpty()) {
             return Collections.emptyList();
         }
 
@@ -185,11 +181,26 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             }
         }
 
+        Set<FqName> affectedPackages = Sets.newHashSet();
         Collection<JetNamedFunction> jetNamedFunctions = JetShortFunctionNameIndex.getInstance().get(name, project, scope);
         for (JetNamedFunction jetNamedFunction : jetNamedFunctions) {
-            ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile)jetNamedFunction.getContainingFile());
-            FunctionDescriptor functionDescriptor = (FunctionDescriptor) resolveSession.resolveToDescriptor(jetNamedFunction);
-            result.add(functionDescriptor);
+            PsiFile containingFile = jetNamedFunction.getContainingFile();
+            if (containingFile instanceof JetFile) {
+                JetFile jetFile = (JetFile) containingFile;
+                String packageName = jetFile.getPackageName();
+                if (packageName != null) {
+                    affectedPackages.add(new FqName(packageName));
+                }
+            }
+        }
+
+        Name referenceName = Name.identifier(name);
+
+        for (FqName affectedPackage : affectedPackages) {
+            NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(affectedPackage);
+            assert packageDescriptor != null : "There's a function in stub index with invalid package";
+            JetScope memberScope = packageDescriptor.getMemberScope();
+            result.addAll(memberScope.getFunctions(referenceName));
         }
 
         return result;

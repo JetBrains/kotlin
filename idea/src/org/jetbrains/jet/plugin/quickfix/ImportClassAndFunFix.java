@@ -110,9 +110,11 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
             JetSimpleNameExpression expression,
             @NotNull Project project) {
         JetShortNamesCache namesCache = JetCacheManager.getInstance(project).getNamesCache();
+
         Collection<FunctionDescriptor> topLevelFunctions = namesCache.getTopLevelFunctionDescriptorsByName(
                 referenceName,
                 expression,
+                WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) expression.getContainingFile()),
                 GlobalSearchScope.allScope(project));
 
         return Sets.newHashSet(Collections2.transform(topLevelFunctions, new Function<DeclarationDescriptor, FqName>() {

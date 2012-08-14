@@ -35,6 +35,8 @@ import org.jetbrains.jet.cli.jvm.compiler.TipsManager;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.lazy.LazyBindingContextUtils;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
@@ -202,12 +204,12 @@ public class JetCompletionContributor extends CompletionContributor {
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
         Collection<String> functionNames = namesCache.getAllTopLevelFunctionNames();
 
-        BindingContext resolutionContext = WholeProjectAnalyzerFacade.getLazyResolveContext(
-                (JetFile) position.getContainingFile(), expression);
+        ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) position.getContainingFile());
+        BindingContext resolutionContext = LazyBindingContextUtils.getExpressionBindingContext(resolveSession, expression);
 
         for (String name : functionNames) {
             if (name.contains(actualPrefix)) {
-                for (FunctionDescriptor function : namesCache.getTopLevelFunctionDescriptorsByName(name, expression, scope)) {
+                for (FunctionDescriptor function : namesCache.getTopLevelFunctionDescriptorsByName(name, expression, resolveSession, scope)) {
                     addCompletionToResult(result, DescriptorLookupConverter.createLookupElement(resolutionContext, function), session);
                 }
             }
