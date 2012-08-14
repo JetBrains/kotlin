@@ -67,18 +67,6 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
         };
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        try {
-            super.tearDown();
-        } catch (RuntimeException exception) {
-            // TODO: Fix inability to free pointer for runtimejar in JetWithJdkAndRuntimeLightProjectDescriptor
-            if (!(exception.getMessage().contains("runtimejar") && exception.getMessage().contains("Virtual pointer hasn't been disposed"))) {
-                throw exception;
-            }
-        }
-    }
-
     public static Test suite() {
         //setFilter(); //to launch only part of tests
         TestSuite suite = new TestSuite();
