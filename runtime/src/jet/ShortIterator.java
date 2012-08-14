@@ -18,14 +18,23 @@ package jet;
 
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
+import java.util.Iterator;
+
 /**
  * @author alex.tkachman
  */
 @AssertInvisibleInResolver
 public abstract class ShortIterator implements Iterator<Short> {
+    @Override
     public final Short next() {
         return nextShort();
     }
 
     public abstract short nextShort();
+
+
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException("Mutating method called on a Kotlin Iterator");
+    }
 }

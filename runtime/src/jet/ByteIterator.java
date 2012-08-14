@@ -18,14 +18,22 @@ package jet;
 
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
+import java.util.Iterator;
+
 /**
  * @author alex.tkachman
  */
 @AssertInvisibleInResolver
 public abstract class ByteIterator implements Iterator<Byte> {
+    @Override
     public final Byte next() {
         return nextByte();
     }
 
     public abstract byte nextByte();
+
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException("Mutating method called on a Kotlin Iterator");
+    }
 }

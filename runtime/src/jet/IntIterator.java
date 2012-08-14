@@ -18,14 +18,23 @@ package jet;
 
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
+import java.util.Iterator;
+
 /**
  * @author alex.tkachman
  */
 @AssertInvisibleInResolver
 public abstract class IntIterator implements Iterator<Integer> {
+    @Override
     public final Integer next() {
         return nextInt();
     }
 
     public abstract int nextInt();
+
+
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException("Mutating method called on a Kotlin Iterator");
+    }
 }

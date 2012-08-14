@@ -18,14 +18,23 @@ package jet;
 
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
+import java.util.Iterator;
+
 /**
  * @author alex.tkachman
  */
 @AssertInvisibleInResolver
 public abstract class FloatIterator implements Iterator<Float> {
+    @Override
     public final Float next() {
         return nextFloat();
     }
 
     public abstract float nextFloat();
+
+
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException("Mutating method called on a Kotlin Iterator");
+    }
 }

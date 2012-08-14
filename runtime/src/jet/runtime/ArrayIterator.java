@@ -18,6 +18,8 @@ package jet.runtime;
 
 import jet.*;
 
+import java.util.Iterator;
+
 /**
  * @author alex.tkachman
  */
@@ -30,7 +32,7 @@ public abstract class ArrayIterator<T> implements Iterator<T> {
     }
 
     @Override
-    public boolean getHasNext() {
+    public boolean hasNext() {
         return index < size;
     }
 
@@ -46,6 +48,11 @@ public abstract class ArrayIterator<T> implements Iterator<T> {
         public T next() {
             return array[index++];
         }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Mutating method called on a Kotlin Iterator");
+        }
     }
     
     public static <T> Iterator<T> iterator(T[] array) {
@@ -57,7 +64,7 @@ public abstract class ArrayIterator<T> implements Iterator<T> {
         private int index;
 
         @Override
-        public boolean getHasNext() {
+        public boolean hasNext() {
             return index < array.length;
         }
 
@@ -81,7 +88,7 @@ public abstract class ArrayIterator<T> implements Iterator<T> {
         private int index;
 
         @Override
-        public boolean getHasNext() {
+        public boolean hasNext() {
             return index < array.length;
         }
 
@@ -99,17 +106,17 @@ public abstract class ArrayIterator<T> implements Iterator<T> {
         return new ArrayShortIterator(array);
     }
 
-    private static class ArrayIntegerIterator extends IntIterator {
+    private static class ArrayIntIterator extends IntIterator {
         private final int[] array;
 
         private int index;
 
         @Override
-        public boolean getHasNext() {
+        public boolean hasNext() {
             return index < array.length;
         }
 
-        private ArrayIntegerIterator(int[] array) {
+        private ArrayIntIterator(int[] array) {
             this.array = array;
         }
 
@@ -120,7 +127,7 @@ public abstract class ArrayIterator<T> implements Iterator<T> {
     }
 
     public static IntIterator iterator(int[] array) {
-        return new ArrayIntegerIterator(array);
+        return new ArrayIntIterator(array);
     }
 
     private static class ArrayLongIterator extends LongIterator {
@@ -129,7 +136,7 @@ public abstract class ArrayIterator<T> implements Iterator<T> {
         private int index;
 
         @Override
-        public boolean getHasNext() {
+        public boolean hasNext() {
             return index < array.length;
         }
 
@@ -153,7 +160,7 @@ public abstract class ArrayIterator<T> implements Iterator<T> {
         private int index;
 
         @Override
-        public boolean getHasNext() {
+        public boolean hasNext() {
             return index < array.length;
         }
 
@@ -177,7 +184,7 @@ public abstract class ArrayIterator<T> implements Iterator<T> {
         private int index;
 
         @Override
-        public boolean getHasNext() {
+        public boolean hasNext() {
             return index < array.length;
         }
 
@@ -201,7 +208,7 @@ public abstract class ArrayIterator<T> implements Iterator<T> {
         private int index;
 
         @Override
-        public boolean getHasNext() {
+        public boolean hasNext() {
             return index < array.length;
         }
 
@@ -225,7 +232,7 @@ public abstract class ArrayIterator<T> implements Iterator<T> {
         private int index;
 
         @Override
-        public boolean getHasNext() {
+        public boolean hasNext() {
             return index < array.length;
         }
 

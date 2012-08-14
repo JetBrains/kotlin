@@ -75,9 +75,9 @@ public final class FloatRange implements Range<Float> {
 
     public FloatIterator step(float step) {
         if (step < 0)
-            return new MyIterator(getEnd(), -size, -step);
+            return new FloatIteratorImpl(getEnd(), -size, -step);
         else
-            return new MyIterator(start, size, step);
+            return new FloatIteratorImpl(start, size, step);
     }
 
     public boolean getIsReversed() {
@@ -100,14 +100,14 @@ public final class FloatRange implements Range<Float> {
         return new FloatRange(0, length);
     }
 
-    private static class MyIterator extends FloatIterator {
-        private float cur;
-        private float step;
+    private static class FloatIteratorImpl extends FloatIterator {
+        private final float step;
         private final float end;
+        private float cur;
 
         private final boolean reversed;
 
-        public MyIterator(float startValue, float size, float step) {
+        public FloatIteratorImpl(float startValue, float size, float step) {
             cur = startValue;
             this.step = step;
             if (size < 0) {
@@ -122,7 +122,7 @@ public final class FloatRange implements Range<Float> {
         }
 
         @Override
-        public boolean getHasNext() {
+        public boolean hasNext() {
             if (reversed)
                 return cur >= end;
             else

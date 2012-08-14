@@ -18,14 +18,22 @@ package jet;
 
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
+import java.util.Iterator;
+
 /**
  * @author alex.tkachman
  */
 @AssertInvisibleInResolver
 public abstract class CharIterator implements Iterator<Character> {
+    @Override
     public final Character next() {
         return nextChar();
     }
 
     public abstract char nextChar();
+
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException("Mutating method called on a Kotlin Iterator");
+    }
 }

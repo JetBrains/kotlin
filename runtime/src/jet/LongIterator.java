@@ -18,14 +18,22 @@ package jet;
 
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
+import java.util.Iterator;
+
 /**
  * @author alex.tkachman
  */
 @AssertInvisibleInResolver
 public abstract class LongIterator implements Iterator<Long> {
+    @Override
     public final Long next() {
         return nextLong();
     }
 
     public abstract long nextLong();
+
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException("Mutating method called on a Kotlin Iterator");
+    }
 }
