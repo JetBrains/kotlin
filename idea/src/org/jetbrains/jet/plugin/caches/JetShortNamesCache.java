@@ -234,13 +234,12 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     public Collection<DeclarationDescriptor> getJetCallableExtensions(
             @NotNull Condition<String> acceptedNameCondition,
             @NotNull JetSimpleNameExpression expression,
+            @NotNull ResolveSession resolveSession,
             @NotNull GlobalSearchScope searchScope
     ) {
         Collection<DeclarationDescriptor> resultDescriptors = new ArrayList<DeclarationDescriptor>();
 
-        JetFile jetFile = (JetFile) expression.getContainingFile();
-
-        BindingContext context = WholeProjectAnalyzerFacade.getLazyResolveContext(jetFile, expression);
+        BindingContext context = LazyBindingContextUtils.getExpressionBindingContext(resolveSession, expression);
         JetExpression receiverExpression = expression.getReceiverExpression();
 
         if (receiverExpression != null) {
