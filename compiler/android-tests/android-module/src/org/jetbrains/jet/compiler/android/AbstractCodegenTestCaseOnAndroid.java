@@ -40,8 +40,8 @@ public class AbstractCodegenTestCaseOnAndroid extends TestCase {
                 try {
                     method = clazz.getMethod("main", String[].class);
                 }
-                catch(Throwable e) {
-                    throw new RuntimeException("File: " + filePath, e);
+                catch(Throwable t) {
+                    throw new RuntimeException("File: " + filePath, t);
                 }
                 method.invoke(null);
                 return;
