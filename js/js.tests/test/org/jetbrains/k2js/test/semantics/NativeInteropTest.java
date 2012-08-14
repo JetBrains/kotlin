@@ -76,7 +76,7 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-    public void testKt2388() throws Exception {
+    public void testKt_2388() throws Exception {
         fooBoxTest();
     }
 }
