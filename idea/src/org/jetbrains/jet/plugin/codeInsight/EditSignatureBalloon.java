@@ -63,11 +63,11 @@ class EditSignatureBalloon {
     }
 
     private Balloon createBalloon(JPanel panel) {
-        BalloonBuilder builder = JBPopupFactory.getInstance().createDialogBalloonBuilder(panel, "Kotlin signature");
-        builder.setHideOnClickOutside(true);
-        builder.setHideOnKeyOutside(true);
+        Balloon balloon = JBPopupFactory.getInstance().createDialogBalloonBuilder(panel, "Kotlin signature")
+                .setHideOnClickOutside(true)
+                .setHideOnKeyOutside(true)
+                .setBlockClicksThroughBalloon(true).createBalloon();
 
-        Balloon balloon = builder.createBalloon();
         balloon.addListener(new JBPopupAdapter() {
             @Override
             public void onClosed(LightweightWindowEvent event) {
