@@ -2,7 +2,7 @@ package kotlin
 
 import java.util.*
 
-public inline fun <T> java.lang.Iterable<T>.toString(): String {
+public inline fun <T> Iterable<T>.toString(): String {
     return makeString(", ", "[", "]")
 }
 

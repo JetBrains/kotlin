@@ -1,4 +1,4 @@
-fun <T> java.lang.Iterable<T>.first() : T? {
+fun <T> Iterable<T>.first() : T? {
     return this.iterator()?.next()
 }
 
