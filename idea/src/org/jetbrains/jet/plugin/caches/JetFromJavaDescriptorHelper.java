@@ -137,7 +137,7 @@ class JetFromJavaDescriptorHelper {
             FqName classFQN = new FqName(containingClass.getQualifiedName());
 
             if (classFQN != null) {
-                if (QualifiedNamesUtil.fqnToShortName(classFQN).getName().equals(JvmAbi.PACKAGE_CLASS)) {
+                if (classFQN.shortName().toString().equals(JvmAbi.PACKAGE_CLASS)) {
                     FqName classParentFQN = QualifiedNamesUtil.withoutLastSegment(classFQN);
                     return QualifiedNamesUtil.combine(classParentFQN, Name.identifier(method.getName()));
                 }

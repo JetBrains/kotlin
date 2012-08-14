@@ -37,11 +37,6 @@ public final class QualifiedNamesUtil {
                (subpackageName.getFqName().startsWith(packageName.getFqName()) && subpackageName.getFqName().charAt(packageName.getFqName().length()) == '.');
     }
 
-    public static boolean isShortNameForFQN(@NotNull final String name, @NotNull final FqName fqn) {
-        return fqn.getFqName().equals(name) ||
-               (fqn.getFqName().endsWith(name) && fqn.getFqName().charAt(fqn.getFqName().length() - name.length() - 1) == '.');
-    }
-
     public static boolean isOneSegmentFQN(@NotNull final String fqn) {
         if (fqn.isEmpty()) {
             return false;
@@ -52,16 +47,6 @@ public final class QualifiedNamesUtil {
 
     public static boolean isOneSegmentFQN(@NotNull FqName fqn) {
         return isOneSegmentFQN(fqn.getFqName());
-    }
-
-    @NotNull
-    public static Name fqnToShortName(@NotNull FqName fqn) {
-        return getLastSegment(fqn);
-    }
-
-    @NotNull
-    public static Name getLastSegment(@NotNull FqName fqn) {
-        return fqn.shortName();
     }
 
     @NotNull
