@@ -4,6 +4,7 @@ import kotlin.*
 import kotlin.support.*
 import java.util.*
 import org.w3c.dom.*
+import jet.Iterator
 
 // TODO should not need this - its here for the JS stuff
 import java.lang.IllegalArgumentException
@@ -330,7 +331,7 @@ fun NodeList?.toXmlString(xmlDeclaration: Boolean = false): String {
 }
 
 /** Converts the collection of nodes to an XML String */
-public fun nodesToXmlString(nodes: java.lang.Iterable<Node>, xmlDeclaration: Boolean = false): String {
+public fun nodesToXmlString(nodes: Iterable<Node>, xmlDeclaration: Boolean = false): String {
     // TODO this should work...
     // return this.map<Node,String>{it.toXmlString()}.makeString("")
     val builder = StringBuilder()

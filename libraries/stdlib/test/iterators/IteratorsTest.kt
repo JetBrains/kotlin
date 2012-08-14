@@ -4,7 +4,7 @@ import kotlin.test.assertEquals
 import org.junit.Test as test
 import kotlin.test.failsWith
 
-fun fibonacci(): java.util.Iterator<Int> {
+fun fibonacci(): Iterator<Int> {
     // fibonacci terms
     var index = 0; var a = 0; var b = 1
     return iterate<Int> { when (index++) { 0 -> a; 1 -> b; else -> { val result = a + b; a = b; b = result; result } } }

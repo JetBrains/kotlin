@@ -3,7 +3,7 @@ package regressions
 import kotlin.test.assertEquals
 import org.junit.Test as test
 
-fun f(xs: java.util.Iterator<Int>): Int {
+fun f(xs: Iterator<Int>): Int {
     var answer = 0
     for (x in xs)  {
         answer += x

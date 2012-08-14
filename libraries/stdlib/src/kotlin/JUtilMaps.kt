@@ -69,7 +69,7 @@ public inline fun <K,V> java.util.Map<K,V>.getOrPut(key: K, defaultValue: ()-> V
  *
  * @includeFunctionBody ../../test/MapTest.kt iterateWithProperties
  */
-public inline fun <K,V> java.util.Map<K,V>.iterator(): java.util.Iterator<java.util.Map.Entry<K,V>> {
+public inline fun <K,V> java.util.Map<K,V>.iterator(): Iterator<java.util.Map.Entry<K,V>> {
     val entrySet = this.entrySet()!!
     return entrySet.iterator()!!
 }

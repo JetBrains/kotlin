@@ -17,7 +17,7 @@ object State {
  * A base class to simplify implementing iterators so that implementations only have to implement [[computeNext()]]
  * to implement the iterator, calling [[done()]] when the iteration is complete.
  */
-public abstract class AbstractIterator<T>: java.util.Iterator<T> {
+public abstract class AbstractIterator<T>: Iterator<T> {
     private var state = State.NotReady
     private var next: T? = null
 
@@ -34,10 +34,6 @@ public abstract class AbstractIterator<T>: java.util.Iterator<T> {
         if (!hasNext()) throw NoSuchElementException()
         state = State.NotReady
         return next.sure()
-    }
-
-    override fun remove() {
-        throw UnsupportedOperationException()
     }
 
     /** Returns the next element in the iteration without advancing the iteration */
@@ -94,15 +90,15 @@ class FunctionIterator<T>(val nextFunction: () -> T?): AbstractIterator<T>() {
 }
 
 /** An [[Iterator]] which iterates over a number of iterators in sequence */
-class CompositeIterator<T>(vararg iterators: java.util.Iterator<T>): AbstractIterator<T>() {
+class CompositeIterator<T>(vararg iterators: Iterator<T>): AbstractIterator<T>() {
 
     val iteratorsIter = iterators.iterator()
-    var currentIter: java.util.Iterator<T>? = null
+    var currentIter: Iterator<T>? = null
 
     override protected fun computeNext(): Unit {
         while (true) {
             if (currentIter == null) {
-                if (iteratorsIter.hasNext) {
+                if (iteratorsIter.hasNext()) {
                     currentIter = iteratorsIter.next()
                 } else {
                     done()

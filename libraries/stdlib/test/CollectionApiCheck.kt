@@ -23,7 +23,7 @@ trait Traversable<T> {
   fun forEach(operation: (element: T)-> Unit)
 
   /** Returns a new collection containing the results of applying the given function to each element in this collection */
-  fun <T, R> java.lang.Iterable<T>.map(transform : (T)-> R) : Collection<R>
+  fun <T, R> Iterable<T>.map(transform : (T)-> R) : Collection<R>
 }
 
 /**

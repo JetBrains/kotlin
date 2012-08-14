@@ -18,12 +18,6 @@ import java.util.concurrent.Callable
 public inline fun <T> Iterator<T>.toLinkedSet() : LinkedHashSet<T> = toCollection(LinkedHashSet<T>())
 
 /**
- * Add iterated elements to [[SortedSet]] to ensure iteration is in the order of the default comparator
- * for the type
- */
-public inline fun <T> Iterator<T>.toSortedSet() : SortedSet<T> = toCollection(TreeSet<T>())
-
-/**
  * Add iterated elements to [[SortedSet]] with the given *comparator* to ensure iteration is in the order of the given comparator
  */
 public inline fun <T> Iterator<T>.toSortedSet(comparator: Comparator<T>) : SortedSet<T> = toCollection(TreeSet<T>(comparator))

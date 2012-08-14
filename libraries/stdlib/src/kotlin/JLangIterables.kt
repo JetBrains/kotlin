@@ -7,7 +7,7 @@ import java.util.*
  *
  * @includeFunctionBody ../../test/CollectionTest.kt all
  */
-public inline fun <T> java.lang.Iterable<T>.all(predicate: (T) -> Boolean) : Boolean {
+public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean) : Boolean {
     for (element in this) if (!predicate(element)) return false
     return true
 }
@@ -17,7 +17,7 @@ public inline fun <T> java.lang.Iterable<T>.all(predicate: (T) -> Boolean) : Boo
  *
  * @includeFunctionBody ../../test/CollectionTest.kt any
  */
-public inline fun <T> java.lang.Iterable<T>.any(predicate: (T) -> Boolean) : Boolean {
+public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean) : Boolean {
     for (element in this) if (predicate(element)) return true
     return false
 }
@@ -30,7 +30,7 @@ public inline fun <T> java.lang.Iterable<T>.any(predicate: (T) -> Boolean) : Boo
  *
  * @includeFunctionBody ../../test/CollectionTest.kt appendString
  */
-public inline fun <T> java.lang.Iterable<T>.appendString(buffer: Appendable, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): Unit {
+public inline fun <T> Iterable<T>.appendString(buffer: Appendable, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): Unit {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
@@ -49,7 +49,7 @@ public inline fun <T> java.lang.Iterable<T>.appendString(buffer: Appendable, sep
  *
  * @includeFunctionBody ../../test/CollectionTest.kt count
  */
-public inline fun <T> java.lang.Iterable<T>.count(predicate: (T) -> Boolean) : Int {
+public inline fun <T> Iterable<T>.count(predicate: (T) -> Boolean) : Int {
     var count = 0
     for (element in this) if (predicate(element)) count++
     return count
@@ -60,7 +60,7 @@ public inline fun <T> java.lang.Iterable<T>.count(predicate: (T) -> Boolean) : I
  *
  * @includeFunctionBody ../../test/CollectionTest.kt find
  */
-public inline fun <T> java.lang.Iterable<T>.find(predicate: (T) -> Boolean) : T? {
+public inline fun <T> Iterable<T>.find(predicate: (T) -> Boolean) : T? {
     for (element in this) if (predicate(element)) return element
     return null
 }
@@ -70,7 +70,7 @@ public inline fun <T> java.lang.Iterable<T>.find(predicate: (T) -> Boolean) : T?
  *
  * @includeFunctionBody ../../test/CollectionTest.kt filterIntoLinkedList
  */
-public inline fun <T, C: Collection<in T>> java.lang.Iterable<T>.filterTo(result: C, predicate: (T) -> Boolean) : C {
+public inline fun <T, C: Collection<in T>> Iterable<T>.filterTo(result: C, predicate: (T) -> Boolean) : C {
     for (element in this) if (predicate(element)) result.add(element)
     return result
 }
@@ -80,7 +80,7 @@ public inline fun <T, C: Collection<in T>> java.lang.Iterable<T>.filterTo(result
  *
  * @includeFunctionBody ../../test/CollectionTest.kt filterNotIntoLinkedList
  */
-public inline fun <T, C: Collection<in T>> java.lang.Iterable<T>.filterNotTo(result: C, predicate: (T) -> Boolean) : C {
+public inline fun <T, C: Collection<in T>> Iterable<T>.filterNotTo(result: C, predicate: (T) -> Boolean) : C {
     for (element in this) if (!predicate(element)) result.add(element)
     return result
 }
@@ -90,7 +90,7 @@ public inline fun <T, C: Collection<in T>> java.lang.Iterable<T>.filterNotTo(res
  *
  * @includeFunctionBody ../../test/CollectionTest.kt filterNotNullIntoLinkedList
  */
-public inline fun <T, C: Collection<in T>> java.lang.Iterable<T?>?.filterNotNullTo(result: C) : C {
+public inline fun <T, C: Collection<in T>> Iterable<T?>?.filterNotNullTo(result: C) : C {
     if (this != null) {
         for (element in this) if (element != null) result.add(element)
     }
@@ -102,7 +102,7 @@ public inline fun <T, C: Collection<in T>> java.lang.Iterable<T?>?.filterNotNull
  *
  * @includeFunctionBody ../../test/CollectionTest.kt flatMap
  */
-public inline fun <T, R> java.lang.Iterable<T>.flatMapTo(result: Collection<R>, transform: (T) -> Collection<R>) : Collection<R> {
+public inline fun <T, R> Iterable<T>.flatMapTo(result: Collection<R>, transform: (T) -> Collection<R>) : Collection<R> {
     for (element in this) {
         val list = transform(element)
         if (list != null) {
@@ -117,14 +117,14 @@ public inline fun <T, R> java.lang.Iterable<T>.flatMapTo(result: Collection<R>, 
  *
  * @includeFunctionBody ../../test/CollectionTest.kt forEach
  */
-public inline fun <T> java.lang.Iterable<T>.forEach(operation: (T) -> Unit) : Unit = for (element in this) operation(element)
+public inline fun <T> Iterable<T>.forEach(operation: (T) -> Unit) : Unit = for (element in this) operation(element)
 
 /**
  * Folds all elements from from left to right with the *initial* value to perform the operation on sequential pairs of elements
  *
  * @includeFunctionBody ../../test/CollectionTest.kt fold
  */
-public inline fun <T> java.lang.Iterable<T>.fold(initial: T, operation: (T, T) -> T): T {
+public inline fun <T> Iterable<T>.fold(initial: T, operation: (T, T) -> T): T {
     var answer = initial
     for (element in this) answer = operation(answer, element)
     return answer
@@ -135,7 +135,7 @@ public inline fun <T> java.lang.Iterable<T>.fold(initial: T, operation: (T, T) -
  *
  * @includeFunctionBody ../../test/CollectionTest.kt foldRight
  */
-public inline fun <T> java.lang.Iterable<T>.foldRight(initial: T, operation: (T, T) -> T): T = reverse().fold(initial, {x, y -> operation(y, x)})
+public inline fun <T> Iterable<T>.foldRight(initial: T, operation: (T, T) -> T): T = reverse().fold(initial, {x, y -> operation(y, x)})
 
 
 /**
@@ -144,7 +144,7 @@ public inline fun <T> java.lang.Iterable<T>.foldRight(initial: T, operation: (T,
  *
  * @includeFunctionBody ../../test/CollectionTest.kt reduce
  */
-public inline fun <T> java.lang.Iterable<T>.reduce(operation: (T, T) -> T): T {
+public inline fun <T> Iterable<T>.reduce(operation: (T, T) -> T): T {
     val iterator = this.iterator().sure()
     if (!iterator.hasNext()) {
         throw UnsupportedOperationException("Empty iterable can't be reduced")
@@ -164,7 +164,7 @@ public inline fun <T> java.lang.Iterable<T>.reduce(operation: (T, T) -> T): T {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt reduceRight
  */
-public inline fun <T> java.lang.Iterable<T>.reduceRight(operation: (T, T) -> T): T = reverse().reduce { x, y -> operation(y, x) }
+public inline fun <T> Iterable<T>.reduceRight(operation: (T, T) -> T): T = reverse().reduce { x, y -> operation(y, x) }
 
 
 /**
@@ -172,14 +172,14 @@ public inline fun <T> java.lang.Iterable<T>.reduceRight(operation: (T, T) -> T):
  *
  * @includeFunctionBody ../../test/CollectionTest.kt groupBy
  */
-public inline fun <T, K> java.lang.Iterable<T>.groupBy(toKey: (T) -> K) : Map<K, List<T>> = groupByTo<T,K>(HashMap<K, List<T>>(), toKey)
+public inline fun <T, K> Iterable<T>.groupBy(toKey: (T) -> K) : Map<K, List<T>> = groupByTo<T,K>(HashMap<K, List<T>>(), toKey)
 
 /**
  * Groups the elements in the collection into the given [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
  *
  * @includeFunctionBody ../../test/CollectionTest.kt groupBy
  */
-public inline fun <T, K> java.lang.Iterable<T>.groupByTo(result: Map<K, List<T>>, toKey: (T) -> K) : Map<K, List<T>> {
+public inline fun <T, K> Iterable<T>.groupByTo(result: Map<K, List<T>>, toKey: (T) -> K) : Map<K, List<T>> {
     for (element in this) {
         val key = toKey(element)
         val list = result.getOrPut(key) { ArrayList<T>() }
@@ -196,14 +196,14 @@ public inline fun <T, K> java.lang.Iterable<T>.groupByTo(result: Map<K, List<T>>
  *
  * @includeFunctionBody ../../test/CollectionTest.kt makeString
  */
-public inline fun <T> java.lang.Iterable<T>.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
+public inline fun <T> Iterable<T>.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
     return buffer.toString().sure()
 }
 
 /** Returns a list containing the everything but the first elements that satisfy the given *predicate* */
-public inline fun <T, L: List<in T>> java.lang.Iterable<T>.dropWhileTo(result: L, predicate: (T) -> Boolean) : L {
+public inline fun <T, L: List<in T>> Iterable<T>.dropWhileTo(result: L, predicate: (T) -> Boolean) : L {
     var start = true
     for (element in this) {
         if (start && predicate(element)) {
@@ -217,13 +217,13 @@ public inline fun <T, L: List<in T>> java.lang.Iterable<T>.dropWhileTo(result: L
 }
 
 /** Returns a list containing the first elements that satisfy the given *predicate* */
-public inline fun <T, C: Collection<in T>> java.lang.Iterable<T>.takeWhileTo(result: C, predicate: (T) -> Boolean) : C {
+public inline fun <T, C: Collection<in T>> Iterable<T>.takeWhileTo(result: C, predicate: (T) -> Boolean) : C {
     for (element in this) if (predicate(element)) result.add(element) else break
     return result
 }
 
 /** Copies all elements into the given collection */
-public inline fun <in T, C: Collection<in T>> java.lang.Iterable<T>.toCollection(result: C) : C {
+public inline fun <in T, C: Collection<in T>> Iterable<T>.toCollection(result: C) : C {
     for (element in this) result.add(element)
     return result
 }
@@ -233,27 +233,27 @@ public inline fun <in T, C: Collection<in T>> java.lang.Iterable<T>.toCollection
  *
  * @includeFunctionBody ../../test/CollectionTest.kt reverse
  */
-public inline fun <T> java.lang.Iterable<T>.reverse() : List<T> {
+public inline fun <T> Iterable<T>.reverse() : List<T> {
     val list = toList()
     Collections.reverse(list)
     return list
 }
 
 /** Copies all elements into a [[LinkedList]]  */
-public inline fun <in T> java.lang.Iterable<T>.toLinkedList() : LinkedList<T> = toCollection(LinkedList<T>())
+public inline fun <in T> Iterable<T>.toLinkedList() : LinkedList<T> = toCollection(LinkedList<T>())
 
 /** Copies all elements into a [[List]] */
-public inline fun <in T> java.lang.Iterable<T>.toList() : List<T> = toCollection(ArrayList<T>())
+public inline fun <in T> Iterable<T>.toList() : List<T> = toCollection(ArrayList<T>())
 
 /** Copies all elements into a [[List] */
-public inline fun <in T> java.lang.Iterable<T>.toCollection() : Collection<T> = toCollection(ArrayList<T>())
+public inline fun <in T> Iterable<T>.toCollection() : Collection<T> = toCollection(ArrayList<T>())
 
 /** Copies all elements into a [[Set]] */
-public inline fun <in T> java.lang.Iterable<T>.toSet() : Set<T> = toCollection(HashSet<T>())
+public inline fun <in T> Iterable<T>.toSet() : Set<T> = toCollection(HashSet<T>())
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)
-public inline fun <in T> java.lang.Iterable<T>.toSortedList(transform: fun(T) : java.lang.Comparable<*>) : List<T> {
+public inline fun <in T> Iterable<T>.toSortedList(transform: fun(T) : java.lang.Comparable<*>) : List<T> {
     val answer = this.toList()
     answer.sort(transform)
     return answer

@@ -15,7 +15,7 @@ import java.util.List
  *
  * @includeFunctionBody ../../test/CollectionTest.kt sortBy
  */
-public inline fun <in T, R: Comparable<in R>> java.lang.Iterable<T>.sortBy(f: (T) -> R): java.util.List<T> {
+public inline fun <in T, R: Comparable<in R>> Iterable<T>.sortBy(f: (T) -> R): java.util.List<T> {
     val sortedList = this.toList()
     val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) ->
         val xr = f(x)

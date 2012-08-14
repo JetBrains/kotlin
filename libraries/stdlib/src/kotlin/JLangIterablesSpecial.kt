@@ -14,7 +14,7 @@ import java.util.ArrayList
  * If base collection implements [[Collection]] interface method [[Collection.size()]] will be used.
  * Otherwise, this method determines the count by iterating through the all items.
  */
-public fun <T> java.lang.Iterable<T>.count() : Int {
+public fun <T> Iterable<T>.count() : Int {
   if (this is Collection<T>) {
     return this.size()
   }
@@ -38,7 +38,7 @@ private fun <T> countTo(n: Int): (T) -> Boolean {
  * Will throw an exception if there are no elements
  */
 // TODO: Specify type of the exception
-public inline fun <T> java.lang.Iterable<T>.first() : T {
+public inline fun <T> Iterable<T>.first() : T {
   if (this is AbstractList<T>) {
     return this.get(0)
   }
@@ -58,7 +58,7 @@ public inline fun <T> java.lang.Iterable<T>.first() : T {
  * @includeFunctionBody ../../test/CollectionTest.kt last
  */
 // TODO: Specify type of the exception
-public fun <T> java.lang.Iterable<T>.last() : T {
+public fun <T> Iterable<T>.last() : T {
   if (this is List<T>) {
     return this.get(this.size() - 1);
   }
@@ -80,7 +80,7 @@ public fun <T> java.lang.Iterable<T>.last() : T {
  * If collection implements [[java.util.AbstractCollection]] an overridden implementation of the contains
  * method will be used.
  */
-public fun <T> java.lang.Iterable<T>.contains(item : T) : Boolean {
+public fun <T> Iterable<T>.contains(item : T) : Boolean {
   if (this is java.util.AbstractCollection<T>) {
     return this.contains(item);
   }
@@ -99,7 +99,7 @@ public fun <T> java.lang.Iterable<T>.contains(item : T) : Boolean {
  *
  * @includeFunctionBody ../../test/ListTest.kt withIndices
  */
-public fun <T> java.lang.Iterable<T>.withIndices(): java.util.List<#(Int, T)> {
+public fun <T> Iterable<T>.withIndices(): java.util.List<#(Int, T)> {
     val answer = ArrayList<#(Int, T)>()
     var nextIndex = 0
     for (e in this) {
@@ -109,13 +109,13 @@ public fun <T> java.lang.Iterable<T>.withIndices(): java.util.List<#(Int, T)> {
     return answer
 }
 
-public inline fun <in T: Comparable<T>> java.lang.Iterable<T>.sort() : List<T> {
+public inline fun <in T: Comparable<T>> Iterable<T>.sort() : List<T> {
     val list = toList()
     java.util.Collections.sort(list)
     return list
 }
 
-public inline fun <in T> java.lang.Iterable<T>.sort(comparator: java.util.Comparator<T>) : List<T> {
+public inline fun <in T> Iterable<T>.sort(comparator: java.util.Comparator<T>) : List<T> {
     val list = toList()
     java.util.Collections.sort(list, comparator)
     return list

@@ -6,16 +6,10 @@ import java.util.HashSet
 import java.util.LinkedList
 
 /**
-Helper to make java.util.Iterator usable in for
-*/
-public inline fun <T> java.util.Iterator<T>.iterator() : java.util.Iterator<T> = this
-
-/**
 Helper to make java.util.Enumeration usable in for
 */
 public fun <T> java.util.Enumeration<T>.iterator(): Iterator<T> = object: Iterator<T> {
-    override val hasNext: Boolean
-    get() = hasMoreElements()
+    override fun hasNext(): Boolean = hasMoreElements()
 
     public override fun next() : T = nextElement().sure()
 }
@@ -27,21 +21,18 @@ public fun <T> java.util.Enumeration<T>.iterator(): Iterator<T> = object: Iterat
 /**
 Add iterated elements to given container
 */
+/*
 public fun <T,U: Collection<in T>> Iterator<T>.toCollection(container: U) : U {
-    while(hasNext)
+    while(hasNext())
         container.add(next())
     return container
 }
+*/
 
 /**
 Add iterated elements to java.util.ArrayList
 */
 public inline fun <T> Iterator<T>.toArrayList() : ArrayList<T> = toCollection(ArrayList<T>())
-
-/**
-Add iterated elements to java.util.LinkedList
-*/
-public inline fun <T> Iterator<T>.toLinkedList() : LinkedList<T> = toCollection(LinkedList<T>())
 
 /**
 Add iterated elements to java.util.HashSet

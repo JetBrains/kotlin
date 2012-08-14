@@ -3,6 +3,7 @@ package test.collections
 import kotlin.test.*
 
 import java.util.*
+import jet.Iterator
 
 import org.junit.Test as test
 
@@ -272,7 +273,7 @@ class CollectionTest {
     }
 
     test fun reverseFunctionShouldReturnReversedCopyForIterable() {
-        val iterable : java.lang.Iterable<Int> = arrayList(2, 3, 1)
+        val iterable : Iterable<Int> = arrayList(2, 3, 1)
         expect(arrayList(1, 3, 2)) { iterable.reverse() }
         expect(arrayList(2, 3, 1)) { iterable }
     }
@@ -387,10 +388,10 @@ class CollectionTest {
         //    assertFalse(IterableWrapper(linkedList<Int>()).contains(15))
     }
 
-    class IterableWrapper<T>(collection : java.lang.Iterable<T>) : java.lang.Iterable<T> {
+    class IterableWrapper<T>(collection : Iterable<T>) : Iterable<T> {
         private val collection = collection
 
-        override fun iterator(): java.util.Iterator<T> {
+        override fun iterator(): Iterator<T> {
             return collection.iterator().sure()
         }
     }
