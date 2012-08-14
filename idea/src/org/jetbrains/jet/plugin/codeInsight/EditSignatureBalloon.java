@@ -23,6 +23,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.*;
+import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.*;
@@ -137,6 +138,8 @@ class EditSignatureBalloon {
         if (editor instanceof EditorEx) {
             ((EditorEx)editor).setEmbeddedIntoDialogWrapper(true);
         }
+
+        editor.getColorsScheme().setColor(EditorColors.CARET_ROW_COLOR, editor.getColorsScheme().getDefaultBackground());
 
         return editor;
     }
