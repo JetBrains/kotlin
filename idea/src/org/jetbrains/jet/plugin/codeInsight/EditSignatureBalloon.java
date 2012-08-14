@@ -77,7 +77,13 @@ class EditSignatureBalloon {
     }
 
     private JPanel createBalloonPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new JPanel(new BorderLayout()) {
+            @Override
+            public Dimension getPreferredSize() {
+                Dimension preferredSize = super.getPreferredSize();
+                return new Dimension((int) (preferredSize.width * 1.4), preferredSize.height);
+            }
+        };
         panel.add(editor.getComponent(), BorderLayout.CENTER);
 
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -126,7 +132,7 @@ class EditSignatureBalloon {
         settings.setFoldingOutlineShown(false);
         settings.setRightMarginShown(false);
         settings.setAdditionalPageAtBottom(false);
-        settings.setAdditionalLinesCount(0);
+        settings.setAdditionalLinesCount(2);
 
         if (editor instanceof EditorEx) {
             ((EditorEx)editor).setEmbeddedIntoDialogWrapper(true);
