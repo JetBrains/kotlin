@@ -2,7 +2,7 @@ package jet
 
 public trait Iterator<out T> {
   public fun next()  : T
-  public val hasNext : Boolean
+  public fun hasNext() : Boolean
 }
 
 public abstract class ByteIterator() : Iterator<Byte> {
