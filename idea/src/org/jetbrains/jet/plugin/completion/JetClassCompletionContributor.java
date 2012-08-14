@@ -60,7 +60,7 @@ public class JetClassCompletionContributor extends CompletionContributor {
 
         final Collection<DeclarationDescriptor> jetOnlyClasses = JetShortNamesCache.getJetOnlyTypes();
         for (DeclarationDescriptor jetOnlyClass : jetOnlyClasses) {
-            consumer.consume(DescriptorLookupConverter.createLookupElement(jetContext, jetOnlyClass));
+            consumer.consume(DescriptorLookupConverter.createLookupElement(resolveSession, jetContext, jetOnlyClass));
         }
 
         if (!JsModuleDetector.isJsModule((JetFile)parameters.getOriginalFile())) {
@@ -98,7 +98,7 @@ public class JetClassCompletionContributor extends CompletionContributor {
                     }, resolveSession);
 
             for (ClassDescriptor descriptor : descriptors) {
-                consumer.consume(DescriptorLookupConverter.createLookupElement(jetContext, descriptor));
+                consumer.consume(DescriptorLookupConverter.createLookupElement(resolveSession, jetContext, descriptor));
             }
         }
     }
@@ -121,7 +121,7 @@ public class JetClassCompletionContributor extends CompletionContributor {
                     Collection<ClassDescriptor> classDescriptors = ResolveSessionUtils.getClassDescriptorsByFqName(
                             resolveSession,((JetLightClass) aClass).getFqName());
                     for (ClassDescriptor descriptor : classDescriptors) {
-                        consumer.consume(DescriptorLookupConverter.createLookupElement(context, descriptor));
+                        consumer.consume(DescriptorLookupConverter.createLookupElement(resolveSession, context, descriptor));
                     }
 
                     return true;

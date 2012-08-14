@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
@@ -53,11 +54,11 @@ public final class DescriptorLookupConverter {
     private DescriptorLookupConverter() {}
 
     @NotNull
-    public static LookupElement createLookupElement(@NotNull BindingContext bindingContext,
+    public static LookupElement createLookupElement(@NotNull ResolveSession resolveSession,
             @NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration) {
 
         LookupElementBuilder element = LookupElementBuilder.create(
-                new JetLookupObject(descriptor, bindingContext, declaration), descriptor.getName().getName());
+                new JetLookupObject(descriptor, resolveSession, declaration), descriptor.getName().getName());
 
         String presentableText = descriptor.getName().getName();
         String typeText = "";
@@ -80,14 +81,14 @@ public final class DescriptorLookupConverter {
             // TODO: A special case when it's impossible to resolve type parameters from arguments. Need '<' caret '>'
             // TODO: Support omitting brackets for one argument functions
             if (functionDescriptor.getValueParameters().isEmpty()) {
-                element = element.setInsertHandler(EMPTY_FUNCTION_HANDLER);
+                element = element.withInsertHandler(EMPTY_FUNCTION_HANDLER);
             }
             else {
                 if (functionDescriptor.getValueParameters().size() == 1
                         && JetStandardClasses.isFunctionType(functionDescriptor.getValueParameters().get(0).getType())) {
-                    element = element.setInsertHandler(PARAMS_BRACES_FUNCTION_HANDLER);
+                    element = element.withInsertHandler(PARAMS_BRACES_FUNCTION_HANDLER);
                 } else {
-                    element = element.setInsertHandler(PARAMS_PARENTHESIS_FUNCTION_HANDLER);
+                    element = element.withInsertHandler(PARAMS_PARENTHESIS_FUNCTION_HANDLER);
                 }
             }
         }
@@ -100,20 +101,23 @@ public final class DescriptorLookupConverter {
             assert declaredIn != null;
             tailText = " (" + DescriptorUtils.getFQName(declaredIn) + ")";
             tailTextGrayed = true;
-            element = element.setInsertHandler(JetClassInsertHandler.INSTANCE);
+            element = element.withInsertHandler(JetClassInsertHandler.INSTANCE);
         }
         else {
             typeText = DescriptorRenderer.TEXT.render(descriptor);
         }
 
-        element = element.setTailText(tailText, tailTextGrayed).setTypeText(typeText).setPresentableText(presentableText);
-        element = element.setIcon(JetDescriptorIconProvider.getIcon(descriptor, Iconable.ICON_FLAG_VISIBILITY));
+        element = element.withTailText(tailText, tailTextGrayed).withTypeText(typeText).withPresentableText(presentableText);
+        element = element.withIcon(JetDescriptorIconProvider.getIcon(descriptor, Iconable.ICON_FLAG_VISIBILITY));
 
         return element;
     }
 
     @NotNull
-    public static LookupElement createLookupElement(@NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor descriptor) {
+    public static LookupElement createLookupElement(
+            @NotNull ResolveSession resolveSession,
+            @NotNull BindingContext bindingContext,
+            @NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof CallableMemberDescriptor) {
             CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) descriptor;
             while (callableMemberDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
@@ -122,14 +126,17 @@ public final class DescriptorLookupConverter {
             }
             descriptor = callableMemberDescriptor;
         }
-        return createLookupElement(bindingContext, descriptor, BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor));
+        return createLookupElement(resolveSession, descriptor, BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor));
     }
 
-    public static LookupElement[] collectLookupElements(BindingContext bindingContext, Iterable<DeclarationDescriptor> descriptors) {
+    public static LookupElement[] collectLookupElements(
+            @NotNull ResolveSession resolveSession,
+            @NotNull BindingContext bindingContext,
+            @NotNull Iterable<DeclarationDescriptor> descriptors) {
         List<LookupElement> result = Lists.newArrayList();
 
         for (final DeclarationDescriptor descriptor : descriptors) {
-            result.add(createLookupElement(bindingContext, descriptor));
+            result.add(createLookupElement(resolveSession, bindingContext, descriptor));
         }
 
         return result.toArray(new LookupElement[result.size()]);

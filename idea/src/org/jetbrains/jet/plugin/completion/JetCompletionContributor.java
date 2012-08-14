@@ -184,7 +184,8 @@ public class JetCompletionContributor extends CompletionContributor {
                 matchPrefixCondition, expression, session.resolveSession, GlobalSearchScope.allScope(position.getProject()));
 
         for (DeclarationDescriptor jetCallableExtension : jetCallableExtensions) {
-            result.addElement(DescriptorLookupConverter.createLookupElement(session.expressionBindingContext, jetCallableExtension));
+            result.addElement(DescriptorLookupConverter.createLookupElement(
+                    session.resolveSession, session.expressionBindingContext, jetCallableExtension));
         }
     }
 
@@ -214,13 +215,11 @@ public class JetCompletionContributor extends CompletionContributor {
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
         Collection<String> functionNames = namesCache.getAllTopLevelFunctionNames();
 
-        ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) position.getContainingFile());
-        BindingContext resolutionContext = ResolveSessionUtils.getExpressionBindingContext(resolveSession, expression);
-
         for (String name : functionNames) {
             if (name.contains(actualPrefix)) {
-                for (FunctionDescriptor function : namesCache.getTopLevelFunctionDescriptorsByName(name, expression, resolveSession, scope)) {
-                    addCompletionToResult(result, DescriptorLookupConverter.createLookupElement(resolutionContext, function), session);
+                for (FunctionDescriptor function : namesCache.getTopLevelFunctionDescriptorsByName(name, expression, session.resolveSession, scope)) {
+                    addCompletionToResult(result, DescriptorLookupConverter.createLookupElement(
+                            session.resolveSession, session.expressionBindingContext, function), session);
                 }
             }
         }
@@ -342,6 +341,7 @@ public class JetCompletionContributor extends CompletionContributor {
 
         if (descriptor instanceof DeclarationDescriptorWithVisibility) {
             if (session.inDescriptor != null) {
+                //noinspection ConstantConditions
                 return Visibilities.isVisible((DeclarationDescriptorWithVisibility)descriptor, session.inDescriptor);
             }
         }
@@ -368,6 +368,6 @@ public class JetCompletionContributor extends CompletionContributor {
             }
         });
 
-        return DescriptorLookupConverter.collectLookupElements(session.expressionBindingContext, checkedDescriptors);
+        return DescriptorLookupConverter.collectLookupElements(session.resolveSession, session.expressionBindingContext, checkedDescriptors);
     }
 }

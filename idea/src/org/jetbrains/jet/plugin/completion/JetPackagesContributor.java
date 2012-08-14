@@ -28,6 +28,8 @@ import org.jetbrains.jet.cli.jvm.compiler.TipsManager;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
@@ -71,11 +73,13 @@ public class JetPackagesContributor extends CompletionContributor {
                            int prefixLength = parameters.getOffset() - simpleNameReference.getExpression().getTextOffset();
                            result = result.withPrefixMatcher(new PlainPrefixMatcher(name.substring(0, prefixLength)));
 
-                           BindingContext bindingContext = WholeProjectAnalyzerFacade.getLazyResolveContext(
-                                   (JetFile) namespaceHeader.getContainingFile(), simpleNameReference.getExpression());
+                           ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile(
+                                   (JetFile) simpleNameReference.getExpression().getContainingFile());
+                           BindingContext bindingContext = ResolveSessionUtils.getExpressionBindingContext(
+                                   resolveSession, simpleNameReference.getExpression());
 
                            for (LookupElement variant : DescriptorLookupConverter.collectLookupElements(
-                                   bindingContext, TipsManager.getPackageReferenceVariants(simpleNameReference.getExpression(), bindingContext))) {
+                                   resolveSession, bindingContext, TipsManager.getPackageReferenceVariants(simpleNameReference.getExpression(), bindingContext))) {
                                if (!variant.getLookupString().contains(DUMMY_IDENTIFIER)) {
                                    result.addElement(variant);
                                }
