@@ -11,18 +11,11 @@ public trait Comparator<T> {
 }
 
 library
-public trait Iterator<T> {
-    open public fun next() : T = js.noImpl
-    open public fun hasNext() : Boolean = js.noImpl
-    open public fun remove() : Unit = js.noImpl
-}
-
-library
 public trait Collection<E>: Iterable<E> {
     open public fun size(): Int
     open public fun isEmpty(): Boolean
     open public fun contains(o: Any?): Boolean
-    override public fun iterator(): java.util.Iterator<E>
+    override public fun iterator(): Iterator<E>
     public fun toArray(): Array<E>
     // open public fun toArray<T>(a : Array<out T>) : Array<T>
     open public fun add(e: E): Boolean
@@ -40,7 +33,7 @@ public abstract class AbstractCollection<E>() : Collection<E> {
 
     override public fun isEmpty(): Boolean = js.noImpl
     override public fun contains(o: Any?): Boolean = js.noImpl
-    override public fun iterator(): java.util.Iterator<E> = js.noImpl
+    override public fun iterator(): Iterator<E> = js.noImpl
 
     override public fun add(e: E): Boolean = js.noImpl
     override public fun remove(o: Any?): Boolean = js.noImpl

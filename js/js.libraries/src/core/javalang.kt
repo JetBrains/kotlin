@@ -1,13 +1,7 @@
 package java.lang
 
 import java.io.IOException
-import java.util.Iterator
 import js.library
-
-library
-public trait Iterable<T> {
-    public fun iterator() : java.util.Iterator<T> = js.noImpl
-}
 
 library
 open public class Exception() : Throwable() {}
