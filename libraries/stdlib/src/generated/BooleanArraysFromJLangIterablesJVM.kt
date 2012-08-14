@@ -10,6 +10,7 @@ package kotlin
 
 
 import java.util.*
+import jet.Iterator
 
 /** Copies all elements into a [[SortedSet]] */
 public inline fun  BooleanArray.toSortedSet() : SortedSet<Boolean> = toCollection(TreeSet<Boolean>())
