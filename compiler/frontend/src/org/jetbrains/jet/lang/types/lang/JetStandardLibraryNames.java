@@ -39,6 +39,8 @@ public class JetStandardLibraryNames {
     public static final ClassName VOLATILE = classIn("volatile", 0);
     public static final ClassName INT = PrimitiveType.INT.getClassName();
     public static final ClassName COMPARABLE = classIn("Comparable", 1);
+    public static final ClassName ITERABLE = classIn("Iterable", 1);
+    public static final ClassName ITERATOR = classIn("Iterator", 1);
     public static final ClassName NOTHING = classIn("Nothing", 0);
     public static final ClassName STRING = classIn("String", 0);
     public static final ClassName CHAR_SEQUENCE = classIn("CharSequence", 0);

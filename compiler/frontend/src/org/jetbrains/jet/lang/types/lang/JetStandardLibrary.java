@@ -93,6 +93,7 @@ public class JetStandardLibrary {
     private ClassDescriptor stringClass;
     private ClassDescriptor arrayClass;
     private ClassDescriptor iterableClass;
+    private ClassDescriptor iteratorClass;
     private ClassDescriptor comparableClass;
     private ClassDescriptor throwableClass;
     private ClassDescriptor enumClass;
@@ -168,6 +169,7 @@ public class JetStandardLibrary {
             this.enumClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Enum"));
 
             this.iterableClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Iterable"));
+            this.iteratorClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Iterator"));
             this.comparableClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Comparable"));
 
             this.stringType = new JetTypeImpl(getString());
@@ -210,6 +212,7 @@ public class JetStandardLibrary {
         classDescriptors.add(arrayClass);
         classDescriptors.add(throwableClass);
         classDescriptors.add(iterableClass);
+        classDescriptors.add(iteratorClass);
         classDescriptors.add(comparableClass);
         classDescriptors.add(enumClass);
 
@@ -290,6 +293,12 @@ public class JetStandardLibrary {
     public ClassDescriptor getIterable() {
         initStdClasses();
         return iterableClass;
+    }
+
+    @NotNull
+    public ClassDescriptor getIterator() {
+        initStdClasses();
+        return iteratorClass;
     }
 
     @NotNull
