@@ -44,7 +44,8 @@ public class LibrarySourcesConfig extends Config {
     @NotNull
     public static final String UNKNOWN_EXTERNAL_MODULE_NAME = "<unknown>";
 
-    private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.asJava.JetLightClass");
+    @NotNull
+    private static final Logger LOG = Logger.getInstance("#org.jetbrains.k2js.config.LibrarySourcesConfig");
 
     @NotNull
     private final List<String> files;
