@@ -37,7 +37,7 @@ import static com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
 
-// todo easy incremental compiler implementation — generated functions should be inside corresponding class/namespace definition
+// todo easy incremental compiler implementation - generated functions should be inside corresponding class/namespace definition
 public class LiteralFunctionTranslator {
     private final List<JsPropertyInitializer> properties = new ArrayList<JsPropertyInitializer>();
     private final LabelGenerator labelGenerator = new LabelGenerator('f');

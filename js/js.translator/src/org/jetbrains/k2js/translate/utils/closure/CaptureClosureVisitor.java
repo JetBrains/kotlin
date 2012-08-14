@@ -83,7 +83,7 @@ class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
             return false;
         }
 
-        // is not working, try test life — init is captured, but this method returns false
+        // is not working, try test life - init is captured, but this method returns false
         //if (bindingContext.get(BindingContext.CAPTURED_IN_CLOSURE, descriptor) != Boolean.TRUE) {
         //    return false;
         //}
@@ -109,7 +109,7 @@ class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
                variableDeclaration.getNode().getElementType().equals(JetNodeTypes.LOOP_PARAMETER);
     }
 
-    // differs from DescriptorUtils — fails if reach NamespaceDescriptor
+    // differs from DescriptorUtils - fails if reach NamespaceDescriptor
     public static boolean isAncestor(@NotNull DeclarationDescriptor ancestor,
             @NotNull DeclarationDescriptor declarationDescriptor) {
         DeclarationDescriptor descriptor = declarationDescriptor.getContainingDeclaration();
