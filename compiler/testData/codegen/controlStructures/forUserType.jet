@@ -16,7 +16,7 @@ fun box() : String {
     }
     if(sum != 15) return "c5 failed"
 
-    val c1: java.lang.Iterable<Int> = MyCollection1()
+    val c1: Iterable<Int> = MyCollection1()
     sum = 0
     for (el in c1) {
         sum = sum + el!!
@@ -77,15 +77,14 @@ fun box() : String {
     return "OK"
 }
 
-class MyCollection1(): java.lang.Iterable<Int> {
-    override fun iterator(): java.util.Iterator<Int> = MyIterator()
+class MyCollection1(): Iterable<Int> {
+    override fun iterator(): Iterator<Int> = MyIterator()
 
-    class MyIterator(): java.util.Iterator<Int> {
+    class MyIterator(): Iterator<Int> {
         var k : Int = 5
 
         override fun next() : Int = k--
         override fun hasNext() = k > 0
-        override fun remove() {}
     }
 }
 
@@ -96,8 +95,7 @@ class MyCollection2(): Iterable<Int> {
         var k : Int = 5
 
         override fun next() : Int = k--
-        override val hasNext : Boolean
-          get() = k > 0
+        override fun hasNext() : Boolean = k > 0
     }
 }
 
@@ -108,8 +106,7 @@ class MyCollection3() {
         var k : Int = 5
 
         fun next() : Int? = k--
-        val hasNext : Boolean
-            get() = k > 0
+        fun hasNext() : Boolean = k > 0
     }
 }
 

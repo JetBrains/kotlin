@@ -13,4 +13,4 @@ fun arrayList<T>(vararg <!UNUSED_PARAMETER!>values<!>: T) : ArrayList<T> {<!NO_R
 
 fun <T, R> Collection<T>.map(<!UNUSED_PARAMETER!>transform<!> : (T) -> R) : List<R> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
-fun <T> java.lang.Iterable<T>.fold(<!UNUSED_PARAMETER!>initial<!>: T, <!UNUSED_PARAMETER!>operation<!>: (T, T) -> T): T {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun <T> Iterable<T>.fold(<!UNUSED_PARAMETER!>initial<!>: T, <!UNUSED_PARAMETER!>operation<!>: (T, T) -> T): T {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

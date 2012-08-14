@@ -2,8 +2,6 @@ package mask
 
 import java.io.*
 import java.util.*
-import java.util.Iterator as It
-import java.lang.Iterable as Itl
 
 fun box() : String {
     val input = StringReader("/Users/abreslav/work/jet/docs/luhnybin/src/test")
