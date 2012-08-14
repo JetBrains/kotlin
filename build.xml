@@ -169,6 +169,8 @@
       <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib_ecma5.js"/>
       <arg value="--js"/>
       <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib.js"/>
+      <arg value="--js"/>
+      <arg value="${basedir}/js/js.translator/testFiles/maps.js"/>
       <arg value="--js_output_file"/>
       <arg value="${kotlin-home}/lib/kotlinEcma5.js"/>
     </java>
@@ -186,6 +188,8 @@
       <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib_ecma3.js"/>
       <arg value="--js"/>
       <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib.js"/>
+      <arg value="--js"/>
+      <arg value="${basedir}/js/js.translator/testFiles/maps.js"/>
       <arg value="--js_output_file"/>
       <arg value="${kotlin-home}/lib/kotlinEcma3.js"/>
     </java>
