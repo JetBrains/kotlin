@@ -1,3 +1,6 @@
 namespace test
 
+internal final object test.Bar : jet.Any {
+    internal final /*constructor*/ fun <init>(): test.Bar
+}
 internal final val Bar: test.Bar

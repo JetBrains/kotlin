@@ -76,7 +76,10 @@ public class CompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir {
         compileA();
         compileB();
 
-        URLClassLoader classLoader = new URLClassLoader(new URL[]{ aDir.toURI().toURL(), bDir.toURI().toURL() });
+        URLClassLoader classLoader = new URLClassLoader(
+                new URL[]{ aDir.toURI().toURL(), bDir.toURI().toURL() },
+                CompileKotlinAgainstKotlinTest.class.getClassLoader()
+        );
         Class<?> clazz = classLoader.loadClass("bbb.namespace");
         Method main = clazz.getMethod("main", new Class[] { String[].class });
         main.invoke(null, new Object[] { new String[0] });
@@ -104,7 +107,7 @@ public class CompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir {
 
         String text = FileUtil.loadFile(ktBFile);
 
-        LightVirtualFile virtualFile = new LightVirtualFile(ktAFile.getName(), JetLanguage.INSTANCE, text);
+        LightVirtualFile virtualFile = new LightVirtualFile(ktBFile.getName(), JetLanguage.INSTANCE, text);
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
 

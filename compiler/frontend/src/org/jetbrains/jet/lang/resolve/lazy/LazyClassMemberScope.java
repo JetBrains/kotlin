@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -141,6 +142,26 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         generateFakeOverrides(name, fromSupertypes, result, FunctionDescriptor.class);
     }
 
+    private void generateEnumClassObjectMethods() {
+        DeclarationDescriptor containingDeclaration = thisDescriptor.getContainingDeclaration();
+        if(containingDeclaration instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
+            if(classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
+                if(classDescriptor.getClassObjectDescriptor() == thisDescriptor) {
+                    SimpleFunctionDescriptor valuesMethod = DescriptorResolver
+                            .createEnumClassObjectValuesMethod(classDescriptor, thisDescriptor, resolveSession.getTrace());
+                    functionDescriptors.put(valuesMethod.getName(), Collections.<FunctionDescriptor>singleton(valuesMethod));
+                    allDescriptors.add(valuesMethod);
+                    SimpleFunctionDescriptor valueOfMethod = DescriptorResolver.createEnumClassObjectValueOfMethod(classDescriptor,
+                                                                                                            thisDescriptor,
+                                                                                                            resolveSession.getTrace());
+                    functionDescriptors.put(valueOfMethod.getName(), Collections.<FunctionDescriptor>singleton(valueOfMethod));
+                    allDescriptors.add(valueOfMethod);
+                }
+            }
+        }
+    }
+
     @NotNull
     @Override
     public Set<VariableDescriptor> getProperties(@NotNull Name name) {
@@ -180,22 +201,6 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                     result.add(propertyDescriptor);
                 }
             }
-        }
-
-        // Enum entries
-        JetClassOrObject classOrObjectDeclaration = declarationProvider.getClassOrObjectDeclaration(name);
-        if (classOrObjectDeclaration instanceof JetEnumEntry) {
-            // TODO: This code seems to be wrong, but it mimics the present behavior of eager resolve
-            JetEnumEntry jetEnumEntry = (JetEnumEntry) classOrObjectDeclaration;
-            if (!jetEnumEntry.hasPrimaryConstructor()) {
-                VariableDescriptor propertyDescriptor = resolveSession.getInjector().getDescriptorResolver()
-                        .resolveObjectDeclarationAsPropertyDescriptor(thisDescriptor,
-                                                                      jetEnumEntry,
-                                                                      resolveSession.getClassDescriptor(jetEnumEntry),
-                                                                      resolveSession.getTrace());
-                result.add(propertyDescriptor);
-            }
-
         }
 
         // Members from supertypes
@@ -242,6 +247,8 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                 // Nothing else is inherited
             }
         }
+
+        generateEnumClassObjectMethods();
     }
 
     @Override
@@ -264,9 +271,14 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     @Nullable
     public ConstructorDescriptor getPrimaryConstructor() {
         if (!primaryConstructorResolved) {
-            if (EnumSet.of(ClassKind.CLASS, ClassKind.ANNOTATION_CLASS, ClassKind.OBJECT, ClassKind.ENUM_CLASS).contains(thisDescriptor.getKind())) {
+            Set<ClassKind> generateConstructorsFor =
+                    EnumSet.of(ClassKind.CLASS, ClassKind.ANNOTATION_CLASS, ClassKind.OBJECT, ClassKind.ENUM_CLASS, ClassKind.ENUM_ENTRY);
+            if (generateConstructorsFor.contains(thisDescriptor.getKind())) {
                 JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
-                if (thisDescriptor.getKind() != ClassKind.OBJECT) {
+                if (
+                        thisDescriptor.getKind() != ClassKind.OBJECT // a fake class object of an enum class
+                        && !declaresObjectOrEnumConstant(classOrObject) // normal objects and enum entries with no constructors
+                ) {
                     JetClass jetClass = (JetClass) classOrObject;
                     ConstructorDescriptorImpl constructor = resolveSession.getInjector().getDescriptorResolver()
                             .resolvePrimaryConstructorDescriptor(thisDescriptor.getScopeForClassHeaderResolution(),

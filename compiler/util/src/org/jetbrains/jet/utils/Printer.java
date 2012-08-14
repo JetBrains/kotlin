@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.test.generator;
+package org.jetbrains.jet.utils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -44,6 +44,11 @@ public class Printer {
         for (Object object : objects) {
             out.append(object);
         }
+    }
+
+    public void printlnWithNoIndent(Object... objects) {
+        printWithNoIndent(objects);
+        out.append("\n");
     }
 
     public void pushIndent() {

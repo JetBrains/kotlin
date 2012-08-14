@@ -18,9 +18,12 @@ package org.jetbrains.k2js.translate.intrinsic.functions.patterns;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,7 +35,13 @@ import java.util.List;
 public final class NamePredicate implements Predicate<Name> {
 
     @NotNull
-    public static final NamePredicate PRIMITIVE_NUMBERS = new NamePredicate("Int", "Double", "Float", "Long", "Short", "Byte");
+    public static final NamePredicate PRIMITIVE_NUMBERS = new NamePredicate(
+            ContainerUtil.map(PrimitiveType.NUMBER_TYPES, new Function<PrimitiveType, String>() {
+        @Override
+        public String fun(PrimitiveType type) {
+            return type.getTypeName().getName();
+        }
+    }));
 
     @NotNull
     private final List<Name> validNames = Lists.newArrayList();

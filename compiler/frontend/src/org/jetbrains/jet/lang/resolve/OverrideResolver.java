@@ -189,7 +189,7 @@ public class OverrideResolver {
             extractAndBindOverridesForMember(fromCurrent, notOverridden, current, sink);
         }
 
-        bindFakeOverrides(current, notOverridden, sink);
+        createAndBindFakeOverrides(current, notOverridden, sink);
     }
 
     private static void extractAndBindOverridesForMember(
@@ -222,7 +222,7 @@ public class OverrideResolver {
         }
     }
 
-    private static void bindFakeOverrides(
+    private static void createAndBindFakeOverrides(
             @NotNull ClassDescriptor current,
             @NotNull List<CallableMemberDescriptor> notOverridden,
             @NotNull DescriptorSink sink
@@ -231,11 +231,11 @@ public class OverrideResolver {
         while (!fromSuperQueue.isEmpty()) {
             CallableMemberDescriptor notOverriddenFromSuper = fromSuperQueue.remove();
             Collection<CallableMemberDescriptor> overridables = extractMembersOverridableBy(notOverriddenFromSuper, fromSuperQueue, sink);
-            bindFakeOverride(notOverriddenFromSuper, overridables, current, sink);
+            createAndBindFakeOverride(notOverriddenFromSuper, overridables, current, sink);
         }
     }
 
-    private static void bindFakeOverride(
+    private static void createAndBindFakeOverride(
             @NotNull CallableMemberDescriptor notOverriddenFromSuper,
             @NotNull Collection<CallableMemberDescriptor> overridables,
             @NotNull ClassDescriptor current,

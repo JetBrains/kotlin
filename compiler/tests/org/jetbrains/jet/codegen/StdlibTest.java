@@ -345,6 +345,10 @@ public class StdlibTest extends CodegenTestCase {
         blackBoxFile("uptoDownto.kt");
     }
 
+    public void testKt930 () {
+        blackBoxFile("regressions/kt930.kt");
+    }
+
     public void test1733() {
         blackBoxFile("regressions/kt1733.kt");
     }
@@ -356,5 +360,21 @@ public class StdlibTest extends CodegenTestCase {
     public void testKt2210() throws Exception {
         blackBoxFile("regressions/kt2210.kt");
 //        System.out.println(generateToText());
+    }
+
+    public void testKt2593() {
+        blackBoxFile("regressions/kt2593.kt");
+    }
+
+    public void testKt2318() {
+        blackBoxFile("regressions/kt2318.kt");
+    }
+
+    public void testKt2246() {
+        blackBoxFile("regressions/kt2246.kt");
+    }
+
+    public void testKt2596() {
+        blackBoxFile("regressions/kt2596.kt");
     }
 }

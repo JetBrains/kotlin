@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.components.ServiceManager;
+import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
@@ -38,9 +39,6 @@ public class ScriptGenTest extends CodegenTestCase {
 
     public static final JetScriptDefinition FIB_SCRIPT_DEFINITION =
             new JetScriptDefinition(".lang.kt", new AnalyzerScriptParameter("num", "jet.Int"));
-
-    public static final JetScriptDefinition DEFIMPORT_SCRIPT_DEFINITION =
-            new JetScriptDefinition(".def.kt", null, Arrays.asList("java.util.Collections"));
 
     @Override
     protected void setUp() throws Exception {
@@ -109,7 +107,8 @@ public class ScriptGenTest extends CodegenTestCase {
         final Class aClass = loadClass("Fib", generateClassesInFile());
         try {
             Constructor constructor = aClass.getConstructor(int.class);
-            Field result = aClass.getField("result");
+            Field result = aClass.getDeclaredField("result");
+            result.setAccessible(true);
             Object script = constructor.newInstance(5);
             assertEquals(8,result.get(script));
         }
@@ -124,7 +123,8 @@ public class ScriptGenTest extends CodegenTestCase {
         final Class aClass = loadClass("test.Fibwp", generateClassesInFile());
         try {
             Constructor constructor = aClass.getConstructor(int.class);
-            Field result = aClass.getField("result");
+            Field result = aClass.getDeclaredField("result");
+            result.setAccessible(true);
             Object script = constructor.newInstance(5);
             assertEquals(8,result.get(script));
         }
@@ -139,26 +139,17 @@ public class ScriptGenTest extends CodegenTestCase {
         final Class aClass = loadClass("Fibwprunner", generateClassesInFile());
         try {
             Constructor constructor = aClass.getConstructor();
-            Field result = aClass.getField("result");
+            Field result = aClass.getDeclaredField("result");
+            result.setAccessible(true);
+            Method resultMethod = aClass.getDeclaredMethod("getResult");
+            assertTrue((resultMethod.getModifiers() & Opcodes.ACC_FINAL) != 0);
+            assertTrue((resultMethod.getModifiers() & Opcodes.ACC_PUBLIC) != 0);
             Field rv = aClass.getField("rv");
+            assertTrue((result.getModifiers() & Opcodes.ACC_PRIVATE) != 0);
             Object script = constructor.newInstance();
             assertEquals(12,rv.get(script));
             assertEquals(8,result.get(script));
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void testDefImports() {
-        JetScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(DEFIMPORT_SCRIPT_DEFINITION);
-        loadFile("script/withdefimports.def.kt");
-        final Class aClass = loadClass("Withdefimports", generateClassesInFile());
-        try {
-            Constructor constructor = aClass.getConstructor();
-            Field rv = aClass.getField("rv");
-            Object script = constructor.newInstance();
-            assertEquals(Collections.emptyList(),rv.get(script));
+            assertEquals(8,resultMethod.invoke(script));
         }
         catch (Exception e) {
             throw new RuntimeException(e);

@@ -23,11 +23,24 @@ public final class ShortRange implements Range<Short>, ShortIterable {
     private final short start;
     private final int count;
 
-    public static final ShortRange empty = new ShortRange((short) 0,0);
+    public static final ShortRange EMPTY = new ShortRange((short) 0,0);
 
     public ShortRange(short startValue, int count) {
         this.start = startValue;
         this.count = count;
+    }
+
+    @Override
+    public String toString() {
+        if (count == 0) {
+            return "<empty range>";
+        }
+        else if (count > 0) {
+            return getStart() + ".rangeTo(" + getEnd() + ")";
+        }
+        else {
+            return getStart() + ".downTo(" + getEnd() + ")";
+        }
     }
 
     public ShortIterator step(int step) {
@@ -91,10 +104,6 @@ public final class ShortRange implements Range<Short>, ShortIterable {
 
     public int getSize() {
         return count < 0 ? -count : count;
-    }
-
-    public ShortRange minus() {
-        return new ShortRange(getEnd(), -count);
     }
 
     @Override

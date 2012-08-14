@@ -209,7 +209,7 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
             if (binding.isError()) {
                 return printStackTraceToString(binding.getError());
             }
-            state = new GenerationState(myProject, ClassBuilderFactories.TEXT, binding, Collections.singletonList(file));
+            state = new GenerationState(ClassBuilderFactories.TEXT, binding, Collections.singletonList(file));
             state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         }
         catch (Exception e) {

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.asm4.Type;
@@ -41,6 +42,11 @@ public class ConstructorFrameMap extends FrameMap {
         }
 
         List<Type> explicitArgTypes = callableMethod.getValueParameterTypes();
+
+        if(descriptor != null && descriptor.getContainingDeclaration().getKind() == ClassKind.ENUM_CLASS) {
+            enterTemp(); // name
+            enterTemp(); // ordinal
+        }
 
         List<ValueParameterDescriptor> paramDescrs = descriptor != null
                 ? descriptor.getValueParameters()

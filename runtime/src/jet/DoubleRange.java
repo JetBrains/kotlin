@@ -23,9 +23,24 @@ public final class DoubleRange implements Range<Double> {
     private final double start;
     private final double size;
 
+    public static final DoubleRange EMPTY = new DoubleRange(0, 0);
+
     public DoubleRange(double startValue, double size) {
         this.start = startValue;
         this.size = size;
+    }
+
+    @Override
+    public String toString() {
+        if (size == 0.0) {
+            return "<empty range>";
+        }
+        else if (size > 0) {
+            return getStart() + ".rangeTo(" + getEnd() + ")";
+        }
+        else {
+            return getStart() + ".downTo(" + getEnd() + ")";
+        }
     }
 
     @Override
@@ -83,10 +98,6 @@ public final class DoubleRange implements Range<Double> {
 
     public double getSize() {
         return size < 0 ? -size : size;
-    }
-
-    public DoubleRange minus() {
-        return new DoubleRange(getEnd(), -size);
     }
 
     public static DoubleRange count(int length) {

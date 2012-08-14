@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -34,11 +33,9 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ScriptReceiver;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -106,17 +103,8 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
             if(jetDeclaration instanceof JetProperty) {
                 VariableDescriptor descriptor = bindingContext.get(BindingContext.VARIABLE, jetDeclaration);
                 assert descriptor != null;
-                propertyDescriptor = new PropertyDescriptor(classDescriptor,
-                                                           Collections.<AnnotationDescriptor>emptyList(),
-                                                           Modality.FINAL,
-                                                           propertyDescriptor.getVisibility(),
-                                                           false,
-                                                           false,
-                                                           descriptor.getName(),
-                                                           CallableMemberDescriptor.Kind.DECLARATION);
-                propertyDescriptor.setType(returnType, Collections.<TypeParameterDescriptor>emptyList(), classReceiver, ReceiverDescriptor.NO_RECEIVER);
-                propertyDescriptor.initialize(null, null);
-                classScope.addPropertyDescriptor(propertyDescriptor);
+                initializeWithDefaultGetterSetter((PropertyDescriptor) descriptor);
+                classScope.addPropertyDescriptor(descriptor);
             }
             else if(jetDeclaration instanceof JetNamedFunction) {
                 SimpleFunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, jetDeclaration);
@@ -126,6 +114,21 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
                 classScope.addFunctionDescriptor(copy);
             }
         }
+    }
+
+    public static void initializeWithDefaultGetterSetter(PropertyDescriptor propertyDescriptor) {
+        PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
+        if(getter == null) {
+            getter = propertyDescriptor.getVisibility() != Visibilities.PRIVATE ? DescriptorResolver.createDefaultGetter(propertyDescriptor) : null;
+            if(getter != null)
+                getter.initialize(propertyDescriptor.getType());
+        }
+
+        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
+        if(setter == null) {
+            setter = propertyDescriptor.isVar() ? DescriptorResolver.createDefaultSetter(propertyDescriptor) : null;
+        }
+        propertyDescriptor.initialize(getter, setter);
     }
 
     public int getPriority() {

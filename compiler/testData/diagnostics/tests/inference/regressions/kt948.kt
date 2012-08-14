@@ -1,3 +1,5 @@
+//KT-948 Make type inference work with sure()/!!
+
 package a
 
 import java.util.*

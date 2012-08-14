@@ -18,7 +18,6 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -222,8 +221,8 @@ public class ClosureAnnotator {
     }
 
     private class MyJetVisitorVoid extends JetVisitorVoid {
-        private LinkedList<ClassDescriptor> classStack = new LinkedList<ClassDescriptor>();
-        private LinkedList<String> nameStack = new LinkedList<String>();
+        private final LinkedList<ClassDescriptor> classStack = new LinkedList<ClassDescriptor>();
+        private final LinkedList<String> nameStack = new LinkedList<String>();
 
         private void recordEnclosing(ClassDescriptor classDescriptor) {
             if (classStack.size() > 0) {
@@ -381,7 +380,9 @@ public class ClosureAnnotator {
             else if (containingDeclaration instanceof NamespaceDescriptor) {
                 String peek = nameStack.peek();
                 if (peek.isEmpty()) { peek = "namespace"; }
-                else { peek = peek + "/namespace"; }
+                else {
+                    peek += "/namespace";
+                }
                 nameStack.push(peek + '$' + function.getName());
                 super.visitNamedFunction(function);
                 nameStack.pop();
@@ -408,11 +409,6 @@ public class ClosureAnnotator {
 
     @NotNull
     public JvmClassName classNameForClassDescriptor(@NotNull ClassDescriptor classDescriptor) {
-        return classNamesForClassDescriptor.get(classDescriptor);
-    }
-
-    @Nullable
-    public JvmClassName classNameForClassDescriptorIfDefined(@NotNull ClassDescriptor classDescriptor) {
         return classNamesForClassDescriptor.get(classDescriptor);
     }
 }

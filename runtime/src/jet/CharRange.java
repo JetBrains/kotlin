@@ -23,11 +23,24 @@ public final class CharRange implements Range<Character>, CharIterable {
     private final char start;
     private final int count;
 
-    public static final CharRange empty = new CharRange((char) 0,0);
+    public static final CharRange EMPTY = new CharRange((char) 0,0);
 
     public CharRange(char startValue, int count) {
         this.start = startValue;
         this.count = count;
+    }
+
+    @Override
+    public String toString() {
+        if (count == 0) {
+            return "<empty range>";
+        }
+        else if (count > 0) {
+            return getStart() + ".rangeTo(" + getEnd() + ")";
+        }
+        else {
+            return getStart() + ".downTo(" + getEnd() + ")";
+        }
     }
 
     @Override
@@ -84,10 +97,6 @@ public final class CharRange implements Range<Character>, CharIterable {
 
     public int getSize() {
         return count < 0 ? -count : count;
-    }
-
-    public CharRange minus() {
-        return new CharRange(getEnd(), -count);
     }
 
     public CharIterator step(int step) {

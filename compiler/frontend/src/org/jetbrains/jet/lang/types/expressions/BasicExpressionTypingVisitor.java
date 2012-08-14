@@ -611,13 +611,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (!results.isNothing()) {
             checkSuper(receiver, results, context.trace, callExpression);
             result[0] = true;
-            if (results.isSingleResult()) {
-                ResolvedCall<FunctionDescriptor> resultingCall = results.getResultingCall();
-                if (resultingCall instanceof ResolvedCallWithTrace) {
-                    if (((ResolvedCallWithTrace)resultingCall).getStatus() == ResolutionStatus.TYPE_INFERENCE_ERROR) {
-                        return null;
-                    }
-                }
+            if (results.isIncomplete()) {
+                return null;
             }
             return results.isSingleResult() ? results.getResultingDescriptor() : null;
         }

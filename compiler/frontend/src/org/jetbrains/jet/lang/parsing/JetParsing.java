@@ -97,7 +97,7 @@ public class JetParsing extends AbstractJetParsing {
     void parseFile() {
         PsiBuilder.Marker fileMarker = mark();
 
-        parsePreamble();
+        parsePreamble(true);
 
         parseToplevelDeclarations(false);
 
@@ -107,22 +107,7 @@ public class JetParsing extends AbstractJetParsing {
     void parseScript() {
         PsiBuilder.Marker fileMarker = mark();
 
-        PsiBuilder.Marker namespaceHeader = mark();
-        PsiBuilder.Marker firstEntry = mark();
-        parseModifierList(MODIFIER_LIST, true);
-
-        if (at(PACKAGE_KEYWORD)) {
-            advance(); // PACKAGE_KEYWORD
-
-            parseNamespaceName();
-
-            firstEntry.drop();
-            consumeIf(SEMICOLON);
-        }
-        else {
-            firstEntry.rollbackTo();
-        }
-        namespaceHeader.done(NAMESPACE_HEADER);
+        parsePreamble(false);
 
         PsiBuilder.Marker scriptMarker = mark();
         parseImportDirectives();
@@ -155,7 +140,7 @@ public class JetParsing extends AbstractJetParsing {
      *  : namespaceHeader? import*
      *  ;
      */
-    private void parsePreamble() {
+    private void parsePreamble(boolean imports) {
         /*
          * namespaceHeader
          *   : modifiers "namespace" SimpleName{"."} SEMI?
@@ -187,7 +172,8 @@ public class JetParsing extends AbstractJetParsing {
         }
         namespaceHeader.done(NAMESPACE_HEADER);
 
-        parseImportDirectives();
+        if(imports)
+            parseImportDirectives();
     }
 
     /* SimpleName{"."} */

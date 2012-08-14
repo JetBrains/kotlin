@@ -1,3 +1,4 @@
+//KT-702 Type inference failed
 package a
 //+JDK
 

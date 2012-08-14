@@ -115,38 +115,46 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
         });
     }
 
+    private DeclarationDescriptor findCurrentDescriptorForClass(@NotNull ClassDescriptor originalDescriptor) {
+        if (originalDescriptor.getKind() == ClassKind.OBJECT) {
+            DeclarationDescriptor currentParent = findCurrentDescriptor(originalDescriptor.getContainingDeclaration());
+            if (currentParent == null) return null;
+            return ((ClassDescriptor) currentParent).getClassObjectDescriptor();
+        }
+        else {
+            return bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFQName(originalDescriptor).toSafe());
+        }
+    }
+
+    private DeclarationDescriptor findCurrentDescriptorForMember(@NotNull MemberDescriptor originalDescriptor) {
+        JetScope memberScope = getMemberScope(findCurrentDescriptor(originalDescriptor.getContainingDeclaration()));
+        if (memberScope == null) return null;
+
+        String renderedOriginal = DescriptorRenderer.TEXT.render(originalDescriptor);
+        for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
+            if (renderedOriginal.equals(DescriptorRenderer.TEXT.render(member).replace(TUPLE0_FQ_NAME.getFqName(),
+                                                                                       JetStandardClasses.UNIT_ALIAS.getName()))) {
+                return member;
+            }
+        }
+        return null;
+    }
+
     @Nullable
     private DeclarationDescriptor findCurrentDescriptor(@NotNull DeclarationDescriptor originalDescriptor) {
         if (originalDescriptor instanceof ClassDescriptor) {
-            return bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFQName(originalDescriptor).toSafe());
+            return findCurrentDescriptorForClass((ClassDescriptor) originalDescriptor);
         }
         else if (originalDescriptor instanceof NamespaceDescriptor) {
             return bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
                                       DescriptorUtils.getFQName(originalDescriptor).toSafe());
         }
-        else {
-            DeclarationDescriptor parent = originalDescriptor.getContainingDeclaration();
-            if (parent == null) return null;
-            parent = findCurrentDescriptor(parent);
-            JetScope memberScope;
-            if (parent instanceof ClassDescriptor) {
-                memberScope = ((ClassDescriptor) parent).getDefaultType().getMemberScope();
-            }
-            else if (parent instanceof NamespaceDescriptor) {
-                memberScope = ((NamespaceDescriptor)parent).getMemberScope();
-            }
-            else {
-                return null;
-            }
-            String renderedOriginal = DescriptorRenderer.TEXT.render(originalDescriptor);
-            for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
-                if (renderedOriginal.equals(DescriptorRenderer.TEXT.render(member).replace(TUPLE0_FQ_NAME.getFqName(),
-                                                                                           JetStandardClasses.UNIT_ALIAS.getName()))) {
-                    return member;
-                }
-            }
+        else if (originalDescriptor instanceof MemberDescriptor) {
+            return findCurrentDescriptorForMember((MemberDescriptor) originalDescriptor);
         }
-        return null;
+        else {
+            return null;
+        }
     }
 
     @Nullable
@@ -169,6 +177,19 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
             return BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
         }
         return null;
+    }
+
+    @Nullable
+    private static JetScope getMemberScope(@Nullable DeclarationDescriptor parent) {
+        if (parent instanceof ClassDescriptor) {
+            return ((ClassDescriptor) parent).getDefaultType().getMemberScope();
+        }
+        else if (parent instanceof NamespaceDescriptor) {
+            return ((NamespaceDescriptor)parent).getMemberScope();
+        }
+        else {
+            return null;
+        }
     }
 
     private static class FakeJetNamespaceDescriptor extends NamespaceDescriptorImpl {

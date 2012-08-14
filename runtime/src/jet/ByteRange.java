@@ -23,11 +23,24 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
     private final byte start;
     private final int count;
 
-    public static final ByteRange empty = new ByteRange((byte) 0,0);
+    public static final ByteRange EMPTY = new ByteRange((byte) 0,0);
 
     public ByteRange(byte startValue, int count) {
         this.start = startValue;
         this.count = count;
+    }
+
+    @Override
+    public String toString() {
+        if (count == 0) {
+            return "<empty range>";
+        }
+        else if (count > 0) {
+            return getStart() + ".rangeTo(" + getEnd() + ")";
+        }
+        else {
+            return getStart() + ".downTo(" + getEnd() + ")";
+        }
     }
 
     @Override
@@ -91,10 +104,6 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
             return new MyIterator(getEnd(), -count, -step);
         else
             return new MyIterator(start, count, step);
-    }
-
-    public ByteRange minus() {
-        return new ByteRange(getEnd(), -count);
     }
 
     @Override

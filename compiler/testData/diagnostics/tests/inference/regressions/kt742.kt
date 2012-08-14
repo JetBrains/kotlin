@@ -1,3 +1,4 @@
+//KT-742 Stack overflow in type inference
 package a
 
 class List<T>(val head: T, val tail: List<T>? = null)

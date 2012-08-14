@@ -21,23 +21,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.parsing.JetParserDefinition;
-import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
-import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-
-import java.util.List;
+import org.jetbrains.jet.lang.resolve.scopes.*;
 
 /**
-* @author abreslav
-*/
+ * @author abreslav
+ */
 public class ScopeProvider {
 
     private final ResolveSession resolveSession;
@@ -62,9 +53,10 @@ public class ScopeProvider {
             throw new IllegalStateException("Package not found: " + fqName + " maybe the file is not in scope of this resolve session: " + file.getName());
         }
 
-        WritableScope writableScope = new WritableScopeImpl(
+        WritableScope fileScope = new WritableScopeImpl(
                 JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING, "File scope for declaration resolution");
-        writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
+
+        fileScope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
         NamespaceDescriptor rootPackageDescriptor = resolveSession.getPackageDescriptorByFqName(FqName.ROOT);
         if (rootPackageDescriptor == null) {
@@ -73,37 +65,18 @@ public class ScopeProvider {
 
         // Don't import twice
         if (!packageDescriptor.getQualifiedName().equals(FqName.ROOT)) {
-            writableScope.importScope(rootPackageDescriptor.getMemberScope());
+            fileScope.importScope(rootPackageDescriptor.getMemberScope());
         }
 
-        List<JetImportDirective> importDirectives = getFileImports(file);
-
-        ImportsResolver.processImportsInFile(true, writableScope, importDirectives,
+        ImportsResolver.processImportsInFile(true, fileScope, Lists.newArrayList(file.getImportDirectives()),
                                              rootPackageDescriptor.getMemberScope(),
                                              resolveSession.getModuleConfiguration(), resolveSession.getTrace(),
                                              resolveSession.getInjector().getQualifiedExpressionResolver());
 
-        writableScope.importScope(packageDescriptor.getMemberScope());
+        fileScope.changeLockLevel(WritableScope.LockLevel.READING);
 
-        writableScope.changeLockLevel(WritableScope.LockLevel.READING);
         // TODO: Cache
-        return writableScope;
-    }
-
-    public static List<JetImportDirective> getFileImports(JetFile file) {
-        List<JetImportDirective> fileImports = file.getImportDirectives();
-        List<JetImportDirective> importDirectives = Lists.newArrayList();
-        if(file.isScript()) {
-            JetScriptDefinition definition = JetScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file);
-            List<ImportPath> imports = definition.getImports();
-            if(!imports.isEmpty()) {
-                for (ImportPath importPath : imports) {
-                    importDirectives.add(JetPsiFactory.createImportDirective(file.getProject(), importPath));
-                }
-            }
-        }
-        importDirectives.addAll(fileImports);
-        return importDirectives;
+        return new ChainedScope(packageDescriptor, packageDescriptor.getMemberScope(), fileScope);
     }
 
     @NotNull

@@ -8,6 +8,8 @@ trait T {}
 
 class Br(t : T) : T by t {}
 
-open enum class E() {}
+open enum class EN() {
+  A
+}
 
-class Test2(e : E) : <!DELEGATION_NOT_TO_TRAIT!>E<!> by e {}
+class Test2(e : EN) : <!DELEGATION_NOT_TO_TRAIT!>EN<!> by e {}

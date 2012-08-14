@@ -233,4 +233,13 @@ public abstract class AnnotationCodegen {
             }
         };
     }
+
+    public static AnnotationCodegen forParameter(final int parameter, final MethodVisitor mv, JetTypeMapper mapper) {
+        return new AnnotationCodegen(mapper) {
+            @Override
+            AnnotationVisitor visitAnnotation(String descr, boolean visible) {
+                return mv.visitParameterAnnotation(parameter, descr, visible);
+            }
+        };
+    }
 }

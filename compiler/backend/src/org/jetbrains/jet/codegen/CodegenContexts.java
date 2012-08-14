@@ -40,6 +40,9 @@ import java.util.List;
  * @author Stepan Koltsov
  */
 public class CodegenContexts {
+    private CodegenContexts() {
+    }
+
     private static class FakeDescriptorForStaticContext implements DeclarationDescriptor {
 
         @NotNull
@@ -214,7 +217,7 @@ public class CodegenContexts {
 
             final Type type = enclosingClassType(typeMapper);
             outerExpression = type != null
-                        ? StackValue.field(type, typeMapper.getClassFQName(contextDescriptor), "this$0", false)
+                        ? StackValue.field(type, typeMapper.getJvmClassName(contextDescriptor), "this$0", false)
                         : null;
         }
 

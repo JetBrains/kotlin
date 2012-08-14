@@ -170,8 +170,9 @@ public class FunctionCodegen {
                         av.visitEnd();
                     }
                     for(int i = 0; i != paramDescrs.size(); ++i) {
-                        JetValueParameterAnnotationWriter av = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i + start);
                         ValueParameterDescriptor parameterDescriptor = paramDescrs.get(i);
+                        AnnotationCodegen.forParameter(i, mv, state.getInjector().getJetTypeMapper()).genAnnotations(parameterDescriptor);
+                        JetValueParameterAnnotationWriter av = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i + start);
                         av.writeName(parameterDescriptor.getName().getName());
                         av.writeHasDefaultValue(parameterDescriptor.declaresDefaultValue());
                         av.writeNullable(parameterDescriptor.getType().isNullable());
@@ -444,6 +445,10 @@ public class FunctionCodegen {
 
                 FrameMap frameMap = owner.prepareFrame(state.getInjector().getJetTypeMapper());
 
+                if (kind instanceof OwnerKind.StaticDelegateKind) {
+                    frameMap.leaveTemp();
+                }
+
                 ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), owner, state);
 
                 int var = 0;
@@ -452,14 +457,12 @@ public class FunctionCodegen {
                 }
 
                 Type receiverType;
-                if (receiverParameter.exists()) {
+                if (hasReceiver) {
                     receiverType = state.getInjector().getJetTypeMapper().mapType(receiverParameter.getType(), MapTypeMode.VALUE);
+                    var += receiverType.getSize();
                 }
                 else {
                     receiverType = Type.DOUBLE_TYPE;
-                }
-                if (hasReceiver) {
-                    var += receiverType.getSize();
                 }
 
                 Type[] argTypes = jvmSignature.getArgumentTypes();
@@ -484,12 +487,15 @@ public class FunctionCodegen {
 
                 int extra = hasReceiver ? 1 : 0;
 
-                Type[] argumentTypes = jvmSignature.getArgumentTypes();
                 for (int index = 0; index < paramDescrs.size(); index++) {
                     ValueParameterDescriptor parameterDescriptor = paramDescrs.get(index);
 
-                    Type t = argumentTypes[extra + index];
-                    Label endArg = null;
+                    Type t = argTypes[extra + index];
+
+                    if (frameMap.getIndex(parameterDescriptor) < 0) {
+                        frameMap.enter(parameterDescriptor, t.getSize());
+                    }
+
                     if (parameterDescriptor.declaresDefaultValue()) {
                         iv.load(maskIndex, Type.INT_TYPE);
                         iv.iconst(1 << index);
@@ -501,18 +507,14 @@ public class FunctionCodegen {
                         assert jetParameter != null;
                         codegen.gen(jetParameter.getDefaultValue(), t);
 
-                        endArg = new Label();
-                        iv.goTo(endArg);
+                        int ind = frameMap.getIndex(parameterDescriptor);
+                        iv.store(ind, t);
 
                         iv.mark(loadArg);
                     }
 
                     iv.load(var, t);
                     var += t.getSize();
-
-                    if (parameterDescriptor.declaresDefaultValue()) {
-                        iv.mark(endArg);
-                    }
                 }
 
                 if (!isStatic) {

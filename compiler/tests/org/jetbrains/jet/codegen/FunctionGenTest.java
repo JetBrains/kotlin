@@ -68,6 +68,14 @@ public class FunctionGenTest extends CodegenTestCase {
 //        System.out.println(generateToText());
     }
 
+    public void testDefaultArgs6() {
+        blackBoxFile("functions/defaultargs6.kt");
+    }
+
+    public void testDefaultArgs7() {
+        blackBoxFile("functions/defaultargs7.kt");
+    }
+
     public void testNoThisNoClosure() throws Exception {
         blackBoxFile("functions/nothisnoclosure.jet");
 //        System.out.println(generateToText());
@@ -121,7 +129,7 @@ public class FunctionGenTest extends CodegenTestCase {
         blackBoxFile("functions/invoke.kt");
     }
 
-    public void test2481() {
+    public void testKt2481() {
         blackBoxFile("regressions/kt2481.kt");
     }
 
@@ -135,6 +143,10 @@ public class FunctionGenTest extends CodegenTestCase {
 
     public void testKt2271() {
         blackBoxFile("regressions/kt2271.kt");
+    }
+
+    public void testKt2270() {
+        blackBoxFile("regressions/kt2270.kt");
     }
 
     public static class WithJavaFunctionGenTest extends CodegenTestCase {

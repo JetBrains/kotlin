@@ -42,7 +42,9 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     protected boolean allDescriptorsComputed = false;
 
     private final Map<Name, ClassDescriptor> classDescriptors = Maps.newHashMap();
-    private final Map<Name, Set<FunctionDescriptor>> functionDescriptors = Maps.newHashMap();
+    private final Map<Name, ClassDescriptor> objectDescriptors = Maps.newHashMap();
+
+    protected final Map<Name, Set<FunctionDescriptor>> functionDescriptors = Maps.newHashMap();
     private final Map<Name, Set<VariableDescriptor>> propertyDescriptors = Maps.newHashMap();
 
     protected final List<DeclarationDescriptor> allDescriptors = Lists.newArrayList();
@@ -58,8 +60,8 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     }
 
     @Nullable
-    private ClassDescriptor getClassOrObjectDescriptor(@NotNull Name name, boolean object) {
-        ClassDescriptor known = classDescriptors.get(name);
+    private ClassDescriptor getClassOrObjectDescriptor(@NotNull Map<Name, ClassDescriptor> cache, @NotNull Name name, boolean object) {
+        ClassDescriptor known = cache.get(name);
         if (known != null) return known;
 
         if (allDescriptorsComputed) return null;
@@ -67,12 +69,13 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         JetClassOrObject classOrObjectDeclaration = declarationProvider.getClassOrObjectDeclaration(name);
         if (classOrObjectDeclaration == null) return null;
 
-        if (object != classOrObjectDeclaration instanceof JetObjectDeclaration) return null;
+        // TODO: when enum entries with constructors are dropped, replace with declaresObjectOrEnumConstant()
+        if (object != mayDeclareObject(classOrObjectDeclaration)) return null;
 
         ClassDescriptor classDescriptor = new LazyClassDescriptor(resolveSession, thisDescriptor, name,
-                                                                  JetClassInfoUtil.createClassLikeInfo(classOrObjectDeclaration));
+                                                      JetClassInfoUtil.createClassLikeInfo(classOrObjectDeclaration));
 
-        classDescriptors.put(name, classDescriptor);
+        cache.put(name, classDescriptor);
         if (!object) {
             allDescriptors.add(classDescriptor);
         }
@@ -80,15 +83,25 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         return classDescriptor;
     }
 
+    private static boolean mayDeclareObject(JetClassOrObject declaration) {
+        return declaration instanceof JetObjectDeclaration || declaration instanceof JetEnumEntry;
+    }
+
+    protected static boolean declaresObjectOrEnumConstant(JetClassOrObject declaration) {
+        if (declaration instanceof JetObjectDeclaration) {
+            return true;
+        }
+        return declaration instanceof JetEnumEntry && !declaration.hasPrimaryConstructor();
+    }
+
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        return getClassOrObjectDescriptor(name, false);
+        return getClassOrObjectDescriptor(classDescriptors, name, false);
     }
 
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        // TODO: We shouldn't really allow objects in classes...
-        return getClassOrObjectDescriptor(name, true);
+        return getClassOrObjectDescriptor(objectDescriptors, name, true);
     }
 
     @NotNull
@@ -145,14 +158,13 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
         // Objects are also properties
         JetClassOrObject classOrObjectDeclaration = declarationProvider.getClassOrObjectDeclaration(name);
-        if (classOrObjectDeclaration instanceof JetObjectDeclaration) {
-            JetObjectDeclaration objectDeclaration = (JetObjectDeclaration) classOrObjectDeclaration;
+        if (declaresObjectOrEnumConstant(classOrObjectDeclaration)) {
             ClassDescriptor classifier = getObjectDescriptor(name);
             if (classifier == null) {
                 throw new IllegalStateException("Object declaration " + name + " found in the DeclarationProvider " + declarationProvider + " but not in the scope " + this);
             }
             VariableDescriptor propertyDescriptor = resolveSession.getInjector().getDescriptorResolver()
-                    .resolveObjectDeclaration(thisDescriptor, objectDeclaration, classifier, resolveSession.getTrace());
+                    .resolveObjectDeclaration(thisDescriptor, classOrObjectDeclaration, classifier, resolveSession.getTrace());
             result.add(propertyDescriptor);
         }
 
@@ -170,7 +182,8 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @NotNull
     @Override
     public Collection<ClassDescriptor> getObjectDescriptors() {
-        throw new UnsupportedOperationException(); // TODO
+        getAllDescriptors();
+        return objectDescriptors.values();
     }
 
     @Override
@@ -199,49 +212,53 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
-        for (JetDeclaration declaration : declarationProvider.getAllDeclarations()) {
-            if (declaration instanceof JetEnumEntry) {
-                JetEnumEntry jetEnumEntry = (JetEnumEntry) declaration;
-                Name name = jetEnumEntry.getNameAsName();
-                if (name != null) {
-                    getProperties(name);
+        if (!allDescriptorsComputed) {
+            for (JetDeclaration declaration : declarationProvider.getAllDeclarations()) {
+                if (declaration instanceof JetEnumEntry) {
+                    JetEnumEntry jetEnumEntry = (JetEnumEntry) declaration;
+                    Name name = jetEnumEntry.getNameAsName();
+                    if (name != null) {
+                        getProperties(name);
+                        getObjectDescriptor(name);
+                    }
+                }
+                else if (declaration instanceof JetObjectDeclaration) {
+                    JetClassOrObject classOrObject = (JetClassOrObject) declaration;
+                    Name name = classOrObject.getNameAsName();
+                    if (name != null) {
+                        getProperties(name);
+                        getObjectDescriptor(name);
+                    }
+                }
+                else if (declaration instanceof JetClassOrObject) {
+                    JetClassOrObject classOrObject = (JetClassOrObject) declaration;
+                    Name name = classOrObject.getNameAsName();
+                    if (name != null) {
+                        getClassifier(name);
+                    }
+                }
+                else if (declaration instanceof JetFunction) {
+                    JetFunction function = (JetFunction) declaration;
+                    getFunctions(function.getNameAsSafeName());
+                }
+                else if (declaration instanceof JetProperty) {
+                    JetProperty property = (JetProperty) declaration;
+                    getProperties(property.getNameAsSafeName());
+                }
+                else if (declaration instanceof JetParameter) {
+                    JetParameter parameter = (JetParameter) declaration;
+                    Name name = parameter.getNameAsName();
+                    if (name != null) {
+                        getProperties(name);
+                    }
+                }
+                else {
+                    throw new IllegalArgumentException("Unsupported declaration kind: " + declaration);
                 }
             }
-            else if (declaration instanceof JetObjectDeclaration) {
-                JetClassOrObject classOrObject = (JetClassOrObject) declaration;
-                Name name = classOrObject.getNameAsName();
-                if (name != null) {
-                    getProperties(name);
-                }
-            }
-            else if (declaration instanceof JetClassOrObject) {
-                JetClassOrObject classOrObject = (JetClassOrObject) declaration;
-                Name name = classOrObject.getNameAsName();
-                if (name != null) {
-                    getClassifier(name);
-                }
-            }
-            else if (declaration instanceof JetFunction) {
-                JetFunction function = (JetFunction) declaration;
-                getFunctions(function.getNameAsSafeName());
-            }
-            else if (declaration instanceof JetProperty) {
-                JetProperty property = (JetProperty) declaration;
-                getProperties(property.getNameAsSafeName());
-            }
-            else if (declaration instanceof JetParameter) {
-                JetParameter parameter = (JetParameter) declaration;
-                Name name = parameter.getNameAsName();
-                if (name != null) {
-                    getProperties(name);
-                }
-            }
-            else {
-                throw new IllegalArgumentException("Unsupported declaration kind: " + declaration);
-            }
+            addExtraDescriptors();
+            allDescriptorsComputed = true;
         }
-        addExtraDescriptors();
-        allDescriptorsComputed = true;
         return allDescriptors;
     }
 

@@ -313,7 +313,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testKt1076() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
         blackBoxFile("regressions/kt1076.kt");
     }
 
@@ -375,5 +375,30 @@ public class ControlStructuresTest extends CodegenTestCase {
     public void testKt2291() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt2291.kt");
+    }
+
+    public void testKt2259() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("regressions/kt2259.kt");
+    }
+
+    public void testKt2577() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("regressions/kt2577.kt");
+    }
+
+    public void testTryCatchFinallyChain() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("controlStructures/tryCatchFinallyChain.kt");
+    }
+
+    public void testKt2597() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("regressions/kt2597.kt");
+    }
+
+    public void testKt2598() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("regressions/kt2598.kt");
     }
 }

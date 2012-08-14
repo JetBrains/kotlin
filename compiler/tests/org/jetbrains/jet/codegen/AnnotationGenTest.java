@@ -60,6 +60,77 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNull(aClass.getDeclaredField("x").getAnnotation(Deprecated.class));
     }
 
+    public void testAnnotationForParamInGlobalFunction() throws NoSuchFieldException, NoSuchMethodException {
+        loadText("fun x([Deprecated] i: Int) {}");
+        Class aClass = generateNamespaceClass();
+        Method x = aClass.getMethod("x", int.class);
+        assertNotNull(x);
+        // Get annotations for first parameter
+        Annotation[] annotations = x.getParameterAnnotations()[0];
+        assertNotNull(getDeprecatedAnnotationFromList(annotations));
+    }
+
+    public void testAnnotationForParamInLocalFunction() throws NoSuchFieldException, NoSuchMethodException {
+        loadText("class A() { fun x([Deprecated] i: Int) {}}");
+        Class aClass = generateClass("A");
+        Method x = aClass.getMethod("x", int.class);
+        assertNotNull(x);
+        // Get annotations for first parameter
+        Annotation[] annotations = x.getParameterAnnotations()[0];
+        assertNotNull(getDeprecatedAnnotationFromList(annotations));
+    }
+
+    public void testParamInConstructor() throws NoSuchFieldException, NoSuchMethodException {
+        loadText("class A ([Deprecated] x: Int) {}");
+        Class aClass = generateClass("A");
+        Constructor constructor = aClass.getDeclaredConstructor(int.class);
+        assertNotNull(constructor);
+        // Get annotations for first parameter
+        Annotation[] annotations = constructor.getParameterAnnotations()[0];
+        assertNotNull(getDeprecatedAnnotationFromList(annotations));
+    }
+
+    public void testPropFieldInConstructor() throws NoSuchFieldException, NoSuchMethodException {
+        loadText("class A ([Deprecated] var x: Int) {}");
+        Class aClass = generateClass("A");
+        Constructor constructor = aClass.getDeclaredConstructor(int.class);
+        assertNotNull(constructor);
+        // Get annotations for first parameter
+        Annotation[] annotations = constructor.getParameterAnnotations()[0];
+        assertNotNull(getDeprecatedAnnotationFromList(annotations));
+        assertNull(aClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
+        assertNull(aClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
+        assertNotNull(aClass.getDeclaredField("x").getAnnotation(Deprecated.class));
+    }
+    
+    public void testAnnotationWithParamForParamInFunction() throws NoSuchFieldException, NoSuchMethodException {
+        loadText("import java.lang.annotation.*\n" +
+                 "Retention(RetentionPolicy.RUNTIME) annotation class A(val a: String)\n" +
+                 "fun x(A(\"239\") i: Int) {}");
+        Class aClass = generateNamespaceClass();
+        Method x = aClass.getMethod("x", int.class);
+        assertNotNull(x);
+        // Get annotations for first parameter
+        Annotation[] annotations = x.getParameterAnnotations()[0];
+        Annotation resultAnnotation = null;
+        for (Annotation annotation : annotations) {
+            if (annotation.annotationType().getCanonicalName().equals("A")) {
+                resultAnnotation = annotation;
+                break;
+            }
+        }
+        assertNotNull(resultAnnotation);
+    }
+
+    private Deprecated getDeprecatedAnnotationFromList(Annotation[] annotations) {
+        for (Annotation annotation : annotations) {
+            if (annotation instanceof Deprecated) {
+                return (Deprecated) annotation;
+            }
+        }
+        return null;
+    } 
+
     public void testConstructor() throws NoSuchFieldException, NoSuchMethodException {
         loadText("class A [Deprecated] () {}");
         Class aClass = generateClass("A");

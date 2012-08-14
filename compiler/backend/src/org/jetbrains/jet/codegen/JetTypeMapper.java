@@ -62,6 +62,7 @@ public class JetTypeMapper {
     public static final Type JL_NUMBER_TYPE = Type.getObjectType("java/lang/Number");
     public static final Type JL_STRING_BUILDER = Type.getObjectType("java/lang/StringBuilder");
     public static final Type JL_STRING_TYPE = Type.getObjectType("java/lang/String");
+    public static final Type JL_ENUM_TYPE = Type.getObjectType("java/lang/Enum");
     public static final Type JL_CHAR_SEQUENCE_TYPE = Type.getObjectType("java/lang/CharSequence");
     private static final Type JL_COMPARABLE_TYPE = Type.getObjectType("java/lang/Comparable");
     public static final Type JL_CLASS_TYPE = Type.getObjectType("java/lang/Class");
@@ -84,11 +85,79 @@ public class JetTypeMapper {
     public static final Type TYPE_FUNCTION0 = Type.getObjectType("jet/Function0");
     public static final Type TYPE_FUNCTION1 = Type.getObjectType("jet/Function1");
 
+    public static class SpecialTypes {
+        private static final class SpecialTypeKey {
+            @NotNull
+            private final FqNameUnsafe className;
+            private final boolean nullable;
+
+            private SpecialTypeKey(@NotNull FqNameUnsafe className, boolean nullable) {
+                this.className = className;
+                this.nullable = nullable;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+
+                SpecialTypeKey that = (SpecialTypeKey) o;
+
+                if (nullable != that.nullable) return false;
+                if (!className.equals(that.className)) return false;
+
+                return true;
+            }
+
+            @Override
+            public int hashCode() {
+                int result = className.hashCode();
+                result = 31 * result + (nullable ? 1 : 0);
+                return result;
+            }
+        }
+
+        private final Map<SpecialTypeKey, Type> asmTypes = Maps.newHashMap();
+
+        @Nullable
+        public Type get(@NotNull JetType type) {
+            ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
+            return asmTypes.get(new SpecialTypeKey(DescriptorUtils.getFQName(classifier), type.isNullable()));
+        }
+
+        private void register(@NotNull ClassName className, @NotNull Type nonNullType, @NotNull Type nullableType) {
+            asmTypes.put(new SpecialTypeKey(className.getFqName().toUnsafe(), true), nullableType);
+            asmTypes.put(new SpecialTypeKey(className.getFqName().toUnsafe(), false), nonNullType);
+        }
+
+        public void init() {
+            register(JetStandardLibraryNames.NOTHING, TYPE_NOTHING, TYPE_NOTHING);
+
+            for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
+                PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
+                register(primitiveType.getClassName(), jvmPrimitiveType.getAsmType(), jvmPrimitiveType.getWrapper().getAsmType());
+            }
+
+            register(JetStandardLibraryNames.NUMBER, JL_NUMBER_TYPE, JL_NUMBER_TYPE);
+            register(JetStandardLibraryNames.STRING, JL_STRING_TYPE, JL_STRING_TYPE);
+            register(JetStandardLibraryNames.CHAR_SEQUENCE, JL_CHAR_SEQUENCE_TYPE, JL_CHAR_SEQUENCE_TYPE);
+            register(JetStandardLibraryNames.THROWABLE, TYPE_THROWABLE, TYPE_THROWABLE);
+            register(JetStandardLibraryNames.COMPARABLE, JL_COMPARABLE_TYPE, JL_COMPARABLE_TYPE);
+            register(JetStandardLibraryNames.ENUM, JL_ENUM_TYPE, JL_ENUM_TYPE);
+
+            for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
+                PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
+                register(primitiveType.getArrayClassName(), jvmPrimitiveType.getAsmArrayType(), jvmPrimitiveType.getAsmArrayType());
+            }
+        }
+    }
+
+
     public BindingContext bindingContext;
     private ClosureAnnotator closureAnnotator;
     private boolean mapBuiltinsToJava;
     private ClassBuilderMode classBuilderMode;
-
+    private final SpecialTypes specialTypes = new SpecialTypes();
 
     @Inject
     public void setBindingContext(BindingContext bindingContext) {
@@ -112,11 +181,8 @@ public class JetTypeMapper {
 
     @PostConstruct
     public void init() {
-        initKnownTypes();
+        specialTypes.init();
     }
-
-
-
 
     public boolean hasThis0(ClassDescriptor classDescriptor) {
         return closureAnnotator.hasThis0(classDescriptor);
@@ -125,40 +191,6 @@ public class JetTypeMapper {
     public ClosureAnnotator getClosureAnnotator() {
         return closureAnnotator;
     }
-
-    private static final class KnownTypeKey {
-        @NotNull
-        private final FqNameUnsafe className;
-        private final boolean nullable;
-
-        private KnownTypeKey(@NotNull FqNameUnsafe className, boolean nullable) {
-            this.className = className;
-            this.nullable = nullable;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            KnownTypeKey that = (KnownTypeKey) o;
-
-            if (nullable != that.nullable) return false;
-            if (!className.equals(that.className)) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = className.hashCode();
-            result = 31 * result + (nullable ? 1 : 0);
-            return result;
-        }
-    }
-
-    private final HashMap<KnownTypeKey, Type> knowTypes = Maps.newHashMap();
-
 
     public static boolean isIntPrimitive(Type type) {
         return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE;
@@ -309,17 +341,12 @@ public class JetTypeMapper {
         return null;
     }
 
-    public JvmClassName getClassFQName(ClassDescriptor classDescriptor) {
-        return JvmClassName.byInternalName(getFQName(classDescriptor));
+    public JvmClassName getJvmClassName(ClassDescriptor classDescriptor) {
+        return JvmClassName.byInternalName(getJvmInternalFQName(classDescriptor));
     }
 
-    /**
-     * @return Internal name
-     *
-     * @see DescriptorUtils#getFQName(DeclarationDescriptor)
-     */
     @NotNull
-    private String getFQName(@NotNull DeclarationDescriptor descriptor) {
+    private String getJvmInternalFQName(@NotNull DeclarationDescriptor descriptor) {
         descriptor = descriptor.getOriginal();
 
         if (descriptor instanceof FunctionDescriptor) {
@@ -340,12 +367,15 @@ public class JetTypeMapper {
                 if (klass.getContainingDeclaration() instanceof ClassDescriptor) {
                     ClassDescriptor containingKlass = (ClassDescriptor) klass.getContainingDeclaration();
                     if (containingKlass.getKind() == ClassKind.ENUM_CLASS) {
-                        return getFQName(containingKlass);
+                        return getJvmInternalFQName(containingKlass);
+                    }
+                    else {
+                        return getJvmInternalFQName(containingKlass) + JvmAbi.CLASS_OBJECT_SUFFIX;
                     }
                 }
             }
             else if (klass.getKind() == ClassKind.ENUM_ENTRY) {
-                return getFQName(klass.getContainingDeclaration());
+                return getJvmInternalFQName(klass.getContainingDeclaration());
             }
         }
 
@@ -363,7 +393,7 @@ public class JetTypeMapper {
             return className.getInternalName();
         }
 
-        String baseName = getFQName(container);
+        String baseName = getJvmInternalFQName(container);
         if (!baseName.isEmpty()) {
             return baseName + (container instanceof NamespaceDescriptor ? "/" : "$") + name.getIdentifier();
         }
@@ -383,17 +413,16 @@ public class JetTypeMapper {
 
         if (mapBuiltinsToJava) {
             if (classifier instanceof ClassDescriptor) {
-                KnownTypeKey key = new KnownTypeKey(DescriptorUtils.getFQName(classifier), jetType.isNullable());
-                known = knowTypes.get(key);
+                known = specialTypes.get(jetType);
             }
         }
 
         if (known != null) {
             if (kind == MapTypeMode.VALUE) {
-                return mapKnownAsmType(jetType, known, signatureVisitor, false);
+                return mapKnownAsmType(jetType, known, signatureVisitor);
             }
             else if (kind == MapTypeMode.TYPE_PARAMETER) {
-                return mapKnownAsmType(jetType, known, signatureVisitor, true);
+                return mapKnownAsmType(jetType, boxType(known), signatureVisitor);
             }
             else if (kind == MapTypeMode.TRAIT_IMPL) {
                 throw new IllegalStateException("TRAIT_IMPL is not possible for " + jetType);
@@ -426,7 +455,7 @@ public class JetTypeMapper {
             }
             Type asmType = Type.getObjectType("error/NonExistentClass");
             if (signatureVisitor != null) {
-                visitAsmType(signatureVisitor, asmType, true);
+                writeSimpleType(signatureVisitor, asmType, true);
             }
             checkValidType(asmType);
             return asmType;
@@ -459,7 +488,7 @@ public class JetTypeMapper {
 
         if (JetStandardClasses.getAny().equals(descriptor)) {
             if (signatureVisitor != null) {
-                visitAsmType(signatureVisitor, TYPE_OBJECT, jetType.isNullable());
+                writeSimpleType(signatureVisitor, TYPE_OBJECT, jetType.isNullable());
             }
             checkValidType(TYPE_OBJECT);
             return TYPE_OBJECT;
@@ -467,33 +496,12 @@ public class JetTypeMapper {
 
         if (descriptor instanceof ClassDescriptor) {
 
-            Type asmType;
-            boolean forceReal;
 
-            if (JetStandardLibraryNames.COMPARABLE.is((ClassDescriptor) descriptor) && mapBuiltinsToJava) {
-                if (jetType.getArguments().size() != 1) {
-                    throw new UnsupportedOperationException("Comparable must have one type argument");
-                }
+            JvmClassName name = getJvmClassName((ClassDescriptor) descriptor);
+            Type asmType = Type.getObjectType(name.getInternalName() + (kind == MapTypeMode.TRAIT_IMPL ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
+            boolean forceReal = isForceReal(name);
 
-                asmType = JL_COMPARABLE_TYPE;
-                forceReal = false;
-            }
-            else {
-                JvmClassName name = getClassFQName((ClassDescriptor) descriptor);
-                asmType = Type.getObjectType(name.getInternalName() + (kind == MapTypeMode.TRAIT_IMPL ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
-                forceReal = isForceReal(name);
-            }
-
-            if (signatureVisitor != null) {
-                signatureVisitor.writeClassBegin(asmType.getInternalName(), jetType.isNullable(), forceReal);
-                for (TypeProjection proj : jetType.getArguments()) {
-                    // TODO: +-
-                    signatureVisitor.writeTypeArgument(proj.getProjectionKind());
-                    mapType(proj.getType(), signatureVisitor, MapTypeMode.TYPE_PARAMETER);
-                    signatureVisitor.writeTypeArgumentEnd();
-                }
-                signatureVisitor.writeClassEnd();
-            }
+            writeGenericType(jetType, signatureVisitor, asmType, forceReal);
 
             checkValidType(asmType);
             return asmType;
@@ -513,26 +521,34 @@ public class JetTypeMapper {
 
         throw new UnsupportedOperationException("Unknown type " + jetType);
     }
-    
-    private Type mapKnownAsmType(JetType jetType, Type asmType, @Nullable BothSignatureWriter signatureVisitor, boolean boxPrimitive) {
-        if (boxPrimitive) {
-            Type boxed = boxType(asmType);
-            if (signatureVisitor != null) {
-                visitAsmType(signatureVisitor, boxed, jetType.isNullable());
+
+    private void writeGenericType(JetType jetType, BothSignatureWriter signatureVisitor, Type asmType, boolean forceReal) {
+        if (signatureVisitor != null) {
+            signatureVisitor.writeClassBegin(asmType.getInternalName(), jetType.isNullable(), forceReal);
+            for (TypeProjection proj : jetType.getArguments()) {
+                // TODO: +-
+                signatureVisitor.writeTypeArgument(proj.getProjectionKind());
+                mapType(proj.getType(), signatureVisitor, MapTypeMode.TYPE_PARAMETER);
+                signatureVisitor.writeTypeArgumentEnd();
             }
-            checkValidType(boxed);
-            return boxed;
-        }
-        else {
-            if (signatureVisitor != null) {
-                visitAsmType(signatureVisitor, asmType, jetType.isNullable());
-            }
-            checkValidType(asmType);
-            return asmType;
+            signatureVisitor.writeClassEnd();
         }
     }
 
-    public static void visitAsmType(BothSignatureWriter visitor, Type asmType, boolean nullable) {
+    private Type mapKnownAsmType(JetType jetType, Type asmType, @Nullable BothSignatureWriter signatureVisitor) {
+        if (signatureVisitor != null) {
+            if (jetType.getArguments().isEmpty()) {
+                writeSimpleType(signatureVisitor, asmType, jetType.isNullable());
+            }
+            else {
+                writeGenericType(jetType, signatureVisitor, asmType, false);
+            }
+        }
+        checkValidType(asmType);
+        return asmType;
+    }
+
+    public static void writeSimpleType(BothSignatureWriter visitor, Type asmType, boolean nullable) {
         visitor.writeAsmType(asmType, nullable);
     }
 
@@ -611,6 +627,8 @@ public class JetTypeMapper {
             boolean originalIsInterface = CodegenUtil.isInterface(declarationOwner);
             boolean currentIsInterface = CodegenUtil.isInterface(currentOwner);
 
+            boolean isAccessor = isAccessor(functionDescriptor);
+
             ClassDescriptor receiver;
             if (currentIsInterface && !originalIsInterface) {
                 receiver = declarationOwner;
@@ -630,7 +648,7 @@ public class JetTypeMapper {
 
             invokeOpcode = isInterface
                     ? (superCall ? Opcodes.INVOKESTATIC : Opcodes.INVOKEINTERFACE)
-                    : (superCall ? Opcodes.INVOKESPECIAL : Opcodes.INVOKEVIRTUAL);
+                    : (isAccessor ? Opcodes.INVOKESTATIC : (superCall ? Opcodes.INVOKESPECIAL : Opcodes.INVOKEVIRTUAL));
             if (isInterface && superCall) {
                 descriptor = mapSignature(functionDescriptor, false, OwnerKind.TRAIT_IMPL);
                 owner = JvmClassName.byInternalName(owner.getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
@@ -653,7 +671,11 @@ public class JetTypeMapper {
                 owner, ownerForDefaultImpl, ownerForDefaultParam, descriptor, invokeOpcode,
                 thisClass, receiverParameterType, null);
     }
-    
+
+    private static boolean isAccessor(FunctionDescriptor functionDescriptor) {
+        return functionDescriptor instanceof AccessorForFunctionDescriptor || functionDescriptor instanceof AccessorForPropertyDescriptor.Getter || functionDescriptor instanceof AccessorForPropertyDescriptor.Setter;
+    }
+
     @NotNull
     private static FunctionDescriptor findAnyDeclaration(@NotNull FunctionDescriptor function) {
         //if (function.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
@@ -681,6 +703,12 @@ public class JetTypeMapper {
         final List<ValueParameterDescriptor> parameters = f.getValueParameters();
 
         signatureVisitor.writeParametersStart();
+
+        if(isAccessor(f)) {
+            signatureVisitor.writeParameterType(JvmMethodParameterKind.THIS);
+            mapType(((ClassifierDescriptor)f.getContainingDeclaration()).getDefaultType(), signatureVisitor, MapTypeMode.VALUE);
+            signatureVisitor.writeParameterTypeEnd();
+        }
 
         if (kind == OwnerKind.TRAIT_IMPL) {
             ClassDescriptor containingDeclaration = (ClassDescriptor) f.getContainingDeclaration();
@@ -784,7 +812,13 @@ public class JetTypeMapper {
         writeFormalTypeParameters(f.getTypeParameters(), signatureWriter);
 
         signatureWriter.writeParametersStart();
-        
+
+        if(isAccessor(f)) {
+            signatureWriter.writeParameterType(JvmMethodParameterKind.THIS);
+            mapType(((ClassifierDescriptor)f.getContainingDeclaration()).getDefaultType(), signatureWriter, MapTypeMode.VALUE);
+            signatureWriter.writeParameterTypeEnd();
+        }
+
         final List<ValueParameterDescriptor> parameters = f.getValueParameters();
         if (receiver.exists()) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.RECEIVER);
@@ -826,6 +860,13 @@ public class JetTypeMapper {
             mapType(containingDeclaration.getDefaultType(), signatureWriter, MapTypeMode.IMPL);
             signatureWriter.writeParameterTypeEnd();
         }
+        else {
+            if(descriptor instanceof AccessorForPropertyDescriptor) {
+                signatureWriter.writeParameterType(JvmMethodParameterKind.THIS);
+                mapType(((ClassifierDescriptor)descriptor.getContainingDeclaration()).getDefaultType(), signatureWriter, MapTypeMode.VALUE);
+                signatureWriter.writeParameterTypeEnd();
+            }
+        }
 
         if (descriptor.getReceiverParameter().exists()) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.RECEIVER);
@@ -866,6 +907,13 @@ public class JetTypeMapper {
             mapType(containingDeclaration.getDefaultType(), signatureWriter, MapTypeMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
         }
+        else {
+            if(descriptor instanceof AccessorForPropertyDescriptor) {
+                signatureWriter.writeParameterType(JvmMethodParameterKind.THIS);
+                mapType(((ClassifierDescriptor)descriptor.getContainingDeclaration()).getDefaultType(), signatureWriter, MapTypeMode.VALUE);
+                signatureWriter.writeParameterTypeEnd();
+            }
+        }
 
         if (descriptor.getReceiverParameter().exists()) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.RECEIVER);
@@ -896,9 +944,19 @@ public class JetTypeMapper {
 
         signatureWriter.writeParametersStart();
 
+        ClassDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (hasThis0) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.THIS0);
-            mapType(closureAnnotator.getEclosingClassDescriptor(descriptor.getContainingDeclaration()).getDefaultType(), signatureWriter, MapTypeMode.VALUE);
+            mapType(closureAnnotator.getEclosingClassDescriptor(containingDeclaration).getDefaultType(), signatureWriter, MapTypeMode.VALUE);
+            signatureWriter.writeParameterTypeEnd();
+        }
+
+        if(containingDeclaration.getKind() == ClassKind.ENUM_CLASS) {
+            signatureWriter.writeParameterType(JvmMethodParameterKind.ENUM_NAME);
+            mapType(JetStandardLibrary.getInstance().getStringType(), signatureWriter, MapTypeMode.VALUE);
+            signatureWriter.writeParameterTypeEnd();
+            signatureWriter.writeParameterType(JvmMethodParameterKind.ENUM_ORDINAL);
+            mapType(JetStandardLibrary.getInstance().getIntType(), signatureWriter, MapTypeMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
         }
 
@@ -971,7 +1029,7 @@ public class JetTypeMapper {
                 return defaultFlags;
             }
             if (p.getContainingDeclaration() instanceof NamespaceDescriptor) {
-                return ACC_PROTECTED;
+                return 0;
             }
             return ACC_PRIVATE;
         }
@@ -995,36 +1053,13 @@ public class JetTypeMapper {
         return result;
     }
 
-    private void registerKnownType(@NotNull ClassName className, @NotNull Type nonNullType, @NotNull Type nullableType) {
-        knowTypes.put(new KnownTypeKey(className.getFqName().toUnsafe(), true), nullableType);
-        knowTypes.put(new KnownTypeKey(className.getFqName().toUnsafe(), false), nonNullType);
-    }
-
-    private void initKnownTypes() {
-        registerKnownType(JetStandardLibraryNames.NOTHING, TYPE_NOTHING, TYPE_NOTHING);
-
-        for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
-            PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-            registerKnownType(primitiveType.getClassName(), jvmPrimitiveType.getAsmType(), jvmPrimitiveType.getWrapper().getAsmType());
-        }
-
-        registerKnownType(JetStandardLibraryNames.NUMBER, JL_NUMBER_TYPE, JL_NUMBER_TYPE);
-        registerKnownType(JetStandardLibraryNames.STRING, JL_STRING_TYPE, JL_STRING_TYPE);
-        registerKnownType(JetStandardLibraryNames.CHAR_SEQUENCE, JL_CHAR_SEQUENCE_TYPE, JL_CHAR_SEQUENCE_TYPE);
-        registerKnownType(JetStandardLibraryNames.THROWABLE, TYPE_THROWABLE, TYPE_THROWABLE);
-
-        for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
-            PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-            registerKnownType(primitiveType.getArrayClassName(), jvmPrimitiveType.getAsmArrayType(), jvmPrimitiveType.getAsmArrayType());
-        }
-    }
-    
     private static boolean isForceReal(JvmClassName className) {
         return JvmPrimitiveType.getByWrapperClass(className) != null
                 || className.getFqName().getFqName().equals("java.lang.String")
                 || className.getFqName().getFqName().equals("java.lang.CharSequence")
                 || className.getFqName().getFqName().equals("java.lang.Object")
                 || className.getFqName().getFqName().equals("java.lang.Number")
+                || className.getFqName().getFqName().equals("java.lang.Enum")
                 || className.getFqName().getFqName().equals("java.lang.Comparable");
     }
 

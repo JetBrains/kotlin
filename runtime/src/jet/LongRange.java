@@ -23,12 +23,26 @@ public final class LongRange implements Range<Long>, LongIterable {
     private final long start;
     private final long count;
 
-    public static final LongRange empty = new LongRange(0L,0L);
+    public static final LongRange EMPTY = new LongRange(0L,0L);
 
     public LongRange(long startValue, long count) {
         this.start = startValue;
         this.count = count;
     }
+
+    @Override
+    public String toString() {
+        if (count == 0) {
+            return "<empty range>";
+        }
+        else if (count > 0) {
+            return getStart() + ".rangeTo(" + getEnd() + ")";
+        }
+        else {
+            return getStart() + ".downTo(" + getEnd() + ")";
+        }
+    }
+
 
     public LongIterator step(long step) {
         if (step < 0)
@@ -91,10 +105,6 @@ public final class LongRange implements Range<Long>, LongIterable {
 
     public long getSize() {
         return count < 0 ? -count : count;
-    }
-
-    public LongRange minus() {
-        return new LongRange(getEnd(), -count);
     }
 
     @Override

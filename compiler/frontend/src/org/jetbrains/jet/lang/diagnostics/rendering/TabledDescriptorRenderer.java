@@ -141,43 +141,6 @@ public class TabledDescriptorRenderer {
         return new TableRenderer();
     }
 
-
-    //protected final List<TableRenderer> previousTables = Lists.newArrayList();
-    //private TextRow currentFirstText;
-    //private List<TableRow> currentRows;
-    //
-    //public TabledDescriptorRenderer newElement() {
-    //    previousTables.add(new TableRenderer(currentFirstText, currentRows));
-    //    currentFirstText = null;
-    //    currentRows = Lists.newArrayList();
-    //    return this;
-    //}
-    //
-    //public TabledDescriptorRenderer text(String text) {
-    //    if (currentRows.isEmpty()) {
-    //        currentFirstText = new TextRow(text);
-    //        return this;
-    //    }
-    //    currentRows.add(new TextRow(text));
-    //    return this;
-    //}
-    //
-    //public TabledDescriptorRenderer text(String text, Object... args) {
-    //    return text(String.format(text, args));
-    //}
-
-
-
-
-    //private TabledDescriptorRenderer(@Nullable TextRow firstText, @NotNull List<TableRow> rows) {
-    //    this.currentFirstText = firstText;
-    //    this.currentRows = rows;
-    //}
-    //
-    //protected TabledDescriptorRenderer() {
-    //    this(null, Lists.<TableRow>newArrayList());
-    //}
-
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();

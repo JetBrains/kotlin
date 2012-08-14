@@ -370,7 +370,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testKt756 () {
         blackBoxFile("regressions/kt756.jet");
-        System.out.println(generateToText());
+        //System.out.println(generateToText());
     }
 
     public void testKt757 () {
@@ -382,7 +382,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     }
 
     public void testKt882 () {
-//        blackBoxFile("regressions/kt882.jet");
+        blackBoxFile("regressions/kt882.jet");
     }
 
     public void testKt887 () {
@@ -399,10 +399,6 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testKt765 () {
         blackBoxFile("regressions/kt765.kt");
-    }
-
-    public void testKt930 () {
-        blackBoxFile("regressions/kt930.kt");
     }
 
     public void testKt944 () {
@@ -447,5 +443,9 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testKt2275() {
         blackBoxFile("regressions/kt2275.kt");
+    }
+
+    public void testEmptyRanges() throws Exception {
+        blackBoxFile("emptyRanges.kt");
     }
 }

@@ -25,6 +25,9 @@ import org.jetbrains.jet.lang.types.ref.ClassName;
  */
 public class JetStandardLibraryNames {
 
+    private JetStandardLibraryNames() {
+    }
+
     @NotNull
     private static ClassName classIn(@NotNull String name, int typeParameterCount) {
         return new ClassName(
@@ -41,5 +44,5 @@ public class JetStandardLibraryNames {
     public static final ClassName CHAR_SEQUENCE = classIn("CharSequence", 0);
     public static final ClassName NUMBER = classIn("Number", 0);
     public static final ClassName THROWABLE = classIn("Throwable", 0);
-
+    public static final ClassName ENUM = classIn("Enum", 1);
 }

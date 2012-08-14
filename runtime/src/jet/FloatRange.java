@@ -23,9 +23,24 @@ public final class FloatRange implements Range<Float> {
     private final float start;
     private final float size;
 
+    public static final FloatRange EMPTY = new FloatRange(0, 0);
+
     public FloatRange(float startValue, float size) {
         this.start = startValue;
         this.size = size;
+    }
+
+    @Override
+    public String toString() {
+        if (size == 0.0) {
+            return "<empty range>";
+        }
+        else if (size > 0) {
+            return getStart() + ".rangeTo(" + getEnd() + ")";
+        }
+        else {
+            return getStart() + ".downTo(" + getEnd() + ")";
+        }
     }
 
     @Override
@@ -79,10 +94,6 @@ public final class FloatRange implements Range<Float> {
 
     public float getSize() {
         return size < 0 ? -size : size;
-    }
-
-    public FloatRange minus() {
-        return new FloatRange(getEnd(), -size);
     }
 
     public static FloatRange count(int length) {

@@ -24,6 +24,9 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
  * @author Stepan Koltsov
  */
 public class StubCodegen {
+    private StubCodegen() {
+    }
+
     public static void generateStubThrow(MethodVisitor mv) {
         new InstructionAdapter(mv).anew(Type.getObjectType("java/lang/RuntimeException"));
         new InstructionAdapter(mv).dup();

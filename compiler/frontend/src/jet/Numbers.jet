@@ -73,22 +73,6 @@ public class Double : Number, Comparable<Double>  {
   public fun rangeTo(other : Byte)   : DoubleRange
   public fun rangeTo(other : Char)   : DoubleRange
 
-  public fun upto(other : Double) : DoubleRange
-  public fun upto(other : Float)  : DoubleRange
-  public fun upto(other : Long)   : DoubleRange
-  public fun upto(other : Int)    : DoubleRange
-  public fun upto(other : Short)  : DoubleRange
-  public fun upto(other : Byte)   : DoubleRange
-  public fun upto(other : Char)   : DoubleRange
-
-  public fun downto(other : Double) : DoubleRange
-  public fun downto(other : Float)  : DoubleRange
-  public fun downto(other : Long)   : DoubleRange
-  public fun downto(other : Int)    : DoubleRange
-  public fun downto(other : Short)  : DoubleRange
-  public fun downto(other : Byte)   : DoubleRange
-  public fun downto(other : Char)   : DoubleRange
-
   public fun inc() : Double
   public fun dec() : Double
   public fun plus() : Double
@@ -163,22 +147,6 @@ public class Float : Number, Comparable<Float>  {
   public fun rangeTo(other : Byte)   : FloatRange
   public fun rangeTo(other : Char)   : FloatRange
 
-  public fun upto(other : Double) : DoubleRange
-  public fun upto(other : Float)  : FloatRange
-  public fun upto(other : Long)   : DoubleRange
-  public fun upto(other : Int)    : FloatRange
-  public fun upto(other : Short)  : FloatRange
-  public fun upto(other : Byte)   : FloatRange
-  public fun upto(other : Char)   : FloatRange
-
-  public fun downto(other : Double) : DoubleRange
-  public fun downto(other : Float)  : FloatRange
-  public fun downto(other : Long)   : DoubleRange
-  public fun downto(other : Int)    : FloatRange
-  public fun downto(other : Short)  : FloatRange
-  public fun downto(other : Byte)   : FloatRange
-  public fun downto(other : Char)   : FloatRange
-
   public fun inc() : Float
   public fun dec() : Float
   public fun plus() : Float
@@ -252,22 +220,6 @@ public class Long : Number, Comparable<Long> {
   public fun rangeTo(other : Short)  : LongRange
   public fun rangeTo(other : Byte)   : LongRange
   public fun rangeTo(other : Char)   : LongRange
-
-  public fun upto(other : Double) : DoubleRange
-  public fun upto(other : Float)  : FloatRange
-  public fun upto(other : Long)   : LongRange
-  public fun upto(other : Int)    : LongRange
-  public fun upto(other : Short)  : LongRange
-  public fun upto(other : Byte)   : LongRange
-  public fun upto(other : Char)   : LongRange
-
-  public fun downto(other : Double) : DoubleRange
-  public fun downto(other : Float)  : FloatRange
-  public fun downto(other : Long)   : LongRange
-  public fun downto(other : Int)    : LongRange
-  public fun downto(other : Short)  : LongRange
-  public fun downto(other : Byte)   : LongRange
-  public fun downto(other : Char)   : LongRange
 
   public fun inc() : Long
   public fun dec() : Long
@@ -351,22 +303,6 @@ public class Int : Number, Comparable<Int> {
   public fun rangeTo(other : Byte)   : IntRange
   public fun rangeTo(other : Char)   : IntRange
 
-  public fun upto(other : Double) : DoubleRange
-  public fun upto(other : Float)  : FloatRange
-  public fun upto(other : Long)   : LongRange
-  public fun upto(other : Int)    : IntRange
-  public fun upto(other : Short)  : IntRange
-  public fun upto(other : Byte)   : IntRange
-  public fun upto(other : Char)   : IntRange
-
-  public fun downto(other : Double) : DoubleRange
-  public fun downto(other : Float)  : FloatRange
-  public fun downto(other : Long)   : LongRange
-  public fun downto(other : Int)    : IntRange
-  public fun downto(other : Short)  : IntRange
-  public fun downto(other : Byte)   : IntRange
-  public fun downto(other : Char)   : IntRange
-
   public fun inc() : Int
   public fun dec() : Int
   public fun plus() : Int
@@ -449,22 +385,6 @@ public class Char : Number, Comparable<Char> {
   public fun rangeTo(other : Byte)   : CharRange
   public fun rangeTo(other : Char)   : CharRange
 
-  public fun upto(other : Double) : DoubleRange
-  public fun upto(other : Float)  : FloatRange
-  public fun upto(other : Long)   : LongRange
-  public fun upto(other : Int)    : IntRange
-  public fun upto(other : Short)  : ShortRange
-  public fun upto(other : Byte)   : CharRange
-  public fun upto(other : Char)   : CharRange
-
-  public fun downto(other : Double) : DoubleRange
-  public fun downto(other : Float)  : FloatRange
-  public fun downto(other : Long)   : LongRange
-  public fun downto(other : Int)    : IntRange
-  public fun downto(other : Short)  : ShortRange
-  public fun downto(other : Byte)   : CharRange
-  public fun downto(other : Char)   : CharRange
-
   public fun inc() : Char
   public fun dec() : Char
   public fun plus() : Int
@@ -539,22 +459,6 @@ public class Short : Number, Comparable<Short> {
   public fun rangeTo(other : Byte)   : ShortRange
   public fun rangeTo(other : Char)   : ShortRange
 
-  public fun upto(other : Double) : DoubleRange
-  public fun upto(other : Float)  : FloatRange
-  public fun upto(other : Long)   : LongRange
-  public fun upto(other : Int)    : IntRange
-  public fun upto(other : Short)  : ShortRange
-  public fun upto(other : Byte)   : ShortRange
-  public fun upto(other : Char)   : ShortRange
-
-  public fun downto(other : Double) : DoubleRange
-  public fun downto(other : Float)  : FloatRange
-  public fun downto(other : Long)   : LongRange
-  public fun downto(other : Int)    : IntRange
-  public fun downto(other : Short)  : ShortRange
-  public fun downto(other : Byte)   : ShortRange
-  public fun downto(other : Char)   : ShortRange
-
   public fun inc() : Short
   public fun dec() : Short
   public fun plus() : Short
@@ -628,22 +532,6 @@ public class Byte : Number, Comparable<Byte> {
   public fun rangeTo(other : Short)  : ShortRange
   public fun rangeTo(other : Byte)   : ByteRange
   public fun rangeTo(other : Char)   : CharRange
-
-  public fun upto(other : Double) : DoubleRange
-  public fun upto(other : Float)  : FloatRange
-  public fun upto(other : Long)   : LongRange
-  public fun upto(other : Int)    : IntRange
-  public fun upto(other : Short)  : ShortRange
-  public fun upto(other : Byte)   : ByteRange
-  public fun upto(other : Char)   : CharRange
-
-  public fun downto(other : Double) : DoubleRange
-  public fun downto(other : Float)  : FloatRange
-  public fun downto(other : Long)   : LongRange
-  public fun downto(other : Int)    : IntRange
-  public fun downto(other : Short)  : ShortRange
-  public fun downto(other : Byte)   : ByteRange
-  public fun downto(other : Char)   : CharRange
 
   public fun inc() : Byte
   public fun dec() : Byte

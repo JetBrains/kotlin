@@ -27,7 +27,7 @@ public class MultiFileGenTest extends CodegenTestCase {
 
     public void testSimple() {
         blackBoxMultiFile("/multi/simple/box.kt", "/multi/simple/ok.kt");
-        System.out.println(generateToText());
+        //System.out.println(generateToText());
     }
 
     public void testInternalVisibility() {

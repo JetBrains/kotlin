@@ -72,6 +72,7 @@
                                     <fileset dir="${basedir}/../../stdlib/src/generated">
                                         <include name="*.kt"/>
                                         <exclude name="**/*JVM.kt"/>
+                                        <exclude name="DownTo.kt"/>
 <!--
                                         <include name="JUtilIteratorsFromJLangIterables.kt"/>
                                         <include name="JUtilIterablesFromJUtilCollections.kt"/>

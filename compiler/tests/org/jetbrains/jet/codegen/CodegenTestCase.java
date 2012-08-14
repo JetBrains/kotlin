@@ -59,6 +59,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected CodegenTestFiles myFiles;
 
     protected Object scriptInstance;
+    private GenerationState alreadyGenerated;
 
     protected void createEnvironmentWithMockJdkAndIdeaAnnotations() {
         if (myEnvironment != null) {
@@ -102,6 +103,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         myFiles = null;
         myEnvironment = null;
         scriptInstance = null;
+        alreadyGenerated = null;
         super.tearDown();
     }
 
@@ -255,10 +257,15 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     protected String generateToText() {
-        return generateCommon(ClassBuilderFactories.TEXT).createText();
+        if(alreadyGenerated == null)
+            alreadyGenerated = generateCommon(ClassBuilderFactories.TEST);
+        return alreadyGenerated.createText();
     }
 
     private GenerationState generateCommon(ClassBuilderFactory classBuilderFactory) {
+        if(alreadyGenerated != null)
+            return alreadyGenerated;
+
         final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationAndCheckForErrors(
                 myEnvironment.getProject(),
                 myFiles.getPsiFiles(),
@@ -267,9 +274,9 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 BuiltinsScopeExtensionMode.ALL);
         analyzeExhaust.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
-        GenerationState state = new GenerationState(myEnvironment.getProject(), classBuilderFactory, analyzeExhaust, myFiles.getPsiFiles());
-        state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
-        return state;
+        alreadyGenerated = new GenerationState(classBuilderFactory, analyzeExhaust, myFiles.getPsiFiles());
+        alreadyGenerated.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
+        return alreadyGenerated;
     }
 
     protected Class generateNamespaceClass() {
@@ -313,8 +320,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     private GenerationState generateClassesInFileGetState() {
         GenerationState generationState;
         try {
-            ClassBuilderFactory classBuilderFactory = ClassBuilderFactories.binaries(false);
-            generationState = generateCommon(classBuilderFactory);
+            generationState = generateCommon(ClassBuilderFactories.TEST);
 
             if (DxChecker.RUN_DX_CHECKER) {
                 DxChecker.check(generationState.getFactory());

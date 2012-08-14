@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.ConfigurationKind;
 
 import java.lang.reflect.Constructor;
@@ -81,7 +82,7 @@ public class PropertyGenTest extends CodegenTestCase {
         final Field field = fields[0];
         field.setAccessible(true);
         assertEquals("x", field.getName());
-        assertEquals(Modifier.PROTECTED | Modifier.STATIC | Modifier.FINAL, field.getModifiers());
+        assertEquals(Modifier.STATIC | Modifier.FINAL, field.getModifiers());
         assertEquals(239, field.get(null));
     }
 
@@ -279,4 +280,37 @@ public class PropertyGenTest extends CodegenTestCase {
         blackBoxFile("regressions/kt2509.kt");
     }
 
+    public void testKt1528() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxMultiFile("regressions/kt1528_1.kt", "regressions/kt1528_3.kt");
+    }
+
+    public void testKt2589() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        loadFile("regressions/kt2589.kt");
+        final Class aClass = loadImplementationClass(generateClassesInFile(), "Foo");
+        assertTrue((aClass.getModifiers() & Opcodes.ACC_FINAL) == 0);
+
+        try {
+            Field foo = aClass.getDeclaredField("foo");
+            assertTrue((foo.getModifiers() & Opcodes.ACC_PRIVATE) != 0);
+            assertTrue((foo.getModifiers() & Opcodes.ACC_FINAL) == 0);
+
+            Field bar = aClass.getDeclaredField("bar");
+            assertTrue((bar.getModifiers() & Opcodes.ACC_PRIVATE) != 0);
+            assertTrue((bar.getModifiers() & Opcodes.ACC_FINAL) != 0);
+
+            Method getFoo = aClass.getDeclaredMethod("getFoo");
+            assertTrue((getFoo.getModifiers() & Opcodes.ACC_PUBLIC) != 0);
+            assertTrue((getFoo.getModifiers() & Opcodes.ACC_FINAL) != 0);
+
+            Method getBar = aClass.getDeclaredMethod("getBar");
+            assertTrue((getBar.getModifiers() & Opcodes.ACC_PROTECTED) != 0);
+            assertTrue((getBar.getModifiers() & Opcodes.ACC_FINAL) == 0);
+        }
+        catch (Throwable e) {
+            System.out.println(generateToText());
+            throw new RuntimeException(e);
+        }
+    }
 }

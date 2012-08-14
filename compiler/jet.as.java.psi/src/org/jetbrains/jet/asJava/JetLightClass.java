@@ -46,7 +46,9 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
+import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
@@ -178,7 +180,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
             throw new IllegalStateException("failed to analyze: " + context.getError(), context.getError());
         }
 
-        final GenerationState state = new GenerationState(project, builderFactory, context, Collections.singletonList(file)) {
+        final GenerationState state = new GenerationState(builderFactory, context, Collections.singletonList(file)) {
             @Override
             protected void generateNamespace(FqName fqName, Collection<JetFile> namespaceFiles, CompilationErrorHandler errorHandler, Progress progress) {
                 PsiManager manager = PsiManager.getInstance(project);
@@ -234,6 +236,30 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         catch (Throwable e) {
             return JetLightClass.class.getSimpleName() + ":" + e.toString();
         }
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getManager().hashCode();
+        result = 31 * result + file.hashCode();
+        result = 31 * result + qualifiedName.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        JetLightClass lightClass = (JetLightClass) obj;
+
+        if (getManager() != lightClass.getManager()) return false;
+        if (!file.equals(lightClass.file)) return false;
+        if (!qualifiedName.equals(lightClass.qualifiedName)) return false;
+
+        return true;
     }
 
     public static JetLightClass wrapDelegate(JetClass jetClass) {

@@ -86,6 +86,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             @NotNull JetClassLikeInfo classLikeInfo
     ) {
         this.resolveSession = resolveSession;
+        this.name = name;
 
         if (classLikeInfo.getCorrespondingClassOrObject() != null) {
             this.resolveSession.getTrace().record(BindingContext.CLASS, classLikeInfo.getCorrespondingClassOrObject(), this);
@@ -95,7 +96,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         JetClassLikeInfo classLikeInfoForMembers =
                 classLikeInfo.getClassKind() != ClassKind.ENUM_CLASS ? classLikeInfo : noEnumEntries(classLikeInfo);
         this.declarationProvider = resolveSession.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfoForMembers);
-        this.name = name;
         this.containingDeclaration = containingDeclaration;
         this.unsubstitutedMemberScope = new LazyClassMemberScope(resolveSession, declarationProvider, this);
         this.unsubstitutedInnerClassesScope = new InnerClassesScopeWrapper(unsubstitutedMemberScope);
@@ -130,12 +130,13 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     public JetScope getScopeForClassHeaderResolution() {
         if (scopeForClassHeaderResolution == null) {
             WritableScopeImpl scope = new WritableScopeImpl(
-                    resolveSession.getResolutionScope(declarationProvider.getOwnerInfo().getScopeAnchor()), this, RedeclarationHandler.DO_NOTHING, "Class Header Resolution");
+                    JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Class Header Resolution");
             for (TypeParameterDescriptor typeParameterDescriptor : getTypeConstructor().getParameters()) {
                 scope.addClassifierDescriptor(typeParameterDescriptor);
             }
             scope.changeLockLevel(WritableScope.LockLevel.READING);
-            scopeForClassHeaderResolution = scope;
+
+            scopeForClassHeaderResolution = new ChainedScope(this, scope, resolveSession.getResolutionScope(declarationProvider.getOwnerInfo().getScopeAnchor()));
         }
         return scopeForClassHeaderResolution;
     }
@@ -143,12 +144,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     public JetScope getScopeForMemberDeclarationResolution() {
         if (scopeForMemberDeclarationResolution == null) {
             WritableScopeImpl scope = new WritableScopeImpl(
-                    getScopeForMemberLookup(), this, RedeclarationHandler.DO_NOTHING, "Member Declaration Resolution");
+                    JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Member Declaration Resolution");
             scope.addLabeledDeclaration(this);
-            scope.importScope(getScopeForClassHeaderResolution());
-
             scope.changeLockLevel(WritableScope.LockLevel.READING);
-            scopeForMemberDeclarationResolution = scope;
+
+            scopeForMemberDeclarationResolution = new ChainedScope(this, scope, getScopeForMemberLookup(), getScopeForClassHeaderResolution());
         }
         return scopeForMemberDeclarationResolution;
     }
@@ -159,7 +159,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         if (scopeForPropertyInitializerResolution == null) {
             WritableScopeImpl scope = new WritableScopeImpl(
-                    getScopeForMemberDeclarationResolution(), this, RedeclarationHandler.DO_NOTHING, "Property Initializer Resolution");
+                    JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Property Initializer Resolution");
 
             List<ValueParameterDescriptor> parameters = primaryConstructor.getValueParameters();
             for (ValueParameterDescriptor valueParameterDescriptor : parameters) {
@@ -167,7 +167,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             }
 
             scope.changeLockLevel(WritableScope.LockLevel.READING);
-            scopeForPropertyInitializerResolution = scope;
+
+            scopeForPropertyInitializerResolution = new ChainedScope(this, scope, getScopeForMemberDeclarationResolution());
         }
         return scopeForPropertyInitializerResolution;
     }

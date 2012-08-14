@@ -189,7 +189,6 @@ public class AllInjectorsGenerator {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
         generator.addParameter(BindingContext.class);
         generator.addParameter(DiType.listOf(JetFile.class));
-        generator.addParameter(Project.class);
         generator.addParameter(BuiltinToJavaTypesMapping.class);
         generator.addParameter(ClassBuilderMode.class);
         generator.addPublicParameter(GenerationState.class);

@@ -1,3 +1,4 @@
+//KT-731 Missing error from type inference
 package a
 
 class A<T>(x: T) {

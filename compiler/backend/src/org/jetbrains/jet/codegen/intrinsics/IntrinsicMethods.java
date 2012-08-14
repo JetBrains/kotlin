@@ -17,23 +17,27 @@
 package org.jetbrains.jet.codegen.intrinsics;
 
 import com.google.common.collect.ImmutableList;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
-import org.jetbrains.asm4.Opcodes;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author yole
@@ -44,14 +48,11 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod UNARY_PLUS = new UnaryPlus();
     private static final IntrinsicMethod NUMBER_CAST = new NumberCast();
     private static final IntrinsicMethod INV = new Inv();
-    private static final IntrinsicMethod UP_TO = new UpTo(true);
-    private static final IntrinsicMethod DOWN_TO = new UpTo(false);
+    private static final IntrinsicMethod RANGE_TO = new RangeTo();
     private static final IntrinsicMethod INC = new Increment(1);
     private static final IntrinsicMethod DEC = new Increment(-1);
     private static final IntrinsicMethod HASH_CODE = new HashCode();
 
-    private static final List<Name> PRIMITIVE_TYPES = ImmutableList.of(Name.identifier("Boolean"), Name.identifier("Byte"), Name.identifier("Char"), Name.identifier("Short"), Name.identifier("Int"), Name.identifier("Float"), Name.identifier("Long"), Name.identifier("Double"));
-    private static final List<Name> PRIMITIVE_NUMBER_TYPES = ImmutableList.of(Name.identifier("Byte"), Name.identifier("Char"), Name.identifier("Short"), Name.identifier("Int"), Name.identifier("Float"), Name.identifier("Long"), Name.identifier("Double"));
     public static final IntrinsicMethod ARRAY_SIZE = new ArraySize();
     public static final IntrinsicMethod ARRAY_INDICES = new ArrayIndices();
     public static final Equals EQUALS = new Equals();
@@ -63,17 +64,13 @@ public class IntrinsicMethods {
     public static final String KOTLIN_JAVA_CLASS_FUNCTION = "kotlin.javaClass.function";
     public static final String KOTLIN_ARRAYS_ARRAY = "kotlin.arrays.array";
     public static final String KOTLIN_JAVA_CLASS_PROPERTY = "kotlin.javaClass.property";
+    public static final EnumValues ENUM_VALUES = new EnumValues();
+    public static final EnumValueOf ENUM_VALUE_OF = new EnumValueOf();
 
-    private Project myProject;
     private final Map<String, IntrinsicMethod> namedMethods = new HashMap<String, IntrinsicMethod>();
     private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();
     private final IntrinsicsMap intrinsicsMap = new IntrinsicsMap();
 
-
-    @Inject
-    public void setMyProject(Project myProject) {
-        this.myProject = myProject;
-    }
 
     @PostConstruct
     public void init() {
@@ -84,22 +81,21 @@ public class IntrinsicMethods {
         ImmutableList<Name> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (Name method : primitiveCastMethods) {
             declareIntrinsicFunction(Name.identifier("Number"), method, 0, NUMBER_CAST);
-            for (Name type : PRIMITIVE_NUMBER_TYPES) {
-                declareIntrinsicFunction(type, method, 0, NUMBER_CAST);
+            for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
+                declareIntrinsicFunction(type.getTypeName(), method, 0, NUMBER_CAST);
             }
         }
 
-        for (Name type : PRIMITIVE_NUMBER_TYPES) {
-            declareIntrinsicFunction(type, Name.identifier("plus"), 0, UNARY_PLUS);
-            declareIntrinsicFunction(type, Name.identifier("minus"), 0, UNARY_MINUS);
-            declareIntrinsicFunction(type, Name.identifier("inv"), 0, INV);
-            declareIntrinsicFunction(type, Name.identifier("rangeTo"), 1, UP_TO);
-            declareIntrinsicFunction(type, Name.identifier("upto"), 1, UP_TO);
-            declareIntrinsicFunction(type, Name.identifier("downto"), 1, DOWN_TO);
-            declareIntrinsicFunction(type, Name.identifier("inc"), 0, INC);
-            declareIntrinsicFunction(type, Name.identifier("dec"), 0, DEC);
-            declareIntrinsicFunction(type, Name.identifier("hashCode"), 0, HASH_CODE);
-            declareIntrinsicFunction(type, Name.identifier("equals"), 1, EQUALS);
+        for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
+            Name typeName = type.getTypeName();
+            declareIntrinsicFunction(typeName, Name.identifier("plus"), 0, UNARY_PLUS);
+            declareIntrinsicFunction(typeName, Name.identifier("minus"), 0, UNARY_MINUS);
+            declareIntrinsicFunction(typeName, Name.identifier("inv"), 0, INV);
+            declareIntrinsicFunction(typeName, Name.identifier("rangeTo"), 1, RANGE_TO);
+            declareIntrinsicFunction(typeName, Name.identifier("inc"), 0, INC);
+            declareIntrinsicFunction(typeName, Name.identifier("dec"), 0, DEC);
+            declareIntrinsicFunction(typeName, Name.identifier("hashCode"), 0, HASH_CODE);
+            declareIntrinsicFunction(typeName, Name.identifier("equals"), 1, EQUALS);
         }
 
         declareBinaryOp(Name.identifier("plus"), Opcodes.IADD);
@@ -120,6 +116,9 @@ public class IntrinsicMethods {
         declareIntrinsicFunction(Name.identifier("CharSequence"), Name.identifier("get"), 1, new StringGetChar());
         declareIntrinsicFunction(Name.identifier("String"), Name.identifier("get"), 1, new StringGetChar());
 
+        intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("name"), 0, new EnumName());
+        intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("ordinal"), 0, new EnumOrdinal());
+
         intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("toString"), 0, new ToString());
         intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("equals"), 1, EQUALS);
         intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("identityEquals"), 1, IDENTITY_EQUALS);
@@ -139,13 +138,19 @@ public class IntrinsicMethods {
         declareIntrinsicFunction(Name.identifier("FloatIterator"), Name.identifier("next"), 0, ITERATOR_NEXT);
         declareIntrinsicFunction(Name.identifier("DoubleIterator"), Name.identifier("next"), 0, ITERATOR_NEXT);
 
-        for (Name type : PRIMITIVE_TYPES) {
-            declareIntrinsicFunction(type, Name.identifier("compareTo"), 1, new CompareTo());
+        for (PrimitiveType type : PrimitiveType.values()) {
+            declareIntrinsicFunction(type.getTypeName(), Name.identifier("compareTo"), 1, new CompareTo());
         }
 //        declareIntrinsicFunction("Any", "equals", 1, new Equals());
 //
         declareIntrinsicProperty(Name.identifier("CharSequence"), Name.identifier("length"), new StringLength());
         declareIntrinsicProperty(Name.identifier("String"), Name.identifier("length"), new StringLength());
+
+        for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
+            intrinsicsMap.registerIntrinsic(
+                    JetStandardClasses.STANDARD_CLASSES_FQNAME.child(type.getRangeTypeName()).toUnsafe().child(JetPsiUtil.NO_NAME_PROVIDED),
+                    Name.identifier("EMPTY"), -1, new EmptyRange(type));
+        }
 
         declareArrayMethods();
     }
@@ -178,8 +183,8 @@ public class IntrinsicMethods {
 
     private void declareBinaryOp(Name methodName, int opcode) {
         BinaryOp op = new BinaryOp(opcode);
-        for (Name type : PRIMITIVE_TYPES) {
-            declareIntrinsicFunction(type, methodName, 1, op);
+        for (PrimitiveType type : PrimitiveType.values()) {
+            declareIntrinsicFunction(type.getTypeName(), methodName, 1, op);
         }
     }
 
@@ -220,6 +225,15 @@ public class IntrinsicMethods {
                     return new PsiMethodCall(functionDescriptor);
                 }
             }
+
+            if(isEnumClassObject(functionDescriptor.getContainingDeclaration())) {
+                if("values".equals(functionDescriptor.getName().getName())) {
+                    return ENUM_VALUES;
+                }
+                if("valueOf".equals(functionDescriptor.getName().getName())) {
+                    return ENUM_VALUE_OF;
+                }
+            }
         }
 
         List<AnnotationDescriptor> annotations = descriptor.getAnnotations();
@@ -235,4 +249,17 @@ public class IntrinsicMethods {
         return intrinsicMethod;
     }
 
+    private static boolean isEnumClassObject(DeclarationDescriptor declaration) {
+        if(declaration instanceof ClassDescriptor) {
+            ClassDescriptor descriptor = (ClassDescriptor) declaration;
+            if(descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
+                ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
+                //noinspection ConstantConditions
+                if(containingDeclaration != null && containingDeclaration.getClassObjectDescriptor() != null && containingDeclaration.getClassObjectDescriptor().equals(descriptor)) {
+                    return true;
+                }
+            }
+        }
+        return false;  //To change body of created methods use File | Settings | File Templates.
+    }
 }

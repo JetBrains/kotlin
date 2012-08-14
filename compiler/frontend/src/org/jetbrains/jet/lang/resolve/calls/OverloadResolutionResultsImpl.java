@@ -28,8 +28,11 @@ import java.util.Collections;
 */
 /*package*/ class OverloadResolutionResultsImpl<D extends CallableDescriptor> implements OverloadResolutionResults<D> {
 
-    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> success(@NotNull ResolvedCallWithTrace<D> descriptor) {
-        return new OverloadResolutionResultsImpl<D>(Code.SUCCESS, Collections.singleton(descriptor));
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> success(@NotNull ResolvedCallWithTrace<D> candidate) {
+        if (candidate.hasUnknownTypeParameters()) {
+            return incompleteTypeInference(candidate);
+        }
+        return new OverloadResolutionResultsImpl<D>(Code.SUCCESS, Collections.singleton(candidate));
     }
 
     public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> nameNotFound() {
@@ -37,22 +40,30 @@ import java.util.Collections;
     }
 
     public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> singleFailedCandidate(ResolvedCallWithTrace<D> candidate) {
+        if (candidate.getStatus() != ResolutionStatus.STRONG_ERROR && candidate.hasUnknownTypeParameters()) {
+            return incompleteTypeInference(candidate);
+        }
         return new OverloadResolutionResultsImpl<D>(Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH, Collections.singleton(candidate));
     }
     public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> manyFailedCandidates(Collection<ResolvedCallWithTrace<D>> failedCandidates) {
         return new OverloadResolutionResultsImpl<D>(Code.MANY_FAILED_CANDIDATES, failedCandidates);
     }
 
-    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> ambiguity(Collection<ResolvedCallWithTrace<D>> descriptors) {
-        return new OverloadResolutionResultsImpl<D>(Code.AMBIGUITY, descriptors);
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> ambiguity(Collection<ResolvedCallWithTrace<D>> candidates) {
+        for (ResolvedCallWithTrace<D> candidate : candidates) {
+            if (candidate.hasUnknownTypeParameters()) {
+                return incompleteTypeInference(candidates);
+            }
+        }
+        return new OverloadResolutionResultsImpl<D>(Code.AMBIGUITY, candidates);
     }
 
-    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> incompleteTypeInference(Collection<ResolvedCallWithTrace<D>> descriptors) {
-        return new OverloadResolutionResultsImpl<D>(Code.INCOMPLETE_TYPE_INFERENCE, descriptors);
+    private static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> incompleteTypeInference(Collection<ResolvedCallWithTrace<D>> candidates) {
+        return new OverloadResolutionResultsImpl<D>(Code.INCOMPLETE_TYPE_INFERENCE, candidates);
     }
 
-    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> incompleteTypeInference(ResolvedCallWithTrace<D> descriptor) {
-        return new OverloadResolutionResultsImpl<D>(Code.INCOMPLETE_TYPE_INFERENCE, Collections.singleton(descriptor));
+    private static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> incompleteTypeInference(ResolvedCallWithTrace<D> candidate) {
+        return incompleteTypeInference(Collections.singleton(candidate));
     }
 
     private final Collection<ResolvedCallWithTrace<D>> results;
@@ -96,7 +107,7 @@ import java.util.Collections;
 
     @Override
     public boolean isSingleResult() {
-        return isSuccess() || resultCode == Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH;
+        return results.size() == 1;
     }
 
     @Override
@@ -108,7 +119,13 @@ import java.util.Collections;
     public boolean isAmbiguity() {
         return resultCode == Code.AMBIGUITY;
     }
-//
+
+    @Override
+    public boolean isIncomplete() {
+        return resultCode == Code.INCOMPLETE_TYPE_INFERENCE;
+    }
+
+    //
 //    public OverloadResolutionResultsImpl<D> newContents(@NotNull Collection<D> functionDescriptors) {
 //        return new OverloadResolutionResultsImpl<D>(resultCode, functionDescriptors);
 //    }

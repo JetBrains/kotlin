@@ -13,11 +13,13 @@ public class IntRange(public val start : Int, public val size : Int) : Range<Int
 
     public val iteratorStart : Int
 
-    public fun minus() : IntRange
-
     public fun step(step: Int) : IntIterator
 
     public val isReversed : Boolean
+
+    public class object {
+        public val EMPTY: IntRange
+    }
 }
 
 public class LongRange(public val start : Long, public val size : Long) : Range<Long>, LongIterable {
@@ -29,11 +31,13 @@ public class LongRange(public val start : Long, public val size : Long) : Range<
 
     public val end : Long
 
-    public fun minus() : LongRange
-
     public fun step(step: Long) : LongIterator
 
     public val isReversed : Boolean
+
+    public class object {
+        public val EMPTY: LongRange
+    }
 }
 
 public class ByteRange(public val start : Byte, public val size : Int) : Range<Byte>, ByteIterable {
@@ -45,11 +49,13 @@ public class ByteRange(public val start : Byte, public val size : Int) : Range<B
 
     public val iteratorStart : Byte
 
-    public fun minus() : ByteRange
-
     public fun step(step: Int) : ByteIterator
 
     public val isReversed : Boolean
+
+    public class object {
+        public val EMPTY: ByteRange
+    }
 }
 
 public class ShortRange(public val start : Short, public val size : Int) : Range<Short>, ShortIterable {
@@ -61,11 +67,13 @@ public class ShortRange(public val start : Short, public val size : Int) : Range
 
     public val end : Short
 
-    public fun minus() : ShortRange
-
     public fun step(step: Int) : ShortIterator
 
     public val isReversed : Boolean
+
+    public class object {
+        public val EMPTY: ShortRange
+    }
 }
 
 public class CharRange(public val start : Char, public val size : Int) : Range<Char>, CharIterable {
@@ -77,11 +85,13 @@ public class CharRange(public val start : Char, public val size : Int) : Range<C
 
     public val end : Char
 
-    public fun minus() : CharRange
-
     public fun step(step: Int) : CharIterator
 
     public val isReversed : Boolean
+
+    public class object {
+        public val EMPTY: CharRange
+    }
 }
 
 public class FloatRange(public val start : Float, public val size : Float) : Range<Float> {
@@ -89,11 +99,13 @@ public class FloatRange(public val start : Float, public val size : Float) : Ran
 
     public val end : Float
 
-    public fun minus() : FloatRange
-
     public fun step(step: Float) : FloatIterator
 
     public val isReversed : Boolean
+
+    public class object {
+        public val EMPTY: FloatRange
+    }
 }
 
 public class DoubleRange(public val start : Double, public val size : Double) : Range<Double> {
@@ -101,9 +113,11 @@ public class DoubleRange(public val start : Double, public val size : Double) : 
 
     public val end : Double
 
-    public fun minus() : DoubleRange
-
     public fun step(step: Double) : DoubleIterator
 
     public val isReversed : Boolean
+
+    public class object {
+        public val EMPTY: DoubleRange
+    }
 }

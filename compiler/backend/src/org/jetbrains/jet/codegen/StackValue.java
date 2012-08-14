@@ -212,6 +212,13 @@ public abstract class StackValue {
         }
     }
 
+    protected static void pop(Type type, InstructionAdapter v) {
+        if (type.getSize() == 1)
+            v.pop();
+        else
+            v.pop2();
+    }
+
     protected void coerce(Type toType, InstructionAdapter v) {
         coerce(this.type, toType, v);
     }
@@ -220,10 +227,7 @@ public abstract class StackValue {
         if (toType.equals(fromType)) return;
 
         if (toType.getSort() == Type.VOID && fromType.getSort() != Type.VOID) {
-            if (fromType.getSize() == 1)
-                v.pop();
-            else
-                v.pop2();
+            pop(fromType, v);
         }
         else if (toType.getSort() != Type.VOID && fromType.getSort() == Type.VOID) {
             if (toType.getSort() == Type.OBJECT) {
@@ -237,6 +241,10 @@ public abstract class StackValue {
                 v.dconst(0);
             else
                 v.iconst(0);
+        }
+        else if (toType.equals(JetTypeMapper.TUPLE0_TYPE) && !fromType.equals(JetTypeMapper.TUPLE0_TYPE)) {
+            pop(fromType, v);
+            putTuple0Instance(v);
         }
         else if (toType.getSort() == Type.OBJECT && fromType.equals(JetTypeMapper.TYPE_OBJECT) || toType.getSort() == Type.ARRAY) {
                 v.checkcast(toType);
@@ -357,17 +365,7 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            if (type == Type.VOID_TYPE && this.type != Type.VOID_TYPE) {
-                if (this.type.getSize() == 2) {
-                    v.pop2();
-                }
-                else {
-                    v.pop();
-                }
-            }
-            else {
-                coerce(type, v);
-            }
+            coerce(type, v);
         }
 
         @Override
@@ -627,10 +625,7 @@ public abstract class StackValue {
                 method.invoke(v);
                 Type returnType = asmMethod.getReturnType();
                 if (returnType != Type.VOID_TYPE) {
-                    if (returnType.getSize() == 2)
-                        v.pop2();
-                    else
-                        v.pop();
+                    pop(returnType, v);
                 }
             }
             else

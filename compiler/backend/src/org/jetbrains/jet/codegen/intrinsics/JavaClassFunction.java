@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
+import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 
 import java.util.List;
 
@@ -42,7 +43,13 @@ public class JavaClassFunction implements IntrinsicMethod {
         CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
         Type type = state.getInjector().getJetTypeMapper().mapType(
                 resultingDescriptor.getReturnType().getArguments().get(0).getType(), MapTypeMode.VALUE);
-        v.aconst(type);
+        JvmPrimitiveType primitiveType = JvmPrimitiveType.getByAsmType(type);
+        if (primitiveType != null) {
+            v.getstatic(primitiveType.getWrapper().getAsmType().getInternalName(), "TYPE", "Ljava/lang/Class;");
+        }
+        else {
+            v.aconst(type);
+        }
         return StackValue.onStack(JetTypeMapper.JL_CLASS_TYPE);
     }
 }

@@ -63,4 +63,6 @@ public interface OverloadResolutionResults<D extends CallableDescriptor> {
     boolean isNothing();
 
     boolean isAmbiguity();
+
+    boolean isIncomplete();
 }

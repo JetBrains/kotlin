@@ -39,27 +39,27 @@ public class ConstraintsUtil {
             values.addAll(typeConstraints.getExactBounds());
             if (!typeConstraints.getLowerBounds().isEmpty()) {
                 JetType superTypeOfLowerBounds = CommonSupertypes.commonSupertype(typeConstraints.getLowerBounds());
-                if (values.isEmpty()) {
-                    values.add(superTypeOfLowerBounds);
-                }
                 for (JetType value : values) {
                     if (!JetTypeChecker.INSTANCE.isSubtypeOf(superTypeOfLowerBounds, value)) {
                         values.add(superTypeOfLowerBounds);
                         break;
                     }
                 }
+                if (values.isEmpty()) {
+                    values.add(superTypeOfLowerBounds);
+                }
             }
             if (!typeConstraints.getUpperBounds().isEmpty()) {
                 //todo subTypeOfUpperBounds
                 JetType subTypeOfUpperBounds = typeConstraints.getUpperBounds().iterator().next(); //todo
-                if (values.isEmpty()) {
-                    values.add(subTypeOfUpperBounds);
-                }
                 for (JetType value : values) {
                     if (!JetTypeChecker.INSTANCE.isSubtypeOf(value, subTypeOfUpperBounds)) {
                         values.add(subTypeOfUpperBounds);
                         break;
                     }
+                }
+                if (values.isEmpty()) {
+                    values.add(subTypeOfUpperBounds);
                 }
             }
         }
@@ -141,10 +141,10 @@ public class ConstraintsUtil {
         assert typeConstraints != null;
         JetType type = getValue(typeConstraints);
         JetType upperBound = typeParameter.getUpperBoundsAsType();
-        JetType substitute = constraintSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
+        JetType substitutedType = constraintSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
 
         if (type != null) {
-            if (substitute == null || !JetTypeChecker.INSTANCE.isSubtypeOf(type, substitute)) {
+            if (substitutedType == null || !JetTypeChecker.INSTANCE.isSubtypeOf(type, substitutedType)) {
                 return false;
             }
         }
@@ -153,14 +153,8 @@ public class ConstraintsUtil {
 
     public static boolean checkBoundsAreSatisfied(@NotNull ConstraintSystem constraintSystem) {
         for (TypeParameterDescriptor typeVariable : constraintSystem.getTypeVariables()) {
-            JetType type = getValue(constraintSystem.getTypeConstraints(typeVariable));
-            JetType upperBound = typeVariable.getUpperBoundsAsType();
-            JetType substitutedType = constraintSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
-
-            if (type != null) {
-                if (substitutedType == null || !JetTypeChecker.INSTANCE.isSubtypeOf(type, substitutedType)) {
-                    return false;
-                }
+            if (!checkUpperBoundIsSatisfied(constraintSystem, typeVariable)) {
+                return false;
             }
         }
         return true;

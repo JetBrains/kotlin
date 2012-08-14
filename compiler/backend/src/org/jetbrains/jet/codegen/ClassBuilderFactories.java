@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.ClassWriter;
 import org.jetbrains.asm4.util.TraceClassVisitor;
 
@@ -27,6 +28,34 @@ import java.io.StringWriter;
  * @author Stepan Koltsov
  */
 public class ClassBuilderFactories {
+
+    public static ClassBuilderFactory TEST = new ClassBuilderFactory() {
+        @NotNull
+        @Override
+        public ClassBuilderMode getClassBuilderMode() {
+            return ClassBuilderMode.FULL;
+        }
+
+        @Override
+        public ClassBuilder newClassBuilder() {
+            return new TraceBuilder(new BinaryClassWriter());
+        }
+
+        @Override
+        public String asText(ClassBuilder builder) {
+            TraceClassVisitor visitor = (TraceClassVisitor) builder.getVisitor();
+
+            StringWriter writer = new StringWriter();
+            visitor.p.print(new PrintWriter(writer));
+
+            return writer.toString();
+        }
+
+        @Override
+        public byte[] asBytes(ClassBuilder builder) {
+            return ((TraceBuilder) builder).binary.toByteArray();
+        }
+    };
 
     public static ClassBuilderFactory TEXT = new ClassBuilderFactory() {
         @NotNull
@@ -56,6 +85,9 @@ public class ClassBuilderFactories {
         }
     };
 
+    private ClassBuilderFactories() {
+    }
+
     public static ClassBuilderFactory binaries(final boolean stubs) {
         return new ClassBuilderFactory() {
             @NotNull
@@ -66,18 +98,7 @@ public class ClassBuilderFactories {
 
             @Override
             public ClassBuilder newClassBuilder() {
-                return new ClassBuilder.Concrete(new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS){
-                    @Override
-                    protected String getCommonSuperClass(String type1, String type2) {
-                        try {
-                            return super.getCommonSuperClass(type1, type2);
-                        }
-                        catch (Throwable t) {
-                            // @todo we might need at some point do more sofisticated handling
-                            return "java/lang/Object";
-                        }
-                    }
-                });
+                return new ClassBuilder.Concrete(new BinaryClassWriter());
             }
 
             @Override
@@ -91,5 +112,31 @@ public class ClassBuilderFactories {
                 return visitor.toByteArray();
             }
         };
+    }
+
+    private static class BinaryClassWriter extends ClassWriter {
+        public BinaryClassWriter() {
+            super(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+        }
+
+        @Override
+        protected String getCommonSuperClass(String type1, String type2) {
+            try {
+                return super.getCommonSuperClass(type1, type2);
+            }
+            catch (Throwable t) {
+                // @todo we might need at some point do more sofisticated handling
+                return "java/lang/Object";
+            }
+        }
+    }
+
+    private static class TraceBuilder extends ClassBuilder.Concrete {
+        public final BinaryClassWriter binary;
+
+        public TraceBuilder(BinaryClassWriter binary) {
+            super(new TraceClassVisitor(binary, new PrintWriter(new StringWriter())));
+            this.binary = binary;
+        }
     }
 }

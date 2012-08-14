@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.types.lang;
 
+import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ref.ClassName;
@@ -34,17 +35,23 @@ public enum PrimitiveType {
     LONG("Long"),
     DOUBLE("Double"),
     ;
+
+    public static final ImmutableSet<PrimitiveType> NUMBER_TYPES = ImmutableSet.of(CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE);
     
     private final Name typeName;
     private final Name arrayTypeName;
+    private final Name rangeTypeName;
     private final ClassName className;
     private final ClassName arrayClassName;
+    private final ClassName rangeClassName;
 
     private PrimitiveType(String typeName) {
         this.typeName = Name.identifier(typeName);
         this.arrayTypeName = Name.identifier(typeName + "Array");
+        this.rangeTypeName = Name.identifier(typeName + "Range");
         this.className = new ClassName(JetStandardClasses.STANDARD_CLASSES_FQNAME.child(this.typeName), 0);
         this.arrayClassName = new ClassName(JetStandardClasses.STANDARD_CLASSES_FQNAME.child(this.arrayTypeName), 0);
+        this.rangeClassName = new ClassName(JetStandardClasses.STANDARD_CLASSES_FQNAME.child(this.rangeTypeName), 0);
     }
 
     @NotNull
@@ -58,6 +65,11 @@ public enum PrimitiveType {
     }
 
     @NotNull
+    public Name getRangeTypeName() {
+        return rangeTypeName;
+    }
+
+    @NotNull
     public ClassName getClassName() {
         return className;
     }
@@ -65,5 +77,10 @@ public enum PrimitiveType {
     @NotNull
     public ClassName getArrayClassName() {
         return arrayClassName;
+    }
+
+    @NotNull
+    public ClassName getRangeClassName() {
+        return rangeClassName;
     }
 }

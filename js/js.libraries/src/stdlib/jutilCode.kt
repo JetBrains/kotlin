@@ -10,7 +10,7 @@ public inline fun <T> java.util.List<T>.equals(that: List<T>): Boolean {
     val s1 = this.size()
     val s2 = that.size()
     if (s1 == s2) {
-        for (i in 0.upto(s1)) {
+        for (i in 0.rangeTo(s1)) {
             val elem1 = this.get(i)
             val elem2 = that.get(i)
             if (elem1 != elem2) {

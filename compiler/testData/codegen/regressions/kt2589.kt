@@ -1,0 +1,1 @@
+open class Foo(var foo: String?, open protected val bar: String?)
