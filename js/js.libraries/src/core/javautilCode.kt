@@ -30,7 +30,7 @@ public object Collections {
         throw UnsupportedOperationException()
     }
 
-    library
+    library("sortWithComp")
     public fun <in T> sort(list: List<T>, comparator: java.util.Comparator<T>): Unit {
         throw UnsupportedOperationException()
     }
