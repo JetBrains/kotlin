@@ -68,6 +68,8 @@ public class JetTypeMapper {
     public static final Type JL_ENUM_TYPE = Type.getObjectType("java/lang/Enum");
     public static final Type JL_CHAR_SEQUENCE_TYPE = Type.getObjectType("java/lang/CharSequence");
     private static final Type JL_COMPARABLE_TYPE = Type.getObjectType("java/lang/Comparable");
+    private static final Type JL_ITERABLE_TYPE = Type.getObjectType("java/lang/Iterable");
+    private static final Type JL_ITERATOR_TYPE = Type.getObjectType("java/util/Iterator");
     public static final Type JL_CLASS_TYPE = Type.getObjectType("java/lang/Class");
     public static final Type JL_BOOLEAN_TYPE = Type.getObjectType("java/lang/Boolean");
 
@@ -148,6 +150,8 @@ public class JetTypeMapper {
             register(JetStandardLibraryNames.THROWABLE, TYPE_THROWABLE, TYPE_THROWABLE);
             register(JetStandardLibraryNames.COMPARABLE, JL_COMPARABLE_TYPE, JL_COMPARABLE_TYPE);
             register(JetStandardLibraryNames.ENUM, JL_ENUM_TYPE, JL_ENUM_TYPE);
+            register(JetStandardLibraryNames.ITERABLE, JL_ITERABLE_TYPE, JL_ITERABLE_TYPE);
+            register(JetStandardLibraryNames.ITERATOR, JL_ITERATOR_TYPE, JL_ITERATOR_TYPE);
 
             for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
                 PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
@@ -444,7 +448,7 @@ public class JetTypeMapper {
                     // TODO: enable and fix tests
                     //throw new IllegalStateException("must not map known type to IMPL when not compiling builtins: " + jetType);
                 }
-                // fall through
+                return mapKnownAsmType(jetType, known, signatureVisitor);
             }
             else {
                 throw new IllegalStateException("unknown kind: " + kind);
