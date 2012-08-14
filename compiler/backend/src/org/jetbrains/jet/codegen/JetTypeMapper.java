@@ -1044,13 +1044,13 @@ public class JetTypeMapper {
         }
     }
 
-    public Collection<String> allJvmNames(JetClassOrObject jetClass) {
-        Set<String> result = new HashSet<String>();
+    @Nullable
+    public String getJvmInternalName(JetClassOrObject jetClass) {
         final ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, jetClass);
-        if (classDescriptor != null) {
-            result.add(mapType(classDescriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName());
+        if (classDescriptor == null) {
+            return null;
         }
-        return result;
+        return mapType(classDescriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName();
     }
 
     private static boolean isForceReal(JvmClassName className) {

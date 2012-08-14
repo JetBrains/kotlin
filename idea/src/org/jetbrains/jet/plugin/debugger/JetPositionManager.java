@@ -33,18 +33,14 @@ import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.request.ClassPrepareRequest;
-import com.sun.jna.TypeMapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.di.InjectorForJetTypeMapper;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
@@ -127,53 +123,42 @@ public class JetPositionManager implements PositionManager {
     }
 
     private Collection<String> classNamesForPosition(final SourcePosition sourcePosition) {
-
         final Collection<String> names = new ArrayList<String>();
 
         ApplicationManager.getApplication().runReadAction(new Runnable() {
             @Override
+            @SuppressWarnings("unchecked")
             public void run() {
-                final JetFile file = (JetFile)sourcePosition.getFile();
-                JetTypeMapper typeMapper = prepareTypeMapper(file);
+                final JetFile namespace = (JetFile)sourcePosition.getFile();
+                final JetTypeMapper typeMapper = prepareTypeMapper(namespace);
 
-                PsiElement psiElement = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
-                if (psiElement == null) {
-                    JetFile namespace = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetFile.class);
-                    if (namespace != null) {
-                        names.add(NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(namespace)).getInternalName());
+                PsiElement element = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
+                if (element instanceof JetClassOrObject) {
+                    names.add(typeMapper.getJvmInternalName((JetClassOrObject)element));
+                }
+                else if (element instanceof JetFunctionLiteralExpression) {
+                    names.add(typeMapper.getClosureAnnotator().classNameForAnonymousClass((JetFunctionLiteralExpression)element).getInternalName());
+                }
+                else if (element instanceof JetNamedFunction) {
+                    PsiElement parent = PsiTreeUtil.getParentOfType(element, JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
+                    if (parent instanceof JetClassOrObject) {
+                        names.add(typeMapper.getJvmInternalName((JetClassOrObject)parent));
                     }
-                    else {
-                        names.add(NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(file)).getInternalName());
+                    else if (parent instanceof JetFunctionLiteralExpression || parent instanceof JetNamedFunction) {
+                        names.add(typeMapper.getClosureAnnotator().classNameForAnonymousClass((JetElement)element).getInternalName());
                     }
                 }
-                else {
-                    if (psiElement instanceof JetClassOrObject) {
-                        names.addAll(typeMapper.allJvmNames((JetClassOrObject) psiElement));
-                    }
-                    else if(psiElement instanceof JetNamedFunction) {
-                        if(psiElement.getParent() instanceof JetFile) {
-                            JetFile namespace = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetFile.class);
-                            boolean multiFileNamespace = typeMapper.getClosureAnnotator().isMultiFileNamespace(JetPsiUtil.getFQName(namespace));
-                            if(multiFileNamespace) {
-                                String name = namespace.getName();
-                                names.add(NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(namespace)).getInternalName() + "$src$" + name.substring(0,name.lastIndexOf('.')));
-                            }
-                            else {
-                                names.add(NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(namespace)).getInternalName());
-                            }
-                        }
-                        else {
-                            JetFile namespace = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetFile.class);
-                            if (namespace != null) {
-                                names.add(NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(namespace)).getInternalName());
-                            }
-                            else {
-                                names.add(NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(file)).getInternalName());
-                            }
-                        }
+
+                if (names.isEmpty()) {
+                    FqName fqName = JetPsiUtil.getFQName(namespace);
+                    boolean multiFileNamespace = typeMapper.getClosureAnnotator().isMultiFileNamespace(fqName);
+                    String namespaceInternalName = NamespaceCodegen.getJVMClassNameForKotlinNs(fqName).getInternalName();
+                    if (multiFileNamespace) {
+                        String name = namespace.getName();
+                        names.add(namespaceInternalName + "$src$" + name.substring(0, name.lastIndexOf('.')));
                     }
                     else {
-                        names.add(typeMapper.getClosureAnnotator().classNameForAnonymousClass((JetElement) psiElement).getInternalName());
+                        names.add(namespaceInternalName);
                     }
                 }
             }
