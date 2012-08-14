@@ -126,7 +126,6 @@ public abstract class Config {
             "/generated/ArraysFromJLangIterablesLazy.kt",
             "/generated/ArraysFromJUtilCollections.kt",
             "/generated/JUtilIteratorsFromJLangIterables.kt",
-            "/generated/JUtilIterablesFromJUtilCollections.kt",
             "/kotlin/support/AbstractIterator.kt",
             "/kotlin/Standard.kt",
             "/kotlin/Strings.kt",
