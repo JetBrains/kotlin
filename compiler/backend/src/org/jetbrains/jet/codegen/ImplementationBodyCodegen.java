@@ -1031,7 +1031,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.putstatic(implClass, enumConstant.getName(), "L" + implClass + ";");
             iv.astore(TYPE_OBJECT);
         }
-        iv.putstatic(myAsmType.getClassName(), "$VALUES", arrayAsmType.getDescriptor());
+        iv.putstatic(myAsmType.getInternalName(), "$VALUES", arrayAsmType.getDescriptor());
     }
 
     public static void generateInitializers(@NotNull ExpressionCodegen codegen, @NotNull InstructionAdapter iv, @NotNull List<JetDeclaration> declarations,

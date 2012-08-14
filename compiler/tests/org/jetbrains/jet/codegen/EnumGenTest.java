@@ -73,6 +73,10 @@ public class EnumGenTest extends CodegenTestCase {
         blackBoxFile("enum/simple.kt");
     }
 
+    public void testSimpleEnumInPackage() throws NoSuchFieldException, IllegalAccessException {
+        blackBoxFile("enum/inPackage.kt");
+    }
+
     public void testAsReturnExpression() {
         blackBoxFile("enum/asReturnExpression.kt");
     }
