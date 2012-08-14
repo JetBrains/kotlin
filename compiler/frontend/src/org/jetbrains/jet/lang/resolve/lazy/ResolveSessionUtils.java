@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -27,20 +28,20 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Nikolay Krasko
  */
-public class LazyBindingContextUtils {
-    private static final Logger LOG = Logger.getInstance("#" + LazyBindingContextUtils.class.getName());
+public class ResolveSessionUtils {
+    private static final Logger LOG = Logger.getInstance("#" + ResolveSessionUtils.class.getName());
 
-    private LazyBindingContextUtils() {
+    private ResolveSessionUtils() {
     }
 
     private static class EmptyBodyResolveContext implements BodiesResolveContext {
@@ -197,5 +198,66 @@ public class LazyBindingContextUtils {
         }
 
         return null;
+    }
+
+    public static Collection<ClassDescriptor> getClassDescriptorsByFqName(@NotNull ResolveSession resolveSession, @NotNull FqName fqName) {
+        if (fqName.isRoot()) {
+            return Collections.emptyList();
+        }
+
+        Collection<ClassDescriptor> classDescriptors = Lists.newArrayList();
+
+        FqName packageFqName = fqName.parent();
+        while (true) {
+            NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(packageFqName);
+            if (packageDescriptor != null) {
+                FqName classInPackagePath = new FqName(QualifiedNamesUtil.tail(packageFqName, fqName));
+                Collection<ClassDescriptor> descriptors = getClassDescriptorsByFqName(packageDescriptor, classInPackagePath);
+                classDescriptors.addAll(descriptors);
+            }
+
+            if (packageFqName.isRoot()) {
+                break;
+            }
+            else {
+                packageFqName = packageFqName.parent();
+            }
+        }
+
+        return classDescriptors;
+    }
+
+    private static Collection<ClassDescriptor> getClassDescriptorsByFqName(NamespaceDescriptor packageDescriptor, FqName path) {
+        if (path.isRoot()) {
+            return Collections.emptyList();
+        }
+
+        Collection<JetScope> scopes = Arrays.asList(packageDescriptor.getMemberScope());
+
+        List<Name> names = path.pathSegments();
+        if (names.size() > 1) {
+            for (Name subName : path.pathSegments().subList(0, names.size() - 1)) {
+                Collection<JetScope> tempScopes = Lists.newArrayList();
+                for (JetScope scope : scopes) {
+                    ClassifierDescriptor classifier = scope.getClassifier(subName);
+                    if (classifier instanceof ClassDescriptorBase) {
+                        ClassDescriptorBase classDescriptor = (ClassDescriptorBase) classifier;
+                        tempScopes.add(classDescriptor.getUnsubstitutedInnerClassesScope());
+                    }
+                }
+                scopes = tempScopes;
+            }
+        }
+
+        Name shortName = path.shortName();
+        Collection<ClassDescriptor> resultClassDescriptors = Lists.newArrayList();
+        for (JetScope scope : scopes) {
+            ClassifierDescriptor classifier = scope.getClassifier(shortName);
+            if (classifier instanceof ClassDescriptor) {
+                resultClassDescriptors.add((ClassDescriptor) classifier);
+            }
+        }
+
+        return resultClassDescriptors;
     }
 }

@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
-import org.jetbrains.jet.lang.resolve.lazy.LazyBindingContextUtils;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 
 /**
@@ -48,7 +48,7 @@ public final class WholeProjectAnalyzerFacade {
     public static BindingContext getLazyResolveContext(@NotNull JetFile file, @Nullable JetExpression expression) {
         ResolveSession resolveSession = getLazyResolveSessionForFile(file);
         return expression != null ?
-               LazyBindingContextUtils.getExpressionBindingContext(resolveSession, expression) :
+               ResolveSessionUtils.getExpressionBindingContext(resolveSession, expression) :
                resolveSession.getBindingContext();
     }
 }

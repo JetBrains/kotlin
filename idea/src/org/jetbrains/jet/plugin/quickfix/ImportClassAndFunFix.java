@@ -96,7 +96,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
         ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) element.getContainingFile());
 
         List<FqName> result = Lists.newArrayList();
-        result.addAll(getClassNames(referenceName, (JetFile) file));
+        result.addAll(getClassNames(referenceName, (JetFile) file, resolveSession));
         result.addAll(getJetTopLevelFunctions(referenceName, element, resolveSession, file.getProject()));
         result.addAll(getJetExtensionFunctions(referenceName, element, resolveSession, file.getProject()));
 
@@ -159,14 +159,14 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
     /*
      * Searches for possible class names in kotlin context and java facade.
      */
-    public static Collection<FqName> getClassNames(@NotNull String referenceName, @NotNull JetFile file) {
+    public static Collection<FqName> getClassNames(@NotNull String referenceName, @NotNull JetFile file, @NotNull ResolveSession resolveSession) {
         Set<FqName> possibleResolveNames = Sets.newHashSet();
 
         if (!JsModuleDetector.isJsModule(file)) {
             possibleResolveNames.addAll(getClassesFromCache(referenceName, file));
         }
         else {
-            possibleResolveNames.addAll(getJetClasses(referenceName, file));
+            possibleResolveNames.addAll(getJetClasses(referenceName, file.getProject(), resolveSession));
         }
 
         // TODO: Do appropriate sorting
@@ -198,14 +198,14 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
         });
     }
 
-    private static Collection<FqName> getJetClasses(@NotNull final String typeName, @NotNull JetFile file) {
-        JetShortNamesCache cache = JetCacheManager.getInstance(file.getProject()).getNamesCache();
+    private static Collection<FqName> getJetClasses(@NotNull final String typeName, @NotNull Project project, @NotNull ResolveSession resolveSession) {
+        JetShortNamesCache cache = JetCacheManager.getInstance(project).getNamesCache();
         Collection<ClassDescriptor> descriptors = cache.getJetClassesDescriptors(new Condition<String>() {
             @Override
             public boolean value(String s) {
                 return typeName.equals(s);
             }
-        }, file);
+        }, resolveSession);
 
         return Collections2.transform(descriptors, new Function<ClassDescriptor, FqName>() {
             @Override

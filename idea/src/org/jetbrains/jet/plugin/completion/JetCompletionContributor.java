@@ -35,7 +35,7 @@ import org.jetbrains.jet.cli.jvm.compiler.TipsManager;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.lazy.LazyBindingContextUtils;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -84,7 +84,7 @@ public class JetCompletionContributor extends CompletionContributor {
                            session.resolveSession =
                                    WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) position.getContainingFile());
 
-                           session.expressionBindingContext = LazyBindingContextUtils.getExpressionBindingContext(
+                           session.expressionBindingContext = ResolveSessionUtils.getExpressionBindingContext(
                                    session.resolveSession, jetReference.getExpression());
 
                            JetScope scope = session.expressionBindingContext.get(BindingContext.RESOLUTION_SCOPE, jetReference.getExpression());
@@ -96,7 +96,7 @@ public class JetCompletionContributor extends CompletionContributor {
                                // Rerun completion if nothing was found
                                session.customInvocationCount = 1;
                                session.resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) position.getContainingFile());
-                               session.expressionBindingContext = LazyBindingContextUtils.getExpressionBindingContext(
+                               session.expressionBindingContext = ResolveSessionUtils.getExpressionBindingContext(
                                        session.resolveSession, jetReference.getExpression());
 
                                completeForReference(parameters, result, position, jetReference, session);
@@ -215,7 +215,7 @@ public class JetCompletionContributor extends CompletionContributor {
         Collection<String> functionNames = namesCache.getAllTopLevelFunctionNames();
 
         ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) position.getContainingFile());
-        BindingContext resolutionContext = LazyBindingContextUtils.getExpressionBindingContext(resolveSession, expression);
+        BindingContext resolutionContext = ResolveSessionUtils.getExpressionBindingContext(resolveSession, expression);
 
         for (String name : functionNames) {
             if (name.contains(actualPrefix)) {
@@ -233,7 +233,9 @@ public class JetCompletionContributor extends CompletionContributor {
             @NotNull CompletionParameters parameters,
             @NotNull final CompletionResultSet result,
             @NotNull final CompletionSession session) {
-        JetClassCompletionContributor.addClasses(parameters, result, session.expressionBindingContext, new Consumer<LookupElement>() {
+        JetClassCompletionContributor.addClasses(
+                parameters, result,
+                session.expressionBindingContext, session.resolveSession, new Consumer<LookupElement>() {
             @Override
             public void consume(@NotNull LookupElement element) {
                 addCompletionToResult(result, element, session);

@@ -21,7 +21,6 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
@@ -32,11 +31,11 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 
 import java.util.Collection;
@@ -54,6 +53,7 @@ public class JetClassCompletionContributor extends CompletionContributor {
             @NotNull final CompletionParameters parameters,
             @NotNull final CompletionResultSet result,
             @NotNull final BindingContext jetContext,
+            @NotNull final ResolveSession resolveSession,
             @NotNull final Consumer<LookupElement> consumer
     ) {
         CompletionResultSet tempResult = result.withPrefixMatcher(CompletionUtil.findReferenceOrAlphanumericPrefix(parameters));
@@ -75,7 +75,7 @@ public class JetClassCompletionContributor extends CompletionContributor {
                                 JavaPsiClassReferenceElement javaPsiReferenceElement = (JavaPsiClassReferenceElement) lookupElement;
 
                                 PsiClass psiClass = javaPsiReferenceElement.getObject();
-                                if (addAsJetLookupElement(parameters, psiClass, consumer)) {
+                                if (addAsJetLookupElement(parameters, psiClass, resolveSession, jetContext, consumer)) {
                                     return;
                                 }
 
@@ -95,8 +95,7 @@ public class JetClassCompletionContributor extends CompletionContributor {
                         public boolean value(String shortName) {
                             return result.getPrefixMatcher().prefixMatches(shortName);
                         }
-                    },
-                    (JetFile) parameters.getOriginalFile());
+                    }, resolveSession);
 
             for (ClassDescriptor descriptor : descriptors) {
                 consumer.consume(DescriptorLookupConverter.createLookupElement(jetContext, descriptor));
@@ -104,23 +103,27 @@ public class JetClassCompletionContributor extends CompletionContributor {
         }
     }
 
-    private static boolean addAsJetLookupElement(CompletionParameters parameters, PsiClass aClass, Consumer<LookupElement> consumer) {
+    private static boolean addAsJetLookupElement(
+            CompletionParameters parameters,
+            PsiClass aClass,
+            ResolveSession resolveSession,
+            BindingContext context,
+            Consumer<LookupElement> consumer
+    ) {
         if (aClass instanceof JetLightClass) {
             Project project = parameters.getPosition().getProject();
-            PsiFile completionFile = parameters.getPosition().getContainingFile();
 
             Collection<JetClassOrObject> classOrObjects =
                     JetFullClassNameIndex.getInstance().get(aClass.getQualifiedName(), project, GlobalSearchScope.allScope(project));
 
             for (JetClassOrObject classOrObject : classOrObjects) {
                 if (classOrObject.getContainingFile().getOriginalFile().equals(aClass.getContainingFile())) {
-                    PsiFile fileOfClass = completionFile.getOriginalFile().equals(aClass.getContainingFile()) ? completionFile : aClass.getContainingFile();
+                    Collection<ClassDescriptor> classDescriptors = ResolveSessionUtils.getClassDescriptorsByFqName(
+                            resolveSession,((JetLightClass) aClass).getFqName());
+                    for (ClassDescriptor descriptor : classDescriptors) {
+                        consumer.consume(DescriptorLookupConverter.createLookupElement(context, descriptor));
+                    }
 
-                    ResolveSession resolveSessionForFile = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) fileOfClass);
-                    ClassDescriptor descriptor = resolveSessionForFile.getClassDescriptor(classOrObject);
-
-                    LookupElement element = DescriptorLookupConverter.createLookupElement(resolveSessionForFile.getBindingContext(), descriptor);
-                    consumer.consume(element);
                     return true;
                 }
             }

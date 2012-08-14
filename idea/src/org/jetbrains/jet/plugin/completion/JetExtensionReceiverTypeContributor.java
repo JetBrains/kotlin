@@ -25,7 +25,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
@@ -41,11 +41,13 @@ public class JetExtensionReceiverTypeContributor extends CompletionContributor {
                                       ProcessingContext context,
                                       final @NotNull CompletionResultSet result
         ) {
-            BindingContext jetContext = WholeProjectAnalyzerFacade
-                    .getLazyResolveContext((JetFile) parameters.getPosition().getContainingFile(), null);
+            ResolveSession resolveSession =
+                    WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) parameters.getPosition().getContainingFile());
 
-            if (parameters.getInvocationCount() > 0 || parameters.getCompletionType() == CompletionType.CLASS_NAME) {
-                JetClassCompletionContributor.addClasses(parameters, result, jetContext, new Consumer<LookupElement>() {
+            if (parameters.getInvocationCount() > 0) {
+                JetClassCompletionContributor.addClasses(
+                        parameters, result,
+                        resolveSession.getBindingContext(), resolveSession, new Consumer<LookupElement>() {
                     @Override
                     public void consume(@NotNull LookupElement element) {
                         result.addElement(element);

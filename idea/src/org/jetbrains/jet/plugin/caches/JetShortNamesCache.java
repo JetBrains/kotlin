@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
-import org.jetbrains.jet.lang.resolve.lazy.LazyBindingContextUtils;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -46,7 +46,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.stubindex.JetExtensionFunctionNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetShortClassNameIndex;
@@ -157,7 +156,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             @NotNull ResolveSession resolveSession,
             @NotNull GlobalSearchScope scope
     ) {
-        BindingContext context = LazyBindingContextUtils.getExpressionBindingContext(resolveSession, expression);
+        BindingContext context = ResolveSessionUtils.getExpressionBindingContext(resolveSession, expression);
         JetScope jetScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
 
         if (jetScope == null || name.isEmpty()) {
@@ -239,7 +238,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     ) {
         Collection<DeclarationDescriptor> resultDescriptors = new ArrayList<DeclarationDescriptor>();
 
-        BindingContext context = LazyBindingContextUtils.getExpressionBindingContext(resolveSession, expression);
+        BindingContext context = ResolveSessionUtils.getExpressionBindingContext(resolveSession, expression);
         JetExpression receiverExpression = expression.getReceiverExpression();
 
         if (receiverExpression != null) {
@@ -286,18 +285,14 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
     public Collection<ClassDescriptor> getJetClassesDescriptors(
             @NotNull Condition<String> acceptedShortNameCondition,
-            @NotNull JetFile jetFile
+            @NotNull ResolveSession resolveSession
     ) {
-        BindingContext context = WholeProjectAnalyzerFacade.getLazyResolveContext(jetFile, null);
         Collection<ClassDescriptor> classDescriptors = new ArrayList<ClassDescriptor>();
 
         for (String fqName : JetFullClassNameIndex.getInstance().getAllKeys(project)) {
             FqName classFQName = new FqName(fqName);
             if (acceptedShortNameCondition.value(classFQName.shortName().getName())) {
-                ClassDescriptor descriptor = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, classFQName);
-                if (descriptor != null) {
-                    classDescriptors.add(descriptor);
-                }
+                classDescriptors.addAll(ResolveSessionUtils.getClassDescriptorsByFqName(resolveSession, classFQName));
             }
         }
 
