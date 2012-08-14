@@ -28,8 +28,6 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.initializer.InitializerUtils;
 import org.jetbrains.k2js.translate.initializer.InitializerVisitor;
-import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
@@ -39,6 +37,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.generateInitializerForProperty;
+import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.isPredefinedObject;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForElement;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptor;
 
 /**
@@ -64,7 +64,7 @@ final class NamespaceTranslator extends AbstractTranslator {
 
     public void translate(JetFile file) {
         for (JetDeclaration declaration : file.getDeclarations()) {
-            if (!AnnotationsUtils.isNativeObject(BindingUtils.getDescriptorForElement(bindingContext(), declaration))) {
+            if (!isPredefinedObject(getDescriptorForElement(bindingContext(), declaration))) {
                 declaration.accept(visitor, context());
             }
         }
