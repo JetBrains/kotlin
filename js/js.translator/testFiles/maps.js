@@ -298,7 +298,7 @@
 
         this.values = function () {
             var values = this._values();
-            var i = values.length
+            var i = values.length;
             var result = Kotlin.$new(Kotlin.ArrayList)();
             while (--i) {
                 result.add(values[i]);
@@ -371,7 +371,7 @@
         };
 
         this.keySet = function () {
-            var res = Kotlin.$new(Kotlin.HashSet)();
+            var res = Kotlin.$new(Kotlin.ComplexHashSet)();
             var keys = this._keys();
             var i = keys.length;
             while (i--) {
@@ -475,7 +475,7 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
             throw Kotlin.$new(Kotlin.UnsupportedOperationException)();
         },
         keySet: function () {
-            var result = Kotlin.$new(Kotlin.HashSet)();
+            var result = Kotlin.$new(Kotlin.PrimitiveHashSet)();
             var map = this.map;
             for (var key in map) {
                 if (map.hasOwnProperty(key)) {
@@ -493,6 +493,46 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
         }
     });
 }());
+
+Kotlin.Set = Kotlin.$createClass(Kotlin.Collection);
+
+Kotlin.PrimitiveHashSet = Kotlin.$createClass(Kotlin.AbstractCollection, {
+    initialize: function () {
+        this.$size = 0;
+        this.map = {};
+    },
+    contains: function (key) {
+        return this.map[key] === true;
+    },
+    add: function (element) {
+        var prevElement = this.map[element];
+        this.map[element] = true;
+        if (prevElement === true) {
+            return false;
+        }
+        else {
+            this.$size++;
+            return true;
+        }
+    },
+    remove: function (element) {
+        if (this.map[element] === true) {
+            delete this.map[element];
+            this.$size--;
+            return true;
+        }
+        else {
+            return false;
+        }
+    },
+    clear: function () {
+        this.$size = 0;
+        this.map = {};
+    },
+    toArray: function () {
+        return Kotlin.keys(this.map);
+    }
+});
 
 (function () {
     function HashSet(hashingFunction, equalityFunction) {
@@ -614,7 +654,7 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
         };
     }
 
-    Kotlin.HashSet = Kotlin.$createClass({initialize: function () {
+    Kotlin.ComplexHashSet = Kotlin.$createClass(Kotlin.Set, {initialize: function () {
         HashSet.call(this);
     }});
 }());
