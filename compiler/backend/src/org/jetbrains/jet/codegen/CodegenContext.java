@@ -18,14 +18,14 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.asm4.Type;
-import org.jetbrains.asm4.commons.InstructionAdapter;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
 
 /*
  * @author max
@@ -39,26 +39,32 @@ public abstract class CodegenContext {
     private final OwnerKind contextKind;
     @Nullable
     private final CodegenContext parentContext;
-    public  final ObjectOrClosureCodegen closure;
+    public final ObjectOrClosureCodegen closure;
 
     HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors;
 
     protected StackValue outerExpression;
 
-    protected Type outerWasUsed ;
+    protected Type outerWasUsed;
 
-    public CodegenContext(@NotNull DeclarationDescriptor contextDescriptor, OwnerKind contextKind, @Nullable CodegenContext parentContext, @Nullable ObjectOrClosureCodegen closureCodegen) {
+    public CodegenContext(
+            @NotNull DeclarationDescriptor contextDescriptor,
+            OwnerKind contextKind,
+            @Nullable CodegenContext parentContext,
+            @Nullable ObjectOrClosureCodegen closureCodegen
+    ) {
         this.contextDescriptor = contextDescriptor;
         this.contextKind = contextKind;
         this.parentContext = parentContext;
         closure = closureCodegen;
     }
 
-    protected abstract ClassDescriptor getThisDescriptor ();
+    protected abstract ClassDescriptor getThisDescriptor();
 
     public DeclarationDescriptor getClassOrNamespaceDescriptor() {
         CodegenContext c = this;
-        while(true) {
+        while (true) {
+            assert c != null;
             DeclarationDescriptor contextDescriptor = c.getContextDescriptor();
             if (!(contextDescriptor instanceof ClassDescriptor) && !(contextDescriptor instanceof NamespaceDescriptor)) {
                 c = c.getParentContext();
@@ -82,6 +88,7 @@ public abstract class CodegenContext {
         return prefix != null ? StackValue.composed(prefix, outerExpression) : outerExpression;
     }
 
+    @NotNull
     public DeclarationDescriptor getContextDescriptor() {
         return contextDescriptor;
     }
@@ -95,14 +102,19 @@ public abstract class CodegenContext {
     }
 
     public CodegenContext intoNamespacePart(String delegateTo, NamespaceDescriptor descriptor) {
-        return new CodegenContexts.NamespaceContext(descriptor, this, new OwnerKind.StaticDelegateKind(StackValue.none(), delegateTo));
+        return new CodegenContexts.NamespaceContext(descriptor, this, new OwnerKind.StaticDelegateKind(delegateTo));
     }
 
     public CodegenContext intoClass(ClassDescriptor descriptor, OwnerKind kind, JetTypeMapper typeMapper) {
         return new CodegenContexts.ClassContext(descriptor, kind, this, typeMapper);
     }
 
-    public CodegenContext intoAnonymousClass(@NotNull ObjectOrClosureCodegen closure, ClassDescriptor descriptor, OwnerKind kind, JetTypeMapper typeMapper) {
+    public CodegenContext intoAnonymousClass(
+            @NotNull ObjectOrClosureCodegen closure,
+            ClassDescriptor descriptor,
+            OwnerKind kind,
+            JetTypeMapper typeMapper
+    ) {
         return new CodegenContexts.AnonymousClassContext(descriptor, kind, this, closure, typeMapper);
     }
 
@@ -113,7 +125,8 @@ public abstract class CodegenContext {
     public CodegenContexts.ConstructorContext intoConstructor(ConstructorDescriptor descriptor, JetTypeMapper typeMapper) {
         if (descriptor == null) {
             descriptor = new ConstructorDescriptorImpl(getThisDescriptor(), Collections.<AnnotationDescriptor>emptyList(), true)
-                    .initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(), Visibilities.PUBLIC);
+                    .initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
+                                Visibilities.PUBLIC);
         }
         return new CodegenContexts.ConstructorContext(descriptor, getContextKind(), this, typeMapper);
     }
@@ -122,7 +135,13 @@ public abstract class CodegenContext {
         return new CodegenContexts.ScriptContext(script, classDescriptor, OwnerKind.IMPLEMENTATION, this, closure);
     }
 
-    public CodegenContexts.ClosureContext intoClosure(FunctionDescriptor funDescriptor, ClassDescriptor classDescriptor, JvmClassName internalClassName, ClosureCodegen closureCodegen, JetTypeMapper typeMapper) {
+    public CodegenContexts.ClosureContext intoClosure(
+            FunctionDescriptor funDescriptor,
+            ClassDescriptor classDescriptor,
+            JvmClassName internalClassName,
+            ClosureCodegen closureCodegen,
+            JetTypeMapper typeMapper
+    ) {
         return new CodegenContexts.ClosureContext(funDescriptor, classDescriptor, this, closureCodegen, internalClassName, typeMapper);
     }
 
@@ -151,7 +170,9 @@ public abstract class CodegenContext {
         final ObjectOrClosureCodegen top = closure;
         if (top != null) {
             final StackValue answer = top.lookupInContext(d, result);
-            if (answer != null) { return result == null ? answer : StackValue.composed(result, answer); }
+            if (answer != null) {
+                return result == null ? answer : StackValue.composed(result, answer);
+            }
 
             StackValue outer = getOuterExpression(null);
             result = result == null ? outer : StackValue.composed(result, outer);
@@ -171,17 +192,19 @@ public abstract class CodegenContext {
 
     DeclarationDescriptor getAccessor(DeclarationDescriptor descriptor) {
         if (accessors == null) {
-            accessors = new HashMap<DeclarationDescriptor,DeclarationDescriptor>();
+            accessors = new HashMap<DeclarationDescriptor, DeclarationDescriptor>();
         }
         descriptor = descriptor.getOriginal();
         DeclarationDescriptor accessor = accessors.get(descriptor);
-        if (accessor != null) { return accessor; }
+        if (accessor != null) {
+            return accessor;
+        }
 
         if (descriptor instanceof SimpleFunctionDescriptor) {
             accessor = new AccessorForFunctionDescriptor(descriptor, contextDescriptor, accessors.size());
         }
         else if (descriptor instanceof PropertyDescriptor) {
-            accessor = new AccessorForPropertyDescriptor((PropertyDescriptor) descriptor, contextDescriptor,accessors.size());
+            accessor = new AccessorForPropertyDescriptor((PropertyDescriptor) descriptor, contextDescriptor, accessors.size());
         }
         else {
             throw new UnsupportedOperationException();
@@ -201,7 +224,7 @@ public abstract class CodegenContext {
     public void copyAccessors(HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors) {
         if (accessors != null) {
             if (this.accessors == null) {
-                this.accessors = new HashMap<DeclarationDescriptor,DeclarationDescriptor>();
+                this.accessors = new HashMap<DeclarationDescriptor, DeclarationDescriptor>();
             }
             this.accessors.putAll(accessors);
         }

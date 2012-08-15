@@ -19,14 +19,10 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.annotations.NotNull;
 
 /**
-* @author yole
-*/
+ * @author yole
+ */
 public class GeneratedClassLoader extends ClassLoader {
     private ClassFileFactory state;
-
-    public GeneratedClassLoader(@NotNull ClassFileFactory state) {
-        this(state, GeneratedClassLoader.class.getClassLoader());
-    }
 
     public GeneratedClassLoader(@NotNull ClassFileFactory state, ClassLoader parentClassLoader) {
         super(parentClassLoader);

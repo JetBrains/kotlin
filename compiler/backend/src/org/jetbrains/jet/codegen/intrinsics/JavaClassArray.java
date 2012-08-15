@@ -19,6 +19,8 @@ package org.jetbrains.jet.codegen.intrinsics;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.StackValue;
@@ -30,8 +32,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.VarargValueArgument;
-import org.jetbrains.asm4.Type;
-import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 import java.util.Map;
@@ -41,17 +41,20 @@ import java.util.Map;
  */
 public class JavaClassArray implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen,
-                               InstructionAdapter v,
-                               @NotNull Type expectedType,
-                               @Nullable PsiElement element,
-                               @Nullable List<JetExpression> arguments,
-                               StackValue receiver,
-                               @NotNull GenerationState state) {
+    public StackValue generate(
+            ExpressionCodegen codegen,
+            InstructionAdapter v,
+            @NotNull Type expectedType,
+            @Nullable PsiElement element,
+            @Nullable List<JetExpression> arguments,
+            StackValue receiver,
+            @NotNull GenerationState state
+    ) {
         ResolvedCall<? extends CallableDescriptor> call =
-            codegen.getBindingContext().get(BindingContext.RESOLVED_CALL, ((JetCallExpression)element).getCalleeExpression());
-        Map.Entry<ValueParameterDescriptor,ResolvedValueArgument> next = call.getValueArguments().entrySet().iterator().next();
-        codegen.genVarargs(next.getKey(), (VarargValueArgument)next.getValue());
+                codegen.getBindingContext().get(BindingContext.RESOLVED_CALL, ((JetCallExpression) element).getCalleeExpression());
+        assert call != null;
+        Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> next = call.getValueArguments().entrySet().iterator().next();
+        codegen.genVarargs(next.getKey(), (VarargValueArgument) next.getValue());
         return StackValue.onStack(expectedType);
     }
 }

@@ -25,12 +25,12 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Random;
 
 /**
@@ -64,20 +64,20 @@ public class CodegenUtil {
                 CallableMemberDescriptor.Kind.DECLARATION);
 
         invokeDescriptor.initialize(fd.getReceiverParameter().exists() ? fd.getReceiverParameter().getType() : null,
-                                   fd.getExpectedThisObject(),
-                                   Collections.<TypeParameterDescriptorImpl>emptyList(),
-                                   fd.getValueParameters(),
-                                   fd.getReturnType(),
-                                   Modality.FINAL,
-                                   Visibilities.PUBLIC,
-                                   /*isInline = */false
+                                    fd.getExpectedThisObject(),
+                                    Collections.<TypeParameterDescriptorImpl>emptyList(),
+                                    fd.getValueParameters(),
+                                    fd.getReturnType(),
+                                    Modality.FINAL,
+                                    Visibilities.PUBLIC,
+                                    /*isInline = */false
         );
         return invokeDescriptor;
     }
 
     public static boolean isNonLiteralObject(JetClassOrObject myClass) {
         return myClass instanceof JetObjectDeclaration && !((JetObjectDeclaration) myClass).isObjectLiteral() &&
-                !(myClass.getParent() instanceof JetClassObject);
+               !(myClass.getParent() instanceof JetClassObject);
     }
 
     public static boolean isLocalFun(DeclarationDescriptor fd, BindingContext bindingContext) {
@@ -109,7 +109,9 @@ public class CodegenUtil {
     }
 
 
-    public static @NotNull BitSet getFlagsForVisibility(@NotNull Visibility visibility) {
+    public static
+    @NotNull
+    BitSet getFlagsForVisibility(@NotNull Visibility visibility) {
         BitSet flags = new BitSet();
         if (visibility == Visibilities.INTERNAL) {
             flags.set(JvmStdlibNames.FLAG_INTERNAL_BIT);

@@ -31,7 +31,9 @@ public class JvmMethodSignature {
 
     @NotNull
     private final Method asmMethod;
-    /** Null when we don't care about type parameters */
+    /**
+     * Null when we don't care about type parameters
+     */
     private final String genericsSignature;
     private final String kotlinTypeParameter;
     @NotNull
@@ -44,8 +46,13 @@ public class JvmMethodSignature {
      */
     private final boolean genericsAvailable;
 
-    public JvmMethodSignature(@NotNull Method asmMethod, @Nullable String genericsSignature,
-            @Nullable String kotlinTypeParameters, @NotNull List<JvmMethodParameterSignature> kotlinParameterTypes, @NotNull String kotlinReturnType) {
+    public JvmMethodSignature(
+            @NotNull Method asmMethod,
+            @Nullable String genericsSignature,
+            @Nullable String kotlinTypeParameters,
+            @NotNull List<JvmMethodParameterSignature> kotlinParameterTypes,
+            @NotNull String kotlinReturnType
+    ) {
         this.asmMethod = asmMethod;
         this.genericsSignature = genericsSignature;
         this.kotlinTypeParameter = kotlinTypeParameters;
@@ -53,7 +60,7 @@ public class JvmMethodSignature {
         this.kotlinReturnType = kotlinReturnType;
         this.genericsAvailable = true;
     }
-    
+
     public JvmMethodSignature(@NotNull Method asmMethod, @NotNull List<JvmMethodParameterSignature> kotlinParameterTypes) {
         this.asmMethod = asmMethod;
         this.genericsSignature = null;
@@ -62,11 +69,16 @@ public class JvmMethodSignature {
         this.kotlinReturnType = "";
         this.genericsAvailable = false;
     }
-    
-    public static JvmMethodSignature simple(@NotNull String methodName, @NotNull Type returnType, @NotNull List<JvmMethodParameterSignature> parameterSignatures) {
-        return new JvmMethodSignature(new Method(methodName, returnType, getTypes(parameterSignatures).toArray(new Type[0])), parameterSignatures);
+
+    public static JvmMethodSignature simple(
+            @NotNull String methodName,
+            @NotNull Type returnType,
+            @NotNull List<JvmMethodParameterSignature> parameterSignatures
+    ) {
+        return new JvmMethodSignature(new Method(methodName, returnType, getTypes(parameterSignatures).toArray(new Type[0])),
+                                      parameterSignatures);
     }
-    
+
     @NotNull
     private static List<Type> getTypes(@NotNull List<JvmMethodParameterSignature> signatures) {
         List<Type> r = new ArrayList<Type>(signatures.size());
@@ -103,12 +115,12 @@ public class JvmMethodSignature {
         checkGenericsAvailable();
         return kotlinParameterTypes;
     }
-    
+
     public int getParameterCount() {
         // TODO: slow
         return asmMethod.getArgumentTypes().length;
     }
-    
+
     @NotNull
     public String getKotlinParameterType(int i) {
         checkGenericsAvailable();
@@ -125,7 +137,7 @@ public class JvmMethodSignature {
         checkGenericsAvailable();
         return kotlinReturnType;
     }
-    
+
     public List<Type> getValueParameterTypes() {
         List<Type> r = new ArrayList<Type>(kotlinParameterTypes.size());
         for (JvmMethodParameterSignature p : kotlinParameterTypes) {

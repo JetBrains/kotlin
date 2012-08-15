@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.ClassWriter;
 import org.jetbrains.asm4.util.TraceClassVisitor;
 
@@ -27,6 +26,7 @@ import java.io.StringWriter;
 /**
  * @author Stepan Koltsov
  */
+@SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
 public class ClassBuilderFactories {
 
     public static ClassBuilderFactory TEST = new ClassBuilderFactory() {

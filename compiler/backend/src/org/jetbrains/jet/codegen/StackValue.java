@@ -19,6 +19,11 @@ package org.jetbrains.jet.codegen;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.Label;
+import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
+import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -27,11 +32,6 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.asm4.Label;
-import org.jetbrains.asm4.Opcodes;
-import org.jetbrains.asm4.Type;
-import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.asm4.commons.Method;
 
 import java.util.List;
 
@@ -69,8 +69,8 @@ public abstract class StackValue {
      * This method is called to put the value on the top of the JVM stack if <code>depth</code> other values have been put on the
      * JVM stack after this value was generated.
      *
-     * @param type the type as which the value should be put
-     * @param v the visitor used to generate the instructions
+     * @param type  the type as which the value should be put
+     * @param v     the visitor used to generate the instructions
      * @param depth the number of new values put onto the stack
      */
     public void moveToTopOfStack(Type type, InstructionAdapter v, int depth) {
@@ -130,7 +130,13 @@ public abstract class StackValue {
         return new ArrayElement(type, unbox);
     }
 
-    public static StackValue collectionElement(Type type, ResolvedCall<FunctionDescriptor> getter, ResolvedCall<FunctionDescriptor> setter, ExpressionCodegen codegen, GenerationState state) {
+    public static StackValue collectionElement(
+            Type type,
+            ResolvedCall<FunctionDescriptor> getter,
+            ResolvedCall<FunctionDescriptor> setter,
+            ExpressionCodegen codegen,
+            GenerationState state
+    ) {
         return new CollectionElement(type, getter, setter, codegen, state);
     }
 
@@ -138,7 +144,18 @@ public abstract class StackValue {
         return new Field(type, owner, name, isStatic);
     }
 
-    public static Property property(String name, JvmClassName methodOwner, JvmClassName methodOwnerParam, Type type, boolean isStatic, boolean isInterface, boolean isSuper, Method getter, Method setter, int invokeOpcode) {
+    public static Property property(
+            String name,
+            JvmClassName methodOwner,
+            JvmClassName methodOwnerParam,
+            Type type,
+            boolean isStatic,
+            boolean isInterface,
+            boolean isSuper,
+            @Nullable Method getter,
+            @Nullable Method setter,
+            int invokeOpcode
+    ) {
         return new Property(name, methodOwner, methodOwnerParam, getter, setter, isStatic, isInterface, isSuper, type, invokeOpcode);
     }
 
@@ -213,10 +230,12 @@ public abstract class StackValue {
     }
 
     protected static void pop(Type type, InstructionAdapter v) {
-        if (type.getSize() == 1)
+        if (type.getSize() == 1) {
             v.pop();
-        else
+        }
+        else {
             v.pop2();
+        }
     }
 
     protected void coerce(Type toType, InstructionAdapter v) {
@@ -233,28 +252,33 @@ public abstract class StackValue {
             if (toType.getSort() == Type.OBJECT) {
                 putTuple0Instance(v);
             }
-            else if (toType == Type.LONG_TYPE)
+            else if (toType == Type.LONG_TYPE) {
                 v.lconst(0);
-            else if (toType == Type.FLOAT_TYPE)
+            }
+            else if (toType == Type.FLOAT_TYPE) {
                 v.fconst(0);
-            else if (toType == Type.DOUBLE_TYPE)
+            }
+            else if (toType == Type.DOUBLE_TYPE) {
                 v.dconst(0);
-            else
+            }
+            else {
                 v.iconst(0);
+            }
         }
         else if (toType.equals(JetTypeMapper.TUPLE0_TYPE) && !fromType.equals(JetTypeMapper.TUPLE0_TYPE)) {
             pop(fromType, v);
             putTuple0Instance(v);
         }
         else if (toType.getSort() == Type.OBJECT && fromType.equals(JetTypeMapper.TYPE_OBJECT) || toType.getSort() == Type.ARRAY) {
-                v.checkcast(toType);
+            v.checkcast(toType);
         }
         else if (toType.getSort() == Type.OBJECT) {
             if (fromType.getSort() == Type.OBJECT && !toType.equals(JetTypeMapper.TYPE_OBJECT)) {
                 v.checkcast(toType);
             }
-            else
+            else {
                 box(fromType, toType, v);
+            }
         }
         else if (fromType.getSort() == Type.OBJECT && toType.getSort() <= Type.DOUBLE) {
             if (fromType.equals(JetTypeMapper.TYPE_OBJECT)) {
@@ -314,14 +338,22 @@ public abstract class StackValue {
         return new PreIncrement(index, increment);
     }
 
-    public static StackValue receiver(ResolvedCall<? extends CallableDescriptor> resolvedCall, StackValue receiver, ExpressionCodegen codegen, @Nullable CallableMethod callableMethod, GenerationState state) {
-        if (resolvedCall.getThisObject().exists() || resolvedCall.getReceiverArgument().exists())
+    public static StackValue receiver(
+            ResolvedCall<? extends CallableDescriptor> resolvedCall,
+            StackValue receiver,
+            ExpressionCodegen codegen,
+            @Nullable CallableMethod callableMethod,
+            GenerationState state
+    ) {
+        if (resolvedCall.getThisObject().exists() || resolvedCall.getReceiverArgument().exists()) {
             return new CallReceiver(resolvedCall, receiver, codegen, state, callableMethod);
+        }
         return receiver;
     }
 
     private static class None extends StackValue {
         public static None INSTANCE = new None();
+
         private None() {
             super(Type.VOID_TYPE);
         }
@@ -396,19 +428,21 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            if (value instanceof Integer)
+            if (value instanceof Integer) {
                 v.iconst((Integer) value);
-            else
-            if (value instanceof Long)
+            }
+            else if (value instanceof Long) {
                 v.lconst((Long) value);
-            else
-            if (value instanceof Float)
+            }
+            else if (value instanceof Float) {
                 v.fconst((Float) value);
-            else
-            if (value instanceof Double)
+            }
+            else if (value instanceof Double) {
                 v.dconst((Double) value);
-            else
+            }
+            else {
                 v.aconst(value);
+            }
             coerce(type, v);
         }
 
@@ -449,8 +483,9 @@ public abstract class StackValue {
                 throw new UnsupportedOperationException("don't know how to put a compare as a non-boolean type " + type);
             }
             putAsBoolean(v);
-            if(type != Type.BOOLEAN_TYPE)
-                box(Type.BOOLEAN_TYPE,type,v);
+            if (type != Type.BOOLEAN_TYPE) {
+                box(Type.BOOLEAN_TYPE, type, v);
+            }
         }
 
         @Override
@@ -522,8 +557,9 @@ public abstract class StackValue {
         private Invert(StackValue operand) {
             super(Type.BOOLEAN_TYPE);
             myOperand = operand;
-            if (myOperand.type != Type.BOOLEAN_TYPE)
+            if (myOperand.type != Type.BOOLEAN_TYPE) {
                 throw new UnsupportedOperationException("operand of ! must be boolean");
+            }
         }
 
         @Override
@@ -536,8 +572,9 @@ public abstract class StackValue {
                 throw new UnsupportedOperationException("don't know how to put a compare as a non-boolean type");
             }
             putAsBoolean(v);
-            if(type != Type.BOOLEAN_TYPE)
-                box(Type.BOOLEAN_TYPE,type,v);
+            if (type != Type.BOOLEAN_TYPE) {
+                box(Type.BOOLEAN_TYPE, type, v);
+            }
         }
 
         @Override
@@ -571,6 +608,7 @@ public abstract class StackValue {
             v.dup2();   // array and index
         }
 
+        @Override
         public int receiverSize() {
             return 2;
         }
@@ -587,7 +625,13 @@ public abstract class StackValue {
         private final FunctionDescriptor setterDescriptor;
         private final FunctionDescriptor getterDescriptor;
 
-        public CollectionElement(Type type, ResolvedCall<FunctionDescriptor> resolvedGetCall, ResolvedCall<FunctionDescriptor> resolvedSetCall, ExpressionCodegen codegen, GenerationState state) {
+        public CollectionElement(
+                Type type,
+                ResolvedCall<FunctionDescriptor> resolvedGetCall,
+                ResolvedCall<FunctionDescriptor> resolvedSetCall,
+                ExpressionCodegen codegen,
+                GenerationState state
+        ) {
             super(type);
             this.resolvedGetCall = resolvedGetCall;
             this.resolvedSetCall = resolvedSetCall;
@@ -605,10 +649,12 @@ public abstract class StackValue {
             if (getter == null) {
                 throw new UnsupportedOperationException("no getter specified");
             }
-            if (getter instanceof CallableMethod)
-                ((CallableMethod)getter).invoke(v);
-            else
-                ((IntrinsicMethod)getter).generate(codegen, v, type, null, null, null, state);
+            if (getter instanceof CallableMethod) {
+                ((CallableMethod) getter).invoke(v);
+            }
+            else {
+                ((IntrinsicMethod) getter).generate(codegen, v, type, null, null, null, state);
+            }
             coerce(type, v);
         }
 
@@ -621,17 +667,19 @@ public abstract class StackValue {
                 CallableMethod method = (CallableMethod) setter;
                 Method asmMethod = method.getSignature().getAsmMethod();
                 Type[] argumentTypes = asmMethod.getArgumentTypes();
-                coerce(topOfStackType, argumentTypes[argumentTypes.length-1], v);
+                coerce(topOfStackType, argumentTypes[argumentTypes.length - 1], v);
                 method.invoke(v);
                 Type returnType = asmMethod.getReturnType();
                 if (returnType != Type.VOID_TYPE) {
                     pop(returnType, v);
                 }
             }
-            else
+            else {
                 ((IntrinsicMethod) setter).generate(codegen, v, null, null, null, null, state);
+            }
         }
 
+        @Override
         public int receiverSize() {
             if (isStandardStack(resolvedGetCall, 1) && isStandardStack(resolvedSetCall, 2)) {
                 return 2;
@@ -650,27 +698,27 @@ public abstract class StackValue {
                 int size = 0;
                 int lastIndex = frame.enterTemp();
                 frame.leaveTemp();
-                
+
                 // indexes
                 List<ValueParameterDescriptor> valueParameters = resolvedGetCall.getResultingDescriptor().getValueParameters();
                 int firstParamIndex = -1;
-                for(int i = valueParameters.size()-1; i >= 0; --i) {
+                for (int i = valueParameters.size() - 1; i >= 0; --i) {
                     Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType(), MapTypeMode.VALUE);
                     int sz = type.getSize();
                     frame.enterTemp(sz);
                     lastIndex += sz;
                     size += sz;
-                    v.store((firstParamIndex = lastIndex)-sz, type);
+                    v.store((firstParamIndex = lastIndex) - sz, type);
                 }
 
                 List<TypeParameterDescriptor> typeParameters = resolvedGetCall.getResultingDescriptor().getTypeParameters();
                 int firstTypeParamIndex = -1;
-                for(int i = typeParameters.size()-1; i >= 0; --i)  {
+                for (int i = typeParameters.size() - 1; i >= 0; --i) {
                     if (typeParameters.get(i).isReified()) {
                         frame.enterTemp();
                         lastIndex++;
                         size++;
-                        v.store(firstTypeParamIndex = lastIndex-1, JetTypeMapper.TYPE_OBJECT);
+                        v.store(firstTypeParamIndex = lastIndex - 1, JetTypeMapper.TYPE_OBJECT);
                     }
                 }
 
@@ -682,7 +730,7 @@ public abstract class StackValue {
                     frame.enterTemp(sz);
                     lastIndex += sz;
                     size += sz;
-                    v.store((receiverIndex = lastIndex)-sz, type);
+                    v.store((receiverIndex = lastIndex) - sz, type);
                 }
 
                 ReceiverDescriptor thisObject = resolvedGetCall.getThisObject();
@@ -691,17 +739,17 @@ public abstract class StackValue {
                     frame.enterTemp();
                     lastIndex++;
                     size++;
-                    v.store((thisIndex = lastIndex)-1, JetTypeMapper.TYPE_OBJECT);
+                    v.store((thisIndex = lastIndex) - 1, JetTypeMapper.TYPE_OBJECT);
                 }
-                
+
                 // for setter
 
-                int  realReceiverIndex;
+                int realReceiverIndex;
                 Type realReceiverType;
                 if (thisIndex != -1) {
                     if (receiverIndex != -1) {
                         realReceiverIndex = receiverIndex;
-                        realReceiverType =  codegen.typeMapper.mapType(receiverParameter.getType(), MapTypeMode.VALUE);
+                        realReceiverType = codegen.typeMapper.mapType(receiverParameter.getType(), MapTypeMode.VALUE);
                     }
                     else {
                         realReceiverIndex = thisIndex;
@@ -710,7 +758,7 @@ public abstract class StackValue {
                 }
                 else {
                     if (receiverIndex != -1) {
-                        realReceiverType =  codegen.typeMapper.mapType(receiverParameter.getType(), MapTypeMode.VALUE);
+                        realReceiverType = codegen.typeMapper.mapType(receiverParameter.getType(), MapTypeMode.VALUE);
                         realReceiverIndex = receiverIndex;
                     }
                     else {
@@ -734,38 +782,38 @@ public abstract class StackValue {
                 }
 
                 int index = firstParamIndex;
-                for(int i = 0; i != valueParameters.size(); ++i) {
+                for (int i = 0; i != valueParameters.size(); ++i) {
                     Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType(), MapTypeMode.VALUE);
                     int sz = type.getSize();
-                    v.load(index-sz, type);
+                    v.load(index - sz, type);
                     index -= sz;
                 }
 
                 // restoring original
                 if (thisIndex != -1) {
-                    v.load(thisIndex-1, JetTypeMapper.TYPE_OBJECT);
+                    v.load(thisIndex - 1, JetTypeMapper.TYPE_OBJECT);
                 }
-                
+
                 if (receiverIndex != -1) {
                     Type type = codegen.typeMapper.mapType(receiverParameter.getType(), MapTypeMode.VALUE);
-                    v.load(receiverIndex-type.getSize(), type);
+                    v.load(receiverIndex - type.getSize(), type);
                 }
 
                 if (firstTypeParamIndex != -1) {
                     index = firstTypeParamIndex;
-                    for(int i = 0; i != typeParameters.size(); ++i)  {
+                    for (int i = 0; i != typeParameters.size(); ++i) {
                         if (typeParameters.get(i).isReified()) {
-                            v.load(index-1, JetTypeMapper.TYPE_OBJECT);
+                            v.load(index - 1, JetTypeMapper.TYPE_OBJECT);
                             index--;
                         }
                     }
                 }
-                
+
                 index = firstParamIndex;
-                for(int i = 0; i != valueParameters.size(); ++i) {
+                for (int i = 0; i != valueParameters.size(); ++i) {
                     Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType(), MapTypeMode.VALUE);
                     int sz = type.getSize();
-                    v.load(index-sz, type);
+                    v.load(index - sz, type);
                     index -= sz;
                 }
 
@@ -774,30 +822,37 @@ public abstract class StackValue {
         }
 
         private boolean isStandardStack(ResolvedCall call, int valueParamsSize) {
-            if (call == null)
+            if (call == null) {
                 return true;
+            }
 
             for (TypeParameterDescriptor typeParameterDescriptor : call.getResultingDescriptor().getTypeParameters()) {
-                if (typeParameterDescriptor.isReified())
+                if (typeParameterDescriptor.isReified()) {
                     return false;
+                }
             }
 
             List<ValueParameterDescriptor> valueParameters = call.getResultingDescriptor().getValueParameters();
-            if (valueParameters.size() != valueParamsSize)
+            if (valueParameters.size() != valueParamsSize) {
                 return false;
+            }
 
             for (ValueParameterDescriptor valueParameter : valueParameters) {
-                if (codegen.typeMapper.mapType(valueParameter.getType(), MapTypeMode.VALUE).getSize() != 1)
+                if (codegen.typeMapper.mapType(valueParameter.getType(), MapTypeMode.VALUE).getSize() != 1) {
                     return false;
+                }
             }
 
             if (call.getThisObject().exists()) {
-                if (call.getReceiverArgument().exists())
+                if (call.getReceiverArgument().exists()) {
                     return false;
+                }
             }
             else {
-                if (codegen.typeMapper.mapType(call.getResultingDescriptor().getReceiverParameter().getType(), MapTypeMode.VALUE).getSize() != 1)
+                if (codegen.typeMapper.mapType(call.getResultingDescriptor().getReceiverParameter().getType(), MapTypeMode.VALUE)
+                            .getSize() != 1) {
                     return false;
+                }
             }
 
             return true;
@@ -830,6 +885,7 @@ public abstract class StackValue {
             }
         }
 
+        @Override
         public int receiverSize() {
             return isStatic ? 0 : 1;
         }
@@ -857,8 +913,10 @@ public abstract class StackValue {
         private final boolean isSuper;
         private final int invokeOpcode;
 
-        public Property(@NotNull String name, @NotNull JvmClassName methodOwner, @NotNull JvmClassName methodOwnerParam,
-                Method getter, Method setter, boolean aStatic, boolean isInterface, boolean isSuper, Type type, int invokeOpcode) {
+        public Property(
+                @NotNull String name, @NotNull JvmClassName methodOwner, @NotNull JvmClassName methodOwnerParam,
+                Method getter, Method setter, boolean aStatic, boolean isInterface, boolean isSuper, Type type, int invokeOpcode
+        ) {
             super(type);
             this.name = name;
             this.methodOwner = methodOwner;
@@ -879,15 +937,18 @@ public abstract class StackValue {
         @Override
         public void put(Type type, InstructionAdapter v) {
             if (isSuper && isInterface) {
-                v.visitMethodInsn(Opcodes.INVOKESTATIC, methodOwner.getInternalName(), getter.getName(), getter.getDescriptor().replace("(", "(" + methodOwnerParam.getDescriptor()));
+                assert getter != null;
+                v.visitMethodInsn(Opcodes.INVOKESTATIC, methodOwner.getInternalName(), getter.getName(),
+                                  getter.getDescriptor().replace("(", "(" + methodOwnerParam.getDescriptor()));
             }
             else {
-            if (getter == null) {
-                v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, methodOwner.getInternalName(), name, this.type.getDescriptor());
-            }
-            else {
-                v.visitMethodInsn(invokeOpcode, methodOwner.getInternalName(), getter.getName(), getter.getDescriptor());
-            }
+                if (getter == null) {
+                    v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, methodOwner.getInternalName(), name,
+                                     this.type.getDescriptor());
+                }
+                else {
+                    v.visitMethodInsn(invokeOpcode, methodOwner.getInternalName(), getter.getName(), getter.getDescriptor());
+                }
             }
             coerce(type, v);
         }
@@ -895,10 +956,13 @@ public abstract class StackValue {
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
             if (isSuper && isInterface) {
-                v.visitMethodInsn(Opcodes.INVOKESTATIC, methodOwner.getInternalName(), setter.getName(), setter.getDescriptor().replace("(", "(" + methodOwnerParam.getDescriptor()));
+                assert setter != null;
+                v.visitMethodInsn(Opcodes.INVOKESTATIC, methodOwner.getInternalName(), setter.getName(),
+                                  setter.getDescriptor().replace("(", "(" + methodOwnerParam.getDescriptor()));
             }
             else if (setter == null) {
-                v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, methodOwner.getInternalName(), name, this.type.getDescriptor());
+                v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, methodOwner.getInternalName(), name,
+                                 this.type.getDescriptor());
             }
             else {
                 v.visitMethodInsn(invokeOpcode, methodOwner.getInternalName(), setter.getName(), setter.getDescriptor());
@@ -912,6 +976,7 @@ public abstract class StackValue {
             }
         }
 
+        @Override
         public int receiverSize() {
             return isStatic ? 0 : 1;
         }
@@ -975,7 +1040,7 @@ public abstract class StackValue {
     }
 
     public static Type sharedTypeForType(Type type) {
-        switch(type.getSort()) {
+        switch (type.getSort()) {
             case Type.OBJECT:
             case Type.ARRAY:
                 return JetTypeMapper.TYPE_SHARED_VAR;
@@ -1010,8 +1075,9 @@ public abstract class StackValue {
     }
 
     public static Type refType(Type type) {
-        if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY)
+        if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
             return JetTypeMapper.TYPE_OBJECT;
+        }
 
         return type;
     }
@@ -1031,6 +1097,7 @@ public abstract class StackValue {
             v.dup();
         }
 
+        @Override
         public int receiverSize() {
             return 1;
         }
@@ -1135,20 +1202,27 @@ public abstract class StackValue {
         private ResolvedCall<? extends CallableDescriptor> resolvedCall;
         StackValue receiver;
         private ExpressionCodegen codegen;
-        @NotNull
-        private final GenerationState state;
         private CallableMethod callableMethod;
 
-        public CallReceiver(ResolvedCall<? extends CallableDescriptor> resolvedCall, StackValue receiver, ExpressionCodegen codegen, @NotNull GenerationState state, CallableMethod callableMethod) {
+        public CallReceiver(
+                ResolvedCall<? extends CallableDescriptor> resolvedCall,
+                StackValue receiver,
+                ExpressionCodegen codegen,
+                @NotNull GenerationState state,
+                CallableMethod callableMethod
+        ) {
             super(calcType(resolvedCall, codegen, callableMethod));
             this.resolvedCall = resolvedCall;
             this.receiver = receiver;
             this.codegen = codegen;
-            this.state = state;
             this.callableMethod = callableMethod;
         }
 
-        private static Type calcType(ResolvedCall<? extends CallableDescriptor> resolvedCall, ExpressionCodegen codegen, CallableMethod callableMethod) {
+        private static Type calcType(
+                ResolvedCall<? extends CallableDescriptor> resolvedCall,
+                ExpressionCodegen codegen,
+                CallableMethod callableMethod
+        ) {
             ReceiverDescriptor thisObject = resolvedCall.getThisObject();
             ReceiverDescriptor receiverArgument = resolvedCall.getReceiverArgument();
 
@@ -1174,10 +1248,12 @@ public abstract class StackValue {
             }
             else {
                 if (receiverArgument.exists()) {
-                    if (callableMethod != null)
+                    if (callableMethod != null) {
                         return callableMethod.getReceiverClass();
-                    else
+                    }
+                    else {
                         return codegen.typeMapper.mapType(descriptor.getReceiverParameter().getType(), MapTypeMode.VALUE);
+                    }
                 }
                 else {
                     return Type.VOID_TYPE;
@@ -1197,7 +1273,8 @@ public abstract class StackValue {
                         codegen.generateFromResolvedCall(thisObject, callableMethod.getOwner().getAsmType());
                     }
                     else {
-                        codegen.generateFromResolvedCall(thisObject, codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType(), MapTypeMode.VALUE));
+                        codegen.generateFromResolvedCall(thisObject, codegen.typeMapper
+                                .mapType(descriptor.getExpectedThisObject().getType(), MapTypeMode.VALUE));
                     }
                     genReceiver(v, receiverArgument, type, descriptor.getReceiverParameter(), 1);
                 }
@@ -1212,8 +1289,10 @@ public abstract class StackValue {
             }
         }
 
-        private void genReceiver(InstructionAdapter v, ReceiverDescriptor receiverArgument, Type type,
-                @Nullable ReceiverDescriptor receiverParameter, int depth) {
+        private void genReceiver(
+                InstructionAdapter v, ReceiverDescriptor receiverArgument, Type type,
+                @Nullable ReceiverDescriptor receiverParameter, int depth
+        ) {
             if (receiver == StackValue.none()) {
                 if (receiverParameter != null) {
                     Type receiverType = codegen.typeMapper.mapType(receiverParameter.getType(), MapTypeMode.VALUE);

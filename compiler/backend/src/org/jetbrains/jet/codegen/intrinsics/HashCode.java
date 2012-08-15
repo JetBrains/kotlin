@@ -35,13 +35,15 @@ import java.util.List;
  */
 public class HashCode implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen,
+    public StackValue generate(
+            ExpressionCodegen codegen,
             InstructionAdapter v,
             @NotNull Type expectedType,
             @Nullable PsiElement element,
             @Nullable List<JetExpression> arguments,
             StackValue receiver,
-            @NotNull GenerationState state) {
+            @NotNull GenerationState state
+    ) {
         receiver.put(JetTypeMapper.TYPE_OBJECT, v);
         v.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "hashCode", "()I");
         return StackValue.onStack(Type.INT_TYPE);

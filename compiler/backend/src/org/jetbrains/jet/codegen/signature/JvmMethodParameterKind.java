@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.codegen.signature;
 
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-
 /**
  * @author Stepan Koltsov
  */

@@ -24,7 +24,7 @@ import java.util.Collections;
 
 /**
  * @author alex.tkachman
-*/
+ */
 public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl {
     public AccessorForFunctionDescriptor(DeclarationDescriptor descriptor, DeclarationDescriptor containingDeclaration, int index) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(),

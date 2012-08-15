@@ -18,12 +18,12 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.asm4.Type;
-import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -39,9 +39,12 @@ public class PsiMethodCall implements IntrinsicMethod {
     }
 
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element,
-            List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
-        final CallableMethod callableMethod = state.getInjector().getJetTypeMapper().mapToCallableMethod(method, false, OwnerKind.IMPLEMENTATION);
+    public StackValue generate(
+            ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element,
+            List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state
+    ) {
+        final CallableMethod callableMethod =
+                state.getInjector().getJetTypeMapper().mapToCallableMethod(method, false, OwnerKind.IMPLEMENTATION);
         codegen.invokeMethodWithArguments(callableMethod, (JetCallExpression) element, receiver);
         return StackValue.onStack(callableMethod.getSignature().getAsmMethod().getReturnType());
     }

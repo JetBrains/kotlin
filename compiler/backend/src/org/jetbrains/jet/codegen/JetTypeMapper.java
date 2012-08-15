@@ -20,6 +20,8 @@ import com.google.common.collect.Maps;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
@@ -42,12 +44,13 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibraryNames;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.jet.lang.types.ref.ClassName;
-import org.jetbrains.asm4.Opcodes;
-import org.jetbrains.asm4.Type;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.asm4.Opcodes.*;
 
@@ -122,6 +125,7 @@ public class JetTypeMapper {
         @Nullable
         public Type get(@NotNull JetType type) {
             ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
+            assert classifier != null;
             return asmTypes.get(new SpecialTypeKey(DescriptorUtils.getFQName(classifier), type.isNullable()));
         }
 
@@ -435,6 +439,7 @@ public class JetTypeMapper {
                 throw new IllegalStateException("TRAIT_IMPL is not possible for " + jetType);
             }
             else if (kind == MapTypeMode.IMPL) {
+                //noinspection ConstantConditions
                 if (mapBuiltinsToJava) {
                     // TODO: enable and fix tests
                     //throw new IllegalStateException("must not map known type to IMPL when not compiling builtins: " + jetType);
@@ -756,7 +761,9 @@ public class JetTypeMapper {
         }
         else {
             signatureVisitor.writeReturnType();
-            mapReturnType(f.getReturnType(), signatureVisitor);
+            JetType returnType = f.getReturnType();
+            assert returnType != null;
+            mapReturnType(returnType, signatureVisitor);
             signatureVisitor.writeReturnTypeEnd();
         }
         return signatureVisitor.makeJvmMethodSignature(f.getName().getName());
@@ -847,7 +854,9 @@ public class JetTypeMapper {
         signatureWriter.writeParametersEnd();
 
         signatureWriter.writeReturnType();
-        mapReturnType(f.getReturnType(), signatureWriter);
+        JetType returnType = f.getReturnType();
+        assert returnType != null;
+        mapReturnType(returnType, signatureWriter);
         signatureWriter.writeReturnTypeEnd();
 
         return signatureWriter.makeJvmMethodSignature(name.getName());
@@ -868,7 +877,7 @@ public class JetTypeMapper {
         signatureWriter.writeParametersStart();
 
         if (kind == OwnerKind.TRAIT_IMPL) {
-            ClassDescriptor containingDeclaration = (ClassDescriptor) parentDescriptor;
+            @SuppressWarnings("ConstantConditions") ClassDescriptor containingDeclaration = (ClassDescriptor) parentDescriptor;
             signatureWriter.writeParameterType(JvmMethodParameterKind.THIS);
             mapType(containingDeclaration.getDefaultType(), signatureWriter, MapTypeMode.IMPL);
             signatureWriter.writeParameterTypeEnd();

@@ -20,12 +20,20 @@ package org.jetbrains.jet.codegen;
  * @author Stepan Koltsov
  */
 public enum MapTypeMode {
-    /** jet.Int is mapped to Ljet/Int; */
+    /**
+     * jet.Int is mapped to Ljet/Int;
+     */
     IMPL,
-    /** jet.Int is mapped to Ljet/Impl$TImpl; */
+    /**
+     * jet.Int is mapped to Ljet/Impl$TImpl;
+     */
     TRAIT_IMPL,
-    /** jet.Int is mapped to I */
+    /**
+     * jet.Int is mapped to I
+     */
     VALUE,
-    /** jet.Int is mapped to Ljava/lang/Integer; */
+    /**
+     * jet.Int is mapped to Ljava/lang/Integer;
+     */
     TYPE_PARAMETER,
 }

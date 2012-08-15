@@ -70,7 +70,7 @@ class IntrinsicsMap {
         }
     }
 
-    private int valueParameterCountForKey(@NotNull CallableMemberDescriptor member) {
+    private static int valueParameterCountForKey(@NotNull CallableMemberDescriptor member) {
         if (member instanceof PropertyDescriptor) {
             return -1;
         }
@@ -79,7 +79,7 @@ class IntrinsicsMap {
         }
     }
 
-    private Map<Key, IntrinsicMethod> intrinsicsMap = Maps.newHashMap();
+    private final Map<Key, IntrinsicMethod> intrinsicsMap = Maps.newHashMap();
 
 
     /**
@@ -105,5 +105,4 @@ class IntrinsicsMap {
                 valueParameterCountForKey(descriptor));
         return intrinsicsMap.get(key);
     }
-
 }

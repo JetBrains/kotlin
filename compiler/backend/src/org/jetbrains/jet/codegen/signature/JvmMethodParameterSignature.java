@@ -31,7 +31,8 @@ public class JvmMethodParameterSignature {
     private final JvmMethodParameterKind kind;
 
     public JvmMethodParameterSignature(
-            @NotNull Type asmType, @NotNull String kotlinSignature, @NotNull JvmMethodParameterKind kind) {
+            @NotNull Type asmType, @NotNull String kotlinSignature, @NotNull JvmMethodParameterKind kind
+    ) {
         this.asmType = asmType;
         this.kotlinSignature = kotlinSignature;
         this.kind = kind;

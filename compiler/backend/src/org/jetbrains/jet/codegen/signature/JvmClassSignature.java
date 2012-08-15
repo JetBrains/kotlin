@@ -30,8 +30,10 @@ public class JvmClassSignature {
     private final String javaGenericSignature;
     private final String kotlinGenericSignature;
 
-    public JvmClassSignature(String name, String superclassName, List<String> interfaces,
-            @Nullable String javaGenericSignature, @Nullable String kotlinGenericSignature) {
+    public JvmClassSignature(
+            String name, String superclassName, List<String> interfaces,
+            @Nullable String javaGenericSignature, @Nullable String kotlinGenericSignature
+    ) {
         this.name = name;
         this.superclassName = superclassName;
         this.interfaces = interfaces;

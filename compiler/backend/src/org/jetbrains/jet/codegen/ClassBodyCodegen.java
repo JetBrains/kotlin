@@ -90,17 +90,18 @@ public abstract class ClassBodyCodegen {
     }
 
     private void generatePrimaryConstructorProperties(PropertyCodegen propertyCodegen, JetClassOrObject origin) {
-        boolean isAnnotation = origin instanceof JetClass && ((JetClass)origin).isAnnotation();
-        OwnerKind kind = context.getContextKind();
+        boolean isAnnotation = origin instanceof JetClass && ((JetClass) origin).isAnnotation();
         for (JetParameter p : getPrimaryConstructorParameters()) {
             if (p.getValOrVarNode() != null) {
                 PropertyDescriptor propertyDescriptor = state.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, p);
                 if (propertyDescriptor != null) {
                     if (!isAnnotation) {
                         propertyCodegen.generateBackingField(p, propertyDescriptor);
-                        propertyCodegen.generateDefaultGetter(propertyDescriptor, JetTypeMapper.getAccessModifiers(propertyDescriptor,0), p);
+                        propertyCodegen
+                                .generateDefaultGetter(propertyDescriptor, JetTypeMapper.getAccessModifiers(propertyDescriptor, 0), p);
                         if (propertyDescriptor.isVar()) {
-                            propertyCodegen.generateDefaultSetter(propertyDescriptor, JetTypeMapper.getAccessModifiers(propertyDescriptor,0), p);
+                            propertyCodegen
+                                    .generateDefaultSetter(propertyDescriptor, JetTypeMapper.getAccessModifiers(propertyDescriptor, 0), p);
                         }
                     }
                     else {
@@ -121,7 +122,7 @@ public abstract class ClassBodyCodegen {
 
     private void generateStaticInitializer() {
         if (staticInitializerChunks.size() > 0) {
-            final MethodVisitor mv = v.newMethod(null, ACC_PUBLIC | Opcodes.ACC_STATIC,"<clinit>", "()V", null, null);
+            final MethodVisitor mv = v.newMethod(null, ACC_PUBLIC | Opcodes.ACC_STATIC, "<clinit>", "()V", null, null);
             if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
                 mv.visitCode();
 

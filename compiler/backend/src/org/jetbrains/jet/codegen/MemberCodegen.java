@@ -37,8 +37,10 @@ public class MemberCodegen {
     }
 
 
-    public void generateFunctionOrProperty(@NotNull JetTypeParameterListOwner functionOrProperty,
-            @NotNull CodegenContext context, @NotNull ClassBuilder classBuilder) {
+    public void generateFunctionOrProperty(
+            @NotNull JetTypeParameterListOwner functionOrProperty,
+            @NotNull CodegenContext context, @NotNull ClassBuilder classBuilder
+    ) {
         FunctionCodegen functionCodegen = new FunctionCodegen(context, classBuilder, state);
         if (functionOrProperty instanceof JetNamedFunction) {
             try {
@@ -66,5 +68,4 @@ public class MemberCodegen {
             throw new IllegalArgumentException("Unknown parameter: " + functionOrProperty);
         }
     }
-
 }

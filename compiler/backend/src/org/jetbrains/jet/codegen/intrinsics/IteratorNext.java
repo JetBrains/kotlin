@@ -18,13 +18,13 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.asm4.Type;
-import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -33,26 +33,43 @@ import java.util.List;
  */
 public class IteratorNext implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
+    public StackValue generate(
+            ExpressionCodegen codegen,
+            InstructionAdapter v,
+            @NotNull Type expectedType,
+            PsiElement element,
+            List<JetExpression> arguments,
+            StackValue receiver,
+            @NotNull GenerationState state
+    ) {
         String name;
-        if (expectedType == Type.CHAR_TYPE)
+        if (expectedType == Type.CHAR_TYPE) {
             name = "Char";
-        else if (expectedType == Type.BOOLEAN_TYPE)
+        }
+        else if (expectedType == Type.BOOLEAN_TYPE) {
             name = "Boolean";
-        else if (expectedType == Type.BYTE_TYPE)
+        }
+        else if (expectedType == Type.BYTE_TYPE) {
             name = "Byte";
-        else if (expectedType == Type.SHORT_TYPE)
+        }
+        else if (expectedType == Type.SHORT_TYPE) {
             name = "Short";
-        else if (expectedType == Type.INT_TYPE)
+        }
+        else if (expectedType == Type.INT_TYPE) {
             name = "Int";
-        else if (expectedType == Type.LONG_TYPE)
+        }
+        else if (expectedType == Type.LONG_TYPE) {
             name = "Long";
-        else if (expectedType == Type.FLOAT_TYPE)
+        }
+        else if (expectedType == Type.FLOAT_TYPE) {
             name = "Float";
-        else if (expectedType == Type.DOUBLE_TYPE)
+        }
+        else if (expectedType == Type.DOUBLE_TYPE) {
             name = "Double";
-        else
+        }
+        else {
             throw new UnsupportedOperationException();
+        }
         receiver.put(JetTypeMapper.TYPE_OBJECT, v);
         v.invokevirtual("jet/" + name + "Iterator", "next" + name, "()" + expectedType.getDescriptor());
         return StackValue.onStack(expectedType);

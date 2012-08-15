@@ -19,12 +19,12 @@ package org.jetbrains.jet.codegen.intrinsics;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.asm4.Type;
-import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -33,12 +33,21 @@ import java.util.List;
  */
 public class CompareTo implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, @Nullable PsiElement element, @Nullable List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
+    public StackValue generate(
+            ExpressionCodegen codegen,
+            InstructionAdapter v,
+            @NotNull Type expectedType,
+            @Nullable PsiElement element,
+            @Nullable List<JetExpression> arguments,
+            StackValue receiver,
+            @NotNull GenerationState state
+    ) {
         assert arguments != null;
         receiver.put(receiver.type, v);
         codegen.gen(arguments.get(0), receiver.type);
-        if (receiver.type == Type.BYTE_TYPE || receiver.type == Type.SHORT_TYPE || receiver.type == Type.CHAR_TYPE)
+        if (receiver.type == Type.BYTE_TYPE || receiver.type == Type.SHORT_TYPE || receiver.type == Type.CHAR_TYPE) {
             v.sub(Type.INT_TYPE);
+        }
         else if (receiver.type == Type.INT_TYPE) {
             v.invokestatic("jet/runtime/Intrinsics", "compare", "(II)I");
         }
