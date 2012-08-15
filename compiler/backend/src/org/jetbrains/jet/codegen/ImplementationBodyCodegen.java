@@ -17,8 +17,19 @@
 package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
+import com.intellij.lang.Language;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiClassType;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.compiled.ClsClassImpl;
+import com.intellij.psi.impl.compiled.ClsFileImpl;
+import com.intellij.psi.impl.source.PsiJavaFileImpl;
+import com.intellij.psi.stubs.PsiFileStubImpl;
+import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.signature.*;
@@ -26,8 +37,12 @@ import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetClassElementType;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
+import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetClassStubImpl;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DeclarationUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JdkNames;
@@ -777,7 +792,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 StackValue field = StackValue.field(fieldType, classname, delegateField, false);
                 field.store(fieldType, iv);
 
-                JetClass superClass = (JetClass) BindingContextUtils.classDescriptorToDeclaration(bindingContext, superClassDescriptor);
+                PsiElement element = BindingContextUtils.classDescriptorToDeclaration(bindingContext, superClassDescriptor);
+                JetClass superClass;
+                if (element instanceof JetClass) {
+                    superClass = (JetClass) element;
+                } else {
+                    //element is a java interface
+                    assert element instanceof ClsClassImpl;
+                    superClass = DeclarationUtils.toJetDeclaration((ClsClassImpl) element);
+                }
                 final CodegenContext delegateContext = context.intoClass(superClassDescriptor,
                                                                          new OwnerKind.DelegateKind(StackValue.field(fieldType, classname, delegateField, false),
                                                                                                     typeMapper.mapType(superClassDescriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName()), state.getInjector().getJetTypeMapper());
@@ -1103,7 +1126,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 if (callableMemberDescriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION) {
                     Set<? extends CallableMemberDescriptor> overriddenDescriptors = callableMemberDescriptor.getOverriddenDescriptors();
                     for (CallableMemberDescriptor overriddenDescriptor : overriddenDescriptors) {
-                        if (overriddenDescriptor.getContainingDeclaration() == classDescriptor) {
+                        //TODO there should be the corresponding ClassDescriptor in the binding context for java interfaces
+                        if ((classDescriptor == null && toClass.getName().equals(overriddenDescriptor.getContainingDeclaration().getName().getName()))
+                            || overriddenDescriptor.getContainingDeclaration() == classDescriptor) {
                             if (declaration instanceof PropertyDescriptor) {
                                 propertyCodegen.genDelegate((PropertyDescriptor) declaration, (PropertyDescriptor) overriddenDescriptor, field);
                             }

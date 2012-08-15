@@ -22,7 +22,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.compiled.ClsMethodImpl;
 import com.intellij.util.containers.LinkedMultiMap;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
@@ -453,7 +454,15 @@ public class OverrideResolver {
     }
 
     private void checkOverrideForMember(@NotNull CallableMemberDescriptor declared) {
-        JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
+        PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
+        JetNamedDeclaration member;
+        if (element instanceof JetNamedDeclaration) {
+            member = (JetNamedDeclaration) element;
+        } else {
+            assert element instanceof ClsMethodImpl;
+            member = DeclarationUtils.toJetDeclaration((ClsMethodImpl) element);
+        }
+
         if (member == null) {
             if (declared.getKind() != CallableMemberDescriptor.Kind.DELEGATION) {
                 throw new IllegalStateException(
@@ -552,8 +561,15 @@ public class OverrideResolver {
         boolean fakeOverride = declared.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
         if (!fakeOverride) {
             // No check if the function is not marked as 'override'
-            JetModifierListOwner declaration =
-                    (JetModifierListOwner) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
+            PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
+            JetModifierListOwner declaration;
+            if (element instanceof  JetModifierListOwner) {
+                declaration = (JetModifierListOwner) element;
+            } else {
+                assert element instanceof ClsMethodImpl;
+                declaration = DeclarationUtils.toJetDeclaration((ClsMethodImpl) element);
+            }
+
             if (!declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
                 return;
             }

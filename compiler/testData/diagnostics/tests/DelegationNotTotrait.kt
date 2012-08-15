@@ -1,3 +1,5 @@
+package examp
+
 open class Foo() {
 
 }
@@ -13,3 +15,7 @@ open enum class EN() {
 }
 
 class Test2(e : EN) : <!DELEGATION_NOT_TO_TRAIT!>EN<!> by e {}
+
+class Test3(r : Runnable) : Runnable by r {}
+
+class Test4(o : Object) : <!DELEGATION_NOT_TO_TRAIT!>Object<!> by o {}

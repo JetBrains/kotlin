@@ -153,15 +153,7 @@ public class BindingContextUtils {
     @Nullable
     public static PsiElement callableDescriptorToDeclaration(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
         if (callable.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
-            Set<? extends CallableMemberDescriptor> overriddenDescriptors = callable.getOverriddenDescriptors();
-            if (overriddenDescriptors.size() != 1) {
-                // TODO evil code
-                throw new IllegalStateException(
-                        "cannot find declaration: fake descriptor" +
-                                " has more then one overridden descriptor: " + callable);
-            }
-
-            return callableDescriptorToDeclaration(context, overriddenDescriptors.iterator().next());
+            return callableDescriptorToDeclaration(context, callable.getOverriddenDescriptors().iterator().next());
         }
 
         return doGetDescriptorToDeclaration(context, callable.getOriginal());
