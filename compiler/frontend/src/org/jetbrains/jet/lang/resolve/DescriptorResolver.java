@@ -1179,8 +1179,18 @@ public class DescriptorResolver {
                 return mutableClassDescriptor.getDefaultType();
             }
         });
-        ValueParameterDescriptorImpl parameterDescriptor = new ValueParameterDescriptorImpl(values,0,Collections.<AnnotationDescriptor>emptyList(),Name.identifier("value"),false,JetStandardLibrary.getInstance().getStringType(),false,null);
-        values.initialize(null, classReceiver, Collections.<TypeParameterDescriptor>emptyList(),Arrays.<ValueParameterDescriptor>asList(parameterDescriptor),
+        ValueParameterDescriptor parameterDescriptor = new ValueParameterDescriptorImpl(
+                values,
+                0,
+                Collections.<AnnotationDescriptor>emptyList(),
+                Name.identifier("value"),
+                false,
+                JetStandardLibrary.getInstance().getStringType(),
+                false,
+                null);
+        values.initialize(null, classReceiver,
+                          Collections.<TypeParameterDescriptor>emptyList(),
+                          Collections.singletonList(parameterDescriptor),
                           type, Modality.FINAL,
                           Visibilities.PUBLIC, false);
         return values;
