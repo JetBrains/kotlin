@@ -1,4 +1,3 @@
-class D(b: B) : C(b)
 trait A {
   fun foo() {}
 }
