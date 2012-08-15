@@ -17,11 +17,14 @@
 package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.codeHighlighting.Pass;
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationUtil;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.util.Function;
@@ -40,6 +43,8 @@ import java.util.List;
  * @since 3 August 2012
  */
 public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
+    private static final String SHOW_MARKERS_PROPERTY = "kotlin.signature.markers.enabled";
+
     private static final Function<PsiElement,String> TOOLTIP_PROVIDER = new Function<PsiElement, String>() {
         @Override
         public String fun(PsiElement element) {
@@ -112,7 +117,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     @Override
     @Nullable
     public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
-        if (findKotlinSignatureAnnotation(element) != null) {
+        if (isMarkersEnabled(element.getProject()) && findKotlinSignatureAnnotation(element) != null) {
             return new LineMarkerInfo<PsiMethod>((PsiMethod) element, element.getTextOffset(), JetIcons.SMALL_LOGO, Pass.UPDATE_ALL,
                                                  TOOLTIP_PROVIDER, NAVIGATION_HANDLER);
         }
@@ -121,5 +126,14 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
 
     @Override
     public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
+    }
+
+    public static boolean isMarkersEnabled(@NotNull Project project) {
+        return PropertiesComponent.getInstance(project).getBoolean(SHOW_MARKERS_PROPERTY, true);
+    }
+
+    public static void setMarkersEnabled(@NotNull Project project, boolean value) {
+        PropertiesComponent.getInstance(project).setValue(SHOW_MARKERS_PROPERTY, Boolean.toString(value));
+        DaemonCodeAnalyzer.getInstance(project).restart();
     }
 }

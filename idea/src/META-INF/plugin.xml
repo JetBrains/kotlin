@@ -63,7 +63,10 @@
          <add-to-group group-id="CodeMenu" anchor="last"/>
      </action>
 
-
+     <group id="EditorGutterKotlinPopupMenu">
+       <action id="ShowKotlinSignatures" class="org.jetbrains.jet.plugin.codeInsight.ShowKotlinSignaturesAction"/>
+       <add-to-group group-id="EditorGutterPopupMenu" anchor="last" />
+     </group>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
