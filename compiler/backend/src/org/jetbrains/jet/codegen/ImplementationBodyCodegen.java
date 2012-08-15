@@ -130,6 +130,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             access |= ACC_ANNOTATION;
         }
         if (isEnum) {
+            for (JetDeclaration declaration : myClass.getDeclarations()) {
+                if (declaration instanceof JetEnumEntry) {
+                    if (state.getInjector().getClosureAnnotator().enumEntryNeedSubclass((JetEnumEntry) declaration)) {
+                        access &= ~ACC_FINAL;
+                    }
+                }
+            }
             access |= ACC_ENUM;
         }
         v.defineClass(myClass, V1_6,

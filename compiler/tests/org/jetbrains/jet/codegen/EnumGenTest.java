@@ -131,4 +131,8 @@ public class EnumGenTest extends CodegenTestCase {
         catch (ClassNotFoundException e) {
         }
     }
+
+    public void testKt1119() {
+        blackBoxFile("regressions/kt1119.kt");
+    }
 }
