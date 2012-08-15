@@ -292,6 +292,7 @@ public class TypeHierarchyResolver {
                         MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(
                                 mutableClassDescriptor, outerScope, ClassKind.OBJECT,
                                 Name.special("<class-object-for-" + klass.getName() + ">"));
+                        mutableClassDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
                         classObjectDescriptor.setModality(Modality.FINAL);
                         classObjectDescriptor.setVisibility(DescriptorResolver.resolveVisibilityFromModifiers(klass.getModifierList()));
                         classObjectDescriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));
@@ -299,9 +300,8 @@ public class TypeHierarchyResolver {
                         ConstructorDescriptorImpl primaryConstructorForObject =
                                 createPrimaryConstructorForObject(null, classObjectDescriptor);
                         primaryConstructorForObject.setReturnType(classObjectDescriptor.getDefaultType());
-                        classObjectDescriptor.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValuesMethod(mutableClassDescriptor, classObjectDescriptor, trace));
-                        classObjectDescriptor.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValueOfMethod(mutableClassDescriptor, classObjectDescriptor,trace));
-                        mutableClassDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
+                        classObjectDescriptor.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValuesMethod(mutableClassDescriptor, trace));
+                        classObjectDescriptor.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValueOfMethod(mutableClassDescriptor, trace));
                     }
                 }
 

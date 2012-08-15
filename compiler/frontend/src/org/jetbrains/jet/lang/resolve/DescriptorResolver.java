@@ -54,6 +54,9 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.CONSTRUCTOR;
  * @author abreslav
  */
 public class DescriptorResolver {
+    public static final Name VALUE_OF_METHOD_NAME = Name.identifier("valueOf");
+    public static final Name VALUES_METHOD_NAME = Name.identifier("values");
+
     @NotNull
     private TypeResolver typeResolver;
     @NotNull
@@ -1142,43 +1145,46 @@ public class DescriptorResolver {
     }
 
     public static SimpleFunctionDescriptor createEnumClassObjectValuesMethod(
-            final ClassDescriptor mutableClassDescriptor,
-            ClassDescriptor classObjectDescriptor,
+            final ClassDescriptor enumClassDescriptor,
             BindingTrace trace
     ) {
+        ClassDescriptor classObjectDescriptor = enumClassDescriptor.getClassObjectDescriptor();
+        assert classObjectDescriptor != null : "Enum class has no class object";
         List<AnnotationDescriptor> annotations = Collections.<AnnotationDescriptor>emptyList();
         SimpleFunctionDescriptorImpl values =
                 new SimpleFunctionDescriptorImpl(classObjectDescriptor, annotations,
-                                                 Name.identifier("values"),
+                                                 VALUES_METHOD_NAME,
                                                  CallableMemberDescriptor.Kind.DECLARATION);
         ClassReceiver classReceiver = new ClassReceiver(classObjectDescriptor);
         JetType type = DeferredType.create(trace, new LazyValue<JetType>() {
             @Override
             protected JetType compute() {
-                return JetStandardLibrary.getInstance().getArrayType(mutableClassDescriptor.getDefaultType());
+                return JetStandardLibrary.getInstance().getArrayType(enumClassDescriptor.getDefaultType());
             }
         });
-        values.initialize(null, classReceiver, Collections.<TypeParameterDescriptor>emptyList(),Collections.<ValueParameterDescriptor>emptyList(),
+        values.initialize(null, classReceiver, Collections.<TypeParameterDescriptor>emptyList(),
+                          Collections.<ValueParameterDescriptor>emptyList(),
                           type, Modality.FINAL,
                           Visibilities.PUBLIC, false);
         return values;
     }
 
     public static SimpleFunctionDescriptor createEnumClassObjectValueOfMethod(
-            final ClassDescriptor mutableClassDescriptor,
-            ClassDescriptor classObjectDescriptor,
+            final ClassDescriptor enumClassDescriptor,
             BindingTrace trace
     ) {
+        ClassDescriptor classObjectDescriptor = enumClassDescriptor.getClassObjectDescriptor();
+        assert classObjectDescriptor != null : "Enum class has no class object";
         List<AnnotationDescriptor> annotations = Collections.<AnnotationDescriptor>emptyList();
         SimpleFunctionDescriptorImpl values =
                 new SimpleFunctionDescriptorImpl(classObjectDescriptor, annotations,
-                                                 Name.identifier("valueOf"),
+                                                 VALUE_OF_METHOD_NAME,
                                                  CallableMemberDescriptor.Kind.DECLARATION);
         ClassReceiver classReceiver = new ClassReceiver(classObjectDescriptor);
         JetType type = DeferredType.create(trace, new LazyValue<JetType>() {
             @Override
             protected JetType compute() {
-                return mutableClassDescriptor.getDefaultType();
+                return enumClassDescriptor.getDefaultType();
             }
         });
         ValueParameterDescriptor parameterDescriptor = new ValueParameterDescriptorImpl(
