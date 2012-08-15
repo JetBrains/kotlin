@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -56,32 +57,44 @@ public class ClassCodegen {
             // different for the case when we compute closures
             generateImplementation(context, aClass, OwnerKind.IMPLEMENTATION, contextForInners.accessors, classBuilder);
         }
-        
+
         for (JetDeclaration declaration : aClass.getDeclarations()) {
-            if (declaration instanceof JetClass && !(declaration instanceof JetEnumEntry)) {
+            if (declaration instanceof JetClass) {
+                if (declaration instanceof JetEnumEntry && !state.getInjector().getClosureAnnotator().enumEntryNeedSubclass(
+                        (JetEnumEntry) declaration)) {
+                    continue;
+                }
+
                 generate(contextForInners, (JetClass) declaration);
             }
             if (declaration instanceof JetClassObject) {
-                generate(contextForInners, ((JetClassObject)declaration).getObjectDeclaration());
+                generate(contextForInners, ((JetClassObject) declaration).getObjectDeclaration());
             }
         }
 
         if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES) {
             generateImplementation(context, aClass, OwnerKind.IMPLEMENTATION, contextForInners.accessors, classBuilder);
         }
-        
+
         classBuilder.done();
     }
 
-    private void generateImplementation(CodegenContext context, JetClassOrObject aClass, OwnerKind kind, HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors, ClassBuilder classBuilder) {
+    private void generateImplementation(
+            CodegenContext context,
+            JetClassOrObject aClass,
+            OwnerKind kind,
+            HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors,
+            ClassBuilder classBuilder
+    ) {
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
         CodegenContext classContext = context.intoClass(descriptor, kind, jetTypeMapper);
         classContext.copyAccessors(accessors);
         new ImplementationBodyCodegen(aClass, classContext, classBuilder, state).generate();
 
-        if (aClass instanceof JetClass && ((JetClass)aClass).isTrait()) {
+        if (aClass instanceof JetClass && ((JetClass) aClass).isTrait()) {
             ClassBuilder traitBuilder = state.forTraitImplementation(descriptor);
-            new TraitImplBodyCodegen(aClass, context.intoClass(descriptor, OwnerKind.TRAIT_IMPL, jetTypeMapper), traitBuilder, state).generate();
+            new TraitImplBodyCodegen(aClass, context.intoClass(descriptor, OwnerKind.TRAIT_IMPL, jetTypeMapper), traitBuilder, state)
+                    .generate();
             traitBuilder.done();
         }
     }

@@ -100,4 +100,35 @@ public class EnumGenTest extends CodegenTestCase {
     public void testInClassObj() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         blackBoxFile("enum/inclassobj.kt");
     }
+
+    public void testAbstractMethod()
+            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        blackBoxFile("enum/abstractmethod.kt");
+    }
+
+    public void testNoClassForSimpleEnum()
+            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
+        loadFile("enum/name.kt");
+        Class cls = loadImplementationClass(generateClassesInFile(), "State");
+        Field field = cls.getField("O");
+        assertEquals("State", field.get(null).getClass().getName());
+    }
+
+    public void testYesClassForComplexEnum()
+            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
+        loadFile("enum/abstractmethod.kt");
+        Class cls = loadImplementationClass(generateClassesInFile(), "IssueState");
+        Field field = cls.getField("DEFAULT");
+        assertEquals("IssueState", field.get(null).getClass().getName());
+        field = cls.getField("FIXED");
+        assertEquals("IssueState", field.getType().getName());
+        assertEquals("IssueState$FIXED", field.get(null).getClass().getName());
+        assertNotNull(cls.getClassLoader().loadClass("IssueState$FIXED"));
+        try {
+            cls.getClassLoader().loadClass("IssueState$DEFAULT");
+            fail();
+        }
+        catch (ClassNotFoundException e) {
+        }
+    }
 }

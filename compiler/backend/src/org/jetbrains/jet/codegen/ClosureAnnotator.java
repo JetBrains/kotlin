@@ -51,6 +51,7 @@ public class ClosureAnnotator {
 
     private BindingContext bindingContext;
     private List<JetFile> files;
+    private final Map<ClassDescriptor, Boolean> enumEntryNeedSubclass = new HashMap<ClassDescriptor, Boolean>();
 
     @Inject
     public void setBindingContext(BindingContext bindingContext) {
@@ -229,6 +230,16 @@ public class ClosureAnnotator {
         return other != null;
     }
 
+    public boolean enumEntryNeedSubclass(JetEnumEntry enumEntry) {
+        ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, enumEntry);
+        return enumEntryNeedSubclass.get(descriptor);
+    }
+
+    public boolean enumEntryNeedSubclass(ClassDescriptor enumEntry) {
+        Boolean aBoolean = enumEntryNeedSubclass.get(enumEntry);
+        return aBoolean != null && aBoolean;
+    }
+
     private class MyJetVisitorVoid extends JetVisitorVoid {
         private final LinkedList<ClassDescriptor> classStack = new LinkedList<ClassDescriptor>();
         private final LinkedList<String> nameStack = new LinkedList<String>();
@@ -283,6 +294,13 @@ public class ClosureAnnotator {
             }
             file.acceptChildren(this);
             nameStack.pop();
+        }
+
+        @Override
+        public void visitEnumEntry(JetEnumEntry enumEntry) {
+            ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, enumEntry);
+            enumEntryNeedSubclass.put(descriptor, !enumEntry.getDeclarations().isEmpty());
+            super.visitEnumEntry(enumEntry);
         }
 
         @Override
