@@ -180,5 +180,9 @@ public class FunctionGenTest extends CodegenTestCase {
         public void testReferencesStaticInnerClassMethodTwoLevels() throws Exception {
             blackBoxFileWithJava("functions/referencesStaticInnerClassMethodL2.kt");
         }
+
+        public void testRemoveInIterator() throws Exception {
+            blackBoxFileWithJava("functions/removeInIterator.kt");
+        }
     }
 }

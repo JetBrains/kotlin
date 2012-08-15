@@ -28,7 +28,9 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.*;
 
@@ -342,6 +344,24 @@ public class DescriptorUtils {
                 return inStaticContext(classDescriptor.getContainingDeclaration());
             }
 
+        }
+        return false;
+    }
+
+    public static boolean isIteratorWithoutRemoveImpl(@NotNull ClassDescriptor classDescriptor) {
+        ClassDescriptor iteratorOfT = JetStandardLibrary.getInstance().getIterator();
+        JetType iteratorOfAny = TypeUtils.substituteParameters(iteratorOfT, Collections.singletonList(JetStandardClasses.getAnyType()));
+        boolean isIterator = JetTypeChecker.INSTANCE.isSubtypeOf(classDescriptor.getDefaultType(), iteratorOfAny);
+        boolean hasRemove = hasMethod(classDescriptor, Name.identifier("remove"));
+        return isIterator && !hasRemove;
+    }
+
+    private static boolean hasMethod(ClassDescriptor classDescriptor, Name name) {
+        Collection<FunctionDescriptor> removeFunctions = classDescriptor.getDefaultType().getMemberScope().getFunctions(name);
+        for (FunctionDescriptor function : removeFunctions) {
+            if (function.getValueParameters().isEmpty() && function.getTypeParameters().isEmpty()) {
+                return true;
+            }
         }
         return false;
     }

@@ -18,6 +18,9 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.asm4.MethodVisitor;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -120,5 +123,21 @@ public class CodegenUtil {
             flags.set(JvmStdlibNames.FLAG_PRIVATE_BIT);
         }
         return flags;
+    }
+
+    public static void generateThrow(MethodVisitor mv, String exception, String message) {
+        InstructionAdapter instructionAdapter = new InstructionAdapter(mv);
+        instructionAdapter.anew(Type.getObjectType(exception));
+        instructionAdapter.dup();
+        instructionAdapter.aconst(message);
+        instructionAdapter.invokespecial(exception, "<init>", "(Ljava/lang/String;)V");
+        instructionAdapter.athrow();
+    }
+
+    public static void generateMethodThrow(MethodVisitor mv, String exception, String message) {
+        mv.visitCode();
+        generateThrow(mv, exception, message);
+        mv.visitMaxs(-1, -1);
+        mv.visitEnd();
     }
 }

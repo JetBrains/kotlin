@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,6 +65,8 @@ public abstract class ClassBodyCodegen {
         generateSyntheticParts();
 
         generateStaticInitializer();
+
+        generateRemoveInIterator();
     }
 
     protected abstract void generateDeclaration();
@@ -135,6 +138,14 @@ public abstract class ClassBodyCodegen {
                 mv.visitInsn(Opcodes.RETURN);
                 FunctionCodegen.endVisit(v, "static initializer", myClass);
             }
+        }
+    }
+
+    private void generateRemoveInIterator() {
+        // generates stub 'remove' function for subclasses of Iterator to be compatible with java.util.Iterator
+        if (DescriptorUtils.isIteratorWithoutRemoveImpl(descriptor)) {
+            final MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "remove", "()V", null, null);
+            CodegenUtil.generateMethodThrow(mv, "java/lang/UnsupportedOperationException", "Mutating method called on a Kotlin Iterator");
         }
     }
 }
