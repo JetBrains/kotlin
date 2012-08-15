@@ -72,7 +72,7 @@ public class OverrideResolver {
 
     public void process() {
         //all created fake descriptors are stored to resolve visibility on them later
-        generateOverrides();
+        generateOverridesAndDelegation();
 
         checkVisibility();
         checkOverrides();
@@ -82,7 +82,7 @@ public class OverrideResolver {
     /**
      * Generate fake overrides and add overridden descriptors to existing descriptors.
      */
-    private void generateOverrides() {
+    private void generateOverridesAndDelegation() {
         Set<MutableClassDescriptor> ourClasses = new HashSet<MutableClassDescriptor>();
         ourClasses.addAll(context.getClasses().values());
         ourClasses.addAll(context.getObjects().values());
@@ -90,33 +90,34 @@ public class OverrideResolver {
         Set<ClassifierDescriptor> processed = new HashSet<ClassifierDescriptor>();
 
         for (MutableClassDescriptor clazz : ourClasses) {
-            generateOverridesInAClass(clazz, processed, ourClasses);
+            generateOverridesAndDelegationInAClass(clazz, processed, ourClasses);
         }
     }
 
-    private void generateOverridesInAClass(@NotNull final MutableClassDescriptor classDescriptor,
+    private void generateOverridesAndDelegationInAClass(
+            @NotNull final MutableClassDescriptor classDescriptor,
             @NotNull Set<ClassifierDescriptor> processed,
-            @NotNull Set<MutableClassDescriptor> ourClasses) {
+            @NotNull Set<MutableClassDescriptor> classesBeingAnalyzed
+            // to filter out classes such as stdlib and others that come from dependencies
+    ) {
         if (!processed.add(classDescriptor)) {
-            return;
-        }
-
-        // avoid processing stdlib classes twice
-        if (!ourClasses.contains(classDescriptor)) {
             return;
         }
 
         for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
             ClassDescriptor superclass = (ClassDescriptor) supertype.getConstructor().getDeclarationDescriptor();
-            if (superclass instanceof MutableClassDescriptor) {
-                generateOverridesInAClass((MutableClassDescriptor) superclass, processed, ourClasses);
+            if (superclass instanceof MutableClassDescriptor && classesBeingAnalyzed.contains(superclass)) {
+                generateOverridesAndDelegationInAClass((MutableClassDescriptor) superclass, processed, classesBeingAnalyzed);
             }
         }
 
-        doGenerateOverridesInAClass(classDescriptor);
+        PsiElement declaration = BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
+        DelegationResolver.addDelegatedMembers(trace, (JetClassOrObject) declaration, classDescriptor);
+
+        generateOverridesInAClass(classDescriptor);
     }
 
-    private void doGenerateOverridesInAClass(final MutableClassDescriptor classDescriptor) {
+    private void generateOverridesInAClass(final MutableClassDescriptor classDescriptor) {
         List<CallableMemberDescriptor> membersFromSupertypes = getCallableMembersFromSupertypes(classDescriptor);
 
         MultiMap<Name, CallableMemberDescriptor> membersFromSupertypesByName = groupDescriptorsByName(membersFromSupertypes);
@@ -160,7 +161,7 @@ public class OverrideResolver {
         }
         for (CallableMemberDescriptor memberDescriptor : classDescriptor.getAllCallableMembers()) {
             JetDeclaration declaration = null;
-            if (memberDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            if (memberDescriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
                 PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), memberDescriptor);
                 if (element instanceof JetDeclaration) {
                     declaration = (JetDeclaration) element;
@@ -453,18 +454,17 @@ public class OverrideResolver {
     }
 
     private void checkOverrideForMember(@NotNull CallableMemberDescriptor declared) {
+        if (declared.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
+            return;
+        }
+
         JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
         if (member == null) {
             if (declared.getKind() != CallableMemberDescriptor.Kind.DELEGATION) {
                 throw new IllegalStateException(
-                        "decriptor is not resolved to declaration" +
-                        " and it is not delegate: " + declared + ", DELEGATED: " +
-                        (declared.getKind() == CallableMemberDescriptor.Kind.DELEGATION));
+                        "descriptor is not resolved to declaration" +
+                        " and it is not delegate: " + declared);
             }
-            return;
-        }
-
-        if (declared.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
             return;
         }
 
@@ -549,8 +549,8 @@ public class OverrideResolver {
     }
 
     private void checkOverridesForParameters(CallableMemberDescriptor declared) {
-        boolean fakeOverride = declared.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
-        if (!fakeOverride) {
+        boolean noDeclaration = declared.getKind() != CallableMemberDescriptor.Kind.DECLARATION;
+        if (!noDeclaration) {
             // No check if the function is not marked as 'override'
             JetModifierListOwner declaration =
                     (JetModifierListOwner) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
@@ -566,13 +566,13 @@ public class OverrideResolver {
         //  b) p1 must have the same name as p2
         for (ValueParameterDescriptor parameterFromSubclass : declared.getValueParameters()) {
             JetParameter parameter =
-                    fakeOverride ? null :
+                    noDeclaration ? null :
                             (JetParameter) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), parameterFromSubclass);
 
-            JetClassOrObject classElement = fakeOverride ? (JetClassOrObject) BindingContextUtils
+            JetClassOrObject classElement = noDeclaration ? (JetClassOrObject) BindingContextUtils
                     .descriptorToDeclaration(trace.getBindingContext(), declared.getContainingDeclaration()) : null;
 
-            if (parameterFromSubclass.declaresDefaultValue() && !fakeOverride) {
+            if (parameterFromSubclass.declaresDefaultValue() && !noDeclaration) {
                 trace.report(DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE.on(parameter));
             }
 
@@ -583,7 +583,7 @@ public class OverrideResolver {
                         superWithDefault = true;
                     }
                     else {
-                        if (fakeOverride) {
+                        if (noDeclaration) {
                             trace.report(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE.on(classElement, parameterFromSubclass));
                         }
                         else {
@@ -594,7 +594,7 @@ public class OverrideResolver {
                 }
 
                 if (!parameterFromSuperclass.getName().equals(parameterFromSubclass.getName())) {
-                    if (fakeOverride) {
+                    if (noDeclaration) {
                         trace.report(DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES.on(classElement, declared.getOverriddenDescriptors(), parameterFromSuperclass.getIndex() + 1));
                     }
                     else {

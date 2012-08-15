@@ -52,9 +52,15 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
         catch (IOException e) {
             throw ExceptionUtils.rethrow(e);
         }
-        return new JetCoreEnvironment(getTestRootDisposable(), CompileCompilerDependenciesTest.compilerConfigurationForTests(
-                ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(),
-                javaFilesDir));
+        return new JetCoreEnvironment(
+                getTestRootDisposable(),
+                CompileCompilerDependenciesTest.compilerConfigurationForTests(
+                   ConfigurationKind.JDK_AND_ANNOTATIONS,
+                   TestJdkKind.MOCK_JDK,
+                   JetTestUtils.getAnnotationsJar(),
+                   javaFilesDir
+                )
+        );
     }
 
     private static boolean writeJavaFile(@NotNull String fileName, @NotNull String content, @NotNull File javaFilesDir) {
