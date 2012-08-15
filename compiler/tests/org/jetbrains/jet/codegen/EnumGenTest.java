@@ -96,4 +96,8 @@ public class EnumGenTest extends CodegenTestCase {
     public void testValues() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         blackBoxFile("enum/valueof.kt");
     }
+
+    public void testInClassObj() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        blackBoxFile("enum/inclassobj.kt");
+    }
 }
