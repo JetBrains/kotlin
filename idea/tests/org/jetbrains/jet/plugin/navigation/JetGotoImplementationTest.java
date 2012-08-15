@@ -18,8 +18,11 @@ package org.jetbrains.jet.plugin.navigation;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 import com.intellij.codeInsight.navigation.GotoImplementationHandler;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
+import com.intellij.navigation.ItemPresentation;
+import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.LightCodeInsightTestCase;
@@ -29,6 +32,7 @@ import org.jetbrains.jet.testing.InTextDirectivesUtils;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,6 +40,10 @@ import java.util.List;
  */
 public class JetGotoImplementationTest extends LightCodeInsightTestCase {
     public void testClassNavigation() {
+        doTest();
+    }
+
+    public void testClassImplementatorsWithDeclaration() {
         doTest();
     }
 
@@ -55,6 +63,7 @@ public class JetGotoImplementationTest extends LightCodeInsightTestCase {
 
         List<String> expectedReferences = Arrays.asList(
                 InTextDirectivesUtils.findListWithPrefix("// REF:", getEditor().getDocument().getText()));
+        Collections.sort(expectedReferences);
 
         GotoTargetHandler.GotoData elements = new GotoImplementationHandler().getSourceAndTargetElements(getEditor(), getFile());
 
@@ -63,11 +72,14 @@ public class JetGotoImplementationTest extends LightCodeInsightTestCase {
                 @Override
                 public String apply(@Nullable PsiElement element) {
                     assertNotNull(element);
-                    return element.toString();
+                    assertTrue(element instanceof NavigationItem);
+                    ItemPresentation presentation = ((NavigationItem)element).getPresentation();
+                    assertNotNull(presentation);
+                    return presentation.getPresentableText();
                 }
             });
 
-            assertOrderedEquals(expectedReferences, psiElements);
+            assertOrderedEquals(Ordering.natural().sortedCopy(psiElements), expectedReferences);
         }
         else {
             assertEmpty(expectedReferences);

@@ -2,6 +2,9 @@ package testing
 
 open class <caret>Test
 
-class TestOther : Test()
+open class TestOther : Test()
 
-// REF: JetLightClass:testing.TestOther
+class TestOtherMore : TestOther()
+
+// REF: TestOtherMore
+// REF: TestOther
