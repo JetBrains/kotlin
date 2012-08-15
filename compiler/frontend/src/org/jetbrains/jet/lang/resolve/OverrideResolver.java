@@ -455,15 +455,7 @@ public class OverrideResolver {
 
     private void checkOverrideForMember(@NotNull CallableMemberDescriptor declared) {
         PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
-        JetNamedDeclaration member;
-        if (element instanceof JetNamedDeclaration) {
-            member = (JetNamedDeclaration) element;
-        } else {
-            assert element instanceof ClsMethodImpl;
-            member = DeclarationUtils.toJetDeclaration((ClsMethodImpl) element);
-        }
-
-        if (member == null) {
+        if (element == null) {
             if (declared.getKind() != CallableMemberDescriptor.Kind.DELEGATION) {
                 throw new IllegalStateException(
                         "decriptor is not resolved to declaration" +
@@ -477,9 +469,7 @@ public class OverrideResolver {
             return;
         }
 
-        JetModifierList modifierList = member.getModifierList();
-        ASTNode overrideNode = modifierList != null ? modifierList.getModifierNode(JetTokens.OVERRIDE_KEYWORD) : null;
-        boolean hasOverrideModifier = overrideNode != null;
+        boolean hasOverrideModifier = DeclarationUtils.isOverridable(element);
 
         boolean finalOverriddenError = false;
         boolean typeMismatchError = false;
@@ -488,17 +478,17 @@ public class OverrideResolver {
             if (overridden != null) {
                 if (hasOverrideModifier) {
                     if (!overridden.getModality().isOverridable() && !finalOverriddenError) {
-                        trace.report(OVERRIDING_FINAL_MEMBER.on(overrideNode.getPsi(), overridden, overridden.getContainingDeclaration()));
+                        trace.report(OVERRIDING_FINAL_MEMBER.on(((JetModifierListOwner) element).getModifierList().getModifierNode(JetTokens.OVERRIDE_KEYWORD).getPsi(), overridden, overridden.getContainingDeclaration()));
                         finalOverriddenError = true;
                     }
 
                     if (!OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, overridden, declared) && !typeMismatchError) {
-                        trace.report(RETURN_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden));
+                        trace.report(RETURN_TYPE_MISMATCH_ON_OVERRIDE.on((JetNamedDeclaration) element, declared, overridden));
                         typeMismatchError = true;
                     }
 
                     if (checkPropertyKind(overridden, true) && checkPropertyKind(declared, false) && !kindMismatchError) {
-                        trace.report(VAR_OVERRIDDEN_BY_VAL.on((JetProperty) member, (PropertyDescriptor) declared, (PropertyDescriptor) overridden));
+                        trace.report(VAR_OVERRIDDEN_BY_VAL.on((JetProperty) element, (PropertyDescriptor) declared, (PropertyDescriptor) overridden));
                         kindMismatchError = true;
                     }
                 }
@@ -512,17 +502,20 @@ public class OverrideResolver {
 
             CallableMemberDescriptor invisibleOverriddenDescriptor = findInvisibleOverriddenDescriptor(declared, declaringClass);
             if (invisibleOverriddenDescriptor != null) {
-                trace.report(CANNOT_OVERRIDE_INVISIBLE_MEMBER.on(member, declared, invisibleOverriddenDescriptor,
+                trace.report(CANNOT_OVERRIDE_INVISIBLE_MEMBER.on((JetModifierListOwner) element, declared, invisibleOverriddenDescriptor,
                                                                  invisibleOverriddenDescriptor.getContainingDeclaration()));
             }
             else {
-                trace.report(NOTHING_TO_OVERRIDE.on(member, declared));
+                trace.report(NOTHING_TO_OVERRIDE.on((JetModifierListOwner) element, declared));
             }
         }
-        PsiElement nameIdentifier = member.getNameIdentifier();
+
+        assert element instanceof PsiNameIdentifierOwner;
+        PsiNameIdentifierOwner nameIdentifierOwner = (PsiNameIdentifierOwner) element;
+        PsiElement nameIdentifier = nameIdentifierOwner.getNameIdentifier();
         if (!hasOverrideModifier && declared.getOverriddenDescriptors().size() > 0 && nameIdentifier != null) {
             CallableMemberDescriptor overridden = declared.getOverriddenDescriptors().iterator().next();
-            trace.report(VIRTUAL_MEMBER_HIDDEN.on(member, declared, overridden, overridden.getContainingDeclaration()));
+            trace.report(VIRTUAL_MEMBER_HIDDEN.on(nameIdentifierOwner, declared, overridden, overridden.getContainingDeclaration()));
         }
     }
 
@@ -562,15 +555,15 @@ public class OverrideResolver {
         if (!fakeOverride) {
             // No check if the function is not marked as 'override'
             PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
-            JetModifierListOwner declaration;
-            if (element instanceof  JetModifierListOwner) {
-                declaration = (JetModifierListOwner) element;
+            boolean hasOverrideModifier;
+            if (element instanceof JetModifierListOwner) {
+                hasOverrideModifier = ((JetModifierListOwner)element).hasModifier(JetTokens.OVERRIDE_KEYWORD);
             } else {
-                assert element instanceof ClsMethodImpl;
-                declaration = DeclarationUtils.toJetDeclaration((ClsMethodImpl) element);
+                assert element instanceof PsiMethod;
+                hasOverrideModifier = !((PsiMethod)element).hasModifierProperty(PsiModifier.FINAL);
             }
 
-            if (!declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
+            if (!hasOverrideModifier) {
                 return;
             }
         }

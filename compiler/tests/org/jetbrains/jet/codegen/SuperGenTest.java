@@ -56,4 +56,7 @@ public class SuperGenTest extends CodegenTestCase {
 //        System.out.println(generateToText());
     }
 
+    public void testDelegation() throws Exception {
+        blackBoxFile("/super/delegation.jet");
+    }
 }

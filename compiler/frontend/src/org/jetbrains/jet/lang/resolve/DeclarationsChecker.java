@@ -22,6 +22,8 @@ import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifier;
 import com.intellij.psi.impl.compiled.ClsMethodImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -125,16 +127,14 @@ public class DeclarationsChecker {
     private void checkOpenMembers(MutableClassDescriptor classDescriptor) {
         for (CallableMemberDescriptor memberDescriptor : classDescriptor.getDeclaredCallableMembers()) {
             PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), memberDescriptor);
-            JetNamedDeclaration member;
-            if (element instanceof JetNamedDeclaration) {
-                member = (JetNamedDeclaration) element;
-            } else {
-                assert element instanceof ClsMethodImpl;
-                member = DeclarationUtils.toJetDeclaration((ClsMethodImpl) element);
-            }
-
-            if (member != null && classDescriptor.getModality() == Modality.FINAL && member.hasModifier(JetTokens.OPEN_KEYWORD)) {
-                trace.report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member));
+            if (element != null && classDescriptor.getModality() == Modality.FINAL && !DeclarationUtils.isFinal(element)) {
+                if (memberDescriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
+                    trace.report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on((JetNamedDeclaration) element));
+                }
+                else {
+                    trace.report(FINAL_CLASS_WITH_NON_FINAL_MEMBERS.on((JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), classDescriptor)));
+                    return;
+                }
             }
         }
     }

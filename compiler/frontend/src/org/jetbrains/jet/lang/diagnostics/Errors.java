@@ -122,6 +122,7 @@ public interface Errors {
 
     DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY = DiagnosticFactory1.create(ERROR, NAMED_ELEMENT);
     SimpleDiagnosticFactory<JetNamedDeclaration> NON_FINAL_MEMBER_IN_FINAL_CLASS = SimpleDiagnosticFactory.create(ERROR, positionModifier(JetTokens.OPEN_KEYWORD));
+    SimpleDiagnosticFactory<JetNamedDeclaration> FINAL_CLASS_WITH_NON_FINAL_MEMBERS = SimpleDiagnosticFactory.create(ERROR, NAMED_ELEMENT);
 
     SimpleDiagnosticFactory<JetNamedDeclaration> PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE = SimpleDiagnosticFactory.create(ERROR, NAMED_ELEMENT);
 

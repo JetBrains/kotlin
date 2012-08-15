@@ -1,0 +1,25 @@
+package bbb
+
+open class Test1(r : Runnable) : Runnable by r {}
+
+class TestRunnable() : Runnable {
+  override fun run() = System.out.println("foobar")
+}
+
+open trait Root {
+ open fun boo() = 4
+}
+
+open trait Left : Root {}
+open trait Right : Root {}
+
+open class Test2(r : Root) : Left, Root by r {}
+
+fun box() : String {
+    var del = Test1(TestRunnable())
+    del.run()
+    if (del is Runnable)
+        return "OK"
+    else
+        return "Fail #1"
+}

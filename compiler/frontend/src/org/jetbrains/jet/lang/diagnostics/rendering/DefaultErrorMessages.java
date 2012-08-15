@@ -135,6 +135,7 @@ public class DefaultErrorMessages {
 
         MAP.put(NON_MEMBER_FUNCTION_NO_BODY, "Function ''{0}'' must have a body", NAME);
         MAP.put(NON_FINAL_MEMBER_IN_FINAL_CLASS, "Non-final member in a final class");
+        MAP.put(FINAL_CLASS_WITH_NON_FINAL_MEMBERS, "Final class with non-final members");
 
         MAP.put(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, "Public or protected member should have specified type");
 

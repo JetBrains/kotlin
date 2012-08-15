@@ -183,6 +183,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             // todo FIXME: enable this test
             //doTest("compiler/testData/diagnostics/tests/DelegationNotTotrait.kt");
         }
+
+        @TestMetadata("DelegationToJavaIface.kt")
+        public void testDelegationToJavaIface() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/DelegationToJavaIface.kt");
+        }
         
         @TestMetadata("DiamondFunction.kt")
         public void testDiamondFunction() throws Exception {

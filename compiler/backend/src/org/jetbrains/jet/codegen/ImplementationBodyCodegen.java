@@ -792,19 +792,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 StackValue field = StackValue.field(fieldType, classname, delegateField, false);
                 field.store(fieldType, iv);
 
-                PsiElement element = BindingContextUtils.classDescriptorToDeclaration(bindingContext, superClassDescriptor);
-                JetClass superClass;
-                if (element instanceof JetClass) {
-                    superClass = (JetClass) element;
-                } else {
-                    //element is a java interface
-                    assert element instanceof ClsClassImpl;
-                    superClass = DeclarationUtils.toJetDeclaration((ClsClassImpl) element);
-                }
                 final CodegenContext delegateContext = context.intoClass(superClassDescriptor,
                                                                          new OwnerKind.DelegateKind(StackValue.field(fieldType, classname, delegateField, false),
                                                                                                     typeMapper.mapType(superClassDescriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName()), state.getInjector().getJetTypeMapper());
-                generateDelegates(superClass, delegateContext, field);
+                generateDelegates(superClassDescriptor, delegateContext, field);
             }
         }
 
@@ -1115,20 +1106,17 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    protected void generateDelegates(JetClass toClass, CodegenContext delegateContext, StackValue field) {
+    protected void generateDelegates(ClassDescriptor toClass, CodegenContext delegateContext, StackValue field) {
         final FunctionCodegen functionCodegen = new FunctionCodegen(delegateContext, v, state);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(delegateContext, v, functionCodegen, state);
 
-        ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, toClass);
         for (DeclarationDescriptor declaration : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
             if (declaration instanceof CallableMemberDescriptor) {
                 CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) declaration;
                 if (callableMemberDescriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION) {
                     Set<? extends CallableMemberDescriptor> overriddenDescriptors = callableMemberDescriptor.getOverriddenDescriptors();
                     for (CallableMemberDescriptor overriddenDescriptor : overriddenDescriptors) {
-                        //TODO there should be the corresponding ClassDescriptor in the binding context for java interfaces
-                        if ((classDescriptor == null && toClass.getName().equals(overriddenDescriptor.getContainingDeclaration().getName().getName()))
-                            || overriddenDescriptor.getContainingDeclaration() == classDescriptor) {
+                        if (overriddenDescriptor.getContainingDeclaration() == toClass) {
                             if (declaration instanceof PropertyDescriptor) {
                                 propertyCodegen.genDelegate((PropertyDescriptor) declaration, (PropertyDescriptor) overriddenDescriptor, field);
                             }

@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetFunctionStubImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -53,32 +54,30 @@ import java.util.ArrayList;
  * @author Kirill Berezin
  */
 public final class DeclarationUtils {
-
-    @Nullable
-    public static JetClass toJetDeclaration(@NotNull ClsClassImpl classImpl) {
-        PsiClassType[] types = classImpl.getSuperTypes();
-        ArrayList<String> superNames = new ArrayList<String>(types.length);
-        for (PsiClassType type : types) {
-            superNames.add(type.getClassName());
+    public static final boolean isFinal(@Nullable PsiElement element) {
+        if (element instanceof JetModifierListOwner) {
+            return !((JetModifierListOwner) element).hasModifier(JetTokens.OPEN_KEYWORD);
         }
-        FileViewProvider provider = ((ClsFileImpl) classImpl.getParent()).getViewProvider();
-        //preparing "adapter"
-        return new JetClass(new PsiJetClassStubImpl(JetStubElementTypes.CLASS, new PsiFileStubImpl<PsiJavaFileImpl>(new
-            PsiJavaFileImpl(provider)), classImpl.getQualifiedName(), classImpl.getName(), superNames, classImpl.isInterface(), classImpl.isEnum(), classImpl.isAnnotationType())) {
-            @Override
-            public JetParameterList getPrimaryConstructorParameterList() {
-                return null; //since interfaces don't have constructors with parameters
-            }
-        };
+        else if (element instanceof PsiModifierListOwner) {
+            return ((PsiModifierListOwner)element).hasModifierProperty(PsiModifier.FINAL);
+        }
+        else {
+            throw new IllegalArgumentException("element doesn't own a modifier list: " + element);
+        }
     }
 
-    @Nullable
-    public static JetNamedFunction toJetDeclaration(@NotNull final ClsMethodImpl method) {
-        return new JetNamedFunction(new PsiJetFunctionStubImpl(JetStubElementTypes.FUNCTION, ((ClsClassImpl) method.getParent()).getStub(), method.getName(), false, null, false)) {
-            @Override
-            public JetModifierList getModifierList() {
-                return new JetModifierList(new MethodElement()); //TODO incorrect
-            }
-        };
+    public static final boolean isOverridable(@Nullable PsiElement element) {
+        if (element instanceof JetModifierListOwner) {
+            JetModifierList modifierList = ((JetModifierListOwner) element).getModifierList();
+            ASTNode overrideNode = modifierList != null ? modifierList.getModifierNode(JetTokens.OVERRIDE_KEYWORD) : null;
+            return overrideNode != null;
+        }
+        else if (element instanceof PsiModifierListOwner) {
+            assert element instanceof PsiMethod;
+            return !((PsiModifierListOwner) element).hasModifierProperty(PsiModifier.FINAL);
+        }
+        else {
+            throw new IllegalArgumentException("element doesn't own a modifier list: " + element);
+        }
     }
 }
