@@ -340,7 +340,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                     else {
                         List<JetType> allSupertypes = resolveSession.getInjector().getDescriptorResolver()
                                 .resolveSupertypes(getScopeForClassHeaderResolution(),
-                                                   classOrObject,
+                                                   LazyClassDescriptor.this, classOrObject,
                                                    resolveSession.getTrace());
                         List<JetType> validSupertypes = Lists.newArrayList(Collections2.filter(allSupertypes, VALID_SUPERTYPE));
                         this.supertypes = validSupertypes;

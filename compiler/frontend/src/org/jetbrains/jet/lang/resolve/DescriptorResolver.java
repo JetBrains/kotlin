@@ -48,7 +48,6 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.CLASS;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CONSTRUCTOR;
 
 /**
@@ -112,43 +111,46 @@ public class DescriptorResolver {
             @NotNull MutableClassDescriptor descriptor,
             BindingTrace trace
     ) {
-        for (JetType supertype : resolveSupertypes(descriptor.getScopeForSupertypeResolution(), jetClass, trace)) {
+        for (JetType supertype : resolveSupertypes(descriptor.getScopeForSupertypeResolution(), descriptor, jetClass, trace)) {
             descriptor.addSupertype(supertype);
         }
     }
 
-    public List<JetType> resolveSupertypes(@NotNull JetScope scope, @NotNull JetClassOrObject jetClass, BindingTrace trace) {
-        List<JetType> result = Lists.newArrayList();
+    public List<JetType> resolveSupertypes(
+            @NotNull JetScope scope,
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull JetClassOrObject jetClass,
+            BindingTrace trace
+    ) {
+        List<JetType> supertypes = Lists.newArrayList();
         List<JetDelegationSpecifier> delegationSpecifiers = jetClass.getDelegationSpecifiers();
-        boolean isEnum = jetClass instanceof JetClass && ((JetClass) jetClass).hasModifier(JetTokens.ENUM_KEYWORD);
+        boolean isEnum = classDescriptor.getKind() == ClassKind.ENUM_CLASS;
         if (delegationSpecifiers.isEmpty()) {
             if (!isEnum) {
-                result.add(getDefaultSupertype(jetClass, trace));
+                supertypes.add(getDefaultSupertype(jetClass, trace));
             }
         }
         else {
-            Collection<JetType> supertypes = resolveDelegationSpecifiers(
+            Collection<JetType> declaredSupertypes = resolveDelegationSpecifiers(
                     scope,
                     delegationSpecifiers,
                     typeResolver, trace, false);
-            for (JetType supertype : supertypes) {
-                result.add(supertype);
+            supertypes.addAll(declaredSupertypes);
+        }
+        if (isEnum && !containsClass(supertypes)) {
+            supertypes.add(0, JetStandardLibrary.getInstance().getEnumType(classDescriptor.getDefaultType()));
+        }
+        return supertypes;
+    }
+
+    private boolean containsClass(Collection<JetType> result) {
+        for (JetType type : result) {
+            ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+            if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.TRAIT) {
+                return true;
             }
         }
-        if (isEnum) {
-            boolean hasSuper = false;
-            for (JetType type : result) {
-                ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-                if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.TRAIT) {
-                    hasSuper = true;
-                }
-            }
-            if (!hasSuper) {
-                ClassDescriptor classDescriptor = trace.getBindingContext().get(CLASS, jetClass);
-                result.add(0, JetStandardLibrary.getInstance().getEnumType(classDescriptor.getDefaultType()));
-            }
-        }
-        return result;
+        return false;
     }
 
     private JetType getDefaultSupertype(JetClassOrObject jetClass, BindingTrace trace) {
