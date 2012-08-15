@@ -135,4 +135,9 @@ public class EnumGenTest extends CodegenTestCase {
     public void testKt1119() {
         blackBoxFile("regressions/kt1119.kt");
     }
+
+    public void testKt2350() {
+        blackBoxFile("regressions/kt2350.kt");
+        System.out.println(generateToText());
+    }
 }

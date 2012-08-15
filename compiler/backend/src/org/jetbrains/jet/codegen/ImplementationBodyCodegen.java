@@ -1088,7 +1088,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.dup();
             iv.iconst(ordinal);
 
-            // TODO type and constructor parameters
             ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, enumConstant);
             String implClass = typeMapper.mapType(classDescriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName();
 
@@ -1103,7 +1102,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.aconst(enumConstant.getName());
             iv.iconst(ordinal);
 
-            if (delegationSpecifiers.size() == 1) {
+            if (delegationSpecifiers.size() == 1 && !state.getInjector().getClosureAnnotator().enumEntryNeedSubclass(enumConstant)) {
                 final JetDelegationSpecifier specifier = delegationSpecifiers.get(0);
                 if (specifier instanceof JetDelegatorToSuperCall) {
                     final JetDelegatorToSuperCall superCall = (JetDelegatorToSuperCall) specifier;
