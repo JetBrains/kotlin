@@ -143,11 +143,9 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     }
 
     private void generateEnumClassObjectMethods(@NotNull Collection<? super FunctionDescriptor> result, @NotNull Name name) {
-        DeclarationDescriptor containingDeclaration = thisDescriptor.getContainingDeclaration();
-        if (!(containingDeclaration instanceof ClassDescriptor)) return;
-        ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
-        if (classDescriptor.getClassObjectDescriptor() != thisDescriptor) return;
-        if (classDescriptor.getKind() != ClassKind.ENUM_CLASS) return;
+        if (!isEnumClassObject()) return;
+
+        ClassDescriptor classDescriptor = (ClassDescriptor) thisDescriptor.getContainingDeclaration();
 
         if (name.equals(DescriptorResolver.VALUES_METHOD_NAME)) {
             SimpleFunctionDescriptor valuesMethod = DescriptorResolver
@@ -155,10 +153,19 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             result.add(valuesMethod);
         }
         else if (name.equals(DescriptorResolver.VALUE_OF_METHOD_NAME)) {
-            SimpleFunctionDescriptor valueOfMethod = DescriptorResolver.createEnumClassObjectValueOfMethod(classDescriptor,
-                                                                                                    resolveSession.getTrace());
+            SimpleFunctionDescriptor valueOfMethod = DescriptorResolver
+                    .createEnumClassObjectValueOfMethod(classDescriptor, resolveSession.getTrace());
             result.add(valueOfMethod);
         }
+    }
+
+    private boolean isEnumClassObject() {
+        DeclarationDescriptor containingDeclaration = thisDescriptor.getContainingDeclaration();
+        if (!(containingDeclaration instanceof ClassDescriptor)) return false;
+        ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
+        if (classDescriptor.getKind() != ClassKind.ENUM_CLASS) return false;
+        if (classDescriptor.getClassObjectDescriptor() != thisDescriptor) return false;
+        return true;
     }
 
     @NotNull
