@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.diagnostics;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
@@ -34,7 +33,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.PositioningStrategies.*;
 import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
@@ -121,7 +119,7 @@ public interface Errors {
     DiagnosticFactory1<JetModifierListOwner, SimpleFunctionDescriptor> NON_MEMBER_ABSTRACT_FUNCTION = DiagnosticFactory1.create(ERROR, ABSTRACT_MODIFIER);
 
     DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY = DiagnosticFactory1.create(ERROR, NAMED_ELEMENT);
-    SimpleDiagnosticFactory<JetNamedDeclaration> NON_FINAL_MEMBER_IN_FINAL_CLASS = SimpleDiagnosticFactory.create(ERROR, positionModifier(JetTokens.OPEN_KEYWORD));
+    SimpleDiagnosticFactory<JetNamedDeclaration> NON_FINAL_MEMBER_IN_FINAL_CLASS = SimpleDiagnosticFactory.create(WARNING, positionModifier(JetTokens.OPEN_KEYWORD));
 
     SimpleDiagnosticFactory<JetNamedDeclaration> PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE = SimpleDiagnosticFactory.create(ERROR, NAMED_ELEMENT);
 
