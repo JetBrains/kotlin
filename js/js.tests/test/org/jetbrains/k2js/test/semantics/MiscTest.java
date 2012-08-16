@@ -187,4 +187,12 @@ public final class MiscTest extends AbstractExpressionTest {
     public void testInheritFromJetIterator() throws Exception {
         fooBoxTest();
     }
+
+    public void testIterableExtension() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testIterationOverIterator() throws Exception {
+        fooBoxTest();
+    }
 }
