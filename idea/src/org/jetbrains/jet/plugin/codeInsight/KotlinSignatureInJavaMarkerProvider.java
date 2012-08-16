@@ -22,7 +22,10 @@ import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationUtil;
+import com.intellij.ide.DataManager;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -34,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.plugin.JetIcons;
 
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;
@@ -61,34 +65,13 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         public void navigate(MouseEvent e, PsiMethod element) {
             if (e.getClickCount() != 1 || e.getButton() != MouseEvent.BUTTON1) return;
 
-            PsiAnnotation annotation = findKotlinSignatureAnnotation(element);
-            assert annotation != null;
-            if (annotation.getContainingFile() == element.getContainingFile()) {
-                // not external, go to
-                for (PsiNameValuePair pair : annotation.getParameterList().getAttributes()) {
-                    if (pair.getName() == null || "value".equals(pair.getName())) {
-                        PsiAnnotationMemberValue value = pair.getValue();
-                        if (value != null) {
-                            PsiElement firstChild = value.getFirstChild();
-                            VirtualFile virtualFile = value.getContainingFile().getVirtualFile();
-                            if (firstChild != null && firstChild.getNode().getElementType() == JavaTokenType.STRING_LITERAL
-                                && virtualFile != null) {
-                                new OpenFileDescriptor(value.getProject(), virtualFile, value.getTextOffset() + 1).navigate(true);
-                            }
-                            else {
-                                NavigationUtil.activateFileWithPsiElement(value);
-                            }
-                        }
-                    }
-                }
-            }
-            else {
-                // TODO check if annotations are editable
+            Editor editor = PlatformDataKeys.EDITOR.getData(DataManager.getInstance().getDataContext(e.getComponent()));
+            assert editor != null;
 
-                new EditSignatureBalloon(element, getKotlinSignature(annotation)).show(e);
-            }
+            invokeEditSignature(element, editor, e.getPoint());
         }
     };
+
 
     static final String KOTLIN_SIGNATURE_ANNOTATION = JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().getFqName();
 
@@ -139,5 +122,34 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
 
     static void refresh(@NotNull Project project) {
         DaemonCodeAnalyzer.getInstance(project).restart();
+    }
+
+    static void invokeEditSignature(@NotNull PsiMethod element, @NotNull Editor editor, @Nullable Point point) {
+        PsiAnnotation annotation = findKotlinSignatureAnnotation(element);
+        assert annotation != null;
+        if (annotation.getContainingFile() == element.getContainingFile()) {
+            // not external, go to
+            for (PsiNameValuePair pair : annotation.getParameterList().getAttributes()) {
+                if (pair.getName() == null || "value".equals(pair.getName())) {
+                    PsiAnnotationMemberValue value = pair.getValue();
+                    if (value != null) {
+                        PsiElement firstChild = value.getFirstChild();
+                        VirtualFile virtualFile = value.getContainingFile().getVirtualFile();
+                        if (firstChild != null && firstChild.getNode().getElementType() == JavaTokenType.STRING_LITERAL
+                            && virtualFile != null) {
+                            new OpenFileDescriptor(value.getProject(), virtualFile, value.getTextOffset() + 1).navigate(true);
+                        }
+                        else {
+                            NavigationUtil.activateFileWithPsiElement(value);
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            // TODO check if annotations are editable
+
+            new EditSignatureBalloon(element, getKotlinSignature(annotation)).show(point, editor);
+        }
     }
 }

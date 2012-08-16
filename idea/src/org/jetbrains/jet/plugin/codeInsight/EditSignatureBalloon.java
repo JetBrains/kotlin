@@ -17,16 +17,17 @@
 package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.codeInsight.ExternalAnnotationsManager;
-import com.intellij.ide.DataManager;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.ex.EditorEx;
+import com.intellij.openapi.editor.ex.EditorGutterComponentEx;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.*;
+import com.intellij.openapi.ui.popup.Balloon;
+import com.intellij.openapi.ui.popup.JBPopupAdapter;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.JavaPsiFacade;
@@ -40,7 +41,10 @@ import org.jetbrains.jet.plugin.JetFileType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
 /**
 * @author Evgeny Gerashchenko
@@ -155,23 +159,28 @@ class EditSignatureBalloon {
         return editor;
     }
 
-    private int getLineY(@Nullable DataContext dataContext) {
-        if (dataContext != null) {
-            Editor mainEditor = PlatformDataKeys.EDITOR.getData(dataContext);
+    private int getLineY(@Nullable Editor editor) {
+        if (editor != null) {
             Document document = PsiDocumentManager.getInstance(project).getDocument(method.getContainingFile());
-            if (mainEditor != null && document != null) {
+            if (document != null) {
                 int lineNumber = document.getLineNumber(method.getTextOffset());
-                return mainEditor.logicalPositionToXY(new LogicalPosition(lineNumber, 0)).y;
+                return editor.logicalPositionToXY(new LogicalPosition(lineNumber, 0)).y;
             }
         }
         return Integer.MAX_VALUE;
     }
 
-    public void show(MouseEvent e) {
-        Point eventPoint = e.getPoint();
-        int lineY = getLineY(DataManager.getInstance().getDataContext(e.getComponent()));
-        Point point = new Point(eventPoint.x, Math.min(lineY, eventPoint.y));
-        balloon.show(new RelativePoint(e.getComponent(), point), Balloon.Position.above);
+    public void show(@Nullable Point point, @NotNull Editor editor) {
+        int lineY = getLineY(editor);
+        EditorGutterComponentEx gutter = (EditorGutterComponentEx) editor.getGutter();
+        Point adjustedPoint;
+        if (point == null) {
+            adjustedPoint = new Point(gutter.getIconsAreaWidth() + gutter.getLineMarkerAreaOffset(), lineY);
+        }
+        else {
+            adjustedPoint = new Point(point.x, Math.min(lineY, point.y));
+        }
+        balloon.show(new RelativePoint(gutter, adjustedPoint), Balloon.Position.above);
         IdeFocusManager.getInstance(editor.getProject()).requestFocus(editor.getContentComponent(), false);
     }
 
