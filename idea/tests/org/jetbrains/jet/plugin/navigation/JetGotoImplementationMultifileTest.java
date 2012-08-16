@@ -16,9 +16,8 @@
 
 package org.jetbrains.jet.plugin.navigation;
 
+import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
@@ -26,29 +25,28 @@ import java.io.File;
 /**
  * @author Nikolay Krasko
  */
-public class JetGotoImplementationTest extends LightCodeInsightTestCase {
-    public void testClassNavigation() {
-        doTest();
+public class JetGotoImplementationMultifileTest extends CodeInsightTestCase {
+    public void testImplementKotlinClassInJava() throws Exception {
+        doKotlinJavaTest();
     }
 
-    public void testClassImplementatorsWithDeclaration() {
-        doTest();
+    public void testImplementJavaClassInKotlin() throws Exception {
+        doKotlinJavaTest();
+    }
+
+    private void doKotlinJavaTest() throws Exception {
+        doMultifileTest(getTestName(false) + ".kt", getTestName(false) + ".java");
+    }
+
+    private void doMultifileTest(String ... fileNames) throws Exception {
+        configureByFiles(null, fileNames);
+        GotoTargetHandler.GotoData gotoData = ImplementationTestUtils.invokeGotoImplementations(getEditor(), getFile());
+        ImplementationTestUtils.assertGotoImplementations(getEditor(), gotoData);
     }
 
     @Override
     protected String getTestDataPath() {
-        return new File(PluginTestCaseBase.getTestDataPathBase(), "/navigation/implementations").getPath() +
-               File.separator;
-    }
-
-    @Override
-    protected Sdk getProjectJDK() {
-        return PluginTestCaseBase.jdkFromIdeaHome();
-    }
-
-    protected void doTest() {
-        configureByFile(getTestName(false) + ".kt");
-        GotoTargetHandler.GotoData gotoData = ImplementationTestUtils.invokeGotoImplementations(getEditor(), getFile());
-        ImplementationTestUtils.assertGotoImplementations(getEditor(), gotoData);
+        return new File(PluginTestCaseBase.getTestDataPathBase(),
+                        "/navigation/implementations/multifile/" + getTestName(false)).getPath() + File.separator;
     }
 }
