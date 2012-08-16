@@ -50,11 +50,13 @@ import java.awt.event.*;
 class EditSignatureBalloon {
     private final Editor editor;
     private final PsiMethod method;
+    private final Project project;
     private final String previousSignature;
     private final Balloon balloon;
 
     public EditSignatureBalloon(@NotNull PsiMethod method, @NotNull String previousSignature) {
         this.method = method;
+        project = method.getProject();
         this.previousSignature = previousSignature;
 
         editor = createEditor();
@@ -94,7 +96,10 @@ class EditSignatureBalloon {
                 return true;
             }
         };
+        JButton deleteButton = new JButton("Delete");
+
         toolbar.add(saveButton);
+        toolbar.add(deleteButton);
         panel.add(toolbar, BorderLayout.SOUTH);
 
         ActionListener saveAndHideListener = new ActionListener() {
@@ -112,6 +117,12 @@ class EditSignatureBalloon {
         };
 
         saveButton.addActionListener(saveAndHideListener);
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteAndHide();
+            }
+        });
         panel.registerKeyboardAction(saveAndHideListener, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
             SystemInfo.isMac ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK),
                                      JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -126,7 +137,7 @@ class EditSignatureBalloon {
         assert editorFactory != null;
         Document document = editorFactory.createDocument(this.previousSignature);
 
-        Editor editor = editorFactory.createEditor(document, this.method.getProject(), JetFileType.INSTANCE, false);
+        Editor editor = editorFactory.createEditor(document, project, JetFileType.INSTANCE, false);
         EditorSettings settings = editor.getSettings();
         settings.setVirtualSpace(false);
         settings.setLineMarkerAreaShown(false);
@@ -147,7 +158,7 @@ class EditSignatureBalloon {
     private int getLineY(@Nullable DataContext dataContext) {
         if (dataContext != null) {
             Editor mainEditor = PlatformDataKeys.EDITOR.getData(dataContext);
-            Document document = PsiDocumentManager.getInstance(method.getProject()).getDocument(method.getContainingFile());
+            Document document = PsiDocumentManager.getInstance(project).getDocument(method.getContainingFile());
             if (mainEditor != null && document != null) {
                 int lineNumber = document.getLineNumber(method.getTextOffset());
                 return mainEditor.logicalPositionToXY(new LogicalPosition(lineNumber, 0)).y;
@@ -170,10 +181,22 @@ class EditSignatureBalloon {
         editorFactory.releaseEditor(editor);
     }
 
+    private void deleteAndHide() {
+        new WriteCommandAction(project) {
+            @Override
+            protected void run(final Result result) throws Throwable {
+                ExternalAnnotationsManager.getInstance(project)
+                        .deannotate(method, KotlinSignatureInJavaMarkerProvider.KOTLIN_SIGNATURE_ANNOTATION);
+            }
+        }.execute();
+        KotlinSignatureInJavaMarkerProvider.refresh(project);
+
+        balloon.hide();
+    }
+
     private void saveAndHide() {
         String newSignature = editor.getDocument().getText();
         if (!previousSignature.equals(newSignature)) {
-            final Project project = method.getProject();
             final PsiNameValuePair[] nameValuePairs = JavaPsiFacade.getElementFactory(project).createAnnotationFromText(
                     "@" + KotlinSignatureInJavaMarkerProvider.KOTLIN_SIGNATURE_ANNOTATION + "(value=\"" + newSignature + "\")", null)
                     .getParameterList().getAttributes();

@@ -134,6 +134,10 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
 
     public static void setMarkersEnabled(@NotNull Project project, boolean value) {
         PropertiesComponent.getInstance(project).setValue(SHOW_MARKERS_PROPERTY, Boolean.toString(value));
+        refresh(project);
+    }
+
+    static void refresh(@NotNull Project project) {
         DaemonCodeAnalyzer.getInstance(project).restart();
     }
 }
