@@ -554,16 +554,7 @@ public class OverrideResolver {
         boolean fakeOverride = declared.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
         if (!fakeOverride) {
             // No check if the function is not marked as 'override'
-            PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
-            boolean hasOverrideModifier;
-            if (element instanceof JetModifierListOwner) {
-                hasOverrideModifier = ((JetModifierListOwner)element).hasModifier(JetTokens.OVERRIDE_KEYWORD);
-            } else {
-                assert element instanceof PsiMethod;
-                hasOverrideModifier = !((PsiMethod)element).hasModifierProperty(PsiModifier.FINAL);
-            }
-
-            if (!hasOverrideModifier) {
+            if (!DeclarationUtils.isOverridable(BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared))) {
                 return;
             }
         }
