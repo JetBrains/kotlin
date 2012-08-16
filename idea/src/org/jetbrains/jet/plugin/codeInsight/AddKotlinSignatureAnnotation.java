@@ -82,13 +82,15 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        PsiMethod method = (PsiMethod) findMethod(file, editor.getCaretModel().getOffset()).getOriginalElement();
-        String signature = getDefaultSignature(project, method);
+        PsiMethod method = findMethod(file, editor.getCaretModel().getOffset());
+        PsiMethod original = (PsiMethod) method.getOriginalElement();
+        String signature = getDefaultSignature(project, original);
         if (signature == null) {
             return;
         }
         createFix(method, signature).invoke(project, editor, file);
         KotlinSignatureInJavaMarkerProvider.refresh(project);
+        KotlinSignatureInJavaMarkerProvider.invokeEditSignature(method, editor, null);
     }
 
     @NotNull
