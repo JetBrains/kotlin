@@ -21,10 +21,7 @@ import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiCodeBlock;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
@@ -77,6 +74,7 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction {
         PsiMethod method = findMethod(file, editor.getCaretModel().getOffset());
         if (method == null) return false;
         if (KotlinSignatureInJavaMarkerProvider.findKotlinSignatureAnnotation(method) != null) return false;
+        if (method.getModifierList().hasExplicitModifier(PsiModifier.PRIVATE)) return false;
         return createFix(method, "").isAvailable(project, editor, file);
     }
 
