@@ -222,6 +222,7 @@ public class AllInjectorsGenerator {
         generator.addPublicParameter(Project.class);
         generator.addPublicParameter(TopDownAnalysisParameters.class);
         generator.addPublicParameter(BindingTrace.class);
+        generator.addPublicParameter(BodiesResolveContext.class);
         generator.generate("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForBodyResolve");
     }
 

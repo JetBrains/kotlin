@@ -132,12 +132,15 @@ public class FrameMap {
 
         Collections.sort(descriptors, new Comparator<Tuple3<DeclarationDescriptor, Integer, Integer>>() {
             @Override
-            public int compare(Tuple3<DeclarationDescriptor, Integer, Integer> left, Tuple3<DeclarationDescriptor, Integer, Integer> right) {
+            public int compare(
+                    Tuple3<DeclarationDescriptor, Integer, Integer> left,
+                    Tuple3<DeclarationDescriptor, Integer, Integer> right
+            ) {
                 return left._2 - right._2;
             }
         });
 
-        sb.append("size=" + myMaxIndex);
+        sb.append("size=").append(myMaxIndex);
 
         boolean first = true;
         for (Tuple3<DeclarationDescriptor, Integer, Integer> t : descriptors) {
@@ -145,7 +148,7 @@ public class FrameMap {
                 sb.append(", ");
             }
             first = false;
-            sb.append(t._1 + ",i=" + t._2 + ",s=" + t._3);
+            sb.append(t._1).append(",i=").append(t._2).append(",s=").append(t._3);
         }
 
         return sb.toString();

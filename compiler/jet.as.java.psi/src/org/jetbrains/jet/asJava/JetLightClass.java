@@ -51,7 +51,6 @@ import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetLanguage;
-import org.jetbrains.jet.util.QualifiedNamesUtil;
 import org.jetbrains.jet.utils.Progress;
 
 import javax.swing.*;
@@ -74,7 +73,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
 
     @Override
     public String getName() {
-        return QualifiedNamesUtil.fqnToShortName(qualifiedName).getName();
+        return qualifiedName.shortName().getName();
     }
 
     @Override

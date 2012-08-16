@@ -48,7 +48,7 @@ import java.util.*;
  */
 public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDescriptorFromSource {
 
-    private static final Predicate<Object> ONLY_ENUM_ENTIRES = Predicates.instanceOf(JetEnumEntry.class);
+    private static final Predicate<Object> ONLY_ENUM_ENTRIES = Predicates.instanceOf(JetEnumEntry.class);
     private static final Predicate<JetType> VALID_SUPERTYPE = new Predicate<JetType>() {
         @Override
         public boolean apply(JetType type) {
@@ -148,7 +148,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             scope.addLabeledDeclaration(this);
             scope.changeLockLevel(WritableScope.LockLevel.READING);
 
-            scopeForMemberDeclarationResolution = new ChainedScope(this, scope, getScopeForMemberLookup(), getScopeForClassHeaderResolution());
+            scopeForMemberDeclarationResolution = new ChainedScope(this, getScopeForMemberLookup().getImplicitReceiver(),
+                                                                   scope, getScopeForMemberLookup(), getScopeForClassHeaderResolution());
         }
         return scopeForMemberDeclarationResolution;
     }
@@ -339,7 +340,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                     else {
                         List<JetType> allSupertypes = resolveSession.getInjector().getDescriptorResolver()
                                 .resolveSupertypes(getScopeForClassHeaderResolution(),
-                                                   classOrObject,
+                                                   LazyClassDescriptor.this, classOrObject,
                                                    resolveSession.getTrace());
                         List<JetType> validSupertypes = Lists.newArrayList(Collections2.filter(allSupertypes, VALID_SUPERTYPE));
                         this.supertypes = validSupertypes;
@@ -395,11 +396,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     }
 
     private static JetClassLikeInfo noEnumEntries(JetClassLikeInfo classLikeInfo) {
-        return new FilteringClassLikeInfo(classLikeInfo, Predicates.not(ONLY_ENUM_ENTIRES));
+        return new FilteringClassLikeInfo(classLikeInfo, Predicates.not(ONLY_ENUM_ENTRIES));
     }
 
     private static JetClassLikeInfo onlyEnumEntries(JetClassLikeInfo classLikeInfo) {
-        return new FilteringClassLikeInfo(classLikeInfo, ONLY_ENUM_ENTIRES) {
+        return new FilteringClassLikeInfo(classLikeInfo, ONLY_ENUM_ENTRIES) {
             @Override
             public JetClassOrObject getCorrespondingClassOrObject() {
                 return null;

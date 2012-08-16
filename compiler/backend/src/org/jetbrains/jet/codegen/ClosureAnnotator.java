@@ -42,14 +42,16 @@ public class ClosureAnnotator {
     private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
     private final Map<ScriptDescriptor, JvmClassName> classNameForScript = new HashMap<ScriptDescriptor, JvmClassName>();
     private final Set<JvmClassName> scriptClassNames = new HashSet<JvmClassName>();
-    private final Map<DeclarationDescriptor, ClassDescriptorImpl> classesForFunctions = new HashMap<DeclarationDescriptor, ClassDescriptorImpl>();
-    private final Map<DeclarationDescriptor,ClassDescriptor> enclosing = new HashMap<DeclarationDescriptor, ClassDescriptor>();
+    private final Map<DeclarationDescriptor, ClassDescriptorImpl> classesForFunctions =
+            new HashMap<DeclarationDescriptor, ClassDescriptorImpl>();
+    private final Map<DeclarationDescriptor, ClassDescriptor> enclosing = new HashMap<DeclarationDescriptor, ClassDescriptor>();
 
     private final MultiMap<FqName, JetFile> namespaceName2MultiNamespaceFiles = MultiMap.create();
     private final MultiMap<FqName, JetFile> namespaceName2Files = MultiMap.create();
 
     private BindingContext bindingContext;
     private List<JetFile> files;
+    private final Map<ClassDescriptor, Boolean> enumEntryNeedSubclass = new HashMap<ClassDescriptor, Boolean>();
 
     @Inject
     public void setBindingContext(BindingContext bindingContext) {
@@ -81,7 +83,10 @@ public class ClosureAnnotator {
             classDescriptor.initialize(
                     false,
                     Collections.<TypeParameterDescriptor>emptyList(),
-                    Collections.singleton((funDescriptor.getReceiverParameter().exists() ? JetStandardClasses.getReceiverFunction(arity) : JetStandardClasses.getFunction(arity)).getDefaultType()), JetScope.EMPTY, Collections.<ConstructorDescriptor>emptySet(), null);
+                    Collections.singleton((funDescriptor.getReceiverParameter().exists()
+                                           ? JetStandardClasses.getReceiverFunction(arity)
+                                           : JetStandardClasses.getFunction(arity)).getDefaultType()), JetScope.EMPTY,
+                    Collections.<ConstructorDescriptor>emptySet(), null);
             classesForFunctions.put(funDescriptor, classDescriptor);
         }
         return classDescriptor;
@@ -169,7 +174,7 @@ public class ClosureAnnotator {
 
             ArrayList<JetFile> namespaceFiles = new ArrayList<JetFile>();
             for (JetFile jetFile : entry.getValue()) {
-                ArrayList<JetDeclaration> fileFunctions = new ArrayList<JetDeclaration>();
+                Collection<JetDeclaration> fileFunctions = new ArrayList<JetDeclaration>();
                 for (JetDeclaration declaration : jetFile.getDeclarations()) {
                     if (declaration instanceof JetNamedFunction) {
                         fileFunctions.add(declaration);
@@ -181,7 +186,7 @@ public class ClosureAnnotator {
                 }
             }
 
-            if(namespaceFiles.size() > 1) {
+            if (namespaceFiles.size() > 1) {
                 for (JetFile namespaceFile : namespaceFiles) {
                     namespaceName2MultiNamespaceFiles.putValue(entry.getKey(), namespaceFile);
                 }
@@ -214,10 +219,25 @@ public class ClosureAnnotator {
     }
 
     public boolean hasThis0(ClassDescriptor classDescriptor) {
-        if (DescriptorUtils.isClassObject(classDescriptor)) { return false; }
+        if (DescriptorUtils.isClassObject(classDescriptor)) {
+            return false;
+        }
+        if (classDescriptor.getKind() == ClassKind.ENUM_CLASS || classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
+            return false;
+        }
 
         ClassDescriptor other = enclosing.get(classDescriptor);
         return other != null;
+    }
+
+    public boolean enumEntryNeedSubclass(JetEnumEntry enumEntry) {
+        ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, enumEntry);
+        return enumEntryNeedSubclass.get(descriptor);
+    }
+
+    public boolean enumEntryNeedSubclass(ClassDescriptor enumEntry) {
+        Boolean aBoolean = enumEntryNeedSubclass.get(enumEntry);
+        return aBoolean != null && aBoolean;
     }
 
     private class MyJetVisitorVoid extends JetVisitorVoid {
@@ -266,6 +286,7 @@ public class ClosureAnnotator {
         @Override
         public void visitJetFile(JetFile file) {
             if (file.isScript()) {
+                //noinspection ConstantConditions
                 nameStack.push(classNameForScriptPsi(file.getScript()).getInternalName());
             }
             else {
@@ -276,9 +297,17 @@ public class ClosureAnnotator {
         }
 
         @Override
+        public void visitEnumEntry(JetEnumEntry enumEntry) {
+            ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, enumEntry);
+            enumEntryNeedSubclass.put(descriptor, !enumEntry.getDeclarations().isEmpty());
+            super.visitEnumEntry(enumEntry);
+        }
+
+        @Override
         public void visitClassObject(JetClassObject classObject) {
             JvmClassName name = recordClassObject(classObject);
             ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, classObject.getObjectDeclaration());
+            assert classDescriptor != null;
             recordEnclosing(classDescriptor);
             recordName(classDescriptor, name);
             classStack.push(classDescriptor);
@@ -303,7 +332,9 @@ public class ClosureAnnotator {
                 if (classDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
                     nameStack.push(base.isEmpty() ? classDescriptor.getName().getName() : base + '/' + classDescriptor.getName());
                 }
-                else { nameStack.push(base + '$' + classDescriptor.getName()); }
+                else {
+                    nameStack.push(base + '$' + classDescriptor.getName());
+                }
                 super.visitObjectDeclaration(declaration);
                 nameStack.pop();
                 classStack.pop();
@@ -321,7 +352,9 @@ public class ClosureAnnotator {
             if (classDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
                 nameStack.push(base.isEmpty() ? classDescriptor.getName().getName() : base + '/' + classDescriptor.getName());
             }
-            else { nameStack.push(base + '$' + classDescriptor.getName()); }
+            else {
+                nameStack.push(base + '$' + classDescriptor.getName());
+            }
             super.visitClass(klass);
             nameStack.pop();
             classStack.pop();
@@ -347,7 +380,8 @@ public class ClosureAnnotator {
         @Override
         public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
             JvmClassName name = recordAnonymousClass(expression.getFunctionLiteral());
-            FunctionDescriptor declarationDescriptor = (FunctionDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, expression);
+            FunctionDescriptor declarationDescriptor =
+                    (FunctionDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, expression);
             // working around a problem with shallow analysis
             if (declarationDescriptor == null) return;
             ClassDescriptor classDescriptor = classDescriptorForFunctionDescriptor(declarationDescriptor, name);
@@ -368,7 +402,8 @@ public class ClosureAnnotator {
 
         @Override
         public void visitNamedFunction(JetNamedFunction function) {
-            FunctionDescriptor functionDescriptor = (FunctionDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
+            FunctionDescriptor functionDescriptor =
+                    (FunctionDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
             // working around a problem with shallow analysis
             if (functionDescriptor == null) return;
             DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
@@ -379,7 +414,9 @@ public class ClosureAnnotator {
             }
             else if (containingDeclaration instanceof NamespaceDescriptor) {
                 String peek = nameStack.peek();
-                if (peek.isEmpty()) { peek = "namespace"; }
+                if (peek.isEmpty()) {
+                    peek = "namespace";
+                }
                 else {
                     peek += "/namespace";
                 }

@@ -1,7 +1,7 @@
 package first
 
 fun firstFun() {
-    sec<caret>
+    s<caret>
 }
 
 // EXIST: secondFun

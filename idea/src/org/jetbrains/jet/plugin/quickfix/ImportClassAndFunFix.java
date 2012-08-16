@@ -50,6 +50,7 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetAddImportAction;
@@ -92,10 +93,12 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
 
         assert referenceName != null;
 
+        ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) element.getContainingFile());
+
         List<FqName> result = Lists.newArrayList();
-        result.addAll(getClassNames(referenceName, (JetFile) file));
-        result.addAll(getJetTopLevelFunctions(referenceName, element, file.getProject()));
-        result.addAll(getJetExtensionFunctions(referenceName, element, file.getProject()));
+        result.addAll(getClassNames(referenceName, (JetFile) file, resolveSession));
+        result.addAll(getJetTopLevelFunctions(referenceName, element, resolveSession, file.getProject()));
+        result.addAll(getJetExtensionFunctions(referenceName, element, resolveSession, file.getProject()));
 
         return Collections2.filter(result, new Predicate<FqName>() {
             @Override
@@ -106,14 +109,16 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
         });
     }
 
-    private static Collection<FqName> getJetTopLevelFunctions(@NotNull String referenceName,
-            JetSimpleNameExpression expression,
-            @NotNull Project project) {
+    private static Collection<FqName> getJetTopLevelFunctions(
+            @NotNull String referenceName,
+            @NotNull JetSimpleNameExpression expression,
+            @NotNull ResolveSession resolveSession,
+            @NotNull Project project
+    ) {
         JetShortNamesCache namesCache = JetCacheManager.getInstance(project).getNamesCache();
+
         Collection<FunctionDescriptor> topLevelFunctions = namesCache.getTopLevelFunctionDescriptorsByName(
-                referenceName,
-                expression,
-                GlobalSearchScope.allScope(project));
+                referenceName, expression, resolveSession, GlobalSearchScope.allScope(project));
 
         return Sets.newHashSet(Collections2.transform(topLevelFunctions, new Function<DeclarationDescriptor, FqName>() {
             @Override
@@ -127,6 +132,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
     private static Collection<FqName> getJetExtensionFunctions(
             @NotNull final String referenceName,
             @NotNull JetSimpleNameExpression expression,
+            @NotNull ResolveSession resolveSession,
             @NotNull Project project
     ) {
         JetShortNamesCache namesCache = JetCacheManager.getInstance(project).getNamesCache();
@@ -138,6 +144,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
                     }
                 },
                 expression,
+                resolveSession,
                 GlobalSearchScope.allScope(project));
 
         return Sets.newHashSet(Collections2.transform(jetCallableExtensions, new Function<DeclarationDescriptor, FqName>() {
@@ -152,14 +159,14 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
     /*
      * Searches for possible class names in kotlin context and java facade.
      */
-    public static Collection<FqName> getClassNames(@NotNull String referenceName, @NotNull JetFile file) {
+    public static Collection<FqName> getClassNames(@NotNull String referenceName, @NotNull JetFile file, @NotNull ResolveSession resolveSession) {
         Set<FqName> possibleResolveNames = Sets.newHashSet();
 
         if (!JsModuleDetector.isJsModule(file)) {
             possibleResolveNames.addAll(getClassesFromCache(referenceName, file));
         }
         else {
-            possibleResolveNames.addAll(getJetClasses(referenceName, file));
+            possibleResolveNames.addAll(getJetClasses(referenceName, file.getProject(), resolveSession));
         }
 
         // TODO: Do appropriate sorting
@@ -191,14 +198,14 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
         });
     }
 
-    private static Collection<FqName> getJetClasses(@NotNull final String typeName, @NotNull JetFile file) {
-        JetShortNamesCache cache = JetCacheManager.getInstance(file.getProject()).getNamesCache();
+    private static Collection<FqName> getJetClasses(@NotNull final String typeName, @NotNull Project project, @NotNull ResolveSession resolveSession) {
+        JetShortNamesCache cache = JetCacheManager.getInstance(project).getNamesCache();
         Collection<ClassDescriptor> descriptors = cache.getJetClassesDescriptors(new Condition<String>() {
             @Override
             public boolean value(String s) {
                 return typeName.equals(s);
             }
-        }, file);
+        }, resolveSession);
 
         return Collections2.transform(descriptors, new Function<ClassDescriptor, FqName>() {
             @Override

@@ -20,10 +20,7 @@ import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Opcodes;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -141,8 +138,8 @@ public class IntrinsicMethods {
         for (PrimitiveType type : PrimitiveType.values()) {
             declareIntrinsicFunction(type.getTypeName(), Name.identifier("compareTo"), 1, new CompareTo());
         }
-//        declareIntrinsicFunction("Any", "equals", 1, new Equals());
-//
+        //        declareIntrinsicFunction("Any", "equals", 1, new Equals());
+        //
         declareIntrinsicProperty(Name.identifier("CharSequence"), Name.identifier("length"), new StringLength());
         declareIntrinsicProperty(Name.identifier("String"), Name.identifier("length"), new StringLength());
 
@@ -196,20 +193,6 @@ public class IntrinsicMethods {
         intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME.child(className), functionName, arity, implementation);
     }
 
-    public IntrinsicMethod isIntrinsicMethod(DeclarationDescriptor descriptor) {
-        List<AnnotationDescriptor> annotations = descriptor.getAnnotations();
-        if (annotations != null) {
-            for (AnnotationDescriptor annotation : annotations) {
-                if("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName().getName())) {
-                    String value = (String) annotation.getValueArguments().get(0).getValue();
-                    IntrinsicMethod intrinsicMethod = namedMethods.get(value);
-                    if (intrinsicMethod != null) { return intrinsicMethod; }
-                }
-            }
-        }
-        return null;
-    }
-
     @Nullable
     public IntrinsicMethod getIntrinsic(@NotNull CallableMemberDescriptor descriptor) {
         IntrinsicMethod intrinsicMethod = intrinsicsMap.getIntrinsic(descriptor);
@@ -226,11 +209,11 @@ public class IntrinsicMethods {
                 }
             }
 
-            if(isEnumClassObject(functionDescriptor.getContainingDeclaration())) {
-                if("values".equals(functionDescriptor.getName().getName())) {
+            if (isEnumClassObject(functionDescriptor.getContainingDeclaration())) {
+                if ("values".equals(functionDescriptor.getName().getName())) {
                     return ENUM_VALUES;
                 }
-                if("valueOf".equals(functionDescriptor.getName().getName())) {
+                if ("valueOf".equals(functionDescriptor.getName().getName())) {
                     return ENUM_VALUE_OF;
                 }
             }
@@ -239,10 +222,14 @@ public class IntrinsicMethods {
         List<AnnotationDescriptor> annotations = descriptor.getAnnotations();
         if (annotations != null) {
             for (AnnotationDescriptor annotation : annotations) {
-                if("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName().getName())) {
+                ClassifierDescriptor classifierDescriptor = annotation.getType().getConstructor().getDeclarationDescriptor();
+                assert classifierDescriptor != null;
+                if ("Intrinsic".equals(classifierDescriptor.getName().getName())) {
                     String value = (String) annotation.getValueArguments().get(0).getValue();
                     intrinsicMethod = namedMethods.get(value);
-                    if (intrinsicMethod != null) { break; }
+                    if (intrinsicMethod != null) {
+                        break;
+                    }
                 }
             }
         }
@@ -250,16 +237,18 @@ public class IntrinsicMethods {
     }
 
     private static boolean isEnumClassObject(DeclarationDescriptor declaration) {
-        if(declaration instanceof ClassDescriptor) {
+        if (declaration instanceof ClassDescriptor) {
             ClassDescriptor descriptor = (ClassDescriptor) declaration;
-            if(descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
+            if (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
                 ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
                 //noinspection ConstantConditions
-                if(containingDeclaration != null && containingDeclaration.getClassObjectDescriptor() != null && containingDeclaration.getClassObjectDescriptor().equals(descriptor)) {
+                if (containingDeclaration != null &&
+                    containingDeclaration.getClassObjectDescriptor() != null &&
+                    containingDeclaration.getClassObjectDescriptor().equals(descriptor)) {
                     return true;
                 }
             }
         }
-        return false;  //To change body of created methods use File | Settings | File Templates.
+        return false;
     }
 }

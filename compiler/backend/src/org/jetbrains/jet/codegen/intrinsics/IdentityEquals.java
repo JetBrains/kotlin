@@ -18,6 +18,8 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
@@ -25,11 +27,7 @@ import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.asm4.Type;
-import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -38,14 +36,22 @@ import java.util.List;
  */
 public class IdentityEquals implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
+    public StackValue generate(
+            ExpressionCodegen codegen,
+            InstructionAdapter v,
+            @NotNull Type expectedType,
+            PsiElement element,
+            List<JetExpression> arguments,
+            StackValue receiver,
+            @NotNull GenerationState state
+    ) {
         if (element instanceof JetCallExpression) {
             receiver.put(JetTypeMapper.TYPE_OBJECT, v);
             codegen.gen(arguments.get(0)).put(JetTypeMapper.TYPE_OBJECT, v);
         }
         else {
             assert element instanceof JetBinaryExpression;
-            JetBinaryExpression e = (JetBinaryExpression)element;
+            JetBinaryExpression e = (JetBinaryExpression) element;
             codegen.gen(e.getLeft()).put(JetTypeMapper.TYPE_OBJECT, v);
             codegen.gen(e.getRight()).put(JetTypeMapper.TYPE_OBJECT, v);
         }

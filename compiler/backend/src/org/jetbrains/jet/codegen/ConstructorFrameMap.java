@@ -17,10 +17,10 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.asm4.Type;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +31,6 @@ import java.util.List;
  */
 public class ConstructorFrameMap extends FrameMap {
     private int myOuterThisIndex = -1;
-    private int myTypeInfoIndex  = -1;
 
     public ConstructorFrameMap(CallableMethod callableMethod, @Nullable ConstructorDescriptor descriptor, boolean hasThis0) {
         enterTemp(); // this
@@ -43,14 +42,16 @@ public class ConstructorFrameMap extends FrameMap {
 
         List<Type> explicitArgTypes = callableMethod.getValueParameterTypes();
 
-        if(descriptor != null && descriptor.getContainingDeclaration().getKind() == ClassKind.ENUM_CLASS) {
+        if (descriptor != null &&
+            (descriptor.getContainingDeclaration().getKind() == ClassKind.ENUM_CLASS ||
+             descriptor.getContainingDeclaration().getKind() == ClassKind.ENUM_ENTRY)) {
             enterTemp(); // name
             enterTemp(); // ordinal
         }
 
         List<ValueParameterDescriptor> paramDescrs = descriptor != null
-                ? descriptor.getValueParameters()
-                : Collections.<ValueParameterDescriptor>emptyList();
+                                                     ? descriptor.getValueParameters()
+                                                     : Collections.<ValueParameterDescriptor>emptyList();
         for (int i = 0; i < paramDescrs.size(); i++) {
             ValueParameterDescriptor parameter = paramDescrs.get(i);
             enter(parameter, explicitArgTypes.get(i).getSize());
@@ -59,9 +60,5 @@ public class ConstructorFrameMap extends FrameMap {
 
     public int getOuterThisIndex() {
         return myOuterThisIndex;
-    }
-
-    public int getTypeInfoIndex() {
-        return myTypeInfoIndex;
     }
 }

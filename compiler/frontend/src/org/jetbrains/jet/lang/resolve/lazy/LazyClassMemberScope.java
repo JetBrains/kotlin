@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -139,27 +138,34 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             fromSupertypes.addAll(supertype.getMemberScope().getFunctions(name));
         }
         generateDelegatingDescriptors(name, MemberExtractor.EXTRACT_FUNCTIONS, result);
+        generateEnumClassObjectMethods(result, name);
         generateFakeOverrides(name, fromSupertypes, result, FunctionDescriptor.class);
     }
 
-    private void generateEnumClassObjectMethods() {
-        DeclarationDescriptor containingDeclaration = thisDescriptor.getContainingDeclaration();
-        if(containingDeclaration instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
-            if(classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
-                if(classDescriptor.getClassObjectDescriptor() == thisDescriptor) {
-                    SimpleFunctionDescriptor valuesMethod = DescriptorResolver
-                            .createEnumClassObjectValuesMethod(classDescriptor, thisDescriptor, resolveSession.getTrace());
-                    functionDescriptors.put(valuesMethod.getName(), Collections.<FunctionDescriptor>singleton(valuesMethod));
-                    allDescriptors.add(valuesMethod);
-                    SimpleFunctionDescriptor valueOfMethod = DescriptorResolver.createEnumClassObjectValueOfMethod(classDescriptor,
-                                                                                                            thisDescriptor,
-                                                                                                            resolveSession.getTrace());
-                    functionDescriptors.put(valueOfMethod.getName(), Collections.<FunctionDescriptor>singleton(valueOfMethod));
-                    allDescriptors.add(valueOfMethod);
-                }
-            }
+    private void generateEnumClassObjectMethods(@NotNull Collection<? super FunctionDescriptor> result, @NotNull Name name) {
+        if (!isEnumClassObject()) return;
+
+        ClassDescriptor classDescriptor = (ClassDescriptor) thisDescriptor.getContainingDeclaration();
+
+        if (name.equals(DescriptorResolver.VALUES_METHOD_NAME)) {
+            SimpleFunctionDescriptor valuesMethod = DescriptorResolver
+                    .createEnumClassObjectValuesMethod(classDescriptor, resolveSession.getTrace());
+            result.add(valuesMethod);
         }
+        else if (name.equals(DescriptorResolver.VALUE_OF_METHOD_NAME)) {
+            SimpleFunctionDescriptor valueOfMethod = DescriptorResolver
+                    .createEnumClassObjectValueOfMethod(classDescriptor, resolveSession.getTrace());
+            result.add(valueOfMethod);
+        }
+    }
+
+    private boolean isEnumClassObject() {
+        DeclarationDescriptor containingDeclaration = thisDescriptor.getContainingDeclaration();
+        if (!(containingDeclaration instanceof ClassDescriptor)) return false;
+        ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
+        if (classDescriptor.getKind() != ClassKind.ENUM_CLASS) return false;
+        if (classDescriptor.getClassObjectDescriptor() != thisDescriptor) return false;
+        return true;
     }
 
     @NotNull
@@ -248,7 +254,8 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             }
         }
 
-        generateEnumClassObjectMethods();
+        getFunctions(DescriptorResolver.VALUES_METHOD_NAME);
+        getFunctions(DescriptorResolver.VALUE_OF_METHOD_NAME);
     }
 
     @Override

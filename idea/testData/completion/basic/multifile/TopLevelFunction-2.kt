@@ -1,4 +1,4 @@
-package second
+package first
 
 fun secondFun() {
 }

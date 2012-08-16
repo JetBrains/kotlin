@@ -21,49 +21,21 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
+import org.jetbrains.jet.lang.psi.JetDelegatorByExpressionSpecifier;
 import org.jetbrains.jet.lang.types.JetType;
 
-import javax.inject.Inject;
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * @author abreslav
  */
 public class DelegationResolver {
-    @NotNull
-    private TopDownAnalysisContext context;
-    @NotNull
-    private BindingTrace trace;
 
+    private DelegationResolver() {}
 
-    @Inject
-    public void setContext(@NotNull TopDownAnalysisContext context) {
-        this.context = context;
-    }
-
-    @Inject
-    public void setTrace(@NotNull BindingTrace trace) {
-        this.trace = trace;
-    }
-
-
-
-    public void process() {
-        addDelegatedMembers();
-    }
-
-    private void addDelegatedMembers() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            addDelegatedMembers(entry.getKey(), entry.getValue());
-        }
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
-            addDelegatedMembers(entry.getKey(), entry.getValue());
-        }
-    }
-
-    private void addDelegatedMembers(JetClassOrObject jetClass, MutableClassDescriptor classDescriptor) {
+    public static void addDelegatedMembers(@NotNull BindingTrace trace, @NotNull JetClassOrObject jetClass, @NotNull MutableClassDescriptor classDescriptor) {
         for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
             if (delegationSpecifier instanceof JetDelegatorByExpressionSpecifier) {
                 JetDelegatorByExpressionSpecifier specifier = (JetDelegatorByExpressionSpecifier) delegationSpecifier;

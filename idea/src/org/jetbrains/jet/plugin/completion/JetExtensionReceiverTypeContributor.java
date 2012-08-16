@@ -24,7 +24,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 /**
  * Special contributor for getting completion of type for extensions receiver.
@@ -38,8 +41,13 @@ public class JetExtensionReceiverTypeContributor extends CompletionContributor {
                                       ProcessingContext context,
                                       final @NotNull CompletionResultSet result
         ) {
-            if (parameters.getInvocationCount() > 0 || parameters.getCompletionType() == CompletionType.CLASS_NAME) {
-                JetClassCompletionContributor.addClasses(parameters, result, new Consumer<LookupElement>() {
+            ResolveSession resolveSession =
+                    WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) parameters.getPosition().getContainingFile());
+
+            if (parameters.getInvocationCount() > 0) {
+                JetClassCompletionContributor.addClasses(
+                        parameters, result,
+                        resolveSession.getBindingContext(), resolveSession, new Consumer<LookupElement>() {
                     @Override
                     public void consume(@NotNull LookupElement element) {
                         result.addElement(element);

@@ -16,11 +16,12 @@
 
 package org.jetbrains.jet.plugin.completion;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 /**
@@ -30,18 +31,20 @@ import org.jetbrains.jet.resolve.DescriptorRenderer;
  * @author Nikolay Krasko
  */
 public final class JetLookupObject {
+    private static final Logger LOG = Logger.getInstance("#" + JetLookupObject.class.getName());
+
     @Nullable
     private final DeclarationDescriptor descriptor;
 
     @Nullable
-    private BindingContext context;
+    private ResolveSession resolveSession;
 
     @Nullable
     private final PsiElement psiElement;
 
-    public JetLookupObject(@Nullable DeclarationDescriptor descriptor, @NotNull BindingContext context, @Nullable PsiElement psiElement) {
+    public JetLookupObject(@Nullable DeclarationDescriptor descriptor, @NotNull ResolveSession resolveSession, @Nullable PsiElement psiElement) {
         this.descriptor = descriptor;
-        this.context = context;
+        this.resolveSession = resolveSession;
         this.psiElement = psiElement;
     }
 
@@ -78,12 +81,14 @@ public final class JetLookupObject {
 
         // Same descriptor - same lookup element
         if (descriptor != null && other.descriptor != null) {
-            if (context == other.context) {
+            if (resolveSession == other.resolveSession) {
                 if (descriptor.equals(other.descriptor)) {
                     return true;
                 }
             }
             else {
+                LOG.warn("Descriptors from different resolve sessions");
+
                 String descriptorText = DescriptorRenderer.TEXT.render(descriptor);
                 @SuppressWarnings("ConstantConditions")
                 String otherDescriptorText = DescriptorRenderer.TEXT.render(other.descriptor);

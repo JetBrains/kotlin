@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.codeInsight.ExternalAnnotationsManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.*;
@@ -31,7 +32,6 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
-import org.jetbrains.jet.lang.resolve.java.extAnnotations.ExternalAnnotationsProvider;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -1617,7 +1617,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             result.addAll(Arrays.asList(list.getAnnotations()));
         }
 
-        PsiAnnotation[] externalAnnotations = ExternalAnnotationsProvider.getInstance(owner.getProject()).findExternalAnnotations(owner);
+        PsiAnnotation[] externalAnnotations = ExternalAnnotationsManager.getInstance(owner.getProject()).findExternalAnnotations(owner);
         if (externalAnnotations != null) {
             result.addAll(Arrays.asList(externalAnnotations));
         }
@@ -1635,6 +1635,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             }
         }
 
-        return ExternalAnnotationsProvider.getInstance(owner.getProject()).findExternalAnnotation(owner, fqName);
+        return ExternalAnnotationsManager.getInstance(owner.getProject()).findExternalAnnotation(owner, fqName);
     }
 }

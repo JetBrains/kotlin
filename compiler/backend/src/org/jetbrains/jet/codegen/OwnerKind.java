@@ -50,17 +50,11 @@ public class OwnerKind {
     }
 
     public static class StaticDelegateKind extends OwnerKind {
-        private final StackValue delegate;
         private final String ownerClass;
 
-        public StaticDelegateKind(StackValue delegate, String ownerClass) {
+        public StaticDelegateKind(String ownerClass) {
             super("staticDelegateKind");
-            this.delegate = delegate;
             this.ownerClass = ownerClass;
-        }
-
-        public StackValue getDelegate() {
-            return delegate;
         }
 
         public String getOwnerClass() {

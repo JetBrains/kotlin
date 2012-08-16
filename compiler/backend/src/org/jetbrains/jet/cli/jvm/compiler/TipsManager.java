@@ -51,12 +51,15 @@ public final class TipsManager {
     }
 
     @NotNull
-    public static Collection<DeclarationDescriptor> getReferenceVariants(JetSimpleNameExpression expression, BindingContext context) {
+    public static Collection<DeclarationDescriptor> getReferenceVariants(
+            @NotNull final JetSimpleNameExpression expression,
+            @NotNull final BindingContext context
+    ) {
         JetExpression receiverExpression = expression.getReceiverExpression();
         if (receiverExpression != null) {
             // Process as call expression
-            final JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
-            final JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
+            JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
+            JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
 
             if (expressionType != null && resolutionScope != null) {
                 if (!(expressionType instanceof NamespaceType)) {
@@ -116,7 +119,7 @@ public final class TipsManager {
     }
 
     @NotNull
-    public static Collection<DeclarationDescriptor> getReferenceVariants(JetNamespaceHeader expression, BindingContext context) {
+    public static Collection<DeclarationDescriptor> getPackageReferenceVariants(JetSimpleNameExpression expression, BindingContext context) {
         JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
         if (resolutionScope != null) {
             return excludeNonPackageDescriptors(resolutionScope.getAllDescriptors());

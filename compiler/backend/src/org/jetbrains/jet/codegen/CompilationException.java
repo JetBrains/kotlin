@@ -24,9 +24,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 
 /**
-* @author alex.tkachman
-* @author abreslav
-*/
+ * @author alex.tkachman
+ * @author abreslav
+ */
 public class CompilationException extends RuntimeException {
     private final PsiElement element;
 
@@ -56,7 +56,8 @@ public class CompilationException extends RuntimeException {
         return ApplicationManager.getApplication().runReadAction(new Computable<String>() {
             @Override
             public String compute() {
-                StringBuilder message = new StringBuilder("Back-end (JVM) Internal error: ").append(CompilationException.super.getMessage()).append("\n");
+                StringBuilder message =
+                        new StringBuilder("Back-end (JVM) Internal error: ").append(CompilationException.super.getMessage()).append("\n");
                 Throwable cause = getCause();
                 if (cause != null) {
                     String causeMessage = cause.getMessage();

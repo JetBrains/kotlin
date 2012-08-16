@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
-import org.jetbrains.asm4.Opcodes;
 
 import java.util.List;
 

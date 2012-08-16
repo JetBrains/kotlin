@@ -18,6 +18,9 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.asm4.Label;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.StackValue;
@@ -26,9 +29,6 @@ import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
-import org.jetbrains.asm4.Label;
-import org.jetbrains.asm4.Type;
-import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -37,11 +37,20 @@ import java.util.List;
  */
 public class Sure implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
+    public StackValue generate(
+            ExpressionCodegen codegen,
+            InstructionAdapter v,
+            @NotNull Type expectedType,
+            PsiElement element,
+            List<JetExpression> arguments,
+            StackValue receiver,
+            @NotNull GenerationState state
+    ) {
         JetCallExpression call = (JetCallExpression) element;
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = codegen.getBindingContext().get(BindingContext.RESOLVED_CALL, call.getCalleeExpression());
+        ResolvedCall<? extends CallableDescriptor> resolvedCall =
+                codegen.getBindingContext().get(BindingContext.RESOLVED_CALL, call.getCalleeExpression());
         assert resolvedCall != null;
-        if (resolvedCall.getReceiverArgument().getType().isNullable())  {
+        if (resolvedCall.getReceiverArgument().getType().isNullable()) {
             receiver.put(receiver.type, v);
             v.dup();
             Label ok = new Label();

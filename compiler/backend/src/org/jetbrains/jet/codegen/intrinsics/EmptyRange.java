@@ -42,13 +42,15 @@ public class EmptyRange implements IntrinsicMethod {
     }
 
     @Override
-    public StackValue generate(ExpressionCodegen codegen,
+    public StackValue generate(
+            ExpressionCodegen codegen,
             InstructionAdapter v,
             @NotNull Type expectedType,
             @Nullable PsiElement element,
             @Nullable List<JetExpression> arguments,
             StackValue receiver,
-            @NotNull GenerationState state) {
+            @NotNull GenerationState state
+    ) {
         JvmClassName name = JvmClassName.byFqNameWithoutInnerClasses(elementType.getRangeClassName().getFqName());
         v.getstatic(name.toString(), "EMPTY", "L" + name + ";");
         return StackValue.onStack(expectedType);

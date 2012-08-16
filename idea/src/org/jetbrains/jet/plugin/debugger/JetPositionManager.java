@@ -23,7 +23,7 @@ import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.requests.ClassPrepareRequestor;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.FilenameIndex;
@@ -33,18 +33,14 @@ import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.request.ClassPrepareRequest;
-import com.sun.jna.TypeMapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.di.InjectorForJetTypeMapper;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
@@ -118,68 +114,58 @@ public class JetPositionManager implements PositionManager {
         if (!(sourcePosition.getFile() instanceof JetFile)) {
             throw new NoDataException();
         }
-        final Collection<String> names = classNamesForPosition(sourcePosition);
+        String name = classNameForPosition(sourcePosition);
         List<ReferenceType> result = new ArrayList<ReferenceType>();
-        for (String name : names) {
+        if (name != null) {
             result.addAll(myDebugProcess.getVirtualMachineProxy().classesByName(name));
         }
         return result;
     }
 
-    private Collection<String> classNamesForPosition(final SourcePosition sourcePosition) {
-
-        final Collection<String> names = new ArrayList<String>();
+    @Nullable
+    private String classNameForPosition(final SourcePosition sourcePosition) {
+        final Ref<String> result = Ref.create();
 
         ApplicationManager.getApplication().runReadAction(new Runnable() {
             @Override
+            @SuppressWarnings("unchecked")
             public void run() {
-                final JetFile file = (JetFile)sourcePosition.getFile();
-                JetTypeMapper typeMapper = prepareTypeMapper(file);
+                final JetFile namespace = (JetFile)sourcePosition.getFile();
+                final JetTypeMapper typeMapper = prepareTypeMapper(namespace);
 
-                PsiElement psiElement = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
-                if (psiElement == null) {
-                    JetFile namespace = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetFile.class);
-                    if (namespace != null) {
-                        names.add(NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(namespace)).getInternalName());
+                PsiElement element = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
+                if (element instanceof JetClassOrObject) {
+                    result.set(typeMapper.getJvmInternalName((JetClassOrObject) element));
+                }
+                else if (element instanceof JetFunctionLiteralExpression) {
+                    result.set(typeMapper.getClosureAnnotator().classNameForAnonymousClass((JetFunctionLiteralExpression)element).getInternalName());
+                }
+                else if (element instanceof JetNamedFunction) {
+                    PsiElement parent = PsiTreeUtil.getParentOfType(element, JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
+                    if (parent instanceof JetClassOrObject) {
+                        result.set(typeMapper.getJvmInternalName((JetClassOrObject) parent));
                     }
-                    else {
-                        names.add(NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(file)).getInternalName());
+                    else if (parent instanceof JetFunctionLiteralExpression || parent instanceof JetNamedFunction) {
+                        result.set(typeMapper.getClosureAnnotator().classNameForAnonymousClass((JetElement)element).getInternalName());
                     }
                 }
-                else {
-                    if (psiElement instanceof JetClassOrObject) {
-                        names.addAll(typeMapper.allJvmNames((JetClassOrObject) psiElement));
-                    }
-                    else if(psiElement instanceof JetNamedFunction) {
-                        if(psiElement.getParent() instanceof JetFile) {
-                            JetFile namespace = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetFile.class);
-                            boolean multiFileNamespace = typeMapper.getClosureAnnotator().isMultiFileNamespace(JetPsiUtil.getFQName(namespace));
-                            if(multiFileNamespace) {
-                                String name = namespace.getName();
-                                names.add(NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(namespace)).getInternalName() + "$src$" + name.substring(0,name.lastIndexOf('.')));
-                            }
-                            else {
-                                names.add(NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(namespace)).getInternalName());
-                            }
-                        }
-                        else {
-                            JetFile namespace = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetFile.class);
-                            if (namespace != null) {
-                                names.add(NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(namespace)).getInternalName());
-                            }
-                            else {
-                                names.add(NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(file)).getInternalName());
-                            }
-                        }
+
+                if (result.isNull()) {
+                    FqName fqName = JetPsiUtil.getFQName(namespace);
+                    boolean multiFileNamespace = typeMapper.getClosureAnnotator().isMultiFileNamespace(fqName);
+                    String namespaceInternalName = NamespaceCodegen.getJVMClassNameForKotlinNs(fqName).getInternalName();
+                    if (multiFileNamespace) {
+                        String name = namespace.getName();
+                        result.set(namespaceInternalName + "$src$" + name.substring(0, name.lastIndexOf('.')));
                     }
                     else {
-                        names.add(typeMapper.getClosureAnnotator().classNameForAnonymousClass((JetElement) psiElement).getInternalName());
+                        result.set(namespaceInternalName);
                     }
                 }
             }
         });
 
-        return names;
+        return result.get();
     }
 
     private JetTypeMapper prepareTypeMapper(final JetFile file) {
@@ -230,20 +216,10 @@ public class JetPositionManager implements PositionManager {
         if (!(sourcePosition.getFile() instanceof JetFile)) {
             throw new NoDataException();
         }
-        final Collection<String> classNames = classNamesForPosition(sourcePosition);
-        if (classNames.isEmpty()) {
+        final String className = classNameForPosition(sourcePosition);
+        if (className == null) {
             return null;
         }
-        final Iterator<String> iterator = classNames.iterator();
-        boolean wildcard = false;
-        String namePattern = iterator.next();
-        while (iterator.hasNext()) {
-            namePattern = StringUtil.commonPrefix(namePattern, iterator.next());
-            wildcard = true;
-        }
-        if (wildcard) {
-            namePattern += "*";
-        }
-        return myDebugProcess.getRequestsManager().createClassPrepareRequest(classPrepareRequestor, namePattern.replace('/', '.'));
+        return myDebugProcess.getRequestsManager().createClassPrepareRequest(classPrepareRequestor, className.replace('/', '.'));
     }
 }

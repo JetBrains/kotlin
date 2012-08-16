@@ -17,10 +17,10 @@
 package org.jetbrains.jet.codegen.signature.kotlin;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
-import org.jetbrains.jet.utils.BitSetUtils;
 import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.MethodVisitor;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.utils.BitSetUtils;
 
 import java.util.BitSet;
 
@@ -58,13 +58,13 @@ public class JetMethodAnnotationWriter {
             av.visit(JvmStdlibNames.JET_METHOD_PROPERTY_TYPE_FIELD, propertyType);
         }
     }
-    
+
     public void writeNullableReturnType(boolean nullableReturnType) {
         if (nullableReturnType) {
             av.visit(JvmStdlibNames.JET_METHOD_NULLABLE_RETURN_TYPE_FIELD, nullableReturnType);
         }
     }
-    
+
     public void visitEnd() {
         av.visitEnd();
     }

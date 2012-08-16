@@ -88,6 +88,7 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
         return text != null ? JetPsiUtil.unquoteIdentifierOrFieldReference(text) : null;
     }
 
+    @Nullable
     public Name getReferencedNameAsName() {
         String name = getReferencedName();
         if (name != null && name.length() == 0) {

@@ -122,6 +122,7 @@ public class DeclarationsChecker {
 
     private void checkOpenMembers(MutableClassDescriptor classDescriptor) {
         for (CallableMemberDescriptor memberDescriptor : classDescriptor.getDeclaredCallableMembers()) {
+            if (memberDescriptor.getKind() != CallableMemberDescriptor.Kind.DECLARATION) continue;
             JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), memberDescriptor);
             if (member != null && classDescriptor.getModality() == Modality.FINAL && member.hasModifier(JetTokens.OPEN_KEYWORD)) {
                 trace.report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member));

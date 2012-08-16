@@ -17,13 +17,19 @@
 package org.jetbrains.jet.codegen;
 
 /**
-* @author Stepan Koltsov
-*/
+ * @author Stepan Koltsov
+ */
 public enum ClassBuilderMode {
-    /** Full function bodies */
+    /**
+     * Full function bodies
+     */
     FULL,
-    /** Only function signatures */
+    /**
+     * Only function signatures
+     */
     SIGNATURES,
-    /** Function with stub bodies: just throw exception */
+    /**
+     * Function with stub bodies: just throw exception
+     */
     STUBS,
 }

@@ -18,13 +18,13 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.asm4.Type;
-import org.jetbrains.asm4.commons.InstructionAdapter;
 
 import java.util.List;
 
@@ -34,7 +34,15 @@ import java.util.List;
  */
 public class Inv implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
+    public StackValue generate(
+            ExpressionCodegen codegen,
+            InstructionAdapter v,
+            @NotNull Type expectedType,
+            PsiElement element,
+            List<JetExpression> arguments,
+            StackValue receiver,
+            @NotNull GenerationState state
+    ) {
         boolean nullable = expectedType.getSort() == Type.OBJECT;
         if (nullable) {
             expectedType = JetTypeMapper.unboxType(expectedType);

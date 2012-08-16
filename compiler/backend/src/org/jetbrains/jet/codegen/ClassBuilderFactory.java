@@ -17,11 +17,6 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.asm4.ClassWriter;
-import org.jetbrains.asm4.util.TraceClassVisitor;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 /**
  * @author max
@@ -29,7 +24,10 @@ import java.io.StringWriter;
 public interface ClassBuilderFactory {
     @NotNull
     ClassBuilderMode getClassBuilderMode();
+
     ClassBuilder newClassBuilder();
+
     String asText(ClassBuilder builder);
+
     byte[] asBytes(ClassBuilder builder);
 }

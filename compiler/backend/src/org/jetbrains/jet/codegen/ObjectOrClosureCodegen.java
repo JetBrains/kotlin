@@ -17,13 +17,13 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.asm4.Opcodes;
-import org.jetbrains.asm4.Type;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -40,7 +40,8 @@ public class ObjectOrClosureCodegen {
     protected final CodegenContext context;
     protected ClassBuilder cv = null;
     public JvmClassName name = null;
-    protected Map<DeclarationDescriptor, EnclosedValueDescriptor> closure = new LinkedHashMap<DeclarationDescriptor, EnclosedValueDescriptor>();
+    protected Map<DeclarationDescriptor, EnclosedValueDescriptor> closure =
+            new LinkedHashMap<DeclarationDescriptor, EnclosedValueDescriptor>();
     public JetDelegatorToSuperCall superCall;
 
     public ObjectOrClosureCodegen(ExpressionCodegen exprContext, CodegenContext context, GenerationState state) {
@@ -69,8 +70,8 @@ public class ObjectOrClosureCodegen {
             StackValue outerValue = StackValue.local(idx, type);
             final String fieldName = "$" + vd.getName();
             StackValue innerValue = sharedVarType != null
-                    ? StackValue.fieldForSharedVar(localType, name, fieldName)
-                    : StackValue.field(type, name, fieldName, false);
+                                    ? StackValue.fieldForSharedVar(localType, name, fieldName)
+                                    : StackValue.field(type, name, fieldName, false);
 
             cv.newField(null, Opcodes.ACC_PUBLIC, fieldName, type.getDescriptor(), null, null);
 
@@ -111,10 +112,12 @@ public class ObjectOrClosureCodegen {
 
             CodegenContexts.ReceiverContext fcontext = (CodegenContexts.ReceiverContext) context;
 
-            if (fcontext.getReceiverDescriptor() != fd)
+            if (fcontext.getReceiverDescriptor() != fd) {
                 return null;
+            }
 
-            Type type = state.getInjector().getJetTypeMapper().mapType(fcontext.getReceiverDescriptor().getReceiverParameter().getType(), MapTypeMode.VALUE);
+            Type type = state.getInjector().getJetTypeMapper()
+                    .mapType(fcontext.getReceiverDescriptor().getReceiverParameter().getType(), MapTypeMode.VALUE);
             boolean isStatic = fcontext.getContextDescriptor().getContainingDeclaration() instanceof NamespaceDescriptor;
             StackValue outerValue = StackValue.local(isStatic ? 0 : 1, type);
             final String fieldName = "receiver$0";
@@ -134,7 +137,7 @@ public class ObjectOrClosureCodegen {
         return null;
     }
 
-    public boolean isConst () {
+    public boolean isConst() {
         return captureThis == null && captureReceiver == null && closure.isEmpty();
     }
 }

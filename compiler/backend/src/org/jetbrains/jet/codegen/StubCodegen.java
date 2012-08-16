@@ -28,11 +28,12 @@ public class StubCodegen {
     }
 
     public static void generateStubThrow(MethodVisitor mv) {
-        new InstructionAdapter(mv).anew(Type.getObjectType("java/lang/RuntimeException"));
-        new InstructionAdapter(mv).dup();
-        new InstructionAdapter(mv).aconst("Stubs are for compiler only, do not add them to runtime classpath");
-        new InstructionAdapter(mv).invokespecial("java/lang/RuntimeException", "<init>", "(Ljava/lang/String;)V");
-        new InstructionAdapter(mv).athrow();
+        InstructionAdapter iv = new InstructionAdapter(mv);
+        iv.anew(Type.getObjectType("java/lang/RuntimeException"));
+        iv.dup();
+        iv.aconst("Stubs are for compiler only, do not add them to runtime classpath");
+        iv.invokespecial("java/lang/RuntimeException", "<init>", "(Ljava/lang/String;)V");
+        iv.athrow();
     }
 
     public static void generateStubCode(MethodVisitor mv) {

@@ -62,8 +62,10 @@ public class GenerationState {
         this(builderFactory, Progress.DEAF, analyzeExhaust, files, BuiltinToJavaTypesMapping.ENABLED);
     }
 
-    public GenerationState(ClassBuilderFactory builderFactory, Progress progress,
-            @NotNull AnalyzeExhaust exhaust, @NotNull List<JetFile> files, @NotNull BuiltinToJavaTypesMapping builtinToJavaTypesMapping) {
+    public GenerationState(
+            ClassBuilderFactory builderFactory, Progress progress,
+            @NotNull AnalyzeExhaust exhaust, @NotNull List<JetFile> files, @NotNull BuiltinToJavaTypesMapping builtinToJavaTypesMapping
+    ) {
         this.progress = progress;
         this.analyzeExhaust = exhaust;
         this.files = files;
@@ -90,6 +92,7 @@ public class GenerationState {
         return progress;
     }
 
+    @NotNull
     public InjectorForJvmCodegen getInjector() {
         return injector;
     }
@@ -112,15 +115,17 @@ public class GenerationState {
     }
 
     public ClassBuilder forClassImplementation(ClassDescriptor aClass) {
-        return getFactory().newVisitor(getInjector().getJetTypeMapper().mapType(aClass.getDefaultType(), MapTypeMode.IMPL).getInternalName() + ".class");
+        return getFactory().newVisitor(
+                getInjector().getJetTypeMapper().mapType(aClass.getDefaultType(), MapTypeMode.IMPL).getInternalName() + ".class");
     }
 
-    public ClassBuilder forNamespacepart(String name, JetFile file) {
+    public ClassBuilder forNamespacepart(String name) {
         return getFactory().newVisitor(name + ".class");
     }
 
     public ClassBuilder forTraitImplementation(ClassDescriptor aClass) {
-        return getFactory().newVisitor(getInjector().getJetTypeMapper().mapType(aClass.getDefaultType(), MapTypeMode.TRAIT_IMPL).getInternalName() + ".class");
+        return getFactory().newVisitor(
+                getInjector().getJetTypeMapper().mapType(aClass.getDefaultType(), MapTypeMode.TRAIT_IMPL).getInternalName() + ".class");
     }
 
     public Pair<JvmClassName, ClassBuilder> forAnonymousSubclass(JetExpression expression) {
@@ -142,7 +147,9 @@ public class GenerationState {
         for (JetFile file : this.files) {
             if (file.isScript()) {
                 String name = ScriptNameUtil.classNameForScript(file);
-                injector.getClosureAnnotator().registerClassNameForScript(file.getScript(), JvmClassName.byInternalName(name));
+                JetScript script = file.getScript();
+                assert script != null;
+                injector.getClosureAnnotator().registerClassNameForScript(script, JvmClassName.byInternalName(name));
             }
         }
 
@@ -165,7 +172,8 @@ public class GenerationState {
             @NotNull JetScript script,
             @NotNull JvmClassName className,
             @NotNull List<Pair<ScriptDescriptor, JvmClassName>> earlierScripts,
-            @NotNull CompilationErrorHandler errorHandler) {
+            @NotNull CompilationErrorHandler errorHandler
+    ) {
 
         injector.getScriptCodegen().registerEarlierScripts(earlierScripts);
         injector.getClosureAnnotator().registerClassNameForScript(script, className);
@@ -191,14 +199,18 @@ public class GenerationState {
         closure.cv = nameAndVisitor.getSecond();
         closure.name = nameAndVisitor.getFirst();
         final CodegenContext objectContext = closure.context.intoAnonymousClass(
-                closure, analyzeExhaust.getBindingContext().get(BindingContext.CLASS, objectDeclaration), OwnerKind.IMPLEMENTATION, injector.getJetTypeMapper());
+                closure, analyzeExhaust.getBindingContext().get(BindingContext.CLASS, objectDeclaration), OwnerKind.IMPLEMENTATION,
+                injector.getJetTypeMapper());
 
         new ImplementationBodyCodegen(objectDeclaration, objectContext, nameAndVisitor.getSecond(), this).generate();
 
         ConstructorDescriptor constructorDescriptor = analyzeExhaust.getBindingContext().get(BindingContext.CONSTRUCTOR, objectDeclaration);
+        assert constructorDescriptor != null;
         CallableMethod callableMethod = injector.getJetTypeMapper().mapToCallableMethod(
-                constructorDescriptor, OwnerKind.IMPLEMENTATION, injector.getJetTypeMapper().hasThis0(constructorDescriptor.getContainingDeclaration()));
-        return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, callableMethod.getSignature().getAsmMethod(), objectContext.outerWasUsed, null);
+                constructorDescriptor, OwnerKind.IMPLEMENTATION,
+                injector.getJetTypeMapper().hasThis0(constructorDescriptor.getContainingDeclaration()));
+        return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, callableMethod.getSignature().getAsmMethod(),
+                                                     objectContext.outerWasUsed, null);
     }
 
     public String createText() {
@@ -207,10 +219,10 @@ public class GenerationState {
         final ClassFileFactory factory = getFactory();
         List<String> files = factory.files();
         for (String file : files) {
-//            if (!file.startsWith("kotlin/")) {
-                answer.append("@").append(file).append('\n');
-                answer.append(factory.asText(file));
-//            }
+            //            if (!file.startsWith("kotlin/")) {
+            answer.append("@").append(file).append('\n');
+            answer.append(factory.asText(file));
+            //            }
         }
 
         return answer.toString();
