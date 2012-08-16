@@ -49,10 +49,10 @@ public class JetClassPresenter implements ItemPresentationProvider<JetClass> {
             public String getLocationString() {
                 FqName name = JetPsiUtil.getFQName(item);
                 if (name != null) {
-                    return name.toString();
+                    return "(" + name.parent().toString() + ")";
                 }
 
-                return "";
+                return null;
             }
 
             @Override
