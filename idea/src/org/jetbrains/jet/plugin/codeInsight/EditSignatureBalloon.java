@@ -195,12 +195,8 @@ class EditSignatureBalloon {
     }
 
     private void saveAndHide() {
-        String newSignature = editor.getDocument().getText();
+        final String newSignature = editor.getDocument().getText();
         if (!previousSignature.equals(newSignature)) {
-            final PsiNameValuePair[] nameValuePairs = JavaPsiFacade.getElementFactory(project).createAnnotationFromText(
-                    "@" + KotlinSignatureInJavaMarkerProvider.KOTLIN_SIGNATURE_ANNOTATION + "(value=\"" + newSignature + "\")", null)
-                    .getParameterList().getAttributes();
-
             new WriteCommandAction(project) {
                 @Override
                 protected void run(final Result result) throws Throwable {
@@ -208,11 +204,17 @@ class EditSignatureBalloon {
                             .getInstance(project).deannotate(method, KotlinSignatureInJavaMarkerProvider.KOTLIN_SIGNATURE_ANNOTATION);
                     ExternalAnnotationsManager.getInstance(project).annotateExternally(
                             method, KotlinSignatureInJavaMarkerProvider.KOTLIN_SIGNATURE_ANNOTATION, method.getContainingFile(),
-                            nameValuePairs);
+                            signatureToNameValuePairs(project, newSignature));
                 }
             }.execute();
         }
 
         balloon.hide();
+    }
+
+    static PsiNameValuePair[] signatureToNameValuePairs(@NotNull Project project, @NotNull String signature) {
+        return JavaPsiFacade.getElementFactory(project).createAnnotationFromText(
+                        "@" + KotlinSignatureInJavaMarkerProvider.KOTLIN_SIGNATURE_ANNOTATION + "(value=\"" + signature + "\")", null)
+                        .getParameterList().getAttributes();
     }
 }

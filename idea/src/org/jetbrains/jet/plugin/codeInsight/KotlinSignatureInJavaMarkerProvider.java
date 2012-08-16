@@ -93,7 +93,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     static final String KOTLIN_SIGNATURE_ANNOTATION = JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().getFqName();
 
     @Nullable
-    private static PsiAnnotation findKotlinSignatureAnnotation(@NotNull PsiElement element) {
+    static PsiAnnotation findKotlinSignatureAnnotation(@NotNull PsiElement element) {
         if (!(element instanceof PsiMethod)) return null;
         PsiMethod annotationOwner = element.getOriginalElement() instanceof PsiMethod
                                     ? (PsiMethod) element.getOriginalElement()
