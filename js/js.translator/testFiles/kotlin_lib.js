@@ -104,7 +104,6 @@ var kotlin = {set:function (receiver, key, value) {
         initialize: function () {
         },
         next: throwAbstractFunctionInvocationError("Iterator#next"),
-        get_hasNext: throwAbstractFunctionInvocationError("Iterator#get_hasNext"),
         hasNext: throwAbstractFunctionInvocationError("Iterator#hasNext")
     });
 
