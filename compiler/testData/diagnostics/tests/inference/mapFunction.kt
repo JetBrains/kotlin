@@ -9,6 +9,16 @@ fun foo() {
     val u = v map { it * 2 }
 
     u : List<Int>
+
+    val a = 1..5
+
+    val b = a.map { it * 2 }
+
+    b : List<Int>
+
+    //check for non-error types
+    <!TYPE_MISMATCH!>u<!> : String
+    <!TYPE_MISMATCH!>b<!> : String
 }
 
 
@@ -17,12 +27,6 @@ fun foo() {
 
 fun <T> array(vararg t : T) : Array<T> = t
 
-fun <T, R> Array<T>.map(transform : (T) -> R) : java.util.List<R> {
-    return mapTo(java.util.ArrayList<R>(this.size), transform)
-}
+fun <T, R> Array<T>.map(<!UNUSED_PARAMETER!>transform<!> : (T) -> R) : java.util.List<R> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
-fun <T, R, C: Collection<in R>> Array<T>.mapTo(result: C, transform : (T) -> R) : C {
-  for (item in this)
-    result.add(transform(item))
-  return result
-}
+fun <T, R> Iterable<T>.map(<!UNUSED_PARAMETER!>transform<!> : (T) -> R) : java.util.List<R> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
