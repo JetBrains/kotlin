@@ -6,5 +6,5 @@ open class TestOther : Test()
 
 class TestOtherMore : TestOther()
 
-// REF: TestOtherMore
-// REF: TestOther
+// REF: (testing).TestOther
+// REF: (testing).TestOtherMore

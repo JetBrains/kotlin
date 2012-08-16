@@ -27,7 +27,9 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.asJava.JetLightClass;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.presentation.JetLightClassListCellRenderer;
 import org.jetbrains.jet.testing.InTextDirectivesUtils;
 
 import java.io.File;
@@ -65,17 +67,24 @@ public class JetGotoImplementationTest extends LightCodeInsightTestCase {
                 InTextDirectivesUtils.findListWithPrefix("// REF:", getEditor().getDocument().getText()));
         Collections.sort(expectedReferences);
 
-        GotoTargetHandler.GotoData elements = new GotoImplementationHandler().getSourceAndTargetElements(getEditor(), getFile());
+        final GotoTargetHandler.GotoData gotoData = new GotoImplementationHandler().getSourceAndTargetElements(getEditor(), getFile());
 
-        if (elements != null) {
-            List<String> psiElements = Lists.transform(Arrays.asList(elements.targets), new Function<PsiElement, String>() {
+        if (gotoData != null) {
+            List<String> psiElements = Lists.transform(Arrays.asList(gotoData.targets), new Function<PsiElement, String>() {
                 @Override
                 public String apply(@Nullable PsiElement element) {
                     assertNotNull(element);
+                    if (element instanceof JetLightClass) {
+                        JetLightClass jetLightClass = (JetLightClass) element;
+                        JetLightClassListCellRenderer renderer = new JetLightClassListCellRenderer();
+                        return JetLightClassListCellRenderer.getContainerTextStatic(jetLightClass) + "." +
+                               renderer.getElementText(jetLightClass);
+                    }
+
                     assertTrue(element instanceof NavigationItem);
                     ItemPresentation presentation = ((NavigationItem)element).getPresentation();
                     assertNotNull(presentation);
-                    return presentation.getPresentableText();
+                    return presentation.getLocationString() + "." + presentation.getPresentableText();
                 }
             });
 

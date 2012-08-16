@@ -6,6 +6,6 @@ open class TestOther : <caret>Test()
 
 class TestOtherMore : TestOther()
 
-// REF: Test
-// REF: TestOther
-// REF: TestOtherMore
+// REF: (testing).Test
+// REF: (testing).TestOther
+// REF: (testing).TestOtherMore
