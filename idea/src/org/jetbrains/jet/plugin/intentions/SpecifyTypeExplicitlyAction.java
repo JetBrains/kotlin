@@ -48,7 +48,7 @@ import java.util.Collections;
  * @since 4/20/12
  */
 public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
-     @NotNull
+    @NotNull
     @Override
     public String getFamilyName() {
         return JetBundle.message("specify.type.explicitly.action.family.name");
@@ -117,8 +117,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
                  && !((JetNamedFunction) declaration).hasBlockBody()) {
             setText(JetBundle.message("specify.type.explicitly.add.return.type.action.name"));
         }
-        else if (declaration instanceof JetParameter && JetNodeTypes.LOOP_PARAMETER == declaration.getNode().getElementType())
-        {
+        else if (declaration instanceof JetParameter && JetNodeTypes.LOOP_PARAMETER == declaration.getNode().getElementType()) {
             if (((JetParameter) declaration).getTypeReference() != null) {
                 setText(JetBundle.message("specify.type.explicitly.remove.action.name"));
                 return true;
@@ -139,7 +138,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
 
     private static boolean hasPublicMemberDiagnostic(@NotNull JetNamedDeclaration declaration) {
-        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)declaration.getContainingFile());
+        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile) declaration.getContainingFile());
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             //noinspection ConstantConditions
             if (Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE == diagnostic.getFactory() && declaration == diagnostic.getPsiElement()) {
@@ -151,7 +150,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
     @NotNull
     private static JetType getTypeForDeclaration(@NotNull JetNamedDeclaration declaration) {
-        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)declaration.getContainingFile());
+        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile) declaration.getContainingFile());
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
 
         JetType type;
