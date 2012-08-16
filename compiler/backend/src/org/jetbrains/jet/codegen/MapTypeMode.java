@@ -21,11 +21,11 @@ package org.jetbrains.jet.codegen;
  */
 public enum MapTypeMode {
     /**
-     * jet.Int is mapped to Ljet/Int;
+     * foo.Bar is mapped to Lfoo/Bar;
      */
     IMPL,
     /**
-     * jet.Int is mapped to Ljet/Impl$TImpl;
+     * foo.Bar is mapped to Lfoo/Bar$TImpl;
      */
     TRAIT_IMPL,
     /**
