@@ -112,6 +112,7 @@ public class DefaultErrorMessages {
 
         MAP.put(MANY_FUNCTION_LITERAL_ARGUMENTS, "Only one function literal is allowed outside a parenthesized argument list");
         MAP.put(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER, "This property must either have a type annotation or be initialized");
+        MAP.put(VARIABLE_WITH_NO_TYPE_NO_INITIALIZER, "This variable must either have a type annotation or be initialized");
         MAP.put(INITIALIZER_REQUIRED_FOR_MULTIDECLARATION, "Initializer required for multi-declaration");
         MAP.put(COMPONENT_FUNCTION_MISSING, "Multi-declaration initializer must have a ''{0}()'' function", TO_STRING);
         MAP.put(COMPONENT_FUNCTION_AMBIGUITY, "Method ''{0}'' is ambiguous for this expression: {1}", TO_STRING, AMBIGUOUS_CALLS);

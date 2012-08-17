@@ -819,7 +819,7 @@ public class DescriptorResolver {
             @NotNull final JetScope scope,
             @NotNull final JetVariableDeclaration variable,
             @NotNull final DataFlowInfo dataFlowInfo,
-            boolean allowDeferred,
+            boolean notLocal,
             final BindingTrace trace
     ) {
         JetTypeReference propertyTypeRef = variable.getTypeRef();
@@ -827,6 +827,9 @@ public class DescriptorResolver {
         if (propertyTypeRef == null) {
             final JetExpression initializer = variable.getInitializer();
             if (initializer == null) {
+                if (!notLocal) {
+                    trace.report(VARIABLE_WITH_NO_TYPE_NO_INITIALIZER.on(variable));
+                }
                 return ErrorUtils.createErrorType("No type, no body");
             }
             else {
@@ -836,7 +839,7 @@ public class DescriptorResolver {
                         return expressionTypingServices.safeGetType(scope, initializer, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo, trace);
                     }
                 };
-                if (allowDeferred) {
+                if (notLocal) {
                     return DeferredType.create(trace, lazyValue);
                 }
                 else {

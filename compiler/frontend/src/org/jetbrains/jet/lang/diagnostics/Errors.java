@@ -99,6 +99,7 @@ public interface Errors {
 
     SimpleDiagnosticFactory<JetExpression> MANY_FUNCTION_LITERAL_ARGUMENTS = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetProperty> PROPERTY_WITH_NO_TYPE_NO_INITIALIZER = SimpleDiagnosticFactory.create(ERROR, NAMED_ELEMENT);
+    SimpleDiagnosticFactory<JetVariableDeclaration> VARIABLE_WITH_NO_TYPE_NO_INITIALIZER = SimpleDiagnosticFactory.create(ERROR, NAME_IDENTIFIER);
     SimpleDiagnosticFactory<JetMultiDeclaration> INITIALIZER_REQUIRED_FOR_MULTIDECLARATION = SimpleDiagnosticFactory.create(ERROR, DEFAULT);
     DiagnosticFactory1<JetExpression, Name> COMPONENT_FUNCTION_MISSING = DiagnosticFactory1.create(ERROR, DEFAULT);
     DiagnosticFactory2<JetExpression, Name, Collection<? extends ResolvedCall<? extends CallableDescriptor>>> COMPONENT_FUNCTION_AMBIGUITY = DiagnosticFactory2.create(ERROR, DEFAULT);

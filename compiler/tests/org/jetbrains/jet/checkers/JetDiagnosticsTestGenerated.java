@@ -1088,6 +1088,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/kt559.kt");
             }
             
+            @TestMetadata("LocalVariableWithNoTypeInformation.kt")
+            public void testLocalVariableWithNoTypeInformation() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/declarationChecks/LocalVariableWithNoTypeInformation.kt");
+            }
+            
             @TestMetadata("MultiDeclarationErrors.kt")
             public void testMultiDeclarationErrors() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/MultiDeclarationErrors.kt");
