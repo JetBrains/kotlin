@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
@@ -125,6 +126,45 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
         scope.addVariableDescriptor(propertyDescriptor);
         return DataFlowUtils.checkStatementType(property, context, context.dataFlowInfo);
+    }
+
+    @Override
+    public JetTypeInfo visitMultiDeclaration(JetMultiDeclaration multiDeclaration, final ExpressionTypingContext context) {
+        final JetExpression initializer = multiDeclaration.getInitializer();
+        if (initializer == null) {
+            context.trace.report(INITIALIZER_REQUIRED_FOR_MULTIDECLARATION.on(multiDeclaration));
+            return JetTypeInfo.create(null, context.dataFlowInfo);
+        }
+        final ExpressionReceiver expressionReceiver = ExpressionTypingUtils.getExpressionReceiver(facade, initializer, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE));
+        if (expressionReceiver == null) {
+            return JetTypeInfo.create(null, context.dataFlowInfo);
+        }
+        int componentIndex = 0;
+        for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
+            final Name componentName = Name.identifier("component" + componentIndex);
+            componentIndex++;
+
+            JetType componentType = null;
+            OverloadResolutionResults<FunctionDescriptor> results =
+                    ExpressionTypingUtils.resolveFakeCall(expressionReceiver, context, componentName);
+            if (results.isSuccess()) {
+                componentType = results.getResultingDescriptor().getReturnType();
+            }
+            else if (results.isAmbiguity()) {
+                context.trace.report(COMPONENT_FUNCTION_AMBIGUITY.on(initializer, componentName, results.getResultingCalls()));
+            }
+            else {
+                context.trace.report(COMPONENT_FUNCTION_MISSING.on(initializer, componentName));
+            }
+            if (componentType == null) {
+                componentType = ErrorUtils.createErrorType(componentName + "() return type");
+            }
+            VariableDescriptor variableDescriptor = context.expressionTypingServices.getDescriptorResolver().
+                resolveLocalVariableDescriptorWithType(scope.getContainingDeclaration(), entry, componentType, context.trace);
+
+            scope.addVariableDescriptor(variableDescriptor);
+        }
+        return DataFlowUtils.checkStatementType(multiDeclaration, context, context.dataFlowInfo);
     }
 
     @Override

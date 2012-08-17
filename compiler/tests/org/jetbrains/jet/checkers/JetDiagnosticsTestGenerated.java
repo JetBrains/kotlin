@@ -1073,9 +1073,19 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/kt2142.kt");
             }
             
+            @TestMetadata("kt2631_MultipleDeclaration.kt")
+            public void testKt2631_MultipleDeclaration() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/declarationChecks/kt2631_MultipleDeclaration.kt");
+            }
+            
             @TestMetadata("kt559.kt")
             public void testKt559() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/kt559.kt");
+            }
+            
+            @TestMetadata("MultiDeclarationErrors.kt")
+            public void testMultiDeclarationErrors() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/declarationChecks/MultiDeclarationErrors.kt");
             }
             
         }

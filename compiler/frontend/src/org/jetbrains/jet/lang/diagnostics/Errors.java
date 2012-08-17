@@ -24,7 +24,9 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -97,6 +99,9 @@ public interface Errors {
 
     SimpleDiagnosticFactory<JetExpression> MANY_FUNCTION_LITERAL_ARGUMENTS = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetProperty> PROPERTY_WITH_NO_TYPE_NO_INITIALIZER = SimpleDiagnosticFactory.create(ERROR, NAMED_ELEMENT);
+    SimpleDiagnosticFactory<JetMultiDeclaration> INITIALIZER_REQUIRED_FOR_MULTIDECLARATION = SimpleDiagnosticFactory.create(ERROR, DEFAULT);
+    DiagnosticFactory1<JetExpression, Name> COMPONENT_FUNCTION_MISSING = DiagnosticFactory1.create(ERROR, DEFAULT);
+    DiagnosticFactory2<JetExpression, Name, Collection<? extends ResolvedCall<? extends CallableDescriptor>>> COMPONENT_FUNCTION_AMBIGUITY = DiagnosticFactory2.create(ERROR, DEFAULT);
 
     SimpleDiagnosticFactory<JetModifierListOwner> ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS = SimpleDiagnosticFactory.create(ERROR, ABSTRACT_MODIFIER);
     SimpleDiagnosticFactory<JetProperty> ABSTRACT_PROPERTY_NOT_IN_CLASS = SimpleDiagnosticFactory.create(ERROR, ABSTRACT_MODIFIER);
