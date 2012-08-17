@@ -812,7 +812,7 @@ public class JetParsing extends AbstractJetParsing {
         return parseProperty(false);
     }
 
-    IElementType parseProperty(boolean local) {
+    public IElementType parseProperty(boolean local) {
         if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) {
             advance(); // VAL_KEYWORD or VAR_KEYWORD
         }
@@ -842,6 +842,7 @@ public class JetParsing extends AbstractJetParsing {
                 }));
 
         parseReceiverType("property", propertyNameFollow, lastDot);
+        parseFunctionOrPropertyName(lastDot != -1, "property", propertyNameFollow);
 
         myBuilder.restoreJoiningComplexTokensState();
 
@@ -982,7 +983,12 @@ public class JetParsing extends AbstractJetParsing {
 
         myBuilder.disableJoiningComplexTokens();
         int lastDot = findLastBefore(RECEIVER_TYPE_TERMINATORS, TokenSet.create(LPAR), true);
-        parseReceiverType("function", TokenSet.create(LT, LPAR, COLON, EQ), lastDot);
+
+        TokenSet functionNameFollow = TokenSet.create(LT, LPAR, COLON, EQ);
+        parseReceiverType("function", functionNameFollow, lastDot);
+
+        parseFunctionOrPropertyName(lastDot != -1, "function", functionNameFollow);
+
         myBuilder.restoreJoiningComplexTokensState();
 
         TokenSet valueParametersFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON, RPAR);
@@ -1028,10 +1034,6 @@ public class JetParsing extends AbstractJetParsing {
     private void parseReceiverType(String title, TokenSet nameFollow, int lastDot) {
         if (lastDot == -1) { // There's no explicit receiver type specified
             parseAnnotations(false);
-
-            if (!parseIdeTemplate()) {
-                expect(IDENTIFIER, "Expecting " + title + " name or receiver type", nameFollow);
-            }
         }
         else {
             if (parseIdeTemplate()) {
@@ -1048,6 +1050,19 @@ public class JetParsing extends AbstractJetParsing {
                 }
             }
 
+        }
+    }
+
+    /*
+     * IDENTIFIER
+     */
+    private void parseFunctionOrPropertyName(boolean receiverFound, String title, TokenSet nameFollow) {
+        if (!receiverFound) {
+            if (!parseIdeTemplate()) {
+                expect(IDENTIFIER, "Expecting " + title + " name or receiver type", nameFollow);
+            }
+        }
+        else {
             if (!parseIdeTemplate()) {
                 expect(IDENTIFIER, "Expecting " + title + " name", nameFollow);
             }
