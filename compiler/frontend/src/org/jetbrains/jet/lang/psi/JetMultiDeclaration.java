@@ -30,28 +30,9 @@ import static org.jetbrains.jet.lexer.JetTokens.VAR_KEYWORD;
 /**
  * @author abreslav
  */
-public class JetMultiDeclaration extends JetDeclarationImpl implements JetVariableDeclaration  {
+public class JetMultiDeclaration extends JetDeclarationImpl {
     public JetMultiDeclaration(@NotNull ASTNode node) {
         super(node);
-    }
-
-    @Override
-    public boolean isVar() {
-        return getNode().findChildByType(JetTokens.VAR_KEYWORD) != null;
-    }
-
-    @Nullable
-    @Override
-    public JetExpression getInitializer() {
-        return PsiTreeUtil.getNextSiblingOfType(findChildByType(EQ), JetExpression.class);
-    }
-
-    @NotNull
-    @Override
-    public ASTNode getValOrVarNode() {
-        ASTNode node = getNode().findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD));
-        assert node != null : "Val or var should always exist for property";
-        return node;
     }
 
     @Override

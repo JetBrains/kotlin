@@ -17,20 +17,27 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetTokens;
+
+import static org.jetbrains.jet.lexer.JetTokens.EQ;
+import static org.jetbrains.jet.lexer.JetTokens.VAL_KEYWORD;
+import static org.jetbrains.jet.lexer.JetTokens.VAR_KEYWORD;
 
 /**
  * @author abreslav
  */
-public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed {
+public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed implements JetVariableDeclaration {
     public JetMultiDeclarationEntry(@NotNull ASTNode node) {
         super(node);
     }
 
-    @Nullable
-    public JetTypeReference getTypeRef() {
+    @Override
+    public JetTypeReference getPropertyTypeRef() {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }
 
@@ -44,5 +51,33 @@ public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed {
         return visitor.visitMultiDeclarationEntry(this, data);
     }
 
+    @Override
+    public boolean isVar() {
+        return getParentNode().findChildByType(JetTokens.VAR_KEYWORD) != null;
+    }
 
+    @Nullable
+    @Override
+    public JetExpression getInitializer() {
+        ASTNode eqNode = getParentNode().findChildByType(EQ);
+        if (eqNode == null) {
+            return null;
+        }
+        return PsiTreeUtil.getNextSiblingOfType(eqNode.getPsi(), JetExpression.class);
+    }
+
+    @NotNull
+    private ASTNode getParentNode() {
+        ASTNode parent = getNode().getTreeParent();
+        assert parent.getElementType() == JetNodeTypes.MULTI_VARIABLE_DECLARATION;
+        return parent;
+    }
+
+    @NotNull
+    @Override
+    public ASTNode getValOrVarNode() {
+        ASTNode node = getParentNode().findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD));
+        assert node != null : "Val or var should always exist for property";
+        return node;
+    }
 }
