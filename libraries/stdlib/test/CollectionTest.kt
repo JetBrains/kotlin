@@ -220,14 +220,10 @@ class CollectionTest {
         assertEquals(arrayList("a", "b", "c"), list3)
     }
 
-    /*
-     TODO compiler fails on this one
-     KT-1718
     test fun plusCollectionBug() {
         val list = arrayList("foo", "bar") + arrayList("cheese", "wine")
         assertEquals(arrayList("foo", "bar", "cheese", "wine"), list)
     }
-    */
 
     test fun plusCollection() {
         val a = arrayList("foo", "bar")
