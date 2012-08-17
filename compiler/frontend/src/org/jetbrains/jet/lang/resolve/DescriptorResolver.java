@@ -822,7 +822,6 @@ public class DescriptorResolver {
             boolean allowDeferred,
             final BindingTrace trace
     ) {
-        // TODO : receiver?
         JetTypeReference propertyTypeRef = variable.getTypeRef();
 
         if (propertyTypeRef == null) {
@@ -831,7 +830,6 @@ public class DescriptorResolver {
                 return ErrorUtils.createErrorType("No type, no body");
             }
             else {
-                // TODO : a risk of a memory leak
                 LazyValue<JetType> lazyValue = new LazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
                     @Override
                     protected JetType compute() {
