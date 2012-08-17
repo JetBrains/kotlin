@@ -1075,15 +1075,6 @@ public class JetTypeMapper {
         }
     }
 
-    @Nullable
-    public String getJvmInternalName(JetClassOrObject jetClass) {
-        final ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, jetClass);
-        if (classDescriptor == null) {
-            return null;
-        }
-        return mapType(classDescriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName();
-    }
-
     private static boolean isForceReal(JvmClassName className) {
         return JvmPrimitiveType.getByWrapperClass(className) != null
                || className.getFqName().getFqName().equals("java.lang.String")

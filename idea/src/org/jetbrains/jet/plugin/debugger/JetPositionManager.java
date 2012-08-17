@@ -37,9 +37,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.JetTypeMapper;
+import org.jetbrains.jet.codegen.MapTypeMode;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.di.InjectorForJetTypeMapper;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
@@ -130,23 +133,23 @@ public class JetPositionManager implements PositionManager {
             @Override
             @SuppressWarnings("unchecked")
             public void run() {
-                final JetFile namespace = (JetFile)sourcePosition.getFile();
+                final JetFile namespace = (JetFile) sourcePosition.getFile();
                 final JetTypeMapper typeMapper = prepareTypeMapper(namespace);
 
                 PsiElement element = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
                 if (element instanceof JetClassOrObject) {
-                    result.set(typeMapper.getJvmInternalName((JetClassOrObject) element));
+                    result.set(getJvmInternalName(typeMapper, (JetClassOrObject) element));
                 }
                 else if (element instanceof JetFunctionLiteralExpression) {
-                    result.set(typeMapper.getClosureAnnotator().classNameForAnonymousClass((JetFunctionLiteralExpression)element).getInternalName());
+                    result.set(typeMapper.getClosureAnnotator().classNameForAnonymousClass((JetFunctionLiteralExpression) element).getInternalName());
                 }
                 else if (element instanceof JetNamedFunction) {
                     PsiElement parent = PsiTreeUtil.getParentOfType(element, JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
                     if (parent instanceof JetClassOrObject) {
-                        result.set(typeMapper.getJvmInternalName((JetClassOrObject) parent));
+                        result.set(getJvmInternalName(typeMapper, (JetClassOrObject) parent));
                     }
                     else if (parent instanceof JetFunctionLiteralExpression || parent instanceof JetNamedFunction) {
-                        result.set(typeMapper.getClosureAnnotator().classNameForAnonymousClass((JetElement)element).getInternalName());
+                        result.set(typeMapper.getClosureAnnotator().classNameForAnonymousClass((JetElement) element).getInternalName());
                     }
                 }
 
@@ -166,6 +169,15 @@ public class JetPositionManager implements PositionManager {
         });
 
         return result.get();
+    }
+
+    @Nullable
+    private String getJvmInternalName(JetTypeMapper typeMapper, JetClassOrObject jetClass) {
+        final ClassDescriptor classDescriptor = typeMapper.bindingContext.get(BindingContext.CLASS, jetClass);
+        if (classDescriptor == null) {
+            return null;
+        }
+        return typeMapper.mapType(classDescriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName();
     }
 
     private JetTypeMapper prepareTypeMapper(final JetFile file) {
