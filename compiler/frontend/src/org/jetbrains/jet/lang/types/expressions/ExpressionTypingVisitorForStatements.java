@@ -107,11 +107,12 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             context.trace.report(LOCAL_VARIABLE_WITH_SETTER.on(setter));
         }
 
-        VariableDescriptor propertyDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(scope.getContainingDeclaration(), scope, property, context.dataFlowInfo, context.trace);
+        VariableDescriptor propertyDescriptor = context.expressionTypingServices.getDescriptorResolver().
+                resolveLocalVariableDescriptor(scope.getContainingDeclaration(), scope, property, context.dataFlowInfo, context.trace);
         JetExpression initializer = property.getInitializer();
         if (property.getTypeRef() != null && initializer != null) {
             JetType outType = propertyDescriptor.getType();
-            JetType initializerType = facade.getTypeInfo(initializer, context.replaceExpectedType(outType).replaceScope(scope)).getType();
+            facade.getTypeInfo(initializer, context.replaceExpectedType(outType).replaceScope(scope)).getType();
         }
         
         {
