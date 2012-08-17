@@ -1053,6 +1053,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve", new File("compiler/testData/diagnostics/tests/declarationChecks"), "kt", false);
             }
             
+            @TestMetadata("DataFlowInfoInMultiDecl.kt")
+            public void testDataFlowInfoInMultiDecl() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/declarationChecks/DataFlowInfoInMultiDecl.kt");
+            }
+            
             @TestMetadata("kt1141.kt")
             public void testKt1141() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/kt1141.kt");
