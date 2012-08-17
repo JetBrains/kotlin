@@ -286,6 +286,10 @@ public class PrimitiveTypesTest extends CodegenTestCase {
         assertEquals(expected, main.invoke(null, arg1, arg2));
     }
 
+    public void testEa35963() {
+        blackBoxFile("regressions/ea35963.jet");
+    }
+
     public void testKt242 () throws Exception {
         blackBoxFile("regressions/kt242.jet");
     }
