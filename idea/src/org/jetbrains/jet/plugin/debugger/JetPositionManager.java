@@ -138,7 +138,7 @@ public class JetPositionManager implements PositionManager {
 
                 PsiElement element = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
                 if (element instanceof JetClassOrObject) {
-                    result.set(getJvmInternalName(typeMapper, (JetClassOrObject) element));
+                    result.set(getJvmInternalNameForImpl(typeMapper, (JetClassOrObject) element));
                 }
                 else if (element instanceof JetFunctionLiteralExpression) {
                     result.set(typeMapper.getClosureAnnotator().classNameForAnonymousClass((JetFunctionLiteralExpression) element).getInternalName());
@@ -146,7 +146,7 @@ public class JetPositionManager implements PositionManager {
                 else if (element instanceof JetNamedFunction) {
                     PsiElement parent = PsiTreeUtil.getParentOfType(element, JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
                     if (parent instanceof JetClassOrObject) {
-                        result.set(getJvmInternalName(typeMapper, (JetClassOrObject) parent));
+                        result.set(getJvmInternalNameForImpl(typeMapper, (JetClassOrObject) parent));
                     }
                     else if (parent instanceof JetFunctionLiteralExpression || parent instanceof JetNamedFunction) {
                         result.set(typeMapper.getClosureAnnotator().classNameForAnonymousClass((JetElement) element).getInternalName());
@@ -172,12 +172,19 @@ public class JetPositionManager implements PositionManager {
     }
 
     @Nullable
-    private String getJvmInternalName(JetTypeMapper typeMapper, JetClassOrObject jetClass) {
+    private String getJvmInternalNameForImpl(JetTypeMapper typeMapper, JetClassOrObject jetClass) {
         final ClassDescriptor classDescriptor = typeMapper.bindingContext.get(BindingContext.CLASS, jetClass);
         if (classDescriptor == null) {
             return null;
         }
-        return typeMapper.mapType(classDescriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName();
+        MapTypeMode mode;
+        if (jetClass instanceof JetClass && ((JetClass) jetClass).isTrait()) {
+            mode = MapTypeMode.TRAIT_IMPL;
+        }
+        else {
+            mode = MapTypeMode.IMPL;
+        }
+        return typeMapper.mapType(classDescriptor.getDefaultType(), mode).getInternalName();
     }
 
     private JetTypeMapper prepareTypeMapper(final JetFile file) {
