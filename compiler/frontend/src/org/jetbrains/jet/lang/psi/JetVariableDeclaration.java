@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author abreslav
  */
-public interface JetVariableDeclaration extends JetDeclaration, JetWithExpressionInitializer {
+public interface JetVariableDeclaration extends JetDeclaration, JetWithExpressionInitializer, JetNamedDeclaration {
     boolean isVar();
 
     @NotNull
