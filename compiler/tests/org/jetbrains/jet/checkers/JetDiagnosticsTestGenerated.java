@@ -1088,6 +1088,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/MultiDeclarationErrors.kt");
             }
             
+            @TestMetadata("RedeclarationsInMultiDecl.kt")
+            public void testRedeclarationsInMultiDecl() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/declarationChecks/RedeclarationsInMultiDecl.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/extensions")
