@@ -21,7 +21,10 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetTokens;
+
+import java.util.List;
 
 import static org.jetbrains.jet.lexer.JetTokens.EQ;
 import static org.jetbrains.jet.lexer.JetTokens.VAL_KEYWORD;
@@ -45,4 +48,17 @@ public class JetMultiDeclaration extends JetDeclarationImpl {
         return visitor.visitMultiDeclaration(this, data);
     }
 
+    @NotNull
+    public List<JetMultiDeclarationEntry> getEntries() {
+        return findChildrenByType(JetNodeTypes.MULTI_VARIABLE_DECLARATION_ENTRY);
+    }
+
+    @Nullable
+    public JetExpression getInitializer() {
+        ASTNode eqNode = getNode().findChildByType(EQ);
+        if (eqNode == null) {
+            return null;
+        }
+        return PsiTreeUtil.getNextSiblingOfType(eqNode.getPsi(), JetExpression.class);
+    }
 }

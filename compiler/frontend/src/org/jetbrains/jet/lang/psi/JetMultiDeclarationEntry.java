@@ -59,11 +59,7 @@ public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed impl
     @Nullable
     @Override
     public JetExpression getInitializer() {
-        ASTNode eqNode = getParentNode().findChildByType(EQ);
-        if (eqNode == null) {
-            return null;
-        }
-        return PsiTreeUtil.getNextSiblingOfType(eqNode.getPsi(), JetExpression.class);
+        return null;
     }
 
     @NotNull
