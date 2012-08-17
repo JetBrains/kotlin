@@ -260,6 +260,15 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         error.error(mesage);
     }
 
+    protected static void errorIf(PsiBuilder.Marker marker, boolean condition, String message) {
+        if (condition) {
+            marker.error(message);
+        }
+        else {
+            marker.drop();
+        }
+    }
+
     protected int matchTokenStreamPredicate(TokenStreamPattern pattern) {
         PsiBuilder.Marker currentPosition = mark();
         Stack<IElementType> opens = new Stack<IElementType>();

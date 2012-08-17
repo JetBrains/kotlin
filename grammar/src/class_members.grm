@@ -84,11 +84,12 @@ functionBody
 property
   : modifiers ("val" | "var")
       typeParameters? (type "." | annotations)?
-      SimpleName (":" type)?
+      (SimpleName (":" type)?){","}
       typeConstraints
       ("=" expression SEMI?)?
       (getter? setter? | setter? getter?) SEMI?
   ;
+
 /**
 bq. See [Properties and Fields]
 */

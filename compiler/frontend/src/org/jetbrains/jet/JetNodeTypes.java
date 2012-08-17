@@ -31,6 +31,8 @@ public interface JetNodeTypes {
     IElementType CLASS     = JetStubElementTypes.CLASS;
     IElementType FUN       = JetStubElementTypes.FUNCTION;
     IElementType PROPERTY  = JetStubElementTypes.PROPERTY;
+    IElementType MULTI_VARIABLE_DECLARATION  = new JetNodeType("MULTI_VARIABLE_DECLARATION", JetMultiDeclaration.class);
+    IElementType MULTI_VARIABLE_DECLARATION_ENTRY = new JetNodeType("MULTI_VARIABLE_DECLARATION_ENTRY", JetMultiDeclarationEntry.class);
 
     JetNodeType TYPEDEF    = new JetNodeType("TYPEDEF", JetTypedef.class);
     IElementType OBJECT_DECLARATION = JetStubElementTypes.OBJECT_DECLARATION;

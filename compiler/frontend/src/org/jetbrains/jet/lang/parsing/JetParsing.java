@@ -802,7 +802,7 @@ public class JetParsing extends AbstractJetParsing {
      * property
      *   : modifiers ("val" | "var")
      *       typeParameters? (type "." | attributes)?
-     *       SimpleName (":" type)?
+     *       (SimpleName (":" type)?){","}
      *       typeConstraints
      *       ("=" element SEMI?)?
      *       (getter? setter? | setter? getter?) SEMI?
@@ -841,16 +841,32 @@ public class JetParsing extends AbstractJetParsing {
                     }
                 }));
 
+        PsiBuilder.Marker receiver = mark();
         parseReceiverType("property", propertyNameFollow, lastDot);
-        parseFunctionOrPropertyName(lastDot != -1, "property", propertyNameFollow);
+
+        boolean multiDeclaration = at(LPAR);
+        boolean receiverTypeDeclared = lastDot != -1;
+
+        errorIf(receiver, multiDeclaration && receiverTypeDeclared, "Receiver type is not allowed on a multi-declaration");
+
+        if (multiDeclaration) {
+            PsiBuilder.Marker multiDecl = mark();
+            parseMultiDeclarationName(propertyNameFollow);
+            errorIf(multiDecl, !local, "Multi-declarations are only allowed for local variables/values");
+        }
+        else {
+            parseFunctionOrPropertyName(receiverTypeDeclared, "property", propertyNameFollow);
+        }
 
         myBuilder.restoreJoiningComplexTokensState();
 
         if (at(COLON)) {
+            PsiBuilder.Marker type = mark();
             advance(); // COLON
             if (!parseIdeTemplate()) {
                 parseTypeRef();
             }
+            errorIf(type, multiDeclaration, "Type annotations are not allowed on multi-declarations");
         }
 
         parseTypeConstraintsGuarded(typeParametersDeclared);
@@ -882,8 +898,44 @@ public class JetParsing extends AbstractJetParsing {
             }
         }
 
+        return multiDeclaration ? MULTI_VARIABLE_DECLARATION : PROPERTY;
+    }
 
-        return PROPERTY;
+    /*
+     * (SimpleName (":" type)){","}
+     */
+    private void parseMultiDeclarationName(TokenSet propertyNameFollow) {
+        // Parsing multi-name, e.g.
+        //   val (a, b) = foo()
+        myBuilder.disableNewlines();
+        advance(); // LPAR
+
+        TokenSet recoverySet = TokenSet.orSet(PARAMETER_NAME_RECOVERY_SET, propertyNameFollow);
+        if (!atSet(propertyNameFollow)) {
+            while (true) {
+                if (at(COMMA)) {
+                    errorAndAdvance("Expecting a name");
+                }
+                else if (at(RPAR)) {
+                    error("Expecting a name");
+                    break;
+                }
+                PsiBuilder.Marker property = mark();
+                expect(IDENTIFIER, "Expecting a name", recoverySet);
+
+                if (at(COLON)) {
+                    advance(); // COLON
+                    parseTypeRef();
+                }
+                property.done(MULTI_VARIABLE_DECLARATION_ENTRY);
+
+                if (!at(COMMA)) break;
+                advance(); // COMMA
+            }
+        }
+
+        expect(RPAR, "Expecting ')'", propertyNameFollow);
+        myBuilder.restoreNewlinesState();
     }
 
     /*
@@ -996,12 +1048,7 @@ public class JetParsing extends AbstractJetParsing {
         if (at(LT)) {
             PsiBuilder.Marker error = mark();
             parseTypeParameterList(TokenSet.orSet(TokenSet.create(LPAR), valueParametersFollow));
-            if (typeParameterListOccurred) {
-                error.error("Only one type parameter list is allowed for a function"); // TODO : discuss
-            }
-            else {
-                error.drop();
-            }
+            errorIf(error, typeParameterListOccurred, "Only one type parameter list is allowed for a function");
             typeParameterListOccurred = true;
         }
 
@@ -1028,7 +1075,6 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     * :
      *   (type "." | attributes)?
      */
     private void parseReceiverType(String title, TokenSet nameFollow, int lastDot) {
@@ -1201,12 +1247,7 @@ public class JetParsing extends AbstractJetParsing {
     private void parseTypeConstraintsGuarded(boolean typeParameterListOccurred) {
         PsiBuilder.Marker error = mark();
         boolean constraints = parseTypeConstraints();
-        if (constraints && !typeParameterListOccurred) {
-            error.error("Type constraints are not allowed when no type parameters declared");
-        }
-        else {
-            error.drop();
-        }
+        errorIf(error, constraints && !typeParameterListOccurred, "Type constraints are not allowed when no type parameters declared");
     }
 
     private boolean parseTypeConstraints() {

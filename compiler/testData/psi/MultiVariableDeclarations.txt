@@ -1,0 +1,619 @@
+JetFile: MultiVariableDeclarations.jet
+  NAMESPACE_HEADER
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('a')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('b')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('b')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('b')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('b')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('b')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('b')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        PsiErrorElement:Expecting a name
+          <empty list>
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        PsiErrorElement:Expecting a name
+          PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(COMMA)(',')
+        PsiErrorElement:Expecting a name
+          <empty list>
+        PsiWhiteSpace(' ')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiErrorElement:Expecting a name
+            <empty list>
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiErrorElement:Expecting a name
+            <empty list>
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(COMMA)(',')
+        PsiErrorElement:Expecting a name
+          <empty list>
+        PsiWhiteSpace(' ')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiErrorElement:Expecting a name
+            <empty list>
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('b')
+        PsiErrorElement:Expecting ')'
+          <empty list>
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiErrorElement:Expecting a name
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Receiver type is not allowed on a multi-declaration
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('T')
+          PsiElement(DOT)('.')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(RPAR)(')')
+        PsiErrorElement:Type annotations are not allowed on multi-declarations
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Receiver type is not allowed on a multi-declaration
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('T')
+          PsiElement(DOT)('.')
+        PsiElement(LPAR)('(')
+        MULTI_VARIABLE_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(RPAR)(')')
+        PsiErrorElement:Type annotations are not allowed on multi-declarations
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  MULTI_VARIABLE_DECLARATION
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Multi-declarations are only allowed for local variables/values
+      PsiElement(LPAR)('(')
+      MULTI_VARIABLE_DECLARATION_ENTRY
+        PsiElement(IDENTIFIER)('a')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      MULTI_VARIABLE_DECLARATION_ENTRY
+        PsiElement(IDENTIFIER)('b')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('1')
+  PsiWhiteSpace('\n')
+  MULTI_VARIABLE_DECLARATION
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Receiver type is not allowed on a multi-declaration
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Int')
+      PsiElement(DOT)('.')
+    PsiErrorElement:Multi-declarations are only allowed for local variables/values
+      PsiElement(LPAR)('(')
+      MULTI_VARIABLE_DECLARATION_ENTRY
+        PsiElement(IDENTIFIER)('a')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      MULTI_VARIABLE_DECLARATION_ENTRY
+        PsiElement(IDENTIFIER)('b')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('1')
+  PsiWhiteSpace('\n')
+  MULTI_VARIABLE_DECLARATION
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Multi-declarations are only allowed for local variables/values
+      PsiElement(LPAR)('(')
+      MULTI_VARIABLE_DECLARATION_ENTRY
+        PsiElement(IDENTIFIER)('a')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      MULTI_VARIABLE_DECLARATION_ENTRY
+        PsiElement(IDENTIFIER)('b')
+      PsiElement(RPAR)(')')
+    PsiErrorElement:Type annotations are not allowed on multi-declarations
+      PsiElement(COLON)(':')
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('1')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('X')
+    PsiWhiteSpace(' ')
+    TYPE_PARAMETER_LIST
+      <empty list>
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Multi-declarations are only allowed for local variables/values
+          PsiElement(LPAR)('(')
+          MULTI_VARIABLE_DECLARATION_ENTRY
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          MULTI_VARIABLE_DECLARATION_ENTRY
+            PsiElement(IDENTIFIER)('b')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Receiver type is not allowed on a multi-declaration
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+          PsiElement(DOT)('.')
+        PsiErrorElement:Multi-declarations are only allowed for local variables/values
+          PsiElement(LPAR)('(')
+          MULTI_VARIABLE_DECLARATION_ENTRY
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          MULTI_VARIABLE_DECLARATION_ENTRY
+            PsiElement(IDENTIFIER)('b')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      MULTI_VARIABLE_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Multi-declarations are only allowed for local variables/values
+          PsiElement(LPAR)('(')
+          MULTI_VARIABLE_DECLARATION_ENTRY
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          MULTI_VARIABLE_DECLARATION_ENTRY
+            PsiElement(IDENTIFIER)('b')
+          PsiElement(RPAR)(')')
+        PsiErrorElement:Type annotations are not allowed on multi-declarations
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
