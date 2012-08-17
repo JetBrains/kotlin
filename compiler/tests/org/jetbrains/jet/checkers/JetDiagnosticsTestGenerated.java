@@ -1053,6 +1053,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve", new File("compiler/testData/diagnostics/tests/declarationChecks"), "kt", false);
             }
             
+            @TestMetadata("ComponentFunctionReturnTypeMismatch.kt")
+            public void testComponentFunctionReturnTypeMismatch() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/declarationChecks/ComponentFunctionReturnTypeMismatch.kt");
+            }
+            
             @TestMetadata("DataFlowInfoInMultiDecl.kt")
             public void testDataFlowInfoInMultiDecl() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/DataFlowInfoInMultiDecl.kt");

@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -144,11 +145,20 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             final Name componentName = Name.identifier("component" + componentIndex);
             componentIndex++;
 
-            JetType componentType = null;
+            JetType expectedType = getExpectedTypeForComponent(context, entry);
             OverloadResolutionResults<FunctionDescriptor> results =
-                    ExpressionTypingUtils.resolveFakeCall(expressionReceiver, context, componentName);
+                    ExpressionTypingUtils.resolveFakeCall(expressionReceiver, context.replaceExpectedType(expectedType), componentName);
+
+            JetType componentType = null;
             if (results.isSuccess()) {
-                componentType = results.getResultingDescriptor().getReturnType();
+                FunctionDescriptor resultingDescriptor = results.getResultingDescriptor();
+                componentType = resultingDescriptor.getReturnType();
+                if (componentType != null && expectedType != TypeUtils.NO_EXPECTED_TYPE
+                       && !JetTypeChecker.INSTANCE.isSubtypeOf(componentType, expectedType)) {
+
+                    context.trace.report(
+                            COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.on(initializer, componentName, componentType, expectedType));
+                }
             }
             else if (results.isAmbiguity()) {
                 context.trace.report(COMPONENT_FUNCTION_AMBIGUITY.on(initializer, componentName, results.getResultingCalls()));
@@ -165,6 +175,17 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             scope.addVariableDescriptor(variableDescriptor);
         }
         return DataFlowUtils.checkStatementType(multiDeclaration, context, context.dataFlowInfo);
+    }
+
+    @NotNull
+    private static JetType getExpectedTypeForComponent(ExpressionTypingContext context, JetMultiDeclarationEntry entry) {
+        JetTypeReference entryTypeRef = entry.getTypeRef();
+        if (entryTypeRef != null) {
+            return context.expressionTypingServices.getTypeResolver().resolveType(context.scope, entryTypeRef, context.trace, true);
+        }
+        else {
+            return TypeUtils.NO_EXPECTED_TYPE;
+        }
     }
 
     @Override

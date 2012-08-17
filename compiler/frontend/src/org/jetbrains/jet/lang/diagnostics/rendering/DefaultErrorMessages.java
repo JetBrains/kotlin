@@ -113,9 +113,12 @@ public class DefaultErrorMessages {
         MAP.put(MANY_FUNCTION_LITERAL_ARGUMENTS, "Only one function literal is allowed outside a parenthesized argument list");
         MAP.put(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER, "This property must either have a type annotation or be initialized");
         MAP.put(VARIABLE_WITH_NO_TYPE_NO_INITIALIZER, "This variable must either have a type annotation or be initialized");
+
         MAP.put(INITIALIZER_REQUIRED_FOR_MULTIDECLARATION, "Initializer required for multi-declaration");
         MAP.put(COMPONENT_FUNCTION_MISSING, "Multi-declaration initializer must have a ''{0}()'' function", TO_STRING);
-        MAP.put(COMPONENT_FUNCTION_AMBIGUITY, "Method ''{0}'' is ambiguous for this expression: {1}", TO_STRING, AMBIGUOUS_CALLS);
+        MAP.put(COMPONENT_FUNCTION_AMBIGUITY, "Function ''{0}()'' is ambiguous for this expression: {1}", TO_STRING, AMBIGUOUS_CALLS);
+        MAP.put(COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH, "''{0}()'' function returns ''{1}'', but ''{2}'' is expected",
+                                                                                    TO_STRING, RENDER_TYPE, RENDER_TYPE);
 
         MAP.put(ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS, "This property cannot be declared abstract");
         MAP.put(ABSTRACT_PROPERTY_NOT_IN_CLASS, "A property may be abstract only when defined in a class or trait");
