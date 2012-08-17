@@ -598,35 +598,35 @@ public class DescriptorResolver {
     public VariableDescriptor resolveLocalVariableDescriptor(
             DeclarationDescriptor containingDeclaration,
             JetScope scope,
-            JetVariableDeclaration property,
+            JetVariableDeclaration variable,
             DataFlowInfo dataFlowInfo,
             BindingTrace trace
     ) {
-        if (JetPsiUtil.isScriptDeclaration(property)) {
+        if (JetPsiUtil.isScriptDeclaration(variable)) {
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                     containingDeclaration,
-                    annotationResolver.createAnnotationStubs(property.getModifierList(), trace),
+                    annotationResolver.createAnnotationStubs(variable.getModifierList(), trace),
                     Modality.FINAL,
                     Visibilities.INTERNAL,
-                    property.isVar(),
+                    variable.isVar(),
                     false,
-                    JetPsiUtil.safeName(property.getName()),
+                    JetPsiUtil.safeName(variable.getName()),
                     CallableMemberDescriptor.Kind.DECLARATION
             );
 
             JetType type =
-                    getVariableType(scope, property, dataFlowInfo, false, trace); // For a local variable the type must not be deferred
+                    getVariableType(scope, variable, dataFlowInfo, false, trace); // For a local variable the type must not be deferred
 
             propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(), scope.getImplicitReceiver(), (JetType) null);
-            trace.record(BindingContext.VARIABLE, property, propertyDescriptor);
+            trace.record(BindingContext.VARIABLE, variable, propertyDescriptor);
             return propertyDescriptor;
         }
         else {
             VariableDescriptorImpl variableDescriptor =
-                    resolveLocalVariableDescriptorWithType(containingDeclaration, property, null, trace);
+                    resolveLocalVariableDescriptorWithType(containingDeclaration, variable, null, trace);
 
             JetType type =
-                    getVariableType(scope, property, dataFlowInfo, false, trace); // For a local variable the type must not be deferred
+                    getVariableType(scope, variable, dataFlowInfo, false, trace); // For a local variable the type must not be deferred
             variableDescriptor.setOutType(type);
             return variableDescriptor;
         }
@@ -635,17 +635,17 @@ public class DescriptorResolver {
     @NotNull
     public VariableDescriptorImpl resolveLocalVariableDescriptorWithType(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull JetVariableDeclaration property,
+            @NotNull JetVariableDeclaration variable,
             @Nullable JetType type,
             @NotNull BindingTrace trace
     ) {
         VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptor(
                 containingDeclaration,
-                annotationResolver.createAnnotationStubs(property.getModifierList(), trace),
-                JetPsiUtil.safeName(property.getName()),
+                annotationResolver.createAnnotationStubs(variable.getModifierList(), trace),
+                JetPsiUtil.safeName(variable.getName()),
                 type,
-                property.isVar());
-        trace.record(BindingContext.VARIABLE, property, variableDescriptor);
+                variable.isVar());
+        trace.record(BindingContext.VARIABLE, variable, variableDescriptor);
         return variableDescriptor;
     }
 
@@ -817,16 +817,16 @@ public class DescriptorResolver {
     @NotNull
     private JetType getVariableType(
             @NotNull final JetScope scope,
-            @NotNull final JetVariableDeclaration property,
+            @NotNull final JetVariableDeclaration variable,
             @NotNull final DataFlowInfo dataFlowInfo,
             boolean allowDeferred,
             final BindingTrace trace
     ) {
         // TODO : receiver?
-        JetTypeReference propertyTypeRef = property.getTypeRef();
+        JetTypeReference propertyTypeRef = variable.getTypeRef();
 
         if (propertyTypeRef == null) {
-            final JetExpression initializer = property.getInitializer();
+            final JetExpression initializer = variable.getInitializer();
             if (initializer == null) {
                 return ErrorUtils.createErrorType("No type, no body");
             }
