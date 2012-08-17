@@ -23,8 +23,7 @@ public fun <R> ResultSet.use(block : (ResultSet) -> R) : R {
 fun ResultSet.iterator() : Iterator<ResultSet> {
     val rs = this
     return object : Iterator<ResultSet>{
-        public override val hasNext : Boolean
-        get() = rs.next()
+        public override fun hasNext() : Boolean = rs.next()
 
         public override fun next() : ResultSet = rs
     }
@@ -37,8 +36,7 @@ fun <T> ResultSet.map(fn : (ResultSet) -> T) : jet.Iterable<T> {
     val rs = this
 
     val iterator = object : Iterator<T>{
-        public override val hasNext : Boolean
-            get() = rs.next()
+        public override fun hasNext() : Boolean = rs.next()
 
         public override fun next() : T = fn(rs)
     }
