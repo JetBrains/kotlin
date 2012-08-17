@@ -30,7 +30,6 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -69,13 +68,13 @@ public abstract class AbstractCallExpressionTranslator extends AbstractTranslato
         }
         if (actualArgument instanceof DefaultValueArgument) {
             JetExpression defaultArgument = getDefaultArgument(bindingContext(), parameterDescriptor);
-            return Arrays.asList(Translation.translateAsExpression(defaultArgument, context()));
+            return Collections.singletonList(Translation.translateAsExpression(defaultArgument, context()));
         }
         assert actualArgument instanceof ExpressionValueArgument;
         assert valueArguments.size() == 1;
         JetExpression argumentExpression = valueArguments.get(0).getArgumentExpression();
         assert argumentExpression != null;
-        return Arrays.asList(Translation.translateAsExpression(argumentExpression, context()));
+        return Collections.singletonList(Translation.translateAsExpression(argumentExpression, context()));
     }
 
     @NotNull
