@@ -47,6 +47,14 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitNamedDeclaration(property, data);
     }
 
+    public R visitMultiDeclaration(JetMultiDeclaration multiDeclaration, D data) {
+        return visitDeclaration(multiDeclaration, data);
+    }
+
+    public R visitMultiDeclarationEntry(JetMultiDeclarationEntry multiDeclarationEntry, D data) {
+        return visitNamedDeclaration(multiDeclarationEntry, data);
+    }
+
     public R visitTypedef(JetTypedef typedef, D data) {
         return visitNamedDeclaration(typedef, data);
     }

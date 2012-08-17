@@ -53,4 +53,15 @@ public class JetMultiDeclaration extends JetDeclarationImpl implements JetVariab
         assert node != null : "Val or var should always exist for property";
         return node;
     }
+
+    @Override
+    public void accept(@NotNull JetVisitorVoid visitor) {
+        visitor.visitMultiDeclaration(this);
+    }
+
+    @Override
+    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
+        return visitor.visitMultiDeclaration(this, data);
+    }
+
 }

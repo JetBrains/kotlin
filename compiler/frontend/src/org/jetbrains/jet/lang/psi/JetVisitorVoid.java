@@ -436,4 +436,12 @@ public class JetVisitorVoid extends PsiElementVisitor {
     public void visitEscapeStringTemplateEntry(JetEscapeStringTemplateEntry entry) {
         visitStringTemplateEntry(entry);
     }
+
+    public void visitMultiDeclaration(JetMultiDeclaration declaration) {
+        visitDeclaration(declaration);
+    }
+
+    public void visitMultiDeclarationEntry(JetMultiDeclarationEntry entry) {
+        visitNamedDeclaration(entry);
+    }
 }

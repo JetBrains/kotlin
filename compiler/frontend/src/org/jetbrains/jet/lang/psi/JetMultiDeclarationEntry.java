@@ -34,6 +34,15 @@ public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }
 
+    @Override
+    public void accept(@NotNull JetVisitorVoid visitor) {
+        visitor.visitMultiDeclarationEntry(this);
+    }
+
+    @Override
+    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
+        return visitor.visitMultiDeclarationEntry(this, data);
+    }
 
 
 }
