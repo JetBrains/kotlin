@@ -16,21 +16,45 @@
 
 package org.jetbrains.jet.plugin.debugger;
 
-import com.intellij.debugger.PositionManagerFactory;
+import com.intellij.debugger.engine.DebugProcess;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.JetTypeMapper;
+import org.jetbrains.jet.di.InjectorForJetTypeMapper;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+
+import java.util.List;
 
 /**
  * @author udalov
  */
 public class JetPositionManagerTest extends PositionManagerTestCase {
+    private final JetPositionManagerFactory jetPositionManagerFactory = new JetPositionManagerFactory();
+
     @Override
+    @NotNull
     protected String getTestDataPath() {
         return PluginTestCaseBase.getTestDataPathBase() + "/debugger";
     }
 
     @Override
-    protected PositionManagerFactory getPositionManagerFactory() {
-        return new JetPositionManagerFactory();
+    @NotNull
+    protected JetPositionManager createPositionManager(DebugProcess process, List<JetFile> files, GenerationState state) {
+        JetPositionManager positionManager = (JetPositionManager) jetPositionManagerFactory.createPositionManager(process);
+        assertNotNull(positionManager);
+
+        JetTypeMapper typeMapper = new InjectorForJetTypeMapper(state.getBindingContext(), files).getJetTypeMapper();
+        typeMapper.getClosureAnnotator().init();
+        for (JetFile file : files) {
+            positionManager.addTypeMapper(file, typeMapper);
+        }
+
+        return positionManager;
+    }
+
+    public void testMultiFileNamespace() {
+        doMultiTest("multiFileNamespace/a.kt", "multiFileNamespace/b.kt");
     }
 
     public void testAnnotation() {

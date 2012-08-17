@@ -35,6 +35,7 @@ import com.sun.jdi.ReferenceType;
 import com.sun.jdi.request.ClassPrepareRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.MapTypeMode;
@@ -240,5 +241,17 @@ public class JetPositionManager implements PositionManager {
             return null;
         }
         return myDebugProcess.getRequestsManager().createClassPrepareRequest(classPrepareRequestor, className.replace('/', '.'));
+    }
+
+    @TestOnly
+    public void addTypeMapper(JetFile file, final JetTypeMapper typeMapper) {
+        FqName fqName = JetPsiUtil.getFQName(file);
+        CachedValue<JetTypeMapper> value = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<JetTypeMapper>() {
+            @Override
+            public Result<JetTypeMapper> compute() {
+                return new Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT);
+            }
+        }, false);
+        myTypeMappers.put(fqName, value);
     }
 }

@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.plugin.debugger;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.debugger.NoDataException;
 import com.intellij.debugger.PositionManager;
-import com.intellij.debugger.PositionManagerFactory;
 import com.intellij.debugger.SourcePosition;
 import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.engine.DebugProcessEvents;
@@ -27,11 +27,12 @@ import com.intellij.debugger.jdi.VirtualMachineProxyImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.PlatformTestCase;
 import com.sun.jdi.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.codegen.ClassFileFactory;
+import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.utils.ExceptionUtils;
@@ -52,9 +53,11 @@ public abstract class PositionManagerTestCase extends PlatformTestCase {
     // This pattern matches against these line comments and saves the class name in the first group
     private static final Pattern breakpointPattern = Pattern.compile("^.*//\\s*([a-zA-Z0-9._/$]*)\\s*$");
 
+    @NotNull
     protected abstract String getTestDataPath();
 
-    protected abstract PositionManagerFactory getPositionManagerFactory();
+    @NotNull
+    protected abstract PositionManager createPositionManager(DebugProcess process, List<JetFile> files, GenerationState state);
 
     @Override
     protected final void setUp() throws Exception {
@@ -92,31 +95,49 @@ public abstract class PositionManagerTestCase extends PlatformTestCase {
     }
 
     protected void doTest() {
-        File file = new File(getTestDataPath(), getTestName(true) + ".kt");
-        String fileContent;
-        try {
-            fileContent = FileUtil.loadFile(file);
-        }
-        catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
-        }
-        final PsiFile psiFile = JetTestUtils.createFile(file.getAbsolutePath(), fileContent, getProject());
+        doTest(getTestDataPath() + "/" + getTestName(true) + ".kt");
+    }
 
-        final Map<Integer, String> breakpoints = extractBreakpointsInfo(fileContent);
+    protected void doMultiTest(String... filenames) {
+        for (int i = 0; i < filenames.length; i++) {
+            filenames[i] = getTestDataPath() + "/" + filenames[i];
+        }
+        doTest(filenames);
+    }
 
-        Map<String, ReferenceType> referencesByName = compileFileGetReferenceMap((JetFile) psiFile);
+    private void doTest(String... filenames) {
+        final List<JetFile> files = Lists.newArrayList();
+        final List<Breakpoint> breakpoints = Lists.newArrayList();
+
+        for (String filename : filenames) {
+            File file = new File(filename);
+            String fileContent;
+            try {
+                fileContent = FileUtil.loadFile(file);
+            }
+            catch (IOException e) {
+                throw ExceptionUtils.rethrow(e);
+            }
+            final JetFile jetFile = (JetFile)JetTestUtils.createFile(file.getAbsolutePath(), fileContent, getProject());
+
+            files.add(jetFile);
+            breakpoints.addAll(extractBreakpointsInfo(jetFile, fileContent));
+        }
+
+        GenerationState state = GenerationUtils.compileManyFilesGetGenerationStateForTest(getProject(), files);
+
+        Map<String, ReferenceType> referencesByName = getReferenceMap(state.getFactory());
 
         final DebugProcess debugProcess = createDebugProcess(referencesByName);
+
+        final PositionManager positionManager = createPositionManager(debugProcess, files, state);
 
         ApplicationManager.getApplication().runReadAction(new Runnable() {
             public void run() {
                 try {
-                    PositionManager positionManager = getPositionManagerFactory().createPositionManager(debugProcess);
-                    assertNotNull(positionManager);
-                    for (Integer lineNumber : breakpoints.keySet()) {
-                        String className = breakpoints.get(lineNumber);
-                        SourcePosition position = SourcePosition.createFromLine(psiFile, lineNumber);
-                        assertPositionIsValid(position, className, positionManager);
+                    for (Breakpoint breakpoint : breakpoints) {
+                        SourcePosition position = SourcePosition.createFromLine(breakpoint.file, breakpoint.lineNumber);
+                        assertPositionIsValid(position, breakpoint.className, positionManager);
                     }
                 }
                 catch (NoDataException e) {
@@ -126,24 +147,22 @@ public abstract class PositionManagerTestCase extends PlatformTestCase {
         });
     }
 
-    private static Map<Integer, String> extractBreakpointsInfo(String fileContent) {
-        Map<Integer, String> breakpoints = Maps.newHashMap();
+    private static Collection<Breakpoint> extractBreakpointsInfo(JetFile file, String fileContent) {
+        Collection<Breakpoint> breakpoints = Lists.newArrayList();
         String[] lines = StringUtil.convertLineSeparators(fileContent).split("\n");
 
         for (int i = 0; i < lines.length; i++) {
             Matcher matcher = breakpointPattern.matcher(lines[i]);
             if (matcher.matches()) {
                 // Line breakpoint numbers are 1-based
-                breakpoints.put(i + 1, matcher.group(1));
+                breakpoints.add(new Breakpoint(file, i + 1, matcher.group(1)));
             }
         }
 
         return breakpoints;
     }
 
-    private static Map<String, ReferenceType> compileFileGetReferenceMap(JetFile jetFile) {
-        ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(jetFile);
-
+    private static Map<String, ReferenceType> getReferenceMap(ClassFileFactory classFileFactory) {
         Map<String, ReferenceType> referencesByName = Maps.newHashMap();
         for (String classFileName : classFileFactory.files()) {
             String name = classFileName.substring(0, classFileName.lastIndexOf('.'));
@@ -174,6 +193,18 @@ public abstract class PositionManagerTestCase extends PlatformTestCase {
         assertEquals(1, classes.size());
         ReferenceType type = classes.get(0);
         assertEquals(className, type.name());
+    }
+
+    private static class Breakpoint {
+        private final JetFile file;
+        private final int lineNumber;
+        private final String className;
+
+        private Breakpoint(JetFile file, int lineNumber, String className) {
+            this.file = file;
+            this.lineNumber = lineNumber;
+            this.className = className;
+        }
     }
 
     private static class MockVirtualMachineProxy extends VirtualMachineProxyImpl {
