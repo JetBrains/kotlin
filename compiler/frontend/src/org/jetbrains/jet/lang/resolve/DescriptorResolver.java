@@ -598,7 +598,7 @@ public class DescriptorResolver {
     public VariableDescriptor resolveLocalVariableDescriptor(
             DeclarationDescriptor containingDeclaration,
             JetScope scope,
-            JetProperty property,
+            JetVariableDeclaration property,
             DataFlowInfo dataFlowInfo,
             BindingTrace trace
     ) {
@@ -635,7 +635,7 @@ public class DescriptorResolver {
     @NotNull
     public VariableDescriptorImpl resolveLocalVariableDescriptorWithType(
             DeclarationDescriptor containingDeclaration,
-            JetProperty property,
+            JetVariableDeclaration property,
             JetType type,
             BindingTrace trace
     ) {
@@ -817,7 +817,7 @@ public class DescriptorResolver {
     @NotNull
     private JetType getVariableType(
             @NotNull final JetScope scope,
-            @NotNull final JetProperty property,
+            @NotNull final JetVariableDeclaration property,
             @NotNull final DataFlowInfo dataFlowInfo,
             boolean allowDeferred,
             final BindingTrace trace
