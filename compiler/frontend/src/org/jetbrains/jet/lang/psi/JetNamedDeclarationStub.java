@@ -83,20 +83,4 @@ abstract class JetNamedDeclarationStub<T extends NamedStub> extends JetDeclarati
         PsiElement identifier = getNameIdentifier();
         return identifier != null ? identifier.getTextRange().getStartOffset() : getTextRange().getStartOffset();
     }
-
-    @Override
-    public boolean isScriptDeclaration() {
-        return getScript() != null;
-    }
-
-    @Override
-    @Nullable
-    public JetScript getScript() {
-        if (getParent() != null && getParent().getParent() instanceof JetScript) {
-            return (JetScript) getParent().getParent();
-        }
-        else {
-            return null;
-        }
-    }
 }

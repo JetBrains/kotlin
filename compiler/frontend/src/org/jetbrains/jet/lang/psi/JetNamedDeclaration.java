@@ -11,9 +11,4 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 public interface JetNamedDeclaration extends JetDeclaration, PsiNameIdentifierOwner, JetStatementExpression, JetNamed {
     @NotNull
     Name getNameAsSafeName();
-
-    boolean isScriptDeclaration();
-
-    @Nullable
-    JetScript getScript();
 }

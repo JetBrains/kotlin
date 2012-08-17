@@ -602,7 +602,7 @@ public class DescriptorResolver {
             DataFlowInfo dataFlowInfo,
             BindingTrace trace
     ) {
-        if (property.isScriptDeclaration()) {
+        if (JetPsiUtil.isScriptDeclaration(property)) {
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                     containingDeclaration,
                     annotationResolver.createAnnotationStubs(property.getModifierList(), trace),

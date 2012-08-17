@@ -321,4 +321,19 @@ public class JetPsiUtil {
         }
         return true;
     }
+
+    public static boolean isScriptDeclaration(@NotNull JetDeclaration namedDeclaration) {
+        return getScript(namedDeclaration) != null;
+    }
+
+    @Nullable
+    public static JetScript getScript(@NotNull JetDeclaration namedDeclaration) {
+        PsiElement parent = namedDeclaration.getParent();
+        if (parent != null && parent.getParent() instanceof JetScript) {
+            return (JetScript) parent.getParent();
+        }
+        else {
+            return null;
+        }
+    }
 }

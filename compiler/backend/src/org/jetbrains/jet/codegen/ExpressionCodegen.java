@@ -773,7 +773,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     public StackValue visitNamedFunction(JetNamedFunction function, StackValue data) {
         assert data == StackValue.none();
 
-        if (function.isScriptDeclaration()) {
+        if (JetPsiUtil.isScriptDeclaration(function)) {
             return StackValue.none();
         }
 
@@ -889,7 +889,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         for (JetElement statement : statements) {
             if (statement instanceof JetNamedDeclaration) {
                 JetNamedDeclaration declaration = (JetNamedDeclaration) statement;
-                if (declaration.isScriptDeclaration()) {
+                if (JetPsiUtil.isScriptDeclaration(declaration)) {
                     continue;
                 }
             }
@@ -928,7 +928,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         for (JetElement statement : Lists.reverse(statements)) {
             if (statement instanceof JetNamedDeclaration) {
                 JetNamedDeclaration declaration = (JetNamedDeclaration) statement;
-                if (declaration.isScriptDeclaration()) {
+                if (JetPsiUtil.isScriptDeclaration(declaration)) {
                     continue;
                 }
             }
@@ -1538,7 +1538,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if (fd.getContainingDeclaration() instanceof ScriptDescriptor) {
             JetNamedFunction psi = (JetNamedFunction) BindingContextUtils.descriptorToDeclaration(bindingContext, fd);
             assert psi != null;
-            return !psi.isScriptDeclaration();
+            return !JetPsiUtil.isScriptDeclaration(psi);
         }
         else if (fd instanceof ExpressionAsFunctionDescriptor) {
             return true;
@@ -2562,7 +2562,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         Type sharedVarType;
         int index;
 
-        if (property.isScriptDeclaration()) {
+        if (JetPsiUtil.isScriptDeclaration(property)) {
             return StackValue.none();
         }
         else {
@@ -2586,9 +2586,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         JetExpression initializer = property.getInitializer();
         if (initializer != null) {
-            if (property.isScriptDeclaration()) {
+            if (JetPsiUtil.isScriptDeclaration(property)) {
                 gen(initializer, varType);
-                JetScript scriptPsi = property.getScript();
+                JetScript scriptPsi = JetPsiUtil.getScript(property);
                 assert scriptPsi != null;
                 JvmClassName scriptClassName = state.getInjector().getClosureAnnotator().classNameForScriptPsi(scriptPsi);
                 v.putfield(scriptClassName.getInternalName(), property.getName(), varType.getDescriptor());
