@@ -105,9 +105,9 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
             namespaceDescriptor = createNamespaceDescriptorIfNeeded(
                     file, currentOwner, name, namespaceHeader.getLastPartExpression(), handler);
 
-            trace.record(BindingContext.NAMESPACE_IS_SRC, namespaceDescriptor, true);
             trace.record(RESOLUTION_SCOPE, namespaceHeader, outerScope);
         }
+        trace.record(BindingContext.NAMESPACE_IS_SRC, namespaceDescriptor, true);
 
         return namespaceDescriptor;
     }
