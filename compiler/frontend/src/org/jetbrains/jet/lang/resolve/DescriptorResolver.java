@@ -634,10 +634,10 @@ public class DescriptorResolver {
 
     @NotNull
     public VariableDescriptorImpl resolveLocalVariableDescriptorWithType(
-            DeclarationDescriptor containingDeclaration,
-            JetVariableDeclaration property,
-            JetType type,
-            BindingTrace trace
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull JetVariableDeclaration property,
+            @Nullable JetType type,
+            @NotNull BindingTrace trace
     ) {
         VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptor(
                 containingDeclaration,
