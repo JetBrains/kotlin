@@ -2,13 +2,13 @@
 package a
 
 class MyClass {
-    fun component0() = 1
-    fun component1() = "a"
+    fun component1() = 1
+    fun component2() = "a"
 }
 
 class MyClass2 {}
 
-fun MyClass2.component0() = 1.2
+fun MyClass2.component1() = 1.2
 
 fun test(<!UNUSED_PARAMETER!>mc1<!>: MyClass, <!UNUSED_PARAMETER!>mc2<!>: MyClass2) {
     val (a, b) = mc1

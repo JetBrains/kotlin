@@ -139,7 +139,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         if (expressionReceiver == null) {
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        int componentIndex = 0;
+        int componentIndex = 1;
         for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
             final Name componentName = Name.identifier("component" + componentIndex);
             componentIndex++;
