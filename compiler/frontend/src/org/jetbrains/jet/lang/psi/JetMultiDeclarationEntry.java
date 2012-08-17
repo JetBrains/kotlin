@@ -37,7 +37,7 @@ public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed impl
     }
 
     @Override
-    public JetTypeReference getPropertyTypeRef() {
+    public JetTypeReference getTypeRef() {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }
 

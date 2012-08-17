@@ -68,7 +68,7 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
 
     @Override
     public PsiJetPropertyStub createStub(@NotNull JetProperty psi, StubElement parentStub) {
-        JetTypeReference typeRef = psi.getPropertyTypeRef();
+        JetTypeReference typeRef = psi.getTypeRef();
         JetExpression expression = psi.getInitializer();
 
         assert !psi.isLocal() : "Should not store local property";

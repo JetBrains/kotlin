@@ -731,7 +731,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 declaration.accept(new JetVisitorVoid() {
                     @Override
                     public void visitProperty(JetProperty property) {
-                        if (property.getPropertyTypeRef() != null) {
+                        if (property.getTypeRef() != null) {
                             memberDeclarations.addPropertyDescriptor(descriptorResolver.resolvePropertyDescriptor(classDescriptor, parameterScope, property, JetTestUtils.DUMMY_TRACE));
                         }
                         else {

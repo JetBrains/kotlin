@@ -22,15 +22,9 @@ import com.intellij.ide.projectView.impl.nodes.AbstractPsiBasedNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
-import org.jetbrains.jet.plugin.structureView.JetStructureViewElement;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -69,7 +63,7 @@ public class JetDeclarationTreeNode extends AbstractPsiBasedNode<JetDeclaration>
                 text = CLASS_INITIALIZER;
             } else if (declaration instanceof JetProperty) {
                 JetProperty property = (JetProperty) declaration;
-                JetTypeReference ref = property.getPropertyTypeRef();
+                JetTypeReference ref = property.getTypeRef();
                 if (ref != null) {
                     if (settings.SPACE_BEFORE_TYPE_COLON) text += " ";
                     text += ":";

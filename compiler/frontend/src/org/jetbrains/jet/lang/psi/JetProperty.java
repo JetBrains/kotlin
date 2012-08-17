@@ -116,7 +116,7 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
 
     @Override
     @Nullable
-    public JetTypeReference getPropertyTypeRef() {
+    public JetTypeReference getTypeRef() {
         ASTNode node = getNode().getFirstChildNode();
         boolean passedColon = false;
         while (node != null) {

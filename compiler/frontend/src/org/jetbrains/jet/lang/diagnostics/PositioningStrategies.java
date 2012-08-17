@@ -49,7 +49,7 @@ public class PositioningStrategies {
             }
             else if (declaration instanceof JetProperty) {
                 JetProperty property = (JetProperty) declaration;
-                returnTypeRef = property.getPropertyTypeRef();
+                returnTypeRef = property.getTypeRef();
                 nameNode = getNameNode(property);
             }
             else if (declaration instanceof JetPropertyAccessor) {
@@ -108,7 +108,7 @@ public class PositioningStrategies {
             else if (element instanceof JetProperty) {
                 JetProperty property = (JetProperty) element;
                 PsiElement endOfSignatureElement;
-                JetTypeReference propertyTypeRef = property.getPropertyTypeRef();
+                JetTypeReference propertyTypeRef = property.getTypeRef();
                 PsiElement nameIdentifier = property.getNameIdentifier();
                 if (propertyTypeRef != null) {
                     endOfSignatureElement = propertyTypeRef;

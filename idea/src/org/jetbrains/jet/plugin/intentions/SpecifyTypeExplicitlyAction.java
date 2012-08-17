@@ -67,7 +67,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         }
         if (parent instanceof JetProperty) {
             JetProperty property = (JetProperty) parent;
-            if (property.getPropertyTypeRef() == null) {
+            if (property.getTypeRef() == null) {
                 addTypeAnnotation(project, property, type);
             }
             else {
@@ -105,7 +105,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         }
         JetNamedDeclaration declaration = (JetNamedDeclaration) parent;
         if (declaration instanceof JetProperty && !PsiTreeUtil.isAncestor(((JetProperty) declaration).getInitializer(), element, false)) {
-            if (((JetProperty) declaration).getPropertyTypeRef() != null) {
+            if (((JetProperty) declaration).getTypeRef() != null) {
                 setText(JetBundle.message("specify.type.explicitly.remove.action.name"));
                 return true;
             }
@@ -173,7 +173,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     }
 
     public static void addTypeAnnotation(Project project, JetProperty property, @NotNull JetType exprType) {
-        if (property.getPropertyTypeRef() != null) return;
+        if (property.getTypeRef() != null) return;
         PsiElement anchor = property.getNameIdentifier();
         if (anchor == null) return;
         anchor = anchor.getNextSibling();
@@ -227,7 +227,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     }
 
     public static void removeTypeAnnotation(JetProperty property) {
-        removeTypeAnnotation(property, property.getPropertyTypeRef());
+        removeTypeAnnotation(property, property.getTypeRef());
     }
 
     public static void removeTypeAnnotation(JetParameter parameter) {

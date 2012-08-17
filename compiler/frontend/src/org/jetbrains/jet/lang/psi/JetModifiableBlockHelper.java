@@ -45,7 +45,7 @@ public final class JetModifiableBlockHelper {
             }
             else if (declaration instanceof JetProperty) {
                 JetProperty property = (JetProperty) declaration;
-                if (property.getPropertyTypeRef() != null) {
+                if (property.getTypeRef() != null) {
                     return takePartInDeclarationTypeInference(property);
                 }
 
@@ -71,7 +71,7 @@ public final class JetModifiableBlockHelper {
             }
             else if (declaration instanceof JetProperty) {
                 JetProperty property = (JetProperty) declaration;
-                if (property.getPropertyTypeRef() == null) {
+                if (property.getTypeRef() == null) {
                     return true;
                 }
             }

@@ -30,5 +30,5 @@ public interface JetVariableDeclaration extends JetDeclaration, JetWithExpressio
     ASTNode getValOrVarNode();
 
     @Nullable
-    JetTypeReference getPropertyTypeRef();
+    JetTypeReference getTypeRef();
 }

@@ -114,7 +114,7 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
             assert nextSibling != null;
             newElement.deleteChildRange(nextSibling, initializer);
 
-            if (newElement.getPropertyTypeRef() == null && type != null) {
+            if (newElement.getTypeRef() == null && type != null) {
                 typeToAdd = type;
             }
         }

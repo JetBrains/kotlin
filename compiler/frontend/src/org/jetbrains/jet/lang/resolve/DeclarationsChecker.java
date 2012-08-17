@@ -144,7 +144,7 @@ public class DeclarationsChecker {
     private void checkDeclaredTypeInPublicMember(JetNamedDeclaration member, CallableMemberDescriptor memberDescriptor) {
         boolean hasDeferredType;
         if (member instanceof JetProperty) {
-            hasDeferredType = ((JetProperty) member).getPropertyTypeRef() == null && DescriptorResolver.hasBody((JetProperty) member);
+            hasDeferredType = ((JetProperty) member).getTypeRef() == null && DescriptorResolver.hasBody((JetProperty) member);
         }
         else {
             assert member instanceof JetFunction;
@@ -204,7 +204,7 @@ public class DeclarationsChecker {
                                             (setter != null && setter.getBodyExpression() != null);
 
         if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
-            if (property.getInitializer() == null && property.getPropertyTypeRef() == null) {
+            if (property.getInitializer() == null && property.getTypeRef() == null) {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
             }
             return;
@@ -229,7 +229,7 @@ public class DeclarationsChecker {
                     trace.report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property));
                 }
             }
-            if (!error && property.getPropertyTypeRef() == null) {
+            if (!error && property.getTypeRef() == null) {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
             }
             return;

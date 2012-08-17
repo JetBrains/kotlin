@@ -823,7 +823,7 @@ public class DescriptorResolver {
             final BindingTrace trace
     ) {
         // TODO : receiver?
-        JetTypeReference propertyTypeRef = property.getPropertyTypeRef();
+        JetTypeReference propertyTypeRef = property.getTypeRef();
 
         if (propertyTypeRef == null) {
             final JetExpression initializer = property.getInitializer();

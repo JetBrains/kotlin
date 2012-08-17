@@ -188,7 +188,7 @@ public class JetPsiUtil {
                 }
                 if (pattern instanceof JetBindingPattern) {
                     JetBindingPattern bindingPattern = (JetBindingPattern) pattern;
-                    if (bindingPattern.getVariableDeclaration().getPropertyTypeRef() == null && bindingPattern.getCondition() == null) {
+                    if (bindingPattern.getVariableDeclaration().getTypeRef() == null && bindingPattern.getCondition() == null) {
                         return true;
                     }
                 }

@@ -59,7 +59,7 @@ public class JetPsiFactory {
 
     public static JetTypeReference createType(Project project, String type) {
         JetProperty property = createProperty(project, "val x : " + type);
-        return property.getPropertyTypeRef();
+        return property.getTypeRef();
     }
 
     //the pair contains the first and the last elements of a range

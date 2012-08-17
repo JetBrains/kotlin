@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.types.expressions;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -110,7 +109,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
         VariableDescriptor propertyDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(scope.getContainingDeclaration(), scope, property, context.dataFlowInfo, context.trace);
         JetExpression initializer = property.getInitializer();
-        if (property.getPropertyTypeRef() != null && initializer != null) {
+        if (property.getTypeRef() != null && initializer != null) {
             JetType outType = propertyDescriptor.getType();
             JetType initializerType = facade.getTypeInfo(initializer, context.replaceExpectedType(outType).replaceScope(scope)).getType();
         }
