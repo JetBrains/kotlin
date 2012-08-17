@@ -113,7 +113,7 @@ class MapJsTest {
         m1["beverage"] = "beer"
         m1["location"] = "Mells"
 
-        val list = m1.map<String,String,String>{ it.value + " rocks" }
+        val list = m1.map{ it.value + " rocks" }
 
         println("Got new list $list")
         assertEquals(arrayList("beer rocks", "Mells rocks"), list)
@@ -124,7 +124,7 @@ class MapJsTest {
         m1["beverage"] = "beer"
         m1["location"] = "Mells"
 
-        val m2 = m1.mapValues<String,String,String>{ it.value + "2" }
+        val m2 = m1.mapValues{ it.value + "2" }
 
         println("Got new map $m2")
         assertEquals(arrayList("beer2", "Mells2"), m2.values().toList())

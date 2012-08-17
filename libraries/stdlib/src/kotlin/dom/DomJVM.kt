@@ -110,7 +110,7 @@ get() = childNodes.outerHTML
  * Returns the HTML representation of the nodes
  */
 public val NodeList.outerHTML: String
-get() = toList().map<Node, String> { it.innerHTML }.makeString("")
+get() = toList().map { it.innerHTML }.makeString("")
 
 /** Returns an [[Iterator]] of all the next [[Element]] siblings */
 fun Node.nextElements(): Iterator<Element> = nextSiblings().filterIsInstance<Node, Element>(javaClass<Element>())

@@ -132,7 +132,7 @@ class CollectionTest {
         // lets concatenate some strings
         expect("1234") {
             val numbers = arrayList(1, 2, 3, 4)
-            numbers.map<Int, String>{it.toString()}.fold(""){ a, b -> a + b}
+            numbers.map{it.toString()}.fold(""){ a, b -> a + b}
         }
     }
 
@@ -146,7 +146,7 @@ class CollectionTest {
     test fun foldRight() {
         expect("1234") {
             val numbers = arrayList(1, 2, 3, 4)
-            numbers.map<Int, String>{it.toString()}.foldRight(""){ a, b -> a + b}
+            numbers.map{it.toString()}.foldRight(""){ a, b -> a + b}
         }
     }
 
@@ -198,14 +198,9 @@ class CollectionTest {
         assertEquals("a, b, c, *", text2)
     }
 
-    /*
-        TODO compiler bug
-        we should be able to remove the explicit type <String,Int> on the map function
-        http://youtrack.jetbrains.net/issue/KT-1145
-    */
     test fun map() {
         val data = arrayList("foo", "bar")
-        val lengths = data.map<String, Int>{ it.length }
+        val lengths = data.map{ it.length }
         assertTrue {
             lengths.all{it == 3}
         }

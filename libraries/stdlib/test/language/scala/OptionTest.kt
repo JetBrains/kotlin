@@ -105,11 +105,8 @@ class OptionTest: TestCase() {
             */
     
             val name = request.getParameter("name")
-            val upper = name.map<String, String>{ it.trim() }.filter{ it.length != 0 }.map<String, String>{ it.toUpperCase() }
+            val upper = name.map{ it.trim() }.filter{ it.length != 0 }.map{ it.toUpperCase() }
             return upper ?: ""
-    
-            // TODO when http://youtrack.jetbrains.com/issue/KT-1145 is fixed
-            // we can get rid of the unnecessary <String, String> on map
         }
     
         assertEquals("", foo(Request(null)))

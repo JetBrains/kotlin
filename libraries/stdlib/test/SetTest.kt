@@ -54,7 +54,7 @@ class SetTest {
           we should be able to remove the explicit type on the function
           http://youtrack.jetbrains.net/issue/KT-849
         */
-        val lengths = data.map<String, Int>{(s: String) -> s.length}
+        val lengths = data.map{s -> s.length}
         assertTrue {
             lengths.all{it == 3}
         }

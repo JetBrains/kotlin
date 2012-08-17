@@ -144,7 +144,7 @@ import js.noImpl
 
                     // TODO in java 7 its not easy with reflection to get the parameter argument name...
                     var counter = 0
-                    val parameters = parameterTypes.map<Class<out Any?>?, String>{ "arg${++counter}: ${parameterTypeName(it)}" }.makeString(", ")
+                    val parameters = parameterTypes.map{ "arg${++counter}: ${parameterTypeName(it)}" }.makeString(", ")
                     val returnType = simpleTypeName(method.getReturnType())
                     println("    public fun ${method.getName()}($parameters): $returnType = js.noImpl")
                 }
