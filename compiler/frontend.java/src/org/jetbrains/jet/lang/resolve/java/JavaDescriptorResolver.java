@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
@@ -47,6 +46,8 @@ import org.jetbrains.jet.utils.ExceptionUtils;
 
 import javax.inject.Inject;
 import java.util.*;
+
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 
 /**
  * @author abreslav
@@ -534,7 +535,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         classDescriptorCache.put(fqName, classData);
 
         classData.classDescriptor.setSupertypes(getSupertypes(new PsiClassWrapper(classObjectPsiClass), classData, new ArrayList<TypeParameterDescriptor>(0)));
-        classData.classDescriptor.setName(JetPsiUtil.NO_NAME_PROVIDED); // TODO
+        classData.classDescriptor.setName(getClassObjectName(containing.getName()));
         classData.classDescriptor.setModality(Modality.FINAL);
         classData.classDescriptor.setVisibility(containing.getVisibility());
         classData.classDescriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));

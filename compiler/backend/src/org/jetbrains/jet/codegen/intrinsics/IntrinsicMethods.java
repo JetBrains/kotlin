@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -35,6 +34,8 @@ import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 
 /**
  * @author yole
@@ -145,7 +146,8 @@ public class IntrinsicMethods {
 
         for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
             intrinsicsMap.registerIntrinsic(
-                    JetStandardClasses.STANDARD_CLASSES_FQNAME.child(type.getRangeTypeName()).toUnsafe().child(JetPsiUtil.NO_NAME_PROVIDED),
+                    JetStandardClasses.STANDARD_CLASSES_FQNAME.child(type.getRangeTypeName()).toUnsafe().child(
+                            getClassObjectName(type.getRangeTypeName())),
                     Name.identifier("EMPTY"), -1, new EmptyRange(type));
         }
 

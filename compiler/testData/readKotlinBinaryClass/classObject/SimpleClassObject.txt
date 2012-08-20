@@ -2,7 +2,7 @@ namespace test
 
 internal final class test.SimpleClassObject : jet.Any {
     public final /*constructor*/ fun <init>(): test.SimpleClassObject
-    internal final class object test.SimpleClassObject.<no name provided> : jet.Any {
-        internal final /*constructor*/ fun <init>(): test.SimpleClassObject.<no name provided>
+    internal final class object test.SimpleClassObject.<class-object-for-SimpleClassObject> : jet.Any {
+        internal final /*constructor*/ fun <init>(): test.SimpleClassObject.<class-object-for-SimpleClassObject>
     }
 }

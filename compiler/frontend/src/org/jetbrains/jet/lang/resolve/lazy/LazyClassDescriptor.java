@@ -223,10 +223,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
             JetClassLikeInfo classObjectInfo = getClassObjectInfo(classObject);
             if (classObjectInfo != null) {
-                Name classObjectName = getKind() == ClassKind.ENUM_CLASS
-                                       ? getClassObjectName(getName())
-                                       : JetPsiUtil.NO_NAME_PROVIDED;
-                classObjectDescriptor = new LazyClassDescriptor(resolveSession, this, classObjectName, classObjectInfo);
+                classObjectDescriptor = new LazyClassDescriptor(resolveSession, this, getClassObjectName(getName()), classObjectInfo);
             }
             classObjectDescriptorResolved = true;
         }

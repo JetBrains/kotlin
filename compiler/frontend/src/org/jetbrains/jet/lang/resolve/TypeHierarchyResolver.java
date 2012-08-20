@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -230,7 +231,8 @@ public class TypeHierarchyResolver {
 
                 @Override
                 public void visitObjectDeclaration(JetObjectDeclaration declaration) {
-                    final MutableClassDescriptor objectDescriptor = createClassDescriptorForObject(declaration, owner, outerScope);
+                    final MutableClassDescriptor objectDescriptor =
+                            createClassDescriptorForObject(declaration, owner, outerScope, JetPsiUtil.safeName(declaration.getName()));
                     owner.addObjectDescriptor(objectDescriptor);
                     trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(declaration), objectDescriptor);
                 }
@@ -270,8 +272,9 @@ public class TypeHierarchyResolver {
                 public void visitClassObject(JetClassObject classObject) {
                     JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
                     if (objectDeclaration != null) {
+                        Name classObjectName = getClassObjectName(owner.getOwnerForChildren().getName());
                         MutableClassDescriptor classObjectDescriptor =
-                                createClassDescriptorForObject(objectDeclaration, owner, getStaticScope(classObject, owner));
+                              createClassDescriptorForObject(objectDeclaration, owner, getStaticScope(classObject, owner), classObjectName);
                         NamespaceLikeBuilder.ClassObjectStatus status = owner.setClassObjectDescriptor(classObjectDescriptor);
                         switch (status) {
                             case DUPLICATE:
@@ -306,10 +309,11 @@ public class TypeHierarchyResolver {
                 }
 
                 private MutableClassDescriptor createClassDescriptorForObject(
-                        @NotNull JetObjectDeclaration declaration, @NotNull NamespaceLikeBuilder owner, JetScope scope
+                        @NotNull JetObjectDeclaration declaration, @NotNull NamespaceLikeBuilder owner,
+                        @NotNull JetScope scope, @NotNull Name name
                 ) {
                     MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
-                            owner.getOwnerForChildren(), scope, ClassKind.OBJECT, JetPsiUtil.safeName(declaration.getName()));
+                            owner.getOwnerForChildren(), scope, ClassKind.OBJECT, name);
                     context.getObjects().put(declaration, mutableClassDescriptor);
 
                     JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
