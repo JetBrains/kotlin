@@ -2559,22 +2559,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, property);
 
-        Type sharedVarType;
-        int index;
-
         if (JetPsiUtil.isScriptDeclaration(property)) {
             return StackValue.none();
         }
-        else {
-            index = lookupLocal(variableDescriptor);
+        int index = lookupLocal(variableDescriptor);
 
-            if (index < 0) {
-                throw new IllegalStateException("Local variable not found for " + variableDescriptor);
-            }
-
-            sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
-            assert variableDescriptor != null;
+        if (index < 0) {
+            throw new IllegalStateException("Local variable not found for " + variableDescriptor);
         }
+
+        Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
+        assert variableDescriptor != null;
 
         Type varType = asmType(variableDescriptor.getType());
         if (sharedVarType != null) {
