@@ -12,8 +12,7 @@ class SimpleEnumerator {
 }
 
 class SimpleEnumeratorWrapper(private val enumerator: SimpleEnumerator) {
-    val hasNext: Boolean
-        get() = enumerator.hasMoreElements()
+    fun hasNext(): Boolean = enumerator.hasMoreElements()
 
     fun next() = enumerator.getNext()
 }

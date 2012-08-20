@@ -228,8 +228,6 @@ public class DefaultErrorMessages {
         MAP.put(NO_CLASS_OBJECT, "Please specify constructor invocation; classifier ''{0}'' does not have a class object", NAME);
         MAP.put(NO_GENERICS_IN_SUPERTYPE_SPECIFIER, "Generic arguments of the base type must be specified");
 
-        MAP.put(HAS_NEXT_PROPERTY_AND_FUNCTION_AMBIGUITY,
-                "An ambiguity between 'iterator().hasNext()' function and 'iterator().hasNext' property");
         MAP.put(HAS_NEXT_MISSING, "Loop range must have an 'iterator().hasNext()' function or an 'iterator().hasNext' property");
         MAP.put(HAS_NEXT_FUNCTION_AMBIGUITY, "Function 'iterator().hasNext()' is ambiguous for this expression");
         MAP.put(HAS_NEXT_MUST_BE_READABLE, "The 'iterator().hasNext' property of the loop range must be readable");

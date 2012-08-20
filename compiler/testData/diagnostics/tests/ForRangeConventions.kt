@@ -1,4 +1,3 @@
-
 import java.util.*;
 
 class NotRange1() {
@@ -82,7 +81,7 @@ fun test(notRange1: NotRange1, notRange2: NotRange2, notRange3: NotRange3, notRa
   for (i in <!NEXT_MISSING!>notRange3<!>);
   for (i in <!HAS_NEXT_MISSING!>notRange4<!>);
   for (i in <!HAS_NEXT_FUNCTION_TYPE_MISMATCH!>notRange5<!>);
-  for (i in <!HAS_NEXT_PROPERTY_AND_FUNCTION_AMBIGUITY!>notRange6<!>);
+  for (i in notRange6);
   for (i in <!HAS_NEXT_FUNCTION_TYPE_MISMATCH!>notRange7<!>);
   for (i in <!HAS_NEXT_MISSING!>notRange8<!>);
   for (i in range0);
@@ -90,4 +89,3 @@ fun test(notRange1: NotRange1, notRange2: NotRange2, notRange3: NotRange3, notRa
 
   for (i in (ArrayList<Int>() : List<Int>));
 }
-

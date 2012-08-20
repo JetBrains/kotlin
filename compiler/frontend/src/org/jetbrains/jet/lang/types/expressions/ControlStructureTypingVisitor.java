@@ -327,17 +327,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             JetType iteratorType = iteratorFunction.getReturnType();
             FunctionDescriptor hasNextFunction = checkHasNextFunctionSupport(loopRangeExpression, iteratorType, context);
             boolean hasNextFunctionSupported = hasNextFunction != null;
-            VariableDescriptor hasNextProperty = checkHasNextPropertySupport(loopRangeExpression, iteratorType, context);
-            boolean hasNextPropertySupported = hasNextProperty != null;
-            if (hasNextFunctionSupported && hasNextPropertySupported && !ErrorUtils.isErrorType(iteratorType)) {
-                // TODO : overload resolution rules impose priorities here???
-                context.trace.report(HAS_NEXT_PROPERTY_AND_FUNCTION_AMBIGUITY.on(loopRangeExpression));
-            }
-            else if (!hasNextFunctionSupported && !hasNextPropertySupported) {
+            if (!hasNextFunctionSupported) {
                 context.trace.report(HAS_NEXT_MISSING.on(loopRangeExpression));
             }
             else {
-                context.trace.record(LOOP_RANGE_HAS_NEXT, loopRange.getExpression(), hasNextFunctionSupported ? hasNextFunction : hasNextProperty);
+                context.trace.record(LOOP_RANGE_HAS_NEXT, loopRange.getExpression(), hasNextFunction);
             }
 
             OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), Name.identifier("next"), Collections.<JetType>emptyList());
@@ -386,25 +380,6 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         return hasNextResolutionResults.getResultingCall().getResultingDescriptor();
-    }
-
-    @Nullable
-    private static VariableDescriptor checkHasNextPropertySupport(@NotNull JetExpression loopRange, @NotNull JetType iteratorType, ExpressionTypingContext context) {
-        VariableDescriptor hasNextProperty = DescriptorUtils.filterNonExtensionProperty(iteratorType.getMemberScope().getProperties(Name.identifier("hasNext")));
-        if (hasNextProperty == null) {
-            return null;
-        }
-        else {
-            JetType hasNextReturnType = hasNextProperty.getType();
-            if (hasNextReturnType == null) {
-                // TODO : accessibility
-                context.trace.report(HAS_NEXT_MUST_BE_READABLE.on(loopRange));
-            }
-            else if (!isBoolean(hasNextReturnType)) {
-                context.trace.report(HAS_NEXT_PROPERTY_TYPE_MISMATCH.on(loopRange, hasNextReturnType));
-            }
-        }
-        return hasNextProperty;
     }
 
     @Override

@@ -1,6 +1,7 @@
 fun <T : Any> T?.iterator() = object {
     var hasNext = this@iterator != null
       private set
+    fun hasNext() = hasNext
 
     fun next() : T {
         if (hasNext) {

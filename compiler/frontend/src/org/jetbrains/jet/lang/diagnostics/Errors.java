@@ -212,7 +212,6 @@ public interface Errors {
     DiagnosticFactory1<JetSimpleNameExpression, ClassifierDescriptor> NO_CLASS_OBJECT = DiagnosticFactory1.create(ERROR);
     SimpleDiagnosticFactory<PsiElement> NO_GENERICS_IN_SUPERTYPE_SPECIFIER = SimpleDiagnosticFactory.create(ERROR);
 
-    SimpleDiagnosticFactory<JetExpression> HAS_NEXT_PROPERTY_AND_FUNCTION_AMBIGUITY = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetExpression> HAS_NEXT_MISSING = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetExpression> HAS_NEXT_FUNCTION_AMBIGUITY = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetExpression> HAS_NEXT_MUST_BE_READABLE = SimpleDiagnosticFactory.create(ERROR);

@@ -9,6 +9,7 @@ inline fun <T> java.util.Enumeration<T>.iterator() = object: Iterator<T> {
 fun <T : Any> T?.iterator() = object {
     var hasNext = this@iterator != null
       private set
+    fun hasNext() = hasNext
 
     fun next() : T {
         if (hasNext) {
