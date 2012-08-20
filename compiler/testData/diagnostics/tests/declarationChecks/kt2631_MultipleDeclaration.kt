@@ -10,7 +10,7 @@ class MyClass2 {}
 
 fun MyClass2.component1() = 1.2
 
-fun test(<!UNUSED_PARAMETER!>mc1<!>: MyClass, <!UNUSED_PARAMETER!>mc2<!>: MyClass2) {
+fun test(mc1: MyClass, mc2: MyClass2) {
     val (a, b) = mc1
     a : Int
     b : String

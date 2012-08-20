@@ -4,11 +4,11 @@ class A {
 }
 
 fun a() {
-    val (<!REDECLARATION!>a<!>, <!REDECLARATION!>a<!>) = A()
-    val (x, <!REDECLARATION!>y<!>) = A();
+    val (<!REDECLARATION, UNUSED_VARIABLE!>a<!>, <!REDECLARATION, UNUSED_VARIABLE!>a<!>) = A()
+    val (<!UNUSED_VARIABLE!>x<!>, <!REDECLARATION, UNUSED_VARIABLE!>y<!>) = A();
     val <!REDECLARATION!>b<!> = 1
     use(b)
-    val (<!REDECLARATION!>b<!>, <!REDECLARATION!>y<!>) = A();
+    val (<!REDECLARATION, UNUSED_VARIABLE!>b<!>, <!REDECLARATION, UNUSED_VARIABLE!>y<!>) = A();
 }
 
 

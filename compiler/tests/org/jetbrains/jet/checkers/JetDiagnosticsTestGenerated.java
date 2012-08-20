@@ -1088,6 +1088,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/kt2631_MultipleDeclaration.kt");
             }
             
+            @TestMetadata("kt2643MultiDeclInControlFlow.kt")
+            public void testKt2643MultiDeclInControlFlow() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/declarationChecks/kt2643MultiDeclInControlFlow.kt");
+            }
+            
             @TestMetadata("kt559.kt")
             public void testKt559() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/kt559.kt");

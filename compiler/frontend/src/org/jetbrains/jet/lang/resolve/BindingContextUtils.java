@@ -93,7 +93,7 @@ public class BindingContextUtils {
     @Nullable
     public static VariableDescriptor extractVariableDescriptorIfAny(@NotNull BindingContext bindingContext, @Nullable JetElement element, boolean onlyReference) {
         DeclarationDescriptor descriptor = null;
-        if (!onlyReference && (element instanceof JetProperty || element instanceof JetParameter)) {
+        if (!onlyReference && (element instanceof JetVariableDeclaration || element instanceof JetParameter)) {
             descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
         }
         else if (element instanceof JetSimpleNameExpression) {

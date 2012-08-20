@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.JetVariableDeclaration;
 
 /**
  * @author svtk
@@ -29,7 +30,7 @@ public class VariableDeclarationInstruction extends InstructionWithNext {
         super(element);
     }
 
-    protected VariableDeclarationInstruction(@NotNull JetProperty element) {
+    protected VariableDeclarationInstruction(@NotNull JetVariableDeclaration element) {
         super(element);
     }
     

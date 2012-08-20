@@ -78,7 +78,7 @@ public interface JetControlFlowBuilder {
     void write(@NotNull JetElement assignment, @NotNull JetElement lValue);
     
     void declare(@NotNull JetParameter parameter);
-    void declare(@NotNull JetProperty property);
+    void declare(@NotNull JetVariableDeclaration property);
 
     // Other
     void unsupported(JetElement element);

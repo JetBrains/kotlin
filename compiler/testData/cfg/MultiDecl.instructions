@@ -1,0 +1,40 @@
+== C ==
+class C {
+    fun component1() = 1
+    fun component2() = 2
+}
+---------------------
+l0:
+    <START>    NEXT:[<END>]     PREV:[]
+l1:
+    <END>      NEXT:[<SINK>]    PREV:[<START>]
+error:
+    <ERROR>    NEXT:[<SINK>]    PREV:[]
+sink:
+    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+=====================
+== test ==
+fun test(c: C) {
+    val (a, b) = c
+    val d = 1
+}
+---------------------
+l0:
+    <START>         NEXT:[v(c: C)]         PREV:[]
+    v(c: C)         NEXT:[w(c)]            PREV:[<START>]
+    w(c)            NEXT:[r(c)]            PREV:[v(c: C)]
+    r(c)            NEXT:[v(a)]            PREV:[w(c)]
+    v(a)            NEXT:[w(a)]            PREV:[r(c)]
+    w(a)            NEXT:[v(b)]            PREV:[v(a)]
+    v(b)            NEXT:[w(b)]            PREV:[w(a)]
+    w(b)            NEXT:[v(val d = 1)]    PREV:[v(b)]
+    v(val d = 1)    NEXT:[r(1)]            PREV:[w(b)]
+    r(1)            NEXT:[w(d)]            PREV:[v(val d = 1)]
+    w(d)            NEXT:[<END>]           PREV:[r(1)]
+l1:
+    <END>           NEXT:[<SINK>]          PREV:[w(d)]
+error:
+    <ERROR>         NEXT:[<SINK>]          PREV:[]
+sink:
+    <SINK>          NEXT:[]                PREV:[<ERROR>, <END>]
+=====================

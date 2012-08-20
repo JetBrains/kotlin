@@ -451,8 +451,8 @@ public class JetFlowInformationProvider {
                         PsiElement nameIdentifier = ((JetNamedDeclaration) element).getNameIdentifier();
                         if (nameIdentifier == null) return;
                         if (!VariableUseState.isUsed(variableUseState)) {
-                            if (element instanceof JetProperty) {
-                                trace.report(Errors.UNUSED_VARIABLE.on((JetProperty) element, variableDescriptor));
+                            if (element instanceof JetVariableDeclaration) {
+                                trace.report(Errors.UNUSED_VARIABLE.on((JetVariableDeclaration) element, variableDescriptor));
                             }
                             else if (element instanceof JetParameter) {
                                 PsiElement psiElement = element.getParent().getParent();
@@ -468,13 +468,18 @@ public class JetFlowInformationProvider {
                                 }
                             }
                         }
-                        else if (variableUseState == ONLY_WRITTEN_NEVER_READ && element instanceof JetProperty) {
-                            trace.report(Errors.ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE.on((JetNamedDeclaration) element, variableDescriptor));
+                        else if (variableUseState == ONLY_WRITTEN_NEVER_READ && element instanceof JetVariableDeclaration) {
+                            trace.report(Errors.ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE.on((JetVariableDeclaration) element, variableDescriptor));
                         }
-                        else if (variableUseState == LAST_WRITTEN && element instanceof JetProperty) {
-                            JetExpression initializer = ((JetProperty) element).getInitializer();
-                            if (initializer != null) {
-                                trace.report(Errors.VARIABLE_WITH_REDUNDANT_INITIALIZER.on(initializer, variableDescriptor));
+                        else if (variableUseState == LAST_WRITTEN && element instanceof JetVariableDeclaration) {
+                            if (element instanceof JetProperty) {
+                                JetExpression initializer = ((JetProperty) element).getInitializer();
+                                if (initializer != null) {
+                                    trace.report(Errors.VARIABLE_WITH_REDUNDANT_INITIALIZER.on(initializer, variableDescriptor));
+                                }
+                            }
+                            else if (element instanceof JetMultiDeclarationEntry) {
+                                trace.report(VARIABLE_WITH_REDUNDANT_INITIALIZER.on(element, variableDescriptor));
                             }
                         }
                     }

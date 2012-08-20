@@ -743,6 +743,19 @@ public class JetControlFlowProcessor {
         }
 
         @Override
+        public void visitMultiDeclaration(JetMultiDeclaration declaration) {
+            JetExpression initializer = declaration.getInitializer();
+            if (initializer != null) {
+                builder.read(initializer);
+            }
+            List<JetMultiDeclarationEntry> entries = declaration.getEntries();
+            for (JetMultiDeclarationEntry entry : entries) {
+                builder.declare(entry);
+                builder.write(entry, entry);
+            }
+        }
+
+        @Override
         public void visitPropertyAccessor(JetPropertyAccessor accessor) {
             processLocalDeclaration(accessor);
         }
