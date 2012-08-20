@@ -60,7 +60,7 @@ public class GenerationUtils {
     @NotNull
     private static GenerationState compileFilesGetGenerationState(@NotNull AnalyzeExhaust analyzeExhaust, @NotNull List<JetFile> files) {
         analyzeExhaust.throwIfError();
-        GenerationState state = new GenerationState(ClassBuilderFactories.binaries(false), analyzeExhaust, files);
+        GenerationState state = new GenerationState(ClassBuilderFactories.TEST, analyzeExhaust, files);
         state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         return state;
     }

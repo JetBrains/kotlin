@@ -1,0 +1,5 @@
+fun foo() {
+    {
+        test.lineNumber()
+    }()
+}
