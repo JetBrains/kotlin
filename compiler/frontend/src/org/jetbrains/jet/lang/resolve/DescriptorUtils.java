@@ -365,4 +365,14 @@ public class DescriptorUtils {
         }
         return false;
     }
+
+    @NotNull
+    public static Name getClassObjectName(@NotNull Name className) {
+        return getClassObjectName(className.getName());
+    }
+
+    @NotNull
+    public static Name getClassObjectName(@NotNull String className) {
+        return Name.special("<class-object-for-" + className + ">");
+    }
 }

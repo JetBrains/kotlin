@@ -43,6 +43,8 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
+
 /**
  * @author abreslav
  */
@@ -222,7 +224,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             JetClassLikeInfo classObjectInfo = getClassObjectInfo(classObject);
             if (classObjectInfo != null) {
                 Name classObjectName = getKind() == ClassKind.ENUM_CLASS
-                                       ? Name.special("<class-object-for-" + getName() + ">")
+                                       ? getClassObjectName(getName())
                                        : JetPsiUtil.NO_NAME_PROVIDED;
                 classObjectDescriptor = new LazyClassDescriptor(resolveSession, this, classObjectName, classObjectInfo);
             }
