@@ -935,7 +935,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         final Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
         final Type type = sharedVarType != null ? sharedVarType : asmType(variableDescriptor.getType());
-        myFrameMap.enter(variableDescriptor, type.getSize());
+        int index = myFrameMap.enter(variableDescriptor, type.getSize());
+
+        if (sharedVarType != null) {
+            v.anew(sharedVarType);
+            v.dup();
+            v.invokespecial(sharedVarType.getInternalName(), "<init>", "()V");
+            v.store(index, TYPE_OBJECT);
+        }
 
         leaveTasks.add(new Function<StackValue, Void>() {
             @Override
@@ -2578,12 +2585,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         assert variableDescriptor != null;
 
         Type varType = asmType(variableDescriptor.getType());
-        if (sharedVarType != null) {
-            v.anew(sharedVarType);
-            v.dup();
-            v.invokespecial(sharedVarType.getInternalName(), "<init>", "()V");
-            v.store(index, TYPE_OBJECT);
-        }
 
         JetExpression initializer = property.getInitializer();
         if (initializer != null) {

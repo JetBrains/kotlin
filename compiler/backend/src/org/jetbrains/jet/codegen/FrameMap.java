@@ -34,10 +34,12 @@ public class FrameMap {
     private final TObjectIntHashMap<DeclarationDescriptor> myVarSizes = new TObjectIntHashMap<DeclarationDescriptor>();
     private int myMaxIndex = 0;
 
-    public void enter(DeclarationDescriptor descriptor, int size) {
-        myVarIndex.put(descriptor, myMaxIndex);
+    public int enter(DeclarationDescriptor descriptor, int size) {
+        int index = myMaxIndex;
+        myVarIndex.put(descriptor, index);
         myMaxIndex += size;
         myVarSizes.put(descriptor, size);
+        return index;
     }
 
     public int leave(DeclarationDescriptor descriptor) {
