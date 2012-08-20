@@ -118,7 +118,7 @@ public abstract class PositionManagerTestCase extends PlatformTestCase {
             catch (IOException e) {
                 throw ExceptionUtils.rethrow(e);
             }
-            final JetFile jetFile = (JetFile)JetTestUtils.createFile(file.getAbsolutePath(), fileContent, getProject());
+            final JetFile jetFile = JetTestUtils.createFile(file.getAbsolutePath(), fileContent, getProject());
 
             files.add(jetFile);
             breakpoints.addAll(extractBreakpointsInfo(jetFile, fileContent));

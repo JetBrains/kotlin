@@ -67,10 +67,7 @@ public class CheckLocalVariablesTableTest extends TestCaseWithTmpdir {
 
         String text = FileUtil.loadFile(ktFile);
 
-        LightVirtualFile virtualFile = new LightVirtualFile(ktFile.getName(), JetLanguage.INSTANCE, text);
-        virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
-        JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject()))
-                .trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
+        JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment.getProject());
         assert psiFile != null;
 
         final ClassFileFactory factory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);

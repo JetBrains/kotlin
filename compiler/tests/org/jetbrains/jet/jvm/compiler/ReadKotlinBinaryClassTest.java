@@ -71,9 +71,7 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
 
         String text = FileUtil.loadFile(testFile);
 
-        LightVirtualFile virtualFile = new LightVirtualFile(testFile.getName(), JetLanguage.INSTANCE, text);
-        virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
-        JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
+        JetFile psiFile = JetTestUtils.createFile(testFile.getName(), text, jetCoreEnvironment.getProject());
 
         GenerationState state = GenerationUtils.compileFileGetGenerationStateForTest(psiFile);
 

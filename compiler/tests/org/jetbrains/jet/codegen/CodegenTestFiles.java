@@ -96,7 +96,7 @@ public class CodegenTestFiles {
                 String content = JetTestUtils.doLoadFile(JetParsingTest.getTestDataDir() + "/codegen/", name);
                 int i = name.lastIndexOf('/');
                 name = name.substring(i+1);
-                JetFile file = (JetFile) JetTestUtils.createFile(name, content, project);
+                JetFile file = JetTestUtils.createFile(name, content, project);
                 files.add(file);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -107,7 +107,7 @@ public class CodegenTestFiles {
 
     @NotNull
     public static CodegenTestFiles create(@NotNull String fileName, @NotNull String content, @NotNull Project project) {
-        JetFile file = (JetFile) JetTestUtils.createFile(fileName, content, project);
+        JetFile file = JetTestUtils.createFile(fileName, content, project);
 
         List<Pair<String, String>> expectedValues = Lists.newArrayList();
 
