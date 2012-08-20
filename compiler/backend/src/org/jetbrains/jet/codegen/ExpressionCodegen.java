@@ -22,6 +22,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Label;
@@ -883,10 +884,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private StackValue generateBlock(List<JetElement> statements) {
-        Label blockStart = new Label();
-        v.mark(blockStart);
+        final Label blockEnd = new Label();
 
-        for (JetElement statement : statements) {
+        List<Function<StackValue, Void>> leaveTasks = Lists.newArrayList();
+
+        StackValue answer = StackValue.none();
+
+        for (Iterator<JetElement> iterator = statements.iterator(); iterator.hasNext(); ) {
+            JetElement statement = iterator.next();
+
             if (statement instanceof JetNamedDeclaration) {
                 JetNamedDeclaration declaration = (JetNamedDeclaration) statement;
                 if (JetPsiUtil.isScriptDeclaration(declaration)) {
@@ -894,60 +900,48 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 }
             }
 
-            if (statement instanceof JetProperty) {
-                final VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, statement);
-                assert variableDescriptor != null;
-
-                final Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
-                final Type type = sharedVarType != null ? sharedVarType : asmType(variableDescriptor.getType());
-                myFrameMap.enter(variableDescriptor, type.getSize());
+            if (statement instanceof JetVariableDeclaration) {
+                generateLocalVariableDeclaration((JetVariableDeclaration) statement, blockEnd, leaveTasks);
             }
 
             if (statement instanceof JetNamedFunction) {
-                DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, statement);
-                myFrameMap.enter(descriptor, 1);
+                generateLocalFunctionDeclaration((JetNamedFunction) statement, leaveTasks);
             }
-        }
 
-        StackValue answer = StackValue.none();
-        for (int i = 0, statementsSize = statements.size(); i < statementsSize; i++) {
-            JetElement statement = statements.get(i);
-            if (i ==
-                statements.size() -
-                1 /*&& statement instanceof JetExpression && !bindingContext.get(BindingContext.STATEMENT, statement)*/) {
+            if (!iterator.hasNext()) {
                 answer = gen(statement);
             }
             else {
                 gen(statement, Type.VOID_TYPE);
             }
+
         }
 
-        Label blockEnd = new Label();
         v.mark(blockEnd);
 
-        for (JetElement statement : Lists.reverse(statements)) {
-            if (statement instanceof JetNamedDeclaration) {
-                JetNamedDeclaration declaration = (JetNamedDeclaration) statement;
-                if (JetPsiUtil.isScriptDeclaration(declaration)) {
-                    continue;
-                }
-            }
+        for (Function<StackValue, Void> task : Lists.reverse(leaveTasks)) {
+            task.fun(answer);
+        }
 
-            if (statement instanceof JetNamedFunction) {
-                DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, statement);
-                myFrameMap.leave(descriptor);
-            }
+        return answer;
+    }
 
-            if (statement instanceof JetProperty) {
-                JetProperty var = (JetProperty) statement;
+    private void generateLocalVariableDeclaration(@NotNull JetVariableDeclaration variableDeclaration, final @NotNull Label blockEnd, @NotNull List<Function<StackValue, Void>> leaveTasks) {
+        final VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, variableDeclaration);
+        assert variableDescriptor != null;
 
-                VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, var);
-                assert variableDescriptor != null;
+        final Label scopeStart = new Label();
+        v.mark(scopeStart);
 
+        final Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
+        final Type type = sharedVarType != null ? sharedVarType : asmType(variableDescriptor.getType());
+        myFrameMap.enter(variableDescriptor, type.getSize());
+
+        leaveTasks.add(new Function<StackValue, Void>() {
+            @Override
+            public Void fun(StackValue answer) {
                 int index = myFrameMap.leave(variableDescriptor);
 
-                final Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
-                final Type type = sharedVarType != null ? sharedVarType : asmType(variableDescriptor.getType());
                 if (sharedVarType != null) {
                     if (answer instanceof StackValue.Shared && index == ((StackValue.Shared) answer).getIndex()) {
                         ((StackValue.Shared) answer).releaseOnPut();
@@ -957,12 +951,24 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                         v.store(index, TYPE_OBJECT);
                     }
                 }
-
-                v.visitLocalVariable(var.getName(), type.getDescriptor(), null, blockStart, blockEnd, index);
+                v.visitLocalVariable(variableDescriptor.getName().getName(), type.getDescriptor(), null, scopeStart, blockEnd,
+                                     index);
+                return null;
             }
-        }
+        });
+    }
 
-        return answer;
+    private void generateLocalFunctionDeclaration(@NotNull JetNamedFunction namedFunction, @NotNull List<Function<StackValue, Void>> leaveTasks) {
+        final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, namedFunction);
+        myFrameMap.enter(descriptor, 1);
+
+        leaveTasks.add(new Function<StackValue, Void>() {
+            @Override
+            public Void fun(StackValue value) {
+                myFrameMap.leave(descriptor);
+                return null;
+            }
+        });
     }
 
     private void markLineNumber(@NotNull JetElement statement) {
