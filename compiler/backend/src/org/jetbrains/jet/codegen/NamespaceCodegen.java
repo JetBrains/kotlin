@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.utils.Progress;
 
+import java.io.File;
 import java.util.Collection;
 
 import static org.jetbrains.asm4.Opcodes.*;
@@ -151,9 +152,8 @@ public class NamespaceCodegen {
 
             if (k > 0) {
                 PsiFile containingFile = file.getContainingFile();
-                String fname = containingFile.getName();
-                fname = fname.substring(0, fname.lastIndexOf('.'));
-                String className = name.child(Name.identifier("namespace$src$" + fname)).getFqName().replace('.', '/');
+                String namespaceInternalName = name.child(Name.identifier(JvmAbi.PACKAGE_CLASS)).getFqName().replace('.', '/');
+                String className = getMultiFileNamespaceInternalName(namespaceInternalName, containingFile);
                 ClassBuilder builder = state.forNamespacepart(className);
 
                 builder.defineClass(containingFile, V1_6,
@@ -281,5 +281,19 @@ public class NamespaceCodegen {
         }
 
         return JvmClassName.byInternalName(fqName.getFqName().replace('.', '/') + "/" + JvmAbi.PACKAGE_CLASS);
+    }
+
+    @NotNull
+    public static String getMultiFileNamespaceInternalName(String namespaceInternalName, PsiFile file) {
+        String name = file.getName();
+
+        int substringFrom = name.lastIndexOf(File.separator) + 1;
+
+        int substringTo = name.lastIndexOf('.');
+        if (substringTo == -1) {
+            substringTo = name.length();
+        }
+
+        return namespaceInternalName + "$src$" + name.substring(substringFrom, substringTo);
     }
 }
