@@ -29,7 +29,19 @@ import java.io.File;
  */
 public class JetTypingIndentationTest extends LightCodeInsightTestCase {
 
+    public void testAfterCatch() {
+        doFileNewlineTest();
+    }
+
+    public void testAfterFinally() {
+        doFileNewlineTest();
+    }
+
     public void testAfterImport() {
+        doFileNewlineTest();
+    }
+
+    public void testAfterTry() {
         doFileNewlineTest();
     }
 

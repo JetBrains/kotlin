@@ -58,12 +58,12 @@ public abstract class ASTIndentStrategy {
     public static class PositionStrategy extends ASTIndentStrategy {
         private Indent defaultIndent = Indent.getNoneIndent();
 
-        private List<IElementType> in = new ArrayList<IElementType>();
-        private List<IElementType> notIn = new ArrayList<IElementType>();
-        private List<IElementType> forElement = new ArrayList<IElementType>();
-        private List<IElementType> notForElement = new ArrayList<IElementType>();
+        private final List<IElementType> in = new ArrayList<IElementType>();
+        private final List<IElementType> notIn = new ArrayList<IElementType>();
+        private final List<IElementType> forElement = new ArrayList<IElementType>();
+        private final List<IElementType> notForElement = new ArrayList<IElementType>();
 
-        private String debugInfo;
+        private final String debugInfo;
 
         public PositionStrategy(@Nullable String debugInfo) {
             this.debugInfo = debugInfo;

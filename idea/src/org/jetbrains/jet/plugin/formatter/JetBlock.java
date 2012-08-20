@@ -145,6 +145,10 @@ public class JetBlock extends AbstractBlock {
 
             return new ChildAttributes(Indent.getNormalIndent(), null);
         }
+        else if (type == JetNodeTypes.TRY) {
+            // In try - try BLOCK catch BLOCK finally BLOCK
+            return new ChildAttributes(Indent.getNoneIndent(), null);
+        }
         else if (type == JetNodeTypes.DOT_QUALIFIED_EXPRESSION) {
             return new ChildAttributes(Indent.getContinuationWithoutFirstIndent(), null);
         }
