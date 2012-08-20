@@ -51,7 +51,7 @@ public abstract class PositionManagerTestCase extends PlatformTestCase {
 
     // Breakpoint is given as a line comment on a specific line, containing the name of the class, where that line can be found.
     // This pattern matches against these line comments and saves the class name in the first group
-    private static final Pattern breakpointPattern = Pattern.compile("^.*//\\s*([a-zA-Z0-9._/$]*)\\s*$");
+    private static final Pattern BREAKPOINT_PATTERN = Pattern.compile("^.*//\\s*([a-zA-Z0-9._/$]*)\\s*$");
 
     @NotNull
     protected abstract String getTestDataPath();
@@ -152,7 +152,7 @@ public abstract class PositionManagerTestCase extends PlatformTestCase {
         String[] lines = StringUtil.convertLineSeparators(fileContent).split("\n");
 
         for (int i = 0; i < lines.length; i++) {
-            Matcher matcher = breakpointPattern.matcher(lines[i]);
+            Matcher matcher = BREAKPOINT_PATTERN.matcher(lines[i]);
             if (matcher.matches()) {
                 // Line breakpoint numbers are 1-based
                 breakpoints.add(new Breakpoint(file, i + 1, matcher.group(1)));
