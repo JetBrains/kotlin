@@ -2596,11 +2596,54 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     @Override
     public StackValue visitProperty(JetProperty property, StackValue receiver) {
-
-        VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, property);
-
-        if (JetPsiUtil.isScriptDeclaration(property)) {
+        final JetExpression initializer = property.getInitializer();
+        if (initializer == null) {
             return StackValue.none();
+        }
+        initializeLocalVariable(property, new Function<VariableDescriptor, Void>() {
+            @Override
+            public Void fun(VariableDescriptor descriptor) {
+                Type varType = asmType(descriptor.getType());
+                gen(initializer, varType);
+                return null;
+            }
+        });
+        return StackValue.none();
+    }
+
+    @Override
+    public StackValue visitMultiDeclaration(JetMultiDeclaration multiDeclaration, StackValue receiver) {
+        JetExpression initializer = multiDeclaration.getInitializer();
+        if (initializer == null) return StackValue.none();
+
+        JetType initializerType = bindingContext.get(EXPRESSION_TYPE, initializer);
+        assert initializerType != null;
+        final ExpressionReceiver initializerAsReceiver = new ExpressionReceiver(initializer, initializerType);
+
+        for (final JetMultiDeclarationEntry variableDeclaration : multiDeclaration.getEntries()) {
+            initializeLocalVariable(variableDeclaration, new Function<VariableDescriptor, Void>() {
+                @Override
+                public Void fun(VariableDescriptor descriptor) {
+                    ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(BindingContext.COMPONENT_RESOLVED_CALL, variableDeclaration);
+                    assert resolvedCall != null : "Resolved call is null for " + variableDeclaration.getText();
+                    Call call = CallMaker.makeCall(initializerAsReceiver, (JetExpression) null);
+                    invokeFunction(call, resolvedCall.getResultingDescriptor(), StackValue.none(), resolvedCall);
+                    return null;
+                }
+            });
+        }
+        return StackValue.none();
+    }
+
+    private void initializeLocalVariable(
+            @NotNull JetVariableDeclaration variableDeclaration,
+            @NotNull Function<VariableDescriptor, Void> generateInitializer
+    ) {
+
+        VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, variableDeclaration);
+
+        if (JetPsiUtil.isScriptDeclaration(variableDeclaration)) {
+            return;
         }
         int index = lookupLocal(variableDescriptor);
 
@@ -2613,81 +2656,23 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         Type varType = asmType(variableDescriptor.getType());
 
-        JetExpression initializer = property.getInitializer();
-        if (initializer != null) {
-            if (JetPsiUtil.isScriptDeclaration(property)) {
-                gen(initializer, varType);
-                JetScript scriptPsi = JetPsiUtil.getScript(property);
-                assert scriptPsi != null;
-                JvmClassName scriptClassName = state.getInjector().getClosureAnnotator().classNameForScriptPsi(scriptPsi);
-                v.putfield(scriptClassName.getInternalName(), property.getName(), varType.getDescriptor());
-            }
-            else if (sharedVarType == null) {
-                gen(initializer, varType);
-                v.store(index, varType);
-            }
-            else {
-                v.load(index, TYPE_OBJECT);
-                gen(initializer, varType);
-                v.putfield(sharedVarType.getInternalName(), "ref",
-                           sharedVarType == TYPE_SHARED_VAR ? "Ljava/lang/Object;" : varType.getDescriptor());
-            }
+        if (JetPsiUtil.isScriptDeclaration(variableDeclaration)) {
+            generateInitializer.fun(variableDescriptor);
+            JetScript scriptPsi = JetPsiUtil.getScript(variableDeclaration);
+            assert scriptPsi != null;
+            JvmClassName scriptClassName = state.getInjector().getClosureAnnotator().classNameForScriptPsi(scriptPsi);
+            v.putfield(scriptClassName.getInternalName(), variableDeclaration.getName(), varType.getDescriptor());
         }
-        return StackValue.none();
-    }
-
-    @Override
-    public StackValue visitMultiDeclaration(JetMultiDeclaration multiDeclaration, StackValue receiver) {
-        for (JetMultiDeclarationEntry variableDeclaration : multiDeclaration.getEntries()) {
-
-            VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, variableDeclaration);
-
-            if (JetPsiUtil.isScriptDeclaration(variableDeclaration)) {
-                return StackValue.none();
-            }
-            int index = lookupLocal(variableDescriptor);
-
-            if (index < 0) {
-                throw new IllegalStateException("Local variable not found for " + variableDescriptor);
-            }
-
-            Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
-            assert variableDescriptor != null;
-
-            Type varType = asmType(variableDescriptor.getType());
-
-            JetExpression initializer = multiDeclaration.getInitializer();
-
-            ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(BindingContext.COMPONENT_RESOLVED_CALL, variableDeclaration);
-            if (initializer != null) {
-                JetType type = bindingContext.get(EXPRESSION_TYPE, initializer);
-                assert type != null;
-                Call call = CallMaker.makeCall(new ExpressionReceiver(initializer, type), (JetExpression) null);
-
-                if (JetPsiUtil.isScriptDeclaration(variableDeclaration)) {
-                    invokeFunction(call, resolvedCall.getResultingDescriptor(), StackValue.none(), resolvedCall);
-
-                    JetScript scriptPsi = JetPsiUtil.getScript(variableDeclaration);
-                    assert scriptPsi != null;
-                    JvmClassName scriptClassName = state.getInjector().getClosureAnnotator().classNameForScriptPsi(scriptPsi);
-                    v.putfield(scriptClassName.getInternalName(), variableDeclaration.getName(), varType.getDescriptor());
-                }
-                else if (sharedVarType == null) {
-                    invokeFunction(call, resolvedCall.getResultingDescriptor(), StackValue.none(), resolvedCall);
-
-                    v.store(index, varType);
-                }
-                else {
-                    v.load(index, TYPE_OBJECT);
-                    invokeFunction(call, resolvedCall.getResultingDescriptor(), StackValue.none(), resolvedCall);
-
-                    v.putfield(sharedVarType.getInternalName(), "ref",
-                               sharedVarType == TYPE_SHARED_VAR ? "Ljava/lang/Object;" : varType.getDescriptor());
-                }
-            }
-
+        else if (sharedVarType == null) {
+            generateInitializer.fun(variableDescriptor);
+            v.store(index, varType);
         }
-        return StackValue.none();
+        else {
+            v.load(index, TYPE_OBJECT);
+            generateInitializer.fun(variableDescriptor);
+            v.putfield(sharedVarType.getInternalName(), "ref",
+                       sharedVarType == TYPE_SHARED_VAR ? "Ljava/lang/Object;" : varType.getDescriptor());
+        }
     }
 
     private StackValue generateConstructorCall(
