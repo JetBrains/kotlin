@@ -1,4 +1,5 @@
 /*
+/*
  * Copyright 2010-2012 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +17,9 @@
 
 package org.jetbrains.k2js.translate.reference;
 
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsConditional;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNullLiteral;
+import com.google.dart.compiler.backend.js.ast.JsLiteral;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression;
@@ -27,9 +27,8 @@ import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSafeQualifiedExpression;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
-import static com.google.dart.compiler.util.AstUtil.newSequence;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.notNullConditionalTestExpression;
 
 /**
  * @author Pavel Talanov
@@ -41,11 +40,8 @@ public enum CallType {
         JsExpression constructCall(@Nullable JsExpression receiver, @NotNull CallConstructor constructor,
                                    @NotNull TranslationContext context) {
             assert receiver != null;
-            TemporaryVariable temporaryVariable = context.declareTemporary(receiver);
-            JsBinaryOperation notNullCheck = TranslationUtils.notNullConditionalTestExpression(temporaryVariable);
-            JsExpression methodCall = constructor.construct(temporaryVariable.reference());
-            JsConditional callMethodIfNotNullElseNull = new JsConditional(notNullCheck, methodCall, JsNullLiteral.NULL);
-            return newSequence(temporaryVariable.assignmentExpression(), callMethodIfNotNullElseNull);
+            TemporaryVariable cachedValue = context.declareTemporary(receiver);
+            return new JsConditional(notNullConditionalTestExpression(cachedValue), constructor.construct(cachedValue.reference()), JsLiteral.NULL);
         }
     },
     //TODO: bang qualifier is not implemented in frontend for now
