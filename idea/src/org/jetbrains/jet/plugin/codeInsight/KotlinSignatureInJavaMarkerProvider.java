@@ -93,9 +93,16 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     private static String getKotlinSignature(@NotNull PsiAnnotation kotlinSignatureAnnotation) {
         PsiNameValuePair pair = kotlinSignatureAnnotation.getParameterList().getAttributes()[0];
         PsiAnnotationMemberValue value = pair.getValue();
-        return value == null ? "null" : value instanceof PsiLiteralExpression
-                                        ? StringUtil.unescapeStringCharacters(((PsiLiteralExpression) value).getValue().toString())
-                                        : value.getText();
+        if (value == null) {
+            return "null";
+        }
+        else if (value instanceof PsiLiteralExpression) {
+            Object valueObject = ((PsiLiteralExpression) value).getValue();
+            return valueObject == null ? "null" : StringUtil.unescapeStringCharacters(valueObject.toString());
+        }
+        else {
+            return value.getText();
+        }
     }
 
     @Override
