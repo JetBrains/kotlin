@@ -267,6 +267,14 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
             loopScope.addVariableDescriptor(variableDescriptor);
         }
+        else {
+            JetMultiDeclaration multiParameter = expression.getMultiParameter();
+            if (multiParameter != null && loopRange != null) {
+                JetType elementType = expectedParameterType == null ? ErrorUtils.createErrorType("Loop range has no type") : expectedParameterType;
+                TransientReceiver iteratorNextAsReceiver = new TransientReceiver(elementType);
+                ExpressionTypingUtils.defineLocalVariablesFromMultiDeclaration(loopScope, multiParameter, iteratorNextAsReceiver, loopRange, context);
+            }
+        }
 
         JetExpression body = expression.getBody();
         if (body != null) {

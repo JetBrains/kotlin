@@ -1113,6 +1113,60 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/RedeclarationsInMultiDecl.kt");
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations")
+            public static class MultiDeclarations extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInMultiDeclarations() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve", new File("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations"), "kt", false);
+                }
+                
+                @TestMetadata("DoubleDeclForLoop.kt")
+                public void testDoubleDeclForLoop() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/DoubleDeclForLoop.kt");
+                }
+                
+                @TestMetadata("FolLoopTypeComponentTypeMismatch.kt")
+                public void testFolLoopTypeComponentTypeMismatch() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/FolLoopTypeComponentTypeMismatch.kt");
+                }
+                
+                @TestMetadata("ForLoopComponentFunctionAmbiguity.kt")
+                public void testForLoopComponentFunctionAmbiguity() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/ForLoopComponentFunctionAmbiguity.kt");
+                }
+                
+                @TestMetadata("ForLoopComponentFunctionMissing.kt")
+                public void testForLoopComponentFunctionMissing() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/ForLoopComponentFunctionMissing.kt");
+                }
+                
+                @TestMetadata("ForLoopWithExtensions.kt")
+                public void testForLoopWithExtensions() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/ForLoopWithExtensions.kt");
+                }
+                
+                @TestMetadata("ForWithExplicitTypes.kt")
+                public void testForWithExplicitTypes() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/ForWithExplicitTypes.kt");
+                }
+                
+                @TestMetadata("RedeclarationInForLoop.kt")
+                public void testRedeclarationInForLoop() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/RedeclarationInForLoop.kt");
+                }
+                
+                @TestMetadata("SingleDeclForLoop.kt")
+                public void testSingleDeclForLoop() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/SingleDeclForLoop.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("DeclarationChecks");
+                suite.addTestSuite(DeclarationChecks.class);
+                suite.addTestSuite(MultiDeclarations.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/extensions")
@@ -2972,7 +3026,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTestSuite(ControlStructures.class);
             suite.addTestSuite(DataFlow.class);
             suite.addTestSuite(DataFlowInfoTraversal.class);
-            suite.addTestSuite(DeclarationChecks.class);
+            suite.addTest(DeclarationChecks.innerSuite());
             suite.addTestSuite(Extensions.class);
             suite.addTestSuite(Generics.class);
             suite.addTest(IncompleteCode.innerSuite());
