@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -26,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 public interface JetVariableDeclaration extends JetDeclaration, JetWithExpressionInitializer, JetNamedDeclaration {
     boolean isVar();
 
-    @NotNull
+    @Nullable
     ASTNode getValOrVarNode();
 
     @Nullable

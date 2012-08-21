@@ -27,7 +27,7 @@ loop
   ;
 
 for
-  : "for" "(" annotations ("val" | "var")? SimpleName (":" type)? "in" expression ")" expression
+  : "for" "(" annotations ("val" | "var")? (multipleVariableDeclarations | variableDeclarationEntry) "in" expression ")" expression
   ;
 
 while

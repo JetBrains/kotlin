@@ -39,9 +39,14 @@ public class JetForExpression extends JetLoopExpression {
         return visitor.visitForExpression(this, data);
     }
 
-    @Nullable @IfNotParsed
+    @Nullable
     public JetParameter getLoopParameter() {
         return (JetParameter) findChildByType(JetNodeTypes.LOOP_PARAMETER);
+    }
+
+    @Nullable
+    public JetMultiDeclaration getMultiParameter() {
+        return (JetMultiDeclaration) findChildByType(JetNodeTypes.MULTI_VARIABLE_DECLARATION);
     }
 
     @Nullable @IfNotParsed

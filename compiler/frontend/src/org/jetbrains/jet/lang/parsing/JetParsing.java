@@ -908,14 +908,14 @@ public class JetParsing extends AbstractJetParsing {
     /*
      * (SimpleName (":" type)){","}
      */
-    private void parseMultiDeclarationName(TokenSet propertyNameFollow) {
+    public void parseMultiDeclarationName(TokenSet follow) {
         // Parsing multi-name, e.g.
         //   val (a, b) = foo()
         myBuilder.disableNewlines();
         advance(); // LPAR
 
-        TokenSet recoverySet = TokenSet.orSet(PARAMETER_NAME_RECOVERY_SET, propertyNameFollow);
-        if (!atSet(propertyNameFollow)) {
+        TokenSet recoverySet = TokenSet.orSet(PARAMETER_NAME_RECOVERY_SET, follow);
+        if (!atSet(follow)) {
             while (true) {
                 if (at(COMMA)) {
                     errorAndAdvance("Expecting a name");
@@ -929,7 +929,7 @@ public class JetParsing extends AbstractJetParsing {
 
                 if (at(COLON)) {
                     advance(); // COLON
-                    parseTypeRef();
+                    parseTypeRef(follow);
                 }
                 property.done(MULTI_VARIABLE_DECLARATION_ENTRY);
 
@@ -938,7 +938,7 @@ public class JetParsing extends AbstractJetParsing {
             }
         }
 
-        expect(RPAR, "Expecting ')'", propertyNameFollow);
+        expect(RPAR, "Expecting ')'", follow);
         myBuilder.restoreNewlinesState();
     }
 

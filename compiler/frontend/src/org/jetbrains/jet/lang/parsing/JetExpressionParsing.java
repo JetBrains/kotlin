@@ -1481,7 +1481,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * for
-     *   : "for" "(" attributes valOrVar? SimpleName (":" type)? "in" element ")" element
+     *   : "for" "(" annotations ("val" | "var")? (multipleVariableDeclarations | variableDeclarationEntry) "in" expression ")" expression
      *   ;
      *
      *   TODO: empty loop body (at the end of the block)?
@@ -1498,16 +1498,23 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker parameter = mark();
         if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance(); // VAL_KEYWORD or VAR_KEYWORD
-        if (!myJetParsing.parseIdeTemplate()) {
-            expect(IDENTIFIER, "Expecting a variable name", TokenSet.create(COLON));
-        }
-        if (at(COLON)) {
-            advance(); // COLON
-            myJetParsing.parseTypeRef();
-        }
-        parameter.done(LOOP_PARAMETER);
+        if (at(LPAR)) {
+            myJetParsing.parseMultiDeclarationName(TokenSet.create(IN_KEYWORD, LBRACE));
 
-        expect(IN_KEYWORD, "Expecting 'in'");
+            parameter.done(MULTI_VARIABLE_DECLARATION);
+        }
+        else {
+            if (!myJetParsing.parseIdeTemplate()) {
+                expect(IDENTIFIER, "Expecting a variable name", TokenSet.create(COLON));
+            }
+            if (at(COLON)) {
+                advance(); // COLON
+                myJetParsing.parseTypeRef();
+            }
+            parameter.done(LOOP_PARAMETER);
+        }
+
+        expect(IN_KEYWORD, "Expecting 'in'", TokenSet.create(LPAR, LBRACE));
 
         PsiBuilder.Marker range = mark();
         parseExpression();

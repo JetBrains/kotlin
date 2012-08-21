@@ -18,13 +18,11 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.TokenSet;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import static org.jetbrains.jet.lexer.JetTokens.EQ;
 import static org.jetbrains.jet.lexer.JetTokens.VAL_KEYWORD;
 import static org.jetbrains.jet.lexer.JetTokens.VAR_KEYWORD;
 
@@ -69,11 +67,8 @@ public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed impl
         return parent;
     }
 
-    @NotNull
     @Override
     public ASTNode getValOrVarNode() {
-        ASTNode node = getParentNode().findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD));
-        assert node != null : "Val or var should always exist for property";
-        return node;
+        return getParentNode().findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD));
     }
 }

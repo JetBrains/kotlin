@@ -85,10 +85,14 @@ variableDeclarationEntry
   : SimpleName (":" type)?
   ;
 
+multipleVariableDeclarations
+  : "(" variableDeclarationEntry{","} ")"
+  ;
+
 property
   : modifiers ("val" | "var")
       typeParameters? (type "." | annotations)?
-      ("(" variableDeclarationEntry{","} ")" | variableDeclarationEntry)
+      (multipleVariableDeclarations | variableDeclarationEntry)
       typeConstraints
       ("=" expression SEMI?)?
       (getter? setter? | setter? getter?) SEMI?
