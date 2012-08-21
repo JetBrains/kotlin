@@ -23,6 +23,8 @@ import com.intellij.codeInsight.ExternalAnnotationsManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.*;
+import gnu.trove.THashMap;
+import gnu.trove.TObjectHashingStrategy;
 import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,6 +36,8 @@ import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameBase;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.types.*;
@@ -85,13 +89,14 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         final PsiClass psiClass;
         @Nullable
         final PsiPackage psiPackage;
+        @Nullable
         final FqName fqName;
         final boolean staticMembers;
         final boolean kotlin;
         final ClassOrNamespaceDescriptor classOrNamespaceDescriptor;
         private List<String> alternativeSignatureErrors;
 
-        protected ResolverScopeData(@Nullable PsiClass psiClass, @Nullable PsiPackage psiPackage, @NotNull FqName fqName, boolean staticMembers, @NotNull ClassOrNamespaceDescriptor descriptor) {
+        protected ResolverScopeData(@Nullable PsiClass psiClass, @Nullable PsiPackage psiPackage, @Nullable FqName fqName, boolean staticMembers, @NotNull ClassOrNamespaceDescriptor descriptor) {
             checkPsiClassIsNotJet(psiClass);
 
             this.psiClass = psiClass;
@@ -107,7 +112,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                     (new PsiClassWrapper(psiClass).getJetClass().isDefined() || psiClass.getName().equals(JvmAbi.PACKAGE_CLASS));
             classOrNamespaceDescriptor = descriptor;
 
-            if (fqName.lastSegmentIs(Name.identifier(JvmAbi.PACKAGE_CLASS)) && psiClass != null && kotlin) {
+            if (fqName != null && fqName.lastSegmentIs(Name.identifier(JvmAbi.PACKAGE_CLASS)) && psiClass != null && kotlin) {
                 throw new IllegalStateException("Kotlin namespace cannot have last segment " + JvmAbi.PACKAGE_CLASS + ": " + fqName);
             }
         }
@@ -154,7 +159,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     /** Class with instance members */
     static class ResolverBinaryClassData extends ResolverClassData {
 
-        ResolverBinaryClassData(@NotNull PsiClass psiClass, @NotNull FqName fqName, @NotNull ClassDescriptorFromJvmBytecode classDescriptor) {
+        ResolverBinaryClassData(@NotNull PsiClass psiClass, @Nullable FqName fqName, @NotNull ClassDescriptorFromJvmBytecode classDescriptor) {
             super(psiClass, null, fqName, false, classDescriptor);
         }
 
@@ -181,7 +186,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         protected ResolverClassData(
                 @Nullable PsiClass psiClass,
                 @Nullable PsiPackage psiPackage,
-                @NotNull FqName fqName,
+                @Nullable FqName fqName,
                 boolean staticMembers,
                 @NotNull ClassDescriptorFromJvmBytecode descriptor
         ) {
@@ -207,7 +212,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
         protected ResolverEnumClassObjectClassData(
                 @Nullable PsiClass psiClass,
-                @NotNull FqName fqName,
+                @Nullable FqName fqName,
                 @NotNull ClassDescriptorFromJvmBytecode descriptor
         ) {
             super(psiClass, null, fqName, true, descriptor);
@@ -239,7 +244,22 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
     }
 
-    protected final Map<FqName, ResolverClassData> classDescriptorCache = Maps.newHashMap();
+    // NOTE: this complexity is introduced because class descriptors do not always have valid fqnames (class objects) 
+    protected final Map<FqNameBase, ResolverClassData> classDescriptorCache = new THashMap<FqNameBase, ResolverClassData>(new TObjectHashingStrategy<FqNameBase>() {
+        @Override
+        public int computeHashCode(FqNameBase o) {
+            if (o instanceof FqName) {
+                return ((FqName) o).toUnsafe().hashCode();
+            }
+            assert o instanceof FqNameUnsafe;
+            return o.hashCode();
+        }
+
+        @Override
+        public boolean equals(FqNameBase n1, FqNameBase n2) {
+            return n1.equalsTo(n2.toString()) && n2.equalsTo(n1.toString());
+        }
+    });
     protected final Map<FqName, ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
 
     protected Project project;
@@ -572,8 +592,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                 containing, ClassKind.OBJECT, classObjectPsiClass, fqName, this)
                         .getResolverBinaryClassData();
 
-        classDescriptorCache.put(fqName, classData);
-
         ClassDescriptorFromJvmBytecode classObjectDescriptor = classData.classDescriptor;
         classObjectDescriptor.setSupertypes(
                 getSupertypes(new PsiClassWrapper(classObjectPsiClass), classData, new ArrayList<TypeParameterDescriptor>(0)));
@@ -585,11 +603,11 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private MutableClassDescriptorLite createClassObjectDescriptorForEnum(@NotNull ClassDescriptor containing, @NotNull PsiClass psiClass) {
         String psiClassQualifiedName = psiClass.getQualifiedName();
         assert psiClassQualifiedName != null : "Reading java class with no qualified name";
-        FqName fqName = new FqName(psiClassQualifiedName + "." + getClassObjectName(psiClass.getName()).getName());
+        FqNameUnsafe fqName = new FqNameUnsafe(psiClassQualifiedName + "." + getClassObjectName(psiClass.getName()).getName());
         ClassDescriptorFromJvmBytecode classObjectDescriptor = new ClassDescriptorFromJvmBytecode(
-                containing, ClassKind.OBJECT, psiClass, fqName, this);
+                containing, ClassKind.OBJECT, psiClass, null, this);
 
-        ResolverEnumClassObjectClassData data = new ResolverEnumClassObjectClassData(psiClass, fqName, classObjectDescriptor);
+        ResolverEnumClassObjectClassData data = new ResolverEnumClassObjectClassData(psiClass, null, classObjectDescriptor);
         setUpClassObjectDescriptor(containing, fqName, data, getClassObjectName(containing.getName().getName()));
 
         classObjectDescriptor.getBuilder().addFunctionDescriptor(createEnumClassObjectValuesMethod(classObjectDescriptor, trace));
@@ -600,7 +618,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     private void setUpClassObjectDescriptor(
             @NotNull ClassDescriptor containing,
-            @NotNull FqName fqName,
+            @NotNull FqNameBase fqName,
             @NotNull ResolverClassData data,
             @NotNull Name classObjectName
     ) {
@@ -612,7 +630,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         classDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
         classDescriptor.createTypeConstructor();
         JavaClassMembersScope classMembersScope = new JavaClassMembersScope(semanticServices, data);
-        WritableScopeImpl writableScope = new WritableScopeImpl(classMembersScope, classDescriptor, RedeclarationHandler.THROW_EXCEPTION, fqName.getFqName());
+        WritableScopeImpl writableScope = new WritableScopeImpl(classMembersScope, classDescriptor, RedeclarationHandler.THROW_EXCEPTION, fqName.toString());
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         classDescriptor.setScopeForMemberLookup(writableScope);
     }

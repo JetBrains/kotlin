@@ -94,7 +94,8 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
             }
 
             if (resolverScopeData.psiPackage != null) {
-                boolean isKotlinNamespace = semanticServices.getKotlinNamespaceDescriptor(resolverScopeData.fqName) != null;
+                FqName packageFqName = resolverScopeData.fqName;
+                boolean isKotlinNamespace = packageFqName != null && semanticServices.getKotlinNamespaceDescriptor(packageFqName) != null;
                 final JavaDescriptorResolver descriptorResolver = semanticServices.getDescriptorResolver();
 
                 for (PsiPackage psiSubPackage : resolverScopeData.psiPackage.getSubPackages()) {

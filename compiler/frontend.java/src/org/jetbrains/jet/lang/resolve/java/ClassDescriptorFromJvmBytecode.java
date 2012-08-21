@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -44,7 +45,7 @@ public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
 
     public ClassDescriptorFromJvmBytecode(
             @NotNull DeclarationDescriptor containingDeclaration, @NotNull ClassKind kind,
-            @NotNull PsiClass psiClass, @NotNull FqName fqName,
+            @NotNull PsiClass psiClass, @Nullable FqName fqName,
             @NotNull JavaDescriptorResolver javaDescriptorResolver) {
         super(containingDeclaration, kind);
         this.javaDescriptorResolver = javaDescriptorResolver;

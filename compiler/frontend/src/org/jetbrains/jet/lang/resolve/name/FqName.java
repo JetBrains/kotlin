@@ -38,6 +38,8 @@ public class FqName extends FqNameBase {
 
     public FqName(@NotNull String fqName) {
         this.fqName = new FqNameUnsafe(fqName, this);
+
+        validateFqName();
     }
 
     public FqName(@NotNull FqNameUnsafe fqName) {
