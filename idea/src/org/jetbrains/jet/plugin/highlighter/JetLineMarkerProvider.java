@@ -24,6 +24,7 @@ import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.daemon.impl.MarkerType;
 import com.intellij.codeInsight.hint.HintUtil;
 import com.intellij.codeInsight.navigation.NavigationUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -35,6 +36,7 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.Function;
 import com.intellij.util.PsiNavigateUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JetLightClass;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -96,7 +98,10 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
     };
 
     @Override
-    public LineMarkerInfo getLineMarkerInfo(final PsiElement element) {
+    public LineMarkerInfo getLineMarkerInfo(@NotNull final PsiElement element) {
+        // TODO this is a workaround for CME in external annotations code, should be removed after updating to IDEA 122.145+ (KT-2666)
+        if (ApplicationManager.getApplication().isUnitTestMode()) return null;
+
         JetFile file = (JetFile)element.getContainingFile();
         if (file == null) return null;
 
