@@ -51,7 +51,7 @@ public final class LoadJavaDescriptorsTest extends KotlinTestWithEnvironment {
         });
         File expected = new File(expectedFileName);
         File tmpDir = JetTestUtils.tmpDir(expected.getName());
-        NamespaceDescriptor javaNamespaceDescriptor = LoadJavaDescriptorUtil.compileJava(files, tmpDir, getTestRootDisposable());
+        NamespaceDescriptor javaNamespaceDescriptor = LoadDescriptorUtil.compileJava(files, tmpDir, getTestRootDisposable());
         //NOTE: comparing namespace to file (hack)
         NamespaceComparator.compareNamespaces(javaNamespaceDescriptor, javaNamespaceDescriptor, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, expected);
     }
@@ -62,5 +62,12 @@ public final class LoadJavaDescriptorsTest extends KotlinTestWithEnvironment {
         doTest(dir + "/expected.txt",
                javaDir + "/test/JFrame.java",
                javaDir + "/awt/Frame.java");
+    }
+
+    public void testEnum() throws Exception {
+        String dir = PATH + "/enum";
+        String javaDir = dir + "/java";
+        doTest(dir + "/expected.txt",
+               javaDir + "/MyEnum.java");
     }
 }
