@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -46,14 +45,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
-        if (classDescriptor == null || DescriptorUtils.isObject(classDescriptor)) {
-            // TODO: this is a big hack against several things that I barely understand myself and cannot explain
-            // 1. We should not return objects from this method, and maybe JDR.resolveClass should not return too
-            // 2. JDR should not return classes being analyzed
-            return null;
-        }
-        return classDescriptor;
+        return semanticServices.getDescriptorResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
     }
 
     @Override
