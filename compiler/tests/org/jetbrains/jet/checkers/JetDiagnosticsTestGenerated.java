@@ -1190,6 +1190,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/enum/javaEnumValuesMethod.kt");
             }
             
+            @TestMetadata("javaEnumWithAbstractFun.kt")
+            public void testJavaEnumWithAbstractFun() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/javaEnumWithAbstractFun.kt");
+            }
+            
             @TestMetadata("javaEnumWithFuns.kt")
             public void testJavaEnumWithFuns() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/enum/javaEnumWithFuns.kt");
