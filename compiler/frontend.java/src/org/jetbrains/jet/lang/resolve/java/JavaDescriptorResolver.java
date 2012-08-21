@@ -148,22 +148,42 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     /** Class with instance members */
-    static class ResolverBinaryClassData extends ResolverScopeData {
-        final ClassDescriptorFromJvmBytecode classDescriptor;
+    static class ResolverBinaryClassData extends ResolverClassData {
 
         ResolverBinaryClassData(@NotNull PsiClass psiClass, @NotNull FqName fqName, @NotNull ClassDescriptorFromJvmBytecode classDescriptor) {
             super(psiClass, null, fqName, false, classDescriptor);
-            this.classDescriptor = classDescriptor;
         }
 
-        private ResolverBinaryClassData(boolean negative) {
+        ResolverBinaryClassData(boolean negative) {
+            super(negative);
+        }
+
+        static final ResolverClassData NEGATIVE = new ResolverBinaryClassData(true);
+
+    }
+
+    static class ResolverClassData extends ResolverScopeData {
+
+        final ClassDescriptorFromJvmBytecode classDescriptor;
+
+        List<JavaDescriptorSignatureResolver.TypeParameterDescriptorInitialization> typeParameters;
+
+        protected ResolverClassData(boolean negative) {
             super(negative);
             this.classDescriptor = null;
         }
+        
 
-        static final ResolverBinaryClassData NEGATIVE = new ResolverBinaryClassData(true);
-
-        List<JavaDescriptorSignatureResolver.TypeParameterDescriptorInitialization> typeParameters;
+        protected ResolverClassData(
+                @Nullable PsiClass psiClass,
+                @Nullable PsiPackage psiPackage,
+                @NotNull FqName fqName,
+                boolean staticMembers,
+                @NotNull ClassDescriptorFromJvmBytecode descriptor
+        ) {
+            super(psiClass, psiPackage, fqName, staticMembers, descriptor);
+            classDescriptor = descriptor;
+        }
 
         @NotNull
         public ClassDescriptor getClassDescriptor() {
@@ -203,7 +223,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
     }
 
-    protected final Map<FqName, ResolverBinaryClassData> classDescriptorCache = Maps.newHashMap();
+    protected final Map<FqName, ResolverClassData> classDescriptorCache = Maps.newHashMap();
     protected final Map<FqName, ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
 
     protected Project project;
@@ -297,11 +317,11 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
 
         // Not let's take a descriptor of a Java class
-        ResolverBinaryClassData classData = classDescriptorCache.get(qualifiedName);
+        ResolverClassData classData = classDescriptorCache.get(qualifiedName);
         if (classData == null) {
             PsiClass psiClass = psiClassFinder.findPsiClass(qualifiedName, PsiClassFinder.RuntimeClassesHandleMode.THROW);
             if (psiClass == null) {
-                ResolverBinaryClassData oldValue = classDescriptorCache.put(qualifiedName, ResolverBinaryClassData.NEGATIVE);
+                ResolverClassData oldValue = classDescriptorCache.put(qualifiedName, ResolverBinaryClassData.NEGATIVE);
                 if (oldValue != null) {
                     throw new IllegalStateException("rewrite at " + qualifiedName);
                 }
@@ -313,7 +333,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @NotNull
-    private ResolverBinaryClassData createJavaClassDescriptor(@NotNull final PsiClass psiClass, List<Runnable> taskList) {
+    private ResolverClassData createJavaClassDescriptor(@NotNull final PsiClass psiClass, List<Runnable> taskList) {
         FqName fqName = new FqName(psiClass.getQualifiedName());
         if (classDescriptorCache.containsKey(fqName)) {
             throw new IllegalStateException(psiClass.getQualifiedName());
@@ -326,7 +346,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
 
         // class may be resolved during resolution of parent
-        ResolverBinaryClassData classData = classDescriptorCache.get(fqName);
+        ResolverClassData classData = classDescriptorCache.get(fqName);
         if (classData != null) {
             return classData;
         }
@@ -379,7 +399,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @NotNull
-    public Collection<ConstructorDescriptor> resolveConstructors(@NotNull ResolverBinaryClassData classData) {
+    public Collection<ConstructorDescriptor> resolveConstructors(@NotNull ResolverClassData classData) {
         Collection<ConstructorDescriptor> constructors = Lists.newArrayList();
 
         PsiClass psiClass = classData.psiClass;
@@ -473,7 +493,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @Nullable
-    private ConstructorDescriptor resolveConstructor(PsiClass psiClass, ResolverBinaryClassData classData, boolean aStatic, PsiMethod psiConstructor) {
+    private ConstructorDescriptor resolveConstructor(PsiClass psiClass, ResolverClassData classData, boolean aStatic, PsiMethod psiConstructor) {
         PsiMethodWrapper constructor = new PsiMethodWrapper(psiConstructor);
 
         if (constructor.getJetConstructor().hidden()) {
@@ -528,7 +548,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         checkPsiClassIsNotJet(psiClass);
 
         FqName fqName = new FqName(classObjectPsiClass.getQualifiedName());
-        ResolverBinaryClassData classData = new ClassDescriptorFromJvmBytecode(
+        ResolverClassData classData = new ClassDescriptorFromJvmBytecode(
                 containing, ClassKind.OBJECT, classObjectPsiClass, fqName, this)
                         .getResolverBinaryClassData();
 
@@ -573,7 +593,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return ns;
     }
 
-    private Collection<JetType> getSupertypes(PsiClassWrapper psiClass, ResolverBinaryClassData classData, List<TypeParameterDescriptor> typeParameters) {
+    private Collection<JetType> getSupertypes(PsiClassWrapper psiClass, ResolverClassData classData, List<TypeParameterDescriptor> typeParameters) {
         ClassDescriptor classDescriptor = classData.classDescriptor;
 
         final List<JetType> result = new ArrayList<JetType>();
@@ -1514,8 +1534,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     private Collection<JetType> getSupertypes(ResolverScopeData scope) {
-        if (scope instanceof ResolverBinaryClassData) {
-            return ((ResolverBinaryClassData) scope).classDescriptor.getSupertypes();
+        if (scope instanceof ResolverClassData) {
+            return ((ResolverClassData) scope).classDescriptor.getSupertypes();
         }
         else if (scope instanceof ResolverNamespaceData) {
             return Collections.emptyList();
@@ -1526,8 +1546,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     private TypeSubstitutor typeSubstitutorForGenericSupertypes(ResolverScopeData scopeData) {
-        if (scopeData instanceof ResolverBinaryClassData) {
-            return createSubstitutorForGenericSupertypes(((ResolverBinaryClassData) scopeData).getClassDescriptor());
+        if (scopeData instanceof ResolverClassData) {
+            return createSubstitutorForGenericSupertypes(((ResolverClassData) scopeData).getClassDescriptor());
         }
         else {
             return TypeSubstitutor.EMPTY;

@@ -17,11 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Lists;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiTypeParameter;
-import com.intellij.psi.PsiTypeParameterListOwner;
+import com.intellij.psi.*;
 import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -318,7 +314,7 @@ public class JavaDescriptorSignatureResolver {
     }
 
 
-    List<TypeParameterDescriptorInitialization> createUninitializedClassTypeParameters(PsiClass psiClass, JavaDescriptorResolver.ResolverBinaryClassData classData) {
+    List<TypeParameterDescriptorInitialization> createUninitializedClassTypeParameters(PsiClass psiClass, JavaDescriptorResolver.ResolverClassData classData) {
         JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
 
         if (jetClassAnnotation.signature().length() > 0) {

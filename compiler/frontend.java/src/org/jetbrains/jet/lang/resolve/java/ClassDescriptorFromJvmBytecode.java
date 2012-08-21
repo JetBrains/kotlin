@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.google.common.collect.Lists;
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
@@ -27,8 +26,6 @@ import org.jetbrains.jet.lang.resolve.lazy.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author Stepan Koltsov
@@ -39,7 +36,7 @@ public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
     @NotNull
     private final JavaDescriptorResolver javaDescriptorResolver;
     @NotNull
-    private final JavaDescriptorResolver.ResolverBinaryClassData resolverBinaryClassData;
+    private final JavaDescriptorResolver.ResolverClassData resolverBinaryClassData;
 
 
     // lazy
@@ -55,7 +52,7 @@ public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
     }
 
     @NotNull
-    public JavaDescriptorResolver.ResolverBinaryClassData getResolverBinaryClassData() {
+    public JavaDescriptorResolver.ResolverClassData getResolverBinaryClassData() {
         return resolverBinaryClassData;
     }
 
