@@ -32,6 +32,10 @@ import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.util.*;
 
+import static org.jetbrains.jet.JetNodeTypes.BLOCK;
+import static org.jetbrains.jet.JetNodeTypes.FUNCTION_LITERAL;
+import static org.jetbrains.jet.lexer.JetTokens.*;
+
 /**
  * @author yole
  * @see Block for good JavaDoc documentation
@@ -46,7 +50,6 @@ public class JetBlock extends AbstractBlock {
     private static final TokenSet CODE_BLOCKS = TokenSet.create(
             JetNodeTypes.BLOCK,
             JetNodeTypes.CLASS_BODY,
-            JetNodeTypes.FUNCTION_LITERAL_EXPRESSION,
             JetNodeTypes.FUNCTION_LITERAL);
 
     // private static final List<IndentWhitespaceRule>
@@ -129,7 +132,34 @@ public class JetBlock extends AbstractBlock {
 
     @Override
     public Spacing getSpacing(Block child1, Block child2) {
-        return mySpacingBuilder.getSpacing(this, child1, child2);
+        Spacing spacing = mySpacingBuilder.getSpacing(this, child1, child2);
+        if (spacing != null) {
+            return spacing;
+        }
+
+        // TODO: extend SpacingBuilder API - afterInside(RBRACE, FUNCTION_LITERAL).spacing(...), beforeInside(RBRACE, FUNCTION_LITERAL).spacing(...)
+
+        IElementType parentType = this.getNode().getElementType();
+        IElementType child1Type = ((ASTBlock) child1).getNode().getElementType();
+        IElementType child2Type = ((ASTBlock) child2).getNode().getElementType();
+
+        if (parentType == FUNCTION_LITERAL && child1Type == LBRACE && child2Type == BLOCK) {
+            return Spacing.createDependentLFSpacing(1, 1, this.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+        }
+
+        if (parentType == FUNCTION_LITERAL && child1Type == ARROW && child2Type == BLOCK) {
+            return Spacing.createDependentLFSpacing(1, 1, this.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+        }
+
+        if (parentType == FUNCTION_LITERAL && child2Type == RBRACE) {
+            return Spacing.createDependentLFSpacing(1, 1, this.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+        }
+
+        if (parentType == FUNCTION_LITERAL && child1Type == LBRACE) {
+            return Spacing.createSpacing(1, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+        }
+
+        return null;
     }
 
     @NotNull
@@ -248,13 +278,13 @@ public class JetBlock extends AbstractBlock {
 
     static ASTIndentStrategy[] INDENT_RULES = new ASTIndentStrategy[] {
             ASTIndentStrategy.forNode("No indent for braces in blocks")
-                    .in(JetNodeTypes.BLOCK, JetNodeTypes.CLASS_BODY, JetNodeTypes.FUNCTION_LITERAL_EXPRESSION)
+                    .in(JetNodeTypes.BLOCK, JetNodeTypes.CLASS_BODY, JetNodeTypes.FUNCTION_LITERAL)
                     .forType(JetTokens.RBRACE, JetTokens.LBRACE)
                     .set(Indent.getNoneIndent()),
 
             ASTIndentStrategy.forNode("Indent for block content")
-                    .in(JetNodeTypes.BLOCK, JetNodeTypes.CLASS_BODY, JetNodeTypes.FUNCTION_LITERAL_EXPRESSION)
-                    .notForType(JetTokens.RBRACE, JetTokens.LBRACE)
+                    .in(JetNodeTypes.BLOCK, JetNodeTypes.CLASS_BODY, JetNodeTypes.FUNCTION_LITERAL)
+                    .notForType(JetTokens.RBRACE, JetTokens.LBRACE, JetNodeTypes.BLOCK)
                     .set(Indent.getNormalIndent()),
 
             ASTIndentStrategy.forNode("Indent for property accessors")
