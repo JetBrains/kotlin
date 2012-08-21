@@ -36,10 +36,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.NamespaceType;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -49,7 +46,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.RESULT_TYPE_MISMATCH;
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 /**
@@ -248,7 +245,7 @@ public class ExpressionTypingUtils {
 
     @NotNull
     public static OverloadResolutionResults<FunctionDescriptor> resolveFakeCall(
-            @NotNull ExpressionReceiver receiver,
+            @NotNull ReceiverDescriptor receiver,
             @NotNull ExpressionTypingContext context,
             @NotNull Name name
     ) {
@@ -256,5 +253,59 @@ public class ExpressionTypingUtils {
         BindingTrace fakeTrace = TemporaryBindingTrace.create(context.trace);
         Call call = CallMaker.makeCall(fake, receiver, null, fake, Collections.<ValueArgument>emptyList());
         return context.replaceBindingTrace(fakeTrace).resolveCallWithGivenName(call, fake, name);
+    }
+
+    public static void defineLocalVariablesFromMultiDeclaration(
+            @NotNull WritableScope writableScope,
+            @NotNull JetMultiDeclaration multiDeclaration,
+            @NotNull ReceiverDescriptor receiver,
+            @NotNull JetExpression reportErrorsOn,
+            @NotNull ExpressionTypingContext context
+    ) {
+        int componentIndex = 1;
+        for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
+            final Name componentName = Name.identifier("component" + componentIndex);
+            componentIndex++;
+
+            JetType expectedType = getExpectedTypeForComponent(context, entry);
+            OverloadResolutionResults<FunctionDescriptor> results =
+                    resolveFakeCall(receiver, context.replaceExpectedType(expectedType), componentName);
+
+            JetType componentType = null;
+            if (results.isSuccess()) {
+                context.trace.record(COMPONENT_RESOLVED_CALL, entry, results.getResultingCall());
+                componentType = results.getResultingDescriptor().getReturnType();
+                if (componentType != null && expectedType != TypeUtils.NO_EXPECTED_TYPE
+                       && !JetTypeChecker.INSTANCE.isSubtypeOf(componentType, expectedType)) {
+
+                    context.trace.report(
+                            COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.on(reportErrorsOn, componentName, componentType, expectedType));
+                }
+            }
+            else if (results.isAmbiguity()) {
+                context.trace.report(COMPONENT_FUNCTION_AMBIGUITY.on(reportErrorsOn, componentName, results.getResultingCalls()));
+            }
+            else {
+                context.trace.report(COMPONENT_FUNCTION_MISSING.on(reportErrorsOn, componentName));
+            }
+            if (componentType == null) {
+                componentType = ErrorUtils.createErrorType(componentName + "() return type");
+            }
+            VariableDescriptor variableDescriptor = context.expressionTypingServices.getDescriptorResolver().
+                resolveLocalVariableDescriptorWithType(writableScope.getContainingDeclaration(), entry, componentType, context.trace);
+
+            writableScope.addVariableDescriptor(variableDescriptor);
+        }
+    }
+
+    @NotNull
+    private static JetType getExpectedTypeForComponent(ExpressionTypingContext context, JetMultiDeclarationEntry entry) {
+        JetTypeReference entryTypeRef = entry.getTypeRef();
+        if (entryTypeRef != null) {
+            return context.expressionTypingServices.getTypeResolver().resolveType(context.scope, entryTypeRef, context.trace, true);
+        }
+        else {
+            return TypeUtils.NO_EXPECTED_TYPE;
+        }
     }
 }
