@@ -51,6 +51,8 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.JetTypeMapper.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.CALL;
+import static org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_TYPE;
 
 /**
  * @author max
@@ -212,6 +214,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     @NotNull
     private Type asmType(@NotNull JetType type) {
         return typeMapper.mapType(type, MapTypeMode.VALUE);
+    }
+
+    @NotNull
+    private Type asmTypeOrVoid(@Nullable JetType type) {
+        return type == null ? Type.VOID_TYPE : asmType(type);
     }
 
     @Override
@@ -1425,13 +1432,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         else if (funDescriptor instanceof FunctionDescriptor) {
             final FunctionDescriptor fd = (FunctionDescriptor) funDescriptor;
+            Call call = bindingContext.get(CALL, expression.getCalleeExpression());
             if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-                VariableAsFunctionResolvedCall call = (VariableAsFunctionResolvedCall) resolvedCall;
-                ResolvedCallWithTrace<FunctionDescriptor> functionCall = call.getFunctionCall();
-                return invokeFunction(expression, functionCall.getResultingDescriptor(), receiver, functionCall);
+                VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
+                ResolvedCallWithTrace<FunctionDescriptor> functionCall = variableAsFunctionResolvedCall.getFunctionCall();
+                return invokeFunction(call, functionCall.getResultingDescriptor(), receiver, functionCall);
             }
             else {
-                return invokeFunction(expression, fd, receiver, resolvedCall);
+                return invokeFunction(call, fd, receiver, resolvedCall);
             }
         }
         else {
@@ -1440,14 +1448,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private StackValue invokeFunction(
-            JetCallExpression expression,
+            Call call,
             FunctionDescriptor fd,
             StackValue receiver,
             ResolvedCall<? extends CallableDescriptor> resolvedCall
     ) {
         boolean superCall = false;
-        if (expression.getParent() instanceof JetQualifiedExpression) {
-            final JetExpression receiverExpression = ((JetQualifiedExpression) expression.getParent()).getReceiverExpression();
+        ReceiverDescriptor explicitReceiver = call.getExplicitReceiver();
+        if (explicitReceiver instanceof ExpressionReceiver) {
+            final JetExpression receiverExpression = ((ExpressionReceiver) explicitReceiver).getExpression();
             if (receiverExpression instanceof JetSuperExpression) {
                 superCall = true;
                 receiver = StackValue.thisOrOuter(this, context.getThisDescriptor());
@@ -1492,7 +1501,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         Callable callable = resolveToCallable(fd, superCall);
         if (callable instanceof CallableMethod) {
             final CallableMethod callableMethod = (CallableMethod) callable;
-            invokeMethodWithArguments(callableMethod, expression, receiver);
+            invokeMethodWithArguments(callableMethod, resolvedCall, call, receiver);
 
             final Type callReturnType = callableMethod.getSignature().getAsmMethod().getReturnType();
             return returnValueAsStackValue(fd, callReturnType);
@@ -1502,14 +1511,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
             IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
             List<JetExpression> args = new ArrayList<JetExpression>();
-            for (ValueArgument argument : expression.getValueArguments()) {
+            for (ValueArgument argument : call.getValueArguments()) {
                 args.add(argument.getArgumentExpression());
             }
             JetType type = resolvedCall.getCandidateDescriptor().getReturnType();
             assert type != null;
             Type callType = typeMapper.mapType(type, MapTypeMode.VALUE);
-            Type exprType = expressionType(expression);
-            StackValue stackValue = intrinsic.generate(this, v, callType, expression, args, receiver, state);
+
+            Type exprType = asmTypeOrVoid(type);
+            StackValue stackValue = intrinsic.generate(this, v, callType, call.getCallElement(), args, receiver, state);
             stackValue.put(exprType, v);
             return StackValue.onStack(exprType);
         }
@@ -1567,15 +1577,24 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     public void invokeMethodWithArguments(CallableMethod callableMethod, JetCallElement expression, StackValue receiver) {
-        final Type calleeType = callableMethod.getGenerateCalleeType();
-        if (calleeType != null && expression instanceof JetCallExpression) {
-            assert !callableMethod.isNeedsThis();
-            gen(expression.getCalleeExpression(), calleeType);
-        }
+        JetExpression calleeExpression = expression.getCalleeExpression();
+        Call call = bindingContext.get(CALL, calleeExpression);
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, calleeExpression);
 
-        ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
-        assert resolvedCall != null;
+        invokeMethodWithArguments(callableMethod, resolvedCall, call, receiver);
+    }
+
+    public void invokeMethodWithArguments(
+            @NotNull CallableMethod callableMethod,
+            @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall,
+            @NotNull Call call,
+            @NotNull StackValue receiver
+    ) {
+        final Type calleeType = callableMethod.getGenerateCalleeType();
+        if (calleeType != null) {
+            assert !callableMethod.isNeedsThis();
+            gen(call.getCalleeExpression(), calleeType);
+        }
 
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             resolvedCall = ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall();
@@ -1589,7 +1608,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             }
         }
 
-        int mask = pushMethodArguments(expression, callableMethod.getValueParameterTypes());
+        int mask = pushMethodArguments(resolvedCall, callableMethod.getValueParameterTypes());
         if (mask == 0) {
             callableMethod.invoke(v);
         }
@@ -1879,9 +1898,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
     }
 
+    @NotNull
     public Type expressionType(JetExpression expr) {
         JetType type = bindingContext.get(BindingContext.EXPRESSION_TYPE, expr);
-        return type == null ? Type.VOID_TYPE : asmType(type);
+        return asmTypeOrVoid(type);
     }
 
     public int indexOfLocal(JetReferenceExpression lhs) {
@@ -2739,7 +2759,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     public StackValue visitArrayAccessExpression(JetArrayAccessExpression expression, StackValue receiver) {
         final JetExpression array = expression.getArrayExpression();
         JetType type = bindingContext.get(BindingContext.EXPRESSION_TYPE, array);
-        final Type arrayType = type == null ? Type.VOID_TYPE : asmType(type);
+        final Type arrayType = asmTypeOrVoid(type);
         final List<JetExpression> indices = expression.getIndexExpressions();
         FunctionDescriptor operationDescriptor = (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
         assert operationDescriptor != null;
@@ -3130,7 +3150,7 @@ The "returned" value of try expression with no finally is either the last expres
     public StackValue visitWhenExpression(JetWhenExpression expression, StackValue receiver) {
         JetExpression expr = expression.getSubjectExpression();
         JetType subjectJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expr);
-        final Type subjectType = subjectJetType == null ? Type.VOID_TYPE : asmType(subjectJetType);
+        final Type subjectType = asmTypeOrVoid(subjectJetType);
         final Type resultType = expressionType(expression);
         final int subjectLocal = expr != null ? myFrameMap.enterTemp(subjectType.getSize()) : -1;
         if (subjectLocal != -1) {

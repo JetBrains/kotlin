@@ -81,12 +81,12 @@ public class CallMaker {
         private final List<? extends ValueArgument> valueArguments;
         private final Call.CallType callType;
 
-        protected CallImpl(@Nullable PsiElement callElement, @NotNull ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments) {
+        protected CallImpl(@Nullable PsiElement callElement, @NotNull ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode, @Nullable JetExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments) {
             this(callElement, explicitReceiver, callOperationNode, calleeExpression, valueArguments, CallType.DEFAULT);
         }
 
         protected CallImpl(@Nullable PsiElement callElement, @NotNull ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode,
-                @NotNull JetExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments, @NotNull CallType callType) {
+                @Nullable JetExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments, @NotNull CallType callType) {
             this.callElement = callElement;
             this.explicitReceiver = explicitReceiver;
             this.callOperationNode = callOperationNode;
@@ -285,5 +285,9 @@ public class CallMaker {
                 return CallType.DEFAULT;
             }
         };
+    }
+
+    public static Call makeCall(@NotNull ReceiverDescriptor explicitReceiver, @Nullable JetExpression calleeExpression) {
+        return new CallImpl(null, explicitReceiver, null, calleeExpression, Collections.<ValueArgument>emptyList());
     }
 }
