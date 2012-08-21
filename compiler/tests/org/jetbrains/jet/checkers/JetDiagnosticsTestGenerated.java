@@ -1169,6 +1169,44 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             }
         }
         
+        @TestMetadata("compiler/testData/diagnostics/tests/enum")
+        public static class Enum extends AbstractDiagnosticsTestWithEagerResolve {
+            public void testAllFilesPresentInEnum() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve", new File("compiler/testData/diagnostics/tests/enum"), "kt", false);
+            }
+            
+            @TestMetadata("importEnumFromJava.kt")
+            public void testImportEnumFromJava() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/importEnumFromJava.kt");
+            }
+            
+            @TestMetadata("javaEnumValueOfMethod.kt")
+            public void testJavaEnumValueOfMethod() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/javaEnumValueOfMethod.kt");
+            }
+            
+            @TestMetadata("javaEnumValuesMethod.kt")
+            public void testJavaEnumValuesMethod() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/javaEnumValuesMethod.kt");
+            }
+            
+            @TestMetadata("javaEnumWithFuns.kt")
+            public void testJavaEnumWithFuns() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/javaEnumWithFuns.kt");
+            }
+            
+            @TestMetadata("javaEnumWithNameClashing.kt")
+            public void testJavaEnumWithNameClashing() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/javaEnumWithNameClashing.kt");
+            }
+            
+            @TestMetadata("javaEnumWithProperty.kt")
+            public void testJavaEnumWithProperty() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/javaEnumWithProperty.kt");
+            }
+            
+        }
+        
         @TestMetadata("compiler/testData/diagnostics/tests/extensions")
         public static class Extensions extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInExtensions() throws Exception {
@@ -3027,6 +3065,8 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTestSuite(DataFlow.class);
             suite.addTestSuite(DataFlowInfoTraversal.class);
             suite.addTest(DeclarationChecks.innerSuite());
+            suite.addTestSuite(DeclarationChecks.class);
+            suite.addTestSuite(Enum.class);
             suite.addTestSuite(Extensions.class);
             suite.addTestSuite(Generics.class);
             suite.addTest(IncompleteCode.innerSuite());
