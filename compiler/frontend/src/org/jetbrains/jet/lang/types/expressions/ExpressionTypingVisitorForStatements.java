@@ -44,6 +44,7 @@ import java.util.Collection;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.COMPONENT_RESOLVED_CALL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.VARIABLE_REASSIGNMENT;
 
 /**
@@ -151,8 +152,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
             JetType componentType = null;
             if (results.isSuccess()) {
-                FunctionDescriptor resultingDescriptor = results.getResultingDescriptor();
-                componentType = resultingDescriptor.getReturnType();
+                context.trace.record(COMPONENT_RESOLVED_CALL, entry, results.getResultingCall());
+                componentType = results.getResultingDescriptor().getReturnType();
                 if (componentType != null && expectedType != TypeUtils.NO_EXPECTED_TYPE
                        && !JetTypeChecker.INSTANCE.isSubtypeOf(componentType, expectedType)) {
 

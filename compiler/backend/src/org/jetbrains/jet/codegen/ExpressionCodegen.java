@@ -907,6 +907,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 }
             }
 
+            if (statement instanceof JetMultiDeclaration) {
+                JetMultiDeclaration multiDeclaration = (JetMultiDeclaration) statement;
+                for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
+                    generateLocalVariableDeclaration(entry, blockEnd, leaveTasks);
+                }
+            }
+
             if (statement instanceof JetVariableDeclaration) {
                 generateLocalVariableDeclaration((JetVariableDeclaration) statement, blockEnd, leaveTasks);
             }
@@ -2625,6 +2632,60 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 v.putfield(sharedVarType.getInternalName(), "ref",
                            sharedVarType == TYPE_SHARED_VAR ? "Ljava/lang/Object;" : varType.getDescriptor());
             }
+        }
+        return StackValue.none();
+    }
+
+    @Override
+    public StackValue visitMultiDeclaration(JetMultiDeclaration multiDeclaration, StackValue receiver) {
+        for (JetMultiDeclarationEntry variableDeclaration : multiDeclaration.getEntries()) {
+
+            VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, variableDeclaration);
+
+            if (JetPsiUtil.isScriptDeclaration(variableDeclaration)) {
+                return StackValue.none();
+            }
+            int index = lookupLocal(variableDescriptor);
+
+            if (index < 0) {
+                throw new IllegalStateException("Local variable not found for " + variableDescriptor);
+            }
+
+            Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
+            assert variableDescriptor != null;
+
+            Type varType = asmType(variableDescriptor.getType());
+
+            JetExpression initializer = multiDeclaration.getInitializer();
+
+            ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(BindingContext.COMPONENT_RESOLVED_CALL, variableDeclaration);
+            if (initializer != null) {
+                JetType type = bindingContext.get(EXPRESSION_TYPE, initializer);
+                assert type != null;
+                Call call = CallMaker.makeCall(new ExpressionReceiver(initializer, type), (JetExpression) null);
+
+                if (JetPsiUtil.isScriptDeclaration(variableDeclaration)) {
+                    invokeFunction(call, resolvedCall.getResultingDescriptor(), StackValue.none(), resolvedCall);
+
+                    JetScript scriptPsi = JetPsiUtil.getScript(variableDeclaration);
+                    assert scriptPsi != null;
+                    JvmClassName scriptClassName = state.getInjector().getClosureAnnotator().classNameForScriptPsi(scriptPsi);
+                    v.putfield(scriptClassName.getInternalName(), variableDeclaration.getName(), varType.getDescriptor());
+                }
+                else if (sharedVarType == null) {
+                    invokeFunction(call, resolvedCall.getResultingDescriptor(), StackValue.none(), resolvedCall);
+
+                    v.store(index, varType);
+                }
+                else {
+                    v.load(index, TYPE_OBJECT);
+                    invokeFunction(call, resolvedCall.getResultingDescriptor(), StackValue.none(), resolvedCall);
+
+                    v.putfield(sharedVarType.getInternalName(), "ref",
+                               sharedVarType == TYPE_SHARED_VAR ? "Ljava/lang/Object;" : varType.getDescriptor());
+                }
+            }
+
         }
         return StackValue.none();
     }

@@ -20,6 +20,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
@@ -121,6 +122,17 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         }
     }
 
+    protected String loadFileByFullPath(final String fullPath) {
+        try {
+            File file = new File(fullPath);
+            final String content = FileUtil.loadFile(file, true);
+            myFiles = CodegenTestFiles.create(file.getName(), content, myEnvironment.getProject());
+            return content;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     protected void loadFiles(final String... names) {
         myFiles = CodegenTestFiles.create(myEnvironment.getProject(), names);
     }
@@ -135,6 +147,11 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     protected void blackBoxFile(String filename) {
         loadFile(filename);
+        blackBox();
+    }
+
+    protected void blackBoxFileByFullPath(String filename) {
+        loadFileByFullPath(filename);
         blackBox();
     }
 
