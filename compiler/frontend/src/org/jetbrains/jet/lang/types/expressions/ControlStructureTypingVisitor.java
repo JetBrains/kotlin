@@ -250,7 +250,6 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         if (!isStatement) return DataFlowUtils.illegalStatementType(expression, contextWithExpectedType, facade);
 
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
-        JetParameter loopParameter = expression.getLoopParameter();
         JetExpression loopRange = expression.getLoopRange();
         JetType expectedParameterType = null;
         if (loopRange != null) {
@@ -262,34 +261,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         WritableScope loopScope = newWritableScopeImpl(context, "Scope with for-loop index");
 
+        JetParameter loopParameter = expression.getLoopParameter();
         if (loopParameter != null) {
-            JetTypeReference typeReference = loopParameter.getTypeReference();
-            VariableDescriptor variableDescriptor;
-            if (typeReference != null) {
-                variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), context.scope, loopParameter, context.trace);
-                JetType actualParameterType = variableDescriptor.getType();
-                if (expectedParameterType != null &&
-                        actualParameterType != null &&
-                        !JetTypeChecker.INSTANCE.isSubtypeOf(expectedParameterType, actualParameterType)) {
-                    context.trace.report(TYPE_MISMATCH_IN_FOR_LOOP.on(typeReference, expectedParameterType, actualParameterType));
-                }
-            }
-            else {
-                if (expectedParameterType == null) {
-                    expectedParameterType = ErrorUtils.createErrorType("Error");
-                }
-                variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), loopParameter, expectedParameterType, context.trace);
-            }
-
-            {
-                // http://youtrack.jetbrains.net/issue/KT-527
-
-                VariableDescriptor olderVariable = context.scope.getLocalVariable(variableDescriptor.getName());
-                if (olderVariable != null && DescriptorUtils.isLocal(context.scope.getContainingDeclaration(), olderVariable)) {
-                    PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), variableDescriptor);
-                    context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().getName()));
-                }
-            }
+            VariableDescriptor variableDescriptor = createLoopParameterDescriptor(loopParameter, expectedParameterType, context);
 
             loopScope.addVariableDescriptor(variableDescriptor);
         }
@@ -300,6 +274,40 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         }
 
         return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType, context.dataFlowInfo);
+    }
+
+    private static VariableDescriptor createLoopParameterDescriptor(
+            JetParameter loopParameter,
+            JetType expectedParameterType,
+            ExpressionTypingContext context
+    ) {
+        JetTypeReference typeReference = loopParameter.getTypeReference();
+        VariableDescriptor variableDescriptor;
+        if (typeReference != null) {
+            variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), context.scope, loopParameter, context.trace);
+            JetType actualParameterType = variableDescriptor.getType();
+            if (expectedParameterType != null &&
+                    !JetTypeChecker.INSTANCE.isSubtypeOf(expectedParameterType, actualParameterType)) {
+                context.trace.report(TYPE_MISMATCH_IN_FOR_LOOP.on(typeReference, expectedParameterType, actualParameterType));
+            }
+        }
+        else {
+            if (expectedParameterType == null) {
+                expectedParameterType = ErrorUtils.createErrorType("Error");
+            }
+            variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), loopParameter, expectedParameterType, context.trace);
+        }
+
+        {
+            // http://youtrack.jetbrains.net/issue/KT-527
+
+            VariableDescriptor olderVariable = context.scope.getLocalVariable(variableDescriptor.getName());
+            if (olderVariable != null && DescriptorUtils.isLocal(context.scope.getContainingDeclaration(), olderVariable)) {
+                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), variableDescriptor);
+                context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().getName()));
+            }
+        }
+        return variableDescriptor;
     }
 
     @Nullable
