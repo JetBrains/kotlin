@@ -8,3 +8,5 @@ fun foo() = test() { a ->
         1
     }
 }
+
+// SET_TRUE: INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD

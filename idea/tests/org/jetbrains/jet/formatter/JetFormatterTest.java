@@ -73,7 +73,7 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
     }
 
     public void testMultilineFunctionLiteralWithParams() throws Exception {
-        doTest();
+        doTestWithInvert();
     }
 
     public void testParameters() throws Exception {
@@ -93,7 +93,7 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
     }
 
     public void testSingleLineFunctionLiteral() throws Exception {
-        doTest();
+        doTestWithInvert();
     }
 
     public void testSpaceAroundExtendColon() throws Exception {

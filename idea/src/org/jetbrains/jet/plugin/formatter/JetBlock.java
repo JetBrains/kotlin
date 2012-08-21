@@ -143,8 +143,13 @@ public class JetBlock extends AbstractBlock {
         IElementType child1Type = ((ASTBlock) child1).getNode().getElementType();
         IElementType child2Type = ((ASTBlock) child2).getNode().getElementType();
 
+        JetCodeStyleSettings jetSettings = mySettings.getCustomSettings(JetCodeStyleSettings.class);
+        int spacesInSimpleMethod = jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD ? 1 : 0;
+
         if (parentType == FUNCTION_LITERAL && child1Type == LBRACE && child2Type == BLOCK) {
-            return Spacing.createDependentLFSpacing(1, 1, this.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+            return Spacing.createDependentLFSpacing(
+                    spacesInSimpleMethod, spacesInSimpleMethod, this.getTextRange(),
+                    mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
         }
 
         if (parentType == FUNCTION_LITERAL && child1Type == ARROW && child2Type == BLOCK) {
@@ -152,11 +157,14 @@ public class JetBlock extends AbstractBlock {
         }
 
         if (parentType == FUNCTION_LITERAL && child2Type == RBRACE) {
-            return Spacing.createDependentLFSpacing(1, 1, this.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+            return Spacing.createDependentLFSpacing(
+                    spacesInSimpleMethod, spacesInSimpleMethod, this.getTextRange(),
+                    mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
         }
 
         if (parentType == FUNCTION_LITERAL && child1Type == LBRACE) {
-            return Spacing.createSpacing(1, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+            return Spacing.createSpacing(spacesInSimpleMethod, spacesInSimpleMethod, 0,
+                                         mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
         }
 
         return null;

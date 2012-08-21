@@ -52,10 +52,12 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                         "                14\n" +
                         "        )\n" +
                         "    }\n" +
+                        "    private val f = {(a: Int)->a*2}\n" +
                         "}";
             default:
                 return
                         "class Some {\n" +
+                        "  private val f = {(a: Int)->a*2}\n" +
                         "  fun foo() : Int {\n" +
                         "    val test : Int = 12\n" +
                         "    return test\n" +
@@ -104,6 +106,11 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                 consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_BEFORE_EXTEND_COLON",
                                           "Space before colon in new type definition",
                                           CodeStyleSettingsCustomizable.SPACES_OTHER);
+
+                consumer.showCustomOption(JetCodeStyleSettings.class, "INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD",
+                                          "Insert whitespaces in simple one line methods",
+                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+
                 break;
             case WRAPPING_AND_BRACES_SETTINGS:
                 consumer.showStandardOptions(
