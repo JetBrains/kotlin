@@ -88,6 +88,10 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
         doTestWithInvert();
     }
 
+    public void testSaveSpacesInDocComments() throws Exception {
+        doTest();
+    }
+
     public void testSingleLineFunctionLiteral() throws Exception {
         doTest();
     }
