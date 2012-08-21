@@ -149,12 +149,12 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
         if (name.equals(DescriptorResolver.VALUES_METHOD_NAME)) {
             SimpleFunctionDescriptor valuesMethod = DescriptorResolver
-                    .createEnumClassObjectValuesMethod(classDescriptor, resolveSession.getTrace());
+                    .createEnumClassObjectValuesMethod(thisDescriptor, resolveSession.getTrace());
             result.add(valuesMethod);
         }
         else if (name.equals(DescriptorResolver.VALUE_OF_METHOD_NAME)) {
             SimpleFunctionDescriptor valueOfMethod = DescriptorResolver
-                    .createEnumClassObjectValueOfMethod(classDescriptor, resolveSession.getTrace());
+                    .createEnumClassObjectValueOfMethod(thisDescriptor, resolveSession.getTrace());
             result.add(valueOfMethod);
         }
     }

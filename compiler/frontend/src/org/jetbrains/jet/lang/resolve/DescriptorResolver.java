@@ -1146,11 +1146,11 @@ public class DescriptorResolver {
     }
 
     public static SimpleFunctionDescriptor createEnumClassObjectValuesMethod(
-            final ClassDescriptor enumClassDescriptor,
+            @NotNull ClassDescriptor classObjectDescriptor,
             BindingTrace trace
     ) {
-        ClassDescriptor classObjectDescriptor = enumClassDescriptor.getClassObjectDescriptor();
-        assert classObjectDescriptor != null : "Enum class has no class object";
+        final ClassDescriptor enumClassDescriptor = (ClassDescriptor) classObjectDescriptor.getContainingDeclaration();
+        assert enumClassDescriptor.getKind() == ClassKind.ENUM_CLASS;
         List<AnnotationDescriptor> annotations = Collections.<AnnotationDescriptor>emptyList();
         SimpleFunctionDescriptorImpl values =
                 new SimpleFunctionDescriptorImpl(classObjectDescriptor, annotations,
@@ -1171,11 +1171,11 @@ public class DescriptorResolver {
     }
 
     public static SimpleFunctionDescriptor createEnumClassObjectValueOfMethod(
-            final ClassDescriptor enumClassDescriptor,
+            @NotNull ClassDescriptor classObjectDescriptor,
             BindingTrace trace
     ) {
-        ClassDescriptor classObjectDescriptor = enumClassDescriptor.getClassObjectDescriptor();
-        assert classObjectDescriptor != null : "Enum class has no class object";
+        final ClassDescriptor enumClassDescriptor = (ClassDescriptor) classObjectDescriptor.getContainingDeclaration();
+        assert enumClassDescriptor.getKind() == ClassKind.ENUM_CLASS;
         List<AnnotationDescriptor> annotations = Collections.<AnnotationDescriptor>emptyList();
         SimpleFunctionDescriptorImpl values =
                 new SimpleFunctionDescriptorImpl(classObjectDescriptor, annotations,

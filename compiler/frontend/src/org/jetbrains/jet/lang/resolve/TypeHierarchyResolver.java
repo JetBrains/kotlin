@@ -303,8 +303,8 @@ public class TypeHierarchyResolver {
                         ConstructorDescriptorImpl primaryConstructorForObject =
                                 createPrimaryConstructorForObject(null, classObjectDescriptor);
                         primaryConstructorForObject.setReturnType(classObjectDescriptor.getDefaultType());
-                        classObjectDescriptor.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValuesMethod(mutableClassDescriptor, trace));
-                        classObjectDescriptor.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValueOfMethod(mutableClassDescriptor, trace));
+                        classObjectDescriptor.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValuesMethod(classObjectDescriptor, trace));
+                        classObjectDescriptor.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValueOfMethod(classObjectDescriptor, trace));
                     }
                 }
 
