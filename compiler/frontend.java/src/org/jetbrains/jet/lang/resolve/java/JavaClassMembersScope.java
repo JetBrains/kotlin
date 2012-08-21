@@ -29,11 +29,7 @@ import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class static of instance members.
@@ -50,9 +46,6 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
 
         if (resolverScopeData.psiClass == null) {
             throw new IllegalArgumentException("must pass PsiClass here");
-        }
-        if (resolverScopeData.staticMembers) {
-            throw new IllegalArgumentException("static members should be resolved using " + JavaPackageScope.class);
         }
     }
 

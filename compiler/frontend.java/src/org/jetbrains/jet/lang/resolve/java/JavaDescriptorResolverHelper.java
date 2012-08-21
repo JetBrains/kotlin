@@ -64,6 +64,10 @@ class JavaDescriptorResolverHelper {
         }
         
         private boolean includeMember(PsiMemberWrapper member) {
+            if (psiClass.getPsiClass().isEnum() && staticMembers) {
+                return member.isStatic();
+            }
+
             if (member.isStatic() != staticMembers) {
                 return false;
             }
@@ -80,20 +84,22 @@ class JavaDescriptorResolverHelper {
         }
         
         private void processFields() {
-            if (!kotlin) {
-                for (PsiField field0 : psiClass.getPsiClass().getAllFields()) {
-                    PsiFieldWrapper field = new PsiFieldWrapper(field0);
+            // Hack to load static members for enum class loaded from class file
+            if (kotlin && !psiClass.getPsiClass().isEnum()) {
+                return;
+            }
+            for (PsiField field0 : psiClass.getPsiClass().getAllFields()) {
+                PsiFieldWrapper field = new PsiFieldWrapper(field0);
 
-                    // group must be created even for excluded field
-                    NamedMembers namedMembers = getNamedMembers(Name.identifier(field.getName()));
+                // group must be created even for excluded field
+                NamedMembers namedMembers = getNamedMembers(Name.identifier(field.getName()));
 
-                    if (!includeMember(field)) {
-                        continue;
-                    }
-
-                    TypeSource type = new TypeSource("", field.getType(), field0);
-                    namedMembers.addPropertyAccessor(new PropertyAccessorData(field, type, null));
+                if (!includeMember(field)) {
+                    continue;
                 }
+
+                TypeSource type = new TypeSource("", field.getType(), field0);
+                namedMembers.addPropertyAccessor(new PropertyAccessorData(field, type, null));
             }
         }
 
