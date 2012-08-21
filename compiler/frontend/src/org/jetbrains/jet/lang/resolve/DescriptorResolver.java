@@ -1070,7 +1070,7 @@ public class DescriptorResolver {
             @NotNull JetParameter parameter, BindingTrace trace
     ) {
         JetType type = resolveParameterType(scope, parameter, trace);
-        Name name = parameter.getNameAsName();
+        Name name = parameter.getNameAsSafeName();
         boolean isMutable = parameter.isMutable();
         JetModifierList modifierList = parameter.getModifierList();
 
@@ -1088,7 +1088,7 @@ public class DescriptorResolver {
                 resolveVisibilityFromModifiers(parameter.getModifierList()),
                 isMutable,
                 false,
-                name == null ? Name.special("<no name>") : name,
+                name,
                 CallableMemberDescriptor.Kind.DECLARATION
         );
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(),
