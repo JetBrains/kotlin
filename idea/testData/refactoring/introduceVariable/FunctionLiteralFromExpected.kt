@@ -11,7 +11,7 @@ class A {
 }
 fun apply(x: (A) -> Int) = 2
 fun test() {
-    val function: (A) -> Int = {it.foo()}
+    val function: (A) -> Int = { it.foo() }
     apply(function)
 }
 */

@@ -1,3 +1,3 @@
 fun main(args : Array<String>) {
-    val someFun = {param -> param}<caret>
+    val someFun = { param -> param }<caret>
 }

@@ -3,7 +3,7 @@ fun foo(c : Collection<String>){
 }
 /*
 fun foo(c : Collection<String>){
-    val function = {it; false}
+    val function = { it; false }
     c.filter(function)
 }
 */
