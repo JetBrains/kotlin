@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.kt;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +37,7 @@ public class KotlinSignatureAnnotation extends PsiAnnotationWrapper {
 
     public String signature() {
         if (signature == null) {
-            signature = getStringAttribute(JvmStdlibNames.KOTLIN_SIGNATURE_VALUE_METHOD, "");
+            signature = StringUtil.unescapeStringCharacters(getStringAttribute(JvmStdlibNames.KOTLIN_SIGNATURE_VALUE_METHOD, ""));
         }
         return signature;
     }

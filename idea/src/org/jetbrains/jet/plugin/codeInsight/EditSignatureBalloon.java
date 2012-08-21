@@ -29,6 +29,7 @@ import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiDocumentManager;
@@ -223,7 +224,7 @@ class EditSignatureBalloon {
 
     static PsiNameValuePair[] signatureToNameValuePairs(@NotNull Project project, @NotNull String signature) {
         return JavaPsiFacade.getElementFactory(project).createAnnotationFromText(
-                        "@" + KotlinSignatureInJavaMarkerProvider.KOTLIN_SIGNATURE_ANNOTATION + "(value=\"" + signature + "\")", null)
-                        .getParameterList().getAttributes();
+                "@" + KotlinSignatureInJavaMarkerProvider.KOTLIN_SIGNATURE_ANNOTATION
+                + "(value=\"" + StringUtil.escapeStringCharacters(signature) + "\")", null).getParameterList().getAttributes();
     }
 }

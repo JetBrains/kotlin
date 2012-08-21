@@ -28,6 +28,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.util.Function;
@@ -93,7 +94,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         PsiNameValuePair pair = kotlinSignatureAnnotation.getParameterList().getAttributes()[0];
         PsiAnnotationMemberValue value = pair.getValue();
         return value == null ? "null" : value instanceof PsiLiteralExpression
-                                        ? ((PsiLiteralExpression) value).getValue().toString()
+                                        ? StringUtil.unescapeStringCharacters(((PsiLiteralExpression) value).getValue().toString())
                                         : value.getText();
     }
 
