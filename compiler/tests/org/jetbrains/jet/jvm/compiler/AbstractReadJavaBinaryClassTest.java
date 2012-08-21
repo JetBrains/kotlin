@@ -17,10 +17,6 @@
 package org.jetbrains.jet.jvm.compiler;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.impl.PsiFileFactoryImpl;
-import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
@@ -33,7 +29,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.generator.SimpleTestClassModel;
 import org.jetbrains.jet.test.generator.TestGenerator;
@@ -55,13 +50,13 @@ public abstract class AbstractReadJavaBinaryClassTest extends TestCaseWithTmpdir
         File javaFile = new File(javaFileName);
         File ktFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".kt"));
         File txtFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".txt"));
-        NamespaceDescriptor nsa = compileKotlin(ktFile);
+        NamespaceDescriptor nsa = analyzeKotlin(ktFile);
         NamespaceDescriptor nsb = LoadDescriptorUtil.compileJava(Collections.singletonList(javaFile), tmpdir, myTestRootDisposable);
         NamespaceComparator.compareNamespaces(nsa, nsb, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
     }
 
     @NotNull
-    private NamespaceDescriptor compileKotlin(File ktFile) throws Exception {
+    private NamespaceDescriptor analyzeKotlin(File ktFile) throws Exception {
         JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_ONLY);
 
         String text = FileUtil.loadFile(ktFile);
