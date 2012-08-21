@@ -81,10 +81,14 @@ functionBody
   : "=" expression
   ;
 
+variableDeclarationEntry
+  : SimpleName (":" type)?
+  ;
+
 property
   : modifiers ("val" | "var")
       typeParameters? (type "." | annotations)?
-      (SimpleName (":" type)?){","}
+      ("(" variableDeclarationEntry{","} ")" | variableDeclarationEntry)
       typeConstraints
       ("=" expression SEMI?)?
       (getter? setter? | setter? getter?) SEMI?

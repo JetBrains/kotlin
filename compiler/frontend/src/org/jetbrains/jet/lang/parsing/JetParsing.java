@@ -799,10 +799,14 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
+     * variableDeclarationEntry
+     *   : SimpleName (":" type)?
+     *   ;
+     *
      * property
      *   : modifiers ("val" | "var")
-     *       typeParameters? (type "." | attributes)?
-     *       (SimpleName (":" type)?){","}
+     *       typeParameters? (type "." | annotations)?
+     *       ("(" variableDeclarationEntry{","} ")" | variableDeclarationEntry)
      *       typeConstraints
      *       ("=" element SEMI?)?
      *       (getter? setter? | setter? getter?) SEMI?
