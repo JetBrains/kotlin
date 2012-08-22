@@ -17,13 +17,9 @@
 package org.jetbrains.jet.plugin.project;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 
 /**
@@ -42,13 +38,5 @@ public final class WholeProjectAnalyzerFacade {
     @NotNull
     public static ResolveSession getLazyResolveSessionForFile(@NotNull JetFile file) {
         return AnalyzerFacadeWithCache.getLazyResolveSession(file);
-    }
-
-    @NotNull
-    public static BindingContext getLazyResolveContext(@NotNull JetFile file, @Nullable JetExpression expression) {
-        ResolveSession resolveSession = getLazyResolveSessionForFile(file);
-        return expression != null ?
-               ResolveSessionUtils.getExpressionBindingContext(resolveSession, expression) :
-               resolveSession.getBindingContext();
     }
 }
