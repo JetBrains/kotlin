@@ -37,10 +37,11 @@ import java.util.*;
  * @author alex.tkachman
  */
 public class ClosureAnnotator {
-    private final Map<JetElement, JvmClassName> classNamesForAnonymousClasses = new HashMap<JetElement, JvmClassName>();
     private final Map<ClassDescriptor, JvmClassName> classNamesForClassDescriptor = new HashMap<ClassDescriptor, JvmClassName>();
     private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
     private final Map<ScriptDescriptor, JvmClassName> classNameForScript = new HashMap<ScriptDescriptor, JvmClassName>();
+    private final Map<ClassDescriptor, LocalClassClosureCodegen> localClassCodegenForClass =
+            new HashMap<ClassDescriptor, LocalClassClosureCodegen>();
     private final Set<JvmClassName> scriptClassNames = new HashSet<JvmClassName>();
     private final Map<DeclarationDescriptor, ClassDescriptorImpl> classesForFunctions =
             new HashMap<DeclarationDescriptor, ClassDescriptorImpl>();
@@ -69,7 +70,8 @@ public class ClosureAnnotator {
     }
 
 
-    public ClassDescriptor classDescriptorForFunctionDescriptor(FunctionDescriptor funDescriptor, JvmClassName name) {
+    @NotNull
+    public ClassDescriptor classDescriptorForFunctionDescriptor(FunctionDescriptor funDescriptor) {
         ClassDescriptorImpl classDescriptor = classesForFunctions.get(funDescriptor);
         if (classDescriptor == null) {
             int arity = funDescriptor.getValueParameters().size();
@@ -79,7 +81,6 @@ public class ClosureAnnotator {
                     Collections.<AnnotationDescriptor>emptyList(),
                     Modality.FINAL,
                     Name.special("<closure>"));
-            recordName(classDescriptor, name);
             classDescriptor.initialize(
                     false,
                     Collections.<TypeParameterDescriptor>emptyList(),
@@ -204,14 +205,13 @@ public class ClosureAnnotator {
             expression = jetObjectLiteralExpression.getObjectDeclaration();
         }
 
-        if (expression instanceof JetFunctionLiteralExpression) {
-            JetFunctionLiteralExpression jetFunctionLiteralExpression = (JetFunctionLiteralExpression) expression;
-            expression = jetFunctionLiteralExpression.getFunctionLiteral();
+        ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, expression);
+        if (descriptor == null) {
+            SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, expression);
+            assert functionDescriptor != null;
+            descriptor = classDescriptorForFunctionDescriptor(functionDescriptor);
         }
-
-        JvmClassName name = classNamesForAnonymousClasses.get(expression);
-        assert name != null;
-        return name;
+        return classNameForClassDescriptor(descriptor);
     }
 
     public ClassDescriptor getEclosingClassDescriptor(ClassDescriptor descriptor) {
@@ -240,6 +240,11 @@ public class ClosureAnnotator {
         return aBoolean != null && aBoolean;
     }
 
+    public void recordLocalClass(ClassDescriptor descriptor, LocalClassClosureCodegen codegen) {
+        LocalClassClosureCodegen put = localClassCodegenForClass.put(descriptor, codegen);
+        assert put == null;
+    }
+
     private class MyJetVisitorVoid extends JetVisitorVoid {
         private final LinkedList<ClassDescriptor> classStack = new LinkedList<ClassDescriptor>();
         private final LinkedList<String> nameStack = new LinkedList<String>();
@@ -252,28 +257,41 @@ public class ClosureAnnotator {
         }
 
         private JvmClassName recordAnonymousClass(JetElement declaration) {
-            JvmClassName name = classNamesForAnonymousClasses.get(declaration);
-            assert name == null;
-
             String top = nameStack.peek();
             Integer cnt = anonymousSubclassesCount.get(top);
             if (cnt == null) {
                 cnt = 0;
             }
-            name = JvmClassName.byInternalName(top + "$" + (cnt + 1));
-            classNamesForAnonymousClasses.put(declaration, name);
+            JvmClassName name = JvmClassName.byInternalName(top + "$" + (cnt + 1));
+            ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, declaration);
+            if (descriptor == null) {
+                if (declaration instanceof JetFunctionLiteralExpression || declaration instanceof JetNamedFunction) {
+                    DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
+                    assert declarationDescriptor instanceof FunctionDescriptor;
+                    descriptor = classDescriptorForFunctionDescriptor((FunctionDescriptor) declarationDescriptor);
+                }
+                else if (declaration instanceof JetObjectLiteralExpression) {
+                    descriptor =
+                            bindingContext.get(BindingContext.CLASS, ((JetObjectLiteralExpression) declaration).getObjectDeclaration());
+                    assert descriptor != null;
+                }
+                else {
+                    throw new IllegalStateException(
+                            "Class-less declaration which is not JetFunctionLiteralExpression|JetNamedFunction|JetObjectLiteralExpression : " +
+                            declaration.getClass().getName());
+                }
+            }
+            recordName(descriptor, name);
             anonymousSubclassesCount.put(top, cnt + 1);
 
             return name;
         }
 
         private JvmClassName recordClassObject(JetClassObject declaration) {
-            JvmClassName name = classNamesForAnonymousClasses.get(declaration.getObjectDeclaration());
-            assert name == null;
-
-            name = JvmClassName.byInternalName(nameStack.peek() + JvmAbi.CLASS_OBJECT_SUFFIX);
-            classNamesForAnonymousClasses.put(declaration.getObjectDeclaration(), name);
-
+            JvmClassName name = JvmClassName.byInternalName(nameStack.peek() + JvmAbi.CLASS_OBJECT_SUFFIX);
+            ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, declaration.getObjectDeclaration());
+            assert classDescriptor != null;
+            recordName(classDescriptor, name);
             return name;
         }
 
@@ -309,7 +327,6 @@ public class ClosureAnnotator {
             ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, classObject.getObjectDeclaration());
             assert classDescriptor != null;
             recordEnclosing(classDescriptor);
-            recordName(classDescriptor, name);
             classStack.push(classDescriptor);
             nameStack.push(name.getInternalName());
             super.visitClassObject(classObject);
@@ -335,6 +352,7 @@ public class ClosureAnnotator {
                 else {
                     nameStack.push(base + '$' + classDescriptor.getName());
                 }
+                recordName(classDescriptor, JvmClassName.byInternalName(nameStack.peek()));
                 super.visitObjectDeclaration(declaration);
                 nameStack.pop();
                 classStack.pop();
@@ -355,6 +373,7 @@ public class ClosureAnnotator {
             else {
                 nameStack.push(base + '$' + classDescriptor.getName());
             }
+            recordName(classDescriptor, JvmClassName.byInternalName(nameStack.peek()));
             super.visitClass(klass);
             nameStack.pop();
             classStack.pop();
@@ -362,13 +381,13 @@ public class ClosureAnnotator {
 
         @Override
         public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
-            JvmClassName name = recordAnonymousClass(expression.getObjectDeclaration());
             ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, expression.getObjectDeclaration());
             if (classDescriptor == null) {
+                // working around a problem with shallow analysis
                 super.visitObjectLiteralExpression(expression);
                 return;
             }
-            recordName(classDescriptor, name);
+            recordAnonymousClass(expression.getObjectDeclaration());
             recordEnclosing(classDescriptor);
             classStack.push(classDescriptor);
             nameStack.push(classNameForClassDescriptor(classDescriptor).getInternalName());
@@ -379,15 +398,15 @@ public class ClosureAnnotator {
 
         @Override
         public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
-            JvmClassName name = recordAnonymousClass(expression.getFunctionLiteral());
-            FunctionDescriptor declarationDescriptor =
+            FunctionDescriptor functionDescriptor =
                     (FunctionDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, expression);
             // working around a problem with shallow analysis
-            if (declarationDescriptor == null) return;
-            ClassDescriptor classDescriptor = classDescriptorForFunctionDescriptor(declarationDescriptor, name);
+            if (functionDescriptor == null) return;
+            JvmClassName name = recordAnonymousClass(expression);
+            ClassDescriptor classDescriptor = classDescriptorForFunctionDescriptor(functionDescriptor);
             recordEnclosing(classDescriptor);
             classStack.push(classDescriptor);
-            nameStack.push(classNameForClassDescriptor(classDescriptor).getInternalName());
+            nameStack.push(name.getInternalName());
             super.visitFunctionLiteralExpression(expression);
             nameStack.pop();
             classStack.pop();
@@ -426,7 +445,7 @@ public class ClosureAnnotator {
             }
             else {
                 JvmClassName name = recordAnonymousClass(function);
-                ClassDescriptor classDescriptor = classDescriptorForFunctionDescriptor(functionDescriptor, name);
+                ClassDescriptor classDescriptor = classDescriptorForFunctionDescriptor(functionDescriptor);
                 recordEnclosing(classDescriptor);
                 classStack.push(classDescriptor);
                 nameStack.push(name.getInternalName());
@@ -444,7 +463,6 @@ public class ClosureAnnotator {
         }
     }
 
-    @NotNull
     public JvmClassName classNameForClassDescriptor(@NotNull ClassDescriptor classDescriptor) {
         return classNamesForClassDescriptor.get(classDescriptor);
     }

@@ -703,6 +703,7 @@ public class DescriptorResolver {
                 JetPsiUtil.safeName(objectDeclaration.getName()),
                 classDescriptor.getDefaultType(),
                 /*isVar =*/ false);
+        trace.record(BindingContext.OBJECT_DECLARATION_CLASS, variableDescriptor, classDescriptor);
         JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
         if (nameAsDeclaration != null) {
             trace.record(BindingContext.VARIABLE, nameAsDeclaration, variableDescriptor);

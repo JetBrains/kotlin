@@ -29,13 +29,15 @@ import java.util.List;
  * @author abreslav
  */
 public class LocalVariableDescriptor extends VariableDescriptorImpl {
-    private boolean isVar;
+    private final boolean isVar;
+
     public LocalVariableDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Name name,
             @Nullable JetType type,
-            boolean mutable) {
+            boolean mutable
+    ) {
         super(containingDeclaration, annotations, name, type);
         isVar = mutable;
     }

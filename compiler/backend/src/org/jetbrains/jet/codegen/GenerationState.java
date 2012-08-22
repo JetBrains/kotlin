@@ -43,8 +43,6 @@ import java.util.Map;
 public class GenerationState {
     private final Progress progress;
     @NotNull
-    private final AnalyzeExhaust analyzeExhaust;
-    @NotNull
     private final List<JetFile> files;
     @NotNull
     private final InjectorForJvmCodegen injector;
@@ -56,6 +54,8 @@ public class GenerationState {
 
     // out parameter
     private Method scriptConstructorMethod;
+    private final BindingContext bindingContext;
+    private final JetTypeMapper typeMapper;
 
 
     public GenerationState(ClassBuilderFactory builderFactory, AnalyzeExhaust analyzeExhaust, List<JetFile> files) {
@@ -67,12 +67,13 @@ public class GenerationState {
             @NotNull AnalyzeExhaust exhaust, @NotNull List<JetFile> files, @NotNull BuiltinToJavaTypesMapping builtinToJavaTypesMapping
     ) {
         this.progress = progress;
-        this.analyzeExhaust = exhaust;
         this.files = files;
         this.classBuilderMode = builderFactory.getClassBuilderMode();
+        bindingContext = exhaust.getBindingContext();
         this.injector = new InjectorForJvmCodegen(
-                analyzeExhaust.getBindingContext(),
+                bindingContext,
                 this.files, builtinToJavaTypesMapping, builderFactory.getClassBuilderMode(), this, builderFactory);
+        typeMapper = injector.getJetTypeMapper();
     }
 
     private void markUsed() {
@@ -98,7 +99,7 @@ public class GenerationState {
     }
 
     public BindingContext getBindingContext() {
-        return analyzeExhaust.getBindingContext();
+        return bindingContext;
     }
 
     @NotNull
@@ -199,16 +200,16 @@ public class GenerationState {
         closure.cv = nameAndVisitor.getSecond();
         closure.name = nameAndVisitor.getFirst();
         final CodegenContext objectContext = closure.context.intoAnonymousClass(
-                closure, analyzeExhaust.getBindingContext().get(BindingContext.CLASS, objectDeclaration), OwnerKind.IMPLEMENTATION,
-                injector.getJetTypeMapper());
+                closure, bindingContext.get(BindingContext.CLASS, objectDeclaration), OwnerKind.IMPLEMENTATION,
+                typeMapper);
 
         new ImplementationBodyCodegen(objectDeclaration, objectContext, nameAndVisitor.getSecond(), this).generate();
 
-        ConstructorDescriptor constructorDescriptor = analyzeExhaust.getBindingContext().get(BindingContext.CONSTRUCTOR, objectDeclaration);
+        ConstructorDescriptor constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, objectDeclaration);
         assert constructorDescriptor != null;
-        CallableMethod callableMethod = injector.getJetTypeMapper().mapToCallableMethod(
+        CallableMethod callableMethod = typeMapper.mapToCallableMethod(
                 constructorDescriptor, OwnerKind.IMPLEMENTATION,
-                injector.getJetTypeMapper().hasThis0(constructorDescriptor.getContainingDeclaration()));
+                typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
         return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, callableMethod.getSignature().getAsmMethod(),
                                                      objectContext.outerWasUsed, null);
     }

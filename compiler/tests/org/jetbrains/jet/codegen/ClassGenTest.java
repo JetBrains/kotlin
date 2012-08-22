@@ -48,7 +48,7 @@ public class ClassGenTest extends CodegenTestCase {
     public void testArrayListInheritance() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile("classes/inheritingFromArrayList.jet");
-//        System.out.println(generateToText());
+        //        System.out.println(generateToText());
         final Class aClass = loadClass("Foo", generateClassesInFile());
         assertInstanceOf(aClass.newInstance(), List.class);
     }
@@ -86,7 +86,7 @@ public class ClassGenTest extends CodegenTestCase {
     public void testNewInstanceExplicitConstructor() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile("classes/newInstanceDefaultConstructor.jet");
-//        System.out.println(generateToText());
+        //        System.out.println(generateToText());
         final Method method = generateFunction("test");
         final Integer returnValue = (Integer) method.invoke(null);
         assertEquals(610, returnValue.intValue());
@@ -163,7 +163,7 @@ public class ClassGenTest extends CodegenTestCase {
     public void testClassObjectMethod() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         // todo to be implemented after removal of type info
-//        blackBoxFile("classes/classObjectMethod.jet");
+        //        blackBoxFile("classes/classObjectMethod.jet");
     }
 
     public void testClassObjectInterface() throws Exception {
@@ -203,7 +203,7 @@ public class ClassGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("enum class Direction { NORTH; SOUTH; EAST; WEST }");
         final Class direction = createClassLoader(generateClassesInFile()).loadClass("Direction");
-//        System.out.println(generateToText());
+        //        System.out.println(generateToText());
         final Field north = direction.getField("NORTH");
         assertEquals(direction, north.getType());
         assertInstanceOf(north.get(null), direction);
@@ -241,94 +241,94 @@ public class ClassGenTest extends CodegenTestCase {
         blackBoxFile("regressions/kt249.jet");
     }
 
-    public void testKt48 () throws Exception {
+    public void testKt48() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt48.jet");
-//        System.out.println(generateToText());
+        //        System.out.println(generateToText());
     }
 
-    public void testKt309 () throws Exception {
+    public void testKt309() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("fun box() = null");
         final Method method = generateFunction("box");
         assertEquals(method.getReturnType().getName(), "java.lang.Object");
-//        System.out.println(generateToText());
+        //        System.out.println(generateToText());
     }
 
-    public void testKt343 () throws Exception {
+    public void testKt343() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt343.jet");
-//        System.out.println(generateToText());
+        //        System.out.println(generateToText());
     }
 
-    public void testKt508 () throws Exception {
+    public void testKt508() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile("regressions/kt508.jet");
-//        System.out.println(generateToText());
+        //        System.out.println(generateToText());
         blackBox();
     }
 
-    public void testKt504 () throws Exception {
+    public void testKt504() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile("regressions/kt504.jet");
-//        System.out.println(generateToText());
+        //        System.out.println(generateToText());
         blackBox();
     }
 
-    public void testKt501 () throws Exception {
+    public void testKt501() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt501.jet");
     }
 
-    public void testKt496 () throws Exception {
+    public void testKt496() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt496.jet");
-//        System.out.println(generateToText());
+        //        System.out.println(generateToText());
     }
 
-    public void testKt500 () throws Exception {
+    public void testKt500() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt500.jet");
     }
 
-    public void testKt694 () throws Exception {
+    public void testKt694() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         //        blackBoxFile("regressions/kt694.jet");
     }
 
-    public void testKt285 () throws Exception {
+    public void testKt285() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         //        blackBoxFile("regressions/kt285.jet");
     }
 
-    public void testKt707 () throws Exception {
+    public void testKt707() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt707.jet");
     }
 
-    public void testKt857 () throws Exception {
+    public void testKt857() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         //        blackBoxFile("regressions/kt857.jet");
     }
 
-    public void testKt903 () throws Exception {
+    public void testKt903() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt903.jet");
     }
 
-    public void testKt940 () throws Exception {
+    public void testKt940() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt940.kt");
     }
 
-    public void testKt1018 () throws Exception {
+    public void testKt1018() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt1018.kt");
     }
 
-    public void testKt1120 () throws Exception {
+    public void testKt1120() throws Exception {
         //createEnvironmentWithFullJdk();
-//        blackBoxFile("regressions/kt1120.kt");
+        //        blackBoxFile("regressions/kt1120.kt");
     }
 
     public void testSelfCreate() throws Exception {

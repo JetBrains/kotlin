@@ -73,6 +73,7 @@ public class FqName extends FqNameBase {
                isValidAfterUnsafeCheck(qualifiedName);
     }
 
+    @Override
     @NotNull
     public String getFqName() {
         return fqName.getFqName();
@@ -143,7 +144,6 @@ public class FqName extends FqNameBase {
     public boolean lastSegmentIs(@NotNull Name segment) {
         return fqName.lastSegmentIs(segment);
     }
-
 
 
     @NotNull

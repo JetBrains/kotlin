@@ -28,7 +28,6 @@ import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.signature.JvmPropertyAccessorSignature;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetClassObject;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -392,6 +391,11 @@ public class JetTypeMapper {
                     return getJvmInternalFQName(klass.getContainingDeclaration());
                 }
             }
+
+            JvmClassName name = closureAnnotator.classNameForClassDescriptor((ClassDescriptor) descriptor);
+            if (name != null) {
+                return name.getInternalName();
+            }
         }
 
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
@@ -401,12 +405,6 @@ public class JetTypeMapper {
         }
 
         Name name = descriptor.getName();
-
-        if (descriptor instanceof ClassDescriptor && name.isSpecial()) {
-            ClassDescriptor clazz = (ClassDescriptor) descriptor;
-            JvmClassName className = closureAnnotator.classNameForClassDescriptor(clazz);
-            return className.getInternalName();
-        }
 
         String baseName = getJvmInternalFQName(container);
         if (!baseName.isEmpty()) {
@@ -511,8 +509,6 @@ public class JetTypeMapper {
         }
 
         if (descriptor instanceof ClassDescriptor) {
-
-
             JvmClassName name = getJvmClassName((ClassDescriptor) descriptor);
             Type asmType = Type.getObjectType(name.getInternalName() + (kind == MapTypeMode.TRAIT_IMPL ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
             boolean forceReal = isForceReal(name);
@@ -1113,7 +1109,7 @@ public class JetTypeMapper {
     public boolean isVarCapturedInClosure(DeclarationDescriptor descriptor) {
         if (!(descriptor instanceof VariableDescriptor) || descriptor instanceof PropertyDescriptor) return false;
         VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
-        Boolean aBoolean = bindingContext.get(BindingContext.CAPTURED_IN_CLOSURE, variableDescriptor);
-        return aBoolean != null && aBoolean && variableDescriptor.isVar();
+        return Boolean.TRUE.equals(bindingContext.get(BindingContext.CAPTURED_IN_CLOSURE, variableDescriptor)) &&
+               variableDescriptor.isVar();
     }
 }

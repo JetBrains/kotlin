@@ -68,11 +68,14 @@ public interface BindingContext {
     WritableSlice<JetExpression, JetType> EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>(DO_NOTHING);
     WritableSlice<JetExpression, DataFlowInfo> EXPRESSION_DATA_FLOW_INFO = new BasicWritableSlice<JetExpression, DataFlowInfo>(DO_NOTHING);
 
-    WritableSlice<JetReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>(DO_NOTHING);
-    WritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>> RESOLVED_CALL = new BasicWritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>>(DO_NOTHING);
+    WritableSlice<JetReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET =
+            new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>(DO_NOTHING);
+    WritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>> RESOLVED_CALL =
+            new BasicWritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>>(DO_NOTHING);
     WritableSlice<JetElement, Call> CALL = new BasicWritableSlice<JetElement, Call>(DO_NOTHING);
 
-    WritableSlice<JetReferenceExpression, Collection<? extends DeclarationDescriptor>> AMBIGUOUS_REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, Collection<? extends DeclarationDescriptor>>(DO_NOTHING);
+    WritableSlice<JetReferenceExpression, Collection<? extends DeclarationDescriptor>> AMBIGUOUS_REFERENCE_TARGET =
+            new BasicWritableSlice<JetReferenceExpression, Collection<? extends DeclarationDescriptor>>(DO_NOTHING);
 
     WritableSlice<CallKey, OverloadResolutionResults<FunctionDescriptor>> RESOLUTION_RESULTS_FOR_FUNCTION = Slices.createSimpleSlice();
     WritableSlice<CallKey, OverloadResolutionResults<VariableDescriptor>> RESOLUTION_RESULTS_FOR_PROPERTY = Slices.createSimpleSlice();
@@ -89,35 +92,46 @@ public interface BindingContext {
 
     WritableSlice<JetExpression, JetType> AUTOCAST = Slices.createSimpleSlice();
 
-    /** A scope where type of expression has been resolved */
+    /**
+     * A scope where type of expression has been resolved
+     */
     WritableSlice<JetTypeReference, JetScope> TYPE_RESOLUTION_SCOPE = Slices.createSimpleSlice();
     WritableSlice<JetExpression, JetScope> RESOLUTION_SCOPE = Slices.createSimpleSlice();
 
     WritableSlice<ScriptDescriptor, JetScope> SCRIPT_SCOPE = Slices.createSimpleSlice();
 
-    /** Collected during analyze, used in IDE in auto-cast completion */
+    /**
+     * Collected during analyze, used in IDE in auto-cast completion
+     */
     WritableSlice<JetExpression, DataFlowInfo> NON_DEFAULT_EXPRESSION_DATA_FLOW = Slices.createSimpleSlice();
 
     WritableSlice<JetExpression, Boolean> VARIABLE_REASSIGNMENT = Slices.createSimpleSetSlice();
     WritableSlice<ValueParameterDescriptor, Boolean> AUTO_CREATED_IT = Slices.createSimpleSetSlice();
     WritableSlice<JetExpression, DeclarationDescriptor> VARIABLE_ASSIGNMENT = Slices.createSimpleSlice();
 
-    /** Has type of current expression has been already resolved */
+    /**
+     * Has type of current expression has been already resolved
+     */
     WritableSlice<JetExpression, Boolean> PROCESSED = Slices.createSimpleSetSlice();
     WritableSlice<JetElement, Boolean> STATEMENT = Slices.createRemovableSetSlice();
 
     WritableSlice<VariableDescriptor, Boolean> CAPTURED_IN_CLOSURE = Slices.createSimpleSetSlice();
-    
-//    enum DeferredTypeKey {DEFERRED_TYPE_KEY}
-//    WritableSlice<DeferredTypeKey, Collection<DeferredType>> DEFERRED_TYPES = Slices.createSimpleSlice();
+
+    //    enum DeferredTypeKey {DEFERRED_TYPE_KEY}
+    //    WritableSlice<DeferredTypeKey, Collection<DeferredType>> DEFERRED_TYPES = Slices.createSimpleSlice();
 
     WritableSlice<Box<DeferredType>, Boolean> DEFERRED_TYPE = Slices.createCollectiveSetSlice();
 
-    WritableSlice<PropertyDescriptor, ClassDescriptor> OBJECT_DECLARATION_CLASS = Slices.createSimpleSlice();
+    WritableSlice<VariableDescriptor, ClassDescriptor> OBJECT_DECLARATION_CLASS = Slices.createSimpleSlice();
 
     WritableSlice<PropertyDescriptor, Boolean> BACKING_FIELD_REQUIRED = new Slices.SetSlice<PropertyDescriptor>(DO_NOTHING) {
         @Override
-        public Boolean computeValue(SlicedMap map, PropertyDescriptor propertyDescriptor, Boolean backingFieldRequired, boolean valueNotFound) {
+        public Boolean computeValue(
+                SlicedMap map,
+                PropertyDescriptor propertyDescriptor,
+                Boolean backingFieldRequired,
+                boolean valueNotFound
+        ) {
             if (propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
                 return false;
             }
@@ -159,33 +173,56 @@ public interface BindingContext {
         }
     };
 
-    WritableSlice<PsiElement, NamespaceDescriptor> NAMESPACE = Slices.<PsiElement, NamespaceDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<PsiElement, ClassDescriptor> CLASS = Slices.<PsiElement, ClassDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<PsiElement, ScriptDescriptor> SCRIPT = Slices.<PsiElement, ScriptDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<JetTypeParameter, TypeParameterDescriptor> TYPE_PARAMETER = Slices.<JetTypeParameter, TypeParameterDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
-    /** @see BindingContextUtils#recordFunctionDeclarationToDescriptor(BindingTrace, PsiElement, SimpleFunctionDescriptor)} */
-    WritableSlice<PsiElement, SimpleFunctionDescriptor> FUNCTION = Slices.<PsiElement, SimpleFunctionDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<PsiElement, ConstructorDescriptor> CONSTRUCTOR = Slices.<PsiElement, ConstructorDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<PsiElement, VariableDescriptor> VARIABLE = Slices.<PsiElement, VariableDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<JetParameter, VariableDescriptor> VALUE_PARAMETER = Slices.<JetParameter, VariableDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<JetPropertyAccessor, PropertyAccessorDescriptor> PROPERTY_ACCESSOR = Slices.<JetPropertyAccessor, PropertyAccessorDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
+    WritableSlice<PsiElement, NamespaceDescriptor> NAMESPACE = Slices.<PsiElement, NamespaceDescriptor>sliceBuilder()
+            .setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
+    WritableSlice<PsiElement, ClassDescriptor> CLASS =
+            Slices.<PsiElement, ClassDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION)
+                    .build();
+    WritableSlice<PsiElement, ScriptDescriptor> SCRIPT =
+            Slices.<PsiElement, ScriptDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION)
+                    .build();
+    WritableSlice<JetTypeParameter, TypeParameterDescriptor> TYPE_PARAMETER =
+            Slices.<JetTypeParameter, TypeParameterDescriptor>sliceBuilder()
+                    .setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
+    /**
+     * @see BindingContextUtils#recordFunctionDeclarationToDescriptor(BindingTrace, PsiElement, SimpleFunctionDescriptor)}
+     */
+    WritableSlice<PsiElement, SimpleFunctionDescriptor> FUNCTION = Slices.<PsiElement, SimpleFunctionDescriptor>sliceBuilder()
+            .setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
+    WritableSlice<PsiElement, ConstructorDescriptor> CONSTRUCTOR = Slices.<PsiElement, ConstructorDescriptor>sliceBuilder()
+            .setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
+    WritableSlice<PsiElement, VariableDescriptor> VARIABLE =
+            Slices.<PsiElement, VariableDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION)
+                    .build();
+    WritableSlice<JetParameter, VariableDescriptor> VALUE_PARAMETER = Slices.<JetParameter, VariableDescriptor>sliceBuilder()
+            .setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
+    WritableSlice<JetPropertyAccessor, PropertyAccessorDescriptor> PROPERTY_ACCESSOR =
+            Slices.<JetPropertyAccessor, PropertyAccessorDescriptor>sliceBuilder()
+                    .setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
 
     // normalize value to getOriginal(value)
-    WritableSlice<PsiElement, PropertyDescriptor> PRIMARY_CONSTRUCTOR_PARAMETER = Slices.<PsiElement, PropertyDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<JetObjectDeclarationName, PropertyDescriptor> OBJECT_DECLARATION = Slices.<JetObjectDeclarationName, PropertyDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
+    WritableSlice<PsiElement, PropertyDescriptor> PRIMARY_CONSTRUCTOR_PARAMETER =
+            Slices.<PsiElement, PropertyDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION)
+                    .build();
+    WritableSlice<JetObjectDeclarationName, PropertyDescriptor> OBJECT_DECLARATION =
+            Slices.<JetObjectDeclarationName, PropertyDescriptor>sliceBuilder()
+                    .setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
 
     WritableSlice[] DECLARATIONS_TO_DESCRIPTORS = new WritableSlice[] {
-        NAMESPACE, CLASS, TYPE_PARAMETER, FUNCTION, CONSTRUCTOR, VARIABLE, VALUE_PARAMETER, PROPERTY_ACCESSOR, PRIMARY_CONSTRUCTOR_PARAMETER, OBJECT_DECLARATION
+            NAMESPACE, CLASS, TYPE_PARAMETER, FUNCTION, CONSTRUCTOR, VARIABLE, VALUE_PARAMETER, PROPERTY_ACCESSOR,
+            PRIMARY_CONSTRUCTOR_PARAMETER, OBJECT_DECLARATION
     };
 
     ReadOnlySlice<PsiElement, DeclarationDescriptor> DECLARATION_TO_DESCRIPTOR = Slices.<PsiElement, DeclarationDescriptor>sliceBuilder()
             .setFurtherLookupSlices(DECLARATIONS_TO_DESCRIPTORS).build();
 
     WritableSlice<JetReferenceExpression, PsiElement> LABEL_TARGET = Slices.<JetReferenceExpression, PsiElement>sliceBuilder().build();
-    WritableSlice<JetParameter, PropertyDescriptor> VALUE_PARAMETER_AS_PROPERTY = Slices.<JetParameter, PropertyDescriptor>sliceBuilder().build();
+    WritableSlice<JetParameter, PropertyDescriptor> VALUE_PARAMETER_AS_PROPERTY =
+            Slices.<JetParameter, PropertyDescriptor>sliceBuilder().build();
 
     WritableSlice<FqName, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR = new BasicWritableSlice<FqName, ClassDescriptor>(DO_NOTHING, true);
-    WritableSlice<FqName, NamespaceDescriptor> FQNAME_TO_NAMESPACE_DESCRIPTOR = new BasicWritableSlice<FqName, NamespaceDescriptor>(DO_NOTHING);
+    WritableSlice<FqName, NamespaceDescriptor> FQNAME_TO_NAMESPACE_DESCRIPTOR =
+            new BasicWritableSlice<FqName, NamespaceDescriptor>(DO_NOTHING);
     WritableSlice<JetFile, NamespaceDescriptor> FILE_TO_NAMESPACE = Slices.createSimpleSlice();
     WritableSlice<NamespaceDescriptor, Collection<JetFile>> NAMESPACE_TO_FILES = Slices.createSimpleSlice();
 
@@ -193,13 +230,13 @@ public interface BindingContext {
      * Each namespace found in src must be registered here.
      */
     WritableSlice<NamespaceDescriptor, Boolean> NAMESPACE_IS_SRC = Slices.createSimpleSlice();
-    
+
     WritableSlice<ClassDescriptor, Boolean> INCOMPLETE_HIERARCHY = Slices.createCollectiveSetSlice();
 
     @SuppressWarnings("UnusedDeclaration")
     @Deprecated // This field is needed only for the side effects of its initializer
-    Void _static_initializer = BasicWritableSlice.initSliceDebugNames(BindingContext.class);
-    
+            Void _static_initializer = BasicWritableSlice.initSliceDebugNames(BindingContext.class);
+
     Collection<Diagnostic> getDiagnostics();
 
     @Nullable
