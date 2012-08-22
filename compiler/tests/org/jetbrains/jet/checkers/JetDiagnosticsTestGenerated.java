@@ -1304,6 +1304,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/arrayBracketsRange.kt");
             }
             
+            @TestMetadata("checkNothingIsSubtype.kt")
+            public void testCheckNothingIsSubtype() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/incompleteCode/checkNothingIsSubtype.kt");
+            }
+            
             @TestMetadata("incompleteAssignment.kt")
             public void testIncompleteAssignment() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/incompleteAssignment.kt");
