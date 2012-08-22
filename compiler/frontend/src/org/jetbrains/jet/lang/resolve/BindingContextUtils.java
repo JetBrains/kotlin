@@ -194,4 +194,27 @@ public class BindingContextUtils {
 
         trace.record(BindingContext.FUNCTION, psiElement, function);
     }
+
+    @NotNull
+    public static <K, V> V getNotNull(
+        @NotNull BindingContext bindingContext,
+        @NotNull ReadOnlySlice<K, V> slice,
+        @NotNull K key
+    ) {
+        return getNotNull(bindingContext, slice, key, "Value at " + slice + " must not be null for " + key);
+    }
+
+    @NotNull
+    public static <K, V> V getNotNull(
+            @NotNull BindingContext bindingContext,
+            @NotNull ReadOnlySlice<K, V> slice,
+            @NotNull K key,
+            @NotNull String messageIfNull
+    ) {
+        V value = bindingContext.get(slice, key);
+        if (value == null) {
+            throw new IllegalStateException(messageIfNull);
+        }
+        return value;
+    }
 }
