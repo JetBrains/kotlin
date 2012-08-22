@@ -141,10 +141,10 @@ public native trait Window {
     public native fun print(): Unit = js.noImpl
     public native fun clearInterval(intervalId: Number): Unit = js.noImpl
     public native fun clearTimeout(intervalId: Number): Unit = js.noImpl
-    public native fun setInterval(vCode: () -> Unit, iMillis: Number): Double? = js.noImpl
-    public native fun setInterval(vCode: String, iMillis: Number): Double? = js.noImpl
-    public native fun setTimeout(vCode: () -> Unit, iMillis: Number): Double? = js.noImpl
-    public native fun setTimeout(vCode: String, iMillis: Number): Double? = js.noImpl
+    public native fun setInterval(vCode: () -> Unit, iMillis: Number): Long = js.noImpl
+    public native fun setInterval(vCode: String, iMillis: Number): Long = js.noImpl
+    public native fun setTimeout(vCode: () -> Unit, iMillis: Number): Long = js.noImpl
+    public native fun setTimeout(vCode: String, iMillis: Number): Long = js.noImpl
     public native fun scrollTo(x: Number, y: Number): Unit = js.noImpl
     public native fun scrollBy(xDelta: Number, yDelta: Number): Unit = js.noImpl
     public native fun moveTo(x: Number, y: Number): Unit = js.noImpl
