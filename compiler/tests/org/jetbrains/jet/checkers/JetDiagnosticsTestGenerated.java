@@ -1098,6 +1098,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/kt559.kt");
             }
             
+            @TestMetadata("localDeclarationModifiers.kt")
+            public void testLocalDeclarationModifiers() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/declarationChecks/localDeclarationModifiers.kt");
+            }
+            
             @TestMetadata("LocalVariableWithNoTypeInformation.kt")
             public void testLocalVariableWithNoTypeInformation() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/LocalVariableWithNoTypeInformation.kt");
@@ -3075,7 +3080,6 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTestSuite(DataFlow.class);
             suite.addTestSuite(DataFlowInfoTraversal.class);
             suite.addTest(DeclarationChecks.innerSuite());
-            suite.addTestSuite(DeclarationChecks.class);
             suite.addTestSuite(Enum.class);
             suite.addTestSuite(Extensions.class);
             suite.addTestSuite(Generics.class);

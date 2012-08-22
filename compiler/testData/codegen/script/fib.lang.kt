@@ -5,4 +5,4 @@ fun fib(n: Int): Int {
     return v
 }
 
-public val result = fib(num)
+val result = fib(num)

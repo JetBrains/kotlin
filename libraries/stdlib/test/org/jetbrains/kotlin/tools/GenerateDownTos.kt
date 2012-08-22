@@ -6,7 +6,7 @@ import java.io.PrintWriter
 
 private fun generateDownTos(outputFile: File, header: String) {
 
-    private fun getMaxType(fromType: String, toType: String): String {
+    fun getMaxType(fromType: String, toType: String): String {
         return when {
             fromType == "Double" || toType == "Double" -> "Double"
             fromType == "Float"  || toType == "Float"  -> "Float"
@@ -18,7 +18,7 @@ private fun generateDownTos(outputFile: File, header: String) {
         }
     }
 
-    private fun generateDownTo(writer: PrintWriter, fromType: String, toType: String) {
+    fun generateDownTo(writer: PrintWriter, fromType: String, toType: String) {
         val elementType = getMaxType(fromType, toType)
         val rangeType = elementType + "Range"
         val fromExpr = "this${ if (elementType == fromType) "" else ".to$elementType()" }"
