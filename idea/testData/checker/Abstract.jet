@@ -122,23 +122,23 @@ abstract enum class MyAbstractEnum() {}
     //properties
     <error>val a: Int</error>
     val a1: Int = 1
-    <error>abstract</error> val a2: Int
+    <error><error>abstract</error> val a2: Int</error>
     <error>abstract</error> val a3: Int = 1
 
     <error>var b: Int</error>                private set
     var b1: Int = 0;                         private set
-    <error>abstract</error> var b2: Int      private set
+    <error><error>abstract</error> var b2: Int</error>      private set
     <error>abstract</error> var b3: Int = 0; private set
 
     <error>var c: Int</error>                set(v: Int) { $c = v }
     var c1: Int = 0;                         set(v: Int) { $c1 = v }
-    <error>abstract</error> var c2: Int      set(v: Int) { $c2 = v }
+    <error><error>abstract</error> var c2: Int</error>      set(v: Int) { $c2 = v }
     <error>abstract</error> var c3: Int = 0; set(v: Int) { $c3 = v }
 
     val e: Int                               get() = a
     val e1: Int = <error>0</error>;          get() = a
     <error>abstract</error> val e2: Int      get() = a
-    <error>abstract</error> val e3: Int = 0; get() = a
+    <error>abstract</error> val e3: Int = <error>0</error>; get() = a
 
     //methods
     <error>fun f()</error>
@@ -160,6 +160,6 @@ abstract class B3(i: Int) {
 }
 
 fun foo(<warning>a</warning>: B3) {
-    val <warning>a</warning> = <error>B3(1)</error>
+    val <warning><warning>a</warning></warning> = <error>B3(1)</error>
     val <warning>b</warning> = <error>B1(2, "s")</error>
 }

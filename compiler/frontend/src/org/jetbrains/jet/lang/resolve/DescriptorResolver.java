@@ -758,12 +758,15 @@ public class DescriptorResolver {
         boolean isVar = property.isVar();
 
         boolean hasBody = hasBody(property);
-        Modality defaultModality = getDefaultModality(containingDeclaration, hasBody);
+        Modality modality = containingDeclaration instanceof ClassDescriptor
+                            ? ModifiersChecker.resolveModalityFromModifiers(property, getDefaultModality(containingDeclaration, hasBody))
+                            : Modality.FINAL;
+        Visibility visibility = ModifiersChecker.resolveVisibilityFromModifiers(property, getDefaultVisibility(property, containingDeclaration));
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
                 annotationResolver.resolveAnnotations(scope, modifierList, trace),
-                ModifiersChecker.resolveModalityFromModifiers(property, defaultModality),
-                ModifiersChecker.resolveVisibilityFromModifiers(property),
+                modality,
+                visibility,
                 isVar,
                 JetPsiUtil.safeName(property.getName()),
                 CallableMemberDescriptor.Kind.DECLARATION

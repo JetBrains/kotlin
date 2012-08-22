@@ -1123,6 +1123,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/packageDeclarationModifiers.kt");
             }
             
+            @TestMetadata("propertyInPackageHasNoInheritVisibility.kt")
+            public void testPropertyInPackageHasNoInheritVisibility() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/declarationChecks/propertyInPackageHasNoInheritVisibility.kt");
+            }
+            
             @TestMetadata("RedeclarationsInMultiDecl.kt")
             public void testRedeclarationsInMultiDecl() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/RedeclarationsInMultiDecl.kt");

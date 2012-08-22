@@ -1,6 +1,6 @@
 package d
 
-<!ILLEGAL_MODIFIER!>abstract<!> val a : Int
+<!ILLEGAL_MODIFIER!>abstract<!> val a : Int = 1
 
 <!ILLEGAL_MODIFIER!>override<!> val c : Int = 1
 

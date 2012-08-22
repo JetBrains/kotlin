@@ -179,11 +179,7 @@ public class ModifiersChecker {
 
     @NotNull
     public static Visibility resolveVisibilityFromModifiers(@NotNull JetModifierListOwner modifierListOwner) {
-        JetModifierList modifierList = modifierListOwner.getModifierList();
-        Visibility defaultVisibility = modifierList != null && modifierList.hasModifier(OVERRIDE_KEYWORD)
-                                       ? Visibilities.INHERITED
-                                       : Visibilities.INTERNAL;
-        return resolveVisibilityFromModifiers(modifierListOwner, defaultVisibility);
+        return resolveVisibilityFromModifiers(modifierListOwner, Visibilities.INTERNAL);
     }
 
     @NotNull
