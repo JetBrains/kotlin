@@ -44,15 +44,17 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibraryNames;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.JetTypeMapper.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.CALL;
-import static org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_TYPE;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
 
 /**
  * @author max
@@ -1440,15 +1442,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             return generateConstructorCall(expression, (JetSimpleNameExpression) callee, receiver);
         }
         else if (funDescriptor instanceof FunctionDescriptor) {
-            final FunctionDescriptor fd = (FunctionDescriptor) funDescriptor;
             Call call = bindingContext.get(CALL, expression.getCalleeExpression());
             if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
                 VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
                 ResolvedCallWithTrace<FunctionDescriptor> functionCall = variableAsFunctionResolvedCall.getFunctionCall();
-                return invokeFunction(call, functionCall.getResultingDescriptor(), receiver, functionCall);
+                return invokeFunction(call, receiver, functionCall);
             }
             else {
-                return invokeFunction(call, fd, receiver, resolvedCall);
+                return invokeFunction(call, receiver, resolvedCall);
             }
         }
         else {
@@ -1458,10 +1459,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     private StackValue invokeFunction(
             Call call,
-            FunctionDescriptor fd,
             StackValue receiver,
             ResolvedCall<? extends CallableDescriptor> resolvedCall
     ) {
+        FunctionDescriptor fd = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
         boolean superCall = false;
         ReceiverDescriptor explicitReceiver = call.getExplicitReceiver();
         if (explicitReceiver instanceof ExpressionReceiver) {
@@ -2629,7 +2630,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                     ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(BindingContext.COMPONENT_RESOLVED_CALL, variableDeclaration);
                     assert resolvedCall != null : "Resolved call is null for " + variableDeclaration.getText();
                     Call call = CallMaker.makeCall(initializerAsReceiver, (JetExpression) null);
-                    invokeFunction(call, resolvedCall.getResultingDescriptor(), StackValue.none(), resolvedCall);
+                    invokeFunction(call, StackValue.none(), resolvedCall);
                     return null;
                 }
             });
@@ -3271,11 +3272,11 @@ The "returned" value of try expression with no finally is either the last expres
                 getInIntRange(new StackValue.Local(subjectLocal, subjectType), (JetBinaryExpression) rangeExpression, inverted);
             }
             else {
-                FunctionDescriptor op =
-                        (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, conditionInRange.getOperationReference());
-                genToJVMStack(rangeExpression);
-                new StackValue.Local(subjectLocal, subjectType).put(TYPE_OBJECT, v);
-                invokeFunctionNoParams(op, Type.BOOLEAN_TYPE, v);
+                ResolvedCall<? extends CallableDescriptor> resolvedCall =
+                        bindingContext.get(BindingContext.RESOLVED_CALL, conditionInRange.getOperationReference());
+                Call call = bindingContext.get(BindingContext.CALL, conditionInRange.getOperationReference());
+
+                invokeFunction(call, StackValue.local(subjectLocal, subjectType), resolvedCall);
                 if (inverted) {
                     invertBoolean();
                 }
