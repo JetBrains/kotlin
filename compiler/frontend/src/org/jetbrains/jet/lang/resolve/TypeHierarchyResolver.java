@@ -297,7 +297,7 @@ public class TypeHierarchyResolver {
                                 getClassObjectName(klass.getName()));
                         mutableClassDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
                         classObjectDescriptor.setModality(Modality.FINAL);
-                        classObjectDescriptor.setVisibility(DescriptorResolver.resolveVisibilityFromModifiers(klass.getModifierList()));
+                        classObjectDescriptor.setVisibility(ModifiersChecker.resolveVisibilityFromModifiers(klass));
                         classObjectDescriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));
                         classObjectDescriptor.createTypeConstructor();
                         ConstructorDescriptorImpl primaryConstructorForObject =
@@ -388,7 +388,7 @@ public class TypeHierarchyResolver {
             JetObjectDeclaration objectDeclaration = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
             descriptor.setModality(Modality.FINAL);
-            descriptor.setVisibility(DescriptorResolver.resolveVisibilityFromModifiers(objectDeclaration.getModifierList()));
+            descriptor.setVisibility(ModifiersChecker.resolveVisibilityFromModifiers(objectDeclaration));
             descriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));
             descriptor.createTypeConstructor();
         }

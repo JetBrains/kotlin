@@ -16,24 +16,18 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
-import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import javax.inject.Inject;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -46,10 +40,13 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
 public class DeclarationsChecker {
     @NotNull
     private BindingTrace trace;
+    @NotNull
+    private ModifiersChecker modifiersChecker;
 
     @Inject
     public void setTrace(@NotNull BindingTrace trace) {
         this.trace = trace;
+        this.modifiersChecker = new ModifiersChecker(trace);
     }
 
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
@@ -60,7 +57,7 @@ public class DeclarationsChecker {
             if (!bodiesResolveContext.completeAnalysisNeeded(aClass)) continue;
 
             checkClass(aClass, classDescriptor);
-            checkModifiers(aClass.getModifierList(), classDescriptor);
+            modifiersChecker.checkModifiersForDeclaration(aClass, classDescriptor);
         }
 
         Map<JetObjectDeclaration, MutableClassDescriptor> objects = bodiesResolveContext.getObjects();
@@ -69,7 +66,7 @@ public class DeclarationsChecker {
             MutableClassDescriptor objectDescriptor = entry.getValue();
 
             if (!bodiesResolveContext.completeAnalysisNeeded(objectDeclaration)) continue;
-            checkObject(objectDeclaration, objectDescriptor);
+            modifiersChecker.checkIllegalModalityModifiers(objectDeclaration);
         }
 
         Map<JetNamedFunction, SimpleFunctionDescriptor> functions = bodiesResolveContext.getFunctions();
@@ -79,7 +76,7 @@ public class DeclarationsChecker {
 
             if (!bodiesResolveContext.completeAnalysisNeeded(function)) continue;
             checkFunction(function, functionDescriptor);
-            checkModifiers(function.getModifierList(), functionDescriptor);
+            modifiersChecker.checkModifiersForDeclaration(function, functionDescriptor);
         }
 
         Map<JetProperty, PropertyDescriptor> properties = bodiesResolveContext.getProperties();
@@ -89,7 +86,7 @@ public class DeclarationsChecker {
 
             if (!bodiesResolveContext.completeAnalysisNeeded(property)) continue;
             checkProperty(property, propertyDescriptor);
-            checkModifiers(property.getModifierList(), propertyDescriptor);
+            modifiersChecker.checkModifiersForDeclaration(property, propertyDescriptor);
         }
 
     }
@@ -115,10 +112,6 @@ public class DeclarationsChecker {
         }
     }
 
-
-    private void checkObject(JetObjectDeclaration objectDeclaration, MutableClassDescriptor classDescriptor) {
-        checkIllegalInThisContextModifiers(objectDeclaration.getModifierList(), Sets.newHashSet(JetTokens.ABSTRACT_KEYWORD, JetTokens.OPEN_KEYWORD, JetTokens.OVERRIDE_KEYWORD));
-    }
 
     private void checkOpenMembers(MutableClassDescriptor classDescriptor) {
         for (CallableMemberDescriptor memberDescriptor : classDescriptor.getDeclaredCallableMembers()) {
@@ -274,15 +267,17 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkAccessors(JetProperty property, PropertyDescriptor propertyDescriptor) {
+    private void checkAccessors(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
         for (JetPropertyAccessor accessor : property.getAccessors()) {
-            checkIllegalInThisContextModifiers(accessor.getModifierList(), Sets.newHashSet(JetTokens.ABSTRACT_KEYWORD, JetTokens.OPEN_KEYWORD, JetTokens.FINAL_KEYWORD, JetTokens.OVERRIDE_KEYWORD));
+            modifiersChecker.checkIllegalModalityModifiers(accessor);
         }
         JetPropertyAccessor getter = property.getGetter();
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
         JetModifierList getterModifierList = getter != null ? getter.getModifierList() : null;
         if (getterModifierList != null && getterDescriptor != null) {
-            Map<JetKeywordToken, ASTNode> nodes = getNodesCorrespondingToModifiers(getterModifierList, Sets.newHashSet(JetTokens.PUBLIC_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PRIVATE_KEYWORD, JetTokens.INTERNAL_KEYWORD));
+            Map<JetKeywordToken, ASTNode> nodes = ModifiersChecker.getNodesCorrespondingToModifiers(getterModifierList, Sets
+                    .newHashSet(JetTokens.PUBLIC_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PRIVATE_KEYWORD,
+                                JetTokens.INTERNAL_KEYWORD));
             if (getterDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
                 for (ASTNode node : nodes.values()) {
                     trace.report(Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.on(node.getPsi()));
@@ -296,82 +291,7 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkModifiers(@Nullable JetModifierList modifierList, @NotNull DeclarationDescriptor descriptor) {
-        checkModalityModifiers(modifierList);
-        checkVisibilityModifiers(modifierList, descriptor);
-    }
 
-    private void checkModalityModifiers(@Nullable JetModifierList modifierList) {
-        if (modifierList == null) return;
-        checkRedundantModifier(modifierList, Pair.create(JetTokens.OPEN_KEYWORD, JetTokens.ABSTRACT_KEYWORD), Pair.create(JetTokens.OPEN_KEYWORD, JetTokens.OVERRIDE_KEYWORD));
-
-        checkCompatibility(modifierList, Lists.newArrayList(JetTokens.ABSTRACT_KEYWORD, JetTokens.OPEN_KEYWORD, JetTokens.FINAL_KEYWORD),
-                           Lists.<JetToken>newArrayList(JetTokens.ABSTRACT_KEYWORD, JetTokens.OPEN_KEYWORD));
-    }
-
-    private void checkVisibilityModifiers(@Nullable JetModifierList modifierList, @NotNull DeclarationDescriptor descriptor) {
-        if (modifierList == null) return;
-
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof NamespaceDescriptor) {
-            if (modifierList.hasModifier(JetTokens.PROTECTED_KEYWORD)) {
-                trace.report(Errors.PACKAGE_MEMBER_CANNOT_BE_PROTECTED.on(modifierList.getModifierNode(JetTokens.PROTECTED_KEYWORD).getPsi()));
-            }
-        }
-
-        checkCompatibility(modifierList, Lists.newArrayList(JetTokens.PRIVATE_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PUBLIC_KEYWORD, JetTokens.INTERNAL_KEYWORD));
-    }
-
-    private void checkCompatibility(@Nullable JetModifierList modifierList, Collection<JetKeywordToken> availableModifiers, Collection<JetToken>... availableCombinations) {
-        if (modifierList == null) return;
-        Collection<JetKeywordToken> presentModifiers = Sets.newLinkedHashSet();
-        for (JetKeywordToken modifier : availableModifiers) {
-            if (modifierList.hasModifier(modifier)) {
-                presentModifiers.add(modifier);
-            }
-        }
-        if (presentModifiers.size() == 1) {
-            return;
-        }
-        for (Collection<JetToken> combination : availableCombinations) {
-            if (presentModifiers.containsAll(combination) && combination.containsAll(presentModifiers)) {
-                return;
-            }
-        }
-        for (JetKeywordToken token : presentModifiers) {
-            trace.report(Errors.INCOMPATIBLE_MODIFIERS.on(modifierList.getModifierNode(token).getPsi(), presentModifiers));
-        }
-    }
-
-    private void checkRedundantModifier(@NotNull JetModifierList modifierList, Pair<JetKeywordToken, JetKeywordToken>... redundantBundles) {
-        for (Pair<JetKeywordToken, JetKeywordToken> tokenPair : redundantBundles) {
-            JetKeywordToken redundantModifier = tokenPair.getFirst();
-            JetKeywordToken sufficientModifier = tokenPair.getSecond();
-            if (modifierList.hasModifier(redundantModifier) && modifierList.hasModifier(sufficientModifier)) {
-                trace.report(Errors.REDUNDANT_MODIFIER.on(modifierList.getModifierNode(redundantModifier).getPsi(), redundantModifier, sufficientModifier));
-            }
-        }
-    }
-
-    private void checkIllegalInThisContextModifiers(@Nullable JetModifierList modifierList, Collection<JetKeywordToken> illegalModifiers) {
-        if (modifierList == null) return;
-        for (JetKeywordToken modifier : illegalModifiers) {
-            if (modifierList.hasModifier(modifier)) {
-                trace.report(Errors.ILLEGAL_MODIFIER.on(modifierList.getModifierNode(modifier).getPsi(), modifier));
-            }
-        }
-    }
-
-    @NotNull
-    public static Map<JetKeywordToken, ASTNode> getNodesCorrespondingToModifiers(@NotNull JetModifierList modifierList, Collection<JetKeywordToken> possibleModifiers) {
-        Map<JetKeywordToken, ASTNode> nodes = Maps.newHashMap();
-        for (JetKeywordToken modifier : possibleModifiers) {
-            if (modifierList.hasModifier(modifier)) {
-                nodes.put(modifier, modifierList.getModifierNode(modifier));
-            }
-        }
-        return nodes;
-    }
 
     private void checkEnum(JetClass aClass, ClassDescriptor classDescriptor) {
         if (classDescriptor.getKind() != ClassKind.ENUM_ENTRY) return;
