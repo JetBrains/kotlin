@@ -40,6 +40,7 @@ import org.jetbrains.k2js.translate.utils.PredefinedAnnotation;
 import java.util.Map;
 
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.isObjectDeclaration;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 
 /**
@@ -226,7 +227,7 @@ public final class StaticContext {
 
                     PropertyAccessorDescriptor accessorDescriptor = (PropertyAccessorDescriptor) descriptor;
                     String propertyName = accessorDescriptor.getCorrespondingProperty().getName().getName();
-                    if (accessorDescriptor.getCorrespondingProperty().isObjectDeclaration()) {
+                    if (isObjectDeclaration(bindingContext, accessorDescriptor.getCorrespondingProperty())) {
                         return declareName(descriptor, propertyName);
                     }
 

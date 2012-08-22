@@ -162,7 +162,6 @@ public class ErrorUtils {
             Modality.OPEN,
             Visibilities.INTERNAL,
             true,
-            false,
             null,
             ReceiverDescriptor.NO_RECEIVER,
             Name.special("<ERROR PROPERTY>"),

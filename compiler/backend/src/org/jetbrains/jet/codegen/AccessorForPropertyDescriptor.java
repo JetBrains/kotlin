@@ -29,7 +29,7 @@ import java.util.Collections;
 public class AccessorForPropertyDescriptor extends PropertyDescriptor {
     public AccessorForPropertyDescriptor(PropertyDescriptor pd, DeclarationDescriptor containingDeclaration, int index) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.PUBLIC,
-              pd.isVar(), pd.isObjectDeclaration(), Name.identifier(pd.getName() + "$b$" + index),
+              pd.isVar(), Name.identifier(pd.getName() + "$b$" + index),
               Kind.DECLARATION);
 
         JetType receiverType = pd.getReceiverParameter().exists() ? pd.getReceiverParameter().getType() : null;

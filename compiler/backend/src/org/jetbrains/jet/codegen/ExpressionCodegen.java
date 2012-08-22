@@ -1107,7 +1107,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
-            if (propertyDescriptor.isObjectDeclaration()) {
+            ClassDescriptor objectClassDescriptor = getBindingContext().get(BindingContext.OBJECT_DECLARATION_CLASS, propertyDescriptor);
+            if (objectClassDescriptor != null) {
                 boolean isEnumEntry = DescriptorUtils.isEnumClassObject(propertyDescriptor.getContainingDeclaration());
                 if (isEnumEntry) {
                     ClassDescriptor containing = (ClassDescriptor) propertyDescriptor.getContainingDeclaration().getContainingDeclaration();
@@ -1117,9 +1118,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                     return StackValue.onStack(type);
                 }
                 else {
-                    ClassifierDescriptor classDescriptor = propertyDescriptor.getReturnType().getConstructor().getDeclarationDescriptor();
-                    assert classDescriptor != null;
-                    Type type = typeMapper.mapType(classDescriptor.getDefaultType(), MapTypeMode.VALUE);
+                    Type type = typeMapper.mapType(objectClassDescriptor.getDefaultType(), MapTypeMode.VALUE);
                     return StackValue.field(type, JvmClassName.byType(type), "$instance", true);
                 }
             }

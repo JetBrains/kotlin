@@ -258,7 +258,7 @@ public class QualifiedExpressionResolver {
 
     @NotNull
     private Collection<? extends DeclarationDescriptor> filterAndStoreResolutionResult(@NotNull Collection<SuccessfulLookupResult> lookupResults,
-            @NotNull JetSimpleNameExpression referenceExpression, @NotNull BindingTrace trace, @NotNull JetScope scopeToCheckVisibility,
+            @NotNull JetSimpleNameExpression referenceExpression, @NotNull final BindingTrace trace, @NotNull JetScope scopeToCheckVisibility,
             boolean onlyClasses, boolean storeResult) {
 
         if (lookupResults.isEmpty()) {
@@ -304,7 +304,8 @@ public class QualifiedExpressionResolver {
                     public boolean apply(@Nullable DeclarationDescriptor descriptor) {
                         return (descriptor instanceof NamespaceDescriptor) ||
                                (descriptor instanceof ClassifierDescriptor) ||
-                               (descriptor instanceof VariableDescriptor && ((VariableDescriptor)descriptor).isObjectDeclaration());
+                               ((descriptor instanceof PropertyDescriptor) &&
+                                (trace.get(BindingContext.OBJECT_DECLARATION_CLASS, ((PropertyDescriptor) descriptor)) != null));
                     }
                 }));
             }

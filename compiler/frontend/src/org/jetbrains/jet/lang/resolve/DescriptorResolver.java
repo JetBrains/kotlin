@@ -609,7 +609,6 @@ public class DescriptorResolver {
                     Modality.FINAL,
                     Visibilities.INTERNAL,
                     variable.isVar(),
-                    false,
                     JetPsiUtil.safeName(variable.getName()),
                     CallableMemberDescriptor.Kind.DECLARATION
             );
@@ -678,13 +677,13 @@ public class DescriptorResolver {
                 Modality.FINAL,
                 resolveVisibilityFromModifiers(modifierList),
                 false,
-                true,
                 JetPsiUtil.safeName(objectDeclaration.getName()),
                 CallableMemberDescriptor.Kind.DECLARATION
         );
         propertyDescriptor.setType(classDescriptor.getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(),
                                    DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration), ReceiverDescriptor.NO_RECEIVER);
         propertyDescriptor.initialize(createDefaultGetter(propertyDescriptor), null);
+        trace.record(BindingContext.OBJECT_DECLARATION_CLASS, propertyDescriptor, classDescriptor);
         JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
         if (nameAsDeclaration != null) {
             trace.record(BindingContext.OBJECT_DECLARATION, nameAsDeclaration, propertyDescriptor);
@@ -747,7 +746,6 @@ public class DescriptorResolver {
                 resolveModalityFromModifiers(property.getModifierList(), defaultModality),
                 resolveVisibilityFromModifiers(property.getModifierList()),
                 isVar,
-                false,
                 JetPsiUtil.safeName(property.getName()),
                 CallableMemberDescriptor.Kind.DECLARATION
         );
@@ -1087,7 +1085,6 @@ public class DescriptorResolver {
                 resolveModalityFromModifiers(parameter.getModifierList(), Modality.FINAL),
                 resolveVisibilityFromModifiers(parameter.getModifierList()),
                 isMutable,
-                false,
                 name,
                 CallableMemberDescriptor.Kind.DECLARATION
         );

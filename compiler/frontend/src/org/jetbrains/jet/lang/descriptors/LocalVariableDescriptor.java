@@ -56,11 +56,6 @@ public class LocalVariableDescriptor extends VariableDescriptorImpl {
         return isVar;
     }
 
-    @Override
-    public boolean isObjectDeclaration() {
-        return false;
-    }
-
     @NotNull
     @Override
     public Visibility getVisibility() {

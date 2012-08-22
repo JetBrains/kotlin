@@ -92,7 +92,6 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
                                                                Modality.FINAL,
                                                                Visibilities.PUBLIC,
                                                                false,
-                                                               false,
                                                                Name.identifier(ScriptNameUtil.LAST_EXPRESSION_VALUE_FIELD_NAME),
                                                                CallableMemberDescriptor.Kind.DECLARATION);
         propertyDescriptor.setType(returnType, Collections.<TypeParameterDescriptor>emptyList(), new ClassReceiver(classDescriptor), ReceiverDescriptor.NO_RECEIVER);
@@ -180,7 +179,6 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
                                                                    Collections.<AnnotationDescriptor>emptyList(),
                                                                    Modality.FINAL,
                                                                    Visibilities.PUBLIC,
-                                                                   false,
                                                                    false,
                                                                    parameter.getName(),
                                                                    CallableMemberDescriptor.Kind.DECLARATION);

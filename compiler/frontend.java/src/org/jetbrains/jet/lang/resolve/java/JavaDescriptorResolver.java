@@ -39,7 +39,10 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameBase;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
@@ -1185,9 +1188,22 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                     resolveModality(anyMember.getMember(), isFinal),
                     visibility,
                     isVar,
-                    DescriptorUtils.isEnumClassObject(realOwner),
                     propertyName,
                     CallableMemberDescriptor.Kind.DECLARATION);
+
+            //TODO: this is a hack to indicate that this enum entry is an object
+            // class descriptor for enum entries is not used by backends so for now this should be safe to use
+            // remove this when JavaDescriptorResolver gets rewritten
+            if (DescriptorUtils.isEnumClassObject(realOwner)) {
+                ClassDescriptorImpl dummyClassDescriptorForEnumEntryObject =
+                        new ClassDescriptorImpl(realOwner, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, propertyName);
+                dummyClassDescriptorForEnumEntryObject.initialize(
+                                    true,
+                                    Collections.<TypeParameterDescriptor>emptyList(),
+                                    Collections.<JetType>emptyList(), JetScope.EMPTY,
+                                    Collections.<ConstructorDescriptor>emptySet(), null);
+                trace.record(BindingContext.OBJECT_DECLARATION_CLASS, propertyDescriptor, dummyClassDescriptorForEnumEntryObject);
+            }
 
             PropertyGetterDescriptor getterDescriptor = null;
             PropertySetterDescriptor setterDescriptor = null;

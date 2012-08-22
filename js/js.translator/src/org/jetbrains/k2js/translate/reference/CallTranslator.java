@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.reference.CallParametersResolver.resolveCallParameters;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.isObjectDeclaration;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isConstructorDescriptor;
@@ -267,7 +268,12 @@ public final class CallTranslator extends AbstractTranslator {
 
     private boolean isDirectPropertyAccess() {
         return descriptor instanceof PropertyAccessorDescriptor &&
-               (context().isEcma5() || ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty().isObjectDeclaration());
+               (context().isEcma5() || isObjectAccessor((PropertyAccessorDescriptor) descriptor));
+    }
+
+    private boolean isObjectAccessor(@NotNull PropertyAccessorDescriptor propertyAccessorDescriptor) {
+        PropertyDescriptor correspondingProperty = propertyAccessorDescriptor.getCorrespondingProperty();
+        return isObjectDeclaration(bindingContext(), correspondingProperty);
     }
 
     @NotNull
