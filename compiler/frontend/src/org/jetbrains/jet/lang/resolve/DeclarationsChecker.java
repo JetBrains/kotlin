@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -125,11 +126,13 @@ public class DeclarationsChecker {
 
     private void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor) {
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
-        ClassDescriptor classDescriptor = (containingDeclaration instanceof ClassDescriptor)
-                                          ? (ClassDescriptor) containingDeclaration
-                                          : null;
-        checkPropertyAbstractness(property, propertyDescriptor, classDescriptor);
-        checkPropertyInitializer(property, propertyDescriptor, classDescriptor);
+        if (containingDeclaration instanceof ClassDescriptor) {
+            checkPropertyAbstractness(property, propertyDescriptor, (ClassDescriptor) containingDeclaration);
+        }
+        else {
+            modifiersChecker.checkIllegalModalityModifiers(property);
+        }
+        checkPropertyInitializer(property, propertyDescriptor);
         checkAccessors(property, propertyDescriptor);
         checkDeclaredTypeInPublicMember(property, propertyDescriptor);
     }
@@ -149,17 +152,17 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkPropertyAbstractness(JetProperty property, PropertyDescriptor propertyDescriptor, ClassDescriptor classDescriptor) {
+    private void checkPropertyAbstractness(
+            @NotNull JetProperty property,
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull ClassDescriptor classDescriptor
+    ) {
         JetPropertyAccessor getter = property.getGetter();
         JetPropertyAccessor setter = property.getSetter();
         JetModifierList modifierList = property.getModifierList();
         ASTNode abstractNode = modifierList != null ? modifierList.getModifierNode(JetTokens.ABSTRACT_KEYWORD) : null;
 
         if (abstractNode != null) { //has abstract modifier
-            if (classDescriptor == null) {
-                trace.report(ABSTRACT_PROPERTY_NOT_IN_CLASS.on(property));
-                return;
-            }
             if (!(classDescriptor.getModality() == Modality.ABSTRACT) && classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
                 JetClass classElement = (JetClass) BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
                 String name = property.getName();
@@ -190,7 +193,10 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkPropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, ClassDescriptor classDescriptor) {
+    private void checkPropertyInitializer(
+            @NotNull JetProperty property,
+            @NotNull PropertyDescriptor propertyDescriptor
+    ) {
         JetPropertyAccessor getter = property.getGetter();
         JetPropertyAccessor setter = property.getSetter();
         boolean hasAccessorImplementation = (getter != null && getter.getBodyExpression() != null) ||
@@ -202,8 +208,8 @@ public class DeclarationsChecker {
             }
             return;
         }
-
-        boolean inTrait = classDescriptor != null && classDescriptor.getKind() == ClassKind.TRAIT;
+        DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
+        boolean inTrait = containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor)containingDeclaration).getKind() == ClassKind.TRAIT;
         JetExpression initializer = property.getInitializer();
         boolean backingFieldRequired = trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
 
@@ -213,7 +219,7 @@ public class DeclarationsChecker {
         if (initializer == null) {
             boolean error = false;
             if (backingFieldRequired && !inTrait && !trace.getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor)) {
-                if (classDescriptor == null || hasAccessorImplementation) {
+                if (!(containingDeclaration instanceof ClassDescriptor) || hasAccessorImplementation) {
                     error = true;
                     trace.report(MUST_BE_INITIALIZED.on(property));
                 }
@@ -259,14 +265,9 @@ public class DeclarationsChecker {
             }
             return;
         }
-        if (hasAbstractModifier) {
-            trace.report(NON_MEMBER_ABSTRACT_FUNCTION.on(function, functionDescriptor));
-        }
+        modifiersChecker.checkIllegalModalityModifiers(function);
         if (function.getBodyExpression() == null && !hasAbstractModifier) {
             trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
-        }
-        if (function.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
-            trace.report(ILLEGAL_MODIFIER.on(function.getModifierList().getModifierNode(JetTokens.OVERRIDE_KEYWORD).getPsi(), JetTokens.OVERRIDE_KEYWORD));
         }
     }
 

@@ -3,7 +3,7 @@ fun getTT<A, B>() {}
 fun getTTT<A, B, C>(<!UNUSED_PARAMETER!>x<!> : Any) {}
 fun foo(<!UNUSED_PARAMETER!>a<!> : Any?) {}
 
-open fun main() {
+public fun main() {
     getT<<!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>*<!>>()
     <!UNRESOLVED_REFERENCE!>ggetT<!><<!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>*<!>>()
     getTT<<!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>*<!>, <!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>*<!>>()

@@ -3,29 +3,29 @@ package MyNamespace
     //properties
     <!MUST_BE_INITIALIZED!>val a: Int<!>
     val a1: Int = 1
-    <!ABSTRACT_PROPERTY_NOT_IN_CLASS!>abstract<!> val a2: Int
-    <!ABSTRACT_PROPERTY_NOT_IN_CLASS!>abstract<!> val a3: Int = 1
+    <!ILLEGAL_MODIFIER!>abstract<!> val a2: Int
+    <!ILLEGAL_MODIFIER!>abstract<!> val a3: Int = 1
 
     <!MUST_BE_INITIALIZED!>var b: Int<!>                private set
     var b1: Int = 0;                         private set
-    <!ABSTRACT_PROPERTY_NOT_IN_CLASS!>abstract<!> var b2: Int      private set
-    <!ABSTRACT_PROPERTY_NOT_IN_CLASS!>abstract<!> var b3: Int = 0; private set
+    <!ILLEGAL_MODIFIER!>abstract<!> var b2: Int      private set
+    <!ILLEGAL_MODIFIER!>abstract<!> var b3: Int = 0; private set
 
     <!MUST_BE_INITIALIZED!>var c: Int<!>                set(v: Int) { $c = v }
     var c1: Int = 0;                         set(v: Int) { $c1 = v }
-    <!ABSTRACT_PROPERTY_NOT_IN_CLASS!>abstract<!> var c2: Int      set(v: Int) { $c2 = v }
-    <!ABSTRACT_PROPERTY_NOT_IN_CLASS!>abstract<!> var c3: Int = 0; set(v: Int) { $c3 = v }
+    <!ILLEGAL_MODIFIER!>abstract<!> var c2: Int      set(v: Int) { $c2 = v }
+    <!ILLEGAL_MODIFIER!>abstract<!> var c3: Int = 0; set(v: Int) { $c3 = v }
 
     val e: Int                               get() = a
     val e1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;          get() = a
-    <!ABSTRACT_PROPERTY_NOT_IN_CLASS!>abstract<!> val e2: Int      get() = a
-    <!ABSTRACT_PROPERTY_NOT_IN_CLASS!>abstract<!> val e3: Int = 0; get() = a
+    <!ILLEGAL_MODIFIER!>abstract<!> val e2: Int      get() = a
+    <!ILLEGAL_MODIFIER!>abstract<!> val e3: Int = 0; get() = a
 
     //methods
     <!NON_MEMBER_FUNCTION_NO_BODY!>fun f()<!>
     fun g() {}
-    <!NON_MEMBER_ABSTRACT_FUNCTION!>abstract<!> fun h()
-    <!NON_MEMBER_ABSTRACT_FUNCTION!>abstract<!> fun j() {}
+    <!ILLEGAL_MODIFIER!>abstract<!> fun h()
+    <!ILLEGAL_MODIFIER!>abstract<!> fun j() {}
 
     //property accessors
     var i: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set

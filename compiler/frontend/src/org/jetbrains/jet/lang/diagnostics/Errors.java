@@ -107,7 +107,6 @@ public interface Errors {
     DiagnosticFactory3<JetExpression, Name, JetType, JetType> COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR, DEFAULT);
 
     SimpleDiagnosticFactory<JetModifierListOwner> ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS = SimpleDiagnosticFactory.create(ERROR, ABSTRACT_MODIFIER);
-    SimpleDiagnosticFactory<JetProperty> ABSTRACT_PROPERTY_NOT_IN_CLASS = SimpleDiagnosticFactory.create(ERROR, ABSTRACT_MODIFIER);
     SimpleDiagnosticFactory<JetExpression> ABSTRACT_PROPERTY_WITH_INITIALIZER = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetPropertyAccessor> ABSTRACT_PROPERTY_WITH_GETTER = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetPropertyAccessor>ABSTRACT_PROPERTY_WITH_SETTER = SimpleDiagnosticFactory.create(ERROR);
@@ -124,7 +123,6 @@ public interface Errors {
     DiagnosticFactory2<JetFunction, String, ClassDescriptor> ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS = DiagnosticFactory2.create(ERROR, ABSTRACT_MODIFIER);
     DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> ABSTRACT_FUNCTION_WITH_BODY = DiagnosticFactory1.create(ERROR, ABSTRACT_MODIFIER);
     DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> NON_ABSTRACT_FUNCTION_WITH_NO_BODY = DiagnosticFactory1.create(ERROR, NAMED_ELEMENT);
-    DiagnosticFactory1<JetModifierListOwner, SimpleFunctionDescriptor> NON_MEMBER_ABSTRACT_FUNCTION = DiagnosticFactory1.create(ERROR, ABSTRACT_MODIFIER);
 
     DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY = DiagnosticFactory1.create(ERROR, NAMED_ELEMENT);
     SimpleDiagnosticFactory<JetNamedDeclaration> NON_FINAL_MEMBER_IN_FINAL_CLASS = SimpleDiagnosticFactory.create(WARNING, positionModifier(JetTokens.OPEN_KEYWORD));
