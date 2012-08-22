@@ -19,12 +19,20 @@ package org.jetbrains.jet.plugin.highlighter;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.hint.HintUtil;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationAdapter;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.EditorMouseEvent;
 import com.intellij.openapi.editor.event.EditorMouseEventArea;
 import com.intellij.openapi.editor.event.EditorMouseMotionAdapter;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.util.ProgressIndicatorBase;
+import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
@@ -32,6 +40,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.LightweightHint;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
@@ -48,7 +58,9 @@ import java.awt.*;
  * @since 5/16/12
  */
 public class DeclarationHintSupport extends AbstractProjectComponent {
-    private final MyListener listener = new MyListener();
+    private static final Logger LOG = Logger.getInstance(DeclarationHintSupport.class.getName());
+
+    private final MouseMoveListener mouseMoveListener = new MouseMoveListener();
 
     public DeclarationHintSupport(Project project) {
         super(project);
@@ -56,41 +68,182 @@ public class DeclarationHintSupport extends AbstractProjectComponent {
 
     @Override
     public void initComponent() {
-        EditorFactory.getInstance().getEventMulticaster().addEditorMouseMotionListener(listener, myProject);
+        EditorFactory instance = EditorFactory.getInstance();
+        if (instance != null) {
+            instance.getEventMulticaster().addEditorMouseMotionListener(mouseMoveListener, myProject);
+        }
+        else {
+            LOG.error("Couldn't initialize " + DeclarationHintSupport.class.getName() + " component");
+        }
     }
 
-    private class MyListener extends EditorMouseMotionAdapter {
-        @Override
-        public void mouseMoved(EditorMouseEvent e) {
-            if (e.isConsumed() || e.getArea() != EditorMouseEventArea.EDITING_AREA) return;
+    private class MouseMoveListener extends EditorMouseMotionAdapter {
+        private JetNamedDeclaration lastNamedDeclaration = null;
+        private ProgressIndicator lastIndicator;
+        private LightweightHint lastHint;
 
-            Editor editor = e.getEditor();
+        @Override
+        public void mouseMoved(final EditorMouseEvent e) {
+            if (e.isConsumed() || e.getArea() != EditorMouseEventArea.EDITING_AREA) {
+                return;
+            }
+
+            final Editor editor = e.getEditor();
             PsiFile psiFile = PsiDocumentManager.getInstance(myProject).getPsiFile(editor.getDocument());
-            if (psiFile == null || psiFile.getLanguage() != JetLanguage.INSTANCE) return;
+            if (psiFile == null || psiFile.getLanguage() != JetLanguage.INSTANCE) {
+                return;
+            }
 
             if (DumbService.getInstance(psiFile.getProject()).isDumb()) {
                 return;
             }
 
-            JetFile jetFile = (JetFile) psiFile;
+            final JetFile jetFile = (JetFile) psiFile;
 
             int offset = editor.logicalPositionToOffset(editor.xyToLogicalPosition(e.getMouseEvent().getPoint()));
             PsiElement elementAtCursor = psiFile.findElementAt(offset);
-            JetNamedDeclaration declaration = PsiTreeUtil.getParentOfType(elementAtCursor, JetNamedDeclaration.class);
+            final JetNamedDeclaration declaration = PsiTreeUtil.getParentOfType(elementAtCursor, JetNamedDeclaration.class);
+
             if (declaration != null && declaration.getNameIdentifier() == elementAtCursor) {
-                BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile).getBindingContext();
-
-                DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
-
-                if (descriptor == null) {
+                if (lastNamedDeclaration == declaration) {
                     return;
                 }
 
-                JLayeredPane layeredPane = editor.getComponent().getRootPane().getLayeredPane();
-                Point point = SwingUtilities.convertPoint(e.getMouseEvent().getComponent(), e.getMouseEvent().getPoint(), layeredPane);
-                ((HintManagerImpl) HintManager.getInstance()).showEditorHint(
-                        new LightweightHint(HintUtil.createInformationLabel(DescriptorRenderer.HTML.render(descriptor))), editor, point,
-                        HintManager.HIDE_BY_ANY_KEY | HintManager.HIDE_BY_TEXT_CHANGE | HintManager.HIDE_BY_SCROLLING, 0, false);
+                if (lastIndicator != null) {
+                    lastIndicator.cancel();
+                }
+
+                lastNamedDeclaration = declaration;
+                lastIndicator = new ProgressIndicatorBase();
+
+                // Move long resolve operation to another thread
+                ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        searchResolvedDescriptor(jetFile, declaration, editor, lastIndicator);
+                    }
+                });
+            }
+            else {
+                // Mouse moved out of the declaration - can stop search for descriptor
+                if (lastIndicator != null) {
+                    lastIndicator.cancel();
+                }
+
+                if (lastHint != null) {
+                    lastHint.hide();
+                }
+
+                lastHint = null;
+                lastNamedDeclaration = null;
+                lastIndicator = null;
+            }
+        }
+
+        // Executed in Event dispatch thread
+        private void onDescriptorReady(
+                @Nullable DeclarationDescriptor descriptor,
+                @NotNull JetNamedDeclaration declaration,
+                @NotNull Editor editor,
+                @NotNull PsiFile psiFile,
+                @NotNull ProgressIndicator indicator
+        ) {
+            if (indicator != lastIndicator) {
+                // This is callback for some outdated request
+                return;
+            }
+
+            // Clear - last request is done
+            lastNamedDeclaration = null;
+            lastIndicator = null;
+
+            if (descriptor == null) {
+                return;
+            }
+
+            if (editor.isDisposed()) {
+                return;
+            }
+
+            // Check that cursor is still at the same position
+            Point mousePosition = editor.getContentComponent().getMousePosition();
+            if (mousePosition == null) {
+                return;
+            }
+
+            int offset = editor.logicalPositionToOffset(editor.xyToLogicalPosition(mousePosition));
+            PsiElement elementAtCursor = psiFile.findElementAt(offset);
+
+            if (elementAtCursor != declaration.getNameIdentifier()) {
+                return;
+            }
+
+            JLayeredPane layeredPane = editor.getComponent().getRootPane().getLayeredPane();
+            Point point = SwingUtilities.convertPoint(editor.getContentComponent(), mousePosition, layeredPane);
+            lastHint = new LightweightHint(HintUtil.createInformationLabel(DescriptorRenderer.HTML.render(descriptor)));
+            ((HintManagerImpl) HintManager.getInstance()).showEditorHint(
+                    lastHint, editor, point,
+                    HintManager.HIDE_BY_ANY_KEY | HintManager.HIDE_BY_TEXT_CHANGE
+                    | HintManager.HIDE_BY_SCROLLING | HintManager.HIDE_BY_OTHER_HINT | HintManager.HIDE_BY_MOUSEOVER, 0, false);
+        }
+
+        // Executed in Thread Pool
+        private void searchResolvedDescriptor(
+                @NotNull final JetFile jetFile,
+                @NotNull final JetNamedDeclaration declaration,
+                @NotNull final Editor editor,
+                @NotNull final ProgressIndicator indicator
+        ) {
+            runWithWriteActionPriority(indicator, new Runnable() {
+                @Override
+                public void run() {
+                    DeclarationDescriptor descriptor = null;
+                    try {
+                        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile).getBindingContext();
+                        descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+                    }
+                    finally {
+                        // Back to GUI thread for submitting result
+                        final DeclarationDescriptor finalDescriptor = descriptor;
+                        ApplicationManager.getApplication().invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                onDescriptorReady(finalDescriptor, declaration, editor, jetFile, indicator);
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        /**
+         * Execute action with immediate stop when write lock is required.
+         *
+         * @see ProgressIndicatorUtils.runWithWriteActionPriority();
+         *
+         * @param indicator
+         * @param action
+         */
+        private void runWithWriteActionPriority(final ProgressIndicator indicator, final Runnable action) {
+            // Executed in Thread Pool
+            final ApplicationAdapter listener = new ApplicationAdapter() {
+                @Override
+                public void beforeWriteActionStart(Object action) {
+                    indicator.cancel();
+                }
+            };
+            final Application application = ApplicationManager.getApplication();
+            try {
+                application.addApplicationListener(listener);
+                ProgressManager.getInstance().runProcess(new Runnable(){
+                    @Override
+                    public void run() {
+                        application.runReadAction(action);
+                    }
+                }, indicator);
+            }
+            finally {
+                application.removeApplicationListener(listener);
             }
         }
     }
