@@ -1185,7 +1185,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                     resolveModality(anyMember.getMember(), isFinal),
                     visibility,
                     isVar,
-                    false,
+                    DescriptorUtils.isEnumClassObject(realOwner),
                     propertyName,
                     CallableMemberDescriptor.Kind.DECLARATION);
 

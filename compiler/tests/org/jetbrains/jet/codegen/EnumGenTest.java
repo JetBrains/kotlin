@@ -105,6 +105,18 @@ public class EnumGenTest extends CodegenTestCase {
             throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         blackBoxFile("enum/abstractmethod.kt");
     }
+    
+    public void testSimpleJavaEnum() throws Exception {
+        blackBoxFileWithJava("enum/simpleJavaEnum.kt");
+    }
+    
+    public void testSimpleJavaEnumWithStaticImport() throws Exception {
+        blackBoxFileWithJava("enum/simpleJavaEnumWithStaticImport.kt");
+    } 
+    
+    public void testSimpleJavaEnumWithFunction() throws Exception {
+        blackBoxFileWithJava("enum/simpleJavaEnumWithFunction.kt");
+    }
 
     public void testNoClassForSimpleEnum()
             throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {

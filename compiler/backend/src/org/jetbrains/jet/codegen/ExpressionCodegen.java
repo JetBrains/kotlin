@@ -1105,18 +1105,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
             if (propertyDescriptor.isObjectDeclaration()) {
-                ClassDescriptor classDescriptor =
-                        (ClassDescriptor) propertyDescriptor.getReturnType().getConstructor().getDeclarationDescriptor();
-                assert classDescriptor != null;
-                if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
-                    ClassDescriptor containing = (ClassDescriptor) classDescriptor.getContainingDeclaration().getContainingDeclaration();
+                boolean isEnumEntry = DescriptorUtils.isEnumClassObject(propertyDescriptor.getContainingDeclaration());
+                if (isEnumEntry) {
+                    ClassDescriptor containing = (ClassDescriptor) propertyDescriptor.getContainingDeclaration().getContainingDeclaration();
                     assert containing != null;
                     Type type = typeMapper.mapType(containing.getDefaultType(), MapTypeMode.VALUE);
-                    Type entryType = typeMapper.mapType(classDescriptor.getDefaultType(), MapTypeMode.VALUE);
-                    StackValue.field(type, JvmClassName.byType(type), classDescriptor.getName().getName(), true).put(entryType, v);
-                    return StackValue.onStack(entryType);
+                    StackValue.field(type, JvmClassName.byType(type), propertyDescriptor.getName().getName(), true).put(type, v);
+                    return StackValue.onStack(type);
                 }
                 else {
+                    ClassifierDescriptor classDescriptor = propertyDescriptor.getReturnType().getConstructor().getDeclarationDescriptor();
+                    assert classDescriptor != null;
                     Type type = typeMapper.mapType(classDescriptor.getDefaultType(), MapTypeMode.VALUE);
                     return StackValue.field(type, JvmClassName.byType(type), "$instance", true);
                 }
