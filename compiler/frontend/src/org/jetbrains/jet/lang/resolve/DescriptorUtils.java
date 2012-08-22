@@ -375,4 +375,10 @@ public class DescriptorUtils {
     public static Name getClassObjectName(@NotNull String className) {
         return Name.special("<class-object-for-" + className + ">");
     }
+
+    public static boolean isEnumClassObject(@NotNull DeclarationDescriptor classObjectDescriptor) {
+        DeclarationDescriptor containingDeclaration = classObjectDescriptor.getContainingDeclaration();
+        return ((containingDeclaration instanceof ClassDescriptor) &&
+                ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.ENUM_CLASS);
+    }
 }

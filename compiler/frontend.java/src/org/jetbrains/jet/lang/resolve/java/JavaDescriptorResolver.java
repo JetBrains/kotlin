@@ -1364,7 +1364,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
         functions.addAll(functionsFromCurrent);
 
-        if (isEnumClassObject(owner)) {
+        if (DescriptorUtils.isEnumClassObject(owner)) {
             for (FunctionDescriptor functionDescriptor : Lists.newArrayList(functions)) {
                 if (isEnumSpecialMethod(functionDescriptor)) {
                     functions.remove(functionDescriptor);
@@ -1543,12 +1543,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             return true;
         }
         return (methodName.equals("values") && methodTypeParameters.isEmpty());
-    }
-
-    private static boolean isEnumClassObject(@NotNull DeclarationDescriptor classObjectDescriptor) {
-        DeclarationDescriptor containingDeclaration = classObjectDescriptor.getContainingDeclaration();
-        return ((containingDeclaration instanceof ClassDescriptor) &&
-                ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.ENUM_CLASS);
     }
 
     private List<AnnotationDescriptor> resolveAnnotations(PsiModifierListOwner owner, @NotNull List<Runnable> tasks) {
