@@ -265,6 +265,9 @@ public class DeclarationsChecker {
         if (function.getBodyExpression() == null && !hasAbstractModifier) {
             trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
         }
+        if (function.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
+            trace.report(ILLEGAL_MODIFIER.on(function.getModifierList().getModifierNode(JetTokens.OVERRIDE_KEYWORD).getPsi(), JetTokens.OVERRIDE_KEYWORD));
+        }
     }
 
     private void checkAccessors(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {

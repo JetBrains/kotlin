@@ -1103,6 +1103,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/localDeclarationModifiers.kt");
             }
             
+            @TestMetadata("localFunctionNoInheritVisibility.kt")
+            public void testLocalFunctionNoInheritVisibility() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/declarationChecks/localFunctionNoInheritVisibility.kt");
+            }
+            
             @TestMetadata("LocalVariableWithNoTypeInformation.kt")
             public void testLocalVariableWithNoTypeInformation() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/LocalVariableWithNoTypeInformation.kt");

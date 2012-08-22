@@ -49,6 +49,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CONSTRUCTOR;
+import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
 
 /**
  * @author abreslav
@@ -273,7 +274,7 @@ public class DescriptorResolver {
         }
         boolean hasBody = function.getBodyExpression() != null;
         Modality modality = ModifiersChecker.resolveModalityFromModifiers(function, getDefaultModality(containingDescriptor, hasBody));
-        Visibility visibility = ModifiersChecker.resolveVisibilityFromModifiers(function);
+        Visibility visibility = ModifiersChecker.resolveVisibilityFromModifiers(function, getDefaultVisibility(function, containingDescriptor));
         JetModifierList modifierList = function.getModifierList();
         boolean isInline = (modifierList != null) && modifierList.hasModifier(JetTokens.INLINE_KEYWORD);
         functionDescriptor.initialize(
@@ -288,6 +289,23 @@ public class DescriptorResolver {
 
         BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, function, functionDescriptor);
         return functionDescriptor;
+    }
+
+    public static Visibility getDefaultVisibility(JetModifierListOwner modifierListOwner, DeclarationDescriptor containingDescriptor) {
+        Visibility defaultVisibility;
+        if (containingDescriptor instanceof ClassDescriptor) {
+            JetModifierList modifierList = modifierListOwner.getModifierList();
+            defaultVisibility = modifierList != null && modifierList.hasModifier(OVERRIDE_KEYWORD)
+                                           ? Visibilities.INHERITED
+                                           : Visibilities.INTERNAL;
+        }
+        else if (containingDescriptor instanceof FunctionDescriptor) {
+            defaultVisibility = Visibilities.LOCAL;
+        }
+        else {
+            defaultVisibility = Visibilities.INTERNAL;
+        }
+        return defaultVisibility;
     }
 
     public static Modality getDefaultModality(DeclarationDescriptor containingDescriptor, boolean isBodyPresent) {
