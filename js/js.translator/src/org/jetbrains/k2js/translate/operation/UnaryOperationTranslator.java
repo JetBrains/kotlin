@@ -31,8 +31,6 @@ import static org.jetbrains.k2js.translate.general.Translation.translateAsExpres
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getBaseExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.notNullConditional;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.sure;
 
 public final class UnaryOperationTranslator {
     private UnaryOperationTranslator() {
