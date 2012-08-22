@@ -1249,7 +1249,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return myFrameMap.getIndex(descriptor);
     }
 
-    public void invokeFunctionNoParams(FunctionDescriptor functionDescriptor, Type type, InstructionAdapter v) {
+    public void invokeFunctionNoParams(FunctionDescriptor functionDescriptor, Type expectedType, InstructionAdapter v) {
         DeclarationDescriptor containingDeclaration = functionDescriptor.getOriginal().getContainingDeclaration();
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptor;
         functionDescriptor = functionDescriptor.getOriginal();
@@ -1257,7 +1257,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         IntrinsicMethod intrinsic = state.getInjector().getIntrinsics().getIntrinsic(functionDescriptor);
         if (intrinsic != null) {
-            intrinsic.generate(this, v, type, null, null, StackValue.onStack(TYPE_OBJECT), state);
+            intrinsic.generate(this, v, expectedType, null, null, StackValue.onStack(TYPE_OBJECT), state);
             return;
         }
 
@@ -1277,7 +1277,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                           typeMapper.mapSignature(functionDescriptor.getName(), functionDescriptor).getAsmMethod().getDescriptor());
         JetType returnType = functionDescriptor.getReturnType();
         assert returnType != null;
-        StackValue.onStack(asmType(returnType)).coerce(type, v);
+        StackValue.onStack(asmType(returnType)).coerce(expectedType, v);
     }
 
     public StackValue.Property intermediateValueForProperty(
