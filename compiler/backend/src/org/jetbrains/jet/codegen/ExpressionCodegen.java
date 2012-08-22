@@ -384,7 +384,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         JetType paramType = parameterDescriptor.getType();
         Type asmParamType = asmType(paramType);
 
-        int iteratorVar = myFrameMap.enterTemp();
+        int iteratorVar = myFrameMap.enterTemp(asmIterType);
         gen(expression.getLoopRange(), boxType(loopRangeType));
         invokeFunctionNoParams(iteratorDescriptor, asmIterType, v);
         v.store(iteratorVar, asmIterType);
@@ -413,7 +413,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         v.ifeq(end);
 
-        myFrameMap.enter(parameterDescriptor, asmParamType.getSize());
+        myFrameMap.enter(parameterDescriptor, asmParamType);
         v.load(iteratorVar, asmIterType);
         invokeFunctionNoParams(nextDescriptor, asmParamType, v);
 
@@ -431,7 +431,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         int paramIndex = myFrameMap.leave(parameterDescriptor);
         //noinspection ConstantConditions
         v.visitLocalVariable(loopParameter.getName(), asmParamType.getDescriptor(), null, begin, end, paramIndex);
-        myFrameMap.leaveTemp();
+        myFrameMap.leaveTemp(asmIterType);
 
         blockStackElements.pop();
     }
@@ -459,7 +459,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             JetType paramType = parameterDescriptor.getType();
             Type asmParamType = asmType(paramType);
 
-            myFrameMap.enter(parameterDescriptor, asmParamType.getSize());
+            myFrameMap.enter(parameterDescriptor, asmParamType);
             generatePrologue();
 
             Label condition = new Label();
@@ -507,7 +507,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         @Override
         protected void generatePrologue() {
-            myIndexVar = myFrameMap.enterTemp();
+            myIndexVar = myFrameMap.enterTemp(Type.INT_TYPE);
 
             StackValue value = gen(expression.getLoopRange());
             if (value instanceof StackValue.Local) {
@@ -515,7 +515,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 localArrayVar = true;
             }
             else {
-                myArrayVar = myFrameMap.enterTemp();
+                myArrayVar = myFrameMap.enterTemp(TYPE_OBJECT);
                 value.put(loopRangeType, v);
                 v.store(myArrayVar, TYPE_OBJECT);
             }
@@ -558,7 +558,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         @Override
         protected void cleanupTemp() {
-            myFrameMap.leaveTemp(localArrayVar ? 1 : 2);
+            myFrameMap.leaveTemp(Type.INT_TYPE);
+            if (!localArrayVar) {
+                myFrameMap.leaveTemp(TYPE_OBJECT);
+            }
         }
     }
 
@@ -574,8 +577,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         @Override
         protected void generatePrologue() {
             myIndexVar = lookupLocal(parameterDescriptor);
-            myCountVar = myFrameMap.enterTemp();
-            myDeltaVar = myFrameMap.enterTemp();
+            myCountVar = myFrameMap.enterTemp(Type.INT_TYPE);
+            myDeltaVar = myFrameMap.enterTemp(Type.INT_TYPE);
             if (isIntRangeExpr(expression.getLoopRange())) {
                 JetBinaryExpression rangeExpression = (JetBinaryExpression) expression.getLoopRange();
                 //noinspection ConstantConditions
@@ -638,8 +641,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         @Override
         protected void cleanupTemp() {
-            myFrameMap.leaveTemp();
-            myFrameMap.leaveTemp();
+            myFrameMap.leaveTemp(Type.INT_TYPE);
+            myFrameMap.leaveTemp(Type.INT_TYPE);
         }
     }
 
@@ -949,7 +952,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         final Type sharedVarType = typeMapper.getSharedVarType(variableDescriptor);
         final Type type = sharedVarType != null ? sharedVarType : asmType(variableDescriptor.getType());
-        int index = myFrameMap.enter(variableDescriptor, type.getSize());
+        int index = myFrameMap.enter(variableDescriptor, type);
 
         if (sharedVarType != null) {
             v.anew(sharedVarType);
@@ -981,7 +984,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     private void generateLocalFunctionDeclaration(@NotNull JetNamedFunction namedFunction, @NotNull List<Function<StackValue, Void>> leaveTasks) {
         final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, namedFunction);
-        myFrameMap.enter(descriptor, 1);
+        myFrameMap.enter(descriptor, TYPE_OBJECT);
 
         leaveTasks.add(new Function<StackValue, Void>() {
             @Override
@@ -2764,8 +2767,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         if (args.size() == 2) {
-            int sizeIndex = myFrameMap.enterTemp(2);
-            int indexIndex = sizeIndex + 1;
+            int sizeIndex = myFrameMap.enterTemp(Type.INT_TYPE);
+            int indexIndex = myFrameMap.enterTemp(Type.INT_TYPE);
 
             v.dup();
             v.arraylength();
@@ -2796,7 +2799,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             v.visitLabel(end);
             v.pop();
 
-            myFrameMap.leaveTemp(2);
+            myFrameMap.leaveTemp(Type.INT_TYPE);
+            myFrameMap.leaveTemp(Type.INT_TYPE);
         }
     }
 
@@ -2922,7 +2926,7 @@ The "returned" value of try expression with no finally is either the last expres
 
         gen(expression.getTryBlock(), expectedAsmType);
 
-        int savedValue = myFrameMap.enterTemp(expectedAsmType.getSize());
+        int savedValue = myFrameMap.enterTemp(expectedAsmType);
         v.store(savedValue, expectedAsmType);
 
         Label tryEnd = new Label();
@@ -2945,7 +2949,7 @@ The "returned" value of try expression with no finally is either the last expres
             VariableDescriptor descriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, clause.getCatchParameter());
             assert descriptor != null;
             Type descriptorType = asmType(descriptor.getType());
-            myFrameMap.enter(descriptor, 1);
+            myFrameMap.enter(descriptor, descriptorType);
             int index = lookupLocal(descriptor);
             v.store(index, descriptorType);
 
@@ -2972,7 +2976,7 @@ The "returned" value of try expression with no finally is either the last expres
             Label finallyStart = new Label();
             v.mark(finallyStart);
 
-            int savedException = myFrameMap.enterTemp();
+            int savedException = myFrameMap.enterTemp(TYPE_THROWABLE);
             v.store(savedException, TYPE_THROWABLE);
 
             blockStackElements.pop();
@@ -2980,7 +2984,7 @@ The "returned" value of try expression with no finally is either the last expres
             blockStackElements.push(finallyBlockStackElement);
 
             v.load(savedException, TYPE_THROWABLE);
-            myFrameMap.leaveTemp();
+            myFrameMap.leaveTemp(TYPE_THROWABLE);
 
             v.athrow();
 
@@ -2989,7 +2993,7 @@ The "returned" value of try expression with no finally is either the last expres
         v.mark(end);
 
         v.load(savedValue, expectedAsmType);
-        myFrameMap.leaveTemp(expectedAsmType.getSize());
+        myFrameMap.leaveTemp(expectedAsmType);
 
         if (finallyBlock != null) {
             blockStackElements.pop();
@@ -3108,7 +3112,7 @@ The "returned" value of try expression with no finally is either the last expres
             final VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, var);
             assert variableDescriptor != null;
             final Type varType = asmType(variableDescriptor.getType());
-            myFrameMap.enter(variableDescriptor, varType.getSize());
+            myFrameMap.enter(variableDescriptor, varType);
             expressionToMatch.dupReceiver(v);
             expressionToMatch.put(varType, v);
             final int varIndex = myFrameMap.getIndex(variableDescriptor);
@@ -3197,7 +3201,7 @@ The "returned" value of try expression with no finally is either the last expres
         JetType subjectJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expr);
         final Type subjectType = asmTypeOrVoid(subjectJetType);
         final Type resultType = expressionType(expression);
-        final int subjectLocal = expr != null ? myFrameMap.enterTemp(subjectType.getSize()) : -1;
+        final int subjectLocal = expr != null ? myFrameMap.enterTemp(subjectType) : -1;
         if (subjectLocal != -1) {
             gen(expr, subjectType);
             v.store(subjectLocal, subjectType);
@@ -3248,7 +3252,7 @@ The "returned" value of try expression with no finally is either the last expres
         }
         v.mark(end);
 
-        myFrameMap.leaveTemp(subjectType.getSize());
+        myFrameMap.leaveTemp(subjectType);
         return StackValue.onStack(resultType);
     }
 

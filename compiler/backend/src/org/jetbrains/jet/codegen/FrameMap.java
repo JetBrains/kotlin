@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen;
 import com.google.common.collect.Lists;
 import gnu.trove.TObjectIntHashMap;
 import gnu.trove.TObjectIntIterator;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
 import java.util.ArrayList;
@@ -34,11 +35,11 @@ public class FrameMap {
     private final TObjectIntHashMap<DeclarationDescriptor> myVarSizes = new TObjectIntHashMap<DeclarationDescriptor>();
     private int myMaxIndex = 0;
 
-    public int enter(DeclarationDescriptor descriptor, int size) {
+    public int enter(DeclarationDescriptor descriptor, Type type) {
         int index = myMaxIndex;
         myVarIndex.put(descriptor, index);
-        myMaxIndex += size;
-        myVarSizes.put(descriptor, size);
+        myMaxIndex += type.getSize();
+        myVarSizes.put(descriptor, type.getSize());
         return index;
     }
 
@@ -53,22 +54,14 @@ public class FrameMap {
         return oldIndex;
     }
 
-    public int enterTemp() {
-        return enterTemp(1);
-    }
-
-    public int enterTemp(int size) {
+    public int enterTemp(Type type) {
         int result = myMaxIndex;
-        myMaxIndex += size;
+        myMaxIndex += type.getSize();
         return result;
     }
 
-    public void leaveTemp() {
-        myMaxIndex--;
-    }
-
-    public void leaveTemp(int size) {
-        myMaxIndex -= size;
+    public void leaveTemp(Type type) {
+        myMaxIndex -= type.getSize();
     }
 
     public int getIndex(DeclarationDescriptor descriptor) {

@@ -27,6 +27,8 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import java.util.Collections;
 import java.util.HashMap;
 
+import static org.jetbrains.jet.codegen.JetTypeMapper.TYPE_OBJECT;
+
 /*
  * @author max
  * @author alex.tkachman
@@ -149,13 +151,13 @@ public abstract class CodegenContext {
         FrameMap frameMap = new FrameMap();
 
         if (getContextKind() != OwnerKind.NAMESPACE) {
-            frameMap.enterTemp();  // 0 slot for this
+            frameMap.enterTemp(TYPE_OBJECT);  // 0 slot for this
         }
 
         CallableDescriptor receiverDescriptor = getReceiverDescriptor();
         if (receiverDescriptor != null) {
             Type type = mapper.mapType(receiverDescriptor.getReceiverParameter().getType(), MapTypeMode.VALUE);
-            frameMap.enterTemp(type.getSize());  // Next slot for fake this
+            frameMap.enterTemp(type);  // Next slot for fake this
         }
 
         return frameMap;

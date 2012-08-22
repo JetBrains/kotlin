@@ -38,6 +38,8 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import javax.inject.Inject;
 import java.util.List;
 
+import static org.jetbrains.jet.codegen.JetTypeMapper.TYPE_OBJECT;
+
 /**
  * @author Stepan Koltsov
  */
@@ -155,7 +157,7 @@ public class ScriptCodegen {
         FrameMap frameMap = context.prepareFrame(jetTypeMapper);
 
         for (ScriptDescriptor importedScript : importedScripts) {
-            frameMap.enter(importedScript, 1);
+            frameMap.enter(importedScript, TYPE_OBJECT);
         }
 
         Type[] argTypes = jvmSignature.getAsmMethod().getArgumentTypes();
@@ -163,7 +165,7 @@ public class ScriptCodegen {
 
         for (int i = 0; i < scriptDescriptor.getValueParameters().size(); i++) {
             ValueParameterDescriptor parameter = scriptDescriptor.getValueParameters().get(i);
-            frameMap.enter(parameter, argTypes[i + add].getSize());
+            frameMap.enter(parameter, argTypes[i + add]);
         }
 
         ImplementationBodyCodegen.generateInitializers(

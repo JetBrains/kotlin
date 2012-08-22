@@ -33,10 +33,10 @@ public class ConstructorFrameMap extends FrameMap {
     private int myOuterThisIndex = -1;
 
     public ConstructorFrameMap(CallableMethod callableMethod, @Nullable ConstructorDescriptor descriptor, boolean hasThis0) {
-        enterTemp(); // this
+        enterTemp(JetTypeMapper.TYPE_OBJECT); // this
         if (descriptor != null) {
             if (hasThis0) {
-                myOuterThisIndex = enterTemp();   // outer class instance
+                myOuterThisIndex = enterTemp(JetTypeMapper.TYPE_OBJECT);   // outer class instance
             }
         }
 
@@ -45,8 +45,8 @@ public class ConstructorFrameMap extends FrameMap {
         if (descriptor != null &&
             (descriptor.getContainingDeclaration().getKind() == ClassKind.ENUM_CLASS ||
              descriptor.getContainingDeclaration().getKind() == ClassKind.ENUM_ENTRY)) {
-            enterTemp(); // name
-            enterTemp(); // ordinal
+            enterTemp(JetTypeMapper.TYPE_OBJECT); // name
+            enterTemp(Type.INT_TYPE); // ordinal
         }
 
         List<ValueParameterDescriptor> paramDescrs = descriptor != null
@@ -54,7 +54,7 @@ public class ConstructorFrameMap extends FrameMap {
                                                      : Collections.<ValueParameterDescriptor>emptyList();
         for (int i = 0; i < paramDescrs.size(); i++) {
             ValueParameterDescriptor parameter = paramDescrs.get(i);
-            enter(parameter, explicitArgTypes.get(i).getSize());
+            enter(parameter, explicitArgTypes.get(i));
         }
     }
 

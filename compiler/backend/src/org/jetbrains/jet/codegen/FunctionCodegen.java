@@ -219,7 +219,7 @@ public class FunctionCodegen {
 
                 for (int i = 0; i < paramDescrs.size(); i++) {
                     ValueParameterDescriptor parameter = paramDescrs.get(i);
-                    frameMap.enter(parameter, argTypes[i + add].getSize());
+                    frameMap.enter(parameter, argTypes[i + add]);
                 }
 
                 if (!isStatic &&
@@ -488,7 +488,7 @@ public class FunctionCodegen {
                 FrameMap frameMap = owner.prepareFrame(state.getInjector().getJetTypeMapper());
 
                 if (kind instanceof OwnerKind.StaticDelegateKind) {
-                    frameMap.leaveTemp();
+                    frameMap.leaveTemp(JetTypeMapper.TYPE_OBJECT);
                 }
 
                 ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), owner, state);
@@ -510,8 +510,9 @@ public class FunctionCodegen {
                 Type[] argTypes = jvmSignature.getArgumentTypes();
                 List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
                 for (int i = 0; i < paramDescrs.size(); i++) {
-                    int size = argTypes[i + (hasReceiver ? 1 : 0)].getSize();
-                    frameMap.enter(paramDescrs.get(i), size);
+                    Type argType = argTypes[i + (hasReceiver ? 1 : 0)];
+                    int size = argType.getSize();
+                    frameMap.enter(paramDescrs.get(i), argType);
                     var += size;
                 }
 
@@ -535,7 +536,7 @@ public class FunctionCodegen {
                     Type t = argTypes[extra + index];
 
                     if (frameMap.getIndex(parameterDescriptor) < 0) {
-                        frameMap.enter(parameterDescriptor, t.getSize());
+                        frameMap.enter(parameterDescriptor, t);
                     }
 
                     if (parameterDescriptor.declaresDefaultValue()) {
