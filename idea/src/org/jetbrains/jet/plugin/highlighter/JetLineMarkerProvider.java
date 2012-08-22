@@ -233,7 +233,10 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
     }
 
     @Override
-    public void collectSlowLineMarkers(List<PsiElement> elements, Collection<LineMarkerInfo> result) {
+    public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
+        // TODO this is a workaround for CME in external annotations code, should be removed after updating to IDEA 122.145+ (KT-2666)
+        if (ApplicationManager.getApplication().isUnitTestMode()) return;
+
         if (elements.isEmpty() || DumbService.getInstance(elements.get(0).getProject()).isDumb()) {
           return;
         }
