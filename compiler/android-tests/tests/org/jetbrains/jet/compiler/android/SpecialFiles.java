@@ -70,6 +70,9 @@ public class SpecialFiles {
     private static void fillExcludedFiles() {
         excludedFiles.add("referencesStaticInnerClassMethod.kt"); // Must compile Java files before
         excludedFiles.add("referencesStaticInnerClassMethodL2.kt"); // Must compile Java files before
+        excludedFiles.add("simpleJavaEnum.kt"); // Must compile Java files before
+        excludedFiles.add("simpleJavaEnumWithFunction.kt"); // Must compile Java files before
+        excludedFiles.add("simpleJavaEnumWithStaticImport.kt"); // Must compile Java files before
         excludedFiles.add("removeInIterator.kt"); // Must compile Java files before
         excludedFiles.add("namespaceQualifiedMethod.jet"); // Cannot change package name
         excludedFiles.add("kt1482_2279.kt"); // Cannot change package name
