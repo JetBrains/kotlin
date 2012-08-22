@@ -441,11 +441,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private abstract class ForLoopGenerator {
-        protected JetForExpression expression;
-        protected Type loopRangeType;
-        protected JetType expressionType;
-        protected VariableDescriptor parameterDescriptor;
-        Label end = new Label();
+        protected final JetForExpression expression;
+        protected final Type loopRangeType;
+        protected final JetType expressionType;
+        protected final VariableDescriptor parameterDescriptor;
+        protected final Label end = new Label();
 
         public ForLoopGenerator(JetForExpression expression, Type loopRangeType) {
             this.expression = expression;
@@ -1673,7 +1673,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             StackValue.onStack(intermediateType).put(type, v);
         }
         else {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("Unsupported receiver type: " + descriptor);
         }
     }
 
