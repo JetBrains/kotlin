@@ -44,17 +44,15 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibraryNames;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.JetTypeMapper.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
+import static org.jetbrains.jet.lang.resolve.BindingContext.CALL;
+import static org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_TYPE;
 
 /**
  * @author max
@@ -3272,11 +3270,12 @@ The "returned" value of try expression with no finally is either the last expres
                 getInIntRange(new StackValue.Local(subjectLocal, subjectType), (JetBinaryExpression) rangeExpression, inverted);
             }
             else {
-                ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                        bindingContext.get(BindingContext.RESOLVED_CALL, conditionInRange.getOperationReference());
-                Call call = bindingContext.get(BindingContext.CALL, conditionInRange.getOperationReference());
+                FunctionDescriptor op =
+                        (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, conditionInRange.getOperationReference());
+                genToJVMStack(rangeExpression);
+                new StackValue.Local(subjectLocal, subjectType).put(TYPE_OBJECT, v);
+                invokeFunctionNoParams(op, Type.BOOLEAN_TYPE, v);
 
-                invokeFunction(call, StackValue.local(subjectLocal, subjectType), resolvedCall);
                 if (inverted) {
                     invertBoolean();
                 }
