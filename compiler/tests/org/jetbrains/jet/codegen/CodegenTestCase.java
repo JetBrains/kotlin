@@ -25,7 +25,9 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
@@ -258,6 +260,19 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         } finally {
             loader.dispose();
         }
+    }
+
+    protected void blackBoxFileWithJava(@NotNull String ktFile) throws Exception {
+        File javaClassesTempDirectory = new File(FileUtil.getTempDirectory(), "java-classes");
+        JetTestUtils.mkdirs(javaClassesTempDirectory);
+        JetTestUtils.compileJavaFile(
+                new File("compiler/testData/codegen/" + ktFile.replaceFirst("\\.kt$", ".java")),
+                javaClassesTempDirectory);
+
+        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), CompileCompilerDependenciesTest.compilerConfigurationForTests(
+                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
+
+        blackBoxFile(ktFile);
     }
 
     protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens) {

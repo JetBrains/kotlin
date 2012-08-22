@@ -163,30 +163,16 @@ public class FunctionGenTest extends CodegenTestCase {
         blackBoxFile("regressions/kt1038.kt");
     }
 
-    public static class WithJavaFunctionGenTest extends CodegenTestCase {
-        private void blackBoxFileWithJava(@NotNull String ktFile) throws Exception {
-            File javaClassesTempDirectory = new File(FileUtil.getTempDirectory(), "java-classes");
-            JetTestUtils.mkdirs(javaClassesTempDirectory);
-            JetTestUtils.compileJavaFile(
-                    new File("compiler/testData/codegen/" + ktFile.replaceFirst("\\.kt$", ".java")),
-                    javaClassesTempDirectory);
 
-            myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), CompileCompilerDependenciesTest.compilerConfigurationForTests(
-                    ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
+    public void testReferencesStaticInnerClassMethod() throws Exception {
+        blackBoxFileWithJava("functions/referencesStaticInnerClassMethod.kt");
+    }
 
-            blackBoxFile(ktFile);
-        }
+    public void testReferencesStaticInnerClassMethodTwoLevels() throws Exception {
+        blackBoxFileWithJava("functions/referencesStaticInnerClassMethodL2.kt");
+    }
 
-        public void testReferencesStaticInnerClassMethod() throws Exception {
-            blackBoxFileWithJava("functions/referencesStaticInnerClassMethod.kt");
-        }
-
-        public void testReferencesStaticInnerClassMethodTwoLevels() throws Exception {
-            blackBoxFileWithJava("functions/referencesStaticInnerClassMethodL2.kt");
-        }
-
-        public void testRemoveInIterator() throws Exception {
-            blackBoxFileWithJava("functions/removeInIterator.kt");
-        }
+    public void testRemoveInIterator() throws Exception {
+        blackBoxFileWithJava("functions/removeInIterator.kt");
     }
 }
