@@ -64,10 +64,12 @@ public class ControlStructuresTest extends CodegenTestCase {
         factorialTest("controlStructures/break.jet");
     }
 
+    /*
     public void testInRangeConditionsInWhen() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("controlStructures/inRangeConditionsInWhen.jet");
     }
+    */
 
     private void factorialTest(final String name) throws IllegalAccessException, InvocationTargetException {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
