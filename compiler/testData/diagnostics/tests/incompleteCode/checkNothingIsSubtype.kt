@@ -9,6 +9,6 @@ fun test(nothing: Nothing?) {
 }
 
 fun sum(<!UNUSED_PARAMETER!>a<!> : IntArray) : Int {
-    for (<!UNREACHABLE_CODE!>n<!><!SYNTAX!><!>
-    <!ITERATOR_AMBIGUITY!>return <!TYPE_MISMATCH!>"?"<!><!><!SYNTAX!><!>
+    for (n
+    <!SYNTAX!>return<!> <!ITERATOR_MISSING!>"?"<!><!SYNTAX!><!>
 <!SYNTAX!><!>}
