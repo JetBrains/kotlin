@@ -401,100 +401,221 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     @SuppressWarnings("ConstantConditions")
     private void generateForInIterable(JetForExpression expression, Type loopRangeType) {
-        final JetExpression loopRange = expression.getLoopRange();
-
-        FunctionDescriptor iteratorDescriptor = bindingContext.get(BindingContext.LOOP_RANGE_ITERATOR, loopRange);
-        FunctionDescriptor nextDescriptor = bindingContext.get(BindingContext.LOOP_RANGE_NEXT, loopRange);
-        DeclarationDescriptor hasNextDescriptor = bindingContext.get(BindingContext.LOOP_RANGE_HAS_NEXT, loopRange);
-
-        if (iteratorDescriptor == null) {
-            throw new IllegalStateException("No iterator() method " + DiagnosticUtils.atLocation(loopRange));
-        }
-        if (nextDescriptor == null) {
-            throw new IllegalStateException("No next() method " + DiagnosticUtils.atLocation(loopRange));
-        }
-        if (hasNextDescriptor == null) {
-            throw new IllegalStateException("No hasNext method or property" + DiagnosticUtils.atLocation(loopRange));
-        }
-
-        final JetParameter loopParameter = expression.getLoopParameter();
-        final VariableDescriptor parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, loopParameter);
-
-        JetType iteratorType = iteratorDescriptor.getReturnType();
-        Type asmIterType = boxType(asmType(iteratorType));
-
-        JetType paramType = parameterDescriptor.getType();
-        Type asmParamType = asmType(paramType);
-
-        int iteratorVar = myFrameMap.enterTemp(asmIterType);
-        gen(expression.getLoopRange(), boxType(loopRangeType));
-        invokeFunctionNoParams(iteratorDescriptor, asmIterType, v);
-        v.store(iteratorVar, asmIterType);
-
-        Label end = new Label();
-        if (iteratorType.isNullable()) {
-            v.load(iteratorVar, TYPE_OBJECT);
-            v.ifnull(end);
-        }
-
-        Label begin = new Label();
-        blockStackElements.push(new LoopBlockStackElement(end, begin, targetLabel(expression)));
-
-        v.mark(begin);
-        v.load(iteratorVar, asmIterType);
-        if (hasNextDescriptor instanceof FunctionDescriptor) {
-            FunctionDescriptor hND = (FunctionDescriptor) hasNextDescriptor;
-            invokeFunctionNoParams(hND, Type.BOOLEAN_TYPE, v);
-        }
-        else {
-            //            hND = ((PropertyDescriptor) hasNextDescriptor).getGetter();
-            //            if (hND != null)
-            //                invokeFunctionNoParams(hND, Type.BOOLEAN_TYPE, v);
-            //            else
-            intermediateValueForProperty((PropertyDescriptor) hasNextDescriptor, false, null).put(Type.BOOLEAN_TYPE, v);
-        }
-        v.ifeq(end);
-
-        myFrameMap.enter(parameterDescriptor, asmParamType);
-        v.load(iteratorVar, asmIterType);
-        invokeFunctionNoParams(nextDescriptor, asmParamType, v);
-
-        // TODO checkcast should be generated via StackValue
-        if (asmParamType.getSort() == Type.OBJECT && !"java.lang.Object".equals(asmParamType.getClassName())) {
-            v.checkcast(asmParamType);
-        }
-        v.store(lookupLocal(parameterDescriptor), asmParamType);
-
-        gen(expression.getBody(), Type.VOID_TYPE);
-
-        v.goTo(begin);
-        v.mark(end);
-
-        int paramIndex = myFrameMap.leave(parameterDescriptor);
-        //noinspection ConstantConditions
-        v.visitLocalVariable(loopParameter.getName(), asmParamType.getDescriptor(), null, begin, end, paramIndex);
-        myFrameMap.leaveTemp(asmIterType);
-
-        blockStackElements.pop();
+        generateForLoop(expression.getBody(), new IteratorForLoopGenerator(expression));
     }
 
     private OwnerKind contextKind() {
         return context.getContextKind();
     }
 
-    private abstract class ForLoopGenerator {
+    private interface ForLoopGenerator {
+        void beforeLoop();
+        void condition();
+        void beforeBody();
+        void afterBody();
+        void afterLoop();
+    }
+
+    private void generateForLoop(JetExpression body, ForLoopGenerator generator) {
+        Label loopExit = new Label();
+        Label loopEntry = new Label();
+
+        generator.beforeLoop();
+
+        v.mark(loopEntry);
+        generator.condition();
+        v.ifeq(loopExit);
+
+        generator.beforeBody();
+        blockStackElements.push(new LoopBlockStackElement(loopExit, loopEntry, null));
+        gen(body, Type.VOID_TYPE);
+        blockStackElements.pop();
+        generator.afterBody();
+
+        v.goTo(loopEntry);
+
+        v.mark(loopExit);
+        generator.afterLoop();
+    }
+
+    private class IteratorForLoopGenerator implements ForLoopGenerator {
+        // for (e : E in c) {...}
+        private final JetForExpression forExpression;
+
+        private int iteratorVarIndex;
+        private final ResolvedCall<FunctionDescriptor> iteratorCall;
+        private final ResolvedCall<FunctionDescriptor> nextCall;
+        private final ResolvedCall<FunctionDescriptor> hasNextCall;
+        private final Type asmTypeForLoopRange;
+        private final JetExpression loopRange;
+        private final Type asmTypeForIterator;
+        private final Type asmTypeForNext;
+
+        private final Label bodyStart = new Label();
+        private final Label bodyEnd = new Label();
+
+        private final List<Runnable> leaveVariableTasks = Lists.newArrayList();
+
+
+        private IteratorForLoopGenerator(@NotNull JetForExpression forExpression) {
+            this.forExpression = forExpression;
+
+            this.loopRange = forExpression.getLoopRange();
+            assert loopRange != null;
+
+            JetType loopRangeType = getNotNull(bindingContext, EXPRESSION_TYPE, loopRange);
+            this.asmTypeForLoopRange = asmType(loopRangeType);
+
+            this.iteratorCall = getNotNull(bindingContext,
+                                                 LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRange,
+                                                 "No .iterator() function " + DiagnosticUtils.atLocation(loopRange));
+
+            JetType iteratorType = iteratorCall.getResultingDescriptor().getReturnType();
+            assert iteratorType != null;
+            this.asmTypeForIterator = asmType(iteratorType);
+
+            this.nextCall = getNotNull(bindingContext,
+                                       LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange,
+                                             "No next() function " + DiagnosticUtils.atLocation(loopRange));
+            this.asmTypeForNext = asmType(nextCall.getResultingDescriptor().getReturnType());
+
+
+            this.hasNextCall = getNotNull(bindingContext,
+                                          LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, loopRange,
+                                                "No hasNext() function " + DiagnosticUtils.atLocation(loopRange));
+        }
+
+        @Override
+        public void beforeLoop() {
+            // Iterator<E> tmp<iterator> = c.iterator()
+
+            iteratorVarIndex = myFrameMap.enterTemp(asmTypeForIterator);
+
+            Call call = bindingContext.get(LOOP_RANGE_ITERATOR_CALL, forExpression.getLoopRange());
+            invokeFunction(call, StackValue.none(), iteratorCall);
+            v.store(iteratorVarIndex, asmTypeForIterator);
+        }
+
+        @Override
+        public void condition() {
+            // tmp<iterator>.hasNext()
+
+            Call fakeCall =
+                    makeFakeCall(new TransientReceiver(iteratorCall.getResultingDescriptor().getReturnType()));
+            invokeFunction(fakeCall, StackValue.local(iteratorVarIndex, asmTypeForIterator), hasNextCall);
+
+            JetType type = hasNextCall.getResultingDescriptor().getReturnType();
+            assert type != null && JetTypeChecker.INSTANCE.isSubtypeOf(type, JetStandardLibrary.getInstance().getBooleanType());
+
+            Type asmType = asmType(type);
+            StackValue.coerce(asmType, Type.BOOLEAN_TYPE, v);
+        }
+
+        @Override
+        public void beforeBody() {
+            v.mark(bodyStart);
+            JetParameter loopParameter = forExpression.getLoopParameter();
+            if (loopParameter != null) {
+                // E e = tmp<iterator>.next()
+                final VariableDescriptor parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, loopParameter);
+                final Type asmTypeForParameter = asmType(parameterDescriptor.getType());
+                final int parameterIndex = myFrameMap.enter(parameterDescriptor, asmTypeForParameter);
+                leaveVariableTasks.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        myFrameMap.leave(parameterDescriptor);
+                        v.visitLocalVariable(parameterDescriptor.getName().getName(),
+                                             asmTypeForParameter.getDescriptor(), null,
+                                             bodyStart, bodyEnd,
+                                             parameterIndex);
+                    }
+                });
+                assignToLoopParameter(parameterIndex);
+            }
+            else {
+                JetMultiDeclaration multiParameter = forExpression.getMultiParameter();
+                assert multiParameter != null;
+
+                // E tmp<e> = tmp<iterator>.next()
+                int tmpParameterIndex = myFrameMap.enterTemp(asmTypeForNext);
+                leaveVariableTasks.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        myFrameMap.leaveTemp(asmTypeForNext);
+                    }
+                });
+                assignToLoopParameter(tmpParameterIndex);
+
+                generateMultiVariables(tmpParameterIndex, multiParameter.getEntries());
+            }
+        }
+
+        private void assignToLoopParameter(int parameterIndex) {
+            Call fakeCall =
+                    makeFakeCall(new TransientReceiver(iteratorCall.getResultingDescriptor().getReturnType()));
+            invokeFunction(fakeCall, StackValue.local(iteratorVarIndex, asmTypeForIterator), nextCall);
+            v.store(parameterIndex, asmTypeForNext);
+        }
+
+        private void generateMultiVariables(int tmpParameterIndex, List<JetMultiDeclarationEntry> entries) {
+            for (JetMultiDeclarationEntry variableDeclaration : entries) {
+                v.load(tmpParameterIndex, asmTypeForNext);
+
+                final VariableDescriptor componentDescriptor = bindingContext.get(BindingContext.VARIABLE, variableDeclaration);
+
+                final Type componentAsmType = asmType(componentDescriptor.getReturnType());
+                final int componentVarIndex = myFrameMap.enter(componentDescriptor, componentAsmType);
+                leaveVariableTasks.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        myFrameMap.leave(componentDescriptor);
+                        v.visitLocalVariable(componentDescriptor.getName().getName(),
+                                             componentAsmType.getDescriptor(), null,
+                                             bodyStart, bodyEnd,
+                                             componentVarIndex);
+                    }
+                });
+
+
+                ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(BindingContext.COMPONENT_RESOLVED_CALL, variableDeclaration);
+                assert resolvedCall != null : "Resolved call is null for " + variableDeclaration.getText();
+                Call call = makeFakeCall(new TransientReceiver(nextCall.getResultingDescriptor().getReturnType()));
+                invokeFunction(call, StackValue.local(tmpParameterIndex, asmTypeForNext), resolvedCall);
+
+                v.store(componentVarIndex, componentAsmType);
+            }
+        }
+
+        @Override
+        public void afterBody() {
+            v.mark(bodyEnd);
+            // e goes out of scope
+            for (Runnable task : Lists.reverse(leaveVariableTasks)) {
+                task.run();
+            }
+        }
+
+        @Override
+        public void afterLoop() {
+            // tmp<iterator> goes out of scope
+            myFrameMap.leaveTemp(asmTypeForIterator);
+        }
+    }
+
+    // This class will be unified with ForLoopGenerator soon
+    private abstract class IntrinsicForLoopGenerator {
         protected final JetForExpression expression;
         protected final Type loopRangeType;
         protected final JetType expressionType;
         protected final VariableDescriptor parameterDescriptor;
         protected final Label end = new Label();
 
-        public ForLoopGenerator(JetForExpression expression, Type loopRangeType) {
+        public IntrinsicForLoopGenerator(JetForExpression expression, Type loopRangeType) {
             this.expression = expression;
             this.loopRangeType = loopRangeType;
-            final JetParameter loopParameter = expression.getLoopParameter();
+            JetParameter loopParameter = expression.getLoopParameter();
             this.parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, loopParameter);
-            expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getLoopRange());
+            this.expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getLoopRange());
         }
 
         public void invoke() {
@@ -538,7 +659,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
     }
 
-    private class ForInArrayLoopGenerator extends ForLoopGenerator {
+    private class ForInArrayLoopGenerator extends IntrinsicForLoopGenerator {
         private int myIndexVar;
         private int myArrayVar;
         private boolean localArrayVar;
@@ -607,7 +728,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
     }
 
-    private class ForInRangeLoopGenerator extends ForLoopGenerator {
+    private class ForInRangeLoopGenerator extends IntrinsicForLoopGenerator {
         private int myCountVar;
         private int myDeltaVar;
         private int myIndexVar;
@@ -1304,7 +1425,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return myFrameMap.getIndex(descriptor);
     }
 
-    protected void invokeFunctionNoParams(FunctionDescriptor functionDescriptor, Type expectedType, InstructionAdapter v) {
+    public void invokeFunctionNoParams(FunctionDescriptor functionDescriptor, Type expectedType, InstructionAdapter v) {
         DeclarationDescriptor containingDeclaration = functionDescriptor.getOriginal().getContainingDeclaration();
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptor;
         functionDescriptor = functionDescriptor.getOriginal();
@@ -1317,7 +1438,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         boolean isInterface;
-        boolean isInsideClass = context.hasThisDescriptor() && containingDeclaration == context.getThisDescriptor();
+        boolean isInsideClass = containingDeclaration == context.getThisDescriptor();
         if (isInsideClass || isStatic) {
             owner = typeMapper.getOwner(functionDescriptor, contextKind());
             isInterface = false;

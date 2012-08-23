@@ -194,6 +194,21 @@ public class ControlStructuresTest extends CodegenTestCase {
         blackBoxFile("controlStructures/forUserType.jet");
     }
 
+    public void testForLoopMemberExtensionNext() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("controlStructures/forLoopMemberExtensionNext.kt");
+    }
+
+    public void testForLoopMemberExtensionHasNext() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("controlStructures/forLoopMemberExtensionHasNext.kt");
+    }
+
+    public void testForLoopMemberExtensionAll() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("controlStructures/forLoopMemberExtensionAll.kt");
+    }
+
     public void testForIntArray() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("controlStructures/forIntArray.jet");
