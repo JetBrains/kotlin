@@ -113,6 +113,59 @@ public class MultiDeclTestGenerated extends AbstractMultiDeclTestCase {
             blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forArray/MultiDeclForValCaptured.kt");
         }
         
+        @TestMetadata("compiler/testData/codegen/multiDecl/forArray/int")
+        public static class Int extends AbstractMultiDeclTestCase {
+            public void testAllFilesPresentInInt() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractMultiDeclTestCase", new File("compiler/testData/codegen/multiDecl/forArray/int"), "kt", false);
+            }
+            
+            @TestMetadata("MultiDeclForComponentExtensions.kt")
+            public void testMultiDeclForComponentExtensions() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forArray/int/MultiDeclForComponentExtensions.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
+            public void testMultiDeclForComponentMemberExtensions() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forArray/int/MultiDeclForComponentMemberExtensions.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
+            public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forArray/int/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+            }
+            
+        }
+        
+        @TestMetadata("compiler/testData/codegen/multiDecl/forArray/long")
+        public static class Long extends AbstractMultiDeclTestCase {
+            public void testAllFilesPresentInLong() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractMultiDeclTestCase", new File("compiler/testData/codegen/multiDecl/forArray/long"), "kt", false);
+            }
+            
+            @TestMetadata("MultiDeclForComponentExtensions.kt")
+            public void testMultiDeclForComponentExtensions() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forArray/long/MultiDeclForComponentExtensions.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
+            public void testMultiDeclForComponentMemberExtensions() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forArray/long/MultiDeclForComponentMemberExtensions.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
+            public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forArray/long/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+            }
+            
+        }
+        
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("ForArray");
+            suite.addTestSuite(ForArray.class);
+            suite.addTestSuite(Int.class);
+            suite.addTestSuite(Long.class);
+            return suite;
+        }
     }
     
     @TestMetadata("compiler/testData/codegen/multiDecl/forIterator")
@@ -151,7 +204,7 @@ public class MultiDeclTestGenerated extends AbstractMultiDeclTestCase {
     public static Test suite() {
         TestSuite suite = new TestSuite("MultiDeclTestGenerated");
         suite.addTestSuite(MultiDeclTestGenerated.class);
-        suite.addTestSuite(ForArray.class);
+        suite.addTest(ForArray.innerSuite());
         suite.addTestSuite(ForIterator.class);
         return suite;
     }
