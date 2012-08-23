@@ -267,66 +267,10 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
     }
 
     private Method generateConstructor(JvmClassName funClass, JetExpression fun, FunctionDescriptor funDescriptor) {
-        int argCount = captureThis != null ? 1 : 0;
-        argCount += (captureReceiver != null ? 1 : 0);
+        final ArrayList<Pair<String, Type>> args = new ArrayList<Pair<String, Type>>();
+        boolean putFieldForMyself = calculateConstructorParameters(funDescriptor, args);
 
-        ArrayList<DeclarationDescriptor> variableDescriptors = new ArrayList<DeclarationDescriptor>();
-
-        for (DeclarationDescriptor descriptor : closure.keySet()) {
-            if (descriptor == funDescriptor) {
-                continue;
-            }
-            if (descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
-                argCount++;
-                variableDescriptors.add(descriptor);
-            }
-            else if (CodegenUtil.isNamedFun(descriptor, state.getBindingContext()) &&
-                     descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
-                argCount++;
-                variableDescriptors.add(descriptor);
-            }
-            else if (descriptor instanceof FunctionDescriptor) {
-                assert captureReceiver != null;
-            }
-        }
-
-        Type[] argTypes = new Type[argCount];
-
-        int i = 0;
-        if (captureThis != null) {
-            argTypes[i++] = typeMapper.mapType(context.getThisDescriptor().getDefaultType(), MapTypeMode.VALUE);
-        }
-
-        if (captureReceiver != null) {
-            argTypes[i++] = captureReceiver;
-        }
-
-        boolean putFieldForMyself = false;
-
-        for (DeclarationDescriptor descriptor : closure.keySet()) {
-            if (descriptor == funDescriptor) {
-                putFieldForMyself = true;
-                continue;
-            }
-            if (descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
-                final Type sharedVarType = typeMapper.getSharedVarType(descriptor);
-                final Type type;
-                if (sharedVarType != null) {
-                    type = sharedVarType;
-                }
-                else {
-                    type = typeMapper.mapType(((VariableDescriptor) descriptor).getType(), MapTypeMode.VALUE);
-                }
-                argTypes[i++] = type;
-            }
-            else if (CodegenUtil.isNamedFun(descriptor, state.getBindingContext()) &&
-                     descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
-                final Type type = closureAnnotator
-                        .classNameForAnonymousClass((JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor))
-                        .getAsmType();
-                argTypes[i++] = type;
-            }
-        }
+        final Type[] argTypes = nameAnTypeListToTypeArray(args);
 
         final Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
         final MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC, "<init>", constructor.getDescriptor(), null, new String[0]);
@@ -340,26 +284,14 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
             iv.load(0, funClass.getAsmType());
             iv.invokespecial(funClass.getInternalName(), "<init>", "()V");
 
-            i = 1;
-            for (Type type : argTypes) {
+            int k = 1;
+            for (int i = 0; i != argTypes.length; ++i) {
                 StackValue.local(0, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
-                StackValue.local(i, type).put(type, iv);
-                final String fieldName;
-                if (captureThis != null && i == 1) {
-                    fieldName = "this$0";
-                }
-                else {
-                    if (captureReceiver != null && (captureThis != null && i == 2 || captureThis == null && i == 1)) {
-                        fieldName = "receiver$0";
-                    }
-                    else {
-                        DeclarationDescriptor removed = variableDescriptors.remove(0);
-                        fieldName = "$" + removed.getName();
-                    }
-                }
-                i += type.getSize();
-
-                StackValue.field(type, name, fieldName, false).store(type, iv);
+                final Pair<String, Type> nameAndType = args.get(i);
+                final Type type = nameAndType.second;
+                StackValue.local(k, type).put(type, iv);
+                k += type.getSize();
+                StackValue.field(type, name, nameAndType.first, false).store(type, iv);
             }
 
             if (putFieldForMyself) {
@@ -375,6 +307,52 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
             FunctionCodegen.endVisit(iv, "constructor", fun);
         }
         return constructor;
+    }
+
+    private boolean calculateConstructorParameters(FunctionDescriptor funDescriptor, ArrayList<Pair<String, Type>> args) {
+        if (captureThis != null) {
+            final Type type = typeMapper.mapType(context.getThisDescriptor().getDefaultType(), MapTypeMode.VALUE);
+            args.add(new Pair<String, Type>("this$0", type));
+        }
+        if (captureReceiver != null) {
+            args.add(new Pair<String, Type>("receiver$0", captureReceiver));
+        }
+
+        boolean putFieldForMyself = false;
+
+        for (DeclarationDescriptor descriptor : closure.keySet()) {
+            if (descriptor == funDescriptor) {
+                putFieldForMyself = true;
+            }
+            else if (descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
+                final Type sharedVarType = typeMapper.getSharedVarType(descriptor);
+
+                final Type type = sharedVarType != null
+                                  ? sharedVarType
+                                  : typeMapper.mapType(((VariableDescriptor) descriptor).getType(), MapTypeMode.VALUE);
+                args.add(new Pair<String, Type>("$" + descriptor.getName().getName(), type));
+            }
+            else if (CodegenUtil.isNamedFun(descriptor, state.getBindingContext()) &&
+                     descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
+                final Type type = closureAnnotator
+                        .classNameForAnonymousClass((JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor))
+                        .getAsmType();
+
+                args.add(new Pair<String, Type>("$" + descriptor.getName().getName(), type));
+            }
+            else if (descriptor instanceof FunctionDescriptor) {
+                assert captureReceiver != null;
+            }
+        }
+        return putFieldForMyself;
+    }
+
+    private static Type[] nameAnTypeListToTypeArray(ArrayList<Pair<String, Type>> args) {
+        final Type[] argTypes = new Type[args.size()];
+        for (int i = 0; i != argTypes.length; ++i) {
+            argTypes[i] = args.get(i).second;
+        }
+        return argTypes;
     }
 
     @NotNull
