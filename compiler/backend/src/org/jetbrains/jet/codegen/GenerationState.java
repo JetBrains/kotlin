@@ -129,7 +129,7 @@ public class GenerationState {
                 getInjector().getJetTypeMapper().mapType(aClass.getDefaultType(), MapTypeMode.TRAIT_IMPL).getInternalName() + ".class");
     }
 
-    public Pair<JvmClassName, ClassBuilder> forAnonymousSubclass(JetExpression expression) {
+    public Pair<JvmClassName, ClassBuilder> forAnonymousSubclass(JetElement expression) {
         JvmClassName className = getInjector().getJetTypeMapper().getClosureAnnotator().classNameForAnonymousClass(expression);
         return Pair.create(className, getFactory().forAnonymousSubclass(className));
     }

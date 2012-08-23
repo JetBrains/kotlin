@@ -197,22 +197,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     @Override
     public StackValue visitClass(JetClass klass, StackValue data) {
-        ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, klass);
-        ObjectOrClosureCodegen closure = new LocalClassClosureCodegen(this, context, state, descriptor);
-        Pair<JvmClassName, ClassBuilder> nameAndVisitor = state.forAnonymousSubclass(klass);
-
-        closure.cv = nameAndVisitor.getSecond();
-        closure.name = nameAndVisitor.getFirst();
-        final CodegenContext objectContext = closure.context.intoAnonymousClass(
-                closure, descriptor, OwnerKind.IMPLEMENTATION,
-                typeMapper);
-
-        new ImplementationBodyCodegen(klass, objectContext, nameAndVisitor.getSecond(), state).generate();
-        return StackValue.none();
+        return visitClassOrObject(klass);
     }
 
-    @Override
-    public StackValue visitObjectDeclaration(JetObjectDeclaration declaration, StackValue data) {
+    private StackValue visitClassOrObject(JetClassOrObject declaration) {
         ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, declaration);
         ObjectOrClosureCodegen closure = new LocalClassClosureCodegen(this, context, state, descriptor);
         Pair<JvmClassName, ClassBuilder> nameAndVisitor = state.forAnonymousSubclass(declaration);
@@ -225,6 +213,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         new ImplementationBodyCodegen(declaration, objectContext, nameAndVisitor.getSecond(), state).generate();
         return StackValue.none();
+    }
+
+    @Override
+    public StackValue visitObjectDeclaration(JetObjectDeclaration declaration, StackValue data) {
+        return visitClassOrObject(declaration);
     }
 
     @Override
