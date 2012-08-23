@@ -2083,23 +2083,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             getInIntRange(leftValue, rangeExpression, inverted);
         }
         else {
-            StackValue leftValue = gen(expr);
-            FunctionDescriptor op =
-                    (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
-            assert op != null;
-            Type type = asmType(op.getValueParameters().get(0).getType());
-            if (type.getSize() == 1) {
-                leftValue.put(type, v);
-                genToJVMStack(expression.getRight());
-                v.swap();
-            }
-            else {
-                leftValue.put(type, v);
-                genToJVMStack(expression.getRight());
-                v.dupX2();
-                v.pop();
-            }
-            invokeFunctionNoParams(op, Type.BOOLEAN_TYPE, v);
+            invokeFunctionByReference(expression.getOperationReference());
             if (inverted) {
                 invertBoolean();
             }
@@ -3332,7 +3316,8 @@ The "returned" value of try expression with no finally is either the last expres
             while (rangeExpression instanceof JetParenthesizedExpression) {
                 rangeExpression = ((JetParenthesizedExpression) rangeExpression).getExpression();
             }
-            boolean inverted = conditionInRange.getOperationReference().getReferencedNameElementType() == JetTokens.NOT_IN;
+            JetSimpleNameExpression operationReference = conditionInRange.getOperationReference();
+            boolean inverted = operationReference.getReferencedNameElementType() == JetTokens.NOT_IN;
             if (isIntRangeExpr(rangeExpression)) {
                 getInIntRange(new StackValue.Local(subjectLocal, subjectType), (JetBinaryExpression) rangeExpression, inverted);
             }
@@ -3342,10 +3327,7 @@ The "returned" value of try expression with no finally is either the last expres
                 //genToJVMStack(rangeExpression);
                 //new StackValue.Local(subjectLocal, subjectType).put(TYPE_OBJECT, v);
                 //invokeFunctionNoParams(op, Type.BOOLEAN_TYPE, v);
-                ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                        bindingContext.get(RESOLVED_CALL, conditionInRange.getOperationReference());
-                Call call = bindingContext.get(CALL, conditionInRange.getOperationReference());
-                invokeFunction(call, StackValue.none(), resolvedCall);
+                invokeFunctionByReference(operationReference);
                 if (inverted) {
                     invertBoolean();
                 }
@@ -3369,6 +3351,13 @@ The "returned" value of try expression with no finally is either the last expres
         return generatePatternMatch(pattern, isNegated,
                                     subjectLocal == -1 ? null : StackValue.local(subjectLocal, subjectType),
                                     subjectIsNullable, nextEntry);
+    }
+
+    private void invokeFunctionByReference(JetSimpleNameExpression operationReference) {
+        ResolvedCall<? extends CallableDescriptor> resolvedCall =
+                bindingContext.get(RESOLVED_CALL, operationReference);
+        Call call = bindingContext.get(CALL, operationReference);
+        invokeFunction(call, StackValue.none(), resolvedCall);
     }
 
     private void invertBoolean() {

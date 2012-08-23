@@ -80,6 +80,10 @@ public class PatternMatchingTest extends CodegenTestCase {
         blackBoxFile("patternMatching/range.jet");
     }
 
+    public void testLongInRange() throws Exception {
+        blackBoxFile("patternMatching/longInRange.jet");
+    }
+
     public void testWhenArgumentIsEvaluatedOnlyOnce() throws Exception {
         blackBoxFile("patternMatching/whenArgumentIsEvaluatedOnlyOnce.kt");
     }
