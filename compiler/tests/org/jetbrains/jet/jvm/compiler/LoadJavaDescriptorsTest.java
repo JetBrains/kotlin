@@ -66,6 +66,21 @@ public final class LoadJavaDescriptorsTest extends KotlinTestWithEnvironment {
                javaDir + "/awt/Frame.java");
     }
 
+    public void testInner() throws Exception {
+        doSimpleTest();
+    }
+
+    public void testStaticFinal() throws Exception {
+        String dir = "/staticFinal/";
+        doTest(PATH + dir + "expected.txt",
+               PATH + dir + "test.java");
+    }
+
+    private void doSimpleTest() throws Exception {
+        doTest(PATH + "/" + getTestName(false) + ".txt",
+               PATH + "/" + getTestName(false) + ".java");
+    }
+
     public void testEnum() throws Exception {
         String dir = PATH + "/enum";
         String javaDir = dir + "/java";

@@ -1,5 +1,6 @@
+package test;
 
-class A implements B.C {
+public class inner implements B.C {
 }
 
 class B {
