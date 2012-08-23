@@ -66,14 +66,14 @@ public final class LoadDescriptorUtil {
     }
 
     @NotNull
-    public static NamespaceDescriptor compileKotlinAndExtractTestNamespaceDescriptorFromBinary(
+    public static NamespaceDescriptor compileKotlinAndLoadTestNamespaceDescriptorFromBinary(
             @NotNull File kotlinFile,
             @NotNull File outDir,
             @NotNull Disposable disposable
     )
             throws IOException {
         compileKotlinToDirAndGetAnalyzeExhaust(kotlinFile, outDir, disposable);
-        return extractTestNamespaceFromBinaries(outDir, disposable);
+        return loadTestNamespaceFromBinaries(outDir, disposable);
     }
 
     @NotNull
@@ -91,7 +91,7 @@ public final class LoadDescriptorUtil {
     }
 
     @NotNull
-    public static NamespaceDescriptor extractTestNamespaceFromBinaries(@NotNull File outDir, @NotNull Disposable disposable) {
+    public static NamespaceDescriptor loadTestNamespaceFromBinaries(@NotNull File outDir, @NotNull Disposable disposable) {
         Disposer.dispose(disposable);
 
         CompilerConfiguration configuration = CompileCompilerDependenciesTest.compilerConfigurationForTests(
@@ -108,14 +108,14 @@ public final class LoadDescriptorUtil {
     }
 
     @NotNull
-    public static NamespaceDescriptor compileJavaAndExtractTestNamespaceFromBinary(
+    public static NamespaceDescriptor compileJavaAndLoadTestNamespaceFromBinary(
             @NotNull Collection<File> javaFiles,
             @NotNull File outDir,
             @NotNull Disposable disposable
     )
             throws IOException {
         compileJavaWithAnnotationsJar(javaFiles, outDir);
-        return extractTestNamespaceFromBinaries(outDir, disposable);
+        return loadTestNamespaceFromBinaries(outDir, disposable);
     }
 
     private static void compileJavaWithAnnotationsJar(@NotNull Collection<File> javaFiles, @NotNull File outDir) throws IOException {
@@ -141,7 +141,7 @@ public final class LoadDescriptorUtil {
     }
 
     @NotNull
-    public static NamespaceDescriptor analyzeKotlinAndExtractTestNamespace(@NotNull File ktFile, @NotNull Disposable disposable) throws Exception {
+    public static NamespaceDescriptor analyzeKotlinAndLoadTestNamespace(@NotNull File ktFile, @NotNull Disposable disposable) throws Exception {
         JetFileAndExhaust fileAndExhaust = JetFileAndExhaust.createJetFileAndAnalyze(ktFile, disposable);
         //noinspection ConstantConditions
         return fileAndExhaust.getExhaust().getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, TEST_PACKAGE_FQNAME);

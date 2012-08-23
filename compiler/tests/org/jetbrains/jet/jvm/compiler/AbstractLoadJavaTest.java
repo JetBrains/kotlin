@@ -28,8 +28,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.analyzeKotlinAndExtractTestNamespace;
-import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileJavaAndExtractTestNamespaceFromBinary;
+import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.analyzeKotlinAndLoadTestNamespace;
+import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileJavaAndLoadTestNamespaceFromBinary;
 import static org.jetbrains.jet.test.util.NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT;
 import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
 
@@ -46,9 +46,9 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File javaFile = new File(javaFileName);
         File ktFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".kt"));
         File txtFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".txt"));
-        NamespaceDescriptor nsa = analyzeKotlinAndExtractTestNamespace(ktFile, myTestRootDisposable);
-        NamespaceDescriptor nsb = compileJavaAndExtractTestNamespaceFromBinary(Collections.singletonList(javaFile),
-                                                                               tmpdir, myTestRootDisposable);
+        NamespaceDescriptor nsa = analyzeKotlinAndLoadTestNamespace(ktFile, myTestRootDisposable);
+        NamespaceDescriptor nsb = compileJavaAndLoadTestNamespaceFromBinary(Collections.singletonList(javaFile),
+                                                                            tmpdir, myTestRootDisposable);
         compareNamespaces(nsa, nsb, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
     }
 

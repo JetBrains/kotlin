@@ -60,7 +60,7 @@ public final class LoadCompiledKotlinTest extends TestCaseWithTmpdir {
                                                                                   TEST_PACKAGE_FQNAME);
         assert namespaceFromSource != null;
         Assert.assertEquals("test", namespaceFromSource.getName().getName());
-        NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.extractTestNamespaceFromBinaries(tmpdir, getTestRootDisposable());
+        NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.loadTestNamespaceFromBinaries(tmpdir, getTestRootDisposable());
         compareNamespaces(namespaceFromSource, namespaceFromClass, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
     }
 

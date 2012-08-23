@@ -30,7 +30,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileJavaAndExtractTestNamespaceFromBinary;
+import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileJavaAndLoadTestNamespaceFromBinary;
 
 /**
  * @author Pavel Talanov
@@ -56,7 +56,7 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
         });
         File expected = new File(expectedFileName);
         File tmpDir = JetTestUtils.tmpDir(expected.getName());
-        NamespaceDescriptor javaNamespaceDescriptor = compileJavaAndExtractTestNamespaceFromBinary(files, tmpDir, getTestRootDisposable());
+        NamespaceDescriptor javaNamespaceDescriptor = compileJavaAndLoadTestNamespaceFromBinary(files, tmpDir, getTestRootDisposable());
         //NOTE: comparing namespace to file (hack)
         NamespaceComparator.compareNamespaces(javaNamespaceDescriptor, javaNamespaceDescriptor, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, expected);
     }

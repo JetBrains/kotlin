@@ -22,7 +22,7 @@ import org.jetbrains.jet.test.TestCaseWithTmpdir;
 
 import java.io.File;
 
-import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinAndExtractTestNamespaceDescriptorFromBinary;
+import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinAndLoadTestNamespaceDescriptorFromBinary;
 import static org.jetbrains.jet.test.util.NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT;
 import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
 
@@ -39,7 +39,7 @@ public final class LoadCompiledKotlinCustomTest extends TestCaseWithTmpdir {
 
     private void doTest(@NotNull String expectedFileName, @NotNull String kotlinFileName) throws Exception {
         NamespaceDescriptor namespaceFromClass =
-                compileKotlinAndExtractTestNamespaceDescriptorFromBinary(new File(kotlinFileName), tmpdir, myTestRootDisposable);
+                compileKotlinAndLoadTestNamespaceDescriptorFromBinary(new File(kotlinFileName), tmpdir, myTestRootDisposable);
 
         compareNamespaces(namespaceFromClass, namespaceFromClass, DONT_INCLUDE_METHODS_OF_OBJECT, new File(expectedFileName));
     }
