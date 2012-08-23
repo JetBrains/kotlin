@@ -341,6 +341,7 @@ public class JetTypeMapper {
         return mapType(jetType, signatureVisitor, MapTypeMode.VALUE);
     }
 
+    @Nullable
     public static String getLocalNameForObject(JetObjectDeclaration object) {
         PsiElement parent = object.getParent();
         if (parent instanceof JetClassObject) {
@@ -596,11 +597,7 @@ public class JetTypeMapper {
         }
     }
 
-    public CallableMethod mapToCallableMethod(FunctionDescriptor functionDescriptor, boolean superCall, OwnerKind kind) {
-        if (functionDescriptor == null) {
-            return null;
-        }
-
+    public CallableMethod mapToCallableMethod(@NotNull FunctionDescriptor functionDescriptor, boolean superCall, OwnerKind kind) {
         final DeclarationDescriptor functionParent = functionDescriptor.getOriginal().getContainingDeclaration();
 
         while (functionDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {

@@ -84,10 +84,12 @@ public class CallableMethod implements Callable {
         return signature.getValueParameterTypes();
     }
 
+    @Nullable
     public JvmClassName getThisType() {
         return thisClass;
     }
 
+    @Nullable
     public Type getReceiverClass() {
         return receiverParameterType;
     }

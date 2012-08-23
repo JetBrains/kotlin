@@ -1516,6 +1516,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                     }
                     if (enclosed != context.getThisDescriptor()) {
                         CodegenContext c = context;
+                        //noinspection ConstantConditions
                         while (!(c instanceof CodegenContexts.ClassContext) ||
                                !DescriptorUtils.isSubclass(c.getThisDescriptor(), enclosed)) {
                             c = c.getParentContext();
@@ -1720,6 +1721,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
     }
 
+    @Nullable
     private static JetExpression getReceiverForSelector(PsiElement expression) {
         if (expression.getParent() instanceof JetDotQualifiedExpression && !isReceiver(expression)) {
             final JetDotQualifiedExpression parent = (JetDotQualifiedExpression) expression.getParent();
@@ -1793,9 +1795,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
 
             assert cur != null;
-            if (DescriptorUtils.isSubclass(cur.getThisDescriptor(), calleeContainingClass)) {
-                if (!isObject || (cur.getThisDescriptor() == calleeContainingClass)) {
-                    return castToRequiredTypeOfInterfaceIfNeeded(result, cur.getThisDescriptor(), calleeContainingClass);
+            final ClassDescriptor thisDescriptor = cur.getThisDescriptor();
+            assert thisDescriptor != null;
+            if (DescriptorUtils.isSubclass(thisDescriptor, calleeContainingClass)) {
+                if (!isObject || (thisDescriptor == calleeContainingClass)) {
+                    return castToRequiredTypeOfInterfaceIfNeeded(result, thisDescriptor, calleeContainingClass);
                 }
                 else {
                     v.getstatic(type.getInternalName(), "$instance", type.getDescriptor());
@@ -2447,6 +2451,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         v.invokevirtual("java/lang/StringBuilder", "append", appendDescriptor.getDescriptor());
     }
 
+    @Nullable
     private static JetSimpleNameExpression targetLabel(JetExpression expression) {
         if (expression.getParent() instanceof JetPrefixExpression) {
             JetPrefixExpression parent = (JetPrefixExpression) expression.getParent();

@@ -205,6 +205,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
+    @Nullable
     private static ClassDescriptor getContainingClassDescriptor(ClassDescriptor decl) {
         DeclarationDescriptor container = decl.getContainingDeclaration();
         while (container != null && !(container instanceof NamespaceDescriptor)) {
@@ -768,6 +769,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     typeMapper.getClosureAnnotator().getEclosingClassDescriptor(descriptor).getDefaultType(), MapTypeMode.VALUE));
         }
         Method superCallMethod = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
+        //noinspection ConstantConditions
         iv.invokespecial(typeMapper.mapType(superClassDescriptor.getDefaultType(), MapTypeMode.VALUE).getInternalName(), "<init>",
                          superCallMethod.getDescriptor());
     }
