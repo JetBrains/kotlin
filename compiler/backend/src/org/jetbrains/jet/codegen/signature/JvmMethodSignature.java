@@ -125,12 +125,7 @@ public class JvmMethodSignature {
     @NotNull
     public String getKotlinParameterType(int i) {
         checkGenericsAvailable();
-        if (kotlinParameterTypes == null) {
-            return "";
-        }
-        else {
-            return kotlinParameterTypes.get(i).getKotlinSignature();
-        }
+        return kotlinParameterTypes.get(i).getKotlinSignature();
     }
 
     @NotNull
