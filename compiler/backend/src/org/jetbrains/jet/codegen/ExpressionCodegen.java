@@ -438,24 +438,114 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         generator.afterLoop();
     }
 
-    private class IteratorForLoopGenerator implements ForLoopGenerator {
+    private abstract class AbstractForLoopGenerator implements ForLoopGenerator {
+
         // for (e : E in c) {...}
-        private final JetForExpression forExpression;
+        protected final JetForExpression forExpression;
+        private final Label bodyStart = new Label();
+        private final Label bodyEnd = new Label();
+        private final List<Runnable> leaveVariableTasks = Lists.newArrayList();
+
+        private AbstractForLoopGenerator(
+                @NotNull JetForExpression forExpression
+        ) {
+            this.forExpression = forExpression;
+        }
+
+        @NotNull
+        protected abstract JetType getElementType();
+
+        @Override
+        public void beforeBody() {
+            v.mark(bodyStart);
+            JetParameter loopParameter = forExpression.getLoopParameter();
+            if (loopParameter != null) {
+                // E e = tmp<iterator>.next()
+                final VariableDescriptor parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, loopParameter);
+                final Type asmTypeForParameter = asmType(parameterDescriptor.getType());
+                final int parameterIndex = myFrameMap.enter(parameterDescriptor, asmTypeForParameter);
+                leaveVariableTasks.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        myFrameMap.leave(parameterDescriptor);
+                        v.visitLocalVariable(parameterDescriptor.getName().getName(),
+                                             asmTypeForParameter.getDescriptor(), null,
+                                             bodyStart, bodyEnd,
+                                             parameterIndex);
+                    }
+                });
+                assignToLoopParameter(parameterIndex);
+            }
+            else {
+                JetMultiDeclaration multiParameter = forExpression.getMultiParameter();
+                assert multiParameter != null;
+
+                // E tmp<e> = tmp<iterator>.next()
+                final Type asmElementType = asmType(getElementType());
+                int tmpParameterIndex = myFrameMap.enterTemp(asmElementType);
+                leaveVariableTasks.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        myFrameMap.leaveTemp(asmElementType);
+                    }
+                });
+                assignToLoopParameter(tmpParameterIndex);
+
+                generateMultiVariables(tmpParameterIndex, multiParameter.getEntries());
+            }
+        }
+
+        protected abstract void assignToLoopParameter(int parameterIndex);
+
+        private void generateMultiVariables(int tmpParameterIndex, List<JetMultiDeclarationEntry> entries) {
+            Type asmElementType = asmType(getElementType());
+            for (JetMultiDeclarationEntry variableDeclaration : entries) {
+                v.load(tmpParameterIndex, asmElementType);
+
+                final VariableDescriptor componentDescriptor = bindingContext.get(BindingContext.VARIABLE, variableDeclaration);
+
+                final Type componentAsmType = asmType(componentDescriptor.getReturnType());
+                final int componentVarIndex = myFrameMap.enter(componentDescriptor, componentAsmType);
+                leaveVariableTasks.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        myFrameMap.leave(componentDescriptor);
+                        v.visitLocalVariable(componentDescriptor.getName().getName(),
+                                             componentAsmType.getDescriptor(), null,
+                                             bodyStart, bodyEnd,
+                                             componentVarIndex);
+                    }
+                });
+
+
+                ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(BindingContext.COMPONENT_RESOLVED_CALL, variableDeclaration);
+                assert resolvedCall != null : "Resolved call is null for " + variableDeclaration.getText();
+                Call call = makeFakeCall(new TransientReceiver(getElementType()));
+                invokeFunction(call, StackValue.local(tmpParameterIndex, asmElementType), resolvedCall);
+
+                v.store(componentVarIndex, componentAsmType);
+            }
+        }
+
+        @Override
+        public void afterBody() {
+            v.mark(bodyEnd);
+            // e goes out of scope
+            for (Runnable task : Lists.reverse(leaveVariableTasks)) {
+                task.run();
+            }
+        }
+    }
+
+    private class IteratorForLoopGenerator extends AbstractForLoopGenerator {
 
         private int iteratorVarIndex;
         private final ResolvedCall<FunctionDescriptor> iteratorCall;
         private final ResolvedCall<FunctionDescriptor> nextCall;
         private final Type asmTypeForIterator;
-        private final Type asmTypeForNext;
-
-        private final Label bodyStart = new Label();
-        private final Label bodyEnd = new Label();
-
-        private final List<Runnable> leaveVariableTasks = Lists.newArrayList();
-
 
         private IteratorForLoopGenerator(@NotNull JetForExpression forExpression) {
-            this.forExpression = forExpression;
+            super(forExpression);
 
             JetExpression loopRange = forExpression.getLoopRange();
             this.iteratorCall = getNotNull(bindingContext,
@@ -468,8 +558,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
             this.nextCall = getNotNull(bindingContext,
                                        LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange,
-                                             "No next() function " + DiagnosticUtils.atLocation(loopRange));
-            this.asmTypeForNext = asmType(nextCall.getResultingDescriptor().getReturnType());
+                                       "No next() function " + DiagnosticUtils.atLocation(loopRange));
+        }
+
+        @NotNull
+        @Override
+        protected JetType getElementType() {
+            return nextCall.getResultingDescriptor().getReturnType();
         }
 
         @Override
@@ -502,87 +597,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         @Override
-        public void beforeBody() {
-            v.mark(bodyStart);
-            JetParameter loopParameter = forExpression.getLoopParameter();
-            if (loopParameter != null) {
-                // E e = tmp<iterator>.next()
-                final VariableDescriptor parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, loopParameter);
-                final Type asmTypeForParameter = asmType(parameterDescriptor.getType());
-                final int parameterIndex = myFrameMap.enter(parameterDescriptor, asmTypeForParameter);
-                leaveVariableTasks.add(new Runnable() {
-                    @Override
-                    public void run() {
-                        myFrameMap.leave(parameterDescriptor);
-                        v.visitLocalVariable(parameterDescriptor.getName().getName(),
-                                             asmTypeForParameter.getDescriptor(), null,
-                                             bodyStart, bodyEnd,
-                                             parameterIndex);
-                    }
-                });
-                assignToLoopParameter(parameterIndex);
-            }
-            else {
-                JetMultiDeclaration multiParameter = forExpression.getMultiParameter();
-                assert multiParameter != null;
-
-                // E tmp<e> = tmp<iterator>.next()
-                int tmpParameterIndex = myFrameMap.enterTemp(asmTypeForNext);
-                leaveVariableTasks.add(new Runnable() {
-                    @Override
-                    public void run() {
-                        myFrameMap.leaveTemp(asmTypeForNext);
-                    }
-                });
-                assignToLoopParameter(tmpParameterIndex);
-
-                generateMultiVariables(tmpParameterIndex, multiParameter.getEntries());
-            }
-        }
-
-        private void assignToLoopParameter(int parameterIndex) {
+        protected void assignToLoopParameter(int parameterIndex) {
             Call fakeCall =
                     makeFakeCall(new TransientReceiver(iteratorCall.getResultingDescriptor().getReturnType()));
             invokeFunction(fakeCall, StackValue.local(iteratorVarIndex, asmTypeForIterator), nextCall);
-            v.store(parameterIndex, asmTypeForNext);
-        }
-
-        private void generateMultiVariables(int tmpParameterIndex, List<JetMultiDeclarationEntry> entries) {
-            for (JetMultiDeclarationEntry variableDeclaration : entries) {
-                v.load(tmpParameterIndex, asmTypeForNext);
-
-                final VariableDescriptor componentDescriptor = bindingContext.get(BindingContext.VARIABLE, variableDeclaration);
-
-                final Type componentAsmType = asmType(componentDescriptor.getReturnType());
-                final int componentVarIndex = myFrameMap.enter(componentDescriptor, componentAsmType);
-                leaveVariableTasks.add(new Runnable() {
-                    @Override
-                    public void run() {
-                        myFrameMap.leave(componentDescriptor);
-                        v.visitLocalVariable(componentDescriptor.getName().getName(),
-                                             componentAsmType.getDescriptor(), null,
-                                             bodyStart, bodyEnd,
-                                             componentVarIndex);
-                    }
-                });
-
-
-                ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(BindingContext.COMPONENT_RESOLVED_CALL, variableDeclaration);
-                assert resolvedCall != null : "Resolved call is null for " + variableDeclaration.getText();
-                Call call = makeFakeCall(new TransientReceiver(nextCall.getResultingDescriptor().getReturnType()));
-                invokeFunction(call, StackValue.local(tmpParameterIndex, asmTypeForNext), resolvedCall);
-
-                v.store(componentVarIndex, componentAsmType);
-            }
-        }
-
-        @Override
-        public void afterBody() {
-            v.mark(bodyEnd);
-            // e goes out of scope
-            for (Runnable task : Lists.reverse(leaveVariableTasks)) {
-                task.run();
-            }
+            v.store(parameterIndex, asmType(getElementType()));
         }
 
         @Override
