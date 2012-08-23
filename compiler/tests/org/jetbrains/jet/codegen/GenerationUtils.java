@@ -46,21 +46,21 @@ public class GenerationUtils {
     public static GenerationState compileFileGetGenerationStateForTest(@NotNull JetFile psiFile) {
         final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
                 psiFile, Collections.<AnalyzerScriptParameter>emptyList(), BuiltinsScopeExtensionMode.ALL);
-        return compileFilesGetGenerationState(analyzeExhaust, Collections.singletonList(psiFile));
+        return compileFilesGetGenerationState(psiFile.getProject(), analyzeExhaust, Collections.singletonList(psiFile));
     }
 
     @NotNull
     public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<JetFile> files) {
         final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationAndCheckForErrors(
                 project, files, Collections.<AnalyzerScriptParameter>emptyList(), Predicates.<PsiFile>alwaysTrue(), BuiltinsScopeExtensionMode.ALL);
-        return compileFilesGetGenerationState(analyzeExhaust, files);
+        return compileFilesGetGenerationState(project,analyzeExhaust, files);
     }
 
 
     @NotNull
-    public static GenerationState compileFilesGetGenerationState(@NotNull AnalyzeExhaust analyzeExhaust, @NotNull List<JetFile> files) {
+    public static GenerationState compileFilesGetGenerationState(@NotNull Project project, @NotNull AnalyzeExhaust analyzeExhaust, @NotNull List<JetFile> files) {
         analyzeExhaust.throwIfError();
-        GenerationState state = new GenerationState(ClassBuilderFactories.TEST, analyzeExhaust, files);
+        GenerationState state = new GenerationState(project, ClassBuilderFactories.TEST, analyzeExhaust, files);
         state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         return state;
     }

@@ -179,7 +179,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
             throw new IllegalStateException("failed to analyze: " + context.getError(), context.getError());
         }
 
-        final GenerationState state = new GenerationState(builderFactory, context, Collections.singletonList(file)) {
+        final GenerationState state = new GenerationState(project, builderFactory, context, Collections.singletonList(file)) {
             @Override
             protected void generateNamespace(FqName fqName, Collection<JetFile> namespaceFiles, CompilationErrorHandler errorHandler, Progress progress) {
                 PsiManager manager = PsiManager.getInstance(project);

@@ -193,6 +193,7 @@ public class AllInjectorsGenerator {
         generator.addParameter(ClassBuilderMode.class);
         generator.addPublicParameter(GenerationState.class);
         generator.addParameter(ClassBuilderFactory.class);
+        generator.addPublicParameter(Project.class);
         generator.addPublicField(JetTypeMapper.class);
         generator.addPublicField(ClassCodegen.class);
         generator.addPublicField(ScriptCodegen.class);

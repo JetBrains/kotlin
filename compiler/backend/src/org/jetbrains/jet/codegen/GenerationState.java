@@ -19,6 +19,7 @@
  */
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
@@ -58,11 +59,12 @@ public class GenerationState {
     private final JetTypeMapper typeMapper;
 
 
-    public GenerationState(ClassBuilderFactory builderFactory, AnalyzeExhaust analyzeExhaust, List<JetFile> files) {
-        this(builderFactory, Progress.DEAF, analyzeExhaust, files, BuiltinToJavaTypesMapping.ENABLED);
+    public GenerationState(Project project, ClassBuilderFactory builderFactory, AnalyzeExhaust analyzeExhaust, List<JetFile> files) {
+        this(project, builderFactory, Progress.DEAF, analyzeExhaust, files, BuiltinToJavaTypesMapping.ENABLED);
     }
 
     public GenerationState(
+            @NotNull Project project,
             ClassBuilderFactory builderFactory, Progress progress,
             @NotNull AnalyzeExhaust exhaust, @NotNull List<JetFile> files, @NotNull BuiltinToJavaTypesMapping builtinToJavaTypesMapping
     ) {
@@ -72,7 +74,7 @@ public class GenerationState {
         bindingContext = exhaust.getBindingContext();
         this.injector = new InjectorForJvmCodegen(
                 bindingContext,
-                this.files, builtinToJavaTypesMapping, builderFactory.getClassBuilderMode(), this, builderFactory);
+                this.files, builtinToJavaTypesMapping, builderFactory.getClassBuilderMode(), this, builderFactory, project);
         typeMapper = injector.getJetTypeMapper();
     }
 
