@@ -336,4 +336,12 @@ public class JetPsiUtil {
             return null;
         }
     }
+
+    public static boolean isVariableNotParameterDeclaration(@NotNull JetDeclaration declaration) {
+        if (!(declaration instanceof JetVariableDeclaration)) return false;
+        if (declaration instanceof JetProperty) return true;
+        assert declaration instanceof JetMultiDeclarationEntry;
+        JetMultiDeclarationEntry multiDeclarationEntry = (JetMultiDeclarationEntry) declaration;
+        return !(multiDeclarationEntry.getParent().getParent() instanceof JetForExpression);
+    }
 }

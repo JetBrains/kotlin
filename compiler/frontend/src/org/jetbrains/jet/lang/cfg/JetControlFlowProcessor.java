@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator
 import org.jetbrains.jet.lang.cfg.pseudocode.LocalDeclarationInstruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
+import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -529,9 +530,13 @@ public class JetControlFlowProcessor {
             }
             JetParameter loopParameter = expression.getLoopParameter();
             if (loopParameter != null) {
-                builder.declare(loopParameter);
-                builder.write(loopParameter, loopParameter);
+                value(loopParameter, inCondition);
             }
+            else {
+                JetMultiDeclaration multiParameter = expression.getMultiParameter();
+                value(multiParameter, inCondition);
+            }
+
             // TODO : primitive cases
             Label loopExitPoint = builder.createUnboundLabel();
             Label conditionEntryPoint = builder.createUnboundLabel();
@@ -632,8 +637,8 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitParameter(JetParameter parameter) {
-            JetExpression defaultValue = parameter.getDefaultValue();
             builder.declare(parameter);
+            JetExpression defaultValue = parameter.getDefaultValue();
             if (defaultValue != null) {
                 value(defaultValue, inCondition);
             }

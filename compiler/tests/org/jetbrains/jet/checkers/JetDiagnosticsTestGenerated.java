@@ -1058,6 +1058,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/ComponentFunctionReturnTypeMismatch.kt");
             }
             
+            @TestMetadata("DataFlowInMultiDeclInFor.kt")
+            public void testDataFlowInMultiDeclInFor() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/declarationChecks/DataFlowInMultiDeclInFor.kt");
+            }
+            
             @TestMetadata("DataFlowInfoInMultiDecl.kt")
             public void testDataFlowInfoInMultiDecl() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/DataFlowInfoInMultiDecl.kt");
