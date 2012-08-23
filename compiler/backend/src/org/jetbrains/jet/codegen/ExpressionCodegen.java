@@ -500,8 +500,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         private void generateMultiVariables(int tmpParameterIndex, List<JetMultiDeclarationEntry> entries) {
             Type asmElementType = asmType(getElementType());
             for (JetMultiDeclarationEntry variableDeclaration : entries) {
-                v.load(tmpParameterIndex, asmElementType);
-
                 final VariableDescriptor componentDescriptor = bindingContext.get(BindingContext.VARIABLE, variableDeclaration);
 
                 final Type componentAsmType = asmType(componentDescriptor.getReturnType());

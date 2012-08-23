@@ -37,6 +37,31 @@ public class MultiDeclTestGenerated extends AbstractMultiDeclTestCase {
         blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/ComplexInitializer.kt");
     }
     
+    @TestMetadata("MultiDeclFor.kt")
+    public void testMultiDeclFor() throws Exception {
+        blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/MultiDeclFor.kt");
+    }
+    
+    @TestMetadata("MultiDeclForComponentExtensions.kt")
+    public void testMultiDeclForComponentExtensions() throws Exception {
+        blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/MultiDeclForComponentExtensions.kt");
+    }
+    
+    @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
+    public void testMultiDeclForComponentMemberExtensions() throws Exception {
+        blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/MultiDeclForComponentMemberExtensions.kt");
+    }
+    
+    @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
+    public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
+        blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+    }
+    
+    @TestMetadata("MultiDeclForValCaptured.kt")
+    public void testMultiDeclForValCaptured() throws Exception {
+        blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/MultiDeclForValCaptured.kt");
+    }
+    
     @TestMetadata("SimpleVals.kt")
     public void testSimpleVals() throws Exception {
         blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/SimpleVals.kt");
