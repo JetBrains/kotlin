@@ -43,6 +43,7 @@ public abstract class CodegenContext {
     @Nullable
     private final CodegenContext parentContext;
     public final ObjectOrClosureCodegen closure;
+    private final boolean hasThis;
 
     HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors;
 
@@ -54,15 +55,22 @@ public abstract class CodegenContext {
             @NotNull DeclarationDescriptor contextDescriptor,
             OwnerKind contextKind,
             @Nullable CodegenContext parentContext,
-            @Nullable ObjectOrClosureCodegen closureCodegen
+            @Nullable ObjectOrClosureCodegen closureCodegen,
+            boolean hasThis
     ) {
         this.contextDescriptor = contextDescriptor;
         this.contextKind = contextKind;
         this.parentContext = parentContext;
         closure = closureCodegen;
+        this.hasThis = hasThis;
     }
 
+    @NotNull
     protected abstract ClassDescriptor getThisDescriptor();
+
+    protected final boolean hasThisDescriptor() {
+        return hasThis;
+    }
 
     public DeclarationDescriptor getClassOrNamespaceDescriptor() {
         CodegenContext c = this;
@@ -219,7 +227,7 @@ public abstract class CodegenContext {
     public StackValue getReceiverExpression(JetTypeMapper typeMapper) {
         assert getReceiverDescriptor() != null;
         Type asmType = typeMapper.mapType(getReceiverDescriptor().getReceiverParameter().getType(), MapTypeMode.VALUE);
-        return getThisDescriptor() != null ? StackValue.local(1, asmType) : StackValue.local(0, asmType);
+        return hasThisDescriptor() ? StackValue.local(1, asmType) : StackValue.local(0, asmType);
     }
 
     public abstract boolean isStatic();

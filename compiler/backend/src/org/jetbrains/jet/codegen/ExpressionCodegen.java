@@ -1300,7 +1300,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         boolean isInterface;
-        boolean isInsideClass = containingDeclaration == context.getThisDescriptor();
+        boolean isInsideClass = context.hasThisDescriptor() && containingDeclaration == context.getThisDescriptor();
         if (isInsideClass || isStatic) {
             owner = typeMapper.getOwner(functionDescriptor, contextKind());
             isInterface = false;
@@ -1334,10 +1334,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         boolean isFakeOverride = propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
         PropertyDescriptor initialDescriptor = propertyDescriptor;
         propertyDescriptor = initialDescriptor.getOriginal();
-        boolean isInsideClass = !isFakeOverride && (((containingDeclaration == context.getThisDescriptor()) ||
-                                                     (context.getParentContext() instanceof CodegenContexts.NamespaceContext) &&
-                                                     context.getParentContext().getContextDescriptor() == containingDeclaration)
-                                                    && contextKind() != OwnerKind.TRAIT_IMPL);
+        boolean isInsideClass = !isFakeOverride &&
+                                (((containingDeclaration == null && !context.hasThisDescriptor() ||
+                                   context.hasThisDescriptor() && containingDeclaration == context.getThisDescriptor()) ||
+                                  (context.getParentContext() instanceof CodegenContexts.NamespaceContext) &&
+                                  context.getParentContext().getContextDescriptor() == containingDeclaration)
+                                 && contextKind() != OwnerKind.TRAIT_IMPL);
         Method getter = null;
         Method setter = null;
         if (!forceField) {
@@ -1436,7 +1438,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             && propertyDescriptor.getContainingDeclaration() instanceof ClassDescriptor) {
             if (context.getClassOrNamespaceDescriptor() != propertyDescriptor.getContainingDeclaration()) {
                 DeclarationDescriptor enclosed = propertyDescriptor.getContainingDeclaration();
-                if (enclosed != context.getThisDescriptor()) {
+                if (!context.hasThisDescriptor() || enclosed != context.getThisDescriptor()) {
                     CodegenContext c = context;
                     while (c != null && c.getContextDescriptor() != enclosed) {
                         c = c.getParentContext();
@@ -1796,7 +1798,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
             assert cur != null;
             final ClassDescriptor thisDescriptor = cur.getThisDescriptor();
-            assert thisDescriptor != null;
             if (DescriptorUtils.isSubclass(thisDescriptor, calleeContainingClass)) {
                 if (!isObject || (thisDescriptor == calleeContainingClass)) {
                     return castToRequiredTypeOfInterfaceIfNeeded(result, thisDescriptor, calleeContainingClass);

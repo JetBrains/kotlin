@@ -144,10 +144,10 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
         generateBridge(name.getInternalName(), funDescriptor, fun, cv);
         captureThis = generateBody(funDescriptor, cv, (JetDeclarationWithBody) fun);
-        ClassDescriptor thisDescriptor = context.getThisDescriptor();
-        final Type enclosingType = thisDescriptor == null
+
+        final Type enclosingType = !context.hasThisDescriptor()
                                    ? null
-                                   : typeMapper.mapType(thisDescriptor.getDefaultType(), MapTypeMode.VALUE);
+                                   : typeMapper.mapType(context.getThisDescriptor().getDefaultType(), MapTypeMode.VALUE);
         if (enclosingType == null) {
             captureThis = null;
         }
