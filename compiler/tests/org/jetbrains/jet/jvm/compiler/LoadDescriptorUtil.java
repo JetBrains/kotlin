@@ -24,18 +24,21 @@ import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -46,43 +49,76 @@ import javax.tools.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+
+import static org.jetbrains.jet.JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations;
+import static org.jetbrains.jet.lang.psi.JetPsiFactory.createFile;
 
 /**
  * @author Pavel Talanov
  */
 public final class LoadDescriptorUtil {
+
+    @NotNull
+    public static final FqName TEST_PACKAGE_FQNAME = FqName.topLevel(Name.identifier("test"));
+
     private LoadDescriptorUtil() {
     }
 
     @NotNull
-    public static NamespaceDescriptor compileKotlin(@NotNull File kotlinFile, File tmpdir, Disposable disposable)
+    public static NamespaceDescriptor compileKotlinAndExtractTestNamespaceDescriptorFromBinary(
+            @NotNull File kotlinFile,
+            @NotNull File outDir,
+            @NotNull Disposable disposable
+    )
             throws IOException {
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, ConfigurationKind.JDK_ONLY);
-        JetFile psiFile = JetPsiFactory.createFile(jetCoreEnvironment.getProject(), FileUtil.loadFile(kotlinFile, true));
-        GenerationState state = GenerationUtils.compileFileGetGenerationStateForTest(psiFile);
+        compileKotlinToDirAndGetAnalyzeExhaust(kotlinFile, outDir, disposable);
+        return extractTestNamespaceFromBinaries(outDir, disposable);
+    }
+
+    @NotNull
+    public static AnalyzeExhaust compileKotlinToDirAndGetAnalyzeExhaust(
+            @NotNull File kotlinFile,
+            @NotNull File outDir,
+            @NotNull Disposable disposable
+    ) throws IOException {
+        JetFileAndExhaust fileAndExhaust = JetFileAndExhaust.createJetFileAndAnalyze(kotlinFile, disposable);
+        GenerationState state = GenerationUtils.compileFilesGetGenerationState(fileAndExhaust.getExhaust(), Collections.singletonList(
+                fileAndExhaust.getJetFile()));
         ClassFileFactory classFileFactory = state.getFactory();
-        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, tmpdir);
-        NamespaceDescriptor namespaceFromSource = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, psiFile);
-        Assert.assertEquals("test", namespaceFromSource.getName().getName());
+        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, outDir);
+        return fileAndExhaust.getExhaust();
+    }
+
+    @NotNull
+    public static NamespaceDescriptor extractTestNamespaceFromBinaries(@NotNull File outDir, @NotNull Disposable disposable) {
         Disposer.dispose(disposable);
 
-        jetCoreEnvironment = new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.compilerConfigurationForTests(
-                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), tmpdir,
-                ForTestCompileRuntime.runtimeJarForTests()));
-
+        CompilerConfiguration configuration = CompileCompilerDependenciesTest.compilerConfigurationForTests(
+                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), outDir,
+                ForTestCompileRuntime.runtimeJarForTests());
+        JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(disposable, configuration);
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(BuiltinsScopeExtensionMode.ALL,
                                                                                        jetCoreEnvironment.getProject());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        return javaDescriptorResolver.resolveNamespace(FqName.topLevel(Name.identifier("test")), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
+        NamespaceDescriptor namespaceDescriptor =
+                javaDescriptorResolver.resolveNamespace(TEST_PACKAGE_FQNAME, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
+        assert namespaceDescriptor != null;
+        return namespaceDescriptor;
     }
-    
+
     @NotNull
-    public static NamespaceDescriptor compileJava(@NotNull Collection<File> javaFiles, File tmpdir, Disposable disposable)
+    public static NamespaceDescriptor compileJavaAndExtractTestNamespaceFromBinary(
+            @NotNull Collection<File> javaFiles,
+            @NotNull File outDir,
+            @NotNull Disposable disposable
+    )
             throws IOException {
+        compileJavaToDir(javaFiles, outDir);
+        return extractTestNamespaceFromBinaries(outDir, disposable);
+    }
+
+    private static void compileJavaToDir(@NotNull Collection<File> javaFiles, @NotNull File ourDir) throws IOException {
         JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
 
         StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(null, Locale.ENGLISH, Charset.forName("utf-8"));
@@ -90,7 +126,7 @@ public final class LoadDescriptorUtil {
             Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(javaFiles);
             List<String> options = Arrays.asList(
                     "-classpath", "out/production/runtime" + File.pathSeparator + JetTestUtils.getAnnotationsJar().getPath(),
-                    "-d", tmpdir.getPath()
+                    "-d", ourDir.getPath()
             );
             JavaCompiler.CompilationTask task = javaCompiler.getTask(null, fileManager, null, options, null, javaFileObjectsFromFiles);
 
@@ -99,14 +135,45 @@ public final class LoadDescriptorUtil {
         finally {
             fileManager.close();
         }
+    }
 
-        JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.
-                compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), tmpdir,
-                                              new File("out/production/runtime")));
+    @NotNull
+    public static NamespaceDescriptor analyzeKotlinAndExtractTestNamespace(@NotNull File ktFile, @NotNull Disposable disposable) throws Exception {
+        JetFileAndExhaust fileAndExhaust = JetFileAndExhaust.createJetFileAndAnalyze(ktFile, disposable);
+        //noinspection ConstantConditions
+        return fileAndExhaust.getExhaust().getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, TEST_PACKAGE_FQNAME);
+    }
 
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(BuiltinsScopeExtensionMode.ALL,
-                                                                                       jetCoreEnvironment.getProject());
-        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        return javaDescriptorResolver.resolveNamespace(FqName.topLevel(Name.identifier("test")), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
+    private static class JetFileAndExhaust {
+
+        @NotNull
+        public static JetFileAndExhaust createJetFileAndAnalyze(@NotNull File kotlinFile, @NotNull Disposable disposable)
+                throws IOException {
+            JetCoreEnvironment jetCoreEnvironment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, ConfigurationKind.JDK_ONLY);
+            JetFile jetFile = createFile(jetCoreEnvironment.getProject(), FileUtil.loadFile(kotlinFile, true));
+            AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
+                    jetFile, Collections.<AnalyzerScriptParameter>emptyList(), BuiltinsScopeExtensionMode.ALL);
+            return new JetFileAndExhaust(jetFile, exhaust);
+        }
+
+        @NotNull
+        private final JetFile jetFile;
+        @NotNull
+        private final AnalyzeExhaust exhaust;
+
+        private JetFileAndExhaust(@NotNull JetFile file, @NotNull AnalyzeExhaust exhaust) {
+            jetFile = file;
+            this.exhaust = exhaust;
+        }
+
+        @NotNull
+        public JetFile getJetFile() {
+            return jetFile;
+        }
+
+        @NotNull
+        public AnalyzeExhaust getExhaust() {
+            return exhaust;
+        }
     }
 }

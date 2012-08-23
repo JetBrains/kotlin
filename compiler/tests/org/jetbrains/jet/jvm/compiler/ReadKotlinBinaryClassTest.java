@@ -16,49 +16,36 @@
 
 package org.jetbrains.jet.jvm.compiler;
 
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.impl.PsiFileFactoryImpl;
-import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.Assert;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.*;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.codegen.ClassFileFactory;
-import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.codegen.GenerationUtils;
-import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
-import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
+import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.File;
+
+import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME;
+import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalyzeExhaust;
+import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
 
 /**
  * Compile Kotlin and then parse model from .class files.
  *
  * @author Stepan Koltsov
  */
-public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
+@SuppressWarnings("JUnitTestCaseWithNoTests")
+public final class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
 
-    private JetCoreEnvironment jetCoreEnvironment;
-
+    @NotNull
     private final File testFile;
+    @NotNull
     private final File txtFile;
 
+    @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
     public ReadKotlinBinaryClassTest(@NotNull File testFile) {
         this.testFile = testFile;
         this.txtFile = new File(testFile.getPath().replaceFirst("\\.kt$", ".txt"));
@@ -67,35 +54,14 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
 
     @Override
     public void runTest() throws Exception {
-        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_ONLY);
+        AnalyzeExhaust exhaust = compileKotlinToDirAndGetAnalyzeExhaust(testFile, tmpdir, getTestRootDisposable());
 
-        String text = FileUtil.loadFile(testFile);
-
-        JetFile psiFile = JetTestUtils.createFile(testFile.getName(), text, jetCoreEnvironment.getProject());
-
-        GenerationState state = GenerationUtils.compileFileGetGenerationStateForTest(psiFile);
-
-        ClassFileFactory classFileFactory = state.getFactory();
-
-        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, tmpdir);
-        
-        NamespaceDescriptor namespaceFromSource = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, psiFile);
-
+        NamespaceDescriptor namespaceFromSource = exhaust.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
+                                                                                  TEST_PACKAGE_FQNAME);
+        assert namespaceFromSource != null;
         Assert.assertEquals("test", namespaceFromSource.getName().getName());
-
-        Disposer.dispose(myTestRootDisposable);
-
-
-        jetCoreEnvironment = new JetCoreEnvironment(myTestRootDisposable, CompileCompilerDependenciesTest.compilerConfigurationForTests(
-                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), tmpdir,
-                ForTestCompileRuntime.runtimeJarForTests()));
-
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(BuiltinsScopeExtensionMode.ALL,
-                                                                                       jetCoreEnvironment.getProject());
-        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        NamespaceDescriptor namespaceFromClass = javaDescriptorResolver.resolveNamespace(FqName.topLevel(Name.identifier("test")), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
-        
-        NamespaceComparator.compareNamespaces(namespaceFromSource, namespaceFromClass, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
+        NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.extractTestNamespaceFromBinaries(tmpdir, getTestRootDisposable());
+        compareNamespaces(namespaceFromSource, namespaceFromClass, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
     }
 
     public static Test suite() {
@@ -107,5 +73,5 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
             }
         });
     }
-    
+
 }

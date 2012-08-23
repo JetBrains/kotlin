@@ -16,29 +16,22 @@
 
 package org.jetbrains.jet.jvm.compiler;
 
-import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.generator.SimpleTestClassModel;
 import org.jetbrains.jet.test.generator.TestGenerator;
-import org.jetbrains.jet.test.util.NamespaceComparator;
 import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+
+import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.analyzeKotlinAndExtractTestNamespace;
+import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileJavaAndExtractTestNamespaceFromBinary;
+import static org.jetbrains.jet.test.util.NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT;
+import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
 
 /**
  * @author Stepan Koltsov
@@ -50,22 +43,10 @@ public abstract class AbstractReadJavaBinaryClassTest extends TestCaseWithTmpdir
         File javaFile = new File(javaFileName);
         File ktFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".kt"));
         File txtFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".txt"));
-        NamespaceDescriptor nsa = analyzeKotlin(ktFile);
-        NamespaceDescriptor nsb = LoadDescriptorUtil.compileJava(Collections.singletonList(javaFile), tmpdir, myTestRootDisposable);
-        NamespaceComparator.compareNamespaces(nsa, nsb, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
-    }
-
-    @NotNull
-    private NamespaceDescriptor analyzeKotlin(File ktFile) throws Exception {
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_ONLY);
-
-        String text = FileUtil.loadFile(ktFile);
-
-        JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment.getProject());
-
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
-                psiFile, Collections.<AnalyzerScriptParameter>emptyList(), BuiltinsScopeExtensionMode.ALL).getBindingContext();
-        return bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, FqName.topLevel(Name.identifier("test")));
+        NamespaceDescriptor nsa = analyzeKotlinAndExtractTestNamespace(ktFile, myTestRootDisposable);
+        NamespaceDescriptor nsb = compileJavaAndExtractTestNamespaceFromBinary(Collections.singletonList(javaFile),
+                                                                               tmpdir, myTestRootDisposable);
+        compareNamespaces(nsa, nsb, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
     }
 
     public static void main(String[] args) throws IOException {
