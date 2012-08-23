@@ -80,8 +80,8 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
     }
 
     private void doSimpleTest() throws Exception {
-        doTest(PATH + "/" + getTestName(false) + ".txt",
-               PATH + "/" + getTestName(false) + ".java");
+        doTest(PATH + "/" + getTestName(true) + ".txt",
+               PATH + "/" + getTestName(true) + ".java");
     }
 
     //TODO: move to LoadJavaTestGenerated when possible
