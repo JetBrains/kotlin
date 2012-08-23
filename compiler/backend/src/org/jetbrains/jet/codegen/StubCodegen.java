@@ -22,8 +22,8 @@ import org.jetbrains.asm4.MethodVisitor;
  * @author Stepan Koltsov
  */
 public class StubCodegen {
-    private static String STUB_EXCEPTION = "java/lang/RuntimeException";
-    private static String STUB_EXCEPTION_MESSAGE = "Stubs are for compiler only, do not add them to runtime classpath";
+    private static final String STUB_EXCEPTION = "java/lang/RuntimeException";
+    private static final String STUB_EXCEPTION_MESSAGE = "Stubs are for compiler only, do not add them to runtime classpath";
 
     private StubCodegen() {
     }
