@@ -445,9 +445,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         private int iteratorVarIndex;
         private final ResolvedCall<FunctionDescriptor> iteratorCall;
         private final ResolvedCall<FunctionDescriptor> nextCall;
-        private final ResolvedCall<FunctionDescriptor> hasNextCall;
-        private final Type asmTypeForLoopRange;
-        private final JetExpression loopRange;
         private final Type asmTypeForIterator;
         private final Type asmTypeForNext;
 
@@ -460,12 +457,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         private IteratorForLoopGenerator(@NotNull JetForExpression forExpression) {
             this.forExpression = forExpression;
 
-            this.loopRange = forExpression.getLoopRange();
-            assert loopRange != null;
-
-            JetType loopRangeType = getNotNull(bindingContext, EXPRESSION_TYPE, loopRange);
-            this.asmTypeForLoopRange = asmType(loopRangeType);
-
+            JetExpression loopRange = forExpression.getLoopRange();
             this.iteratorCall = getNotNull(bindingContext,
                                                  LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRange,
                                                  "No .iterator() function " + DiagnosticUtils.atLocation(loopRange));
@@ -478,11 +470,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                                        LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange,
                                              "No next() function " + DiagnosticUtils.atLocation(loopRange));
             this.asmTypeForNext = asmType(nextCall.getResultingDescriptor().getReturnType());
-
-
-            this.hasNextCall = getNotNull(bindingContext,
-                                          LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, loopRange,
-                                                "No hasNext() function " + DiagnosticUtils.atLocation(loopRange));
         }
 
         @Override
@@ -500,8 +487,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         public void condition() {
             // tmp<iterator>.hasNext()
 
-            Call fakeCall =
-                    makeFakeCall(new TransientReceiver(iteratorCall.getResultingDescriptor().getReturnType()));
+            JetExpression loopRange = forExpression.getLoopRange();
+            ResolvedCall<FunctionDescriptor> hasNextCall = getNotNull(bindingContext,
+                                                                      LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, loopRange,
+                                                                      "No hasNext() function " + DiagnosticUtils.atLocation(loopRange));
+            Call fakeCall = makeFakeCall(new TransientReceiver(iteratorCall.getResultingDescriptor().getReturnType()));
             invokeFunction(fakeCall, StackValue.local(iteratorVarIndex, asmTypeForIterator), hasNextCall);
 
             JetType type = hasNextCall.getResultingDescriptor().getReturnType();
