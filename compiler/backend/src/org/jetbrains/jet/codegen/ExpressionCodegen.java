@@ -2676,7 +2676,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                     ResolvedCall<FunctionDescriptor> resolvedCall =
                             bindingContext.get(BindingContext.COMPONENT_RESOLVED_CALL, variableDeclaration);
                     assert resolvedCall != null : "Resolved call is null for " + variableDeclaration.getText();
-                    Call call = CallMaker.makeCall(initializerAsReceiver, (JetExpression) null);
+                    Call call = makeFakeCall(initializerAsReceiver);
                     invokeFunction(call, StackValue.none(), resolvedCall);
                     return null;
                 }
@@ -3419,8 +3419,14 @@ The "returned" value of try expression with no finally is either the last expres
         v.athrow();
     }
 
+    private Call makeFakeCall(ReceiverDescriptor initializerAsReceiver) {
+        JetSimpleNameExpression fake = JetPsiFactory.createSimpleName(state.getInjector().getProject(), "fake");
+        return CallMaker.makeCall(fake, initializerAsReceiver);
+    }
+
     @Override
     public String toString() {
         return context.getContextDescriptor().toString();
     }
+
 }
