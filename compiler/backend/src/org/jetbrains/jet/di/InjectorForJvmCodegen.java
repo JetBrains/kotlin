@@ -35,13 +35,13 @@ public class InjectorForJvmCodegen {
     private final ClassBuilderMode classBuilderMode;
     private final GenerationState generationState;
     private final ClassBuilderFactory classBuilderFactory;
-    private final JetTypeMapper jetTypeMapper;
-    private final ClassCodegen classCodegen;
-    private final ScriptCodegen scriptCodegen;
-    private final IntrinsicMethods intrinsics;
-    private final ClassFileFactory classFileFactory;
-    private final MemberCodegen memberCodegen;
-    private final ClosureAnnotator closureAnnotator;
+    private JetTypeMapper jetTypeMapper;
+    private ClassCodegen classCodegen;
+    private ScriptCodegen scriptCodegen;
+    private IntrinsicMethods intrinsics;
+    private ClassFileFactory classFileFactory;
+    private MemberCodegen memberCodegen;
+    private ClosureAnnotator closureAnnotator;
 
     public InjectorForJvmCodegen(
             @NotNull BindingContext bindingContext,

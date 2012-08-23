@@ -33,10 +33,10 @@ public class InjectorForJetTypeMapper {
 
     private final BindingContext bindingContext;
     private final List<JetFile> listOfJetFile;
-    private final JetTypeMapper jetTypeMapper;
-    private final BuiltinToJavaTypesMapping builtinToJavaTypesMapping;
-    private final ClassBuilderMode classBuilderMode;
-    private final ClosureAnnotator closureAnnotator;
+    private JetTypeMapper jetTypeMapper;
+    private BuiltinToJavaTypesMapping builtinToJavaTypesMapping;
+    private ClassBuilderMode classBuilderMode;
+    private ClosureAnnotator closureAnnotator;
 
     public InjectorForJetTypeMapper(
             @NotNull BindingContext bindingContext,
