@@ -40,7 +40,7 @@ import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileJavaAndEx
  */
 public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
     @NotNull
-    private static final String PATH = "compiler/testData/loadJavaDescriptors";
+    private static final String PATH = "compiler/testData/loadJavaCustom";
 
     @Override
     protected JetCoreEnvironment createEnvironment() {

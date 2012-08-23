@@ -87,11 +87,11 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
             "LazyResolveNamespaceComparingTestGenerated",
             AbstractLazyResolveNamespaceComparingTest.class,
             Arrays.asList(
-                    new SimpleTestClassModel(new File("compiler/testData/readKotlinBinaryClass"),
+                    new SimpleTestClassModel(new File("compiler/testData/loadKotlin"),
                                              true,
                                              extension,
                                              "doTestSinglePackage"),
-                    new SimpleTestClassModel(new File("compiler/testData/readJavaBinaryClass"),
+                    new SimpleTestClassModel(new File("compiler/testData/loadJava"),
                                              true,
                                              extension,
                                              "doTestSinglePackage"),

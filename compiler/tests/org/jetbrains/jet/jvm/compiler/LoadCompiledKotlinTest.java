@@ -65,7 +65,7 @@ public final class LoadCompiledKotlinTest extends TestCaseWithTmpdir {
     }
 
     public static Test suite() {
-        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/readKotlinBinaryClass", true, new JetTestCaseBuilder.NamedTestFactory() {
+        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/loadKotlin", true, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {

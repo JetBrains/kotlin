@@ -61,7 +61,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 "LoadJavaTestGenerated",
                 AbstractLoadJavaTest.class,
                 Arrays.asList(
-                        new SimpleTestClassModel(new File("compiler/testData/readJavaBinaryClass"), true, extension, "doTest")
+                        new SimpleTestClassModel(new File("compiler/testData/loadJava"), true, extension, "doTest")
                 ),
                 AbstractLoadJavaTest.class
         ).generateAndSave();

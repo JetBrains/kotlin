@@ -35,7 +35,7 @@ import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
  */
 public final class LoadCompiledKotlinCustomTest extends TestCaseWithTmpdir {
     @NotNull
-    private static final String PATH = "compiler/testData/loadKotlinDescriptors";
+    private static final String PATH = "compiler/testData/loadKotlinCustom";
 
     private void doTest(@NotNull String expectedFileName, @NotNull String kotlinFileName) throws Exception {
         NamespaceDescriptor namespaceFromClass =
