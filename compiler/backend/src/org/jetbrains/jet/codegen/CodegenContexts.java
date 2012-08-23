@@ -18,17 +18,16 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.List;
 
 /**
+ * @author alex.tkachman
  * @author Stepan Koltsov
  */
 public class CodegenContexts {
@@ -76,13 +75,7 @@ public class CodegenContexts {
     }
 
     public static final CodegenContext STATIC =
-            new CodegenContext(new FakeDescriptorForStaticContext(), OwnerKind.NAMESPACE, null, null, false) {
-                @NotNull
-                @Override
-                protected ClassDescriptor getThisDescriptor() {
-                    throw new UnsupportedOperationException();
-                }
-
+            new CodegenContext(null, new FakeDescriptorForStaticContext(), OwnerKind.NAMESPACE, null, null, null) {
                 @Override
                 public boolean isStatic() {
                     return true;
@@ -99,13 +92,14 @@ public class CodegenContexts {
         final CallableDescriptor receiverDescriptor;
 
         public ReceiverContext(
+                JetTypeMapper typeMapper,
                 CallableDescriptor contextDescriptor,
                 OwnerKind contextKind,
                 CodegenContext parentContext,
                 @Nullable ObjectOrClosureCodegen closureCodegen,
-                boolean hasThis
+                ClassDescriptor thisDescriptor
         ) {
-            super(contextDescriptor, contextKind, parentContext, closureCodegen, hasThis);
+            super(typeMapper, contextDescriptor, contextKind, parentContext, closureCodegen, thisDescriptor);
             receiverDescriptor = contextDescriptor.getReceiverParameter().exists() ? contextDescriptor : null;
         }
 
@@ -117,29 +111,22 @@ public class CodegenContexts {
 
     public static class MethodContext extends ReceiverContext {
 
-        public MethodContext(@NotNull FunctionDescriptor contextType, OwnerKind contextKind, CodegenContext parentContext) {
-            super(contextType instanceof PropertyAccessorDescriptor
-                  ? ((PropertyAccessorDescriptor) contextType).getCorrespondingProperty()
-                  : contextType, contextKind, parentContext, null, parentContext.hasThisDescriptor());
-        }
-
-        @NotNull
-        @Override
-        protected ClassDescriptor getThisDescriptor() {
-            //noinspection ConstantConditions
-            return getParentContext().getThisDescriptor();
+        public MethodContext(
+                JetTypeMapper typeMapper,
+                @NotNull FunctionDescriptor contextType,
+                OwnerKind contextKind,
+                CodegenContext parentContext
+        ) {
+            super(typeMapper, contextType instanceof PropertyAccessorDescriptor
+                              ? ((PropertyAccessorDescriptor) contextType).getCorrespondingProperty()
+                              : contextType, contextKind, parentContext, null,
+                  parentContext.hasThisDescriptor() ? parentContext.getThisDescriptor() : null);
         }
 
         @Override
         public StackValue lookupInContext(DeclarationDescriptor d, InstructionAdapter v, StackValue result) {
             //noinspection ConstantConditions
             return getParentContext().lookupInContext(d, v, result);
-        }
-
-        @Override
-        public Type enclosingClassType(JetTypeMapper typeMapper) {
-            //noinspection ConstantConditions
-            return getParentContext().enclosingClassType(typeMapper);
         }
 
         @Override
@@ -162,17 +149,15 @@ public class CodegenContexts {
 
     public static class ConstructorContext extends MethodContext {
         public ConstructorContext(
+                JetTypeMapper typeMapper,
                 ConstructorDescriptor contextDescriptor,
                 OwnerKind kind,
-                CodegenContext parent,
-                JetTypeMapper typeMapper
+                CodegenContext parent
         ) {
-            super(contextDescriptor, kind, parent);
+            super(typeMapper, contextDescriptor, kind, parent);
 
-            final Type type = enclosingClassType(typeMapper);
-            outerExpression = type != null
-                              ? local1
-                              : null;
+            final ClassDescriptor type = getEnclosingClass();
+            outerExpression = type != null ? local1 : null;
         }
 
         @Override
@@ -187,29 +172,20 @@ public class CodegenContexts {
     }
 
     public static class ScriptContext extends CodegenContext {
-
-        @NotNull
-        private final ClassDescriptor classDescriptor;
         @NotNull
         private final ScriptDescriptor scriptDescriptor;
 
         public ScriptContext(
+                JetTypeMapper typeMapper,
                 @NotNull ScriptDescriptor scriptDescriptor,
                 @NotNull ClassDescriptor contextDescriptor,
                 @NotNull OwnerKind contextKind,
                 @Nullable CodegenContext parentContext,
                 @Nullable ObjectOrClosureCodegen closureCodegen
         ) {
-            super(contextDescriptor, contextKind, parentContext, closureCodegen, true);
+            super(typeMapper, contextDescriptor, contextKind, parentContext, closureCodegen, contextDescriptor);
 
-            this.classDescriptor = contextDescriptor;
             this.scriptDescriptor = scriptDescriptor;
-        }
-
-        @NotNull
-        @Override
-        protected ClassDescriptor getThisDescriptor() {
-            return classDescriptor;
         }
 
         @NotNull
@@ -225,23 +201,13 @@ public class CodegenContexts {
 
     public static class ClassContext extends CodegenContext {
         public ClassContext(
+                JetTypeMapper typeMapper,
                 ClassDescriptor contextDescriptor,
                 OwnerKind contextKind,
-                CodegenContext parentContext,
-                JetTypeMapper typeMapper
+                CodegenContext parentContext
         ) {
-            super(contextDescriptor, contextKind, parentContext, null, true);
-
-            final Type type = enclosingClassType(typeMapper);
-            outerExpression = type != null
-                              ? StackValue.field(type, typeMapper.getJvmClassName(contextDescriptor), "this$0", false)
-                              : null;
-        }
-
-        @NotNull
-        @Override
-        protected ClassDescriptor getThisDescriptor() {
-            return (ClassDescriptor) getContextDescriptor();
+            super(typeMapper, contextDescriptor, contextKind, parentContext, null, contextDescriptor);
+            initOuterExpression(typeMapper, contextDescriptor);
         }
 
         @Override
@@ -252,25 +218,14 @@ public class CodegenContexts {
 
     public static class AnonymousClassContext extends CodegenContext {
         public AnonymousClassContext(
+                JetTypeMapper typeMapper,
                 ClassDescriptor contextDescriptor,
                 OwnerKind contextKind,
                 CodegenContext parentContext,
-                @NotNull ObjectOrClosureCodegen closure,
-                JetTypeMapper typeMapper
+                @NotNull ObjectOrClosureCodegen closure
         ) {
-            super(contextDescriptor, contextKind, parentContext, closure, true);
-
-            final Type type = enclosingClassType(typeMapper);
-            Type owner = closure.state.getInjector().getJetTypeMapper().mapType(contextDescriptor.getDefaultType(), MapTypeMode.IMPL);
-            outerExpression = type != null
-                              ? StackValue.field(type, JvmClassName.byType(owner), "this$0", false)
-                              : null;
-        }
-
-        @NotNull
-        @Override
-        protected ClassDescriptor getThisDescriptor() {
-            return (ClassDescriptor) getContextDescriptor();
+            super(typeMapper, contextDescriptor, contextKind, parentContext, closure, contextDescriptor);
+            initOuterExpression(typeMapper, contextDescriptor);
         }
 
         @Override
@@ -288,26 +243,16 @@ public class CodegenContexts {
         private final ClassDescriptor classDescriptor;
 
         public ClosureContext(
+                JetTypeMapper typeMapper,
                 FunctionDescriptor contextDescriptor,
                 ClassDescriptor classDescriptor,
                 CodegenContext parentContext,
-                @NotNull ObjectOrClosureCodegen closureCodegen,
-                JvmClassName internalClassName,
-                JetTypeMapper typeMapper
+                @NotNull ObjectOrClosureCodegen closureCodegen
         ) {
-            super(contextDescriptor, OwnerKind.IMPLEMENTATION, parentContext, closureCodegen, true);
+            super(typeMapper, contextDescriptor, OwnerKind.IMPLEMENTATION, parentContext, closureCodegen, classDescriptor);
             this.classDescriptor = classDescriptor;
 
-            final Type type = enclosingClassType(typeMapper);
-            outerExpression = type != null
-                              ? StackValue.field(type, internalClassName, "this$0", false)
-                              : null;
-        }
-
-        @NotNull
-        @Override
-        protected ClassDescriptor getThisDescriptor() {
-            return classDescriptor;
+            initOuterExpression(typeMapper, classDescriptor);
         }
 
         @NotNull
@@ -328,14 +273,8 @@ public class CodegenContexts {
     }
 
     public static class NamespaceContext extends CodegenContext {
-        public NamespaceContext(NamespaceDescriptor contextDescriptor, CodegenContext parent, OwnerKind kind) {
-            super(contextDescriptor, kind != null ? kind : OwnerKind.NAMESPACE, parent, null, false);
-        }
-
-        @NotNull
-        @Override
-        protected ClassDescriptor getThisDescriptor() {
-            throw new UnsupportedOperationException();
+        public NamespaceContext(JetTypeMapper typeMapper, NamespaceDescriptor contextDescriptor, CodegenContext parent, OwnerKind kind) {
+            super(typeMapper, contextDescriptor, kind != null ? kind : OwnerKind.NAMESPACE, parent, null, null);
         }
 
         @Override

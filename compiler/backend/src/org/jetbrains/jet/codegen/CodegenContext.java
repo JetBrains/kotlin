@@ -22,7 +22,6 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,33 +42,44 @@ public abstract class CodegenContext {
     @Nullable
     private final CodegenContext parentContext;
     public final ObjectOrClosureCodegen closure;
-    private final boolean hasThis;
+    private final ClassDescriptor thisDescriptor;
 
     HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors;
 
     protected StackValue outerExpression;
 
-    protected Type outerWasUsed;
+    protected ClassDescriptor outerWasUsed;
 
     public CodegenContext(
+            JetTypeMapper typeMapper,
             @NotNull DeclarationDescriptor contextDescriptor,
             OwnerKind contextKind,
             @Nullable CodegenContext parentContext,
             @Nullable ObjectOrClosureCodegen closureCodegen,
-            boolean hasThis
+            ClassDescriptor thisDescriptor
     ) {
         this.contextDescriptor = contextDescriptor;
         this.contextKind = contextKind;
         this.parentContext = parentContext;
         closure = closureCodegen;
-        this.hasThis = hasThis;
+        this.thisDescriptor = thisDescriptor;
+
+        final ClassDescriptor enclosingClass = getEnclosingClass();
+        //outerExpression = enclosingClass != null && hasThisDescriptor() && typeMapper != null
+        //                  ? StackValue.field(typeMapper.mapType(enclosingClass.getDefaultType(),MapTypeMode.VALUE), typeMapper.getJvmClassName(thisDescriptor), "this$0", false)
+        //                  : null;
     }
 
     @NotNull
-    protected abstract ClassDescriptor getThisDescriptor();
+    protected final ClassDescriptor getThisDescriptor() {
+        if (thisDescriptor == null) {
+            throw new UnsupportedOperationException();
+        }
+        return thisDescriptor;
+    }
 
     protected final boolean hasThisDescriptor() {
-        return hasThis;
+        return thisDescriptor != null;
     }
 
     public DeclarationDescriptor getClassOrNamespaceDescriptor() {
@@ -95,7 +105,7 @@ public abstract class CodegenContext {
             throw new UnsupportedOperationException();
         }
 
-        outerWasUsed = outerExpression.type;
+        outerWasUsed = getEnclosingClass();
         return prefix != null ? StackValue.composed(prefix, outerExpression) : outerExpression;
     }
 
@@ -108,16 +118,16 @@ public abstract class CodegenContext {
         return contextKind;
     }
 
-    public CodegenContext intoNamespace(NamespaceDescriptor descriptor) {
-        return new CodegenContexts.NamespaceContext(descriptor, this, null);
+    public CodegenContext intoNamespace(NamespaceDescriptor descriptor, JetTypeMapper typeMapper) {
+        return new CodegenContexts.NamespaceContext(typeMapper, descriptor, this, null);
     }
 
-    public CodegenContext intoNamespacePart(String delegateTo, NamespaceDescriptor descriptor) {
-        return new CodegenContexts.NamespaceContext(descriptor, this, new OwnerKind.StaticDelegateKind(delegateTo));
+    public CodegenContext intoNamespacePart(String delegateTo, NamespaceDescriptor descriptor, JetTypeMapper typeMapper) {
+        return new CodegenContexts.NamespaceContext(typeMapper, descriptor, this, new OwnerKind.StaticDelegateKind(delegateTo));
     }
 
     public CodegenContext intoClass(ClassDescriptor descriptor, OwnerKind kind, JetTypeMapper typeMapper) {
-        return new CodegenContexts.ClassContext(descriptor, kind, this, typeMapper);
+        return new CodegenContexts.ClassContext(typeMapper, descriptor, kind, this);
     }
 
     public CodegenContext intoAnonymousClass(
@@ -126,11 +136,11 @@ public abstract class CodegenContext {
             OwnerKind kind,
             JetTypeMapper typeMapper
     ) {
-        return new CodegenContexts.AnonymousClassContext(descriptor, kind, this, closure, typeMapper);
+        return new CodegenContexts.AnonymousClassContext(typeMapper, descriptor, kind, this, closure);
     }
 
-    public CodegenContexts.MethodContext intoFunction(FunctionDescriptor descriptor) {
-        return new CodegenContexts.MethodContext(descriptor, getContextKind(), this);
+    public CodegenContexts.MethodContext intoFunction(FunctionDescriptor descriptor, JetTypeMapper typeMapper) {
+        return new CodegenContexts.MethodContext(typeMapper, descriptor, getContextKind(), this);
     }
 
     public CodegenContexts.ConstructorContext intoConstructor(ConstructorDescriptor descriptor, JetTypeMapper typeMapper) {
@@ -139,21 +149,20 @@ public abstract class CodegenContext {
                     .initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
                                 Visibilities.PUBLIC);
         }
-        return new CodegenContexts.ConstructorContext(descriptor, getContextKind(), this, typeMapper);
+        return new CodegenContexts.ConstructorContext(typeMapper, descriptor, getContextKind(), this);
     }
 
-    public CodegenContext intoScript(@NotNull ScriptDescriptor script, @NotNull ClassDescriptor classDescriptor) {
-        return new CodegenContexts.ScriptContext(script, classDescriptor, OwnerKind.IMPLEMENTATION, this, closure);
+    public CodegenContext intoScript(@NotNull ScriptDescriptor script, @NotNull ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
+        return new CodegenContexts.ScriptContext(typeMapper, script, classDescriptor, OwnerKind.IMPLEMENTATION, this, closure);
     }
 
     public CodegenContexts.ClosureContext intoClosure(
             FunctionDescriptor funDescriptor,
             ClassDescriptor classDescriptor,
-            JvmClassName internalClassName,
             ClosureCodegen closureCodegen,
             JetTypeMapper typeMapper
     ) {
-        return new CodegenContexts.ClosureContext(funDescriptor, classDescriptor, this, closureCodegen, internalClassName, typeMapper);
+        return new CodegenContexts.ClosureContext(typeMapper, funDescriptor, classDescriptor, this, closureCodegen);
     }
 
     public FrameMap prepareFrame(JetTypeMapper mapper) {
@@ -192,13 +201,13 @@ public abstract class CodegenContext {
         return parentContext != null ? parentContext.lookupInContext(d, v, result) : null;
     }
 
-    public Type enclosingClassType(JetTypeMapper typeMapper) {
+    public ClassDescriptor getEnclosingClass() {
         CodegenContext cur = getParentContext();
         while (cur != null && !(cur.getContextDescriptor() instanceof ClassDescriptor)) {
             cur = cur.getParentContext();
         }
 
-        return cur == null ? null : typeMapper.mapType(((ClassDescriptor) cur.getContextDescriptor()).getDefaultType(), MapTypeMode.IMPL);
+        return cur == null ? null : (ClassDescriptor) cur.getContextDescriptor();
     }
 
     DeclarationDescriptor getAccessor(DeclarationDescriptor descriptor) {
@@ -239,5 +248,15 @@ public abstract class CodegenContext {
             }
             this.accessors.putAll(accessors);
         }
+    }
+
+    protected void initOuterExpression(JetTypeMapper typeMapper, ClassDescriptor classDescriptor) {
+        final ClassDescriptor enclosingClass = getEnclosingClass();
+        outerExpression = enclosingClass != null
+                          ? StackValue
+                .field(typeMapper.mapType(enclosingClass.getDefaultType(), MapTypeMode.VALUE), typeMapper.getJvmClassName(
+                        classDescriptor), "this$0",
+                       false)
+                          : null;
     }
 }

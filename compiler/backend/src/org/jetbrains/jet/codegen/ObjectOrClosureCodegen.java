@@ -32,8 +32,8 @@ import java.util.Map;
  * @author alex.tkachman
  */
 public class ObjectOrClosureCodegen {
-    protected Type captureThis;
-    protected Type captureReceiver;
+    protected ClassDescriptor captureThis;
+    protected ClassifierDescriptor captureReceiver;
 
     public final GenerationState state;
     private final ExpressionCodegen exprContext;
@@ -129,7 +129,8 @@ public class ObjectOrClosureCodegen {
             closure.put(d, answer);
 
             assert captureReceiver == null;
-            captureReceiver = type;
+            captureReceiver =
+                    fcontext.getReceiverDescriptor().getReceiverParameter().getType().getConstructor().getDeclarationDescriptor();
 
             return innerValue;
         }

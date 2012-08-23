@@ -19,8 +19,9 @@
  */
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.Method;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 
 import java.util.ArrayList;
@@ -29,11 +30,17 @@ import java.util.List;
 public class GeneratedAnonymousClassDescriptor {
     private final JvmClassName classname;
     private final Method constructor;
-    private final Type captureThis;
-    private final Type captureReceiver;
+
+    private final ClassDescriptor captureThis;
+    private final ClassifierDescriptor captureReceiver;
     private final List<StackValue> args = new ArrayList<StackValue>();
 
-    public GeneratedAnonymousClassDescriptor(JvmClassName classname, Method constructor, Type captureThis, Type captureReceiver) {
+    public GeneratedAnonymousClassDescriptor(
+            JvmClassName classname,
+            Method constructor,
+            ClassDescriptor captureThis,
+            ClassifierDescriptor captureReceiver
+    ) {
         this.classname = classname;
         this.constructor = constructor;
         this.captureThis = captureThis;
@@ -60,7 +67,15 @@ public class GeneratedAnonymousClassDescriptor {
         return captureThis != null;
     }
 
-    public Type isCaptureReceiver() {
+    public boolean isCaptureReceiver() {
+        return captureReceiver != null;
+    }
+
+    public ClassDescriptor getCaptureThis() {
+        return captureThis;
+    }
+
+    public ClassifierDescriptor getCaptureReceiver() {
         return captureReceiver;
     }
 }

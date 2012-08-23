@@ -853,10 +853,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 v.load(0, TYPE_OBJECT);
             }
 
-            if (closure.isCaptureReceiver() != null) {
+            if (closure.isCaptureReceiver()) {
                 k++;
                 v.load(context.getContextDescriptor().getContainingDeclaration() instanceof NamespaceDescriptor ? 0 : 1,
-                       closure.isCaptureReceiver());
+                       typeMapper.mapType(closure.getCaptureReceiver().getDefaultType(), MapTypeMode.IMPL));
             }
 
             for (int i = 0; i < closure.getArgs().size(); i++) {
@@ -883,8 +883,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         if (closureCodegen.captureReceiver != null) {
-            v.load(context.isStatic() ? 0 : 1, closureCodegen.captureReceiver);
-            consArgTypes.add(closureCodegen.captureReceiver);
+            final Type asmType = typeMapper.mapType(closureCodegen.captureReceiver.getDefaultType(), MapTypeMode.IMPL);
+            v.load(context.isStatic() ? 0 : 1, asmType);
+            consArgTypes.add(asmType);
         }
 
         for (Map.Entry<DeclarationDescriptor, EnclosedValueDescriptor> entry : closureCodegen.closure.entrySet()) {

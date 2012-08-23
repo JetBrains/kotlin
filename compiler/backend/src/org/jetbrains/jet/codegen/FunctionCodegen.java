@@ -74,7 +74,7 @@ public class FunctionCodegen {
             @Nullable String propertyTypeSignature, FunctionDescriptor functionDescriptor
     ) {
 
-        CodegenContexts.MethodContext funContext = owner.intoFunction(functionDescriptor);
+        CodegenContexts.MethodContext funContext = owner.intoFunction(functionDescriptor, state.getInjector().getJetTypeMapper());
 
         final JetExpression bodyExpression = f.getBodyExpression();
         generatedMethod(bodyExpression, jvmMethod, needJetAnnotations, propertyTypeSignature, funContext, functionDescriptor, f);

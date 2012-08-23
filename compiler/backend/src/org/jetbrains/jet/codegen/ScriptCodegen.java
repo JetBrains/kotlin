@@ -100,7 +100,8 @@ public class ScriptCodegen {
         ClassDescriptor classDescriptorForScript = closureAnnotator.classDescriptorForScriptDescriptor(scriptDescriptor);
 
         CodegenContexts.ScriptContext context =
-                (CodegenContexts.ScriptContext) CodegenContexts.STATIC.intoScript(scriptDescriptor, classDescriptorForScript);
+                (CodegenContexts.ScriptContext) CodegenContexts.STATIC
+                        .intoScript(scriptDescriptor, classDescriptorForScript, state.getInjector().getJetTypeMapper());
 
         JvmClassName className = closureAnnotator.classNameForClassDescriptor(classDescriptorForScript);
 
@@ -116,7 +117,8 @@ public class ScriptCodegen {
         genMembers(scriptDeclaration, context, classBuilder);
         genFieldsForParameters(scriptDescriptor, classBuilder);
         genConstructor(scriptDeclaration, scriptDescriptor, classDescriptorForScript, classBuilder,
-                       context.intoFunction(scriptDescriptor.getScriptCodeDescriptor()), earlierScripts);
+                       context.intoFunction(scriptDescriptor.getScriptCodeDescriptor(), state.getInjector().getJetTypeMapper()),
+                       earlierScripts);
 
         classBuilder.done();
     }

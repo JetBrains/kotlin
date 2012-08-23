@@ -145,17 +145,16 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         generateBridge(name.getInternalName(), funDescriptor, fun, cv);
         captureThis = generateBody(funDescriptor, cv, (JetDeclarationWithBody) fun);
 
-        final Type enclosingType = !context.hasThisDescriptor()
-                                   ? null
-                                   : typeMapper.mapType(context.getThisDescriptor().getDefaultType(), MapTypeMode.VALUE);
-        if (enclosingType == null) {
+        final ClassDescriptor enclosingClass = context.getEnclosingClass();
+        if (enclosingClass == null) {
             captureThis = null;
         }
 
         final Method constructor = generateConstructor(funClass, fun, funDescriptor);
 
         if (captureThis != null) {
-            cv.newField(fun, ACC_FINAL, "this$0", enclosingType.getDescriptor(), null, null);
+            cv.newField(fun, ACC_FINAL, "this$0", typeMapper.mapType(enclosingClass.getDefaultType(), MapTypeMode.IMPL).getDescriptor(),
+                        null, null);
         }
 
         if (isConst()) {
@@ -207,12 +206,12 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         }
     }
 
-    private Type generateBody(FunctionDescriptor funDescriptor, ClassBuilder cv, JetDeclarationWithBody body) {
+    private ClassDescriptor generateBody(FunctionDescriptor funDescriptor, ClassBuilder cv, JetDeclarationWithBody body) {
         ClassDescriptor function =
                 closureAnnotator.classDescriptorForFunctionDescriptor(funDescriptor);
 
         final CodegenContexts.ClosureContext closureContext = context.intoClosure(
-                funDescriptor, function, name, this, typeMapper);
+                funDescriptor, function, this, typeMapper);
         FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
         JvmMethodSignature jvmMethodSignature = invokeSignature(funDescriptor);
         fc.generateMethod(body, jvmMethodSignature, false, null, funDescriptor);
@@ -315,7 +314,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
             args.add(new Pair<String, Type>("this$0", type));
         }
         if (captureReceiver != null) {
-            args.add(new Pair<String, Type>("receiver$0", captureReceiver));
+            args.add(new Pair<String, Type>("receiver$0", typeMapper.mapType(captureReceiver.getDefaultType(), MapTypeMode.VALUE)));
         }
 
         boolean putFieldForMyself = false;

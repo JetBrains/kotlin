@@ -702,10 +702,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             int k = hasOuterThis ? 2 : 1;
             if (closure.captureReceiver != null) {
                 iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                iv.load(1, closure.captureReceiver);
+                final Type asmType = typeMapper.mapType(closure.captureReceiver.getDefaultType(), MapTypeMode.IMPL);
+                iv.load(1, asmType);
                 iv.putfield(typeMapper.mapType(descriptor.getDefaultType(), MapTypeMode.VALUE).getInternalName(), "receiver$0",
-                            closure.captureReceiver.getDescriptor());
-                k += closure.captureReceiver.getSize();
+                            asmType.getDescriptor());
+                k += asmType.getSize();
             }
 
             for (DeclarationDescriptor varDescr : closure.closure.keySet()) {
@@ -872,7 +873,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             if (closure.captureReceiver != null) {
-                consArgTypes.add(insert++, new JvmMethodParameterSignature(closure.captureReceiver, "", JvmMethodParameterKind.RECEIVER));
+                final Type asmType = typeMapper.mapType(closure.captureReceiver.getDefaultType(), MapTypeMode.IMPL);
+                consArgTypes.add(insert++, new JvmMethodParameterSignature(asmType, "", JvmMethodParameterKind.RECEIVER));
             }
 
             for (DeclarationDescriptor descriptor : closure.closure.keySet()) {
