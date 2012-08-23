@@ -384,7 +384,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         assert expressionType != null;
         Type loopRangeType = asmType(expressionType);
         if (loopRangeType.getSort() == Type.ARRAY) {
-            new ForInArrayLoopGenerator(expression, loopRangeType).invoke();
+            generateForLoop(expression.getBody(), new ForInArrayLoopGenerator(expression));
             return StackValue.none();
         }
         else {
@@ -410,7 +410,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     private interface ForLoopGenerator {
         void beforeLoop();
-        void condition();
+        void conditionAndJump(@NotNull Label loopExit);
         void beforeBody();
         void afterBody();
         void afterLoop();
@@ -423,8 +423,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         generator.beforeLoop();
 
         v.mark(loopEntry);
-        generator.condition();
-        v.ifeq(loopExit);
+        generator.conditionAndJump(loopExit);
 
         generator.beforeBody();
         blockStackElements.push(new LoopBlockStackElement(loopExit, loopEntry, null));
@@ -446,7 +445,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         private final Label bodyEnd = new Label();
         private final List<Runnable> leaveVariableTasks = Lists.newArrayList();
 
-        private final JetType elementType;
+        protected final JetType elementType;
 
         private AbstractForLoopGenerator(
                 @NotNull JetForExpression forExpression
@@ -580,7 +579,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         @Override
-        public void condition() {
+        public void conditionAndJump(@NotNull Label loopExit) {
             // tmp<iterator>.hasNext()
 
             JetExpression loopRange = forExpression.getLoopRange();
@@ -595,6 +594,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
             Type asmType = asmType(type);
             StackValue.coerce(asmType, Type.BOOLEAN_TYPE, v);
+            v.ifeq(loopExit);
         }
 
         @Override
@@ -669,72 +669,86 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
     }
 
-    private class ForInArrayLoopGenerator extends IntrinsicForLoopGenerator {
+    private class ForInArrayLoopGenerator extends AbstractForLoopGenerator {
         private int myIndexVar;
         private int myArrayVar;
-        private boolean localArrayVar;
+        private Runnable afterLoopAction;
+        private final JetType loopRangeType;
 
-        public ForInArrayLoopGenerator(JetForExpression expression, Type loopRangeType) {
-            super(expression, loopRangeType);
+        private ForInArrayLoopGenerator(@NotNull JetForExpression forExpression) {
+            super(forExpression);
+            loopRangeType = bindingContext.get(BindingContext.EXPRESSION_TYPE, forExpression.getLoopRange());
         }
 
         @Override
-        protected void generatePrologue() {
+        public void beforeLoop() {
             myIndexVar = myFrameMap.enterTemp(Type.INT_TYPE);
 
-            StackValue value = gen(expression.getLoopRange());
+            JetExpression loopRange = forExpression.getLoopRange();
+            StackValue value = gen(loopRange);
             if (value instanceof StackValue.Local) {
                 myArrayVar = ((StackValue.Local) value).index;
-                localArrayVar = true;
             }
             else {
                 myArrayVar = myFrameMap.enterTemp(TYPE_OBJECT);
-                value.put(loopRangeType, v);
+                afterLoopAction = new Runnable() {
+                    @Override
+                    public void run() {
+                        myFrameMap.leaveTemp(TYPE_OBJECT);
+                    }
+                };
+                Type asmLoopRangeType = asmType(loopRangeType);
+                value.put(asmLoopRangeType, v);
                 v.store(myArrayVar, TYPE_OBJECT);
             }
 
-            if (expressionType.isNullable()) {
-                v.load(myArrayVar, TYPE_OBJECT);
-                v.ifnull(end);
-            }
+            //if (loopRangeType.isNullable()) {
+            //    v.load(myArrayVar, TYPE_OBJECT);
+            //    v.ifnull(end);
+            //}
 
             v.iconst(0);
             v.store(myIndexVar, Type.INT_TYPE);
         }
 
         @Override
-        protected void generateCondition(Type asmParamType, Label end) {
-            Type arrayElParamType;
-            if (JetStandardLibraryNames.ARRAY.is(expressionType)) {
-                arrayElParamType = boxType(asmParamType);
-            }
-            else {
-                arrayElParamType = asmParamType;
-            }
-
+        public void conditionAndJump(@NotNull Label loopExit) {
             v.load(myIndexVar, Type.INT_TYPE);
             v.load(myArrayVar, TYPE_OBJECT);
             v.arraylength();
-            v.ificmpge(end);
+            v.ificmpge(loopExit);
+        }
+
+        @Override
+        protected void assignToLoopParameter(int parameterIndex) {
+            Type arrayElParamType;
+            Type asmElementType = asmType(elementType);
+            if (JetStandardLibraryNames.ARRAY.is(loopRangeType)) {
+                arrayElParamType = boxType(asmElementType);
+            }
+            else {
+                arrayElParamType = asmElementType;
+            }
 
             v.load(myArrayVar, TYPE_OBJECT);
             v.load(myIndexVar, Type.INT_TYPE);
             v.aload(arrayElParamType);
-            StackValue.onStack(arrayElParamType).put(asmParamType, v);
-            v.store(lookupLocal(parameterDescriptor), asmParamType);
+            StackValue.onStack(arrayElParamType).put(asmElementType, v);
+            v.store(parameterIndex, asmElementType);
         }
 
         @Override
-        protected void generateIncrement() {
+        public void afterBody() {
             v.iinc(myIndexVar, 1);
+            super.afterBody();
         }
 
         @Override
-        protected void cleanupTemp() {
-            myFrameMap.leaveTemp(Type.INT_TYPE);
-            if (!localArrayVar) {
-                myFrameMap.leaveTemp(TYPE_OBJECT);
+        public void afterLoop() {
+            if (afterLoopAction != null) {
+                afterLoopAction.run();
             }
+            myFrameMap.leaveTemp(Type.INT_TYPE);
         }
     }
 

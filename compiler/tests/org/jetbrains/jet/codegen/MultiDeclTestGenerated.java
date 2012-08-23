@@ -82,6 +82,39 @@ public class MultiDeclTestGenerated extends AbstractMultiDeclTestCase {
         blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/VarCapturedInObjectLiteral.kt");
     }
     
+    @TestMetadata("compiler/testData/codegen/multiDecl/forArray")
+    public static class ForArray extends AbstractMultiDeclTestCase {
+        public void testAllFilesPresentInForArray() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractMultiDeclTestCase", new File("compiler/testData/codegen/multiDecl/forArray"), "kt", false);
+        }
+        
+        @TestMetadata("MultiDeclFor.kt")
+        public void testMultiDeclFor() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forArray/MultiDeclFor.kt");
+        }
+        
+        @TestMetadata("MultiDeclForComponentExtensions.kt")
+        public void testMultiDeclForComponentExtensions() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forArray/MultiDeclForComponentExtensions.kt");
+        }
+        
+        @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
+        public void testMultiDeclForComponentMemberExtensions() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forArray/MultiDeclForComponentMemberExtensions.kt");
+        }
+        
+        @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
+        public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forArray/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+        }
+        
+        @TestMetadata("MultiDeclForValCaptured.kt")
+        public void testMultiDeclForValCaptured() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forArray/MultiDeclForValCaptured.kt");
+        }
+        
+    }
+    
     @TestMetadata("compiler/testData/codegen/multiDecl/forIterator")
     public static class ForIterator extends AbstractMultiDeclTestCase {
         public void testAllFilesPresentInForIterator() throws Exception {
@@ -118,6 +151,7 @@ public class MultiDeclTestGenerated extends AbstractMultiDeclTestCase {
     public static Test suite() {
         TestSuite suite = new TestSuite("MultiDeclTestGenerated");
         suite.addTestSuite(MultiDeclTestGenerated.class);
+        suite.addTestSuite(ForArray.class);
         suite.addTestSuite(ForIterator.class);
         return suite;
     }
