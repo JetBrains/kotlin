@@ -866,7 +866,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateTraitMethods() {
         if (myClass instanceof JetClass &&
-            (((JetClass) myClass).isTrait() || ((JetClass) myClass).hasModifier(JetTokens.ABSTRACT_KEYWORD))) {
+            (((JetClass) myClass).isTrait() || myClass.hasModifier(JetTokens.ABSTRACT_KEYWORD))) {
             return;
         }
 
