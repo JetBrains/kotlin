@@ -751,6 +751,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         mv.visitInsn(RETURN);
         FunctionCodegen.endVisit(mv, "constructor", myClass);
 
+        assert constructorDescriptor != null;
         FunctionCodegen.generateDefaultIfNeeded(constructorContext, state, v, constructorMethod.getAsmMethod(), constructorDescriptor,
                                                 OwnerKind.IMPLEMENTATION);
     }

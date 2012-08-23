@@ -143,7 +143,6 @@ public class PropertyCodegen {
                 assert setterDescriptor != null;
                 JvmPropertyAccessorSignature signature =
                         state.getInjector().getJetTypeMapper().mapSetterSignature(propertyDescriptor, kind);
-                assert signature != null;
                 functionCodegen.generateMethod(setter, signature.getJvmMethodSignature(), true, signature.getPropertyTypeKotlinSignature(),
                                                setterDescriptor);
             }
@@ -298,7 +297,7 @@ public class PropertyCodegen {
         }
 
         JvmPropertyAccessorSignature signature = state.getInjector().getJetTypeMapper().mapSetterSignature(propertyDescriptor, kind);
-        assert signature != null;
+        assert true;
         final String descriptor = signature.getJvmMethodSignature().getAsmMethod().getDescriptor();
         MethodVisitor mv = v.newMethod(origin, flags, setterName(propertyDescriptor.getName()), descriptor, null, null);
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
@@ -367,7 +366,6 @@ public class PropertyCodegen {
 
         if (declaration.isVar()) {
             jvmPropertyAccessorSignature = state.getInjector().getJetTypeMapper().mapSetterSignature(declaration, OwnerKind.IMPLEMENTATION);
-            assert jvmPropertyAccessorSignature != null;
             functionCodegen.genDelegate(declaration, overriddenDescriptor, field, jvmPropertyAccessorSignature.getJvmMethodSignature());
         }
     }
