@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.jetbrains.jet.codegen.JetTypeMapper.TYPE_OBJECT;
 
@@ -223,7 +224,7 @@ public abstract class CodegenContext {
 
     public abstract boolean isStatic();
 
-    public void copyAccessors(HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors) {
+    public void copyAccessors(Map<DeclarationDescriptor, DeclarationDescriptor> accessors) {
         if (accessors != null) {
             if (this.accessors == null) {
                 this.accessors = new HashMap<DeclarationDescriptor, DeclarationDescriptor>();

@@ -173,7 +173,7 @@ public class ClosureAnnotator {
                 jetFile.accept(visitor);
             }
 
-            ArrayList<JetFile> namespaceFiles = new ArrayList<JetFile>();
+            Collection<JetFile> namespaceFiles = new ArrayList<JetFile>();
             for (JetFile jetFile : entry.getValue()) {
                 Collection<JetDeclaration> fileFunctions = new ArrayList<JetDeclaration>();
                 for (JetDeclaration declaration : jetFile.getDeclarations()) {

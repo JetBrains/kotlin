@@ -607,7 +607,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ObjectOrClosureCodegen closure = context.closure;
         int firstSuperArgument = -1;
-        final LinkedList<JvmMethodParameterSignature> consArgTypes =
+        final List<JvmMethodParameterSignature> consArgTypes =
                 new LinkedList<JvmMethodParameterSignature>(constructorMethod.getKotlinParameterTypes());
 
         int insert = 0;
@@ -737,7 +737,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         Type classType = typeMapper.mapType(descriptor.getDefaultType(), MapTypeMode.IMPL);
         JvmClassName classname = JvmClassName.byType(classType);
 
-        HashSet<FunctionDescriptor> overridden = new HashSet<FunctionDescriptor>();
+        Collection<FunctionDescriptor> overridden = new HashSet<FunctionDescriptor>();
         for (JetDeclaration declaration : myClass.getDeclarations()) {
             if (declaration instanceof JetNamedFunction) {
                 SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
