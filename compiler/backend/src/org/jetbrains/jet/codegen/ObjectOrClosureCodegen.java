@@ -40,7 +40,7 @@ public class ObjectOrClosureCodegen {
     protected final CodegenContext context;
     protected ClassBuilder cv = null;
     public JvmClassName name = null;
-    protected Map<DeclarationDescriptor, EnclosedValueDescriptor> closure =
+    protected final Map<DeclarationDescriptor, EnclosedValueDescriptor> closure =
             new LinkedHashMap<DeclarationDescriptor, EnclosedValueDescriptor>();
     public JetDelegatorToSuperCall superCall;
 

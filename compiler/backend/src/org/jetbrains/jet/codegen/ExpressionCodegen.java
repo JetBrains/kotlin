@@ -86,7 +86,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     static class LoopBlockStackElement extends BlockStackElement {
         final Label continueLabel;
         final Label breakLabel;
-        public JetSimpleNameExpression targetLabel;
+        public final JetSimpleNameExpression targetLabel;
 
         LoopBlockStackElement(Label breakLabel, Label continueLabel, JetSimpleNameExpression targetLabel) {
             this.breakLabel = breakLabel;

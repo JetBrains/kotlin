@@ -168,6 +168,7 @@ public abstract class AnnotationCodegen {
                     String value = null;
                     if (annotations != null) {
                         for (AnnotationDescriptor annotation : annotations) {
+                            //noinspection ConstantConditions
                             if ("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName().getName())) {
                                 value = (String) annotation.getValueArguments().get(0).getValue();
                                 break;
@@ -175,6 +176,7 @@ public abstract class AnnotationCodegen {
                         }
                     }
                     if (IntrinsicMethods.KOTLIN_JAVA_CLASS_FUNCTION.equals(value)) {
+                        //noinspection ConstantConditions
                         annotationVisitor.visit(keyName, typeMapper
                                 .mapType(call.getResultingDescriptor().getReturnType().getArguments().get(0).getType(), MapTypeMode.VALUE));
                         return;

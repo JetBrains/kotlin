@@ -75,7 +75,7 @@ public class BothSignatureWriter {
     private String kotlinClassParameters;
     private String kotlinClassSignature;
 
-    private List<JvmMethodParameterSignature> kotlinParameterTypes = new ArrayList<JvmMethodParameterSignature>();
+    private final List<JvmMethodParameterSignature> kotlinParameterTypes = new ArrayList<JvmMethodParameterSignature>();
     private String kotlinReturnType;
 
     private int jvmCurrentTypeArrayLevel;
@@ -104,7 +104,7 @@ public class BothSignatureWriter {
     }
 
     // TODO: ignore when debugging is disabled
-    private Stack<SignatureVisitor> visitors = new Stack<SignatureVisitor>();
+    private final Stack<SignatureVisitor> visitors = new Stack<SignatureVisitor>();
 
     private void push(SignatureVisitor visitor) {
         visitors.push(visitor);

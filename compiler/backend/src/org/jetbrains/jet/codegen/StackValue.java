@@ -354,7 +354,7 @@ public abstract class StackValue {
     }
 
     private static class None extends StackValue {
-        public static None INSTANCE = new None();
+        public static final None INSTANCE = new None();
 
         private None() {
             super(Type.VOID_TYPE);
@@ -554,7 +554,7 @@ public abstract class StackValue {
     }
 
     private static class Invert extends StackValue {
-        private StackValue myOperand;
+        private final StackValue myOperand;
 
         private Invert(StackValue operand) {
             super(Type.BOOLEAN_TYPE);
@@ -586,7 +586,7 @@ public abstract class StackValue {
     }
 
     private static class ArrayElement extends StackValue {
-        private Type boxed;
+        private final Type boxed;
 
         public ArrayElement(Type type, boolean unbox) {
             super(type);
@@ -1147,8 +1147,8 @@ public abstract class StackValue {
     }
 
     private static class ThisOuter extends StackValue {
-        private ExpressionCodegen codegen;
-        private ClassDescriptor descriptor;
+        private final ExpressionCodegen codegen;
+        private final ClassDescriptor descriptor;
 
         public ThisOuter(ExpressionCodegen codegen, ClassDescriptor descriptor) {
             super(TYPE_OBJECT);
@@ -1164,8 +1164,8 @@ public abstract class StackValue {
     }
 
     private static class PostIncrement extends StackValue {
-        private int index;
-        private int increment;
+        private final int index;
+        private final int increment;
 
         public PostIncrement(int index, int increment) {
             super(Type.INT_TYPE);
@@ -1184,8 +1184,8 @@ public abstract class StackValue {
     }
 
     private static class PreIncrement extends StackValue {
-        private int index;
-        private int increment;
+        private final int index;
+        private final int increment;
 
         public PreIncrement(int index, int increment) {
             super(Type.INT_TYPE);
@@ -1204,10 +1204,10 @@ public abstract class StackValue {
     }
 
     public static class CallReceiver extends StackValue {
-        private ResolvedCall<? extends CallableDescriptor> resolvedCall;
-        StackValue receiver;
-        private ExpressionCodegen codegen;
-        private CallableMethod callableMethod;
+        private final ResolvedCall<? extends CallableDescriptor> resolvedCall;
+        final StackValue receiver;
+        private final ExpressionCodegen codegen;
+        private final CallableMethod callableMethod;
 
         public CallReceiver(
                 ResolvedCall<? extends CallableDescriptor> resolvedCall,
