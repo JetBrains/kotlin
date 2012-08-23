@@ -908,11 +908,9 @@ public class JetTypeMapper {
         return new JvmPropertyAccessorSignature(jvmMethodSignature, jvmMethodSignature.getKotlinReturnType());
     }
 
-    @Nullable
+    @NotNull
     public JvmPropertyAccessorSignature mapSetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
-        if (!descriptor.isVar()) {
-            return null;
-        }
+        assert descriptor.isVar();
 
         // TODO: generics signature is not always needed
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, true);

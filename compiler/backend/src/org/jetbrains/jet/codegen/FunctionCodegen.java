@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Label;
 import org.jetbrains.asm4.MethodVisitor;
@@ -420,7 +421,7 @@ public class FunctionCodegen {
             GenerationState state,
             ClassBuilder v,
             Method jvmSignature,
-            @Nullable FunctionDescriptor functionDescriptor,
+            @NotNull FunctionDescriptor functionDescriptor,
             OwnerKind kind
     ) {
         DeclarationDescriptor contextClass = owner.getContextDescriptor().getContainingDeclaration();
@@ -431,9 +432,7 @@ public class FunctionCodegen {
             return;
         }
 
-        boolean needed = isDefaultNeeded(functionDescriptor);
-
-        if (!needed) {
+        if (!isDefaultNeeded(functionDescriptor)) {
             return;
         }
 

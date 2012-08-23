@@ -1378,9 +1378,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 }
             }
             //noinspection ConstantConditions
-            if (isInsideClass &&
-                (propertyDescriptor.getSetter() == null ||
-                 propertyDescriptor.getSetter().isDefault() && propertyDescriptor.getSetter().getModality() == Modality.FINAL)) {
+            if (!propertyDescriptor.isVar() || isInsideClass &&
+                                               (propertyDescriptor.getSetter() == null ||
+                                                propertyDescriptor.getSetter().isDefault() &&
+                                                propertyDescriptor.getSetter().getModality() == Modality.FINAL)) {
                 setter = null;
             }
             else {
