@@ -1022,11 +1022,10 @@ public class JetTypeMapper {
         return signatureWriter.makeJvmMethodSignature("<init>");
     }
 
-    public CallableMethod mapToCallableMethod(ConstructorDescriptor descriptor, OwnerKind kind, boolean hasThis0) {
+    public CallableMethod mapToCallableMethod(ConstructorDescriptor descriptor, boolean hasThis0) {
         final JvmMethodSignature method = mapConstructorSignature(descriptor, hasThis0);
-        MapTypeMode mapTypeMode = ownerKindToMapTypeMode(kind);
         JetType defaultType = descriptor.getContainingDeclaration().getDefaultType();
-        Type mapped = mapType(defaultType, mapTypeMode);
+        Type mapped = mapType(defaultType, MapTypeMode.IMPL);
         if (mapped.getSort() != Type.OBJECT) {
             throw new IllegalStateException("type must have been mapped to object: " + defaultType + ", actual: " + mapped);
         }

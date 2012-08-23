@@ -208,7 +208,7 @@ public class GenerationState {
         ConstructorDescriptor constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, objectDeclaration);
         assert constructorDescriptor != null;
         CallableMethod callableMethod = typeMapper.mapToCallableMethod(
-                constructorDescriptor, OwnerKind.IMPLEMENTATION,
+                constructorDescriptor,
                 typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
         return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, callableMethod.getSignature().getAsmMethod(),
                                                      objectContext.outerWasUsed, null);

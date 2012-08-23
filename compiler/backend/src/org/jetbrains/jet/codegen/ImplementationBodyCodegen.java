@@ -582,7 +582,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                        null);
         }
         else {
-            callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor, kind,
+            callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor,
                                                             typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
             constructorMethod = callableMethod.getSignature();
         }
@@ -608,7 +608,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     declarationDescriptor = ((ClassDescriptorFromSource) declarationDescriptor).getUnsubstitutedPrimaryConstructor();
                 }
                 ConstructorDescriptor superConstructor = (ConstructorDescriptor) declarationDescriptor;
-                CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor, OwnerKind.IMPLEMENTATION, typeMapper
+                CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor, typeMapper
                         .hasThis0(superConstructor.getContainingDeclaration()));
                 firstSuperArgument = insert;
                 for (Type t : superCallable.getSignature().getAsmMethod().getArgumentTypes()) {
@@ -1075,7 +1075,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         CallableMethod method = typeMapper
-                .mapToCallableMethod(constructorDescriptor, kind, typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
+                .mapToCallableMethod(constructorDescriptor, typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
 
         if (myClass instanceof JetObjectDeclaration &&
             superCall instanceof JetDelegatorToSuperCall &&
@@ -1085,7 +1085,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                                                                         .getCalleeExpression()
                                                                                                         .getConstructorReferenceExpression());
             assert superConstructor != null;
-            CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor, OwnerKind.IMPLEMENTATION,
+            CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor,
                                                                           typeMapper.hasThis0(superConstructor.getContainingDeclaration()));
             int nextVar = firstSuperArgument + 1;
             for (Type t : superCallable.getSignature().getAsmMethod().getArgumentTypes()) {
@@ -1168,7 +1168,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) bindingContext
                             .get(BindingContext.REFERENCE_TARGET, superCall.getCalleeExpression().getConstructorReferenceExpression());
                     assert constructorDescriptor != null;
-                    CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, OwnerKind.IMPLEMENTATION, typeMapper
+                    CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, typeMapper
                             .hasThis0(constructorDescriptor.getContainingDeclaration()));
                     codegen.invokeMethodWithArguments(method, superCall, StackValue.none());
                 }
