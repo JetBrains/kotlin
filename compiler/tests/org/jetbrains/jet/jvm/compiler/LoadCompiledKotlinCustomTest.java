@@ -29,7 +29,11 @@ import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
 /**
  * @author Pavel Talanov
  */
-public final class LoadKotlinDescriptorsTest extends TestCaseWithTmpdir {
+/*
+    This test should be implemented via LoadCompiledKotlinTest.
+    Atm it's not possible due to enums being loaded differently from binaries (in contrast to from sources).
+ */
+public final class LoadCompiledKotlinCustomTest extends TestCaseWithTmpdir {
     @NotNull
     private static final String PATH = "compiler/testData/loadKotlinDescriptors";
 

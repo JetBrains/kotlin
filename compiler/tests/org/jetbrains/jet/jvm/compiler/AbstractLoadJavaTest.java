@@ -36,7 +36,10 @@ import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
 /**
  * @author Stepan Koltsov
  */
-public abstract class AbstractReadJavaBinaryClassTest extends TestCaseWithTmpdir {
+/*
+    The generated test compares namespace descriptors loaded from kotlin sources and read from compiled java.
+*/
+public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
     public void doTest(@NotNull String javaFileName) throws Exception {
         Assert.assertTrue("A java file expected: " + javaFileName, javaFileName.endsWith(".java"));
@@ -55,12 +58,12 @@ public abstract class AbstractReadJavaBinaryClassTest extends TestCaseWithTmpdir
         new TestGenerator(
                 "compiler/tests/",
                 aPackage,
-                "ReadJavaBinaryClassTestGenerated",
-                AbstractReadJavaBinaryClassTest.class,
+                "LoadJavaTestGenerated",
+                AbstractLoadJavaTest.class,
                 Arrays.asList(
                         new SimpleTestClassModel(new File("compiler/testData/readJavaBinaryClass"), true, extension, "doTest")
                 ),
-                AbstractReadJavaBinaryClassTest.class
+                AbstractLoadJavaTest.class
         ).generateAndSave();
     }
 }

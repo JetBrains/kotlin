@@ -35,7 +35,10 @@ import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileJavaAndEx
 /**
  * @author Pavel Talanov
  */
-public final class LoadJavaDescriptorsTest extends KotlinTestWithEnvironment {
+/*
+   LoadJavaTestGenerated should be used instead if possible.
+ */
+public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
     @NotNull
     private static final String PATH = "compiler/testData/loadJavaDescriptors";
 
@@ -81,6 +84,7 @@ public final class LoadJavaDescriptorsTest extends KotlinTestWithEnvironment {
                PATH + "/" + getTestName(false) + ".java");
     }
 
+    //TODO: move to LoadJavaTestGenerated when possible
     public void testEnum() throws Exception {
         String dir = PATH + "/enum";
         String javaDir = dir + "/java";

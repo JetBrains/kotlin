@@ -38,7 +38,7 @@ import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
  * @author Stepan Koltsov
  */
 @SuppressWarnings("JUnitTestCaseWithNoTests")
-public final class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
+public final class LoadCompiledKotlinTest extends TestCaseWithTmpdir {
 
     @NotNull
     private final File testFile;
@@ -46,7 +46,7 @@ public final class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
     private final File txtFile;
 
     @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
-    public ReadKotlinBinaryClassTest(@NotNull File testFile) {
+    public LoadCompiledKotlinTest(@NotNull File testFile) {
         this.testFile = testFile;
         this.txtFile = new File(testFile.getPath().replaceFirst("\\.kt$", ".txt"));
         setName(testFile.getName());
@@ -69,7 +69,7 @@ public final class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
-                return new ReadKotlinBinaryClassTest(file);
+                return new LoadCompiledKotlinTest(file);
             }
         });
     }
