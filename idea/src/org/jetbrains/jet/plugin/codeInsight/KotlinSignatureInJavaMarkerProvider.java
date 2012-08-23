@@ -24,6 +24,7 @@ import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -31,6 +32,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.compiled.ClsElementImpl;
+import com.intellij.psi.impl.source.SourceTreeToPsiMap;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -82,6 +85,15 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         PsiMethod annotationOwner = element.getOriginalElement() instanceof PsiMethod
                                     ? (PsiMethod) element.getOriginalElement()
                                     : (PsiMethod) element;
+        if (!annotationOwner.isPhysical()) {
+            ASTNode node = SourceTreeToPsiMap.psiElementToTree(element);
+            if (node != null) {
+                PsiCompiledElement compiledElement = node.getUserData(ClsElementImpl.COMPILED_ELEMENT);
+                if (compiledElement instanceof PsiMethod) {
+                    annotationOwner = (PsiMethod) compiledElement;
+                }
+            }
+        }
         PsiAnnotation annotation =
                 JavaDescriptorResolver.findAnnotation(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
         if (annotation == null) return null;
