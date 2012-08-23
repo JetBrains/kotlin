@@ -737,15 +737,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         Type classType = typeMapper.mapType(descriptor.getDefaultType(), MapTypeMode.IMPL);
         JvmClassName classname = JvmClassName.byType(classType);
 
-        Collection<FunctionDescriptor> overridden = new HashSet<FunctionDescriptor>();
-        for (JetDeclaration declaration : myClass.getDeclarations()) {
-            if (declaration instanceof JetNamedFunction) {
-                SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
-                assert functionDescriptor != null;
-                overridden.addAll(functionDescriptor.getOverriddenDescriptors());
-            }
-        }
-
         if (superCall == null) {
             iv.load(0, Type.getType("L" + superClass + ";"));
             if (descriptor.getKind() == ClassKind.ENUM_CLASS || descriptor.getKind() == ClassKind.ENUM_ENTRY) {
@@ -1134,57 +1125,26 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         for (JetDeclaration declaration : declarations) {
             if (declaration instanceof JetProperty) {
                 final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(BindingContext.VARIABLE, declaration);
-                if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
+                assert propertyDescriptor != null;
+                if (Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor))) {
                     final JetExpression initializer = ((JetProperty) declaration).getInitializer();
                     if (initializer != null) {
                         CompileTimeConstant<?> compileTimeValue = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, initializer);
+                        final JetType jetType = propertyDescriptor.getType();
                         if (compileTimeValue != null) {
-                            assert compileTimeValue != null;
                             Object value = compileTimeValue.getValue();
-                            Type type = typeMapper.mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
-                            if (JetTypeMapper.isPrimitive(type)) {
-                                if (!propertyDescriptor.getType().isNullable() && value instanceof Number) {
-                                    if (type == Type.INT_TYPE && ((Number) value).intValue() == 0) {
-                                        continue;
-                                    }
-                                    if (type == Type.BYTE_TYPE && ((Number) value).byteValue() == 0) {
-                                        continue;
-                                    }
-                                    if (type == Type.LONG_TYPE && ((Number) value).longValue() == 0L) {
-                                        continue;
-                                    }
-                                    if (type == Type.SHORT_TYPE && ((Number) value).shortValue() == 0) {
-                                        continue;
-                                    }
-                                    if (type == Type.DOUBLE_TYPE && ((Number) value).doubleValue() == 0d) {
-                                        continue;
-                                    }
-                                    if (type == Type.FLOAT_TYPE && ((Number) value).byteValue() == 0f) {
-                                        continue;
-                                    }
-                                }
-                                if (type == Type.BOOLEAN_TYPE && value instanceof Boolean && !((Boolean) value)) {
-                                    continue;
-                                }
-                                if (type == Type.CHAR_TYPE && value instanceof Character && ((Character) value) == 0) {
-                                    continue;
-                                }
-                            }
-                            else {
-                                if (value == null) {
-                                    continue;
-                                }
-                            }
+                            Type type = typeMapper.mapType(jetType, MapTypeMode.VALUE);
+                            if (skipDefaultValue(propertyDescriptor, value, type)) continue;
                         }
                         iv.load(0, JetTypeMapper.TYPE_OBJECT);
                         Type type = codegen.expressionType(initializer);
-                        if (propertyDescriptor.getType().isNullable()) {
+                        if (jetType.isNullable()) {
                             type = JetTypeMapper.boxType(type);
                         }
                         codegen.gen(initializer, type);
                         // @todo write directly to the field. Fix test excloset.jet::test6
                         JvmClassName owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.IMPLEMENTATION);
-                        Type propType = typeMapper.mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
+                        Type propType = typeMapper.mapType(jetType, MapTypeMode.VALUE);
                         StackValue.property(propertyDescriptor.getName().getName(), owner, owner,
                                             propType, false, false, false, null, null, 0).store(propType, iv);
                     }
@@ -1194,6 +1154,43 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 codegen.gen(((JetClassInitializer) declaration).getBody(), Type.VOID_TYPE);
             }
         }
+    }
+
+    private static boolean skipDefaultValue(PropertyDescriptor propertyDescriptor, Object value, Type type) {
+        if (JetTypeMapper.isPrimitive(type)) {
+            if (!propertyDescriptor.getType().isNullable() && value instanceof Number) {
+                if (type == Type.INT_TYPE && ((Number) value).intValue() == 0) {
+                    return true;
+                }
+                if (type == Type.BYTE_TYPE && ((Number) value).byteValue() == 0) {
+                    return true;
+                }
+                if (type == Type.LONG_TYPE && ((Number) value).longValue() == 0L) {
+                    return true;
+                }
+                if (type == Type.SHORT_TYPE && ((Number) value).shortValue() == 0) {
+                    return true;
+                }
+                if (type == Type.DOUBLE_TYPE && ((Number) value).doubleValue() == 0d) {
+                    return true;
+                }
+                if (type == Type.FLOAT_TYPE && ((Number) value).byteValue() == 0f) {
+                    return true;
+                }
+            }
+            if (type == Type.BOOLEAN_TYPE && value instanceof Boolean && !((Boolean) value)) {
+                return true;
+            }
+            if (type == Type.CHAR_TYPE && value instanceof Character && ((Character) value) == 0) {
+                return true;
+            }
+        }
+        else {
+            if (value == null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected void generateDelegates(JetClass toClass, CodegenContext delegateContext, StackValue field) {
