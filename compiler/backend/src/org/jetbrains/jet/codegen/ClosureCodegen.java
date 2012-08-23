@@ -309,7 +309,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         return constructor;
     }
 
-    private boolean calculateConstructorParameters(FunctionDescriptor funDescriptor, ArrayList<Pair<String, Type>> args) {
+    private boolean calculateConstructorParameters(FunctionDescriptor funDescriptor, List<Pair<String, Type>> args) {
         if (captureThis != null) {
             final Type type = typeMapper.mapType(context.getThisDescriptor().getDefaultType(), MapTypeMode.VALUE);
             args.add(new Pair<String, Type>("this$0", type));
@@ -347,7 +347,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         return putFieldForMyself;
     }
 
-    private static Type[] nameAnTypeListToTypeArray(ArrayList<Pair<String, Type>> args) {
+    private static Type[] nameAnTypeListToTypeArray(List<Pair<String, Type>> args) {
         final Type[] argTypes = new Type[args.size()];
         for (int i = 0; i != argTypes.length; ++i) {
             argTypes[i] = args.get(i).second;

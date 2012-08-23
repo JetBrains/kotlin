@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
 import javax.inject.Inject;
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author max
@@ -82,7 +82,7 @@ public class ClassCodegen {
             CodegenContext context,
             JetClassOrObject aClass,
             OwnerKind kind,
-            HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors,
+            Map<DeclarationDescriptor, DeclarationDescriptor> accessors,
             ClassBuilder classBuilder
     ) {
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
