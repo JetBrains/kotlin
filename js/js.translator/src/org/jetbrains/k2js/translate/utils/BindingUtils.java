@@ -227,35 +227,30 @@ public final class BindingUtils {
     }
 
     @NotNull
-    public static FunctionDescriptor getIteratorFunction(@NotNull BindingContext context,
+    public static ResolvedCall<FunctionDescriptor> getIteratorFunction(@NotNull BindingContext context,
             @NotNull JetExpression rangeExpression) {
-        FunctionDescriptor functionDescriptor = context.get(BindingContext.LOOP_RANGE_ITERATOR, rangeExpression);
-        assert functionDescriptor != null :
+        ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, rangeExpression);
+        assert resolvedCall != null :
                 message(rangeExpression, "Range expression must have a descriptor for iterator function");
-        return functionDescriptor;
+        return resolvedCall;
     }
 
     @NotNull
-    public static FunctionDescriptor getNextFunction(@NotNull BindingContext context,
+    public static ResolvedCall<FunctionDescriptor> getNextFunction(@NotNull BindingContext context,
             @NotNull JetExpression rangeExpression) {
-        FunctionDescriptor functionDescriptor = context.get(BindingContext.LOOP_RANGE_NEXT, rangeExpression);
-        assert functionDescriptor != null : ErrorReportingUtils
+        ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, rangeExpression);
+        assert resolvedCall != null : ErrorReportingUtils
                 .message(rangeExpression, "Range expression must have a descriptor for next function");
-        return functionDescriptor;
+        return resolvedCall;
     }
 
     @NotNull
-    public static CallableDescriptor getHasNextCallable(@NotNull BindingContext context,
+    public static ResolvedCall<FunctionDescriptor> getHasNextCallable(@NotNull BindingContext context,
             @NotNull JetExpression rangeExpression) {
-        CallableDescriptor hasNextDescriptor = context.get(BindingContext.LOOP_RANGE_HAS_NEXT, rangeExpression);
-        assert hasNextDescriptor != null
+        ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, rangeExpression);
+        assert resolvedCall != null
                 : message(rangeExpression, "Range expression must have a descriptor for hasNext function or property");
-        if (hasNextDescriptor instanceof PropertyDescriptor) {
-            PropertyGetterDescriptor getter = ((PropertyDescriptor) hasNextDescriptor).getGetter();
-            assert getter != null : "Loop range hasNext val should have a getter.";
-            return getter;
-        }
-        return hasNextDescriptor;
+        return resolvedCall;
     }
 
     @NotNull

@@ -20,10 +20,10 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetForExpression;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
@@ -61,24 +61,24 @@ public final class IteratorForTranslator extends ForTranslator {
 
     @NotNull
     private JsExpression hasNextMethodInvocation() {
-        CallableDescriptor hasNextFunction = getHasNextCallable(bindingContext(), getLoopRange(expression));
-        return translateMethodInvocation(iterator.second, hasNextFunction);
+        ResolvedCall<FunctionDescriptor> resolvedCall = getHasNextCallable(bindingContext(), getLoopRange(expression));
+        return translateMethodInvocation(iterator.second, resolvedCall);
     }
 
     @NotNull
     private JsExpression iteratorMethodInvocation() {
         JetExpression rangeExpression = getLoopRange(expression);
         JsExpression range = Translation.translateAsExpression(rangeExpression, context());
-        FunctionDescriptor iteratorFunction = getIteratorFunction(bindingContext(), rangeExpression);
-        return translateMethodInvocation(range, iteratorFunction);
+        ResolvedCall<FunctionDescriptor> resolvedCall = getIteratorFunction(bindingContext(), rangeExpression);
+        return translateMethodInvocation(range, resolvedCall);
     }
 
     @NotNull
     private JsExpression translateMethodInvocation(@Nullable JsExpression receiver,
-            @NotNull CallableDescriptor descriptor) {
+            @NotNull ResolvedCall<FunctionDescriptor> resolvedCall) {
         return CallBuilder.build(context())
+                .resolvedCall(resolvedCall)
                 .receiver(receiver)
-                .descriptor(descriptor)
                 .translate();
     }
 }

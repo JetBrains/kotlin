@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.types.expressions;
 
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -25,11 +26,13 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.diagnostics.SimpleDiagnosticFactory;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -41,6 +44,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -324,44 +328,37 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         // Make a fake call loopRange.iterator(), and try to resolve it
         Name iterator = Name.identifier("iterator");
-        OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = resolveFakeCall(loopRange, context, iterator);
+        Pair<Call, OverloadResolutionResults<FunctionDescriptor>> calls = makeAndResolveFakeCall(loopRange, context, iterator);
+        Call iteratorCall = calls.getFirst();
+        OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = calls.getSecond();
 
         // We allow the loop range to be null (nothing happens), so we make the receiver type non-null
         if (!iteratorResolutionResults.isSuccess()) {
             ExpressionReceiver nonNullReceiver = new ExpressionReceiver(loopRange.getExpression(), TypeUtils.makeNotNullable(loopRange.getType()));
-            OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResultsWithNonNullReceiver = resolveFakeCall(nonNullReceiver, context, iterator);
+            Pair<Call,OverloadResolutionResults<FunctionDescriptor>> callsNonNull = makeAndResolveFakeCall(nonNullReceiver, context, iterator);
+            Call iteratorCallWithNonNullReceiver = callsNonNull.getFirst();
+            OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResultsWithNonNullReceiver = callsNonNull.getSecond();
             if (iteratorResolutionResultsWithNonNullReceiver.isSuccess()) {
                 iteratorResolutionResults = iteratorResolutionResultsWithNonNullReceiver;
+                iteratorCall = iteratorCallWithNonNullReceiver;
             }
         }
         
         if (iteratorResolutionResults.isSuccess()) {
-            FunctionDescriptor iteratorFunction = iteratorResolutionResults.getResultingCall().getResultingDescriptor();
+            ResolvedCall<FunctionDescriptor> iteratorResolvedCall = iteratorResolutionResults.getResultingCall();
+            context.trace.record(LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRangeExpression, iteratorResolvedCall);
+            context.trace.record(LOOP_RANGE_ITERATOR_CALL, loopRangeExpression, iteratorCall);
 
-            context.trace.record(LOOP_RANGE_ITERATOR, loopRangeExpression, iteratorFunction);
-
+            FunctionDescriptor iteratorFunction = iteratorResolvedCall.getResultingDescriptor();
             JetType iteratorType = iteratorFunction.getReturnType();
-            FunctionDescriptor hasNextFunction = checkHasNextFunctionSupport(loopRangeExpression, iteratorType, context);
-            boolean hasNextFunctionSupported = hasNextFunction != null;
-            if (!hasNextFunctionSupported) {
-                context.trace.report(HAS_NEXT_MISSING.on(loopRangeExpression));
+            JetType hasNextType = checkConventionForIterator(context, loopRangeExpression, iteratorType, "hasNext",
+                                                             HAS_NEXT_FUNCTION_AMBIGUITY, HAS_NEXT_MISSING,
+                                                             LOOP_RANGE_HAS_NEXT_RESOLVED_CALL);
+            if (hasNextType != null && !isBoolean(hasNextType)) {
+                context.trace.report(HAS_NEXT_FUNCTION_TYPE_MISMATCH.on(loopRangeExpression, hasNextType));
             }
-            else {
-                context.trace.record(LOOP_RANGE_HAS_NEXT, loopRange.getExpression(), hasNextFunction);
-            }
-
-            OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), Name.identifier("next"), Collections.<JetType>emptyList());
-            if (nextResolutionResults.isAmbiguity()) {
-                context.trace.report(NEXT_AMBIGUITY.on(loopRangeExpression));
-            }
-            else if (nextResolutionResults.isNothing()) {
-                context.trace.report(NEXT_MISSING.on(loopRangeExpression));
-            }
-            else {
-                FunctionDescriptor nextFunction = nextResolutionResults.getResultingCall().getResultingDescriptor();
-                context.trace.record(LOOP_RANGE_NEXT, loopRange.getExpression(), nextFunction);
-                return nextFunction.getReturnType();
-            }
+            return checkConventionForIterator(context, loopRangeExpression, iteratorType, "next", NEXT_AMBIGUITY, NEXT_MISSING,
+                                              LOOP_RANGE_NEXT_RESOLVED_CALL);
         }
         else {
             if (iteratorResolutionResults.isAmbiguity()) {
@@ -380,22 +377,30 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Nullable
-    private static FunctionDescriptor checkHasNextFunctionSupport(@NotNull JetExpression loopRange, @NotNull JetType iteratorType, ExpressionTypingContext context) {
-        OverloadResolutionResults<FunctionDescriptor> hasNextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), Name.identifier("hasNext"), Collections.<JetType>emptyList());
-        if (hasNextResolutionResults.isAmbiguity()) {
-            context.trace.report(HAS_NEXT_FUNCTION_AMBIGUITY.on(loopRange));
+    private static JetType checkConventionForIterator(
+            @NotNull ExpressionTypingContext context,
+            @NotNull JetExpression loopRangeExpression,
+            @NotNull JetType iteratorType,
+            @NotNull String name,
+            @NotNull SimpleDiagnosticFactory<JetExpression> ambiguity,
+            @NotNull SimpleDiagnosticFactory<JetExpression> missing,
+            @NotNull WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> call
+    ) {
+        OverloadResolutionResults<FunctionDescriptor>
+                nextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), Name.identifier(name), Collections
+                .<JetType>emptyList());
+        if (nextResolutionResults.isAmbiguity()) {
+            context.trace.report(ambiguity.on(loopRangeExpression));
         }
-        else if (hasNextResolutionResults.isNothing()) {
-            return null;
+        else if (nextResolutionResults.isNothing()) {
+            context.trace.report(missing.on(loopRangeExpression));
         }
         else {
-            assert hasNextResolutionResults.isSuccess();
-            JetType hasNextReturnType = hasNextResolutionResults.getResultingDescriptor().getReturnType();
-            if (!isBoolean(hasNextReturnType)) {
-                context.trace.report(HAS_NEXT_FUNCTION_TYPE_MISMATCH.on(loopRange, hasNextReturnType));
-            }
+            ResolvedCall<FunctionDescriptor> nextCall = nextResolutionResults.getResultingCall();
+            context.trace.record(call, loopRangeExpression, nextCall);
+            return nextCall.getResultingDescriptor().getReturnType();
         }
-        return hasNextResolutionResults.getResultingCall().getResultingDescriptor();
+        return null;
     }
 
     @Override

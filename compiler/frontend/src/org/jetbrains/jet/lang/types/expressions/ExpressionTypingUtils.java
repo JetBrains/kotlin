@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.types.expressions;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,10 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.inference.*;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -249,10 +253,19 @@ public class ExpressionTypingUtils {
             @NotNull ExpressionTypingContext context,
             @NotNull Name name
     ) {
+        return makeAndResolveFakeCall(receiver, context, name).getSecond();
+    }
+
+    @NotNull
+    public static Pair<Call, OverloadResolutionResults<FunctionDescriptor>> makeAndResolveFakeCall(
+            @NotNull ReceiverDescriptor receiver,
+            @NotNull ExpressionTypingContext context,
+            @NotNull Name name
+    ) {
         JetReferenceExpression fake = JetPsiFactory.createSimpleName(context.expressionTypingServices.getProject(), "fake");
         BindingTrace fakeTrace = TemporaryBindingTrace.create(context.trace);
         Call call = CallMaker.makeCall(fake, receiver, null, fake, Collections.<ValueArgument>emptyList());
-        return context.replaceBindingTrace(fakeTrace).resolveCallWithGivenName(call, fake, name);
+        return Pair.create(call, context.replaceBindingTrace(fakeTrace).resolveCallWithGivenName(call, fake, name));
     }
 
     public static void defineLocalVariablesFromMultiDeclaration(
