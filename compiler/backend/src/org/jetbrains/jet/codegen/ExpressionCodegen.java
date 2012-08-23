@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Pair;
@@ -45,15 +46,17 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibraryNames;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.JetTypeMapper.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.CALL;
-import static org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_TYPE;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
 
 /**
  * @author max
@@ -79,6 +82,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     private final Stack<BlockStackElement> blockStackElements = new Stack<BlockStackElement>();
     private final Collection<String> localVariableNames = new HashSet<String>();
+
+    /*
+     * When we create a temporary variable to hold some value not to compute it many times
+     * we put it into this map to emit access to that variable instead of evaluating the whole expression
+     */
+    private final Map<JetElement, StackValue.Local> tempVariables = Maps.newHashMap();
 
     static class BlockStackElement {
     }
@@ -157,6 +166,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     public StackValue genQualified(StackValue receiver, JetElement selector) {
+        if (tempVariables.containsKey(selector)) {
+            throw new IllegalStateException("Inconsistent state: expression saved to a temporary variable is a selector");
+        }
         if (!(selector instanceof JetBlockExpression)) {
             markLineNumber(selector);
         }
@@ -176,6 +188,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     public StackValue gen(JetElement expr) {
+        StackValue tempVar = tempVariables.get(expr);
+        if (tempVar != null) {
+            return tempVar;
+        }
         if (expr instanceof JetExpression) {
             JetExpression expression = (JetExpression) expr;
             CompileTimeConstant<?> constant = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression);
@@ -3252,6 +3268,7 @@ The "returned" value of try expression with no finally is either the last expres
         final int subjectLocal = expr != null ? myFrameMap.enterTemp(subjectType) : -1;
         if (subjectLocal != -1) {
             gen(expr, subjectType);
+            tempVariables.put(expr, StackValue.local(subjectLocal, subjectType));
             v.store(subjectLocal, subjectType);
         }
 
@@ -3301,6 +3318,7 @@ The "returned" value of try expression with no finally is either the last expres
         v.mark(end);
 
         myFrameMap.leaveTemp(subjectType);
+        tempVariables.remove(expr);
         return StackValue.onStack(resultType);
     }
 
@@ -3319,12 +3337,15 @@ The "returned" value of try expression with no finally is either the last expres
                 getInIntRange(new StackValue.Local(subjectLocal, subjectType), (JetBinaryExpression) rangeExpression, inverted);
             }
             else {
-                FunctionDescriptor op =
-                        (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, conditionInRange.getOperationReference());
-                genToJVMStack(rangeExpression);
-                new StackValue.Local(subjectLocal, subjectType).put(TYPE_OBJECT, v);
-                invokeFunctionNoParams(op, Type.BOOLEAN_TYPE, v);
-
+                //FunctionDescriptor op =
+                //        (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, conditionInRange.getOperationReference());
+                //genToJVMStack(rangeExpression);
+                //new StackValue.Local(subjectLocal, subjectType).put(TYPE_OBJECT, v);
+                //invokeFunctionNoParams(op, Type.BOOLEAN_TYPE, v);
+                ResolvedCall<? extends CallableDescriptor> resolvedCall =
+                        bindingContext.get(RESOLVED_CALL, conditionInRange.getOperationReference());
+                Call call = bindingContext.get(CALL, conditionInRange.getOperationReference());
+                invokeFunction(call, StackValue.none(), resolvedCall);
                 if (inverted) {
                     invertBoolean();
                 }

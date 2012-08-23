@@ -104,7 +104,7 @@ public abstract class StackValue {
         }
     }
 
-    public static StackValue local(int index, Type type) {
+    public static Local local(int index, Type type) {
         return new Local(index, type);
     }
 

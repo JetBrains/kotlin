@@ -77,15 +77,11 @@ public class PatternMatchingTest extends CodegenTestCase {
     }
 
     public void testRange() throws Exception {
-        loadFile();
-//        System.out.println(generateToText());
-        Method foo = generateFunction();
-        assertEquals("array list", foo.invoke(null, 239));
-        assertEquals("digit", foo.invoke(null, 0));
-        assertEquals("digit", foo.invoke(null, 9));
-        assertEquals("digit", foo.invoke(null, 5));
-        assertEquals("something", foo.invoke(null, 19));
-        assertEquals("not small", foo.invoke(null, 190));
+        blackBoxFile("patternMatching/range.jet");
+    }
+
+    public void testWhenArgumentIsEvaluatedOnlyOnce() throws Exception {
+        blackBoxFile("patternMatching/whenArgumentIsEvaluatedOnlyOnce.kt");
     }
 
     public void testRangeChar() throws Exception {
