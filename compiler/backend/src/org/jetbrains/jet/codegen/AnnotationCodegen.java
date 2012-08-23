@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.FieldVisitor;
@@ -135,7 +136,7 @@ public abstract class AnnotationCodegen {
         }
     }
 
-    private void genAnnotationExpressionValue(AnnotationVisitor annotationVisitor, String keyName, JetExpression expression) {
+    private void genAnnotationExpressionValue(AnnotationVisitor annotationVisitor, @Nullable String keyName, JetExpression expression) {
         CompileTimeConstant<?> compileTimeConstant =
                 bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression);
 

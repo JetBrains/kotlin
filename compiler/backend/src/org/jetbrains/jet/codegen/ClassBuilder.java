@@ -88,7 +88,7 @@ public abstract class ClassBuilder {
         getVisitor().visitSource(name, debug);
     }
 
-    public void visitOuterClass(String owner, String name, String desc) {
+    public void visitOuterClass(String owner, @Nullable String name, @Nullable String desc) {
         getVisitor().visitOuterClass(owner, name, desc);
     }
 
