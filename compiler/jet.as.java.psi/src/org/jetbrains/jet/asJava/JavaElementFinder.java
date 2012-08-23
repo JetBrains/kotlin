@@ -45,7 +45,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
     private final Project project;
     private final PsiManager psiManager;
 
-    private WeakHashMap<GlobalSearchScope, List<JetFile>> jetFiles = new WeakHashMap<GlobalSearchScope, List<JetFile>>();
+    private final WeakHashMap<GlobalSearchScope, Collection<JetFile>> jetFiles = new WeakHashMap<GlobalSearchScope, Collection<JetFile>>();
 
     public JavaElementFinder(Project project) {
         this.project = project;
@@ -112,7 +112,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         if (qualifiedName.getFqName().startsWith("java.")) return PsiClass.EMPTY_ARRAY;
 
         List<PsiClass> answer = new SmartList<PsiClass>();
-        final List<JetFile> filesInScope = collectProjectJetFiles(project, scope);
+        final Collection<JetFile> filesInScope = collectProjectJetFiles(project, scope);
         for (JetFile file : filesInScope) {
             final FqName packageName = JetPsiUtil.getFQName(file);
             if (packageName != null && qualifiedName.getFqName().startsWith(packageName.getFqName())) {
@@ -189,7 +189,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
 
         FqName fqName = new FqName(qualifiedNameString);
 
-        final List<JetFile> psiFiles = collectProjectJetFiles(project, GlobalSearchScope.allScope(project));
+        final Collection<JetFile> psiFiles = collectProjectJetFiles(project, GlobalSearchScope.allScope(project));
 
         for (JetFile psiFile : psiFiles) {
             if (QualifiedNamesUtil.isSubpackageOf(JetPsiUtil.getFQName(psiFile), fqName)) {
@@ -203,7 +203,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
     @NotNull
     @Override
     public PsiPackage[] getSubPackages(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-        final List<JetFile> psiFiles = collectProjectJetFiles(project, GlobalSearchScope.allScope(project));
+        final Collection<JetFile> psiFiles = collectProjectJetFiles(project, GlobalSearchScope.allScope(project));
 
         Set<PsiPackage> answer = new HashSet<PsiPackage>();
 
@@ -223,7 +223,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
     @Override
     public PsiClass[] getClasses(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
         List<PsiClass> answer = new SmartList<PsiClass>();
-        final List<JetFile> filesInScope = collectProjectJetFiles(project, scope);
+        final Collection<JetFile> filesInScope = collectProjectJetFiles(project, scope);
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
         for (JetFile file : filesInScope) {
             if (packageFQN.equals(JetPsiUtil.getFQName(file))) {
@@ -246,8 +246,8 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         jetFiles.clear();
     }
 
-    private synchronized List<JetFile> collectProjectJetFiles(final Project project, @NotNull final GlobalSearchScope scope) {
-        List<JetFile> cachedFiles = jetFiles.get(scope);
+    private synchronized Collection<JetFile> collectProjectJetFiles(final Project project, @NotNull final GlobalSearchScope scope) {
+        Collection<JetFile> cachedFiles = jetFiles.get(scope);
         
         if (cachedFiles == null) {
             cachedFiles = JetFilesProvider.getInstance(project).allInScope(scope);

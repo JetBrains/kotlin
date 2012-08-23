@@ -58,7 +58,6 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Pavel Talanov
@@ -202,7 +201,7 @@ public final class AnalyzerFacadeWithCache {
                                 InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(
                                         fileProject, new BindingTraceContext(), javaModule, BuiltinsScopeExtensionMode.ALL);
 
-                                List<JetFile> files = JetFilesProvider.getInstance(fileProject).allInScope(GlobalSearchScope.allScope(fileProject));
+                                Collection<JetFile> files = JetFilesProvider.getInstance(fileProject).allInScope(GlobalSearchScope.allScope(fileProject));
 
                                 // Given file can differ from the original because it can be a virtual copy with some modifications
                                 JetFile originalFile = (JetFile) file.getOriginalFile();
@@ -244,6 +243,7 @@ public final class AnalyzerFacadeWithCache {
                                         }
                                         if (psiClassFinder.findPsiPackage(fqName) != null) {
                                             JavaPackageScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(fqName, namespaceDescriptor);
+                                            assert javaPackageScope != null;
                                             namespaceMemberScope.importScope(javaPackageScope);
                                         }
                                     }

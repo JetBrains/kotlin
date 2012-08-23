@@ -19,8 +19,9 @@
  */
 package org.jetbrains.jet.plugin.project;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.compiler.ex.CompilerPathsEx;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
@@ -29,17 +30,21 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ModuleFileIndex;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Function;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.plugin.JetFileType;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PluginJetFilesProvider extends JetFilesProvider {
     private final Project project;
@@ -93,28 +98,26 @@ public class PluginJetFilesProvider extends JetFilesProvider {
     }
 
     @Override
-    public List<JetFile> allInScope(final GlobalSearchScope scope) {
-        final List<JetFile> answer = new ArrayList<JetFile>();
-
-        final FileTypeManager fileTypeManager = FileTypeManager.getInstance();
-        List<VirtualFile> contentRoots = Arrays.asList(ProjectRootManager.getInstance(project).getContentRoots());
+    public Collection<JetFile> allInScope(final GlobalSearchScope scope) {
         final PsiManager manager = PsiManager.getInstance(project);
 
-        CompilerPathsEx.visitFiles(contentRoots, new CompilerPathsEx.FileVisitor() {
-            @Override
-            protected void acceptFile(VirtualFile file, String fileRoot, String filePath) {
-                final FileType fileType = fileTypeManager.getFileTypeByFile(file);
-                if (fileType != JetFileType.INSTANCE) return;
+        Collection<JetFile> jetFiles = Collections2.transform(FileTypeIndex.getFiles(JetFileType.INSTANCE, scope),
+               new com.google.common.base.Function<VirtualFile, JetFile>() {
+                   @Override
+                   public JetFile apply(@Nullable VirtualFile file) {
+                       if (file == null || !ProjectFileIndex.SERVICE.getInstance(project).isInContent(file)) {
+                           return null;
+                       }
 
-                if (scope.accept(file)) {
-                    final PsiFile psiFile = manager.findFile(file);
-                    if (psiFile instanceof JetFile) {
-                        answer.add((JetFile) psiFile);
-                    }
-                }
-            }
-        });
+                       PsiFile psiFile = manager.findFile(file);
+                       if (!(psiFile instanceof JetFile)) {
+                           return null;
+                       }
 
-        return answer;
+                       return ((JetFile) psiFile);
+                   }
+               });
+
+        return Sets.newHashSet(Collections2.filter(jetFiles, Predicates.<JetFile>notNull()));
     }
 }
