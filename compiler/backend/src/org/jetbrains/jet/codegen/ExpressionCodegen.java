@@ -446,14 +446,23 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         private final Label bodyEnd = new Label();
         private final List<Runnable> leaveVariableTasks = Lists.newArrayList();
 
+        private final JetType elementType;
+
         private AbstractForLoopGenerator(
                 @NotNull JetForExpression forExpression
         ) {
             this.forExpression = forExpression;
+            this.elementType = getElementType(forExpression);
         }
 
         @NotNull
-        protected abstract JetType getElementType();
+        private JetType getElementType(JetForExpression forExpression) {
+            JetExpression loopRange = forExpression.getLoopRange();
+            ResolvedCall<FunctionDescriptor> nextCall = getNotNull(bindingContext,
+                                                                   LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange,
+                                                                   "No next() function " + DiagnosticUtils.atLocation(loopRange));
+            return nextCall.getResultingDescriptor().getReturnType();
+        }
 
         @Override
         public void beforeBody() {
@@ -481,7 +490,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 assert multiParameter != null;
 
                 // E tmp<e> = tmp<iterator>.next()
-                final Type asmElementType = asmType(getElementType());
+                final Type asmElementType = asmType(elementType);
                 int tmpParameterIndex = myFrameMap.enterTemp(asmElementType);
                 leaveVariableTasks.add(new Runnable() {
                     @Override
@@ -498,7 +507,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         protected abstract void assignToLoopParameter(int parameterIndex);
 
         private void generateMultiVariables(int tmpParameterIndex, List<JetMultiDeclarationEntry> entries) {
-            Type asmElementType = asmType(getElementType());
+            Type asmElementType = asmType(elementType);
             for (JetMultiDeclarationEntry variableDeclaration : entries) {
                 final VariableDescriptor componentDescriptor = bindingContext.get(BindingContext.VARIABLE, variableDeclaration);
 
@@ -518,7 +527,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
                 ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(BindingContext.COMPONENT_RESOLVED_CALL, variableDeclaration);
                 assert resolvedCall != null : "Resolved call is null for " + variableDeclaration.getText();
-                Call call = makeFakeCall(new TransientReceiver(getElementType()));
+                Call call = makeFakeCall(new TransientReceiver(elementType));
                 invokeFunction(call, StackValue.local(tmpParameterIndex, asmElementType), resolvedCall);
 
                 v.store(componentVarIndex, componentAsmType);
@@ -559,12 +568,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                                        "No next() function " + DiagnosticUtils.atLocation(loopRange));
         }
 
-        @NotNull
-        @Override
-        protected JetType getElementType() {
-            return nextCall.getResultingDescriptor().getReturnType();
-        }
-
         @Override
         public void beforeLoop() {
             // Iterator<E> tmp<iterator> = c.iterator()
@@ -599,7 +602,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             Call fakeCall =
                     makeFakeCall(new TransientReceiver(iteratorCall.getResultingDescriptor().getReturnType()));
             invokeFunction(fakeCall, StackValue.local(iteratorVarIndex, asmTypeForIterator), nextCall);
-            v.store(parameterIndex, asmType(getElementType()));
+            v.store(parameterIndex, asmType(nextCall.getResultingDescriptor().getReturnType()));
         }
 
         @Override
