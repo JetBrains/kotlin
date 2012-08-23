@@ -463,7 +463,7 @@ public class BothSignatureWriter {
         for (JvmMethodParameterSignature p : kotlinParameterTypes) {
             jvmParameterTypes.add(p.getAsmType());
         }
-        return new Method(name, jvmReturnType, jvmParameterTypes.toArray(new Type[0]));
+        return new Method(name, jvmReturnType, jvmParameterTypes.toArray(new Type[jvmParameterTypes.size()]));
     }
 
     @Nullable

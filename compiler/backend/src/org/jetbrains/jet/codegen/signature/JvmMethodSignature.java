@@ -75,7 +75,8 @@ public class JvmMethodSignature {
             @NotNull Type returnType,
             @NotNull List<JvmMethodParameterSignature> parameterSignatures
     ) {
-        return new JvmMethodSignature(new Method(methodName, returnType, getTypes(parameterSignatures).toArray(new Type[0])),
+        List<Type> types = getTypes(parameterSignatures);
+        return new JvmMethodSignature(new Method(methodName, returnType, types.toArray(new Type[types.size()])),
                                       parameterSignatures);
     }
 
