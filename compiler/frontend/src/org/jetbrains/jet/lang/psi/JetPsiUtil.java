@@ -174,6 +174,10 @@ public class JetPsiUtil {
             return null;
         }
 
+        if (PsiTreeUtil.hasErrorElements(importedReference)) {
+            return null;
+        }
+
         final String text = importedReference.getText();
         return new ImportPath(text.replaceAll(" ", "") + (importDirective.isAllUnder() ? ".*" : ""));
     }

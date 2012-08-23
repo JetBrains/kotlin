@@ -1,0 +1,30 @@
+JetFile: ImportRecovery.jet
+  NAMESPACE_HEADER
+    <empty list>
+  IMPORT_DIRECTIVE
+    PsiElement(import)('import')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('some')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('test')
+      PsiElement(DOT)('.')
+      PsiErrorElement:Qualified name must be a '.'-separated identifier list
+        <empty list>
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// Some')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// SomeOther')
+  PsiWhiteSpace('\n\n')
+  OBJECT_DECLARATION
+    PsiElement(object)('object')
+    PsiWhiteSpace(' ')
+    OBJECT_DECLARATION_NAME
+      PsiElement(IDENTIFIER)('StyleSheetOrigin')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
