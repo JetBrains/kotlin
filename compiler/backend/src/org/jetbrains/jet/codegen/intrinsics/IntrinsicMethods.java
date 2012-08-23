@@ -51,19 +51,19 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod DEC = new Increment(-1);
     private static final IntrinsicMethod HASH_CODE = new HashCode();
 
-    public static final IntrinsicMethod ARRAY_SIZE = new ArraySize();
-    public static final IntrinsicMethod ARRAY_INDICES = new ArrayIndices();
-    public static final Equals EQUALS = new Equals();
-    public static final IdentityEquals IDENTITY_EQUALS = new IdentityEquals();
-    public static final IteratorNext ITERATOR_NEXT = new IteratorNext();
-    public static final ArraySet ARRAY_SET = new ArraySet();
-    public static final ArrayGet ARRAY_GET = new ArrayGet();
-    public static final StringPlus STRING_PLUS = new StringPlus();
+    private static final IntrinsicMethod ARRAY_SIZE = new ArraySize();
+    private static final IntrinsicMethod ARRAY_INDICES = new ArrayIndices();
+    private static final Equals EQUALS = new Equals();
+    private static final IdentityEquals IDENTITY_EQUALS = new IdentityEquals();
+    private static final IteratorNext ITERATOR_NEXT = new IteratorNext();
+    private static final ArraySet ARRAY_SET = new ArraySet();
+    private static final ArrayGet ARRAY_GET = new ArrayGet();
+    private static final StringPlus STRING_PLUS = new StringPlus();
     public static final String KOTLIN_JAVA_CLASS_FUNCTION = "kotlin.javaClass.function";
     public static final String KOTLIN_ARRAYS_ARRAY = "kotlin.arrays.array";
-    public static final String KOTLIN_JAVA_CLASS_PROPERTY = "kotlin.javaClass.property";
-    public static final EnumValues ENUM_VALUES = new EnumValues();
-    public static final EnumValueOf ENUM_VALUE_OF = new EnumValueOf();
+    private static final String KOTLIN_JAVA_CLASS_PROPERTY = "kotlin.javaClass.property";
+    private static final EnumValues ENUM_VALUES = new EnumValues();
+    private static final EnumValueOf ENUM_VALUE_OF = new EnumValueOf();
 
     private final Map<String, IntrinsicMethod> namedMethods = new HashMap<String, IntrinsicMethod>();
     private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();

@@ -64,8 +64,8 @@ public class JetTypeMapper {
     public static final Type JL_NUMBER_TYPE = Type.getObjectType("java/lang/Number");
     public static final Type JL_STRING_BUILDER = Type.getObjectType("java/lang/StringBuilder");
     public static final Type JL_STRING_TYPE = Type.getObjectType("java/lang/String");
-    public static final Type JL_ENUM_TYPE = Type.getObjectType("java/lang/Enum");
-    public static final Type JL_CHAR_SEQUENCE_TYPE = Type.getObjectType("java/lang/CharSequence");
+    private static final Type JL_ENUM_TYPE = Type.getObjectType("java/lang/Enum");
+    private static final Type JL_CHAR_SEQUENCE_TYPE = Type.getObjectType("java/lang/CharSequence");
     private static final Type JL_COMPARABLE_TYPE = Type.getObjectType("java/lang/Comparable");
     private static final Type JL_ITERABLE_TYPE = Type.getObjectType("java/lang/Iterable");
     private static final Type JL_ITERATOR_TYPE = Type.getObjectType("java/util/Iterator");
@@ -245,7 +245,7 @@ public class JetTypeMapper {
         }
     }
 
-    public static MapTypeMode ownerKindToMapTypeMode(OwnerKind kind) {
+    private static MapTypeMode ownerKindToMapTypeMode(OwnerKind kind) {
         if (kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.NAMESPACE || kind instanceof OwnerKind.StaticDelegateKind) {
             return MapTypeMode.IMPL;
         }
@@ -561,7 +561,7 @@ public class JetTypeMapper {
         return asmType;
     }
 
-    public static void writeSimpleType(BothSignatureWriter visitor, Type asmType, boolean nullable) {
+    private static void writeSimpleType(BothSignatureWriter visitor, Type asmType, boolean nullable) {
         visitor.writeAsmType(asmType, nullable);
     }
 
@@ -1081,7 +1081,7 @@ public class JetTypeMapper {
                || className.getFqName().getFqName().equals("java.lang.Comparable");
     }
 
-    public static boolean isGenericsArray(JetType type) {
+    private static boolean isGenericsArray(JetType type) {
         return JetStandardLibraryNames.ARRAY.is(type) &&
                type.getArguments().get(0).getType().getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor;
     }

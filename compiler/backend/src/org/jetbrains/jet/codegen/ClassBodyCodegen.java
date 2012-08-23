@@ -48,7 +48,7 @@ public abstract class ClassBodyCodegen {
 
     protected final List<CodeChunk> staticInitializerChunks = new ArrayList<CodeChunk>();
 
-    public ClassBodyCodegen(JetClassOrObject aClass, CodegenContext context, ClassBuilder v, GenerationState state) {
+    protected ClassBodyCodegen(JetClassOrObject aClass, CodegenContext context, ClassBuilder v, GenerationState state) {
         this.state = state;
         descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
         myClass = aClass;

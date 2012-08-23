@@ -55,7 +55,7 @@ import static org.jetbrains.jet.codegen.JetTypeMapper.TYPE_OBJECT;
  * @author alex.tkachman
  */
 public class ImplementationBodyCodegen extends ClassBodyCodegen {
-    public static final String VALUES = "$VALUES";
+    private static final String VALUES = "$VALUES";
     private JetDelegationSpecifier superCall;
     private String superClass;
     @Nullable // null means java/lang/Object
@@ -1232,7 +1232,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
      * Return pairs of descriptors. First is member of this that should be implemented by delegating to trait,
      * second is member of trait that contain implementation.
      */
-    public static List<Pair<CallableMemberDescriptor, CallableMemberDescriptor>> getTraitImplementations(@NotNull ClassDescriptor classDescriptor) {
+    private static List<Pair<CallableMemberDescriptor, CallableMemberDescriptor>> getTraitImplementations(@NotNull ClassDescriptor classDescriptor) {
         List<Pair<CallableMemberDescriptor, CallableMemberDescriptor>> r = Lists.newArrayList();
 
         root:

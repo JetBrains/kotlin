@@ -36,7 +36,7 @@ public class ObjectOrClosureCodegen {
     protected Type captureReceiver;
 
     public final GenerationState state;
-    protected final ExpressionCodegen exprContext;
+    private final ExpressionCodegen exprContext;
     protected final CodegenContext context;
     protected ClassBuilder cv = null;
     public JvmClassName name = null;

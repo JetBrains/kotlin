@@ -22,7 +22,7 @@ package org.jetbrains.jet.codegen;
 public class OwnerKind {
     private final String name;
 
-    public OwnerKind(String name) {
+    protected OwnerKind(String name) {
         this.name = name;
     }
 

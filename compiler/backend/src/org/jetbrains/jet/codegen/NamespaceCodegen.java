@@ -204,7 +204,7 @@ public class NamespaceCodegen {
         return false;
     }
 
-    public static void checkAllFilesHaveSameNamespace(Collection<JetFile> namespaceFiles) {
+    private static void checkAllFilesHaveSameNamespace(Collection<JetFile> namespaceFiles) {
         FqName commonFqName = null;
         for (JetFile file : namespaceFiles) {
             FqName fqName = JetPsiUtil.getFQName(file);

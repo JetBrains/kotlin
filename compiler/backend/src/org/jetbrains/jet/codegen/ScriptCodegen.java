@@ -243,7 +243,7 @@ public class ScriptCodegen {
         this.earlierScripts = earlierScriptDescriptors;
     }
 
-    public int getScriptIndex(@NotNull ScriptDescriptor scriptDescriptor) {
+    protected int getScriptIndex(@NotNull ScriptDescriptor scriptDescriptor) {
         int index = earlierScripts.indexOf(scriptDescriptor);
         if (index < 0) {
             throw new IllegalStateException("Unregistered script: " + scriptDescriptor);

@@ -134,7 +134,7 @@ public class GenerationState {
         return Pair.create(className, getFactory().forAnonymousSubclass(className));
     }
 
-    public NamespaceCodegen forNamespace(FqName fqName, Collection<JetFile> jetFiles) {
+    protected NamespaceCodegen forNamespace(FqName fqName, Collection<JetFile> jetFiles) {
         return getFactory().forNamespace(fqName, jetFiles);
     }
 

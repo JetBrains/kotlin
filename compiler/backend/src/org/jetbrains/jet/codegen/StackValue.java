@@ -45,7 +45,7 @@ public abstract class StackValue {
     @NotNull
     public final Type type;
 
-    public StackValue(@NotNull Type type) {
+    protected StackValue(@NotNull Type type) {
         this.type = type;
     }
 
@@ -75,7 +75,7 @@ public abstract class StackValue {
      * @param v     the visitor used to generate the instructions
      * @param depth the number of new values put onto the stack
      */
-    public void moveToTopOfStack(Type type, InstructionAdapter v, int depth) {
+    protected void moveToTopOfStack(Type type, InstructionAdapter v, int depth) {
         put(type, v);
     }
 
@@ -231,7 +231,7 @@ public abstract class StackValue {
         }
     }
 
-    protected static void pop(Type type, InstructionAdapter v) {
+    private static void pop(Type type, InstructionAdapter v) {
         if (type.getSize() == 1) {
             v.pop();
         }

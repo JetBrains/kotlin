@@ -44,10 +44,10 @@ import java.util.Map;
  * @author alex.tkachman
  */
 public abstract class AnnotationCodegen {
-    final JetTypeMapper typeMapper;
-    final BindingContext bindingContext;
+    private final JetTypeMapper typeMapper;
+    private final BindingContext bindingContext;
 
-    protected AnnotationCodegen(JetTypeMapper mapper) {
+    private AnnotationCodegen(JetTypeMapper mapper) {
         typeMapper = mapper;
         bindingContext = typeMapper.bindingContext;
     }

@@ -29,7 +29,7 @@ import java.util.*;
  */
 public class ClassFileFactory {
     private ClassBuilderFactory builderFactory;
-    public GenerationState state;
+    private GenerationState state;
 
 
     private final Map<FqName, NamespaceCodegen> ns2codegen = new HashMap<FqName, NamespaceCodegen>();

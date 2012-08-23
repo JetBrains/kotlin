@@ -458,7 +458,7 @@ public class BothSignatureWriter {
 
 
     @NotNull
-    public Method makeAsmMethod(String name) {
+    protected Method makeAsmMethod(String name) {
         List<Type> jvmParameterTypes = new ArrayList<Type>(kotlinParameterTypes.size());
         for (JvmMethodParameterSignature p : kotlinParameterTypes) {
             jvmParameterTypes.add(p.getAsmType());
@@ -476,19 +476,19 @@ public class BothSignatureWriter {
     }
 
     @NotNull
-    public List<JvmMethodParameterSignature> makeKotlinParameterTypes() {
+    protected List<JvmMethodParameterSignature> makeKotlinParameterTypes() {
         checkState(State.METHOD_END);
         // TODO: return nulls if equal to #makeJavaString
         return kotlinParameterTypes;
     }
 
     @NotNull
-    public String makeKotlinReturnTypeSignature() {
+    protected String makeKotlinReturnTypeSignature() {
         checkState(State.METHOD_END);
         return kotlinReturnType;
     }
 
-    public String makeKotlinMethodTypeParameters() {
+    protected String makeKotlinMethodTypeParameters() {
         checkState(State.METHOD_END);
         return kotlinClassParameters;
     }

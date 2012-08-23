@@ -61,7 +61,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         closureAnnotator = typeMapper.getClosureAnnotator();
     }
 
-    public static JvmMethodSignature erasedInvokeSignature(FunctionDescriptor fd) {
+    private static JvmMethodSignature erasedInvokeSignature(FunctionDescriptor fd) {
 
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, false);
 
@@ -106,7 +106,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                 getInternalClassName(fd), receiverParameterType, getInternalClassName(fd).getAsmType());
     }
 
-    public JvmMethodSignature invokeSignature(FunctionDescriptor fd) {
+    protected JvmMethodSignature invokeSignature(FunctionDescriptor fd) {
         return typeMapper.mapSignature(Name.identifier("invoke"), fd);
     }
 

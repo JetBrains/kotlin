@@ -131,7 +131,7 @@ public final class TipsManager {
         return Collections.emptyList();
     }
 
-    public static Collection<DeclarationDescriptor> excludePrivateDescriptors(
+    private static Collection<DeclarationDescriptor> excludePrivateDescriptors(
             @NotNull Collection<DeclarationDescriptor> descriptors
     ) {
 

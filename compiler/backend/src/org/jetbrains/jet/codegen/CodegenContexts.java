@@ -91,7 +91,7 @@ public class CodegenContexts {
             return "ROOT";
         }
     };
-    protected static final StackValue local1 = StackValue.local(1, JetTypeMapper.TYPE_OBJECT);
+    private static final StackValue local1 = StackValue.local(1, JetTypeMapper.TYPE_OBJECT);
 
     public abstract static class ReceiverContext extends CodegenContext {
         final CallableDescriptor receiverDescriptor;

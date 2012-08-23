@@ -1287,7 +1287,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return myFrameMap.getIndex(descriptor);
     }
 
-    public void invokeFunctionNoParams(FunctionDescriptor functionDescriptor, Type expectedType, InstructionAdapter v) {
+    protected void invokeFunctionNoParams(FunctionDescriptor functionDescriptor, Type expectedType, InstructionAdapter v) {
         DeclarationDescriptor containingDeclaration = functionDescriptor.getOriginal().getContainingDeclaration();
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptor;
         functionDescriptor = functionDescriptor.getOriginal();
@@ -1449,7 +1449,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return propertyDescriptor;
     }
 
-    static boolean isOverrideForTrait(CallableMemberDescriptor propertyDescriptor) {
+    private static boolean isOverrideForTrait(CallableMemberDescriptor propertyDescriptor) {
         if (propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
             final Set<? extends CallableMemberDescriptor> overriddenDescriptors = propertyDescriptor.getOverriddenDescriptors();
             for (CallableMemberDescriptor descriptor : overriddenDescriptors) {
@@ -1632,7 +1632,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         invokeMethodWithArguments(callableMethod, resolvedCall, call, receiver);
     }
 
-    public void invokeMethodWithArguments(
+    protected void invokeMethodWithArguments(
             @NotNull CallableMethod callableMethod,
             @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall,
             @NotNull Call call,
