@@ -49,4 +49,10 @@ public final class LoadCompiledKotlinCustomTest extends TestCaseWithTmpdir {
         doTest(dir + "/simpleEnum.txt",
                dir + "/simpleEnum.kt");
     }
+
+    public void testEnumVisibility() throws Exception {
+        String dir = PATH + "/enum";
+        doTest(dir + "/enumVisibility.txt",
+               dir + "/enumVisibility.kt");
+    }
 }

@@ -1182,10 +1182,11 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
             DeclarationDescriptor realOwner = getRealOwner(owner, scopeData, anyMember.getMember().isStatic());
 
+            boolean isEnumEntry = DescriptorUtils.isEnumClassObject(realOwner);
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                     realOwner,
                     resolveAnnotations(anyMember.getMember().psiMember),
-                    resolveModality(anyMember.getMember(), isFinal),
+                    resolveModality(anyMember.getMember(), isFinal || isEnumEntry),
                     visibility,
                     isVar,
                     propertyName,
@@ -1194,7 +1195,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             //TODO: this is a hack to indicate that this enum entry is an object
             // class descriptor for enum entries is not used by backends so for now this should be safe to use
             // remove this when JavaDescriptorResolver gets rewritten
-            if (DescriptorUtils.isEnumClassObject(realOwner)) {
+            if (isEnumEntry) {
                 ClassDescriptorImpl dummyClassDescriptorForEnumEntryObject =
                         new ClassDescriptorImpl(realOwner, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, propertyName);
                 dummyClassDescriptorForEnumEntryObject.initialize(

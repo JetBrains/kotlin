@@ -5,11 +5,11 @@ package testData.libraries
 
 [public final enum class Color : jet.Enum<testData.libraries.Color> {
     class object {
-        [public open val BLUE : testData.libraries.Color] /* compiled code */
+        [public final val BLUE : testData.libraries.Color] /* compiled code */
 
-        [public open val GREEN : testData.libraries.Color] /* compiled code */
+        [public final val GREEN : testData.libraries.Color] /* compiled code */
 
-        [public open val RED : testData.libraries.Color] /* compiled code */
+        [public final val RED : testData.libraries.Color] /* compiled code */
 
         public final fun valueOf(value : jet.String) : testData.libraries.Color { /* compiled code */ }
 

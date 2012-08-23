@@ -6,7 +6,7 @@ internal final enum class test.MyEnum : jet.Enum<test.MyEnum> {
     public final override /*1*/ fun ordinal(): jet.Int
     internal final class object test.MyEnum.<class-object-for-MyEnum> {
         public final /*constructor*/ fun <init>(): test.MyEnum.<class-object-for-MyEnum>
-        public open val ENTRY: test.MyEnum
+        public final val ENTRY: test.MyEnum
         public final fun valueOf(/*0*/ value: jet.String): test.MyEnum
         public final fun values(): jet.Array<test.MyEnum>
     }
