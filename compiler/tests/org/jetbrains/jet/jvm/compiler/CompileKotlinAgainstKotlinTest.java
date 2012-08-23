@@ -16,39 +16,41 @@
 
 package org.jetbrains.jet.jvm.compiler;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.impl.PsiFileFactoryImpl;
-import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.ArrayUtil;
 import junit.framework.Assert;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.*;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.ClassFileFactory;
+import org.jetbrains.jet.codegen.GenerationUtils;
+import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
 /**
  * @author Stepan Koltsov
  */
-public class CompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir {
+@SuppressWarnings({"JUnitTestCaseWithNonTrivialConstructors", "JUnitTestCaseWithNoTests"})
+public final class CompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir {
 
     private final File ktAFile;
     private final File ktBFile;
 
-    public CompileKotlinAgainstKotlinTest(File ktAFile) {
+    public CompileKotlinAgainstKotlinTest(@NotNull File ktAFile) {
         Assert.assertTrue(ktAFile.getName().endsWith("A.kt"));
         this.ktAFile = ktAFile;
         this.ktBFile = new File(ktAFile.getPath().replaceFirst("A\\.kt$", "B.kt"));
@@ -75,43 +77,46 @@ public class CompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir {
     protected void runTest() throws Throwable {
         compileA();
         compileB();
+        invokeMain();
+    }
 
+    private void invokeMain()
+            throws MalformedURLException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         URLClassLoader classLoader = new URLClassLoader(
                 new URL[]{ aDir.toURI().toURL(), bDir.toURI().toURL() },
                 CompileKotlinAgainstKotlinTest.class.getClassLoader()
         );
         Class<?> clazz = classLoader.loadClass("bbb.namespace");
         Method main = clazz.getMethod("main", new Class[] { String[].class });
-        main.invoke(null, new Object[] { new String[0] });
+        main.invoke(null, new Object[] {ArrayUtil.EMPTY_STRING_ARRAY});
     }
 
     private void compileA() throws IOException {
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable);
-
-        String text = FileUtil.loadFile(ktAFile);
-
-        JetFile psiFile = JetTestUtils.createFile(ktAFile.getName(), text, jetCoreEnvironment.getProject());
-
-        ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
-
-        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, aDir);
-        
-        Disposer.dispose(myTestRootDisposable);
+        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable());
+        compileKotlin(ktAFile, aDir, jetCoreEnvironment, getTestRootDisposable());
     }
 
     private void compileB() throws IOException {
-        JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(myTestRootDisposable, CompileCompilerDependenciesTest
-                .compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), aDir));
+        CompilerConfiguration configurationWithADirInClasspath = CompileCompilerDependenciesTest
+                .compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), aDir);
+        compileKotlin(ktBFile, bDir, new JetCoreEnvironment(getTestRootDisposable(), configurationWithADirInClasspath),
+                      getTestRootDisposable());
+    }
 
-        String text = FileUtil.loadFile(ktBFile);
+    private static void compileKotlin(
+            @NotNull File file, @NotNull File outputDir, @NotNull JetCoreEnvironment jetCoreEnvironment,
+            @NotNull Disposable disposable
+    ) throws IOException {
 
-        JetFile psiFile = JetTestUtils.createFile(ktBFile.getName(), text, jetCoreEnvironment.getProject());
+        String text = FileUtil.loadFile(file);
+
+        JetFile psiFile = JetTestUtils.createFile(file.getName(), text, jetCoreEnvironment.getProject());
 
         ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 
-        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, bDir);
+        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, outputDir);
 
-        Disposer.dispose(myTestRootDisposable);
+        Disposer.dispose(disposable);
     }
 
     public static Test suite() {
