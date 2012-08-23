@@ -1132,6 +1132,7 @@ public class CallResolver {
         }
     }
 
+    @Deprecated // Creates wrong resolved calls, should be removed
     @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveExactSignature(@NotNull JetScope scope, @NotNull ReceiverDescriptor receiver, @NotNull Name name, @NotNull List<JetType> parameterTypes) {
         List<ResolutionCandidate<FunctionDescriptor>> candidates = findCandidatesByExactSignature(scope, receiver, name, parameterTypes);

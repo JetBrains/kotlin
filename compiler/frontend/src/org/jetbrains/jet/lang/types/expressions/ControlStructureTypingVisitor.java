@@ -384,11 +384,10 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             @NotNull String name,
             @NotNull SimpleDiagnosticFactory<JetExpression> ambiguity,
             @NotNull SimpleDiagnosticFactory<JetExpression> missing,
-            @NotNull WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> call
+            @NotNull WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> resolvedCallKey
     ) {
-        OverloadResolutionResults<FunctionDescriptor>
-                nextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), Name.identifier(name), Collections
-                .<JetType>emptyList());
+        OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = resolveFakeCall(
+                new TransientReceiver(iteratorType), context, Name.identifier(name));
         if (nextResolutionResults.isAmbiguity()) {
             context.trace.report(ambiguity.on(loopRangeExpression));
         }
@@ -396,9 +395,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(missing.on(loopRangeExpression));
         }
         else {
-            ResolvedCall<FunctionDescriptor> nextCall = nextResolutionResults.getResultingCall();
-            context.trace.record(call, loopRangeExpression, nextCall);
-            return nextCall.getResultingDescriptor().getReturnType();
+            ResolvedCall<FunctionDescriptor> resolvedCall = nextResolutionResults.getResultingCall();
+            context.trace.record(resolvedCallKey, loopRangeExpression, resolvedCall);
+            return resolvedCall.getResultingDescriptor().getReturnType();
         }
         return null;
     }
