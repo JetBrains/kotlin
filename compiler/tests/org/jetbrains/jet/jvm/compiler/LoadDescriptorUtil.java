@@ -114,20 +114,23 @@ public final class LoadDescriptorUtil {
             @NotNull Disposable disposable
     )
             throws IOException {
-        compileJavaToDir(javaFiles, outDir);
+        compileJavaWithAnnotationsJar(javaFiles, outDir);
         return extractTestNamespaceFromBinaries(outDir, disposable);
     }
 
-    private static void compileJavaToDir(@NotNull Collection<File> javaFiles, @NotNull File ourDir) throws IOException {
+    private static void compileJavaWithAnnotationsJar(@NotNull Collection<File> javaFiles, @NotNull File outDir) throws IOException {
+        compileJavaToDir(javaFiles, Arrays.asList(
+                "-classpath", "out/production/runtime" + File.pathSeparator + JetTestUtils.getAnnotationsJar().getPath(),
+                "-d", outDir.getPath()
+        ));
+    }
+
+    public static void compileJavaToDir(@NotNull Collection<File> javaFiles, @NotNull List<String> options) throws IOException {
         JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
 
         StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(null, Locale.ENGLISH, Charset.forName("utf-8"));
         try {
             Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(javaFiles);
-            List<String> options = Arrays.asList(
-                    "-classpath", "out/production/runtime" + File.pathSeparator + JetTestUtils.getAnnotationsJar().getPath(),
-                    "-d", ourDir.getPath()
-            );
             JavaCompiler.CompilationTask task = javaCompiler.getTask(null, fileManager, null, options, null, javaFileObjectsFromFiles);
 
             Assert.assertTrue(task.call());

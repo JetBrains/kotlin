@@ -16,47 +16,34 @@
 
 package org.jetbrains.jet.jvm.compiler;
 
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.impl.PsiFileFactoryImpl;
-import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.codegen.*;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.junit.Assert;
 
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
 import java.io.File;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
+
+import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileJavaToDir;
+import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalyzeExhaust;
 
 /**
  * @author Stepan Koltsov
  *
  * @see WriteSignatureTest
  */
+@SuppressWarnings({"JUnitTestCaseWithNonTrivialConstructors", "JUnitTestCaseWithNoTests"})
 public class CompileJavaAgainstKotlinTest extends TestCaseWithTmpdir {
 
+    @NotNull
     private final File ktFile;
+    @NotNull
     private final File javaFile;
-    private JetCoreEnvironment jetCoreEnvironment;
 
-    public CompileJavaAgainstKotlinTest(File ktFile) {
+    public CompileJavaAgainstKotlinTest(@NotNull File ktFile) {
         this.ktFile = ktFile;
         Assert.assertTrue(ktFile.getName().endsWith(".kt"));
         this.javaFile = new File(ktFile.getPath().replaceFirst("\\.kt", ".java"));
@@ -69,33 +56,13 @@ public class CompileJavaAgainstKotlinTest extends TestCaseWithTmpdir {
 
     @Override
     protected void runTest() throws Throwable {
-        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable);
+        compileKotlinToDirAndGetAnalyzeExhaust(ktFile, tmpdir, getTestRootDisposable());
 
-        String text = FileUtil.loadFile(ktFile);
-
-        JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment.getProject());
-
-        ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
-
-        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, tmpdir);
-
-        Disposer.dispose(myTestRootDisposable);
-
-        JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
-
-        StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(null, Locale.ENGLISH, Charset.forName("utf-8"));
-        try {
-            Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(Collections.singleton(javaFile));
-            List<String> options = Arrays.asList(
-                    "-classpath", tmpdir.getPath() + System.getProperty("path.separator") + "out/production/stdlib",
-                    "-d", tmpdir.getPath()
-                );
-            JavaCompiler.CompilationTask task = javaCompiler.getTask(null, fileManager, null, options, null, javaFileObjectsFromFiles);
-
-            Assert.assertTrue(task.call());
-        } finally {
-            fileManager.close();
-        }
+        List<String> options = Arrays.asList(
+                "-classpath", tmpdir.getPath() + System.getProperty("path.separator") + "out/production/stdlib",
+                "-d", tmpdir.getPath()
+        );
+        compileJavaToDir(Collections.singleton(javaFile), options);
     }
 
     public static Test suite() {
