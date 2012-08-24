@@ -210,10 +210,8 @@ class EditSignatureBalloon {
             new WriteCommandAction(project) {
                 @Override
                 protected void run(final Result result) throws Throwable {
-                    ExternalAnnotationsManager
-                            .getInstance(project).deannotate(method, KotlinSignatureInJavaMarkerProvider.KOTLIN_SIGNATURE_ANNOTATION);
-                    ExternalAnnotationsManager.getInstance(project).annotateExternally(
-                            method, KotlinSignatureInJavaMarkerProvider.KOTLIN_SIGNATURE_ANNOTATION, method.getContainingFile(),
+                    ExternalAnnotationsManager.getInstance(project).editExternalAnnotation(
+                            method, KotlinSignatureInJavaMarkerProvider.KOTLIN_SIGNATURE_ANNOTATION,
                             signatureToNameValuePairs(project, newSignature));
                 }
             }.execute();
