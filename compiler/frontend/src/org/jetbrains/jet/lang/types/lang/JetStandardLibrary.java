@@ -99,6 +99,7 @@ public class JetStandardLibrary {
     private ClassDescriptor comparableClass;
     private ClassDescriptor throwableClass;
     private ClassDescriptor enumClass;
+    private ClassDescriptor volatileClass;
 
     private JetType stringType;
 
@@ -169,6 +170,7 @@ public class JetStandardLibrary {
             this.arrayClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Array"));
             this.throwableClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Throwable"));
             this.enumClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Enum"));
+            this.volatileClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("volatile"));
 
             this.iterableClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Iterable"));
             this.iteratorClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Iterator"));
@@ -458,16 +460,20 @@ public class JetStandardLibrary {
         return primitiveJetTypeToJetArrayType.get(jetType);
     }
 
-    public static boolean isVolatile(PropertyDescriptor descriptor) {
+    public boolean isVolatile(@NotNull PropertyDescriptor descriptor) {
         List<AnnotationDescriptor> annotations = descriptor.getOriginal().getAnnotations();
         if (annotations != null) {
-            for(AnnotationDescriptor d: annotations) {
-                if (JetStandardLibraryNames.VOLATILE.is(d.getType())) {
+            for(AnnotationDescriptor annotation: annotations) {
+                if (volatileClass.equals(annotation.getType().getConstructor().getDeclarationDescriptor())) {
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    public boolean isArray(@NotNull JetType type) {
+        return getArray().equals(type.getConstructor().getDeclarationDescriptor());
     }
 
     public JetType getTuple0Type() {

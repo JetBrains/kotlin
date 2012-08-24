@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
@@ -39,7 +38,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.jet.codegen.JetTypeMapper.*;
-import static org.jetbrains.jet.lang.types.lang.JetStandardLibraryNames.*;
 
 /**
 * @author svtk
@@ -61,7 +59,7 @@ public class KotlinToJavaTypesMap {
 
     private KotlinToJavaTypesMap() {
         init();
-        initPrimitive();
+        initPrimitives();
     }
 
     @Nullable
@@ -97,8 +95,9 @@ public class KotlinToJavaTypesMap {
         asmNullableTypes.put(className.getFqName().toUnsafe(), nullableType);
     }
 
-    public void init() {
+    private void init() {
         JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
+
         register(JetStandardClasses.getNothing(), JET_NOTHING_TYPE); //todo ?????
         register(JetStandardClasses.getAny(), Object.class);
         register(standardLibrary.getNumber(), Number.class);
@@ -113,7 +112,7 @@ public class KotlinToJavaTypesMap {
         register(standardLibrary.getMutableIterator(), Iterator.class);
     }
 
-    public void initPrimitive() {
+    private void initPrimitives() {
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
             ClassName className = jvmPrimitiveType.getPrimitiveType().getClassName();
 
@@ -126,7 +125,7 @@ public class KotlinToJavaTypesMap {
         }
     }
 
-    public boolean isForceReal(JvmClassName className) {
+    public boolean isForceReal(@NotNull JvmClassName className) {
         return JvmPrimitiveType.getByWrapperClass(className) != null
                || asmTypeNames.contains(className.getFqName().getFqName());
     }

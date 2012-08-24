@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibraryNames;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import java.util.List;
@@ -56,7 +56,7 @@ public class ArrayIterator implements IntrinsicMethod {
                 .get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) call.getCalleeExpression());
         assert funDescriptor != null;
         ClassDescriptor containingDeclaration = (ClassDescriptor) funDescriptor.getContainingDeclaration().getOriginal();
-        if (JetStandardLibraryNames.ARRAY.is(containingDeclaration)) {
+        if (containingDeclaration.equals(JetStandardLibrary.getInstance().getArray())) {
             v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Ljava/lang/Object;)Ljava/util/Iterator;");
             return StackValue.onStack(JetTypeMapper.JET_ITERATOR_TYPE);
         }

@@ -103,7 +103,7 @@ public class PropertyCodegen {
             if (!propertyDescriptor.isVar()) {
                 modifiers |= Opcodes.ACC_FINAL;
             }
-            if (JetStandardLibrary.isVolatile(propertyDescriptor)) {
+            if (JetStandardLibrary.getInstance().isVolatile(propertyDescriptor)) {
                 modifiers |= Opcodes.ACC_VOLATILE;
             }
             Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);

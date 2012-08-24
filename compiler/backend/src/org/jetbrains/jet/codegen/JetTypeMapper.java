@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibraryNames;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -389,7 +388,7 @@ public class JetTypeMapper {
         }
 
         if (descriptor instanceof ClassDescriptor
-            && JetStandardLibraryNames.ARRAY.is((ClassDescriptor) descriptor)
+            && JetStandardLibrary.getInstance().isArray(jetType)
             && mapBuiltinsToJava) {
             if (jetType.getArguments().size() != 1) {
                 throw new UnsupportedOperationException("arrays must have one type argument");
@@ -970,7 +969,7 @@ public class JetTypeMapper {
     }
 
     private static boolean isGenericsArray(JetType type) {
-        return JetStandardLibraryNames.ARRAY.is(type) &&
+        return JetStandardLibrary.getInstance().isArray(type) &&
                type.getArguments().get(0).getType().getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor;
     }
 
