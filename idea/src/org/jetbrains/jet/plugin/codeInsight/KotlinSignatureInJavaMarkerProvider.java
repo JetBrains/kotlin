@@ -82,6 +82,15 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     @Nullable
     static PsiAnnotation findKotlinSignatureAnnotation(@NotNull PsiElement element) {
         if (!(element instanceof PsiMethod)) return null;
+        PsiMethod annotationOwner = getAnnotationOwner(element);
+        PsiAnnotation annotation =
+                JavaDescriptorResolver.findAnnotation(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
+        if (annotation == null) return null;
+        if (annotation.getParameterList().getAttributes().length == 0) return null;
+        return annotation;
+    }
+
+    private static PsiMethod getAnnotationOwner(PsiElement element) {
         PsiMethod annotationOwner = element.getOriginalElement() instanceof PsiMethod
                                     ? (PsiMethod) element.getOriginalElement()
                                     : (PsiMethod) element;
@@ -94,11 +103,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
                 }
             }
         }
-        PsiAnnotation annotation =
-                JavaDescriptorResolver.findAnnotation(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
-        if (annotation == null) return null;
-        if (annotation.getParameterList().getAttributes().length == 0) return null;
-        return annotation;
+        return annotationOwner;
     }
 
     @NotNull
@@ -169,7 +174,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         else {
             // TODO check if annotations are editable
 
-            new EditSignatureBalloon(element, getKotlinSignature(annotation)).show(point, editor);
+            new EditSignatureBalloon(getAnnotationOwner(element), getKotlinSignature(annotation)).show(point, editor);
         }
     }
 }
