@@ -83,7 +83,7 @@ public final class LoadDescriptorUtil {
             @NotNull Disposable disposable
     ) throws IOException {
         JetFileAndExhaust fileAndExhaust = JetFileAndExhaust.createJetFileAndAnalyze(kotlinFile, disposable);
-        GenerationState state = GenerationUtils.compileFilesGetGenerationState(fileAndExhaust.getExhaust(), Collections.singletonList(
+        GenerationState state = GenerationUtils.compileFilesGetGenerationState(fileAndExhaust.getJetFile().getProject(), fileAndExhaust.getExhaust(), Collections.singletonList(
                 fileAndExhaust.getJetFile()));
         ClassFileFactory classFileFactory = state.getFactory();
         CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, outDir);
