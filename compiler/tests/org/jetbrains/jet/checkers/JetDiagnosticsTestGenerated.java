@@ -1706,6 +1706,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/j+k/kt2394.kt");
             }
             
+            @TestMetadata("mutableIterator.kt")
+            public void testMutableIterator() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/j+k/mutableIterator.kt");
+            }
+            
             @TestMetadata("OverrideVararg.kt")
             public void testOverrideVararg() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/j+k/OverrideVararg.kt");

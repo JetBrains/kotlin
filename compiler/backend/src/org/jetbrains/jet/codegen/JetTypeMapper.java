@@ -151,6 +151,8 @@ public class JetTypeMapper {
             register(JetStandardLibraryNames.ENUM, JL_ENUM_TYPE, JL_ENUM_TYPE);
             register(JetStandardLibraryNames.ITERABLE, JL_ITERABLE_TYPE, JL_ITERABLE_TYPE);
             register(JetStandardLibraryNames.ITERATOR, JL_ITERATOR_TYPE, JL_ITERATOR_TYPE);
+            register(JetStandardLibraryNames.MUTABLE_ITERABLE, JL_ITERABLE_TYPE, JL_ITERABLE_TYPE);
+            register(JetStandardLibraryNames.MUTABLE_ITERATOR, JL_ITERATOR_TYPE, JL_ITERATOR_TYPE);
 
             for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
                 PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();

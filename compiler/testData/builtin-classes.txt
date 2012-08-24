@@ -832,6 +832,14 @@ public final class jet.LongRange : jet.Range<jet.Long>, jet.LongIterable {
         public final val EMPTY: jet.LongRange
     }
 }
+public abstract trait jet.MutableIterable</*0*/ out T : jet.Any?> : jet.Iterable<T> {
+    public abstract override /*1*/ fun iterator(): jet.MutableIterator<T>
+}
+public abstract trait jet.MutableIterator</*0*/ out T : jet.Any?> : jet.Iterator<T> {
+    public abstract override /*1*/ fun hasNext(): jet.Boolean
+    public abstract override /*1*/ fun next(): T
+    public abstract fun remove(): jet.Tuple0
+}
 public final class jet.Nothing {
     private final /*constructor*/ fun <init>(): jet.Nothing
 }

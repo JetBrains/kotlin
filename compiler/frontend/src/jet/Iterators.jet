@@ -5,6 +5,10 @@ public trait Iterator<out T> {
   public fun hasNext() : Boolean
 }
 
+public trait MutableIterator<out T> : Iterator<T> {
+  public fun remove()
+}
+
 public abstract class ByteIterator() : Iterator<Byte> {
   public abstract open fun nextByte() : Byte
 

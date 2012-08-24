@@ -41,6 +41,8 @@ public class JetStandardLibraryNames {
     public static final ClassName COMPARABLE = classIn("Comparable", 1);
     public static final ClassName ITERABLE = classIn("Iterable", 1);
     public static final ClassName ITERATOR = classIn("Iterator", 1);
+    public static final ClassName MUTABLE_ITERABLE = classIn("MutableIterable", 1);
+    public static final ClassName MUTABLE_ITERATOR = classIn("MutableIterator", 1);
     public static final ClassName NOTHING = classIn("Nothing", 0);
     public static final ClassName STRING = classIn("String", 0);
     public static final ClassName CHAR_SEQUENCE = classIn("CharSequence", 0);

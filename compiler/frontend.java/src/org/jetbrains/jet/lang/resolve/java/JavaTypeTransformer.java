@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
@@ -59,6 +60,7 @@ public class JavaTypeTransformer {
 
     private Map<String, JetType> primitiveTypesMap;
     private Map<FqName, ClassDescriptor> classDescriptorMap;
+    private Map<FqName, ClassDescriptor> classDescriptorMapForCovariantPositions;
 
 
     @NotNull
@@ -157,7 +159,7 @@ public class JavaTypeTransformer {
                     // 'L extends List<T>' in Java is a List<T> in Kotlin, not a List<T?>
                     boolean nullable = !EnumSet.of(SUPERTYPE_ARGUMENT, SUPERTYPE).contains(howThisTypeIsUsed);
 
-                    ClassDescriptor classData = getKotlinAnalog(new FqName(psiClass.getQualifiedName()));
+                    ClassDescriptor classData = getKotlinAnalog(new FqName(psiClass.getQualifiedName()), howThisTypeIsUsed);
 
                     if (classData == null) {
                         classData = resolver.resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
@@ -255,7 +257,7 @@ public class JavaTypeTransformer {
 
     public Map<FqName, ClassDescriptor> getClassDescriptorMap() {
         if (classDescriptorMap == null) {
-            classDescriptorMap = new HashMap<FqName, ClassDescriptor>();
+            classDescriptorMap = Maps.newHashMap();
             for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
                 PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
                 classDescriptorMap.put(jvmPrimitiveType.getWrapper().getFqName(), JetStandardLibrary.getInstance().getPrimitiveClassDescriptor(primitiveType));
@@ -273,8 +275,23 @@ public class JavaTypeTransformer {
         return classDescriptorMap;
     }
 
+    public Map<FqName, ClassDescriptor> getClassDescriptorMapForCovariantPositions() {
+        if (classDescriptorMapForCovariantPositions == null) {
+            classDescriptorMapForCovariantPositions = Maps.newHashMap();
+            classDescriptorMapForCovariantPositions.put(new FqName("java.lang.Iterable"), JetStandardLibrary.getInstance().getMutableIterable());
+            classDescriptorMapForCovariantPositions.put(new FqName("java.util.Iterator"), JetStandardLibrary.getInstance().getMutableIterator());
+        }
+        return classDescriptorMapForCovariantPositions;
+    }
+
     @Nullable
-    public ClassDescriptor getKotlinAnalog(@NotNull FqName fqName) {
+    public ClassDescriptor getKotlinAnalog(@NotNull FqName fqName, @NotNull TypeUsage typeUsage) {
+        if (typeUsage == MEMBER_SIGNATURE_COVARIANT) {
+            ClassDescriptor descriptor = getClassDescriptorMapForCovariantPositions().get(fqName);
+            if (descriptor != null) {
+                return descriptor;
+            }
+        }
         return getClassDescriptorMap().get(fqName);
     }
 

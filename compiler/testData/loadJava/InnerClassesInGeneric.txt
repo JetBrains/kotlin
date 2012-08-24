@@ -7,6 +7,6 @@ public open class test.InnerClassesInGeneric</*0*/ P : jet.Any?, /*1*/ Q : jet.A
     }
     public open class test.InnerClassesInGeneric.Inner2 : test.InnerClassesInGeneric.Inner {
         public final /*constructor*/ fun <init>(): test.InnerClassesInGeneric.Inner2
-        public open fun iterator(): jet.Iterator<P>?
+        public open fun iterator(): jet.MutableIterator<P>?
     }
 }

@@ -12,7 +12,7 @@ public open class test.ModalityOfFakeOverrides : java.util.AbstractList<jet.Stri
     public open override /*1*/ fun get(/*0*/ p0: jet.Int): jet.String?
     public open override /*1*/ fun indexOf(/*0*/ p0: jet.Any?): jet.Int
     public open override /*1*/ fun isEmpty(): jet.Boolean
-    public open override /*1*/ fun iterator(): jet.Iterator<jet.String>?
+    public open override /*1*/ fun iterator(): jet.MutableIterator<jet.String>?
     public open override /*1*/ fun lastIndexOf(/*0*/ p0: jet.Any?): jet.Int
     public open override /*1*/ fun listIterator(): java.util.ListIterator<jet.String>?
     public open override /*1*/ fun listIterator(/*0*/ p0: jet.Int): java.util.ListIterator<jet.String>?
