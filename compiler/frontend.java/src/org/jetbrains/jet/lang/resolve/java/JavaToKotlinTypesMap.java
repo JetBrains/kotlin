@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -48,7 +49,7 @@ public class JavaToKotlinTypesMap {
 
     private JavaToKotlinTypesMap() {
         init();
-        initPrimitive();
+        initPrimitives();
     }
 
     @Nullable
@@ -70,41 +71,43 @@ public class JavaToKotlinTypesMap {
     private void init() {
         JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
 
+        register(Object.class, JetStandardClasses.getAny());
+        register(String.class, standardLibrary.getString());
+        register(CharSequence.class, standardLibrary.getCharSequence());
+        register(Throwable.class, standardLibrary.getThrowable());
+        register(Number.class, standardLibrary.getNumber());
+        register(Comparable.class, standardLibrary.getComparable());
+        register(Enum.class, standardLibrary.getEnum());
+        register(Iterable.class, standardLibrary.getIterable());
+        register(Iterator.class, standardLibrary.getIterator());
+
+        registerCovariant(Iterable.class, standardLibrary.getMutableIterable());
+        registerCovariant(Iterator.class, standardLibrary.getMutableIterator());
+    }
+
+    private void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor) {
+        register(new FqName(javaClass.getName()), kotlinDescriptor);
+    }
+
+    private void register(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
+        classDescriptorMap.put(javaClassName, kotlinDescriptor);
+    }
+
+    private void registerCovariant(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor) {
+        registerCovariant(new FqName(javaClass.getName()), kotlinDescriptor);
+    }
+
+    private void registerCovariant(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
+        classDescriptorMapForCovariantPositions.put(javaClassName, kotlinDescriptor);
+    }
+
+    private void initPrimitives() {
+        JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
             PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
             register(jvmPrimitiveType.getWrapper().getFqName(), standardLibrary.getPrimitiveClassDescriptor(primitiveType));
         }
-        register("java.lang.Object", JetStandardClasses.getAny());
-        register("java.lang.String", standardLibrary.getString());
-        register("java.lang.CharSequence", standardLibrary.getCharSequence());
-        register("java.lang.Throwable", standardLibrary.getThrowable());
-        register("java.lang.Number", standardLibrary.getNumber());
-        register("java.lang.Comparable", standardLibrary.getComparable());
-        register("java.lang.Enum", standardLibrary.getEnum());
-        register("java.lang.Iterable", standardLibrary.getIterable());
-        register("java.util.Iterator", standardLibrary.getIterator());
 
-        registerCovariant("java.lang.Iterable", standardLibrary.getMutableIterable());
-        registerCovariant("java.util.Iterator", standardLibrary.getMutableIterator());
-    }
-
-    private void register(String className, ClassDescriptor classDescriptor) {
-        register(new FqName(className), classDescriptor);
-    }
-
-    private void register(FqName fqName, ClassDescriptor classDescriptor) {
-        classDescriptorMap.put(fqName, classDescriptor);
-    }
-
-    private void registerCovariant(String className, ClassDescriptor classDescriptor) {
-        registerCovariant(new FqName(className), classDescriptor);
-    }
-
-    private void registerCovariant(FqName fqName, ClassDescriptor classDescriptor) {
-        classDescriptorMapForCovariantPositions.put(fqName, classDescriptor);
-    }
-
-    private void initPrimitive() {
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
             PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
             primitiveTypesMap.put(jvmPrimitiveType.getName(), JetStandardLibrary.getInstance().getPrimitiveJetType(primitiveType));
