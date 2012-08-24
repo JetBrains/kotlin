@@ -117,12 +117,7 @@ public class DeclarationHintSupport extends AbstractProjectComponent {
                 lastIndicator = new ProgressIndicatorBase();
 
                 // Move long resolve operation to another thread
-                ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        searchResolvedDescriptor(jetFile, declaration, editor, lastIndicator);
-                    }
-                });
+                searchResolvedDescriptor(jetFile, declaration, editor, lastIndicator);
             }
             else {
                 // Mouse moved out of the declaration - can stop search for descriptor
@@ -187,31 +182,38 @@ public class DeclarationHintSupport extends AbstractProjectComponent {
                     | HintManager.HIDE_BY_SCROLLING | HintManager.HIDE_BY_OTHER_HINT | HintManager.HIDE_BY_MOUSEOVER, 0, false);
         }
 
-        // Executed in Thread Pool
+        // Moves execution from GUI thread to thread pool thread
         private void searchResolvedDescriptor(
                 @NotNull final JetFile jetFile,
                 @NotNull final JetNamedDeclaration declaration,
                 @NotNull final Editor editor,
                 @NotNull final ProgressIndicator indicator
         ) {
-            runWithWriteActionPriority(indicator, new Runnable() {
+            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
                 @Override
                 public void run() {
-                    DeclarationDescriptor descriptor = null;
-                    try {
-                        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile).getBindingContext();
-                        descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
-                    }
-                    finally {
-                        // Back to GUI thread for submitting result
-                        final DeclarationDescriptor finalDescriptor = descriptor;
-                        ApplicationManager.getApplication().invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                onDescriptorReady(finalDescriptor, declaration, editor, jetFile, indicator);
+                    runWithWriteActionPriority(indicator, new Runnable() {
+                        @Override
+                        public void run() {
+                            // Executed in the thread from Thread Pool
+                            DeclarationDescriptor descriptor = null;
+                            try {
+                                BindingContext bindingContext =
+                                        WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile).getBindingContext();
+                                descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
                             }
-                        });
-                    }
+                            finally {
+                                // Back to GUI thread for submitting result
+                                final DeclarationDescriptor finalDescriptor = descriptor;
+                                ApplicationManager.getApplication().invokeLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        onDescriptorReady(finalDescriptor, declaration, editor, jetFile, indicator);
+                                    }
+                                });
+                            }
+                        }
+                    });
                 }
             });
         }
@@ -219,11 +221,11 @@ public class DeclarationHintSupport extends AbstractProjectComponent {
         /**
          * Execute action with immediate stop when write lock is required.
          *
-         * @see ProgressIndicatorUtils.runWithWriteActionPriority();
-         *
          * @param indicator
          * @param action
+         * @see ProgressIndicatorUtils.runWithWriteActionPriority();
          */
+        @SuppressWarnings("JavadocReference")
         private void runWithWriteActionPriority(final ProgressIndicator indicator, final Runnable action) {
             // Executed in Thread Pool
             final ApplicationAdapter listener = new ApplicationAdapter() {
@@ -235,7 +237,7 @@ public class DeclarationHintSupport extends AbstractProjectComponent {
             final Application application = ApplicationManager.getApplication();
             try {
                 application.addApplicationListener(listener);
-                ProgressManager.getInstance().runProcess(new Runnable(){
+                ProgressManager.getInstance().runProcess(new Runnable() {
                     @Override
                     public void run() {
                         application.runReadAction(action);
