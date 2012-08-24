@@ -162,3 +162,15 @@ private class TakeWhileIterator<T>(val iterator: Iterator<T>, val predicate: (T)
         done()
     }
 }
+
+private class IteratorAdapter<T, I : java.util.Iterator<T>> (val delegate : I) : jet.Iterator<T> {
+
+    public override val hasNext: Boolean
+        get() = delegate.hasNext()
+
+    public override fun next(): T = delegate.next()
+}
+
+public inline fun <T> java.util.Iterator<T>.toJetIterator() : jet.Iterator<T> {
+    return IteratorAdapter(this)
+}
