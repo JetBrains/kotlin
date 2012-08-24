@@ -108,7 +108,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testFor() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_AND_ANNOTATIONS);
         loadFile();
 //        System.out.println(generateToText());
         final Method main = generateFunction();
@@ -117,7 +117,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testIfBlock() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_AND_ANNOTATIONS);
         loadFile();
 //        System.out.println(generateToText());
         final Method main = generateFunction();

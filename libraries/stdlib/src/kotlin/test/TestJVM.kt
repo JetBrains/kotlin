@@ -17,7 +17,7 @@ public var asserter: Asserter
         if (_asserter == null) {
             val klass = javaClass<Asserter>()
             val loader = ServiceLoader.load(klass)!!
-            for (a in loader) {
+            for (a in loader.iterator()!!) {
                 if (a != null) {
                     _asserter = a
                     break

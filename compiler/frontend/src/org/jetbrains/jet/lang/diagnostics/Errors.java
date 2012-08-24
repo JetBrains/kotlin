@@ -210,11 +210,15 @@ public interface Errors {
     DiagnosticFactory1<JetSimpleNameExpression, ClassifierDescriptor> NO_CLASS_OBJECT = DiagnosticFactory1.create(ERROR);
     SimpleDiagnosticFactory<PsiElement> NO_GENERICS_IN_SUPERTYPE_SPECIFIER = SimpleDiagnosticFactory.create(ERROR);
 
-    SimpleDiagnosticFactory<JetExpression> HAS_NEXT_MISSING = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetExpression> HAS_NEXT_FUNCTION_AMBIGUITY = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory1<JetExpression, JetType> HAS_NEXT_MISSING = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<JetExpression, JetType> HAS_NEXT_FUNCTION_AMBIGUITY = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<JetExpression, JetType> HAS_NEXT_FUNCTION_NONE_APPLICABLE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetExpression, JetType> HAS_NEXT_FUNCTION_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
-    SimpleDiagnosticFactory<JetExpression> NEXT_AMBIGUITY = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetExpression> NEXT_MISSING = SimpleDiagnosticFactory.create(ERROR);
+
+    DiagnosticFactory1<JetExpression, JetType> NEXT_AMBIGUITY = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<JetExpression, JetType> NEXT_MISSING = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<JetExpression, JetType> NEXT_NONE_APPLICABLE = DiagnosticFactory1.create(ERROR);
+
     SimpleDiagnosticFactory<JetExpression> ITERATOR_MISSING = SimpleDiagnosticFactory.create(ERROR);
     AmbiguousDescriptorDiagnosticFactory ITERATOR_AMBIGUITY = AmbiguousDescriptorDiagnosticFactory.create();
 

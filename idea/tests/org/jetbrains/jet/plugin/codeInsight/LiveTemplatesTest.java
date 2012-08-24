@@ -165,7 +165,7 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
     public void testIter() {
         start();
 
-        assertStringItems("args", "collection", "myList", "str", "stream");
+        assertStringItems("args", "myList", "str", "stream");
         type("args");
         nextTab(2);
 

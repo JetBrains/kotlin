@@ -25,8 +25,8 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
 import org.jetbrains.jet.lang.diagnostics.Errors;
-import org.jetbrains.jet.lang.diagnostics.SimpleDiagnosticFactory;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -340,12 +340,13 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             FunctionDescriptor iteratorFunction = iteratorResolvedCall.getResultingDescriptor();
             JetType iteratorType = iteratorFunction.getReturnType();
             JetType hasNextType = checkConventionForIterator(context, loopRangeExpression, iteratorType, "hasNext",
-                                                             HAS_NEXT_FUNCTION_AMBIGUITY, HAS_NEXT_MISSING,
+                                                             HAS_NEXT_FUNCTION_AMBIGUITY, HAS_NEXT_MISSING, HAS_NEXT_FUNCTION_NONE_APPLICABLE,
                                                              LOOP_RANGE_HAS_NEXT_RESOLVED_CALL);
             if (hasNextType != null && !isBoolean(hasNextType)) {
                 context.trace.report(HAS_NEXT_FUNCTION_TYPE_MISMATCH.on(loopRangeExpression, hasNextType));
             }
-            return checkConventionForIterator(context, loopRangeExpression, iteratorType, "next", NEXT_AMBIGUITY, NEXT_MISSING,
+            return checkConventionForIterator(context, loopRangeExpression, iteratorType, "next",
+                                              NEXT_AMBIGUITY, NEXT_MISSING, NEXT_NONE_APPLICABLE,
                                               LOOP_RANGE_NEXT_RESOLVED_CALL);
         }
         else {
@@ -370,19 +371,24 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             @NotNull JetExpression loopRangeExpression,
             @NotNull JetType iteratorType,
             @NotNull String name,
-            @NotNull SimpleDiagnosticFactory<JetExpression> ambiguity,
-            @NotNull SimpleDiagnosticFactory<JetExpression> missing,
+            @NotNull DiagnosticFactory1<JetExpression, JetType> ambiguity,
+            @NotNull DiagnosticFactory1<JetExpression, JetType> missing,
+            @NotNull DiagnosticFactory1<JetExpression, JetType> noneApplicable,
             @NotNull WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> resolvedCallKey
     ) {
         OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = resolveFakeCall(
                 new TransientReceiver(iteratorType), context, Name.identifier(name));
         if (nextResolutionResults.isAmbiguity()) {
-            context.trace.report(ambiguity.on(loopRangeExpression));
+            context.trace.report(ambiguity.on(loopRangeExpression, iteratorType));
         }
         else if (nextResolutionResults.isNothing()) {
-            context.trace.report(missing.on(loopRangeExpression));
+            context.trace.report(missing.on(loopRangeExpression, iteratorType));
+        }
+        else if (!nextResolutionResults.isSuccess()) {
+            context.trace.report(noneApplicable.on(loopRangeExpression, iteratorType));
         }
         else {
+            assert nextResolutionResults.isSuccess();
             ResolvedCall<FunctionDescriptor> resolvedCall = nextResolutionResults.getResultingCall();
             context.trace.record(resolvedCallKey, loopRangeExpression, resolvedCall);
             return resolvedCall.getResultingDescriptor().getReturnType();

@@ -226,12 +226,16 @@ public class DefaultErrorMessages {
         MAP.put(NO_CLASS_OBJECT, "Please specify constructor invocation; classifier ''{0}'' does not have a class object", NAME);
         MAP.put(NO_GENERICS_IN_SUPERTYPE_SPECIFIER, "Generic arguments of the base type must be specified");
 
-        MAP.put(HAS_NEXT_MISSING, "Loop range must have an 'iterator().hasNext()' function or an 'iterator().hasNext' property");
-        MAP.put(HAS_NEXT_FUNCTION_AMBIGUITY, "Function 'iterator().hasNext()' is ambiguous for this expression");
+        MAP.put(HAS_NEXT_MISSING, "hasNext() cannot be called on iterator() of type ''{0}''", RENDER_TYPE);
+        MAP.put(HAS_NEXT_FUNCTION_AMBIGUITY, "hasNext() is ambiguous for iterator() of type ''{0}''", RENDER_TYPE);
+        MAP.put(HAS_NEXT_FUNCTION_NONE_APPLICABLE, "None of the hasNext() functions is applicable for iterator() of type ''{0}''", RENDER_TYPE);
         MAP.put(HAS_NEXT_FUNCTION_TYPE_MISMATCH, "The ''iterator().hasNext()'' function of the loop range must return jet.Boolean, but returns {0}",
                 RENDER_TYPE);
-        MAP.put(NEXT_AMBIGUITY, "Function 'iterator().next()' is ambiguous for this expression");
-        MAP.put(NEXT_MISSING, "Loop range must have an 'iterator().next()' function");
+
+        MAP.put(NEXT_MISSING, "next() cannot be called on iterator() of type ''{0}''", RENDER_TYPE);
+        MAP.put(NEXT_AMBIGUITY, "next() is ambiguous for iterator() of type ''{0}''", RENDER_TYPE);
+        MAP.put(NEXT_NONE_APPLICABLE, "None of the next() functions is applicable for iterator() of type ''{0}''", RENDER_TYPE);
+
         MAP.put(ITERATOR_MISSING, "For-loop range must have an iterator() method");
         MAP.put(ITERATOR_AMBIGUITY, "Method ''iterator()'' is ambiguous for this expression: {0}", AMBIGUOUS_CALLS);
 
