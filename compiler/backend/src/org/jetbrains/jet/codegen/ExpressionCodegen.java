@@ -417,7 +417,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         assert expressionType != null;
         Type loopRangeType = asmType(expressionType);
         if (loopRangeType.getSort() == Type.ARRAY) {
-            generateForLoop(expression.getBody(), new ForInArrayLoopGenerator(expression));
+            generateForLoop(new ForInArrayLoopGenerator(expression));
             return StackValue.none();
         }
         else {
@@ -427,33 +427,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 return StackValue.none();
             }
 
-            generateForInIterable(expression);
+            generateForLoop(new IteratorForLoopGenerator(expression));
             return StackValue.none();
         }
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private void generateForInIterable(JetForExpression expression) {
-        generateForLoop(expression.getBody(), new IteratorForLoopGenerator(expression));
     }
 
     private OwnerKind contextKind() {
         return context.getContextKind();
     }
 
-    private interface ForLoopGenerator {
-        void beforeLoop();
-
-        void conditionAndJump(@NotNull Label loopExit);
-
-        void beforeBody();
-
-        void afterBody();
-
-        void afterLoop();
-    }
-
-    private void generateForLoop(JetExpression body, ForLoopGenerator generator) {
+    private void generateForLoop(AbstractForLoopGenerator generator) {
         Label loopExit = new Label();
         Label loopEntry = new Label();
 
@@ -464,7 +447,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         generator.beforeBody();
         blockStackElements.push(new LoopBlockStackElement(loopExit, loopEntry, null));
-        gen(body, Type.VOID_TYPE);
+        generator.body();
         blockStackElements.pop();
         generator.afterBody();
 
@@ -474,7 +457,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         generator.afterLoop();
     }
 
-    private abstract class AbstractForLoopGenerator implements ForLoopGenerator {
+    private abstract class AbstractForLoopGenerator {
 
         // for (e : E in c) {...}
         protected final JetForExpression forExpression;
@@ -484,9 +467,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         protected final JetType elementType;
 
-        private AbstractForLoopGenerator(
-                @NotNull JetForExpression forExpression
-        ) {
+        private AbstractForLoopGenerator(@NotNull JetForExpression forExpression) {
             this.forExpression = forExpression;
             this.elementType = getElementType(forExpression);
         }
@@ -502,7 +483,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return nextCall.getResultingDescriptor().getReturnType();
         }
 
-        @Override
+        public abstract void beforeLoop();
+
+        public abstract void conditionAndJump(@NotNull Label loopExit);
+
         public void beforeBody() {
             v.mark(bodyStart);
             JetParameter loopParameter = forExpression.getLoopParameter();
@@ -573,7 +557,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        @Override
+        public void body() {
+            gen(forExpression.getBody(), Type.VOID_TYPE);
+        }
+
         public void afterBody() {
             v.mark(bodyEnd);
             // e goes out of scope
@@ -581,6 +568,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 task.run();
             }
         }
+
+        public abstract void afterLoop();
     }
 
     private class IteratorForLoopGenerator extends AbstractForLoopGenerator {
