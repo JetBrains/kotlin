@@ -703,8 +703,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
         else {
             TypeVariableResolver typeVariableResolverForSupertypes = TypeVariableResolvers.typeVariableResolverFromTypeParameters(typeParameters, classDescriptor, context);
-            transformSupertypeList(result, psiClass.getPsiClass().getExtendsListTypes(), typeVariableResolverForSupertypes, classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS);
-            transformSupertypeList(result, psiClass.getPsiClass().getImplementsListTypes(), typeVariableResolverForSupertypes, classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS);
+            transformSupertypeList(result, psiClass.getPsiClass().getExtendsListTypes(), typeVariableResolverForSupertypes);
+            transformSupertypeList(result, psiClass.getPsiClass().getImplementsListTypes(), typeVariableResolverForSupertypes);
         }
         
         for (JetType supertype : result) {
@@ -733,16 +733,13 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return result;
     }
 
-    private void transformSupertypeList(List<JetType> result, PsiClassType[] extendsListTypes, TypeVariableResolver typeVariableResolver, boolean annotation) {
+    private void transformSupertypeList(List<JetType> result, PsiClassType[] extendsListTypes, TypeVariableResolver typeVariableResolver) {
         for (PsiClassType type : extendsListTypes) {
             PsiClass resolved = type.resolve();
             if (resolved != null && JvmStdlibNames.JET_OBJECT.getFqName().equalsTo(resolved.getQualifiedName())) {
                 continue;
             }
-            if (resolved != null && annotation && JdkNames.JLA_ANNOTATION.getFqName().equalsTo(resolved.getQualifiedName())) {
-                continue;
-            }
-            
+
             JetType transform = semanticServices.getTypeTransformer().transformToType(type, JavaTypeTransformer.TypeUsage.SUPERTYPE, typeVariableResolver);
             if (ErrorUtils.isErrorType(transform)) {
                 continue;

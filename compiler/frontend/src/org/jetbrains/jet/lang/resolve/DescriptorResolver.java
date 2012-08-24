@@ -170,6 +170,9 @@ public class DescriptorResolver {
                 return ErrorUtils.createErrorType("Supertype not specified");
             }
         }
+        else if (jetClass instanceof JetClass && ((JetClass) jetClass).isAnnotation()) {
+            return JetStandardLibrary.getInstance().getAnnotationType();
+        }
         return JetStandardClasses.getAnyType();
     }
 

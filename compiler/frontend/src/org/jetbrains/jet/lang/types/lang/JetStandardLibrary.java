@@ -98,10 +98,11 @@ public class JetStandardLibrary {
     private ClassDescriptor comparableClass;
     private ClassDescriptor throwableClass;
     private ClassDescriptor enumClass;
+    private ClassDescriptor annotationClass;
     private ClassDescriptor volatileClass;
 
     private JetType stringType;
-
+    private JetType annotationType;
     private JetType tuple0Type;
 
     private EnumMap<PrimitiveType, ClassDescriptor> primitiveTypeToClass;
@@ -179,6 +180,9 @@ public class JetStandardLibrary {
 
             this.stringType = new JetTypeImpl(getString());
             this.tuple0Type = new JetTypeImpl(JetStandardClasses.getTuple(0));
+
+            this.annotationClass = getStdClassByName("Annotation");
+            this.annotationType = new JetTypeImpl(annotationClass);
 
             primitiveTypeToClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
             primitiveTypeToJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
@@ -343,6 +347,18 @@ public class JetStandardLibrary {
     public ClassDescriptor getEnum() {
         initStdClasses();
         return enumClass;
+    }
+
+    @NotNull
+    public ClassDescriptor getAnnotation() {
+        initStdClasses();
+        return annotationClass;
+    }
+
+    @NotNull
+    public JetType getAnnotationType() {
+        initStdClasses();
+        return annotationType;
     }
 
     @NotNull

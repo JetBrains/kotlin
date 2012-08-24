@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
+import java.lang.annotation.Annotation;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -65,6 +66,7 @@ public class JavaToKotlinTypesMap {
         register(Number.class, standardLibrary.getNumber());
         register(Comparable.class, standardLibrary.getComparable());
         register(Enum.class, standardLibrary.getEnum());
+        register(Annotation.class, standardLibrary.getAnnotation());
         register(Iterable.class, standardLibrary.getIterable());
         register(Iterator.class, standardLibrary.getIterator());
 

@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.jet.lang.types.ref.ClassName;
 
+import java.lang.annotation.Annotation;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -70,6 +71,7 @@ public class KotlinToJavaTypesMap {
         register(standardLibrary.getCharSequence(), CharSequence.class);
         register(standardLibrary.getComparable(), Comparable.class);
         register(standardLibrary.getEnum(), Enum.class);
+        register(standardLibrary.getAnnotation(), Annotation.class);
         register(standardLibrary.getIterable(), Iterable.class);
         register(standardLibrary.getIterator(), Iterator.class);
         register(standardLibrary.getMutableIterable(), Iterable.class);

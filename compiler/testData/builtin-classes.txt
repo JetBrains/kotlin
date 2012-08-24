@@ -1,5 +1,7 @@
 namespace jet
 
+public abstract trait jet.Annotation : jet.Any {
+}
 public open class jet.Any {
     public final /*constructor*/ fun <init>(): jet.Any
 }
@@ -1292,10 +1294,10 @@ public final class jet.Tuple9</*0*/ out T1 : jet.Any?, /*1*/ out T2 : jet.Any?, 
     public final val _8: T8
     public final val _9: T9
 }
-public final annotation class jet.atomic : jet.Any {
+public final annotation class jet.atomic : jet.Annotation {
     public final /*constructor*/ fun <init>(): jet.atomic
 }
-public final annotation class jet.volatile : jet.Any {
+public final annotation class jet.volatile : jet.Annotation {
     public final /*constructor*/ fun <init>(): jet.volatile
 }
 public final fun </*0*/ T : jet.Any?>arrayOfNulls(/*0*/ size: jet.Int): jet.Array<T?>

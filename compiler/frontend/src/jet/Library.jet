@@ -1,7 +1,9 @@
 package jet
 
-public annotation class volatile
-public annotation class atomic
+public trait Annotation
+
+public annotation class volatile : Annotation
+public annotation class atomic : Annotation
 
 public fun <R> synchronized(lock: Any, block : () -> R) : R
 
