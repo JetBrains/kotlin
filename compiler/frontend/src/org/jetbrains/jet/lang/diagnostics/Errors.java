@@ -212,8 +212,6 @@ public interface Errors {
 
     SimpleDiagnosticFactory<JetExpression> HAS_NEXT_MISSING = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetExpression> HAS_NEXT_FUNCTION_AMBIGUITY = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetExpression> HAS_NEXT_MUST_BE_READABLE = SimpleDiagnosticFactory.create(ERROR);
-    DiagnosticFactory1<JetExpression, JetType> HAS_NEXT_PROPERTY_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetExpression, JetType> HAS_NEXT_FUNCTION_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
     SimpleDiagnosticFactory<JetExpression> NEXT_AMBIGUITY = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetExpression> NEXT_MISSING = SimpleDiagnosticFactory.create(ERROR);
