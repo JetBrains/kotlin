@@ -40,9 +40,9 @@ public class EnumName implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+        receiver.put(JetTypeMapper.OBJECT_TYPE, v);
         v.invokevirtual("java/lang/Enum", "name", "()Ljava/lang/String;");
-        StackValue.onStack(JetTypeMapper.JL_STRING_TYPE).put(expectedType, v);
+        StackValue.onStack(JetTypeMapper.JAVA_STRING_TYPE).put(expectedType, v);
         return StackValue.onStack(expectedType);
     }
 }

@@ -43,7 +43,7 @@ public class StringGetChar implements IntrinsicMethod {
             @NotNull GenerationState state
     ) {
         if (receiver != null) {
-            receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+            receiver.put(JetTypeMapper.OBJECT_TYPE, v);
         }
         if (arguments != null) {
             codegen.gen(arguments.get(0)).put(Type.INT_TYPE, v);

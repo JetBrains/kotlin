@@ -78,14 +78,14 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
         for (int i = 0; i < paramCount; ++i) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
-            signatureWriter.writeAsmType(JetTypeMapper.TYPE_OBJECT, true);
+            signatureWriter.writeAsmType(JetTypeMapper.OBJECT_TYPE, true);
             signatureWriter.writeParameterTypeEnd();
         }
 
         signatureWriter.writeParametersEnd();
 
         signatureWriter.writeReturnType();
-        signatureWriter.writeAsmType(JetTypeMapper.TYPE_OBJECT, true);
+        signatureWriter.writeAsmType(JetTypeMapper.OBJECT_TYPE, true);
         signatureWriter.writeReturnTypeEnd();
 
         return signatureWriter.makeJvmMethodSignature("invoke");
@@ -242,24 +242,24 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
             final ReceiverDescriptor receiver = funDescriptor.getReceiverParameter();
             int count = 1;
             if (receiver.exists()) {
-                StackValue.local(count, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
-                StackValue.onStack(JetTypeMapper.TYPE_OBJECT)
+                StackValue.local(count, JetTypeMapper.OBJECT_TYPE).put(JetTypeMapper.OBJECT_TYPE, iv);
+                StackValue.onStack(JetTypeMapper.OBJECT_TYPE)
                         .upcast(typeMapper.mapType(receiver.getType(), MapTypeMode.VALUE), iv);
                 count++;
             }
 
             final List<ValueParameterDescriptor> params = funDescriptor.getValueParameters();
             for (ValueParameterDescriptor param : params) {
-                StackValue.local(count, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
-                StackValue.onStack(JetTypeMapper.TYPE_OBJECT)
+                StackValue.local(count, JetTypeMapper.OBJECT_TYPE).put(JetTypeMapper.OBJECT_TYPE, iv);
+                StackValue.onStack(JetTypeMapper.OBJECT_TYPE)
                         .upcast(typeMapper.mapType(param.getType(), MapTypeMode.VALUE), iv);
                 count++;
             }
 
             iv.invokevirtual(className, "invoke", delegate.getDescriptor());
-            StackValue.onStack(delegate.getReturnType()).put(JetTypeMapper.TYPE_OBJECT, iv);
+            StackValue.onStack(delegate.getReturnType()).put(JetTypeMapper.OBJECT_TYPE, iv);
 
-            iv.areturn(JetTypeMapper.TYPE_OBJECT);
+            iv.areturn(JetTypeMapper.OBJECT_TYPE);
 
             FunctionCodegen.endVisit(mv, "bridge", fun);
         }
@@ -285,7 +285,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
             int k = 1;
             for (int i = 0; i != argTypes.length; ++i) {
-                StackValue.local(0, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
+                StackValue.local(0, JetTypeMapper.OBJECT_TYPE).put(JetTypeMapper.OBJECT_TYPE, iv);
                 final Pair<String, Type> nameAndType = args.get(i);
                 final Type type = nameAndType.second;
                 StackValue.local(k, type).put(type, iv);

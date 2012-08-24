@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.jet.codegen.JetTypeMapper.TYPE_OBJECT;
+import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
 
 /*
  * @author max
@@ -169,7 +169,7 @@ public abstract class CodegenContext {
         FrameMap frameMap = new FrameMap();
 
         if (getContextKind() != OwnerKind.NAMESPACE) {
-            frameMap.enterTemp(TYPE_OBJECT);  // 0 slot for this
+            frameMap.enterTemp(OBJECT_TYPE);  // 0 slot for this
         }
 
         CallableDescriptor receiverDescriptor = getReceiverDescriptor();

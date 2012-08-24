@@ -35,7 +35,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
-import static org.jetbrains.jet.codegen.JetTypeMapper.TYPE_OBJECT;
+import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
 
 /**
  * @author yole
@@ -267,15 +267,15 @@ public abstract class StackValue {
                 v.iconst(0);
             }
         }
-        else if (toType.equals(JetTypeMapper.TUPLE0_TYPE) && !fromType.equals(JetTypeMapper.TUPLE0_TYPE)) {
+        else if (toType.equals(JetTypeMapper.JET_TUPLE0_TYPE) && !fromType.equals(JetTypeMapper.JET_TUPLE0_TYPE)) {
             pop(fromType, v);
             putTuple0Instance(v);
         }
-        else if (toType.getSort() == Type.OBJECT && fromType.equals(TYPE_OBJECT) || toType.getSort() == Type.ARRAY) {
+        else if (toType.getSort() == Type.OBJECT && fromType.equals(OBJECT_TYPE) || toType.getSort() == Type.ARRAY) {
             v.checkcast(toType);
         }
         else if (toType.getSort() == Type.OBJECT) {
-            if (fromType.getSort() == Type.OBJECT && !toType.equals(TYPE_OBJECT)) {
+            if (fromType.getSort() == Type.OBJECT && !toType.equals(OBJECT_TYPE)) {
                 v.checkcast(toType);
             }
             else {
@@ -283,7 +283,7 @@ public abstract class StackValue {
             }
         }
         else if (fromType.getSort() == Type.OBJECT && toType.getSort() <= Type.DOUBLE) {
-            if (fromType.equals(TYPE_OBJECT)) {
+            if (fromType.equals(OBJECT_TYPE)) {
                 if (toType.getSort() == Type.BOOLEAN) {
                     v.checkcast(JvmPrimitiveType.BOOLEAN.getWrapper().getAsmType());
                 }
@@ -291,7 +291,7 @@ public abstract class StackValue {
                     v.checkcast(JvmPrimitiveType.CHAR.getWrapper().getAsmType());
                 }
                 else {
-                    v.checkcast(JetTypeMapper.JL_NUMBER_TYPE);
+                    v.checkcast(JetTypeMapper.JAVA_NUMBER_TYPE);
                 }
             }
             unbox(toType, v);
@@ -477,11 +477,11 @@ public abstract class StackValue {
             if (type == Type.VOID_TYPE) {
                 return;
             }
-            if (type.equals(JetTypeMapper.TUPLE0_TYPE)) {
+            if (type.equals(JetTypeMapper.JET_TUPLE0_TYPE)) {
                 putTuple0Instance(v);
                 return;
             }
-            if (type != Type.BOOLEAN_TYPE && !type.equals(TYPE_OBJECT) && !type.equals(JetTypeMapper.JL_BOOLEAN_TYPE)) {
+            if (type != Type.BOOLEAN_TYPE && !type.equals(OBJECT_TYPE) && !type.equals(JetTypeMapper.JAVA_BOOLEAN_TYPE)) {
                 throw new UnsupportedOperationException("don't know how to put a compare as a non-boolean type " + type);
             }
             putAsBoolean(v);
@@ -570,7 +570,7 @@ public abstract class StackValue {
                 myOperand.put(type, v);    // the operand will remove itself from the stack if needed
                 return;
             }
-            if (type != Type.BOOLEAN_TYPE && !type.equals(TYPE_OBJECT) && !type.equals(JetTypeMapper.JL_BOOLEAN_TYPE)) {
+            if (type != Type.BOOLEAN_TYPE && !type.equals(OBJECT_TYPE) && !type.equals(JetTypeMapper.JAVA_BOOLEAN_TYPE)) {
                 throw new UnsupportedOperationException("don't know how to put a compare as a non-boolean type");
             }
             putAsBoolean(v);
@@ -718,10 +718,10 @@ public abstract class StackValue {
                 int firstTypeParamIndex = -1;
                 for (int i = typeParameters.size() - 1; i >= 0; --i) {
                     if (typeParameters.get(i).isReified()) {
-                        frame.enterTemp(TYPE_OBJECT);
+                        frame.enterTemp(OBJECT_TYPE);
                         lastIndex++;
                         size++;
-                        v.store(firstTypeParamIndex = lastIndex - 1, TYPE_OBJECT);
+                        v.store(firstTypeParamIndex = lastIndex - 1, OBJECT_TYPE);
                     }
                 }
 
@@ -739,10 +739,10 @@ public abstract class StackValue {
                 ReceiverDescriptor thisObject = resolvedGetCall.getThisObject();
                 int thisIndex = -1;
                 if (thisObject.exists()) {
-                    frame.enterTemp(TYPE_OBJECT);
+                    frame.enterTemp(OBJECT_TYPE);
                     lastIndex++;
                     size++;
-                    v.store((thisIndex = lastIndex) - 1, TYPE_OBJECT);
+                    v.store((thisIndex = lastIndex) - 1, OBJECT_TYPE);
                 }
 
                 // for setter
@@ -756,7 +756,7 @@ public abstract class StackValue {
                     }
                     else {
                         realReceiverIndex = thisIndex;
-                        realReceiverType = TYPE_OBJECT;
+                        realReceiverType = OBJECT_TYPE;
                     }
                 }
                 else {
@@ -771,7 +771,7 @@ public abstract class StackValue {
 
                 if (resolvedSetCall.getThisObject().exists()) {
                     if (resolvedSetCall.getReceiverArgument().exists()) {
-                        codegen.generateFromResolvedCall(resolvedSetCall.getThisObject(), TYPE_OBJECT);
+                        codegen.generateFromResolvedCall(resolvedSetCall.getThisObject(), OBJECT_TYPE);
                     }
                     v.load(realReceiverIndex - realReceiverType.getSize(), realReceiverType);
                 }
@@ -794,7 +794,7 @@ public abstract class StackValue {
 
                 // restoring original
                 if (thisIndex != -1) {
-                    v.load(thisIndex - 1, TYPE_OBJECT);
+                    v.load(thisIndex - 1, OBJECT_TYPE);
                 }
 
                 if (receiverIndex != -1) {
@@ -806,7 +806,7 @@ public abstract class StackValue {
                     index = firstTypeParamIndex;
                     for (int i = 0; i != typeParameters.size(); ++i) {
                         if (typeParameters.get(i).isReified()) {
-                            v.load(index - 1, TYPE_OBJECT);
+                            v.load(index - 1, OBJECT_TYPE);
                             index--;
                         }
                     }
@@ -821,7 +821,7 @@ public abstract class StackValue {
                 }
 
                 for (int i = 0; i < size; i++) {
-                    frame.leaveTemp(TYPE_OBJECT);
+                    frame.leaveTemp(OBJECT_TYPE);
                 }
             }
         }
@@ -1022,7 +1022,7 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            v.load(index, TYPE_OBJECT);
+            v.load(index, OBJECT_TYPE);
             Type refType = refType(this.type);
             Type sharedType = sharedTypeForType(this.type);
             v.visitFieldInsn(Opcodes.GETFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
@@ -1030,13 +1030,13 @@ public abstract class StackValue {
             coerce(this.type, type, v);
             if (isReleaseOnPut) {
                 v.aconst(null);
-                v.store(index, TYPE_OBJECT);
+                v.store(index, OBJECT_TYPE);
             }
         }
 
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
-            v.load(index, TYPE_OBJECT);
+            v.load(index, OBJECT_TYPE);
             v.swap();
             Type refType = refType(this.type);
             Type sharedType = sharedTypeForType(this.type);
@@ -1048,31 +1048,31 @@ public abstract class StackValue {
         switch (type.getSort()) {
             case Type.OBJECT:
             case Type.ARRAY:
-                return JetTypeMapper.TYPE_SHARED_VAR;
+                return JetTypeMapper.JET_SHARED_VAR_TYPE;
 
             case Type.BYTE:
-                return JetTypeMapper.TYPE_SHARED_BYTE;
+                return JetTypeMapper.JET_SHARED_BYTE_TYPE;
 
             case Type.SHORT:
-                return JetTypeMapper.TYPE_SHARED_SHORT;
+                return JetTypeMapper.JET_SHARED_SHORT_TYPE;
 
             case Type.CHAR:
-                return JetTypeMapper.TYPE_SHARED_CHAR;
+                return JetTypeMapper.JET_SHARED_CHAR_TYPE;
 
             case Type.INT:
-                return JetTypeMapper.TYPE_SHARED_INT;
+                return JetTypeMapper.JET_SHARED_INT_TYPE;
 
             case Type.LONG:
-                return JetTypeMapper.TYPE_SHARED_LONG;
+                return JetTypeMapper.JET_SHARED_LONG_TYPE;
 
             case Type.BOOLEAN:
-                return JetTypeMapper.TYPE_SHARED_BOOLEAN;
+                return JetTypeMapper.JET_SHARED_BOOLEAN_TYPE;
 
             case Type.FLOAT:
-                return JetTypeMapper.TYPE_SHARED_FLOAT;
+                return JetTypeMapper.JET_SHARED_FLOAT_TYPE;
 
             case Type.DOUBLE:
-                return JetTypeMapper.TYPE_SHARED_DOUBLE;
+                return JetTypeMapper.JET_SHARED_DOUBLE_TYPE;
 
             default:
                 throw new UnsupportedOperationException();
@@ -1081,7 +1081,7 @@ public abstract class StackValue {
 
     public static Type refType(Type type) {
         if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
-            return TYPE_OBJECT;
+            return OBJECT_TYPE;
         }
 
         return type;
@@ -1141,7 +1141,7 @@ public abstract class StackValue {
 
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
-            prefix.put(TYPE_OBJECT, v);
+            prefix.put(OBJECT_TYPE, v);
             suffix.store(topOfStackType, v);
         }
     }
@@ -1151,7 +1151,7 @@ public abstract class StackValue {
         private final ClassDescriptor descriptor;
 
         public ThisOuter(ExpressionCodegen codegen, ClassDescriptor descriptor) {
-            super(TYPE_OBJECT);
+            super(OBJECT_TYPE);
             this.codegen = codegen;
             this.descriptor = descriptor;
         }

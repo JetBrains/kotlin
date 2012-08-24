@@ -39,9 +39,9 @@ public class ArrayIndices implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+        receiver.put(JetTypeMapper.OBJECT_TYPE, v);
         v.arraylength();
         v.invokestatic("jet/IntRange", "count", "(I)Ljet/IntRange;");
-        return StackValue.onStack(JetTypeMapper.TYPE_INT_RANGE);
+        return StackValue.onStack(JetTypeMapper.JET_INT_RANGE_TYPE);
     }
 }

@@ -48,7 +48,7 @@ public class Concat implements IntrinsicMethod {
             codegen.invokeAppend(arguments.get(1));
         }
         else {                                    // LHS.plus(RHS)
-            receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+            receiver.put(JetTypeMapper.OBJECT_TYPE, v);
             codegen.generateStringBuilderConstructor();
             v.swap();                                                              // StringBuilder LHS
             codegen.invokeAppendMethod(expectedType);  // StringBuilder(LHS)
@@ -56,7 +56,7 @@ public class Concat implements IntrinsicMethod {
         }
 
         v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
-        StackValue.onStack(JetTypeMapper.JL_STRING_TYPE).put(expectedType, v);
+        StackValue.onStack(JetTypeMapper.JAVA_STRING_TYPE).put(expectedType, v);
         return StackValue.onStack(expectedType);
     }
 }

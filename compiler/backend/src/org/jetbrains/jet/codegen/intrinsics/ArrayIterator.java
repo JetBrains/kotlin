@@ -50,7 +50,7 @@ public class ArrayIterator implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+        receiver.put(JetTypeMapper.OBJECT_TYPE, v);
         JetCallExpression call = (JetCallExpression) element;
         FunctionDescriptor funDescriptor = (FunctionDescriptor) codegen.getBindingContext()
                 .get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) call.getCalleeExpression());
@@ -58,7 +58,7 @@ public class ArrayIterator implements IntrinsicMethod {
         ClassDescriptor containingDeclaration = (ClassDescriptor) funDescriptor.getContainingDeclaration().getOriginal();
         if (JetStandardLibraryNames.ARRAY.is(containingDeclaration)) {
             v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Ljava/lang/Object;)Ljava/util/Iterator;");
-            return StackValue.onStack(JetTypeMapper.TYPE_ITERATOR);
+            return StackValue.onStack(JetTypeMapper.JET_ITERATOR_TYPE);
         }
         else {
             for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {

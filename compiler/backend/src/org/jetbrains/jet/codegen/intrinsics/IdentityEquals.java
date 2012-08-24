@@ -46,15 +46,15 @@ public class IdentityEquals implements IntrinsicMethod {
             @NotNull GenerationState state
     ) {
         if (element instanceof JetCallExpression) {
-            receiver.put(JetTypeMapper.TYPE_OBJECT, v);
-            codegen.gen(arguments.get(0)).put(JetTypeMapper.TYPE_OBJECT, v);
+            receiver.put(JetTypeMapper.OBJECT_TYPE, v);
+            codegen.gen(arguments.get(0)).put(JetTypeMapper.OBJECT_TYPE, v);
         }
         else {
             assert element instanceof JetBinaryExpression;
             JetBinaryExpression e = (JetBinaryExpression) element;
-            codegen.gen(e.getLeft()).put(JetTypeMapper.TYPE_OBJECT, v);
-            codegen.gen(e.getRight()).put(JetTypeMapper.TYPE_OBJECT, v);
+            codegen.gen(e.getLeft()).put(JetTypeMapper.OBJECT_TYPE, v);
+            codegen.gen(e.getRight()).put(JetTypeMapper.OBJECT_TYPE, v);
         }
-        return StackValue.cmp(JetTokens.EQEQEQ, JetTypeMapper.TYPE_OBJECT);
+        return StackValue.cmp(JetTokens.EQEQEQ, JetTypeMapper.OBJECT_TYPE);
     }
 }

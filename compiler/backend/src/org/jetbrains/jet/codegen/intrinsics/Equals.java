@@ -50,7 +50,7 @@ public class Equals implements IntrinsicMethod {
         boolean leftNullable = true;
         JetExpression rightExpr;
         if (element instanceof JetCallExpression) {
-            receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+            receiver.put(JetTypeMapper.OBJECT_TYPE, v);
             JetCallExpression jetCallExpression = (JetCallExpression) element;
             JetExpression calleeExpression = jetCallExpression.getCalleeExpression();
             if (calleeExpression != null) {
@@ -66,16 +66,16 @@ public class Equals implements IntrinsicMethod {
             JetType leftType = codegen.getBindingContext().get(BindingContext.EXPRESSION_TYPE, leftExpr);
             assert leftType != null;
             leftNullable = leftType.isNullable();
-            codegen.gen(leftExpr).put(JetTypeMapper.TYPE_OBJECT, v);
+            codegen.gen(leftExpr).put(JetTypeMapper.OBJECT_TYPE, v);
             rightExpr = arguments.get(1);
         }
 
         JetType rightType = codegen.getBindingContext().get(BindingContext.EXPRESSION_TYPE, rightExpr);
-        codegen.gen(rightExpr).put(JetTypeMapper.TYPE_OBJECT, v);
+        codegen.gen(rightExpr).put(JetTypeMapper.OBJECT_TYPE, v);
 
         assert rightType != null;
         return codegen
-                .generateEqualsForExpressionsOnStack(JetTokens.EQEQ, JetTypeMapper.TYPE_OBJECT, JetTypeMapper.TYPE_OBJECT, leftNullable,
+                .generateEqualsForExpressionsOnStack(JetTokens.EQEQ, JetTypeMapper.OBJECT_TYPE, JetTypeMapper.OBJECT_TYPE, leftNullable,
                                                      rightType.isNullable());
     }
 }

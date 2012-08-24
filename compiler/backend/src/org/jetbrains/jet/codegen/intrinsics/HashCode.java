@@ -44,7 +44,7 @@ public class HashCode implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+        receiver.put(JetTypeMapper.OBJECT_TYPE, v);
         v.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "hashCode", "()I");
         return StackValue.onStack(Type.INT_TYPE);
     }

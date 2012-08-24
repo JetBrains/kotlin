@@ -40,10 +40,10 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibraryNames;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
@@ -53,36 +53,35 @@ import static org.jetbrains.asm4.Opcodes.*;
  * @author alex.tkachman
  */
 public class JetTypeMapper {
-    public static final Type TYPE_OBJECT = Type.getObjectType("java/lang/Object");
-    public static final Type TYPE_THROWABLE = Type.getObjectType("java/lang/Throwable");
-    public static final Type TYPE_NOTHING = Type.getObjectType("jet/Nothing");
-    public static final Type JL_NUMBER_TYPE = Type.getObjectType("java/lang/Number");
-    public static final Type JL_STRING_BUILDER = Type.getObjectType("java/lang/StringBuilder");
-    public static final Type JL_STRING_TYPE = Type.getObjectType("java/lang/String");
-    public static final Type JL_ENUM_TYPE = Type.getObjectType("java/lang/Enum");
-    public static final Type JL_CHAR_SEQUENCE_TYPE = Type.getObjectType("java/lang/CharSequence");
-    public static final Type JL_COMPARABLE_TYPE = Type.getObjectType("java/lang/Comparable");
-    public static final Type JL_ITERABLE_TYPE = Type.getObjectType("java/lang/Iterable");
-    public static final Type JL_ITERATOR_TYPE = Type.getObjectType("java/util/Iterator");
-    public static final Type JL_CLASS_TYPE = Type.getObjectType("java/lang/Class");
-    public static final Type JL_BOOLEAN_TYPE = Type.getObjectType("java/lang/Boolean");
+    public static final Type OBJECT_TYPE = Type.getType(Object.class);
+    public static final Type JAVA_NUMBER_TYPE = Type.getType(Number.class);
+    public static final Type JAVA_STRING_BUILDER_TYPE = Type.getType(StringBuilder.class);
+    public static final Type JAVA_STRING_TYPE = Type.getType(String.class);
+    public static final Type JAVA_ENUM_TYPE = Type.getType(Enum.class);
+    public static final Type JAVA_CHAR_SEQUENCE_TYPE = Type.getType(CharSequence.class);
+    public static final Type JAVA_COMPARABLE_TYPE = Type.getType(Comparable.class);
+    public static final Type JAVA_THROWABLE_TYPE = Type.getType(Throwable.class);
+    public static final Type JAVA_ITERABLE_TYPE = Type.getType(Iterable.class);
+    public static final Type JAVA_ITERATOR_TYPE = Type.getType(Iterator.class);
+    public static final Type JAVA_CLASS_TYPE = Type.getType(Class.class);
+    public static final Type JAVA_BOOLEAN_TYPE = Type.getType(Boolean.class);
+    public static final Type JAVA_ARRAY_GENERIC_TYPE = Type.getType(Object[].class);
 
-    public static final Type ARRAY_GENERIC_TYPE = Type.getType(Object[].class);
-    public static final Type TUPLE0_TYPE = Type.getObjectType("jet/Tuple0");
-
-    public static final Type TYPE_ITERATOR = Type.getObjectType("jet/Iterator");
-    public static final Type TYPE_INT_RANGE = Type.getObjectType("jet/IntRange");
-    public static final Type TYPE_SHARED_VAR = Type.getObjectType("jet/runtime/SharedVar$Object");
-    public static final Type TYPE_SHARED_INT = Type.getObjectType("jet/runtime/SharedVar$Int");
-    public static final Type TYPE_SHARED_DOUBLE = Type.getObjectType("jet/runtime/SharedVar$Double");
-    public static final Type TYPE_SHARED_FLOAT = Type.getObjectType("jet/runtime/SharedVar$Float");
-    public static final Type TYPE_SHARED_BYTE = Type.getObjectType("jet/runtime/SharedVar$Byte");
-    public static final Type TYPE_SHARED_SHORT = Type.getObjectType("jet/runtime/SharedVar$Short");
-    public static final Type TYPE_SHARED_CHAR = Type.getObjectType("jet/runtime/SharedVar$Char");
-    public static final Type TYPE_SHARED_LONG = Type.getObjectType("jet/runtime/SharedVar$Long");
-    public static final Type TYPE_SHARED_BOOLEAN = Type.getObjectType("jet/runtime/SharedVar$Boolean");
-    public static final Type TYPE_FUNCTION0 = Type.getObjectType("jet/Function0");
-    public static final Type TYPE_FUNCTION1 = Type.getObjectType("jet/Function1");
+    public static final Type JET_NOTHING_TYPE = Type.getObjectType("jet/Nothing");
+    public static final Type JET_TUPLE0_TYPE = Type.getObjectType("jet/Tuple0");
+    public static final Type JET_FUNCTION0_TYPE = Type.getObjectType("jet/Function0");
+    public static final Type JET_FUNCTION1_TYPE = Type.getObjectType("jet/Function1");
+    public static final Type JET_ITERATOR_TYPE = Type.getObjectType("jet/Iterator");
+    public static final Type JET_INT_RANGE_TYPE = Type.getObjectType("jet/IntRange");
+    public static final Type JET_SHARED_VAR_TYPE = Type.getObjectType("jet/runtime/SharedVar$Object");
+    public static final Type JET_SHARED_INT_TYPE = Type.getObjectType("jet/runtime/SharedVar$Int");
+    public static final Type JET_SHARED_DOUBLE_TYPE = Type.getObjectType("jet/runtime/SharedVar$Double");
+    public static final Type JET_SHARED_FLOAT_TYPE = Type.getObjectType("jet/runtime/SharedVar$Float");
+    public static final Type JET_SHARED_BYTE_TYPE = Type.getObjectType("jet/runtime/SharedVar$Byte");
+    public static final Type JET_SHARED_SHORT_TYPE = Type.getObjectType("jet/runtime/SharedVar$Short");
+    public static final Type JET_SHARED_CHAR_TYPE = Type.getObjectType("jet/runtime/SharedVar$Char");
+    public static final Type JET_SHARED_LONG_TYPE = Type.getObjectType("jet/runtime/SharedVar$Long");
+    public static final Type JET_SHARED_BOOLEAN_TYPE = Type.getObjectType("jet/runtime/SharedVar$Boolean");
 
     public BindingContext bindingContext;
     private ClosureAnnotator closureAnnotator;
@@ -254,7 +253,7 @@ public class JetTypeMapper {
             if (signatureVisitor != null) {
                 signatureVisitor.writeNothing(true);
             }
-            return TYPE_OBJECT;
+            return OBJECT_TYPE;
         }
         return mapType(jetType, signatureVisitor, MapTypeMode.VALUE);
     }
@@ -413,7 +412,7 @@ public class JetTypeMapper {
                 r = Type.getType("[" + boxType(mapType(memberType, kind)).getDescriptor());
             }
             else {
-                r = ARRAY_GENERIC_TYPE;
+                r = JAVA_ARRAY_GENERIC_TYPE;
             }
             checkValidType(r);
             return r;

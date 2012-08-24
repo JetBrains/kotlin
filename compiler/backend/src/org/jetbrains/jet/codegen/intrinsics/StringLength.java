@@ -42,7 +42,7 @@ public class StringLength implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+        receiver.put(JetTypeMapper.OBJECT_TYPE, v);
         v.invokeinterface("java/lang/CharSequence", "length", "()I");
         return StackValue.onStack(Type.INT_TYPE);
     }

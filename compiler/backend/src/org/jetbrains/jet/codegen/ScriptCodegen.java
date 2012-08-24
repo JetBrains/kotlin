@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import javax.inject.Inject;
 import java.util.List;
 
-import static org.jetbrains.jet.codegen.JetTypeMapper.TYPE_OBJECT;
+import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
 
 /**
  * @author Stepan Koltsov
@@ -159,7 +159,7 @@ public class ScriptCodegen {
         FrameMap frameMap = context.prepareFrame(jetTypeMapper);
 
         for (ScriptDescriptor importedScript : importedScripts) {
-            frameMap.enter(importedScript, TYPE_OBJECT);
+            frameMap.enter(importedScript, OBJECT_TYPE);
         }
 
         Type[] argTypes = jvmSignature.getAsmMethod().getArgumentTypes();

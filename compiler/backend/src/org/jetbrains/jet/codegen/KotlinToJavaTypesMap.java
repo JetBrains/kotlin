@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
-import org.jetbrains.jet.lang.resolve.name.FqNameBase;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
@@ -83,7 +82,7 @@ public class KotlinToJavaTypesMap {
     }
 
     public void init() {
-        register(NOTHING, TYPE_NOTHING);
+        register(NOTHING, JET_NOTHING_TYPE);
 
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
             ClassName className = jvmPrimitiveType.getPrimitiveType().getClassName();
@@ -92,17 +91,17 @@ public class KotlinToJavaTypesMap {
             registerNullable(className, jvmPrimitiveType.getWrapper().getAsmType());
         }
 
-        register(ANY, TYPE_OBJECT);
-        register(NUMBER, JL_NUMBER_TYPE);
-        register(STRING, JL_STRING_TYPE);
-        register(CHAR_SEQUENCE, JL_CHAR_SEQUENCE_TYPE);
-        register(THROWABLE, TYPE_THROWABLE);
-        register(COMPARABLE, JL_COMPARABLE_TYPE);
-        register(ENUM, JL_ENUM_TYPE);
-        register(ITERABLE, JL_ITERABLE_TYPE);
-        register(ITERATOR, JL_ITERATOR_TYPE);
-        register(MUTABLE_ITERABLE, JL_ITERABLE_TYPE);
-        register(MUTABLE_ITERATOR, JL_ITERATOR_TYPE);
+        register(ANY, OBJECT_TYPE);
+        register(NUMBER, JAVA_NUMBER_TYPE);
+        register(STRING, JAVA_STRING_TYPE);
+        register(CHAR_SEQUENCE, JAVA_CHAR_SEQUENCE_TYPE);
+        register(THROWABLE, JAVA_THROWABLE_TYPE);
+        register(COMPARABLE, JAVA_COMPARABLE_TYPE);
+        register(ENUM, JAVA_ENUM_TYPE);
+        register(ITERABLE, JAVA_ITERABLE_TYPE);
+        register(ITERATOR, JAVA_ITERATOR_TYPE);
+        register(MUTABLE_ITERABLE, JAVA_ITERABLE_TYPE);
+        register(MUTABLE_ITERATOR, JAVA_ITERATOR_TYPE);
 
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
             PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();

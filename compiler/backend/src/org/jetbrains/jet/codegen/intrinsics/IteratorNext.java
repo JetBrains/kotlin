@@ -70,7 +70,7 @@ public class IteratorNext implements IntrinsicMethod {
         else {
             throw new UnsupportedOperationException();
         }
-        receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+        receiver.put(JetTypeMapper.OBJECT_TYPE, v);
         v.invokevirtual("jet/" + name + "Iterator", "next" + name, "()" + expectedType.getDescriptor());
         return StackValue.onStack(expectedType);
     }

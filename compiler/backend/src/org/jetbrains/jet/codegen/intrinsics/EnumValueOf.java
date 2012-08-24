@@ -50,7 +50,7 @@ public class EnumValueOf implements IntrinsicMethod {
         Type type = state.getInjector().getJetTypeMapper().mapType(
                 returnType, MapTypeMode.VALUE);
         assert arguments != null;
-        codegen.gen(arguments.get(0), JetTypeMapper.JL_STRING_TYPE);
+        codegen.gen(arguments.get(0), JetTypeMapper.JAVA_STRING_TYPE);
         v.invokestatic(type.getInternalName(), "valueOf", "(Ljava/lang/String;)" + type.getDescriptor());
         StackValue.onStack(type).put(expectedType, v);
         return StackValue.onStack(expectedType);

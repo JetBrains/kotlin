@@ -42,8 +42,8 @@ public class ToString implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+        receiver.put(JetTypeMapper.OBJECT_TYPE, v);
         v.invokestatic("java/lang/String", "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;");
-        return StackValue.onStack(JetTypeMapper.JL_STRING_TYPE);
+        return StackValue.onStack(JetTypeMapper.JAVA_STRING_TYPE);
     }
 }

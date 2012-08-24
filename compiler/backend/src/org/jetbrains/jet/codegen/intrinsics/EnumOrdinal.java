@@ -40,7 +40,7 @@ public class EnumOrdinal implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+        receiver.put(JetTypeMapper.OBJECT_TYPE, v);
         v.invokevirtual("java/lang/Enum", "ordinal", "()I");
         StackValue.onStack(Type.INT_TYPE).put(expectedType, v);
         return StackValue.onStack(expectedType);

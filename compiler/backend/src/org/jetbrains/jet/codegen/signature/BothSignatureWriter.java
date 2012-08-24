@@ -196,7 +196,7 @@ public class BothSignatureWriter {
         jetSignatureWriter.visitClassType("jet/Nothing", nullable, false);
         jetSignatureWriter.visitEnd();
         if (nullable) {
-            writeAsmType0(JetTypeMapper.TYPE_OBJECT);
+            writeAsmType0(JetTypeMapper.OBJECT_TYPE);
         }
         else {
             writeAsmType0(Type.VOID_TYPE);

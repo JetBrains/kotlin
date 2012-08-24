@@ -53,6 +53,6 @@ public class JavaClassProperty implements IntrinsicMethod {
         else {
             v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;");
         }
-        return StackValue.onStack(JetTypeMapper.JL_CLASS_TYPE);
+        return StackValue.onStack(JetTypeMapper.JAVA_CLASS_TYPE);
     }
 }

@@ -42,7 +42,7 @@ public class ArraySet implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+        receiver.put(JetTypeMapper.OBJECT_TYPE, v);
         Type type = JetTypeMapper.correctElementType(receiver.type);
 
         codegen.gen(arguments.get(0), Type.INT_TYPE);

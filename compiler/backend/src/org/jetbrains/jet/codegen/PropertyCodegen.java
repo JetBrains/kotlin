@@ -215,7 +215,7 @@ public class PropertyCodegen {
                 else {
                     InstructionAdapter iv = new InstructionAdapter(mv);
                     if (kind != OwnerKind.NAMESPACE) {
-                        iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                        iv.load(0, JetTypeMapper.OBJECT_TYPE);
                     }
                     final Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
 
@@ -225,7 +225,7 @@ public class PropertyCodegen {
 
                     if (kind instanceof OwnerKind.DelegateKind) {
                         OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
-                        dk.getDelegate().put(JetTypeMapper.TYPE_OBJECT, iv);
+                        dk.getDelegate().put(JetTypeMapper.OBJECT_TYPE, iv);
                         iv.invokeinterface(dk.getOwnerClass(), getterName, descriptor);
                     }
                     else {
@@ -320,7 +320,7 @@ public class PropertyCodegen {
                     final Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
                     int paramCode = 0;
                     if (kind != OwnerKind.NAMESPACE) {
-                        iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                        iv.load(0, JetTypeMapper.OBJECT_TYPE);
                         paramCode = 1;
                     }
 
@@ -330,8 +330,8 @@ public class PropertyCodegen {
 
                     if (kind instanceof OwnerKind.DelegateKind) {
                         OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
-                        iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                        dk.getDelegate().put(JetTypeMapper.TYPE_OBJECT, iv);
+                        iv.load(0, JetTypeMapper.OBJECT_TYPE);
+                        dk.getDelegate().put(JetTypeMapper.OBJECT_TYPE, iv);
 
                         iv.load(paramCode, type);
                         iv.invokeinterface(dk.getOwnerClass(), setterName(propertyDescriptor.getName()), descriptor);

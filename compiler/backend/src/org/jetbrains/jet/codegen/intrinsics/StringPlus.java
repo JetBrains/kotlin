@@ -43,14 +43,14 @@ public class StringPlus implements IntrinsicMethod {
             @NotNull GenerationState state
     ) {
         if (receiver == null || receiver == StackValue.none()) {
-            codegen.gen(arguments.get(0)).put(JetTypeMapper.JL_STRING_TYPE, v);
-            codegen.gen(arguments.get(1)).put(JetTypeMapper.TYPE_OBJECT, v);
+            codegen.gen(arguments.get(0)).put(JetTypeMapper.JAVA_STRING_TYPE, v);
+            codegen.gen(arguments.get(1)).put(JetTypeMapper.OBJECT_TYPE, v);
         }
         else {
-            receiver.put(JetTypeMapper.JL_STRING_TYPE, v);
-            codegen.gen(arguments.get(0)).put(JetTypeMapper.TYPE_OBJECT, v);
+            receiver.put(JetTypeMapper.JAVA_STRING_TYPE, v);
+            codegen.gen(arguments.get(0)).put(JetTypeMapper.OBJECT_TYPE, v);
         }
         v.invokestatic("jet/runtime/Intrinsics", "stringPlus", "(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;");
-        return StackValue.onStack(JetTypeMapper.JL_STRING_TYPE);
+        return StackValue.onStack(JetTypeMapper.JAVA_STRING_TYPE);
     }
 }

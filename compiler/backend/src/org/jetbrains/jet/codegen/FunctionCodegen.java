@@ -245,8 +245,8 @@ public class FunctionCodegen {
                 else if (kind instanceof OwnerKind.DelegateKind) {
                     OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
                     InstructionAdapter iv = new InstructionAdapter(mv);
-                    iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                    dk.getDelegate().put(JetTypeMapper.TYPE_OBJECT, iv);
+                    iv.load(0, JetTypeMapper.OBJECT_TYPE);
+                    dk.getDelegate().put(JetTypeMapper.OBJECT_TYPE, iv);
                     for (int i = 0; i < argTypes.length; i++) {
                         Type argType = argTypes[i];
                         iv.load(i + 1, argType);
@@ -495,7 +495,7 @@ public class FunctionCodegen {
         FrameMap frameMap = owner.prepareFrame(state.getInjector().getJetTypeMapper());
 
         if (kind instanceof OwnerKind.StaticDelegateKind) {
-            frameMap.leaveTemp(JetTypeMapper.TYPE_OBJECT);
+            frameMap.leaveTemp(JetTypeMapper.OBJECT_TYPE);
         }
 
         ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), owner, state);
@@ -645,15 +645,15 @@ public class FunctionCodegen {
             Type[] argTypes = overridden.getArgumentTypes();
             Type[] originalArgTypes = jvmSignature.getArgumentTypes();
             InstructionAdapter iv = new InstructionAdapter(mv);
-            iv.load(0, JetTypeMapper.TYPE_OBJECT);
+            iv.load(0, JetTypeMapper.OBJECT_TYPE);
             for (int i = 0, reg = 1; i < argTypes.length; i++) {
                 Type argType = argTypes[i];
                 iv.load(reg, argType);
                 if (argType.getSort() == Type.OBJECT) {
-                    StackValue.onStack(JetTypeMapper.TYPE_OBJECT).put(originalArgTypes[i], iv);
+                    StackValue.onStack(JetTypeMapper.OBJECT_TYPE).put(originalArgTypes[i], iv);
                 }
                 else if (argType.getSort() == Type.ARRAY) {
-                    StackValue.onStack(JetTypeMapper.ARRAY_GENERIC_TYPE).put(originalArgTypes[i], iv);
+                    StackValue.onStack(JetTypeMapper.JAVA_ARRAY_GENERIC_TYPE).put(originalArgTypes[i], iv);
                 }
 
                 //noinspection AssignmentToForLoopParameter
@@ -699,22 +699,22 @@ public class FunctionCodegen {
 
             Type[] argTypes = method.getArgumentTypes();
             InstructionAdapter iv = new InstructionAdapter(mv);
-            iv.load(0, JetTypeMapper.TYPE_OBJECT);
+            iv.load(0, JetTypeMapper.OBJECT_TYPE);
             for (int i = 0, reg = 1; i < argTypes.length; i++) {
                 Type argType = argTypes[i];
                 iv.load(reg, argType);
                 if (argType.getSort() == Type.OBJECT) {
-                    StackValue.onStack(JetTypeMapper.TYPE_OBJECT).put(method.getArgumentTypes()[i], iv);
+                    StackValue.onStack(JetTypeMapper.OBJECT_TYPE).put(method.getArgumentTypes()[i], iv);
                 }
                 else if (argType.getSort() == Type.ARRAY) {
-                    StackValue.onStack(JetTypeMapper.ARRAY_GENERIC_TYPE).put(method.getArgumentTypes()[i], iv);
+                    StackValue.onStack(JetTypeMapper.JAVA_ARRAY_GENERIC_TYPE).put(method.getArgumentTypes()[i], iv);
                 }
 
                 //noinspection AssignmentToForLoopParameter
                 reg += argType.getSize();
             }
 
-            iv.load(0, JetTypeMapper.TYPE_OBJECT);
+            iv.load(0, JetTypeMapper.OBJECT_TYPE);
             field.put(field.type, iv);
             ClassDescriptor classDescriptor = (ClassDescriptor) overriddenDescriptor.getContainingDeclaration();
             String internalName =
