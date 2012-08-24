@@ -67,7 +67,7 @@ public inline fun <in T> Iterable<T>.plus(elements: Iterable<T>): List<T> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt requireNoNulls
  */
-public inline fun <in T> Iterable<T?>?.requireNoNulls() : List<T> {
+public inline fun <in T> Iterable<T?>.requireNoNulls() : List<T> {
     val list = ArrayList<T>()
     for (element in this) {
         if (element == null) {

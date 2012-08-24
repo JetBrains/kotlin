@@ -332,18 +332,6 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         Call iteratorCall = calls.getFirst();
         OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = calls.getSecond();
 
-        // We allow the loop range to be null (nothing happens), so we make the receiver type non-null
-        if (!iteratorResolutionResults.isSuccess()) {
-            ExpressionReceiver nonNullReceiver = new ExpressionReceiver(loopRange.getExpression(), TypeUtils.makeNotNullable(loopRange.getType()));
-            Pair<Call,OverloadResolutionResults<FunctionDescriptor>> callsNonNull = makeAndResolveFakeCall(nonNullReceiver, context, iterator);
-            Call iteratorCallWithNonNullReceiver = callsNonNull.getFirst();
-            OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResultsWithNonNullReceiver = callsNonNull.getSecond();
-            if (iteratorResolutionResultsWithNonNullReceiver.isSuccess()) {
-                iteratorResolutionResults = iteratorResolutionResultsWithNonNullReceiver;
-                iteratorCall = iteratorCallWithNonNullReceiver;
-            }
-        }
-        
         if (iteratorResolutionResults.isSuccess()) {
             ResolvedCall<FunctionDescriptor> iteratorResolvedCall = iteratorResolutionResults.getResultingCall();
             context.trace.record(LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRangeExpression, iteratorResolvedCall);

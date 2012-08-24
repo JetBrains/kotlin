@@ -76,7 +76,7 @@ public inline fun  DoubleArray.plus(elements: DoubleArray): List<Double> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt requireNoNulls
  */
-public inline fun  DoubleArray?.requireNoNulls() : List<Double> {
+public inline fun  DoubleArray.requireNoNulls() : List<Double> {
     val list = ArrayList<Double>()
     for (element in this) {
         if (element == null) {

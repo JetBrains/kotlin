@@ -14,7 +14,7 @@ import java.net.URL
 public fun File.recurse(block: (File) -> Unit): Unit {
     block(this)
     if (this.isDirectory()) {
-        for (child in this.listFiles()) {
+        for (child in this.listFiles()!!) {
             if (child != null) {
                 child.recurse(block)
             }

@@ -874,6 +874,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve", new File("compiler/testData/diagnostics/tests/controlStructures"), "kt", false);
             }
             
+            @TestMetadata("forLoopWithNullableRange.kt")
+            public void testForLoopWithNullableRange() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlStructures/forLoopWithNullableRange.kt");
+            }
+            
             @TestMetadata("ForWithoutBraces.kt")
             public void testForWithoutBraces() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlStructures/ForWithoutBraces.kt");

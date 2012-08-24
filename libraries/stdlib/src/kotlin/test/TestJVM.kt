@@ -16,7 +16,7 @@ public var asserter: Asserter
     get() {
         if (_asserter == null) {
             val klass = javaClass<Asserter>()
-            val loader = ServiceLoader.load(klass)
+            val loader = ServiceLoader.load(klass)!!
             for (a in loader) {
                 if (a != null) {
                     _asserter = a

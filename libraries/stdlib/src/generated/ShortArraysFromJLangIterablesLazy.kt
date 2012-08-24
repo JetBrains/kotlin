@@ -76,7 +76,7 @@ public inline fun  ShortArray.plus(elements: ShortArray): List<Short> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt requireNoNulls
  */
-public inline fun  ShortArray?.requireNoNulls() : List<Short> {
+public inline fun  ShortArray.requireNoNulls() : List<Short> {
     val list = ArrayList<Short>()
     for (element in this) {
         if (element == null) {

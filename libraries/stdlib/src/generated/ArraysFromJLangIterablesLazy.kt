@@ -76,7 +76,7 @@ public inline fun <in T> Array<T>.plus(elements: Array<T>): List<T> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt requireNoNulls
  */
-public inline fun <in T> Array<T?>?.requireNoNulls() : List<T> {
+public inline fun <in T> Array<T?>.requireNoNulls() : List<T> {
     val list = ArrayList<T>()
     for (element in this) {
         if (element == null) {

@@ -76,7 +76,7 @@ public inline fun  ByteArray.plus(elements: ByteArray): List<Byte> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt requireNoNulls
  */
-public inline fun  ByteArray?.requireNoNulls() : List<Byte> {
+public inline fun  ByteArray.requireNoNulls() : List<Byte> {
     val list = ArrayList<Byte>()
     for (element in this) {
         if (element == null) {

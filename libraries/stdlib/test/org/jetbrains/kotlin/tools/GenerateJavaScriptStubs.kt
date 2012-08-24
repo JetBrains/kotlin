@@ -128,7 +128,7 @@ import js.noImpl
                     }
                 }
                 
-                for (pk in properties.values()) {
+                for (pk in properties.values()!!) {
                     // some properties might not have a getter defined
                     // so lets ignore those
 

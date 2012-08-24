@@ -17,7 +17,7 @@ fun <T> fff(x: T) : T { return x }
 
 fun <T> id(value: T): T = value
 
-fun foreach(array: Array<Int>?, action: (Int)-> Unit) {
+fun foreach(array: Array<Int>, action: (Int)-> Unit) {
     for (el in array) {
        action(el) //exception through compilation (see below)
     }

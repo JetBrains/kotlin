@@ -76,7 +76,7 @@ public inline fun  LongArray.plus(elements: LongArray): List<Long> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt requireNoNulls
  */
-public inline fun  LongArray?.requireNoNulls() : List<Long> {
+public inline fun  LongArray.requireNoNulls() : List<Long> {
     val list = ArrayList<Long>()
     for (element in this) {
         if (element == null) {

@@ -76,7 +76,7 @@ public inline fun  CharArray.plus(elements: CharArray): List<Char> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt requireNoNulls
  */
-public inline fun  CharArray?.requireNoNulls() : List<Char> {
+public inline fun  CharArray.requireNoNulls() : List<Char> {
     val list = ArrayList<Char>()
     for (element in this) {
         if (element == null) {

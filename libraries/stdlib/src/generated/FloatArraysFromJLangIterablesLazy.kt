@@ -76,7 +76,7 @@ public inline fun  FloatArray.plus(elements: FloatArray): List<Float> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt requireNoNulls
  */
-public inline fun  FloatArray?.requireNoNulls() : List<Float> {
+public inline fun  FloatArray.requireNoNulls() : List<Float> {
     val list = ArrayList<Float>()
     for (element in this) {
         if (element == null) {

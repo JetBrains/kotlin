@@ -62,7 +62,7 @@ public abstract class ChangeSupport {
             }
         }
         if (allListeners != null) {
-            for (listener in allListeners) {
+            for (listener in allListeners!!) {
                 listener.onPropertyChange(event)
             }
         }
