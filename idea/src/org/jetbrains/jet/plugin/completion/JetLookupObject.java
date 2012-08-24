@@ -36,8 +36,8 @@ public final class JetLookupObject {
     @Nullable
     private final DeclarationDescriptor descriptor;
 
-    @Nullable
-    private ResolveSession resolveSession;
+    @NotNull
+    private final ResolveSession resolveSession;
 
     @Nullable
     private final PsiElement psiElement;
@@ -99,7 +99,7 @@ public final class JetLookupObject {
         }
 
         if (psiElement != null && psiElement.equals(other.psiElement)) {
-            // Warning here - why descriptors are not same???
+            LOG.warn("Different descriptors for same psi elements");
             return true;
         }
 
