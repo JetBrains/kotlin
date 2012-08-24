@@ -100,8 +100,6 @@ public class InjectorForJvmCodegen {
         this.closureAnnotator.setBindingContext(bindingContext);
         this.closureAnnotator.setFiles(listOfJetFile);
 
-        jetTypeMapper.init();
-
         intrinsics.init();
 
     }

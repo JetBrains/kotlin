@@ -56,8 +56,6 @@ public class InjectorForJetTypeMapper {
         closureAnnotator.setBindingContext(bindingContext);
         closureAnnotator.setFiles(listOfJetFile);
 
-        jetTypeMapper.init();
-
     }
 
     @PreDestroy

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.google.common.collect.Maps;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,22 +33,18 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibraryNames;
-import org.jetbrains.jet.lang.types.lang.PrimitiveType;
-import org.jetbrains.jet.lang.types.ref.ClassName;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.jetbrains.asm4.Opcodes.*;
 
@@ -64,11 +59,11 @@ public class JetTypeMapper {
     public static final Type JL_NUMBER_TYPE = Type.getObjectType("java/lang/Number");
     public static final Type JL_STRING_BUILDER = Type.getObjectType("java/lang/StringBuilder");
     public static final Type JL_STRING_TYPE = Type.getObjectType("java/lang/String");
-    private static final Type JL_ENUM_TYPE = Type.getObjectType("java/lang/Enum");
-    private static final Type JL_CHAR_SEQUENCE_TYPE = Type.getObjectType("java/lang/CharSequence");
-    private static final Type JL_COMPARABLE_TYPE = Type.getObjectType("java/lang/Comparable");
-    private static final Type JL_ITERABLE_TYPE = Type.getObjectType("java/lang/Iterable");
-    private static final Type JL_ITERATOR_TYPE = Type.getObjectType("java/util/Iterator");
+    public static final Type JL_ENUM_TYPE = Type.getObjectType("java/lang/Enum");
+    public static final Type JL_CHAR_SEQUENCE_TYPE = Type.getObjectType("java/lang/CharSequence");
+    public static final Type JL_COMPARABLE_TYPE = Type.getObjectType("java/lang/Comparable");
+    public static final Type JL_ITERABLE_TYPE = Type.getObjectType("java/lang/Iterable");
+    public static final Type JL_ITERATOR_TYPE = Type.getObjectType("java/util/Iterator");
     public static final Type JL_CLASS_TYPE = Type.getObjectType("java/lang/Class");
     public static final Type JL_BOOLEAN_TYPE = Type.getObjectType("java/lang/Boolean");
 
@@ -89,84 +84,10 @@ public class JetTypeMapper {
     public static final Type TYPE_FUNCTION0 = Type.getObjectType("jet/Function0");
     public static final Type TYPE_FUNCTION1 = Type.getObjectType("jet/Function1");
 
-    public static class SpecialTypes {
-        private static final class SpecialTypeKey {
-            @NotNull
-            private final FqNameUnsafe className;
-            private final boolean nullable;
-
-            private SpecialTypeKey(@NotNull FqNameUnsafe className, boolean nullable) {
-                this.className = className;
-                this.nullable = nullable;
-            }
-
-            @Override
-            public boolean equals(Object o) {
-                if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
-
-                SpecialTypeKey that = (SpecialTypeKey) o;
-
-                if (nullable != that.nullable) return false;
-                if (!className.equals(that.className)) return false;
-
-                return true;
-            }
-
-            @Override
-            public int hashCode() {
-                int result = className.hashCode();
-                result = 31 * result + (nullable ? 1 : 0);
-                return result;
-            }
-        }
-
-        private final Map<SpecialTypeKey, Type> asmTypes = Maps.newHashMap();
-
-        @Nullable
-        public Type get(@NotNull JetType type) {
-            ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
-            assert classifier != null;
-            return asmTypes.get(new SpecialTypeKey(DescriptorUtils.getFQName(classifier), type.isNullable()));
-        }
-
-        private void register(@NotNull ClassName className, @NotNull Type nonNullType, @NotNull Type nullableType) {
-            asmTypes.put(new SpecialTypeKey(className.getFqName().toUnsafe(), true), nullableType);
-            asmTypes.put(new SpecialTypeKey(className.getFqName().toUnsafe(), false), nonNullType);
-        }
-
-        public void init() {
-            register(JetStandardLibraryNames.NOTHING, TYPE_NOTHING, TYPE_NOTHING);
-
-            for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
-                PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-                register(primitiveType.getClassName(), jvmPrimitiveType.getAsmType(), jvmPrimitiveType.getWrapper().getAsmType());
-            }
-
-            register(JetStandardLibraryNames.NUMBER, JL_NUMBER_TYPE, JL_NUMBER_TYPE);
-            register(JetStandardLibraryNames.STRING, JL_STRING_TYPE, JL_STRING_TYPE);
-            register(JetStandardLibraryNames.CHAR_SEQUENCE, JL_CHAR_SEQUENCE_TYPE, JL_CHAR_SEQUENCE_TYPE);
-            register(JetStandardLibraryNames.THROWABLE, TYPE_THROWABLE, TYPE_THROWABLE);
-            register(JetStandardLibraryNames.COMPARABLE, JL_COMPARABLE_TYPE, JL_COMPARABLE_TYPE);
-            register(JetStandardLibraryNames.ENUM, JL_ENUM_TYPE, JL_ENUM_TYPE);
-            register(JetStandardLibraryNames.ITERABLE, JL_ITERABLE_TYPE, JL_ITERABLE_TYPE);
-            register(JetStandardLibraryNames.ITERATOR, JL_ITERATOR_TYPE, JL_ITERATOR_TYPE);
-            register(JetStandardLibraryNames.MUTABLE_ITERABLE, JL_ITERABLE_TYPE, JL_ITERABLE_TYPE);
-            register(JetStandardLibraryNames.MUTABLE_ITERATOR, JL_ITERATOR_TYPE, JL_ITERATOR_TYPE);
-
-            for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
-                PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-                register(primitiveType.getArrayClassName(), jvmPrimitiveType.getAsmArrayType(), jvmPrimitiveType.getAsmArrayType());
-            }
-        }
-    }
-
-
     public BindingContext bindingContext;
     private ClosureAnnotator closureAnnotator;
     private boolean mapBuiltinsToJava;
     private ClassBuilderMode classBuilderMode;
-    private final SpecialTypes specialTypes = new SpecialTypes();
 
     @Inject
     public void setBindingContext(BindingContext bindingContext) {
@@ -186,11 +107,6 @@ public class JetTypeMapper {
     @Inject
     public void setClassBuilderMode(ClassBuilderMode classBuilderMode) {
         this.classBuilderMode = classBuilderMode;
-    }
-
-    @PostConstruct
-    public void init() {
-        specialTypes.init();
     }
 
     public boolean hasThis0(ClassDescriptor classDescriptor) {
@@ -429,7 +345,7 @@ public class JetTypeMapper {
 
         if (mapBuiltinsToJava) {
             if (classifier instanceof ClassDescriptor) {
-                known = specialTypes.get(jetType);
+                known = KotlinToJavaTypesMap.getInstance().getJavaAnalog(jetType);
             }
         }
 
@@ -514,7 +430,7 @@ public class JetTypeMapper {
         if (descriptor instanceof ClassDescriptor) {
             JvmClassName name = getJvmClassName((ClassDescriptor) descriptor);
             Type asmType = Type.getObjectType(name.getInternalName() + (kind == MapTypeMode.TRAIT_IMPL ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
-            boolean forceReal = isForceReal(name);
+            boolean forceReal = KotlinToJavaTypesMap.isForceReal(name);
 
             writeGenericType(jetType, signatureVisitor, asmType, forceReal);
 
@@ -1065,16 +981,6 @@ public class JetTypeMapper {
             }
             return defaultFlags;
         }
-    }
-
-    private static boolean isForceReal(JvmClassName className) {
-        return JvmPrimitiveType.getByWrapperClass(className) != null
-               || className.getFqName().getFqName().equals("java.lang.String")
-               || className.getFqName().getFqName().equals("java.lang.CharSequence")
-               || className.getFqName().getFqName().equals("java.lang.Object")
-               || className.getFqName().getFqName().equals("java.lang.Number")
-               || className.getFqName().getFqName().equals("java.lang.Enum")
-               || className.getFqName().getFqName().equals("java.lang.Comparable");
     }
 
     private static boolean isGenericsArray(JetType type) {
