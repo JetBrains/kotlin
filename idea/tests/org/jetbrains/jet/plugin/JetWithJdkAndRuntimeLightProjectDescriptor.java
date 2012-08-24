@@ -19,13 +19,11 @@ package org.jetbrains.jet.plugin;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
-import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
-import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
@@ -47,7 +45,7 @@ public class JetWithJdkAndRuntimeLightProjectDescriptor implements LightProjectD
 
     @Override
     public Sdk getSdk() {
-        return JavaSdk.getInstance().createJdk("JDK", SystemUtils.getJavaHome().getAbsolutePath());
+        return PluginTestCaseBase.jdkFromIdeaHome();
     }
 
     @Override
