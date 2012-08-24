@@ -57,12 +57,7 @@ public class JetTypeMapper {
     public static final Type JAVA_NUMBER_TYPE = Type.getType(Number.class);
     public static final Type JAVA_STRING_BUILDER_TYPE = Type.getType(StringBuilder.class);
     public static final Type JAVA_STRING_TYPE = Type.getType(String.class);
-    public static final Type JAVA_ENUM_TYPE = Type.getType(Enum.class);
-    public static final Type JAVA_CHAR_SEQUENCE_TYPE = Type.getType(CharSequence.class);
-    public static final Type JAVA_COMPARABLE_TYPE = Type.getType(Comparable.class);
     public static final Type JAVA_THROWABLE_TYPE = Type.getType(Throwable.class);
-    public static final Type JAVA_ITERABLE_TYPE = Type.getType(Iterable.class);
-    public static final Type JAVA_ITERATOR_TYPE = Type.getType(Iterator.class);
     public static final Type JAVA_CLASS_TYPE = Type.getType(Class.class);
     public static final Type JAVA_BOOLEAN_TYPE = Type.getType(Boolean.class);
     public static final Type JAVA_ARRAY_GENERIC_TYPE = Type.getType(Object[].class);

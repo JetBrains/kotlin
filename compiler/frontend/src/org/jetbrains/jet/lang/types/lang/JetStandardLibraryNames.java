@@ -35,19 +35,7 @@ public class JetStandardLibraryNames {
                 typeParameterCount);
     }
 
-    public static final ClassName ANY = classIn("Any", 0);
     public static final ClassName ARRAY = classIn("Array", 1);
     public static final ClassName VOLATILE = classIn("volatile", 0);
     public static final ClassName INT = PrimitiveType.INT.getClassName();
-    public static final ClassName COMPARABLE = classIn("Comparable", 1);
-    public static final ClassName ITERABLE = classIn("Iterable", 1);
-    public static final ClassName ITERATOR = classIn("Iterator", 1);
-    public static final ClassName MUTABLE_ITERABLE = classIn("MutableIterable", 1);
-    public static final ClassName MUTABLE_ITERATOR = classIn("MutableIterator", 1);
-    public static final ClassName NOTHING = classIn("Nothing", 0);
-    public static final ClassName STRING = classIn("String", 0);
-    public static final ClassName CHAR_SEQUENCE = classIn("CharSequence", 0);
-    public static final ClassName NUMBER = classIn("Number", 0);
-    public static final ClassName THROWABLE = classIn("Throwable", 0);
-    public static final ClassName ENUM = classIn("Enum", 1);
 }
