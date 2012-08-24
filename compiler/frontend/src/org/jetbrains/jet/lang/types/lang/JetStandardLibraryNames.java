@@ -35,6 +35,7 @@ public class JetStandardLibraryNames {
                 typeParameterCount);
     }
 
+    public static final ClassName ANY = classIn("Any", 0);
     public static final ClassName ARRAY = classIn("Array", 1);
     public static final ClassName VOLATILE = classIn("volatile", 0);
     public static final ClassName INT = PrimitiveType.INT.getClassName();

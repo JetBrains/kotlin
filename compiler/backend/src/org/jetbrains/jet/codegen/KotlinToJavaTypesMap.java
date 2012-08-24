@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
@@ -31,6 +32,7 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.jet.lang.types.ref.ClassName;
 
 import java.util.Map;
+import java.util.Set;
 
 import static org.jetbrains.jet.codegen.JetTypeMapper.*;
 import static org.jetbrains.jet.lang.types.lang.JetStandardLibraryNames.*;
@@ -49,7 +51,9 @@ public class KotlinToJavaTypesMap {
         return instance;
     }
 
-    private final Map<SpecialTypeKey, Type> asmTypes = Maps.newHashMap();
+    private final Map<FqNameUnsafe, Type> asmTypes = Maps.newHashMap();
+    private final Map<FqNameUnsafe, Type> asmNullableTypes = Maps.newHashMap();
+    private final Set<String> asmTypeNames = Sets.newHashSet();
 
     private KotlinToJavaTypesMap() {
         init();
@@ -59,26 +63,36 @@ public class KotlinToJavaTypesMap {
     public Type getJavaAnalog(@NotNull JetType jetType) {
         ClassifierDescriptor classifier = jetType.getConstructor().getDeclarationDescriptor();
         assert classifier != null;
-        return asmTypes.get(new SpecialTypeKey(DescriptorUtils.getFQName(classifier), jetType.isNullable()));
+        FqNameUnsafe className = DescriptorUtils.getFQName(classifier);
+        if (jetType.isNullable()) {
+            Type nullableType = asmNullableTypes.get(className);
+            if (nullableType != null) {
+                return nullableType;
+            }
+        }
+        return asmTypes.get(className);
     }
 
     private void register(@NotNull ClassName className, @NotNull Type type) {
-        register(className, type, type);
+        asmTypeNames.add(type.getClassName());
+        asmTypes.put(className.getFqName().toUnsafe(), type);
     }
 
-    private void register(@NotNull ClassName className, @NotNull Type nonNullType, @NotNull Type nullableType) {
-        asmTypes.put(new SpecialTypeKey(className.getFqName().toUnsafe(), true), nullableType);
-        asmTypes.put(new SpecialTypeKey(className.getFqName().toUnsafe(), false), nonNullType);
+    private void registerNullable(@NotNull ClassName className, @NotNull Type nullableType) {
+        asmNullableTypes.put(className.getFqName().toUnsafe(), nullableType);
     }
 
     public void init() {
         register(NOTHING, TYPE_NOTHING);
 
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
-            PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-            register(primitiveType.getClassName(), jvmPrimitiveType.getAsmType(), jvmPrimitiveType.getWrapper().getAsmType());
+            ClassName className = jvmPrimitiveType.getPrimitiveType().getClassName();
+
+            register(className, jvmPrimitiveType.getAsmType());
+            registerNullable(className, jvmPrimitiveType.getWrapper().getAsmType());
         }
 
+        register(ANY, TYPE_OBJECT);
         register(NUMBER, JL_NUMBER_TYPE);
         register(STRING, JL_STRING_TYPE);
         register(CHAR_SEQUENCE, JL_CHAR_SEQUENCE_TYPE);
@@ -96,45 +110,8 @@ public class KotlinToJavaTypesMap {
         }
     }
 
-    public static boolean isForceReal(JvmClassName className) {
+    public boolean isForceReal(JvmClassName className) {
         return JvmPrimitiveType.getByWrapperClass(className) != null
-               || className.getFqName().getFqName().equals("java.lang.String")
-               || className.getFqName().getFqName().equals("java.lang.CharSequence")
-               || className.getFqName().getFqName().equals("java.lang.Object")
-               || className.getFqName().getFqName().equals("java.lang.Number")
-               || className.getFqName().getFqName().equals("java.lang.Enum")
-               || className.getFqName().getFqName().equals("java.lang.Comparable");
-    }
-
-
-    private static final class SpecialTypeKey {
-        @NotNull
-        private final FqNameUnsafe className;
-        private final boolean nullable;
-
-        private SpecialTypeKey(@NotNull FqNameUnsafe className, boolean nullable) {
-            this.className = className;
-            this.nullable = nullable;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            SpecialTypeKey that = (SpecialTypeKey) o;
-
-            if (nullable != that.nullable) return false;
-            if (!className.equals(that.className)) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = className.hashCode();
-            result = 31 * result + (nullable ? 1 : 0);
-            return result;
-        }
+               || asmTypeNames.contains(className.getFqName().getFqName());
     }
 }

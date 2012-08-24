@@ -419,18 +419,10 @@ public class JetTypeMapper {
             return r;
         }
 
-        if (JetStandardClasses.getAny().equals(descriptor)) {
-            if (signatureVisitor != null) {
-                writeSimpleType(signatureVisitor, TYPE_OBJECT, jetType.isNullable());
-            }
-            checkValidType(TYPE_OBJECT);
-            return TYPE_OBJECT;
-        }
-
         if (descriptor instanceof ClassDescriptor) {
             JvmClassName name = getJvmClassName((ClassDescriptor) descriptor);
             Type asmType = Type.getObjectType(name.getInternalName() + (kind == MapTypeMode.TRAIT_IMPL ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
-            boolean forceReal = KotlinToJavaTypesMap.isForceReal(name);
+            boolean forceReal = KotlinToJavaTypesMap.getInstance().isForceReal(name);
 
             writeGenericType(jetType, signatureVisitor, asmType, forceReal);
 
