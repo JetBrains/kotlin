@@ -116,10 +116,12 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction {
 
         //Not available in method's body
         PsiCodeBlock body = res.getBody();
-        if (body == null) return null;
-        TextRange textRange = body.getTextRange();
-        if (textRange == null || textRange.getStartOffset() <= offset) return null;
-
+        if (body != null) {
+            TextRange bodyRange = body.getTextRange();
+            if (bodyRange != null && bodyRange.getStartOffset() <= offset) {
+                return null;
+            }
+        }
         return res;
     }
 }
