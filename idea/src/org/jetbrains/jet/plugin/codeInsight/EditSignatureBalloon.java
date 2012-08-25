@@ -58,9 +58,11 @@ class EditSignatureBalloon {
     private final Project project;
     private final String previousSignature;
     private final Balloon balloon;
+    private final boolean editable;
 
-    public EditSignatureBalloon(@NotNull PsiMethod method, @NotNull String previousSignature) {
+    public EditSignatureBalloon(@NotNull PsiMethod method, @NotNull String previousSignature, boolean editable) {
         this.method = method;
+        this.editable = editable;
         project = method.getProject();
         this.previousSignature = previousSignature;
 
@@ -94,45 +96,47 @@ class EditSignatureBalloon {
         };
         panel.add(editor.getComponent(), BorderLayout.CENTER);
 
-        JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton saveButton = new JButton("Save") {
-            @Override
-            public boolean isDefaultButton() {
-                return true;
-            }
-        };
-        JButton deleteButton = new JButton("Delete");
+        if (editable) {
+            JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            JButton saveButton = new JButton("Save") {
+                @Override
+                public boolean isDefaultButton() {
+                    return true;
+                }
+            };
+            JButton deleteButton = new JButton("Delete");
 
-        toolbar.add(saveButton);
-        toolbar.add(deleteButton);
-        panel.add(toolbar, BorderLayout.SOUTH);
+            toolbar.add(saveButton);
+            toolbar.add(deleteButton);
+            panel.add(toolbar, BorderLayout.SOUTH);
 
-        ActionListener saveAndHideListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                saveAndHide();
-            }
-        };
+            ActionListener saveAndHideListener = new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    saveAndHide();
+                }
+            };
 
-        ActionListener cancelActionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                balloon.hide();
-            }
-        };
+            ActionListener cancelActionListener = new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    balloon.hide();
+                }
+            };
 
-        saveButton.addActionListener(saveAndHideListener);
-        deleteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                deleteAndHide();
-            }
-        });
-        panel.registerKeyboardAction(saveAndHideListener, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
-            SystemInfo.isMac ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK),
-                                     JComponent.WHEN_IN_FOCUSED_WINDOW);
-        panel.registerKeyboardAction(cancelActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-                                     JComponent.WHEN_IN_FOCUSED_WINDOW);
+            saveButton.addActionListener(saveAndHideListener);
+            deleteButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    deleteAndHide();
+                }
+            });
+            panel.registerKeyboardAction(saveAndHideListener, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
+                                                                                     SystemInfo.isMac ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK),
+                                         JComponent.WHEN_IN_FOCUSED_WINDOW);
+            panel.registerKeyboardAction(cancelActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                                         JComponent.WHEN_IN_FOCUSED_WINDOW);
+        }
 
         return panel;
     }
@@ -141,6 +145,7 @@ class EditSignatureBalloon {
         EditorFactory editorFactory = EditorFactory.getInstance();
         assert editorFactory != null;
         Document document = editorFactory.createDocument(this.previousSignature);
+        document.setReadOnly(!editable);
 
         Editor editor = editorFactory.createEditor(document, project, JetFileType.INSTANCE, false);
         EditorSettings settings = editor.getSettings();

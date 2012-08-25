@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.codeHighlighting.Pass;
+import com.intellij.codeInsight.ExternalAnnotationsManager;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
@@ -172,9 +173,10 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             }
         }
         else {
-            // TODO check if annotations are editable
-
-            new EditSignatureBalloon(getAnnotationOwner(element), getKotlinSignature(annotation)).show(point, editor);
+            PsiMethod annotationOwner = getAnnotationOwner(element);
+            boolean editable = ExternalAnnotationsManager.getInstance(element.getProject())
+                    .isExternalAnnotationWritable(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
+            new EditSignatureBalloon(annotationOwner, getKotlinSignature(annotation), editable).show(point, editor);
         }
     }
 }
