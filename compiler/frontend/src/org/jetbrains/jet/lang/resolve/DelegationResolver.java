@@ -64,7 +64,7 @@ public class DelegationResolver {
     public static <T extends CallableMemberDescriptor> Collection<T> generateDelegatedMembers(DeclarationDescriptor newOwner, Collection<T> delegatedDescriptors) {
         Collection<CallableMemberDescriptor> result = Lists.newArrayList();
         for (CallableMemberDescriptor memberDescriptor : delegatedDescriptors) {
-            if (memberDescriptor.getModality().isOverridable()) {
+            if (memberDescriptor.getModality() == Modality.ABSTRACT) {
                 Modality modality = DescriptorUtils.convertModality(memberDescriptor.getModality(), true);
                 CallableMemberDescriptor copy =
                         memberDescriptor.copy(newOwner, modality, false, CallableMemberDescriptor.Kind.DELEGATION, true);

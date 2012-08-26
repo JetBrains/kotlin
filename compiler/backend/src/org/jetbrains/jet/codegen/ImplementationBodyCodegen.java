@@ -839,7 +839,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         StackValue field = StackValue.field(fieldType, classname, delegateField, false);
         field.store(fieldType, iv);
 
-        JetClass superClass = (JetClass) BindingContextUtils.classDescriptorToDeclaration(bindingContext, superClassDescriptor);
         final CodegenContext delegateContext = context.intoClass(superClassDescriptor,
                                                                  new OwnerKind.DelegateKind(StackValue.field(fieldType, classname,
                                                                                                              delegateField, false),
@@ -848,7 +847,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                                                                                MapTypeMode.IMPL)
                                                                                                     .getInternalName()),
                                                                  state.getInjector().getJetTypeMapper());
-        generateDelegates(superClass, delegateContext, field);
+        generateDelegates(superClassDescriptor, delegateContext, field);
     }
 
     private int addClosureToConstructorParameters(
@@ -1263,18 +1262,17 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         return false;
     }
 
-    protected void generateDelegates(JetClass toClass, CodegenContext delegateContext, StackValue field) {
+    protected void generateDelegates(ClassDescriptor toClass, CodegenContext delegateContext, StackValue field) {
         final FunctionCodegen functionCodegen = new FunctionCodegen(delegateContext, v, state);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(delegateContext, v, functionCodegen, state);
 
-        ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, toClass);
         for (DeclarationDescriptor declaration : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
             if (declaration instanceof CallableMemberDescriptor) {
                 CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) declaration;
                 if (callableMemberDescriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION) {
                     Set<? extends CallableMemberDescriptor> overriddenDescriptors = callableMemberDescriptor.getOverriddenDescriptors();
                     for (CallableMemberDescriptor overriddenDescriptor : overriddenDescriptors) {
-                        if (overriddenDescriptor.getContainingDeclaration() == classDescriptor) {
+                        if (overriddenDescriptor.getContainingDeclaration() == toClass) {
                             if (declaration instanceof PropertyDescriptor) {
                                 propertyCodegen
                                         .genDelegate((PropertyDescriptor) declaration, (PropertyDescriptor) overriddenDescriptor, field);
