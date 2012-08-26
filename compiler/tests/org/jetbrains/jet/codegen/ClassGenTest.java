@@ -53,6 +53,11 @@ public class ClassGenTest extends CodegenTestCase {
         assertInstanceOf(aClass.newInstance(), List.class);
     }
 
+    public void testDelegationJavaIface() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("classes/delegationJava.kt");
+    }
+
     public void testInheritanceAndDelegation_DelegatingDefaultConstructorProperties() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("classes/inheritance.jet");

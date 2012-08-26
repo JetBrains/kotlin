@@ -16,17 +16,21 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
 import org.jetbrains.jet.lang.psi.JetDelegatorByExpressionSpecifier;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author abreslav
@@ -41,12 +45,22 @@ public class DelegationResolver {
                 JetDelegatorByExpressionSpecifier specifier = (JetDelegatorByExpressionSpecifier) delegationSpecifier;
                 JetType type = trace.get(BindingContext.TYPE, specifier.getTypeReference());
                 if (type != null) {
-                    @SuppressWarnings("unchecked")
-                    Collection<CallableMemberDescriptor> callableDescriptors = (Collection) Collections2.filter(
-                            type.getMemberScope().getAllDescriptors(),
-                            Predicates.instanceOf(CallableMemberDescriptor.class));
-                    Collection<CallableMemberDescriptor> descriptors = generateDelegatedMembers(classDescriptor, callableDescriptors);
-                    for (CallableMemberDescriptor descriptor : descriptors) {
+                    final Collection<CallableMemberDescriptor> membersToSkip = getMembersFromClassSupertype(type);
+                    Collection<CallableMemberDescriptor> descriptorsToDelegate = Collections2.filter(extractCallableMembers(type),
+                         new Predicate<CallableMemberDescriptor>() {
+                             @Override
+                             public boolean apply(@Nullable CallableMemberDescriptor descriptor) {
+                                 for (CallableMemberDescriptor memberToSkip : membersToSkip) {
+                                    if (haveSameSignatures(memberToSkip, descriptor)) {
+                                         return false;
+                                    }
+                                 }
+                                 return true;
+                             }
+                         });
+
+                    Collection<CallableMemberDescriptor> generatedDescriptors = generateDelegatedMembers(classDescriptor, descriptorsToDelegate);
+                    for (CallableMemberDescriptor descriptor : generatedDescriptors) {
                         if (descriptor instanceof PropertyDescriptor) {
                             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
                             classDescriptor.getBuilder().addPropertyDescriptor(propertyDescriptor);
@@ -59,6 +73,36 @@ public class DelegationResolver {
                 }
             }
         }
+    }
+
+    private static boolean haveSameSignatures(CallableDescriptor memberOne, CallableDescriptor memberTwo) {
+        return OverridingUtil.isOverridableBy(memberOne, memberTwo).getResult() == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
+    }
+
+    private static Collection<CallableMemberDescriptor> getMembersFromClassSupertype(JetType type) {
+        JetType classSupertype = null;
+        for (JetType supertype : TypeUtils.getAllSupertypes(type)) {
+            if (isNotTrait(supertype.getConstructor().getDeclarationDescriptor())) {
+                classSupertype = supertype;
+                break;
+            }
+        }
+
+        return classSupertype != null ? extractCallableMembers(classSupertype) : Collections.<CallableMemberDescriptor>emptyList();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Collection<CallableMemberDescriptor> extractCallableMembers(JetType type) {
+        return (Collection) Collections2.filter(type.getMemberScope().getAllDescriptors(),
+                                                Predicates.instanceOf(CallableMemberDescriptor.class));
+    }
+
+    private static boolean isNotTrait(DeclarationDescriptor descriptor) {
+        if (descriptor instanceof ClassDescriptor) {
+            final ClassKind kind = ((ClassDescriptor) descriptor).getKind();
+            return kind != ClassKind.TRAIT;
+        }
+        return false;
     }
 
     public static <T extends CallableMemberDescriptor> Collection<T> generateDelegatedMembers(DeclarationDescriptor newOwner, Collection<T> delegatedDescriptors) {
