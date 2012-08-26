@@ -80,7 +80,7 @@ public class DelegationResolver {
             if (memberDescriptor.getModality().isOverridable()) {
                 Modality modality = DescriptorUtils.convertModality(memberDescriptor.getModality(), true);
                 CallableMemberDescriptor copy =
-                        memberDescriptor.copy(newOwner, modality, false, CallableMemberDescriptor.Kind.DELEGATION, true);
+                        memberDescriptor.copy(newOwner, modality, false, CallableMemberDescriptor.Kind.DELEGATION, false);
                 result.add(copy);
             }
         }
