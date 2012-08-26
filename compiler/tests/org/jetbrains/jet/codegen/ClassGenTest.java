@@ -63,6 +63,11 @@ public class ClassGenTest extends CodegenTestCase {
         blackBoxFile("classes/delegation2.kt");
     }
 
+    public void testInheritanceAndDelegation3() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("classes/delegation3.kt");
+    }
+
     public void testFunDelegation() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("classes/funDelegation.jet");

@@ -179,6 +179,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         public void testDelegationNotTotrait() throws Exception {
             doTest("compiler/testData/diagnostics/tests/DelegationNotTotrait.kt");
         }
+
+        @TestMetadata("Delegation_MultipleDelegates.kt")
+        public void testMultipleDelegation() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/Delegation_MultipleDelegates.kt");
+        }
         
         @TestMetadata("Delegation_ScopeInitializationOrder.kt")
         public void testDelegation_ScopeInitializationOrder() throws Exception {

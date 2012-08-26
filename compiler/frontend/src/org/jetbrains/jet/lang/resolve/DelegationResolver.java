@@ -28,6 +28,8 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
 
+import static org.jetbrains.jet.lang.diagnostics.Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED;
+
 /**
  * @author abreslav
  */
@@ -46,7 +48,18 @@ public class DelegationResolver {
                             type.getMemberScope().getAllDescriptors(),
                             Predicates.instanceOf(CallableMemberDescriptor.class));
                     Collection<CallableMemberDescriptor> descriptors = generateDelegatedMembers(classDescriptor, callableDescriptors);
+                    outer:
                     for (CallableMemberDescriptor descriptor : descriptors) {
+                        for (CallableMemberDescriptor existingDescriptor : classDescriptor.getAllCallableMembers()) {
+                            if (OverridingUtil.isOverridableBy(existingDescriptor, descriptor).getResult() == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE) {
+                                if (existingDescriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION) {
+                                    //trying to delegate to many traits with the same methods
+                                    trace.report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(jetClass.getNameIdentifier(), jetClass, existingDescriptor));
+                                }
+                                continue outer;
+                            }
+                        }
+
                         if (descriptor instanceof PropertyDescriptor) {
                             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
                             classDescriptor.getBuilder().addPropertyDescriptor(propertyDescriptor);
