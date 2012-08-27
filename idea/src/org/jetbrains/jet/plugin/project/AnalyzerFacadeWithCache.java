@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.project;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
-import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
@@ -54,6 +53,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.plugin.util.ApplicationUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -101,7 +101,7 @@ public final class AnalyzerFacadeWithCache {
                             @Override
                             public Result<AnalyzeExhaust> compute() {
                                 try {
-                                    ApplicationManagerEx.getApplicationEx().assertTimeConsuming();
+                                    ApplicationUtils.warnTimeConsuming(LOG);
 
                                     // Collect context for headers first
                                     AnalyzeExhaust analyzeExhaustHeaders = analyzeHeadersWithCacheOnFile(file, declarationProvider);
@@ -194,7 +194,7 @@ public final class AnalyzerFacadeWithCache {
                         CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<ResolveSession>() {
                             @Override
                             public Result<ResolveSession> compute() {
-                                ApplicationManagerEx.getApplicationEx().assertTimeConsuming();
+                                ApplicationUtils.warnTimeConsuming(LOG);
 
                                 ModuleDescriptor javaModule = new ModuleDescriptor(Name.special("<java module>"));
 
