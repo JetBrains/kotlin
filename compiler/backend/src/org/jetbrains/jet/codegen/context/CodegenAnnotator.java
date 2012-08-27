@@ -38,7 +38,7 @@ import java.util.*;
 /**
  * @author alex.tkachman
  */
-public class ClosureAnnotator {
+public class CodegenAnnotator {
     private final Map<ClassDescriptor, CalculatedClosure> closuresForClassDescriptor = new HashMap<ClassDescriptor, CalculatedClosure>();
     private final Map<ScriptDescriptor, JvmClassName> classNameForScript = new HashMap<ScriptDescriptor, JvmClassName>();
     private final Set<JvmClassName> scriptClassNames = new HashSet<JvmClassName>();

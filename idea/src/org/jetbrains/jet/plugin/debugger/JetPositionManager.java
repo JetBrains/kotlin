@@ -142,7 +142,7 @@ public class JetPositionManager implements PositionManager {
                     result.set(getJvmInternalNameForImpl(typeMapper, (JetClassOrObject) element));
                 }
                 else if (element instanceof JetFunctionLiteralExpression) {
-                    result.set(typeMapper.getClosureAnnotator().classNameForAnonymousClass((JetFunctionLiteralExpression) element).getInternalName());
+                    result.set(typeMapper.getCodegenAnnotator().classNameForAnonymousClass((JetFunctionLiteralExpression) element).getInternalName());
                 }
                 else if (element instanceof JetNamedFunction) {
                     PsiElement parent = PsiTreeUtil.getParentOfType(element, JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
@@ -150,13 +150,13 @@ public class JetPositionManager implements PositionManager {
                         result.set(getJvmInternalNameForImpl(typeMapper, (JetClassOrObject) parent));
                     }
                     else if (parent instanceof JetFunctionLiteralExpression || parent instanceof JetNamedFunction) {
-                        result.set(typeMapper.getClosureAnnotator().classNameForAnonymousClass((JetElement) element).getInternalName());
+                        result.set(typeMapper.getCodegenAnnotator().classNameForAnonymousClass((JetElement) element).getInternalName());
                     }
                 }
 
                 if (result.isNull()) {
                     FqName fqName = JetPsiUtil.getFQName(namespace);
-                    boolean multiFileNamespace = typeMapper.getClosureAnnotator().isMultiFileNamespace(fqName);
+                    boolean multiFileNamespace = typeMapper.getCodegenAnnotator().isMultiFileNamespace(fqName);
                     String namespaceInternalName = NamespaceCodegen.getJVMClassNameForKotlinNs(fqName).getInternalName();
                     if (multiFileNamespace) {
                         result.set(NamespaceCodegen.getMultiFileNamespaceInternalName(namespaceInternalName, namespace));
@@ -200,7 +200,7 @@ public class JetPositionManager implements PositionManager {
                     List<JetFile> namespaceFiles = JetFilesProvider.getInstance(file.getProject()).allNamespaceFiles().fun(file);
 
                     JetTypeMapper typeMapper = new InjectorForJetTypeMapper(analyzeExhaust.getBindingContext(), namespaceFiles).getJetTypeMapper();
-                    typeMapper.getClosureAnnotator().init();
+                    typeMapper.getCodegenAnnotator().init();
                     return new Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT);
                 }
             }, false);

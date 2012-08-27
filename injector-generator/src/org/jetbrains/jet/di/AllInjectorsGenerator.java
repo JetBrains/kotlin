@@ -18,7 +18,7 @@ package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.codegen.*;
-import org.jetbrains.jet.codegen.context.ClosureAnnotator;
+import org.jetbrains.jet.codegen.context.CodegenAnnotator;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -44,6 +44,9 @@ import java.io.IOException;
 // NOTE: After making changes, you need to re-generate the injectors.
 //       To do that, you can run either this class, or /build.xml/generateInjectors task
 public class AllInjectorsGenerator {
+
+    private AllInjectorsGenerator() {
+    }
 
     public static void main(String[] args) throws IOException {
         generateInjectorForTopDownAnalyzerBasic();
@@ -201,7 +204,7 @@ public class AllInjectorsGenerator {
         generator.addField(true, IntrinsicMethods.class, "intrinsics", null);
         generator.addPublicField(ClassFileFactory.class);
         generator.addPublicField(MemberCodegen.class);
-        generator.addPublicField(ClosureAnnotator.class);
+        generator.addPublicField(CodegenAnnotator.class);
         generator.generate("compiler/backend/src", "org.jetbrains.jet.di", "InjectorForJvmCodegen");
     }
 

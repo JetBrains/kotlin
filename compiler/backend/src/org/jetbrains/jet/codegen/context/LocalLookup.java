@@ -74,7 +74,7 @@ public interface LocalLookup {
                 if (!idx) return null;
 
                 JetElement expression = (JetElement) BindingContextUtils.callableDescriptorToDeclaration(state.getBindingContext(), vd);
-                JvmClassName cn = state.getInjector().getJetTypeMapper().getClosureAnnotator().classNameForAnonymousClass(expression);
+                JvmClassName cn = state.getInjector().getJetTypeMapper().getCodegenAnnotator().classNameForAnonymousClass(expression);
                 Type localType = cn.getAsmType();
 
                 final String fieldName = "$" + vd.getName();

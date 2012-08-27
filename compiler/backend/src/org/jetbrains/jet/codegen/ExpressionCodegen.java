@@ -1007,9 +1007,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private StackValue genClosure(JetExpression expression) {
         final FunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, expression);
-        final ClosureAnnotator closureAnnotator = state.getInjector().getClosureAnnotator();
-        final ClassDescriptor classDescriptor = closureAnnotator.classDescriptorForFunctionDescriptor(descriptor);
-        final CalculatedClosure closure = closureAnnotator.getCalculatedClosure(classDescriptor);
+        final CodegenAnnotator codegenAnnotator = state.getInjector().getCodegenAnnotator();
+        final ClassDescriptor classDescriptor = codegenAnnotator.classDescriptorForFunctionDescriptor(descriptor);
+        final CalculatedClosure closure = codegenAnnotator.getCalculatedClosure(classDescriptor);
 
         ClosureCodegen closureCodegen = new ClosureCodegen(state, (MutableClosure) closure).gen(expression, context, this);
 
@@ -1411,11 +1411,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (descriptor instanceof ValueParameterDescriptor && descriptor.getContainingDeclaration() instanceof ScriptDescriptor) {
             ScriptDescriptor scriptDescriptor = (ScriptDescriptor) descriptor.getContainingDeclaration();
-            final ClosureAnnotator closureAnnotator = state.getInjector().getClosureAnnotator();
+            final CodegenAnnotator codegenAnnotator = state.getInjector().getCodegenAnnotator();
             assert scriptDescriptor != null;
-            JvmClassName scriptClassName = closureAnnotator.classNameForScriptDescriptor(scriptDescriptor);
+            JvmClassName scriptClassName = codegenAnnotator.classNameForScriptDescriptor(scriptDescriptor);
             ValueParameterDescriptor valueParameterDescriptor = (ValueParameterDescriptor) descriptor;
-            final ClassDescriptor scriptClass = closureAnnotator.classDescriptorForScriptDescriptor(scriptDescriptor);
+            final ClassDescriptor scriptClass = codegenAnnotator.classDescriptorForScriptDescriptor(scriptDescriptor);
             final StackValue script = StackValue.thisOrOuter(this, scriptClass);
             script.put(script.type, v);
             Type fieldType = typeMapper.mapType(valueParameterDescriptor.getType(), MapTypeMode.VALUE);
@@ -1901,13 +1901,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 CodegenContext.ScriptContext scriptContext = (CodegenContext.ScriptContext) cur;
 
                 JvmClassName currentScriptClassName =
-                        state.getInjector().getClosureAnnotator().classNameForScriptDescriptor(scriptContext.getScriptDescriptor());
+                        state.getInjector().getCodegenAnnotator().classNameForScriptDescriptor(scriptContext.getScriptDescriptor());
                 if (scriptContext.getScriptDescriptor() == receiver.getDeclarationDescriptor()) {
                     result.put(currentScriptClassName.getAsmType(), v);
                 }
                 else {
                     JvmClassName className =
-                            state.getInjector().getClosureAnnotator().classNameForScriptDescriptor(receiver.getDeclarationDescriptor());
+                            state.getInjector().getCodegenAnnotator().classNameForScriptDescriptor(receiver.getDeclarationDescriptor());
                     String fieldName = state.getInjector().getScriptCodegen().getScriptFieldName(receiver.getDeclarationDescriptor());
                     result.put(currentScriptClassName.getAsmType(), v);
                     StackValue.field(className.getAsmType(), currentScriptClassName, fieldName, false).put(className.getAsmType(), v);
@@ -2837,7 +2837,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             generateInitializer.fun(variableDescriptor);
             JetScript scriptPsi = JetPsiUtil.getScript(variableDeclaration);
             assert scriptPsi != null;
-            JvmClassName scriptClassName = state.getInjector().getClosureAnnotator().classNameForScriptPsi(scriptPsi);
+            JvmClassName scriptClassName = state.getInjector().getCodegenAnnotator().classNameForScriptPsi(scriptPsi);
             v.putfield(scriptClassName.getInternalName(), variableDeclaration.getName(), varType.getDescriptor());
         }
         else if (sharedVarType == null) {

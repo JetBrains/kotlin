@@ -131,7 +131,7 @@ public class GenerationState {
     }
 
     public Pair<JvmClassName, ClassBuilder> forAnonymousSubclass(JetElement expression) {
-        JvmClassName className = getInjector().getJetTypeMapper().getClosureAnnotator().classNameForAnonymousClass(expression);
+        JvmClassName className = getInjector().getJetTypeMapper().getCodegenAnnotator().classNameForAnonymousClass(expression);
         return Pair.create(className, getFactory().forAnonymousSubclass(className));
     }
 
@@ -142,7 +142,7 @@ public class GenerationState {
     private void beforeCompile() {
         markUsed();
 
-        injector.getClosureAnnotator().init();
+        injector.getCodegenAnnotator().init();
     }
 
     public void compileCorrectFiles(@NotNull CompilationErrorHandler errorHandler) {
@@ -151,7 +151,7 @@ public class GenerationState {
                 String name = ScriptNameUtil.classNameForScript(file);
                 JetScript script = file.getScript();
                 assert script != null;
-                injector.getClosureAnnotator().registerClassNameForScript(script, JvmClassName.byInternalName(name));
+                injector.getCodegenAnnotator().registerClassNameForScript(script, JvmClassName.byInternalName(name));
             }
         }
 
@@ -178,7 +178,7 @@ public class GenerationState {
     ) {
 
         injector.getScriptCodegen().registerEarlierScripts(earlierScripts);
-        injector.getClosureAnnotator().registerClassNameForScript(script, className);
+        injector.getCodegenAnnotator().registerClassNameForScript(script, className);
 
         beforeCompile();
 
@@ -201,7 +201,7 @@ public class GenerationState {
         final ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, objectDeclaration);
         assert classDescriptor != null;
 
-        final CalculatedClosure closure = getInjector().getClosureAnnotator().getCalculatedClosure(classDescriptor);
+        final CalculatedClosure closure = getInjector().getCodegenAnnotator().getCalculatedClosure(classDescriptor);
 
         final CodegenContext objectContext = expressionCodegen.context.intoAnonymousClass(classDescriptor, expressionCodegen);
 

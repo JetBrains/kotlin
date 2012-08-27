@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.CalculatedClosure;
-import org.jetbrains.jet.codegen.context.ClosureAnnotator;
+import org.jetbrains.jet.codegen.context.CodegenAnnotator;
 import org.jetbrains.jet.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -76,7 +76,7 @@ public class JetTypeMapper {
     public static final Type JET_SHARED_BOOLEAN_TYPE = Type.getObjectType("jet/runtime/SharedVar$Boolean");
 
     public BindingContext bindingContext;
-    private ClosureAnnotator closureAnnotator;
+    private CodegenAnnotator codegenAnnotator;
     private boolean mapBuiltinsToJava;
     private ClassBuilderMode classBuilderMode;
 
@@ -86,8 +86,8 @@ public class JetTypeMapper {
     }
 
     @Inject
-    public void setClosureAnnotator(ClosureAnnotator closureAnnotator) {
-        this.closureAnnotator = closureAnnotator;
+    public void setCodegenAnnotator(CodegenAnnotator codegenAnnotator) {
+        this.codegenAnnotator = codegenAnnotator;
     }
 
     @Inject
@@ -101,16 +101,16 @@ public class JetTypeMapper {
     }
 
     public boolean hasThis0(ClassDescriptor classDescriptor) {
-        final CalculatedClosure closure = closureAnnotator.getCalculatedClosure(classDescriptor);
+        final CalculatedClosure closure = codegenAnnotator.getCalculatedClosure(classDescriptor);
         return closure != null && closure.getCaptureThis() != null;
     }
 
     public CalculatedClosure getCalculatedClosure(ClassDescriptor classDescriptor) {
-        return closureAnnotator.getCalculatedClosure(classDescriptor);
+        return codegenAnnotator.getCalculatedClosure(classDescriptor);
     }
 
-    public ClosureAnnotator getClosureAnnotator() {
-        return closureAnnotator;
+    public CodegenAnnotator getCodegenAnnotator() {
+        return codegenAnnotator;
     }
 
     public static boolean isIntPrimitive(Type type) {
@@ -152,7 +152,7 @@ public class JetTypeMapper {
             return JvmClassName.byType(asmType);
         }
         else if (containingDeclaration instanceof ScriptDescriptor) {
-            return closureAnnotator.classNameForScriptDescriptor((ScriptDescriptor) containingDeclaration);
+            return codegenAnnotator.classNameForScriptDescriptor((ScriptDescriptor) containingDeclaration);
         }
         else {
             throw new UnsupportedOperationException("don't know how to generate owner for parent " + containingDeclaration);
@@ -299,7 +299,7 @@ public class JetTypeMapper {
                 }
             }
             else if (klass.getKind() == ClassKind.ENUM_ENTRY) {
-                if (closureAnnotator.enumEntryNeedSubclass(klass)) {
+                if (codegenAnnotator.enumEntryNeedSubclass(klass)) {
                     return getJvmInternalFQName(klass.getContainingDeclaration()) + "$" + klass.getName().getName();
                 }
                 else {
@@ -307,7 +307,7 @@ public class JetTypeMapper {
                 }
             }
 
-            JvmClassName name = closureAnnotator.classNameForClassDescriptor((ClassDescriptor) descriptor);
+            JvmClassName name = codegenAnnotator.classNameForClassDescriptor((ClassDescriptor) descriptor);
             if (name != null) {
                 return name.getInternalName();
             }
@@ -533,7 +533,7 @@ public class JetTypeMapper {
         }
         else if (functionParent instanceof ScriptDescriptor) {
             thisClass = owner =
-            ownerForDefaultParam = ownerForDefaultImpl = closureAnnotator.classNameForScriptDescriptor((ScriptDescriptor) functionParent);
+            ownerForDefaultParam = ownerForDefaultImpl = codegenAnnotator.classNameForScriptDescriptor((ScriptDescriptor) functionParent);
             invokeOpcode = INVOKEVIRTUAL;
         }
         else if (functionParent instanceof ClassDescriptor) {
@@ -954,7 +954,7 @@ public class JetTypeMapper {
 
         for (ScriptDescriptor importedScript : importedScripts) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
-            mapType(closureAnnotator.classDescriptorForScriptDescriptor(importedScript).getDefaultType(), signatureWriter,
+            mapType(codegenAnnotator.classDescriptorForScriptDescriptor(importedScript).getDefaultType(), signatureWriter,
                     MapTypeMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
         }
@@ -1027,7 +1027,7 @@ public class JetTypeMapper {
         }
         else if (descriptor instanceof SimpleFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
             PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
-            return closureAnnotator.classNameForAnonymousClass((JetElement) psiElement).getAsmType();
+            return codegenAnnotator.classNameForAnonymousClass((JetElement) psiElement).getAsmType();
         }
         else if (descriptor instanceof FunctionDescriptor) {
             return StackValue

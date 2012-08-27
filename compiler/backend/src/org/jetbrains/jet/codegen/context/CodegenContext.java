@@ -179,7 +179,7 @@ public abstract class CodegenContext {
     ) {
         final JetTypeMapper typeMapper = expressionCodegen.getState().getInjector().getJetTypeMapper();
         return new ClosureContext(typeMapper, funDescriptor,
-                                  typeMapper.getClosureAnnotator().classDescriptorForFunctionDescriptor(funDescriptor),
+                                  typeMapper.getCodegenAnnotator().classDescriptorForFunctionDescriptor(funDescriptor),
                                   this, expressionCodegen);
     }
 

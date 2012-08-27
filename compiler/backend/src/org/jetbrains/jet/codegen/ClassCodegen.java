@@ -60,7 +60,7 @@ public class ClassCodegen {
 
         for (JetDeclaration declaration : aClass.getDeclarations()) {
             if (declaration instanceof JetClass) {
-                if (declaration instanceof JetEnumEntry && !state.getInjector().getClosureAnnotator().enumEntryNeedSubclass(
+                if (declaration instanceof JetEnumEntry && !state.getInjector().getCodegenAnnotator().enumEntryNeedSubclass(
                         (JetEnumEntry) declaration)) {
                     continue;
                 }

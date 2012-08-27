@@ -84,7 +84,7 @@ public class NamespaceCodegen {
     }
 
     public void generate(CompilationErrorHandler errorHandler, final Progress progress) {
-        boolean multiFile = state.getInjector().getClosureAnnotator().isMultiFileNamespace(name);
+        boolean multiFile = state.getInjector().getCodegenAnnotator().isMultiFileNamespace(name);
 
         for (JetFile file : files) {
             VirtualFile vFile = file.getVirtualFile();

@@ -45,7 +45,7 @@ public class JetPositionManagerTest extends PositionManagerTestCase {
         assertNotNull(positionManager);
 
         JetTypeMapper typeMapper = new InjectorForJetTypeMapper(state.getBindingContext(), files).getJetTypeMapper();
-        typeMapper.getClosureAnnotator().init();
+        typeMapper.getCodegenAnnotator().init();
         for (JetFile file : files) {
             positionManager.addTypeMapper(file, typeMapper);
         }

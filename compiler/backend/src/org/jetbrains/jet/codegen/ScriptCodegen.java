@@ -23,7 +23,7 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.context.ClosureAnnotator;
+import org.jetbrains.jet.codegen.context.CodegenAnnotator;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -56,7 +56,7 @@ public class ScriptCodegen {
     @NotNull
     private MemberCodegen memberCodegen;
     @NotNull
-    private ClosureAnnotator closureAnnotator;
+    private CodegenAnnotator codegenAnnotator;
     @NotNull
     private BindingContext bindingContext;
 
@@ -84,8 +84,8 @@ public class ScriptCodegen {
     }
 
     @Inject
-    public void setClosureAnnotator(@NotNull ClosureAnnotator closureAnnotator) {
-        this.closureAnnotator = closureAnnotator;
+    public void setCodegenAnnotator(@NotNull CodegenAnnotator codegenAnnotator) {
+        this.codegenAnnotator = codegenAnnotator;
     }
 
     @Inject
@@ -99,13 +99,13 @@ public class ScriptCodegen {
         ScriptDescriptor scriptDescriptor = state.getBindingContext().get(BindingContext.SCRIPT, scriptDeclaration);
 
         assert scriptDescriptor != null;
-        ClassDescriptor classDescriptorForScript = closureAnnotator.classDescriptorForScriptDescriptor(scriptDescriptor);
+        ClassDescriptor classDescriptorForScript = codegenAnnotator.classDescriptorForScriptDescriptor(scriptDescriptor);
 
         CodegenContext.ScriptContext context =
                 (CodegenContext.ScriptContext) CodegenContext.STATIC
                         .intoScript(scriptDescriptor, classDescriptorForScript);
 
-        JvmClassName className = closureAnnotator.classNameForClassDescriptor(classDescriptorForScript);
+        JvmClassName className = codegenAnnotator.classNameForClassDescriptor(classDescriptorForScript);
 
         ClassBuilder classBuilder = classFileFactory.newVisitor(className.getInternalName() + ".class");
         classBuilder.defineClass(scriptDeclaration,
@@ -151,7 +151,7 @@ public class ScriptCodegen {
 
         InstructionAdapter instructionAdapter = new InstructionAdapter(mv);
 
-        JvmClassName className = closureAnnotator.classNameForClassDescriptor(classDescriptorForScript);
+        JvmClassName className = codegenAnnotator.classNameForClassDescriptor(classDescriptorForScript);
 
         instructionAdapter.load(0, className.getAsmType());
         instructionAdapter.invokespecial(JdkNames.JL_OBJECT.getInternalName(), "<init>", "()V");
@@ -182,7 +182,7 @@ public class ScriptCodegen {
         int offset = 1;
 
         for (ScriptDescriptor earlierScript : importedScripts) {
-            JvmClassName earlierClassName = closureAnnotator.classNameForScriptDescriptor(earlierScript);
+            JvmClassName earlierClassName = codegenAnnotator.classNameForScriptDescriptor(earlierScript);
             instructionAdapter.load(0, className.getAsmType());
             instructionAdapter.load(offset, earlierClassName.getAsmType());
             offset += earlierClassName.getAsmType().getSize();
@@ -213,7 +213,7 @@ public class ScriptCodegen {
 
     private void genFieldsForParameters(@NotNull ScriptDescriptor script, @NotNull ClassBuilder classBuilder) {
         for (ScriptDescriptor earlierScript : earlierScripts) {
-            JvmClassName earlierClassName = closureAnnotator.classNameForScriptDescriptor(earlierScript);
+            JvmClassName earlierClassName = codegenAnnotator.classNameForScriptDescriptor(earlierScript);
             int access = Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL;
             classBuilder.newField(null, access, getScriptFieldName(earlierScript), earlierClassName.getDescriptor(), null, null);
         }
@@ -236,7 +236,7 @@ public class ScriptCodegen {
             ScriptDescriptor earlierDescriptor = t.first;
             JvmClassName earlierClassName = t.second;
 
-            closureAnnotator.registerClassNameForScript(earlierDescriptor, earlierClassName);
+            codegenAnnotator.registerClassNameForScript(earlierDescriptor, earlierClassName);
         }
 
         List<ScriptDescriptor> earlierScriptDescriptors = Lists.newArrayList();

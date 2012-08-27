@@ -29,7 +29,7 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.asm4.signature.SignatureWriter;
 import org.jetbrains.jet.codegen.context.CalculatedClosure;
-import org.jetbrains.jet.codegen.context.ClosureAnnotator;
+import org.jetbrains.jet.codegen.context.CodegenAnnotator;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MutableClosure;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
@@ -51,7 +51,7 @@ import static org.jetbrains.asm4.Opcodes.*;
 public class ClosureCodegen {
 
     private final BindingContext bindingContext;
-    private final ClosureAnnotator closureAnnotator;
+    private final CodegenAnnotator codegenAnnotator;
     private final JetTypeMapper typeMapper;
 
     Method constructor;
@@ -65,7 +65,7 @@ public class ClosureCodegen {
         this.closure = closure;
         bindingContext = state.getBindingContext();
         typeMapper = state.getInjector().getJetTypeMapper();
-        closureAnnotator = typeMapper.getClosureAnnotator();
+        codegenAnnotator = typeMapper.getCodegenAnnotator();
     }
 
     public ClosureCodegen gen(JetExpression fun, CodegenContext context, ExpressionCodegen expressionCodegen) {
@@ -282,7 +282,7 @@ public class ClosureCodegen {
             }
             else if (CodegenUtil.isNamedFun(descriptor, state.getBindingContext()) &&
                      descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
-                final Type type = closureAnnotator
+                final Type type = codegenAnnotator
                         .classNameForAnonymousClass((JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor))
                         .getAsmType();
 

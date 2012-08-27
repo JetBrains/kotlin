@@ -136,7 +136,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (isEnum) {
             for (JetDeclaration declaration : myClass.getDeclarations()) {
                 if (declaration instanceof JetEnumEntry) {
-                    if (state.getInjector().getClosureAnnotator().enumEntryNeedSubclass((JetEnumEntry) declaration)) {
+                    if (state.getInjector().getCodegenAnnotator().enumEntryNeedSubclass((JetEnumEntry) declaration)) {
                         access &= ~ACC_FINAL;
                     }
                 }
@@ -627,7 +627,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (hasThis0) {
             final Type type = typeMapper
-                    .mapType(typeMapper.getClosureAnnotator().getEclosingClassDescriptor(descriptor).getDefaultType(), MapTypeMode.VALUE);
+                    .mapType(typeMapper.getCodegenAnnotator().getEclosingClassDescriptor(descriptor).getDefaultType(), MapTypeMode.VALUE);
             String interfaceDesc = type.getDescriptor();
             iv.load(0, classType);
             iv.load(frameMap.getOuterThisIndex(), type);
@@ -704,7 +704,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (typeMapper.hasThis0(superClassDescriptor)) {
             iv.load(1, JetTypeMapper.OBJECT_TYPE);
             parameterTypes.add(typeMapper.mapType(
-                    typeMapper.getClosureAnnotator().getEclosingClassDescriptor(descriptor).getDefaultType(), MapTypeMode.VALUE));
+                    typeMapper.getCodegenAnnotator().getEclosingClassDescriptor(descriptor).getDefaultType(), MapTypeMode.VALUE));
         }
         Method superCallMethod = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
         //noinspection ConstantConditions
@@ -1142,7 +1142,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.aconst(enumConstant.getName());
             iv.iconst(ordinal);
 
-            if (delegationSpecifiers.size() == 1 && !state.getInjector().getClosureAnnotator().enumEntryNeedSubclass(enumConstant)) {
+            if (delegationSpecifiers.size() == 1 && !state.getInjector().getCodegenAnnotator().enumEntryNeedSubclass(enumConstant)) {
                 final JetDelegationSpecifier specifier = delegationSpecifiers.get(0);
                 if (specifier instanceof JetDelegatorToSuperCall) {
                     final JetDelegatorToSuperCall superCall = (JetDelegatorToSuperCall) specifier;
