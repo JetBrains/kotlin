@@ -34,7 +34,8 @@ public abstract class LongRunningReadTask<RequestInfo, ResultData> {
         NOT_INITIALIZED,
         INITIALIZED,
         STARTED,
-        FINISHED
+        FINISHED,
+        FINISHED_AND_PROCESSED
     }
 
     private ProgressIndicator progressIndicator = null;
@@ -51,19 +52,31 @@ public abstract class LongRunningReadTask<RequestInfo, ResultData> {
             throw new IllegalStateException("Task should be initialized state. Call init() method.");
         }
 
+        // Cancel previous task if necessary
+        if (previousTask != null && previousTask.currentState == State.STARTED) {
+            if (requestInfo == null || !requestInfo.equals(previousTask.requestInfo)) {
+                previousTask.progressIndicator.cancel();
+            }
+        }
+
         if (requestInfo == null) {
+            if (previousTask != null && (previousTask.currentState == State.FINISHED_AND_PROCESSED || previousTask.currentState == State.FINISHED)) {
+                previousTask.hideResultOnInvalidLocation();
+            }
+
             return false;
         }
 
-        if (previousTask != null && previousTask.currentState == State.STARTED) {
-            if (!requestInfo.equals(previousTask.requestInfo)) {
-                // Previous task counting data for outdated request - cancel it.
-                previousTask.progressIndicator.cancel();
-                return true;
+
+        if (previousTask != null) {
+            if (previousTask.currentState == State.STARTED) {
+                // Start new task only if previous isn't working on similar request
+                return !requestInfo.equals(previousTask.requestInfo);
             }
-            else {
-                // If previous task is in progress and counting result for similar result don't start new task
-                return false;
+            else if (previousTask.currentState == State.FINISHED_AND_PROCESSED) {
+                if (requestInfo.equals(previousTask.requestInfo)) {
+                    return false;
+                }
             }
         }
 
@@ -76,6 +89,10 @@ public abstract class LongRunningReadTask<RequestInfo, ResultData> {
 
         if (currentState != State.INITIALIZED) {
             throw new IllegalStateException("Task should be initialized with init() method");
+        }
+
+        if (requestInfo == null) {
+            throw new IllegalStateException("Invalid request for task beginning");
         }
 
         currentState = State.STARTED;
@@ -123,7 +140,14 @@ public abstract class LongRunningReadTask<RequestInfo, ResultData> {
         ApplicationManager.getApplication().assertIsDispatchThread();
 
         currentState = State.FINISHED;
-        onResultReady(requestInfo, resultData);
+
+        if (resultData != null) {
+            RequestInfo actualInfo = prepareRequestInfo();
+            if (requestInfo.equals(actualInfo)) {
+                currentState = State.FINISHED_AND_PROCESSED;
+                onResultReady(actualInfo, resultData);
+            }
+        }
     }
 
     /**
@@ -151,6 +175,11 @@ public abstract class LongRunningReadTask<RequestInfo, ResultData> {
      */
     @Nullable
     protected abstract RequestInfo prepareRequestInfo();
+
+    /**
+     * Executed in GUI Thread.
+     */
+    protected void hideResultOnInvalidLocation() {}
 
     /**
      * Executed in GUI Thread right before task run. Do nothing by default.
