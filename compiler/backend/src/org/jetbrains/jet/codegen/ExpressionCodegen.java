@@ -49,7 +49,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibraryNames;
+import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -148,7 +148,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         assert provided instanceof ClassDescriptor;
 
         if (!CodegenUtil.isInterface(provided) && CodegenUtil.isInterface(required)) {
-            inner.put(TYPE_OBJECT, v);
+            inner.put(OBJECT_TYPE, v);
             final Type type = asmType(required.getDefaultType());
             v.checkcast(type);
             return StackValue.onStack(type);
@@ -300,7 +300,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         if (isEmptyExpression(thenExpression)) {
             if (isEmptyExpression(elseExpression)) {
-                if (!asmType.equals(JetTypeMapper.TUPLE0_TYPE)) {
+                if (!asmType.equals(JetTypeMapper.JET_TUPLE0_TYPE)) {
                     throw new CompilationException("Completely empty 'if' is expected to have Unit type", null, expression);
                 }
                 StackValue.putTuple0Instance(v);
@@ -690,20 +690,20 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 myArrayVar = ((StackValue.Local) value).index;
             }
             else {
-                myArrayVar = myFrameMap.enterTemp(TYPE_OBJECT);
+                myArrayVar = myFrameMap.enterTemp(OBJECT_TYPE);
                 afterLoopAction = new Runnable() {
                     @Override
                     public void run() {
-                        myFrameMap.leaveTemp(TYPE_OBJECT);
+                        myFrameMap.leaveTemp(OBJECT_TYPE);
                     }
                 };
                 Type asmLoopRangeType = asmType(loopRangeType);
                 value.put(asmLoopRangeType, v);
-                v.store(myArrayVar, TYPE_OBJECT);
+                v.store(myArrayVar, OBJECT_TYPE);
             }
 
             //if (loopRangeType.isNullable()) {
-            //    v.load(myArrayVar, TYPE_OBJECT);
+            //    v.load(myArrayVar, OBJECT_TYPE);
             //    v.ifnull(end);
             //}
 
@@ -714,7 +714,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         @Override
         public void conditionAndJump(@NotNull Label loopExit) {
             v.load(myIndexVar, Type.INT_TYPE);
-            v.load(myArrayVar, TYPE_OBJECT);
+            v.load(myArrayVar, OBJECT_TYPE);
             v.arraylength();
             v.ificmpge(loopExit);
         }
@@ -723,14 +723,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         protected void assignToLoopParameter(int parameterIndex) {
             Type arrayElParamType;
             Type asmElementType = asmType(elementType);
-            if (JetStandardLibraryNames.ARRAY.is(loopRangeType)) {
+            if (JetStandardLibrary.getInstance().isArray(loopRangeType)) {
                 arrayElParamType = boxType(asmElementType);
             }
             else {
                 arrayElParamType = asmElementType;
             }
 
-            v.load(myArrayVar, TYPE_OBJECT);
+            v.load(myArrayVar, OBJECT_TYPE);
             v.load(myIndexVar, Type.INT_TYPE);
             v.aload(arrayElParamType);
             StackValue.onStack(arrayElParamType).put(asmElementType, v);
@@ -896,8 +896,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     private StackValue generateSingleBranchIf(StackValue condition, JetExpression expression, boolean inverse) {
         Type expressionType = expressionType(expression);
         Type targetType = expressionType;
-        if (!expressionType.equals(TUPLE0_TYPE)) {
-            targetType = TYPE_OBJECT;
+        if (!expressionType.equals(JET_TUPLE0_TYPE)) {
+            targetType = OBJECT_TYPE;
         }
 
         Label elseLabel = new Label();
@@ -953,7 +953,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                                   ? ((JetEscapeStringTemplateEntry) entry).getUnescapedValue()
                                   : entry.getText();
                     v.aconst(text);
-                    invokeAppendMethod(JL_STRING_TYPE);
+                    invokeAppendMethod(JAVA_STRING_TYPE);
                 }
             }
             v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
@@ -978,8 +978,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         StackValue closure = genClosure(function);
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
         int index = myFrameMap.getIndex(descriptor);
-        closure.put(TYPE_OBJECT, v);
-        v.store(index, TYPE_OBJECT);
+        closure.put(OBJECT_TYPE, v);
+        v.store(index, OBJECT_TYPE);
         return StackValue.none();
     }
 
@@ -1011,7 +1011,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             int k = 0;
             if (closure.isCaptureThis()) {
                 k++;
-                v.load(0, TYPE_OBJECT);
+                v.load(0, OBJECT_TYPE);
             }
 
             if (closure.isCaptureReceiver()) {
@@ -1040,7 +1040,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         final List<Type> consArgTypes = new LinkedList<Type>(Arrays.asList(closure.getConstructor().getArgumentTypes()));
 
         if (consArgTypes.size() > 0) {
-            v.load(0, TYPE_OBJECT);
+            v.load(0, OBJECT_TYPE);
         }
 
         if (closureCodegen.captureReceiver != null) {
@@ -1149,7 +1149,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             v.anew(sharedVarType);
             v.dup();
             v.invokespecial(sharedVarType.getInternalName(), "<init>", "()V");
-            v.store(index, TYPE_OBJECT);
+            v.store(index, OBJECT_TYPE);
         }
 
         leaveTasks.add(new Function<StackValue, Void>() {
@@ -1163,7 +1163,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                     }
                     else {
                         v.aconst(null);
-                        v.store(index, TYPE_OBJECT);
+                        v.store(index, OBJECT_TYPE);
                     }
                 }
                 v.visitLocalVariable(variableDescriptor.getName().getName(), type.getDescriptor(), null, scopeStart, blockEnd,
@@ -1178,7 +1178,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             @NotNull List<Function<StackValue, Void>> leaveTasks
     ) {
         final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, namedFunction);
-        myFrameMap.enter(descriptor, TYPE_OBJECT);
+        myFrameMap.enter(descriptor, OBJECT_TYPE);
 
         leaveTasks.add(new Function<StackValue, Void>() {
             @Override
@@ -1338,7 +1338,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                         }
                     }
                     JetType receiverType = bindingContext.get(BindingContext.EXPRESSION_TYPE, r);
-                    receiver.put(receiverType != null && !isSuper ? asmType(receiverType) : TYPE_OBJECT, v);
+                    receiver.put(receiverType != null && !isSuper ? asmType(receiverType) : OBJECT_TYPE, v);
                     if (receiverType != null) {
                         ClassDescriptor propReceiverDescriptor = (ClassDescriptor) propertyDescriptor.getContainingDeclaration();
                         if (!CodegenUtil.isInterface(propReceiverDescriptor) &&
@@ -1376,15 +1376,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             assert type != null;
             v.checkcast(asmType(type));
 
-            return StackValue.onStack(TYPE_OBJECT);
+            return StackValue.onStack(OBJECT_TYPE);
         }
 
-        StackValue value = context.lookupInContext(descriptor, v, StackValue.local(0, TYPE_OBJECT));
+        StackValue value = context.lookupInContext(descriptor, v, StackValue.local(0, OBJECT_TYPE));
         if (value != null) {
 
             if (value instanceof StackValue.Composed) {
                 StackValue.Composed composed = (StackValue.Composed) value;
-                composed.prefix.put(TYPE_OBJECT, v);
+                composed.prefix.put(OBJECT_TYPE, v);
                 value = composed.suffix;
             }
 
@@ -1441,7 +1441,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             }
         }
         else {
-            return StackValue.local(index, TYPE_OBJECT);
+            return StackValue.local(index, OBJECT_TYPE);
         }
     }
 
@@ -1457,7 +1457,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         IntrinsicMethod intrinsic = state.getInjector().getIntrinsics().getIntrinsic(functionDescriptor);
         if (intrinsic != null) {
-            intrinsic.generate(this, v, expectedType, null, null, StackValue.onStack(TYPE_OBJECT), state);
+            intrinsic.generate(this, v, expectedType, null, null, StackValue.onStack(OBJECT_TYPE), state);
             return;
         }
 
@@ -1902,13 +1902,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             return castToRequiredTypeOfInterfaceIfNeeded(result, provided, null);
         }
 
-        StackValue result = context.lookupInContext(provided, v, StackValue.local(0, TYPE_OBJECT));
+        StackValue result = context.lookupInContext(provided, v, StackValue.local(0, OBJECT_TYPE));
         return castToRequiredTypeOfInterfaceIfNeeded(result, provided, null);
     }
 
     private void generateScript(@NotNull ScriptReceiver receiver) {
         CodegenContext cur = context;
-        StackValue result = StackValue.local(0, TYPE_OBJECT);
+        StackValue result = StackValue.local(0, OBJECT_TYPE);
         while (cur != null) {
             if (cur instanceof CodegenContexts.MethodContext && !(cur instanceof CodegenContexts.ConstructorContext)) {
                 cur = cur.getParentContext();
@@ -2070,7 +2070,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                     v.dup();
                     ValueArgument argument = arguments.get(i);
                     if (argument.getSpreadElement() != null) {
-                        gen(argument.getArgumentExpression(), JetTypeMapper.TYPE_OBJECT);
+                        gen(argument.getArgumentExpression(), JetTypeMapper.OBJECT_TYPE);
                         v.invokevirtual(owner, "addSpread", "(Ljava/lang/Object;)V");
                     }
                     else {
@@ -2308,11 +2308,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         JetType rightJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, right);
         assert rightJetType != null;
         Type rightType = asmType(rightJetType);
-        if (leftType == TYPE_NOTHING) {
+        if (leftType.equals(JET_NOTHING_TYPE)) {
             return genCmpWithNull(right, rightType, opToken);
         }
 
-        if (rightType == TYPE_NOTHING) {
+        if (rightType.equals(JET_NOTHING_TYPE)) {
             return genCmpWithNull(left, leftType, opToken);
         }
 
@@ -2564,7 +2564,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     public void generateStringBuilderConstructor() {
-        Type type = JL_STRING_BUILDER;
+        Type type = JAVA_STRING_BUILDER_TYPE;
         v.anew(type);
         v.dup();
         Method method = new Method("<init>", Type.VOID_TYPE, new Type[0]);
@@ -2580,7 +2580,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 Type leftType = expressionType(left);
                 Type rightType = expressionType(right);
 
-                if (leftType.equals(JetTypeMapper.JL_STRING_TYPE) && rightType.equals(JL_STRING_TYPE)) {
+                if (leftType.equals(JetTypeMapper.JAVA_STRING_TYPE) && rightType.equals(JAVA_STRING_TYPE)) {
                     invokeAppend(left);
                     invokeAppend(right);
                     return;
@@ -2589,12 +2589,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         Type exprType = expressionType(expr);
         gen(expr, exprType);
-        invokeAppendMethod(exprType.getSort() == Type.ARRAY ? TYPE_OBJECT : exprType);
+        invokeAppendMethod(exprType.getSort() == Type.ARRAY ? OBJECT_TYPE : exprType);
     }
 
     public void invokeAppendMethod(Type exprType) {
-        Method appendDescriptor = new Method("append", JL_STRING_BUILDER,
-                                             new Type[] {exprType.getSort() == Type.OBJECT ? TYPE_OBJECT : exprType});
+        Method appendDescriptor = new Method("append", JAVA_STRING_BUILDER_TYPE,
+                                             new Type[] {exprType.getSort() == Type.OBJECT ? OBJECT_TYPE : exprType});
         v.invokevirtual("java/lang/StringBuilder", "append", appendDescriptor.getDescriptor());
     }
 
@@ -2863,10 +2863,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             v.store(index, varType);
         }
         else {
-            v.load(index, TYPE_OBJECT);
+            v.load(index, OBJECT_TYPE);
             generateInitializer.fun(variableDescriptor);
             v.putfield(sharedVarType.getInternalName(), "ref",
-                       sharedVarType == TYPE_SHARED_VAR ? "Ljava/lang/Object;" : varType.getDescriptor());
+                       sharedVarType == JET_SHARED_VAR_TYPE ? "Ljava/lang/Object;" : varType.getDescriptor());
         }
     }
 
@@ -2937,7 +2937,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         args.addAll(expression.getFunctionLiteralArguments());
 
-        boolean isArray = JetStandardLibraryNames.ARRAY.is(arrayType);
+        boolean isArray = JetStandardLibrary.getInstance().isArray(arrayType);
         if (isArray) {
             //            if (args.size() != 2 && !arrayType.getArguments().get(0).getType().isNullable()) {
             //                throw new CompilationException("array constructor of non-nullable type requires two arguments");
@@ -2970,7 +2970,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             v.iconst(0);
             v.store(indexIndex, Type.INT_TYPE);
 
-            gen(args.get(1), TYPE_FUNCTION1);
+            gen(args.get(1), JET_FUNCTION1_TYPE);
 
             Label begin = new Label();
             Label end = new Label();
@@ -2986,7 +2986,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             v.load(indexIndex, Type.INT_TYPE);
             v.iinc(indexIndex, 1);
             v.swap();
-            v.astore(TYPE_OBJECT);
+            v.astore(OBJECT_TYPE);
 
             v.goTo(begin);
             v.visitLabel(end);
@@ -3007,13 +3007,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         assert operationDescriptor != null;
         if (arrayType.getSort() == Type.ARRAY &&
             indices.size() == 1 &&
-            JetStandardLibraryNames.INT.is(operationDescriptor.getValueParameters().get(0).getType())) {
+            PrimitiveType.INT.getClassName().is(operationDescriptor.getValueParameters().get(0).getType())) {
             gen(array, arrayType);
             for (JetExpression index : indices) {
                 gen(index, Type.INT_TYPE);
             }
             assert type != null;
-            if (JetStandardLibraryNames.ARRAY.is(type)) {
+            if (JetStandardLibrary.getInstance().isArray(type)) {
                 JetType elementType = type.getArguments().get(0).getType();
                 Type notBoxed = asmType(elementType);
                 return StackValue.arrayElement(notBoxed, true);
@@ -3077,7 +3077,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     @Override
     public StackValue visitThrowExpression(JetThrowExpression expression, StackValue receiver) {
-        gen(expression.getThrownExpression(), TYPE_THROWABLE);
+        gen(expression.getThrownExpression(), JAVA_THROWABLE_TYPE);
         v.athrow();
         return StackValue.none();
     }
@@ -3169,15 +3169,15 @@ The "returned" value of try expression with no finally is either the last expres
             Label finallyStart = new Label();
             v.mark(finallyStart);
 
-            int savedException = myFrameMap.enterTemp(TYPE_THROWABLE);
-            v.store(savedException, TYPE_THROWABLE);
+            int savedException = myFrameMap.enterTemp(JAVA_THROWABLE_TYPE);
+            v.store(savedException, JAVA_THROWABLE_TYPE);
 
             blockStackElements.pop();
             gen(finallyBlock.getFinalExpression(), Type.VOID_TYPE);
             blockStackElements.push(finallyBlockStackElement);
 
-            v.load(savedException, TYPE_THROWABLE);
-            myFrameMap.leaveTemp(TYPE_THROWABLE);
+            v.load(savedException, JAVA_THROWABLE_TYPE);
+            myFrameMap.leaveTemp(JAVA_THROWABLE_TYPE);
 
             v.athrow();
 
@@ -3247,7 +3247,7 @@ The "returned" value of try expression with no finally is either the last expres
 
     @Override
     public StackValue visitIsExpression(final JetIsExpression expression, StackValue receiver) {
-        final StackValue match = StackValue.expression(TYPE_OBJECT, expression.getLeftHandSide(), this);
+        final StackValue match = StackValue.expression(OBJECT_TYPE, expression.getLeftHandSide(), this);
         return generatePatternMatch(expression.getPattern(), expression.isNegated(), match, false, null);
     }
 
@@ -3285,7 +3285,7 @@ The "returned" value of try expression with no finally is either the last expres
                     }
                 }
                 else {
-                    condType = TYPE_OBJECT;
+                    condType = OBJECT_TYPE;
                     patternIsNullable = condJetType != null && condJetType.isNullable();
                 }
                 gen(condExpression, condType);
@@ -3326,7 +3326,7 @@ The "returned" value of try expression with no finally is either the last expres
         Label lblFail = new Label();
         Label lblDone = new Label();
         expressionToMatch.dupReceiver(v);
-        expressionToMatch.put(TYPE_OBJECT, v);
+        expressionToMatch.put(OBJECT_TYPE, v);
         v.dup();
         final JvmClassName tupleClassName = JvmClassName.byInternalName("jet/Tuple" + entries.size());
         Type tupleType = tupleClassName.getAsmType();
@@ -3340,7 +3340,7 @@ The "returned" value of try expression with no finally is either the last expres
 
         v.mark(lblCheck);
         for (int i = 0; i < entries.size(); i++) {
-            final StackValue tupleField = StackValue.field(TYPE_OBJECT, tupleClassName, "_" + (i + 1), false);
+            final StackValue tupleField = StackValue.field(OBJECT_TYPE, tupleClassName, "_" + (i + 1), false);
             final StackValue stackValue = generatePatternMatch(entries.get(i).getPattern(), false, tupleField, false, nextEntry);
             stackValue.condJump(lblPopAndFail, true, v);
         }
@@ -3365,7 +3365,7 @@ The "returned" value of try expression with no finally is either the last expres
     }
 
     private void generateInstanceOf(StackValue expressionToGen, JetType jetType, boolean leaveExpressionOnStack) {
-        expressionToGen.put(TYPE_OBJECT, v);
+        expressionToGen.put(OBJECT_TYPE, v);
         if (leaveExpressionOnStack) {
             v.dup();
         }
@@ -3470,7 +3470,7 @@ The "returned" value of try expression with no finally is either the last expres
                 //FunctionDescriptor op =
                 //        (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, conditionInRange.getOperationReference());
                 //genToJVMStack(rangeExpression);
-                //new StackValue.Local(subjectLocal, subjectType).put(TYPE_OBJECT, v);
+                //new StackValue.Local(subjectLocal, subjectType).put(OBJECT_TYPE, v);
                 //invokeFunctionNoParams(op, Type.BOOLEAN_TYPE, v);
                 invokeFunctionByReference(operationReference);
                 if (inverted) {
@@ -3537,7 +3537,7 @@ The "returned" value of try expression with no finally is either the last expres
         }
         if (entries.size() == 0) {
             v.visitFieldInsn(Opcodes.GETSTATIC, "jet/Tuple0", "INSTANCE", "Ljet/Tuple0;");
-            return StackValue.onStack(TUPLE0_TYPE);
+            return StackValue.onStack(JET_TUPLE0_TYPE);
         }
 
         final String className = "jet/Tuple" + entries.size();
@@ -3551,7 +3551,7 @@ The "returned" value of try expression with no finally is either the last expres
         v.anew(tupleType);
         v.dup();
         for (JetExpression entry : entries) {
-            gen(entry, TYPE_OBJECT);
+            gen(entry, OBJECT_TYPE);
         }
         v.invokespecial(className, "<init>", signature.toString());
         return StackValue.onStack(tupleType);
