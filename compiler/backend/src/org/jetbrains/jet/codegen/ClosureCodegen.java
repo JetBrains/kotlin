@@ -22,15 +22,16 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Label;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.asm4.signature.SignatureWriter;
-import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
-import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
+import org.jetbrains.jet.codegen.context.CalculatedClosure;
+import org.jetbrains.jet.codegen.context.ClosureAnnotator;
+import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.context.MutableClosure;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
@@ -39,7 +40,6 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -48,81 +48,42 @@ import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
 
-public class ClosureCodegen extends ObjectOrClosureCodegen {
+public class ClosureCodegen {
 
     private final BindingContext bindingContext;
     private final ClosureAnnotator closureAnnotator;
     private final JetTypeMapper typeMapper;
 
-    public ClosureCodegen(GenerationState state, ExpressionCodegen exprContext, CodegenContext context) {
-        super(exprContext, context, state);
+    Method constructor;
+    private final GenerationState state;
+    private final MutableClosure closure;
+    JvmClassName name;
+
+
+    public ClosureCodegen(GenerationState state, MutableClosure closure) {
+        this.state = state;
+        this.closure = closure;
         bindingContext = state.getBindingContext();
-        typeMapper = this.state.getInjector().getJetTypeMapper();
+        typeMapper = state.getInjector().getJetTypeMapper();
         closureAnnotator = typeMapper.getClosureAnnotator();
     }
 
-    private static JvmMethodSignature erasedInvokeSignature(FunctionDescriptor fd) {
+    public ClosureCodegen gen(JetExpression fun, CodegenContext context, ExpressionCodegen expressionCodegen) {
+        final SimpleFunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, fun);
+        assert descriptor != null;
 
-        BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, false);
-
-        signatureWriter.writeFormalTypeParametersStart();
-        signatureWriter.writeFormalTypeParametersEnd();
-
-        boolean isExtensionFunction = fd.getReceiverParameter().exists();
-        int paramCount = fd.getValueParameters().size();
-        if (isExtensionFunction) {
-            paramCount++;
-        }
-
-        signatureWriter.writeParametersStart();
-
-        for (int i = 0; i < paramCount; ++i) {
-            signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
-            signatureWriter.writeAsmType(JetTypeMapper.OBJECT_TYPE, true);
-            signatureWriter.writeParameterTypeEnd();
-        }
-
-        signatureWriter.writeParametersEnd();
-
-        signatureWriter.writeReturnType();
-        signatureWriter.writeAsmType(JetTypeMapper.OBJECT_TYPE, true);
-        signatureWriter.writeReturnTypeEnd();
-
-        return signatureWriter.makeJvmMethodSignature("invoke");
-    }
-
-    public static CallableMethod asCallableMethod(FunctionDescriptor fd, @NotNull JetTypeMapper typeMapper) {
-        JvmMethodSignature descriptor = erasedInvokeSignature(fd);
-        JvmClassName owner = getInternalClassName(fd);
-        Type receiverParameterType;
-        if (fd.getReceiverParameter().exists()) {
-            receiverParameterType = typeMapper.mapType(fd.getOriginal().getReceiverParameter().getType(), MapTypeMode.VALUE);
-        }
-        else {
-            receiverParameterType = null;
-        }
-        return new CallableMethod(
-                owner, null, null, descriptor, INVOKEVIRTUAL,
-                getInternalClassName(fd), receiverParameterType, getInternalClassName(fd).getAsmType());
-    }
-
-    protected JvmMethodSignature invokeSignature(FunctionDescriptor fd) {
-        return typeMapper.mapSignature(Name.identifier("invoke"), fd);
-    }
-
-    public GeneratedAnonymousClassDescriptor gen(JetExpression fun) {
         final Pair<JvmClassName, ClassBuilder> nameAndVisitor = state.forAnonymousSubclass(fun);
 
         final FunctionDescriptor funDescriptor = bindingContext.get(BindingContext.FUNCTION, fun);
 
-        cv = nameAndVisitor.getSecond();
+        ClassBuilder cv = nameAndVisitor.getSecond();
         name = nameAndVisitor.getFirst();
 
         SignatureWriter signatureWriter = new SignatureWriter();
 
         assert funDescriptor != null;
         final List<ValueParameterDescriptor> parameters = funDescriptor.getValueParameters();
-        final JvmClassName funClass = getInternalClassName(funDescriptor);
+        final JvmClassName funClass = CodegenUtil.getInternalClassName(funDescriptor);
         signatureWriter.visitClassType(funClass.getInternalName());
         for (ValueParameterDescriptor parameter : parameters) {
             appendType(signatureWriter, parameter.getType(), '=');
@@ -143,46 +104,27 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
 
         generateBridge(name.getInternalName(), funDescriptor, fun, cv);
-        captureThis = generateBody(funDescriptor, cv, (JetDeclarationWithBody) fun);
+        generateBody(funDescriptor, cv, (JetDeclarationWithBody) fun, context, expressionCodegen);
 
-        final ClassDescriptor enclosingClass = context.getEnclosingClass();
-        if (enclosingClass == null) {
-            captureThis = null;
+        constructor = generateConstructor(funClass, fun, cv, closure);
+
+        if (CodegenUtil.isConst(closure)) {
+            generateConstInstance(fun, cv);
         }
 
-        final Method constructor = generateConstructor(funClass, fun, funDescriptor);
-
-        if (captureThis != null) {
-            cv.newField(fun, ACC_FINAL, "this$0", typeMapper.mapType(enclosingClass.getDefaultType(), MapTypeMode.IMPL).getDescriptor(),
-                        null, null);
-        }
-
-        if (isConst()) {
-            generateConstInstance(fun);
-        }
+        CodegenUtil.generateClosureFields(closure, cv, state.getInjector().getJetTypeMapper());
 
         cv.done();
 
-        final GeneratedAnonymousClassDescriptor answer =
-                new GeneratedAnonymousClassDescriptor(name, constructor, captureThis, captureReceiver);
-        for (DeclarationDescriptor descriptor : closure.keySet()) {
-            if (descriptor == funDescriptor) {
-                continue;
-            }
-            if (descriptor instanceof VariableDescriptor || CodegenUtil.isNamedFun(descriptor, state.getBindingContext()) &&
-                                                            descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
-                final EnclosedValueDescriptor valueDescriptor = closure.get(descriptor);
-                answer.addArg(valueDescriptor.getOuterValue());
-            }
-        }
-        return answer;
+        return this;
     }
 
-    private void generateConstInstance(PsiElement fun) {
+    private void generateConstInstance(PsiElement fun, ClassBuilder cv) {
         String classDescr = name.getDescriptor();
-        cv.newField(fun, ACC_PRIVATE | ACC_STATIC | ACC_FINAL, "$instance", classDescr, null, null);
+        cv.newField(fun, ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, "$instance", classDescr, null, null);
 
-        MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC | ACC_STATIC, "$getInstance", "()" + classDescr, null, new String[0]);
+        MethodVisitor mv =
+                cv.newMethod(fun, ACC_PUBLIC | ACC_STATIC | ACC_SYNTHETIC, "$getInstance", "()" + classDescr, null, new String[0]);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             StubCodegen.generateStubCode(mv);
         }
@@ -206,21 +148,29 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         }
     }
 
-    private ClassDescriptor generateBody(FunctionDescriptor funDescriptor, ClassBuilder cv, JetDeclarationWithBody body) {
-        ClassDescriptor function =
-                closureAnnotator.classDescriptorForFunctionDescriptor(funDescriptor);
+    private ClassDescriptor generateBody(
+            FunctionDescriptor funDescriptor,
+            ClassBuilder cv,
+            JetDeclarationWithBody body,
+            CodegenContext context,
+            ExpressionCodegen expressionCodegen
+    ) {
 
-        final CodegenContexts.ClosureContext closureContext = context.intoClosure(
-                funDescriptor, function, this, typeMapper);
+        final CodegenContext closureContext = context.intoClosure(funDescriptor, expressionCodegen);
         FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
-        JvmMethodSignature jvmMethodSignature = invokeSignature(funDescriptor);
+        JvmMethodSignature jvmMethodSignature = typeMapper.invokeSignature(funDescriptor);
         fc.generateMethod(body, jvmMethodSignature, false, null, funDescriptor);
-        return closureContext.outerWasUsed;
+        return closureContext.closure.getCaptureThis();
     }
 
-    private void generateBridge(String className, FunctionDescriptor funDescriptor, JetExpression fun, ClassBuilder cv) {
-        final JvmMethodSignature bridge = erasedInvokeSignature(funDescriptor);
-        final Method delegate = invokeSignature(funDescriptor).getAsmMethod();
+    private void generateBridge(
+            String className,
+            FunctionDescriptor funDescriptor,
+            JetExpression fun,
+            ClassBuilder cv
+    ) {
+        final JvmMethodSignature bridge = CodegenUtil.erasedInvokeSignature(funDescriptor);
+        final Method delegate = typeMapper.invokeSignature(funDescriptor).getAsmMethod();
 
         if (bridge.getAsmMethod().getDescriptor().equals(delegate.getDescriptor())) {
             return;
@@ -265,9 +215,14 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         }
     }
 
-    private Method generateConstructor(JvmClassName funClass, JetExpression fun, FunctionDescriptor funDescriptor) {
+    private Method generateConstructor(
+            JvmClassName funClass,
+            JetExpression fun,
+            ClassBuilder cv,
+            CalculatedClosure closure
+    ) {
         final ArrayList<Pair<String, Type>> args = new ArrayList<Pair<String, Type>>();
-        boolean putFieldForMyself = calculateConstructorParameters(funDescriptor, args);
+        calculateConstructorParameters(args, state, closure);
 
         final Type[] argTypes = nameAnTypeListToTypeArray(args);
 
@@ -293,14 +248,6 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                 StackValue.field(type, name, nameAndType.first, false).store(type, iv);
             }
 
-            if (putFieldForMyself) {
-                Type type = name.getAsmType();
-                String fieldName = "$" + funDescriptor.getName();
-                iv.load(0, type);
-                iv.dup();
-                StackValue.field(type, name, fieldName, false).store(type, iv);
-            }
-
             iv.visitInsn(RETURN);
 
             FunctionCodegen.endVisit(iv, "constructor", fun);
@@ -308,22 +255,24 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         return constructor;
     }
 
-    private boolean calculateConstructorParameters(FunctionDescriptor funDescriptor, List<Pair<String, Type>> args) {
+    private void calculateConstructorParameters(
+            List<Pair<String, Type>> args,
+            GenerationState state,
+            CalculatedClosure closure
+    ) {
+        final ClassDescriptor captureThis = closure.getCaptureThis();
         if (captureThis != null) {
-            final Type type = typeMapper.mapType(context.getThisDescriptor().getDefaultType(), MapTypeMode.VALUE);
-            args.add(new Pair<String, Type>("this$0", type));
+            final Type type = typeMapper.mapType(captureThis.getDefaultType(), MapTypeMode.VALUE);
+            args.add(new Pair<String, Type>(CodegenUtil.THIS$0, type));
         }
+        final ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
         if (captureReceiver != null) {
-            args.add(new Pair<String, Type>("receiver$0", typeMapper.mapType(captureReceiver.getDefaultType(), MapTypeMode.VALUE)));
+            args.add(new Pair<String, Type>(CodegenUtil.RECEIVER$0,
+                                            typeMapper.mapType(captureReceiver.getDefaultType(), MapTypeMode.VALUE)));
         }
 
-        boolean putFieldForMyself = false;
-
-        for (DeclarationDescriptor descriptor : closure.keySet()) {
-            if (descriptor == funDescriptor) {
-                putFieldForMyself = true;
-            }
-            else if (descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
+        for (DeclarationDescriptor descriptor : closure.getCaptureVariables().keySet()) {
+            if (descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
                 final Type sharedVarType = typeMapper.getSharedVarType(descriptor);
 
                 final Type type = sharedVarType != null
@@ -343,7 +292,6 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                 assert captureReceiver != null;
             }
         }
-        return putFieldForMyself;
     }
 
     private static Type[] nameAnTypeListToTypeArray(List<Pair<String, Type>> args) {
@@ -352,17 +300,6 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
             argTypes[i] = args.get(i).second;
         }
         return argTypes;
-    }
-
-    @NotNull
-    public static JvmClassName getInternalClassName(FunctionDescriptor descriptor) {
-        final int paramCount = descriptor.getValueParameters().size();
-        if (descriptor.getReceiverParameter().exists()) {
-            return JvmClassName.byInternalName("jet/ExtensionFunction" + paramCount);
-        }
-        else {
-            return JvmClassName.byInternalName("jet/Function" + paramCount);
-        }
     }
 
     private void appendType(SignatureWriter signatureWriter, JetType type, char variance) {

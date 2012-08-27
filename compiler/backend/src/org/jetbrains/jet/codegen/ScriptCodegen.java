@@ -23,6 +23,8 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
+import org.jetbrains.jet.codegen.context.ClosureAnnotator;
+import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
@@ -99,9 +101,9 @@ public class ScriptCodegen {
         assert scriptDescriptor != null;
         ClassDescriptor classDescriptorForScript = closureAnnotator.classDescriptorForScriptDescriptor(scriptDescriptor);
 
-        CodegenContexts.ScriptContext context =
-                (CodegenContexts.ScriptContext) CodegenContexts.STATIC
-                        .intoScript(scriptDescriptor, classDescriptorForScript, state.getInjector().getJetTypeMapper());
+        CodegenContext.ScriptContext context =
+                (CodegenContext.ScriptContext) CodegenContext.STATIC
+                        .intoScript(scriptDescriptor, classDescriptorForScript);
 
         JvmClassName className = closureAnnotator.classNameForClassDescriptor(classDescriptorForScript);
 
@@ -117,7 +119,7 @@ public class ScriptCodegen {
         genMembers(scriptDeclaration, context, classBuilder);
         genFieldsForParameters(scriptDescriptor, classBuilder);
         genConstructor(scriptDeclaration, scriptDescriptor, classDescriptorForScript, classBuilder,
-                       context.intoFunction(scriptDescriptor.getScriptCodeDescriptor(), state.getInjector().getJetTypeMapper()),
+                       context.intoFunction(scriptDescriptor.getScriptCodeDescriptor()),
                        earlierScripts);
 
         classBuilder.done();

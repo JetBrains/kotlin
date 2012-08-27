@@ -332,7 +332,7 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testSelfCreate() throws Exception {
-        createEnvironmentWithFullJdk();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("classes/selfcreate.kt");
     }
 

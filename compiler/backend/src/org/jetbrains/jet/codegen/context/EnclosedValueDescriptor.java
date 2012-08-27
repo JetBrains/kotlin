@@ -17,19 +17,23 @@
 /*
  * @author max
  */
-package org.jetbrains.jet.codegen;
+package org.jetbrains.jet.codegen.context;
 
+import org.jetbrains.asm4.Type;
+import org.jetbrains.jet.codegen.ExpressionCodegen;
+import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
-public class EnclosedValueDescriptor {
+public final class EnclosedValueDescriptor {
     private final DeclarationDescriptor descriptor;
     private final StackValue innerValue;
-    private final StackValue outerValue;
+    private final Type type;
 
-    public EnclosedValueDescriptor(DeclarationDescriptor descriptor, StackValue innerValue, StackValue outerValue) {
+    public EnclosedValueDescriptor(DeclarationDescriptor descriptor, StackValue innerValue, Type type) {
         this.descriptor = descriptor;
         this.innerValue = innerValue;
-        this.outerValue = outerValue;
+        this.type = type;
     }
 
     public DeclarationDescriptor getDescriptor() {
@@ -40,7 +44,18 @@ public class EnclosedValueDescriptor {
         return innerValue;
     }
 
-    public StackValue getOuterValue() {
-        return outerValue;
+    public Type getType() {
+        return type;
+    }
+
+    public StackValue getOuterValue(ExpressionCodegen expressionCodegen) {
+        final GenerationState state = expressionCodegen.getState();
+        for (LocalLookup.LocalLookupCase aCase : LocalLookup.LocalLookupCase.values()) {
+            if (aCase.isCase(descriptor, state)) {
+                return aCase.outerValue(this, expressionCodegen);
+            }
+        }
+
+        throw new IllegalStateException();
     }
 }

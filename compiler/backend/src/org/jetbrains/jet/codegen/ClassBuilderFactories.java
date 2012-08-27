@@ -125,7 +125,7 @@ public class ClassBuilderFactories {
                 return super.getCommonSuperClass(type1, type2);
             }
             catch (Throwable t) {
-                // @todo we might need at some point do more sofisticated handling
+                // @todo we might need at some point do more sophisticated handling
                 return "java/lang/Object";
             }
         }

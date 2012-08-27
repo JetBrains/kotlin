@@ -31,7 +31,7 @@ import org.jetbrains.jet.codegen.ScriptCodegen;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.MemberCodegen;
-import org.jetbrains.jet.codegen.ClosureAnnotator;
+import org.jetbrains.jet.codegen.context.ClosureAnnotator;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 

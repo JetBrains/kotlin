@@ -16,15 +16,9 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.util.io.FileUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.TestJdkKind;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 
-import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -89,6 +83,19 @@ public class FunctionGenTest extends CodegenTestCase {
         assertFalse((Boolean) foo.invoke(null, "mama"));
     }
 
+    public void testNoRefToOuter() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
+        loadText("class A() { fun f() : ()->String { val s = \"OK\"; return { -> s } } }");
+        //        System.out.println(generateToText());
+        Class foo = generateClass("A");
+        final Object obj = foo.newInstance();
+        final Method f = foo.getMethod("f");
+        final Object closure = f.invoke(obj);
+        final Class<? extends Object> aClass = closure.getClass();
+        final Field[] fields = aClass.getFields();
+        assertEquals(1, fields.length);
+        assertEquals("$s", fields[0].getName());
+    }
+
     public void testAnyEquals() throws InvocationTargetException, IllegalAccessException {
         loadText("fun foo(x: Any) = x.equals(\"lala\")");
         //        System.out.println(generateToText());
@@ -115,6 +122,7 @@ public class FunctionGenTest extends CodegenTestCase {
 
     public void testKt1199() {
         blackBoxFile("regressions/kt1199.kt");
+        System.out.println(generateToText());
     }
 
     public void testFunction() throws InvocationTargetException, IllegalAccessException {

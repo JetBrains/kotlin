@@ -18,13 +18,15 @@ package org.jetbrains.jet.codegen.signature;
 
 /**
  * @author Stepan Koltsov
+ * @author alex.tkachman
  */
 public enum JvmMethodParameterKind {
     VALUE,
     THIS,
-    THIS0,
+    OUTER,
     RECEIVER,
     SHARED_VAR,
     ENUM_NAME,
     ENUM_ORDINAL,
+    SUPER_CALL_PARAM
 }

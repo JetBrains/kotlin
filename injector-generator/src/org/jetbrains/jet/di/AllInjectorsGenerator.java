@@ -18,6 +18,7 @@ package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.context.ClosureAnnotator;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -163,15 +164,15 @@ public class AllInjectorsGenerator {
 
         generator.generate("compiler/tests", "org.jetbrains.jet.di", "InjectorForTests");
     }
-    
+
     private static void generateInjectorForJavaSemanticServices() throws IOException {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
-        
+
         // Fields
         generator.addPublicField(JavaSemanticServices.class);
         generator.addPublicField(JavaDescriptorResolver.class);
         generator.addField(true, BindingTrace.class, null,
-                new GivenExpression("new org.jetbrains.jet.lang.resolve.BindingTraceContext()"));
+                           new GivenExpression("new org.jetbrains.jet.lang.resolve.BindingTraceContext()"));
         generator.addField(JavaBridgeConfiguration.class);
         generator.addPublicField(PsiClassFinderImpl.class);
         generator.addField(false, ModuleDescriptor.class, null,
@@ -181,7 +182,7 @@ public class AllInjectorsGenerator {
 
         // Parameters
         generator.addPublicParameter(Project.class);
-        
+
         generator.generate("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForJavaSemanticServices");
     }
 
@@ -226,5 +227,4 @@ public class AllInjectorsGenerator {
         generator.addPublicParameter(BodiesResolveContext.class);
         generator.generate("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForBodyResolve");
     }
-
 }

@@ -16,31 +16,39 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
+import org.jetbrains.jet.codegen.context.CalculatedClosure;
+import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
+import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
+import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Random;
+import java.util.*;
+
+import static org.jetbrains.asm4.Opcodes.*;
 
 /**
  * @author abreslav
  * @author alex.tkachman
  */
 public class CodegenUtil {
+    public static final String RECEIVER$0 = "receiver$0";
+    public static final String THIS$0 = "this$0";
+
     private CodegenUtil() {
     }
 
@@ -81,6 +89,14 @@ public class CodegenUtil {
     public static boolean isNonLiteralObject(JetClassOrObject myClass) {
         return myClass instanceof JetObjectDeclaration && !((JetObjectDeclaration) myClass).isObjectLiteral() &&
                !(myClass.getParent() instanceof JetClassObject);
+    }
+
+    public static boolean isObjectLiteral(ClassDescriptor declaration, BindingContext bindingContext) {
+        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, declaration);
+        if (psiElement instanceof JetObjectDeclaration && ((JetObjectDeclaration) psiElement).isObjectLiteral()) {
+            return true;
+        }
+        return false;
     }
 
     public static boolean isLocalFun(DeclarationDescriptor fd, BindingContext bindingContext) {
@@ -126,12 +142,12 @@ public class CodegenUtil {
     }
 
     public static void generateThrow(MethodVisitor mv, String exception, String message) {
-        InstructionAdapter instructionAdapter = new InstructionAdapter(mv);
-        instructionAdapter.anew(Type.getObjectType(exception));
-        instructionAdapter.dup();
-        instructionAdapter.aconst(message);
-        instructionAdapter.invokespecial(exception, "<init>", "(Ljava/lang/String;)V");
-        instructionAdapter.athrow();
+        InstructionAdapter iv = new InstructionAdapter(mv);
+        iv.anew(Type.getObjectType(exception));
+        iv.dup();
+        iv.aconst(message);
+        iv.invokespecial(exception, "<init>", "(Ljava/lang/String;)V");
+        iv.athrow();
     }
 
     public static void generateMethodThrow(MethodVisitor mv, String exception, String message) {
@@ -139,5 +155,93 @@ public class CodegenUtil {
         generateThrow(mv, exception, message);
         mv.visitMaxs(-1, -1);
         mv.visitEnd();
+    }
+
+    @NotNull
+    public static JvmClassName getInternalClassName(FunctionDescriptor descriptor) {
+        final int paramCount = descriptor.getValueParameters().size();
+        if (descriptor.getReceiverParameter().exists()) {
+            return JvmClassName.byInternalName("jet/ExtensionFunction" + paramCount);
+        }
+        else {
+            return JvmClassName.byInternalName("jet/Function" + paramCount);
+        }
+    }
+
+    static JvmMethodSignature erasedInvokeSignature(FunctionDescriptor fd) {
+
+        BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, false);
+
+        signatureWriter.writeFormalTypeParametersStart();
+        signatureWriter.writeFormalTypeParametersEnd();
+
+        boolean isExtensionFunction = fd.getReceiverParameter().exists();
+        int paramCount = fd.getValueParameters().size();
+        if (isExtensionFunction) {
+            paramCount++;
+        }
+
+        signatureWriter.writeParametersStart();
+
+        for (int i = 0; i < paramCount; ++i) {
+            signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
+            signatureWriter.writeAsmType(JetTypeMapper.OBJECT_TYPE, true);
+            signatureWriter.writeParameterTypeEnd();
+        }
+
+        signatureWriter.writeParametersEnd();
+
+        signatureWriter.writeReturnType();
+        signatureWriter.writeAsmType(JetTypeMapper.OBJECT_TYPE, true);
+        signatureWriter.writeReturnTypeEnd();
+
+        return signatureWriter.makeJvmMethodSignature("invoke");
+    }
+
+    public static boolean isConst(CalculatedClosure closure) {
+        return closure.getCaptureThis() == null && closure.getCaptureReceiver() == null && closure.getCaptureVariables().isEmpty();
+    }
+
+    public static JetDelegatorToSuperCall findSuperCall(JetElement classOrObject, BindingContext bindingContext) {
+        if (!(classOrObject instanceof JetClassOrObject)) {
+            return null;
+        }
+
+        if (classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait()) {
+            return null;
+        }
+        for (JetDelegationSpecifier specifier : ((JetClassOrObject) classOrObject).getDelegationSpecifiers()) {
+            if (specifier instanceof JetDelegatorToSuperCall) {
+                JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
+                assert superType != null;
+                ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
+                assert superClassDescriptor != null;
+                if (!isInterface(superClassDescriptor)) {
+                    return (JetDelegatorToSuperCall) specifier;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public static void generateClosureFields(CalculatedClosure closure, ClassBuilder v, JetTypeMapper typeMapper) {
+        final ClassifierDescriptor captureThis = closure.getCaptureThis();
+        final int access = ACC_PUBLIC | ACC_SYNTHETIC | ACC_FINAL;
+        if (captureThis != null) {
+            v.newField(null, access, THIS$0, typeMapper.mapType(captureThis.getDefaultType(), MapTypeMode.VALUE).getDescriptor(), null,
+                       null);
+        }
+
+        final ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
+        if (captureReceiver != null) {
+            v.newField(null, access, RECEIVER$0, typeMapper.mapType(captureReceiver.getDefaultType(), MapTypeMode.VALUE).getDescriptor(),
+                       null, null);
+        }
+
+        final List<Pair<String, Type>> fields = closure.getRecordedFields();
+        for (Pair<String, Type> field : fields) {
+            v.newField(null, access, field.first, field.second.getDescriptor(), null, null);
+        }
     }
 }

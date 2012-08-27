@@ -33,7 +33,7 @@ public class LocalClassGenTest extends CodegenTestCase {
     }
 
     public void testWithClosure() {
-        //blackBoxFile("localcls/withclosure.kt");
+        blackBoxFile("localcls/withclosure.kt");
     }
 
     public void testEnum() {

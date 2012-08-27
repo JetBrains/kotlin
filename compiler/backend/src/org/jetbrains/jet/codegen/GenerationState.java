@@ -25,9 +25,10 @@ import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.codegen.context.CalculatedClosure;
+import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.di.InjectorForJvmCodegen;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -56,7 +57,6 @@ public class GenerationState {
     // out parameter
     private Method scriptConstructorMethod;
     private final BindingContext bindingContext;
-    private final JetTypeMapper typeMapper;
 
 
     public GenerationState(Project project, ClassBuilderFactory builderFactory, AnalyzeExhaust analyzeExhaust, List<JetFile> files) {
@@ -75,7 +75,6 @@ public class GenerationState {
         this.injector = new InjectorForJvmCodegen(
                 bindingContext,
                 this.files, builtinToJavaTypesMapping, builderFactory.getClassBuilderMode(), this, builderFactory, project);
-        typeMapper = injector.getJetTypeMapper();
     }
 
     private void markUsed() {
@@ -195,25 +194,20 @@ public class GenerationState {
         codegen.generate(errorHandler, progress);
     }
 
-    public GeneratedAnonymousClassDescriptor generateObjectLiteral(JetObjectLiteralExpression literal, ObjectOrClosureCodegen closure) {
+    public CalculatedClosure generateObjectLiteral(JetObjectLiteralExpression literal, ExpressionCodegen expressionCodegen) {
         JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
         Pair<JvmClassName, ClassBuilder> nameAndVisitor = forAnonymousSubclass(objectDeclaration);
 
-        closure.cv = nameAndVisitor.getSecond();
-        closure.name = nameAndVisitor.getFirst();
-        final CodegenContext objectContext = closure.context.intoAnonymousClass(
-                closure, bindingContext.get(BindingContext.CLASS, objectDeclaration), OwnerKind.IMPLEMENTATION,
-                typeMapper);
+        final ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, objectDeclaration);
+        assert classDescriptor != null;
+
+        final CalculatedClosure closure = getInjector().getClosureAnnotator().getCalculatedClosure(classDescriptor);
+
+        final CodegenContext objectContext = expressionCodegen.context.intoAnonymousClass(classDescriptor, expressionCodegen);
 
         new ImplementationBodyCodegen(objectDeclaration, objectContext, nameAndVisitor.getSecond(), this).generate();
 
-        ConstructorDescriptor constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, objectDeclaration);
-        assert constructorDescriptor != null;
-        CallableMethod callableMethod = typeMapper.mapToCallableMethod(
-                constructorDescriptor,
-                typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
-        return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, callableMethod.getSignature().getAsmMethod(),
-                                                     objectContext.outerWasUsed, null);
+        return closure;
     }
 
     public String createText() {

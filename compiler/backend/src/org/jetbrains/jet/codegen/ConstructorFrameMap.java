@@ -18,7 +18,8 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
-import org.jetbrains.jet.lang.descriptors.ClassKind;
+import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
+import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 
@@ -32,23 +33,25 @@ import java.util.List;
 public class ConstructorFrameMap extends FrameMap {
     private int myOuterThisIndex = -1;
 
-    public ConstructorFrameMap(CallableMethod callableMethod, @Nullable ConstructorDescriptor descriptor, boolean hasThis0) {
+    public ConstructorFrameMap(CallableMethod callableMethod, @Nullable ConstructorDescriptor descriptor) {
         enterTemp(JetTypeMapper.OBJECT_TYPE); // this
-        if (descriptor != null) {
-            if (hasThis0) {
-                myOuterThisIndex = enterTemp(JetTypeMapper.OBJECT_TYPE);   // outer class instance
+
+        final List<JvmMethodParameterSignature> parameterTypes = callableMethod.getSignature().getKotlinParameterTypes();
+        if (parameterTypes != null) {
+            for (JvmMethodParameterSignature parameterType : parameterTypes) {
+                if (parameterType.getKind() == JvmMethodParameterKind.OUTER) {
+                    myOuterThisIndex = enterTemp(JetTypeMapper.OBJECT_TYPE); // this0
+                }
+                else if (parameterType.getKind() != JvmMethodParameterKind.VALUE) {
+                    enterTemp(parameterType.getAsmType());
+                }
+                else {
+                    break;
+                }
             }
         }
 
         List<Type> explicitArgTypes = callableMethod.getValueParameterTypes();
-
-        if (descriptor != null &&
-            (descriptor.getContainingDeclaration().getKind() == ClassKind.ENUM_CLASS ||
-             descriptor.getContainingDeclaration().getKind() == ClassKind.ENUM_ENTRY)) {
-            enterTemp(JetTypeMapper.OBJECT_TYPE); // name
-            enterTemp(Type.INT_TYPE); // ordinal
-        }
-
         List<ValueParameterDescriptor> paramDescrs = descriptor != null
                                                      ? descriptor.getValueParameters()
                                                      : Collections.<ValueParameterDescriptor>emptyList();
