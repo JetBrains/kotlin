@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -28,6 +29,7 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author svtk
@@ -46,26 +48,11 @@ public class JavaToKotlinTypesMap {
     private final Map<FqName, ClassDescriptor> classDescriptorMap = Maps.newHashMap();
     private final Map<FqName, ClassDescriptor> classDescriptorMapForCovariantPositions = Maps.newHashMap();
     private final Map<String, JetType> primitiveTypesMap = Maps.newHashMap();
+    private final Set<String> mappedTypeNames = Sets.newHashSet();
 
     private JavaToKotlinTypesMap() {
         init();
         initPrimitives();
-    }
-
-    @Nullable
-    public JetType getPrimitiveKotlinAnalog(@NotNull String name) {
-        return primitiveTypesMap.get(name);
-    }
-
-    @Nullable
-    public ClassDescriptor getKotlinAnalog(@NotNull FqName fqName, @NotNull JavaTypeTransformer.TypeUsage typeUsage) {
-        if (typeUsage == JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_COVARIANT) {
-            ClassDescriptor descriptor = classDescriptorMapForCovariantPositions.get(fqName);
-            if (descriptor != null) {
-                return descriptor;
-            }
-        }
-        return classDescriptorMap.get(fqName);
     }
 
     private void init() {
@@ -85,22 +72,6 @@ public class JavaToKotlinTypesMap {
         registerCovariant(Iterator.class, standardLibrary.getMutableIterator());
     }
 
-    private void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor) {
-        register(new FqName(javaClass.getName()), kotlinDescriptor);
-    }
-
-    private void register(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
-        classDescriptorMap.put(javaClassName, kotlinDescriptor);
-    }
-
-    private void registerCovariant(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor) {
-        registerCovariant(new FqName(javaClass.getName()), kotlinDescriptor);
-    }
-
-    private void registerCovariant(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
-        classDescriptorMapForCovariantPositions.put(javaClassName, kotlinDescriptor);
-    }
-
     private void initPrimitives() {
         JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
@@ -116,5 +87,39 @@ public class JavaToKotlinTypesMap {
                     primitiveType));
         }
         primitiveTypesMap.put("void", JetStandardClasses.getUnitType());
+    }
+
+    @Nullable
+    public JetType getPrimitiveKotlinAnalog(@NotNull String name) {
+        return primitiveTypesMap.get(name);
+    }
+
+    @Nullable
+    public ClassDescriptor getKotlinAnalog(@NotNull FqName fqName, @NotNull JavaTypeTransformer.TypeUsage typeUsage) {
+        if (typeUsage == JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_COVARIANT) {
+            ClassDescriptor descriptor = classDescriptorMapForCovariantPositions.get(fqName);
+            if (descriptor != null) {
+                return descriptor;
+            }
+        }
+        return classDescriptorMap.get(fqName);
+    }
+
+    private void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor) {
+        register(new FqName(javaClass.getName()), kotlinDescriptor);
+    }
+
+    private void register(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
+        mappedTypeNames.add(javaClassName.getFqName());
+        classDescriptorMap.put(javaClassName, kotlinDescriptor);
+    }
+
+    private void registerCovariant(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor) {
+        registerCovariant(new FqName(javaClass.getName()), kotlinDescriptor);
+    }
+
+    private void registerCovariant(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
+        mappedTypeNames.add(javaClassName.getFqName());
+        classDescriptorMapForCovariantPositions.put(javaClassName, kotlinDescriptor);
     }
 }
