@@ -98,7 +98,6 @@ public class KotlinToJavaTypesMap {
     private void init() {
         JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
 
-        register(JetStandardClasses.getNothing(), JET_NOTHING_TYPE); //todo ?????
         register(JetStandardClasses.getAny(), Object.class);
         register(standardLibrary.getNumber(), Number.class);
         register(standardLibrary.getString(), String.class);
