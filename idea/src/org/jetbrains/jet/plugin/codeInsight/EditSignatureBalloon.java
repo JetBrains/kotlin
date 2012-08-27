@@ -31,10 +31,7 @@ import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiNameValuePair;
+import com.intellij.psi.*;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -165,15 +162,10 @@ class EditSignatureBalloon {
         return editor;
     }
 
-    private int getLineY(@Nullable Editor editor) {
-        if (editor != null) {
-            Document document = PsiDocumentManager.getInstance(project).getDocument(method.getContainingFile());
-            if (document != null) {
-                int lineNumber = document.getLineNumber(method.getTextOffset());
-                return editor.logicalPositionToXY(new LogicalPosition(lineNumber, 0)).y;
-            }
-        }
-        return Integer.MAX_VALUE;
+    private static int getLineY(@Nullable Editor editor) {
+        return editor == null
+               ? Integer.MAX_VALUE
+               : editor.logicalPositionToXY(editor.getCaretModel().getLogicalPosition()).y;
     }
 
     public void show(@Nullable Point point, @NotNull Editor editor) {
