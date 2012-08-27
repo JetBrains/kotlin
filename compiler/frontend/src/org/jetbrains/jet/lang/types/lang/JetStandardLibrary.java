@@ -23,7 +23,6 @@ import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -164,19 +163,19 @@ public class JetStandardLibrary {
         if (libraryScope == null) {
             this.libraryScope = JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getMemberScope();
 
-            this.numberClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Number"));
-            this.stringClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("String"));
-            this.charSequenceClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("CharSequence"));
-            this.arrayClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Array"));
-            this.throwableClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Throwable"));
-            this.enumClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Enum"));
-            this.volatileClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("volatile"));
+            this.numberClass = getStdClassByName("Number");
+            this.stringClass = getStdClassByName("String");
+            this.charSequenceClass = getStdClassByName("CharSequence");
+            this.arrayClass = getStdClassByName("Array");
+            this.throwableClass = getStdClassByName("Throwable");
+            this.enumClass = getStdClassByName("Enum");
+            this.volatileClass = getStdClassByName("volatile");
 
-            this.iterableClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Iterable"));
-            this.iteratorClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Iterator"));
-            this.mutableIterableClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("MutableIterable"));
-            this.mutableIteratorClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("MutableIterator"));
-            this.comparableClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Comparable"));
+            this.iterableClass = getStdClassByName("Iterable");
+            this.iteratorClass = getStdClassByName("Iterator");
+            this.mutableIterableClass = getStdClassByName("MutableIterable");
+            this.mutableIteratorClass = getStdClassByName("MutableIterator");
+            this.comparableClass = getStdClassByName("Comparable");
 
             this.stringType = new JetTypeImpl(getString());
             this.tuple0Type = new JetTypeImpl(JetStandardClasses.getTuple(0));
@@ -192,6 +191,13 @@ public class JetStandardLibrary {
                 makePrimitive(primitive);
             }
         }
+    }
+
+    @NotNull
+    private ClassDescriptor getStdClassByName(String className) {
+        ClassDescriptor classDescriptor = (ClassDescriptor) libraryScope.getClassifier(Name.identifier(className));
+        assert classDescriptor != null : "Standard class not found: " + className;
+        return classDescriptor;
     }
 
     private void makePrimitive(PrimitiveType primitiveType) {
