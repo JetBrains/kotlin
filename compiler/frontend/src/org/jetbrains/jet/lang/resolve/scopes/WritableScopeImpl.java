@@ -20,7 +20,6 @@ import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -314,7 +313,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public void addClassifierDescriptor(@NotNull ClassifierDescriptor classDescriptor) {
         checkMayWrite();
 
-        if (DescriptorUtils.isObject(classDescriptor)) {
+        if (isObject(classDescriptor)) {
             throw new IllegalStateException("must not be object: " + classDescriptor);
         }
 
@@ -325,7 +324,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public void addObjectDescriptor(@NotNull ClassDescriptor objectDescriptor) {
         checkMayWrite();
 
-        if (!DescriptorUtils.isObject(objectDescriptor)) {
+        if (!objectDescriptor.getKind().isObject()) {
             throw new IllegalStateException("must be object: " + objectDescriptor);
         }
         
@@ -538,5 +537,18 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @Override
     public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
         return declaredDescriptorsAccessibleBySimpleName.values();
+    }
+
+    private static boolean isObject(@NotNull ClassifierDescriptor classifier) {
+        if (classifier instanceof ClassDescriptor) {
+            ClassDescriptor clazz = (ClassDescriptor) classifier;
+            return clazz.getKind().isObject();
+        }
+        else if (classifier instanceof TypeParameterDescriptor) {
+            return false;
+        }
+        else {
+            throw new IllegalStateException("unknown classifier: " + classifier);
+        }
     }
 }

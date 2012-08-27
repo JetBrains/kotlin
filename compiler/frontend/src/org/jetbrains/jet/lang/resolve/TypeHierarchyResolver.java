@@ -168,7 +168,7 @@ public class TypeHierarchyResolver {
 
         if (ownerDescriptor instanceof MutableClassDescriptor) {
             MutableClassDescriptor classDescriptor = (MutableClassDescriptor) ownerDescriptor;
-            if (classDescriptor.getKind() == ClassKind.OBJECT) {
+            if (classDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
                 return classDescriptor.getScopeForMemberResolution();
             }
 
@@ -231,8 +231,9 @@ public class TypeHierarchyResolver {
 
                 @Override
                 public void visitObjectDeclaration(JetObjectDeclaration declaration) {
-                    final MutableClassDescriptor objectDescriptor =
-                            createClassDescriptorForObject(declaration, owner, outerScope, JetPsiUtil.safeName(declaration.getName()));
+                    MutableClassDescriptor objectDescriptor =
+                            createClassDescriptorForObject(declaration, owner, outerScope, JetPsiUtil.safeName(declaration.getName()),
+                                                           ClassKind.OBJECT);
                     owner.addObjectDescriptor(objectDescriptor);
                     trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(declaration), objectDescriptor);
                 }
@@ -274,7 +275,8 @@ public class TypeHierarchyResolver {
                     if (objectDeclaration != null) {
                         Name classObjectName = getClassObjectName(owner.getOwnerForChildren().getName());
                         MutableClassDescriptor classObjectDescriptor =
-                              createClassDescriptorForObject(objectDeclaration, owner, getStaticScope(classObject, owner), classObjectName);
+                              createClassDescriptorForObject(objectDeclaration, owner, getStaticScope(classObject, owner),
+                                                             classObjectName, ClassKind.CLASS_OBJECT);
                         NamespaceLikeBuilder.ClassObjectStatus status = owner.setClassObjectDescriptor(classObjectDescriptor);
                         switch (status) {
                             case DUPLICATE:
@@ -293,7 +295,7 @@ public class TypeHierarchyResolver {
                 private void createClassObjectForEnumClass(JetClass klass, MutableClassDescriptor mutableClassDescriptor) {
                     if (klass.hasModifier(JetTokens.ENUM_KEYWORD)) {
                         MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(
-                                mutableClassDescriptor, outerScope, ClassKind.OBJECT,
+                                mutableClassDescriptor, outerScope, ClassKind.CLASS_OBJECT,
                                 getClassObjectName(klass.getName()));
                         mutableClassDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
                         classObjectDescriptor.setModality(Modality.FINAL);
@@ -310,10 +312,10 @@ public class TypeHierarchyResolver {
 
                 private MutableClassDescriptor createClassDescriptorForObject(
                         @NotNull JetObjectDeclaration declaration, @NotNull NamespaceLikeBuilder owner,
-                        @NotNull JetScope scope, @NotNull Name name
+                        @NotNull JetScope scope, @NotNull Name name, @NotNull ClassKind kind
                 ) {
                     MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
-                            owner.getOwnerForChildren(), scope, ClassKind.OBJECT, name);
+                            owner.getOwnerForChildren(), scope, kind, name);
                     context.getObjects().put(declaration, mutableClassDescriptor);
 
                     JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();

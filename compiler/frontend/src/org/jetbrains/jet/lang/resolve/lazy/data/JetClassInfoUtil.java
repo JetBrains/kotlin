@@ -28,12 +28,10 @@ public class JetClassInfoUtil {
 
     public static JetClassLikeInfo createClassLikeInfo(@NotNull JetClassOrObject classOrObject) {
         if (classOrObject instanceof JetClass) {
-            JetClass jetClass = (JetClass) classOrObject;
-            return new JetClassInfo(jetClass);
+            return new JetClassInfo((JetClass) classOrObject);
         }
         if (classOrObject instanceof JetObjectDeclaration) {
-            JetObjectDeclaration objectDeclaration = (JetObjectDeclaration) classOrObject;
-            return new JetObjectInfo(objectDeclaration);
+            return new JetObjectInfo(classOrObject);
         }
         throw new IllegalArgumentException("Unknown declaration type: " + classOrObject + classOrObject.getText());
     }

@@ -231,19 +231,6 @@ public class DescriptorUtils {
         return expectedType != null ? expectedType : TypeUtils.NO_EXPECTED_TYPE;
     }
 
-    public static boolean isObject(@NotNull ClassifierDescriptor classifier) {
-        if (classifier instanceof ClassDescriptor) {
-            ClassDescriptor clazz = (ClassDescriptor) classifier;
-            return clazz.getKind() == ClassKind.OBJECT || clazz.getKind() == ClassKind.ENUM_ENTRY;
-        }
-        else if (classifier instanceof TypeParameterDescriptor) {
-            return false;
-        }
-        else {
-            throw new IllegalStateException("unknown classifier: " + classifier);
-        }
-    }
-
     public static boolean isSubclass(@NotNull ClassDescriptor subClass, @NotNull ClassDescriptor superClass) {
         return isSubtypeOfClass(subClass.getDefaultType(), superClass.getOriginal());
     }
@@ -292,18 +279,8 @@ public class DescriptorUtils {
     }
 
     public static boolean isClassObject(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-            if (classDescriptor.getKind() == ClassKind.OBJECT) {
-                if (classDescriptor.getContainingDeclaration() instanceof ClassDescriptor) {
-                    ClassDescriptor containingDeclaration = (ClassDescriptor) classDescriptor.getContainingDeclaration();
-                    if (classDescriptor.getDefaultType().equals(containingDeclaration.getClassObjectType())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return descriptor instanceof ClassDescriptor
+               && ((ClassDescriptor) descriptor).getKind() == ClassKind.CLASS_OBJECT;
     }
 
     @NotNull
@@ -340,7 +317,7 @@ public class DescriptorUtils {
         if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
 
-            if (classDescriptor.getKind() == ClassKind.OBJECT) {
+            if (classDescriptor.getKind().isObject()) {
                 return inStaticContext(classDescriptor.getContainingDeclaration());
             }
 

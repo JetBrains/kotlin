@@ -120,7 +120,7 @@ public class QualifiedExpressionResolver {
         if (descriptor instanceof NamespaceDescriptor) {
             return true;
         }
-        if (descriptor instanceof ClassDescriptor && ((ClassDescriptor)descriptor).getKind() != ClassKind.OBJECT) {
+        if (descriptor instanceof ClassDescriptor && !((ClassDescriptor)descriptor).getKind().isObject()) {
             return true;
         }
         trace.report(CANNOT_IMPORT_FROM_ELEMENT.on(reference, descriptor));

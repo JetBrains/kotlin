@@ -39,6 +39,11 @@ import java.util.*;
 */
 public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescriptor, ClassMemberDeclarationProvider> {
 
+    @NotNull
+    private static final Set<ClassKind> GENERATE_CONSTRUCTORS_FOR =
+            EnumSet.of(ClassKind.CLASS, ClassKind.ANNOTATION_CLASS, ClassKind.OBJECT,
+                       ClassKind.ENUM_CLASS, ClassKind.ENUM_ENTRY, ClassKind.CLASS_OBJECT);
+
     private interface MemberExtractor<T extends CallableMemberDescriptor> {
         MemberExtractor<FunctionDescriptor> EXTRACT_FUNCTIONS = new MemberExtractor<FunctionDescriptor>() {
             @NotNull
@@ -277,33 +282,29 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
     @Nullable
     public ConstructorDescriptor getPrimaryConstructor() {
-        if (!primaryConstructorResolved) {
-            Set<ClassKind> generateConstructorsFor =
-                    EnumSet.of(ClassKind.CLASS, ClassKind.ANNOTATION_CLASS, ClassKind.OBJECT, ClassKind.ENUM_CLASS, ClassKind.ENUM_ENTRY);
-            if (generateConstructorsFor.contains(thisDescriptor.getKind())) {
-                JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
-                if (
-                        thisDescriptor.getKind() != ClassKind.OBJECT // a fake class object of an enum class
-                        && !declaresObjectOrEnumConstant(classOrObject) // normal objects and enum entries with no constructors
-                ) {
-                    JetClass jetClass = (JetClass) classOrObject;
-                    ConstructorDescriptorImpl constructor = resolveSession.getInjector().getDescriptorResolver()
-                            .resolvePrimaryConstructorDescriptor(thisDescriptor.getScopeForClassHeaderResolution(),
-                                                                 thisDescriptor,
-                                                                 jetClass,
-                                                                 resolveSession.getTrace());
-                    primaryConstructor = constructor;
-                    setDeferredReturnType(constructor);
-                }
-                else {
-                    ConstructorDescriptorImpl constructor =
-                            DescriptorResolver.createPrimaryConstructorForObject(classOrObject, thisDescriptor, resolveSession.getTrace());
-                    setDeferredReturnType(constructor);
-                    primaryConstructor = constructor;
-                }
-            }
-            primaryConstructorResolved = true;
+        if (primaryConstructorResolved) {
+            return primaryConstructor;
         }
+        if (GENERATE_CONSTRUCTORS_FOR.contains(thisDescriptor.getKind())) {
+            JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
+            if (!thisDescriptor.getKind().isObject()) {
+                JetClass jetClass = (JetClass) classOrObject;
+                ConstructorDescriptorImpl constructor = resolveSession.getInjector().getDescriptorResolver()
+                        .resolvePrimaryConstructorDescriptor(thisDescriptor.getScopeForClassHeaderResolution(),
+                                                             thisDescriptor,
+                                                             jetClass,
+                                                             resolveSession.getTrace());
+                primaryConstructor = constructor;
+                setDeferredReturnType(constructor);
+            }
+            else {
+                ConstructorDescriptorImpl constructor =
+                        DescriptorResolver.createPrimaryConstructorForObject(classOrObject, thisDescriptor, resolveSession.getTrace());
+                setDeferredReturnType(constructor);
+                primaryConstructor = constructor;
+            }
+        }
+        primaryConstructorResolved = true;
         return primaryConstructor;
     }
 

@@ -116,7 +116,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
     }
 
     private DeclarationDescriptor findCurrentDescriptorForClass(@NotNull ClassDescriptor originalDescriptor) {
-        if (originalDescriptor.getKind() == ClassKind.OBJECT) {
+        if (originalDescriptor.getKind().isObject()) {
             DeclarationDescriptor currentParent = findCurrentDescriptor(originalDescriptor.getContainingDeclaration());
             if (currentParent == null) return null;
             return ((ClassDescriptor) currentParent).getClassObjectDescriptor();

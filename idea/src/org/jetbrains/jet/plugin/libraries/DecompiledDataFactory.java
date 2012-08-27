@@ -150,7 +150,7 @@ class DecompiledDataFactory {
             String subindent = indent + "    ";
             if (classDescriptor.getClassObjectDescriptor() != null) {
                 firstPassed = true;
-                myBuilder.append(subindent).append("class ");
+                myBuilder.append(subindent);
                 appendDescriptor(classDescriptor.getClassObjectDescriptor(), subindent);
             }
             for (DeclarationDescriptor member : sortDeclarations(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors())) {

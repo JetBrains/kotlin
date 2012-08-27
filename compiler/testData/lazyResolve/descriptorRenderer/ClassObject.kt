@@ -4,4 +4,4 @@ trait TheTrait {
 }
 
 //internal trait TheTrait defined in root package
-//object defined in TheTrait
+//class object defined in TheTrait

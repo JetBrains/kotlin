@@ -7,19 +7,14 @@ internal final enum class test.Test : jet.Enum<test.Test> {
     internal final class object test.Test.<class-object-for-Test> {
         internal final /*constructor*/ fun <init>(): test.Test.<class-object-for-Test>
         internal final val A: test.Test.<class-object-for-Test>.A
-        internal final val C: test.Test.<class-object-for-Test>.C
+        internal final val B: test.Test.<class-object-for-Test>.B
         internal final enum entry test.Test.<class-object-for-Test>.A : test.Test {
             internal final /*constructor*/ fun <init>(): test.Test.<class-object-for-Test>.A
             public final override /*1*/ fun name(): jet.String
             public final override /*1*/ fun ordinal(): jet.Int
         }
         internal final enum entry test.Test.<class-object-for-Test>.B : test.Test {
-            public final /*constructor*/ fun <init>(/*0*/ x: jet.Int): test.Test.<class-object-for-Test>.B
-            public final override /*1*/ fun name(): jet.String
-            public final override /*1*/ fun ordinal(): jet.Int
-        }
-        internal final enum entry test.Test.<class-object-for-Test>.C : test.Test {
-            internal final /*constructor*/ fun <init>(): test.Test.<class-object-for-Test>.C
+            internal final /*constructor*/ fun <init>(): test.Test.<class-object-for-Test>.B
             public final override /*1*/ fun name(): jet.String
             public final override /*1*/ fun ordinal(): jet.Int
         }

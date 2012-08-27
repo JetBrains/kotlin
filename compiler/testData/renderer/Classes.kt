@@ -37,5 +37,5 @@ trait TheTrait {
 //internal final class InternalClass defined in rendererTest
 //internal trait TheTrait defined in rendererTest
 //internal abstract fun abstractFun() : Unit defined in rendererTest.TheTrait
-//object : rendererTest.TheClass<jet.Int, jet.Int> defined in rendererTest.TheTrait
+//class object : rendererTest.TheClass<jet.Int, jet.Int> defined in rendererTest.TheTrait
 //internal final fun classObjectFunction() : jet.Int defined in rendererTest.TheTrait.<class-object-for-TheTrait>

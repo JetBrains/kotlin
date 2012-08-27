@@ -779,7 +779,7 @@ public class NamespaceComparator {
 
         @Override
         public void serialize(ClassKind kind) {
-            assert kind == ClassKind.OBJECT : "Must be called for class objects only";
+            assert kind == ClassKind.CLASS_OBJECT : "Must be called for class objects only";
             sb.append("class object");
         }
     }

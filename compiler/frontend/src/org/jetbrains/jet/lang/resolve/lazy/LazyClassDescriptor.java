@@ -25,7 +25,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.AnnotationResolver;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.ModifiersChecker;
 import org.jetbrains.jet.lang.resolve.lazy.data.FilteringClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
@@ -102,7 +105,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.typeConstructor = new LazyClassTypeConstructor();
 
         this.kind = classLikeInfo.getClassKind();
-        if (kind == ClassKind.OBJECT) {
+        if (kind.isObject()) {
             this.modality = Modality.FINAL;
         }
         else {
@@ -241,7 +244,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         else {
             if (getKind() == ClassKind.ENUM_CLASS) {
                 // Enum classes always have class objects, and enum constants are their members
-                return onlyEnumEntries(originalClassInfo);
+                return enumClassObjectInfo(originalClassInfo);
             }
         }
         return null;
@@ -395,7 +398,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         return new FilteringClassLikeInfo(classLikeInfo, Predicates.not(ONLY_ENUM_ENTRIES));
     }
 
-    private static JetClassLikeInfo onlyEnumEntries(JetClassLikeInfo classLikeInfo) {
+    private static JetClassLikeInfo enumClassObjectInfo(JetClassLikeInfo classLikeInfo) {
         return new FilteringClassLikeInfo(classLikeInfo, ONLY_ENUM_ENTRIES) {
             @Override
             public JetClassOrObject getCorrespondingClassOrObject() {
@@ -405,7 +408,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             @NotNull
             @Override
             public ClassKind getClassKind() {
-                return ClassKind.OBJECT;
+                return ClassKind.CLASS_OBJECT;
             }
 
             @NotNull

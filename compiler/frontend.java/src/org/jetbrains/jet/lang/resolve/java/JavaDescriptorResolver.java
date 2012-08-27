@@ -451,7 +451,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         PsiMethod[] psiConstructors = psiClass.getConstructors();
 
         boolean isStatic = psiClass.hasModifierProperty(PsiModifier.STATIC);
-        if (classData.classDescriptor.getKind() == ClassKind.OBJECT) {
+        if (classData.classDescriptor.getKind() == ClassKind.OBJECT || classData.classDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
             // TODO: wrong: class objects do not need visible constructors
             ConstructorDescriptorImpl constructor = new ConstructorDescriptorImpl(classData.classDescriptor, new ArrayList<AnnotationDescriptor>(0), true);
             Visibility visibility = psiConstructors.length != 0
@@ -592,7 +592,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
         FqName fqName = new FqName(classObjectPsiClass.getQualifiedName());
         ResolverClassData classData = new ClassDescriptorFromJvmBytecode(
-                containing, ClassKind.OBJECT, classObjectPsiClass, fqName, this)
+                containing, ClassKind.CLASS_OBJECT, classObjectPsiClass, fqName, this)
                         .getResolverBinaryClassData();
 
         ClassDescriptorFromJvmBytecode classObjectDescriptor = classData.classDescriptor;
@@ -608,7 +608,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         assert psiClassQualifiedName != null : "Reading java class with no qualified name";
         FqNameUnsafe fqName = new FqNameUnsafe(psiClassQualifiedName + "." + getClassObjectName(psiClass.getName()).getName());
         ClassDescriptorFromJvmBytecode classObjectDescriptor = new ClassDescriptorFromJvmBytecode(
-                containing, ClassKind.OBJECT, psiClass, null, this);
+                containing, ClassKind.CLASS_OBJECT, psiClass, null, this);
 
         ResolverEnumClassObjectClassData data = new ResolverEnumClassObjectClassData(psiClass, null, classObjectDescriptor);
         setUpClassObjectDescriptor(containing, fqName, data, getClassObjectName(containing.getName().getName()));

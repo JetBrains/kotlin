@@ -375,7 +375,7 @@ public class JetTypeMapper {
 
         if (descriptor instanceof ClassDescriptor) {
             ClassDescriptor klass = (ClassDescriptor) descriptor;
-            if (klass.getKind() == ClassKind.OBJECT) {
+            if (klass.getKind() == ClassKind.OBJECT || klass.getKind() == ClassKind.CLASS_OBJECT) {
                 if (klass.getContainingDeclaration() instanceof ClassDescriptor) {
                     ClassDescriptor containingKlass = (ClassDescriptor) klass.getContainingDeclaration();
                     if (containingKlass.getKind() == ClassKind.ENUM_CLASS) {

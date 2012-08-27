@@ -541,6 +541,9 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                 case ANNOTATION_CLASS:
                     keyword = "annotation class";
                     break;
+                case CLASS_OBJECT:
+                    keyword = "class object";
+                    break;
                 default:
                     keyword = "class";
             }
@@ -548,25 +551,16 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             return null;
         }
 
-        private boolean isClassObjectDescriptor(ClassDescriptor descriptor) {
-            if (descriptor.getKind() == ClassKind.OBJECT) {
-                DeclarationDescriptor containing = descriptor.getContainingDeclaration();
-                if (containing instanceof ClassDescriptor) {
-                    return ((ClassDescriptor)containing).getClassObjectDescriptor() == descriptor;
-                }
-            }
-            return false;
-        }
-
         public void renderClassDescriptor(ClassDescriptor descriptor, StringBuilder builder, String keyword) {
-            if (!isClassObjectDescriptor(descriptor)) {
+            if (descriptor.getKind() != ClassKind.CLASS_OBJECT) {
                 renderVisibility(descriptor.getVisibility(), builder);
             }
-            if (descriptor.getKind() != ClassKind.TRAIT && descriptor.getKind() != ClassKind.OBJECT) {
+            if (descriptor.getKind() != ClassKind.TRAIT && descriptor.getKind() != ClassKind.OBJECT
+                && descriptor.getKind() != ClassKind.CLASS_OBJECT) {
                 renderModality(descriptor.getModality(), builder);
             }
             builder.append(renderKeyword(keyword));
-            if (descriptor.getKind() != ClassKind.OBJECT) {
+            if (descriptor.getKind() != ClassKind.CLASS_OBJECT) {
                 builder.append(" ");
                 renderName(descriptor, builder);
                 renderTypeParameters(descriptor.getTypeConstructor().getParameters(), builder);

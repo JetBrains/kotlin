@@ -107,7 +107,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase
         }
         else if (declarationDescriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-            return classDescriptor.getKind() == ClassKind.OBJECT || classDescriptor.getKind() == ClassKind.ENUM_CLASS;
+            return classDescriptor.getKind().isObject() || classDescriptor.getKind() == ClassKind.ENUM_CLASS;
         }
         else {
             return false;
@@ -296,7 +296,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase
 
                 @Override
                 public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
-                    if (getKind() == ClassKind.OBJECT) {
+                    if (getKind().isObject()) {
                         return ClassObjectStatus.NOT_ALLOWED;
                     }
 
@@ -308,7 +308,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase
                         return ClassObjectStatus.NOT_ALLOWED;
                     }
 
-                    assert classObjectDescriptor.getKind() == ClassKind.OBJECT;
+                    assert classObjectDescriptor.getKind() == ClassKind.CLASS_OBJECT;
                     MutableClassDescriptorLite.this.classObjectDescriptor = classObjectDescriptor;
 
                     return ClassObjectStatus.OK;

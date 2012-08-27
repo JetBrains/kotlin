@@ -40,6 +40,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
 
 /**
@@ -209,7 +210,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
                         assert containingDeclaration != null;
                         containingDeclaration = containingDeclaration.getContainingDeclaration();
                     }
-                    if (containingDeclaration instanceof ClassDescriptor && DescriptorUtils.isClassObject(containingDeclaration)) {
+                    if (containingDeclaration != null && isClassObject(containingDeclaration)) {
                         ResolutionCandidate<D> candidate = ResolutionCandidate.create(descriptor);
                         candidate.setThisObject(new ClassReceiver((ClassDescriptor) containingDeclaration));
                         candidate.setExplicitReceiverKind(ExplicitReceiverKind.NO_EXPLICIT_RECEIVER);

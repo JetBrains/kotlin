@@ -21,7 +21,6 @@ import com.google.common.collect.Collections2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.AbstractScopeAdapter;
@@ -49,7 +48,7 @@ public class InnerClassesScopeWrapper extends AbstractScopeAdapter {
     }
 
     private boolean isClass(DeclarationDescriptor descriptor) {
-        return descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.OBJECT;
+        return descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).getKind().isObject();
     }
 
     @Override

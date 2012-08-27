@@ -25,5 +25,10 @@ public enum ClassKind {
     ENUM_CLASS,
     ENUM_ENTRY,
     ANNOTATION_CLASS,
-    OBJECT
+    OBJECT,
+    CLASS_OBJECT;
+
+    public boolean isObject() {
+        return this == OBJECT || this == CLASS_OBJECT || this == ENUM_ENTRY;
+    }
 }

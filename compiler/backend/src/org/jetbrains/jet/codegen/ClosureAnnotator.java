@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -219,10 +218,9 @@ public class ClosureAnnotator {
     }
 
     public boolean hasThis0(ClassDescriptor classDescriptor) {
-        if (DescriptorUtils.isClassObject(classDescriptor)) {
-            return false;
-        }
-        if (classDescriptor.getKind() == ClassKind.ENUM_CLASS || classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
+        if (classDescriptor.getKind() == ClassKind.ENUM_CLASS
+            || classDescriptor.getKind() == ClassKind.ENUM_ENTRY
+            || classDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
             return false;
         }
 

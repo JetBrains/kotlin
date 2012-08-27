@@ -28,8 +28,26 @@ import java.util.List;
  */
 public class JetClassInfo extends JetClassOrObjectInfo<JetClass> {
 
+    @NotNull
+    private final ClassKind kind;
+
     protected JetClassInfo(@NotNull JetClass classOrObject) {
         super(classOrObject);
+        if (element instanceof JetEnumEntry) {
+            this.kind = ClassKind.ENUM_ENTRY;
+        }
+        else if (element.isTrait()) {
+            this.kind = ClassKind.TRAIT;
+        }
+        else if (element.hasModifier(JetTokens.ANNOTATION_KEYWORD)) {
+            this.kind = ClassKind.ANNOTATION_CLASS;
+        }
+        else if (element.hasModifier(JetTokens.ENUM_KEYWORD)) {
+            this.kind = ClassKind.ENUM_CLASS;
+        }
+        else {
+            this.kind = ClassKind.CLASS;
+        }
     }
 
     @Override
@@ -52,10 +70,6 @@ public class JetClassInfo extends JetClassOrObjectInfo<JetClass> {
     @NotNull
     @Override
     public ClassKind getClassKind() {
-        if (element instanceof JetEnumEntry) return ClassKind.ENUM_ENTRY;
-        if (element.isTrait()) return ClassKind.TRAIT;
-        if (element.hasModifier(JetTokens.ANNOTATION_KEYWORD)) return ClassKind.ANNOTATION_CLASS;
-        if (element.hasModifier(JetTokens.ENUM_KEYWORD)) return ClassKind.ENUM_CLASS;
-        return ClassKind.CLASS;
+        return kind;
     }
 }
