@@ -38,6 +38,9 @@ public final class ApplicationUtils {
             return;
         }
 
-        logger.warn("This operation is time consuming and must not be called on EDT");
+        logger.warn("This operation is time consuming and must not be called on EDT.");
+
+        //noinspection CallToPrintStackTrace
+        new Throwable().printStackTrace();
     }
 }
