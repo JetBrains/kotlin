@@ -24,17 +24,14 @@ import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.Alarm;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetElement;
@@ -47,10 +44,10 @@ import org.jetbrains.jet.lang.resolve.calls.inference.BoundsOwner;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.internal.codewindow.BytecodeToolwindow;
+import org.jetbrains.jet.plugin.internal.Location;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.util.LongRunningReadTask;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import javax.swing.*;
 import java.awt.*;
@@ -67,110 +64,121 @@ public class ResolveToolwindow extends JPanel implements Disposable {
 
     public static final String BAR = "\n\n===\n\n";
 
-    private static final int UPDATE_DELAY = 500;
+    private static final int UPDATE_DELAY = 1000;
     private static final String DEFAULT_TEXT = "/*\n" +
                                                "Information about symbols resolved by\nKotlin compiler.\n" +
                                                "No Kotlin source file is opened.\n" +
                                                "*/";
-    private final Editor myEditor;
-    private final Alarm myUpdateAlarm;
-    private BytecodeToolwindow.Location myCurrentLocation;
-    private final Project myProject;
 
+    private static final String NO_REFERENCE_TEXT = "/*\n" +
+                                               "Information about symbols resolved by\nKotlin compiler.\n" +
+                                               "Invalid place for getting reference information.\n" +
+                                               "*/";
+
+    private class UpdateResolveToolWindowTask extends LongRunningReadTask<Location, String> {
+        @Override
+        protected Location prepareRequestInfo() {
+            Location location = Location.fromEditor(FileEditorManager.getInstance(myProject).getSelectedTextEditor(), myProject);
+            if (location.getEditor() == null || location.getJetFile() == null) {
+                return null;
+            }
+
+            return location;
+        }
+
+        @Override
+        protected void hideResultOnInvalidLocation() {
+            setText(DEFAULT_TEXT);
+        }
+
+        @NotNull
+        @Override
+        protected String processRequest(@NotNull Location requestInfo) {
+            JetFile jetFile = requestInfo.getJetFile();
+            assert jetFile != null;
+
+            int startOffset = requestInfo.getStartOffset();
+            int endOffset = requestInfo.getEndOffset();
+
+            BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile).getBindingContext();
+
+            PsiElement elementAtOffset;
+            if (startOffset == endOffset) {
+                elementAtOffset = PsiUtilCore.getElementAtOffset(jetFile, startOffset);
+            }
+            else {
+                PsiElement start = PsiUtilCore.getElementAtOffset(jetFile, startOffset);
+                PsiElement end = PsiUtilCore.getElementAtOffset(jetFile, endOffset - 1);
+                elementAtOffset = PsiTreeUtil.findCommonParent(start, end);
+            }
+
+            PsiElement elementWithDebugInfo = findData(bindingContext, elementAtOffset, RESOLUTION_DEBUG_INFO);
+            if (elementWithDebugInfo != null) {
+                return renderDebugInfo(elementWithDebugInfo, bindingContext.get(RESOLUTION_DEBUG_INFO, elementWithDebugInfo), null);
+            }
+
+            @SuppressWarnings("unchecked")
+            PsiElement elementWithResolvedCall = findData(bindingContext, elementAtOffset, (ReadOnlySlice) RESOLVED_CALL);
+            if (elementWithResolvedCall instanceof JetElement) {
+                return renderDebugInfo(elementWithResolvedCall, null,
+                                       bindingContext.get(RESOLVED_CALL, (JetElement) elementWithResolvedCall));
+            }
+
+            JetExpression parentExpression = (elementAtOffset instanceof JetExpression) ?
+                                             (JetExpression) elementAtOffset :
+                                             PsiTreeUtil.getParentOfType(elementAtOffset, JetExpression.class);
+
+            if (parentExpression != null) {
+                JetType type = bindingContext.get(EXPRESSION_TYPE, parentExpression);
+                String text = parentExpression + "|" + parentExpression.getText() + "| : " + type;
+                if (parentExpression instanceof JetReferenceExpression) {
+                    JetReferenceExpression referenceExpression = (JetReferenceExpression) parentExpression;
+                    DeclarationDescriptor target = bindingContext.get(REFERENCE_TARGET, referenceExpression);
+                    text += "\nReference target: \n" + target;
+                }
+
+                return text;
+            }
+
+            return NO_REFERENCE_TEXT;
+        }
+
+        @Override
+        protected void onResultReady(@NotNull Location requestInfo, @Nullable final String resultText) {
+            if (resultText != null) {
+                setText(resultText);
+            }
+        }
+    }
+
+    private final Alarm myUpdateAlarm;
+    private final Editor myEditor;
+    private UpdateResolveToolWindowTask currentTask = null;
+
+    private final Project myProject;
 
     public ResolveToolwindow(Project project) {
         super(new BorderLayout());
         myProject = project;
-        myEditor = EditorFactory.getInstance().createEditor(EditorFactory.getInstance().createDocument(""), project, JetFileType.INSTANCE, true);
+        myEditor = EditorFactory.getInstance()
+                .createEditor(EditorFactory.getInstance().createDocument(""), project, JetFileType.INSTANCE, true);
         add(myEditor.getComponent());
         myUpdateAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
         myUpdateAlarm.addRequest(new Runnable() {
             @Override
             public void run() {
                 myUpdateAlarm.addRequest(this, UPDATE_DELAY);
-                BytecodeToolwindow.Location location = BytecodeToolwindow.Location.fromEditor(FileEditorManager.getInstance(myProject).getSelectedTextEditor());
-                if (!Comparing.equal(location, myCurrentLocation)) {
-                    render(location, myCurrentLocation);
-                    myCurrentLocation = location;
+                UpdateResolveToolWindowTask task = new UpdateResolveToolWindowTask();
+                task.init();
+
+                if (task.shouldStart(currentTask)) {
+                    currentTask = task;
+                    currentTask.run();
                 }
             }
         }, UPDATE_DELAY);
-    }
 
-    private void render(BytecodeToolwindow.Location location, BytecodeToolwindow.Location oldLocation) {
-        Editor editor = location.getEditor();
-        if (editor == null) {
-            setText(DEFAULT_TEXT);
-        }
-        else {
-            VirtualFile vFile = ((EditorEx) editor).getVirtualFile();
-            if (vFile == null) {
-                setText(DEFAULT_TEXT);
-                return;
-            }
-
-            PsiFile psiFile = PsiManager.getInstance(myProject).findFile(vFile);
-            if (!(psiFile instanceof JetFile)) {
-                setText(DEFAULT_TEXT);
-                return;
-            }
-
-
-            int startOffset = location.getStartOffset();
-            int endOffset = location.getEndOffset();
-            if (oldLocation == null || !Comparing.equal(oldLocation.getEditor(), location.getEditor())
-                    || oldLocation.getStartOffset() != startOffset
-                    || oldLocation.getEndOffset() != endOffset) {
-
-                BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile)
-                        .getBindingContext();
-
-                
-                PsiElement elementAtOffset;
-                if (startOffset == endOffset) {
-                    elementAtOffset = PsiUtilCore.getElementAtOffset(psiFile, startOffset);
-                }
-                else {
-                    PsiElement start = PsiUtilCore.getElementAtOffset(psiFile, startOffset);
-                    PsiElement end = PsiUtilCore.getElementAtOffset(psiFile, endOffset - 1);
-                    elementAtOffset = PsiTreeUtil.findCommonParent(start, end);
-                }
-
-                PsiElement currentElement = elementAtOffset;
-
-                boolean callFound = false;
-
-                PsiElement elementWithDebugInfo = findData(bindingContext, currentElement, RESOLUTION_DEBUG_INFO);
-                if (elementWithDebugInfo != null) {
-                    callFound = true;
-                    setText(renderDebugInfo(elementWithDebugInfo, bindingContext.get(RESOLUTION_DEBUG_INFO, elementWithDebugInfo), null));
-                }
-                else {
-                    PsiElement elementWithResolvedCall = findData(bindingContext, currentElement, (WritableSlice) RESOLVED_CALL);
-                    if (elementWithResolvedCall instanceof JetElement) {
-                        callFound = true;
-                        setText(renderDebugInfo(elementWithResolvedCall, null, bindingContext.get(RESOLVED_CALL, (JetElement) elementWithResolvedCall)));
-                    }
-                }
-
-                if (!callFound) {
-
-                    JetExpression parentExpression = (elementAtOffset instanceof JetExpression) ?
-                                                     (JetExpression) elementAtOffset :
-                                                     PsiTreeUtil.getParentOfType(elementAtOffset, JetExpression.class);
-                    if (parentExpression != null) {
-                        JetType type = bindingContext.get(EXPRESSION_TYPE, parentExpression);
-                        String text = parentExpression + "|" + parentExpression.getText() + "| : " + type;
-                        if (parentExpression instanceof JetReferenceExpression) {
-                            JetReferenceExpression referenceExpression = (JetReferenceExpression) parentExpression;
-                            DeclarationDescriptor target = bindingContext.get(REFERENCE_TARGET, referenceExpression);
-                            text += "\nReference target: \n" + target;
-                        }
-                        setText(text);
-                    }
-                }
-            }
-        }
+        setText(DEFAULT_TEXT);
     }
 
     @Nullable
@@ -182,18 +190,22 @@ public class ResolveToolwindow extends JPanel implements Disposable {
                 if (data != null && data != NO_DEBUG_INFO) {
                     return currentElement;
                 }
-
             }
+
             currentElement = currentElement.getParent();
         }
+
         return null;
     }
 
-    private static String renderDebugInfo(PsiElement currentElement,
+    @NotNull
+    private static String renderDebugInfo(
+            PsiElement currentElement,
             @Nullable ResolutionDebugInfo.Data debugInfo,
-            @Nullable ResolvedCall<? extends CallableDescriptor> call) {
+            @Nullable ResolvedCall<? extends CallableDescriptor> call
+    ) {
         StringBuilder result = new StringBuilder();
-        
+
         if (debugInfo != null) {
             List<? extends ResolutionTask<? extends CallableDescriptor, ?>> resolutionTasks = debugInfo.get(TASKS);
             for (ResolutionTask<? extends CallableDescriptor, ?> resolutionTask : resolutionTasks) {
@@ -215,9 +227,11 @@ public class ResolveToolwindow extends JPanel implements Disposable {
         return result.toString();
     }
 
-    private static void renderResolutionLogForCall(Data debugInfo,
+    private static void renderResolutionLogForCall(
+            Data debugInfo,
             ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall,
-            StringBuilder result) {
+            StringBuilder result
+    ) {
         result.append("Trying to call ").append(resolvedCall.getCandidateDescriptor()).append("\n");
         StringBuilder errors = debugInfo.getByKey(ERRORS, resolvedCall);
         if (errors != null) {
@@ -254,7 +268,6 @@ public class ResolveToolwindow extends JPanel implements Disposable {
     }
 
     private static String renderCall(StringBuilder builder, ResolvedCall<? extends CallableDescriptor> resolvedCall) {
-
         CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
         ReceiverDescriptor receiverArgument = resolvedCall.getReceiverArgument();
         ReceiverDescriptor thisObject = resolvedCall.getThisObject();
@@ -329,17 +342,17 @@ public class ResolveToolwindow extends JPanel implements Disposable {
         if (receiverArgument.exists()) {
             builder.append("/").append(receiverArgument);
         }
-        
+
         if (thisObject.exists()) {
             builder.append("/this=").append(thisObject);
         }
-        
+
         if (thisObject.exists() || receiverArgument.exists()) {
             builder.append("/.");
         }
     }
 
-    private void setText(final String text) {
+    private void setText(@NotNull final String text) {
         new WriteCommandAction(myProject) {
             @Override
             protected void run(Result result) throws Throwable {

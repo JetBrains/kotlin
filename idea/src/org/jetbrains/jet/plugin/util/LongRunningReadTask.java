@@ -35,7 +35,7 @@ public abstract class LongRunningReadTask<RequestInfo, ResultData> {
         INITIALIZED,
         STARTED,
         FINISHED,
-        FINISHED_AND_PROCESSED
+        FINISHED_WITH_ACTUAL_DATA
     }
 
     private ProgressIndicator progressIndicator = null;
@@ -45,7 +45,7 @@ public abstract class LongRunningReadTask<RequestInfo, ResultData> {
     protected LongRunningReadTask() {}
 
     /** Should be executed in GUI thread */
-    public boolean isShouldStartWithCancel(@Nullable LongRunningReadTask<RequestInfo, ResultData> previousTask) {
+    public boolean shouldStart(@Nullable LongRunningReadTask<RequestInfo, ResultData> previousTask) {
         ApplicationManager.getApplication().assertIsDispatchThread();
 
         if (currentState != State.INITIALIZED) {
@@ -60,20 +60,19 @@ public abstract class LongRunningReadTask<RequestInfo, ResultData> {
         }
 
         if (requestInfo == null) {
-            if (previousTask != null && (previousTask.currentState == State.FINISHED_AND_PROCESSED || previousTask.currentState == State.FINISHED)) {
+            if (previousTask != null && (previousTask.currentState == State.FINISHED_WITH_ACTUAL_DATA || previousTask.currentState == State.FINISHED)) {
                 previousTask.hideResultOnInvalidLocation();
             }
 
             return false;
         }
 
-
         if (previousTask != null) {
             if (previousTask.currentState == State.STARTED) {
                 // Start new task only if previous isn't working on similar request
                 return !requestInfo.equals(previousTask.requestInfo);
             }
-            else if (previousTask.currentState == State.FINISHED_AND_PROCESSED) {
+            else if (previousTask.currentState == State.FINISHED_WITH_ACTUAL_DATA) {
                 if (requestInfo.equals(previousTask.requestInfo)) {
                     return false;
                 }
@@ -144,7 +143,7 @@ public abstract class LongRunningReadTask<RequestInfo, ResultData> {
         if (resultData != null) {
             RequestInfo actualInfo = prepareRequestInfo();
             if (requestInfo.equals(actualInfo)) {
-                currentState = State.FINISHED_AND_PROCESSED;
+                currentState = State.FINISHED_WITH_ACTUAL_DATA;
                 onResultReady(actualInfo, resultData);
             }
         }
@@ -172,6 +171,8 @@ public abstract class LongRunningReadTask<RequestInfo, ResultData> {
 
     /**
      * Executed in GUI Thread.
+     *
+     * @return null if current request is invalid and task shouldn't be executed.
      */
     @Nullable
     protected abstract RequestInfo prepareRequestInfo();
