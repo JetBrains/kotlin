@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin;
 
 import com.intellij.ide.IconProvider;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -48,7 +47,7 @@ public class JetIconProvider extends IconProvider {
             return mainClass != null && file.getDeclarations().size() == 1 ? getIcon(mainClass, flags) : JetIcons.FILE;
         }
         if (psiElement instanceof JetNamespaceHeader) {
-            return (flags & Iconable.ICON_FLAG_OPEN) != 0 ? PlatformIcons.PACKAGE_OPEN_ICON : PlatformIcons.PACKAGE_ICON;
+            return PlatformIcons.PACKAGE_ICON;
         }
         if (psiElement instanceof JetNamedFunction) {
             if (((JetFunction) psiElement).getReceiverTypeRef() != null) {

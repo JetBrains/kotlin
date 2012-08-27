@@ -56,7 +56,7 @@ public class JetClassPresenter implements ItemPresentationProvider<JetClass> {
             }
 
             @Override
-            public Icon getIcon(boolean open) {
+            public Icon getIcon(boolean unused) {
                 return JetIconProvider.INSTANCE.getIcon(item, 0);
             }
         };

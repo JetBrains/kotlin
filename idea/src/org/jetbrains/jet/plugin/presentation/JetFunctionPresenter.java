@@ -84,7 +84,7 @@ public class JetFunctionPresenter implements ItemPresentationProvider<JetNamedFu
             }
 
             @Override
-            public Icon getIcon(boolean open) {
+            public Icon getIcon(boolean unused) {
                 return JetIconProvider.INSTANCE.getIcon(function, 0);
             }
         };

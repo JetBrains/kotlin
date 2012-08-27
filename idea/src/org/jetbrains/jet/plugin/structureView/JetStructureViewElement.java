@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.structureView;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.util.Function;
@@ -97,11 +96,9 @@ public class JetStructureViewElement implements StructureViewTreeElement {
             }
 
             @Override
-            public Icon getIcon(boolean open) {
+            public Icon getIcon(boolean unused) {
                 if (myElement.isValid()) {
-                    return PsiIconUtil.getProvidersIcon(
-                            myElement,
-                            open ? Iconable.ICON_FLAG_OPEN : Iconable.ICON_FLAG_CLOSED);
+                    return PsiIconUtil.getProvidersIcon(myElement, 0);
                 }
 
                 return null;
