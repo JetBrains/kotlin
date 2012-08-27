@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
-import org.jetbrains.jet.lang.resolve.java.JdkNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 
 import javax.inject.Inject;
@@ -113,7 +112,7 @@ public class ScriptCodegen {
                                  Opcodes.ACC_PUBLIC,
                                  className.getInternalName(),
                                  null,
-                                 JdkNames.JL_OBJECT.getInternalName(),
+                                 "java/lang/Object",
                                  new String[0]);
 
         genMembers(scriptDeclaration, context, classBuilder);
@@ -154,7 +153,7 @@ public class ScriptCodegen {
         JvmClassName className = codegenAnnotator.classNameForClassDescriptor(classDescriptorForScript);
 
         instructionAdapter.load(0, className.getAsmType());
-        instructionAdapter.invokespecial(JdkNames.JL_OBJECT.getInternalName(), "<init>", "()V");
+        instructionAdapter.invokespecial("java/lang/Object", "<init>", "()V");
 
         instructionAdapter.load(0, className.getAsmType());
 

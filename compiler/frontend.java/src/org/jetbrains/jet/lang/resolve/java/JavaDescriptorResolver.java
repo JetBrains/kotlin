@@ -64,7 +64,9 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
  * @author abreslav
  */
 public class JavaDescriptorResolver implements DependencyClassByQualifiedNameResolver {
-    
+
+    private static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
+
     public static final Name JAVA_ROOT = Name.special("<java_root>");
 
     public static final ModuleDescriptor FAKE_ROOT_MODULE = new ModuleDescriptor(JAVA_ROOT);
@@ -305,7 +307,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     @Nullable
     private ClassDescriptor resolveJavaLangObject() {
-        ClassDescriptor clazz = resolveClass(JdkNames.JL_OBJECT.getFqName(), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        ClassDescriptor clazz = resolveClass(OBJECT_FQ_NAME, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
         if (clazz == null) {
             // TODO: warning
         }
@@ -641,7 +643,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     static boolean isJavaLangObject(JetType type) {
         ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
         return classifierDescriptor instanceof ClassDescriptor &&
-               DescriptorUtils.getFQName(classifierDescriptor).equalsTo(JdkNames.JL_OBJECT.getFqName());
+               DescriptorUtils.getFQName(classifierDescriptor).equalsTo(OBJECT_FQ_NAME);
     }
 
 
@@ -715,7 +717,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         
         if (result.isEmpty()) {
             if (classData.kotlin
-                    || JdkNames.JL_OBJECT.getFqName().equalsTo(psiClass.getQualifiedName())
+                    || OBJECT_FQ_NAME.equalsTo(psiClass.getQualifiedName())
                     // TODO: annotations
                     || classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
                 result.add(JetStandardClasses.getAnyType());
@@ -1498,7 +1500,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         if (scopeData.kotlin) {
             // TODO: unless maybe class explicitly extends Object
             String ownerClassName = method.getPsiMethod().getContainingClass().getQualifiedName();
-            if (JdkNames.JL_OBJECT.getFqName().getFqName().equals(ownerClassName)) {
+            if (OBJECT_FQ_NAME.getFqName().equals(ownerClassName)) {
                 return null;
             }
         }
