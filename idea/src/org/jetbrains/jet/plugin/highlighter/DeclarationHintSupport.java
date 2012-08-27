@@ -19,8 +19,6 @@ package org.jetbrains.jet.plugin.highlighter;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.hint.HintUtil;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationAdapter;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
@@ -30,9 +28,7 @@ import com.intellij.openapi.editor.event.EditorMouseEvent;
 import com.intellij.openapi.editor.event.EditorMouseEventArea;
 import com.intellij.openapi.editor.event.EditorMouseMotionAdapter;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
-import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
@@ -48,6 +44,7 @@ import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.util.LongRunningReadTask;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import javax.swing.*;
@@ -192,7 +189,7 @@ public class DeclarationHintSupport extends AbstractProjectComponent {
             ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
                 @Override
                 public void run() {
-                    runWithWriteActionPriority(indicator, new Runnable() {
+                    LongRunningReadTask.runWithWriteActionPriority(indicator, new Runnable() {
                         @Override
                         public void run() {
                             // Executed in the thread from Thread Pool
@@ -216,37 +213,6 @@ public class DeclarationHintSupport extends AbstractProjectComponent {
                     });
                 }
             });
-        }
-
-        /**
-         * Execute action with immediate stop when write lock is required.
-         *
-         * @param indicator
-         * @param action
-         * @see ProgressIndicatorUtils.runWithWriteActionPriority();
-         */
-        @SuppressWarnings("JavadocReference")
-        private void runWithWriteActionPriority(final ProgressIndicator indicator, final Runnable action) {
-            // Executed in Thread Pool
-            final ApplicationAdapter listener = new ApplicationAdapter() {
-                @Override
-                public void beforeWriteActionStart(Object action) {
-                    indicator.cancel();
-                }
-            };
-            final Application application = ApplicationManager.getApplication();
-            try {
-                application.addApplicationListener(listener);
-                ProgressManager.getInstance().runProcess(new Runnable() {
-                    @Override
-                    public void run() {
-                        application.runReadAction(action);
-                    }
-                }, indicator);
-            }
-            finally {
-                application.removeApplicationListener(listener);
-            }
         }
     }
 }
