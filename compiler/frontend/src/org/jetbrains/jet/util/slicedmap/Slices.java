@@ -44,6 +44,9 @@ public class Slices {
         }
     };
 
+    private Slices() {
+    }
+
     public interface KeyNormalizer<K> {
 
         KeyNormalizer DO_NOTHING = new KeyNormalizer<Object>() {
