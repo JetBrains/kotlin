@@ -21,7 +21,7 @@
   </item>
   <item name='java.util.AbstractList java.util.Iterator<E> iterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun iterator() : Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun iterator() : MutableIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractList java.util.ListIterator<E> listIterator()'>
@@ -121,7 +121,12 @@
   </item>
   <item name='java.util.List java.util.Iterator<E> iterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun iterator() : Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun iterator() : MutableIterator&lt;E&gt;&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.util.ArrayList java.util.Iterator<E> iterator()'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun iterator() : MutableIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List java.util.ListIterator<E> listIterator()'>
@@ -176,7 +181,7 @@
   </item>
   <item name='java.util.HashSet java.util.Iterator<E> iterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun iterator() : Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun iterator() : MutableIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collection boolean add(E)'>
@@ -196,7 +201,7 @@
   </item>
   <item name='java.util.Collection java.util.Iterator<E> iterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun iterator() : Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun iterator() : MutableIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collection boolean removeAll(java.util.Collection<?>)'>
@@ -281,7 +286,7 @@
   </item>
   <item name='java.util.Set java.util.Iterator<E> iterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun iterator() : Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun iterator() : MutableIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Set boolean removeAll(java.util.Collection<?>)'>
@@ -321,7 +326,7 @@
   </item>
   <item name='java.util.AbstractCollection java.util.Iterator<E> iterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun iterator() : Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun iterator() : MutableIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractCollection boolean removeAll(java.util.Collection<?>)'>
@@ -441,7 +446,7 @@
   </item>
   <item name='java.util.LinkedList java.util.Iterator<E> descendingIterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun descendingIterator() : Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun descendingIterator() : MutableIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList E()'>
@@ -581,7 +586,7 @@
   </item>
   <item name='java.util.Deque java.util.Iterator<E> descendingIterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun descendingIterator() : Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun descendingIterator() : MutableIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Deque E()'>
@@ -601,7 +606,7 @@
   </item>
   <item name='java.util.Deque java.util.Iterator<E> iterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun iterator() : Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun iterator() : MutableIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Deque boolean offer(E)'>
@@ -716,7 +721,12 @@
   </item>
   <item name='java.util.AbstractSequentialList java.util.Iterator<E> iterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun iterator() : Iterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun iterator() : MutableIterator&lt;E&gt;&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.util.Iterable java.util.Iterator<E> iterator()'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun iterator() : MutableIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractSequentialList java.util.ListIterator<E> listIterator(int)'>
