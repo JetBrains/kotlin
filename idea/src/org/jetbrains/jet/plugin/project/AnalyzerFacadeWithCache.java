@@ -38,6 +38,7 @@ import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
@@ -50,6 +51,7 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.lazy.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -106,6 +108,7 @@ public final class AnalyzerFacadeWithCache {
                                     AnalyzeExhaust analyzeExhaustHeaders = analyzeHeadersWithCacheOnFile(file, declarationProvider);
 
                                     BodiesResolveContext context = analyzeExhaustHeaders.getBodiesResolveContext();
+                                    ModuleConfiguration moduleConfiguration = analyzeExhaustHeaders.getModuleConfiguration();
                                     assert context != null : "Headers resolver should prepare and stored information for bodies resolve";
 
                                     // Need to resolve bodies in given file and all in the same package
@@ -114,7 +117,8 @@ public final class AnalyzerFacadeWithCache {
                                             Collections.<AnalyzerScriptParameter>emptyList(),
                                             new JetFilesProvider.SameJetFilePredicate(file),
                                             new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext()),
-                                            context);
+                                            context,
+                                            moduleConfiguration);
 
                                     return new Result<AnalyzeExhaust>(exhaust, PsiModificationTracker.MODIFICATION_COUNT);
                                 }
@@ -235,6 +239,12 @@ public final class AnalyzerFacadeWithCache {
                     assert javaPackageScope != null;
                     namespaceMemberScope.importScope(javaPackageScope);
                 }
+            }
+            
+            @NotNull
+            @Override
+            public Collection<ClassDescriptor> getKotlinAnalogs(@NotNull FqNameUnsafe className) {
+                return Collections.emptyList();
             }
         };
 

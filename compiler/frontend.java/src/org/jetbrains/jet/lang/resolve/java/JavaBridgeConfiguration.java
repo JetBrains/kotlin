@@ -21,18 +21,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author abreslav
@@ -42,13 +45,9 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
     public static final ImportPath[] DEFAULT_JAVA_IMPORTS = new ImportPath[] { new ImportPath("java.lang.*") };
 
 
-    @NotNull
     private Project project;
-    @NotNull
     private JavaSemanticServices javaSemanticServices;
-    @NotNull
     private ModuleConfiguration delegateConfiguration;
-    @NotNull
     private BuiltinsScopeExtensionMode builtinsScopeExtensionMode;
 
     @Inject
@@ -90,5 +89,12 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
         delegateConfiguration.extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
     }
 
-
+    @NotNull
+    @Override
+    public Collection<ClassDescriptor> getKotlinAnalogs(@NotNull FqNameUnsafe className) {
+        if (className.isSafe()) {
+            return JavaToKotlinTypesMap.getInstance().getAllKotlinAnalogs(className.toSafe());
+        }
+        return Collections.emptyList();
+    }
 }

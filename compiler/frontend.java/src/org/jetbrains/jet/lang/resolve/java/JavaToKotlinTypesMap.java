@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
@@ -28,9 +29,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import java.lang.annotation.Annotation;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author svtk
@@ -123,5 +122,22 @@ public class JavaToKotlinTypesMap {
     private void registerCovariant(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
         mappedTypeNames.add(javaClassName.getFqName());
         classDescriptorMapForCovariantPositions.put(javaClassName, kotlinDescriptor);
+    }
+
+    @NotNull
+    public List<ClassDescriptor> getAllKotlinAnalogs(@NotNull FqName fqName) {
+        ClassDescriptor kotlinAnalog = classDescriptorMap.get(fqName);
+        ClassDescriptor kotlinCovariantAnalog = classDescriptorMapForCovariantPositions.get(fqName);
+        if (kotlinAnalog == null && kotlinCovariantAnalog == null) {
+            return Collections.emptyList();
+        }
+        ArrayList<ClassDescriptor> descriptors = Lists.newArrayList();
+        if (kotlinAnalog != null) {
+            descriptors.add(kotlinAnalog);
+        }
+        if (kotlinCovariantAnalog != null) {
+            descriptors.add(kotlinCovariantAnalog);
+        }
+        return descriptors;
     }
 }

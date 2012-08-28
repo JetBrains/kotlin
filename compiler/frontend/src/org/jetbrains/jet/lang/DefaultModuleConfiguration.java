@@ -18,17 +18,20 @@ package org.jetbrains.jet.lang;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author svtk
@@ -69,5 +72,11 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
             }
 
         }
+    }
+
+    @NotNull
+    @Override
+    public Collection<ClassDescriptor> getKotlinAnalogs(@NotNull FqNameUnsafe className) {
+        return Collections.emptyList();
     }
 }

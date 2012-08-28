@@ -17,12 +17,15 @@
 package org.jetbrains.jet.lang;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author abreslav
@@ -37,6 +40,11 @@ public interface ModuleConfiguration {
         public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
         }
 
+        @NotNull
+        @Override
+        public Collection<ClassDescriptor> getKotlinAnalogs(@NotNull FqNameUnsafe className) {
+            return Collections.emptyList();
+        }
     };
 
     void addDefaultImports(@NotNull Collection<JetImportDirective> directives);
@@ -47,4 +55,6 @@ public interface ModuleConfiguration {
      */
     void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope);
 
+    @NotNull
+    Collection<ClassDescriptor> getKotlinAnalogs(@NotNull FqNameUnsafe className);
 }
