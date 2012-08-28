@@ -22,12 +22,10 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.Named;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
@@ -289,6 +287,24 @@ public class Renderers {
                             .strong(substitute));
         return result;
     }
+
+    public static final Renderer<Collection<ClassDescriptor>> CLASS_DESCRIPTOR_LIST = new Renderer<Collection<ClassDescriptor>>() {
+        @NotNull
+        @Override
+        public String render(@NotNull Collection<ClassDescriptor> descriptors) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("(");
+            for (Iterator<ClassDescriptor> iterator = descriptors.iterator(); iterator.hasNext(); ) {
+                ClassDescriptor descriptor = iterator.next();
+                sb.append(DescriptorUtils.getFQName(descriptor).getFqName());
+                if (iterator.hasNext()) {
+                    sb.append(", ");
+                }
+            }
+            sb.append(")");
+            return sb.toString();
+        }
+    };
 
     private Renderers() {
     }
