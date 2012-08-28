@@ -26,9 +26,7 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.jet.codegen.context.CalculatedClosure;
-import org.jetbrains.jet.codegen.context.CodegenContext;
-import org.jetbrains.jet.codegen.context.MutableClosure;
+import org.jetbrains.jet.codegen.context.*;
 import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
@@ -51,6 +49,7 @@ import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 
 /**
  * @author max
@@ -135,7 +134,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (isEnum) {
             for (JetDeclaration declaration : myClass.getDeclarations()) {
                 if (declaration instanceof JetEnumEntry) {
-                    if (state.getInjector().getCodegenAnnotator().enumEntryNeedSubclass((JetEnumEntry) declaration)) {
+                    if (enumEntryNeedSubclass(state.getBindingContext(), (JetEnumEntry) declaration)) {
                         access &= ~ACC_FINAL;
                     }
                 }
@@ -626,7 +625,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (hasThis0) {
             final Type type = typeMapper
-                    .mapType(typeMapper.getCodegenAnnotator().getEclosingClassDescriptor(descriptor).getDefaultType(), MapTypeMode.VALUE);
+                    .mapType(eclosingClassDescriptor(typeMapper.bindingContext, descriptor).getDefaultType(), MapTypeMode.VALUE);
             String interfaceDesc = type.getDescriptor();
             iv.load(0, classType);
             iv.load(frameMap.getOuterThisIndex(), type);
@@ -703,7 +702,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (typeMapper.hasThis0(superClassDescriptor)) {
             iv.load(1, JetTypeMapper.OBJECT_TYPE);
             parameterTypes.add(typeMapper.mapType(
-                    typeMapper.getCodegenAnnotator().getEclosingClassDescriptor(descriptor).getDefaultType(), MapTypeMode.VALUE));
+                    eclosingClassDescriptor(typeMapper.bindingContext, descriptor).getDefaultType(), MapTypeMode.VALUE));
         }
         Method superCallMethod = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
         //noinspection ConstantConditions
@@ -1141,7 +1140,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.aconst(enumConstant.getName());
             iv.iconst(ordinal);
 
-            if (delegationSpecifiers.size() == 1 && !state.getInjector().getCodegenAnnotator().enumEntryNeedSubclass(enumConstant)) {
+            if (delegationSpecifiers.size() == 1 && !
+                    enumEntryNeedSubclass(state.getBindingContext(), enumConstant)) {
                 final JetDelegationSpecifier specifier = delegationSpecifiers.get(0);
                 if (specifier instanceof JetDelegatorToSuperCall) {
                     final JetDelegatorToSuperCall superCall = (JetDelegatorToSuperCall) specifier;

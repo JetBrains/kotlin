@@ -44,6 +44,7 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 
 /**
  * @author yole
@@ -101,12 +102,14 @@ public class JetTypeMapper {
     }
 
     public boolean hasThis0(ClassDescriptor classDescriptor) {
-        final CalculatedClosure closure = codegenAnnotator.getCalculatedClosure(classDescriptor);
+        //noinspection SuspiciousMethodCalls
+        final CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
         return closure != null && closure.getCaptureThis() != null;
     }
 
     public CalculatedClosure getCalculatedClosure(ClassDescriptor classDescriptor) {
-        return codegenAnnotator.getCalculatedClosure(classDescriptor);
+        //noinspection SuspiciousMethodCalls
+        return bindingContext.get(CLOSURE, classDescriptor);
     }
 
     public CodegenAnnotator getCodegenAnnotator() {
@@ -152,7 +155,7 @@ public class JetTypeMapper {
             return JvmClassName.byType(asmType);
         }
         else if (containingDeclaration instanceof ScriptDescriptor) {
-            return codegenAnnotator.classNameForScriptDescriptor((ScriptDescriptor) containingDeclaration);
+            return classNameForScriptDescriptor(bindingContext, (ScriptDescriptor) containingDeclaration);
         }
         else {
             throw new UnsupportedOperationException("don't know how to generate owner for parent " + containingDeclaration);
@@ -299,7 +302,7 @@ public class JetTypeMapper {
                 }
             }
             else if (klass.getKind() == ClassKind.ENUM_ENTRY) {
-                if (codegenAnnotator.enumEntryNeedSubclass(klass)) {
+                if (enumEntryNeedSubclass(bindingContext, klass)) {
                     return getJvmInternalFQName(klass.getContainingDeclaration()) + "$" + klass.getName().getName();
                 }
                 else {
@@ -307,7 +310,7 @@ public class JetTypeMapper {
                 }
             }
 
-            JvmClassName name = codegenAnnotator.classNameForClassDescriptor((ClassDescriptor) descriptor);
+            JvmClassName name = classNameForClassDescriptor(bindingContext, (ClassDescriptor) descriptor);
             if (name != null) {
                 return name.getInternalName();
             }
@@ -533,7 +536,7 @@ public class JetTypeMapper {
         }
         else if (functionParent instanceof ScriptDescriptor) {
             thisClass = owner =
-            ownerForDefaultParam = ownerForDefaultImpl = codegenAnnotator.classNameForScriptDescriptor((ScriptDescriptor) functionParent);
+            ownerForDefaultParam = ownerForDefaultImpl = classNameForScriptDescriptor(bindingContext, (ScriptDescriptor) functionParent);
             invokeOpcode = INVOKEVIRTUAL;
         }
         else if (functionParent instanceof ClassDescriptor) {
@@ -954,8 +957,9 @@ public class JetTypeMapper {
 
         for (ScriptDescriptor importedScript : importedScripts) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
-            mapType(codegenAnnotator.classDescriptorForScriptDescriptor(importedScript).getDefaultType(), signatureWriter,
-                    MapTypeMode.VALUE);
+            final ClassDescriptor descriptor = bindingContext.get(CLASS_FOR_FUNCTION, importedScript);
+            assert descriptor != null;
+            mapType(descriptor.getDefaultType(), signatureWriter, MapTypeMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
         }
 
@@ -1027,7 +1031,7 @@ public class JetTypeMapper {
         }
         else if (descriptor instanceof SimpleFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
             PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
-            return codegenAnnotator.classNameForAnonymousClass((JetElement) psiElement).getAsmType();
+            return classNameForAnonymousClass(bindingContext, (JetElement) psiElement).getAsmType();
         }
         else if (descriptor instanceof FunctionDescriptor) {
             return StackValue

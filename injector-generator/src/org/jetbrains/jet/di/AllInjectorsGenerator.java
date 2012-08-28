@@ -191,7 +191,9 @@ public class AllInjectorsGenerator {
 
     private static void generateInjectorForJvmCodegen() throws IOException {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
-        generator.addParameter(BindingContext.class);
+        generator.addPublicParameter(BindingTrace.class);
+        generator.addField(false, BindingContext.class, "bindingContext",
+                           new GivenExpression("bindingTrace.getBindingContext()"));
         generator.addParameter(DiType.listOf(JetFile.class));
         generator.addParameter(BuiltinToJavaTypesMapping.class);
         generator.addParameter(ClassBuilderMode.class);
@@ -210,7 +212,9 @@ public class AllInjectorsGenerator {
 
     private static void generateInjectorForJetTypeMapper() throws IOException {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
-        generator.addParameter(BindingContext.class);
+        generator.addPublicParameter(BindingTrace.class);
+        generator.addField(false, BindingContext.class, "bindingContext",
+                           new GivenExpression("bindingTrace.getBindingContext()"));
         generator.addParameter(DiType.listOf(JetFile.class));
         generator.addPublicField(JetTypeMapper.class);
         generator.addField(BuiltinToJavaTypesMapping.ENABLED);

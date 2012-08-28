@@ -44,11 +44,14 @@ import org.jetbrains.jet.di.InjectorForJetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 import java.util.*;
+
+import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 
 /**
  * @author yole
@@ -56,7 +59,7 @@ import java.util.*;
  */
 public class JetPositionManager implements PositionManager {
     private final DebugProcess myDebugProcess;
-    private WeakHashMap<FqName, CachedValue<JetTypeMapper>> myTypeMappers = new WeakHashMap<FqName, CachedValue<JetTypeMapper>>();
+    private final WeakHashMap<FqName, CachedValue<JetTypeMapper>> myTypeMappers = new WeakHashMap<FqName, CachedValue<JetTypeMapper>>();
 
     public JetPositionManager(DebugProcess debugProcess) {
         myDebugProcess = debugProcess;
@@ -142,7 +145,8 @@ public class JetPositionManager implements PositionManager {
                     result.set(getJvmInternalNameForImpl(typeMapper, (JetClassOrObject) element));
                 }
                 else if (element instanceof JetFunctionLiteralExpression) {
-                    result.set(typeMapper.getCodegenAnnotator().classNameForAnonymousClass((JetFunctionLiteralExpression) element).getInternalName());
+                    result.set(classNameForAnonymousClass(typeMapper.bindingContext,
+                                                          (JetFunctionLiteralExpression) element).getInternalName());
                 }
                 else if (element instanceof JetNamedFunction) {
                     PsiElement parent = PsiTreeUtil.getParentOfType(element, JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
@@ -150,7 +154,8 @@ public class JetPositionManager implements PositionManager {
                         result.set(getJvmInternalNameForImpl(typeMapper, (JetClassOrObject) parent));
                     }
                     else if (parent instanceof JetFunctionLiteralExpression || parent instanceof JetNamedFunction) {
-                        result.set(typeMapper.getCodegenAnnotator().classNameForAnonymousClass((JetElement) element).getInternalName());
+                        result.set(classNameForAnonymousClass(typeMapper.bindingContext,
+                                                              (JetElement) element).getInternalName());
                     }
                 }
 
@@ -172,7 +177,7 @@ public class JetPositionManager implements PositionManager {
     }
 
     @Nullable
-    private String getJvmInternalNameForImpl(JetTypeMapper typeMapper, JetClassOrObject jetClass) {
+    private static String getJvmInternalNameForImpl(JetTypeMapper typeMapper, JetClassOrObject jetClass) {
         final ClassDescriptor classDescriptor = typeMapper.bindingContext.get(BindingContext.CLASS, jetClass);
         if (classDescriptor == null) {
             return null;
@@ -199,7 +204,7 @@ public class JetPositionManager implements PositionManager {
 
                     List<JetFile> namespaceFiles = JetFilesProvider.getInstance(file.getProject()).allNamespaceFiles().fun(file);
 
-                    JetTypeMapper typeMapper = new InjectorForJetTypeMapper(analyzeExhaust.getBindingContext(), namespaceFiles).getJetTypeMapper();
+                    JetTypeMapper typeMapper = new InjectorForJetTypeMapper(new DelegatingBindingTrace(analyzeExhaust.getBindingContext()), namespaceFiles).getJetTypeMapper();
                     typeMapper.getCodegenAnnotator().init();
                     return new Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT);
                 }

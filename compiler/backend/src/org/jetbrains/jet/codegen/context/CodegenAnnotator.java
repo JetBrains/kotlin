@@ -18,13 +18,11 @@ package org.jetbrains.jet.codegen.context;
 
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -35,26 +33,28 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import javax.inject.Inject;
 import java.util.*;
 
+import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+
 /**
  * @author alex.tkachman
  */
 public class CodegenAnnotator {
-    private final Map<ClassDescriptor, CalculatedClosure> closuresForClassDescriptor = new HashMap<ClassDescriptor, CalculatedClosure>();
-    private final Map<ScriptDescriptor, JvmClassName> classNameForScript = new HashMap<ScriptDescriptor, JvmClassName>();
-    private final Set<JvmClassName> scriptClassNames = new HashSet<JvmClassName>();
-    private final Map<DeclarationDescriptor, ClassDescriptorImpl> classesForFunctions =
-            new HashMap<DeclarationDescriptor, ClassDescriptorImpl>();
-
     private final MultiMap<FqName, JetFile> namespaceName2MultiNamespaceFiles = MultiMap.create();
     private final MultiMap<FqName, JetFile> namespaceName2Files = MultiMap.create();
 
+    private BindingTrace bindingTrace;
     private BindingContext bindingContext;
     private List<JetFile> files;
-    private final Map<ClassDescriptor, Boolean> enumEntryNeedSubclass = new HashMap<ClassDescriptor, Boolean>();
+
+    public BindingTrace getBindingTrace() {
+        return bindingTrace;
+    }
 
     @Inject
-    public void setBindingContext(BindingContext bindingContext) {
-        this.bindingContext = bindingContext;
+    public void setBindingTrace(BindingTrace bindingTrace) {
+        this.bindingTrace = bindingTrace;
+        bindingContext = bindingTrace.getBindingContext();
     }
 
     @Inject
@@ -68,90 +68,25 @@ public class CodegenAnnotator {
     }
 
 
-    @NotNull
-    public ClassDescriptor classDescriptorForFunctionDescriptor(FunctionDescriptor funDescriptor) {
-        ClassDescriptorImpl classDescriptor = classesForFunctions.get(funDescriptor);
-        if (classDescriptor == null) {
-            int arity = funDescriptor.getValueParameters().size();
+    private ClassDescriptor recordClassForFunction(FunctionDescriptor funDescriptor) {
+        ClassDescriptor classDescriptor;
+        int arity = funDescriptor.getValueParameters().size();
 
-            classDescriptor = new ClassDescriptorImpl(
-                    funDescriptor.getContainingDeclaration(),
-                    Collections.<AnnotationDescriptor>emptyList(),
-                    Modality.FINAL,
-                    Name.special("<closure>"));
-            classDescriptor.initialize(
-                    false,
-                    Collections.<TypeParameterDescriptor>emptyList(),
-                    Collections.singleton((funDescriptor.getReceiverParameter().exists()
-                                           ? JetStandardClasses.getReceiverFunction(arity)
-                                           : JetStandardClasses.getFunction(arity)).getDefaultType()), JetScope.EMPTY,
-                    Collections.<ConstructorDescriptor>emptySet(), null);
-            classesForFunctions.put(funDescriptor, classDescriptor);
-        }
-        return classDescriptor;
-    }
-
-    public void registerClassNameForScript(@NotNull ScriptDescriptor scriptDescriptor, @NotNull JvmClassName className) {
-        JvmClassName oldName = classNameForScript.put(scriptDescriptor, className);
-        if (oldName != null) {
-            throw new IllegalStateException("Rewrite at key " + scriptDescriptor + " for name");
-        }
-
-        if (!scriptClassNames.add(className)) {
-            throw new IllegalStateException("More than one script has class name " + className);
-        }
-
-        ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
-                scriptDescriptor,
+        classDescriptor = new ClassDescriptorImpl(
+                funDescriptor.getContainingDeclaration(),
                 Collections.<AnnotationDescriptor>emptyList(),
                 Modality.FINAL,
-                Name.special("<script-" + className + ">"));
-        classDescriptor.initialize(
+                Name.special("<closure>"));
+        ((ClassDescriptorImpl)classDescriptor).initialize(
                 false,
                 Collections.<TypeParameterDescriptor>emptyList(),
-                Collections.singletonList(JetStandardClasses.getAnyType()),
-                JetScope.EMPTY,
-                Collections.<ConstructorDescriptor>emptySet(),
-                null);
+                Collections.singleton((funDescriptor.getReceiverParameter().exists()
+                                       ? JetStandardClasses.getReceiverFunction(arity)
+                                       : JetStandardClasses.getFunction(arity)).getDefaultType()), JetScope.EMPTY,
+                Collections.<ConstructorDescriptor>emptySet(), null);
 
-        recordClosure(null, classDescriptor, null, className, false);
-
-        ClassDescriptorImpl oldDescriptor = classesForFunctions.put(scriptDescriptor, classDescriptor);
-        if (oldDescriptor != null) {
-            throw new IllegalStateException("Rewrite at key " + scriptDescriptor + " for class");
-        }
-    }
-
-    public void registerClassNameForScript(@NotNull JetScript jetScript, @NotNull JvmClassName className) {
-        ScriptDescriptor descriptor = bindingContext.get(BindingContext.SCRIPT, jetScript);
-        if (descriptor == null) {
-            throw new IllegalStateException("Descriptor is not found for PSI " + jetScript);
-        }
-        registerClassNameForScript(descriptor, className);
-    }
-
-    @NotNull
-    public ClassDescriptor classDescriptorForScriptDescriptor(@NotNull ScriptDescriptor scriptDescriptor) {
-        ClassDescriptorImpl classDescriptor = classesForFunctions.get(scriptDescriptor);
-        if (classDescriptor == null) {
-            throw new IllegalStateException("Class for script is not registered: " + scriptDescriptor);
-        }
+        bindingTrace.record(CLASS_FOR_FUNCTION, funDescriptor, classDescriptor);
         return classDescriptor;
-    }
-
-    @NotNull
-    public JvmClassName classNameForScriptPsi(@NotNull JetScript script) {
-        ScriptDescriptor scriptDescriptor = bindingContext.get(BindingContext.SCRIPT, script);
-        if (scriptDescriptor == null) {
-            throw new IllegalStateException("Script descriptor not found by PSI " + script);
-        }
-        return classNameForScriptDescriptor(scriptDescriptor);
-    }
-
-    @NotNull
-    public JvmClassName classNameForScriptDescriptor(@NotNull ScriptDescriptor scriptDescriptor) {
-        final ClassDescriptor classDescriptor = classDescriptorForScriptDescriptor(scriptDescriptor);
-        return closuresForClassDescriptor.get(classDescriptor).getClassName();
     }
 
     private void mapFilesToNamespaces(Collection<JetFile> files) {
@@ -199,87 +134,6 @@ public class CodegenAnnotator {
         return namespaceName2MultiNamespaceFiles.get(fqName).size() > 0;
     }
 
-    public JvmClassName classNameForAnonymousClass(JetElement expression) {
-        if (expression instanceof JetObjectLiteralExpression) {
-            JetObjectLiteralExpression jetObjectLiteralExpression = (JetObjectLiteralExpression) expression;
-            expression = jetObjectLiteralExpression.getObjectDeclaration();
-        }
-
-        ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, expression);
-        if (descriptor == null) {
-            SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, expression);
-            assert functionDescriptor != null;
-            descriptor = classDescriptorForFunctionDescriptor(functionDescriptor);
-        }
-        return classNameForClassDescriptor(descriptor);
-    }
-
-    public JvmClassName classNameForClassDescriptor(ClassDescriptor descriptor) {
-        final CalculatedClosure closure = closuresForClassDescriptor.get(descriptor);
-        return closure == null ? null : closure.getClassName();
-    }
-
-    public ClassDescriptor getEclosingClassDescriptor(ClassDescriptor descriptor) {
-        final CalculatedClosure closure = closuresForClassDescriptor.get(descriptor);
-        return closure == null ? null : closure.getEnclosingClass();
-    }
-
-    public boolean canHaveOuter(ClassDescriptor classDescriptor) {
-        if (DescriptorUtils.isClassObject(classDescriptor)) {
-            return false;
-        }
-        if (classDescriptor.getKind() == ClassKind.ENUM_CLASS || classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
-            return false;
-        }
-
-        return getEclosingClassDescriptor(classDescriptor) != null;
-    }
-
-    public boolean enumEntryNeedSubclass(JetEnumEntry enumEntry) {
-        return Boolean.TRUE.equals(enumEntryNeedSubclass.get(bindingContext.get(BindingContext.CLASS, enumEntry)));
-    }
-
-    public boolean enumEntryNeedSubclass(ClassDescriptor enumEntry) {
-        return Boolean.TRUE.equals(enumEntryNeedSubclass.get(enumEntry));
-    }
-
-    public CalculatedClosure getCalculatedClosure(@NotNull ClassDescriptor descriptor) {
-        //noinspection SuspiciousMethodCalls
-        return closuresForClassDescriptor.get(descriptor.getOriginal());
-    }
-
-    private void recordClosure(
-            @Nullable JetElement element,
-            ClassDescriptor classDescriptor,
-            @Nullable ClassDescriptor enclosing,
-            JvmClassName name,
-            boolean functionLiteral
-    ) {
-        final JetDelegatorToSuperCall superCall = CodegenUtil.findSuperCall(element, bindingContext);
-
-        CallableDescriptor enclosingReceiver = null;
-        if (classDescriptor.getContainingDeclaration() instanceof CallableDescriptor) {
-            enclosingReceiver = (CallableDescriptor) classDescriptor.getContainingDeclaration();
-            enclosingReceiver = enclosingReceiver instanceof PropertyAccessorDescriptor
-                                ? ((PropertyAccessorDescriptor) enclosingReceiver).getCorrespondingProperty()
-                                : enclosingReceiver;
-
-            if (!enclosingReceiver.getReceiverParameter().exists()) {
-                enclosingReceiver = null;
-            }
-        }
-
-        final MutableClosure closure = new MutableClosure(superCall, enclosing, name, enclosingReceiver);
-
-        final CalculatedClosure old = closuresForClassDescriptor.put(classDescriptor, closure);
-        assert old == null;
-
-        // TODO: this is temporary before we have proper inner classes
-        if (canHaveOuter(classDescriptor) && !functionLiteral) {
-            closure.setCaptureThis();
-        }
-    }
-
     private class MyJetVisitorVoid extends JetVisitorVoid {
         private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
 
@@ -293,7 +147,7 @@ public class CodegenAnnotator {
                 cnt = 0;
             }
             String name = top + "$" + (cnt + 1);
-            ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, declaration);
+            ClassDescriptor descriptor = bindingContext.get(CLASS, declaration);
             if (descriptor == null) {
                 if (declaration instanceof JetFunctionLiteralExpression ||
                     declaration instanceof JetNamedFunction ||
@@ -320,9 +174,11 @@ public class CodegenAnnotator {
         public void visitJetFile(JetFile file) {
             if (file.isScript()) {
                 //noinspection ConstantConditions
-                classStack.push(classDescriptorForScriptDescriptor(bindingContext.get(BindingContext.SCRIPT, file.getScript())));
+                final ClassDescriptor classDescriptor =
+                        bindingContext.get(CLASS_FOR_FUNCTION, bindingContext.get(SCRIPT, file.getScript()));
+                classStack.push(classDescriptor);
                 //noinspection ConstantConditions
-                nameStack.push(classNameForScriptPsi(file.getScript()).getInternalName());
+                nameStack.push(classNameForScriptPsi(bindingContext, file.getScript()).getInternalName());
             }
             else {
                 nameStack.push(JetPsiUtil.getFQName(file).getFqName().replace('.', '/'));
@@ -336,12 +192,12 @@ public class CodegenAnnotator {
 
         @Override
         public void visitEnumEntry(JetEnumEntry enumEntry) {
-            ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, enumEntry);
+            ClassDescriptor descriptor = bindingContext.get(CLASS, enumEntry);
             assert descriptor != null;
 
             final boolean trivial = enumEntry.getDeclarations().isEmpty();
             if (!trivial) {
-                enumEntryNeedSubclass.put(descriptor, Boolean.TRUE);
+                bindingTrace.record(ENUM_ENTRY_CLASS_NEED_SUBCLASS, descriptor);
 
                 classStack.push(descriptor);
                 nameStack.push(nameStack.peek() + "$" + descriptor.getName().getName());
@@ -356,11 +212,11 @@ public class CodegenAnnotator {
 
         @Override
         public void visitClassObject(JetClassObject classObject) {
-            ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, classObject.getObjectDeclaration());
+            ClassDescriptor classDescriptor = bindingContext.get(CLASS, classObject.getObjectDeclaration());
             assert classDescriptor != null;
 
             JvmClassName name = JvmClassName.byInternalName(nameStack.peek() + JvmAbi.CLASS_OBJECT_SUFFIX);
-            recordClosure(classObject, classDescriptor, classStack.peek(), name, false);
+            recordClosure(bindingTrace, classObject, classDescriptor, classStack.peek(), name, false);
 
             classStack.push(classDescriptor);
             nameStack.push(name.getInternalName());
@@ -375,12 +231,12 @@ public class CodegenAnnotator {
                 super.visitObjectDeclaration(declaration);
             }
             else {
-                ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, declaration);
+                ClassDescriptor classDescriptor = bindingContext.get(CLASS, declaration);
                 // working around a problem with shallow analysis
                 if (classDescriptor == null) return;
 
                 String name = getName(classDescriptor);
-                recordClosure(declaration, classDescriptor, classStack.peek(), JvmClassName.byInternalName(name), false);
+                recordClosure(bindingTrace, declaration, classDescriptor, classStack.peek(), JvmClassName.byInternalName(name), false);
 
                 classStack.push(classDescriptor);
                 nameStack.push(name);
@@ -392,12 +248,12 @@ public class CodegenAnnotator {
 
         @Override
         public void visitClass(JetClass klass) {
-            ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, klass);
+            ClassDescriptor classDescriptor = bindingContext.get(CLASS, klass);
             // working around a problem with shallow analysis
             if (classDescriptor == null) return;
 
             String name = getName(classDescriptor);
-            recordClosure(klass, classDescriptor, classStack.peek(), JvmClassName.byInternalName(name), false);
+            recordClosure(bindingTrace, klass, classDescriptor, classStack.peek(), JvmClassName.byInternalName(name), false);
 
             classStack.push(classDescriptor);
             nameStack.push(name);
@@ -414,7 +270,7 @@ public class CodegenAnnotator {
 
         @Override
         public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
-            ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, expression.getObjectDeclaration());
+            ClassDescriptor classDescriptor = bindingContext.get(CLASS, expression.getObjectDeclaration());
             if (classDescriptor == null) {
                 // working around a problem with shallow analysis
                 super.visitObjectLiteralExpression(expression);
@@ -422,10 +278,10 @@ public class CodegenAnnotator {
             }
 
             final String name = inventAnonymousClassName(expression.getObjectDeclaration());
-            recordClosure(expression.getObjectDeclaration(), classDescriptor, classStack.peek(), JvmClassName.byInternalName(name), false);
+            recordClosure(bindingTrace, expression.getObjectDeclaration(), classDescriptor, classStack.peek(), JvmClassName.byInternalName(name), false);
 
             classStack.push(classDescriptor);
-            nameStack.push(classNameForClassDescriptor(classDescriptor).getInternalName());
+            nameStack.push(classNameForClassDescriptor(bindingContext, classDescriptor).getInternalName());
             super.visitObjectLiteralExpression(expression);
             nameStack.pop();
             classStack.pop();
@@ -434,13 +290,13 @@ public class CodegenAnnotator {
         @Override
         public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
             FunctionDescriptor functionDescriptor =
-                    (FunctionDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, expression);
+                    (FunctionDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, expression);
             // working around a problem with shallow analysis
             if (functionDescriptor == null) return;
 
             String name = inventAnonymousClassName(expression);
-            ClassDescriptor classDescriptor = classDescriptorForFunctionDescriptor(functionDescriptor);
-            recordClosure(expression, classDescriptor, classStack.peek(), JvmClassName.byInternalName(name), true);
+            ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor);
+            recordClosure(bindingTrace, expression, classDescriptor, classStack.peek(), JvmClassName.byInternalName(name), true);
 
             classStack.push(classDescriptor);
             nameStack.push(name);
@@ -459,7 +315,7 @@ public class CodegenAnnotator {
         @Override
         public void visitNamedFunction(JetNamedFunction function) {
             FunctionDescriptor functionDescriptor =
-                    (FunctionDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
+                    (FunctionDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, function);
             // working around a problem with shallow analysis
             if (functionDescriptor == null) return;
             DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
@@ -482,8 +338,8 @@ public class CodegenAnnotator {
             }
             else {
                 String name = inventAnonymousClassName(function);
-                ClassDescriptor classDescriptor = classDescriptorForFunctionDescriptor(functionDescriptor);
-                recordClosure(function, classDescriptor, classStack.peek(), JvmClassName.byInternalName(name), true);
+                ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor);
+                recordClosure(bindingTrace, function, classDescriptor, classStack.peek(), JvmClassName.byInternalName(name), true);
 
                 classStack.push(classDescriptor);
                 nameStack.push(name);

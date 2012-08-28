@@ -56,6 +56,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.JetTypeMapper.*;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
 
@@ -467,6 +468,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             ResolvedCall<FunctionDescriptor> nextCall = getNotNull(bindingContext,
                                                                    LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange,
                                                                    "No next() function " + DiagnosticUtils.atLocation(loopRange));
+            //noinspection ConstantConditions
             return nextCall.getResultingDescriptor().getReturnType();
         }
 
@@ -1008,8 +1010,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private StackValue genClosure(JetExpression expression) {
         final FunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, expression);
         final CodegenAnnotator codegenAnnotator = state.getInjector().getCodegenAnnotator();
-        final ClassDescriptor classDescriptor = codegenAnnotator.classDescriptorForFunctionDescriptor(descriptor);
-        final CalculatedClosure closure = codegenAnnotator.getCalculatedClosure(classDescriptor);
+        final ClassDescriptor classDescriptor =
+                bindingContext.get(CLASS_FOR_FUNCTION, descriptor);
+        //noinspection SuspiciousMethodCalls
+        final CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
 
         ClosureCodegen closureCodegen = new ClosureCodegen(state, (MutableClosure) closure).gen(expression, context, this);
 
@@ -1411,11 +1415,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (descriptor instanceof ValueParameterDescriptor && descriptor.getContainingDeclaration() instanceof ScriptDescriptor) {
             ScriptDescriptor scriptDescriptor = (ScriptDescriptor) descriptor.getContainingDeclaration();
-            final CodegenAnnotator codegenAnnotator = state.getInjector().getCodegenAnnotator();
             assert scriptDescriptor != null;
-            JvmClassName scriptClassName = codegenAnnotator.classNameForScriptDescriptor(scriptDescriptor);
+            JvmClassName scriptClassName = classNameForScriptDescriptor(bindingContext, scriptDescriptor);
             ValueParameterDescriptor valueParameterDescriptor = (ValueParameterDescriptor) descriptor;
-            final ClassDescriptor scriptClass = codegenAnnotator.classDescriptorForScriptDescriptor(scriptDescriptor);
+            final ClassDescriptor scriptClass = bindingContext.get(CLASS_FOR_FUNCTION, scriptDescriptor);
             final StackValue script = StackValue.thisOrOuter(this, scriptClass);
             script.put(script.type, v);
             Type fieldType = typeMapper.mapType(valueParameterDescriptor.getType(), MapTypeMode.VALUE);
@@ -1901,13 +1904,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 CodegenContext.ScriptContext scriptContext = (CodegenContext.ScriptContext) cur;
 
                 JvmClassName currentScriptClassName =
-                        state.getInjector().getCodegenAnnotator().classNameForScriptDescriptor(scriptContext.getScriptDescriptor());
+                        classNameForScriptDescriptor(state.getBindingContext(),
+                                                                    scriptContext.getScriptDescriptor());
                 if (scriptContext.getScriptDescriptor() == receiver.getDeclarationDescriptor()) {
                     result.put(currentScriptClassName.getAsmType(), v);
                 }
                 else {
                     JvmClassName className =
-                            state.getInjector().getCodegenAnnotator().classNameForScriptDescriptor(receiver.getDeclarationDescriptor());
+                            classNameForScriptDescriptor(state.getBindingContext(),
+                                                                        receiver.getDeclarationDescriptor());
                     String fieldName = state.getInjector().getScriptCodegen().getScriptFieldName(receiver.getDeclarationDescriptor());
                     result.put(currentScriptClassName.getAsmType(), v);
                     StackValue.field(className.getAsmType(), currentScriptClassName, fieldName, false).put(className.getAsmType(), v);
@@ -2837,7 +2842,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             generateInitializer.fun(variableDescriptor);
             JetScript scriptPsi = JetPsiUtil.getScript(variableDeclaration);
             assert scriptPsi != null;
-            JvmClassName scriptClassName = state.getInjector().getCodegenAnnotator().classNameForScriptPsi(scriptPsi);
+            JvmClassName scriptClassName = classNameForScriptPsi(state.getBindingContext(), scriptPsi);
             v.putfield(scriptClassName.getInternalName(), variableDeclaration.getName(), varType.getDescriptor());
         }
         else if (sharedVarType == null) {

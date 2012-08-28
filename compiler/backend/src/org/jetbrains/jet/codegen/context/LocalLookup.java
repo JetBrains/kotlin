@@ -24,6 +24,8 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.types.JetType;
 
+import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
+
 /**
  * @author alex.tkachman
  */
@@ -74,7 +76,7 @@ public interface LocalLookup {
                 if (!idx) return null;
 
                 JetElement expression = (JetElement) BindingContextUtils.callableDescriptorToDeclaration(state.getBindingContext(), vd);
-                JvmClassName cn = state.getInjector().getJetTypeMapper().getCodegenAnnotator().classNameForAnonymousClass(expression);
+                JvmClassName cn = classNameForAnonymousClass(state.getBindingContext(), expression);
                 Type localType = cn.getAsmType();
 
                 final String fieldName = "$" + vd.getName();

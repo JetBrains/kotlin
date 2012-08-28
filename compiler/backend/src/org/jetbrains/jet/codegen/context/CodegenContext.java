@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 
 /*
  * @author max
@@ -179,7 +180,7 @@ public abstract class CodegenContext {
     ) {
         final JetTypeMapper typeMapper = expressionCodegen.getState().getInjector().getJetTypeMapper();
         return new ClosureContext(typeMapper, funDescriptor,
-                                  typeMapper.getCodegenAnnotator().classDescriptorForFunctionDescriptor(funDescriptor),
+                                  typeMapper.bindingContext.get(CLASS_FOR_FUNCTION, funDescriptor),
                                   this, expressionCodegen);
     }
 

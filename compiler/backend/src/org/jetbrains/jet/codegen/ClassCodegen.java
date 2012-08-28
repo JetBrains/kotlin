@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.codegen.context.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -24,6 +25,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 
 import javax.inject.Inject;
 import java.util.Map;
+
+import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 
 /**
  * @author max
@@ -60,8 +63,8 @@ public class ClassCodegen {
 
         for (JetDeclaration declaration : aClass.getDeclarations()) {
             if (declaration instanceof JetClass) {
-                if (declaration instanceof JetEnumEntry && !state.getInjector().getCodegenAnnotator().enumEntryNeedSubclass(
-                        (JetEnumEntry) declaration)) {
+                if (declaration instanceof JetEnumEntry && !enumEntryNeedSubclass(
+                        state.getBindingContext(), (JetEnumEntry) declaration)) {
                     continue;
                 }
 

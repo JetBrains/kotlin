@@ -28,10 +28,7 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.asm4.signature.SignatureWriter;
-import org.jetbrains.jet.codegen.context.CalculatedClosure;
-import org.jetbrains.jet.codegen.context.CodegenAnnotator;
-import org.jetbrains.jet.codegen.context.CodegenContext;
-import org.jetbrains.jet.codegen.context.MutableClosure;
+import org.jetbrains.jet.codegen.context.*;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
@@ -47,11 +44,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 
 public class ClosureCodegen {
 
     private final BindingContext bindingContext;
-    private final CodegenAnnotator codegenAnnotator;
     private final JetTypeMapper typeMapper;
 
     Method constructor;
@@ -65,7 +62,6 @@ public class ClosureCodegen {
         this.closure = closure;
         bindingContext = state.getBindingContext();
         typeMapper = state.getInjector().getJetTypeMapper();
-        codegenAnnotator = typeMapper.getCodegenAnnotator();
     }
 
     public ClosureCodegen gen(JetExpression fun, CodegenContext context, ExpressionCodegen expressionCodegen) {
@@ -282,8 +278,9 @@ public class ClosureCodegen {
             }
             else if (CodegenUtil.isNamedFun(descriptor, state.getBindingContext()) &&
                      descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
-                final Type type = codegenAnnotator
-                        .classNameForAnonymousClass((JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor))
+                final Type type =
+                        classNameForAnonymousClass(bindingContext,
+                                                   (JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor))
                         .getAsmType();
 
                 args.add(new Pair<String, Type>("$" + descriptor.getName().getName(), type));

@@ -40,6 +40,7 @@ import javax.inject.Inject;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 
 /**
  * @author Stepan Koltsov
@@ -98,13 +99,14 @@ public class ScriptCodegen {
         ScriptDescriptor scriptDescriptor = state.getBindingContext().get(BindingContext.SCRIPT, scriptDeclaration);
 
         assert scriptDescriptor != null;
-        ClassDescriptor classDescriptorForScript = codegenAnnotator.classDescriptorForScriptDescriptor(scriptDescriptor);
+        ClassDescriptor classDescriptorForScript = bindingContext.get(CLASS_FOR_FUNCTION, scriptDescriptor);
+        assert classDescriptorForScript != null;
 
         CodegenContext.ScriptContext context =
                 (CodegenContext.ScriptContext) CodegenContext.STATIC
                         .intoScript(scriptDescriptor, classDescriptorForScript);
 
-        JvmClassName className = codegenAnnotator.classNameForClassDescriptor(classDescriptorForScript);
+        JvmClassName className = classNameForClassDescriptor(bindingContext, classDescriptorForScript);
 
         ClassBuilder classBuilder = classFileFactory.newVisitor(className.getInternalName() + ".class");
         classBuilder.defineClass(scriptDeclaration,
@@ -150,7 +152,7 @@ public class ScriptCodegen {
 
         InstructionAdapter instructionAdapter = new InstructionAdapter(mv);
 
-        JvmClassName className = codegenAnnotator.classNameForClassDescriptor(classDescriptorForScript);
+        JvmClassName className = classNameForClassDescriptor(bindingContext, classDescriptorForScript);
 
         instructionAdapter.load(0, className.getAsmType());
         instructionAdapter.invokespecial("java/lang/Object", "<init>", "()V");
@@ -181,7 +183,7 @@ public class ScriptCodegen {
         int offset = 1;
 
         for (ScriptDescriptor earlierScript : importedScripts) {
-            JvmClassName earlierClassName = codegenAnnotator.classNameForScriptDescriptor(earlierScript);
+            JvmClassName earlierClassName = classNameForScriptDescriptor(bindingContext, earlierScript);
             instructionAdapter.load(0, className.getAsmType());
             instructionAdapter.load(offset, earlierClassName.getAsmType());
             offset += earlierClassName.getAsmType().getSize();
@@ -212,7 +214,8 @@ public class ScriptCodegen {
 
     private void genFieldsForParameters(@NotNull ScriptDescriptor script, @NotNull ClassBuilder classBuilder) {
         for (ScriptDescriptor earlierScript : earlierScripts) {
-            JvmClassName earlierClassName = codegenAnnotator.classNameForScriptDescriptor(earlierScript);
+            JvmClassName earlierClassName;
+            earlierClassName = classNameForScriptDescriptor(bindingContext, earlierScript);
             int access = Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL;
             classBuilder.newField(null, access, getScriptFieldName(earlierScript), earlierClassName.getDescriptor(), null, null);
         }
@@ -235,7 +238,7 @@ public class ScriptCodegen {
             ScriptDescriptor earlierDescriptor = t.first;
             JvmClassName earlierClassName = t.second;
 
-            codegenAnnotator.registerClassNameForScript(earlierDescriptor, earlierClassName);
+            registerClassNameForScript(codegenAnnotator.getBindingTrace(), earlierDescriptor, earlierClassName);
         }
 
         List<ScriptDescriptor> earlierScriptDescriptors = Lists.newArrayList();

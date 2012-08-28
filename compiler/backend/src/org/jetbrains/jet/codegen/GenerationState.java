@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -41,6 +42,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 
 public class GenerationState {
     private final Progress progress;
@@ -71,9 +74,10 @@ public class GenerationState {
         this.progress = progress;
         this.files = files;
         this.classBuilderMode = builderFactory.getClassBuilderMode();
-        bindingContext = exhaust.getBindingContext();
+        final DelegatingBindingTrace trace = new DelegatingBindingTrace(exhaust.getBindingContext());
+        bindingContext = trace.getBindingContext();
         this.injector = new InjectorForJvmCodegen(
-                bindingContext,
+                trace,
                 this.files, builtinToJavaTypesMapping, builderFactory.getClassBuilderMode(), this, builderFactory, project);
     }
 
@@ -131,7 +135,8 @@ public class GenerationState {
     }
 
     public Pair<JvmClassName, ClassBuilder> forAnonymousSubclass(JetElement expression) {
-        JvmClassName className = getInjector().getJetTypeMapper().getCodegenAnnotator().classNameForAnonymousClass(expression);
+        JvmClassName className =
+                classNameForAnonymousClass(bindingContext, expression);
         return Pair.create(className, getFactory().forAnonymousSubclass(className));
     }
 
@@ -151,7 +156,7 @@ public class GenerationState {
                 String name = ScriptNameUtil.classNameForScript(file);
                 JetScript script = file.getScript();
                 assert script != null;
-                injector.getCodegenAnnotator().registerClassNameForScript(script, JvmClassName.byInternalName(name));
+                registerClassNameForScript(injector.getBindingTrace(), script, JvmClassName.byInternalName(name));
             }
         }
 
@@ -178,7 +183,7 @@ public class GenerationState {
     ) {
 
         injector.getScriptCodegen().registerEarlierScripts(earlierScripts);
-        injector.getCodegenAnnotator().registerClassNameForScript(script, className);
+        registerClassNameForScript(injector.getBindingTrace(), script, className);
 
         beforeCompile();
 
@@ -201,7 +206,8 @@ public class GenerationState {
         final ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, objectDeclaration);
         assert classDescriptor != null;
 
-        final CalculatedClosure closure = getInjector().getCodegenAnnotator().getCalculatedClosure(classDescriptor);
+        //noinspection SuspiciousMethodCalls
+        final CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
 
         final CodegenContext objectContext = expressionCodegen.context.intoAnonymousClass(classDescriptor, expressionCodegen);
 
