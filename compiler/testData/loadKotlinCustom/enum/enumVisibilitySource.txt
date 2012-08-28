@@ -1,0 +1,50 @@
+namespace test
+
+internal final enum class test.In : jet.Enum<test.In> {
+    protected final /*constructor*/ fun <init>(): test.In
+    public final override /*1*/ fun name(): jet.String
+    public final override /*1*/ fun ordinal(): jet.Int
+    internal final class object test.In.<class-object-for-In> {
+        private final /*constructor*/ fun <init>(): test.In.<class-object-for-In>
+        internal final val A: test.In.<class-object-for-In>.A
+        internal final enum entry test.In.<class-object-for-In>.A : test.In {
+            private final /*constructor*/ fun <init>(): test.In.<class-object-for-In>.A
+            public final override /*1*/ fun name(): jet.String
+            public final override /*1*/ fun ordinal(): jet.Int
+        }
+        public final fun valueOf(/*0*/ value: jet.String): test.In
+        public final fun values(): jet.Array<test.In>
+    }
+}
+private final enum class test.Pr : jet.Enum<test.Pr> {
+    protected final /*constructor*/ fun <init>(): test.Pr
+    public final override /*1*/ fun name(): jet.String
+    public final override /*1*/ fun ordinal(): jet.Int
+    private final class object test.Pr.<class-object-for-Pr> {
+        private final /*constructor*/ fun <init>(): test.Pr.<class-object-for-Pr>
+        internal final val A: test.Pr.<class-object-for-Pr>.A
+        internal final enum entry test.Pr.<class-object-for-Pr>.A : test.Pr {
+            private final /*constructor*/ fun <init>(): test.Pr.<class-object-for-Pr>.A
+            public final override /*1*/ fun name(): jet.String
+            public final override /*1*/ fun ordinal(): jet.Int
+        }
+        public final fun valueOf(/*0*/ value: jet.String): test.Pr
+        public final fun values(): jet.Array<test.Pr>
+    }
+}
+public final enum class test.Pu : jet.Enum<test.Pu> {
+    protected final /*constructor*/ fun <init>(): test.Pu
+    public final override /*1*/ fun name(): jet.String
+    public final override /*1*/ fun ordinal(): jet.Int
+    public final class object test.Pu.<class-object-for-Pu> {
+        private final /*constructor*/ fun <init>(): test.Pu.<class-object-for-Pu>
+        internal final val A: test.Pu.<class-object-for-Pu>.A
+        internal final enum entry test.Pu.<class-object-for-Pu>.A : test.Pu {
+            private final /*constructor*/ fun <init>(): test.Pu.<class-object-for-Pu>.A
+            public final override /*1*/ fun name(): jet.String
+            public final override /*1*/ fun ordinal(): jet.Int
+        }
+        public final fun valueOf(/*0*/ value: jet.String): test.Pu
+        public final fun values(): jet.Array<test.Pu>
+    }
+}
