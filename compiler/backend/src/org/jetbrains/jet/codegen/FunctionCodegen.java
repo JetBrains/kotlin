@@ -25,6 +25,7 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
+import org.jetbrains.jet.codegen.context.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
@@ -43,6 +44,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 
 /**
  * @author max
@@ -299,7 +301,7 @@ public class FunctionCodegen {
                     mv.visitLocalVariable("this", type.getDescriptor(), null, methodBegin, methodEnd, k++);
                 }
                 else if (fun instanceof JetFunctionLiteralExpression ||
-                         CodegenUtil.isLocalFun(functionDescriptor, state.getBindingContext())) {
+                         isLocalFun(state.getBindingContext(), functionDescriptor)) {
                     Type type = state.getInjector().getJetTypeMapper().mapType(
                             context.getThisDescriptor().getDefaultType(), MapTypeMode.VALUE);
                     mv.visitLocalVariable("this", type.getDescriptor(), null, methodBegin, methodEnd, k++);

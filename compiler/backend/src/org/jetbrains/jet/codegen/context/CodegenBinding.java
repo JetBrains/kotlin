@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen.context;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.CodegenUtil;
@@ -23,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
@@ -213,5 +215,29 @@ public class CodegenBinding {
         final NamespaceDescriptor namespaceDescriptor = bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName);
         final Collection<JetFile> jetFiles = bindingContext.get(NAMESPACE_TO_FILES, namespaceDescriptor);
         return jetFiles != null && jetFiles.size() > 1;
+    }
+
+    public static boolean isObjectLiteral(BindingContext bindingContext, ClassDescriptor declaration) {
+        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, declaration);
+        if (psiElement instanceof JetObjectDeclaration && ((JetObjectDeclaration) psiElement).isObjectLiteral()) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isLocalFun(BindingContext bindingContext, DeclarationDescriptor fd) {
+        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, fd);
+        if (psiElement instanceof JetNamedFunction && psiElement.getParent() instanceof JetBlockExpression) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isNamedFun(BindingContext bindingContext, DeclarationDescriptor fd) {
+        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, fd);
+        if (psiElement instanceof JetNamedFunction) {
+            return true;
+        }
+        return false;
     }
 }

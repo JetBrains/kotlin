@@ -65,7 +65,7 @@ public interface LocalLookup {
         LOCAL_NAMED_FUNCTION {
             @Override
             public boolean isCase(DeclarationDescriptor d, GenerationState state) {
-                return CodegenUtil.isNamedFun(d, state.getBindingContext()) && (d.getContainingDeclaration() instanceof FunctionDescriptor);
+                return isNamedFun(state.getBindingContext(), d) && (d.getContainingDeclaration() instanceof FunctionDescriptor);
             }
 
             @Override

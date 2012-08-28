@@ -907,7 +907,7 @@ public class JetTypeMapper {
                 if(superDescriptor instanceof ConstructorDescriptor) {
                     final ConstructorDescriptor superConstructor = (ConstructorDescriptor) superDescriptor;
 
-                    if (CodegenUtil.isObjectLiteral(descriptor.getContainingDeclaration(), bindingContext)) {
+                    if (isObjectLiteral(bindingContext, descriptor.getContainingDeclaration())) {
                         CallableMethod superCallable = mapToCallableMethod(superConstructor,
                                                                            getCalculatedClosure(superConstructor.getContainingDeclaration()));
                         final List<JvmMethodParameterSignature> types = superCallable.getSignature().getKotlinParameterTypes();

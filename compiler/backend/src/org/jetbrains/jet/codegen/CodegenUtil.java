@@ -17,8 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.*;
+import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
@@ -31,7 +30,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -92,30 +90,6 @@ public class CodegenUtil {
                !(myClass.getParent() instanceof JetClassObject);
     }
 
-    public static boolean isObjectLiteral(ClassDescriptor declaration, BindingContext bindingContext) {
-        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, declaration);
-        if (psiElement instanceof JetObjectDeclaration && ((JetObjectDeclaration) psiElement).isObjectLiteral()) {
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean isLocalFun(DeclarationDescriptor fd, BindingContext bindingContext) {
-        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, fd);
-        if (psiElement instanceof JetNamedFunction && psiElement.getParent() instanceof JetBlockExpression) {
-            return true;
-        }
-        return false;
-    }
-
-
-    public static boolean isNamedFun(DeclarationDescriptor fd, BindingContext bindingContext) {
-        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, fd);
-        if (psiElement instanceof JetNamedFunction) {
-            return true;
-        }
-        return false;
-    }
 
     public static String generateTmpVariableName(Collection<String> existingNames) {
         String prefix = "tmp";
@@ -246,7 +220,7 @@ public class CodegenUtil {
         }
     }
 
-    public static <T> T peekFromStack(com.intellij.util.containers.Stack<T> stack) {
+    public static <T> T peekFromStack(Stack<T> stack) {
         return stack.empty() ? null : stack.peek();
     }
 }
