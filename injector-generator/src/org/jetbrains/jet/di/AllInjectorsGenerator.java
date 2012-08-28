@@ -67,6 +67,7 @@ public class AllInjectorsGenerator {
         generator.addParameter(Project.class);
         generator.addParameter(ResolveSession.class);
         generator.addParameter(BindingTrace.class);
+        generator.addParameter(ModuleConfiguration.class);
         generator.addPublicField(DescriptorResolver.class);
         generator.addPublicField(ExpressionTypingServices.class);
         generator.addPublicField(TypeResolver.class);
@@ -88,7 +89,7 @@ public class AllInjectorsGenerator {
     private static void generateInjectorForTopDownAnalyzerForJs() throws IOException {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
         generateInjectorForTopDownAnalyzerCommon(generator);
-        generator.addParameter(ModuleConfiguration.class);
+        generator.addPublicParameter(ModuleConfiguration.class);
         generator.addField(DependencyClassByQualifiedNameResolverDummyImpl.class);
         generator.addField(NamespaceFactoryImpl.class);
         generator.generate("js/js.translator/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJs");
@@ -148,6 +149,7 @@ public class AllInjectorsGenerator {
 
         // Parameters
         generator.addPublicParameter(Project.class);
+        generator.addParameter(ModuleConfiguration.class);
 
         generator.generate("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForMacros");
     }
@@ -161,6 +163,7 @@ public class AllInjectorsGenerator {
         generator.addPublicField(TypeResolver.class);
         generator.addPublicField(CallResolver.class);
         generator.addField(true, JetStandardLibrary.class, null, new GivenExpression("JetStandardLibrary.getInstance()"));
+        generator.addField(false, ModuleConfiguration.class, null, new GivenExpression("ModuleConfiguration.EMPTY"));
 
         // Parameters
         generator.addPublicParameter(Project.class);
@@ -226,6 +229,7 @@ public class AllInjectorsGenerator {
         generator.addPublicParameter(TopDownAnalysisParameters.class);
         generator.addPublicParameter(BindingTrace.class);
         generator.addPublicParameter(BodiesResolveContext.class);
+        generator.addParameter(ModuleConfiguration.class);
         generator.generate("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForBodyResolve");
     }
 }

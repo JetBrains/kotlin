@@ -85,7 +85,7 @@ public class ResolveSession {
     ) {
         this.classifierAliases = classifierAliases;
         this.specialClasses = specialClasses;
-        this.injector = new InjectorForLazyResolve(project, this, trace);
+        this.injector = new InjectorForLazyResolve(project, this, trace, moduleConfiguration);
         this.module = rootDescriptor;
         this.moduleConfiguration = moduleConfiguration;
         PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(FqName.ROOT);

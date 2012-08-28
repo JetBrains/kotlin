@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
@@ -37,6 +38,7 @@ public class InjectorForTests {
     private TypeResolver typeResolver;
     private CallResolver callResolver;
     private JetStandardLibrary jetStandardLibrary;
+    private ModuleConfiguration moduleConfiguration;
     private final Project project;
     private AnnotationResolver annotationResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
@@ -50,6 +52,7 @@ public class InjectorForTests {
         this.typeResolver = new TypeResolver();
         this.callResolver = new CallResolver();
         this.jetStandardLibrary = JetStandardLibrary.getInstance();
+        this.moduleConfiguration = ModuleConfiguration.EMPTY;
         this.project = project;
         this.annotationResolver = new AnnotationResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
@@ -66,6 +69,7 @@ public class InjectorForTests {
 
         this.typeResolver.setAnnotationResolver(annotationResolver);
         this.typeResolver.setDescriptorResolver(descriptorResolver);
+        this.typeResolver.setModuleConfiguration(moduleConfiguration);
         this.typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
         this.callResolver.setDescriptorResolver(descriptorResolver);

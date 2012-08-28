@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -47,6 +48,7 @@ public class TypeResolver {
     private AnnotationResolver annotationResolver;
     private DescriptorResolver descriptorResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
+    private ModuleConfiguration moduleConfiguration;
 
     @Inject
     public void setDescriptorResolver(DescriptorResolver descriptorResolver) {
@@ -61,6 +63,11 @@ public class TypeResolver {
     @Inject
     public void setQualifiedExpressionResolver(QualifiedExpressionResolver qualifiedExpressionResolver) {
         this.qualifiedExpressionResolver = qualifiedExpressionResolver;
+    }
+
+    @Inject
+    public void setModuleConfiguration(@NotNull ModuleConfiguration moduleConfiguration) {
+        this.moduleConfiguration = moduleConfiguration;
     }
 
     @NotNull

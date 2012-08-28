@@ -18,39 +18,50 @@ package org.jetbrains.jet.analyzer;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+
+import java.util.Collection;
 
 /**
  * @author Stepan Koltsov
  */
 public class AnalyzeExhaust {
-    @NotNull
     private final BindingContext bindingContext;
     private final Throwable error;
-
-    @Nullable
     private final BodiesResolveContext bodiesResolveContext;
+    private final ModuleConfiguration configuration;
 
-    private AnalyzeExhaust(@NotNull BindingContext bindingContext,
-            @Nullable BodiesResolveContext bodiesResolveContext, @Nullable Throwable error) {
+    private AnalyzeExhaust(
+            @NotNull BindingContext bindingContext,
+            @NotNull ModuleConfiguration configuration,
+            @Nullable BodiesResolveContext bodiesResolveContext,
+            @Nullable Throwable error
+    ) {
         this.bindingContext = bindingContext;
         this.error = error;
         this.bodiesResolveContext = bodiesResolveContext;
+        this.configuration = configuration;
     }
 
-    public static AnalyzeExhaust success(@NotNull BindingContext bindingContext) {
-        return new AnalyzeExhaust(bindingContext, null, null);
+    public static AnalyzeExhaust success(@NotNull BindingContext bindingContext, @NotNull ModuleConfiguration configuration) {
+        return new AnalyzeExhaust(bindingContext, configuration, null, null);
     }
 
     public static AnalyzeExhaust success(@NotNull BindingContext bindingContext,
-            BodiesResolveContext bodiesResolveContext) {
-        return new AnalyzeExhaust(bindingContext, bodiesResolveContext, null);
+            @Nullable BodiesResolveContext bodiesResolveContext,
+            @NotNull ModuleConfiguration configuration
+    ) {
+        return new AnalyzeExhaust(bindingContext, configuration, bodiesResolveContext, null);
     }
 
     public static AnalyzeExhaust error(@NotNull BindingContext bindingContext, @NotNull Throwable error) {
-        return new AnalyzeExhaust(bindingContext, null, error);
+        return new AnalyzeExhaust(bindingContext, ModuleConfiguration.EMPTY, null, error);
     }
 
     @Nullable
@@ -76,5 +87,10 @@ public class AnalyzeExhaust {
         if (isError()) {
             throw new IllegalStateException("failed to analyze: " + error, error);
         }
+    }
+
+    @NotNull
+    public ModuleConfiguration getModuleConfiguration() {
+        return configuration;
     }
 }

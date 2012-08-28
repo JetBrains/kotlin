@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
@@ -44,6 +45,7 @@ public class InjectorForBodyResolve {
     private final TopDownAnalysisParameters topDownAnalysisParameters;
     private final BindingTrace bindingTrace;
     private final BodiesResolveContext bodiesResolveContext;
+    private final ModuleConfiguration moduleConfiguration;
     private CallResolver callResolver;
     private DescriptorResolver descriptorResolver;
     private AnnotationResolver annotationResolver;
@@ -60,13 +62,15 @@ public class InjectorForBodyResolve {
         @NotNull Project project,
         @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
         @NotNull BindingTrace bindingTrace,
-        @NotNull BodiesResolveContext bodiesResolveContext
+        @NotNull BodiesResolveContext bodiesResolveContext,
+        @NotNull ModuleConfiguration moduleConfiguration
     ) {
         this.bodyResolver = new BodyResolver();
         this.project = project;
         this.topDownAnalysisParameters = topDownAnalysisParameters;
         this.bindingTrace = bindingTrace;
         this.bodiesResolveContext = bodiesResolveContext;
+        this.moduleConfiguration = moduleConfiguration;
         this.callResolver = new CallResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.annotationResolver = new AnnotationResolver();
@@ -108,6 +112,7 @@ public class InjectorForBodyResolve {
 
         typeResolver.setAnnotationResolver(annotationResolver);
         typeResolver.setDescriptorResolver(descriptorResolver);
+        typeResolver.setModuleConfiguration(moduleConfiguration);
         typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
         controlFlowAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);

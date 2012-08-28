@@ -20,6 +20,7 @@ import com.google.common.base.Predicate;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -34,15 +35,20 @@ import java.util.List;
 public interface AnalyzerFacade {
 
     @NotNull
-    AnalyzeExhaust analyzeFiles(@NotNull Project project,
-                                @NotNull Collection<JetFile> files,
-                                @NotNull List<AnalyzerScriptParameter> scriptParameters,
-                                @NotNull Predicate<PsiFile> filesToAnalyzeCompletely);
+    AnalyzeExhaust analyzeFiles(
+            @NotNull Project project,
+            @NotNull Collection<JetFile> files,
+            @NotNull List<AnalyzerScriptParameter> scriptParameters,
+            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely
+    );
 
     @NotNull
-    AnalyzeExhaust analyzeBodiesInFiles(@NotNull Project project,
-                                        @NotNull List<AnalyzerScriptParameter> scriptParameters,
-                                        @NotNull Predicate<PsiFile> filesForBodiesResolve,
-                                        @NotNull BindingTrace traceContext,
-                                        @NotNull BodiesResolveContext bodiesResolveContext);
+    AnalyzeExhaust analyzeBodiesInFiles(
+            @NotNull Project project,
+            @NotNull List<AnalyzerScriptParameter> scriptParameters,
+            @NotNull Predicate<PsiFile> filesForBodiesResolve,
+            @NotNull BindingTrace traceContext,
+            @NotNull BodiesResolveContext bodiesResolveContext,
+            @NotNull ModuleConfiguration configuration
+    );
 }

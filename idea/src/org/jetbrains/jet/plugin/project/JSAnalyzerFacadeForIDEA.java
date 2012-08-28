@@ -22,6 +22,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -43,20 +44,25 @@ public enum JSAnalyzerFacadeForIDEA implements AnalyzerFacade {
 
     @NotNull
     @Override
-    public AnalyzeExhaust analyzeFiles(@NotNull Project project,
-                                       @NotNull Collection<JetFile> files,
-                                       @NotNull List<AnalyzerScriptParameter> scriptParameters,
-                                       @NotNull Predicate<PsiFile> filesToAnalyzeCompletely) {
+    public AnalyzeExhaust analyzeFiles(
+            @NotNull Project project,
+            @NotNull Collection<JetFile> files,
+            @NotNull List<AnalyzerScriptParameter> scriptParameters,
+            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely
+    ) {
         return AnalyzerFacadeForJS.analyzeFiles(files, filesToAnalyzeCompletely, new IDEAConfig(project), true);
     }
 
     @NotNull
     @Override
-    public AnalyzeExhaust analyzeBodiesInFiles(@NotNull Project project,
-                                               @NotNull List<AnalyzerScriptParameter> scriptParameters,
-                                               @NotNull Predicate<PsiFile> filesForBodiesResolve,
-                                               @NotNull BindingTrace traceContext,
-                                               @NotNull BodiesResolveContext bodiesResolveContext) {
-        return AnalyzerFacadeForJS.analyzeBodiesInFiles(filesForBodiesResolve, new IDEAConfig(project), traceContext, bodiesResolveContext);
+    public AnalyzeExhaust analyzeBodiesInFiles(
+            @NotNull Project project,
+            @NotNull List<AnalyzerScriptParameter> scriptParameters,
+            @NotNull Predicate<PsiFile> filesForBodiesResolve,
+            @NotNull BindingTrace traceContext,
+            @NotNull BodiesResolveContext bodiesResolveContext,
+            @NotNull ModuleConfiguration configuration
+    ) {
+        return AnalyzerFacadeForJS.analyzeBodiesInFiles(filesForBodiesResolve, new IDEAConfig(project), traceContext, bodiesResolveContext, configuration);
     }
 }

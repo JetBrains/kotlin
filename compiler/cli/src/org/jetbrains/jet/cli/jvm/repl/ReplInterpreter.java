@@ -235,7 +235,7 @@ public class ReplInterpreter {
         }
 
         GenerationState generationState = new GenerationState(psiFile.getProject(), ClassBuilderFactories.binaries(false), backendProgress,
-                AnalyzeExhaust.success(trace.getBindingContext()), Collections.singletonList(psiFile),
+                AnalyzeExhaust.success(trace.getBindingContext(), injector.getModuleConfiguration()), Collections.singletonList(psiFile),
                 BuiltinToJavaTypesMapping.ENABLED);
         generationState.getScriptCodegen().compileScript(psiFile.getScript(), scriptClassName, earierScripts,
                                                          CompilationErrorHandler.THROW_EXCEPTION);

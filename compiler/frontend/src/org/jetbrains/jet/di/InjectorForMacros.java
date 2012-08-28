@@ -19,6 +19,7 @@ package org.jetbrains.jet.di;
 
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
@@ -33,6 +34,7 @@ public class InjectorForMacros {
 
     private ExpressionTypingServices expressionTypingServices;
     private final Project project;
+    private final ModuleConfiguration moduleConfiguration;
     private CallResolver callResolver;
     private DescriptorResolver descriptorResolver;
     private AnnotationResolver annotationResolver;
@@ -41,10 +43,12 @@ public class InjectorForMacros {
     private OverloadingConflictResolver overloadingConflictResolver;
 
     public InjectorForMacros(
-        @NotNull Project project
+        @NotNull Project project,
+        @NotNull ModuleConfiguration moduleConfiguration
     ) {
         this.expressionTypingServices = new ExpressionTypingServices();
         this.project = project;
+        this.moduleConfiguration = moduleConfiguration;
         this.callResolver = new CallResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.annotationResolver = new AnnotationResolver();
@@ -71,6 +75,7 @@ public class InjectorForMacros {
 
         typeResolver.setAnnotationResolver(annotationResolver);
         typeResolver.setDescriptorResolver(descriptorResolver);
+        typeResolver.setModuleConfiguration(moduleConfiguration);
         typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
     }

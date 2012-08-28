@@ -20,6 +20,7 @@ package org.jetbrains.jet.di;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
@@ -37,6 +38,7 @@ public class InjectorForLazyResolve {
     private final Project project;
     private final ResolveSession resolveSession;
     private final BindingTrace bindingTrace;
+    private final ModuleConfiguration moduleConfiguration;
     private DescriptorResolver descriptorResolver;
     private ExpressionTypingServices expressionTypingServices;
     private TypeResolver typeResolver;
@@ -49,11 +51,13 @@ public class InjectorForLazyResolve {
     public InjectorForLazyResolve(
         @NotNull Project project,
         @NotNull ResolveSession resolveSession,
-        @NotNull BindingTrace bindingTrace
+        @NotNull BindingTrace bindingTrace,
+        @NotNull ModuleConfiguration moduleConfiguration
     ) {
         this.project = project;
         this.resolveSession = resolveSession;
         this.bindingTrace = bindingTrace;
+        this.moduleConfiguration = moduleConfiguration;
         this.descriptorResolver = new DescriptorResolver();
         this.expressionTypingServices = new ExpressionTypingServices();
         this.typeResolver = new TypeResolver();
@@ -74,6 +78,7 @@ public class InjectorForLazyResolve {
 
         this.typeResolver.setAnnotationResolver(annotationResolver);
         this.typeResolver.setDescriptorResolver(descriptorResolver);
+        this.typeResolver.setModuleConfiguration(moduleConfiguration);
         this.typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
         this.annotationResolver.setCallResolver(callResolver);

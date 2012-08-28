@@ -26,6 +26,7 @@ import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
@@ -61,11 +62,12 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                                                @NotNull List<AnalyzerScriptParameter> scriptParameters,
                                                @NotNull Predicate<PsiFile> filesForBodiesResolve,
                                                @NotNull BindingTrace headersTraceContext,
-                                               @NotNull BodiesResolveContext bodiesResolveContext
+                                               @NotNull BodiesResolveContext bodiesResolveContext,
+                                               @NotNull ModuleConfiguration configuration
     ) {
         return AnalyzerFacadeForEverything.analyzeBodiesInFilesWithJavaIntegration(
                 project, scriptParameters, filesForBodiesResolve,
-                headersTraceContext, bodiesResolveContext);
+                headersTraceContext, bodiesResolveContext, configuration);
     }
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(
@@ -126,7 +128,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
                                                         new CachedBodiesResolveContext(injector.getTopDownAnalysisContext()) :
                                                         null;
-            return AnalyzeExhaust.success(bindingTraceContext.getBindingContext(), bodiesResolveContext);
+            return AnalyzeExhaust.success(bindingTraceContext.getBindingContext(), bodiesResolveContext, injector.getModuleConfiguration());
         } finally {
             injector.destroy();
         }

@@ -168,6 +168,7 @@ public class InjectorForTopDownAnalyzerForJs {
 
         typeResolver.setAnnotationResolver(annotationResolver);
         typeResolver.setDescriptorResolver(descriptorResolver);
+        typeResolver.setModuleConfiguration(moduleConfiguration);
         typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
         importsResolver.setConfiguration(moduleConfiguration);
@@ -239,6 +240,10 @@ public class InjectorForTopDownAnalyzerForJs {
 
     public BindingTrace getBindingTrace() {
         return this.bindingTrace;
+    }
+
+    public ModuleConfiguration getModuleConfiguration() {
+        return this.moduleConfiguration;
     }
 
 }

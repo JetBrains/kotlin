@@ -168,6 +168,7 @@ public class InjectorForTopDownAnalyzerBasic {
 
         typeResolver.setAnnotationResolver(annotationResolver);
         typeResolver.setDescriptorResolver(descriptorResolver);
+        typeResolver.setModuleConfiguration(moduleConfiguration);
         typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
         importsResolver.setConfiguration(moduleConfiguration);
