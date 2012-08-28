@@ -161,7 +161,7 @@ public class JetPositionManager implements PositionManager {
 
                 if (result.isNull()) {
                     FqName fqName = JetPsiUtil.getFQName(namespace);
-                    boolean multiFileNamespace = typeMapper.getCodegenAnnotator().isMultiFileNamespace(fqName);
+                    boolean multiFileNamespace = isMultiFileNamespace(typeMapper.bindingContext, fqName);
                     String namespaceInternalName = NamespaceCodegen.getJVMClassNameForKotlinNs(fqName).getInternalName();
                     if (multiFileNamespace) {
                         result.set(NamespaceCodegen.getMultiFileNamespaceInternalName(namespaceInternalName, namespace));

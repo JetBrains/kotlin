@@ -26,16 +26,17 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.util.slicedmap.*;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.CLASS;
-import static org.jetbrains.jet.lang.resolve.BindingContext.FUNCTION;
-import static org.jetbrains.jet.lang.resolve.BindingContext.SCRIPT;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 /**
  * @author alex.tkachman
@@ -176,5 +177,34 @@ public class CodegenBinding {
             throw new IllegalStateException("Descriptor is not found for PSI " + jetScript);
         }
         registerClassNameForScript(bindingTrace, descriptor, className);
+    }
+
+    @NotNull public static Collection<JetFile> allFilesInNamespaces(BindingContext bindingContext, Collection<JetFile> files) {
+        // todo: we use Set and add given files but ignoring other scripts because something non-clear kept in binding
+        // for scripts especially in case of REPL
+
+        final HashSet<FqName> names = new HashSet<FqName>();
+        for (JetFile file : files) {
+            if (!file.isScript()) {
+                names.add(JetPsiUtil.getFQName(file));
+            }
+        }
+
+        final HashSet<JetFile> answer = new HashSet<JetFile>();
+        answer.addAll(files);
+
+        for (FqName name : names) {
+            final NamespaceDescriptor namespaceDescriptor = bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, name);
+            final Collection<JetFile> jetFiles = bindingContext.get(NAMESPACE_TO_FILES, namespaceDescriptor);
+            if(jetFiles != null)
+                answer.addAll(jetFiles);
+        }
+        return answer;
+    }
+
+    public static boolean isMultiFileNamespace(BindingContext bindingContext, FqName fqName) {
+        final NamespaceDescriptor namespaceDescriptor = bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName);
+        final Collection<JetFile> jetFiles = bindingContext.get(NAMESPACE_TO_FILES, namespaceDescriptor);
+        return jetFiles != null && jetFiles.size() > 1;
     }
 }

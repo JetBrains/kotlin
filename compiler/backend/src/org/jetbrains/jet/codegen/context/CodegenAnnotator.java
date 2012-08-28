@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen.context;
 
-import com.intellij.util.containers.MultiMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -24,7 +23,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
@@ -40,9 +38,6 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
  * @author alex.tkachman
  */
 public class CodegenAnnotator {
-    private final MultiMap<FqName, JetFile> namespaceName2MultiNamespaceFiles = MultiMap.create();
-    private final MultiMap<FqName, JetFile> namespaceName2Files = MultiMap.create();
-
     private BindingTrace bindingTrace;
     private BindingContext bindingContext;
     private List<JetFile> files;
@@ -63,10 +58,11 @@ public class CodegenAnnotator {
     }
 
     public void init() {
-        mapFilesToNamespaces(files);
-        prepareAnonymousClasses();
+        MyJetVisitorVoid visitor = new MyJetVisitorVoid();
+        for (JetFile file : CodegenBinding.allFilesInNamespaces(bindingContext, files)) {
+            file.accept(visitor);
+        }
     }
-
 
     private ClassDescriptor recordClassForFunction(FunctionDescriptor funDescriptor) {
         ClassDescriptor classDescriptor;
@@ -89,52 +85,7 @@ public class CodegenAnnotator {
         return classDescriptor;
     }
 
-    private void mapFilesToNamespaces(Collection<JetFile> files) {
-        for (JetFile file : files) {
-            if (file.isScript()) {
-                namespaceName2Files.putValue(FqName.ROOT, file);
-            }
-            else {
-                FqName fqName = JetPsiUtil.getFQName(file);
-                namespaceName2Files.putValue(fqName, file);
-            }
-        }
-    }
-
-    private void prepareAnonymousClasses() {
-        MyJetVisitorVoid visitor = new MyJetVisitorVoid();
-        for (Map.Entry<FqName, Collection<JetFile>> entry : namespaceName2Files.entrySet()) {
-            for (JetFile jetFile : entry.getValue()) {
-                jetFile.accept(visitor);
-            }
-
-            Collection<JetFile> namespaceFiles = new ArrayList<JetFile>();
-            for (JetFile jetFile : entry.getValue()) {
-                Collection<JetDeclaration> fileFunctions = new ArrayList<JetDeclaration>();
-                for (JetDeclaration declaration : jetFile.getDeclarations()) {
-                    if (declaration instanceof JetNamedFunction) {
-                        fileFunctions.add(declaration);
-                    }
-                }
-
-                if (fileFunctions.size() > 0) {
-                    namespaceFiles.add(jetFile);
-                }
-            }
-
-            if (namespaceFiles.size() > 1) {
-                for (JetFile namespaceFile : namespaceFiles) {
-                    namespaceName2MultiNamespaceFiles.putValue(entry.getKey(), namespaceFile);
-                }
-            }
-        }
-    }
-
-    public boolean isMultiFileNamespace(FqName fqName) {
-        return namespaceName2MultiNamespaceFiles.get(fqName).size() > 0;
-    }
-
-   static <T> T peekFromStack(Stack<T> stack) {
+    static <T> T peekFromStack(Stack<T> stack) {
         return stack.empty() ? null : stack.peek();
     }
 
