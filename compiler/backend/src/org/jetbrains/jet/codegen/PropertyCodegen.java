@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import java.util.BitSet;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.JetTypeMapper.getVisibilityAccessFlag;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 
 /**
@@ -160,7 +161,7 @@ public class PropertyCodegen {
     private void generateDefaultGetter(JetProperty p) {
         final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, p);
         assert propertyDescriptor != null;
-        int flags = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0) |
+        int flags = getVisibilityAccessFlag(propertyDescriptor) |
                     (propertyDescriptor.getModality() == Modality.ABSTRACT
                      ? ACC_ABSTRACT
                      : (propertyDescriptor.getModality() == Modality.FINAL ? ACC_FINAL : 0));
@@ -266,9 +267,9 @@ public class PropertyCodegen {
         final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, p);
         assert propertyDescriptor != null;
 
-        int modifiers = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0);
+        int modifiers = getVisibilityAccessFlag(propertyDescriptor);
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-        int flags = setter == null ? modifiers : JetTypeMapper.getAccessModifiers(setter, modifiers);
+        int flags = setter == null ? modifiers : getVisibilityAccessFlag(setter);
         flags |= (propertyDescriptor.getModality() == Modality.ABSTRACT ? ACC_ABSTRACT : 0);
         generateDefaultSetter(propertyDescriptor, flags, p);
     }

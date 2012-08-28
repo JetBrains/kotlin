@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.JetTypeMapper.getVisibilityAccessFlag;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.isLocalFun;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
@@ -97,7 +98,7 @@ public class FunctionCodegen {
 
         List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
 
-        int flags = JetTypeMapper.getAccessModifiers(functionDescriptor, 0);
+        int flags = getVisibilityAccessFlag(functionDescriptor);
 
         if (!functionDescriptor.getValueParameters().isEmpty()
             && functionDescriptor.getValueParameters().get(functionDescriptor.getValueParameters().size() - 1)

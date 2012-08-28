@@ -50,6 +50,7 @@ import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
+import static org.jetbrains.jet.codegen.JetTypeMapper.getVisibilityAccessFlag;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.eclosingClassDescriptor;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.enumEntryNeedSubclass;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
@@ -568,7 +569,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         final JvmMethodSignature constructorMethod = callableMethod.getSignature();
 
         assert constructorDescriptor != null;
-        int flags = JetTypeMapper.getAccessModifiers(constructorDescriptor, 0);
+        int flags = getVisibilityAccessFlag(constructorDescriptor);
         final MethodVisitor mv = v.newMethod(myClass, flags, constructorMethod.getName(), constructorMethod.getAsmMethod().getDescriptor(),
                                              constructorMethod.getGenericsSignature(), null);
         if (state.getClassBuilderMode() == ClassBuilderMode.SIGNATURES) return;

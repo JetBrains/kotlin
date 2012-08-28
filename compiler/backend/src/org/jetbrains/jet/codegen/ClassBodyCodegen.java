@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.JetTypeMapper.getVisibilityAccessFlag;
 
 /**
  * @author max
@@ -100,10 +101,10 @@ public abstract class ClassBodyCodegen {
                     if (!isAnnotation) {
                         propertyCodegen.generateBackingField(p, propertyDescriptor);
                         propertyCodegen
-                                .generateDefaultGetter(propertyDescriptor, JetTypeMapper.getAccessModifiers(propertyDescriptor, 0), p);
+                                .generateDefaultGetter(propertyDescriptor, getVisibilityAccessFlag(propertyDescriptor), p);
                         if (propertyDescriptor.isVar()) {
                             propertyCodegen
-                                    .generateDefaultSetter(propertyDescriptor, JetTypeMapper.getAccessModifiers(propertyDescriptor, 0), p);
+                                    .generateDefaultSetter(propertyDescriptor, getVisibilityAccessFlag(propertyDescriptor), p);
                         }
                     }
                     else {

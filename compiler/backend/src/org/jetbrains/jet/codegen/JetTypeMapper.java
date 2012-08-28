@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.google.common.collect.ImmutableMap;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,7 +81,20 @@ public class JetTypeMapper {
 
     public BindingContext bindingContext;
     private boolean mapBuiltinsToJava;
+
     private ClassBuilderMode classBuilderMode;
+
+    private static final int ACC_LOCAL = 0;
+    private static final int ACC_PACKAGE_PRIVATE = 0;
+
+    @NotNull
+    private static final Map<Visibility, Integer> visibilityToAccessFlag = ImmutableMap.<Visibility, Integer>builder()
+            .put(Visibilities.PRIVATE, ACC_PRIVATE)
+            .put(Visibilities.PROTECTED, ACC_PROTECTED)
+            .put(Visibilities.PUBLIC, ACC_PUBLIC)
+            .put(Visibilities.INTERNAL, ACC_PUBLIC)
+            .put(Visibilities.LOCAL, ACC_LOCAL)
+            .build();
 
     @Inject
     public void setBindingContext(BindingContext bindingContext) {
@@ -979,44 +993,44 @@ public class JetTypeMapper {
         return new CallableMethod(owner, owner, owner, method, INVOKESPECIAL, null, null, null);
     }
 
+    //TODO: move mapping logic to front-end java
+    public static int getVisibilityAccessFlag(@NotNull MemberDescriptor descriptor) {
+        Integer specialCase = specialCaseVisibility(descriptor);
+        if (specialCase != null) {
+            return specialCase;
+        }
+        Integer defaultMapping = visibilityToAccessFlag.get(descriptor.getVisibility());
+        if (defaultMapping == null) {
+            throw new IllegalStateException(descriptor.getVisibility() + " is not a valid visibility in backend.");
+        }
+        return defaultMapping;
+    }
 
-    public static int getAccessModifiers(@NotNull MemberDescriptor p, int defaultFlags) {
-        DeclarationDescriptor containingDeclaration = p.getContainingDeclaration();
+    @Nullable
+    private static Integer specialCaseVisibility(@NotNull MemberDescriptor memberDescriptor) {
+        DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
         if (CodegenUtil.isInterface(containingDeclaration)) {
             return ACC_PUBLIC;
         }
-        if (p.getVisibility() == Visibilities.PUBLIC) {
-            return ACC_PUBLIC;
+        Visibility memberVisibility = memberDescriptor.getVisibility();
+        if (memberVisibility != Visibilities.PRIVATE) {
+            return null;
         }
-        else if (p.getVisibility() == Visibilities.PROTECTED) {
-            return ACC_PROTECTED;
+        if (isClassObject(containingDeclaration)) {
+            return ACC_PACKAGE_PRIVATE;
         }
-        else if (p.getVisibility() == Visibilities.PRIVATE) {
-            if (isClassObject(containingDeclaration)) {
-                return defaultFlags;
-            }
-            if (p instanceof ConstructorDescriptor) {
-                ClassKind kind = ((ClassDescriptor) containingDeclaration).getKind();
-                if (kind == ClassKind.OBJECT) {
-                    return ACC_PUBLIC;
-                } else if (kind == ClassKind.ENUM_ENTRY) {
-                    return 0;
-                }
-            }
-            if (containingDeclaration instanceof NamespaceDescriptor) {
+        if (memberDescriptor instanceof ConstructorDescriptor) {
+            ClassKind kind = ((ClassDescriptor) containingDeclaration).getKind();
+            if (kind == ClassKind.OBJECT) {
                 return ACC_PUBLIC;
+            } else if (kind == ClassKind.ENUM_ENTRY) {
+                return ACC_PACKAGE_PRIVATE;
             }
-            return ACC_PRIVATE;
         }
-        else if (p.getVisibility() == Visibilities.INTERNAL) {
+        if (containingDeclaration instanceof NamespaceDescriptor) {
             return ACC_PUBLIC;
         }
-        else {
-            if (p.getVisibility() == Visibilities.INHERITED) {
-                throw new IllegalStateException("'inherited' visibility is unresolved on code generation stage");
-            }
-            return defaultFlags;
-        }
+        return null;
     }
 
     private static boolean isGenericsArray(JetType type) {
