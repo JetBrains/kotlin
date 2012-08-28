@@ -44,10 +44,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 
 /**
  * @author yole
@@ -1005,7 +1004,7 @@ public class JetTypeMapper {
                 }
             }
             if (containingDeclaration instanceof NamespaceDescriptor) {
-                return 0;
+                return ACC_PUBLIC;
             }
             return ACC_PRIVATE;
         }
