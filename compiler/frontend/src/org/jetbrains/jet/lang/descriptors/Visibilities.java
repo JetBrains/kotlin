@@ -105,7 +105,7 @@ public class Visibilities {
         }
     };
 
-    public static final Set<Visibility> INTERNAL_VISIBILITIES = Sets.newHashSet(PRIVATE, INTERNAL, LOCAL);
+    public static final Set<Visibility> INVISIBLE_FROM_OTHER_MODULES = Sets.newHashSet(PRIVATE, INTERNAL, LOCAL);
 
     private Visibilities() {
     }

@@ -24,9 +24,9 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.JetModuleUtil;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiverDescriptor;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
@@ -120,7 +120,7 @@ public class DataFlowValueFactory {
         if (variableDescriptor.isVar()) return false;
         if (variableDescriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
-            if (!isInternal(propertyDescriptor)) return false;
+            if (!invisibleFromOtherModules(propertyDescriptor)) return false;
             if (!isFinal(propertyDescriptor)) return false;
             if (!hasDefaultGetter(propertyDescriptor)) return false;
         }
@@ -141,15 +141,15 @@ public class DataFlowValueFactory {
         return true;
     }
 
-    private static boolean isInternal(@NotNull DeclarationDescriptorWithVisibility descriptor) {
-        if (Visibilities.INTERNAL_VISIBILITIES.contains(descriptor.getVisibility())) return true;
+    private static boolean invisibleFromOtherModules(@NotNull DeclarationDescriptorWithVisibility descriptor) {
+        if (Visibilities.INVISIBLE_FROM_OTHER_MODULES.contains(descriptor.getVisibility())) return true;
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (!(containingDeclaration instanceof DeclarationDescriptorWithVisibility)) {
             return false;
         }
 
-        return isInternal((DeclarationDescriptorWithVisibility) containingDeclaration);
+        return invisibleFromOtherModules((DeclarationDescriptorWithVisibility) containingDeclaration);
     }
 
     private static boolean hasDefaultGetter(PropertyDescriptor propertyDescriptor) {
