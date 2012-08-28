@@ -1,6 +1,6 @@
 fun box() = IssueState.DEFAULT.ToString() + IssueState.FIXED.ToString()
 
-open enum class IssueState {
+enum class IssueState {
    DEFAULT
    FIXED {
        override fun ToString() = "K"
