@@ -24,7 +24,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
@@ -349,14 +348,11 @@ public class JetTestUtils {
         return result.toString();
     }
 
-    public static void compileJavaFile(@NotNull File file, @NotNull File outputDirectory) throws IOException {
+    public static void compileJavaFiles(@NotNull Collection<File> files, List<String> options) throws IOException {
         JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
         StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(null, Locale.ENGLISH, Charset.forName("utf-8"));
         try {
-            Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(Collections.singleton(file));
-            List<String> options = Arrays.asList(
-                    "-d", outputDirectory.getPath()
-            );
+            Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(files);
             JavaCompiler.CompilationTask task = javaCompiler.getTask(null, fileManager, null, options, null, javaFileObjectsFromFiles);
 
             Assert.assertTrue(task.call());

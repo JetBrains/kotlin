@@ -119,25 +119,11 @@ public final class LoadDescriptorUtil {
     }
 
     private static void compileJavaWithAnnotationsJar(@NotNull Collection<File> javaFiles, @NotNull File outDir) throws IOException {
-        compileJavaToDir(javaFiles, Arrays.asList(
-                "-classpath", "out/production/runtime" + File.pathSeparator + JetTestUtils.getAnnotationsJar().getPath(),
+        String classPath = "out/production/runtime" + File.pathSeparator + JetTestUtils.getAnnotationsJar().getPath();
+        JetTestUtils.compileJavaFiles(javaFiles, Arrays.asList(
+                "-classpath", classPath,
                 "-d", outDir.getPath()
         ));
-    }
-
-    public static void compileJavaToDir(@NotNull Collection<File> javaFiles, @NotNull List<String> options) throws IOException {
-        JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
-
-        StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(null, Locale.ENGLISH, Charset.forName("utf-8"));
-        try {
-            Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(javaFiles);
-            JavaCompiler.CompilationTask task = javaCompiler.getTask(null, fileManager, null, options, null, javaFileObjectsFromFiles);
-
-            Assert.assertTrue(task.call());
-        }
-        finally {
-            fileManager.close();
-        }
     }
 
     @NotNull

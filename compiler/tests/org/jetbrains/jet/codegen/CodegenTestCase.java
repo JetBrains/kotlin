@@ -52,6 +52,8 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -267,9 +269,12 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected void blackBoxFileWithJava(@NotNull String ktFile) throws Exception {
         File javaClassesTempDirectory = new File(FileUtil.getTempDirectory(), "java-classes");
         JetTestUtils.mkdirs(javaClassesTempDirectory);
-        JetTestUtils.compileJavaFile(
-                new File("compiler/testData/codegen/" + ktFile.replaceFirst("\\.kt$", ".java")),
-                javaClassesTempDirectory);
+        List<String> options = Arrays.asList(
+                "-d", javaClassesTempDirectory.getPath()
+        );
+
+        File javaFile = new File("compiler/testData/codegen/" + ktFile.replaceFirst("\\.kt$", ".java"));
+        JetTestUtils.compileJavaFiles(Collections.singleton(javaFile), options);
 
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), CompileCompilerDependenciesTest.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));

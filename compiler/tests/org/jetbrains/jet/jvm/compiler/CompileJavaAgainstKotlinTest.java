@@ -19,6 +19,7 @@ package org.jetbrains.jet.jvm.compiler;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.junit.Assert;
 
@@ -27,7 +28,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileJavaToDir;
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalyzeExhaust;
 
 /**
@@ -62,7 +62,7 @@ public class CompileJavaAgainstKotlinTest extends TestCaseWithTmpdir {
                 "-classpath", tmpdir.getPath() + System.getProperty("path.separator") + "out/production/stdlib",
                 "-d", tmpdir.getPath()
         );
-        compileJavaToDir(Collections.singleton(javaFile), options);
+        JetTestUtils.compileJavaFiles(Collections.singleton(javaFile), options);
     }
 
     public static Test suite() {
