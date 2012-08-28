@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.BitSet;
 
+import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.*;
 
 /**
@@ -73,9 +74,9 @@ public class PropertyCodegen {
             generateSetter(p, propertyDescriptor);
         }
         else if (kind instanceof OwnerKind.DelegateKind) {
-            generateDefaultGetter(propertyDescriptor, Opcodes.ACC_PUBLIC, p);
+            generateDefaultGetter(propertyDescriptor, ACC_PUBLIC, p);
             if (propertyDescriptor.isVar()) {
-                generateDefaultSetter(propertyDescriptor, Opcodes.ACC_PUBLIC, p);
+                generateDefaultSetter(propertyDescriptor, ACC_PUBLIC, p);
             }
         }
     }
@@ -98,16 +99,16 @@ public class PropertyCodegen {
             }
             int modifiers;
             if (kind == OwnerKind.NAMESPACE) {
-                modifiers = Opcodes.ACC_STATIC;
+                modifiers = ACC_STATIC;
             }
             else {
-                modifiers = Opcodes.ACC_PRIVATE;
+                modifiers = ACC_PRIVATE;
             }
             if (!propertyDescriptor.isVar()) {
-                modifiers |= Opcodes.ACC_FINAL;
+                modifiers |= ACC_FINAL;
             }
             if (JetStandardLibrary.getInstance().isVolatile(propertyDescriptor)) {
-                modifiers |= Opcodes.ACC_VOLATILE;
+                modifiers |= ACC_VOLATILE;
             }
             Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
             FieldVisitor fieldVisitor = v.newField(p, modifiers, propertyDescriptor.getName().getName(), type.getDescriptor(), null, value);
@@ -163,8 +164,8 @@ public class PropertyCodegen {
         assert propertyDescriptor != null;
         int flags = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0) |
                     (propertyDescriptor.getModality() == Modality.ABSTRACT
-                     ? Opcodes.ACC_ABSTRACT
-                     : (propertyDescriptor.getModality() == Modality.FINAL ? Opcodes.ACC_FINAL : 0));
+                     ? ACC_ABSTRACT
+                     : (propertyDescriptor.getModality() == Modality.FINAL ? ACC_FINAL : 0));
         generateDefaultGetter(propertyDescriptor, flags, p);
     }
 
@@ -178,17 +179,17 @@ public class PropertyCodegen {
         }
 
         if (kind == OwnerKind.NAMESPACE) {
-            flags |= Opcodes.ACC_STATIC;
+            flags |= ACC_STATIC;
         }
 
         PsiElement psiElement = descriptorToDeclaration(state.getBindingContext(), propertyDescriptor.getContainingDeclaration());
         boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
         if (isTrait && !(kind instanceof OwnerKind.DelegateKind)) {
-            flags |= Opcodes.ACC_ABSTRACT;
+            flags |= ACC_ABSTRACT;
         }
 
         if (propertyDescriptor.getModality() == Modality.FINAL) {
-            flags |= Opcodes.ACC_FINAL;
+            flags |= ACC_FINAL;
         }
 
         JvmPropertyAccessorSignature signature = state.getInjector().getJetTypeMapper().mapGetterSignature(propertyDescriptor, kind);
@@ -232,7 +233,7 @@ public class PropertyCodegen {
                     }
                     else {
                         iv.visitFieldInsn(
-                                kind == OwnerKind.NAMESPACE ? Opcodes.GETSTATIC : Opcodes.GETFIELD,
+                                kind == OwnerKind.NAMESPACE ? GETSTATIC : GETFIELD,
                                 state.getInjector().getJetTypeMapper().getOwner(propertyDescriptor, kind).getInternalName(),
                                 propertyDescriptor.getName().getName(),
                                 type.getDescriptor());
@@ -270,7 +271,7 @@ public class PropertyCodegen {
         int modifiers = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0);
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
         int flags = setter == null ? modifiers : JetTypeMapper.getAccessModifiers(setter, modifiers);
-        flags |= (propertyDescriptor.getModality() == Modality.ABSTRACT ? Opcodes.ACC_ABSTRACT : 0);
+        flags |= (propertyDescriptor.getModality() == Modality.ABSTRACT ? ACC_ABSTRACT : 0);
         generateDefaultSetter(propertyDescriptor, flags, p);
     }
 
@@ -284,17 +285,17 @@ public class PropertyCodegen {
         }
 
         if (kind == OwnerKind.NAMESPACE) {
-            flags |= Opcodes.ACC_STATIC;
+            flags |= ACC_STATIC;
         }
 
         PsiElement psiElement = descriptorToDeclaration(state.getBindingContext(), propertyDescriptor.getContainingDeclaration());
         boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
         if (isTrait && !(kind instanceof OwnerKind.DelegateKind)) {
-            flags |= Opcodes.ACC_ABSTRACT;
+            flags |= ACC_ABSTRACT;
         }
 
         if (propertyDescriptor.getModality() == Modality.FINAL) {
-            flags |= Opcodes.ACC_FINAL;
+            flags |= ACC_FINAL;
         }
 
         JvmPropertyAccessorSignature signature = state.getInjector().getJetTypeMapper().mapSetterSignature(propertyDescriptor, kind);
@@ -339,13 +340,13 @@ public class PropertyCodegen {
                     }
                     else {
                         iv.load(paramCode, type);
-                        iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD,
+                        iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? PUTSTATIC : PUTFIELD,
                                           state.getInjector().getJetTypeMapper().getOwner(propertyDescriptor, kind).getInternalName(),
                                           propertyDescriptor.getName().getName(),
                                           type.getDescriptor());
                     }
 
-                    iv.visitInsn(Opcodes.RETURN);
+                    iv.visitInsn(RETURN);
                 }
             }
             FunctionCodegen.endVisit(mv, "setter", origin);

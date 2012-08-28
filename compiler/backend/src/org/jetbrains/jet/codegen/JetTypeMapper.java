@@ -559,8 +559,8 @@ public class JetTypeMapper {
                     ownerForDefaultParam.getInternalName() + (originalIsInterface ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
 
             invokeOpcode = isInterface
-                           ? (superCall ? Opcodes.INVOKESTATIC : Opcodes.INVOKEINTERFACE)
-                           : (isAccessor ? Opcodes.INVOKESTATIC : (superCall ? Opcodes.INVOKESPECIAL : Opcodes.INVOKEVIRTUAL));
+                           ? (superCall ? INVOKESTATIC : INVOKEINTERFACE)
+                           : (isAccessor ? INVOKESTATIC : (superCall ? INVOKESPECIAL : INVOKEVIRTUAL));
             if (isInterface && superCall) {
                 descriptor = mapSignature(functionDescriptor, false, OwnerKind.TRAIT_IMPL);
                 owner = JvmClassName.byInternalName(owner.getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);

@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 
 /**
@@ -96,17 +97,17 @@ public class IntrinsicMethods {
             declareIntrinsicFunction(typeName, Name.identifier("equals"), 1, EQUALS);
         }
 
-        declareBinaryOp(Name.identifier("plus"), Opcodes.IADD);
-        declareBinaryOp(Name.identifier("minus"), Opcodes.ISUB);
-        declareBinaryOp(Name.identifier("times"), Opcodes.IMUL);
-        declareBinaryOp(Name.identifier("div"), Opcodes.IDIV);
-        declareBinaryOp(Name.identifier("mod"), Opcodes.IREM);
-        declareBinaryOp(Name.identifier("shl"), Opcodes.ISHL);
-        declareBinaryOp(Name.identifier("shr"), Opcodes.ISHR);
-        declareBinaryOp(Name.identifier("ushr"), Opcodes.IUSHR);
-        declareBinaryOp(Name.identifier("and"), Opcodes.IAND);
-        declareBinaryOp(Name.identifier("or"), Opcodes.IOR);
-        declareBinaryOp(Name.identifier("xor"), Opcodes.IXOR);
+        declareBinaryOp(Name.identifier("plus"), IADD);
+        declareBinaryOp(Name.identifier("minus"), ISUB);
+        declareBinaryOp(Name.identifier("times"), IMUL);
+        declareBinaryOp(Name.identifier("div"), IDIV);
+        declareBinaryOp(Name.identifier("mod"), IREM);
+        declareBinaryOp(Name.identifier("shl"), ISHL);
+        declareBinaryOp(Name.identifier("shr"), ISHR);
+        declareBinaryOp(Name.identifier("ushr"), IUSHR);
+        declareBinaryOp(Name.identifier("and"), IAND);
+        declareBinaryOp(Name.identifier("or"), IOR);
+        declareBinaryOp(Name.identifier("xor"), IXOR);
 
         declareIntrinsicFunction(Name.identifier("Boolean"), Name.identifier("not"), 0, new Not());
 

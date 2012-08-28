@@ -126,7 +126,7 @@ public abstract class ClassBodyCodegen {
 
     private void generateStaticInitializer() {
         if (staticInitializerChunks.size() > 0) {
-            final MethodVisitor mv = v.newMethod(null, ACC_PUBLIC | Opcodes.ACC_STATIC, "<clinit>", "()V", null, null);
+            final MethodVisitor mv = v.newMethod(null, ACC_PUBLIC | ACC_STATIC, "<clinit>", "()V", null, null);
             if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
                 mv.visitCode();
 
@@ -136,7 +136,7 @@ public abstract class ClassBodyCodegen {
                     chunk.generate(v);
                 }
 
-                mv.visitInsn(Opcodes.RETURN);
+                mv.visitInsn(RETURN);
                 FunctionCodegen.endVisit(v, "static initializer", myClass);
             }
         }

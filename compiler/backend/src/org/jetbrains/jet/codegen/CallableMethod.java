@@ -27,6 +27,8 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 
 import java.util.List;
 
+import static org.jetbrains.asm4.Opcodes.*;
+
 /**
  * @author yole
  * @author alex.tkacman
@@ -112,13 +114,13 @@ public class CallableMethod implements Callable {
         v.iconst(mask);
         String desc = getSignature().getAsmMethod().getDescriptor().replace(")", "I)");
         if ("<init>".equals(getSignature().getAsmMethod().getName())) {
-            v.visitMethodInsn(Opcodes.INVOKESPECIAL, defaultImplOwner.getInternalName(), "<init>", desc);
+            v.visitMethodInsn(INVOKESPECIAL, defaultImplOwner.getInternalName(), "<init>", desc);
         }
         else {
-            if (getInvokeOpcode() != Opcodes.INVOKESTATIC) {
+            if (getInvokeOpcode() != INVOKESTATIC) {
                 desc = desc.replace("(", "(" + defaultImplParam.getDescriptor());
             }
-            v.visitMethodInsn(Opcodes.INVOKESTATIC, defaultImplOwner.getInternalName(),
+            v.visitMethodInsn(INVOKESTATIC, defaultImplOwner.getInternalName(),
                               getSignature().getAsmMethod().getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, desc);
         }
     }

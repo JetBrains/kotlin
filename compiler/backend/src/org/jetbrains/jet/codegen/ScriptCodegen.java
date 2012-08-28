@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import javax.inject.Inject;
 import java.util.List;
 
+import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 
@@ -102,8 +103,8 @@ public class ScriptCodegen {
 
         ClassBuilder classBuilder = classFileFactory.newVisitor(className.getInternalName() + ".class");
         classBuilder.defineClass(scriptDeclaration,
-                                 Opcodes.V1_6,
-                                 Opcodes.ACC_PUBLIC,
+                                 V1_6,
+                                 ACC_PUBLIC,
                                  className.getInternalName(),
                                  null,
                                  "java/lang/Object",
@@ -129,7 +130,7 @@ public class ScriptCodegen {
 
         Type blockType = jetTypeMapper.mapType(scriptDescriptor.getReturnType(), MapTypeMode.VALUE);
 
-        classBuilder.newField(null, Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL, ScriptNameUtil.LAST_EXPRESSION_VALUE_FIELD_NAME,
+        classBuilder.newField(null, ACC_PUBLIC | ACC_FINAL, ScriptNameUtil.LAST_EXPRESSION_VALUE_FIELD_NAME,
                               blockType.getDescriptor(), null, null);
 
         JvmMethodSignature jvmSignature = jetTypeMapper.mapScriptSignature(scriptDescriptor, importedScripts);
@@ -137,7 +138,7 @@ public class ScriptCodegen {
         state.setScriptConstructorMethod(jvmSignature.getAsmMethod());
 
         MethodVisitor mv = classBuilder.newMethod(
-                scriptDeclaration, Opcodes.ACC_PUBLIC, jvmSignature.getAsmMethod().getName(), jvmSignature.getAsmMethod().getDescriptor(),
+                scriptDeclaration, ACC_PUBLIC, jvmSignature.getAsmMethod().getName(), jvmSignature.getAsmMethod().getDescriptor(),
                 null, null);
 
         mv.visitCode();
@@ -208,13 +209,13 @@ public class ScriptCodegen {
         for (ScriptDescriptor earlierScript : earlierScripts) {
             JvmClassName earlierClassName;
             earlierClassName = classNameForScriptDescriptor(bindingContext, earlierScript);
-            int access = Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL;
+            int access = ACC_PRIVATE | ACC_FINAL;
             classBuilder.newField(null, access, getScriptFieldName(earlierScript), earlierClassName.getDescriptor(), null, null);
         }
 
         for (ValueParameterDescriptor parameter : script.getValueParameters()) {
             Type parameterType = jetTypeMapper.mapType(parameter.getType(), MapTypeMode.VALUE);
-            int access = Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL;
+            int access = ACC_PUBLIC | ACC_FINAL;
             classBuilder.newField(null, access, parameter.getName().getIdentifier(), parameterType.getDescriptor(), null, null);
         }
     }

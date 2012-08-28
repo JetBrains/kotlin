@@ -35,6 +35,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
+import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
 
 /**
@@ -302,7 +303,7 @@ public abstract class StackValue {
     }
 
     public static void putTuple0Instance(InstructionAdapter v) {
-        v.visitFieldInsn(Opcodes.GETSTATIC, "jet/Tuple0", "INSTANCE", "Ljet/Tuple0;");
+        v.visitFieldInsn(GETSTATIC, "jet/Tuple0", "INSTANCE", "Ljet/Tuple0;");
     }
 
     protected void putAsBoolean(InstructionAdapter v) {
@@ -494,22 +495,22 @@ public abstract class StackValue {
         public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
             int opcode;
             if (opToken == JetTokens.EQEQ) {
-                opcode = jumpIfFalse ? Opcodes.IFNE : Opcodes.IFEQ;
+                opcode = jumpIfFalse ? IFNE : IFEQ;
             }
             else if (opToken == JetTokens.EXCLEQ) {
-                opcode = jumpIfFalse ? Opcodes.IFEQ : Opcodes.IFNE;
+                opcode = jumpIfFalse ? IFEQ : IFNE;
             }
             else if (opToken == JetTokens.GT) {
-                opcode = jumpIfFalse ? Opcodes.IFLE : Opcodes.IFGT;
+                opcode = jumpIfFalse ? IFLE : IFGT;
             }
             else if (opToken == JetTokens.GTEQ) {
-                opcode = jumpIfFalse ? Opcodes.IFLT : Opcodes.IFGE;
+                opcode = jumpIfFalse ? IFLT : IFGE;
             }
             else if (opToken == JetTokens.LT) {
-                opcode = jumpIfFalse ? Opcodes.IFGE : Opcodes.IFLT;
+                opcode = jumpIfFalse ? IFGE : IFLT;
             }
             else if (opToken == JetTokens.LTEQ) {
-                opcode = jumpIfFalse ? Opcodes.IFGT : Opcodes.IFLE;
+                opcode = jumpIfFalse ? IFGT : IFLE;
             }
             else {
                 throw new UnsupportedOperationException("don't know how to generate this condjump");
@@ -526,7 +527,7 @@ public abstract class StackValue {
                 v.lcmp();
             }
             else {
-                opcode += (Opcodes.IF_ICMPEQ - Opcodes.IFEQ);
+                opcode += (IF_ICMPEQ - IFEQ);
             }
             v.visitJumpInsn(opcode, label);
         }
@@ -541,10 +542,10 @@ public abstract class StackValue {
         public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
             int opcode;
             if (opToken == JetTokens.EQEQEQ) {
-                opcode = jumpIfFalse ? Opcodes.IF_ACMPNE : Opcodes.IF_ACMPEQ;
+                opcode = jumpIfFalse ? IF_ACMPNE : IF_ACMPEQ;
             }
             else if (opToken == JetTokens.EXCLEQEQEQ) {
-                opcode = jumpIfFalse ? Opcodes.IF_ACMPEQ : Opcodes.IF_ACMPNE;
+                opcode = jumpIfFalse ? IF_ACMPEQ : IF_ACMPNE;
             }
             else {
                 throw new UnsupportedOperationException("don't know how to generate this condjump");
@@ -879,7 +880,7 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, owner.getInternalName(), name, this.type.getDescriptor());
+            v.visitFieldInsn(isStatic ? GETSTATIC : GETFIELD, owner.getInternalName(), name, this.type.getDescriptor());
             coerce(type, v);
         }
 
@@ -898,7 +899,7 @@ public abstract class StackValue {
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
             coerce(topOfStackType, this.type, v);
-            v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, owner.getInternalName(), name, this.type.getDescriptor());
+            v.visitFieldInsn(isStatic ? PUTSTATIC : PUTFIELD, owner.getInternalName(), name, this.type.getDescriptor());
         }
     }
 
@@ -943,12 +944,12 @@ public abstract class StackValue {
         public void put(Type type, InstructionAdapter v) {
             if (isSuper && isInterface) {
                 assert getter != null;
-                v.visitMethodInsn(Opcodes.INVOKESTATIC, methodOwner.getInternalName(), getter.getName(),
+                v.visitMethodInsn(INVOKESTATIC, methodOwner.getInternalName(), getter.getName(),
                                   getter.getDescriptor().replace("(", "(" + methodOwnerParam.getDescriptor()));
             }
             else {
                 if (getter == null) {
-                    v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, methodOwner.getInternalName(), name,
+                    v.visitFieldInsn(isStatic ? GETSTATIC : GETFIELD, methodOwner.getInternalName(), name,
                                      this.type.getDescriptor());
                 }
                 else {
@@ -962,11 +963,11 @@ public abstract class StackValue {
         public void store(Type topOfStackType, InstructionAdapter v) {
             if (isSuper && isInterface) {
                 assert setter != null;
-                v.visitMethodInsn(Opcodes.INVOKESTATIC, methodOwner.getInternalName(), setter.getName(),
+                v.visitMethodInsn(INVOKESTATIC, methodOwner.getInternalName(), setter.getName(),
                                   setter.getDescriptor().replace("(", "(" + methodOwnerParam.getDescriptor()));
             }
             else if (setter == null) {
-                v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, methodOwner.getInternalName(), name,
+                v.visitFieldInsn(isStatic ? PUTSTATIC : PUTFIELD, methodOwner.getInternalName(), name,
                                  this.type.getDescriptor());
             }
             else {
@@ -1025,7 +1026,7 @@ public abstract class StackValue {
             v.load(index, OBJECT_TYPE);
             Type refType = refType(this.type);
             Type sharedType = sharedTypeForType(this.type);
-            v.visitFieldInsn(Opcodes.GETFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
+            v.visitFieldInsn(GETFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
             coerce(refType, this.type, v);
             coerce(this.type, type, v);
             if (isReleaseOnPut) {
@@ -1040,7 +1041,7 @@ public abstract class StackValue {
             v.swap();
             Type refType = refType(this.type);
             Type sharedType = sharedTypeForType(this.type);
-            v.visitFieldInsn(Opcodes.PUTFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
+            v.visitFieldInsn(PUTFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
         }
     }
 
@@ -1111,7 +1112,7 @@ public abstract class StackValue {
         public void put(Type type, InstructionAdapter v) {
             Type sharedType = sharedTypeForType(this.type);
             Type refType = refType(this.type);
-            v.visitFieldInsn(Opcodes.GETFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
+            v.visitFieldInsn(GETFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
             StackValue.onStack(refType).coerce(this.type, v);
             StackValue.onStack(this.type).coerce(type, v);
         }
@@ -1119,7 +1120,7 @@ public abstract class StackValue {
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
             coerce(topOfStackType, v);
-            v.visitFieldInsn(Opcodes.PUTFIELD, sharedTypeForType(type).getInternalName(), "ref", refType(type).getDescriptor());
+            v.visitFieldInsn(PUTFIELD, sharedTypeForType(type).getInternalName(), "ref", refType(type).getDescriptor());
         }
     }
 

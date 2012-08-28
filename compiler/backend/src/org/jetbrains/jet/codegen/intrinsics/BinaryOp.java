@@ -29,6 +29,8 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
+import static org.jetbrains.asm4.Opcodes.*;
+
 /**
  * @author yole
  */
@@ -73,6 +75,6 @@ public class BinaryOp implements IntrinsicMethod {
     }
 
     private boolean shift() {
-        return opcode == Opcodes.ISHL || opcode == Opcodes.ISHR || opcode == Opcodes.IUSHR;
+        return opcode == ISHL || opcode == ISHR || opcode == IUSHR;
     }
 }

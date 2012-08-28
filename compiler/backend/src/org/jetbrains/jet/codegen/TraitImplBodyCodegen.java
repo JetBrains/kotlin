@@ -27,6 +27,8 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
 import java.util.List;
 
+import static org.jetbrains.asm4.Opcodes.*;
+
 public class TraitImplBodyCodegen extends ClassBodyCodegen {
     public TraitImplBodyCodegen(JetClassOrObject aClass, CodegenContext context, ClassBuilder v, GenerationState state) {
         super(aClass, context, v, state);
@@ -44,8 +46,8 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateDeclaration() {
-        v.defineClass(myClass, Opcodes.V1_6,
-                      Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL/*| Opcodes.ACC_SUPER*/,
+        v.defineClass(myClass, V1_6,
+                      ACC_PUBLIC | ACC_FINAL/*| Opcodes.ACC_SUPER*/,
                       jvmName(),
                       null,
                       "java/lang/Object",

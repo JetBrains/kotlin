@@ -55,6 +55,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
 
+import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.JetTypeMapper.*;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -1244,7 +1245,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.areturn(returnType);
         }
         else {
-            v.visitInsn(Opcodes.RETURN);
+            v.visitInsn(RETURN);
         }
         return StackValue.none();
     }
@@ -1405,7 +1406,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (value instanceof StackValue.FieldForSharedVar) {
                 StackValue.FieldForSharedVar fieldForSharedVar = (StackValue.FieldForSharedVar) value;
                 Type sharedType = StackValue.sharedTypeForType(value.type);
-                v.visitFieldInsn(Opcodes.GETFIELD, fieldForSharedVar.owner.getInternalName(), fieldForSharedVar.name,
+                v.visitFieldInsn(GETFIELD, fieldForSharedVar.owner.getInternalName(), fieldForSharedVar.name,
                                  sharedType.getDescriptor());
             }
 
@@ -1558,9 +1559,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (isInsideClass || isStatic || propertyDescriptor.getGetter() == null) {
             owner = ownerParam = typeMapper.getOwner(propertyDescriptor, contextKind());
             isInterface = overridesTrait;
-            invokeOpcode = isStatic ? Opcodes.INVOKESTATIC :
-                           overridesTrait ? Opcodes.INVOKEINTERFACE
-                                          : Opcodes.INVOKEVIRTUAL;
+            invokeOpcode = isStatic ? INVOKESTATIC :
+                           overridesTrait ? INVOKEINTERFACE
+                                          : INVOKEVIRTUAL;
         }
         else {
             isInterface = CodegenUtil.isInterface(containingDeclaration) || overridesTrait;
@@ -3520,7 +3521,7 @@ The "returned" value of try expression with no finally is either the last expres
             throw new UnsupportedOperationException("tuple too large");
         }
         if (entries.size() == 0) {
-            v.visitFieldInsn(Opcodes.GETSTATIC, "jet/Tuple0", "INSTANCE", "Ljet/Tuple0;");
+            v.visitFieldInsn(GETSTATIC, "jet/Tuple0", "INSTANCE", "Ljet/Tuple0;");
             return StackValue.onStack(JET_TUPLE0_TYPE);
         }
 
