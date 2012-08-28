@@ -233,10 +233,11 @@ public class CodegenBinding {
         return false;
     }
 
-    public static boolean isNamedFun(BindingContext bindingContext, DeclarationDescriptor fd) {
+    public static boolean isLocalNamedFun(BindingContext bindingContext, DeclarationDescriptor fd) {
         PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, fd);
         if (psiElement instanceof JetNamedFunction) {
-            return true;
+            final DeclarationDescriptor declaration = fd.getContainingDeclaration();
+            return declaration instanceof FunctionDescriptor || declaration instanceof PropertyDescriptor;
         }
         return false;
     }

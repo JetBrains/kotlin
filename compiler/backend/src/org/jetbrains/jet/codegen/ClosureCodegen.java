@@ -276,8 +276,7 @@ public class ClosureCodegen {
                                   : typeMapper.mapType(((VariableDescriptor) descriptor).getType(), MapTypeMode.VALUE);
                 args.add(new Pair<String, Type>("$" + descriptor.getName().getName(), type));
             }
-            else if (isNamedFun(state.getBindingContext(), descriptor) &&
-                     descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
+            else if (isLocalNamedFun(state.getBindingContext(), descriptor)) {
                 final Type type =
                         classNameForAnonymousClass(bindingContext,
                                                    (JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor))
