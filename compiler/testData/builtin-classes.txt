@@ -1447,6 +1447,9 @@ public final class jet.Tuple9</*0*/ out T1 : jet.Any?, /*1*/ out T2 : jet.Any?, 
 public final annotation class jet.atomic : jet.Annotation {
     public final /*constructor*/ fun <init>(): jet.atomic
 }
+public final annotation class jet.data : jet.Annotation {
+    public final /*constructor*/ fun <init>(): jet.data
+}
 public final annotation class jet.volatile : jet.Annotation {
     public final /*constructor*/ fun <init>(): jet.volatile
 }

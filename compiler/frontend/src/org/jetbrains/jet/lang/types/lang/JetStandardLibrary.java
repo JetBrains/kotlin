@@ -99,6 +99,7 @@ public class JetStandardLibrary {
     private ClassDescriptor enumClass;
     private ClassDescriptor annotationClass;
     private ClassDescriptor volatileClass;
+    private ClassDescriptor dataClass;
 
     private JetType stringType;
     private JetType annotationType;
@@ -170,7 +171,9 @@ public class JetStandardLibrary {
             this.arrayClass = getStdClassByName("Array");
             this.throwableClass = getStdClassByName("Throwable");
             this.enumClass = getStdClassByName("Enum");
+
             this.volatileClass = getStdClassByName("volatile");
+            this.dataClass = getStdClassByName("data");
 
             this.iterableClass = getStdClassByName("Iterable");
             this.iteratorClass = getStdClassByName("Iterator");
@@ -499,6 +502,11 @@ public class JetStandardLibrary {
     }
 
     @NotNull
+    public ClassDescriptor getDataClassAnnotation() {
+        return dataClass;
+    }
+
+    @NotNull
     public JetType getArrayType(@NotNull Variance projectionType, @NotNull JetType argument) {
         List<TypeProjection> types = Collections.singletonList(new TypeProjection(projectionType, argument));
         return new JetTypeImpl(
@@ -559,10 +567,24 @@ public class JetStandardLibrary {
     }
 
     public boolean isVolatile(@NotNull PropertyDescriptor descriptor) {
+        return containsAnnotation(descriptor, volatileClass);
+    }
+
+    public static boolean isData(@NotNull ClassDescriptor descriptor) {
+        if (initializing) {
+            // This is a hack to make this method callable while resolving standard library
+            // (otherwise getInstance() would throw an Exception)
+            // This also means that "data" annotation has no effect in standard library
+            return false;
+        }
+        return containsAnnotation(descriptor, getInstance().dataClass);
+    }
+
+    private static boolean containsAnnotation(DeclarationDescriptor descriptor, ClassDescriptor annotationClass) {
         List<AnnotationDescriptor> annotations = descriptor.getOriginal().getAnnotations();
         if (annotations != null) {
-            for(AnnotationDescriptor annotation: annotations) {
-                if (volatileClass.equals(annotation.getType().getConstructor().getDeclarationDescriptor())) {
+            for (AnnotationDescriptor annotation : annotations) {
+                if (annotationClass.equals(annotation.getType().getConstructor().getDeclarationDescriptor())) {
                     return true;
                 }
             }
