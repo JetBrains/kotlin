@@ -45,6 +45,11 @@ public interface ModuleConfiguration {
         public Collection<ClassDescriptor> getKotlinAnalogs(@NotNull FqNameUnsafe className) {
             return Collections.emptyList();
         }
+
+        @Override
+        public String toString() {
+            return "EMPTY";
+        }
     };
 
     void addDefaultImports(@NotNull Collection<JetImportDirective> directives);
