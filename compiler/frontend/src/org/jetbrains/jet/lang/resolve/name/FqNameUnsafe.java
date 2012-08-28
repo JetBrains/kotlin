@@ -91,6 +91,13 @@ public class FqNameUnsafe extends FqNameBase {
         return fqName;
     }
 
+    public boolean isSafe() {
+        if (safe != null) {
+            return true;
+        }
+        return FqName.isValidAfterUnsafeCheck(getFqName());
+    }
+
     @NotNull
     public FqName toSafe() {
         if (safe != null) {

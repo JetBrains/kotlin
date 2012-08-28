@@ -62,7 +62,7 @@ public class FqName extends FqNameBase {
         }
     }
 
-    private static boolean isValidAfterUnsafeCheck(@NotNull String qualifiedName) {
+    /*package*/ static boolean isValidAfterUnsafeCheck(@NotNull String qualifiedName) {
         // TODO: There's a valid name with escape char ``
         return qualifiedName.indexOf('<') < 0;
     }
