@@ -996,8 +996,13 @@ public class JetTypeMapper {
             if (isClassObject(containingDeclaration)) {
                 return defaultFlags;
             }
-            if (p instanceof ConstructorDescriptor && isEnumEntry(containingDeclaration)) {
-                return 0;
+            if (p instanceof ConstructorDescriptor) {
+                ClassKind kind = ((ClassDescriptor) containingDeclaration).getKind();
+                if (kind == ClassKind.OBJECT) {
+                    return ACC_PUBLIC;
+                } else if (kind == ClassKind.ENUM_ENTRY) {
+                    return 0;
+                }
             }
             if (containingDeclaration instanceof NamespaceDescriptor) {
                 return 0;

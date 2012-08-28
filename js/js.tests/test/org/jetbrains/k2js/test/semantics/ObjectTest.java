@@ -44,7 +44,8 @@ public final class ObjectTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-    public void testObjectInObject() throws Exception {
+    //TODO: KT-2696
+    public void TODO_testObjectInObject() throws Exception {
         fooBoxTest();
     }
 

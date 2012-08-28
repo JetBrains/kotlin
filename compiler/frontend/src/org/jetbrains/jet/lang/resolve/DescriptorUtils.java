@@ -372,11 +372,8 @@ public class DescriptorUtils {
             // see http://youtrack.jetbrains.com/issue/KT-2680
             return Visibilities.PROTECTED;
         }
-        if (classKind == ClassKind.ENUM_ENTRY || classKind == ClassKind.CLASS_OBJECT) {
+        if (classKind.isObject()) {
             return Visibilities.PRIVATE;
-        }
-        if (classKind == ClassKind.OBJECT) {
-            return Visibilities.INTERNAL;
         }
         assert classKind == ClassKind.CLASS || classKind == ClassKind.TRAIT || classKind == ClassKind.ANNOTATION_CLASS;
         return Visibilities.PUBLIC;
