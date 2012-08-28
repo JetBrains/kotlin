@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.context.CalculatedClosure;
+import org.jetbrains.jet.codegen.context.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.di.InjectorForJvmCodegen;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -147,7 +148,8 @@ public class GenerationState {
     private void beforeCompile() {
         markUsed();
 
-        injector.getCodegenAnnotator().init();
+        //noinspection unchecked
+        CodegenBinding.initTrace(injector.getBindingTrace(), injector.getListOfJetFile());
     }
 
     public void compileCorrectFiles(@NotNull CompilationErrorHandler errorHandler) {

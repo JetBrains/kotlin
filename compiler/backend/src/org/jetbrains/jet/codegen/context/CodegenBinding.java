@@ -53,6 +53,13 @@ public class CodegenBinding {
     private CodegenBinding() {
     }
 
+    public static void initTrace(BindingTrace bindingTrace, Collection<JetFile> files) {
+        CodegenAnnotatingVisitor visitor = new CodegenAnnotatingVisitor(bindingTrace);
+        for (JetFile file : allFilesInNamespaces(bindingTrace.getBindingContext(), files)) {
+            file.accept(visitor);
+        }
+    }
+
     public static boolean enumEntryNeedSubclass(BindingContext bindingContext, JetEnumEntry enumEntry) {
         return enumEntryNeedSubclass(bindingContext, bindingContext.get(CLASS, enumEntry));
     }

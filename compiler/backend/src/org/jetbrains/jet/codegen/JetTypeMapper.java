@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.CalculatedClosure;
-import org.jetbrains.jet.codegen.context.CodegenAnnotator;
 import org.jetbrains.jet.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -77,18 +76,12 @@ public class JetTypeMapper {
     public static final Type JET_SHARED_BOOLEAN_TYPE = Type.getObjectType("jet/runtime/SharedVar$Boolean");
 
     public BindingContext bindingContext;
-    private CodegenAnnotator codegenAnnotator;
     private boolean mapBuiltinsToJava;
     private ClassBuilderMode classBuilderMode;
 
     @Inject
     public void setBindingContext(BindingContext bindingContext) {
         this.bindingContext = bindingContext;
-    }
-
-    @Inject
-    public void setCodegenAnnotator(CodegenAnnotator codegenAnnotator) {
-        this.codegenAnnotator = codegenAnnotator;
     }
 
     @Inject
@@ -110,10 +103,6 @@ public class JetTypeMapper {
     public CalculatedClosure getCalculatedClosure(ClassDescriptor classDescriptor) {
         //noinspection SuspiciousMethodCalls
         return bindingContext.get(CLOSURE, classDescriptor);
-    }
-
-    public CodegenAnnotator getCodegenAnnotator() {
-        return codegenAnnotator;
     }
 
     public static boolean isIntPrimitive(Type type) {

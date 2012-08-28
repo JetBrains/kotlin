@@ -40,6 +40,7 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.MapTypeMode;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
+import org.jetbrains.jet.codegen.context.CodegenBinding;
 import org.jetbrains.jet.di.InjectorForJetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -204,8 +205,11 @@ public class JetPositionManager implements PositionManager {
 
                     List<JetFile> namespaceFiles = JetFilesProvider.getInstance(file.getProject()).allNamespaceFiles().fun(file);
 
-                    JetTypeMapper typeMapper = new InjectorForJetTypeMapper(new DelegatingBindingTrace(analyzeExhaust.getBindingContext()), namespaceFiles).getJetTypeMapper();
-                    typeMapper.getCodegenAnnotator().init();
+                    final DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(analyzeExhaust.getBindingContext());
+                    final InjectorForJetTypeMapper injector = new InjectorForJetTypeMapper(bindingTrace, namespaceFiles);
+                    JetTypeMapper typeMapper = injector.getJetTypeMapper();
+                    //noinspection unchecked
+                    CodegenBinding.initTrace(bindingTrace, injector.getListOfJetFile());
                     return new Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT);
                 }
             }, false);

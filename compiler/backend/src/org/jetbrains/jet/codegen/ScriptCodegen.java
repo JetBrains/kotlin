@@ -23,7 +23,6 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.context.CodegenAnnotator;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -56,8 +55,6 @@ public class ScriptCodegen {
     @NotNull
     private MemberCodegen memberCodegen;
     @NotNull
-    private CodegenAnnotator codegenAnnotator;
-    @NotNull
     private BindingContext bindingContext;
 
     private List<ScriptDescriptor> earlierScripts;
@@ -81,11 +78,6 @@ public class ScriptCodegen {
     @Inject
     public void setMemberCodegen(@NotNull MemberCodegen memberCodegen) {
         this.memberCodegen = memberCodegen;
-    }
-
-    @Inject
-    public void setCodegenAnnotator(@NotNull CodegenAnnotator codegenAnnotator) {
-        this.codegenAnnotator = codegenAnnotator;
     }
 
     @Inject
@@ -238,7 +230,7 @@ public class ScriptCodegen {
             ScriptDescriptor earlierDescriptor = t.first;
             JvmClassName earlierClassName = t.second;
 
-            registerClassNameForScript(codegenAnnotator.getBindingTrace(), earlierDescriptor, earlierClassName);
+            registerClassNameForScript(state.getInjector().getBindingTrace(), earlierDescriptor, earlierClassName);
         }
 
         List<ScriptDescriptor> earlierScriptDescriptors = Lists.newArrayList();

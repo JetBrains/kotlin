@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.containers.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
@@ -243,5 +244,9 @@ public class CodegenUtil {
         for (Pair<String, Type> field : fields) {
             v.newField(null, access, field.first, field.second.getDescriptor(), null, null);
         }
+    }
+
+    public static <T> T peekFromStack(com.intellij.util.containers.Stack<T> stack) {
+        return stack.empty() ? null : stack.peek();
     }
 }

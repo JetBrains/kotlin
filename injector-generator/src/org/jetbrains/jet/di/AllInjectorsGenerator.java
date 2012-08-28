@@ -18,7 +18,6 @@ package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.codegen.*;
-import org.jetbrains.jet.codegen.context.CodegenAnnotator;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -194,7 +193,7 @@ public class AllInjectorsGenerator {
         generator.addPublicParameter(BindingTrace.class);
         generator.addField(false, BindingContext.class, "bindingContext",
                            new GivenExpression("bindingTrace.getBindingContext()"));
-        generator.addParameter(DiType.listOf(JetFile.class));
+        generator.addPublicParameter(DiType.listOf(JetFile.class));
         generator.addParameter(BuiltinToJavaTypesMapping.class);
         generator.addParameter(ClassBuilderMode.class);
         generator.addPublicParameter(GenerationState.class);
@@ -206,7 +205,6 @@ public class AllInjectorsGenerator {
         generator.addField(true, IntrinsicMethods.class, "intrinsics", null);
         generator.addPublicField(ClassFileFactory.class);
         generator.addPublicField(MemberCodegen.class);
-        generator.addPublicField(CodegenAnnotator.class);
         generator.generate("compiler/backend/src", "org.jetbrains.jet.di", "InjectorForJvmCodegen");
     }
 
@@ -215,7 +213,7 @@ public class AllInjectorsGenerator {
         generator.addPublicParameter(BindingTrace.class);
         generator.addField(false, BindingContext.class, "bindingContext",
                            new GivenExpression("bindingTrace.getBindingContext()"));
-        generator.addParameter(DiType.listOf(JetFile.class));
+        generator.addPublicParameter(DiType.listOf(JetFile.class));
         generator.addPublicField(JetTypeMapper.class);
         generator.addField(BuiltinToJavaTypesMapping.ENABLED);
         generator.addField(ClassBuilderMode.FULL);

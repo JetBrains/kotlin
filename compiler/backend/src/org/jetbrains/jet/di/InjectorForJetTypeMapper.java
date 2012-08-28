@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
-import org.jetbrains.jet.codegen.context.CodegenAnnotator;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -37,7 +36,6 @@ public class InjectorForJetTypeMapper {
     private JetTypeMapper jetTypeMapper;
     private BuiltinToJavaTypesMapping builtinToJavaTypesMapping;
     private ClassBuilderMode classBuilderMode;
-    private CodegenAnnotator codegenAnnotator;
 
     public InjectorForJetTypeMapper(
         @NotNull BindingTrace bindingTrace,
@@ -49,15 +47,10 @@ public class InjectorForJetTypeMapper {
         this.jetTypeMapper = new JetTypeMapper();
         this.builtinToJavaTypesMapping = BuiltinToJavaTypesMapping.ENABLED;
         this.classBuilderMode = ClassBuilderMode.FULL;
-        this.codegenAnnotator = new CodegenAnnotator();
 
         this.jetTypeMapper.setBindingContext(bindingContext);
         this.jetTypeMapper.setBuiltinToJavaTypesMapping(builtinToJavaTypesMapping);
         this.jetTypeMapper.setClassBuilderMode(classBuilderMode);
-        this.jetTypeMapper.setCodegenAnnotator(codegenAnnotator);
-
-        codegenAnnotator.setBindingTrace(bindingTrace);
-        codegenAnnotator.setFiles(listOfJetFile);
 
     }
 
@@ -67,6 +60,10 @@ public class InjectorForJetTypeMapper {
 
     public BindingTrace getBindingTrace() {
         return this.bindingTrace;
+    }
+
+    public List getListOfJetFile() {
+        return this.listOfJetFile;
     }
 
     public JetTypeMapper getJetTypeMapper() {

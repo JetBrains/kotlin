@@ -1009,7 +1009,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private StackValue genClosure(JetExpression expression) {
         final FunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, expression);
-        final CodegenAnnotator codegenAnnotator = state.getInjector().getCodegenAnnotator();
         final ClassDescriptor classDescriptor =
                 bindingContext.get(CLASS_FOR_FUNCTION, descriptor);
         //noinspection SuspiciousMethodCalls
