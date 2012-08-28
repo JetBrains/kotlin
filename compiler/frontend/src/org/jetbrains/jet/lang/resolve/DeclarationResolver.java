@@ -28,6 +28,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -88,6 +90,7 @@ public class DeclarationResolver {
         resolveConstructorHeaders();
         resolveAnnotationStubsOnClassesAndConstructors();
         resolveFunctionAndPropertyHeaders();
+        createComponentFunctionsForDataClasses();
         importsResolver.processMembersImports(rootScope);
         checkRedeclarationsInNamespaces();
         checkRedeclarationsInInnerClassNames();
@@ -207,6 +210,38 @@ public class DeclarationResolver {
                     classObjectDescriptor.getBuilder().addPropertyDescriptor(propertyDescriptor);
                 }
             });
+        }
+    }
+
+    private void createComponentFunctionsForDataClasses() {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+            JetClass jetClass = entry.getKey();
+            MutableClassDescriptor classDescriptor = entry.getValue();
+
+            if (jetClass.hasPrimaryConstructor() && JetStandardLibrary.isData(classDescriptor)) {
+                createComponentFunctions(classDescriptor);
+            }
+        }
+    }
+
+    private void createComponentFunctions(MutableClassDescriptor classDescriptor) {
+        Set<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
+        assert constructors.size() == 1 : "Data class hasn't a single constructor: " + constructors.size();
+        ConstructorDescriptor constructor = constructors.iterator().next();
+
+        int parameterIndex = 0;
+        for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
+            if (!ErrorUtils.isErrorType(parameter.getType())) {
+                PropertyDescriptor property = trace.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameter);
+                if (property != null) {
+                    ++parameterIndex;
+
+                    SimpleFunctionDescriptor functionDescriptor =
+                            DescriptorResolver.createComponentFunctionDescriptor(parameterIndex, property, parameter, classDescriptor, trace);
+
+                    classDescriptor.getBuilder().addFunctionDescriptor(functionDescriptor);
+                }
+            }
         }
     }
 

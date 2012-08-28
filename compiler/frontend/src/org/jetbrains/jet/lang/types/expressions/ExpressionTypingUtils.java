@@ -277,7 +277,7 @@ public class ExpressionTypingUtils {
     ) {
         int componentIndex = 1;
         for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
-            final Name componentName = Name.identifier("component" + componentIndex);
+            final Name componentName = Name.identifier(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX + componentIndex);
             componentIndex++;
 
             JetType expectedType = getExpectedTypeForComponent(context, entry);

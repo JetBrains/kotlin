@@ -58,6 +58,7 @@ import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
 public class DescriptorResolver {
     public static final Name VALUE_OF_METHOD_NAME = Name.identifier("valueOf");
     public static final Name VALUES_METHOD_NAME = Name.identifier("values");
+    public static final String COMPONENT_FUNCTION_NAME_PREFIX = "component";
 
     @NotNull
     private TypeResolver typeResolver;
@@ -292,6 +293,40 @@ public class DescriptorResolver {
                 isInline);
 
         BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, function, functionDescriptor);
+        return functionDescriptor;
+    }
+
+    @NotNull
+    public static SimpleFunctionDescriptor createComponentFunctionDescriptor(
+            int parameterIndex,
+            @NotNull PropertyDescriptor property,
+            @NotNull ValueParameterDescriptor parameter,
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull BindingTrace trace
+    ) {
+        String functionName = COMPONENT_FUNCTION_NAME_PREFIX + parameterIndex;
+        JetType returnType = property.getType();
+
+        SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
+                classDescriptor,
+                Collections.<AnnotationDescriptor>emptyList(),
+                Name.identifier(functionName),
+                CallableMemberDescriptor.Kind.SYNTHESIZED
+        );
+
+        functionDescriptor.initialize(
+                null,
+                classDescriptor.getImplicitReceiver(),
+                Collections.<TypeParameterDescriptor>emptyList(),
+                Collections.<ValueParameterDescriptor>emptyList(),
+                returnType,
+                Modality.FINAL,
+                property.getVisibility(),
+                true
+        );
+
+        trace.record(BindingContext.DATA_CLASS_COMPONENT_FUNCTION, parameter, functionDescriptor);
+
         return functionDescriptor;
     }
 
@@ -1076,6 +1111,7 @@ public class DescriptorResolver {
         getter.initialize(propertyDescriptor.getType());
 
         trace.record(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter, propertyDescriptor);
+        trace.record(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameter, propertyDescriptor);
         return propertyDescriptor;
     }
 

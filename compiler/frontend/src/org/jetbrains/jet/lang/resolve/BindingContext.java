@@ -220,8 +220,11 @@ public interface BindingContext {
             .setFurtherLookupSlices(DECLARATIONS_TO_DESCRIPTORS).build();
 
     WritableSlice<JetReferenceExpression, PsiElement> LABEL_TARGET = Slices.<JetReferenceExpression, PsiElement>sliceBuilder().build();
-    WritableSlice<JetParameter, PropertyDescriptor> VALUE_PARAMETER_AS_PROPERTY =
-            Slices.<JetParameter, PropertyDescriptor>sliceBuilder().build();
+    WritableSlice<ValueParameterDescriptor, PropertyDescriptor> VALUE_PARAMETER_AS_PROPERTY =
+            Slices.<ValueParameterDescriptor, PropertyDescriptor>sliceBuilder().build();
+
+    WritableSlice<ValueParameterDescriptor, FunctionDescriptor> DATA_CLASS_COMPONENT_FUNCTION =
+            Slices.<ValueParameterDescriptor, FunctionDescriptor>sliceBuilder().build();
 
     WritableSlice<FqName, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR = new BasicWritableSlice<FqName, ClassDescriptor>(DO_NOTHING, true);
     WritableSlice<FqName, NamespaceDescriptor> FQNAME_TO_NAMESPACE_DESCRIPTOR =
