@@ -136,11 +136,15 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
             if (localName != null) {
                 FqName fqn = QualifiedNamesUtil.combine(containerFqn, Name.identifier(localName));
                 if (qualifiedName.equals(fqn)) {
-                    answer.add(new JetLightClass(psiManager, file, qualifiedName));
+                    if (!(declaration instanceof JetEnumEntry)) {
+                        answer.add(new JetLightClass(psiManager, file, qualifiedName));
+                    }
                 }
-                else {
-                    for (JetDeclaration child : ((JetClassOrObject) declaration).getDeclarations()) {
-                        scanClasses(answer, child, qualifiedName, fqn, file);
+                else if (QualifiedNamesUtil.isSubpackageOf(qualifiedName, fqn)) {
+                    if (!(declaration instanceof JetEnumEntry)) {
+                        for (JetDeclaration child : ((JetClassOrObject) declaration).getDeclarations()) {
+                            scanClasses(answer, child, qualifiedName, fqn, file);
+                        }
                     }
                 }
             }
