@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 import org.jetbrains.asm4.MethodVisitor;
-import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
@@ -31,8 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.asm4.Opcodes.ACC_ABSTRACT;
-import static org.jetbrains.asm4.Opcodes.ACC_PUBLIC;
+import static org.jetbrains.asm4.Opcodes.*;
 
 /**
  * @author max
