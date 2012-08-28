@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.MethodVisitor;
-import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;

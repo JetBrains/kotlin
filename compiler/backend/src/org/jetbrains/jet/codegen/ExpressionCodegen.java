@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Label;
 import org.jetbrains.asm4.MethodVisitor;
-import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;

@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.DefaultValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
@@ -41,7 +40,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.*;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 
 /**
  * @author alex.tkachman

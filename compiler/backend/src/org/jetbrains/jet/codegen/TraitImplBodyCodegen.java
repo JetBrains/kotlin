@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;

@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
-import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.CLASS_FOR_FUNCTION;
 
 /*
  * @author max

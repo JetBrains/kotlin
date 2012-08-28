@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.sun.org.apache.bcel.internal.generic.RETURN;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;

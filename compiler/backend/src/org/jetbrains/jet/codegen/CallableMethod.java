@@ -18,7 +18,6 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
@@ -27,7 +26,8 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 
 import java.util.List;
 
-import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.asm4.Opcodes.INVOKESPECIAL;
+import static org.jetbrains.asm4.Opcodes.INVOKESTATIC;
 
 /**
  * @author yole

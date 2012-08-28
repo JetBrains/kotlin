@@ -20,12 +20,12 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.types.JetType;
 
-import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.*;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.classNameForAnonymousClass;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.isLocalNamedFun;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
 
 /**
  * @author alex.tkachman

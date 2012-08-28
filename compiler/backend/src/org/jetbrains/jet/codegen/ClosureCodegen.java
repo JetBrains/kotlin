@@ -28,7 +28,9 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.asm4.signature.SignatureWriter;
-import org.jetbrains.jet.codegen.context.*;
+import org.jetbrains.jet.codegen.context.CalculatedClosure;
+import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.context.MutableClosure;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
@@ -44,7 +46,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.classNameForAnonymousClass;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.isLocalNamedFun;
 
 public class ClosureCodegen {
 

@@ -18,7 +18,6 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;

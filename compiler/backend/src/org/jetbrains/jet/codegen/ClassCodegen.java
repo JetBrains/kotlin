@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import javax.inject.Inject;
 import java.util.Map;
 
-import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.enumEntryNeedSubclass;
 
 /**
  * @author max

@@ -34,9 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.CLASS;
-import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
-import static org.jetbrains.jet.lang.resolve.BindingContext.SCRIPT;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 /**
  * @author alex.tkachman

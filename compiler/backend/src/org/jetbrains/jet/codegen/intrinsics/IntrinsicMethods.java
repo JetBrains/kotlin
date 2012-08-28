@@ -19,7 +19,6 @@ package org.jetbrains.jet.codegen.intrinsics;
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;

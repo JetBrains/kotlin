@@ -21,7 +21,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.FieldVisitor;
 import org.jetbrains.asm4.MethodVisitor;
-import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
@@ -30,7 +29,6 @@ import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -41,7 +39,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import java.util.BitSet;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.*;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 
 /**
  * @author max

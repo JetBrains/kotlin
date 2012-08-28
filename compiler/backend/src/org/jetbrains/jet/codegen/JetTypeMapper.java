@@ -19,7 +19,6 @@ package org.jetbrains.jet.codegen;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.CalculatedClosure;
 import org.jetbrains.jet.codegen.context.EnclosedValueDescriptor;
@@ -30,7 +29,6 @@ import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -40,11 +38,14 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.*;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 
 /**
  * @author yole
