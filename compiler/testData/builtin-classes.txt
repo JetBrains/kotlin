@@ -132,7 +132,7 @@ public final class jet.ByteRange : jet.Range<jet.Byte>, jet.ByteIterable {
     public final val start: jet.Byte
     public final fun step(/*0*/ step: jet.Int): jet.ByteIterator
     public final class object jet.ByteRange.<class-object-for-ByteRange> : jet.Any {
-        internal final /*constructor*/ fun <init>(): jet.ByteRange.<class-object-for-ByteRange>
+        private final /*constructor*/ fun <init>(): jet.ByteRange.<class-object-for-ByteRange>
         public final val EMPTY: jet.ByteRange
     }
 }
@@ -225,7 +225,7 @@ public final class jet.CharRange : jet.Range<jet.Char>, jet.CharIterable {
     public final val start: jet.Char
     public final fun step(/*0*/ step: jet.Int): jet.CharIterator
     public final class object jet.CharRange.<class-object-for-CharRange> : jet.Any {
-        internal final /*constructor*/ fun <init>(): jet.CharRange.<class-object-for-CharRange>
+        private final /*constructor*/ fun <init>(): jet.CharRange.<class-object-for-CharRange>
         public final val EMPTY: jet.CharRange
     }
 }
@@ -327,7 +327,7 @@ public final class jet.DoubleRange : jet.Range<jet.Double> {
     public final val start: jet.Double
     public final fun step(/*0*/ step: jet.Double): jet.DoubleIterator
     public final class object jet.DoubleRange.<class-object-for-DoubleRange> : jet.Any {
-        internal final /*constructor*/ fun <init>(): jet.DoubleRange.<class-object-for-DoubleRange>
+        private final /*constructor*/ fun <init>(): jet.DoubleRange.<class-object-for-DoubleRange>
         public final val EMPTY: jet.DoubleRange
     }
 }
@@ -519,7 +519,7 @@ public final class jet.FloatRange : jet.Range<jet.Float> {
     public final val start: jet.Float
     public final fun step(/*0*/ step: jet.Float): jet.FloatIterator
     public final class object jet.FloatRange.<class-object-for-FloatRange> : jet.Any {
-        internal final /*constructor*/ fun <init>(): jet.FloatRange.<class-object-for-FloatRange>
+        private final /*constructor*/ fun <init>(): jet.FloatRange.<class-object-for-FloatRange>
         public final val EMPTY: jet.FloatRange
     }
 }
@@ -719,7 +719,7 @@ public final class jet.IntRange : jet.Range<jet.Int>, jet.IntIterable {
     public final val start: jet.Int
     public final fun step(/*0*/ step: jet.Int): jet.IntIterator
     public final class object jet.IntRange.<class-object-for-IntRange> : jet.Any {
-        internal final /*constructor*/ fun <init>(): jet.IntRange.<class-object-for-IntRange>
+        private final /*constructor*/ fun <init>(): jet.IntRange.<class-object-for-IntRange>
         public final val EMPTY: jet.IntRange
     }
 }
@@ -830,7 +830,7 @@ public final class jet.LongRange : jet.Range<jet.Long>, jet.LongIterable {
     public final val start: jet.Long
     public final fun step(/*0*/ step: jet.Long): jet.LongIterator
     public final class object jet.LongRange.<class-object-for-LongRange> : jet.Any {
-        internal final /*constructor*/ fun <init>(): jet.LongRange.<class-object-for-LongRange>
+        private final /*constructor*/ fun <init>(): jet.LongRange.<class-object-for-LongRange>
         public final val EMPTY: jet.LongRange
     }
 }
@@ -953,7 +953,7 @@ public final class jet.ShortRange : jet.Range<jet.Short>, jet.ShortIterable {
     public final val start: jet.Short
     public final fun step(/*0*/ step: jet.Int): jet.ShortIterator
     public final class object jet.ShortRange.<class-object-for-ShortRange> : jet.Any {
-        internal final /*constructor*/ fun <init>(): jet.ShortRange.<class-object-for-ShortRange>
+        private final /*constructor*/ fun <init>(): jet.ShortRange.<class-object-for-ShortRange>
         public final val EMPTY: jet.ShortRange
     }
 }

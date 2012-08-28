@@ -5,6 +5,6 @@ internal abstract trait test.Bbb</*0*/ P : jet.Any?> : jet.Any {
 internal final class test.ClassObjectExtendsTraitWithTP : jet.Any {
     public final /*constructor*/ fun <init>(): test.ClassObjectExtendsTraitWithTP
     internal final class object test.ClassObjectExtendsTraitWithTP.<class-object-for-ClassObjectExtendsTraitWithTP> : test.Bbb<jet.String> {
-        internal final /*constructor*/ fun <init>(): test.ClassObjectExtendsTraitWithTP.<class-object-for-ClassObjectExtendsTraitWithTP>
+        private final /*constructor*/ fun <init>(): test.ClassObjectExtendsTraitWithTP.<class-object-for-ClassObjectExtendsTraitWithTP>
     }
 }
