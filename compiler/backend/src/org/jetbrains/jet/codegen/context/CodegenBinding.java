@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.HashSet;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.*;
 
 /**
  * @author alex.tkachman
@@ -218,7 +219,7 @@ public class CodegenBinding {
     }
 
     public static boolean isObjectLiteral(BindingContext bindingContext, ClassDescriptor declaration) {
-        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, declaration);
+        PsiElement psiElement = descriptorToDeclaration(bindingContext, declaration);
         if (psiElement instanceof JetObjectDeclaration && ((JetObjectDeclaration) psiElement).isObjectLiteral()) {
             return true;
         }
@@ -226,7 +227,7 @@ public class CodegenBinding {
     }
 
     public static boolean isLocalFun(BindingContext bindingContext, DeclarationDescriptor fd) {
-        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, fd);
+        PsiElement psiElement = descriptorToDeclaration(bindingContext, fd);
         if (psiElement instanceof JetNamedFunction && psiElement.getParent() instanceof JetBlockExpression) {
             return true;
         }
@@ -234,7 +235,7 @@ public class CodegenBinding {
     }
 
     public static boolean isLocalNamedFun(BindingContext bindingContext, DeclarationDescriptor fd) {
-        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, fd);
+        PsiElement psiElement = descriptorToDeclaration(bindingContext, fd);
         if (psiElement instanceof JetNamedFunction) {
             final DeclarationDescriptor declaration = fd.getContainingDeclaration();
             return declaration instanceof FunctionDescriptor || declaration instanceof PropertyDescriptor;

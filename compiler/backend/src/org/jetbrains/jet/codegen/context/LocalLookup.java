@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.types.JetType;
 
 import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.*;
 
 /**
  * @author alex.tkachman
@@ -75,7 +76,7 @@ public interface LocalLookup {
                 final boolean idx = localLookup.lookupLocal(vd);
                 if (!idx) return null;
 
-                JetElement expression = (JetElement) BindingContextUtils.callableDescriptorToDeclaration(state.getBindingContext(), vd);
+                JetElement expression = (JetElement) callableDescriptorToDeclaration(state.getBindingContext(), vd);
                 JvmClassName cn = classNameForAnonymousClass(state.getBindingContext(), expression);
                 Type localType = cn.getAsmType();
 

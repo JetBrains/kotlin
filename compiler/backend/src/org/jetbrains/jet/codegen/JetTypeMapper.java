@@ -44,6 +44,7 @@ import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.*;
 
 /**
  * @author yole
@@ -1019,7 +1020,7 @@ public class JetTypeMapper {
                     .sharedTypeForType(mapType(((PropertyDescriptor) descriptor).getReceiverParameter().getType(), MapTypeMode.VALUE));
         }
         else if (descriptor instanceof SimpleFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
-            PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
+            PsiElement psiElement = descriptorToDeclaration(bindingContext, descriptor);
             return classNameForAnonymousClass(bindingContext, (JetElement) psiElement).getAsmType();
         }
         else if (descriptor instanceof FunctionDescriptor) {

@@ -50,6 +50,7 @@ import java.util.*;
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.*;
 
 /**
  * @author max
@@ -774,7 +775,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         StackValue field = StackValue.field(fieldType, classname, delegateField, false);
         field.store(fieldType, iv);
 
-        JetClass superClass = (JetClass) BindingContextUtils.classDescriptorToDeclaration(bindingContext, superClassDescriptor);
+        JetClass superClass = (JetClass) classDescriptorToDeclaration(bindingContext, superClassDescriptor);
         final CodegenContext delegateContext = context.intoClass(superClassDescriptor,
                                                                  new OwnerKind.DelegateKind(StackValue.field(fieldType, classname,
                                                                                                              delegateField, false),
@@ -1012,7 +1013,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         iv.checkcast(function.getReturnType());
                     }
                     iv.areturn(function.getReturnType());
-                    FunctionCodegen.endVisit(iv, "trait method", BindingContextUtils.callableDescriptorToDeclaration(bindingContext, fun));
+                    FunctionCodegen.endVisit(iv, "trait method", callableDescriptorToDeclaration(bindingContext, fun));
                 }
 
                 FunctionCodegen.generateBridgeIfNeeded(context, state, v, function, fun, kind);

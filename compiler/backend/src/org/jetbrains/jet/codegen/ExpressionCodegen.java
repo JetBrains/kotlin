@@ -58,7 +58,7 @@ import java.util.*;
 import static org.jetbrains.jet.codegen.JetTypeMapper.*;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.*;
 
 /**
  * @author max
@@ -1366,7 +1366,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
+            PsiElement declaration = descriptorToDeclaration(bindingContext, descriptor);
             if (declaration instanceof JetClass) {
                 final ClassDescriptor descriptor1 = ((ClassDescriptor) descriptor).getClassObjectDescriptor();
                 assert descriptor1 != null;
@@ -1758,7 +1758,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private boolean isCallAsFunctionObject(FunctionDescriptor fd) {
         if (fd.getContainingDeclaration() instanceof ScriptDescriptor) {
-            JetNamedFunction psi = (JetNamedFunction) BindingContextUtils.descriptorToDeclaration(bindingContext, fd);
+            JetNamedFunction psi = (JetNamedFunction) descriptorToDeclaration(bindingContext, fd);
             assert psi != null;
             return !JetPsiUtil.isScriptDeclaration(psi);
         }
@@ -1933,7 +1933,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     public StackValue generateThisOrOuter(@NotNull final ClassDescriptor calleeContainingClass) {
-        PsiElement psiElement = BindingContextUtils.classDescriptorToDeclaration(bindingContext, calleeContainingClass);
+        PsiElement psiElement = classDescriptorToDeclaration(bindingContext, calleeContainingClass);
         boolean isObject = psiElement instanceof JetClassOrObject && CodegenUtil.isNonLiteralObject((JetClassOrObject) psiElement);
 
         CodegenContext cur = context;

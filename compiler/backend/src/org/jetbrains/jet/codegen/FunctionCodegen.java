@@ -45,6 +45,7 @@ import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.*;
 
 /**
  * @author max
@@ -555,8 +556,7 @@ public class FunctionCodegen {
                 Label loadArg = new Label();
                 iv.ifeq(loadArg);
 
-                JetParameter jetParameter =
-                        (JetParameter) BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), parameterDescriptor);
+                JetParameter jetParameter = (JetParameter) descriptorToDeclaration(state.getBindingContext(), parameterDescriptor);
                 assert jetParameter != null;
                 codegen.gen(jetParameter.getDefaultValue(), t);
 
@@ -592,8 +592,7 @@ public class FunctionCodegen {
 
         iv.areturn(jvmSignature.getReturnType());
 
-        endVisit(mv, "default method",
-                 BindingContextUtils.callableDescriptorToDeclaration(state.getBindingContext(), functionDescriptor));
+        endVisit(mv, "default method", callableDescriptorToDeclaration(state.getBindingContext(), functionDescriptor));
         mv.visitEnd();
     }
 
@@ -672,8 +671,7 @@ public class FunctionCodegen {
                 iv.aconst(null);
             }
             iv.areturn(overridden.getReturnType());
-            endVisit(mv, "bridge method",
-                     BindingContextUtils.callableDescriptorToDeclaration(state.getBindingContext(), functionDescriptor));
+            endVisit(mv, "bridge method", callableDescriptorToDeclaration(state.getBindingContext(), functionDescriptor));
         }
     }
 
@@ -728,7 +726,7 @@ public class FunctionCodegen {
                 iv.invokevirtual(internalName, method.getName(), method.getDescriptor());
             }
             iv.areturn(method.getReturnType());
-            endVisit(mv, "delegate method", BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), functionDescriptor));
+            endVisit(mv, "delegate method", descriptorToDeclaration(state.getBindingContext(), functionDescriptor));
         }
     }
 }

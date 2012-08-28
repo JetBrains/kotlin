@@ -40,6 +40,8 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.BitSet;
 
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.*;
+
 /**
  * @author max
  * @author alex.tkachman
@@ -179,8 +181,7 @@ public class PropertyCodegen {
             flags |= Opcodes.ACC_STATIC;
         }
 
-        PsiElement psiElement =
-                BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), propertyDescriptor.getContainingDeclaration());
+        PsiElement psiElement = descriptorToDeclaration(state.getBindingContext(), propertyDescriptor.getContainingDeclaration());
         boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
         if (isTrait && !(kind instanceof OwnerKind.DelegateKind)) {
             flags |= Opcodes.ACC_ABSTRACT;
@@ -286,8 +287,7 @@ public class PropertyCodegen {
             flags |= Opcodes.ACC_STATIC;
         }
 
-        PsiElement psiElement =
-                BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), propertyDescriptor.getContainingDeclaration());
+        PsiElement psiElement = descriptorToDeclaration(state.getBindingContext(), propertyDescriptor.getContainingDeclaration());
         boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
         if (isTrait && !(kind instanceof OwnerKind.DelegateKind)) {
             flags |= Opcodes.ACC_ABSTRACT;

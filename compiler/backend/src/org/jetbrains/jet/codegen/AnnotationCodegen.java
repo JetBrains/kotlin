@@ -41,6 +41,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.*;
+
 /**
  * @author alex.tkachman
  */
@@ -62,7 +64,7 @@ public abstract class AnnotationCodegen {
             return;
         }
 
-        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, (DeclarationDescriptor) annotated);
+        PsiElement psiElement = descriptorToDeclaration(bindingContext, (DeclarationDescriptor) annotated);
 
         JetModifierList modifierList = null;
         if (annotated instanceof ConstructorDescriptor && psiElement instanceof JetClass) {
