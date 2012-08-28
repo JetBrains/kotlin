@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen.context;
 
 import com.intellij.util.containers.MultiMap;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
