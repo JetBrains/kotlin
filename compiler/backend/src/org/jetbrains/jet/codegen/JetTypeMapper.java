@@ -44,6 +44,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 
@@ -980,8 +982,8 @@ public class JetTypeMapper {
 
 
     public static int getAccessModifiers(@NotNull MemberDescriptor p, int defaultFlags) {
-        DeclarationDescriptor declaration = p.getContainingDeclaration();
-        if (CodegenUtil.isInterface(declaration)) {
+        DeclarationDescriptor containingDeclaration = p.getContainingDeclaration();
+        if (CodegenUtil.isInterface(containingDeclaration)) {
             return ACC_PUBLIC;
         }
         if (p.getVisibility() == Visibilities.PUBLIC) {
@@ -991,10 +993,13 @@ public class JetTypeMapper {
             return ACC_PROTECTED;
         }
         else if (p.getVisibility() == Visibilities.PRIVATE) {
-            if (DescriptorUtils.isClassObject(declaration)) {
+            if (isClassObject(containingDeclaration)) {
                 return defaultFlags;
             }
-            if (p.getContainingDeclaration() instanceof NamespaceDescriptor) {
+            if (p instanceof ConstructorDescriptor && isEnumEntry(containingDeclaration)) {
+                return 0;
+            }
+            if (containingDeclaration instanceof NamespaceDescriptor) {
                 return 0;
             }
             return ACC_PRIVATE;

@@ -299,7 +299,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             }
             else {
                 ConstructorDescriptorImpl constructor =
-                        DescriptorResolver.createPrimaryConstructorForObject(classOrObject, thisDescriptor, resolveSession.getTrace());
+                        DescriptorResolver.createAndRecordPrimaryConstructorForObject(classOrObject, thisDescriptor, resolveSession.getTrace());
                 setDeferredReturnType(constructor);
                 primaryConstructor = constructor;
             }

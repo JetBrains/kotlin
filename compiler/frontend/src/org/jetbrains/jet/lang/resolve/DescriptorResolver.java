@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -49,6 +48,8 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CONSTRUCTOR;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getDefaultConstructorVisibility;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getExpectedThisObjectIfNeeded;
 import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
 
 /**
@@ -282,7 +283,7 @@ public class DescriptorResolver {
         boolean isInline = (modifierList != null) && modifierList.hasModifier(JetTokens.INLINE_KEYWORD);
         functionDescriptor.initialize(
                 receiverType,
-                DescriptorUtils.getExpectedThisObjectIfNeeded(containingDescriptor),
+                getExpectedThisObjectIfNeeded(containingDescriptor),
                 typeParameterDescriptors,
                 valueParameterDescriptors,
                 returnType,
@@ -429,27 +430,26 @@ public class DescriptorResolver {
         return typeParameterDescriptor;
     }
 
-    public static ConstructorDescriptorImpl createPrimaryConstructorForObject(
+    @NotNull
+    public static ConstructorDescriptorImpl createAndRecordPrimaryConstructorForObject(
             @Nullable PsiElement object,
             @NotNull ClassDescriptor classDescriptor,
             @NotNull BindingTrace trace
     ) {
-        ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(classDescriptor, Collections
-                .<AnnotationDescriptor>emptyList(), true);
-
-        // TODO : make the constructor private?
-        // TODO check set classDescriptor.getVisibility()
-        constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(),
-                                         Collections.<ValueParameterDescriptor>emptyList(), Visibilities.INTERNAL);
-
+        ConstructorDescriptorImpl constructorDescriptor = createPrimaryConstructorForObject(classDescriptor);
         if (object != null) {
-            try {
-                trace.record(CONSTRUCTOR, object, constructorDescriptor);
-            }
-            catch (RuntimeException e) {
-                throw new RuntimeException(e.getMessage() + " at " + DiagnosticUtils.atLocation(object), e);
-            }
+            trace.record(CONSTRUCTOR, object, constructorDescriptor);
         }
+        return constructorDescriptor;
+    }
+
+    @NotNull
+    public static ConstructorDescriptorImpl createPrimaryConstructorForObject(@NotNull ClassDescriptor containingClass) {
+        ConstructorDescriptorImpl constructorDescriptor =
+                new ConstructorDescriptorImpl(containingClass, Collections.<AnnotationDescriptor>emptyList(), true);
+        constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(),
+                                         Collections.<ValueParameterDescriptor>emptyList(),
+                                         getDefaultConstructorVisibility(containingClass));
         return constructorDescriptor;
     }
 
@@ -702,7 +702,7 @@ public class DescriptorResolver {
                 CallableMemberDescriptor.Kind.DECLARATION
         );
         propertyDescriptor.setType(classDescriptor.getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(),
-                                   DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration), ReceiverDescriptor.NO_RECEIVER);
+                                   getExpectedThisObjectIfNeeded(containingDeclaration), ReceiverDescriptor.NO_RECEIVER);
         propertyDescriptor.initialize(createDefaultGetter(propertyDescriptor), null);
         trace.record(BindingContext.OBJECT_DECLARATION_CLASS, propertyDescriptor, classDescriptor);
         JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
@@ -809,7 +809,7 @@ public class DescriptorResolver {
 
         JetType type = getVariableType(propertyScope, property, DataFlowInfo.EMPTY, true, trace);
 
-        propertyDescriptor.setType(type, typeParameterDescriptors, DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration),
+        propertyDescriptor.setType(type, typeParameterDescriptors, getExpectedThisObjectIfNeeded(containingDeclaration),
                                    receiverDescriptor);
 
         PropertyGetterDescriptor getter = resolvePropertyGetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor, trace);
@@ -1022,7 +1022,7 @@ public class DescriptorResolver {
                         constructorDescriptor,
                         parameterScope,
                         valueParameters, trace),
-                ModifiersChecker.resolveVisibilityFromModifiers(modifierList, Visibilities.PUBLIC));
+                ModifiersChecker.resolveVisibilityFromModifiers(modifierList, getDefaultConstructorVisibility(classDescriptor)));
     }
 
     @Nullable
@@ -1071,7 +1071,7 @@ public class DescriptorResolver {
                 CallableMemberDescriptor.Kind.DECLARATION
         );
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(),
-                                   DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor), ReceiverDescriptor.NO_RECEIVER);
+                                   getExpectedThisObjectIfNeeded(classDescriptor), ReceiverDescriptor.NO_RECEIVER);
 
         PropertyGetterDescriptor getter = createDefaultGetter(propertyDescriptor);
         PropertySetterDescriptor setter = propertyDescriptor.isVar() ? createDefaultSetter(propertyDescriptor) : null;

@@ -350,7 +350,7 @@ public class TypeHierarchyResolver {
                         MutableClassDescriptor mutableClassDescriptor
                 ) {
                     ConstructorDescriptorImpl constructorDescriptor = DescriptorResolver
-                            .createPrimaryConstructorForObject(object, mutableClassDescriptor, trace);
+                            .createAndRecordPrimaryConstructorForObject(object, mutableClassDescriptor, trace);
                     mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor, trace);
                     return constructorDescriptor;
                 }

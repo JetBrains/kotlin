@@ -56,8 +56,7 @@ import org.jetbrains.jet.utils.ExceptionUtils;
 import javax.inject.Inject;
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValueOfMethod;
-import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValuesMethod;
+import static org.jetbrains.jet.lang.resolve.DescriptorResolver.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 
 /**
@@ -445,22 +444,17 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
         PsiClass psiClass = classData.psiClass;
 
+        ClassDescriptorFromJvmBytecode containingClass = classData.classDescriptor;
         TypeVariableResolver resolverForTypeParameters = TypeVariableResolvers.classTypeVariableResolver(
-                classData.classDescriptor, "class " + psiClass.getQualifiedName());
+                containingClass, "class " + psiClass.getQualifiedName());
 
-        List<TypeParameterDescriptor> typeParameters = classData.classDescriptor.getTypeConstructor().getParameters();
+        List<TypeParameterDescriptor> typeParameters = containingClass.getTypeConstructor().getParameters();
 
         PsiMethod[] psiConstructors = psiClass.getConstructors();
 
         boolean isStatic = psiClass.hasModifierProperty(PsiModifier.STATIC);
-        if (classData.classDescriptor.getKind() == ClassKind.OBJECT || classData.classDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
-            // TODO: wrong: class objects do not need visible constructors
-            ConstructorDescriptorImpl constructor = new ConstructorDescriptorImpl(classData.classDescriptor, new ArrayList<AnnotationDescriptor>(0), true);
-            Visibility visibility = psiConstructors.length != 0
-                                    ? resolveVisibility(psiConstructors[0], new PsiMethodWrapper(psiConstructors[0]).getJetConstructor())
-                                    : Visibilities.PUBLIC;
-            constructor.initialize(new ArrayList<TypeParameterDescriptor>(0), new ArrayList<ValueParameterDescriptor>(0), visibility);
-            constructors.add(constructor);
+        if (containingClass.getKind() == ClassKind.OBJECT || containingClass.getKind() == ClassKind.CLASS_OBJECT) {
+            constructors.add(createPrimaryConstructorForObject(containingClass));
         }
         else if (psiConstructors.length == 0) {
             // We need to create default constructors for classes and abstract classes.
@@ -469,17 +463,18 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             // abstract public class Java {}
             if (!psiClass.isInterface()) {
                 ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
-                        classData.classDescriptor,
+                        containingClass,
                         Collections.<AnnotationDescriptor>emptyList(),
                         false);
-                constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), classData.classDescriptor.getVisibility(), isStatic);
+                constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), containingClass
+                        .getVisibility(), isStatic);
                 constructors.add(constructorDescriptor);
                 trace.record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
             }
             if (psiClass.isAnnotationType()) {
                 // A constructor for an annotation type takes all the "methods" in the @interface as parameters
                 ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
-                        classData.classDescriptor,
+                        containingClass,
                         Collections.<AnnotationDescriptor>emptyList(),
                         false);
 
@@ -512,7 +507,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                     }
                 }
 
-                constructorDescriptor.initialize(typeParameters, valueParameters, classData.classDescriptor.getVisibility(), isStatic);
+                constructorDescriptor.initialize(typeParameters, valueParameters, containingClass.getVisibility(), isStatic);
                 constructors.add(constructorDescriptor);
                 trace.record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
             }
@@ -527,7 +522,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
 
         for (ConstructorDescriptor constructor : constructors) {
-            ((ConstructorDescriptorImpl) constructor).setReturnType(classData.classDescriptor.getDefaultType());
+            ((ConstructorDescriptorImpl) constructor).setReturnType(containingClass.getDefaultType());
         }
 
         return constructors;

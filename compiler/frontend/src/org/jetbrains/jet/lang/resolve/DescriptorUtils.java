@@ -283,6 +283,11 @@ public class DescriptorUtils {
                && ((ClassDescriptor) descriptor).getKind() == ClassKind.CLASS_OBJECT;
     }
 
+    public static boolean isEnumEntry(@NotNull DeclarationDescriptor descriptor) {
+        return descriptor instanceof ClassDescriptor
+               && ((ClassDescriptor) descriptor).getKind() == ClassKind.ENUM_ENTRY;
+    }
+
     @NotNull
     public static List<ClassDescriptor> getSuperclassDescriptors(@NotNull ClassDescriptor classDescriptor) {
         Collection<? extends JetType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
@@ -357,5 +362,23 @@ public class DescriptorUtils {
         DeclarationDescriptor containingDeclaration = classObjectDescriptor.getContainingDeclaration();
         return ((containingDeclaration instanceof ClassDescriptor) &&
                 ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.ENUM_CLASS);
+    }
+
+    @NotNull
+    public static Visibility getDefaultConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
+        ClassKind classKind = classDescriptor.getKind();
+        if (classKind == ClassKind.ENUM_CLASS) {
+            //TODO: should be PRIVATE
+            // see http://youtrack.jetbrains.com/issue/KT-2680
+            return Visibilities.PROTECTED;
+        }
+        if (classKind == ClassKind.ENUM_ENTRY || classKind == ClassKind.CLASS_OBJECT) {
+            return Visibilities.PRIVATE;
+        }
+        if (classKind == ClassKind.OBJECT) {
+            return Visibilities.INTERNAL;
+        }
+        assert classKind == ClassKind.CLASS || classKind == ClassKind.TRAIT || classKind == ClassKind.ANNOTATION_CLASS;
+        return Visibilities.PUBLIC;
     }
 }
