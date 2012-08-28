@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.classNameForAnonymousClass;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.isLocalNamedFun;
 
@@ -82,7 +83,7 @@ public class ClosureCodegen {
 
         assert funDescriptor != null;
         final List<ValueParameterDescriptor> parameters = funDescriptor.getValueParameters();
-        final JvmClassName funClass = CodegenUtil.getInternalClassName(funDescriptor);
+        final JvmClassName funClass = getInternalClassName(funDescriptor);
         signatureWriter.visitClassType(funClass.getInternalName());
         for (ValueParameterDescriptor parameter : parameters) {
             appendType(signatureWriter, parameter.getType(), '=');
@@ -107,11 +108,11 @@ public class ClosureCodegen {
 
         constructor = generateConstructor(funClass, fun, cv, closure);
 
-        if (CodegenUtil.isConst(closure)) {
+        if (isConst(closure)) {
             generateConstInstance(fun, cv);
         }
 
-        CodegenUtil.generateClosureFields(closure, cv, state.getInjector().getJetTypeMapper());
+        generateClosureFields(closure, cv, state.getInjector().getJetTypeMapper());
 
         cv.done();
 
@@ -168,7 +169,7 @@ public class ClosureCodegen {
             JetExpression fun,
             ClassBuilder cv
     ) {
-        final JvmMethodSignature bridge = CodegenUtil.erasedInvokeSignature(funDescriptor);
+        final JvmMethodSignature bridge = erasedInvokeSignature(funDescriptor);
         final Method delegate = typeMapper.invokeSignature(funDescriptor).getAsmMethod();
 
         if (bridge.getAsmMethod().getDescriptor().equals(delegate.getDescriptor())) {
@@ -262,11 +263,11 @@ public class ClosureCodegen {
         final ClassDescriptor captureThis = closure.getCaptureThis();
         if (captureThis != null) {
             final Type type = typeMapper.mapType(captureThis.getDefaultType(), MapTypeMode.VALUE);
-            args.add(new Pair<String, Type>(CodegenUtil.THIS$0, type));
+            args.add(new Pair<String, Type>(THIS$0, type));
         }
         final ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
         if (captureReceiver != null) {
-            args.add(new Pair<String, Type>(CodegenUtil.RECEIVER$0,
+            args.add(new Pair<String, Type>(RECEIVER$0,
                                             typeMapper.mapType(captureReceiver.getDefaultType(), MapTypeMode.VALUE)));
         }
 

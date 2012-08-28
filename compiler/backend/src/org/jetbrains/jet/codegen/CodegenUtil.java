@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -222,5 +223,36 @@ public class CodegenUtil {
 
     public static <T> T peekFromStack(Stack<T> stack) {
         return stack.empty() ? null : stack.peek();
+    }
+
+    public static int getAccessModifiers(@NotNull MemberDescriptor p, int defaultFlags) {
+        DeclarationDescriptor declaration = p.getContainingDeclaration();
+        if (isInterface(declaration)) {
+            return ACC_PUBLIC;
+        }
+        if (p.getVisibility() == Visibilities.PUBLIC) {
+            return ACC_PUBLIC;
+        }
+        else if (p.getVisibility() == Visibilities.PROTECTED) {
+            return ACC_PROTECTED;
+        }
+        else if (p.getVisibility() == Visibilities.PRIVATE) {
+            if (DescriptorUtils.isClassObject(declaration)) {
+                return defaultFlags;
+            }
+            if (p.getContainingDeclaration() instanceof NamespaceDescriptor) {
+                return 0;
+            }
+            return ACC_PRIVATE;
+        }
+        else if (p.getVisibility() == Visibilities.INTERNAL) {
+            return ACC_PUBLIC;
+        }
+        else {
+            if (p.getVisibility() == Visibilities.INHERITED) {
+                throw new IllegalStateException("'inherited' visibility is unresolved on code generation stage");
+            }
+            return defaultFlags;
+        }
     }
 }

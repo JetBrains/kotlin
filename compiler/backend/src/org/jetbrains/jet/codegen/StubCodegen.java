@@ -18,6 +18,8 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.asm4.MethodVisitor;
 
+import static org.jetbrains.jet.codegen.CodegenUtil.*;
+
 /**
  * @author Stepan Koltsov
  */
@@ -29,10 +31,10 @@ public class StubCodegen {
     }
 
     public static void generateStubThrow(MethodVisitor mv) {
-        CodegenUtil.generateThrow(mv, STUB_EXCEPTION, STUB_EXCEPTION_MESSAGE);
+        generateThrow(mv, STUB_EXCEPTION, STUB_EXCEPTION_MESSAGE);
     }
 
     public static void generateStubCode(MethodVisitor mv) {
-        CodegenUtil.generateMethodThrow(mv, STUB_EXCEPTION, STUB_EXCEPTION_MESSAGE);
+        generateMethodThrow(mv, STUB_EXCEPTION, STUB_EXCEPTION_MESSAGE);
     }
 }

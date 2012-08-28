@@ -77,7 +77,7 @@ public class InjectorForJvmCodegen {
         this.classFileFactory = new ClassFileFactory();
         this.memberCodegen = new MemberCodegen();
 
-        this.jetTypeMapper.setBindingContext(bindingContext);
+        this.jetTypeMapper.setBindingTrace(bindingTrace);
         this.jetTypeMapper.setBuiltinToJavaTypesMapping(builtinToJavaTypesMapping);
         this.jetTypeMapper.setClassBuilderMode(classBuilderMode);
 

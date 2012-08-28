@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.CodegenUtil.*;
 
 /**
  * @author max
@@ -100,10 +101,10 @@ public abstract class ClassBodyCodegen {
                     if (!isAnnotation) {
                         propertyCodegen.generateBackingField(p, propertyDescriptor);
                         propertyCodegen
-                                .generateDefaultGetter(propertyDescriptor, JetTypeMapper.getAccessModifiers(propertyDescriptor, 0), p);
+                                .generateDefaultGetter(propertyDescriptor, getAccessModifiers(propertyDescriptor, 0), p);
                         if (propertyDescriptor.isVar()) {
                             propertyCodegen
-                                    .generateDefaultSetter(propertyDescriptor, JetTypeMapper.getAccessModifiers(propertyDescriptor, 0), p);
+                                    .generateDefaultSetter(propertyDescriptor, getAccessModifiers(propertyDescriptor, 0), p);
                         }
                     }
                     else {
@@ -144,7 +145,7 @@ public abstract class ClassBodyCodegen {
         // generates stub 'remove' function for subclasses of Iterator to be compatible with java.util.Iterator
         if (DescriptorUtils.isIteratorWithoutRemoveImpl(descriptor)) {
             final MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "remove", "()V", null, null);
-            CodegenUtil.generateMethodThrow(mv, "java/lang/UnsupportedOperationException", "Mutating method called on a Kotlin Iterator");
+            generateMethodThrow(mv, "java/lang/UnsupportedOperationException", "Mutating method called on a Kotlin Iterator");
         }
     }
 }

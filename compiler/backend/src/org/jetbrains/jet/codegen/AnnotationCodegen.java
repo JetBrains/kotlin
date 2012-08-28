@@ -51,7 +51,7 @@ public abstract class AnnotationCodegen {
 
     private AnnotationCodegen(JetTypeMapper mapper) {
         typeMapper = mapper;
-        bindingContext = typeMapper.bindingContext;
+        bindingContext = typeMapper.getBindingContext();
     }
 
     public void genAnnotations(Annotated annotated) {

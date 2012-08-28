@@ -48,7 +48,7 @@ public class InjectorForJetTypeMapper {
         this.builtinToJavaTypesMapping = BuiltinToJavaTypesMapping.ENABLED;
         this.classBuilderMode = ClassBuilderMode.FULL;
 
-        this.jetTypeMapper.setBindingContext(bindingContext);
+        this.jetTypeMapper.setBindingTrace(bindingTrace);
         this.jetTypeMapper.setBuiltinToJavaTypesMapping(builtinToJavaTypesMapping);
         this.jetTypeMapper.setClassBuilderMode(classBuilderMode);
 

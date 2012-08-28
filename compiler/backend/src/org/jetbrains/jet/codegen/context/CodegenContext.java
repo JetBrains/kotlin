@@ -180,7 +180,7 @@ public abstract class CodegenContext {
     ) {
         final JetTypeMapper typeMapper = expressionCodegen.getState().getInjector().getJetTypeMapper();
         return new ClosureContext(typeMapper, funDescriptor,
-                                  typeMapper.bindingContext.get(CLASS_FOR_FUNCTION, funDescriptor),
+                                  typeMapper.getBindingContext().get(CLASS_FOR_FUNCTION, funDescriptor),
                                   this, expressionCodegen);
     }
 
@@ -258,8 +258,8 @@ public abstract class CodegenContext {
         final ClassDescriptor enclosingClass = getEnclosingClass();
         outerExpression = enclosingClass != null
                           ? StackValue
-                .field(typeMapper.mapType(enclosingClass.getDefaultType(), MapTypeMode.VALUE), typeMapper.getJvmClassName(
-                        classDescriptor), CodegenUtil.THIS$0,
+                .field(typeMapper.mapType(enclosingClass.getDefaultType(), MapTypeMode.VALUE), CodegenBinding.getJvmClassName(
+                        typeMapper.getBindingTrace(), classDescriptor), CodegenUtil.THIS$0,
                        false)
                           : null;
     }

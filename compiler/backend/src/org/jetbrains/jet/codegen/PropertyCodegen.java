@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import java.util.BitSet;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 
 /**
@@ -83,7 +84,7 @@ public class PropertyCodegen {
         //noinspection ConstantConditions
         if (state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
             DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
-            if (CodegenUtil.isInterface(containingDeclaration)) {
+            if (isInterface(containingDeclaration)) {
                 return;
             }
 
@@ -160,7 +161,7 @@ public class PropertyCodegen {
     private void generateDefaultGetter(JetProperty p) {
         final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, p);
         assert propertyDescriptor != null;
-        int flags = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0) |
+        int flags = getAccessModifiers(propertyDescriptor, 0) |
                     (propertyDescriptor.getModality() == Modality.ABSTRACT
                      ? ACC_ABSTRACT
                      : (propertyDescriptor.getModality() == Modality.FINAL ? ACC_FINAL : 0));
@@ -249,9 +250,9 @@ public class PropertyCodegen {
     ) {
         JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
         Modality modality = propertyDescriptor.getModality();
-        BitSet flags = CodegenUtil.getFlagsForVisibility(visibility);
+        BitSet flags = getFlagsForVisibility(visibility);
         flags.set(JvmStdlibNames.FLAG_PROPERTY_BIT);
-        if (CodegenUtil.isInterface(propertyDescriptor.getContainingDeclaration()) && modality != Modality.ABSTRACT) {
+        if (isInterface(propertyDescriptor.getContainingDeclaration()) && modality != Modality.ABSTRACT) {
             flags.set(modality == Modality.FINAL
                       ? JvmStdlibNames.FLAG_FORCE_FINAL_BIT
                       : JvmStdlibNames.FLAG_FORCE_OPEN_BIT);
@@ -266,9 +267,9 @@ public class PropertyCodegen {
         final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, p);
         assert propertyDescriptor != null;
 
-        int modifiers = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0);
+        int modifiers = getAccessModifiers(propertyDescriptor, 0);
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-        int flags = setter == null ? modifiers : JetTypeMapper.getAccessModifiers(setter, modifiers);
+        int flags = setter == null ? modifiers : getAccessModifiers(setter, modifiers);
         flags |= (propertyDescriptor.getModality() == Modality.ABSTRACT ? ACC_ABSTRACT : 0);
         generateDefaultSetter(propertyDescriptor, flags, p);
     }

@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
@@ -74,7 +75,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     private String inventAnonymousClassName(JetElement declaration) {
-        String top = CodegenUtil.peekFromStack(nameStack);
+        String top = peekFromStack(nameStack);
         Integer cnt = anonymousSubclassesCount.get(top);
         if (cnt == null) {
             cnt = 0;
@@ -133,7 +134,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             bindingTrace.record(ENUM_ENTRY_CLASS_NEED_SUBCLASS, descriptor);
 
             classStack.push(descriptor);
-            nameStack.push(CodegenUtil.peekFromStack(nameStack) + "$" + descriptor.getName().getName());
+            nameStack.push(peekFromStack(nameStack) + "$" + descriptor.getName().getName());
             super.visitEnumEntry(enumEntry);
             nameStack.pop();
             classStack.pop();
@@ -148,8 +149,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         ClassDescriptor classDescriptor = bindingContext.get(CLASS, classObject.getObjectDeclaration());
         assert classDescriptor != null;
 
-        JvmClassName name = JvmClassName.byInternalName(CodegenUtil.peekFromStack(nameStack) + JvmAbi.CLASS_OBJECT_SUFFIX);
-        recordClosure(bindingTrace, classObject, classDescriptor, CodegenUtil.peekFromStack(classStack), name, false);
+        JvmClassName name = JvmClassName.byInternalName(peekFromStack(nameStack) + JvmAbi.CLASS_OBJECT_SUFFIX);
+        recordClosure(bindingTrace, classObject, classDescriptor, peekFromStack(classStack), name, false);
 
         classStack.push(classDescriptor);
         nameStack.push(name.getInternalName());
@@ -169,7 +170,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             if (classDescriptor == null) return;
 
             String name = getName(classDescriptor);
-            recordClosure(bindingTrace, declaration, classDescriptor, CodegenUtil.peekFromStack(classStack), JvmClassName.byInternalName(name), false);
+            recordClosure(bindingTrace, declaration, classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), false);
 
             classStack.push(classDescriptor);
             nameStack.push(name);
@@ -186,7 +187,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         if (classDescriptor == null) return;
 
         String name = getName(classDescriptor);
-        recordClosure(bindingTrace, klass, classDescriptor, CodegenUtil.peekFromStack(classStack), JvmClassName.byInternalName(name), false);
+        recordClosure(bindingTrace, klass, classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), false);
 
         classStack.push(classDescriptor);
         nameStack.push(name);
@@ -196,7 +197,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     private String getName(ClassDescriptor classDescriptor) {
-        String base = CodegenUtil.peekFromStack(nameStack);
+        String base = peekFromStack(nameStack);
         return classDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor ? base.isEmpty() ? classDescriptor.getName()
                 .getName() : base + '/' + classDescriptor.getName() : base + '$' + classDescriptor.getName();
     }
@@ -211,7 +212,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         }
 
         final String name = inventAnonymousClassName(expression.getObjectDeclaration());
-        recordClosure(bindingTrace, expression.getObjectDeclaration(), classDescriptor, CodegenUtil.peekFromStack(classStack), JvmClassName.byInternalName(name), false);
+        recordClosure(bindingTrace, expression.getObjectDeclaration(), classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), false);
 
         classStack.push(classDescriptor);
         nameStack.push(classNameForClassDescriptor(bindingContext, classDescriptor).getInternalName());
@@ -229,7 +230,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
         String name = inventAnonymousClassName(expression);
         ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor);
-        recordClosure(bindingTrace, expression, classDescriptor, CodegenUtil.peekFromStack(classStack), JvmClassName.byInternalName(name), true);
+        recordClosure(bindingTrace, expression, classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), true);
 
         classStack.push(classDescriptor);
         nameStack.push(name);
@@ -240,7 +241,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
     @Override
     public void visitProperty(JetProperty property) {
-        nameStack.push(CodegenUtil.peekFromStack(nameStack) + '$' + property.getName());
+        nameStack.push(peekFromStack(nameStack) + '$' + property.getName());
         super.visitProperty(property);
         nameStack.pop();
     }
@@ -253,12 +254,12 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         if (functionDescriptor == null) return;
         DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
         if (containingDeclaration instanceof ClassDescriptor) {
-            nameStack.push(CodegenUtil.peekFromStack(nameStack) + '$' + function.getName());
+            nameStack.push(peekFromStack(nameStack) + '$' + function.getName());
             super.visitNamedFunction(function);
             nameStack.pop();
         }
         else if (containingDeclaration instanceof NamespaceDescriptor) {
-            String peek = CodegenUtil.peekFromStack(nameStack);
+            String peek = peekFromStack(nameStack);
             if (peek.isEmpty()) {
                 peek = "namespace";
             }
@@ -272,7 +273,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         else {
             String name = inventAnonymousClassName(function);
             ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor);
-            recordClosure(bindingTrace, function, classDescriptor, CodegenUtil.peekFromStack(classStack), JvmClassName.byInternalName(name), true);
+            recordClosure(bindingTrace, function, classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), true);
 
             classStack.push(classDescriptor);
             nameStack.push(name);

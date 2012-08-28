@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.isLocalFun;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
@@ -97,7 +98,7 @@ public class FunctionCodegen {
 
         List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
 
-        int flags = JetTypeMapper.getAccessModifiers(functionDescriptor, 0);
+        int flags = getAccessModifiers(functionDescriptor, 0);
 
         if (!functionDescriptor.getValueParameters().isEmpty()
             && functionDescriptor.getValueParameters().get(functionDescriptor.getValueParameters().size() - 1)
@@ -131,7 +132,7 @@ public class FunctionCodegen {
 
             boolean isAbstract = (
                                          modality == Modality.ABSTRACT
-                                         || CodegenUtil.isInterface(functionDescriptor.getContainingDeclaration())
+                                         || isInterface(functionDescriptor.getContainingDeclaration())
                                  ) && !isStatic && kind != OwnerKind.TRAIT_IMPL;
             if (isAbstract) flags |= ACC_ABSTRACT;
 
@@ -153,8 +154,8 @@ public class FunctionCodegen {
                             throw new IllegalStateException();
                         }
                         JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
-                        BitSet kotlinFlags = CodegenUtil.getFlagsForVisibility(functionDescriptor.getVisibility());
-                        if (CodegenUtil.isInterface(functionDescriptor.getContainingDeclaration()) && modality != Modality.ABSTRACT) {
+                        BitSet kotlinFlags = getFlagsForVisibility(functionDescriptor.getVisibility());
+                        if (isInterface(functionDescriptor.getContainingDeclaration()) && modality != Modality.ABSTRACT) {
                             kotlinFlags.set(modality == Modality.FINAL
                                             ? JvmStdlibNames.FLAG_FORCE_FINAL_BIT
                                             : JvmStdlibNames.FLAG_FORCE_OPEN_BIT);
@@ -324,7 +325,7 @@ public class FunctionCodegen {
                         Type sharedVarType = state.getInjector().getJetTypeMapper().getSharedVarType(parameter);
                         mv.visitLocalVariable(parameterName, type.getDescriptor(), null, methodBegin, divideLabel, k);
 
-                        String nameForSharedVar = CodegenUtil.generateTmpVariableName(localVariableNames);
+                        String nameForSharedVar = generateTmpVariableName(localVariableNames);
                         localVariableNames.add(nameForSharedVar);
 
                         mv.visitLocalVariable(nameForSharedVar, sharedVarType.getDescriptor(), null, divideLabel, methodEnd, k);

@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -48,6 +49,8 @@ public class CodegenBinding {
     public static final WritableSlice<ClassDescriptor, MutableClosure> CLOSURE = Slices.createSimpleSlice();
 
     public static final WritableSlice<DeclarationDescriptor, ClassDescriptor> CLASS_FOR_FUNCTION = Slices.createSimpleSlice();
+
+    public static final WritableSlice<DeclarationDescriptor, JvmClassName> FQN = Slices.createSimpleSlice();
 
     public static final WritableSlice<JvmClassName, Boolean> SCRIPT_NAMES = Slices.createSimpleSetSlice();
 
@@ -241,5 +244,92 @@ public class CodegenBinding {
             return declaration instanceof FunctionDescriptor || declaration instanceof PropertyDescriptor;
         }
         return false;
+    }
+
+    public static JvmClassName getJvmClassName(BindingTrace bindingTrace, ClassDescriptor classDescriptor) {
+        classDescriptor = (ClassDescriptor) classDescriptor.getOriginal();
+        final JvmClassName name = bindingTrace.getBindingContext().get(FQN, classDescriptor);
+        if(name != null) {
+            return name;
+        }
+
+        return getJvmInternalName(bindingTrace, classDescriptor);
+    }
+
+    @NotNull
+    private static JvmClassName getJvmInternalName(BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor) {
+        descriptor = descriptor.getOriginal();
+        JvmClassName name = bindingTrace.getBindingContext().get(FQN, descriptor);
+        if(name != null) {
+            return name;
+        }
+
+        name = JvmClassName.byInternalName(getJvmInternalFQNameImpl(bindingTrace, descriptor));
+        bindingTrace.record(FQN, descriptor, name);
+        return name;
+    }
+
+    private static String getJvmInternalFQNameImpl(BindingTrace bindingTrace, DeclarationDescriptor descriptor) {
+        if (descriptor instanceof FunctionDescriptor) {
+            throw new IllegalStateException("requested fq name for function: " + descriptor);
+        }
+
+        if (descriptor.getContainingDeclaration() instanceof ModuleDescriptor || descriptor instanceof ScriptDescriptor) {
+            return "";
+        }
+
+        if (descriptor instanceof ModuleDescriptor) {
+            throw new IllegalStateException("missed something");
+        }
+
+        if (descriptor instanceof ClassDescriptor) {
+            ClassDescriptor klass = (ClassDescriptor) descriptor;
+            if (klass.getKind() == ClassKind.OBJECT || klass.getKind() == ClassKind.CLASS_OBJECT) {
+                if (klass.getContainingDeclaration() instanceof ClassDescriptor) {
+                    ClassDescriptor containingKlass = (ClassDescriptor) klass.getContainingDeclaration();
+                    if (containingKlass.getKind() == ClassKind.ENUM_CLASS) {
+                        return getJvmInternalName(bindingTrace, containingKlass).getInternalName();
+                    }
+                    else {
+                        return getJvmInternalName(bindingTrace, containingKlass).getInternalName() + JvmAbi.CLASS_OBJECT_SUFFIX;
+                    }
+                }
+            }
+            else if (klass.getKind() == ClassKind.ENUM_ENTRY) {
+                if (enumEntryNeedSubclass(bindingTrace.getBindingContext(), klass)) {
+                    return getJvmInternalName(bindingTrace, klass.getContainingDeclaration()).getInternalName() + "$" + klass.getName().getName();
+                }
+                else {
+                    return getJvmInternalName(bindingTrace, klass.getContainingDeclaration()).getInternalName();
+                }
+            }
+
+            JvmClassName name = classNameForClassDescriptor(bindingTrace.getBindingContext(), (ClassDescriptor) descriptor);
+            if (name != null) {
+                return name.getInternalName();
+            }
+        }
+
+        DeclarationDescriptor container = descriptor.getContainingDeclaration();
+
+        if (container == null) {
+            throw new IllegalStateException("descriptor has no container: " + descriptor);
+        }
+
+        Name name = descriptor.getName();
+
+        String baseName = getJvmInternalName(bindingTrace, container).getInternalName();
+        if (!baseName.isEmpty()) {
+            return baseName + (container instanceof NamespaceDescriptor ? "/" : "$") + name.getIdentifier();
+        }
+
+        return name.getIdentifier();
+    }
+
+    public static boolean isVarCapturedInClosure(BindingContext bindingContext, DeclarationDescriptor descriptor) {
+        if (!(descriptor instanceof VariableDescriptor) || descriptor instanceof PropertyDescriptor) return false;
+        VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
+        return Boolean.TRUE.equals(bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor)) &&
+               variableDescriptor.isVar();
     }
 }
