@@ -19,9 +19,6 @@
             <element id="module-output" name="ide-compiler-runner" />
           </element>
           <element id="library" level="project" name="js-libs" />
-          <element id="archive" name="kotlin-js-libraries.zip">
-            <element id="dir-copy" path="$PROJECT_DIR$/js/js.libraries/src" />
-          </element>
           <element id="library" level="project" name="javax.inject" />
           <element id="directory" name="jps">
             <element id="archive" name="kotlin-jps-plugin.jar">
