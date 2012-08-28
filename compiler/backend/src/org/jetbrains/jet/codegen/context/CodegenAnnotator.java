@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import com.intellij.util.containers.Stack;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -133,14 +134,18 @@ public class CodegenAnnotator {
         return namespaceName2MultiNamespaceFiles.get(fqName).size() > 0;
     }
 
+   static <T> T peekFromStack(Stack<T> stack) {
+        return stack.empty() ? null : stack.peek();
+    }
+
     private class MyJetVisitorVoid extends JetVisitorVoid {
         private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
 
-        private final LinkedList<ClassDescriptor> classStack = new LinkedList<ClassDescriptor>();
-        private final LinkedList<String> nameStack = new LinkedList<String>();
+        private final Stack<ClassDescriptor> classStack = new Stack<ClassDescriptor>();
+        private final Stack<String> nameStack = new Stack<String>();
 
         private String inventAnonymousClassName(JetElement declaration) {
-            String top = nameStack.peek();
+            String top = peekFromStack(nameStack);
             Integer cnt = anonymousSubclassesCount.get(top);
             if (cnt == null) {
                 cnt = 0;
@@ -199,7 +204,7 @@ public class CodegenAnnotator {
                 bindingTrace.record(ENUM_ENTRY_CLASS_NEED_SUBCLASS, descriptor);
 
                 classStack.push(descriptor);
-                nameStack.push(nameStack.peek() + "$" + descriptor.getName().getName());
+                nameStack.push(peekFromStack(nameStack) + "$" + descriptor.getName().getName());
                 super.visitEnumEntry(enumEntry);
                 nameStack.pop();
                 classStack.pop();
@@ -214,8 +219,8 @@ public class CodegenAnnotator {
             ClassDescriptor classDescriptor = bindingContext.get(CLASS, classObject.getObjectDeclaration());
             assert classDescriptor != null;
 
-            JvmClassName name = JvmClassName.byInternalName(nameStack.peek() + JvmAbi.CLASS_OBJECT_SUFFIX);
-            recordClosure(bindingTrace, classObject, classDescriptor, classStack.peek(), name, false);
+            JvmClassName name = JvmClassName.byInternalName(peekFromStack(nameStack) + JvmAbi.CLASS_OBJECT_SUFFIX);
+            recordClosure(bindingTrace, classObject, classDescriptor, peekFromStack(classStack), name, false);
 
             classStack.push(classDescriptor);
             nameStack.push(name.getInternalName());
@@ -235,7 +240,7 @@ public class CodegenAnnotator {
                 if (classDescriptor == null) return;
 
                 String name = getName(classDescriptor);
-                recordClosure(bindingTrace, declaration, classDescriptor, classStack.peek(), JvmClassName.byInternalName(name), false);
+                recordClosure(bindingTrace, declaration, classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), false);
 
                 classStack.push(classDescriptor);
                 nameStack.push(name);
@@ -252,7 +257,7 @@ public class CodegenAnnotator {
             if (classDescriptor == null) return;
 
             String name = getName(classDescriptor);
-            recordClosure(bindingTrace, klass, classDescriptor, classStack.peek(), JvmClassName.byInternalName(name), false);
+            recordClosure(bindingTrace, klass, classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), false);
 
             classStack.push(classDescriptor);
             nameStack.push(name);
@@ -262,7 +267,7 @@ public class CodegenAnnotator {
         }
 
         private String getName(ClassDescriptor classDescriptor) {
-            String base = nameStack.peek();
+            String base = peekFromStack(nameStack);
             return classDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor ? base.isEmpty() ? classDescriptor.getName()
                     .getName() : base + '/' + classDescriptor.getName() : base + '$' + classDescriptor.getName();
         }
@@ -277,7 +282,7 @@ public class CodegenAnnotator {
             }
 
             final String name = inventAnonymousClassName(expression.getObjectDeclaration());
-            recordClosure(bindingTrace, expression.getObjectDeclaration(), classDescriptor, classStack.peek(), JvmClassName.byInternalName(name), false);
+            recordClosure(bindingTrace, expression.getObjectDeclaration(), classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), false);
 
             classStack.push(classDescriptor);
             nameStack.push(classNameForClassDescriptor(bindingContext, classDescriptor).getInternalName());
@@ -295,7 +300,7 @@ public class CodegenAnnotator {
 
             String name = inventAnonymousClassName(expression);
             ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor);
-            recordClosure(bindingTrace, expression, classDescriptor, classStack.peek(), JvmClassName.byInternalName(name), true);
+            recordClosure(bindingTrace, expression, classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), true);
 
             classStack.push(classDescriptor);
             nameStack.push(name);
@@ -306,7 +311,7 @@ public class CodegenAnnotator {
 
         @Override
         public void visitProperty(JetProperty property) {
-            nameStack.push(nameStack.peek() + '$' + property.getName());
+            nameStack.push(peekFromStack(nameStack) + '$' + property.getName());
             super.visitProperty(property);
             nameStack.pop();
         }
@@ -319,12 +324,12 @@ public class CodegenAnnotator {
             if (functionDescriptor == null) return;
             DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
             if (containingDeclaration instanceof ClassDescriptor) {
-                nameStack.push(nameStack.peek() + '$' + function.getName());
+                nameStack.push(peekFromStack(nameStack) + '$' + function.getName());
                 super.visitNamedFunction(function);
                 nameStack.pop();
             }
             else if (containingDeclaration instanceof NamespaceDescriptor) {
-                String peek = nameStack.peek();
+                String peek = peekFromStack(nameStack);
                 if (peek.isEmpty()) {
                     peek = "namespace";
                 }
@@ -338,7 +343,7 @@ public class CodegenAnnotator {
             else {
                 String name = inventAnonymousClassName(function);
                 ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor);
-                recordClosure(bindingTrace, function, classDescriptor, classStack.peek(), JvmClassName.byInternalName(name), true);
+                recordClosure(bindingTrace, function, classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), true);
 
                 classStack.push(classDescriptor);
                 nameStack.push(name);
