@@ -349,7 +349,45 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateEnumMethods();
 
+        generateComponentFunctionsForDataClasses();
+
         generateClosureFields(context.closure, v, state.getTypeMapper());
+    }
+
+    private void generateComponentFunctionsForDataClasses() {
+        if (!myClass.hasPrimaryConstructor() || !JetStandardLibrary.isData(descriptor)) return;
+
+        ConstructorDescriptor constructor = descriptor.getConstructors().iterator().next();
+
+        for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
+            FunctionDescriptor function = bindingContext.get(BindingContext.DATA_CLASS_COMPONENT_FUNCTION, parameter);
+            if (function != null) {
+                generateComponentFunction(function, parameter);
+            }
+        }
+    }
+
+    private void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull ValueParameterDescriptor parameter) {
+        JetType returnType = function.getReturnType();
+        assert returnType != null : "Return type of component function should not be null: " + function;
+        Type componentType = typeMapper.mapReturnType(returnType);
+
+        MethodVisitor mv = v.newMethod(myClass,
+                                       ACC_FINAL | getVisibilityAccessFlag(function),
+                                       function.getName().getName(),
+                                       "()" + componentType.getDescriptor(),
+                                       null, null);
+
+        mv.visitCode();
+        InstructionAdapter iv = new InstructionAdapter(mv);
+        if (!componentType.equals(Type.VOID_TYPE)) {
+            Type classType = typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.IMPL);
+            iv.load(0, classType);
+            iv.getfield(classType.getInternalName(), parameter.getName().getName(), componentType.getDescriptor());
+        }
+        iv.areturn(componentType);
+
+        FunctionCodegen.endVisit(mv, function.getName().getName(), myClass);
     }
 
     private void generateEnumMethods() {
