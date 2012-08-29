@@ -26,6 +26,7 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
@@ -80,7 +81,7 @@ public class FunctionCodegen {
             @Nullable String propertyTypeSignature, FunctionDescriptor functionDescriptor
     ) {
 
-        CodegenContext.MethodContext funContext = owner.intoFunction(functionDescriptor);
+        MethodContext funContext = owner.intoFunction(functionDescriptor);
 
         final JetExpression bodyExpression = f.getBodyExpression();
         generatedMethod(bodyExpression, jvmMethod, needJetAnnotations, propertyTypeSignature, funContext, functionDescriptor, f);
@@ -90,7 +91,7 @@ public class FunctionCodegen {
             JetExpression bodyExpressions,
             JvmMethodSignature jvmSignature,
             boolean needJetAnnotations, @Nullable String propertyTypeSignature,
-            CodegenContext.MethodContext context,
+            MethodContext context,
             FunctionDescriptor functionDescriptor,
             JetDeclarationWithBody fun
     ) {
@@ -422,7 +423,7 @@ public class FunctionCodegen {
     }
 
     static void generateDefaultIfNeeded(
-            CodegenContext.MethodContext owner,
+            MethodContext owner,
             GenerationState state,
             ClassBuilder v,
             Method jvmSignature,
@@ -482,7 +483,7 @@ public class FunctionCodegen {
     }
 
     private static void generateDefaultImpl(
-            CodegenContext.MethodContext owner,
+            MethodContext owner,
             GenerationState state,
             Method jvmSignature,
             FunctionDescriptor functionDescriptor,

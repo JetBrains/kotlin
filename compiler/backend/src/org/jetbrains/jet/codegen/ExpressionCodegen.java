@@ -1491,7 +1491,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         boolean isInsideClass = !isFakeOverride &&
                                 (((containingDeclaration == null && !context.hasThisDescriptor() ||
                                    context.hasThisDescriptor() && containingDeclaration == context.getThisDescriptor()) ||
-                                  (context.getParentContext() instanceof CodegenContext.NamespaceContext) &&
+                                  (context.getParentContext() instanceof NamespaceContext) &&
                                   context.getParentContext().getContextDescriptor() == containingDeclaration)
                                  && contextKind() != OwnerKind.TRAIT_IMPL);
         Method getter = null;
@@ -1673,7 +1673,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     if (enclosed != context.getThisDescriptor()) {
                         CodegenContext c = context;
                         //noinspection ConstantConditions
-                        while (!(c instanceof CodegenContext.ClassContext) ||
+                        while (!(c instanceof ClassContext) ||
                                !DescriptorUtils.isSubclass(c.getThisDescriptor(), enclosed)) {
                             c = c.getParentContext();
                             assert c != null;
@@ -1900,12 +1900,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         CodegenContext cur = context;
         StackValue result = StackValue.local(0, OBJECT_TYPE);
         while (cur != null) {
-            if (cur instanceof CodegenContext.MethodContext && !(cur instanceof CodegenContext.ConstructorContext)) {
+            if (cur instanceof MethodContext && !(cur instanceof ConstructorContext)) {
                 cur = cur.getParentContext();
             }
 
-            if (cur instanceof CodegenContext.ScriptContext) {
-                CodegenContext.ScriptContext scriptContext = (CodegenContext.ScriptContext) cur;
+            if (cur instanceof ScriptContext) {
+                ScriptContext scriptContext = (ScriptContext) cur;
 
                 JvmClassName currentScriptClassName =
                         classNameForScriptDescriptor(state.getBindingContext(),
@@ -1927,7 +1927,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             assert cur != null;
             result = cur.getOuterExpression(result, false);
 
-            if (cur instanceof CodegenContext.ConstructorContext) {
+            if (cur instanceof ConstructorContext) {
                 cur = cur.getParentContext();
             }
             assert cur != null;
@@ -1945,7 +1945,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Type type = asmType(calleeContainingClass.getDefaultType());
         StackValue result = StackValue.local(0, type);
         while (cur != null) {
-            if (cur instanceof CodegenContext.MethodContext && !(cur instanceof CodegenContext.ConstructorContext)) {
+            if (cur instanceof MethodContext && !(cur instanceof ConstructorContext)) {
                 cur = cur.getParentContext();
             }
 
@@ -1963,7 +1963,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             result = cur.getOuterExpression(result, false);
 
-            if (cur instanceof CodegenContext.ConstructorContext) {
+            if (cur instanceof ConstructorContext) {
                 cur = cur.getParentContext();
             }
             assert cur != null;

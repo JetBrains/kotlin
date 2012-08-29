@@ -26,10 +26,7 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.jet.codegen.context.CalculatedClosure;
-import org.jetbrains.jet.codegen.context.CodegenBinding;
-import org.jetbrains.jet.codegen.context.CodegenContext;
-import org.jetbrains.jet.codegen.context.MutableClosure;
+import org.jetbrains.jet.codegen.context.*;
 import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
@@ -560,7 +557,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ConstructorDescriptor constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, myClass);
 
-        final CodegenContext.ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
+        final ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
 
         lookupConstructorExpressionsInClosureIfPresent(constructorContext);
 
@@ -599,7 +596,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generatePrimiryConstructorImpl(
             ConstructorDescriptor constructorDescriptor,
-            CodegenContext.ConstructorContext constructorContext,
+            ConstructorContext constructorContext,
             JvmMethodSignature constructorMethod,
             CallableMethod callableMethod,
             boolean hasThis0,
@@ -793,7 +790,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         generateDelegates(superClass, delegateContext, field);
     }
 
-    private void lookupConstructorExpressionsInClosureIfPresent(final CodegenContext.ConstructorContext constructorContext) {
+    private void lookupConstructorExpressionsInClosureIfPresent(final ConstructorContext constructorContext) {
         final JetVisitorVoid visitor = new JetVisitorVoid() {
             @Override
             public void visitJetElement(JetElement e) {

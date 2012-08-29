@@ -23,6 +23,7 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.context.ScriptContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
@@ -94,8 +95,8 @@ public class ScriptCodegen {
         ClassDescriptor classDescriptorForScript = bindingContext.get(CLASS_FOR_FUNCTION, scriptDescriptor);
         assert classDescriptorForScript != null;
 
-        CodegenContext.ScriptContext context =
-                (CodegenContext.ScriptContext) CodegenContext.STATIC
+        ScriptContext context =
+                (ScriptContext) CodegenContext.STATIC
                         .intoScript(scriptDescriptor, classDescriptorForScript);
 
         JvmClassName className = bindingContext.get(FQN, classDescriptorForScript);
