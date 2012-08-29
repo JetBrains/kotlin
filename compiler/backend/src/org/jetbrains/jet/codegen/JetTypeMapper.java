@@ -1022,6 +1022,8 @@ public class JetTypeMapper {
         if (memberDescriptor instanceof ConstructorDescriptor) {
             ClassKind kind = ((ClassDescriptor) containingDeclaration).getKind();
             if (kind == ClassKind.OBJECT) {
+                //TODO: should be ACC_PACKAGE_PRIVATE
+                // see http://youtrack.jetbrains.com/issue/KT-2700
                 return ACC_PUBLIC;
             }
             else if (kind == ClassKind.ENUM_ENTRY) {
