@@ -16,11 +16,15 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.FilteringScope;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import java.util.List;
@@ -30,13 +34,13 @@ import java.util.List;
  */
 /*package*/ interface Importer {
 
-    void addAllUnderImport(@NotNull DeclarationDescriptor descriptor);
+    void addAllUnderImport(@NotNull DeclarationDescriptor descriptor, @Nullable Predicate<DeclarationDescriptor> isNotHiddenByKotlinAnalog);
 
     void addAliasImport(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName);
 
     Importer DO_NOTHING = new Importer() {
         @Override
-        public void addAllUnderImport(@NotNull DeclarationDescriptor descriptor) {
+        public void addAllUnderImport(@NotNull DeclarationDescriptor descriptor, Predicate<DeclarationDescriptor> isNotHiddenByKotlinAnalog) {
         }
 
         @Override
@@ -52,8 +56,8 @@ import java.util.List;
         }
 
         @Override
-        public void addAllUnderImport(@NotNull DeclarationDescriptor descriptor) {
-            importAllUnderDeclaration(descriptor);
+        public void addAllUnderImport(@NotNull DeclarationDescriptor descriptor, @Nullable Predicate<DeclarationDescriptor> isNotHiddenByKotlinAnalog) {
+            importAllUnderDeclaration(descriptor, isNotHiddenByKotlinAnalog);
         }
 
         @Override
@@ -61,17 +65,24 @@ import java.util.List;
             importDeclarationAlias(descriptor, aliasName);
         }
 
-        protected void importAllUnderDeclaration(@NotNull DeclarationDescriptor descriptor) {
+        protected void importAllUnderDeclaration(@NotNull DeclarationDescriptor descriptor, @Nullable Predicate<DeclarationDescriptor> isNotHiddenByKotlinAnalog) {
+            JetScope scopeToImport = null;
             if (descriptor instanceof NamespaceDescriptor) {
-                namespaceScope.importScope(((NamespaceDescriptor) descriptor).getMemberScope());
+                scopeToImport = ((NamespaceDescriptor) descriptor).getMemberScope();
             }
             if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.OBJECT) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-                namespaceScope.importScope(classDescriptor.getUnsubstitutedInnerClassesScope());
+                scopeToImport = classDescriptor.getUnsubstitutedInnerClassesScope();
                 ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
                 if (classObjectDescriptor != null) {
-                    namespaceScope.importScope(classObjectDescriptor.getUnsubstitutedInnerClassesScope());
+                    scopeToImport = classObjectDescriptor.getUnsubstitutedInnerClassesScope();
                 }
+            }
+            if (scopeToImport != null) {
+                if (isNotHiddenByKotlinAnalog != null) {
+                    scopeToImport = new FilteringScope(scopeToImport, isNotHiddenByKotlinAnalog);
+                }
+                namespaceScope.importScope(scopeToImport);
             }
         }
 
@@ -93,32 +104,43 @@ import java.util.List;
     }
 
     class DelayedImporter extends StandardImporter {
-        private final List<Pair<DeclarationDescriptor, Name>> imports = Lists.newArrayList();
+        private interface DelayedImportEntry {}
+        private static class AllUnderImportEntry extends Pair<DeclarationDescriptor, Predicate<DeclarationDescriptor>> implements DelayedImportEntry {
+            public AllUnderImportEntry(@NotNull DeclarationDescriptor first, @Nullable Predicate<DeclarationDescriptor> second) {
+                super(first, second);
+            }
+        }
+        private static class AliasImportEntry extends Pair<DeclarationDescriptor, Name> implements DelayedImportEntry {
+            public AliasImportEntry(DeclarationDescriptor first, Name second) {
+                super(first, second);
+            }
+        }
+
+        private final List<DelayedImportEntry> imports = Lists.newArrayList();
 
         public DelayedImporter(@NotNull WritableScope namespaceScope) {
             super(namespaceScope);
         }
 
         @Override
-        public void addAllUnderImport(@NotNull DeclarationDescriptor descriptor) {
-            imports.add(Pair.<DeclarationDescriptor, Name>create(descriptor, null));
+        public void addAllUnderImport(@NotNull DeclarationDescriptor descriptor, @Nullable Predicate<DeclarationDescriptor> isNotHiddenByKotlinAnalog) {
+            imports.add(new AllUnderImportEntry(descriptor, isNotHiddenByKotlinAnalog));
         }
 
         @Override
         public void addAliasImport(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName) {
-            imports.add(Pair.create(descriptor, aliasName));
+            imports.add(new AliasImportEntry(descriptor, aliasName));
         }
 
         public void processImports() {
-            for (Pair<DeclarationDescriptor, Name> anImport : imports) {
-                DeclarationDescriptor descriptor = anImport.getFirst();
-                Name aliasName = anImport.getSecond();
-                boolean allUnderImport = aliasName == null;
-                if (allUnderImport) {
-                    importAllUnderDeclaration(descriptor);
+            for (DelayedImportEntry anImport : imports) {
+                if (anImport instanceof AllUnderImportEntry) {
+                    AllUnderImportEntry allUnderImportEntry = (AllUnderImportEntry) anImport;
+                    importAllUnderDeclaration(allUnderImportEntry.getFirst(), allUnderImportEntry.getSecond());
                 }
                 else {
-                    importDeclarationAlias(descriptor, aliasName);
+                    AliasImportEntry aliasImportEntry = (AliasImportEntry) anImport;
+                    importDeclarationAlias(aliasImportEntry.getFirst(), aliasImportEntry.getSecond());
                 }
             }
         }

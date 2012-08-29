@@ -1742,6 +1742,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/j+k/kt2394.kt");
             }
             
+            @TestMetadata("kt2606.kt")
+            public void testKt2606() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/j+k/kt2606.kt");
+            }
+            
             @TestMetadata("kt2641.kt")
             public void testKt2641() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/j+k/kt2641.kt");

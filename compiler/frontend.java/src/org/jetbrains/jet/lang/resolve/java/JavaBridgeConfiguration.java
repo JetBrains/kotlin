@@ -91,9 +91,9 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     @NotNull
     @Override
-    public Collection<ClassDescriptor> getKotlinAnalogs(@NotNull FqNameUnsafe className) {
-        if (className.isSafe()) {
-            return JavaToKotlinTypesMap.getInstance().getAllKotlinAnalogs(className.toSafe());
+    public Collection<ClassDescriptor> getKotlinAnalogs(@NotNull FqNameUnsafe classOrPackageName) {
+        if (classOrPackageName.isSafe()) {
+            return JavaToKotlinTypesMap.getInstance().getAllKotlinAnalogs(classOrPackageName.toSafe());
         }
         return Collections.emptyList();
     }

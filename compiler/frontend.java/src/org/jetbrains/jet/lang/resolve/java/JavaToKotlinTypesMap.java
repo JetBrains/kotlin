@@ -16,9 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -48,7 +46,7 @@ public class JavaToKotlinTypesMap {
     private final Map<FqName, ClassDescriptor> classDescriptorMap = Maps.newHashMap();
     private final Map<FqName, ClassDescriptor> classDescriptorMapForCovariantPositions = Maps.newHashMap();
     private final Map<String, JetType> primitiveTypesMap = Maps.newHashMap();
-    private final Set<String> mappedTypeNames = Sets.newHashSet();
+    private final Multimap<FqName, ClassDescriptor> packagesWithMappedClasses = HashMultimap.create();
 
     private JavaToKotlinTypesMap() {
         init();
@@ -111,8 +109,8 @@ public class JavaToKotlinTypesMap {
     }
 
     private void register(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
-        mappedTypeNames.add(javaClassName.getFqName());
         classDescriptorMap.put(javaClassName, kotlinDescriptor);
+        packagesWithMappedClasses.put(javaClassName.parent(), kotlinDescriptor);
     }
 
     private void registerCovariant(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor) {
@@ -120,16 +118,16 @@ public class JavaToKotlinTypesMap {
     }
 
     private void registerCovariant(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
-        mappedTypeNames.add(javaClassName.getFqName());
         classDescriptorMapForCovariantPositions.put(javaClassName, kotlinDescriptor);
+        packagesWithMappedClasses.put(javaClassName.parent(), kotlinDescriptor);
     }
 
     @NotNull
-    public List<ClassDescriptor> getAllKotlinAnalogs(@NotNull FqName fqName) {
+    public Collection<ClassDescriptor> getAllKotlinAnalogs(@NotNull FqName fqName) {
         ClassDescriptor kotlinAnalog = classDescriptorMap.get(fqName);
         ClassDescriptor kotlinCovariantAnalog = classDescriptorMapForCovariantPositions.get(fqName);
         if (kotlinAnalog == null && kotlinCovariantAnalog == null) {
-            return Collections.emptyList();
+            return packagesWithMappedClasses.get(fqName);
         }
         ArrayList<ClassDescriptor> descriptors = Lists.newArrayList();
         if (kotlinAnalog != null) {

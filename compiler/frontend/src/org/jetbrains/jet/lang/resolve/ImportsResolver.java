@@ -112,12 +112,14 @@ public class ImportsResolver {
         configuration.addDefaultImports(defaultImportDirectives);
         for (JetImportDirective defaultImportDirective : defaultImportDirectives) {
             TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace); //not to trace errors of default imports
-            qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, namespaceScope, delayedImporter, temporaryTrace, onlyClasses);
+            qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, namespaceScope, delayedImporter,
+                                                               temporaryTrace, configuration, onlyClasses);
         }
 
         for (JetImportDirective importDirective : importDirectives) {
             Collection<? extends DeclarationDescriptor> descriptors =
-                qualifiedExpressionResolver.processImportReference(importDirective, rootScope, namespaceScope, delayedImporter, trace, onlyClasses);
+                qualifiedExpressionResolver.processImportReference(importDirective, rootScope, namespaceScope, delayedImporter,
+                                                                   trace, configuration, onlyClasses);
             if (descriptors.size() == 1) {
                 resolvedDirectives.put(importDirective, descriptors.iterator().next());
             }

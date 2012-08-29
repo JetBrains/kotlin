@@ -16,10 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
@@ -386,5 +388,27 @@ public class DescriptorUtils {
         }
         Collections.sort(resultList);
         return resultList;
+    }
+    
+    @Nullable
+    public static Predicate<DeclarationDescriptor> createIsNotHiddenByKotlinAnalogPredicate(
+            @NotNull DeclarationDescriptor descriptor,
+            final @Nullable ModuleConfiguration moduleConfiguration
+    ) {
+        if (moduleConfiguration == null || moduleConfiguration.getKotlinAnalogs(getFQName(descriptor)).isEmpty()) return null;
+        return new Predicate<DeclarationDescriptor>() {
+            @Override
+            public boolean apply(@Nullable DeclarationDescriptor descriptor) {
+                if (descriptor == null) return false;
+                Collection<ClassDescriptor> kotlinAnalogs =
+                        moduleConfiguration.getKotlinAnalogs(getFQName(descriptor));
+                for (ClassDescriptor kotlinAnalog : kotlinAnalogs) {
+                    if (kotlinAnalog.getName().equals(descriptor.getName())) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        };
     }
 }
