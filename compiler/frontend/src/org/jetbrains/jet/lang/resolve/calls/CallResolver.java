@@ -186,6 +186,11 @@ public class CallResolver {
                 JetTypeReference typeReference = expression.getTypeReference();
                 assert typeReference != null;
                 JetType constructedType = typeResolver.resolveType(context.scope, typeReference, context.trace, true);
+
+                if (ErrorUtils.isErrorType(constructedType)) {
+                    return checkArgumentTypesAndFail(context);
+                }
+
                 DeclarationDescriptor declarationDescriptor = constructedType.getConstructor().getDeclarationDescriptor();
                 if (declarationDescriptor instanceof ClassDescriptor) {
                     ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;

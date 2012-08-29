@@ -202,6 +202,12 @@ public abstract class ExpectedResolveData {
                         renderReferenceInContext(referenceExpression) +
                         " but was resolved to " + renderNullableDescriptor(referenceTarget),
                         unresolvedReferences.contains(referenceExpression));
+
+                assertTrue(
+                        String.format("Reference =%s= has a reference target =%s= but expected to be unresolved",
+                                      renderReferenceInContext(referenceExpression), renderNullableDescriptor(referenceTarget)),
+                        referenceTarget == null);
+
                 continue;
             }
             if ("!!".equals(name)) {
