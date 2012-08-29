@@ -372,7 +372,7 @@ public abstract class CodegenContext {
         }
 
         @Override
-        public StackValue lookupInContext(DeclarationDescriptor d, StackValue result, GenerationState state, boolean ignoreNoOuter) {
+        public StackValue lookupInContext(DeclarationDescriptor d, @Nullable StackValue result, GenerationState state, boolean ignoreNoOuter) {
             if (getContextDescriptor() == d) {
                 return StackValue.local(0, JetTypeMapper.OBJECT_TYPE);
             }
