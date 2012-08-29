@@ -55,8 +55,8 @@ public class CodegenUtil {
     public static final String RECEIVER$0 = "receiver$0";
     public static final String THIS$0 = "this$0";
 
-    private static final int ACC_LOCAL = 0;
-    private static final int ACC_PACKAGE_PRIVATE = 0;
+    private static final int NO_FLAG_LOCAL = 0;
+    private static final int NO_FLAG_PACKAGE_PRIVATE = 0;
 
     @NotNull
     private static final Map<Visibility, Integer> visibilityToAccessFlag = ImmutableMap.<Visibility, Integer>builder()
@@ -64,7 +64,7 @@ public class CodegenUtil {
             .put(Visibilities.PROTECTED, ACC_PROTECTED)
             .put(Visibilities.PUBLIC, ACC_PUBLIC)
             .put(Visibilities.INTERNAL, ACC_PUBLIC)
-            .put(Visibilities.LOCAL, ACC_LOCAL)
+            .put(Visibilities.LOCAL, NO_FLAG_LOCAL)
             .build();
 
     private CodegenUtil() {
@@ -267,17 +267,17 @@ public class CodegenUtil {
             return null;
         }
         if (isClassObject(containingDeclaration)) {
-            return ACC_PACKAGE_PRIVATE;
+            return NO_FLAG_PACKAGE_PRIVATE;
         }
         if (memberDescriptor instanceof ConstructorDescriptor) {
             ClassKind kind = ((ClassDescriptor) containingDeclaration).getKind();
             if (kind == ClassKind.OBJECT) {
-                //TODO: should be ACC_PACKAGE_PRIVATE
+                //TODO: should be NO_FLAG_PACKAGE_PRIVATE
                 // see http://youtrack.jetbrains.com/issue/KT-2700
                 return ACC_PUBLIC;
             }
             else if (kind == ClassKind.ENUM_ENTRY) {
-                return ACC_PACKAGE_PRIVATE;
+                return NO_FLAG_PACKAGE_PRIVATE;
             }
             else if (kind == ClassKind.ENUM_CLASS) {
                 //TODO: should be ACC_PRIVATE
