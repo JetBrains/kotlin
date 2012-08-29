@@ -1,8 +1,8 @@
-open enum class A<T> {
+trait A<T> {
     open fun foo(t: T) = "A"
 }
 
-enum class Z(val name: String) : A<String>() {
+enum class Z(val name: String) : A<String> {
     Z1 : Z("Z1")
     Z2 : Z("Z2")
     override fun foo(t: String) = name

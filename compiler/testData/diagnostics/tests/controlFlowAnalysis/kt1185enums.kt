@@ -38,20 +38,3 @@ fun bar1(c: Color) = <!NO_ELSE_IN_WHEN!>when<!> (c) {
     Color.RED -> 1
     Color.GREEN -> 2
 }
-
-open enum class SomeEnum() {}
-
-enum class MyEnum : SomeEnum() {
-    A
-    B
-}
-
-fun g(me: SomeEnum) = <!NO_ELSE_IN_WHEN!>when<!> (me) {
-    MyEnum.A -> 1
-    MyEnum.B -> 2
-}
-
-fun t2(me: MyEnum) = when (me) {
-    MyEnum.A -> 1
-    MyEnum.B -> 2
-}
