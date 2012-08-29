@@ -37,9 +37,6 @@ public interface CalculatedClosure {
     @Nullable
     ClassDescriptor getEnclosingClass();
 
-    @NotNull
-    JvmClassName getClassName();
-
     @Nullable
     JetDelegatorToSuperCall getSuperCall();
 

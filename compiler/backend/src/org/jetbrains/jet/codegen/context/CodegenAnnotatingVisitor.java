@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen.context;
 
 import com.intellij.util.containers.Stack;
-import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -132,15 +131,10 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         final boolean trivial = enumEntry.getDeclarations().isEmpty();
         if (!trivial) {
             bindingTrace.record(ENUM_ENTRY_CLASS_NEED_SUBCLASS, descriptor);
-
-            classStack.push(descriptor);
-            nameStack.push(peekFromStack(nameStack) + "$" + descriptor.getName().getName());
             super.visitEnumEntry(enumEntry);
-            nameStack.pop();
-            classStack.pop();
         }
         else {
-            super.visitEnumEntry(enumEntry);
+            bindingTrace.record(FQN, descriptor, bindingTrace.get(FQN, peekFromStack(classStack)));
         }
     }
 
@@ -215,7 +209,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         recordClosure(bindingTrace, expression.getObjectDeclaration(), classDescriptor, peekFromStack(classStack), JvmClassName.byInternalName(name), false);
 
         classStack.push(classDescriptor);
-        nameStack.push(classNameForClassDescriptor(bindingContext, classDescriptor).getInternalName());
+        //noinspection ConstantConditions
+        nameStack.push(bindingContext.get(FQN, classDescriptor).getInternalName());
         super.visitObjectLiteralExpression(expression);
         nameStack.pop();
         classStack.pop();

@@ -22,6 +22,7 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -32,6 +33,7 @@ import java.util.Map;
 
 import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.CLASS_FOR_FUNCTION;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.FQN;
 
 /*
  * @author max
@@ -275,7 +277,7 @@ public abstract class CodegenContext {
 
             for (LocalLookup.LocalLookupCase aCase : LocalLookup.LocalLookupCase.values()) {
                 if (aCase.isCase(d, state)) {
-                    StackValue innerValue = aCase.innerValue(d, enclosingLocalLookup, state, closure);
+                    StackValue innerValue = aCase.innerValue(d, enclosingLocalLookup, state, closure, state.getBindingContext().get(FQN, getThisDescriptor()));
                     if (innerValue == null) {
                         break;
                     }

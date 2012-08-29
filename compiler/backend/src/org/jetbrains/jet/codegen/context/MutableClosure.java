@@ -38,8 +38,6 @@ public final class MutableClosure implements CalculatedClosure {
     private final ClassDescriptor enclosingClass;
     private final CallableDescriptor enclosingReceiverDescriptor;
 
-    private final JvmClassName name;
-
     private boolean captureThis;
     private boolean captureReceiver;
 
@@ -49,25 +47,17 @@ public final class MutableClosure implements CalculatedClosure {
     MutableClosure(
             JetDelegatorToSuperCall superCall,
             ClassDescriptor enclosingClass,
-            JvmClassName className,
             CallableDescriptor enclosingReceiverDescriptor
     ) {
         this.superCall = superCall;
         this.enclosingClass = enclosingClass;
         this.enclosingReceiverDescriptor = enclosingReceiverDescriptor;
-        this.name = className;
     }
 
     @Nullable
     @Override
     public ClassDescriptor getEnclosingClass() {
         return enclosingClass;
-    }
-
-    @NotNull
-    @Override
-    public JvmClassName getClassName() {
-        return name;
     }
 
     @Override

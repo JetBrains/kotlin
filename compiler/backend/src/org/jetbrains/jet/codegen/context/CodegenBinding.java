@@ -77,9 +77,8 @@ public class CodegenBinding {
     @NotNull
     public static JvmClassName classNameForScriptDescriptor(BindingContext bindingContext, @NotNull ScriptDescriptor scriptDescriptor) {
         final ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_FUNCTION, scriptDescriptor);
-        final CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
-        assert closure != null;
-        return closure.getClassName();
+        //noinspection ConstantConditions
+        return bindingContext.get(FQN, classDescriptor);
     }
 
     @NotNull
@@ -96,11 +95,6 @@ public class CodegenBinding {
         return closure == null ? null : closure.getEnclosingClass();
     }
 
-    public static JvmClassName classNameForClassDescriptor(BindingContext bindingContext, ClassDescriptor descriptor) {
-        final CalculatedClosure closure = bindingContext.get(CLOSURE, descriptor);
-        return closure == null ? null : closure.getClassName();
-    }
-
     public static JvmClassName classNameForAnonymousClass(BindingContext bindingContext, JetElement expression) {
         if (expression instanceof JetObjectLiteralExpression) {
             JetObjectLiteralExpression jetObjectLiteralExpression = (JetObjectLiteralExpression) expression;
@@ -113,7 +107,7 @@ public class CodegenBinding {
             assert functionDescriptor != null;
             descriptor = bindingContext.get(CLASS_FOR_FUNCTION, functionDescriptor);
         }
-        return classNameForClassDescriptor(bindingContext, descriptor);
+        return bindingContext.get(FQN, descriptor);
     }
 
     public static void registerClassNameForScript(
@@ -174,8 +168,9 @@ public class CodegenBinding {
             }
         }
 
-        final MutableClosure closure = new MutableClosure(superCall, enclosing, name, enclosingReceiver);
+        final MutableClosure closure = new MutableClosure(superCall, enclosing, enclosingReceiver);
 
+        bindingTrace.record(FQN, classDescriptor, name);
         bindingTrace.record(CLOSURE, classDescriptor, closure);
 
         // TODO: this is temporary before we have proper inner classes
@@ -295,16 +290,8 @@ public class CodegenBinding {
                     }
                 }
             }
-            else if (klass.getKind() == ClassKind.ENUM_ENTRY) {
-                if (enumEntryNeedSubclass(bindingTrace.getBindingContext(), klass)) {
-                    return getJvmInternalName(bindingTrace, klass.getContainingDeclaration()).getInternalName() + "$" + klass.getName().getName();
-                }
-                else {
-                    return getJvmInternalName(bindingTrace, klass.getContainingDeclaration()).getInternalName();
-                }
-            }
 
-            JvmClassName name = classNameForClassDescriptor(bindingTrace.getBindingContext(), (ClassDescriptor) descriptor);
+            JvmClassName name = bindingTrace.getBindingContext().get(FQN, descriptor);
             if (name != null) {
                 return name.getInternalName();
             }
