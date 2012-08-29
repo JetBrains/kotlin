@@ -20,10 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.ExpressionCodegen;
-import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.codegen.JetTypeMapper;
-import org.jetbrains.jet.codegen.StackValue;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
@@ -50,7 +47,7 @@ public class ArrayIterator implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        receiver.put(JetTypeMapper.OBJECT_TYPE, v);
+        receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
         JetCallExpression call = (JetCallExpression) element;
         FunctionDescriptor funDescriptor = (FunctionDescriptor) codegen.getBindingContext()
                 .get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) call.getCalleeExpression());
@@ -58,7 +55,7 @@ public class ArrayIterator implements IntrinsicMethod {
         ClassDescriptor containingDeclaration = (ClassDescriptor) funDescriptor.getContainingDeclaration().getOriginal();
         if (containingDeclaration.equals(JetStandardLibrary.getInstance().getArray())) {
             v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Ljava/lang/Object;)Ljava/util/Iterator;");
-            return StackValue.onStack(JetTypeMapper.JET_ITERATOR_TYPE);
+            return StackValue.onStack(AsmTypeConstants.JET_ITERATOR_TYPE);
         }
         else {
             for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {

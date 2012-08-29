@@ -38,7 +38,7 @@ import javax.inject.Inject;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
+import static org.jetbrains.jet.codegen.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 
 /**
@@ -98,7 +98,8 @@ public class ScriptCodegen {
                 (CodegenContext.ScriptContext) CodegenContext.STATIC
                         .intoScript(scriptDescriptor, classDescriptorForScript);
 
-        JvmClassName className = classNameForClassDescriptor(bindingContext, classDescriptorForScript);
+        JvmClassName className = bindingContext.get(FQN, classDescriptorForScript);
+        assert className != null;
 
         ClassBuilder classBuilder = classFileFactory.newVisitor(className.getInternalName() + ".class");
         classBuilder.defineClass(scriptDeclaration,
@@ -144,7 +145,8 @@ public class ScriptCodegen {
 
         InstructionAdapter instructionAdapter = new InstructionAdapter(mv);
 
-        JvmClassName className = classNameForClassDescriptor(bindingContext, classDescriptorForScript);
+        JvmClassName className = bindingContext.get(FQN, classDescriptorForScript);
+        assert className != null;
 
         instructionAdapter.load(0, className.getAsmType());
         instructionAdapter.invokespecial("java/lang/Object", "<init>", "()V");

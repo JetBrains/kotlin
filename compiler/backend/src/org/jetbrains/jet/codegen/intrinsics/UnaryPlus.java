@@ -21,10 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.ExpressionCodegen;
-import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.codegen.JetTypeMapper;
-import org.jetbrains.jet.codegen.StackValue;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
@@ -45,7 +42,7 @@ public class UnaryPlus implements IntrinsicMethod {
     ) {
         boolean nullable = expectedType.getSort() == Type.OBJECT;
         if (nullable) {
-            expectedType = JetTypeMapper.unboxType(expectedType);
+            expectedType = CodegenUtil.unboxType(expectedType);
         }
         if (receiver != null && receiver != StackValue.none()) {
             receiver.put(expectedType, v);

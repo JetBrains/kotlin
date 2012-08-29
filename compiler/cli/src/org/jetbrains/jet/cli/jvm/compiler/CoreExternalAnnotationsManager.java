@@ -66,6 +66,11 @@ public class CoreExternalAnnotationsManager extends BaseExternalAnnotationsManag
         throw new UnsupportedOperationException();
     }
 
+    public boolean editExternalAnnotation(@NotNull PsiModifierListOwner listOwner, @NotNull String annotationFQN,
+            @NotNull PsiNameValuePair[] value) {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     public AnnotationPlace chooseAnnotationsPlace(@NotNull PsiElement element) {
         throw new UnsupportedOperationException();

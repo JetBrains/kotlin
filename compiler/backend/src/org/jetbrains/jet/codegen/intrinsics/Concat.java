@@ -20,10 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.ExpressionCodegen;
-import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.codegen.JetTypeMapper;
-import org.jetbrains.jet.codegen.StackValue;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
@@ -48,7 +45,7 @@ public class Concat implements IntrinsicMethod {
             codegen.invokeAppend(arguments.get(1));
         }
         else {                                    // LHS.plus(RHS)
-            receiver.put(JetTypeMapper.OBJECT_TYPE, v);
+            receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
             codegen.generateStringBuilderConstructor();
             v.swap();                                                              // StringBuilder LHS
             codegen.invokeAppendMethod(expectedType);  // StringBuilder(LHS)
@@ -56,7 +53,7 @@ public class Concat implements IntrinsicMethod {
         }
 
         v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
-        StackValue.onStack(JetTypeMapper.JAVA_STRING_TYPE).put(expectedType, v);
+        StackValue.onStack(AsmTypeConstants.JAVA_STRING_TYPE).put(expectedType, v);
         return StackValue.onStack(expectedType);
     }
 }

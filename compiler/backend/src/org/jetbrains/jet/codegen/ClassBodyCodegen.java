@@ -31,7 +31,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.JetTypeMapper.getVisibilityAccessFlag;
+import static org.jetbrains.jet.codegen.CodegenUtil.generateMethodThrow;
+import static org.jetbrains.jet.codegen.CodegenUtil.getVisibilityAccessFlag;
 
 /**
  * @author max
@@ -145,7 +146,7 @@ public abstract class ClassBodyCodegen {
         // generates stub 'remove' function for subclasses of Iterator to be compatible with java.util.Iterator
         if (DescriptorUtils.isIteratorWithoutRemoveImpl(descriptor)) {
             final MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "remove", "()V", null, null);
-            CodegenUtil.generateMethodThrow(mv, "java/lang/UnsupportedOperationException", "Mutating method called on a Kotlin Iterator");
+            generateMethodThrow(mv, "java/lang/UnsupportedOperationException", "Mutating method called on a Kotlin Iterator");
         }
     }
 }

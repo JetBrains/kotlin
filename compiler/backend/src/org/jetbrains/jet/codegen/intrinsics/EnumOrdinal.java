@@ -21,10 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.ExpressionCodegen;
-import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.codegen.JetTypeMapper;
-import org.jetbrains.jet.codegen.StackValue;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
@@ -40,7 +37,7 @@ public class EnumOrdinal implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        receiver.put(JetTypeMapper.OBJECT_TYPE, v);
+        receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
         v.invokevirtual("java/lang/Enum", "ordinal", "()I");
         StackValue.onStack(Type.INT_TYPE).put(expectedType, v);
         return StackValue.onStack(expectedType);

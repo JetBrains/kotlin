@@ -146,7 +146,7 @@ public class JetPositionManager implements PositionManager {
                     result.set(getJvmInternalNameForImpl(typeMapper, (JetClassOrObject) element));
                 }
                 else if (element instanceof JetFunctionLiteralExpression) {
-                    result.set(classNameForAnonymousClass(typeMapper.bindingContext,
+                    result.set(classNameForAnonymousClass(typeMapper.getBindingContext(),
                                                           (JetFunctionLiteralExpression) element).getInternalName());
                 }
                 else if (element instanceof JetNamedFunction) {
@@ -155,14 +155,14 @@ public class JetPositionManager implements PositionManager {
                         result.set(getJvmInternalNameForImpl(typeMapper, (JetClassOrObject) parent));
                     }
                     else if (parent instanceof JetFunctionLiteralExpression || parent instanceof JetNamedFunction) {
-                        result.set(classNameForAnonymousClass(typeMapper.bindingContext,
+                        result.set(classNameForAnonymousClass(typeMapper.getBindingContext(),
                                                               (JetElement) element).getInternalName());
                     }
                 }
 
                 if (result.isNull()) {
                     FqName fqName = JetPsiUtil.getFQName(namespace);
-                    boolean multiFileNamespace = isMultiFileNamespace(typeMapper.bindingContext, fqName);
+                    boolean multiFileNamespace = isMultiFileNamespace(typeMapper.getBindingContext(), fqName);
                     String namespaceInternalName = NamespaceCodegen.getJVMClassNameForKotlinNs(fqName).getInternalName();
                     if (multiFileNamespace) {
                         result.set(NamespaceCodegen.getMultiFileNamespaceInternalName(namespaceInternalName, namespace));
@@ -179,7 +179,7 @@ public class JetPositionManager implements PositionManager {
 
     @Nullable
     private static String getJvmInternalNameForImpl(JetTypeMapper typeMapper, JetClassOrObject jetClass) {
-        final ClassDescriptor classDescriptor = typeMapper.bindingContext.get(BindingContext.CLASS, jetClass);
+        final ClassDescriptor classDescriptor = typeMapper.getBindingContext().get(BindingContext.CLASS, jetClass);
         if (classDescriptor == null) {
             return null;
         }

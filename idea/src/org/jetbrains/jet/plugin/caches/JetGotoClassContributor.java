@@ -37,7 +37,15 @@ import java.util.HashSet;
 public class JetGotoClassContributor implements GotoClassContributor {
     @Override
     public String getQualifiedName(NavigationItem item) {
-        return "Hello";
+        if (item instanceof JetNamedDeclaration) {
+            JetNamedDeclaration jetClass = (JetNamedDeclaration) item;
+            FqName name = JetPsiUtil.getFQName(jetClass);
+            if (name != null) {
+                return name.getFqName();
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -80,7 +88,7 @@ public class JetGotoClassContributor implements GotoClassContributor {
                     // items.add((JetObjectDeclaration) classOrObject);
                 }
                 else if (classOrObject instanceof JetClass) {
-                    items.add((JetClass) classOrObject);
+                    items.add(classOrObject);
                 }
                 else {
                     assert false;

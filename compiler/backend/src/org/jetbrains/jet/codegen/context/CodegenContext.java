@@ -30,8 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
+import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.CLASS_FOR_FUNCTION;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.CLOSURE;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.FQN;
 
 /*
  * @author max
@@ -180,7 +182,7 @@ public abstract class CodegenContext {
     ) {
         final JetTypeMapper typeMapper = expressionCodegen.getState().getInjector().getJetTypeMapper();
         return new ClosureContext(typeMapper, funDescriptor,
-                                  typeMapper.bindingContext.get(CLASS_FOR_FUNCTION, funDescriptor),
+                                  typeMapper.getBindingContext().get(CLASS_FOR_FUNCTION, funDescriptor),
                                   this, expressionCodegen);
     }
 
@@ -258,8 +260,8 @@ public abstract class CodegenContext {
         final ClassDescriptor enclosingClass = getEnclosingClass();
         outerExpression = enclosingClass != null
                           ? StackValue
-                .field(typeMapper.mapType(enclosingClass.getDefaultType(), MapTypeMode.VALUE), typeMapper.getJvmClassName(
-                        classDescriptor), CodegenUtil.THIS$0,
+                .field(typeMapper.mapType(enclosingClass.getDefaultType(), MapTypeMode.VALUE), CodegenBinding.getJvmClassName(
+                        typeMapper.getBindingTrace(), classDescriptor), CodegenUtil.THIS$0,
                        false)
                           : null;
     }
@@ -275,7 +277,7 @@ public abstract class CodegenContext {
 
             for (LocalLookup.LocalLookupCase aCase : LocalLookup.LocalLookupCase.values()) {
                 if (aCase.isCase(d, state)) {
-                    StackValue innerValue = aCase.innerValue(d, enclosingLocalLookup, state, closure);
+                    StackValue innerValue = aCase.innerValue(d, enclosingLocalLookup, state, closure, state.getBindingContext().get(FQN, getThisDescriptor()));
                     if (innerValue == null) {
                         break;
                     }
@@ -371,9 +373,9 @@ public abstract class CodegenContext {
         }
 
         @Override
-        public StackValue lookupInContext(DeclarationDescriptor d, StackValue result, GenerationState state, boolean ignoreNoOuter) {
+        public StackValue lookupInContext(DeclarationDescriptor d, @Nullable StackValue result, GenerationState state, boolean ignoreNoOuter) {
             if (getContextDescriptor() == d) {
-                return StackValue.local(0, JetTypeMapper.OBJECT_TYPE);
+                return StackValue.local(0, AsmTypeConstants.OBJECT_TYPE);
             }
 
             //noinspection ConstantConditions
@@ -456,7 +458,9 @@ public abstract class CodegenContext {
                 CodegenContext parentContext,
                 LocalLookup localLookup
         ) {
-            super(contextDescriptor, contextKind, parentContext, (MutableClosure) typeMapper.getCalculatedClosure(contextDescriptor),
+            //noinspection SuspiciousMethodCalls
+            super(contextDescriptor, contextKind, parentContext, (MutableClosure) typeMapper.getBindingContext().get(CLOSURE,
+                                                                                                                     contextDescriptor),
                   contextDescriptor,
                   localLookup);
             initOuterExpression(typeMapper, contextDescriptor);
@@ -476,7 +480,9 @@ public abstract class CodegenContext {
                 CodegenContext parentContext,
                 LocalLookup localLookup
         ) {
-            super(contextDescriptor, contextKind, parentContext, (MutableClosure) typeMapper.getCalculatedClosure(contextDescriptor),
+            //noinspection SuspiciousMethodCalls
+            super(contextDescriptor, contextKind, parentContext, (MutableClosure) typeMapper.getBindingContext().get(CLOSURE,
+                                                                                                                     contextDescriptor),
                   contextDescriptor,
                   localLookup);
             initOuterExpression(typeMapper, contextDescriptor);
@@ -503,8 +509,9 @@ public abstract class CodegenContext {
                 CodegenContext parentContext,
                 LocalLookup localLookup
         ) {
+            //noinspection SuspiciousMethodCalls
             super(contextDescriptor, OwnerKind.IMPLEMENTATION, parentContext,
-                  (MutableClosure) typeMapper.getCalculatedClosure(classDescriptor), classDescriptor, localLookup);
+                  (MutableClosure) typeMapper.getBindingContext().get(CLOSURE, classDescriptor), classDescriptor, localLookup);
             this.classDescriptor = classDescriptor;
 
             initOuterExpression(typeMapper, classDescriptor);

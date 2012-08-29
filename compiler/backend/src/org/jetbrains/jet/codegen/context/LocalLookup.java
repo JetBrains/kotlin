@@ -41,7 +41,12 @@ public interface LocalLookup {
             }
 
             @Override
-            public StackValue innerValue(DeclarationDescriptor d, LocalLookup localLookup, GenerationState state, MutableClosure closure) {
+            public StackValue innerValue(
+                    DeclarationDescriptor d,
+                    LocalLookup localLookup,
+                    GenerationState state,
+                    MutableClosure closure, JvmClassName className
+            ) {
                 VariableDescriptor vd = (VariableDescriptor) d;
 
                 final boolean idx = localLookup != null && localLookup.lookupLocal(vd);
@@ -53,8 +58,8 @@ public interface LocalLookup {
 
                 final String fieldName = "$" + vd.getName();
                 StackValue innerValue = sharedVarType != null
-                                        ? StackValue.fieldForSharedVar(localType, closure.getClassName(), fieldName)
-                                        : StackValue.field(type, closure.getClassName(), fieldName, false);
+                                        ? StackValue.fieldForSharedVar(localType, className, fieldName)
+                                        : StackValue.field(type, className, fieldName, false);
 
                 closure.recordField(fieldName, type);
                 closure.captureVariable(new EnclosedValueDescriptor(d, innerValue, type));
@@ -70,7 +75,13 @@ public interface LocalLookup {
             }
 
             @Override
-            public StackValue innerValue(DeclarationDescriptor d, LocalLookup localLookup, GenerationState state, MutableClosure closure) {
+            public StackValue innerValue(
+                    DeclarationDescriptor d,
+                    LocalLookup localLookup,
+                    GenerationState state,
+                    MutableClosure closure,
+                    JvmClassName className
+            ) {
                 FunctionDescriptor vd = (FunctionDescriptor) d;
 
                 final boolean idx = localLookup.lookupLocal(vd);
@@ -81,7 +92,7 @@ public interface LocalLookup {
                 Type localType = cn.getAsmType();
 
                 final String fieldName = "$" + vd.getName();
-                StackValue innerValue = StackValue.field(localType, closure.getClassName(), fieldName, false);
+                StackValue innerValue = StackValue.field(localType, className, fieldName, false);
 
                 closure.recordField(fieldName, localType);
                 closure.captureVariable(new EnclosedValueDescriptor(d, innerValue, localType));
@@ -101,13 +112,13 @@ public interface LocalLookup {
                     DeclarationDescriptor d,
                     LocalLookup enclosingLocalLookup,
                     GenerationState state,
-                    MutableClosure closure
+                    MutableClosure closure, JvmClassName className
             ) {
                 if (closure.getEnclosingReceiverDescriptor() != d) return null;
 
                 final JetType receiverType = ((CallableDescriptor) d).getReceiverParameter().getType();
                 Type type = state.getInjector().getJetTypeMapper().mapType(receiverType, MapTypeMode.VALUE);
-                StackValue innerValue = StackValue.field(type, closure.getClassName(), CodegenUtil.RECEIVER$0, false);
+                StackValue innerValue = StackValue.field(type, className, CodegenUtil.RECEIVER$0, false);
                 closure.setCaptureReceiver();
 
                 return innerValue;
@@ -126,7 +137,8 @@ public interface LocalLookup {
                 DeclarationDescriptor d,
                 LocalLookup localLookup,
                 GenerationState state,
-                MutableClosure closure
+                MutableClosure closure,
+                JvmClassName className
         );
 
         public StackValue outerValue(EnclosedValueDescriptor d, ExpressionCodegen expressionCodegen) {

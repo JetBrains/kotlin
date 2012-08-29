@@ -39,7 +39,8 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import java.util.BitSet;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.JetTypeMapper.getVisibilityAccessFlag;
+import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
+import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 
 /**
@@ -84,7 +85,7 @@ public class PropertyCodegen {
         //noinspection ConstantConditions
         if (state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
             DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
-            if (CodegenUtil.isInterface(containingDeclaration)) {
+            if (isInterface(containingDeclaration)) {
                 return;
             }
 
@@ -217,7 +218,7 @@ public class PropertyCodegen {
                 else {
                     InstructionAdapter iv = new InstructionAdapter(mv);
                     if (kind != OwnerKind.NAMESPACE) {
-                        iv.load(0, JetTypeMapper.OBJECT_TYPE);
+                        iv.load(0, OBJECT_TYPE);
                     }
                     final Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
 
@@ -227,7 +228,7 @@ public class PropertyCodegen {
 
                     if (kind instanceof OwnerKind.DelegateKind) {
                         OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
-                        dk.getDelegate().put(JetTypeMapper.OBJECT_TYPE, iv);
+                        dk.getDelegate().put(OBJECT_TYPE, iv);
                         iv.invokeinterface(dk.getOwnerClass(), getterName, descriptor);
                     }
                     else {
@@ -250,9 +251,9 @@ public class PropertyCodegen {
     ) {
         JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
         Modality modality = propertyDescriptor.getModality();
-        BitSet flags = CodegenUtil.getFlagsForVisibility(visibility);
+        BitSet flags = getFlagsForVisibility(visibility);
         flags.set(JvmStdlibNames.FLAG_PROPERTY_BIT);
-        if (CodegenUtil.isInterface(propertyDescriptor.getContainingDeclaration()) && modality != Modality.ABSTRACT) {
+        if (isInterface(propertyDescriptor.getContainingDeclaration()) && modality != Modality.ABSTRACT) {
             flags.set(modality == Modality.FINAL
                       ? JvmStdlibNames.FLAG_FORCE_FINAL_BIT
                       : JvmStdlibNames.FLAG_FORCE_OPEN_BIT);
@@ -321,7 +322,7 @@ public class PropertyCodegen {
                     final Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
                     int paramCode = 0;
                     if (kind != OwnerKind.NAMESPACE) {
-                        iv.load(0, JetTypeMapper.OBJECT_TYPE);
+                        iv.load(0, OBJECT_TYPE);
                         paramCode = 1;
                     }
 
@@ -331,8 +332,8 @@ public class PropertyCodegen {
 
                     if (kind instanceof OwnerKind.DelegateKind) {
                         OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
-                        iv.load(0, JetTypeMapper.OBJECT_TYPE);
-                        dk.getDelegate().put(JetTypeMapper.OBJECT_TYPE, iv);
+                        iv.load(0, OBJECT_TYPE);
+                        dk.getDelegate().put(OBJECT_TYPE, iv);
 
                         iv.load(paramCode, type);
                         iv.invokeinterface(dk.getOwnerClass(), setterName(propertyDescriptor.getName()), descriptor);

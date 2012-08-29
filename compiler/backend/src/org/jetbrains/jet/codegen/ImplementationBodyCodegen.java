@@ -27,6 +27,7 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.context.CalculatedClosure;
+import org.jetbrains.jet.codegen.context.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MutableClosure;
 import org.jetbrains.jet.codegen.signature.*;
@@ -49,8 +50,9 @@ import org.jetbrains.jet.utils.BitSetUtils;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
-import static org.jetbrains.jet.codegen.JetTypeMapper.getVisibilityAccessFlag;
+import static org.jetbrains.jet.codegen.CodegenUtil.*;
+import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.CLOSURE;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.eclosingClassDescriptor;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.enumEntryNeedSubclass;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
@@ -203,7 +205,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (signature.getKotlinGenericSignature() != null || descriptor.getVisibility() != Visibilities.PUBLIC) {
             AnnotationVisitor annotationVisitor = v.newAnnotation(JvmStdlibNames.JET_CLASS.getDescriptor(), true);
             annotationVisitor.visit(JvmStdlibNames.JET_CLASS_SIGNATURE, signature.getKotlinGenericSignature());
-            BitSet flags = CodegenUtil.getFlagsForVisibility(descriptor.getVisibility());
+            BitSet flags = getFlagsForVisibility(descriptor.getVisibility());
             int flagsValue = BitSetUtils.toInt(flags);
             if (JvmStdlibNames.FLAGS_DEFAULT_VALUE != flagsValue) {
                 annotationVisitor.visit(JvmStdlibNames.JET_CLASS_FLAGS_FIELD, flagsValue);
@@ -258,7 +260,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
                 assert superType != null;
                 ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-                if (CodegenUtil.isInterface(superClassDescriptor)) {
+                if (isInterface(superClassDescriptor)) {
                     signatureVisitor.writeInterface();
                     Type jvmName = typeMapper.mapType(superType, signatureVisitor, MapTypeMode.TYPE_PARAMETER);
                     signatureVisitor.writeInterfaceEnd();
@@ -302,7 +304,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 assert superType != null;
                 ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
                 assert superClassDescriptor != null;
-                if (!CodegenUtil.isInterface(superClassDescriptor)) {
+                if (!isInterface(superClassDescriptor)) {
                     superClassType = superType;
                     superClass = typeMapper.mapType(superClassDescriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName();
                     superCall = specifier;
@@ -346,7 +348,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateEnumMethods();
 
-        CodegenUtil.generateClosureFields(context.closure, v, state.getInjector().getJetTypeMapper());
+        generateClosureFields(context.closure, v, state.getInjector().getJetTypeMapper());
     }
 
     private void generateEnumMethods() {
@@ -407,7 +409,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                 InstructionAdapter iv = new InstructionAdapter(mv);
 
-                iv.load(0, JetTypeMapper.OBJECT_TYPE);
+                iv.load(0, OBJECT_TYPE);
                 for (int i = 1, reg = 1; i < argTypes.length; i++) {
                     Type argType = argTypes[i];
                     iv.load(reg, argType);
@@ -444,7 +446,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                     InstructionAdapter iv = new InstructionAdapter(mv);
 
-                    iv.load(0, JetTypeMapper.OBJECT_TYPE);
+                    iv.load(0, OBJECT_TYPE);
                     if (original.getVisibility() == Visibilities.PRIVATE) {
                         iv.getfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION).getInternalName(), original.getName().getName(),
                                     originalMethod.getReturnType().getDescriptor());
@@ -479,7 +481,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                     InstructionAdapter iv = new InstructionAdapter(mv);
 
-                    iv.load(0, JetTypeMapper.OBJECT_TYPE);
+                    iv.load(0, OBJECT_TYPE);
                     Type[] argTypes = method.getArgumentTypes();
                     for (int i = 1, reg = 1; i < argTypes.length; i++) {
                         Type argType = argTypes[i];
@@ -507,7 +509,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFieldForObjectInstance() {
-        if (CodegenUtil.isNonLiteralObject(myClass)) {
+        if (isNonLiteralObject(myClass)) {
             Type type = typeMapper.mapType(descriptor.getDefaultType(), MapTypeMode.VALUE);
             v.newField(myClass, ACC_PUBLIC | ACC_STATIC | ACC_FINAL, "$instance", type.getDescriptor(), null, null);
 
@@ -576,7 +578,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         AnnotationVisitor jetConstructorVisitor = mv.visitAnnotation(JvmStdlibNames.JET_CONSTRUCTOR.getDescriptor(), true);
 
-        int flagsValue = BitSetUtils.toInt(CodegenUtil.getFlagsForVisibility(constructorDescriptor.getVisibility()));
+        int flagsValue = BitSetUtils.toInt(getFlagsForVisibility(constructorDescriptor.getVisibility()));
         if (JvmStdlibNames.FLAGS_DEFAULT_VALUE != flagsValue) {
             jetConstructorVisitor.visit(JvmStdlibNames.JET_CLASS_FLAGS_FIELD, flagsValue);
         }
@@ -630,11 +632,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (hasThis0) {
             final Type type = typeMapper
-                    .mapType(eclosingClassDescriptor(typeMapper.bindingContext, descriptor).getDefaultType(), MapTypeMode.VALUE);
+                    .mapType(eclosingClassDescriptor(typeMapper.getBindingContext(), descriptor).getDefaultType(), MapTypeMode.VALUE);
             String interfaceDesc = type.getDescriptor();
             iv.load(0, classType);
             iv.load(frameMap.getOuterThisIndex(), type);
-            iv.putfield(classname.getInternalName(), CodegenUtil.THIS$0, interfaceDesc);
+            iv.putfield(classname.getInternalName(), THIS$0, interfaceDesc);
         }
 
         if (closure != null) {
@@ -642,10 +644,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             final String internalName = typeMapper.mapType(descriptor.getDefaultType(), MapTypeMode.VALUE).getInternalName();
             final ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
             if (captureReceiver != null) {
-                iv.load(0, JetTypeMapper.OBJECT_TYPE);
+                iv.load(0, OBJECT_TYPE);
                 final Type asmType = typeMapper.mapType(captureReceiver.getDefaultType(), MapTypeMode.IMPL);
                 iv.load(1, asmType);
-                iv.putfield(internalName, CodegenUtil.RECEIVER$0, asmType.getDescriptor());
+                iv.putfield(internalName, RECEIVER$0, asmType.getDescriptor());
                 k += asmType.getSize();
             }
 
@@ -655,7 +657,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     if (sharedVarType == null) {
                         sharedVarType = typeMapper.mapType(((VariableDescriptor) varDescr).getType(), MapTypeMode.VALUE);
                     }
-                    iv.load(0, JetTypeMapper.OBJECT_TYPE);
+                    iv.load(0, OBJECT_TYPE);
                     iv.load(k, StackValue.refType(sharedVarType));
                     k += StackValue.refType(sharedVarType).getSize();
                     iv.putfield(internalName,
@@ -704,10 +706,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         List<Type> parameterTypes = new ArrayList<Type>();
         assert superType != null;
         ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-        if (typeMapper.hasThis0(superClassDescriptor)) {
-            iv.load(1, JetTypeMapper.OBJECT_TYPE);
+        if (CodegenBinding.hasThis0(bindingContext, superClassDescriptor)) {
+            iv.load(1, OBJECT_TYPE);
             parameterTypes.add(typeMapper.mapType(
-                    eclosingClassDescriptor(typeMapper.bindingContext, descriptor).getDefaultType(), MapTypeMode.VALUE));
+                    eclosingClassDescriptor(typeMapper.getBindingContext(), descriptor).getDefaultType(), MapTypeMode.VALUE));
         }
         Method superCallMethod = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
         //noinspection ConstantConditions
@@ -718,7 +720,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void genSimpleSuperCall(InstructionAdapter iv) {
         iv.load(0, Type.getType("L" + superClass + ";"));
         if (descriptor.getKind() == ClassKind.ENUM_CLASS || descriptor.getKind() == ClassKind.ENUM_ENTRY) {
-            iv.load(1, JetTypeMapper.JAVA_STRING_TYPE);
+            iv.load(1, AsmTypeConstants.JAVA_STRING_TYPE);
             iv.load(2, Type.INT_TYPE);
             iv.invokespecial(superClass, "<init>", "(Ljava/lang/String;I)V");
         }
@@ -789,46 +791,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                                                                     .getInternalName()),
                                                                  state);
         generateDelegates(superClass, delegateContext, field);
-    }
-
-    private int addClosureToConstructorParameters(
-            MutableClosure closure,
-            List<JvmMethodParameterSignature> consArgTypes
-    ) {
-        int insert = 0;
-        if (closure != null) {
-            if (closure.getCaptureThis() != null) {
-                consArgTypes.add(insert,
-                                 new JvmMethodParameterSignature(Type.getObjectType(context.getThisDescriptor().getName().getName()),
-                                                                 "", JvmMethodParameterKind.OUTER));
-                insert++;
-            }
-
-            final ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
-            if (captureReceiver != null) {
-                final Type asmType = typeMapper.mapType(captureReceiver.getDefaultType(), MapTypeMode.IMPL);
-                consArgTypes.add(insert++, new JvmMethodParameterSignature(asmType, "", JvmMethodParameterKind.RECEIVER));
-            }
-
-            for (DeclarationDescriptor descriptor : closure.getCaptureVariables().keySet()) {
-                if (descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
-                    final Type sharedVarType = typeMapper.getSharedVarType(descriptor);
-                    final Type type;
-                    if (sharedVarType != null) {
-                        type = sharedVarType;
-                    }
-                    else {
-                        type = state.getInjector().getJetTypeMapper()
-                                .mapType(((VariableDescriptor) descriptor).getType(), MapTypeMode.VALUE);
-                    }
-                    consArgTypes.add(insert++, new JvmMethodParameterSignature(type, "", JvmMethodParameterKind.SHARED_VAR));
-                }
-                else if (descriptor instanceof FunctionDescriptor) {
-                    assert captureReceiver != null;
-                }
-            }
-        }
-        return insert;
     }
 
     private void lookupConstructorExpressionsInClosureIfPresent(final CodegenContext.ConstructorContext constructorContext) {
@@ -963,7 +925,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 JvmMethodSignature jvmSignature =
                         typeMapper.mapToCallableMethod(inheritedFun, false, OwnerKind.IMPLEMENTATION).getSignature();
                 JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
-                BitSet kotlinFlags = CodegenUtil.getFlagsForVisibility(fun.getVisibility());
+                BitSet kotlinFlags = getFlagsForVisibility(fun.getVisibility());
                 if (fun instanceof PropertyAccessorDescriptor) {
                     kotlinFlags.set(JvmStdlibNames.FLAG_PROPERTY_BIT);
                     aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
@@ -992,7 +954,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     Type[] argTypes = function.getArgumentTypes();
                     List<Type> originalArgTypes = jvmSignature.getValueParameterTypes();
                     InstructionAdapter iv = new InstructionAdapter(mv);
-                    iv.load(0, JetTypeMapper.OBJECT_TYPE);
+                    iv.load(0, OBJECT_TYPE);
                     for (int i = 0, reg = 1; i < argTypes.length; i++) {
                         Type argType = argTypes[i];
                         iv.load(reg, argType);
@@ -1046,7 +1008,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         assert resolvedCall != null;
         final ConstructorDescriptor superConstructor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
 
-        final CalculatedClosure closureForSuper = typeMapper.getCalculatedClosure(superConstructor.getContainingDeclaration());
+        //noinspection SuspiciousMethodCalls
+        final CalculatedClosure closureForSuper = bindingContext.get(CLOSURE, superConstructor.getContainingDeclaration());
         CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor,
                                                                       closureForSuper);
 
@@ -1153,8 +1116,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) bindingContext
                             .get(BindingContext.REFERENCE_TARGET, superCall.getCalleeExpression().getConstructorReferenceExpression());
                     assert constructorDescriptor != null;
-                    CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, typeMapper
-                            .getCalculatedClosure(constructorDescriptor.getContainingDeclaration()));
+                    //noinspection SuspiciousMethodCalls
+                    CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, bindingContext
+                            .get(CLOSURE, constructorDescriptor.getContainingDeclaration()));
                     codegen.invokeMethodWithArguments(method, superCall, StackValue.none());
                 }
                 else {
@@ -1192,7 +1156,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         iv.load(0, OBJECT_TYPE);
                         Type type = codegen.expressionType(initializer);
                         if (jetType.isNullable()) {
-                            type = JetTypeMapper.boxType(type);
+                            type = boxType(type);
                         }
                         codegen.gen(initializer, type);
                         // @todo write directly to the field. Fix test excloset.jet::test6
@@ -1210,7 +1174,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private static boolean skipDefaultValue(PropertyDescriptor propertyDescriptor, Object value, Type type) {
-        if (JetTypeMapper.isPrimitive(type)) {
+        if (isPrimitive(type)) {
             if (!propertyDescriptor.getType().isNullable() && value instanceof Number) {
                 if (type == Type.INT_TYPE && ((Number) value).intValue() == 0) {
                     return true;
@@ -1300,7 +1264,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     OverridingUtil.getOverriddenDeclarations(callableMemberDescriptor);
             for (CallableMemberDescriptor overriddenDeclaration : overriddenDeclarations) {
                 if (overriddenDeclaration.getModality() != Modality.ABSTRACT) {
-                    if (!CodegenUtil.isInterface(overriddenDeclaration.getContainingDeclaration())) {
+                    if (!isInterface(overriddenDeclaration.getContainingDeclaration())) {
                         continue root;
                     }
                 }

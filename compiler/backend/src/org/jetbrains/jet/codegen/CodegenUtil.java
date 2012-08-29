@@ -16,9 +16,12 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.google.common.collect.ImmutableMap;
 import com.intellij.openapi.util.Pair;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
@@ -30,7 +33,9 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -39,6 +44,8 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmTypeConstants.OBJECT_TYPE;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 
 /**
  * @author abreslav
@@ -47,6 +54,18 @@ import static org.jetbrains.asm4.Opcodes.*;
 public class CodegenUtil {
     public static final String RECEIVER$0 = "receiver$0";
     public static final String THIS$0 = "this$0";
+
+    private static final int ACC_LOCAL = 0;
+    private static final int ACC_PACKAGE_PRIVATE = 0;
+
+    @NotNull
+    private static final Map<Visibility, Integer> visibilityToAccessFlag = ImmutableMap.<Visibility, Integer>builder()
+            .put(Visibilities.PRIVATE, ACC_PRIVATE)
+            .put(Visibilities.PROTECTED, ACC_PROTECTED)
+            .put(Visibilities.PUBLIC, ACC_PUBLIC)
+            .put(Visibilities.INTERNAL, ACC_PUBLIC)
+            .put(Visibilities.LOCAL, ACC_LOCAL)
+            .build();
 
     private CodegenUtil() {
     }
@@ -160,14 +179,14 @@ public class CodegenUtil {
 
         for (int i = 0; i < paramCount; ++i) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
-            signatureWriter.writeAsmType(JetTypeMapper.OBJECT_TYPE, true);
+            signatureWriter.writeAsmType(OBJECT_TYPE, true);
             signatureWriter.writeParameterTypeEnd();
         }
 
         signatureWriter.writeParametersEnd();
 
         signatureWriter.writeReturnType();
-        signatureWriter.writeAsmType(JetTypeMapper.OBJECT_TYPE, true);
+        signatureWriter.writeAsmType(OBJECT_TYPE, true);
         signatureWriter.writeReturnTypeEnd();
 
         return signatureWriter.makeJvmMethodSignature("invoke");
@@ -222,5 +241,97 @@ public class CodegenUtil {
 
     public static <T> T peekFromStack(Stack<T> stack) {
         return stack.empty() ? null : stack.peek();
+    }
+
+    //TODO: move mapping logic to front-end java
+    public static int getVisibilityAccessFlag(@NotNull MemberDescriptor descriptor) {
+        Integer specialCase = specialCaseVisibility(descriptor);
+        if (specialCase != null) {
+            return specialCase;
+        }
+        Integer defaultMapping = visibilityToAccessFlag.get(descriptor.getVisibility());
+        if (defaultMapping == null) {
+            throw new IllegalStateException(descriptor.getVisibility() + " is not a valid visibility in backend.");
+        }
+        return defaultMapping;
+    }
+
+    @Nullable
+    private static Integer specialCaseVisibility(@NotNull MemberDescriptor memberDescriptor) {
+        DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
+        if (isInterface(containingDeclaration)) {
+            return ACC_PUBLIC;
+        }
+        Visibility memberVisibility = memberDescriptor.getVisibility();
+        if (memberVisibility != Visibilities.PRIVATE) {
+            return null;
+        }
+        if (isClassObject(containingDeclaration)) {
+            return ACC_PACKAGE_PRIVATE;
+        }
+        if (memberDescriptor instanceof ConstructorDescriptor) {
+            ClassKind kind = ((ClassDescriptor) containingDeclaration).getKind();
+            if (kind == ClassKind.OBJECT) {
+                //TODO: should be ACC_PACKAGE_PRIVATE
+                // see http://youtrack.jetbrains.com/issue/KT-2700
+                return ACC_PUBLIC;
+            }
+            else if (kind == ClassKind.ENUM_ENTRY) {
+                return ACC_PACKAGE_PRIVATE;
+            }
+            else if (kind == ClassKind.ENUM_CLASS) {
+                //TODO: should be ACC_PRIVATE
+                // see http://youtrack.jetbrains.com/issue/KT-2680
+                return ACC_PROTECTED;
+            }
+        }
+        if (containingDeclaration instanceof NamespaceDescriptor) {
+            return ACC_PUBLIC;
+        }
+        return null;
+    }
+
+    public static Type unboxType(final Type type) {
+        JvmPrimitiveType jvmPrimitiveType = JvmPrimitiveType.getByWrapperAsmType(type);
+        if (jvmPrimitiveType != null) {
+            return jvmPrimitiveType.getAsmType();
+        }
+        else {
+            throw new UnsupportedOperationException("Unboxing: " + type);
+        }
+    }
+
+    public static Type boxType(Type asmType) {
+        JvmPrimitiveType jvmPrimitiveType = JvmPrimitiveType.getByAsmType(asmType);
+        if (jvmPrimitiveType != null) {
+            return jvmPrimitiveType.getWrapper().getAsmType();
+        }
+        else {
+            return asmType;
+        }
+    }
+
+    public static boolean isIntPrimitive(Type type) {
+        return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE;
+    }
+
+    public static boolean isPrimitive(Type type) {
+        return type.getSort() != Type.OBJECT && type.getSort() != Type.ARRAY;
+    }
+
+    public static Type correctElementType(Type type) {
+        String internalName = type.getInternalName();
+        assert internalName.charAt(0) == '[';
+        return Type.getType(internalName.substring(1));
+    }
+
+    @Nullable
+    public static String getLocalNameForObject(JetObjectDeclaration object) {
+        PsiElement parent = object.getParent();
+        if (parent instanceof JetClassObject) {
+            return JvmAbi.CLASS_OBJECT_CLASS_NAME;
+        }
+
+        return null;
     }
 }

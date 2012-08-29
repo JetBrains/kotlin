@@ -29,7 +29,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.JetTypeMapper;
+import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JavaPsiFacadeKotlinHacks;
@@ -136,11 +136,15 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
             if (localName != null) {
                 FqName fqn = QualifiedNamesUtil.combine(containerFqn, Name.identifier(localName));
                 if (qualifiedName.equals(fqn)) {
-                    answer.add(new JetLightClass(psiManager, file, qualifiedName));
+                    if (!(declaration instanceof JetEnumEntry)) {
+                        answer.add(new JetLightClass(psiManager, file, qualifiedName));
+                    }
                 }
-                else {
-                    for (JetDeclaration child : ((JetClassOrObject) declaration).getDeclarations()) {
-                        scanClasses(answer, child, qualifiedName, fqn, file);
+                else if (QualifiedNamesUtil.isSubpackageOf(qualifiedName, fqn)) {
+                    if (!(declaration instanceof JetEnumEntry)) {
+                        for (JetDeclaration child : ((JetClassOrObject) declaration).getDeclarations()) {
+                            scanClasses(answer, child, qualifiedName, fqn, file);
+                        }
                     }
                 }
             }
@@ -156,7 +160,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         if (given != null) return given;
 
         if (declaration instanceof JetObjectDeclaration) {
-            return JetTypeMapper.getLocalNameForObject((JetObjectDeclaration) declaration);
+            return CodegenUtil.getLocalNameForObject((JetObjectDeclaration) declaration);
         }
 
         return null;
