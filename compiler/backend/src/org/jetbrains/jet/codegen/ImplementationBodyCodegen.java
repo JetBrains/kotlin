@@ -791,46 +791,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         generateDelegates(superClass, delegateContext, field);
     }
 
-    private int addClosureToConstructorParameters(
-            MutableClosure closure,
-            List<JvmMethodParameterSignature> consArgTypes
-    ) {
-        int insert = 0;
-        if (closure != null) {
-            if (closure.getCaptureThis() != null) {
-                consArgTypes.add(insert,
-                                 new JvmMethodParameterSignature(Type.getObjectType(context.getThisDescriptor().getName().getName()),
-                                                                 "", JvmMethodParameterKind.OUTER));
-                insert++;
-            }
-
-            final ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
-            if (captureReceiver != null) {
-                final Type asmType = typeMapper.mapType(captureReceiver.getDefaultType(), MapTypeMode.IMPL);
-                consArgTypes.add(insert++, new JvmMethodParameterSignature(asmType, "", JvmMethodParameterKind.RECEIVER));
-            }
-
-            for (DeclarationDescriptor descriptor : closure.getCaptureVariables().keySet()) {
-                if (descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
-                    final Type sharedVarType = typeMapper.getSharedVarType(descriptor);
-                    final Type type;
-                    if (sharedVarType != null) {
-                        type = sharedVarType;
-                    }
-                    else {
-                        type = state.getInjector().getJetTypeMapper()
-                                .mapType(((VariableDescriptor) descriptor).getType(), MapTypeMode.VALUE);
-                    }
-                    consArgTypes.add(insert++, new JvmMethodParameterSignature(type, "", JvmMethodParameterKind.SHARED_VAR));
-                }
-                else if (descriptor instanceof FunctionDescriptor) {
-                    assert captureReceiver != null;
-                }
-            }
-        }
-        return insert;
-    }
-
     private void lookupConstructorExpressionsInClosureIfPresent(final CodegenContext.ConstructorContext constructorContext) {
         final JetVisitorVoid visitor = new JetVisitorVoid() {
             @Override
