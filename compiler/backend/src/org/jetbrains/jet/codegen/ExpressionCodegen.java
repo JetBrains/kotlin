@@ -2114,7 +2114,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     public int indexOfLocal(JetReferenceExpression lhs) {
         final DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, lhs);
-        if (isVarCapturedInClosure(typeMapper.getBindingContext(), declarationDescriptor)) {
+        if (isVarCapturedInClosure(bindingContext, declarationDescriptor)) {
             return -1;
         }
         return lookupLocalIndex(declarationDescriptor);

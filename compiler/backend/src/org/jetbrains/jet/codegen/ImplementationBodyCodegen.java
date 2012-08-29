@@ -632,7 +632,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (hasThis0) {
             final Type type = typeMapper
-                    .mapType(eclosingClassDescriptor(typeMapper.getBindingContext(), descriptor).getDefaultType(), MapTypeMode.VALUE);
+                    .mapType(eclosingClassDescriptor(bindingContext, descriptor).getDefaultType(), MapTypeMode.VALUE);
             String interfaceDesc = type.getDescriptor();
             iv.load(0, classType);
             iv.load(frameMap.getOuterThisIndex(), type);
@@ -709,7 +709,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (CodegenBinding.hasThis0(bindingContext, superClassDescriptor)) {
             iv.load(1, OBJECT_TYPE);
             parameterTypes.add(typeMapper.mapType(
-                    eclosingClassDescriptor(typeMapper.getBindingContext(), descriptor).getDefaultType(), MapTypeMode.VALUE));
+                    eclosingClassDescriptor(bindingContext, descriptor).getDefaultType(), MapTypeMode.VALUE));
         }
         Method superCallMethod = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
         //noinspection ConstantConditions
