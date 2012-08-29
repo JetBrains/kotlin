@@ -26,6 +26,8 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
+
 /**
  * @author yole
  * @author alex.tkachman
@@ -34,13 +36,13 @@ public class ConstructorFrameMap extends FrameMap {
     private int myOuterThisIndex = -1;
 
     public ConstructorFrameMap(CallableMethod callableMethod, @Nullable ConstructorDescriptor descriptor) {
-        enterTemp(JetTypeMapper.OBJECT_TYPE); // this
+        enterTemp(OBJECT_TYPE); // this
 
         final List<JvmMethodParameterSignature> parameterTypes = callableMethod.getSignature().getKotlinParameterTypes();
         if (parameterTypes != null) {
             for (JvmMethodParameterSignature parameterType : parameterTypes) {
                 if (parameterType.getKind() == JvmMethodParameterKind.OUTER) {
-                    myOuterThisIndex = enterTemp(JetTypeMapper.OBJECT_TYPE); // this0
+                    myOuterThisIndex = enterTemp(OBJECT_TYPE); // this0
                 }
                 else if (parameterType.getKind() != JvmMethodParameterKind.VALUE) {
                     enterTemp(parameterType.getAsmType());

@@ -35,7 +35,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
+import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
 
 /**
  * @author yole
@@ -267,7 +267,7 @@ public abstract class StackValue {
                 v.iconst(0);
             }
         }
-        else if (toType.equals(JetTypeMapper.JET_TUPLE0_TYPE) && !fromType.equals(JetTypeMapper.JET_TUPLE0_TYPE)) {
+        else if (toType.equals(JET_TUPLE0_TYPE) && !fromType.equals(JET_TUPLE0_TYPE)) {
             pop(fromType, v);
             putTuple0Instance(v);
         }
@@ -291,7 +291,7 @@ public abstract class StackValue {
                     v.checkcast(JvmPrimitiveType.CHAR.getWrapper().getAsmType());
                 }
                 else {
-                    v.checkcast(JetTypeMapper.JAVA_NUMBER_TYPE);
+                    v.checkcast(JAVA_NUMBER_TYPE);
                 }
             }
             unbox(toType, v);
@@ -477,11 +477,11 @@ public abstract class StackValue {
             if (type == Type.VOID_TYPE) {
                 return;
             }
-            if (type.equals(JetTypeMapper.JET_TUPLE0_TYPE)) {
+            if (type.equals(JET_TUPLE0_TYPE)) {
                 putTuple0Instance(v);
                 return;
             }
-            if (type != Type.BOOLEAN_TYPE && !type.equals(OBJECT_TYPE) && !type.equals(JetTypeMapper.JAVA_BOOLEAN_TYPE)) {
+            if (type != Type.BOOLEAN_TYPE && !type.equals(OBJECT_TYPE) && !type.equals(JAVA_BOOLEAN_TYPE)) {
                 throw new UnsupportedOperationException("don't know how to put a compare as a non-boolean type " + type);
             }
             putAsBoolean(v);
@@ -570,7 +570,7 @@ public abstract class StackValue {
                 myOperand.put(type, v);    // the operand will remove itself from the stack if needed
                 return;
             }
-            if (type != Type.BOOLEAN_TYPE && !type.equals(OBJECT_TYPE) && !type.equals(JetTypeMapper.JAVA_BOOLEAN_TYPE)) {
+            if (type != Type.BOOLEAN_TYPE && !type.equals(OBJECT_TYPE) && !type.equals(JAVA_BOOLEAN_TYPE)) {
                 throw new UnsupportedOperationException("don't know how to put a compare as a non-boolean type");
             }
             putAsBoolean(v);
@@ -1048,31 +1048,31 @@ public abstract class StackValue {
         switch (type.getSort()) {
             case Type.OBJECT:
             case Type.ARRAY:
-                return JetTypeMapper.JET_SHARED_VAR_TYPE;
+                return JET_SHARED_VAR_TYPE;
 
             case Type.BYTE:
-                return JetTypeMapper.JET_SHARED_BYTE_TYPE;
+                return JET_SHARED_BYTE_TYPE;
 
             case Type.SHORT:
-                return JetTypeMapper.JET_SHARED_SHORT_TYPE;
+                return JET_SHARED_SHORT_TYPE;
 
             case Type.CHAR:
-                return JetTypeMapper.JET_SHARED_CHAR_TYPE;
+                return JET_SHARED_CHAR_TYPE;
 
             case Type.INT:
-                return JetTypeMapper.JET_SHARED_INT_TYPE;
+                return JET_SHARED_INT_TYPE;
 
             case Type.LONG:
-                return JetTypeMapper.JET_SHARED_LONG_TYPE;
+                return JET_SHARED_LONG_TYPE;
 
             case Type.BOOLEAN:
-                return JetTypeMapper.JET_SHARED_BOOLEAN_TYPE;
+                return JET_SHARED_BOOLEAN_TYPE;
 
             case Type.FLOAT:
-                return JetTypeMapper.JET_SHARED_FLOAT_TYPE;
+                return JET_SHARED_FLOAT_TYPE;
 
             case Type.DOUBLE:
-                return JetTypeMapper.JET_SHARED_DOUBLE_TYPE;
+                return JET_SHARED_DOUBLE_TYPE;
 
             default:
                 throw new UnsupportedOperationException();

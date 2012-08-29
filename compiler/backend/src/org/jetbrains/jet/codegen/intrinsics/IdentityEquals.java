@@ -20,16 +20,15 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.ExpressionCodegen;
-import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.codegen.JetTypeMapper;
-import org.jetbrains.jet.codegen.StackValue;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
+
+import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
 
 /**
  * @author alex.tkachman
@@ -46,15 +45,15 @@ public class IdentityEquals implements IntrinsicMethod {
             @NotNull GenerationState state
     ) {
         if (element instanceof JetCallExpression) {
-            receiver.put(JetTypeMapper.OBJECT_TYPE, v);
-            codegen.gen(arguments.get(0)).put(JetTypeMapper.OBJECT_TYPE, v);
+            receiver.put(OBJECT_TYPE, v);
+            codegen.gen(arguments.get(0)).put(OBJECT_TYPE, v);
         }
         else {
             assert element instanceof JetBinaryExpression;
             JetBinaryExpression e = (JetBinaryExpression) element;
-            codegen.gen(e.getLeft()).put(JetTypeMapper.OBJECT_TYPE, v);
-            codegen.gen(e.getRight()).put(JetTypeMapper.OBJECT_TYPE, v);
+            codegen.gen(e.getLeft()).put(OBJECT_TYPE, v);
+            codegen.gen(e.getRight()).put(OBJECT_TYPE, v);
         }
-        return StackValue.cmp(JetTokens.EQEQEQ, JetTypeMapper.OBJECT_TYPE);
+        return StackValue.cmp(JetTokens.EQEQEQ, OBJECT_TYPE);
     }
 }

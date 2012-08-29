@@ -54,30 +54,6 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDec
  * @author alex.tkachman
  */
 public class JetTypeMapper {
-    public static final Type OBJECT_TYPE = Type.getType(Object.class);
-    public static final Type JAVA_NUMBER_TYPE = Type.getType(Number.class);
-    public static final Type JAVA_STRING_BUILDER_TYPE = Type.getType(StringBuilder.class);
-    public static final Type JAVA_STRING_TYPE = Type.getType(String.class);
-    public static final Type JAVA_THROWABLE_TYPE = Type.getType(Throwable.class);
-    public static final Type JAVA_CLASS_TYPE = Type.getType(Class.class);
-    public static final Type JAVA_BOOLEAN_TYPE = Type.getType(Boolean.class);
-    public static final Type JAVA_ARRAY_GENERIC_TYPE = Type.getType(Object[].class);
-
-    public static final Type JET_NOTHING_TYPE = Type.getObjectType("jet/Nothing");
-    public static final Type JET_TUPLE0_TYPE = Type.getObjectType("jet/Tuple0");
-    public static final Type JET_FUNCTION0_TYPE = Type.getObjectType("jet/Function0");
-    public static final Type JET_FUNCTION1_TYPE = Type.getObjectType("jet/Function1");
-    public static final Type JET_ITERATOR_TYPE = Type.getObjectType("jet/Iterator");
-    public static final Type JET_INT_RANGE_TYPE = Type.getObjectType("jet/IntRange");
-    public static final Type JET_SHARED_VAR_TYPE = Type.getObjectType("jet/runtime/SharedVar$Object");
-    public static final Type JET_SHARED_INT_TYPE = Type.getObjectType("jet/runtime/SharedVar$Int");
-    public static final Type JET_SHARED_DOUBLE_TYPE = Type.getObjectType("jet/runtime/SharedVar$Double");
-    public static final Type JET_SHARED_FLOAT_TYPE = Type.getObjectType("jet/runtime/SharedVar$Float");
-    public static final Type JET_SHARED_BYTE_TYPE = Type.getObjectType("jet/runtime/SharedVar$Byte");
-    public static final Type JET_SHARED_SHORT_TYPE = Type.getObjectType("jet/runtime/SharedVar$Short");
-    public static final Type JET_SHARED_CHAR_TYPE = Type.getObjectType("jet/runtime/SharedVar$Char");
-    public static final Type JET_SHARED_LONG_TYPE = Type.getObjectType("jet/runtime/SharedVar$Long");
-    public static final Type JET_SHARED_BOOLEAN_TYPE = Type.getObjectType("jet/runtime/SharedVar$Boolean");
 
     private BindingContext bindingContext;
     private boolean mapBuiltinsToJava;
@@ -256,7 +232,7 @@ public class JetTypeMapper {
             if (signatureVisitor != null) {
                 signatureVisitor.writeNothing(true);
             }
-            return OBJECT_TYPE;
+            return AsmTypeConstants.OBJECT_TYPE;
         }
         return mapType(jetType, signatureVisitor, MapTypeMode.VALUE);
     }
@@ -351,7 +327,7 @@ public class JetTypeMapper {
                 r = Type.getType("[" + boxType(mapType(memberType, kind)).getDescriptor());
             }
             else {
-                r = JAVA_ARRAY_GENERIC_TYPE;
+                r = AsmTypeConstants.JAVA_ARRAY_GENERIC_TYPE;
             }
             checkValidType(r);
             return r;

@@ -20,10 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.ExpressionCodegen;
-import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.codegen.JetTypeMapper;
-import org.jetbrains.jet.codegen.StackValue;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
@@ -43,14 +40,14 @@ public class StringPlus implements IntrinsicMethod {
             @NotNull GenerationState state
     ) {
         if (receiver == null || receiver == StackValue.none()) {
-            codegen.gen(arguments.get(0)).put(JetTypeMapper.JAVA_STRING_TYPE, v);
-            codegen.gen(arguments.get(1)).put(JetTypeMapper.OBJECT_TYPE, v);
+            codegen.gen(arguments.get(0)).put(AsmTypeConstants.JAVA_STRING_TYPE, v);
+            codegen.gen(arguments.get(1)).put(AsmTypeConstants.OBJECT_TYPE, v);
         }
         else {
-            receiver.put(JetTypeMapper.JAVA_STRING_TYPE, v);
-            codegen.gen(arguments.get(0)).put(JetTypeMapper.OBJECT_TYPE, v);
+            receiver.put(AsmTypeConstants.JAVA_STRING_TYPE, v);
+            codegen.gen(arguments.get(0)).put(AsmTypeConstants.OBJECT_TYPE, v);
         }
         v.invokestatic("jet/runtime/Intrinsics", "stringPlus", "(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;");
-        return StackValue.onStack(JetTypeMapper.JAVA_STRING_TYPE);
+        return StackValue.onStack(AsmTypeConstants.JAVA_STRING_TYPE);
     }
 }

@@ -50,7 +50,7 @@ import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
-import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
+import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.eclosingClassDescriptor;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.enumEntryNeedSubclass;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
@@ -407,7 +407,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                 InstructionAdapter iv = new InstructionAdapter(mv);
 
-                iv.load(0, JetTypeMapper.OBJECT_TYPE);
+                iv.load(0, OBJECT_TYPE);
                 for (int i = 1, reg = 1; i < argTypes.length; i++) {
                     Type argType = argTypes[i];
                     iv.load(reg, argType);
@@ -444,7 +444,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                     InstructionAdapter iv = new InstructionAdapter(mv);
 
-                    iv.load(0, JetTypeMapper.OBJECT_TYPE);
+                    iv.load(0, OBJECT_TYPE);
                     if (original.getVisibility() == Visibilities.PRIVATE) {
                         iv.getfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION).getInternalName(), original.getName().getName(),
                                     originalMethod.getReturnType().getDescriptor());
@@ -479,7 +479,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                     InstructionAdapter iv = new InstructionAdapter(mv);
 
-                    iv.load(0, JetTypeMapper.OBJECT_TYPE);
+                    iv.load(0, OBJECT_TYPE);
                     Type[] argTypes = method.getArgumentTypes();
                     for (int i = 1, reg = 1; i < argTypes.length; i++) {
                         Type argType = argTypes[i];
@@ -642,7 +642,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             final String internalName = typeMapper.mapType(descriptor.getDefaultType(), MapTypeMode.VALUE).getInternalName();
             final ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
             if (captureReceiver != null) {
-                iv.load(0, JetTypeMapper.OBJECT_TYPE);
+                iv.load(0, OBJECT_TYPE);
                 final Type asmType = typeMapper.mapType(captureReceiver.getDefaultType(), MapTypeMode.IMPL);
                 iv.load(1, asmType);
                 iv.putfield(internalName, RECEIVER$0, asmType.getDescriptor());
@@ -655,7 +655,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     if (sharedVarType == null) {
                         sharedVarType = typeMapper.mapType(((VariableDescriptor) varDescr).getType(), MapTypeMode.VALUE);
                     }
-                    iv.load(0, JetTypeMapper.OBJECT_TYPE);
+                    iv.load(0, OBJECT_TYPE);
                     iv.load(k, StackValue.refType(sharedVarType));
                     k += StackValue.refType(sharedVarType).getSize();
                     iv.putfield(internalName,
@@ -705,7 +705,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         assert superType != null;
         ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
         if (typeMapper.hasThis0(superClassDescriptor)) {
-            iv.load(1, JetTypeMapper.OBJECT_TYPE);
+            iv.load(1, OBJECT_TYPE);
             parameterTypes.add(typeMapper.mapType(
                     eclosingClassDescriptor(typeMapper.getBindingContext(), descriptor).getDefaultType(), MapTypeMode.VALUE));
         }
@@ -718,7 +718,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void genSimpleSuperCall(InstructionAdapter iv) {
         iv.load(0, Type.getType("L" + superClass + ";"));
         if (descriptor.getKind() == ClassKind.ENUM_CLASS || descriptor.getKind() == ClassKind.ENUM_ENTRY) {
-            iv.load(1, JetTypeMapper.JAVA_STRING_TYPE);
+            iv.load(1, AsmTypeConstants.JAVA_STRING_TYPE);
             iv.load(2, Type.INT_TYPE);
             iv.invokespecial(superClass, "<init>", "(Ljava/lang/String;I)V");
         }
@@ -952,7 +952,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     Type[] argTypes = function.getArgumentTypes();
                     List<Type> originalArgTypes = jvmSignature.getValueParameterTypes();
                     InstructionAdapter iv = new InstructionAdapter(mv);
-                    iv.load(0, JetTypeMapper.OBJECT_TYPE);
+                    iv.load(0, OBJECT_TYPE);
                     for (int i = 0, reg = 1; i < argTypes.length; i++) {
                         Type argType = argTypes[i];
                         iv.load(reg, argType);

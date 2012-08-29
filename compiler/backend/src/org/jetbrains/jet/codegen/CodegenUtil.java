@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
 
 /**
  * @author abreslav
@@ -161,14 +162,14 @@ public class CodegenUtil {
 
         for (int i = 0; i < paramCount; ++i) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
-            signatureWriter.writeAsmType(JetTypeMapper.OBJECT_TYPE, true);
+            signatureWriter.writeAsmType(OBJECT_TYPE, true);
             signatureWriter.writeParameterTypeEnd();
         }
 
         signatureWriter.writeParametersEnd();
 
         signatureWriter.writeReturnType();
-        signatureWriter.writeAsmType(JetTypeMapper.OBJECT_TYPE, true);
+        signatureWriter.writeAsmType(OBJECT_TYPE, true);
         signatureWriter.writeReturnTypeEnd();
 
         return signatureWriter.makeJvmMethodSignature("invoke");

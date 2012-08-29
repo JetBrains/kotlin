@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
+import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.CLASS_FOR_FUNCTION;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.FQN;
 
@@ -374,7 +374,7 @@ public abstract class CodegenContext {
         @Override
         public StackValue lookupInContext(DeclarationDescriptor d, @Nullable StackValue result, GenerationState state, boolean ignoreNoOuter) {
             if (getContextDescriptor() == d) {
-                return StackValue.local(0, JetTypeMapper.OBJECT_TYPE);
+                return StackValue.local(0, AsmTypeConstants.OBJECT_TYPE);
             }
 
             //noinspection ConstantConditions

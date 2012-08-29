@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.classNameForAnonymousClass;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.isLocalNamedFun;
@@ -192,24 +193,24 @@ public class ClosureCodegen {
             final ReceiverDescriptor receiver = funDescriptor.getReceiverParameter();
             int count = 1;
             if (receiver.exists()) {
-                StackValue.local(count, JetTypeMapper.OBJECT_TYPE).put(JetTypeMapper.OBJECT_TYPE, iv);
-                StackValue.onStack(JetTypeMapper.OBJECT_TYPE)
+                StackValue.local(count, OBJECT_TYPE).put(OBJECT_TYPE, iv);
+                StackValue.onStack(OBJECT_TYPE)
                         .upcast(typeMapper.mapType(receiver.getType(), MapTypeMode.VALUE), iv);
                 count++;
             }
 
             final List<ValueParameterDescriptor> params = funDescriptor.getValueParameters();
             for (ValueParameterDescriptor param : params) {
-                StackValue.local(count, JetTypeMapper.OBJECT_TYPE).put(JetTypeMapper.OBJECT_TYPE, iv);
-                StackValue.onStack(JetTypeMapper.OBJECT_TYPE)
+                StackValue.local(count, OBJECT_TYPE).put(OBJECT_TYPE, iv);
+                StackValue.onStack(OBJECT_TYPE)
                         .upcast(typeMapper.mapType(param.getType(), MapTypeMode.VALUE), iv);
                 count++;
             }
 
             iv.invokevirtual(className, "invoke", delegate.getDescriptor());
-            StackValue.onStack(delegate.getReturnType()).put(JetTypeMapper.OBJECT_TYPE, iv);
+            StackValue.onStack(delegate.getReturnType()).put(OBJECT_TYPE, iv);
 
-            iv.areturn(JetTypeMapper.OBJECT_TYPE);
+            iv.areturn(OBJECT_TYPE);
 
             FunctionCodegen.endVisit(mv, "bridge", fun);
         }
@@ -240,7 +241,7 @@ public class ClosureCodegen {
 
             int k = 1;
             for (int i = 0; i != argTypes.length; ++i) {
-                StackValue.local(0, JetTypeMapper.OBJECT_TYPE).put(JetTypeMapper.OBJECT_TYPE, iv);
+                StackValue.local(0, OBJECT_TYPE).put(OBJECT_TYPE, iv);
                 final Pair<String, Type> nameAndType = args.get(i);
                 final Type type = nameAndType.second;
                 StackValue.local(k, type).put(type, iv);

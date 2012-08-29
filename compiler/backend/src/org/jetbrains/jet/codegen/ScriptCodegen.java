@@ -38,7 +38,7 @@ import javax.inject.Inject;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.JetTypeMapper.OBJECT_TYPE;
+import static org.jetbrains.jet.codegen.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 
 /**

@@ -55,6 +55,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.JetTypeMapper.*;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
@@ -304,7 +305,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (isEmptyExpression(thenExpression)) {
             if (isEmptyExpression(elseExpression)) {
-                if (!asmType.equals(JetTypeMapper.JET_TUPLE0_TYPE)) {
+                if (!asmType.equals(JET_TUPLE0_TYPE)) {
                     throw new CompilationException("Completely empty 'if' is expected to have Unit type", null, expression);
                 }
                 StackValue.putTuple0Instance(v);
@@ -2060,7 +2061,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     v.dup();
                     ValueArgument argument = arguments.get(i);
                     if (argument.getSpreadElement() != null) {
-                        gen(argument.getArgumentExpression(), JetTypeMapper.OBJECT_TYPE);
+                        gen(argument.getArgumentExpression(), OBJECT_TYPE);
                         v.invokevirtual(owner, "addSpread", "(Ljava/lang/Object;)V");
                     }
                     else {
@@ -2569,7 +2570,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 Type leftType = expressionType(left);
                 Type rightType = expressionType(right);
 
-                if (leftType.equals(JetTypeMapper.JAVA_STRING_TYPE) && rightType.equals(JAVA_STRING_TYPE)) {
+                if (leftType.equals(JAVA_STRING_TYPE) && rightType.equals(JAVA_STRING_TYPE)) {
                     invokeAppend(left);
                     invokeAppend(right);
                     return;
