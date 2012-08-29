@@ -34,9 +34,7 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaPackageScope;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -120,8 +118,8 @@ public class LazyResolveTestUtil {
 
             @NotNull
             @Override
-            public Collection<ClassDescriptor> getKotlinAnalogs(@NotNull FqNameUnsafe className) {
-                return Collections.emptyList();
+            public Collection<ClassDescriptor> getKotlinAnalogs(@NotNull FqNameUnsafe classOrPackageName) {
+                return JavaBridgeConfiguration.getKotlinAnalogsForJavaStandardClasses(classOrPackageName);
             }
         };
 

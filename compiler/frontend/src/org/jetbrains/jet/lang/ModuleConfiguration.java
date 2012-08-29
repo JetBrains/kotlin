@@ -42,7 +42,7 @@ public interface ModuleConfiguration {
 
         @NotNull
         @Override
-        public Collection<ClassDescriptor> getKotlinAnalogs(@NotNull FqNameUnsafe className) {
+        public Collection<ClassDescriptor> getKotlinAnalogs(@NotNull FqNameUnsafe classOrPackageName) {
             return Collections.emptyList();
         }
 
@@ -61,5 +61,5 @@ public interface ModuleConfiguration {
     void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope);
 
     @NotNull
-    Collection<ClassDescriptor> getKotlinAnalogs(@NotNull FqNameUnsafe className);
+    Collection<ClassDescriptor> getKotlinAnalogs(@NotNull FqNameUnsafe classOrPackageName);
 }
