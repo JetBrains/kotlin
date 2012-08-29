@@ -122,14 +122,7 @@ public class ImportsResolver {
                 resolvedDirectives.put(importDirective, descriptors.iterator().next());
             }
             for (DeclarationDescriptor descriptor : descriptors) {
-                if (descriptor instanceof ClassDescriptor && !onlyClasses) {
-                    FqNameUnsafe fqName = DescriptorUtils.getFQName(descriptor);
-                    Collection<ClassDescriptor> kotlinAnalogs = configuration.getKotlinAnalogs(fqName);
-                    JetExpression importedReference = importDirective.getImportedReference();
-                    if (importedReference != null && !kotlinAnalogs.isEmpty()) {
-                        trace.report(CLASS_HAS_KOTLIN_ANALOG.on(importedReference, kotlinAnalogs));
-                    }
-                }
+                reportHasKotlinAnalog(onlyClasses, configuration, trace, importDirective, descriptor);
             }
         }
         delayedImporter.processImports();
@@ -138,6 +131,22 @@ public class ImportsResolver {
             for (JetImportDirective importDirective : importDirectives) {
                 reportUselessImport(importDirective, namespaceScope, resolvedDirectives, trace);
             }
+        }
+    }
+
+    private static void reportHasKotlinAnalog(
+            boolean onlyClasses,
+            @NotNull ModuleConfiguration configuration,
+            @NotNull BindingTrace trace,
+            @NotNull JetImportDirective importDirective,
+            @NotNull DeclarationDescriptor descriptor
+    ) {
+        if (!(descriptor instanceof ClassDescriptor) || onlyClasses) return;
+        FqNameUnsafe fqName = DescriptorUtils.getFQName(descriptor);
+        Collection<ClassDescriptor> kotlinAnalogs = configuration.getKotlinAnalogs(fqName);
+        JetExpression importedReference = importDirective.getImportedReference();
+        if (importedReference != null && !kotlinAnalogs.isEmpty()) {
+            trace.report(CLASS_HAS_KOTLIN_ANALOG.on(importedReference, kotlinAnalogs));
         }
     }
 
