@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 
 import java.util.List;
 import java.util.Map;

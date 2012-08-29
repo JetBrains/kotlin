@@ -18,7 +18,8 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.asm4.MethodVisitor;
 
-import static org.jetbrains.jet.codegen.CodegenUtil.*;
+import static org.jetbrains.jet.codegen.CodegenUtil.generateMethodThrow;
+import static org.jetbrains.jet.codegen.CodegenUtil.generateThrow;
 
 /**
  * @author Stepan Koltsov

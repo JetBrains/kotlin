@@ -22,7 +22,6 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 

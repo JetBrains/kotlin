@@ -31,7 +31,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.CodegenUtil.*;
+import static org.jetbrains.jet.codegen.CodegenUtil.generateMethodThrow;
+import static org.jetbrains.jet.codegen.CodegenUtil.getAccessModifiers;
 
 /**
  * @author max

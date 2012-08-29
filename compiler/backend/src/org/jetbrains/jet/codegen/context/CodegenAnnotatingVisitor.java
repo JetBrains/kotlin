@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.jet.codegen.CodegenUtil.*;
+import static org.jetbrains.jet.codegen.CodegenUtil.peekFromStack;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
