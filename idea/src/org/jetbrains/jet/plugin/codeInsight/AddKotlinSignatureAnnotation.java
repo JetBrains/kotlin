@@ -16,14 +16,20 @@
 
 package org.jetbrains.jet.plugin.codeInsight;
 
+import com.intellij.codeInsight.ExternalAnnotationsListener;
+import com.intellij.codeInsight.ExternalAnnotationsManager;
+import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.codeInsight.intention.AddAnnotationFix;
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
@@ -79,16 +85,32 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        PsiMethod method = findMethod(file, editor.getCaretModel().getOffset());
-        PsiMethod original = (PsiMethod) method.getOriginalElement();
-        String signature = getDefaultSignature(project, original);
+    public void invoke(@NotNull final Project project, final Editor editor, PsiFile file) throws IncorrectOperationException {
+        final PsiMethod method = findMethod(file, editor.getCaretModel().getOffset());
+        String signature = getDefaultSignature(project, (PsiMethod) method.getOriginalElement());
         if (signature == null) {
             return;
         }
+        final MessageBusConnection busConnection = project.getMessageBus().connect();
+        busConnection.subscribe(ExternalAnnotationsManager.TOPIC, new ExternalAnnotationsListener.Adapter() {
+            @Override
+            public void afterExternalAnnotationChanging(@NotNull PsiModifierListOwner owner, @NotNull String annotationFQName,
+                    boolean successful) {
+                busConnection.disconnect();
+
+                if (successful && owner == method
+                    && KotlinSignatureInJavaMarkerProvider.KOTLIN_SIGNATURE_ANNOTATION.equals(annotationFQName)) {
+                    ApplicationManager.getApplication().invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            KotlinSignatureInJavaMarkerProvider.refresh(project);
+                            KotlinSignatureInJavaMarkerProvider.invokeEditSignature(method, editor, null);
+                        }
+                    }, ModalityState.NON_MODAL);
+                }
+            }
+        });
         createFix(method, signature).invoke(project, editor, file);
-        KotlinSignatureInJavaMarkerProvider.refresh(project);
-        KotlinSignatureInJavaMarkerProvider.invokeEditSignature(method, editor, null);
     }
 
     @NotNull

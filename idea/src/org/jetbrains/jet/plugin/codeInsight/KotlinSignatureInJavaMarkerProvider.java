@@ -91,7 +91,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         return annotation;
     }
 
-    private static PsiMethod getAnnotationOwner(PsiElement element) {
+    static PsiMethod getAnnotationOwner(PsiElement element) {
         PsiMethod annotationOwner = element.getOriginalElement() instanceof PsiMethod
                                     ? (PsiMethod) element.getOriginalElement()
                                     : (PsiMethod) element;
