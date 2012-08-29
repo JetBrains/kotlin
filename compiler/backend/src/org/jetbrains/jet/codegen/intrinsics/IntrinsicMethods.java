@@ -227,7 +227,7 @@ public class IntrinsicMethods {
                 ClassifierDescriptor classifierDescriptor = annotation.getType().getConstructor().getDeclarationDescriptor();
                 assert classifierDescriptor != null;
                 if ("Intrinsic".equals(classifierDescriptor.getName().getName())) {
-                    String value = (String) annotation.getValueArguments().get(0).getValue();
+                    String value = (String) annotation.getAllValueArguments().values().iterator().next().getValue();
                     intrinsicMethod = namedMethods.get(value);
                     if (intrinsicMethod != null) {
                         break;

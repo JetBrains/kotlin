@@ -172,7 +172,7 @@ public abstract class AnnotationCodegen {
                         for (AnnotationDescriptor annotation : annotations) {
                             //noinspection ConstantConditions
                             if ("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName().getName())) {
-                                value = (String) annotation.getValueArguments().get(0).getValue();
+                                value = (String) annotation.getAllValueArguments().values().iterator().next().getValue();
                                 break;
                             }
                         }

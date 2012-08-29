@@ -48,10 +48,10 @@ public final class AnnotationsUtils {
         AnnotationDescriptor annotationDescriptor = getAnnotationByName(declarationDescriptor, annotation);
         assert annotationDescriptor != null;
         //TODO: this is a quick fix for unsupported default args problem
-        if (annotationDescriptor.getValueArguments().isEmpty()) {
+        if (annotationDescriptor.getAllValueArguments().isEmpty()) {
             return null;
         }
-        CompileTimeConstant<?> constant = annotationDescriptor.getValueArguments().iterator().next();
+        CompileTimeConstant<?> constant = annotationDescriptor.getAllValueArguments().values().iterator().next();
         //TODO: this is a quick fix for unsupported default args problem
         if (constant == null) {
             return null;

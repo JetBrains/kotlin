@@ -534,7 +534,7 @@ public class NamespaceComparator {
         public void serialize(AnnotationDescriptor annotation) {
             new TypeSerializer(sb).serialize(annotation.getType());
             sb.append("(");
-            serializeCommaSeparated(annotation.getValueArguments());
+            serializeCommaSeparated(DescriptorUtils.getSortedValueArguments(annotation));
             sb.append(")");
         }
 

@@ -16,29 +16,38 @@
 
 package org.jetbrains.jet.lang.descriptors.annotations;
 
+import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 
-import javax.rmi.CORBA.ClassDesc;
-import java.util.List;
+import java.util.Map;
+import java.util.Collections;
 
 /**
  * @author abreslav
  */
 public class AnnotationDescriptor {
     private JetType annotationType;
-    private List<CompileTimeConstant<?>> valueArguments;
+    private final Map<ValueParameterDescriptor, CompileTimeConstant<?>> valueArguments = Maps.newHashMap();
 
     @NotNull
     public JetType getType() {
         return annotationType;
     }
 
+    @Nullable
+    public CompileTimeConstant<?> getValueArgument(@NotNull ValueParameterDescriptor valueParameterDescriptor) {
+        return valueArguments.get(valueParameterDescriptor);
+    }
+    
     @NotNull
-    public List<CompileTimeConstant<?>> getValueArguments() {
-        return valueArguments;
+    public Map<ValueParameterDescriptor, CompileTimeConstant<?>> getAllValueArguments() {
+        return Collections.unmodifiableMap(valueArguments);
     }
 
     public void setAnnotationType(@NotNull JetType annotationType) {
@@ -48,7 +57,12 @@ public class AnnotationDescriptor {
         this.annotationType = annotationType;
     }
 
-    public void setValueArguments(@NotNull List<CompileTimeConstant<?>> valueArguments) {
-        this.valueArguments = valueArguments;
+    public void setValueArgument(@NotNull ValueParameterDescriptor name, @NotNull CompileTimeConstant<?> value) {
+        valueArguments.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return annotationType.toString() + DescriptorUtils.getSortedValueArguments(this);
     }
 }

@@ -116,17 +116,19 @@ public class AnnotationResolver {
 
     private void resolveArguments(@NotNull OverloadResolutionResults<FunctionDescriptor> results,
             @NotNull AnnotationDescriptor descriptor, BindingTrace trace) {
-        List<CompileTimeConstant<?>> arguments = Lists.newArrayList();
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> descriptorToArgument :
                 results.getResultingCall().getValueArguments().entrySet()) {
             // TODO: are varargs supported here?
             List<ValueArgument> valueArguments = descriptorToArgument.getValue().getArguments();
             ValueParameterDescriptor parameterDescriptor = descriptorToArgument.getKey();
             for (ValueArgument argument : valueArguments) {
-                arguments.add(resolveAnnotationArgument(argument.getArgumentExpression(), parameterDescriptor.getType(), trace));
+                CompileTimeConstant<?> compileTimeConstant =
+                        resolveAnnotationArgument(argument.getArgumentExpression(), parameterDescriptor.getType(), trace);
+                if (compileTimeConstant != null) {
+                    descriptor.setValueArgument(parameterDescriptor, compileTimeConstant);
+                }
             }
         }
-        descriptor.setValueArguments(arguments);
     }
 
     @Nullable

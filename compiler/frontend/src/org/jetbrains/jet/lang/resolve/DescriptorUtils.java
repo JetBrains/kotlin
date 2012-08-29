@@ -21,8 +21,10 @@ import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -375,5 +377,14 @@ public class DescriptorUtils {
         }
         assert classKind == ClassKind.CLASS || classKind == ClassKind.TRAIT || classKind == ClassKind.ANNOTATION_CLASS;
         return Visibilities.PUBLIC;
+    }
+    
+    public static List<String> getSortedValueArguments(AnnotationDescriptor descriptor) {
+        List<String> resultList = Lists.newArrayList();
+        for (Map.Entry<ValueParameterDescriptor, CompileTimeConstant<?>> entry : descriptor.getAllValueArguments().entrySet()) {
+            resultList.add(entry.getKey().getName().getName() + " = " + entry.getValue().toString());
+        }
+        Collections.sort(resultList);
+        return resultList;
     }
 }
