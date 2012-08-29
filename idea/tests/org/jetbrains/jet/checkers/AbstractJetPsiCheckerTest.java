@@ -16,8 +16,10 @@
 
 package org.jetbrains.jet.checkers;
 
+import com.intellij.ProjectTopics;
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.impl.ModuleRootEventImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.test.generator.SimpleTestClassModel;
@@ -31,6 +33,20 @@ import java.util.Arrays;
  * @author abreslav
  */
 public abstract class AbstractJetPsiCheckerTest extends LightDaemonAnalyzerTestCase {
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        /*
+         * TODO: remove this when fixed in IDEA
+         * super.tearDown() calls cleanupForNextTest() on PsiManagerImpl, which invalidates a cache of view providers
+         * this affects ExternalAnnotationsManagerImpl making XmlFile instances cached in it invalid
+         * this results in external annotations being not found, unless we invalidate the cache in ExternalAnnotationsManagerImpl.
+         * Currently, sending this funny event is the only way (apart from reflection) to invalidate that cache.
+         * The problem will be fixed in IDEA soon (hopefully).
+         */
+        getProject().getMessageBus().syncPublisher(ProjectTopics.PROJECT_ROOTS).rootsChanged(new ModuleRootEventImpl(getProject(), true));
+    }
 
     public void doTest(@NotNull String filePath) throws Exception {
         doTest(filePath, true, false);
