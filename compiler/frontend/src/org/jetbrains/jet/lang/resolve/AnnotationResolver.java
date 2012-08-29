@@ -103,8 +103,6 @@ public class AnnotationResolver {
                     trace.report(Errors.NOT_AN_ANNOTATION_CLASS.on(entryElement, descriptor.getName().getName()));
                 }
             }
-        }
-        if (results.isSuccess()) {
             JetType annotationType = results.getResultingDescriptor().getReturnType();
             annotationDescriptor.setAnnotationType(annotationType);
             resolveArguments(results, annotationDescriptor, trace);
@@ -179,20 +177,28 @@ public class AnnotationResolver {
     }
 
     @NotNull
-    public List<AnnotationDescriptor> createAnnotationStubs(@Nullable JetModifierList modifierList, BindingTrace trace) {
+    public List<AnnotationDescriptor> getResolvedAnnotations(@Nullable JetModifierList modifierList, BindingTrace trace) {
         if (modifierList == null) {
             return Collections.emptyList();
         }
-        return createAnnotationStubs(modifierList.getAnnotationEntries(), trace);
+        return getResolvedAnnotations(modifierList.getAnnotationEntries(), trace);
     }
 
+    @SuppressWarnings("MethodMayBeStatic")
     @NotNull
-    public List<AnnotationDescriptor> createAnnotationStubs(List<JetAnnotationEntry> annotations, BindingTrace trace) {
+    public List<AnnotationDescriptor> getResolvedAnnotations(List<JetAnnotationEntry> annotations, BindingTrace trace) {
         List<AnnotationDescriptor> result = Lists.newArrayList();
         for (JetAnnotationEntry annotation : annotations) {
-            AnnotationDescriptor annotationDescriptor = new AnnotationDescriptor();
+            AnnotationDescriptor annotationDescriptor = trace.get(BindingContext.ANNOTATION, annotation);
+            if (annotationDescriptor == null) {
+                // TODO: Unresolved annotation
+                annotationDescriptor = new AnnotationDescriptor();
+                annotationDescriptor.setAnnotationType(ErrorUtils.createErrorType("Unresolved annotation type"));
+
+                trace.record(BindingContext.ANNOTATION, annotation, annotationDescriptor);
+            }
+
             result.add(annotationDescriptor);
-            trace.record(BindingContext.ANNOTATION, annotation, annotationDescriptor);
         }
         return result;
     }

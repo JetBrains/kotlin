@@ -93,7 +93,7 @@ public class DescriptorResolver {
         for (JetTypeParameter typeParameter : classElement.getTypeParameters()) {
             TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                     descriptor,
-                    annotationResolver.createAnnotationStubs(typeParameter.getModifierList(), trace),
+                    annotationResolver.getResolvedAnnotations(typeParameter.getModifierList(), trace),
                     typeParameter.hasModifier(JetTokens.REIFIED_KEYWORD),
                     typeParameter.getVariance(),
                     JetPsiUtil.safeName(typeParameter.getName()),
@@ -412,19 +412,15 @@ public class DescriptorResolver {
             int index,
             BindingTrace trace
     ) {
-        //        JetTypeReference extendsBound = typeParameter.getExtendsBound();
-        //        JetType bound = extendsBound == null
-        //                ? JetStandardClasses.getDefaultBound()
-        //                : typeResolver.resolveType(extensibleScope, extendsBound);
+        // TODO: Annotations are not resolved!
         TypeParameterDescriptorImpl typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                 containingDescriptor,
-                annotationResolver.createAnnotationStubs(typeParameter.getModifierList(), trace),
+                annotationResolver.getResolvedAnnotations(typeParameter.getModifierList(), trace),
                 typeParameter.hasModifier(JetTokens.REIFIED_KEYWORD),
                 typeParameter.getVariance(),
                 JetPsiUtil.safeName(typeParameter.getName()),
                 index
         );
-        //        typeParameterDescriptor.addUpperBound(bound);
         extensibleScope.addTypeParameterDescriptor(typeParameterDescriptor);
         trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor);
         return typeParameterDescriptor;
@@ -607,7 +603,7 @@ public class DescriptorResolver {
     ) {
         VariableDescriptor variableDescriptor = new LocalVariableDescriptor(
                 containingDeclaration,
-                annotationResolver.createAnnotationStubs(parameter.getModifierList(), trace),
+                annotationResolver.getResolvedAnnotations(parameter.getModifierList(), trace),
                 JetPsiUtil.safeName(parameter.getName()),
                 type,
                 parameter.isMutable());
@@ -626,7 +622,7 @@ public class DescriptorResolver {
         if (JetPsiUtil.isScriptDeclaration(variable)) {
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                     containingDeclaration,
-                    annotationResolver.createAnnotationStubs(variable.getModifierList(), trace),
+                    annotationResolver.getResolvedAnnotations(variable.getModifierList(), trace),
                     Modality.FINAL,
                     Visibilities.INTERNAL,
                     variable.isVar(),
@@ -661,7 +657,7 @@ public class DescriptorResolver {
     ) {
         VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptor(
                 containingDeclaration,
-                annotationResolver.createAnnotationStubs(variable.getModifierList(), trace),
+                annotationResolver.getResolvedAnnotations(variable.getModifierList(), trace),
                 JetPsiUtil.safeName(variable.getName()),
                 type,
                 variable.isVar());
@@ -694,7 +690,7 @@ public class DescriptorResolver {
         JetModifierList modifierList = objectDeclaration.getModifierList();
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
-                annotationResolver.createAnnotationStubs(modifierList, trace),
+                annotationResolver.getResolvedAnnotations(modifierList, trace),
                 Modality.FINAL,
                 ModifiersChecker.resolveVisibilityFromModifiers(objectDeclaration),
                 false,
@@ -720,7 +716,7 @@ public class DescriptorResolver {
     ) {
         VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptor(
                 containingDeclaration,
-                annotationResolver.createAnnotationStubs(objectDeclaration.getModifierList(), trace),
+                annotationResolver.getResolvedAnnotations(objectDeclaration.getModifierList(), trace),
                 JetPsiUtil.safeName(objectDeclaration.getName()),
                 classDescriptor.getDefaultType(),
                 /*isVar =*/ false);

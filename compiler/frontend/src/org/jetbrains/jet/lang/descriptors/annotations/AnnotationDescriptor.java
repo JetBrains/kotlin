@@ -19,14 +19,13 @@ package org.jetbrains.jet.lang.descriptors.annotations;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 
-import java.util.Map;
 import java.util.Collections;
+import java.util.Map;
 
 /**
  * @author abreslav
@@ -51,9 +50,6 @@ public class AnnotationDescriptor {
     }
 
     public void setAnnotationType(@NotNull JetType annotationType) {
-        if (false && !(annotationType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
-            throw new IllegalStateException();
-        }
         this.annotationType = annotationType;
     }
 

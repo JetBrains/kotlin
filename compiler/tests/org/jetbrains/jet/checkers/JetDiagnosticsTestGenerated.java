@@ -514,6 +514,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/annotations/AnnotatedConstructorParams.kt");
             }
             
+            @TestMetadata("AnnotationForObject.kt")
+            public void testAnnotationForObject() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/AnnotationForObject.kt");
+            }
+            
             @TestMetadata("AnnotationsForClasses.kt")
             public void testAnnotationsForClasses() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/annotations/AnnotationsForClasses.kt");
