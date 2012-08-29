@@ -3,14 +3,14 @@ import java.util.*
 import <error>utils</error>.*
 
 import java.io.PrintStream
-import java.lang.Comparable as Com
+import <warning>java.lang.Comparable</warning> as Com
 
 val l : List<in Int> = ArrayList<Int>()
 
 fun test(<warning>l</warning> : java.util.List<Int>) {
   val <warning>x</warning> : java.<error>List</error>
   val <warning>y</warning> : java.util.List<Int>
-  val <warning>b</warning> : java.lang.Object
+  val <warning>b</warning> : <warning>java.lang.Object</warning>
   val <warning>a</warning> : util.List<Int>
   val <warning>z</warning> : java.<error>utils</error>.<error>List</error><Int>
 
@@ -27,7 +27,7 @@ fun test(<warning>l</warning> : java.util.List<Int>) {
   <error>List</error><Int>
 
 
-  val <warning>o</warning> = "sdf" <warning>as</warning> Object
+  val <warning>o</warning> = "sdf" <warning>as</warning> <warning>Object</warning>
 
   try {
     // ...
@@ -38,9 +38,9 @@ fun test(<warning>l</warning> : java.util.List<Int>) {
 
   PrintStream("sdf")
 
-  val c : Com<Int>? = null
+  val c : <warning>Com<Int></warning>? = null
 
-  c : java.lang.Comparable<Int>?
+  c : <warning>java.lang.Comparable<Int></warning>?
 
 //  Collections.sort<Integer>(ArrayList<Integer>())
 }

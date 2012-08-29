@@ -8,7 +8,7 @@ fun test() {
   val <!UNUSED_VARIABLE!>a<!> : java.util.Collection<String>? = java.util.Collections.emptyList()
 }
 
-fun test(<!UNUSED_PARAMETER!>a<!> : java.lang.Comparable<Int>) {
+fun test(<!UNUSED_PARAMETER!>a<!> : <!CLASS_HAS_KOTLIN_ANALOG!>java.lang.Comparable<Int><!>) {
 
 }
 

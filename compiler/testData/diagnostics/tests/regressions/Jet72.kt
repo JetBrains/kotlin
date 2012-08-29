@@ -2,13 +2,13 @@
 
 import java.util.ArrayList
 
-abstract class Item(val room: Object) {
+abstract class Item(val room: <!CLASS_HAS_KOTLIN_ANALOG!>Object<!>) {
    abstract val name : String
 }
 
 val items: ArrayList<Item> = ArrayList<Item>()
 
-fun test(room : Object) {
+fun test(room : <!CLASS_HAS_KOTLIN_ANALOG!>Object<!>) {
   for(val item: Item? in items) {
     if (item?.room === room) {
       System.out.println("You see " + item?.name)

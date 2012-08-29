@@ -5,14 +5,14 @@ import java.util.*
 import <!UNRESOLVED_REFERENCE!>utils<!>.*
 
 import java.io.PrintStream
-import java.lang.Comparable as Com
+import <!CLASS_HAS_KOTLIN_ANALOG!>java.lang.Comparable<!> as Com
 
 val l : List<in Int> = ArrayList<Int>()
 
 fun test(<!UNUSED_PARAMETER!>l<!> : java.util.List<Int>) {
   val <!UNUSED_VARIABLE!>x<!> : java.<!UNRESOLVED_REFERENCE!>List<!>
   val <!UNUSED_VARIABLE!>y<!> : java.util.List<Int>
-  val <!UNUSED_VARIABLE!>b<!> : java.lang.Object
+  val <!UNUSED_VARIABLE!>b<!> : <!CLASS_HAS_KOTLIN_ANALOG!>java.lang.Object<!>
   val <!UNUSED_VARIABLE!>a<!> : util.List<Int>
   val <!UNUSED_VARIABLE!>z<!> : java.<!UNRESOLVED_REFERENCE!>utils<!>.List<Int>
 
@@ -29,7 +29,7 @@ fun test(<!UNUSED_PARAMETER!>l<!> : java.util.List<Int>) {
   <!UNRESOLVED_REFERENCE!>List<!><Int>
 
 
-  val <!UNUSED_VARIABLE!>o<!> = "sdf" <!CAST_NEVER_SUCCEEDS!>as<!> Object
+  val <!UNUSED_VARIABLE!>o<!> = "sdf" <!CAST_NEVER_SUCCEEDS!>as<!> <!CLASS_HAS_KOTLIN_ANALOG!>Object<!>
 
   try {
     // ...
@@ -40,9 +40,9 @@ fun test(<!UNUSED_PARAMETER!>l<!> : java.util.List<Int>) {
 
   PrintStream("sdf")
 
-  val c : Com<Int>? = null
+  val c : <!CLASS_HAS_KOTLIN_ANALOG!>Com<Int><!>? = null
 
-  c : java.lang.Comparable<Int>?
+  c : <!CLASS_HAS_KOTLIN_ANALOG!>java.lang.Comparable<Int><!>?
 
 //  Collections.sort<Integer>(ArrayList<Integer>())
   xxx.<!UNRESOLVED_REFERENCE!>Class<!>()
