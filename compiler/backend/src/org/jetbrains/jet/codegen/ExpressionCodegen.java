@@ -1288,7 +1288,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 VariableAsFunctionResolvedCall call = (VariableAsFunctionResolvedCall) resolvedCall;
                 resolvedCall = call.getVariableCall();
             }
-            receiver = StackValue.receiver(resolvedCall, receiver, this, null, state);
+            receiver = StackValue.receiver(resolvedCall, receiver, this, null);
             descriptor = resolvedCall.getResultingDescriptor();
         }
 
@@ -1631,7 +1631,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         DeclarationDescriptor funDescriptor = resolvedCall.getResultingDescriptor();
 
         if (funDescriptor instanceof ConstructorDescriptor) {
-            receiver = StackValue.receiver(resolvedCall, receiver, this, null, state);
+            receiver = StackValue.receiver(resolvedCall, receiver, this, null);
             return generateConstructorCall(expression, (JetSimpleNameExpression) callee, receiver);
         }
         else if (funDescriptor instanceof FunctionDescriptor) {
@@ -1711,7 +1711,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return returnValueAsStackValue(fd, callReturnType);
         }
         else {
-            receiver = StackValue.receiver(resolvedCall, receiver, this, null, state);
+            receiver = StackValue.receiver(resolvedCall, receiver, this, null);
 
             IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
             List<JetExpression> args = new ArrayList<JetExpression>();
@@ -1807,7 +1807,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         if (!(resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor)) { // otherwise already
-            receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod, state);
+            receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
             receiver.put(receiver.type, v);
             if (calleeType != null) {
                 StackValue.onStack(receiver.type).put(boxType(receiver.type), v);
@@ -1828,7 +1828,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             ResolvedCall<? extends CallableDescriptor> resolvedCall,
             CallableMethod callableMethod
     ) {
-        receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod, state);
+        receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
         receiver.put(receiver.type, v);
     }
 
@@ -2543,7 +2543,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         StackValue receiver = StackValue.onStack(lhsType);
 
         if (!(resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor)) { // otherwise already
-            receiver = StackValue.receiver(resolvedCall, receiver, this, callable, state);
+            receiver = StackValue.receiver(resolvedCall, receiver, this, callable);
             receiver.put(receiver.type, v);
         }
 

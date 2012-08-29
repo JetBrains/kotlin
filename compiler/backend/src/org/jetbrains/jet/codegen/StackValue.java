@@ -344,11 +344,10 @@ public abstract class StackValue {
             ResolvedCall<? extends CallableDescriptor> resolvedCall,
             StackValue receiver,
             ExpressionCodegen codegen,
-            @Nullable CallableMethod callableMethod,
-            GenerationState state
+            @Nullable CallableMethod callableMethod
     ) {
         if (resolvedCall.getThisObject().exists() || resolvedCall.getReceiverArgument().exists()) {
-            return new CallReceiver(resolvedCall, receiver, codegen, state, callableMethod);
+            return new CallReceiver(resolvedCall, receiver, codegen, callableMethod);
         }
         return receiver;
     }
@@ -1214,7 +1213,6 @@ public abstract class StackValue {
                 ResolvedCall<? extends CallableDescriptor> resolvedCall,
                 StackValue receiver,
                 ExpressionCodegen codegen,
-                @NotNull GenerationState state,
                 CallableMethod callableMethod
         ) {
             super(calcType(resolvedCall, codegen, callableMethod));
