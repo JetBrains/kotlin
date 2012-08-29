@@ -40,7 +40,7 @@ public class ArraySet implements IntrinsicMethod {
             @NotNull GenerationState state
     ) {
         receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
-        Type type = JetTypeMapper.correctElementType(receiver.type);
+        Type type = CodegenUtil.correctElementType(receiver.type);
 
         codegen.gen(arguments.get(0), Type.INT_TYPE);
         codegen.gen(arguments.get(1), type);

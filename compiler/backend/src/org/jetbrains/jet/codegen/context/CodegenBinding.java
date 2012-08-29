@@ -319,4 +319,10 @@ public class CodegenBinding {
         return Boolean.TRUE.equals(bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor)) &&
                variableDescriptor.isVar();
     }
+
+    public static boolean hasThis0(BindingContext bindingContext, ClassDescriptor classDescriptor) {
+        //noinspection SuspiciousMethodCalls
+        final CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
+        return closure != null && closure.getCaptureThis() != null;
+    }
 }

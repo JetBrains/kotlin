@@ -665,7 +665,7 @@ public class FunctionCodegen {
             iv.invokevirtual(state.getInjector().getJetTypeMapper().mapType(
                     ((ClassDescriptor) owner.getContextDescriptor()).getDefaultType(), MapTypeMode.VALUE).getInternalName(),
                              jvmSignature.getName(), jvmSignature.getDescriptor());
-            if (JetTypeMapper.isPrimitive(jvmSignature.getReturnType()) && !JetTypeMapper.isPrimitive(overridden.getReturnType())) {
+            if (isPrimitive(jvmSignature.getReturnType()) && !isPrimitive(overridden.getReturnType())) {
                 StackValue.valueOf(iv, jvmSignature.getReturnType());
             }
             if (jvmSignature.getReturnType() == Type.VOID_TYPE) {

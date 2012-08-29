@@ -57,7 +57,6 @@ import java.util.*;
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
-import static org.jetbrains.jet.codegen.JetTypeMapper.*;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.*;
@@ -1060,8 +1059,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                                                                                                         .getCalleeExpression()
                                                                                                         .getConstructorReferenceExpression());
             assert superConstructor != null;
+            //noinspection SuspiciousMethodCalls
             CallableMethod superCallable = typeMapper
-                    .mapToCallableMethod(superConstructor, typeMapper.getCalculatedClosure(superConstructor.getContainingDeclaration()));
+                    .mapToCallableMethod(superConstructor,
+                                         bindingContext.get(CLOSURE, superConstructor.getContainingDeclaration()));
             Type[] argumentTypes = superCallable.getSignature().getAsmMethod().getArgumentTypes();
             ResolvedCall resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, superCall.getCalleeExpression());
             assert resolvedCall != null;
@@ -2885,12 +2886,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 v.dup();
 
                 final ClassDescriptor classDescriptor = ((ConstructorDescriptor) constructorDescriptor).getContainingDeclaration();
+
                 CallableMethod method = typeMapper
-                        .mapToCallableMethod((ConstructorDescriptor) constructorDescriptor, typeMapper
-                                .getCalculatedClosure(classDescriptor));
+                        .mapToCallableMethod((ConstructorDescriptor) constructorDescriptor,
+                                             bindingContext.get(CLOSURE, classDescriptor));
 
                 receiver.put(receiver.type, v);
-                pushClosureOnStack(typeMapper.getCalculatedClosure(classDescriptor), true);
+
+                pushClosureOnStack(bindingContext.get(CLOSURE, classDescriptor), true);
                 invokeMethodWithArguments(method, expression, StackValue.none());
             }
         }
@@ -3200,7 +3203,7 @@ The "returned" value of try expression with no finally is either the last expres
             DeclarationDescriptor descriptor = rightType.getConstructor().getDeclarationDescriptor();
             if (descriptor instanceof ClassDescriptor || descriptor instanceof TypeParameterDescriptor) {
                 StackValue value = genQualified(receiver, left);
-                value.put(JetTypeMapper.boxType(value.type), v);
+                value.put(boxType(value.type), v);
                 assert leftType != null;
 
                 if (opToken != JetTokens.AS_SAFE) {
@@ -3268,7 +3271,7 @@ The "returned" value of try expression with no finally is either the last expres
                     assert condJetType != null;
                     condType = asmType(condJetType);
                     if (!(isNumberPrimitive(condType) || condType.getSort() == Type.BOOLEAN)) {
-                        subjectType = JetTypeMapper.boxType(subjectType);
+                        subjectType = boxType(subjectType);
                         expressionToMatch.coerce(subjectType, v);
                     }
                 }

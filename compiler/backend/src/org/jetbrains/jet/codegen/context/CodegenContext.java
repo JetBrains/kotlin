@@ -32,6 +32,7 @@ import java.util.Map;
 
 import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.CLASS_FOR_FUNCTION;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.CLOSURE;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.FQN;
 
 /*
@@ -457,7 +458,9 @@ public abstract class CodegenContext {
                 CodegenContext parentContext,
                 LocalLookup localLookup
         ) {
-            super(contextDescriptor, contextKind, parentContext, (MutableClosure) typeMapper.getCalculatedClosure(contextDescriptor),
+            //noinspection SuspiciousMethodCalls
+            super(contextDescriptor, contextKind, parentContext, (MutableClosure) typeMapper.getBindingContext().get(CLOSURE,
+                                                                                                                     contextDescriptor),
                   contextDescriptor,
                   localLookup);
             initOuterExpression(typeMapper, contextDescriptor);
@@ -477,7 +480,9 @@ public abstract class CodegenContext {
                 CodegenContext parentContext,
                 LocalLookup localLookup
         ) {
-            super(contextDescriptor, contextKind, parentContext, (MutableClosure) typeMapper.getCalculatedClosure(contextDescriptor),
+            //noinspection SuspiciousMethodCalls
+            super(contextDescriptor, contextKind, parentContext, (MutableClosure) typeMapper.getBindingContext().get(CLOSURE,
+                                                                                                                     contextDescriptor),
                   contextDescriptor,
                   localLookup);
             initOuterExpression(typeMapper, contextDescriptor);
@@ -504,8 +509,9 @@ public abstract class CodegenContext {
                 CodegenContext parentContext,
                 LocalLookup localLookup
         ) {
+            //noinspection SuspiciousMethodCalls
             super(contextDescriptor, OwnerKind.IMPLEMENTATION, parentContext,
-                  (MutableClosure) typeMapper.getCalculatedClosure(classDescriptor), classDescriptor, localLookup);
+                  (MutableClosure) typeMapper.getBindingContext().get(CLOSURE, classDescriptor), classDescriptor, localLookup);
             this.classDescriptor = classDescriptor;
 
             initOuterExpression(typeMapper, classDescriptor);

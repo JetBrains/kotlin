@@ -20,10 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.ExpressionCodegen;
-import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.codegen.JetTypeMapper;
-import org.jetbrains.jet.codegen.StackValue;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
@@ -52,7 +49,7 @@ public class Increment implements IntrinsicMethod {
     ) {
         boolean nullable = expectedType.getSort() == Type.OBJECT;
         if (nullable) {
-            expectedType = JetTypeMapper.unboxType(expectedType);
+            expectedType = CodegenUtil.unboxType(expectedType);
         }
         if (arguments.size() > 0) {
             JetExpression operand = arguments.get(0);
@@ -61,7 +58,7 @@ public class Increment implements IntrinsicMethod {
             }
             if (operand instanceof JetReferenceExpression) {
                 final int index = codegen.indexOfLocal((JetReferenceExpression) operand);
-                if (index >= 0 && JetTypeMapper.isIntPrimitive(expectedType)) {
+                if (index >= 0 && CodegenUtil.isIntPrimitive(expectedType)) {
                     return StackValue.preIncrement(index, myDelta);
                 }
             }

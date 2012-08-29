@@ -57,7 +57,7 @@ public abstract class StackValue {
             instructionAdapter.aconst(null);
         }
         else {
-            Type boxed = JetTypeMapper.boxType(type);
+            Type boxed = CodegenUtil.boxType(type);
             instructionAdapter.invokestatic(boxed.getInternalName(), "valueOf", "(" + type.getDescriptor() + ")" + boxed.getDescriptor());
         }
     }
@@ -167,7 +167,7 @@ public abstract class StackValue {
 
     private static void box(final Type type, final Type toType, InstructionAdapter v) {
         // TODO handle toType correctly
-        if (type == Type.INT_TYPE || (JetTypeMapper.isIntPrimitive(type) && toType.getInternalName().equals("java/lang/Integer"))) {
+        if (type == Type.INT_TYPE || (CodegenUtil.isIntPrimitive(type) && toType.getInternalName().equals("java/lang/Integer"))) {
             v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
         }
         else if (type == Type.BOOLEAN_TYPE) {
@@ -590,7 +590,7 @@ public abstract class StackValue {
 
         public ArrayElement(Type type, boolean unbox) {
             super(type);
-            this.boxed = unbox ? JetTypeMapper.boxType(type) : type;
+            this.boxed = unbox ? CodegenUtil.boxType(type) : type;
         }
 
         @Override
@@ -677,6 +677,7 @@ public abstract class StackValue {
                 }
             }
             else {
+                //noinspection ConstantConditions
                 ((IntrinsicMethod) setter).generate(codegen, v, null, null, null, null, state);
             }
         }
@@ -1239,6 +1240,7 @@ public abstract class StackValue {
                         return callableMethod.getReceiverClass();
                     }
                     else {
+                        //noinspection ConstantConditions
                         return callableMethod.getThisType().getAsmType();
                     }
                 }

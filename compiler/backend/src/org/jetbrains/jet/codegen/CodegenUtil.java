@@ -17,8 +17,10 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Pair;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
@@ -31,7 +33,9 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -255,5 +259,49 @@ public class CodegenUtil {
             }
             return defaultFlags;
         }
+    }
+
+    public static Type unboxType(final Type type) {
+        JvmPrimitiveType jvmPrimitiveType = JvmPrimitiveType.getByWrapperAsmType(type);
+        if (jvmPrimitiveType != null) {
+            return jvmPrimitiveType.getAsmType();
+        }
+        else {
+            throw new UnsupportedOperationException("Unboxing: " + type);
+        }
+    }
+
+    public static Type boxType(Type asmType) {
+        JvmPrimitiveType jvmPrimitiveType = JvmPrimitiveType.getByAsmType(asmType);
+        if (jvmPrimitiveType != null) {
+            return jvmPrimitiveType.getWrapper().getAsmType();
+        }
+        else {
+            return asmType;
+        }
+    }
+
+    public static boolean isIntPrimitive(Type type) {
+        return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE;
+    }
+
+    public static boolean isPrimitive(Type type) {
+        return type.getSort() != Type.OBJECT && type.getSort() != Type.ARRAY;
+    }
+
+    public static Type correctElementType(Type type) {
+        String internalName = type.getInternalName();
+        assert internalName.charAt(0) == '[';
+        return Type.getType(internalName.substring(1));
+    }
+
+    @Nullable
+    public static String getLocalNameForObject(JetObjectDeclaration object) {
+        PsiElement parent = object.getParent();
+        if (parent instanceof JetClassObject) {
+            return JvmAbi.CLASS_OBJECT_CLASS_NAME;
+        }
+
+        return null;
     }
 }

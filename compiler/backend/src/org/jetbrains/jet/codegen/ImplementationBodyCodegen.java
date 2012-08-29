@@ -27,6 +27,7 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.context.CalculatedClosure;
+import org.jetbrains.jet.codegen.context.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MutableClosure;
 import org.jetbrains.jet.codegen.signature.*;
@@ -51,6 +52,7 @@ import java.util.*;
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
+import static org.jetbrains.jet.codegen.context.CodegenBinding.CLOSURE;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.eclosingClassDescriptor;
 import static org.jetbrains.jet.codegen.context.CodegenBinding.enumEntryNeedSubclass;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
@@ -704,7 +706,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         List<Type> parameterTypes = new ArrayList<Type>();
         assert superType != null;
         ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-        if (typeMapper.hasThis0(superClassDescriptor)) {
+        if (CodegenBinding.hasThis0(bindingContext, superClassDescriptor)) {
             iv.load(1, OBJECT_TYPE);
             parameterTypes.add(typeMapper.mapType(
                     eclosingClassDescriptor(typeMapper.getBindingContext(), descriptor).getDefaultType(), MapTypeMode.VALUE));
@@ -1006,7 +1008,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         assert resolvedCall != null;
         final ConstructorDescriptor superConstructor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
 
-        final CalculatedClosure closureForSuper = typeMapper.getCalculatedClosure(superConstructor.getContainingDeclaration());
+        //noinspection SuspiciousMethodCalls
+        final CalculatedClosure closureForSuper = bindingContext.get(CLOSURE, superConstructor.getContainingDeclaration());
         CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor,
                                                                       closureForSuper);
 
@@ -1113,8 +1116,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) bindingContext
                             .get(BindingContext.REFERENCE_TARGET, superCall.getCalleeExpression().getConstructorReferenceExpression());
                     assert constructorDescriptor != null;
-                    CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, typeMapper
-                            .getCalculatedClosure(constructorDescriptor.getContainingDeclaration()));
+                    //noinspection SuspiciousMethodCalls
+                    CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, bindingContext
+                            .get(CLOSURE, constructorDescriptor.getContainingDeclaration()));
                     codegen.invokeMethodWithArguments(method, superCall, StackValue.none());
                 }
                 else {
@@ -1152,7 +1156,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         iv.load(0, OBJECT_TYPE);
                         Type type = codegen.expressionType(initializer);
                         if (jetType.isNullable()) {
-                            type = JetTypeMapper.boxType(type);
+                            type = boxType(type);
                         }
                         codegen.gen(initializer, type);
                         // @todo write directly to the field. Fix test excloset.jet::test6
@@ -1170,7 +1174,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private static boolean skipDefaultValue(PropertyDescriptor propertyDescriptor, Object value, Type type) {
-        if (JetTypeMapper.isPrimitive(type)) {
+        if (isPrimitive(type)) {
             if (!propertyDescriptor.getType().isNullable() && value instanceof Number) {
                 if (type == Type.INT_TYPE && ((Number) value).intValue() == 0) {
                     return true;

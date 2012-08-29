@@ -24,10 +24,8 @@ import org.jetbrains.jet.codegen.context.CalculatedClosure;
 import org.jetbrains.jet.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.JetClassObject;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -76,37 +74,12 @@ public class JetTypeMapper {
         this.classBuilderMode = classBuilderMode;
     }
 
-    public boolean hasThis0(ClassDescriptor classDescriptor) {
-        //noinspection SuspiciousMethodCalls
-        final CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
-        return closure != null && closure.getCaptureThis() != null;
-    }
-
-    public CalculatedClosure getCalculatedClosure(ClassDescriptor classDescriptor) {
-        //noinspection SuspiciousMethodCalls
-        return bindingContext.get(CLOSURE, classDescriptor);
-    }
-
     public BindingTrace getBindingTrace() {
         return bindingTrace;
     }
 
     public BindingContext getBindingContext() {
         return bindingContext;
-    }
-
-    public static boolean isIntPrimitive(Type type) {
-        return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE;
-    }
-
-    public static boolean isPrimitive(Type type) {
-        return type.getSort() != Type.OBJECT && type.getSort() != Type.ARRAY;
-    }
-
-    public static Type correctElementType(Type type) {
-        String internalName = type.getInternalName();
-        assert internalName.charAt(0) == '[';
-        return Type.getType(internalName.substring(1));
     }
 
     @NotNull
@@ -235,16 +208,6 @@ public class JetTypeMapper {
             return AsmTypeConstants.OBJECT_TYPE;
         }
         return mapType(jetType, signatureVisitor, MapTypeMode.VALUE);
-    }
-
-    @Nullable
-    public static String getLocalNameForObject(JetObjectDeclaration object) {
-        PsiElement parent = object.getParent();
-        if (parent instanceof JetClassObject) {
-            return JvmAbi.CLASS_OBJECT_CLASS_NAME;
-        }
-
-        return null;
     }
 
     @NotNull
@@ -404,26 +367,6 @@ public class JetTypeMapper {
                     throw new IllegalStateException("builtins must not reference java.* classes: " + descriptor);
                 }
             }
-        }
-    }
-
-    public static Type unboxType(final Type type) {
-        JvmPrimitiveType jvmPrimitiveType = JvmPrimitiveType.getByWrapperAsmType(type);
-        if (jvmPrimitiveType != null) {
-            return jvmPrimitiveType.getAsmType();
-        }
-        else {
-            throw new UnsupportedOperationException("Unboxing: " + type);
-        }
-    }
-
-    public static Type boxType(Type asmType) {
-        JvmPrimitiveType jvmPrimitiveType = JvmPrimitiveType.getByAsmType(asmType);
-        if (jvmPrimitiveType != null) {
-            return jvmPrimitiveType.getWrapper().getAsmType();
-        }
-        else {
-            return asmType;
         }
     }
 
@@ -840,8 +783,10 @@ public class JetTypeMapper {
                     final ConstructorDescriptor superConstructor = (ConstructorDescriptor) superDescriptor;
 
                     if (isObjectLiteral(bindingContext, descriptor.getContainingDeclaration())) {
+                        //noinspection SuspiciousMethodCalls
                         CallableMethod superCallable = mapToCallableMethod(superConstructor,
-                                                                           getCalculatedClosure(superConstructor.getContainingDeclaration()));
+                                                                           bindingContext.get(CLOSURE,
+                                                                                              superConstructor.getContainingDeclaration()));
                         final List<JvmMethodParameterSignature> types = superCallable.getSignature().getKotlinParameterTypes();
                         if (types != null) {
                             for (JvmMethodParameterSignature type : types) {
