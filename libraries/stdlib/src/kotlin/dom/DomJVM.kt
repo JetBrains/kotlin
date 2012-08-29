@@ -8,7 +8,6 @@ import java.io.InputStream
 import java.io.StringWriter
 import java.io.Writer
 import java.util.*
-import jet.Iterator
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.OutputKeys

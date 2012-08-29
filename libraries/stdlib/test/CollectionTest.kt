@@ -3,7 +3,6 @@ package test.collections
 import kotlin.test.*
 
 import java.util.*
-import jet.Iterator
 
 import org.junit.Test as test
 

@@ -4,7 +4,6 @@ import kotlin.*
 import kotlin.support.*
 import java.util.*
 import org.w3c.dom.*
-import jet.Iterator
 
 // TODO should not need this - its here for the JS stuff
 import java.lang.IllegalArgumentException

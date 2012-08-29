@@ -2,7 +2,6 @@ package foo
 
 import java.util.*
 import java.lang.*
-import jet.Iterator
 
 public inline fun <T, C: Collection<in T>> Iterator<T>.takeWhileTo(result: C, predicate: (T) -> Boolean) : C {
     for (element in this) if (predicate(element)) result.add(element) else break

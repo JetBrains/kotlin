@@ -1,7 +1,6 @@
 package kotlin.concurrent
 
 import java.util.concurrent.Executor
-import jet.Iterator
 
 class FunctionalQueue<T> (
     val input: FunctionalList<T> = FunctionalList.emptyList<T>(),

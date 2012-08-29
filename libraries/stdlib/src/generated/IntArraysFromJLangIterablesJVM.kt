@@ -10,7 +10,6 @@ package kotlin
 
 
 import java.util.*
-import jet.Iterator
 
 /** Copies all elements into a [[SortedSet]] */
 public inline fun  IntArray.toSortedSet() : SortedSet<Int> = toCollection(TreeSet<Int>())

@@ -9,7 +9,6 @@ package kotlin
 
 
 import java.util.*
-import jet.Iterator
 
 /**
  * Returns *true* if all elements match the given *predicate*
