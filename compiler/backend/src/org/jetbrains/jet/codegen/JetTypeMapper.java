@@ -1023,8 +1023,14 @@ public class JetTypeMapper {
             ClassKind kind = ((ClassDescriptor) containingDeclaration).getKind();
             if (kind == ClassKind.OBJECT) {
                 return ACC_PUBLIC;
-            } else if (kind == ClassKind.ENUM_ENTRY) {
+            }
+            else if (kind == ClassKind.ENUM_ENTRY) {
                 return ACC_PACKAGE_PRIVATE;
+            }
+            else if (kind == ClassKind.ENUM_CLASS) {
+                //TODO: should be ACC_PRIVATE
+                // see http://youtrack.jetbrains.com/issue/KT-2680
+                return ACC_PROTECTED;
             }
         }
         if (containingDeclaration instanceof NamespaceDescriptor) {

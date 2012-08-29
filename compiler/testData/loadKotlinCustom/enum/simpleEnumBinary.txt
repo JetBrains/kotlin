@@ -1,7 +1,7 @@
 namespace test
 
 internal final enum class test.MyEnum : jet.Enum<test.MyEnum> {
-    protected final /*constructor*/ fun <init>(/*0*/ p0: jet.String?, /*1*/ p1: jet.Int): test.MyEnum
+    private final /*constructor*/ fun <init>(/*0*/ p0: jet.String?, /*1*/ p1: jet.Int): test.MyEnum
     public final override /*1*/ fun name(): jet.String
     public final override /*1*/ fun ordinal(): jet.Int
     internal final class object test.MyEnum.<class-object-for-MyEnum> {

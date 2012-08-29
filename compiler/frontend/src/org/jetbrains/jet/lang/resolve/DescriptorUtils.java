@@ -368,9 +368,7 @@ public class DescriptorUtils {
     public static Visibility getDefaultConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
         ClassKind classKind = classDescriptor.getKind();
         if (classKind == ClassKind.ENUM_CLASS) {
-            //TODO: should be PRIVATE
-            // see http://youtrack.jetbrains.com/issue/KT-2680
-            return Visibilities.PROTECTED;
+            return Visibilities.PRIVATE;
         }
         if (classKind.isObject()) {
             return Visibilities.PRIVATE;
