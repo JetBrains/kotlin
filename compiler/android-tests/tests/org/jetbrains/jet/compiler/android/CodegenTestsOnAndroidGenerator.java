@@ -55,6 +55,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
     private final String generatorName = "CodegenTestsOnAndroidGenerator";
 
     private JetCoreEnvironment environmentWithMockJdk = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_ONLY);
+    private JetCoreEnvironment environmentWithMockJdkAndExternalAnnotations = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
     private JetCoreEnvironment environmentWithFullJdk = JetTestUtils.createEnvironmentWithFullJdk(myTestRootDisposable);
     private JetCoreEnvironment environmentWithFullJdkAndJUnit;
     
@@ -135,6 +136,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         Set<String> excludedFiles = SpecialFiles.getExcludedFiles();
         Set<String> filesCompiledWithoutStdLib = SpecialFiles.getFilesCompiledWithoutStdLib();
         Set<String> filesCompiledWithJUnit = SpecialFiles.getFilesCompiledWithJUnit();
+        Set<String> filesCompiledWithExternalAnnotations = SpecialFiles.getFilesCompiledWithExternalAnnotations();
         for (File file : files) {
             if (excludedFiles.contains(file.getName())) {
                 continue;
@@ -155,6 +157,9 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                     }
                     else if (filesCompiledWithJUnit.contains(file.getName())) {
                         factory = getFactoryFromText(file.getAbsolutePath(), text, environmentWithFullJdkAndJUnit);
+                    }
+                    else if (filesCompiledWithExternalAnnotations.contains(file.getName())) {
+                        factory = getFactoryFromText(file.getAbsolutePath(), text, environmentWithMockJdkAndExternalAnnotations);
                     }
                     else {
                         factory = getFactoryFromText(file.getAbsolutePath(), text, environmentWithFullJdk);
