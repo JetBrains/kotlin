@@ -58,8 +58,6 @@ JetFile: Color.jet
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('RED')
         PsiWhiteSpace(' ')
-        TYPE_PARAMETER_LIST
-          <empty list>
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
         INITIALIZER_LIST
@@ -90,8 +88,6 @@ JetFile: Color.jet
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('GREEN')
         PsiWhiteSpace(' ')
-        TYPE_PARAMETER_LIST
-          <empty list>
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
         INITIALIZER_LIST
@@ -122,8 +118,6 @@ JetFile: Color.jet
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('BLUE')
         PsiWhiteSpace(' ')
-        TYPE_PARAMETER_LIST
-          <empty list>
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
         INITIALIZER_LIST

@@ -98,11 +98,6 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             doTest("idea/testData/checker/CyclicHierarchy.jet");
         }
         
-        @TestMetadata("Enums.jet")
-        public void testEnums() throws Exception {
-            doTest("idea/testData/checker/Enums.jet");
-        }
-        
         @TestMetadata("ExtensionFunctions.jet")
         public void testExtensionFunctions() throws Exception {
             doTest("idea/testData/checker/ExtensionFunctions.jet");

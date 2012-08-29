@@ -140,9 +140,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
                     "  CLASS:PsiJetClassStubImpl[name=Test fqn=Test superNames=[]]\n" +
                     "    TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n" +
                     "    ENUM_ENTRY:PsiJetClassStubImpl[enumEntry name=First fqn=Test.First superNames=[]]\n" +
-                    "      TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n" +
-                    "    ENUM_ENTRY:PsiJetClassStubImpl[enumEntry name=Second fqn=Test.Second superNames=[]]\n" +
-                    "      TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n"
+                    "    ENUM_ENTRY:PsiJetClassStubImpl[enumEntry name=Second fqn=Test.Second superNames=[]]\n"
         );
     }
 
