@@ -45,4 +45,10 @@ public interface AnnotationArgumentVisitor<R, D> {
     R visitStringValue(StringValue value, D data);
 
     R visitNullValue(NullValue value, D data);
+    
+    R visitEnumValue(EnumValue value, D data);
+    
+    R visitArrayValue(ArrayValue value, D data);
+
+    R visitAnnotationValue(AnnotationValue value, D data);
 }

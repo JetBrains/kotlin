@@ -396,7 +396,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                         .getResolverBinaryClassData();
         classDescriptorCache.put(fqName, classData);
         classData.classDescriptor.setName(name);
-        classData.classDescriptor.setAnnotations(resolveAnnotations(psiClass, taskList));
 
         List<JetType> supertypes = new ArrayList<JetType>();
 
@@ -432,6 +431,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         if (classObject != null) {
             classData.classDescriptor.getBuilder().setClassObjectDescriptor(classObject);
         }
+
+        classData.classDescriptor.setAnnotations(resolveAnnotations(psiClass, taskList));
 
         trace.record(BindingContext.CLASS, psiClass, classData.classDescriptor);
 
@@ -1580,55 +1581,217 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @Nullable
     private AnnotationDescriptor resolveAnnotation(PsiAnnotation psiAnnotation, @NotNull List<Runnable> taskList) {
         final AnnotationDescriptor annotation = new AnnotationDescriptor();
-
         String qname = psiAnnotation.getQualifiedName();
-        if (qname.startsWith("java.lang.annotation.") || qname.startsWith("jet.runtime.typeinfo.") || qname.equals(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName())) {
-            // TODO
+        if (qname == null) {
             return null;
         }
 
-        final ClassDescriptor clazz = resolveClass(new FqName(psiAnnotation.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
+        // Don't process internal jet annotations and jetbrains NotNull annotations
+        if (qname.startsWith("jet.runtime.typeinfo.") || qname.equals(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName())) {
+            return null;
+        }
+
+        FqName annotationFqName = new FqName(qname);
+        final ClassDescriptor clazz = resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
         if (clazz == null) {
             return null;
         }
+
         taskList.add(new Runnable() {
             @Override
             public void run() {
                 annotation.setAnnotationType(clazz.getDefaultType());
             }
         });
-        ArrayList<CompileTimeConstant<?>> valueArguments = new ArrayList<CompileTimeConstant<?>>();
+
 
         PsiAnnotationParameterList parameterList = psiAnnotation.getParameterList();
         for (PsiNameValuePair psiNameValuePair : parameterList.getAttributes()) {
             PsiAnnotationMemberValue value = psiNameValuePair.getValue();
-            if (!(value instanceof PsiLiteralExpression)) {
-                // todo
-                continue;
+            String name = psiNameValuePair.getName();
+            if (name == null) name = "value";
+            Name identifier = Name.identifier(name);
+
+            CompileTimeConstant compileTimeConst = getCompileTimeConstFromExpression(annotationFqName, identifier, value, taskList);
+            if (compileTimeConst != null) {
+                ValueParameterDescriptor valueParameterDescriptor = getValueParameterDescriptorForAnnotationParameter(identifier, clazz);
+                if (valueParameterDescriptor != null) {
+                    annotation.setValueArgument(valueParameterDescriptor, compileTimeConst);
+                }
             }
-            Object literalValue = ((PsiLiteralExpression) value).getValue();
-            if (literalValue instanceof String)
-                valueArguments.add(new StringValue((String) literalValue));
-            else if (literalValue instanceof Byte)
-                valueArguments.add(new ByteValue((Byte) literalValue));
-            else if (literalValue instanceof Short)
-                valueArguments.add(new ShortValue((Short) literalValue));
-            else if (literalValue instanceof Character)
-                valueArguments.add(new CharValue((Character) literalValue));
-            else if (literalValue instanceof Integer)
-                valueArguments.add(new IntValue((Integer) literalValue));
-            else if (literalValue instanceof Long)
-                valueArguments.add(new LongValue((Long) literalValue));
-            else if (literalValue instanceof Float)
-                valueArguments.add(new FloatValue((Float) literalValue));
-            else if (literalValue instanceof Double)
-                valueArguments.add(new DoubleValue((Double) literalValue));
-            else if (literalValue == null)
-                valueArguments.add(NullValue.NULL);
         }
 
-        annotation.setValueArguments(valueArguments); // TODO
         return annotation;
+    }
+
+    @Nullable
+    public static ValueParameterDescriptor getValueParameterDescriptorForAnnotationParameter(
+            Name argumentName,
+            ClassDescriptor classDescriptor
+    ) {
+        Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
+        assert constructors.size() == 1 : "Annotation class descriptor must have only one constructor";
+        List<ValueParameterDescriptor> valueParameters = constructors.iterator().next().getValueParameters();
+
+        for (ValueParameterDescriptor parameter : valueParameters) {
+            Name parameterName = parameter.getName();
+            if (parameterName.equals(argumentName)) {
+                return parameter;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private CompileTimeConstant<?> getCompileTimeConstFromExpression(
+            FqName annotationFqName, Name parameterName,
+            PsiAnnotationMemberValue value, List<Runnable> taskList
+    ) {
+        if (value instanceof PsiLiteralExpression) {
+            return getCompileTimeConstFromLiteralExpression((PsiLiteralExpression) value);
+        }
+        // Enum
+        else if (value instanceof PsiReferenceExpression) {
+            return getCompileTimeConstFromReferenceExpression((PsiReferenceExpression) value, taskList);
+        }
+        // Array
+        else if (value instanceof PsiArrayInitializerMemberValue) {
+            return getCompileTimeConstFromArrayExpression(annotationFqName, parameterName, (PsiArrayInitializerMemberValue) value, taskList);
+        }
+        // Annotation
+        else if (value instanceof PsiAnnotation) {
+            return getCompileTimeConstFromAnnotation((PsiAnnotation) value, taskList);
+        }
+        return null;
+    }
+
+    @Nullable
+    private CompileTimeConstant<?> getCompileTimeConstFromAnnotation(PsiAnnotation value, List<Runnable> taskList) {
+        AnnotationDescriptor annotationDescriptor = resolveAnnotation(value, taskList);
+        if (annotationDescriptor != null) {
+            return new AnnotationValue(annotationDescriptor);
+        }
+        return null;
+    }
+
+    @Nullable
+    private CompileTimeConstant<?> getCompileTimeConstFromArrayExpression(
+            FqName annotationFqName,
+            Name valueName, PsiArrayInitializerMemberValue value,
+            List<Runnable> taskList
+    ) {
+        PsiAnnotationMemberValue[] initializers = value.getInitializers();
+        List<CompileTimeConstant<?>> values = getCompileTimeConstantForArrayValues(annotationFqName, valueName, taskList, initializers);
+
+        ClassDescriptor classDescriptor = resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
+
+        JetType expectedArrayType = getExpectedArrayType(classDescriptor, valueName);
+        if (expectedArrayType == null) {
+            return null;
+        }
+        return new ArrayValue(values, expectedArrayType);
+    }
+
+    private List<CompileTimeConstant<?>> getCompileTimeConstantForArrayValues(
+            FqName annotationQualifiedName,
+            Name valueName,
+            List<Runnable> taskList,
+            PsiAnnotationMemberValue[] initializers
+    ) {
+        List<CompileTimeConstant<?>> values = new ArrayList<CompileTimeConstant<?>>();
+        for (PsiAnnotationMemberValue initializer : initializers) {
+            CompileTimeConstant<?> compileTimeConstant =
+                    getCompileTimeConstFromExpression(annotationQualifiedName, valueName, initializer, taskList);
+            if (compileTimeConstant == null) {
+                compileTimeConstant = NullValue.NULL;
+            }
+            values.add(compileTimeConstant);
+        }
+        return values;
+    }
+
+    @Nullable
+    private JetType getExpectedArrayType(ClassDescriptor clazz, Name argumentName) {
+        Collection<ConstructorDescriptor> constructors = clazz.getConstructors();
+        assert constructors.size() == 1 : "Annotation class descriptor must have only one constructor";
+        List<ValueParameterDescriptor> valueParameters = constructors.iterator().next().getValueParameters();
+
+        for (ValueParameterDescriptor parameter : valueParameters) {
+            Name parameterName = parameter.getName();
+            if (parameterName.equals(argumentName)) {
+                return parameter.getType();
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private CompileTimeConstant<?> getCompileTimeConstFromReferenceExpression(PsiReferenceExpression value, List<Runnable> taskList) {
+        PsiElement resolveElement = value.resolve();
+        if (resolveElement instanceof PsiEnumConstant) {
+            PsiElement psiElement = resolveElement.getParent();
+            if (psiElement instanceof PsiClass) {
+                PsiClass psiClass = (PsiClass) psiElement;
+                String fqName = psiClass.getQualifiedName();
+                if (fqName == null) {
+                    return null;
+                }
+
+                JetScope scope;
+                ClassDescriptor classDescriptor = resolveClass(new FqName(fqName), DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
+                if (classDescriptor == null) {
+                    return null;
+                }
+                ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
+                if (classObjectDescriptor == null) {
+                    return null;
+                }
+                scope = classObjectDescriptor.getMemberScope(Lists.<TypeProjection>newArrayList());
+
+                Name identifier = Name.identifier(((PsiEnumConstant) resolveElement).getName());
+                Collection<VariableDescriptor> properties = scope.getProperties(identifier);
+                for (VariableDescriptor variableDescriptor : properties) {
+                    if (!variableDescriptor.getReceiverParameter().exists()) {
+                        return new EnumValue((PropertyDescriptor) variableDescriptor);
+                    }
+                }
+                return null;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private CompileTimeConstant<?> getCompileTimeConstFromLiteralExpression(PsiLiteralExpression value) {
+        Object literalValue = value.getValue();
+        if (literalValue instanceof String) {
+            return new StringValue((String) literalValue);
+        }
+        else if (literalValue instanceof Byte) {
+            return new ByteValue((Byte) literalValue);
+        }
+        else if (literalValue instanceof Short) {
+            return new ShortValue((Short) literalValue);
+        }
+        else if (literalValue instanceof Character) {
+            return new CharValue((Character) literalValue);
+        }
+        else if (literalValue instanceof Integer) {
+            return new IntValue((Integer) literalValue);
+        }
+        else if (literalValue instanceof Long) {
+            return new LongValue((Long) literalValue);
+        }
+        else if (literalValue instanceof Float) {
+            return new FloatValue((Float) literalValue);
+        }
+        else if (literalValue instanceof Double) {
+            return new DoubleValue((Double) literalValue);
+        }
+        else if (literalValue == null) {
+            return NullValue.NULL;
+        }
+        return null;
     }
 
     public List<FunctionDescriptor> resolveMethods(@NotNull ResolverScopeData scopeData) {
