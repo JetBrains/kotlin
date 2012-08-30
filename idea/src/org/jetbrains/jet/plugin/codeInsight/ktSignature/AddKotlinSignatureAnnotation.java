@@ -46,6 +46,8 @@ import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import javax.swing.*;
 
+import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUtil.*;
+
 /**
  * @author Evgeny Gerashchenko
  * @since 16 Aug 2012
@@ -87,7 +89,7 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
         PsiMethod method = findMethod(file, editor.getCaretModel().getOffset());
         if (method == null) return false;
-        if (KotlinSignatureInJavaMarkerProvider.findKotlinSignatureAnnotation(method) != null) return false;
+        if (findKotlinSignatureAnnotation(method) != null) return false;
         if (method.getModifierList().hasExplicitModifier(PsiModifier.PRIVATE)) return false;
         return createFix(method, "").isAvailable(project, editor, file);
     }
@@ -106,13 +108,12 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements
                     boolean successful) {
                 busConnection.disconnect();
 
-                if (successful && owner == method
-                    && KotlinSignatureInJavaMarkerProvider.KOTLIN_SIGNATURE_ANNOTATION.equals(annotationFQName)) {
+                if (successful && owner == method && KOTLIN_SIGNATURE_ANNOTATION.equals(annotationFQName)) {
                     ApplicationManager.getApplication().invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            KotlinSignatureInJavaMarkerProvider.refresh(project);
-                            KotlinSignatureInJavaMarkerProvider.invokeEditSignature(method, editor, null);
+                            refreshMarkers(project);
+                            EditSignatureBalloon.invokeEditSignature(method, editor, null);
                         }
                     }, ModalityState.NON_MODAL);
                 }
@@ -123,8 +124,7 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements
 
     @NotNull
     private static AddAnnotationFix createFix(@NotNull PsiMethod method, @NotNull String signature) {
-        return new AddAnnotationFix(KotlinSignatureInJavaMarkerProvider.KOTLIN_SIGNATURE_ANNOTATION, method,
-                                    EditSignatureBalloon.signatureToNameValuePairs(method.getProject(), signature));
+        return new AddAnnotationFix(KOTLIN_SIGNATURE_ANNOTATION, method, signatureToNameValuePairs(method.getProject(), signature));
     }
 
     private static String getDefaultSignature(@NotNull Project project, @NotNull PsiMethod method) {

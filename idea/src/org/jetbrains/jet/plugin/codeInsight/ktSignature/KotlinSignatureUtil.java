@@ -1,0 +1,77 @@
+package org.jetbrains.jet.plugin.codeInsight.ktSignature;
+
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
+import com.intellij.lang.ASTNode;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.compiled.ClsElementImpl;
+import com.intellij.psi.impl.source.SourceTreeToPsiMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+
+/**
+ * @author Evgeny Gerashchenko
+ * @since 30 August 2012
+ */
+class KotlinSignatureUtil {
+    static final String KOTLIN_SIGNATURE_ANNOTATION = JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().getFqName();
+
+    private KotlinSignatureUtil() {
+    }
+
+    static PsiMethod getAnnotationOwner(PsiElement element) {
+        PsiMethod annotationOwner = element.getOriginalElement() instanceof PsiMethod
+                                    ? (PsiMethod) element.getOriginalElement()
+                                    : (PsiMethod) element;
+        if (!annotationOwner.isPhysical()) {
+            ASTNode node = SourceTreeToPsiMap.psiElementToTree(element);
+            if (node != null) {
+                PsiCompiledElement compiledElement = node.getUserData(ClsElementImpl.COMPILED_ELEMENT);
+                if (compiledElement instanceof PsiMethod) {
+                    annotationOwner = (PsiMethod) compiledElement;
+                }
+            }
+        }
+        return annotationOwner;
+    }
+
+    @NotNull
+    static String getKotlinSignature(@NotNull PsiAnnotation kotlinSignatureAnnotation) {
+        PsiNameValuePair pair = kotlinSignatureAnnotation.getParameterList().getAttributes()[0];
+        PsiAnnotationMemberValue value = pair.getValue();
+        if (value == null) {
+            return "null";
+        }
+        else if (value instanceof PsiLiteralExpression) {
+            Object valueObject = ((PsiLiteralExpression) value).getValue();
+            return valueObject == null ? "null" : StringUtil.unescapeStringCharacters(valueObject.toString());
+        }
+        else {
+            return value.getText();
+        }
+    }
+
+    @NotNull
+    static PsiNameValuePair[] signatureToNameValuePairs(@NotNull Project project, @NotNull String signature) {
+        return JavaPsiFacade.getElementFactory(project).createAnnotationFromText(
+                "@" + KOTLIN_SIGNATURE_ANNOTATION + "(value=\"" + StringUtil.escapeStringCharacters(signature) + "\")", null)
+                .getParameterList().getAttributes();
+    }
+
+    @Nullable
+    static PsiAnnotation findKotlinSignatureAnnotation(@NotNull PsiElement element) {
+        if (!(element instanceof PsiMethod)) return null;
+        PsiMethod annotationOwner = getAnnotationOwner(element);
+        PsiAnnotation annotation = JavaDescriptorResolver.findAnnotation(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
+        if (annotation == null) return null;
+        if (annotation.getParameterList().getAttributes().length == 0) return null;
+        return annotation;
+    }
+
+    static void refreshMarkers(@NotNull Project project) {
+        DaemonCodeAnalyzer.getInstance(project).restart();
+    }
+}

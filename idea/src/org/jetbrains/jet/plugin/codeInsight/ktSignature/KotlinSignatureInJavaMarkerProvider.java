@@ -17,35 +17,27 @@
 package org.jetbrains.jet.plugin.codeInsight.ktSignature;
 
 import com.intellij.codeHighlighting.Pass;
-import com.intellij.codeInsight.ExternalAnnotationsManager;
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
-import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.lang.ASTNode;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
-import com.intellij.psi.impl.compiled.ClsElementImpl;
-import com.intellij.psi.impl.source.SourceTreeToPsiMap;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.plugin.JetIcons;
 
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;
+
+import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUtil.*;
 
 /**
  * @author Evgeny Gerashchenko
@@ -54,7 +46,7 @@ import java.util.List;
 public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     private static final String SHOW_MARKERS_PROPERTY = "kotlin.signature.markers.enabled";
 
-    private static final Function<PsiElement,String> TOOLTIP_PROVIDER = new Function<PsiElement, String>() {
+    private static final Function<PsiElement, String> TOOLTIP_PROVIDER = new Function<PsiElement, String>() {
         @Override
         public String fun(PsiElement element) {
             PsiAnnotation annotation = findKotlinSignatureAnnotation(element);
@@ -73,55 +65,10 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             Editor editor = PlatformDataKeys.EDITOR.getData(DataManager.getInstance().getDataContext(e.getComponent()));
             assert editor != null;
 
-            invokeEditSignature(element, editor, e.getPoint());
+            EditSignatureBalloon.invokeEditSignature(element, editor, e.getPoint());
         }
     };
 
-
-    static final String KOTLIN_SIGNATURE_ANNOTATION = JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().getFqName();
-
-    @Nullable
-    static PsiAnnotation findKotlinSignatureAnnotation(@NotNull PsiElement element) {
-        if (!(element instanceof PsiMethod)) return null;
-        PsiMethod annotationOwner = getAnnotationOwner(element);
-        PsiAnnotation annotation =
-                JavaDescriptorResolver.findAnnotation(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
-        if (annotation == null) return null;
-        if (annotation.getParameterList().getAttributes().length == 0) return null;
-        return annotation;
-    }
-
-    static PsiMethod getAnnotationOwner(PsiElement element) {
-        PsiMethod annotationOwner = element.getOriginalElement() instanceof PsiMethod
-                                    ? (PsiMethod) element.getOriginalElement()
-                                    : (PsiMethod) element;
-        if (!annotationOwner.isPhysical()) {
-            ASTNode node = SourceTreeToPsiMap.psiElementToTree(element);
-            if (node != null) {
-                PsiCompiledElement compiledElement = node.getUserData(ClsElementImpl.COMPILED_ELEMENT);
-                if (compiledElement instanceof PsiMethod) {
-                    annotationOwner = (PsiMethod) compiledElement;
-                }
-            }
-        }
-        return annotationOwner;
-    }
-
-    @NotNull
-    private static String getKotlinSignature(@NotNull PsiAnnotation kotlinSignatureAnnotation) {
-        PsiNameValuePair pair = kotlinSignatureAnnotation.getParameterList().getAttributes()[0];
-        PsiAnnotationMemberValue value = pair.getValue();
-        if (value == null) {
-            return "null";
-        }
-        else if (value instanceof PsiLiteralExpression) {
-            Object valueObject = ((PsiLiteralExpression) value).getValue();
-            return valueObject == null ? "null" : StringUtil.unescapeStringCharacters(valueObject.toString());
-        }
-        else {
-            return value.getText();
-        }
-    }
 
     @Override
     @Nullable
@@ -143,40 +90,6 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
 
     public static void setMarkersEnabled(@NotNull Project project, boolean value) {
         PropertiesComponent.getInstance(project).setValue(SHOW_MARKERS_PROPERTY, Boolean.toString(value));
-        refresh(project);
-    }
-
-    static void refresh(@NotNull Project project) {
-        DaemonCodeAnalyzer.getInstance(project).restart();
-    }
-
-    static void invokeEditSignature(@NotNull PsiMethod element, @NotNull Editor editor, @Nullable Point point) {
-        PsiAnnotation annotation = findKotlinSignatureAnnotation(element);
-        assert annotation != null;
-        if (annotation.getContainingFile() == element.getContainingFile()) {
-            // not external, go to
-            for (PsiNameValuePair pair : annotation.getParameterList().getAttributes()) {
-                if (pair.getName() == null || "value".equals(pair.getName())) {
-                    PsiAnnotationMemberValue value = pair.getValue();
-                    if (value != null) {
-                        PsiElement firstChild = value.getFirstChild();
-                        VirtualFile virtualFile = value.getContainingFile().getVirtualFile();
-                        if (firstChild != null && firstChild.getNode().getElementType() == JavaTokenType.STRING_LITERAL
-                            && virtualFile != null) {
-                            new OpenFileDescriptor(value.getProject(), virtualFile, value.getTextOffset() + 1).navigate(true);
-                        }
-                        else {
-                            NavigationUtil.activateFileWithPsiElement(value);
-                        }
-                    }
-                }
-            }
-        }
-        else {
-            PsiMethod annotationOwner = getAnnotationOwner(element);
-            boolean editable = ExternalAnnotationsManager.getInstance(element.getProject())
-                    .isExternalAnnotationWritable(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
-            new EditSignatureBalloon(annotationOwner, getKotlinSignature(annotation), editable).show(point, editor);
-        }
+        refreshMarkers(project);
     }
 }
