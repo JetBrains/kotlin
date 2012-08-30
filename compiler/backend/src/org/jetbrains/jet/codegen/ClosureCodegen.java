@@ -29,8 +29,8 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.asm4.signature.SignatureWriter;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
-import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
+import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
+import static org.jetbrains.jet.codegen.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.classNameForAnonymousClass;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;

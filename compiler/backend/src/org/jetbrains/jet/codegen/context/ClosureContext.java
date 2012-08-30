@@ -17,9 +17,8 @@
 package org.jetbrains.jet.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.OwnerKind;
-import org.jetbrains.jet.codegen.binding.MutableClosure;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -41,7 +40,7 @@ class ClosureContext extends ReceiverContext {
     ) {
         //noinspection SuspiciousMethodCalls
         super(contextDescriptor, OwnerKind.IMPLEMENTATION, parentContext,
-              (MutableClosure) typeMapper.getBindingContext().get(CLOSURE, classDescriptor), classDescriptor, localLookup);
+              typeMapper.getBindingContext().get(CLOSURE, classDescriptor), classDescriptor, localLookup);
         this.classDescriptor = classDescriptor;
 
         initOuterExpression(typeMapper, classDescriptor);

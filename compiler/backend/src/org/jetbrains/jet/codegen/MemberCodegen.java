@@ -24,8 +24,6 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner;
 
-import javax.inject.Inject;
-
 /**
  * @author Stepan Koltsov
  */

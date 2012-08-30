@@ -29,7 +29,8 @@ import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
-import org.jetbrains.jet.codegen.context.*;
+import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.context.ConstructorContext;
 import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
@@ -53,13 +54,10 @@ import org.jetbrains.jet.utils.BitSetUtils;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
-import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLOSURE;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.eclosingClassDescriptor;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.classDescriptorToDeclaration;
 
 /**
  * @author max

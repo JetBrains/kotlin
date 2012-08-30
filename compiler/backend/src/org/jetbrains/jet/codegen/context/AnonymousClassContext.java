@@ -16,9 +16,8 @@
 
 package org.jetbrains.jet.codegen.context;
 
-import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.OwnerKind;
-import org.jetbrains.jet.codegen.binding.MutableClosure;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLOSURE;
@@ -35,7 +34,7 @@ class AnonymousClassContext extends CodegenContext {
             LocalLookup localLookup
     ) {
         //noinspection SuspiciousMethodCalls
-        super(contextDescriptor, contextKind, parentContext, (MutableClosure) typeMapper.getBindingContext().get(CLOSURE,
+        super(contextDescriptor, contextKind, parentContext, typeMapper.getBindingContext().get(CLOSURE,
                                                                                                                  contextDescriptor),
               contextDescriptor,
               localLookup);

@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
+import static org.jetbrains.jet.codegen.AsmTypeConstants.OBJECT_TYPE;
 
 /**
  * @author yole

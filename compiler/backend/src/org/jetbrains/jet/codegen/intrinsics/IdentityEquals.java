@@ -20,7 +20,8 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.ExpressionCodegen;
+import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
@@ -29,7 +30,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
-import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
+import static org.jetbrains.jet.codegen.AsmTypeConstants.OBJECT_TYPE;
 
 /**
  * @author alex.tkachman
