@@ -185,7 +185,17 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         public void testDelegationNotTotrait() throws Exception {
             doTest("compiler/testData/diagnostics/tests/DelegationNotTotrait.kt");
         }
-        
+
+        @TestMetadata("Delegation_MultipleDelegates.kt")
+        public void testMultipleDelegation() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/Delegation_MultipleDelegates.kt");
+        }
+
+        @TestMetadata("Delegation_Hierarchy.kt")
+        public void testHierarchyDelegation() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/Delegation_Hierarchy.kt");
+        }
+
         @TestMetadata("DelegationToJavaIface.kt")
         public void testDelegationToJavaIface() throws Exception {
             doTest("compiler/testData/diagnostics/tests/DelegationToJavaIface.kt");
