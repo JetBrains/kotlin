@@ -27,6 +27,7 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
@@ -46,11 +47,10 @@ import static org.jetbrains.asm4.Opcodes.*;
 /**
  * @author max
  */
-public class NamespaceCodegen {
+public class NamespaceCodegen extends GenerationStateAware {
     @NotNull
     private final ClassBuilderOnDemand v;
     @NotNull private final FqName name;
-    private final GenerationState state;
     private final Collection<JetFile> files;
 
     public NamespaceCodegen(
@@ -59,11 +59,11 @@ public class NamespaceCodegen {
             GenerationState state,
             Collection<JetFile> namespaceFiles
     ) {
+        super(state);
         checkAllFilesHaveSameNamespace(namespaceFiles);
 
         this.v = v;
         name = fqName;
-        this.state = state;
         this.files = namespaceFiles;
 
         final PsiFile sourceFile = namespaceFiles.iterator().next().getContainingFile();
