@@ -2462,16 +2462,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return StackValue.onStack(exprType);
     }
 
-    private static boolean isPrimitiveNumberClassDescriptor(DeclarationDescriptor descriptor) {
-        if (!(descriptor instanceof ClassDescriptor)) {
-            return false;
-        }
-        String className = descriptor.getName().getName();
-        return className.equals("Int") || className.equals("Long") || className.equals("Short") ||
-               className.equals("Byte") || className.equals("Char") || className.equals("Float") ||
-               className.equals("Double");
-    }
-
     private static boolean isClass(DeclarationDescriptor descriptor, String name) {
         if (!(descriptor instanceof ClassDescriptor)) {
             return false;

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Stack;
@@ -43,6 +44,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.*;
 
@@ -69,6 +71,16 @@ public class CodegenUtil {
             .put(Visibilities.INTERNAL, ACC_PUBLIC)
             .put(Visibilities.LOCAL, NO_FLAG_LOCAL)
             .build();
+
+    private static final Set<ClassDescriptor> PRIMITIVE_NUMBER_CLASSES = Sets.newHashSet(
+            JetStandardLibrary.getInstance().getByte(),
+            JetStandardLibrary.getInstance().getShort(),
+            JetStandardLibrary.getInstance().getInt(),
+            JetStandardLibrary.getInstance().getLong(),
+            JetStandardLibrary.getInstance().getFloat(),
+            JetStandardLibrary.getInstance().getDouble(),
+            JetStandardLibrary.getInstance().getChar()
+    );
 
     private CodegenUtil() {
     }
@@ -324,6 +336,13 @@ public class CodegenUtil {
 
     public static boolean isPrimitive(Type type) {
         return type.getSort() != Type.OBJECT && type.getSort() != Type.ARRAY;
+    }
+
+    public static boolean isPrimitiveNumberClassDescriptor(DeclarationDescriptor descriptor) {
+        if (!(descriptor instanceof ClassDescriptor)) {
+            return false;
+        }
+        return PRIMITIVE_NUMBER_CLASSES.contains(descriptor);
     }
 
     public static Type correctElementType(Type type) {
