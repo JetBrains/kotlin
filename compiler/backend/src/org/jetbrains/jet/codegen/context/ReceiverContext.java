@@ -26,8 +26,6 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
  * @author alex.tkachman
 */
 abstract class ReceiverContext extends CodegenContext {
-    final CallableDescriptor receiverDescriptor;
-
     public ReceiverContext(
             CallableDescriptor contextDescriptor,
             OwnerKind contextKind,
@@ -37,11 +35,11 @@ abstract class ReceiverContext extends CodegenContext {
             @Nullable LocalLookup localLookup
     ) {
         super(contextDescriptor, contextKind, parentContext, closure, thisDescriptor, localLookup);
-        receiverDescriptor = contextDescriptor.getReceiverParameter().exists() ? contextDescriptor : null;
     }
 
     @Override
     public CallableDescriptor getReceiverDescriptor() {
-        return receiverDescriptor;
+        final CallableDescriptor callableDescriptor = (CallableDescriptor) getContextDescriptor();
+        return callableDescriptor.getReceiverParameter().exists() ? callableDescriptor : null;
     }
 }
