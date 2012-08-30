@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.codeInsight;
 
+import com.intellij.ProjectTopics;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupEx;
 import com.intellij.codeInsight.lookup.LookupManager;
@@ -27,6 +28,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
+import com.intellij.openapi.roots.impl.ModuleRootEventImpl;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.util.ArrayUtil;
@@ -55,6 +57,16 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
 
     @Override
     protected void tearDown() throws Exception {
+        /*
+         * TODO: remove this when fixed in IDEA
+         * super.tearDown() calls cleanupForNextTest() on PsiManagerImpl, which invalidates a cache of view providers
+         * this affects ExternalAnnotationsManagerImpl making XmlFile instances cached in it invalid
+         * this results in external annotations being not found, unless we invalidate the cache in ExternalAnnotationsManagerImpl.
+         * Currently, sending this funny event is the only way (apart from reflection) to invalidate that cache.
+         * The problem will be fixed in IDEA soon (hopefully).
+         */
+        getProject().getMessageBus().syncPublisher(ProjectTopics.PROJECT_ROOTS).rootsChanged(new ModuleRootEventImpl(getProject(), true));
+
         ((TemplateManagerImpl) TemplateManager.getInstance(getProject())).setTemplateTesting(false);
         super.tearDown();
     }
