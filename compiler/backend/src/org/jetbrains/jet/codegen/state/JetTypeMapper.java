@@ -357,9 +357,7 @@ public class JetTypeMapper extends BindingTraceAware {
     public CallableMethod mapToCallableMethod(@NotNull FunctionDescriptor functionDescriptor, boolean superCall, OwnerKind kind) {
         final DeclarationDescriptor functionParent = functionDescriptor.getOriginal().getContainingDeclaration();
 
-        while (functionDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            functionDescriptor = functionDescriptor.getOverriddenDescriptors().iterator().next();
-        }
+        functionDescriptor = unwrapFakeOverride(functionDescriptor);
 
         JvmMethodSignature descriptor = mapSignature(functionDescriptor.getOriginal(), true, kind);
         JvmClassName owner;

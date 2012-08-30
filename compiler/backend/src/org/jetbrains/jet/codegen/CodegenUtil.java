@@ -370,4 +370,12 @@ public class CodegenUtil {
         }
         return JetStandardClasses.getAnyType();
     }
+
+    public static <T extends CallableMemberDescriptor> T unwrapFakeOverride(T member) {
+        while (member.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            //noinspection unchecked
+            member = (T) member.getOverriddenDescriptors().iterator().next();
+        }
+        return member;
+    }
 }

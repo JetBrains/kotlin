@@ -1317,9 +1317,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         IntrinsicMethod intrinsic = null;
         if (descriptor instanceof CallableMemberDescriptor) {
             CallableMemberDescriptor memberDescriptor = (CallableMemberDescriptor) descriptor;
-            while (memberDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                memberDescriptor = memberDescriptor.getOverriddenDescriptors().iterator().next();
-            }
+            memberDescriptor = unwrapFakeOverride(memberDescriptor);
+
             intrinsic = state.getIntrinsics().getIntrinsic(memberDescriptor);
         }
         if (intrinsic != null) {
@@ -1696,6 +1695,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                             c = c.getParentContext();
                             assert c != null;
                         }
+                        fd = unwrapFakeOverride(fd);
                         fd = (FunctionDescriptor) c.getAccessor(fd);
                         superCall = false;
                         receiver = StackValue.thisOrOuter(this, enclosed);
