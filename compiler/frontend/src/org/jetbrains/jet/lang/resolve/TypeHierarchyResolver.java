@@ -245,23 +245,7 @@ public class TypeHierarchyResolver {
                     MutableClassDescriptorLite classObjectDescriptor = ownerClassDescriptor.getClassObjectDescriptor();
 
                     assert classObjectDescriptor != null : enumEntry.getParent().getText();
-                    if (enumEntry.getPrimaryConstructorParameterList() == null) {
-                        // Simple enum entry
-
-                        createClassDescriptorForEnumEntry(enumEntry, classObjectDescriptor.getBuilder());
-                    }
-                    else {
-                        // Advanced enum entry like "Cons<out T>(val head : T, val tail : List<T>) : List<T>(tail.size + 1)"
-                        MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
-                                classObjectDescriptor, outerScope, ClassKind.ENUM_ENTRY, JetPsiUtil.safeName(enumEntry.getName()));
-                        context.getClasses().put(enumEntry, mutableClassDescriptor);
-
-                        JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
-
-                        prepareForDeferredCall(classScope, mutableClassDescriptor, enumEntry);
-
-                        classObjectDescriptor.getBuilder().addObjectDescriptor(mutableClassDescriptor);
-                    }
+                    createClassDescriptorForEnumEntry(enumEntry, classObjectDescriptor.getBuilder());
                 }
 
                 @Override

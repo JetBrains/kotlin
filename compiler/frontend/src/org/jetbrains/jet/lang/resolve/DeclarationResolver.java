@@ -203,15 +203,13 @@ public class DeclarationResolver {
 
                 @Override
                 public void visitEnumEntry(JetEnumEntry enumEntry) {
-                    if (enumEntry.getPrimaryConstructorParameterList() == null) {
-                        // FIX: Bad cast
-                        MutableClassDescriptorLite classObjectDescriptor =
-                                ((MutableClassDescriptorLite)namespaceLike.getOwnerForChildren()).getClassObjectDescriptor();
-                        assert classObjectDescriptor != null;
-                        PropertyDescriptor propertyDescriptor = descriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(
-                                classObjectDescriptor, enumEntry, context.getClasses().get(enumEntry), trace);
-                        classObjectDescriptor.getBuilder().addPropertyDescriptor(propertyDescriptor);
-                    }
+                    // FIX: Bad cast
+                    MutableClassDescriptorLite classObjectDescriptor =
+                            ((MutableClassDescriptorLite)namespaceLike.getOwnerForChildren()).getClassObjectDescriptor();
+                    assert classObjectDescriptor != null;
+                    PropertyDescriptor propertyDescriptor = descriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(
+                            classObjectDescriptor, enumEntry, context.getClasses().get(enumEntry), trace);
+                    classObjectDescriptor.getBuilder().addPropertyDescriptor(propertyDescriptor);
                 }
             });
         }

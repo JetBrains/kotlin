@@ -1047,7 +1047,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (declaration instanceof JetClassObject) {
             // done earlier in order to have accessors
         }
-        else if (declaration instanceof JetEnumEntry && !((JetEnumEntry) declaration).hasPrimaryConstructor()) {
+        else if (declaration instanceof JetEnumEntry) {
             String name = declaration.getName();
             final String desc = "L" + typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName() + ";";
             v.newField(declaration, ACC_PUBLIC | ACC_ENUM | ACC_STATIC | ACC_FINAL, name, desc, null, null);

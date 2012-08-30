@@ -1028,7 +1028,7 @@ public class DescriptorResolver {
             @NotNull JetClass classElement,
             BindingTrace trace
     ) {
-        if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY && !classElement.hasPrimaryConstructor()) return null;
+        if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY) return null;
         return createConstructorDescriptor(
                 scope,
                 classDescriptor,

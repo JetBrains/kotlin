@@ -70,7 +70,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         if (classOrObjectDeclaration == null) return null;
 
         // TODO: when enum entries with constructors are dropped, replace with declaresObjectOrEnumConstant()
-        if (object != mayDeclareObject(classOrObjectDeclaration)) return null;
+        if (object != declaresObjectOrEnumConstant(classOrObjectDeclaration)) return null;
 
         ClassDescriptor classDescriptor = new LazyClassDescriptor(resolveSession, thisDescriptor, name,
                                                       JetClassInfoUtil.createClassLikeInfo(classOrObjectDeclaration));
@@ -83,15 +83,8 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         return classDescriptor;
     }
 
-    private static boolean mayDeclareObject(JetClassOrObject declaration) {
+    private static boolean declaresObjectOrEnumConstant(JetClassOrObject declaration) {
         return declaration instanceof JetObjectDeclaration || declaration instanceof JetEnumEntry;
-    }
-
-    protected static boolean declaresObjectOrEnumConstant(JetClassOrObject declaration) {
-        if (declaration instanceof JetObjectDeclaration) {
-            return true;
-        }
-        return declaration instanceof JetEnumEntry && !declaration.hasPrimaryConstructor();
     }
 
     @Override
