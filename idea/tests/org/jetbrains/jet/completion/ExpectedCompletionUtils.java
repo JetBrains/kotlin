@@ -155,6 +155,7 @@ public class ExpectedCompletionUtils {
 
     protected static void assertContainsRenderedItems(CompletionProposal[] expected, LookupElement[] items, boolean checkOrder) {
         List<CompletionProposal> itemsInformation = getItemsInformation(items);
+        String allItemsString = listToString(itemsInformation);
 
         int indexOfPrevious = Integer.MIN_VALUE;
 
@@ -167,7 +168,7 @@ public class ExpectedCompletionUtils {
                 if (proposal.isSuitable(expectedProposal)) {
                     isFound = true;
 
-                    Assert.assertTrue("Invalid order of existent elements in " + listToString(itemsInformation),
+                    Assert.assertTrue("Invalid order of existent elements in " + allItemsString,
                                       !checkOrder || index > indexOfPrevious);
                     indexOfPrevious = index;
 
@@ -175,16 +176,17 @@ public class ExpectedCompletionUtils {
                 }
             }
 
-            Assert.assertTrue("Expected '" + expectedProposal + "' not found in " + listToString(itemsInformation), isFound);
+            Assert.assertTrue("Expected '" + expectedProposal + "' not found in " + allItemsString, isFound);
         }
     }
 
     protected static void assertNotContainsRenderedItems(CompletionProposal[] unexpected,LookupElement[] items) {
         List<CompletionProposal> itemsInformation = getItemsInformation(items);
+        String allItemsString = listToString(itemsInformation);
 
         for (CompletionProposal unexpectedProposal : unexpected) {
             for (CompletionProposal proposal : itemsInformation) {
-                Assert.assertFalse("Unexpected '" + unexpectedProposal + "' presented in " + listToString(itemsInformation),
+                Assert.assertFalse("Unexpected '" + unexpectedProposal + "' presented in " + allItemsString,
                                    proposal.isSuitable(unexpectedProposal));
             }
         }
@@ -197,7 +199,8 @@ public class ExpectedCompletionUtils {
         if (items != null) {
             for (LookupElement item : items) {
                 item.renderElement(presentation);
-                result.add(new ExpectedCompletionUtils.CompletionProposal(item.getLookupString(), presentation.getItemText(), presentation.getTailText()));
+                result.add(new ExpectedCompletionUtils.CompletionProposal(item.getLookupString(), presentation.getItemText(),
+                                                                          presentation.getTailText()));
             }
         }
 
