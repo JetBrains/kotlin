@@ -31,6 +31,7 @@ import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -56,19 +57,18 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDec
  * @author yole
  * @author alex.tkachman
  */
-public class FunctionCodegen {
+public class FunctionCodegen extends GenerationStateAware {
     private final CodegenContext owner;
     private final ClassBuilder v;
-    private final GenerationState state;
 
     public FunctionCodegen(CodegenContext owner, ClassBuilder v, GenerationState state) {
+        super(state);
         this.owner = owner;
         this.v = v;
-        this.state = state;
     }
 
     public void gen(JetNamedFunction f) {
-        final SimpleFunctionDescriptor functionDescriptor = state.getBindingContext().get(BindingContext.FUNCTION, f);
+        final SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, f);
         assert functionDescriptor != null;
         JvmMethodSignature method =
                 state.getTypeMapper().mapToCallableMethod(functionDescriptor, false, owner.getContextKind())
@@ -306,7 +306,7 @@ public class FunctionCodegen {
                     mv.visitLocalVariable("this", type.getDescriptor(), null, methodBegin, methodEnd, k++);
                 }
                 else if (fun instanceof JetFunctionLiteralExpression ||
-                         isLocalFun(state.getBindingContext(), functionDescriptor)) {
+                         isLocalFun(bindingContext, functionDescriptor)) {
                     Type type = state.getTypeMapper().mapType(
                             context.getThisDescriptor().getDefaultType(), MapTypeMode.VALUE);
                     mv.visitLocalVariable("this", type.getDescriptor(), null, methodBegin, methodEnd, k++);
@@ -730,7 +730,7 @@ public class FunctionCodegen {
                 iv.invokevirtual(internalName, method.getName(), method.getDescriptor());
             }
             iv.areturn(method.getReturnType());
-            endVisit(mv, "delegate method", descriptorToDeclaration(state.getBindingContext(), functionDescriptor));
+            endVisit(mv, "delegate method", descriptorToDeclaration(bindingContext, functionDescriptor));
         }
     }
 }
