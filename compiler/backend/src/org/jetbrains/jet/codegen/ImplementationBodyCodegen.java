@@ -1104,8 +1104,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.aconst(enumConstant.getName());
             iv.iconst(ordinal);
 
-            if (delegationSpecifiers.size() == 1 && !
-                    enumEntryNeedSubclass(state.getBindingContext(), enumConstant)) {
+            if (delegationSpecifiers.size() == 1 && !enumEntryNeedSubclass(state.getBindingContext(), enumConstant)) {
                 final JetDelegationSpecifier specifier = delegationSpecifiers.get(0);
                 if (specifier instanceof JetDelegatorToSuperCall) {
                     final JetDelegatorToSuperCall superCall = (JetDelegatorToSuperCall) specifier;
