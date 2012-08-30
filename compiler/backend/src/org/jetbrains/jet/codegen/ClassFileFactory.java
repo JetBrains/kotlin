@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -29,24 +30,21 @@ import java.util.*;
  * @author max
  * @author alex.tkachman
  */
-public final class ClassFileFactory {
-    private ClassBuilderFactory builderFactory;
-    private GenerationState state;
-
+public final class ClassFileFactory extends GenerationStateAware {
+    @NotNull private ClassBuilderFactory builderFactory;
 
     private final Map<FqName, NamespaceCodegen> ns2codegen = new HashMap<FqName, NamespaceCodegen>();
     private final Map<String, ClassBuilder> generators = new LinkedHashMap<String, ClassBuilder>();
     private boolean isDone = false;
 
-
-    @Inject
-    public void setBuilderFactory(ClassBuilderFactory builderFactory) {
-        this.builderFactory = builderFactory;
+    public ClassFileFactory(@NotNull GenerationState state) {
+        super(state);
     }
 
+
     @Inject
-    public void setState(GenerationState state) {
-        this.state = state;
+    public void setBuilderFactory(@NotNull ClassBuilderFactory builderFactory) {
+        this.builderFactory = builderFactory;
     }
 
     ClassBuilder newVisitor(String filePath) {

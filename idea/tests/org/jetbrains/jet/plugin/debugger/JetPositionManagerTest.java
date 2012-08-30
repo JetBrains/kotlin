@@ -18,10 +18,10 @@ package org.jetbrains.jet.plugin.debugger;
 
 import com.intellij.debugger.engine.DebugProcess;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.codegen.ClassBuilderMode;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.context.CodegenBinding;
-import org.jetbrains.jet.di.InjectorForJetTypeMapper;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
@@ -47,10 +47,9 @@ public class JetPositionManagerTest extends PositionManagerTestCase {
         assertNotNull(positionManager);
 
         final DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(state.getBindingContext());
-        final InjectorForJetTypeMapper injector = new InjectorForJetTypeMapper(bindingTrace, files);
-        JetTypeMapper typeMapper = injector.getJetTypeMapper();
+        JetTypeMapper typeMapper = new JetTypeMapper(bindingTrace, true, ClassBuilderMode.FULL);
         //noinspection unchecked
-        CodegenBinding.initTrace(bindingTrace, injector.getListOfJetFile());
+        CodegenBinding.initTrace(bindingTrace, files);
         for (JetFile file : files) {
             positionManager.addTypeMapper(file, typeMapper);
         }

@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner;
@@ -28,16 +29,11 @@ import javax.inject.Inject;
 /**
  * @author Stepan Koltsov
  */
-public class MemberCodegen {
+public class MemberCodegen extends GenerationStateAware {
 
-    @NotNull
-    private GenerationState state;
-
-    @Inject
-    public void setState(@NotNull GenerationState state) {
-        this.state = state;
+    public MemberCodegen(@NotNull GenerationState state) {
+        super(state);
     }
-
 
     public void generateFunctionOrProperty(
             @NotNull JetTypeParameterListOwner functionOrProperty,

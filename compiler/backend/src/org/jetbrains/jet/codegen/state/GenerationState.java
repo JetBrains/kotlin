@@ -83,24 +83,25 @@ public class GenerationState {
             ClassBuilderFactory builderFactory, Progress progress,
             @NotNull AnalyzeExhaust exhaust, @NotNull List<JetFile> files, @NotNull BuiltinToJavaTypesMapping builtinToJavaTypesMapping
     ) {
+        this.project = project;
         this.progress = progress;
         this.files = files;
         this.classBuilderMode = builderFactory.getClassBuilderMode();
 
-        final DelegatingBindingTrace trace = new DelegatingBindingTrace(exhaust.getBindingContext());
-        this.bindingContext = trace.getBindingContext();
+        bindingTrace = new DelegatingBindingTrace(exhaust.getBindingContext());
+        bindingContext = bindingTrace.getBindingContext();
+
+        this.typeMapper = new JetTypeMapper(bindingTrace, builtinToJavaTypesMapping == BuiltinToJavaTypesMapping.ENABLED, classBuilderMode);
 
         InjectorForJvmCodegen injector = new InjectorForJvmCodegen(
-                trace,
-                this.files, builtinToJavaTypesMapping, builderFactory.getClassBuilderMode(), this, builderFactory, project);
-        this.classFileFactory = injector.getClassFileFactory();
+                typeMapper, this.files,
+                builtinToJavaTypesMapping, this, builderFactory, project);
+
         this.scriptCodegen = injector.getScriptCodegen();
-        this.bindingTrace = injector.getBindingTrace();
-        this.typeMapper = injector.getJetTypeMapper();
         this.memberCodegen = injector.getMemberCodegen();
         this.classCodegen = injector.getClassCodegen();
         this.intrinsics = injector.getIntrinsics();
-        this.project = injector.getProject();
+        this.classFileFactory = injector.getClassFileFactory();
     }
 
     @NotNull

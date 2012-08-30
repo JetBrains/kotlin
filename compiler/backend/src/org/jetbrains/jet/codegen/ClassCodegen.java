@@ -16,8 +16,10 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -32,21 +34,10 @@ import static org.jetbrains.jet.codegen.context.CodegenBinding.enumEntryNeedSubc
  * @author max
  * @author alex.tkachman
  */
-public class ClassCodegen {
-    private GenerationState state;
-    @SuppressWarnings({"FieldCanBeLocal", "UnusedDeclaration"}) private JetTypeMapper jetTypeMapper;
-
-    @Inject
-    public void setState(GenerationState state) {
-        this.state = state;
+public class ClassCodegen extends GenerationStateAware {
+    public ClassCodegen(@NotNull GenerationState state) {
+        super(state);
     }
-
-    @SuppressWarnings("UnusedParameters")
-    @Inject
-    public void setJetTypeMapper(JetTypeMapper jetTypeMapper) {
-        this.jetTypeMapper = jetTypeMapper;
-    }
-
 
     public void generate(CodegenContext context, JetClassOrObject aClass) {
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);

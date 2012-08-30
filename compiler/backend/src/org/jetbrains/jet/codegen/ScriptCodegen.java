@@ -27,6 +27,7 @@ import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.ScriptContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.GenerationStrategy;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
@@ -47,26 +48,18 @@ import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
 /**
  * @author Stepan Koltsov
  */
-public class ScriptCodegen {
+public class ScriptCodegen extends GenerationStateAware {
 
-    @NotNull
-    private GenerationState state;
     @NotNull
     private ClassFileFactory classFileFactory;
     @NotNull
-    private JetTypeMapper jetTypeMapper;
-    @NotNull
     private MemberCodegen memberCodegen;
-    @NotNull
-    private BindingContext bindingContext;
 
     private List<ScriptDescriptor> earlierScripts;
     private Method scriptConstructorMethod;
 
-
-    @Inject
-    public void setState(@NotNull GenerationState state) {
-        this.state = state;
+    public ScriptCodegen(@NotNull GenerationState state) {
+        super(state);
     }
 
     @Inject
@@ -75,20 +68,9 @@ public class ScriptCodegen {
     }
 
     @Inject
-    public void setJetTypeMapper(@NotNull JetTypeMapper jetTypeMapper) {
-        this.jetTypeMapper = jetTypeMapper;
-    }
-
-    @Inject
     public void setMemberCodegen(@NotNull MemberCodegen memberCodegen) {
         this.memberCodegen = memberCodegen;
     }
-
-    @Inject
-    public void setBindingContext(@NotNull BindingContext bindingContext) {
-        this.bindingContext = bindingContext;
-    }
-
 
     public void generate(JetScript scriptDeclaration) {
 
@@ -132,12 +114,12 @@ public class ScriptCodegen {
             @NotNull List<ScriptDescriptor> importedScripts
     ) {
 
-        Type blockType = jetTypeMapper.mapType(scriptDescriptor.getReturnType(), MapTypeMode.VALUE);
+        Type blockType = typeMapper.mapType(scriptDescriptor.getReturnType(), MapTypeMode.VALUE);
 
         classBuilder.newField(null, ACC_PUBLIC | ACC_FINAL, ScriptNameUtil.LAST_EXPRESSION_VALUE_FIELD_NAME,
                               blockType.getDescriptor(), null, null);
 
-        JvmMethodSignature jvmSignature = jetTypeMapper.mapScriptSignature(scriptDescriptor, importedScripts);
+        JvmMethodSignature jvmSignature = typeMapper.mapScriptSignature(scriptDescriptor, importedScripts);
 
         state.getScriptCodegen().setScriptConstructorMethod(jvmSignature.getAsmMethod());
 
@@ -157,7 +139,7 @@ public class ScriptCodegen {
 
         instructionAdapter.load(0, className.getAsmType());
 
-        FrameMap frameMap = context.prepareFrame(jetTypeMapper);
+        FrameMap frameMap = context.prepareFrame(typeMapper);
 
         for (ScriptDescriptor importedScript : importedScripts) {
             frameMap.enter(importedScript, OBJECT_TYPE);
@@ -176,7 +158,7 @@ public class ScriptCodegen {
                 instructionAdapter,
                 scriptDeclaration.getDeclarations(),
                 bindingContext,
-                jetTypeMapper);
+                typeMapper);
 
         int offset = 1;
 
@@ -190,7 +172,7 @@ public class ScriptCodegen {
         }
 
         for (ValueParameterDescriptor parameter : scriptDescriptor.getValueParameters()) {
-            Type parameterType = jetTypeMapper.mapType(parameter.getType(), MapTypeMode.VALUE);
+            Type parameterType = typeMapper.mapType(parameter.getType(), MapTypeMode.VALUE);
             instructionAdapter.load(0, className.getAsmType());
             instructionAdapter.load(offset, parameterType);
             offset += parameterType.getSize();
@@ -219,7 +201,7 @@ public class ScriptCodegen {
         }
 
         for (ValueParameterDescriptor parameter : script.getValueParameters()) {
-            Type parameterType = jetTypeMapper.mapType(parameter.getType(), MapTypeMode.VALUE);
+            Type parameterType = typeMapper.mapType(parameter.getType(), MapTypeMode.VALUE);
             int access = ACC_PUBLIC | ACC_FINAL;
             classBuilder.newField(null, access, parameter.getName().getIdentifier(), parameterType.getDescriptor(), null, null);
         }

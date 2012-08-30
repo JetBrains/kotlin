@@ -23,6 +23,7 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.CalculatedClosure;
 import org.jetbrains.jet.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.jet.codegen.signature.*;
+import org.jetbrains.jet.codegen.state.BindingTraceAware;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetElement;
@@ -51,35 +52,15 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDec
  * @author yole
  * @author alex.tkachman
  */
-public class JetTypeMapper {
+public class JetTypeMapper extends BindingTraceAware {
 
-    private BindingContext bindingContext;
-    private boolean mapBuiltinsToJava;
-    private ClassBuilderMode classBuilderMode;
-    private BindingTrace bindingTrace;
+    private final boolean mapBuiltinsToJava;
+    private final ClassBuilderMode classBuilderMode;
 
-    @Inject
-    public void setBindingTrace(BindingTrace bindingTrace) {
-        this.bindingTrace = bindingTrace;
-        this.bindingContext = bindingTrace.getBindingContext();
-    }
-
-    @Inject
-    public void setBuiltinToJavaTypesMapping(BuiltinToJavaTypesMapping builtinToJavaTypesMapping) {
-        mapBuiltinsToJava = builtinToJavaTypesMapping == BuiltinToJavaTypesMapping.ENABLED;
-    }
-
-    @Inject
-    public void setClassBuilderMode(ClassBuilderMode classBuilderMode) {
-        this.classBuilderMode = classBuilderMode;
-    }
-
-    public BindingTrace getBindingTrace() {
-        return bindingTrace;
-    }
-
-    public BindingContext getBindingContext() {
-        return bindingContext;
+    public JetTypeMapper(BindingTrace bindingTrace, boolean mapBuiltinsToJava, ClassBuilderMode mode) {
+        super(bindingTrace);
+        this.mapBuiltinsToJava = mapBuiltinsToJava;
+        classBuilderMode = mode;
     }
 
     @NotNull

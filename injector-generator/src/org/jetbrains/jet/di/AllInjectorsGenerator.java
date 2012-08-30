@@ -57,7 +57,6 @@ public class AllInjectorsGenerator {
         generateTestInjector();
         generateInjectorForJavaSemanticServices();
         generateInjectorForJvmCodegen();
-        generateInjectorForJetTypeMapper();
         generateInjectorForLazyResolve();
         generateInjectorForBodyResolve();
     }
@@ -191,34 +190,29 @@ public class AllInjectorsGenerator {
 
     private static void generateInjectorForJvmCodegen() throws IOException {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
-        generator.addPublicParameter(BindingTrace.class);
-        generator.addField(false, BindingContext.class, "bindingContext",
-                           new GivenExpression("bindingTrace.getBindingContext()"));
+
+        // Parameters
+        generator.addPublicParameter(JetTypeMapper.class);
         generator.addPublicParameter(DiType.listOf(JetFile.class));
         generator.addParameter(BuiltinToJavaTypesMapping.class);
-        generator.addParameter(ClassBuilderMode.class);
         generator.addPublicParameter(GenerationState.class);
         generator.addParameter(ClassBuilderFactory.class);
         generator.addPublicParameter(Project.class);
-        generator.addPublicField(JetTypeMapper.class);
+
+        // Fields
+        generator.addField(false, BindingTrace.class, "bindingTrace",
+                           new GivenExpression("jetTypeMapper.getBindingTrace()"));
+        generator.addField(false, BindingContext.class, "bindingContext",
+                           new GivenExpression("bindingTrace.getBindingContext()"));
+        generator.addField(false, ClassBuilderMode.class, "classBuilderMode",
+                           new GivenExpression("classBuilderFactory.getClassBuilderMode()"));
         generator.addPublicField(ClassCodegen.class);
         generator.addPublicField(ScriptCodegen.class);
         generator.addField(true, IntrinsicMethods.class, "intrinsics", null);
         generator.addPublicField(ClassFileFactory.class);
         generator.addPublicField(MemberCodegen.class);
-        generator.generate("compiler/backend/src", "org.jetbrains.jet.di", "InjectorForJvmCodegen");
-    }
 
-    private static void generateInjectorForJetTypeMapper() throws IOException {
-        DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
-        generator.addPublicParameter(BindingTrace.class);
-        generator.addField(false, BindingContext.class, "bindingContext",
-                           new GivenExpression("bindingTrace.getBindingContext()"));
-        generator.addPublicParameter(DiType.listOf(JetFile.class));
-        generator.addPublicField(JetTypeMapper.class);
-        generator.addField(BuiltinToJavaTypesMapping.ENABLED);
-        generator.addField(ClassBuilderMode.FULL);
-        generator.generate("compiler/backend/src", "org.jetbrains.jet.di", "InjectorForJetTypeMapper");
+        generator.generate("compiler/backend/src", "org.jetbrains.jet.di", "InjectorForJvmCodegen");
     }
 
     private static void generateInjectorForBodyResolve() throws IOException {
