@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.codeInsight;
+package org.jetbrains.jet.plugin.codeInsight.ktSignature;
 
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.ExternalAnnotationsManager;
