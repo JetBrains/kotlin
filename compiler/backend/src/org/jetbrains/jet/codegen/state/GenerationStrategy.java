@@ -41,6 +41,9 @@ import static org.jetbrains.jet.codegen.binding.CodegenBinding.registerClassName
 public class GenerationStrategy {
     public static final GenerationStrategy STANDARD = new GenerationStrategy();
 
+    protected GenerationStrategy () {
+    }
+
     public void generateNamespace(GenerationState state,
             FqName fqName,
             Collection<JetFile> jetFiles,
