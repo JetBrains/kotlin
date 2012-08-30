@@ -439,6 +439,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private void generateForLoop(AbstractForLoopGenerator generator) {
         Label loopExit = new Label();
         Label loopEntry = new Label();
+        Label continueLabel = new Label();
 
         generator.beforeLoop();
 
@@ -446,9 +447,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         generator.conditionAndJump(loopExit);
 
         generator.beforeBody();
-        blockStackElements.push(new LoopBlockStackElement(loopExit, loopEntry, null));
+        blockStackElements.push(new LoopBlockStackElement(loopExit, continueLabel, targetLabel(generator.forExpression)));
         generator.body();
         blockStackElements.pop();
+        v.mark(continueLabel);
         generator.afterBody();
 
         v.goTo(loopEntry);

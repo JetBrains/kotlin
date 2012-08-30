@@ -344,6 +344,11 @@ public class ControlStructuresTest extends CodegenTestCase {
         blackBoxFile("regressions/kt998.kt");
     }
 
+    public void testContinueInFor() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_AND_ANNOTATIONS);
+        blackBoxFile("controlStructures/continueInFor.kt");
+    }
+
     public void testKt628() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt628.kt");
