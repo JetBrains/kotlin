@@ -22,6 +22,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Label;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
@@ -33,6 +34,7 @@ import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
@@ -53,22 +55,16 @@ import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.classNameForAnonymousClass;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
 
-public class ClosureCodegen {
+public class ClosureCodegen extends GenerationStateAware {
 
-    private final BindingContext bindingContext;
-    private final JetTypeMapper typeMapper;
+    private final MutableClosure closure;
 
     Method constructor;
-    private final GenerationState state;
-    private final MutableClosure closure;
     JvmClassName name;
 
-
     public ClosureCodegen(GenerationState state, MutableClosure closure) {
-        this.state = state;
+        super(state);
         this.closure = closure;
-        bindingContext = state.getBindingContext();
-        typeMapper = state.getTypeMapper();
     }
 
     public ClosureCodegen gen(JetExpression fun, CodegenContext context, ExpressionCodegen expressionCodegen) {
