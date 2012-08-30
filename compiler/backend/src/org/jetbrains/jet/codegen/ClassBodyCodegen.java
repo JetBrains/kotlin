@@ -21,6 +21,7 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -39,9 +40,7 @@ import static org.jetbrains.jet.codegen.CodegenUtil.getVisibilityAccessFlag;
  * @author max
  * @author yole
  */
-public abstract class ClassBodyCodegen {
-    protected final GenerationState state;
-
+public abstract class ClassBodyCodegen extends GenerationStateAware {
     protected final JetClassOrObject myClass;
     protected final OwnerKind kind;
     protected final ClassDescriptor descriptor;
@@ -51,7 +50,7 @@ public abstract class ClassBodyCodegen {
     protected final List<CodeChunk> staticInitializerChunks = new ArrayList<CodeChunk>();
 
     protected ClassBodyCodegen(JetClassOrObject aClass, CodegenContext context, ClassBuilder v, GenerationState state) {
-        this.state = state;
+        super(state);
         descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
         myClass = aClass;
         this.context = context;
@@ -78,7 +77,7 @@ public abstract class ClassBodyCodegen {
 
     private void generateClassBody() {
         final FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
-        final PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen, state);
+        final PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen);
 
         for (JetDeclaration declaration : myClass.getDeclarations()) {
             generateDeclaration(propertyCodegen, declaration, functionCodegen);

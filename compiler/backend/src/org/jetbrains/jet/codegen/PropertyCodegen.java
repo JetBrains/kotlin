@@ -27,6 +27,7 @@ import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.signature.JvmPropertyAccessorSignature;
 import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -48,16 +49,15 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDec
  * @author max
  * @author alex.tkachman
  */
-public class PropertyCodegen {
-    private final GenerationState state;
+public class PropertyCodegen extends GenerationStateAware {
     private final FunctionCodegen functionCodegen;
     private final ClassBuilder v;
     private final OwnerKind kind;
 
-    public PropertyCodegen(CodegenContext context, ClassBuilder v, FunctionCodegen functionCodegen, GenerationState state) {
+    public PropertyCodegen(CodegenContext context, ClassBuilder v, FunctionCodegen functionCodegen) {
+        super(functionCodegen.getState());
         this.v = v;
         this.functionCodegen = functionCodegen;
-        this.state = state;
         this.kind = context.getContextKind();
     }
 

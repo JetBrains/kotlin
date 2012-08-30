@@ -53,7 +53,7 @@ public class MemberCodegen extends GenerationStateAware {
         }
         else if (functionOrProperty instanceof JetProperty) {
             try {
-                new PropertyCodegen(context, classBuilder, functionCodegen, state).gen((JetProperty) functionOrProperty);
+                new PropertyCodegen(context, classBuilder, functionCodegen).gen((JetProperty) functionOrProperty);
             }
             catch (CompilationException e) {
                 throw e;

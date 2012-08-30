@@ -71,13 +71,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private String superClass;
     @Nullable // null means java/lang/Object
     private JetType superClassType;
-    private final JetTypeMapper typeMapper;
-    private final BindingContext bindingContext;
 
     public ImplementationBodyCodegen(JetClassOrObject aClass, CodegenContext context, ClassBuilder v, GenerationState state) {
         super(aClass, context, v, state);
-        typeMapper = state.getTypeMapper();
-        bindingContext = state.getBindingContext();
     }
 
     @Override
@@ -1213,7 +1209,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     protected void generateDelegates(ClassDescriptor toClass, CodegenContext delegateContext, StackValue field) {
         final FunctionCodegen functionCodegen = new FunctionCodegen(delegateContext, v, state);
-        final PropertyCodegen propertyCodegen = new PropertyCodegen(delegateContext, v, functionCodegen, state);
+        final PropertyCodegen propertyCodegen = new PropertyCodegen(delegateContext, v, functionCodegen);
 
         for (DeclarationDescriptor declaration : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
             if (declaration instanceof CallableMemberDescriptor) {
