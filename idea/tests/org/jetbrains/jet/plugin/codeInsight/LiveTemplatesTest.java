@@ -45,6 +45,20 @@ import java.util.Arrays;
  * @since 2/10/12
  */
 public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        myFixture.setTestDataPath(new File(PluginTestCaseBase.getTestDataPathBase(), "/templates").getPath() +
+                                  File.separator);
+        ((TemplateManagerImpl) TemplateManager.getInstance(getProject())).setTemplateTesting(true);
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        ((TemplateManagerImpl) TemplateManager.getInstance(getProject())).setTemplateTesting(false);
+        super.tearDown();
+    }
+
     public void testSout() {
         paremeterless();
     }
@@ -59,7 +73,7 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
 
     public void testSoutv() {
         start();
-        
+
         assertStringItems("args", "x", "y");
         typeAndNextTab("y");
 
@@ -266,22 +280,8 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
         actionHandler.execute(myFixture.getEditor(), DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent()));
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        ((TemplateManagerImpl) TemplateManager.getInstance(getProject())).setTemplateTesting(false);
-        super.tearDown();
-    }
-
     private void assertStringItems(@NonNls String... items) {
         assertEquals(Arrays.asList(items), Arrays.asList(getItemStringsSorted()));
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        myFixture.setTestDataPath(new File(PluginTestCaseBase.getTestDataPathBase(), "/templates").getPath() +
-                                  File.separator);
-        ((TemplateManagerImpl) TemplateManager.getInstance(getProject())).setTemplateTesting(true);
     }
 
     private String[] getItemStrings() {
@@ -293,7 +293,7 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
         }
         return ArrayUtil.toStringArray(result);
     }
-    
+
     private String[] getItemStringsSorted() {
         String[] items = getItemStrings();
         Arrays.sort(items);
