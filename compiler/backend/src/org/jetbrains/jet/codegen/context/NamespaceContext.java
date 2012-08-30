@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen.context;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 
@@ -23,8 +24,8 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
  * @author alex.tkachman
 */
 public class NamespaceContext extends CodegenContext {
-    public NamespaceContext(NamespaceDescriptor contextDescriptor, CodegenContext parent, OwnerKind kind) {
-        super(contextDescriptor, kind != null ? kind : OwnerKind.NAMESPACE, parent, null, null, null);
+    public NamespaceContext(NamespaceDescriptor contextDescriptor, CodegenContext parent, @NotNull OwnerKind kind) {
+        super(contextDescriptor, kind, parent, null, null, null);
     }
 
     @Override

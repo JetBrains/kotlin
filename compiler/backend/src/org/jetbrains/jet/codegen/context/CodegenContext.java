@@ -47,7 +47,9 @@ public abstract class CodegenContext {
     @NotNull
     private final DeclarationDescriptor contextDescriptor;
 
+    @NotNull
     private final OwnerKind contextKind;
+
     @Nullable
     private final CodegenContext parentContext;
     private final ClassDescriptor thisDescriptor;
@@ -61,7 +63,7 @@ public abstract class CodegenContext {
 
     public CodegenContext(
             @NotNull DeclarationDescriptor contextDescriptor,
-            OwnerKind contextKind,
+            @NotNull OwnerKind contextKind,
             @Nullable CodegenContext parentContext,
             @Nullable MutableClosure closure,
             @Nullable ClassDescriptor thisDescriptor,
@@ -131,12 +133,13 @@ public abstract class CodegenContext {
         return contextDescriptor;
     }
 
+    @NotNull
     public OwnerKind getContextKind() {
         return contextKind;
     }
 
     public CodegenContext intoNamespace(NamespaceDescriptor descriptor) {
-        return new NamespaceContext(descriptor, this, null);
+        return new NamespaceContext(descriptor, this, OwnerKind.NAMESPACE);
     }
 
     public CodegenContext intoNamespacePart(String delegateTo, NamespaceDescriptor descriptor) {
@@ -238,6 +241,7 @@ public abstract class CodegenContext {
 
     public StackValue getReceiverExpression(JetTypeMapper typeMapper) {
         assert getCallableDescriptorWithReceiver() != null;
+        @SuppressWarnings("ConstantConditions")
         Type asmType = typeMapper.mapType(getCallableDescriptorWithReceiver().getReceiverParameter().getType(), JetTypeMapperMode.VALUE);
         return hasThisDescriptor() ? StackValue.local(1, asmType) : StackValue.local(0, asmType);
     }
