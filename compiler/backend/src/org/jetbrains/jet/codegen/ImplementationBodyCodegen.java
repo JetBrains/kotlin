@@ -378,6 +378,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                        "()" + componentType.getDescriptor(),
                                        null, null);
 
+        JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
+        BitSet kotlinFlags = getFlagsForVisibility(function.getVisibility());
+        aw.writeFlags(kotlinFlags);
+        aw.writeNullableReturnType(returnType.isNullable());
+        JvmMethodSignature jvmMethodSignature = typeMapper.mapToCallableMethod(function, false, kind).getSignature();
+        aw.writeReturnType(jvmMethodSignature.getKotlinReturnType());
+        aw.visitEnd();
+
         mv.visitCode();
         InstructionAdapter iv = new InstructionAdapter(mv);
         if (!componentType.equals(Type.VOID_TYPE)) {

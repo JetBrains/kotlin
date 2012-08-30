@@ -1,0 +1,7 @@
+namespace test
+
+jet.data() internal open class test.DataClass : jet.Any {
+    public final /*constructor*/ fun <init>(/*0*/ x: jet.String): test.DataClass
+    internal final fun component1(): jet.String
+    internal final val x: jet.String
+}
