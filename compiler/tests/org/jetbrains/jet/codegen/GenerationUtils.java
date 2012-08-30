@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.codegen.context.CodegenBinding.registerClassNameForScript;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.registerClassNameForScript;
 
 /**
  * @author Stepan Koltsov

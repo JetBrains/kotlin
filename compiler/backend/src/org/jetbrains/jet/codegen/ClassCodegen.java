@@ -25,10 +25,9 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
-import javax.inject.Inject;
 import java.util.Map;
 
-import static org.jetbrains.jet.codegen.context.CodegenBinding.enumEntryNeedSubclass;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 
 /**
  * @author max

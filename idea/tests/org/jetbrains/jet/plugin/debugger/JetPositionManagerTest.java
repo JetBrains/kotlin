@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
-import org.jetbrains.jet.codegen.context.CodegenBinding;
+import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;

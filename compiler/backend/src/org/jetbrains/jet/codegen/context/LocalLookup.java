@@ -18,14 +18,15 @@ package org.jetbrains.jet.codegen.context;
 
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.types.JetType;
 
-import static org.jetbrains.jet.codegen.context.CodegenBinding.classNameForAnonymousClass;
-import static org.jetbrains.jet.codegen.context.CodegenBinding.isLocalNamedFun;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.classNameForAnonymousClass;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
 
 /**

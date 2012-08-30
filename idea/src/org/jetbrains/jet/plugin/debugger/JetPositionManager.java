@@ -41,7 +41,7 @@ import org.jetbrains.jet.codegen.ClassBuilderMode;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.MapTypeMode;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
-import org.jetbrains.jet.codegen.context.CodegenBinding;
+import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -52,7 +52,7 @@ import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 import java.util.*;
 
-import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 
 /**
  * @author yole

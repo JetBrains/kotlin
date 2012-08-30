@@ -20,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.binding.CodegenBinding;
+import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -29,8 +31,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
-import static org.jetbrains.jet.codegen.context.CodegenBinding.CLASS_FOR_FUNCTION;
-import static org.jetbrains.jet.codegen.context.CodegenBinding.FQN;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLASS_FOR_FUNCTION;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.FQN;
 
 /*
  * @author max

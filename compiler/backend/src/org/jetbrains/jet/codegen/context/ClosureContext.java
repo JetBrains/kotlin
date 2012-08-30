@@ -19,11 +19,12 @@ package org.jetbrains.jet.codegen.context;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.OwnerKind;
+import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 
-import static org.jetbrains.jet.codegen.context.CodegenBinding.CLOSURE;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLOSURE;
 
 /**
  * @author alex.tkachman

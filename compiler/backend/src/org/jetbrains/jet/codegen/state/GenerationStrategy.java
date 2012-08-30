@@ -33,7 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.jetbrains.jet.codegen.context.CodegenBinding.registerClassNameForScript;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.registerClassNameForScript;
 
 /**
  * @author alex.tkachman

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen.context;
+package org.jetbrains.jet.codegen.binding;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;

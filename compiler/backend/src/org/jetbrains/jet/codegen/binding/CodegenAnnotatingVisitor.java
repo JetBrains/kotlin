@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen.context;
+package org.jetbrains.jet.codegen.binding;
 
 import com.intellij.util.containers.Stack;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.jetbrains.jet.codegen.CodegenUtil.peekFromStack;
-import static org.jetbrains.jet.codegen.context.CodegenBinding.*;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 /**
