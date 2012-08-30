@@ -22,7 +22,6 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Label;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
@@ -35,7 +34,7 @@ import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
-import org.jetbrains.jet.codegen.state.JetTypeMapper;
+import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.psi.JetElement;
@@ -191,7 +190,7 @@ public class ClosureCodegen extends GenerationStateAware {
             if (receiver.exists()) {
                 StackValue.local(count, OBJECT_TYPE).put(OBJECT_TYPE, iv);
                 StackValue.onStack(OBJECT_TYPE)
-                        .upcast(typeMapper.mapType(receiver.getType(), MapTypeMode.VALUE), iv);
+                        .upcast(typeMapper.mapType(receiver.getType(), JetTypeMapperMode.VALUE), iv);
                 count++;
             }
 
@@ -199,7 +198,7 @@ public class ClosureCodegen extends GenerationStateAware {
             for (ValueParameterDescriptor param : params) {
                 StackValue.local(count, OBJECT_TYPE).put(OBJECT_TYPE, iv);
                 StackValue.onStack(OBJECT_TYPE)
-                        .upcast(typeMapper.mapType(param.getType(), MapTypeMode.VALUE), iv);
+                        .upcast(typeMapper.mapType(param.getType(), JetTypeMapperMode.VALUE), iv);
                 count++;
             }
 
@@ -259,13 +258,13 @@ public class ClosureCodegen extends GenerationStateAware {
     ) {
         final ClassDescriptor captureThis = closure.getCaptureThis();
         if (captureThis != null) {
-            final Type type = typeMapper.mapType(captureThis.getDefaultType(), MapTypeMode.VALUE);
+            final Type type = typeMapper.mapType(captureThis.getDefaultType(), JetTypeMapperMode.VALUE);
             args.add(new Pair<String, Type>(THIS$0, type));
         }
         final ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
         if (captureReceiver != null) {
             args.add(new Pair<String, Type>(RECEIVER$0,
-                                            typeMapper.mapType(captureReceiver.getDefaultType(), MapTypeMode.VALUE)));
+                                            typeMapper.mapType(captureReceiver.getDefaultType(), JetTypeMapperMode.VALUE)));
         }
 
         for (DeclarationDescriptor descriptor : closure.getCaptureVariables().keySet()) {
@@ -274,7 +273,7 @@ public class ClosureCodegen extends GenerationStateAware {
 
                 final Type type = sharedVarType != null
                                   ? sharedVarType
-                                  : typeMapper.mapType(((VariableDescriptor) descriptor).getType(), MapTypeMode.VALUE);
+                                  : typeMapper.mapType(((VariableDescriptor) descriptor).getType(), JetTypeMapperMode.VALUE);
                 args.add(new Pair<String, Type>("$" + descriptor.getName().getName(), type));
             }
             else if (isLocalNamedFun(state.getBindingContext(), descriptor)) {
@@ -302,7 +301,7 @@ public class ClosureCodegen extends GenerationStateAware {
     private void appendType(SignatureWriter signatureWriter, JetType type, char variance) {
         signatureWriter.visitTypeArgument(variance);
 
-        final Type rawRetType = typeMapper.mapType(type, MapTypeMode.TYPE_PARAMETER);
+        final Type rawRetType = typeMapper.mapType(type, JetTypeMapperMode.TYPE_PARAMETER);
         signatureWriter.visitClassType(rawRetType.getInternalName());
         signatureWriter.visitEnd();
     }

@@ -38,6 +38,7 @@ import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.signature.JvmPropertyAccessorSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
+import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
@@ -287,7 +288,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @NotNull
     private Type asmType(@NotNull JetType type) {
-        return typeMapper.mapType(type, MapTypeMode.VALUE);
+        return typeMapper.mapType(type, JetTypeMapperMode.VALUE);
     }
 
     @NotNull
@@ -1111,7 +1112,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                 final ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
                 if (captureReceiver != null) {
-                    final Type asmType = typeMapper.mapType(captureReceiver.getDefaultType(), MapTypeMode.IMPL);
+                    final Type asmType = typeMapper.mapType(captureReceiver.getDefaultType(), JetTypeMapperMode.IMPL);
                     v.load(context.isStatic() ? 0 : 1, asmType);
                 }
             }
@@ -1120,7 +1121,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 //if (entry.getKey() instanceof VariableDescriptor && !(entry.getKey() instanceof PropertyDescriptor)) {
                 Type sharedVarType = typeMapper.getSharedVarType(entry.getKey());
                 if (sharedVarType == null) {
-                    sharedVarType = typeMapper.mapType(((VariableDescriptor) entry.getKey()).getType(), MapTypeMode.VALUE);
+                    sharedVarType = typeMapper.mapType(((VariableDescriptor) entry.getKey()).getType(), JetTypeMapperMode.VALUE);
                 }
                 entry.getValue().getOuterValue(this).put(sharedVarType, v);
                 //}
@@ -1403,10 +1404,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (declaration instanceof JetClass) {
                 final ClassDescriptor descriptor1 = ((ClassDescriptor) descriptor).getClassObjectDescriptor();
                 assert descriptor1 != null;
-                final Type type = typeMapper.mapType(descriptor1.getDefaultType(), MapTypeMode.VALUE);
+                final Type type = typeMapper.mapType(descriptor1.getDefaultType(), JetTypeMapperMode.VALUE);
                 return StackValue.field(type,
                                         JvmClassName.byType(typeMapper.mapType(((ClassDescriptor) descriptor).getDefaultType(),
-                                                                               MapTypeMode.IMPL)),
+                                                                               JetTypeMapperMode.IMPL)),
                                         "$classobj",
                                         true);
             }
@@ -1453,7 +1454,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             final ClassDescriptor scriptClass = bindingContext.get(CLASS_FOR_FUNCTION, scriptDescriptor);
             final StackValue script = StackValue.thisOrOuter(this, scriptClass);
             script.put(script.type, v);
-            Type fieldType = typeMapper.mapType(valueParameterDescriptor.getType(), MapTypeMode.VALUE);
+            Type fieldType = typeMapper.mapType(valueParameterDescriptor.getType(), JetTypeMapperMode.VALUE);
             return StackValue.field(fieldType, scriptClassName, valueParameterDescriptor.getName().getIdentifier(), false);
         }
 
@@ -1465,12 +1466,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (isEnumEntry) {
             ClassDescriptor containing = (ClassDescriptor) variableDescriptor.getContainingDeclaration().getContainingDeclaration();
             assert containing != null;
-            Type type = typeMapper.mapType(containing.getDefaultType(), MapTypeMode.VALUE);
+            Type type = typeMapper.mapType(containing.getDefaultType(), JetTypeMapperMode.VALUE);
             StackValue.field(type, JvmClassName.byType(type), variableDescriptor.getName().getName(), true).put(type, v);
             return StackValue.onStack(type);
         }
         else {
-            Type type = typeMapper.mapType(objectClassDescriptor.getDefaultType(), MapTypeMode.VALUE);
+            Type type = typeMapper.mapType(objectClassDescriptor.getDefaultType(), JetTypeMapperMode.VALUE);
             return StackValue.field(type, JvmClassName.byType(type), "$instance", true);
         }
     }
@@ -1602,7 +1603,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             invokeOpcode = callableMethod.getInvokeOpcode();
             owner = isFakeOverride && !overridesTrait && !isInterface(initialDescriptor.getContainingDeclaration())
                     ? JvmClassName.byType(typeMapper.mapType(
-                    ((ClassDescriptor) initialDescriptor.getContainingDeclaration()).getDefaultType(), MapTypeMode.IMPL))
+                    ((ClassDescriptor) initialDescriptor.getContainingDeclaration()).getDefaultType(), JetTypeMapperMode.IMPL))
                     : callableMethod.getOwner();
             ownerParam = callableMethod.getDefaultImplParam();
         }
@@ -1748,7 +1749,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
             JetType type = resolvedCall.getCandidateDescriptor().getReturnType();
             assert type != null;
-            Type callType = typeMapper.mapType(type, MapTypeMode.VALUE);
+            Type callType = typeMapper.mapType(type, JetTypeMapperMode.VALUE);
 
             Type exprType = asmTypeOrVoid(type);
             StackValue stackValue = intrinsic.generate(this, v, callType, call.getCallElement(), args, receiver, state);
@@ -1867,7 +1868,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             ClassDescriptor classReceiverDeclarationDescriptor = classReceiver.getDeclarationDescriptor();
             if (DescriptorUtils.isClassObject(classReceiverDeclarationDescriptor)) {
                 ClassDescriptor containingDeclaration = (ClassDescriptor) classReceiverDeclarationDescriptor.getContainingDeclaration();
-                Type classObjType = typeMapper.mapType(containingDeclaration.getDefaultType(), MapTypeMode.IMPL);
+                Type classObjType = typeMapper.mapType(containingDeclaration.getDefaultType(), JetTypeMapperMode.IMPL);
                 if (context.getContextDescriptor() instanceof ConstructorDescriptor &&
                     classReceiverDeclarationDescriptor.getDefaultType()
                             .equals(((ConstructorDescriptor) context.getContextDescriptor()).getReturnType())) {
@@ -2905,7 +2906,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             //noinspection ConstantConditions
             JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
             assert expressionType != null;
-            type = typeMapper.mapType(expressionType, MapTypeMode.VALUE);
+            type = typeMapper.mapType(expressionType, JetTypeMapperMode.VALUE);
             if (type.getSort() == Type.ARRAY) {
                 generateNewArray(expression, expressionType);
             }
@@ -2973,7 +2974,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.newarray(boxType(asmType(arrayType.getArguments().get(0).getType())));
         }
         else {
-            Type type = typeMapper.mapType(arrayType, MapTypeMode.VALUE);
+            Type type = typeMapper.mapType(arrayType, JetTypeMapperMode.VALUE);
             gen(args.get(0), Type.INT_TYPE);
             v.newarray(correctElementType(type));
         }

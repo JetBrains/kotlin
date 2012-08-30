@@ -29,6 +29,7 @@ import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.GenerationStrategy;
+import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
@@ -114,7 +115,7 @@ public class ScriptCodegen extends GenerationStateAware {
             @NotNull List<ScriptDescriptor> importedScripts
     ) {
 
-        Type blockType = typeMapper.mapType(scriptDescriptor.getReturnType(), MapTypeMode.VALUE);
+        Type blockType = typeMapper.mapType(scriptDescriptor.getReturnType(), JetTypeMapperMode.VALUE);
 
         classBuilder.newField(null, ACC_PUBLIC | ACC_FINAL, ScriptNameUtil.LAST_EXPRESSION_VALUE_FIELD_NAME,
                               blockType.getDescriptor(), null, null);
@@ -172,7 +173,7 @@ public class ScriptCodegen extends GenerationStateAware {
         }
 
         for (ValueParameterDescriptor parameter : scriptDescriptor.getValueParameters()) {
-            Type parameterType = typeMapper.mapType(parameter.getType(), MapTypeMode.VALUE);
+            Type parameterType = typeMapper.mapType(parameter.getType(), JetTypeMapperMode.VALUE);
             instructionAdapter.load(0, className.getAsmType());
             instructionAdapter.load(offset, parameterType);
             offset += parameterType.getSize();
@@ -201,7 +202,7 @@ public class ScriptCodegen extends GenerationStateAware {
         }
 
         for (ValueParameterDescriptor parameter : script.getValueParameters()) {
-            Type parameterType = typeMapper.mapType(parameter.getType(), MapTypeMode.VALUE);
+            Type parameterType = typeMapper.mapType(parameter.getType(), JetTypeMapperMode.VALUE);
             int access = ACC_PUBLIC | ACC_FINAL;
             classBuilder.newField(null, access, parameter.getName().getIdentifier(), parameterType.getDescriptor(), null, null);
         }

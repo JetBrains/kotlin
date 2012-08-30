@@ -38,8 +38,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
+import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.codegen.MapTypeMode;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -183,12 +183,12 @@ public class JetPositionManager implements PositionManager {
         if (classDescriptor == null) {
             return null;
         }
-        MapTypeMode mode;
+        JetTypeMapperMode mode;
         if (jetClass instanceof JetClass && ((JetClass) jetClass).isTrait()) {
-            mode = MapTypeMode.TRAIT_IMPL;
+            mode = JetTypeMapperMode.TRAIT_IMPL;
         }
         else {
-            mode = MapTypeMode.IMPL;
+            mode = JetTypeMapperMode.IMPL;
         }
         return typeMapper.mapType(classDescriptor.getDefaultType(), mode).getInternalName();
     }

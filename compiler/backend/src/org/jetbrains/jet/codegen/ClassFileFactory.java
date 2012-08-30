@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
+import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -112,7 +113,7 @@ public final class ClassFileFactory extends GenerationStateAware {
 
     public ClassBuilder forClassImplementation(ClassDescriptor aClass) {
         return newVisitor(
-                state.getTypeMapper().mapType(aClass.getDefaultType(), MapTypeMode.IMPL).getInternalName() + ".class");
+                state.getTypeMapper().mapType(aClass.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName() + ".class");
     }
 
     public ClassBuilder forNamespacepart(String name) {
@@ -121,6 +122,6 @@ public final class ClassFileFactory extends GenerationStateAware {
 
     public ClassBuilder forTraitImplementation(ClassDescriptor aClass, GenerationState state) {
         return newVisitor(
-                state.getTypeMapper().mapType(aClass.getDefaultType(), MapTypeMode.TRAIT_IMPL).getInternalName() + ".class");
+                state.getTypeMapper().mapType(aClass.getDefaultType(), JetTypeMapperMode.TRAIT_IMPL).getInternalName() + ".class");
     }
 }

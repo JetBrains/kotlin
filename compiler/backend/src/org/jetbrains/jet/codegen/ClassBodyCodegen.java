@@ -22,6 +22,7 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
+import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -108,7 +109,7 @@ public abstract class ClassBodyCodegen extends GenerationStateAware {
                         }
                     }
                     else {
-                        Type type = state.getTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
+                        Type type = state.getTypeMapper().mapType(propertyDescriptor.getType(), JetTypeMapperMode.VALUE);
                         v.newMethod(p, ACC_PUBLIC | ACC_ABSTRACT, p.getName(), "()" + type.getDescriptor(), null, null);
                     }
                 }

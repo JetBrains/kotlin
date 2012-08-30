@@ -32,6 +32,7 @@ import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
+import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -267,7 +268,7 @@ public class FunctionCodegen extends GenerationStateAware {
                     for (ValueParameterDescriptor parameter : paramDescrs) {
                         Type sharedVarType = state.getTypeMapper().getSharedVarType(parameter);
                         if (sharedVarType != null) {
-                            Type localVarType = state.getTypeMapper().mapType(parameter.getType(), MapTypeMode.VALUE);
+                            Type localVarType = state.getTypeMapper().mapType(parameter.getType(), JetTypeMapperMode.VALUE);
                             int index = frameMap.getIndex(parameter);
                             mv.visitTypeInsn(NEW, sharedVarType.getInternalName());
                             mv.visitInsn(DUP);
@@ -301,26 +302,26 @@ public class FunctionCodegen extends GenerationStateAware {
                 int k = 0;
 
                 if (expectedThisObject.exists()) {
-                    Type type = state.getTypeMapper().mapType(expectedThisObject.getType(), MapTypeMode.VALUE);
+                    Type type = state.getTypeMapper().mapType(expectedThisObject.getType(), JetTypeMapperMode.VALUE);
                     // TODO: specify signature
                     mv.visitLocalVariable("this", type.getDescriptor(), null, methodBegin, methodEnd, k++);
                 }
                 else if (fun instanceof JetFunctionLiteralExpression ||
                          isLocalFun(bindingContext, functionDescriptor)) {
                     Type type = state.getTypeMapper().mapType(
-                            context.getThisDescriptor().getDefaultType(), MapTypeMode.VALUE);
+                            context.getThisDescriptor().getDefaultType(), JetTypeMapperMode.VALUE);
                     mv.visitLocalVariable("this", type.getDescriptor(), null, methodBegin, methodEnd, k++);
                 }
 
                 if (receiverParameter.exists()) {
-                    Type type = state.getTypeMapper().mapType(receiverParameter.getType(), MapTypeMode.VALUE);
+                    Type type = state.getTypeMapper().mapType(receiverParameter.getType(), JetTypeMapperMode.VALUE);
                     // TODO: specify signature
                     mv.visitLocalVariable("this$receiver", type.getDescriptor(), null, methodBegin, methodEnd, k);
                     k += type.getSize();
                 }
 
                 for (ValueParameterDescriptor parameter : paramDescrs) {
-                    Type type = state.getTypeMapper().mapType(parameter.getType(), MapTypeMode.VALUE);
+                    Type type = state.getTypeMapper().mapType(parameter.getType(), JetTypeMapperMode.VALUE);
                     // TODO: specify signature
 
                     Label divideLabel = mapLabelsToDivideLocalVarVisibilityForSharedVar.get(parameter.getName());
@@ -461,7 +462,7 @@ public class FunctionCodegen extends GenerationStateAware {
         else {
             ownerInternalName = JvmClassName.byType(state.getTypeMapper()
                                                             .mapType(((ClassDescriptor) contextClass).getDefaultType(),
-                                                                     MapTypeMode.IMPL));
+                                                                     JetTypeMapperMode.IMPL));
         }
 
         String descriptor = jvmSignature.getDescriptor().replace(")", "I)");
@@ -514,7 +515,7 @@ public class FunctionCodegen extends GenerationStateAware {
 
         Type receiverType;
         if (hasReceiver) {
-            receiverType = state.getTypeMapper().mapType(receiverParameter.getType(), MapTypeMode.VALUE);
+            receiverType = state.getTypeMapper().mapType(receiverParameter.getType(), JetTypeMapperMode.VALUE);
             var += receiverType.getSize();
         }
         else {
@@ -666,7 +667,7 @@ public class FunctionCodegen extends GenerationStateAware {
             }
 
             iv.invokevirtual(state.getTypeMapper().mapType(
-                    ((ClassDescriptor) owner.getContextDescriptor()).getDefaultType(), MapTypeMode.VALUE).getInternalName(),
+                    ((ClassDescriptor) owner.getContextDescriptor()).getDefaultType(), JetTypeMapperMode.VALUE).getInternalName(),
                              jvmSignature.getName(), jvmSignature.getDescriptor());
             if (isPrimitive(jvmSignature.getReturnType()) && !isPrimitive(overridden.getReturnType())) {
                 StackValue.valueOf(iv, jvmSignature.getReturnType());
@@ -722,7 +723,7 @@ public class FunctionCodegen extends GenerationStateAware {
             field.put(field.type, iv);
             ClassDescriptor classDescriptor = (ClassDescriptor) overriddenDescriptor.getContainingDeclaration();
             String internalName =
-                    state.getTypeMapper().mapType(classDescriptor.getDefaultType(), MapTypeMode.VALUE).getInternalName();
+                    state.getTypeMapper().mapType(classDescriptor.getDefaultType(), JetTypeMapperMode.VALUE).getInternalName();
             if (classDescriptor.getKind() == ClassKind.TRAIT) {
                 iv.invokeinterface(internalName, method.getName(), method.getDescriptor());
             }

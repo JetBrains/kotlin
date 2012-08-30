@@ -24,6 +24,7 @@ import org.jetbrains.asm4.FieldVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
+import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -102,7 +103,7 @@ public abstract class AnnotationCodegen {
             return;
         }
 
-        String internalName = typeMapper.mapType(type, MapTypeMode.VALUE).getDescriptor();
+        String internalName = typeMapper.mapType(type, JetTypeMapperMode.VALUE).getDescriptor();
         AnnotationVisitor annotationVisitor = visitAnnotation(internalName, rp == RetentionPolicy.RUNTIME);
 
         getAnnotation(resolvedCall, annotationVisitor);
@@ -155,7 +156,7 @@ public abstract class AnnotationCodegen {
             if (call != null) {
                 if (call.getResultingDescriptor() instanceof PropertyDescriptor) {
                     PropertyDescriptor descriptor = (PropertyDescriptor) call.getResultingDescriptor();
-                    annotationVisitor.visitEnum(keyName, typeMapper.mapType(descriptor.getReturnType(), MapTypeMode.VALUE).getDescriptor(),
+                    annotationVisitor.visitEnum(keyName, typeMapper.mapType(descriptor.getReturnType(), JetTypeMapperMode.VALUE).getDescriptor(),
                                                 descriptor.getName().getName());
                     return;
                 }
@@ -181,7 +182,7 @@ public abstract class AnnotationCodegen {
                     if (IntrinsicMethods.KOTLIN_JAVA_CLASS_FUNCTION.equals(value)) {
                         //noinspection ConstantConditions
                         annotationVisitor.visit(keyName, typeMapper
-                                .mapType(call.getResultingDescriptor().getReturnType().getArguments().get(0).getType(), MapTypeMode.VALUE));
+                                .mapType(call.getResultingDescriptor().getReturnType().getArguments().get(0).getType(), JetTypeMapperMode.VALUE));
                         return;
                     }
                     else if (IntrinsicMethods.KOTLIN_ARRAYS_ARRAY.equals(value)) {
@@ -196,7 +197,7 @@ public abstract class AnnotationCodegen {
                     else if (call.getResultingDescriptor() instanceof ConstructorDescriptor) {
                         ConstructorDescriptor descriptor = (ConstructorDescriptor) call.getResultingDescriptor();
                         AnnotationVisitor visitor = annotationVisitor.visitAnnotation(keyName, typeMapper
-                                .mapType(descriptor.getContainingDeclaration().getDefaultType(), MapTypeMode.VALUE).getDescriptor());
+                                .mapType(descriptor.getContainingDeclaration().getDefaultType(), JetTypeMapperMode.VALUE).getDescriptor());
                         getAnnotation(call, visitor);
                         visitor.visitEnd();
                         return;

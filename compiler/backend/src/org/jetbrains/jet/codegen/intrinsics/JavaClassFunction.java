@@ -23,6 +23,7 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -50,7 +51,7 @@ public class JavaClassFunction implements IntrinsicMethod {
         JetType returnType = resultingDescriptor.getReturnType();
         assert returnType != null;
         Type type = state.getTypeMapper().mapType(
-                returnType.getArguments().get(0).getType(), MapTypeMode.VALUE);
+                returnType.getArguments().get(0).getType(), JetTypeMapperMode.VALUE);
         JvmPrimitiveType primitiveType = JvmPrimitiveType.getByAsmType(type);
         if (primitiveType != null) {
             v.getstatic(primitiveType.getWrapper().getAsmType().getInternalName(), "TYPE", "Ljava/lang/Class;");
