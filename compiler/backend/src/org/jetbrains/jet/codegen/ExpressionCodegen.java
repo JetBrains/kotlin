@@ -2369,7 +2369,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             boolean leftNullable,
             boolean rightNullable
     ) {
-        if ((isNumberPrimitive(leftType) || leftType.getSort() == Type.BOOLEAN) && leftType == rightType) {
+        if ((CodegenUtil.isNumberPrimitive(leftType) || leftType.getSort() == Type.BOOLEAN) && leftType == rightType) {
             return compareExpressionsOnStack(opToken, leftType);
         }
         else {
@@ -2462,7 +2462,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return StackValue.onStack(exprType);
     }
 
-    private static boolean isNumberPrimitive(DeclarationDescriptor descriptor) {
+    private static boolean isPrimitiveNumberClassDescriptor(DeclarationDescriptor descriptor) {
         if (!(descriptor instanceof ClassDescriptor)) {
             return false;
         }
@@ -2478,10 +2478,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         String className = descriptor.getName().getName();
         return className.equals(name);
-    }
-
-    private static boolean isNumberPrimitive(Type type) {
-        return isIntPrimitive(type) || type == Type.FLOAT_TYPE || type == Type.DOUBLE_TYPE || type == Type.LONG_TYPE;
     }
 
     private StackValue generateCompareOp(JetExpression left, JetExpression right, IElementType opToken, Type operandType) {
@@ -2637,7 +2633,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         else {
             DeclarationDescriptor cls = op.getContainingDeclaration();
             CallableMethod callableMethod = (CallableMethod) callable;
-            if (isNumberPrimitive(cls) || !(op.getName().getName().equals("inc") || op.getName().getName().equals("dec"))) {
+            if (isPrimitiveNumberClassDescriptor(cls) || !(op.getName().getName().equals("inc") || op.getName().getName().equals("dec"))) {
                 return invokeOperation(expression, (FunctionDescriptor) op, callableMethod);
             }
             else {
@@ -2697,7 +2693,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             final Type asmType = expressionType(expression);
             DeclarationDescriptor cls = op.getContainingDeclaration();
             if (op.getName().getName().equals("inc") || op.getName().getName().equals("dec")) {
-                if (isNumberPrimitive(cls)) {
+                if (isPrimitiveNumberClassDescriptor(cls)) {
                     receiver.put(receiver.type, v);
                     JetExpression operand = expression.getBaseExpression();
                     if (operand instanceof JetReferenceExpression) {
@@ -3285,10 +3281,10 @@ The "returned" value of try expression with no finally is either the last expres
                 boolean patternIsNullable = false;
                 JetType condJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, condExpression);
                 Type condType;
-                if (isNumberPrimitive(subjectType) || subjectType.getSort() == Type.BOOLEAN) {
+                if (CodegenUtil.isNumberPrimitive(subjectType) || subjectType.getSort() == Type.BOOLEAN) {
                     assert condJetType != null;
                     condType = asmType(condJetType);
-                    if (!(isNumberPrimitive(condType) || condType.getSort() == Type.BOOLEAN)) {
+                    if (!(CodegenUtil.isNumberPrimitive(condType) || condType.getSort() == Type.BOOLEAN)) {
                         subjectType = boxType(subjectType);
                         expressionToMatch.coerce(subjectType, v);
                     }
