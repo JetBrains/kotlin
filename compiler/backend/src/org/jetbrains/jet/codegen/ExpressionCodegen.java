@@ -735,11 +735,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 v.store(myArrayVar, OBJECT_TYPE);
             }
 
-            //if (loopRangeType.isNullable()) {
-            //    v.load(myArrayVar, OBJECT_TYPE);
-            //    v.ifnull(end);
-            //}
-
             v.iconst(0);
             v.store(myIndexVar, Type.INT_TYPE);
         }
