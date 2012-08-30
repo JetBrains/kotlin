@@ -20,6 +20,7 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -88,8 +89,7 @@ public abstract class ClassBodyCodegen {
 
     protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration, FunctionCodegen functionCodegen) {
         if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
-            state.getInjector().getMemberCodegen().generateFunctionOrProperty(
-                    (JetTypeParameterListOwner) declaration, context, v);
+            state.getMemberCodegen().generateFunctionOrProperty((JetTypeParameterListOwner) declaration, context, v);
         }
     }
 
@@ -109,7 +109,7 @@ public abstract class ClassBodyCodegen {
                         }
                     }
                     else {
-                        Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
+                        Type type = state.getTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
                         v.newMethod(p, ACC_PUBLIC | ACC_ABSTRACT, p.getName(), "()" + type.getDescriptor(), null, null);
                     }
                 }

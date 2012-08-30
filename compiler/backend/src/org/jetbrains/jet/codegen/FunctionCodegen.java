@@ -30,6 +30,7 @@ import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -70,7 +71,7 @@ public class FunctionCodegen {
         final SimpleFunctionDescriptor functionDescriptor = state.getBindingContext().get(BindingContext.FUNCTION, f);
         assert functionDescriptor != null;
         JvmMethodSignature method =
-                state.getInjector().getJetTypeMapper().mapToCallableMethod(functionDescriptor, false, owner.getContextKind())
+                state.getTypeMapper().mapToCallableMethod(functionDescriptor, false, owner.getContextKind())
                         .getSignature();
         generateMethod(f, method, true, null, functionDescriptor);
     }
@@ -142,7 +143,7 @@ public class FunctionCodegen {
             final MethodVisitor mv =
                     v.newMethod(fun, flags, jvmSignature.getAsmMethod().getName(), jvmSignature.getAsmMethod().getDescriptor(),
                                 jvmSignature.getGenericsSignature(), null);
-            AnnotationCodegen.forMethod(mv, state.getInjector().getJetTypeMapper()).genAnnotations(functionDescriptor);
+            AnnotationCodegen.forMethod(mv, state.getTypeMapper()).genAnnotations(functionDescriptor);
             if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES) {
                 int start = 0;
                 if (needJetAnnotations) {
@@ -185,7 +186,7 @@ public class FunctionCodegen {
                     }
                     for (int i = 0; i != paramDescrs.size(); ++i) {
                         ValueParameterDescriptor parameterDescriptor = paramDescrs.get(i);
-                        AnnotationCodegen.forParameter(i, mv, state.getInjector().getJetTypeMapper()).genAnnotations(parameterDescriptor);
+                        AnnotationCodegen.forParameter(i, mv, state.getTypeMapper()).genAnnotations(parameterDescriptor);
                         JetValueParameterAnnotationWriter av = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i + start);
                         av.writeName(parameterDescriptor.getName().getName());
                         av.writeHasDefaultValue(parameterDescriptor.declaresDefaultValue());
@@ -209,7 +210,7 @@ public class FunctionCodegen {
                 Label methodBegin = new Label();
                 mv.visitLabel(methodBegin);
 
-                FrameMap frameMap = context.prepareFrame(state.getInjector().getJetTypeMapper());
+                FrameMap frameMap = context.prepareFrame(state.getTypeMapper());
 
                 ExpressionCodegen codegen =
                         new ExpressionCodegen(mv, frameMap, jvmSignature.getAsmMethod().getReturnType(), context, state);
@@ -264,9 +265,9 @@ public class FunctionCodegen {
                 }
                 else {
                     for (ValueParameterDescriptor parameter : paramDescrs) {
-                        Type sharedVarType = state.getInjector().getJetTypeMapper().getSharedVarType(parameter);
+                        Type sharedVarType = state.getTypeMapper().getSharedVarType(parameter);
                         if (sharedVarType != null) {
-                            Type localVarType = state.getInjector().getJetTypeMapper().mapType(parameter.getType(), MapTypeMode.VALUE);
+                            Type localVarType = state.getTypeMapper().mapType(parameter.getType(), MapTypeMode.VALUE);
                             int index = frameMap.getIndex(parameter);
                             mv.visitTypeInsn(NEW, sharedVarType.getInternalName());
                             mv.visitInsn(DUP);
@@ -300,32 +301,32 @@ public class FunctionCodegen {
                 int k = 0;
 
                 if (expectedThisObject.exists()) {
-                    Type type = state.getInjector().getJetTypeMapper().mapType(expectedThisObject.getType(), MapTypeMode.VALUE);
+                    Type type = state.getTypeMapper().mapType(expectedThisObject.getType(), MapTypeMode.VALUE);
                     // TODO: specify signature
                     mv.visitLocalVariable("this", type.getDescriptor(), null, methodBegin, methodEnd, k++);
                 }
                 else if (fun instanceof JetFunctionLiteralExpression ||
                          isLocalFun(state.getBindingContext(), functionDescriptor)) {
-                    Type type = state.getInjector().getJetTypeMapper().mapType(
+                    Type type = state.getTypeMapper().mapType(
                             context.getThisDescriptor().getDefaultType(), MapTypeMode.VALUE);
                     mv.visitLocalVariable("this", type.getDescriptor(), null, methodBegin, methodEnd, k++);
                 }
 
                 if (receiverParameter.exists()) {
-                    Type type = state.getInjector().getJetTypeMapper().mapType(receiverParameter.getType(), MapTypeMode.VALUE);
+                    Type type = state.getTypeMapper().mapType(receiverParameter.getType(), MapTypeMode.VALUE);
                     // TODO: specify signature
                     mv.visitLocalVariable("this$receiver", type.getDescriptor(), null, methodBegin, methodEnd, k);
                     k += type.getSize();
                 }
 
                 for (ValueParameterDescriptor parameter : paramDescrs) {
-                    Type type = state.getInjector().getJetTypeMapper().mapType(parameter.getType(), MapTypeMode.VALUE);
+                    Type type = state.getTypeMapper().mapType(parameter.getType(), MapTypeMode.VALUE);
                     // TODO: specify signature
 
                     Label divideLabel = mapLabelsToDivideLocalVarVisibilityForSharedVar.get(parameter.getName());
                     String parameterName = parameter.getName().getName();
                     if (divideLabel != null) {
-                        Type sharedVarType = state.getInjector().getJetTypeMapper().getSharedVarType(parameter);
+                        Type sharedVarType = state.getTypeMapper().getSharedVarType(parameter);
                         mv.visitLocalVariable(parameterName, type.getDescriptor(), null, methodBegin, divideLabel, k);
 
                         String nameForSharedVar = generateTmpVariableName(localVariableNames);
@@ -381,7 +382,7 @@ public class FunctionCodegen {
         }
 
         Method method =
-                state.getInjector().getJetTypeMapper().mapSignature(functionDescriptor.getName(), functionDescriptor).getAsmMethod();
+                state.getTypeMapper().mapSignature(functionDescriptor.getName(), functionDescriptor).getAsmMethod();
 
         Queue<FunctionDescriptor> bfsQueue = new LinkedList<FunctionDescriptor>();
         Set<FunctionDescriptor> visited = new HashSet<FunctionDescriptor>();
@@ -401,7 +402,7 @@ public class FunctionCodegen {
             FunctionDescriptor descriptor = bfsQueue.poll();
             if (descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
                 Method overridden =
-                        state.getInjector().getJetTypeMapper().mapSignature(descriptor.getName(), descriptor.getOriginal()).getAsmMethod();
+                        state.getTypeMapper().mapSignature(descriptor.getName(), descriptor.getOriginal()).getAsmMethod();
                 if (differentMethods(method, overridden)) {
                     bridgesToGenerate.add(overridden);
                 }
@@ -458,7 +459,7 @@ public class FunctionCodegen {
             ownerInternalName = NamespaceCodegen.getJVMClassNameForKotlinNs(DescriptorUtils.getFQName(contextClass).toSafe());
         }
         else {
-            ownerInternalName = JvmClassName.byType(state.getInjector().getJetTypeMapper()
+            ownerInternalName = JvmClassName.byType(state.getTypeMapper()
                                                             .mapType(((ClassDescriptor) contextClass).getDefaultType(),
                                                                      MapTypeMode.IMPL));
         }
@@ -498,7 +499,7 @@ public class FunctionCodegen {
     ) {
         mv.visitCode();
 
-        FrameMap frameMap = owner.prepareFrame(state.getInjector().getJetTypeMapper());
+        FrameMap frameMap = owner.prepareFrame(state.getTypeMapper());
 
         if (kind instanceof OwnerKind.StaticDelegateKind) {
             frameMap.leaveTemp(OBJECT_TYPE);
@@ -513,7 +514,7 @@ public class FunctionCodegen {
 
         Type receiverType;
         if (hasReceiver) {
-            receiverType = state.getInjector().getJetTypeMapper().mapType(receiverParameter.getType(), MapTypeMode.VALUE);
+            receiverType = state.getTypeMapper().mapType(receiverParameter.getType(), MapTypeMode.VALUE);
             var += receiverType.getSize();
         }
         else {
@@ -664,7 +665,7 @@ public class FunctionCodegen {
                 reg += argType.getSize();
             }
 
-            iv.invokevirtual(state.getInjector().getJetTypeMapper().mapType(
+            iv.invokevirtual(state.getTypeMapper().mapType(
                     ((ClassDescriptor) owner.getContextDescriptor()).getDefaultType(), MapTypeMode.VALUE).getInternalName(),
                              jvmSignature.getName(), jvmSignature.getDescriptor());
             if (isPrimitive(jvmSignature.getReturnType()) && !isPrimitive(overridden.getReturnType())) {
@@ -680,7 +681,7 @@ public class FunctionCodegen {
 
     public void genDelegate(FunctionDescriptor functionDescriptor, CallableMemberDescriptor overriddenDescriptor, StackValue field) {
         JvmMethodSignature jvmMethodSignature =
-                state.getInjector().getJetTypeMapper().mapSignature(functionDescriptor.getName(), functionDescriptor);
+                state.getTypeMapper().mapSignature(functionDescriptor.getName(), functionDescriptor);
         genDelegate(functionDescriptor, overriddenDescriptor, field, jvmMethodSignature);
     }
 
@@ -721,7 +722,7 @@ public class FunctionCodegen {
             field.put(field.type, iv);
             ClassDescriptor classDescriptor = (ClassDescriptor) overriddenDescriptor.getContainingDeclaration();
             String internalName =
-                    state.getInjector().getJetTypeMapper().mapType(classDescriptor.getDefaultType(), MapTypeMode.VALUE).getInternalName();
+                    state.getTypeMapper().mapType(classDescriptor.getDefaultType(), MapTypeMode.VALUE).getInternalName();
             if (classDescriptor.getKind() == ClassKind.TRAIT) {
                 iv.invokeinterface(internalName, method.getName(), method.getDescriptor());
             }

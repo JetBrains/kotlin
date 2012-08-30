@@ -29,6 +29,8 @@ import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
+import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationStrategy;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.utils.ExceptionUtils;
@@ -213,7 +215,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 String scriptClassName = ScriptNameUtil.classNameForScript(myFiles.getPsiFile());
                 Class<?> scriptClass = loader.loadClass(scriptClassName);
 
-                Constructor constructor = getConstructor(scriptClass, state.getScriptConstructorMethod());
+                Constructor constructor = getConstructor(scriptClass, state.getScriptCodegen().getScriptConstructorMethod());
                 scriptInstance = constructor.newInstance(myFiles.getScriptParameterValues().toArray());
 
                 assertFalse("expecting at least one expectation", myFiles.getExpectedValues().isEmpty());
@@ -291,7 +293,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected String generateToText() {
         if(alreadyGenerated == null)
             alreadyGenerated = generateCommon(ClassBuilderFactories.TEST);
-        return alreadyGenerated.createText();
+        return alreadyGenerated.getFactory().createText();
     }
 
     private GenerationState generateCommon(ClassBuilderFactory classBuilderFactory) {
@@ -307,7 +309,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         analyzeExhaust.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
         alreadyGenerated = new GenerationState(myEnvironment.getProject(), classBuilderFactory, analyzeExhaust, myFiles.getPsiFiles());
-        alreadyGenerated.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
+        GenerationStrategy.STANDARD.compileCorrectFiles(alreadyGenerated, CompilationErrorHandler.THROW_EXCEPTION);
         return alreadyGenerated;
     }
 

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -44,7 +45,7 @@ public class PsiMethodCall implements IntrinsicMethod {
             List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state
     ) {
         final CallableMethod callableMethod =
-                state.getInjector().getJetTypeMapper().mapToCallableMethod(method, false, OwnerKind.IMPLEMENTATION);
+                state.getTypeMapper().mapToCallableMethod(method, false, OwnerKind.IMPLEMENTATION);
         codegen.invokeMethodWithArguments(callableMethod, (JetCallExpression) element, receiver);
         return StackValue.onStack(callableMethod.getSignature().getAsmMethod().getReturnType());
     }

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
@@ -56,6 +57,6 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
     }
 
     private String jvmName() {
-        return state.getInjector().getJetTypeMapper().mapType(descriptor.getDefaultType(), MapTypeMode.TRAIT_IMPL).getInternalName();
+        return state.getTypeMapper().mapType(descriptor.getDefaultType(), MapTypeMode.TRAIT_IMPL).getInternalName();
     }
 }

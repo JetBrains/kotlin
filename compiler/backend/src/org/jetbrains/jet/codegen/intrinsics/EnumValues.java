@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
-import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.MapTypeMode;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
@@ -50,7 +50,7 @@ public class EnumValues implements IntrinsicMethod {
         CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
         JetType returnType = resultingDescriptor.getReturnType();
         assert returnType != null;
-        Type type = state.getInjector().getJetTypeMapper().mapType(
+        Type type = state.getTypeMapper().mapType(
                 returnType, MapTypeMode.VALUE);
         v.invokestatic(type.getElementType().getInternalName(), "values", "()" + type);
         StackValue.onStack(type).put(expectedType, v);

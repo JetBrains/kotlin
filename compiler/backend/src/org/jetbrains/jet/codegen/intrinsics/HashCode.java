@@ -23,6 +23,7 @@ import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;

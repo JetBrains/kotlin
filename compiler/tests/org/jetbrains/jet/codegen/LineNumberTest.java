@@ -27,6 +27,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.parsing.JetParsingTest;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
@@ -91,7 +92,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
                 actualLineNumbers.addAll(readLineNumbers(cr));
             }
             catch (Throwable e) {
-                System.out.println(state.createText());
+                System.out.println(state.getFactory().createText());
                 throw ExceptionUtils.rethrow(e);
             }
         }

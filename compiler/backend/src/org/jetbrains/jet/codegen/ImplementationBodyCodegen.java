@@ -30,6 +30,7 @@ import org.jetbrains.jet.codegen.context.*;
 import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -71,7 +72,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     public ImplementationBodyCodegen(JetClassOrObject aClass, CodegenContext context, ClassBuilder v, GenerationState state) {
         super(aClass, context, v, state);
-        typeMapper = state.getInjector().getJetTypeMapper();
+        typeMapper = state.getTypeMapper();
         bindingContext = state.getBindingContext();
     }
 
@@ -345,7 +346,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateEnumMethods();
 
-        generateClosureFields(context.closure, v, state.getInjector().getJetTypeMapper());
+        generateClosureFields(context.closure, v, state.getTypeMapper());
     }
 
     private void generateEnumMethods() {
@@ -744,7 +745,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             for (ValueParameterDescriptor valueParameter : constructorDescriptor.getValueParameters()) {
-                AnnotationCodegen.forParameter(i, mv, state.getInjector().getJetTypeMapper()).genAnnotations(valueParameter);
+                AnnotationCodegen.forParameter(i, mv, state.getTypeMapper()).genAnnotations(valueParameter);
                 JetValueParameterAnnotationWriter jetValueParameterAnnotation =
                         JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i);
                 jetValueParameterAnnotation.writeName(valueParameter.getName().getName());
@@ -917,7 +918,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
 
                 final MethodVisitor mv = v.newMethod(myClass, flags, function.getName(), function.getDescriptor(), null, null);
-                AnnotationCodegen.forMethod(mv, state.getInjector().getJetTypeMapper()).genAnnotations(fun);
+                AnnotationCodegen.forMethod(mv, state.getTypeMapper()).genAnnotations(fun);
 
                 JvmMethodSignature jvmSignature =
                         typeMapper.mapToCallableMethod(inheritedFun, false, OwnerKind.IMPLEMENTATION).getSignature();
@@ -943,7 +944,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
                 else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
                     mv.visitCode();
-                    FrameMap frameMap = context.prepareFrame(state.getInjector().getJetTypeMapper());
+                    FrameMap frameMap = context.prepareFrame(state.getTypeMapper());
                     ExpressionCodegen codegen =
                             new ExpressionCodegen(mv, frameMap, jvmSignature.getAsmMethod().getReturnType(), context, state);
                     codegen.generateThisOrOuter(descriptor);    // ??? wouldn't it be addClosureToConstructorParameters good idea to put it?

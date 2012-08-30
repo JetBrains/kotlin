@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.debugger;
 
 import com.intellij.debugger.engine.DebugProcess;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.context.CodegenBinding;
 import org.jetbrains.jet.di.InjectorForJetTypeMapper;

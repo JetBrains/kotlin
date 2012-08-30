@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.tree.IElementType;
@@ -35,6 +34,7 @@ import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.context.*;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.signature.JvmPropertyAccessorSignature;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
@@ -92,6 +92,29 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
      */
     private final Map<JetElement, StackValue.Local> tempVariables = Maps.newHashMap();
 
+    public CalculatedClosure generateObjectLiteral(
+            GenerationState state,
+            JetObjectLiteralExpression literal
+    ) {
+        JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
+
+        JvmClassName className =
+                classNameForAnonymousClass(bindingContext, objectDeclaration);
+        ClassBuilder classBuilder = state.getFactory().newVisitor(className.getInternalName() + ".class");
+
+        final ClassDescriptor classDescriptor = bindingContext.get(CLASS, objectDeclaration);
+        assert classDescriptor != null;
+
+        //noinspection SuspiciousMethodCalls
+        final CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
+
+        final CodegenContext objectContext = context.intoAnonymousClass(classDescriptor, this);
+
+        new ImplementationBodyCodegen(objectDeclaration, objectContext, classBuilder, state).generate();
+
+        return closure;
+    }
+
     static class BlockStackElement {
     }
 
@@ -124,7 +147,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             GenerationState state
     ) {
         this.myFrameMap = myMap;
-        this.typeMapper = state.getInjector().getJetTypeMapper();
+        this.typeMapper = state.getTypeMapper();
         this.returnType = returnType;
         this.state = state;
         this.v = new InstructionAdapter(v) {
@@ -227,11 +250,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, declaration);
         assert descriptor != null;
 
-        Pair<JvmClassName, ClassBuilder> nameAndVisitor = state.forAnonymousSubclass(declaration);
+        JvmClassName className =
+                classNameForAnonymousClass(state.getBindingContext(), declaration);
+        ClassBuilder classBuilder = state.getFactory().newVisitor(className.getInternalName() + ".class");
 
         final CodegenContext objectContext = context.intoAnonymousClass(descriptor, this);
 
-        new ImplementationBodyCodegen(declaration, objectContext, nameAndVisitor.getSecond(), state).generate();
+        new ImplementationBodyCodegen(declaration, objectContext, classBuilder, state).generate();
         return StackValue.none();
     }
 
@@ -1036,7 +1061,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitObjectLiteralExpression(JetObjectLiteralExpression expression, StackValue receiver) {
-        CalculatedClosure closure = state.generateObjectLiteral(expression, this);
+        CalculatedClosure closure = this.generateObjectLiteral(state, expression);
 
         ConstructorDescriptor constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, expression.getObjectDeclaration());
         assert constructorDescriptor != null;
@@ -1302,7 +1327,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             while (memberDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
                 memberDescriptor = memberDescriptor.getOverriddenDescriptors().iterator().next();
             }
-            intrinsic = state.getInjector().getIntrinsics().getIntrinsic(memberDescriptor);
+            intrinsic = state.getIntrinsics().getIntrinsic(memberDescriptor);
         }
         if (intrinsic != null) {
             final Type expectedType = expressionType(expression);
@@ -1741,7 +1766,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     Callable resolveToCallable(@NotNull FunctionDescriptor fd, boolean superCall) {
-        final IntrinsicMethod intrinsic = state.getInjector().getIntrinsics().getIntrinsic(fd);
+        final IntrinsicMethod intrinsic = state.getIntrinsics().getIntrinsic(fd);
         if (intrinsic != null) {
             return intrinsic;
         }
@@ -1917,7 +1942,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     JvmClassName className =
                             classNameForScriptDescriptor(state.getBindingContext(),
                                                                         receiver.getDeclarationDescriptor());
-                    String fieldName = state.getInjector().getScriptCodegen().getScriptFieldName(receiver.getDeclarationDescriptor());
+                    String fieldName = state.getScriptCodegen().getScriptFieldName(receiver.getDeclarationDescriptor());
                     result.put(currentScriptClassName.getAsmType(), v);
                     StackValue.field(className.getAsmType(), currentScriptClassName, fieldName, false).put(className.getAsmType(), v);
                 }
@@ -3556,7 +3581,7 @@ The "returned" value of try expression with no finally is either the last expres
     }
 
     private Call makeFakeCall(ReceiverDescriptor initializerAsReceiver) {
-        JetSimpleNameExpression fake = JetPsiFactory.createSimpleName(state.getInjector().getProject(), "fake");
+        JetSimpleNameExpression fake = JetPsiFactory.createSimpleName(state.getProject(), "fake");
         return CallMaker.makeCall(fake, initializerAsReceiver);
     }
 

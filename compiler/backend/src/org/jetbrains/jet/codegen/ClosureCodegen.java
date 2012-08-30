@@ -32,6 +32,7 @@ import org.jetbrains.jet.codegen.context.CalculatedClosure;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MutableClosure;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.psi.JetElement;
@@ -66,19 +67,17 @@ public class ClosureCodegen {
         this.state = state;
         this.closure = closure;
         bindingContext = state.getBindingContext();
-        typeMapper = state.getInjector().getJetTypeMapper();
+        typeMapper = state.getTypeMapper();
     }
 
     public ClosureCodegen gen(JetExpression fun, CodegenContext context, ExpressionCodegen expressionCodegen) {
         final SimpleFunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, fun);
         assert descriptor != null;
 
-        final Pair<JvmClassName, ClassBuilder> nameAndVisitor = state.forAnonymousSubclass(fun);
+        name = classNameForAnonymousClass(state.getBindingContext(), fun);
+        final ClassBuilder cv = state.getFactory().newVisitor(name.getInternalName() + ".class");
 
         final FunctionDescriptor funDescriptor = bindingContext.get(BindingContext.FUNCTION, fun);
-
-        ClassBuilder cv = nameAndVisitor.getSecond();
-        name = nameAndVisitor.getFirst();
 
         SignatureWriter signatureWriter = new SignatureWriter();
 
@@ -113,7 +112,7 @@ public class ClosureCodegen {
             generateConstInstance(fun, cv);
         }
 
-        generateClosureFields(closure, cv, state.getInjector().getJetTypeMapper());
+        generateClosureFields(closure, cv, state.getTypeMapper());
 
         cv.done();
 

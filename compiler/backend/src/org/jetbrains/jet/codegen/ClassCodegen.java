@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -49,7 +50,7 @@ public class ClassCodegen {
 
     public void generate(CodegenContext context, JetClassOrObject aClass) {
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
-        ClassBuilder classBuilder = state.forClassImplementation(descriptor);
+        ClassBuilder classBuilder = state.getFactory().forClassImplementation(descriptor);
 
         final CodegenContext contextForInners = context.intoClass(descriptor, OwnerKind.IMPLEMENTATION, state);
 
@@ -95,7 +96,7 @@ public class ClassCodegen {
         new ImplementationBodyCodegen(aClass, classContext, classBuilder, state).generate();
 
         if (aClass instanceof JetClass && ((JetClass) aClass).isTrait()) {
-            ClassBuilder traitBuilder = state.forTraitImplementation(descriptor);
+            ClassBuilder traitBuilder = state.getFactory().forTraitImplementation(descriptor, state);
             new TraitImplBodyCodegen(aClass, context.intoClass(descriptor, OwnerKind.TRAIT_IMPL, state), traitBuilder, state)
                     .generate();
             traitBuilder.done();

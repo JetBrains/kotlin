@@ -23,7 +23,7 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.Callable;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
-import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
 

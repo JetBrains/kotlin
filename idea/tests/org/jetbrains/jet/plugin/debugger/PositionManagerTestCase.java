@@ -32,7 +32,7 @@ import com.sun.jdi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.codegen.ClassFileFactory;
-import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.utils.ExceptionUtils;

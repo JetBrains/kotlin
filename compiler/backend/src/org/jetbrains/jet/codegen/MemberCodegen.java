@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner;

@@ -23,7 +23,7 @@ import java.util.List;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
-import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.codegen.JetTypeMapper;

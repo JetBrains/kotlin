@@ -22,20 +22,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
+import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.ScriptContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
+import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationStrategy;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetScript;
-import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 
 import javax.inject.Inject;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
@@ -59,6 +61,7 @@ public class ScriptCodegen {
     private BindingContext bindingContext;
 
     private List<ScriptDescriptor> earlierScripts;
+    private Method scriptConstructorMethod;
 
 
     @Inject
@@ -136,7 +139,7 @@ public class ScriptCodegen {
 
         JvmMethodSignature jvmSignature = jetTypeMapper.mapScriptSignature(scriptDescriptor, importedScripts);
 
-        state.setScriptConstructorMethod(jvmSignature.getAsmMethod());
+        state.getScriptCodegen().setScriptConstructorMethod(jvmSignature.getAsmMethod());
 
         MethodVisitor mv = classBuilder.newMethod(
                 scriptDeclaration, ACC_PUBLIC, jvmSignature.getAsmMethod().getName(), jvmSignature.getAsmMethod().getDescriptor(),
@@ -233,7 +236,7 @@ public class ScriptCodegen {
             ScriptDescriptor earlierDescriptor = t.first;
             JvmClassName earlierClassName = t.second;
 
-            registerClassNameForScript(state.getInjector().getBindingTrace(), earlierDescriptor, earlierClassName);
+            registerClassNameForScript(state.getBindingTrace(), earlierDescriptor, earlierClassName);
         }
 
         List<ScriptDescriptor> earlierScriptDescriptors = Lists.newArrayList();
@@ -254,5 +257,30 @@ public class ScriptCodegen {
 
     public String getScriptFieldName(@NotNull ScriptDescriptor scriptDescriptor) {
         return "script$" + getScriptIndex(scriptDescriptor);
+    }
+
+    public void setScriptConstructorMethod(Method scriptConstructorMethod) {
+        this.scriptConstructorMethod = scriptConstructorMethod;
+    }
+
+    public Method getScriptConstructorMethod() {
+        return scriptConstructorMethod;
+    }
+
+    public void compileScript(
+            @NotNull JetScript script,
+            @NotNull JvmClassName className,
+            @NotNull List<Pair<ScriptDescriptor, JvmClassName>> earlierScripts,
+            @NotNull CompilationErrorHandler errorHandler
+    ) {
+        registerEarlierScripts(earlierScripts);
+        registerClassNameForScript(state.getBindingTrace(), script, className);
+
+        state.beforeCompile();
+        GenerationStrategy.STANDARD.generateNamespace(
+                state,
+                JetPsiUtil.getFQName((JetFile) script.getContainingFile()),
+                Collections.singleton((JetFile) script.getContainingFile()),
+                errorHandler);
     }
 }

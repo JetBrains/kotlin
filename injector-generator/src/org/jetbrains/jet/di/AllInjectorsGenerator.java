@@ -19,6 +19,7 @@ package org.jetbrains.jet.di;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;

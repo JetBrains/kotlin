@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 
@@ -132,14 +133,14 @@ public abstract class CodegenContext {
     }
 
     public CodegenContext intoClass(ClassDescriptor descriptor, OwnerKind kind, GenerationState state) {
-        return new ClassContext(state.getInjector().getJetTypeMapper(), descriptor, kind, this, null);
+        return new ClassContext(state.getTypeMapper(), descriptor, kind, this, null);
     }
 
     public CodegenContext intoAnonymousClass(
             ClassDescriptor descriptor,
             ExpressionCodegen expressionCodegen
     ) {
-        final JetTypeMapper typeMapper = expressionCodegen.getState().getInjector().getJetTypeMapper();
+        final JetTypeMapper typeMapper = expressionCodegen.getState().getTypeMapper();
         return new AnonymousClassContext(typeMapper, descriptor, OwnerKind.IMPLEMENTATION, this,
                                          expressionCodegen);
     }
@@ -165,7 +166,7 @@ public abstract class CodegenContext {
             FunctionDescriptor funDescriptor,
             ExpressionCodegen expressionCodegen
     ) {
-        final JetTypeMapper typeMapper = expressionCodegen.getState().getInjector().getJetTypeMapper();
+        final JetTypeMapper typeMapper = expressionCodegen.getState().getTypeMapper();
         return new ClosureContext(typeMapper, funDescriptor,
                                   typeMapper.getBindingContext().get(CLASS_FOR_FUNCTION, funDescriptor),
                                   this, expressionCodegen);

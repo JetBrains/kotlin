@@ -34,6 +34,8 @@ import org.jetbrains.jet.cli.common.CompilerPluginContext;
 import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationStrategy;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
@@ -344,7 +346,7 @@ public class KotlinToJVMBytecodeCompiler {
                                                               environment.getConfiguration().get(
                                                                       JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY,
                                                                       BuiltinToJavaTypesMapping.ENABLED));
-        generationState.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
+        GenerationStrategy.STANDARD.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
 
         CompilerPluginContext context = new CompilerPluginContext(project, exhaust.getBindingContext(), environment.getSourceFiles());
         for (CompilerPlugin plugin : environment.getConfiguration().getList(CLIConfigurationKeys.COMPILER_PLUGINS)) {

@@ -30,6 +30,7 @@ import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -91,7 +92,7 @@ public class TestlibTest extends CodegenTestCase {
                     new URLClassLoader(new URL[]{ForTestCompileRuntime.runtimeJarForTests().toURI().toURL(), junitJar.toURI().toURL()},
                                        TestCase.class.getClassLoader()));
 
-            JetTypeMapper typeMapper = generationState.getInjector().getJetTypeMapper();
+            JetTypeMapper typeMapper = generationState.getTypeMapper();
             TestSuite suite = new TestSuite("stdlib_test");
             try {
                 for(JetFile jetFile : myEnvironment.getSourceFiles()) {

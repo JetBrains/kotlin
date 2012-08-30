@@ -19,7 +19,7 @@ package org.jetbrains.jet.codegen.context;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.AsmTypeConstants;
-import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;

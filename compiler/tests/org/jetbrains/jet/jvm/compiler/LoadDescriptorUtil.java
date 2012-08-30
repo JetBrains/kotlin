@@ -28,7 +28,7 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
-import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.config.CompilerConfiguration;

@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -47,7 +48,7 @@ public class EnumValueOf implements IntrinsicMethod {
         CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
         JetType returnType = resultingDescriptor.getReturnType();
         assert returnType != null;
-        Type type = state.getInjector().getJetTypeMapper().mapType(
+        Type type = state.getTypeMapper().mapType(
                 returnType, MapTypeMode.VALUE);
         assert arguments != null;
         codegen.gen(arguments.get(0), AsmTypeConstants.JAVA_STRING_TYPE);
