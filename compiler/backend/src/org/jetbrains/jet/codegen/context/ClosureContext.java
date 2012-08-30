@@ -28,7 +28,7 @@ import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLOSURE;
 /**
  * @author alex.tkachman
 */
-class ClosureContext extends ReceiverContext {
+class ClosureContext extends CodegenContext {
     private final ClassDescriptor classDescriptor;
 
     public ClosureContext(

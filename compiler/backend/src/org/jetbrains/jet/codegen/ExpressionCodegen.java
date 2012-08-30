@@ -1916,7 +1916,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue generateReceiver(DeclarationDescriptor provided) {
-        if (context.getReceiverDescriptor() == provided) {
+        if (context.getCallableDescriptorWithReceiver() == provided) {
             StackValue result = context.getReceiverExpression(typeMapper);
             return castToRequiredTypeOfInterfaceIfNeeded(result, provided, null);
         }

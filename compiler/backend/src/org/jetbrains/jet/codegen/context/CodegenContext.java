@@ -101,7 +101,14 @@ public abstract class CodegenContext {
         }
     }
 
-    public CallableDescriptor getReceiverDescriptor() {
+    /**
+     * This method returns not null only if context descriptor corresponds to method or function which has receiver
+     */
+    @Nullable public final CallableDescriptor getCallableDescriptorWithReceiver() {
+        if(contextDescriptor instanceof CallableDescriptor) {
+            final CallableDescriptor callableDescriptor = (CallableDescriptor) getContextDescriptor();
+            return callableDescriptor.getReceiverParameter().exists() ? callableDescriptor : null;
+        }
         return null;
     }
 
@@ -183,7 +190,7 @@ public abstract class CodegenContext {
             frameMap.enterTemp(OBJECT_TYPE);  // 0 slot for this
         }
 
-        CallableDescriptor receiverDescriptor = getReceiverDescriptor();
+        CallableDescriptor receiverDescriptor = getCallableDescriptorWithReceiver();
         if (receiverDescriptor != null) {
             Type type = mapper.mapType(receiverDescriptor.getReceiverParameter().getType(), JetTypeMapperMode.VALUE);
             frameMap.enterTemp(type);  // Next slot for receiver
@@ -230,8 +237,8 @@ public abstract class CodegenContext {
     }
 
     public StackValue getReceiverExpression(JetTypeMapper typeMapper) {
-        assert getReceiverDescriptor() != null;
-        Type asmType = typeMapper.mapType(getReceiverDescriptor().getReceiverParameter().getType(), JetTypeMapperMode.VALUE);
+        assert getCallableDescriptorWithReceiver() != null;
+        Type asmType = typeMapper.mapType(getCallableDescriptorWithReceiver().getReceiverParameter().getType(), JetTypeMapperMode.VALUE);
         return hasThisDescriptor() ? StackValue.local(1, asmType) : StackValue.local(0, asmType);
     }
 

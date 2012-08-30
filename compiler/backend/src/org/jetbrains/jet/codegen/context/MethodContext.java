@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 /**
  * @author alex.tkachman
 */
-public class MethodContext extends ReceiverContext {
+public class MethodContext extends CodegenContext {
     public MethodContext(
             @NotNull FunctionDescriptor contextType,
             OwnerKind contextKind,
