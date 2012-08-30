@@ -1685,10 +1685,11 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
         ClassDescriptor classDescriptor = resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
 
-        JetType expectedArrayType = getExpectedArrayType(classDescriptor, valueName);
-        if (expectedArrayType == null) {
+        ValueParameterDescriptor valueParameterDescriptor = getValueParameterDescriptorForAnnotationParameter(valueName, classDescriptor);
+        if (valueParameterDescriptor == null) {
             return null;
         }
+        JetType expectedArrayType = valueParameterDescriptor.getType();
         return new ArrayValue(values, expectedArrayType);
     }
 
@@ -1708,21 +1709,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             values.add(compileTimeConstant);
         }
         return values;
-    }
-
-    @Nullable
-    private JetType getExpectedArrayType(ClassDescriptor clazz, Name argumentName) {
-        Collection<ConstructorDescriptor> constructors = clazz.getConstructors();
-        assert constructors.size() == 1 : "Annotation class descriptor must have only one constructor";
-        List<ValueParameterDescriptor> valueParameters = constructors.iterator().next().getValueParameters();
-
-        for (ValueParameterDescriptor parameter : valueParameters) {
-            Name parameterName = parameter.getName();
-            if (parameterName.equals(argumentName)) {
-                return parameter.getType();
-            }
-        }
-        return null;
     }
 
     @Nullable
