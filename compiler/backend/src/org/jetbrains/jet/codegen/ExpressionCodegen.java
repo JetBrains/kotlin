@@ -255,7 +255,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         assert descriptor != null;
 
         JvmClassName className =
-                classNameForAnonymousClass(state.getBindingContext(), declaration);
+                classNameForAnonymousClass(bindingContext, declaration);
         ClassBuilder classBuilder = state.getFactory().newVisitor(className.getInternalName() + ".class");
 
         final CodegenContext objectContext = context.intoAnonymousClass(descriptor, this);
@@ -1928,14 +1928,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 ScriptContext scriptContext = (ScriptContext) cur;
 
                 JvmClassName currentScriptClassName =
-                        classNameForScriptDescriptor(state.getBindingContext(),
+                        classNameForScriptDescriptor(bindingContext,
                                                                     scriptContext.getScriptDescriptor());
                 if (scriptContext.getScriptDescriptor() == receiver.getDeclarationDescriptor()) {
                     result.put(currentScriptClassName.getAsmType(), v);
                 }
                 else {
                     JvmClassName className =
-                            classNameForScriptDescriptor(state.getBindingContext(),
+                            classNameForScriptDescriptor(bindingContext,
                                                                         receiver.getDeclarationDescriptor());
                     String fieldName = state.getScriptCodegen().getScriptFieldName(receiver.getDeclarationDescriptor());
                     result.put(currentScriptClassName.getAsmType(), v);
@@ -2852,7 +2852,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             generateInitializer.fun(variableDescriptor);
             JetScript scriptPsi = JetPsiUtil.getScript(variableDeclaration);
             assert scriptPsi != null;
-            JvmClassName scriptClassName = classNameForScriptPsi(state.getBindingContext(), scriptPsi);
+            JvmClassName scriptClassName = classNameForScriptPsi(bindingContext, scriptPsi);
             v.putfield(scriptClassName.getInternalName(), variableDeclaration.getName(), varType.getDescriptor());
         }
         else if (sharedVarType == null) {
