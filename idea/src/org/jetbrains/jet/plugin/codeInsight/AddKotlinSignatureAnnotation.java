@@ -25,6 +25,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -41,13 +42,16 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
+
+import javax.swing.*;
 
 /**
  * @author Evgeny Gerashchenko
  * @since 16 Aug 2012
  */
-public class AddKotlinSignatureAnnotation extends BaseIntentionAction {
+public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements Iconable {
     private static final DescriptorRenderer RENDERER = new DescriptorRenderer() {
         @Override
         protected boolean shouldRenderDefinedIn() {
@@ -73,6 +77,11 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction {
     @Override
     public String getFamilyName() {
         return JetBundle.message("add.kotlin.signature.action.family.name");
+    }
+
+    @Override
+    public Icon getIcon(@IconFlags int flags) {
+        return JetIcons.SMALL_LOGO;
     }
 
     @Override
