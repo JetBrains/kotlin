@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen.state;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.binding.BindingTraceAware;
 
 /**

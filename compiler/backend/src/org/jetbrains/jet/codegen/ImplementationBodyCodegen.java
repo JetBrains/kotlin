@@ -34,6 +34,7 @@ import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -963,7 +964,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         reg += argType.getSize();
                     }
 
-                    JetType jetType = TraitImplBodyCodegen.getSuperClass(declaration);
+                    JetType jetType = CodegenUtil.getSuperClass(declaration);
                     Type type = typeMapper.mapType(jetType, MapTypeMode.IMPL);
                     if (type.getInternalName().equals("java/lang/Object")) {
                         jetType = declaration.getDefaultType();

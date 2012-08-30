@@ -34,16 +34,6 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
         super(aClass, context, v, state);
     }
 
-    static JetType getSuperClass(ClassDescriptor classDescriptor) {
-        final List<ClassDescriptor> superclassDescriptors = DescriptorUtils.getSuperclassDescriptors(classDescriptor);
-        for (ClassDescriptor descriptor : superclassDescriptors) {
-            if (descriptor.getKind() != ClassKind.TRAIT) {
-                return descriptor.getDefaultType();
-            }
-        }
-        return JetStandardClasses.getAnyType();
-    }
-
     @Override
     protected void generateDeclaration() {
         v.defineClass(myClass, V1_6,

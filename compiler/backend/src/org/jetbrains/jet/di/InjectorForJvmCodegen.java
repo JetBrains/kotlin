@@ -17,7 +17,7 @@
 
 package org.jetbrains.jet.di;
 
-import org.jetbrains.jet.codegen.JetTypeMapper;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import java.util.List;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;

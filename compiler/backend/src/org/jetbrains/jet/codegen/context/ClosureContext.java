@@ -17,7 +17,7 @@
 package org.jetbrains.jet.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.JetTypeMapper;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;

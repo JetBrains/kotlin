@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen;
+package org.jetbrains.jet.codegen.state;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.jet.codegen.signature.*;
@@ -480,7 +481,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
         if (kind == OwnerKind.TRAIT_IMPL) {
             ClassDescriptor containingDeclaration = (ClassDescriptor) f.getContainingDeclaration();
-            JetType jetType = TraitImplBodyCodegen.getSuperClass(containingDeclaration);
+            JetType jetType = CodegenUtil.getSuperClass(containingDeclaration);
             Type type = mapType(jetType, MapTypeMode.VALUE);
             if (type.getInternalName().equals("java/lang/Object")) {
                 jetType = containingDeclaration.getDefaultType();
@@ -859,7 +860,7 @@ public class JetTypeMapper extends BindingTraceAware {
         return null;
     }
 
-    protected JvmMethodSignature invokeSignature(FunctionDescriptor fd) {
+    public JvmMethodSignature invokeSignature(FunctionDescriptor fd) {
         return mapSignature(Name.identifier("invoke"), fd);
     }
 

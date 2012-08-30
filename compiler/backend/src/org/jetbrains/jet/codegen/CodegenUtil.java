@@ -29,10 +29,12 @@ import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
@@ -162,7 +164,7 @@ public class CodegenUtil {
         }
     }
 
-    static JvmMethodSignature erasedInvokeSignature(FunctionDescriptor fd) {
+    public static JvmMethodSignature erasedInvokeSignature(FunctionDescriptor fd) {
 
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, false);
 
@@ -333,5 +335,15 @@ public class CodegenUtil {
         }
 
         return null;
+    }
+
+    public static JetType getSuperClass(ClassDescriptor classDescriptor) {
+        final List<ClassDescriptor> superclassDescriptors = DescriptorUtils.getSuperclassDescriptors(classDescriptor);
+        for (ClassDescriptor descriptor : superclassDescriptors) {
+            if (descriptor.getKind() != ClassKind.TRAIT) {
+                return descriptor.getDefaultType();
+            }
+        }
+        return JetStandardClasses.getAnyType();
     }
 }
