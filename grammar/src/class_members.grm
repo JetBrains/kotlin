@@ -31,7 +31,6 @@ class Example(a : Foo, i : Int) : Bar(i), Some {
 memberDeclaration
   : classObject
   : object
-  : constructor
   : function
   : property
   : class
