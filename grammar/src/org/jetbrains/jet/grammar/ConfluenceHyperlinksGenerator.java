@@ -144,7 +144,7 @@ public class ConfluenceHyperlinksGenerator {
                 result.append("{anchor:").append(declaration.getName()).append("}");
                 if (!usedSymbols.contains(declaration.getName())) {
 //                    result.append("(!) *Unused!* ");
-                    System.out.println("Unused: " + token);
+                    System.out.println("Unused: " + token + " at line " + token.getLine());
                 }
                 Collection<String> myUsages = usages.get(declaration.getName());
                 if (!myUsages.isEmpty()) {
@@ -165,7 +165,7 @@ public class ConfluenceHyperlinksGenerator {
                 Identifier identifier = (Identifier) token;
                 if (!declaredSymbols.contains(identifier.getName())) {
                     result.append("(!) *Undeclared!* ");
-                    System.out.println("Undeclared: " + token);
+                    System.out.println("Undeclared: " + token + " at line " + token.getLine());
                 }
             }
             result.append(token);

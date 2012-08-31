@@ -20,8 +20,8 @@ package org.jetbrains.jet.grammar;
  * @author abreslav
  */
 public class Comment extends Token {
-    public Comment(CharSequence text) {
-        super(text);
+    public Comment(CharSequence text, int line) {
+        super(text, line);
     }
 
     @Override

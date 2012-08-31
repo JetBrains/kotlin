@@ -20,8 +20,8 @@ package org.jetbrains.jet.grammar;
  * @author abreslav
  */
 public class DocComment extends Token {
-    public DocComment(CharSequence text) {
-        super(text);
+    public DocComment(CharSequence text, int line) {
+        super(text, line);
     }
 
     @Override

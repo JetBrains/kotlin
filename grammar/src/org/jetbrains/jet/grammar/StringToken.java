@@ -20,8 +20,8 @@ package org.jetbrains.jet.grammar;
  * @author abreslav
  */
 public class StringToken extends Token {
-    public StringToken(CharSequence text) {
-        super(text);
+    public StringToken(CharSequence text, int line) {
+        super(text, line);
     }
 
     @Override

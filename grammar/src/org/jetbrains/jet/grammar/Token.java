@@ -21,15 +21,20 @@ package org.jetbrains.jet.grammar;
  */
 public class Token {
     private final CharSequence text;
+    private final int line;
 
-    public Token(CharSequence text) {
+    public Token(CharSequence text, int line) {
         this.text = text;
+        this.line = line;
     }
 
     public CharSequence getText() {
         return text;
     }
 
+    public int getLine() {
+        return line;
+    }
 
     @Override
     public String toString() {

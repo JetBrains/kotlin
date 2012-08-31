@@ -22,8 +22,8 @@ package org.jetbrains.jet.grammar;
 public class Identifier extends Token {
     private final String name;
 
-    public Identifier(CharSequence text) {
-        super(text);
+    public Identifier(CharSequence text, int line) {
+        super(text, line);
         name = text.toString();
     }
 

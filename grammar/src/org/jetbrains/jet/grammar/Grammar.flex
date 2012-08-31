@@ -11,6 +11,12 @@ package org.jetbrains.jet.grammar;
 
 %unicode
 %class _GrammarLexer
+%{
+    private int line = 1;
+    public int getCurrentLine() {
+        return line;
+    }
+%}
 %function advance
 %type Token
 %eof{  return;
@@ -71,32 +77,33 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 
 %%
 
-<YYINITIAL> {BLOCK_COMMENT} { return new Comment(yytext()); }
-<YYINITIAL> {DOC_COMMENT} { return new DocComment(yytext()); }
+<YYINITIAL> {BLOCK_COMMENT} { return new Comment(yytext(), line); }
+<YYINITIAL> {DOC_COMMENT} { return new DocComment(yytext(), line); }
 
-<YYINITIAL> ({WHITE_SPACE_CHAR})+ { return new WhiteSpace(yytext()); }
+<YYINITIAL> "\n" | "\r"  { line++; return new WhiteSpace(yytext(), line); }
+<YYINITIAL> ({WHITE_SPACE_CHAR})+ { return new WhiteSpace(yytext(), line); }
 
-<YYINITIAL> {EOL_COMMENT} { return new Comment(yytext()); }
+<YYINITIAL> {EOL_COMMENT} { return new Comment(yytext(), line); }
 
-<YYINITIAL> {STRING_LITERAL} { return new StringToken(yytext()); }
-<YYINITIAL> {ANGLE_STRING_LITERAL} { return new StringToken(yytext()); }
-<YYINITIAL> {IDENTIFIER} { return new Identifier(yytext()); }
-<YYINITIAL> "[" {IDENTIFIER} "]" { return new Annotation(yytext()); }
-<YYINITIAL> {DECLARATION_IDENTIFIER} { return new Declaration(yytext()); }
+<YYINITIAL> {STRING_LITERAL} { return new StringToken(yytext(), line); }
+<YYINITIAL> {ANGLE_STRING_LITERAL} { return new StringToken(yytext(), line); }
+<YYINITIAL> {IDENTIFIER} { return new Identifier(yytext(), line); }
+<YYINITIAL> "[" {IDENTIFIER} "]" { return new Annotation(yytext(), line); }
+<YYINITIAL> {DECLARATION_IDENTIFIER} { return new Declaration(yytext(), line); }
 
-<YYINITIAL> ":"          { return new SymbolToken(yytext()); }
-<YYINITIAL> "{"          { return new SymbolToken("\\" + yytext()); }
-<YYINITIAL> "}"          { return new SymbolToken("\\" + yytext()); }
-<YYINITIAL> "["          { return new SymbolToken("\\" + yytext()); }
-<YYINITIAL> "]"          { return new SymbolToken("\\" + yytext()); }
-<YYINITIAL> "("          { return new SymbolToken("\\" + yytext()); }
-<YYINITIAL> ")"          { return new SymbolToken("\\" + yytext()); }
-<YYINITIAL> "*"          { return new SymbolToken(yytext()); }
-<YYINITIAL> "+"          { return new SymbolToken(yytext()); }
-<YYINITIAL> "?"          { return new SymbolToken(yytext()); }
-<YYINITIAL> "|"          { return new SymbolToken(yytext()); }
-<YYINITIAL> "-"          { return new SymbolToken(yytext()); }
-<YYINITIAL> "."          { return new SymbolToken(yytext()); }
+<YYINITIAL> ":"          { return new SymbolToken(yytext(), line); }
+<YYINITIAL> "{"          { return new SymbolToken("\\" + yytext(), line); }
+<YYINITIAL> "}"          { return new SymbolToken("\\" + yytext(), line); }
+<YYINITIAL> "["          { return new SymbolToken("\\" + yytext(), line); }
+<YYINITIAL> "]"          { return new SymbolToken("\\" + yytext(), line); }
+<YYINITIAL> "("          { return new SymbolToken("\\" + yytext(), line); }
+<YYINITIAL> ")"          { return new SymbolToken("\\" + yytext(), line); }
+<YYINITIAL> "*"          { return new SymbolToken(yytext(), line); }
+<YYINITIAL> "+"          { return new SymbolToken(yytext(), line); }
+<YYINITIAL> "?"          { return new SymbolToken(yytext(), line); }
+<YYINITIAL> "|"          { return new SymbolToken(yytext(), line); }
+<YYINITIAL> "-"          { return new SymbolToken(yytext(), line); }
+<YYINITIAL> "."          { return new SymbolToken(yytext(), line); }
 
-<YYINITIAL> . { return new Other(yytext()); }
+<YYINITIAL> . { return new Other(yytext(), line); }
 
