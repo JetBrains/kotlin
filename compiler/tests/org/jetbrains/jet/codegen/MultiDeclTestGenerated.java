@@ -212,13 +212,338 @@ public class MultiDeclTestGenerated extends AbstractMultiDeclTestCase {
             blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forIterator/MultiDeclForValCaptured.kt");
         }
         
+        @TestMetadata("compiler/testData/codegen/multiDecl/forIterator/longIterator")
+        public static class LongIterator extends AbstractMultiDeclTestCase {
+            public void testAllFilesPresentInLongIterator() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractMultiDeclTestCase", new File("compiler/testData/codegen/multiDecl/forIterator/longIterator"), "kt", false);
+            }
+            
+            @TestMetadata("MultiDeclForComponentExtensions.kt")
+            public void testMultiDeclForComponentExtensions() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forIterator/longIterator/MultiDeclForComponentExtensions.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
+            public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forIterator/longIterator/MultiDeclForComponentExtensionsValCaptured.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
+            public void testMultiDeclForComponentMemberExtensions() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forIterator/longIterator/MultiDeclForComponentMemberExtensions.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
+            public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forIterator/longIterator/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+            }
+            
+        }
+        
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("ForIterator");
+            suite.addTestSuite(ForIterator.class);
+            suite.addTestSuite(LongIterator.class);
+            return suite;
+        }
+    }
+    
+    @TestMetadata("compiler/testData/codegen/multiDecl/forRange")
+    public static class ForRange extends AbstractMultiDeclTestCase {
+        public void testAllFilesPresentInForRange() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractMultiDeclTestCase", new File("compiler/testData/codegen/multiDecl/forRange"), "kt", false);
+        }
+        
+        @TestMetadata("MultiDeclFor.kt")
+        public void testMultiDeclFor() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/MultiDeclFor.kt");
+        }
+        
+        @TestMetadata("MultiDeclForComponentExtensions.kt")
+        public void testMultiDeclForComponentExtensions() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/MultiDeclForComponentExtensions.kt");
+        }
+        
+        @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
+        public void testMultiDeclForComponentMemberExtensions() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/MultiDeclForComponentMemberExtensions.kt");
+        }
+        
+        @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
+        public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+        }
+        
+        @TestMetadata("MultiDeclForValCaptured.kt")
+        public void testMultiDeclForValCaptured() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/MultiDeclForValCaptured.kt");
+        }
+        
+        @TestMetadata("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo")
+        public static class ExplicitRangeTo extends AbstractMultiDeclTestCase {
+            public void testAllFilesPresentInExplicitRangeTo() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractMultiDeclTestCase", new File("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo"), "kt", false);
+            }
+            
+            @TestMetadata("MultiDeclFor.kt")
+            public void testMultiDeclFor() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo/MultiDeclFor.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentExtensions.kt")
+            public void testMultiDeclForComponentExtensions() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo/MultiDeclForComponentExtensions.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
+            public void testMultiDeclForComponentMemberExtensions() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo/MultiDeclForComponentMemberExtensions.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
+            public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+            }
+            
+            @TestMetadata("MultiDeclForValCaptured.kt")
+            public void testMultiDeclForValCaptured() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo/MultiDeclForValCaptured.kt");
+            }
+            
+            @TestMetadata("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo/int")
+            public static class Int extends AbstractMultiDeclTestCase {
+                public void testAllFilesPresentInInt() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractMultiDeclTestCase", new File("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo/int"), "kt", false);
+                }
+                
+                @TestMetadata("MultiDeclForComponentExtensions.kt")
+                public void testMultiDeclForComponentExtensions() throws Exception {
+                    blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo/int/MultiDeclForComponentExtensions.kt");
+                }
+                
+                @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
+                public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
+                    blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo/int/MultiDeclForComponentExtensionsValCaptured.kt");
+                }
+                
+                @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
+                public void testMultiDeclForComponentMemberExtensions() throws Exception {
+                    blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo/int/MultiDeclForComponentMemberExtensions.kt");
+                }
+                
+                @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
+                public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
+                    blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo/int/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                }
+                
+            }
+            
+            @TestMetadata("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo/long")
+            public static class Long extends AbstractMultiDeclTestCase {
+                public void testAllFilesPresentInLong() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractMultiDeclTestCase", new File("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo/long"), "kt", false);
+                }
+                
+                @TestMetadata("MultiDeclForComponentExtensions.kt")
+                public void testMultiDeclForComponentExtensions() throws Exception {
+                    blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo/long/MultiDeclForComponentExtensions.kt");
+                }
+                
+                @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
+                public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
+                    blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo/long/MultiDeclForComponentExtensionsValCaptured.kt");
+                }
+                
+                @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
+                public void testMultiDeclForComponentMemberExtensions() throws Exception {
+                    blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo/long/MultiDeclForComponentMemberExtensions.kt");
+                }
+                
+                @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
+                public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
+                    blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeTo/long/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("ExplicitRangeTo");
+                suite.addTestSuite(ExplicitRangeTo.class);
+                suite.addTestSuite(Int.class);
+                suite.addTestSuite(Long.class);
+                return suite;
+            }
+        }
+        
+        @TestMetadata("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot")
+        public static class ExplicitRangeToWithDot extends AbstractMultiDeclTestCase {
+            public void testAllFilesPresentInExplicitRangeToWithDot() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractMultiDeclTestCase", new File("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot"), "kt", false);
+            }
+            
+            @TestMetadata("MultiDeclFor.kt")
+            public void testMultiDeclFor() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot/MultiDeclFor.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentExtensions.kt")
+            public void testMultiDeclForComponentExtensions() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot/MultiDeclForComponentExtensions.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
+            public void testMultiDeclForComponentMemberExtensions() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot/MultiDeclForComponentMemberExtensions.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
+            public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+            }
+            
+            @TestMetadata("MultiDeclForValCaptured.kt")
+            public void testMultiDeclForValCaptured() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot/MultiDeclForValCaptured.kt");
+            }
+            
+            @TestMetadata("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot/int")
+            public static class Int extends AbstractMultiDeclTestCase {
+                public void testAllFilesPresentInInt() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractMultiDeclTestCase", new File("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot/int"), "kt", false);
+                }
+                
+                @TestMetadata("MultiDeclForComponentExtensions.kt")
+                public void testMultiDeclForComponentExtensions() throws Exception {
+                    blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot/int/MultiDeclForComponentExtensions.kt");
+                }
+                
+                @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
+                public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
+                    blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot/int/MultiDeclForComponentExtensionsValCaptured.kt");
+                }
+                
+                @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
+                public void testMultiDeclForComponentMemberExtensions() throws Exception {
+                    blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot/int/MultiDeclForComponentMemberExtensions.kt");
+                }
+                
+                @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
+                public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
+                    blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot/int/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                }
+                
+            }
+            
+            @TestMetadata("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot/long")
+            public static class Long extends AbstractMultiDeclTestCase {
+                public void testAllFilesPresentInLong() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractMultiDeclTestCase", new File("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot/long"), "kt", false);
+                }
+                
+                @TestMetadata("MultiDeclForComponentExtensions.kt")
+                public void testMultiDeclForComponentExtensions() throws Exception {
+                    blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot/long/MultiDeclForComponentExtensions.kt");
+                }
+                
+                @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
+                public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
+                    blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot/long/MultiDeclForComponentExtensionsValCaptured.kt");
+                }
+                
+                @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
+                public void testMultiDeclForComponentMemberExtensions() throws Exception {
+                    blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot/long/MultiDeclForComponentMemberExtensions.kt");
+                }
+                
+                @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
+                public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
+                    blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/explicitRangeToWithDot/long/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("ExplicitRangeToWithDot");
+                suite.addTestSuite(ExplicitRangeToWithDot.class);
+                suite.addTestSuite(Int.class);
+                suite.addTestSuite(Long.class);
+                return suite;
+            }
+        }
+        
+        @TestMetadata("compiler/testData/codegen/multiDecl/forRange/int")
+        public static class Int extends AbstractMultiDeclTestCase {
+            public void testAllFilesPresentInInt() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractMultiDeclTestCase", new File("compiler/testData/codegen/multiDecl/forRange/int"), "kt", false);
+            }
+            
+            @TestMetadata("MultiDeclForComponentExtensions.kt")
+            public void testMultiDeclForComponentExtensions() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/int/MultiDeclForComponentExtensions.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
+            public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/int/MultiDeclForComponentExtensionsValCaptured.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
+            public void testMultiDeclForComponentMemberExtensions() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/int/MultiDeclForComponentMemberExtensions.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
+            public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/int/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+            }
+            
+        }
+        
+        @TestMetadata("compiler/testData/codegen/multiDecl/forRange/long")
+        public static class Long extends AbstractMultiDeclTestCase {
+            public void testAllFilesPresentInLong() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractMultiDeclTestCase", new File("compiler/testData/codegen/multiDecl/forRange/long"), "kt", false);
+            }
+            
+            @TestMetadata("MultiDeclForComponentExtensions.kt")
+            public void testMultiDeclForComponentExtensions() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/long/MultiDeclForComponentExtensions.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
+            public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/long/MultiDeclForComponentExtensionsValCaptured.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
+            public void testMultiDeclForComponentMemberExtensions() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/long/MultiDeclForComponentMemberExtensions.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
+            public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forRange/long/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+            }
+            
+        }
+        
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("ForRange");
+            suite.addTestSuite(ForRange.class);
+            suite.addTest(ExplicitRangeTo.innerSuite());
+            suite.addTest(ExplicitRangeToWithDot.innerSuite());
+            suite.addTestSuite(Int.class);
+            suite.addTestSuite(Long.class);
+            return suite;
+        }
     }
     
     public static Test suite() {
         TestSuite suite = new TestSuite("MultiDeclTestGenerated");
         suite.addTestSuite(MultiDeclTestGenerated.class);
         suite.addTest(ForArray.innerSuite());
-        suite.addTestSuite(ForIterator.class);
+        suite.addTest(ForIterator.innerSuite());
+        suite.addTest(ForRange.innerSuite());
         return suite;
     }
 }
