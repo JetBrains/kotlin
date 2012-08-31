@@ -156,6 +156,8 @@ public class DefaultErrorMessages {
         MAP.put(NOTHING_TO_OVERRIDE, "''{0}'' overrides nothing", NAME);
         MAP.put(VIRTUAL_MEMBER_HIDDEN, "''{0}'' hides member of supertype ''{2}'' and needs ''override'' modifier", NAME, NAME, NAME);
 
+        MAP.put(DATA_CLASS_OVERRIDE_CONFLICT, "Function ''{0}'' generated for the data class conflicts with member of supertype ''{1}''", NAME, NAME);
+
         MAP.put(CANNOT_OVERRIDE_INVISIBLE_MEMBER, "''{0}'' cannot has no access to ''{1}'' in class {2}, so it cannot override it",
                 DescriptorRenderer.TEXT, DescriptorRenderer.TEXT, DescriptorRenderer.TEXT);
         MAP.put(CANNOT_INFER_VISIBILITY, "Cannot infer visibility. Please specify it explicitly");

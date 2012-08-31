@@ -977,6 +977,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/dataClasses/componentNamedComponent1.kt");
             }
             
+            @TestMetadata("dataClassOverrideConflict.kt")
+            public void testDataClassOverrideConflict() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataClasses/dataClassOverrideConflict.kt");
+            }
+            
             @TestMetadata("emptyConstructor.kt")
             public void testEmptyConstructor() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataClasses/emptyConstructor.kt");
@@ -990,6 +995,16 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("firstParamIsVar.kt")
             public void testFirstParamIsVar() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataClasses/firstParamIsVar.kt");
+            }
+            
+            @TestMetadata("implementTraitWhichHasComponent1.kt")
+            public void testImplementTraitWhichHasComponent1() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataClasses/implementTraitWhichHasComponent1.kt");
+            }
+            
+            @TestMetadata("implementTraitWhichHasFinalComponent1.kt")
+            public void testImplementTraitWhichHasFinalComponent1() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataClasses/implementTraitWhichHasFinalComponent1.kt");
             }
             
             @TestMetadata("multiDeclaration.kt")
@@ -1010,6 +1025,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("oneValParam.kt")
             public void testOneValParam() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataClasses/oneValParam.kt");
+            }
+            
+            @TestMetadata("overrideInvisibleMember.kt")
+            public void testOverrideInvisibleMember() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataClasses/overrideInvisibleMember.kt");
             }
             
             @TestMetadata("secondParamIsVal.kt")

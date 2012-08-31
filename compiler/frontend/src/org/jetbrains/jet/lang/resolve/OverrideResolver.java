@@ -26,12 +26,14 @@ import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.CommonSuppliers;
 
@@ -564,6 +566,14 @@ public class OverrideResolver {
     }
 
     private void checkOverrideForMember(@NotNull final CallableMemberDescriptor declared) {
+        if (declared.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
+            // TODO: this should be replaced soon by a framework of synthesized member generation tools
+            if (declared.getName().getName().startsWith(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX)) {
+                checkOverrideForComponentFunction(declared);
+            }
+            return;
+        }
+
         if (declared.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
             return;
         }
@@ -578,7 +588,7 @@ public class OverrideResolver {
         Set<? extends CallableMemberDescriptor> overriddenDescriptors = declared.getOverriddenDescriptors();
 
         if (overrideNode != null) {
-            checkOverridesForMemberMarkedOverride(declared, new CheckOverrideReportStrategy() {
+            checkOverridesForMemberMarkedOverride(declared, true, new CheckOverrideReportStrategy() {
                 private boolean finalOverriddenError = false;
                 private boolean typeMismatchError = false;
                 private boolean kindMismatchError = false;
@@ -624,7 +634,11 @@ public class OverrideResolver {
         }
     }
 
-    private void checkOverridesForMemberMarkedOverride(@NotNull CallableMemberDescriptor declared, @NotNull CheckOverrideReportStrategy reportError) {
+    private void checkOverridesForMemberMarkedOverride(
+            @NotNull CallableMemberDescriptor declared,
+            boolean checkIfOverridesNothing,
+            @NotNull CheckOverrideReportStrategy reportError
+    ) {
         Set<? extends CallableMemberDescriptor> overriddenDescriptors = declared.getOverriddenDescriptors();
 
         for (CallableMemberDescriptor overridden : overriddenDescriptors) {
@@ -643,7 +657,7 @@ public class OverrideResolver {
             }
         }
 
-        if (overriddenDescriptors.isEmpty()) {
+        if (checkIfOverridesNothing && overriddenDescriptors.isEmpty()) {
             DeclarationDescriptor containingDeclaration = declared.getContainingDeclaration();
             assert containingDeclaration instanceof ClassDescriptor : "Overrides may only be resolved in a class, but " + declared + " comes from " + containingDeclaration;
             ClassDescriptor declaringClass = (ClassDescriptor) containingDeclaration;
@@ -656,6 +670,58 @@ public class OverrideResolver {
                 reportError.nothingToOverride();
             }
         }
+    }
+
+    private void checkOverrideForComponentFunction(@NotNull final CallableMemberDescriptor componentFunction) {
+        final JetAnnotationEntry dataAnnotation = findDataAnnotationForDataClass(componentFunction.getContainingDeclaration());
+
+        checkOverridesForMemberMarkedOverride(componentFunction, false, new CheckOverrideReportStrategy() {
+            private boolean overrideConflict = false;
+
+            @Override
+            public void overridingFinalMember(@NotNull CallableMemberDescriptor overridden) {
+                if (!overrideConflict) {
+                    overrideConflict = true;
+                    trace.report(DATA_CLASS_OVERRIDE_CONFLICT.on(dataAnnotation, componentFunction, overridden.getContainingDeclaration()));
+                }
+            }
+
+            @Override
+            public void returnTypeMismatchOnOverride(@NotNull CallableMemberDescriptor overridden) {
+                if (!overrideConflict) {
+                    overrideConflict = true;
+                    trace.report(DATA_CLASS_OVERRIDE_CONFLICT.on(dataAnnotation, componentFunction, overridden.getContainingDeclaration()));
+                }
+            }
+
+            @Override
+            public void varOverriddenByVal(@NotNull CallableMemberDescriptor overridden) {
+                throw new IllegalStateException("Component functions are not properties");
+            }
+
+            @Override
+            public void cannotOverrideInvisibleMember(@NotNull CallableMemberDescriptor invisibleOverridden) {
+                throw new IllegalStateException("CANNOT_OVERRIDE_INVISIBLE_MEMBER should be reported on the corresponding property");
+            }
+
+            @Override
+            public void nothingToOverride() {
+                throw new IllegalStateException("Component functions are OK to override nothing");
+            }
+        });
+    }
+
+    @NotNull
+    private JetAnnotationEntry findDataAnnotationForDataClass(@NotNull DeclarationDescriptor dataClass) {
+        ClassDescriptor stdDataClassAnnotation = JetStandardLibrary.getInstance().getDataClassAnnotation();
+        for (AnnotationDescriptor annotation : dataClass.getAnnotations()) {
+            if (stdDataClassAnnotation.equals(annotation.getType().getConstructor().getDeclarationDescriptor())) {
+                return BindingContextUtils.getNotNull(trace.getBindingContext(),
+                                                      BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT,
+                                                      annotation);
+            }
+        }
+        throw new IllegalStateException("No data annotation is found for data class");
     }
 
     private CallableMemberDescriptor findInvisibleOverriddenDescriptor(CallableMemberDescriptor declared, ClassDescriptor declaringClass) {

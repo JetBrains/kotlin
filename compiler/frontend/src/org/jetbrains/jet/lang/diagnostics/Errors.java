@@ -145,6 +145,8 @@ public interface Errors {
             DiagnosticFactory3.create(ERROR, NAMED_ELEMENT);
     DiagnosticFactory3<JetModifierListOwner, CallableMemberDescriptor, CallableDescriptor, DeclarationDescriptor> CANNOT_OVERRIDE_INVISIBLE_MEMBER =
             DiagnosticFactory3.create(ERROR, OVERRIDE_MODIFIER);
+    DiagnosticFactory2<JetAnnotationEntry, CallableMemberDescriptor, DeclarationDescriptor> DATA_CLASS_OVERRIDE_CONFLICT =
+            DiagnosticFactory2.create(ERROR);
     SimpleDiagnosticFactory<JetDeclaration> CANNOT_INFER_VISIBILITY = SimpleDiagnosticFactory.create(ERROR, DECLARATION);
 
     DiagnosticFactory1<JetClass, ClassDescriptor> ENUM_ENTRY_SHOULD_BE_INITIALIZED = DiagnosticFactory1.create(ERROR, NAME_IDENTIFIER);
