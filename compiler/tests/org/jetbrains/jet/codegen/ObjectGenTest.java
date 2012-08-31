@@ -91,4 +91,8 @@ public class ObjectGenTest extends CodegenTestCase {
     public void testThisInConstructor() {
         blackBoxFile("objects/thisInConstructor.kt");
     }
+
+    public void testFlist() {
+        blackBoxFile("objects/flist.kt");
+    }
 }

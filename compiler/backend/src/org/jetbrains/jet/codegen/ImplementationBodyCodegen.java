@@ -959,7 +959,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     FrameMap frameMap = context.prepareFrame(state.getTypeMapper());
                     ExpressionCodegen codegen =
                             new ExpressionCodegen(mv, frameMap, jvmSignature.getAsmMethod().getReturnType(), context, state);
-                    codegen.generateThisOrOuter(descriptor);    // ??? wouldn't it be addClosureToConstructorParameters good idea to put it?
+                    codegen.generateThisOrOuter(descriptor, false);    // ??? wouldn't it be addClosureToConstructorParameters good idea to put it?
 
                     Type[] argTypes = function.getArgumentTypes();
                     List<Type> originalArgTypes = jvmSignature.getValueParameterTypes();

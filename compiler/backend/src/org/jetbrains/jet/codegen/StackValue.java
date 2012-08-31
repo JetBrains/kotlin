@@ -330,8 +330,8 @@ public abstract class StackValue {
         return new Composed(prefix, suffix);
     }
 
-    public static StackValue thisOrOuter(ExpressionCodegen codegen, ClassDescriptor descriptor) {
-        return new ThisOuter(codegen, descriptor);
+    public static StackValue thisOrOuter(ExpressionCodegen codegen, ClassDescriptor descriptor, boolean isSuper) {
+        return new ThisOuter(codegen, descriptor, isSuper);
     }
 
     public static StackValue postIncrement(int index, int increment) {
@@ -1151,16 +1151,18 @@ public abstract class StackValue {
     private static class ThisOuter extends StackValue {
         private final ExpressionCodegen codegen;
         private final ClassDescriptor descriptor;
+        private final boolean isSuper;
 
-        public ThisOuter(ExpressionCodegen codegen, ClassDescriptor descriptor) {
+        public ThisOuter(ExpressionCodegen codegen, ClassDescriptor descriptor, boolean isSuper) {
             super(OBJECT_TYPE);
             this.codegen = codegen;
             this.descriptor = descriptor;
+            this.isSuper = isSuper;
         }
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            final StackValue stackValue = codegen.generateThisOrOuter(descriptor);
+            final StackValue stackValue = codegen.generateThisOrOuter(descriptor, isSuper);
             stackValue.put(stackValue.type, v);  // no coercion here
         }
     }

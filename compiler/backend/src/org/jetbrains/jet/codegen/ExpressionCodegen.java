@@ -279,7 +279,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public StackValue visitSuperExpression(JetSuperExpression expression, StackValue data) {
         final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getInstanceReference());
         if (descriptor instanceof ClassDescriptor) {
-            return StackValue.thisOrOuter(this, (ClassDescriptor) descriptor);
+            return StackValue.thisOrOuter(this, (ClassDescriptor) descriptor, true);
         }
         else {
             JetType type = context.getThisDescriptor().getDefaultType();
@@ -1104,7 +1104,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (!ignoreThisAndReceiver) {
                 final ClassDescriptor captureThis = closure.getCaptureThis();
                 if (captureThis != null) {
-                    generateThisOrOuter(captureThis).put(OBJECT_TYPE, v);
+                    generateThisOrOuter(captureThis, false).put(OBJECT_TYPE, v);
                 }
 
                 final ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
@@ -1370,14 +1370,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 if (!isStatic) {
                     if (receiver == StackValue.none()) {
                         if (resolvedCall == null) {
-                            receiver = generateThisOrOuter((ClassDescriptor) propertyDescriptor.getContainingDeclaration());
+                            receiver = generateThisOrOuter((ClassDescriptor) propertyDescriptor.getContainingDeclaration(), false);
                         }
                         else {
                             if (resolvedCall.getThisObject() instanceof ExtensionReceiver) {
                                 receiver = generateReceiver(((ExtensionReceiver) resolvedCall.getThisObject()).getDeclarationDescriptor());
                             }
                             else {
-                                receiver = generateThisOrOuter((ClassDescriptor) propertyDescriptor.getContainingDeclaration());
+                                receiver = generateThisOrOuter((ClassDescriptor) propertyDescriptor.getContainingDeclaration(), false);
                             }
                         }
                     }
@@ -1448,7 +1448,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             JvmClassName scriptClassName = classNameForScriptDescriptor(bindingContext, scriptDescriptor);
             ValueParameterDescriptor valueParameterDescriptor = (ValueParameterDescriptor) descriptor;
             final ClassDescriptor scriptClass = bindingContext.get(CLASS_FOR_FUNCTION, scriptDescriptor);
-            final StackValue script = StackValue.thisOrOuter(this, scriptClass);
+            final StackValue script = StackValue.thisOrOuter(this, scriptClass, false);
             script.put(script.type, v);
             Type fieldType = typeMapper.mapType(valueParameterDescriptor.getType(), JetTypeMapperMode.VALUE);
             return StackValue.field(fieldType, scriptClassName, valueParameterDescriptor.getName().getIdentifier(), false);
@@ -1687,7 +1687,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             final JetExpression receiverExpression = ((ExpressionReceiver) explicitReceiver).getExpression();
             if (receiverExpression instanceof JetSuperExpression) {
                 superCall = true;
-                receiver = StackValue.thisOrOuter(this, context.getThisDescriptor());
+                receiver = StackValue.thisOrOuter(this, context.getThisDescriptor(), true);
                 JetSuperExpression superExpression = (JetSuperExpression) receiverExpression;
                 PsiElement enclosingElement = bindingContext.get(BindingContext.LABEL_TARGET, superExpression.getTargetLabel());
                 ClassDescriptor enclosed = (ClassDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, enclosingElement);
@@ -1706,7 +1706,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                         fd = unwrapFakeOverride(fd);
                         fd = (FunctionDescriptor) c.getAccessor(fd);
                         superCall = false;
-                        receiver = StackValue.thisOrOuter(this, enclosed);
+                        receiver = StackValue.thisOrOuter(this, enclosed, true);
                     }
                 }
             }
@@ -1877,7 +1877,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 StackValue.onStack(exprType).put(type, v);
             }
             else {
-                StackValue.thisOrOuter(this, classReceiverDeclarationDescriptor).put(type, v);
+                StackValue.thisOrOuter(this, classReceiverDeclarationDescriptor, false).put(type, v);
             }
         }
         else if (descriptor instanceof ScriptReceiver) {
@@ -1963,7 +1963,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         throw new UnsupportedOperationException();
     }
 
-    public StackValue generateThisOrOuter(@NotNull final ClassDescriptor calleeContainingClass) {
+    public StackValue generateThisOrOuter(@NotNull final ClassDescriptor calleeContainingClass, boolean isSuper) {
         PsiElement psiElement = classDescriptorToDeclaration(bindingContext, calleeContainingClass);
         boolean isObject = psiElement instanceof JetClassOrObject && isNonLiteralObject((JetClassOrObject) psiElement);
 
@@ -1975,11 +1975,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 cur = cur.getParentContext();
             }
 
-
             assert cur != null;
             final ClassDescriptor thisDescriptor = cur.getThisDescriptor();
-            if (DescriptorUtils.isSubclass(thisDescriptor, calleeContainingClass)) {
-                if (!isObject || (thisDescriptor == calleeContainingClass)) {
+            if (!isSuper && thisDescriptor.equals(calleeContainingClass)
+            || isSuper && DescriptorUtils.isSubclass(thisDescriptor, calleeContainingClass)) {
+                if (!isObject || (thisDescriptor.equals(calleeContainingClass))) {
                     return castToRequiredTypeOfInterfaceIfNeeded(result, thisDescriptor, calleeContainingClass);
                 }
                 else {
@@ -3105,7 +3105,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public StackValue visitThisExpression(JetThisExpression expression, StackValue receiver) {
         final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getInstanceReference());
         if (descriptor instanceof ClassDescriptor) {
-            return StackValue.thisOrOuter(this, (ClassDescriptor) descriptor);
+            return StackValue.thisOrOuter(this, (ClassDescriptor) descriptor, false);
         }
         else {
             if (descriptor instanceof CallableDescriptor) {
