@@ -1,6 +1,6 @@
 <project name="GrammarLexer" default="lexer">
     <property name="home" value="${basedir}"/>
-    <property file="${home}/../frontend/idea.properties"/>
+    <property file="${home}/../compiler/frontend/idea.properties"/>
 
     <property name="flex.base" value="${idea.home}/tools/lexer/jflex-1.4"/>
     <property name="out.dir" value="${basedir}/tmpout"/>
