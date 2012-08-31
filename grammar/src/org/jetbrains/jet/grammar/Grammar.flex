@@ -12,9 +12,21 @@ package org.jetbrains.jet.grammar;
 %unicode
 %class _GrammarLexer
 %{
+    private String fileName;
+    public void setFileName(String fileName) {
+      this.fileName = fileName;
+    }
+
     private int line = 1;
     public int getCurrentLine() {
         return line;
+    }
+
+    private void computeLine() {
+        CharSequence s = yytext();
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '\n') line++;
+        }
     }
 %}
 %function advance
@@ -77,33 +89,32 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 
 %%
 
-<YYINITIAL> {BLOCK_COMMENT} { return new Comment(yytext(), line); }
-<YYINITIAL> {DOC_COMMENT} { return new DocComment(yytext(), line); }
+<YYINITIAL> {BLOCK_COMMENT} { computeLine(); return new Comment(yytext(), fileName, line); }
+<YYINITIAL> {DOC_COMMENT} { computeLine(); return new DocComment(yytext(), fileName, line); }
 
-<YYINITIAL> "\n" | "\r"  { line++; return new WhiteSpace(yytext(), line); }
-<YYINITIAL> ({WHITE_SPACE_CHAR})+ { return new WhiteSpace(yytext(), line); }
+<YYINITIAL> ({WHITE_SPACE_CHAR})+ { computeLine(); return new WhiteSpace(yytext(), fileName, line); }
 
-<YYINITIAL> {EOL_COMMENT} { return new Comment(yytext(), line); }
+<YYINITIAL> {EOL_COMMENT} { computeLine(); return new Comment(yytext(), fileName, line); }
 
-<YYINITIAL> {STRING_LITERAL} { return new StringToken(yytext(), line); }
-<YYINITIAL> {ANGLE_STRING_LITERAL} { return new StringToken(yytext(), line); }
-<YYINITIAL> {IDENTIFIER} { return new Identifier(yytext(), line); }
-<YYINITIAL> "[" {IDENTIFIER} "]" { return new Annotation(yytext(), line); }
-<YYINITIAL> {DECLARATION_IDENTIFIER} { return new Declaration(yytext(), line); }
+<YYINITIAL> {STRING_LITERAL} { return new StringToken(yytext(), fileName, line); }
+<YYINITIAL> {ANGLE_STRING_LITERAL} { return new StringToken(yytext(), fileName, line); }
+<YYINITIAL> {IDENTIFIER} { return new Identifier(yytext(), fileName, line); }
+<YYINITIAL> "[" {IDENTIFIER} "]" { return new Annotation(yytext(), fileName, line); }
+<YYINITIAL> {DECLARATION_IDENTIFIER} { return new Declaration(yytext(), fileName, line); }
 
-<YYINITIAL> ":"          { return new SymbolToken(yytext(), line); }
-<YYINITIAL> "{"          { return new SymbolToken("\\" + yytext(), line); }
-<YYINITIAL> "}"          { return new SymbolToken("\\" + yytext(), line); }
-<YYINITIAL> "["          { return new SymbolToken("\\" + yytext(), line); }
-<YYINITIAL> "]"          { return new SymbolToken("\\" + yytext(), line); }
-<YYINITIAL> "("          { return new SymbolToken("\\" + yytext(), line); }
-<YYINITIAL> ")"          { return new SymbolToken("\\" + yytext(), line); }
-<YYINITIAL> "*"          { return new SymbolToken(yytext(), line); }
-<YYINITIAL> "+"          { return new SymbolToken(yytext(), line); }
-<YYINITIAL> "?"          { return new SymbolToken(yytext(), line); }
-<YYINITIAL> "|"          { return new SymbolToken(yytext(), line); }
-<YYINITIAL> "-"          { return new SymbolToken(yytext(), line); }
-<YYINITIAL> "."          { return new SymbolToken(yytext(), line); }
+<YYINITIAL> ":"          { return new SymbolToken(yytext(), fileName, line); }
+<YYINITIAL> "{"          { return new SymbolToken("\\" + yytext(), fileName, line); }
+<YYINITIAL> "}"          { return new SymbolToken("\\" + yytext(), fileName, line); }
+<YYINITIAL> "["          { return new SymbolToken("\\" + yytext(), fileName, line); }
+<YYINITIAL> "]"          { return new SymbolToken("\\" + yytext(), fileName, line); }
+<YYINITIAL> "("          { return new SymbolToken("\\" + yytext(), fileName, line); }
+<YYINITIAL> ")"          { return new SymbolToken("\\" + yytext(), fileName, line); }
+<YYINITIAL> "*"          { return new SymbolToken(yytext(), fileName, line); }
+<YYINITIAL> "+"          { return new SymbolToken(yytext(), fileName, line); }
+<YYINITIAL> "?"          { return new SymbolToken(yytext(), fileName, line); }
+<YYINITIAL> "|"          { return new SymbolToken(yytext(), fileName, line); }
+<YYINITIAL> "-"          { return new SymbolToken(yytext(), fileName, line); }
+<YYINITIAL> "."          { return new SymbolToken(yytext(), fileName, line); }
 
-<YYINITIAL> . { return new Other(yytext(), line); }
+<YYINITIAL> . { return new Other(yytext(), fileName, line); }
 

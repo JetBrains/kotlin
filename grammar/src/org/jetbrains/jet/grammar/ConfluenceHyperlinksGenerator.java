@@ -17,10 +17,8 @@
 package org.jetbrains.jet.grammar;
 
 import com.google.common.base.Supplier;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
+import com.intellij.openapi.util.io.FileUtil;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -28,7 +26,6 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.*;
@@ -61,35 +58,32 @@ public class ConfluenceHyperlinksGenerator {
         File grammarDir = new File("grammar/src");
 
         Set<File> used = new HashSet<File>();
-        StringBuilder allRules = getAllRulesInOneString(grammarDir, used);
-
+        List<Token> tokens = getJoinedTokensFromAllFiles(grammarDir, used);
         assertAllFilesAreUsed(grammarDir, used);
 
-        StringBuilder output = markDeclarations(allRules);
-
-        StringBuilder result = generate(output);
+        StringBuilder result = generate(tokens);
 
         copyToClipboard(result);
     }
 
-    private static StringBuilder getAllRulesInOneString(File grammarDir, Set<File> used) throws IOException {
-        StringBuilder allRules = new StringBuilder();
+    private static List<Token> getJoinedTokensFromAllFiles(File grammarDir, Set<File> used) throws IOException {
+        List<Token> allTokens = Lists.newArrayList();
         for (String fileName : FILE_NAMES_IN_ORDER) {
             File file = new File(grammarDir, fileName + "." + GRAMMAR_EXTENSION);
             used.add(file);
-            FileReader fileReader = new FileReader(file);
-            try {
-                int c;
-                while ((c = fileReader.read()) != -1) {
-                    allRules.append((char) c);
-                }
-                allRules.append("\n");
-                allRules.append("\n");
-            } finally {
-                fileReader.close();
-            }
+            String text = FileUtil.loadFile(file, true);
+            StringBuilder textWithMarkedDeclarations = markDeclarations(text);
+            List<Token> tokens = tokenize(createLexer(file.getPath(), textWithMarkedDeclarations));
+            allTokens.addAll(tokens);
         }
-        return allRules;
+        return allTokens;
+    }
+
+    private static _GrammarLexer createLexer(String fileName, StringBuilder output) {
+        _GrammarLexer grammarLexer = new _GrammarLexer((Reader) null);
+        grammarLexer.reset(output, 0, output.length(), 0);
+        grammarLexer.setFileName(fileName);
+        return grammarLexer;
     }
 
     private static void assertAllFilesAreUsed(File grammarDir, Set<File> used) {
@@ -102,7 +96,7 @@ public class ConfluenceHyperlinksGenerator {
         }
     }
 
-    private static StringBuilder markDeclarations(StringBuilder allRules) {
+    private static StringBuilder markDeclarations(CharSequence allRules) {
         StringBuilder output = new StringBuilder();
 
         Pattern symbolReference = Pattern.compile("^\\w+$", Pattern.MULTILINE);
@@ -120,11 +114,7 @@ public class ConfluenceHyperlinksGenerator {
         return output;
     }
 
-    private static StringBuilder generate(StringBuilder output) throws IOException {
-        _GrammarLexer grammarLexer = new _GrammarLexer((Reader) null);
-        grammarLexer
-                .reset(output, 0, output.length(), 0);
-
+    private static StringBuilder generate(List<Token> tokens) throws IOException {
         StringBuilder result = new StringBuilder("h1. Contents\n").append("{toc:style=disc|indent=20px}");
 
         Set<String> declaredSymbols = new HashSet<String>();
@@ -137,7 +127,6 @@ public class ConfluenceHyperlinksGenerator {
             }
         });
 
-        List<Token> tokens = tokenize(grammarLexer);
         Declaration lastDeclaration = null;
         for (Token advance: tokens) {
             if (advance instanceof Declaration) {
@@ -159,7 +148,7 @@ public class ConfluenceHyperlinksGenerator {
                 result.append("{anchor:").append(declaration.getName()).append("}");
                 if (!usedSymbols.contains(declaration.getName())) {
                     //                    result.append("(!) *Unused!* ");
-                    System.out.println("Unused: " + token + " at line " + token.getLine());
+                    System.out.println("Unused: " + tokenWithPosition(token));
                 }
                 Collection<String> myUsages = usages.get(declaration.getName());
                 if (!myUsages.isEmpty()) {
@@ -180,12 +169,16 @@ public class ConfluenceHyperlinksGenerator {
                 Identifier identifier = (Identifier) token;
                 if (!declaredSymbols.contains(identifier.getName())) {
                     result.append("(!) *Undeclared!* ");
-                    System.out.println("Undeclared: " + token + " at line " + token.getLine());
+                    System.out.println("Undeclared: " + tokenWithPosition(token));
                 }
             }
             result.append(token);
         }
         return result;
+    }
+
+    private static String tokenWithPosition(Token token) {
+        return token + " at " + token.getFileName() + ":" + token.getLine();
     }
 
     private static List<Token> tokenize(_GrammarLexer grammarLexer) throws IOException {
