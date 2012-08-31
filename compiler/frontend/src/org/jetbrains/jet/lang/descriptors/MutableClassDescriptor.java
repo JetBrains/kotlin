@@ -222,7 +222,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite implement
                 public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
                     superBuilder.addFunctionDescriptor(functionDescriptor);
                     functions.add(functionDescriptor);
-                    if (functionDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                    if (functionDescriptor.getKind().isReal()) {
                         declaredCallableMembers.add(functionDescriptor);
                     }
                     allCallableMembers.add(functionDescriptor);
@@ -260,7 +260,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite implement
                 public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
                     superBuilder.addPropertyDescriptor(propertyDescriptor);
                     properties.add(propertyDescriptor);
-                    if (propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                    if (propertyDescriptor.getKind().isReal()) {
                         declaredCallableMembers.add(propertyDescriptor);
                     }
                     allCallableMembers.add(propertyDescriptor);

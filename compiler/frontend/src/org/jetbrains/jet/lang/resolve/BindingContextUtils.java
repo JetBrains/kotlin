@@ -26,6 +26,7 @@ import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -152,32 +153,40 @@ public class BindingContextUtils {
 
     @Nullable
     public static PsiElement callableDescriptorToDeclaration(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
-        if (callable.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
-            Set<? extends CallableMemberDescriptor> overriddenDescriptors = callable.getOverriddenDescriptors();
-            if (overriddenDescriptors.size() != 1) {
-                // TODO evil code
-                throw new IllegalStateException(
-                        "cannot find declaration: fake descriptor" +
-                                " has more then one overridden descriptor: " + callable);
-            }
-
-            return callableDescriptorToDeclaration(context, overriddenDescriptors.iterator().next());
+        if (callable.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
+            return null;
         }
 
-        return doGetDescriptorToDeclaration(context, callable.getOriginal());
+        if (callable.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
+            return doGetDescriptorToDeclaration(context, callable.getOriginal());
+        }
+
+        Set<? extends CallableMemberDescriptor> overriddenDescriptors = callable.getOverriddenDescriptors();
+        if (overriddenDescriptors.size() != 1) {
+            throw new IllegalStateException(
+                    "cannot find declaration: fake descriptor has more than one overridden descriptor: " + callable);
+        }
+
+        return callableDescriptorToDeclaration(context, overriddenDescriptors.iterator().next());
     }
 
+    @NotNull
     private static List<PsiElement> callableDescriptorToDeclarations(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
-        if (callable.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
-            List<PsiElement> r = new ArrayList<PsiElement>();
-            Set<? extends CallableMemberDescriptor> overriddenDescriptors = callable.getOverriddenDescriptors();
-            for (CallableMemberDescriptor overridden : overriddenDescriptors) {
-                r.addAll(callableDescriptorToDeclarations(context, overridden));
-            }
-            return r;
+        if (callable.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
+            return Collections.emptyList();
         }
-        PsiElement psiElement = doGetDescriptorToDeclaration(context, callable);
-        return psiElement != null ? Lists.newArrayList(psiElement) : Lists.<PsiElement>newArrayList();
+
+        if (callable.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
+            PsiElement psiElement = doGetDescriptorToDeclaration(context, callable);
+            return psiElement != null ? Lists.newArrayList(psiElement) : Lists.<PsiElement>newArrayList();
+        }
+
+        List<PsiElement> r = new ArrayList<PsiElement>();
+        Set<? extends CallableMemberDescriptor> overriddenDescriptors = callable.getOverriddenDescriptors();
+        for (CallableMemberDescriptor overridden : overriddenDescriptors) {
+            r.addAll(callableDescriptorToDeclarations(context, overridden));
+        }
+        return r;
     }
 
     @Nullable

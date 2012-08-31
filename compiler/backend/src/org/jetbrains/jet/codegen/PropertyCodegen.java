@@ -171,9 +171,7 @@ public class PropertyCodegen extends GenerationStateAware {
     }
 
     public void generateDefaultGetter(PropertyDescriptor propertyDescriptor, int flags, PsiElement origin) {
-        if (propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            throw new IllegalStateException("must not generate code for fake overrides");
-        }
+        checkMustGenerateCode(propertyDescriptor);
 
         if (kind == OwnerKind.TRAIT_IMPL) {
             return;
@@ -277,9 +275,7 @@ public class PropertyCodegen extends GenerationStateAware {
     }
 
     public void generateDefaultSetter(PropertyDescriptor propertyDescriptor, int flags, PsiElement origin) {
-        if (propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            throw new IllegalStateException("must not generate code for fake overrides");
-        }
+        checkMustGenerateCode(propertyDescriptor);
 
         if (kind == OwnerKind.TRAIT_IMPL) {
             return;

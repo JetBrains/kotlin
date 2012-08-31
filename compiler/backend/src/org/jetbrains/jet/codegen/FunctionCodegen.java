@@ -97,9 +97,7 @@ public class FunctionCodegen extends GenerationStateAware {
             FunctionDescriptor functionDescriptor,
             JetDeclarationWithBody fun
     ) {
-        if (functionDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            throw new IllegalStateException("must not generate code for fake overrides");
-        }
+        checkMustGenerateCode(functionDescriptor);
 
         List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
 
