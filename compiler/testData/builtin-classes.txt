@@ -176,13 +176,7 @@ public final class jet.Char : jet.Number, jet.Comparable<jet.Char> {
     public final fun plus(/*0*/ other: jet.Int): jet.Int
     public final fun plus(/*0*/ other: jet.Long): jet.Long
     public final fun plus(/*0*/ other: jet.Short): jet.Int
-    public final fun rangeTo(/*0*/ other: jet.Byte): jet.CharRange
     public final fun rangeTo(/*0*/ other: jet.Char): jet.CharRange
-    public final fun rangeTo(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun rangeTo(/*0*/ other: jet.Float): jet.FloatRange
-    public final fun rangeTo(/*0*/ other: jet.Int): jet.IntRange
-    public final fun rangeTo(/*0*/ other: jet.Long): jet.LongRange
-    public final fun rangeTo(/*0*/ other: jet.Short): jet.ShortRange
     public final fun times(/*0*/ other: jet.Byte): jet.Int
     public final fun times(/*0*/ other: jet.Double): jet.Double
     public final fun times(/*0*/ other: jet.Float): jet.Float
