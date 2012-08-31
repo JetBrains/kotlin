@@ -662,8 +662,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private class ForInArrayLoopGenerator extends AbstractForLoopGenerator {
-        private int myIndexVar;
-        private int myArrayVar;
+        private int indexVar;
+        private int arrayVar;
         private Runnable afterLoopAction;
         private final JetType loopRangeType;
 
@@ -674,15 +674,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         @Override
         public void beforeLoop() {
-            myIndexVar = myFrameMap.enterTemp(Type.INT_TYPE);
+            indexVar = myFrameMap.enterTemp(Type.INT_TYPE);
 
             JetExpression loopRange = forExpression.getLoopRange();
             StackValue value = gen(loopRange);
             if (value instanceof StackValue.Local) {
-                myArrayVar = ((StackValue.Local) value).index;
+                arrayVar = ((StackValue.Local) value).index;
             }
             else {
-                myArrayVar = myFrameMap.enterTemp(OBJECT_TYPE);
+                arrayVar = myFrameMap.enterTemp(OBJECT_TYPE);
                 afterLoopAction = new Runnable() {
                     @Override
                     public void run() {
@@ -691,17 +691,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 };
                 Type asmLoopRangeType = asmType(loopRangeType);
                 value.put(asmLoopRangeType, v);
-                v.store(myArrayVar, OBJECT_TYPE);
+                v.store(arrayVar, OBJECT_TYPE);
             }
 
             v.iconst(0);
-            v.store(myIndexVar, Type.INT_TYPE);
+            v.store(indexVar, Type.INT_TYPE);
         }
 
         @Override
         public void conditionAndJump(@NotNull Label loopExit) {
-            v.load(myIndexVar, Type.INT_TYPE);
-            v.load(myArrayVar, OBJECT_TYPE);
+            v.load(indexVar, Type.INT_TYPE);
+            v.load(arrayVar, OBJECT_TYPE);
             v.arraylength();
             v.ificmpge(loopExit);
         }
@@ -717,8 +717,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 arrayElParamType = asmElementType;
             }
 
-            v.load(myArrayVar, OBJECT_TYPE);
-            v.load(myIndexVar, Type.INT_TYPE);
+            v.load(arrayVar, OBJECT_TYPE);
+            v.load(indexVar, Type.INT_TYPE);
             v.aload(arrayElParamType);
             StackValue.onStack(arrayElParamType).put(asmElementType, v);
             v.store(parameterIndex, asmElementType);
@@ -726,7 +726,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         @Override
         public void afterBody() {
-            v.iinc(myIndexVar, 1);
+            v.iinc(indexVar, 1);
             super.afterBody();
         }
 
