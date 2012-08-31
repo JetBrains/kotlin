@@ -127,6 +127,11 @@ public class MultiDeclTestGenerated extends AbstractMultiDeclTestCase {
                 blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forArray/int/MultiDeclForComponentExtensions.kt");
             }
             
+            @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
+            public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forArray/int/MultiDeclForComponentExtensionsValCaptured.kt");
+            }
+            
             @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
             public void testMultiDeclForComponentMemberExtensions() throws Exception {
                 blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forArray/int/MultiDeclForComponentMemberExtensions.kt");
@@ -148,6 +153,11 @@ public class MultiDeclTestGenerated extends AbstractMultiDeclTestCase {
             @TestMetadata("MultiDeclForComponentExtensions.kt")
             public void testMultiDeclForComponentExtensions() throws Exception {
                 blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forArray/long/MultiDeclForComponentExtensions.kt");
+            }
+            
+            @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
+            public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
+                blackBoxFileByFullPath("compiler/testData/codegen/multiDecl/forArray/long/MultiDeclForComponentExtensionsValCaptured.kt");
             }
             
             @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
