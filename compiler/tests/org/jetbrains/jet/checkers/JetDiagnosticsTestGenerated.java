@@ -2265,6 +2265,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/redeclarations/PropertyAndFunInClass.kt");
             }
             
+            @TestMetadata("PropertyAndInnerClass.kt")
+            public void testPropertyAndInnerClass() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/redeclarations/PropertyAndInnerClass.kt");
+            }
+            
             @TestMetadata("Redeclarations.kt")
             public void testRedeclarations() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/redeclarations/Redeclarations.kt");

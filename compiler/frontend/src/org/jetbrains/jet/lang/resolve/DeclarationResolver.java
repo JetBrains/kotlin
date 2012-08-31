@@ -18,10 +18,8 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.*;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,10 +30,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
@@ -315,19 +310,45 @@ public class DeclarationResolver {
 
             Multimap<Name, DeclarationDescriptor> descriptorMap = HashMultimap.create();
             for (DeclarationDescriptor desc : allDescriptors) {
-                if (desc instanceof ClassDescriptor) {
+                if (desc instanceof ClassDescriptor || desc instanceof PropertyDescriptor) {
                     descriptorMap.put(desc.getName(), desc);
                 }
             }
+            
+           reportRedeclarations(descriptorMap); 
+        }
+    }
 
-            for (Name name : descriptorMap.keySet()) {
-                Collection<DeclarationDescriptor> descriptors = descriptorMap.get(name);
-                if (descriptors.size() > 1) {
-                    for (DeclarationDescriptor descriptor : descriptors) {
-                        trace.report(REDECLARATION.on(BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), (ClassDescriptor)descriptor), descriptor.getName().getName()));
+    private void reportRedeclarations(@NotNull Multimap<Name, DeclarationDescriptor> descriptorMap) {
+        Set<Pair<PsiElement, Name>> redeclarations = Sets.newHashSet();
+        for (Name name : descriptorMap.keySet()) {
+            Collection<DeclarationDescriptor> descriptors = descriptorMap.get(name);
+            if (descriptors.size() > 1) {
+                // We mustn't compare PropertyDescriptor with PropertyDescriptor because we do this at OverloadResolver
+                for (DeclarationDescriptor descriptor : descriptors) {
+                    if (descriptor instanceof ClassDescriptor) {
+                        for (DeclarationDescriptor descriptor2 : descriptors) {
+                            if (descriptor == descriptor2) {
+                                continue;
+                            }
+
+                            redeclarations.add(Pair.create(
+                                    BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), (ClassDescriptor) descriptor),
+                                    descriptor.getName()));
+                            if (descriptor2 instanceof PropertyDescriptor) {
+                                redeclarations.add(Pair.create(
+                                        BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), descriptor2),
+                                        descriptor2.getName()));
+                            }
+                        }
                     }
                 }
             }
         }
+        for (Pair<PsiElement, Name> redeclaration : redeclarations) {
+            trace.report(REDECLARATION.on(redeclaration.getFirst(), redeclaration.getSecond().getName()));
+        }
     }
+
+    
 }
