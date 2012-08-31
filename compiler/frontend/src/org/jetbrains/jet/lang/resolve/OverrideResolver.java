@@ -551,67 +551,110 @@ public class OverrideResolver {
         return factoredMembers;
     }
 
-    private void checkOverrideForMember(@NotNull CallableMemberDescriptor declared) {
+    private interface CheckOverrideReportStrategy {
+        void overridingFinalMember(@NotNull CallableMemberDescriptor overridden);
+
+        void returnTypeMismatchOnOverride(@NotNull CallableMemberDescriptor overridden);
+
+        void varOverriddenByVal(@NotNull CallableMemberDescriptor overridden);
+
+        void cannotOverrideInvisibleMember(@NotNull CallableMemberDescriptor invisibleOverridden);
+
+        void nothingToOverride();
+    }
+
+    private void checkOverrideForMember(@NotNull final CallableMemberDescriptor declared) {
         if (declared.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
             return;
         }
 
-        JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
+        final JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
         if (member == null) {
-            if (declared.getKind() != CallableMemberDescriptor.Kind.DELEGATION) {
-                throw new IllegalStateException(
-                        "descriptor is not resolved to declaration" +
-                        " and it is not delegate: " + declared);
-            }
-            return;
+            throw new IllegalStateException("declared descriptor is not resolved to declaration: " + declared);
         }
 
         JetModifierList modifierList = member.getModifierList();
-        ASTNode overrideNode = modifierList != null ? modifierList.getModifierNode(JetTokens.OVERRIDE_KEYWORD) : null;
-        boolean hasOverrideModifier = overrideNode != null;
+        final ASTNode overrideNode = modifierList != null ? modifierList.getModifierNode(JetTokens.OVERRIDE_KEYWORD) : null;
+        Set<? extends CallableMemberDescriptor> overriddenDescriptors = declared.getOverriddenDescriptors();
 
-        boolean finalOverriddenError = false;
-        boolean typeMismatchError = false;
-        boolean kindMismatchError = false;
-        for (CallableMemberDescriptor overridden : declared.getOverriddenDescriptors()) {
-            if (overridden != null) {
-                if (hasOverrideModifier) {
-                    if (!overridden.getModality().isOverridable() && !finalOverriddenError) {
-                        trace.report(OVERRIDING_FINAL_MEMBER.on(overrideNode.getPsi(), overridden, overridden.getContainingDeclaration()));
+        if (overrideNode != null) {
+            checkOverridesForMemberMarkedOverride(declared, new CheckOverrideReportStrategy() {
+                private boolean finalOverriddenError = false;
+                private boolean typeMismatchError = false;
+                private boolean kindMismatchError = false;
+
+                @Override
+                public void overridingFinalMember( @NotNull CallableMemberDescriptor overridden) {
+                    if (!finalOverriddenError) {
                         finalOverriddenError = true;
+                        trace.report(OVERRIDING_FINAL_MEMBER.on(overrideNode.getPsi(), overridden, overridden.getContainingDeclaration()));
                     }
+                }
 
-                    if (!OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, overridden, declared) && !typeMismatchError) {
-                        trace.report(RETURN_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden));
+                @Override
+                public void returnTypeMismatchOnOverride(@NotNull CallableMemberDescriptor overridden) {
+                    if (!typeMismatchError) {
                         typeMismatchError = true;
+                        trace.report(RETURN_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden));
                     }
+                }
 
-                    if (checkPropertyKind(overridden, true) && checkPropertyKind(declared, false) && !kindMismatchError) {
-                        trace.report(VAR_OVERRIDDEN_BY_VAL.on((JetProperty) member, (PropertyDescriptor) declared, (PropertyDescriptor) overridden));
+                @Override
+                public void varOverriddenByVal(@NotNull CallableMemberDescriptor overridden) {
+                    if (!kindMismatchError) {
                         kindMismatchError = true;
+                        trace.report(VAR_OVERRIDDEN_BY_VAL.on((JetProperty) member, (PropertyDescriptor) declared, (PropertyDescriptor) overridden));
                     }
+                }
+
+                @Override
+                public void cannotOverrideInvisibleMember(@NotNull CallableMemberDescriptor invisibleOverridden) {
+                    trace.report(CANNOT_OVERRIDE_INVISIBLE_MEMBER.on(member, declared, invisibleOverridden, invisibleOverridden.getContainingDeclaration()));
+                }
+
+                @Override
+                public void nothingToOverride() {
+                    trace.report(NOTHING_TO_OVERRIDE.on(member, declared));
+                }
+            });
+        }
+        else if (!overriddenDescriptors.isEmpty()) {
+            CallableMemberDescriptor overridden = overriddenDescriptors.iterator().next();
+            trace.report(VIRTUAL_MEMBER_HIDDEN.on(member, declared, overridden, overridden.getContainingDeclaration()));
+        }
+    }
+
+    private void checkOverridesForMemberMarkedOverride(@NotNull CallableMemberDescriptor declared, @NotNull CheckOverrideReportStrategy reportError) {
+        Set<? extends CallableMemberDescriptor> overriddenDescriptors = declared.getOverriddenDescriptors();
+
+        for (CallableMemberDescriptor overridden : overriddenDescriptors) {
+            if (overridden != null) {
+                if (!overridden.getModality().isOverridable()) {
+                    reportError.overridingFinalMember(overridden);
+                }
+
+                if (!OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, overridden, declared)) {
+                    reportError.returnTypeMismatchOnOverride(overridden);
+                }
+
+                if (checkPropertyKind(overridden, true) && checkPropertyKind(declared, false)) {
+                    reportError.varOverriddenByVal(overridden);
                 }
             }
         }
 
-        if (hasOverrideModifier && declared.getOverriddenDescriptors().size() == 0) {
+        if (overriddenDescriptors.isEmpty()) {
             DeclarationDescriptor containingDeclaration = declared.getContainingDeclaration();
             assert containingDeclaration instanceof ClassDescriptor : "Overrides may only be resolved in a class, but " + declared + " comes from " + containingDeclaration;
             ClassDescriptor declaringClass = (ClassDescriptor) containingDeclaration;
 
             CallableMemberDescriptor invisibleOverriddenDescriptor = findInvisibleOverriddenDescriptor(declared, declaringClass);
             if (invisibleOverriddenDescriptor != null) {
-                trace.report(CANNOT_OVERRIDE_INVISIBLE_MEMBER.on(member, declared, invisibleOverriddenDescriptor,
-                                                                 invisibleOverriddenDescriptor.getContainingDeclaration()));
+                reportError.cannotOverrideInvisibleMember(invisibleOverriddenDescriptor);
             }
             else {
-                trace.report(NOTHING_TO_OVERRIDE.on(member, declared));
+                reportError.nothingToOverride();
             }
-        }
-        PsiElement nameIdentifier = member.getNameIdentifier();
-        if (!hasOverrideModifier && declared.getOverriddenDescriptors().size() > 0 && nameIdentifier != null) {
-            CallableMemberDescriptor overridden = declared.getOverriddenDescriptors().iterator().next();
-            trace.report(VIRTUAL_MEMBER_HIDDEN.on(member, declared, overridden, overridden.getContainingDeclaration()));
         }
     }
 

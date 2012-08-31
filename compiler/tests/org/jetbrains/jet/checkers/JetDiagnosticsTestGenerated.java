@@ -2352,6 +2352,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/override/NonGenerics.kt");
             }
             
+            @TestMetadata("OverridingFinalMember.kt")
+            public void testOverridingFinalMember() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/override/OverridingFinalMember.kt");
+            }
+            
             @TestMetadata("ParameterDefaultValues-DefaultValueFromOnlyOneSupertype.kt")
             public void testParameterDefaultValues_DefaultValueFromOnlyOneSupertype() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/override/ParameterDefaultValues-DefaultValueFromOnlyOneSupertype.kt");
