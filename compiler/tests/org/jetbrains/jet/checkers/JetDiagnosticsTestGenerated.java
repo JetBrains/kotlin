@@ -183,14 +183,14 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             doTest("compiler/testData/diagnostics/tests/DelegationNotTotrait.kt");
         }
         
-        @TestMetadata("Delegation_ScopeInitializationOrder.kt")
-        public void testDelegation_ScopeInitializationOrder() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/Delegation_ScopeInitializationOrder.kt");
-        }
-
         @TestMetadata("DelegationToJavaIface.kt")
         public void testDelegationToJavaIface() throws Exception {
             doTest("compiler/testData/diagnostics/tests/DelegationToJavaIface.kt");
+        }
+        
+        @TestMetadata("Delegation_ScopeInitializationOrder.kt")
+        public void testDelegation_ScopeInitializationOrder() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/Delegation_ScopeInitializationOrder.kt");
         }
         
         @TestMetadata("DiamondFunction.kt")
@@ -738,6 +738,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("WhenErasedDisallowFromAny.kt")
             public void testWhenErasedDisallowFromAny() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/cast/WhenErasedDisallowFromAny.kt");
+            }
+            
+            @TestMetadata("WhenWithExpression.kt")
+            public void testWhenWithExpression() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/cast/WhenWithExpression.kt");
             }
             
         }

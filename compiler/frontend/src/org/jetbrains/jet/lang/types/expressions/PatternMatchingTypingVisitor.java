@@ -214,6 +214,9 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 if (typeReference == null) return;
                 JetType type = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, typeReference, context.trace, true);
                 checkTypeCompatibility(type, subjectType, typePattern);
+                if (BasicExpressionTypingVisitor.isCastErased(subjectType, type, JetTypeChecker.INSTANCE)) {
+                    context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(typeReference, type));
+                }
                 result.set(Pair.create(context.dataFlowInfo.establishSubtyping(subjectVariables, type), context.dataFlowInfo));
             }
 
@@ -333,10 +336,6 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 // check if the pattern is essentially a 'null' expression
                 if (type == JetStandardClasses.getNullableNothingType() && !subjectType.isNullable()) {
                     context.trace.report(SENSELESS_NULL_IN_WHEN.on(reportErrorOn));
-                }
-
-                if (BasicExpressionTypingVisitor.isCastErased(subjectType, type, JetTypeChecker.INSTANCE)) {
-                    context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(reportErrorOn, type));
                 }
             }
 
