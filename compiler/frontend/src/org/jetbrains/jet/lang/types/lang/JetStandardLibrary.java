@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.types.lang;
 
+import com.google.common.collect.ImmutableSet;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
@@ -23,6 +24,7 @@ import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -34,11 +36,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.JetTypeImpl;
-import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import java.io.IOException;
@@ -216,6 +214,18 @@ public class JetStandardLibrary {
         primitiveTypeToArrayJetType.put(primitiveType, arrayType);
         primitiveJetTypeToJetArrayType.put(type, arrayType);
         jetArrayTypeToPrimitiveJetType.put(arrayType, type);
+    }
+
+    public Set<DeclarationDescriptor> getIntegralRanges() {
+        initStdClasses();
+
+        return ImmutableSet.<DeclarationDescriptor>of(
+                getStdClassByName("ByteRange"),
+                getStdClassByName("ShortRange"),
+                getStdClassByName("CharRange"),
+                getStdClassByName("IntRange"),
+                getStdClassByName("LongRange")
+        );
     }
 
     public Collection<ClassDescriptor> getStandardTypes() {

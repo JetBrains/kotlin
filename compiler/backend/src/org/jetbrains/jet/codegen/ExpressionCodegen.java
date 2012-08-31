@@ -74,6 +74,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private static final String CLASS_NO_PATTERN_MATCHED_EXCEPTION = "jet/NoPatternMatchedException";
     private static final String CLASS_TYPE_CAST_EXCEPTION = "jet/TypeCastException";
+    public static final Set<DeclarationDescriptor> INTEGRAL_RANGES = JetStandardLibrary.getInstance().getIntegralRanges();
 
     private int myLastLineNumber = -1;
 
@@ -3535,13 +3536,7 @@ The "returned" value of try expression with no finally is either the last expres
                 JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, rangeExpression);
                 assert jetType != null;
                 final DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
-                if (isClass(descriptor, "IntRange") ||
-                    isClass(descriptor, "CharRange") ||
-                    isClass(descriptor, "ByteRange") ||
-                    isClass(descriptor, "LongRange") ||
-                    isClass(descriptor, "ShortRange")) {
-                    return true;
-                }
+                return INTEGRAL_RANGES.contains(descriptor);
             }
         }
         return false;
