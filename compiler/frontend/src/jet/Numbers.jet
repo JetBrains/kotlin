@@ -377,12 +377,6 @@ public class Char : Number, Comparable<Char> {
   public fun mod(other : Byte)   : Int
 //  public fun mod(other : Char)   : Int
 
-  public fun rangeTo(other : Double) : DoubleRange
-  public fun rangeTo(other : Float)  : FloatRange
-  public fun rangeTo(other : Long)   : LongRange
-  public fun rangeTo(other : Int)    : IntRange
-  public fun rangeTo(other : Short)  : ShortRange
-  public fun rangeTo(other : Byte)   : CharRange
   public fun rangeTo(other : Char)   : CharRange
 
   public fun inc() : Char
