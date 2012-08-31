@@ -2809,7 +2809,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         JetType initializerType = bindingContext.get(EXPRESSION_TYPE, initializer);
         assert initializerType != null;
-        final ExpressionReceiver initializerAsReceiver = new ExpressionReceiver(initializer, initializerType);
+
+        final Type initializerAsmType = asmType(initializerType);
+
+        final TransientReceiver initializerAsReceiver = new TransientReceiver(initializerType);
+
+        final int tempVarIndex = myFrameMap.enterTemp(initializerAsmType);
+
+        gen(initializer, initializerAsmType);
+        v.store(tempVarIndex, initializerAsmType);
+        final StackValue.Local local = StackValue.local(tempVarIndex, initializerAsmType);
 
         for (final JetMultiDeclarationEntry variableDeclaration : multiDeclaration.getEntries()) {
             initializeLocalVariable(variableDeclaration, new Function<VariableDescriptor, Void>() {
@@ -2819,11 +2828,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                             bindingContext.get(BindingContext.COMPONENT_RESOLVED_CALL, variableDeclaration);
                     assert resolvedCall != null : "Resolved call is null for " + variableDeclaration.getText();
                     Call call = makeFakeCall(initializerAsReceiver);
-                    invokeFunction(call, StackValue.none(), resolvedCall);
+                    invokeFunction(call, local, resolvedCall);
                     return null;
                 }
             });
         }
+
+        if(initializerAsmType.getSort() == Type.OBJECT || initializerAsmType.getSort() == Type.ARRAY) {
+            v.aconst(null);
+            v.store(tempVarIndex, initializerAsmType);
+        }
+        myFrameMap.leaveTemp(initializerAsmType);
+
         return StackValue.none();
     }
 
