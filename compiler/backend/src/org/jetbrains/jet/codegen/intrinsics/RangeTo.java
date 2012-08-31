@@ -50,7 +50,7 @@ public class RangeTo implements IntrinsicMethod {
         if (arguments.size() == 1) {
             final Type leftType = receiver.type;
             final Type rightType = codegen.expressionType(arguments.get(0));
-            receiver.put(Type.INT_TYPE, v);
+            receiver.put(leftType, v);
             codegen.gen(arguments.get(0), rightType);
             v.invokestatic("jet/runtime/Ranges", "rangeTo",
                            "(" + receiver.type.getDescriptor() + leftType.getDescriptor() + ")" + expectedType.getDescriptor());
