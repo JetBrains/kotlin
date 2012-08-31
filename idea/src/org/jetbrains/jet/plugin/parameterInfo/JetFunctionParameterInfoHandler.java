@@ -24,8 +24,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.jvm.compiler.TipsManager;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -186,71 +188,101 @@ public class JetFunctionParameterInfoHandler implements
         if (context == null || context.getParameterOwner() == null || !context.getParameterOwner().isValid()) {
             return;
         }
+
         PsiElement parameterOwner = context.getParameterOwner();
-        if (parameterOwner instanceof JetValueArgumentList) {
-            JetValueArgumentList argumentList = (JetValueArgumentList) parameterOwner;
-            if (descriptor instanceof FunctionDescriptor) {
-                JetFile file = (JetFile)argumentList.getContainingFile();
-                BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile(file);
-                FunctionDescriptor functionDescriptor = (FunctionDescriptor)descriptor;
-                StringBuilder builder = new StringBuilder();
-                List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
-                List<JetValueArgument> valueArguments = argumentList.getArguments();
-                int currentParameterIndex = context.getCurrentParameterIndex();
-                int boldStartOffset = -1;
-                int boldEndOffset = -1;
-                boolean isGrey = false;
-                boolean isDeprecated = false; //todo: add deprecation check
-                Color color = context.getDefaultParameterColor();
-                PsiElement parent = argumentList.getParent();
-                if (parent instanceof JetCallElement) {
-                    JetCallElement callExpression = (JetCallElement) parent;
-                    JetExpression calleeExpression = callExpression.getCalleeExpression();
-                    JetSimpleNameExpression refExpression = null;
-                    if (calleeExpression instanceof JetSimpleNameExpression) {
-                        refExpression = (JetSimpleNameExpression) calleeExpression; 
+        if (!(parameterOwner instanceof JetValueArgumentList)) {
+            return;
+        }
+
+        JetValueArgumentList argumentList = (JetValueArgumentList) parameterOwner;
+
+        if (!(descriptor instanceof FunctionDescriptor)) {
+            context.setUIComponentEnabled(false);
+            return;
+        }
+
+        FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+
+        JetFile file = (JetFile) argumentList.getContainingFile();
+        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile(file);
+        List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
+        List<JetValueArgument> valueArguments = argumentList.getArguments();
+
+        StringBuilder builder = new StringBuilder();
+        int currentParameterIndex = context.getCurrentParameterIndex();
+        int boldStartOffset = -1;
+        int boldEndOffset = -1;
+        boolean isGrey = false;
+        boolean isDeprecated = false; //todo: add deprecation check
+
+        boolean[] usedIndexes = new boolean[valueParameters.size()];
+        boolean namedMode = false;
+        Arrays.fill(usedIndexes, false);
+
+        if ((currentParameterIndex >= valueParameters.size() && (valueParameters.size() > 0 || currentParameterIndex > 0)) &&
+            (valueParameters.size() == 0 || valueParameters.get(valueParameters.size() - 1).getVarargElementType() == null)) {
+            isGrey = true;
+        }
+
+        if (valueParameters.size() == 0) {
+            builder.append(CodeInsightBundle.message("parameter.info.no.parameters"));
+        }
+
+        for (int i = 0; i < valueParameters.size(); ++i) {
+            if (i != 0) {
+                builder.append(", ");
+            }
+
+            boolean highlightParameter = i == currentParameterIndex ||
+                    (!namedMode && i < currentParameterIndex && valueParameters.get(valueParameters.size() - 1).getVarargElementType() != null);
+
+            if (highlightParameter) {
+                boldStartOffset = builder.length();
+            }
+
+            if (!namedMode) {
+                if (valueArguments.size() > i) {
+                    JetValueArgument argument = valueArguments.get(i);
+                    if (argument.isNamed()) {
+                        namedMode = true;
                     }
-                    else if (calleeExpression instanceof JetConstructorCalleeExpression) {
-                        JetConstructorCalleeExpression constructorCalleeExpression = (JetConstructorCalleeExpression) calleeExpression;
-                        if (constructorCalleeExpression.getConstructorReferenceExpression() instanceof JetSimpleNameExpression) {
-                            refExpression = (JetSimpleNameExpression) constructorCalleeExpression.getConstructorReferenceExpression();
-                        }
-                    }
-                    if (refExpression != null) {
-                        DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, refExpression);
-                        if (declarationDescriptor != null) {
-                            if (declarationDescriptor == functionDescriptor) {
-                               color = GREEN_BACKGROUND;
-                            }
-                        }
-                    }
-                }
-                
-                boolean[] usedIndexes = new boolean[valueParameters.size()];
-                boolean namedMode = false;
-                Arrays.fill(usedIndexes, false);
-                if ((currentParameterIndex >= valueParameters.size() && (valueParameters.size() > 0 ||
-                                                                         currentParameterIndex > 0)) &&
-                    (valueParameters.size() == 0 || valueParameters.get(valueParameters.size() - 1).getVarargElementType() == null)) {
-                    isGrey = true;
-                }
-                if (valueParameters.size() == 0) builder.append(CodeInsightBundle.message("parameter.info.no.parameters"));
-                for (int i = 0; i < valueParameters.size(); ++i) {
-                    if (i != 0) builder.append(", ");
-                    boolean highlightParameter = 
-                            i == currentParameterIndex || (!namedMode && i < currentParameterIndex &&
-                                                           valueParameters.get(valueParameters.size() - 1).
-                                                                   getVarargElementType() != null);
-                    if (highlightParameter) boldStartOffset = builder.length();
-                    if (!namedMode) {
-                        if (valueArguments.size() > i) {
-                            JetValueArgument argument = valueArguments.get(i);
-                            if (argument.isNamed()) {
-                                namedMode = true;
+                    else {
+                        ValueParameterDescriptor param = valueParameters.get(i);
+                        builder.append(renderParameter(param, false, bindingContext));
+                        if (i < currentParameterIndex) {
+                            if (argument.getArgumentExpression() != null) {
+                                //check type
+                                JetType paramType = getActualParameterType(param);
+                                JetType exprType = bindingContext.get(BindingContext.EXPRESSION_TYPE, argument.getArgumentExpression());
+                                if (exprType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(exprType, paramType)) {
+                                    isGrey = true;
+                                }
                             }
                             else {
-                                ValueParameterDescriptor param = valueParameters.get(i);
-                                builder.append(renderParameter(param, false, bindingContext));
+                                isGrey = true;
+                            }
+                        }
+                        usedIndexes[i] = true;
+                    }
+                }
+                else {
+                    ValueParameterDescriptor param = valueParameters.get(i);
+                    builder.append(renderParameter(param, false, bindingContext));
+                }
+            }
+            if (namedMode) {
+                boolean takeAnyArgument = true;
+                if (valueArguments.size() > i) {
+                    JetValueArgument argument = valueArguments.get(i);
+                    if (argument.isNamed()) {
+                        for (int j = 0; j < valueParameters.size(); ++j) {
+                            JetSimpleNameExpression referenceExpression = argument.getArgumentName().getReferenceExpression();
+                            ValueParameterDescriptor param = valueParameters.get(j);
+                            if (referenceExpression != null && !usedIndexes[j] &&
+                                param.getName().equals(referenceExpression.getReferencedNameAsName())) {
+                                takeAnyArgument = false;
+                                usedIndexes[j] = true;
+                                builder.append(renderParameter(param, true, bindingContext));
                                 if (i < currentParameterIndex) {
                                     if (argument.getArgumentExpression() != null) {
                                         //check type
@@ -258,131 +290,153 @@ public class JetFunctionParameterInfoHandler implements
                                         JetType exprType = bindingContext.get(BindingContext.EXPRESSION_TYPE, argument.getArgumentExpression());
                                         if (exprType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(exprType, paramType)) isGrey = true;
                                     }
-                                    else isGrey = true;
-                                }
-                                usedIndexes[i] = true;
-                            }
-                        }
-                        else {
-                            ValueParameterDescriptor param = valueParameters.get(i);
-                            builder.append(renderParameter(param, false, bindingContext));
-                        }
-                    } 
-                    if (namedMode) {
-                        boolean takeAnyArgument = true;
-                        if (valueArguments.size() > i) {
-                            JetValueArgument argument = valueArguments.get(i);
-                            if (argument.isNamed()) {
-                                for (int j = 0; j < valueParameters.size(); ++j) {
-                                    JetSimpleNameExpression referenceExpression = argument.getArgumentName().getReferenceExpression();
-                                    ValueParameterDescriptor param = valueParameters.get(j);
-                                    if (referenceExpression != null && !usedIndexes[j] &&
-                                        param.getName().equals(referenceExpression.getReferencedNameAsName())) {
-                                        takeAnyArgument = false;
-                                        usedIndexes[j] = true;
-                                        builder.append(renderParameter(param, true, bindingContext));
-                                        if (i < currentParameterIndex) {
-                                            if (argument.getArgumentExpression() != null) {
-                                                //check type
-                                                JetType paramType = getActualParameterType(param);
-                                                JetType exprType = bindingContext.get(BindingContext.EXPRESSION_TYPE, argument.getArgumentExpression());
-                                                if (exprType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(exprType, paramType)) isGrey = true;
-                                            }
-                                            else isGrey = true;
-                                        }
-                                        break;
+                                    else {
+                                        isGrey = true;
                                     }
                                 }
-                            }
-                        }
-                        
-                        if (takeAnyArgument) {
-                            if (i < currentParameterIndex) isGrey = true;
-                            
-                            for (int j = 0; j < valueParameters.size(); ++j) {
-                                ValueParameterDescriptor param = valueParameters.get(j);
-                                if (!usedIndexes[j]) {
-                                    usedIndexes[j] = true;
-                                    builder.append(renderParameter(param, true, bindingContext));
-                                    break;
-                                }
+                                break;
                             }
                         }
                     }
-                    if (highlightParameter) boldEndOffset = builder.length();
                 }
-                if (builder.toString().isEmpty()) context.setUIComponentEnabled(false);
-                else context.setupUIComponentPresentation(builder.toString(), boldStartOffset, boldEndOffset, isGrey,
-                                                          isDeprecated, false, color);
+
+                if (takeAnyArgument) {
+                    if (i < currentParameterIndex) {
+                        isGrey = true;
+                    }
+
+                    for (int j = 0; j < valueParameters.size(); ++j) {
+                        ValueParameterDescriptor param = valueParameters.get(j);
+                        if (!usedIndexes[j]) {
+                            usedIndexes[j] = true;
+                            builder.append(renderParameter(param, true, bindingContext));
+                            break;
+                        }
+                    }
+                }
             }
-            else context.setUIComponentEnabled(false);
+
+            if (highlightParameter) {
+                boldEndOffset = builder.length();
+            }
+        }
+
+        Color color = getBackgroundColor(context, argumentList, functionDescriptor, bindingContext);
+
+        if (builder.toString().isEmpty()) {
+            context.setUIComponentEnabled(false);
+        }
+        else {
+            context.setupUIComponentPresentation(builder.toString(), boldStartOffset, boldEndOffset, isGrey,
+                                                 isDeprecated, false, color);
         }
     }
+
+    private static Color getBackgroundColor(
+            ParameterInfoUIContext context,
+            JetValueArgumentList argumentList,
+            FunctionDescriptor functionDescriptor,
+            BindingContext bindingContext
+    ) {
+        JetSimpleNameExpression callNameExpression = getCallSimpleNameExpression(argumentList);
+        if (callNameExpression != null) {
+            // Mark with green background the variant with resolved call
+            DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, callNameExpression);
+            if (declarationDescriptor != null) {
+                if (declarationDescriptor == functionDescriptor) {
+                    return GREEN_BACKGROUND;
+                }
+            }
+        }
+
+        return context.getDefaultParameterColor();
+    }
+
 
     private static JetValueArgumentList findCall(CreateParameterInfoContext context) {
         //todo: calls to this constructors, when we will have auxiliary constructors
         PsiFile file = context.getFile();
-        if (!(file instanceof JetFile)) return null;
-        PsiElement element = file.findElementAt(context.getOffset());
-        while (element != null && !(element instanceof JetValueArgumentList)) {
-            element = element.getParent();
-        }
-        if (element == null) return null;
-        JetValueArgumentList argumentList = (JetValueArgumentList) element;
-        JetCallElement callExpression;
-        if (element.getParent() instanceof JetCallElement) {
-            callExpression = (JetCallElement)element.getParent();
-        }
-        else {
+        if (!(file instanceof JetFile)) {
             return null;
         }
+
+        JetValueArgumentList argumentList = PsiTreeUtil.getParentOfType(file.findElementAt(context.getOffset()), JetValueArgumentList.class);
+        if (argumentList == null) {
+            return null;
+        }
+
+        JetSimpleNameExpression callNameExpression = getCallSimpleNameExpression(argumentList);
+        if (callNameExpression == null) {
+            return null;
+        }
+
+        PsiReference[] references = callNameExpression.getReferences();
+        if (references.length == 0) {
+            return null;
+        }
+
         BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)file);
+        JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, callNameExpression);
+        DeclarationDescriptor placeDescriptor = null;
+        if (scope != null) {
+            placeDescriptor = scope.getContainingDeclaration();
+        }
+
+        Collection<DeclarationDescriptor> variants = TipsManager.getReferenceVariants(callNameExpression, bindingContext);
+        Name refName = callNameExpression.getReferencedNameAsName();
+
+        Collection<DeclarationDescriptor> itemsToShow = new ArrayList<DeclarationDescriptor>();
+        for (DeclarationDescriptor variant : variants) {
+            if (variant instanceof FunctionDescriptor) {
+                FunctionDescriptor functionDescriptor = (FunctionDescriptor) variant;
+                if (functionDescriptor.getName().equals(refName)) {
+                    //todo: renamed functions?
+                    if (placeDescriptor != null && !JetVisibilityChecker.isVisible(placeDescriptor, functionDescriptor)) {
+                        continue;
+                    }
+                    itemsToShow.add(functionDescriptor);
+                }
+            }
+            else if (variant instanceof ClassDescriptor) {
+                ClassDescriptor classDescriptor = (ClassDescriptor) variant;
+                if (classDescriptor.getName().equals(refName)) {
+                    //todo: renamed classes?
+                    for (ConstructorDescriptor constructorDescriptor : classDescriptor.getConstructors()) {
+                        if (placeDescriptor != null && !JetVisibilityChecker.isVisible(placeDescriptor, constructorDescriptor)) {
+                            continue;
+                        }
+                        itemsToShow.add(constructorDescriptor);
+                    }
+                }
+            }
+        }
+
+        context.setItemsToShow(ArrayUtil.toObjectArray(itemsToShow));
+        return argumentList;
+    }
+
+    @Nullable
+    private static JetSimpleNameExpression getCallSimpleNameExpression(JetValueArgumentList argumentList) {
+        if (!(argumentList.getParent() instanceof JetCallElement)) {
+            return null;
+        }
+
+        JetCallElement callExpression = (JetCallElement)argumentList.getParent();
         JetExpression calleeExpression = callExpression.getCalleeExpression();
-        if (calleeExpression == null) return null;
-        JetSimpleNameExpression refExpression = null;
+        if (calleeExpression == null) {
+            return null;
+        }
+
         if (calleeExpression instanceof JetSimpleNameExpression) {
-            refExpression = (JetSimpleNameExpression) calleeExpression;
+            return (JetSimpleNameExpression) calleeExpression;
         }
         else if (calleeExpression instanceof JetConstructorCalleeExpression) {
             JetConstructorCalleeExpression constructorCalleeExpression = (JetConstructorCalleeExpression) calleeExpression;
             if (constructorCalleeExpression.getConstructorReferenceExpression() instanceof JetSimpleNameExpression) {
-                refExpression = (JetSimpleNameExpression) constructorCalleeExpression.getConstructorReferenceExpression();
+                return (JetSimpleNameExpression) constructorCalleeExpression.getConstructorReferenceExpression();
             }
         }
-        if (refExpression != null) {
-            JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, refExpression);
-            DeclarationDescriptor placeDescriptor = null;
-            if (scope != null) {
-                placeDescriptor = scope.getContainingDeclaration();
-            }
-            Collection<DeclarationDescriptor> variants = TipsManager.getReferenceVariants(refExpression, bindingContext);
-            Name refName = refExpression.getReferencedNameAsName();
-            PsiReference[] references = refExpression.getReferences();
-            if (references.length == 0) return null;
-            ArrayList<DeclarationDescriptor> itemsToShow = new ArrayList<DeclarationDescriptor>();
-            for (DeclarationDescriptor variant : variants) {
-                if (variant instanceof FunctionDescriptor) {
-                    FunctionDescriptor functionDescriptor = (FunctionDescriptor) variant;
-                    if (functionDescriptor.getName().equals(refName)) {
-                        //todo: renamed functions?
-                        if (placeDescriptor != null && !JetVisibilityChecker.isVisible(placeDescriptor, functionDescriptor)) continue;
-                        itemsToShow.add(functionDescriptor);
-                    }
-                }
-                else if (variant instanceof ClassDescriptor) {
-                   ClassDescriptor classDescriptor = (ClassDescriptor) variant;
-                    if (classDescriptor.getName().equals(refName)) {
-                        //todo: renamed classes?
-                        for (ConstructorDescriptor constructorDescriptor : classDescriptor.getConstructors()) {
-                            if (placeDescriptor != null && !JetVisibilityChecker.isVisible(placeDescriptor, constructorDescriptor)) continue;
-                            itemsToShow.add(constructorDescriptor);
-                        }
-                    }
-                }
-            }
-            context.setItemsToShow(ArrayUtil.toObjectArray(itemsToShow));
-            return argumentList;
-        }
+
         return null;
     }
 
