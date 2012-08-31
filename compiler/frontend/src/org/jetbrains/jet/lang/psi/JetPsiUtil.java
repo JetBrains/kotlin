@@ -133,7 +133,11 @@ public class JetPsiUtil {
     @Nullable
     public static FqName getFQName(JetNamedDeclaration namedDeclaration) {
         if (namedDeclaration instanceof JetObjectDeclarationName) {
-            JetObjectDeclaration objectDeclaration = PsiTreeUtil.getParentOfType(namedDeclaration, JetObjectDeclaration.class);
+            JetNamedDeclaration objectDeclaration = PsiTreeUtil.getParentOfType(namedDeclaration, JetObjectDeclaration.class);
+            if (objectDeclaration == null) {
+                objectDeclaration = PsiTreeUtil.getParentOfType(namedDeclaration, JetEnumEntry.class);
+            }
+            
             if (objectDeclaration == null) {
                 return null;
             }
