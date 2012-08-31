@@ -661,63 +661,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    // This class will be unified with ForLoopGenerator soon
-    private abstract class IntrinsicForLoopGenerator {
-        protected final JetForExpression expression;
-        protected final Type loopRangeType;
-        protected final JetType expressionType;
-        protected final VariableDescriptor parameterDescriptor;
-        protected final Label end = new Label();
-
-        public IntrinsicForLoopGenerator(JetForExpression expression, Type loopRangeType) {
-            this.expression = expression;
-            this.loopRangeType = loopRangeType;
-            JetParameter loopParameter = expression.getLoopParameter();
-            this.parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, loopParameter);
-            this.expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getLoopRange());
-        }
-
-        public void invoke() {
-            JetType paramType = parameterDescriptor.getType();
-            Type asmParamType = asmType(paramType);
-
-            myFrameMap.enter(parameterDescriptor, asmParamType);
-            generatePrologue();
-
-            Label condition = new Label();
-            Label increment = new Label();
-            v.mark(condition);
-
-            blockStackElements.push(new LoopBlockStackElement(end, increment, targetLabel(expression)));
-
-            generateCondition(asmParamType, end);
-
-            gen(expression.getBody(), Type.VOID_TYPE);
-
-            v.mark(increment);
-            generateIncrement();
-            v.goTo(condition);
-            v.mark(end);
-
-            cleanupTemp();
-            final int paramIndex = myFrameMap.leave(parameterDescriptor);
-            //noinspection ConstantConditions
-            v.visitLocalVariable(expression.getLoopParameter().getName(), asmParamType.getDescriptor(), null, condition, end, paramIndex);
-
-            blockStackElements.pop();
-        }
-
-        protected void generatePrologue() {
-        }
-
-        protected abstract void generateCondition(Type asmParamType, Label end);
-
-        protected abstract void generateIncrement();
-
-        protected void cleanupTemp() {
-        }
-    }
-
     private class ForInArrayLoopGenerator extends AbstractForLoopGenerator {
         private int myIndexVar;
         private int myArrayVar;
