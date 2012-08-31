@@ -195,4 +195,10 @@ public final class MiscTest extends AbstractExpressionTest {
     public void testIterationOverIterator() throws Exception {
         fooBoxTest();
     }
+
+    public void testStringInterpolationEvaluationOrder() throws Exception {
+        fooBoxTest();
+    }
+
+
 }
