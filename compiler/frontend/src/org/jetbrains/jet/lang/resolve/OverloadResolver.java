@@ -164,6 +164,14 @@ public class OverloadResolver {
     ) {
         MultiMap<Name, CallableMemberDescriptor> functionsByName = MultiMap.create();
         
+        if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
+            MutableClassDescriptor classObjectDescriptor = (MutableClassDescriptor) classDescriptor.getClassObjectDescriptor();
+            assert classObjectDescriptor != null;
+            for (CallableMemberDescriptor memberDescriptor : classObjectDescriptor.getDeclaredCallableMembers()) {
+                functionsByName.putValue(memberDescriptor.getName(), memberDescriptor);
+            }
+        }
+
         for (CallableMemberDescriptor function : classDescriptor.getDeclaredCallableMembers()) {
             functionsByName.putValue(function.getName(), function);
         }
