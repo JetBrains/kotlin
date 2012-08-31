@@ -52,7 +52,7 @@ public class OptimizeImportsTest extends LightCodeInsightTestCase {
         doTest();
     }
 
-    public void testKt2488() throws Exception {
+    public void testKt2488EnumEntry() throws Exception {
         doTest();
     }
 
