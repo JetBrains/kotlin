@@ -1220,6 +1220,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve", new File("compiler/testData/diagnostics/tests/enum"), "kt", false);
             }
             
+            @TestMetadata("enumStarImport.kt")
+            public void testEnumStarImport() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/enumStarImport.kt");
+            }
+            
             @TestMetadata("importEnumFromJava.kt")
             public void testImportEnumFromJava() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/enum/importEnumFromJava.kt");
