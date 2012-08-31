@@ -83,4 +83,12 @@ public class ObjectGenTest extends CodegenTestCase {
     public void testKt1737() {
         blackBoxFile("regressions/kt1737.kt");
     }
+
+    public void testReceiverInConstructor() {
+        blackBoxFile("objects/receiverInConstructor.kt");
+    }
+
+    public void testThisInConstructor() {
+        blackBoxFile("objects/thisInConstructor.kt");
+    }
 }

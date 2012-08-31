@@ -810,6 +810,20 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     constructorContext.lookupInContext(descriptor, null, state, true);
                 }
             }
+
+            @Override
+            public void visitThisExpression(JetThisExpression expression) {
+                final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getInstanceReference());
+                if (descriptor instanceof ClassDescriptor) {
+                    // @todo for now all our classes are inner so no need to lookup this. change it when we have real inners
+                }
+                else {
+                    assert descriptor instanceof CallableDescriptor;
+                    if (context.getCallableDescriptorWithReceiver() != descriptor) {
+                        context.lookupInContext(descriptor, null, state, false);
+                    }
+                }
+            }
         };
 
         for (JetDeclaration declaration : myClass.getDeclarations()) {
