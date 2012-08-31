@@ -300,6 +300,7 @@ public class NamespaceCodegen extends GenerationStateAware {
             substringTo = name.length();
         }
 
-        return namespaceInternalName + "$src$" + name.substring(substringFrom, substringTo);
+        // dollar sign in the end is to prevent synthetic class from having "Test" or other parseable suffix
+        return namespaceInternalName + "$src$" + name.substring(substringFrom, substringTo) + "$";
     }
 }
