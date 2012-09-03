@@ -210,7 +210,9 @@ public class OverloadResolver {
                 if (!overloadable.isSuccess()) {
                     JetDeclaration jetDeclaration = (JetDeclaration) BindingContextUtils
                             .descriptorToDeclaration(trace.getBindingContext(), member);
-                    redeclarations.add(Pair.create(jetDeclaration, member));
+                    if (jetDeclaration != null) {
+                        redeclarations.add(Pair.create(jetDeclaration, member));
+                    }
                 }
             }
         }

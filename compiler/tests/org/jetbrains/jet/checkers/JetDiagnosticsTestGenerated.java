@@ -977,6 +977,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/dataClasses/componentNamedComponent1.kt");
             }
             
+            @TestMetadata("conflictingOverloads.kt")
+            public void testConflictingOverloads() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataClasses/conflictingOverloads.kt");
+            }
+            
             @TestMetadata("dataClassOverrideConflict.kt")
             public void testDataClassOverrideConflict() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataClasses/dataClassOverrideConflict.kt");
