@@ -151,6 +151,7 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements
         PsiElement element = file.findElementAt(offset);
         PsiMethod res = PsiTreeUtil.getParentOfType(element, PsiMethod.class);
         if (res == null) return null;
+        if (res.getReturnType() == null) return null; // disabled for constructors
 
         //Not available in method's body
         PsiCodeBlock body = res.getBody();
