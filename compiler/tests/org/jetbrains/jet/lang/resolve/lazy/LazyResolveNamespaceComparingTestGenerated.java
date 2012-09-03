@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparing
 @InnerTestClasses({LazyResolveNamespaceComparingTestGenerated.LoadKotlin.class, LazyResolveNamespaceComparingTestGenerated.LoadJava.class, LazyResolveNamespaceComparingTestGenerated.NamespaceComparator.class})
 public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyResolveNamespaceComparingTest {
     @TestMetadata("compiler/testData/loadKotlin")
-    @InnerTestClasses({LoadKotlin.Class.class, LoadKotlin.ClassFun.class, LoadKotlin.ClassObject.class, LoadKotlin.Constructor.class, LoadKotlin.Fun.class, LoadKotlin.Prop.class, LoadKotlin.Type.class, LoadKotlin.Visibility.class})
+    @InnerTestClasses({LoadKotlin.Class.class, LoadKotlin.ClassFun.class, LoadKotlin.ClassObject.class, LoadKotlin.Constructor.class, LoadKotlin.DataClass.class, LoadKotlin.Fun.class, LoadKotlin.Prop.class, LoadKotlin.Type.class, LoadKotlin.Visibility.class})
     public static class LoadKotlin extends AbstractLazyResolveNamespaceComparingTest {
         public void testAllFilesPresentInLoadKotlin() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest", new File("compiler/testData/loadKotlin"), "kt", true);
@@ -264,6 +264,49 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             @TestMetadata("ConstructorWithTypeParametersEAndOnePValueParameter.kt")
             public void testConstructorWithTypeParametersEAndOnePValueParameter() throws Exception {
                 doTestSinglePackage("compiler/testData/loadKotlin/constructor/ConstructorWithTypeParametersEAndOnePValueParameter.kt");
+            }
+            
+        }
+        
+        @TestMetadata("compiler/testData/loadKotlin/dataClass")
+        public static class DataClass extends AbstractLazyResolveNamespaceComparingTest {
+            public void testAllFilesPresentInDataClass() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest", new File("compiler/testData/loadKotlin/dataClass"), "kt", true);
+            }
+            
+            @TestMetadata("MixedComponents.kt")
+            public void testMixedComponents() throws Exception {
+                doTestSinglePackage("compiler/testData/loadKotlin/dataClass/MixedComponents.kt");
+            }
+            
+            @TestMetadata("NoComponents.kt")
+            public void testNoComponents() throws Exception {
+                doTestSinglePackage("compiler/testData/loadKotlin/dataClass/NoComponents.kt");
+            }
+            
+            @TestMetadata("OneVal.kt")
+            public void testOneVal() throws Exception {
+                doTestSinglePackage("compiler/testData/loadKotlin/dataClass/OneVal.kt");
+            }
+            
+            @TestMetadata("OpenDataClass.kt")
+            public void testOpenDataClass() throws Exception {
+                doTestSinglePackage("compiler/testData/loadKotlin/dataClass/OpenDataClass.kt");
+            }
+            
+            @TestMetadata("OpenPropertyFinalComponent.kt")
+            public void testOpenPropertyFinalComponent() throws Exception {
+                doTestSinglePackage("compiler/testData/loadKotlin/dataClass/OpenPropertyFinalComponent.kt");
+            }
+            
+            @TestMetadata("TwoVals.kt")
+            public void testTwoVals() throws Exception {
+                doTestSinglePackage("compiler/testData/loadKotlin/dataClass/TwoVals.kt");
+            }
+            
+            @TestMetadata("TwoVars.kt")
+            public void testTwoVars() throws Exception {
+                doTestSinglePackage("compiler/testData/loadKotlin/dataClass/TwoVars.kt");
             }
             
         }
@@ -850,6 +893,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             suite.addTestSuite(ClassFun.class);
             suite.addTestSuite(ClassObject.class);
             suite.addTestSuite(Constructor.class);
+            suite.addTestSuite(DataClass.class);
             suite.addTest(Fun.innerSuite());
             suite.addTestSuite(Prop.class);
             suite.addTestSuite(Type.class);

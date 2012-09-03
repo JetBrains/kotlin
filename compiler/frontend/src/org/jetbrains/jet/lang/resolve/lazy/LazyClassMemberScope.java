@@ -29,7 +29,9 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.DeferredType;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.util.lazy.LazyValue;
 
 import java.util.*;
@@ -144,13 +146,38 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         }
         generateDelegatingDescriptors(name, MemberExtractor.EXTRACT_FUNCTIONS, result);
         generateEnumClassObjectMethods(result, name);
+        generateDataClassMethods(result, name);
         generateFakeOverrides(name, fromSupertypes, result, FunctionDescriptor.class);
+    }
+
+    private void generateDataClassMethods(@NotNull Collection<FunctionDescriptor> result, @NotNull Name name) {
+        if (!JetStandardLibrary.isData(thisDescriptor)) return;
+
+        ConstructorDescriptor constructor = getPrimaryConstructor();
+        if (constructor == null) return;
+
+        int parameterIndex = 0;
+        for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
+            if (ErrorUtils.isErrorType(parameter.getType())) continue;
+            Set<VariableDescriptor> properties = getProperties(parameter.getName());
+            if (properties.isEmpty()) continue;
+            assert properties.size() == 1 : "A constructor parameter is resolved to more than one (" + properties.size() + ") property: " + parameter;
+            PropertyDescriptor property = (PropertyDescriptor) properties.iterator().next();
+            if (property == null) continue;
+            ++parameterIndex;
+
+            if (name.equals(Name.identifier(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX + parameterIndex))) {
+                SimpleFunctionDescriptor functionDescriptor =
+                        DescriptorResolver.createComponentFunctionDescriptor(parameterIndex, property,
+                                                                             parameter, thisDescriptor, resolveSession.getTrace());
+                result.add(functionDescriptor);
+                break;
+            }
+        }
     }
 
     private void generateEnumClassObjectMethods(@NotNull Collection<? super FunctionDescriptor> result, @NotNull Name name) {
         if (!isEnumClassObject()) return;
-
-        ClassDescriptor classDescriptor = (ClassDescriptor) thisDescriptor.getContainingDeclaration();
 
         if (name.equals(DescriptorResolver.VALUES_METHOD_NAME)) {
             SimpleFunctionDescriptor valuesMethod = DescriptorResolver
@@ -245,6 +272,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             }
         }
     }
+
     @Override
     protected void addExtraDescriptors() {
         for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
@@ -261,6 +289,24 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
         getFunctions(DescriptorResolver.VALUES_METHOD_NAME);
         getFunctions(DescriptorResolver.VALUE_OF_METHOD_NAME);
+
+        addDataClassMethods();
+    }
+
+    private void addDataClassMethods() {
+        if (!JetStandardLibrary.isData(thisDescriptor)) return;
+
+        ConstructorDescriptor constructor = getPrimaryConstructor();
+        if (constructor == null) return;
+
+        // Generate componentN functions until there's no such function for some n
+        int n = 1;
+        while (true) {
+            Name componentName = Name.identifier(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX + n);
+            Set<FunctionDescriptor> functions = getFunctions(componentName);
+            if (functions.isEmpty()) break;
+            n++;
+        }
     }
 
     @Override
