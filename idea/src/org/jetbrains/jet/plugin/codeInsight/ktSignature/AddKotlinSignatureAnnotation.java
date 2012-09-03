@@ -34,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -131,9 +132,16 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(BuiltinsScopeExtensionMode.ALL, project);
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
         FqName classFqName = new FqName(method.getContainingClass().getQualifiedName());
-        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(classFqName);
-        if (classDescriptor == null) return null;
-        classDescriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier(method.getName()));
+        if (method.getModifierList().hasModifierProperty(PsiModifier.STATIC)) {
+            NamespaceDescriptor namespaceDescriptor = javaDescriptorResolver.resolveNamespace(classFqName);
+            if (namespaceDescriptor == null) return null;
+            namespaceDescriptor.getMemberScope().getFunctions(Name.identifier(method.getName()));
+        }
+        else {
+            ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(classFqName);
+            if (classDescriptor == null) return null;
+            classDescriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier(method.getName()));
+        }
         SimpleFunctionDescriptor functionDescriptor = injector.getBindingTrace().getBindingContext().get(BindingContext.FUNCTION, method);
         assert functionDescriptor != null: "Couldn't find function descriptor for " + method.getName() + " in " + classFqName;
         return RENDERER.render(functionDescriptor);
