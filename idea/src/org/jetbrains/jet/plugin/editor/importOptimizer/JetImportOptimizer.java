@@ -139,6 +139,20 @@ public class JetImportOptimizer implements ImportOptimizer {
             }
 
             @Override
+            public void visitUserType(JetUserType type) {
+                if (type.getQualifier() == null) {
+                    super.visitUserType(type);
+                }
+                else {
+                    JetTypeArgumentList argumentList = type.getTypeArgumentList();
+                    if (argumentList != null) {
+                        super.visitTypeArgumentList(argumentList);
+                    }
+                    visitUserType(type.getQualifier());
+                }
+            }
+
+            @Override
             public void visitReferenceExpression(JetReferenceExpression expression) {
                 if (PsiTreeUtil.getParentOfType(expression, JetImportDirective.class) == null &&
                         PsiTreeUtil.getParentOfType(expression, JetNamespaceHeader.class) == null) {
@@ -178,6 +192,26 @@ public class JetImportOptimizer implements ImportOptimizer {
     public static FqName getElementUsageFQName(PsiElement element) {
         if (element instanceof JetFile) {
             return JetPsiUtil.getFQName((JetFile) element);
+        }
+        
+        if (element instanceof JetSimpleNameExpression) {
+            JetNamespaceHeader namespaceHeader = PsiTreeUtil.getParentOfType(element, JetNamespaceHeader.class);
+            if (namespaceHeader != null) {
+                List<JetSimpleNameExpression> simpleNameExpressions = PsiTreeUtil.getChildrenOfTypeAsList(namespaceHeader, JetSimpleNameExpression.class);
+                FqName fqName = null;
+                for (JetSimpleNameExpression nameExpression : simpleNameExpressions) {
+                    Name referencedName = nameExpression.getReferencedNameAsName();
+                    assert referencedName != null;
+                    if (fqName == null) {
+                        fqName = new FqName(referencedName.getName());
+                    } else {
+                        fqName = QualifiedNamesUtil.combine(fqName, referencedName);
+                    }
+                    if (nameExpression.equals(element)) {
+                        return fqName;
+                    }
+                }
+            }
         }
 
         if (element instanceof JetNamedDeclaration) {

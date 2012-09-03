@@ -56,6 +56,18 @@ public class OptimizeImportsTest extends LightCodeInsightTestCase {
         doTest();
     }
 
+    public void testKt1850FullQualified() throws Exception {
+        doTest();
+    }
+    
+    public void testKt1850InnerClass() throws Exception {
+        doTest();
+    }
+
+    public void testPartiallyQualified() throws Exception {
+        doTest();
+    }
+
     public void doTest() throws Exception {
         configureByFile(fileName());
         invokeFormatFile();
