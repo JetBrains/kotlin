@@ -751,4 +751,20 @@
       <val name="value" val="&quot;fun clone() : Any&quot;"/>
     </annotation>
   </item>
+    <item name='java.util.Arrays java.util.List&lt;T&gt; asList(T...)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun &lt;T&gt; asList(vararg a : T) : List&lt;T&gt;&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void sort(T[], java.util.Comparator&lt;? super T&gt;)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun &lt;T&gt; sort(a : Array&lt;out T?&gt;, c : Comparator&lt;in T&gt;?) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void sort(java.lang.Object[])'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun sort(a : Array&lt;out Any?&gt;) : Unit&quot;"/>
+        </annotation>
+    </item>
 </root>

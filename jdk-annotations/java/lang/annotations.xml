@@ -19,4 +19,9 @@
       <val name="value" val="&quot;fun toString() : String&quot;"/>
     </annotation>
   </item>
+    <item name='java.lang.System java.lang.String setProperty(java.lang.String, java.lang.String)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun setProperty(key : String, value : String) : String?&quot;"/>
+        </annotation>
+    </item>
 </root>

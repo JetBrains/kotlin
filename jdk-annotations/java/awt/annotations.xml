@@ -1,0 +1,77 @@
+<root>
+    <item name='java.awt.Rectangle boolean contains(java.awt.Rectangle)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun contains(r : Rectangle) : Boolean&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.awt.Rectangle java.awt.Point getLocation()'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun getLocation() : Point&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.awt.Rectangle void setLocation(java.awt.Point)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun setLocation(p : Point) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.awt.Rectangle java.awt.Rectangle getBounds()'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun getBounds() : Rectangle&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.awt.Rectangle java.awt.geom.Rectangle2D getBounds2D()'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun getBounds2D() : Rectangle2D&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.awt.Rectangle void setBounds(java.awt.Rectangle)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun setBounds(r : Rectangle) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.awt.Rectangle java.awt.Dimension getSize()'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun getSize() : Dimension&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.awt.Rectangle void setSize(java.awt.Dimension)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun setSize(d : Dimension) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.awt.Rectangle boolean contains(java.awt.Point)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun contains(p : Point) : Boolean&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.awt.Rectangle boolean intersects(java.awt.Rectangle)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun intersects(r : Rectangle) : Boolean&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.awt.Rectangle java.awt.Rectangle intersection(java.awt.Rectangle)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun intersection(r : Rectangle) : Rectangle&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.awt.Rectangle java.awt.Rectangle union(java.awt.Rectangle)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun union(r : Rectangle) : Rectangle&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.awt.Rectangle void add(java.awt.Point)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun add(pt : Point)&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.awt.Rectangle java.awt.geom.Rectangle2D createIntersection(java.awt.geom.Rectangle2D)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun createIntersection(r : Rectangle2D) : Rectangle2D&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.awt.Rectangle java.awt.geom.Rectangle2D createUnion(java.awt.geom.Rectangle2D)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun createUnion(r : Rectangle2D) : Rectangle2D&quot;"/>
+        </annotation>
+    </item>
+</root>

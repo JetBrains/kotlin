@@ -1,0 +1,22 @@
+<root>
+    <item name='java.util.concurrent.ConcurrentMap V putIfAbsent(K, V)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun putIfAbsent(key : K, value : V) : V?&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.concurrent.ConcurrentMap boolean remove(java.lang.Object, java.lang.Object)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun remove(key : Any, value : Any?) : Boolean&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.concurrent.ConcurrentMap boolean replace(K, V, V)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun replace(key : K, oldValue : V, newValue : V) : Boolean&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.concurrent.ConcurrentMap V replace(K, V)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun replace(key : K, value : V) : V?&quot;"/>
+        </annotation>
+    </item>
+</root>
