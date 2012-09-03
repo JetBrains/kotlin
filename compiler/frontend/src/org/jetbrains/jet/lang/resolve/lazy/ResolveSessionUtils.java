@@ -138,41 +138,45 @@ public class ResolveSessionUtils {
         DelegatingBindingTrace trace = new DelegatingBindingTrace(resolveSession.getBindingContext());
 
         if (expression instanceof JetReferenceExpression) {
+            QualifiedExpressionResolver qualifiedExpressionResolver = resolveSession.getInjector().getQualifiedExpressionResolver();
+
             // In some type declaration
             if (expression.getParent() instanceof JetUserType) {
                 JetUserType qualifier = ((JetUserType) expression.getParent()).getQualifier();
                 if (qualifier != null) {
-                    Collection<? extends DeclarationDescriptor> descriptors = resolveSession.getInjector().getQualifiedExpressionResolver()
+                    Collection<? extends DeclarationDescriptor> descriptors = qualifiedExpressionResolver
                             .lookupDescriptorsForUserType(qualifier, getExpressionOuterScope(resolveSession, expression), trace);
 
                     for (DeclarationDescriptor descriptor : descriptors) {
                         if (descriptor instanceof LazyPackageDescriptor) {
                             return ((LazyPackageDescriptor) descriptor).getMemberScope();
                         }
-
                     }
                 }
             }
 
             // Inside import
             if (PsiTreeUtil.getParentOfType(expression, JetImportDirective.class, false) != null) {
+                NamespaceDescriptor rootPackage = resolveSession.getPackageDescriptorByFqName(FqName.ROOT);
+                assert rootPackage != null;
+
                 if (expression.getParent() instanceof JetDotQualifiedExpression) {
                     JetExpression element = ((JetDotQualifiedExpression) expression.getParent()).getReceiverExpression();
+                    String name = ((JetFile) expression.getContainingFile()).getPackageName();
 
-                    NamespaceDescriptor filePackage = resolveSession.getPackageDescriptorByFqName(
-                            new FqName(((JetFile) expression.getContainingFile()).getPackageName()));
+                    NamespaceDescriptor filePackage = name != null ? resolveSession.getPackageDescriptorByFqName(new FqName(name)) : rootPackage;
+                    assert filePackage != null : "File package should be already resolved and be found";
 
-                    NamespaceDescriptor rootPackage = resolveSession.getPackageDescriptorByFqName(FqName.ROOT);
-
+                    JetScope scope = filePackage.getMemberScope();
                     Collection<? extends DeclarationDescriptor> descriptors;
 
                     if (element instanceof JetDotQualifiedExpression) {
-                        descriptors = resolveSession.getInjector().getQualifiedExpressionResolver().lookupDescriptorsForQualifiedExpression(
-                                (JetDotQualifiedExpression) element, rootPackage.getMemberScope(), filePackage.getMemberScope(), trace, false, false);
+                        descriptors = qualifiedExpressionResolver.lookupDescriptorsForQualifiedExpression(
+                                (JetDotQualifiedExpression) element, rootPackage.getMemberScope(), scope, trace, false, false);
                     }
                     else {
-                        descriptors = resolveSession.getInjector().getQualifiedExpressionResolver().lookupDescriptorsForSimpleNameReference(
-                                (JetSimpleNameExpression) element, rootPackage.getMemberScope(), filePackage.getMemberScope(), trace, false, false, false);
+                        descriptors = qualifiedExpressionResolver.lookupDescriptorsForSimpleNameReference(
+                                (JetSimpleNameExpression) element, rootPackage.getMemberScope(), scope, trace, false, false, false);
                     }
 
                     for (DeclarationDescriptor descriptor : descriptors) {
@@ -182,7 +186,7 @@ public class ResolveSessionUtils {
                     }
                 }
                 else {
-                    return resolveSession.getPackageDescriptorByFqName(FqName.ROOT).getMemberScope();
+                    return rootPackage.getMemberScope();
                 }
             }
 
