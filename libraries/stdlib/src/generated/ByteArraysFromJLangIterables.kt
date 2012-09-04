@@ -243,7 +243,7 @@ public inline fun <C: MutableCollection<Byte>> ByteArray.toCollection(result: C)
  * @includeFunctionBody ../../test/CollectionTest.kt reverse
  */
 public inline fun ByteArray.reverse() : List<Byte> {
-    val list = toList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -259,6 +259,15 @@ public inline fun  ByteArray.toCollection() : Collection<Byte> = toCollection(Ar
 
 /** Copies all elements into a [[Set]] */
 public inline fun  ByteArray.toSet() : Set<Byte> = toCollection(HashSet<Byte>())
+
+/** Copies all elements into a [[MutableList]] */
+public inline fun  ByteArray.toMutableList() : MutableList<Byte> = toCollection(ArrayList<Byte>())
+
+/** Copies all elements into a [[List] */
+public inline fun  ByteArray.toMutableCollection() : MutableCollection<Byte> = toCollection(ArrayList<Byte>())
+
+/** Copies all elements into a [[Set]] */
+public inline fun  ByteArray.toMutableSet() : MutableSet<Byte> = toCollection(HashSet<Byte>())
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

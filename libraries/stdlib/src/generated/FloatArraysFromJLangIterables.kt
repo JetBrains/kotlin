@@ -243,7 +243,7 @@ public inline fun <C: MutableCollection<Float>> FloatArray.toCollection(result: 
  * @includeFunctionBody ../../test/CollectionTest.kt reverse
  */
 public inline fun FloatArray.reverse() : List<Float> {
-    val list = toList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -259,6 +259,15 @@ public inline fun  FloatArray.toCollection() : Collection<Float> = toCollection(
 
 /** Copies all elements into a [[Set]] */
 public inline fun  FloatArray.toSet() : Set<Float> = toCollection(HashSet<Float>())
+
+/** Copies all elements into a [[MutableList]] */
+public inline fun  FloatArray.toMutableList() : MutableList<Float> = toCollection(ArrayList<Float>())
+
+/** Copies all elements into a [[List] */
+public inline fun  FloatArray.toMutableCollection() : MutableCollection<Float> = toCollection(ArrayList<Float>())
+
+/** Copies all elements into a [[Set]] */
+public inline fun  FloatArray.toMutableSet() : MutableSet<Float> = toCollection(HashSet<Float>())
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

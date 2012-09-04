@@ -243,7 +243,7 @@ public inline fun <C: MutableCollection<Boolean>> BooleanArray.toCollection(resu
  * @includeFunctionBody ../../test/CollectionTest.kt reverse
  */
 public inline fun BooleanArray.reverse() : List<Boolean> {
-    val list = toList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -259,6 +259,15 @@ public inline fun  BooleanArray.toCollection() : Collection<Boolean> = toCollect
 
 /** Copies all elements into a [[Set]] */
 public inline fun  BooleanArray.toSet() : Set<Boolean> = toCollection(HashSet<Boolean>())
+
+/** Copies all elements into a [[MutableList]] */
+public inline fun  BooleanArray.toMutableList() : MutableList<Boolean> = toCollection(ArrayList<Boolean>())
+
+/** Copies all elements into a [[List] */
+public inline fun  BooleanArray.toMutableCollection() : MutableCollection<Boolean> = toCollection(ArrayList<Boolean>())
+
+/** Copies all elements into a [[Set]] */
+public inline fun  BooleanArray.toMutableSet() : MutableSet<Boolean> = toCollection(HashSet<Boolean>())
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

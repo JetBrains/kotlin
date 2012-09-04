@@ -234,7 +234,7 @@ public inline fun <in T, C: MutableCollection<in T>> Iterable<T>.toCollection(re
  * @includeFunctionBody ../../test/CollectionTest.kt reverse
  */
 public inline fun <T> Iterable<T>.reverse() : List<T> {
-    val list = toList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -250,6 +250,15 @@ public inline fun <in T> Iterable<T>.toCollection() : Collection<T> = toCollecti
 
 /** Copies all elements into a [[Set]] */
 public inline fun <in T> Iterable<T>.toSet() : Set<T> = toCollection(HashSet<T>())
+
+/** Copies all elements into a [[MutableList]] */
+public inline fun <in T> Iterable<T>.toMutableList() : MutableList<T> = toCollection(ArrayList<T>())
+
+/** Copies all elements into a [[List] */
+public inline fun <in T> Iterable<T>.toMutableCollection() : MutableCollection<T> = toCollection(ArrayList<T>())
+
+/** Copies all elements into a [[Set]] */
+public inline fun <in T> Iterable<T>.toMutableSet() : MutableSet<T> = toCollection(HashSet<T>())
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

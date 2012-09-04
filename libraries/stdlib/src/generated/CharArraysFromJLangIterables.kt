@@ -243,7 +243,7 @@ public inline fun <C: MutableCollection<Char>> CharArray.toCollection(result: C)
  * @includeFunctionBody ../../test/CollectionTest.kt reverse
  */
 public inline fun CharArray.reverse() : List<Char> {
-    val list = toList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -259,6 +259,15 @@ public inline fun  CharArray.toCollection() : Collection<Char> = toCollection(Ar
 
 /** Copies all elements into a [[Set]] */
 public inline fun  CharArray.toSet() : Set<Char> = toCollection(HashSet<Char>())
+
+/** Copies all elements into a [[MutableList]] */
+public inline fun  CharArray.toMutableList() : MutableList<Char> = toCollection(ArrayList<Char>())
+
+/** Copies all elements into a [[List] */
+public inline fun  CharArray.toMutableCollection() : MutableCollection<Char> = toCollection(ArrayList<Char>())
+
+/** Copies all elements into a [[Set]] */
+public inline fun  CharArray.toMutableSet() : MutableSet<Char> = toCollection(HashSet<Char>())
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

@@ -243,7 +243,7 @@ public inline fun <C: MutableCollection<Short>> ShortArray.toCollection(result: 
  * @includeFunctionBody ../../test/CollectionTest.kt reverse
  */
 public inline fun ShortArray.reverse() : List<Short> {
-    val list = toList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -259,6 +259,15 @@ public inline fun  ShortArray.toCollection() : Collection<Short> = toCollection(
 
 /** Copies all elements into a [[Set]] */
 public inline fun  ShortArray.toSet() : Set<Short> = toCollection(HashSet<Short>())
+
+/** Copies all elements into a [[MutableList]] */
+public inline fun  ShortArray.toMutableList() : MutableList<Short> = toCollection(ArrayList<Short>())
+
+/** Copies all elements into a [[List] */
+public inline fun  ShortArray.toMutableCollection() : MutableCollection<Short> = toCollection(ArrayList<Short>())
+
+/** Copies all elements into a [[Set]] */
+public inline fun  ShortArray.toMutableSet() : MutableSet<Short> = toCollection(HashSet<Short>())
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)
