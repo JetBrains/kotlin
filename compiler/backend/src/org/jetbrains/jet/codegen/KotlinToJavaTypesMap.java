@@ -33,10 +33,8 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.jet.lang.types.ref.ClassName;
 
-import java.util.Map;
-import java.util.Set;
-
-import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
+import java.lang.annotation.Annotation;
+import java.util.*;
 
 /**
 * @author svtk
@@ -64,18 +62,36 @@ public class KotlinToJavaTypesMap {
     private void init() {
         JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
 
-        register(JetStandardClasses.getAny(),          OBJECT_TYPE);
-        register(standardLibrary.getNumber(),          JAVA_NUMBER_TYPE);
-        register(standardLibrary.getString(),          JAVA_STRING_TYPE);
-        register(standardLibrary.getThrowable(),       JAVA_THROWABLE_TYPE);
-        register(standardLibrary.getCharSequence(),    JAVA_CHAR_SEQUENCE_TYPE);
-        register(standardLibrary.getComparable(),      JAVA_COMPARABLE_TYPE);
-        register(standardLibrary.getEnum(),            JAVA_ENUM_TYPE);
-        register(standardLibrary.getAnnotation(),      JAVA_ANNOTATION_TYPE);
-        register(standardLibrary.getIterable(),        JAVA_ITERABLE_TYPE);
-        register(standardLibrary.getMutableIterable(), JAVA_ITERABLE_TYPE);
-        register(standardLibrary.getIterator(),        JAVA_ITERATOR_TYPE);
-        register(standardLibrary.getMutableIterator(), JAVA_ITERATOR_TYPE);
+        register(JetStandardClasses.getAny(), Object.class);
+        register(standardLibrary.getNumber(), Number.class);
+        register(standardLibrary.getString(), String.class);
+        register(standardLibrary.getThrowable(), Throwable.class);
+        register(standardLibrary.getCharSequence(), CharSequence.class);
+        register(standardLibrary.getComparable(), Comparable.class);
+        register(standardLibrary.getEnum(), Enum.class);
+        register(standardLibrary.getAnnotation(), Annotation.class);
+        register(standardLibrary.getIterable(), Iterable.class);
+        register(standardLibrary.getIterator(), Iterator.class);
+        register(standardLibrary.getMutableIterable(), Iterable.class);
+        register(standardLibrary.getMutableIterator(), Iterator.class);
+        
+        register(standardLibrary.getCollection(), Collection.class);
+        register(standardLibrary.getMutableCollection(), Collection.class);
+        
+        register(standardLibrary.getList(), List.class);
+        register(standardLibrary.getMutableList(), List.class);
+        
+        register(standardLibrary.getSet(), Set.class);
+        register(standardLibrary.getMutableSet(), Set.class);
+        
+        register(standardLibrary.getMap(), Map.class);
+        register(standardLibrary.getMutableMap(), Map.class);
+
+        register(standardLibrary.getMapEntry(), Map.Entry.class);
+        register(standardLibrary.getMutableMapEntry(), Map.Entry.class);
+
+        register(standardLibrary.getListIterator(), ListIterator.class);
+        register(standardLibrary.getMutableListIterator(), ListIterator.class);
     }
 
     private void initPrimitives() {

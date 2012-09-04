@@ -69,6 +69,24 @@ public class JavaToKotlinTypesMap {
 
         registerCovariant(Iterable.class, standardLibrary.getMutableIterable());
         registerCovariant(Iterator.class, standardLibrary.getMutableIterator());
+
+        register(Collection.class, standardLibrary.getCollection());
+        registerCovariant(Collection.class, standardLibrary.getMutableCollection());
+
+        register(List.class, standardLibrary.getList());
+        registerCovariant(List.class, standardLibrary.getMutableList());
+
+        register(Set.class, standardLibrary.getSet());
+        registerCovariant(Set.class, standardLibrary.getMutableSet());
+
+        register(Map.class, standardLibrary.getMap());
+        registerCovariant(Map.class, standardLibrary.getMutableMap());
+
+        register(Map.Entry.class, standardLibrary.getMapEntry());
+        registerCovariant(Map.Entry.class, standardLibrary.getMutableMapEntry());
+
+        register(ListIterator.class, standardLibrary.getListIterator());
+        registerCovariant(ListIterator.class, standardLibrary.getMutableListIterator());
     }
 
     private void initPrimitives() {
@@ -95,7 +113,8 @@ public class JavaToKotlinTypesMap {
 
     @Nullable
     public ClassDescriptor getKotlinAnalog(@NotNull FqName fqName, @NotNull JavaTypeTransformer.TypeUsage typeUsage) {
-        if (typeUsage == JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_COVARIANT) {
+        if (typeUsage == JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_COVARIANT
+                || typeUsage == JavaTypeTransformer.TypeUsage.SUPERTYPE) {
             ClassDescriptor descriptor = classDescriptorMapForCovariantPositions.get(fqName);
             if (descriptor != null) {
                 return descriptor;
@@ -104,8 +123,12 @@ public class JavaToKotlinTypesMap {
         return classDescriptorMap.get(fqName);
     }
 
+    private static FqName getJavaClassFqName(@NotNull Class<?> javaClass) {
+        return new FqName(javaClass.getName().replace("$", "."));
+    }
+
     private void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor) {
-        register(new FqName(javaClass.getName()), kotlinDescriptor);
+        register(getJavaClassFqName(javaClass), kotlinDescriptor);
     }
 
     private void register(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
@@ -114,7 +137,7 @@ public class JavaToKotlinTypesMap {
     }
 
     private void registerCovariant(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor) {
-        registerCovariant(new FqName(javaClass.getName()), kotlinDescriptor);
+        registerCovariant(getJavaClassFqName(javaClass), kotlinDescriptor);
     }
 
     private void registerCovariant(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {

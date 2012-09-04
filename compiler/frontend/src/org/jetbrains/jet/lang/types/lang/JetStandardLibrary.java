@@ -24,6 +24,7 @@ import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -119,7 +120,8 @@ public class JetStandardLibrary {
                 "Iterables.jet",
                 "Iterators.jet",
                 "Arrays.jet",
-                "Enum.jet"
+                "Enum.jet",
+                "Collections.jet"
         );
         try {
             List<JetFile> files = new LinkedList<JetFile>();
@@ -369,6 +371,70 @@ public class JetStandardLibrary {
     public JetType getAnnotationType() {
         initStdClasses();
         return annotationType;
+    }
+
+    @NotNull
+    public ClassDescriptor getCollection() {
+        return getStdClassByName("Collection");
+    }
+
+    @NotNull
+    public ClassDescriptor getMutableCollection() {
+        return getStdClassByName("MutableCollection");
+    }
+
+    @NotNull
+    public ClassDescriptor getList() {
+        return getStdClassByName("List");
+    }
+
+    @NotNull
+    public ClassDescriptor getMutableList() {
+        return getStdClassByName("MutableList");
+    }
+
+    @NotNull
+    public ClassDescriptor getListIterator() {
+        return getStdClassByName("ListIterator");
+    }
+
+    @NotNull
+    public ClassDescriptor getMutableListIterator() {
+        return getStdClassByName("MutableListIterator");
+    }
+
+    @NotNull
+    public ClassDescriptor getSet() {
+        return getStdClassByName("Set");
+    }
+
+    @NotNull
+    public ClassDescriptor getMutableSet() {
+        return getStdClassByName("MutableSet");
+    }
+
+    @NotNull
+    public ClassDescriptor getMap() {
+        return getStdClassByName("Map");
+    }
+
+    @NotNull
+    public ClassDescriptor getMutableMap() {
+        return getStdClassByName("MutableMap");
+    }
+
+    @NotNull
+    public ClassDescriptor getMapEntry() {
+        ClassifierDescriptor entry = getMap().getDefaultType().getMemberScope().getClassifier(Name.identifier("Entry"));
+        assert entry instanceof ClassDescriptor;
+        return (ClassDescriptor) entry;
+    }
+
+    @NotNull
+    public ClassDescriptor getMutableMapEntry() {
+        ClassifierDescriptor entry = getMutableMap().getDefaultType().getMemberScope().getClassifier(Name.identifier("MutableEntry"));
+        assert entry instanceof ClassDescriptor;
+        return (ClassDescriptor) entry;
     }
 
     @NotNull

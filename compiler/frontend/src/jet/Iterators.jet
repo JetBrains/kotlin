@@ -75,3 +75,24 @@ public fun FloatIterator.iterator() : FloatIterator
 
 public fun LongIterator.iterator() : LongIterator
 
+public trait ListIterator<T> : Iterator<T> {
+    // Query Operations
+    override fun hasNext() : Boolean
+    override fun next() : T
+
+    public fun hasPrevious() : Boolean
+    public fun previous() : T
+    public fun nextIndex() : Int
+    public fun previousIndex() : Int
+}
+
+public trait MutableListIterator<T> : ListIterator<T>, MutableIterator<T> {
+    // Query Operations
+    override fun hasNext() : Boolean
+    override fun next() : T
+
+    // Modification Operations
+    override fun remove()
+    public fun set(e : T)
+    public fun add(e : T)
+}
