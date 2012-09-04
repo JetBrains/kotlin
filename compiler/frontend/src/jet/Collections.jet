@@ -130,9 +130,7 @@ public trait MutableMap<K, V> : Map<K, V> {
     public fun clear()
 
     // Views
-    override fun keySet() : MutableSet<K>
-    override fun values() : MutableCollection<V>
-    override fun entrySet() : MutableSet<MutableMap.MutableEntry<K, V>>
+    override fun entrySet() : Set<MutableMap.MutableEntry<K, V>>
 
     public trait MutableEntry<K,V> : Map.Entry<K, V>, Hashable {
 	public fun setValue(value : V) : V
