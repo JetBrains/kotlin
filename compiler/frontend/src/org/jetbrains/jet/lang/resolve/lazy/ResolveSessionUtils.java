@@ -90,7 +90,7 @@ public class ResolveSessionUtils {
         }
     }
 
-    public static @NotNull BindingContext getExpressionBindingContext(@NotNull ResolveSession resolveSession, @NotNull JetExpression expression) {
+    public static @NotNull BindingContext resolveToExpression(@NotNull ResolveSession resolveSession, @NotNull JetExpression expression) {
         final DelegatingBindingTrace trace = new DelegatingBindingTrace(resolveSession.getBindingContext());
 
         JetFile file = (JetFile) expression.getContainingFile();

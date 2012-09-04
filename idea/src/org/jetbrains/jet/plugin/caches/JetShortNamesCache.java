@@ -156,7 +156,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             @NotNull ResolveSession resolveSession,
             @NotNull GlobalSearchScope scope
     ) {
-        BindingContext context = ResolveSessionUtils.getExpressionBindingContext(resolveSession, expression);
+        BindingContext context = ResolveSessionUtils.resolveToExpression(resolveSession, expression);
         JetScope jetScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
 
         if (jetScope == null || name.isEmpty()) {
@@ -238,7 +238,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     ) {
         Collection<DeclarationDescriptor> resultDescriptors = new ArrayList<DeclarationDescriptor>();
 
-        BindingContext context = ResolveSessionUtils.getExpressionBindingContext(resolveSession, expression);
+        BindingContext context = ResolveSessionUtils.resolveToExpression(resolveSession, expression);
         JetExpression receiverExpression = expression.getReceiverExpression();
 
         if (receiverExpression != null) {

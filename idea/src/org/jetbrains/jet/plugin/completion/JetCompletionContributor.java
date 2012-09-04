@@ -35,8 +35,8 @@ import org.jetbrains.jet.cli.jvm.compiler.TipsManager;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
@@ -84,7 +84,7 @@ public class JetCompletionContributor extends CompletionContributor {
                            session.resolveSession =
                                    WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) position.getContainingFile());
 
-                           session.expressionBindingContext = ResolveSessionUtils.getExpressionBindingContext(
+                           session.expressionBindingContext = ResolveSessionUtils.resolveToExpression(
                                    session.resolveSession, jetReference.getExpression());
 
                            JetScope scope = session.expressionBindingContext.get(BindingContext.RESOLUTION_SCOPE, jetReference.getExpression());
@@ -96,7 +96,7 @@ public class JetCompletionContributor extends CompletionContributor {
                                // Rerun completion if nothing was found
                                session.customInvocationCount = 1;
                                session.resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) position.getContainingFile());
-                               session.expressionBindingContext = ResolveSessionUtils.getExpressionBindingContext(
+                               session.expressionBindingContext = ResolveSessionUtils.resolveToExpression(
                                        session.resolveSession, jetReference.getExpression());
 
                                completeForReference(parameters, result, position, jetReference, session);
