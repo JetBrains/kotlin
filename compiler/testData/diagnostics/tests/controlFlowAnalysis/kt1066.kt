@@ -2,8 +2,6 @@
 
 package kt1066
 
-import java.util.Set
-
 fun randomDigit() = 0.toChar()
 
 fun foo(excluded: Set<Char>) {

@@ -2,7 +2,7 @@
 
 package demo
 
-  fun filter<T>(list : Array<T>, filter :  (T) -> Boolean) : java.util.List<T> {
+  fun filter<T>(list : Array<T>, filter :  (T) -> Boolean) : List<T> {
     val answer = java.util.ArrayList<T>();
     for (l in list) {
       if (filter(l)) answer.add(l)

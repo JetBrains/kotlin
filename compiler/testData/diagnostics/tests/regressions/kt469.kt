@@ -4,14 +4,14 @@ package kt469
 //KT-512 plusAssign() : Unit does not work properly
 import java.util.*
 
-fun bar(list : List<Int>) {
+fun bar(list : MutableList<Int>) {
     for (i in 1..10) {
         list += i // error
     }
     System.out.println(list)
 }
 
-fun <T> List<T>.plusAssign(t : T) {
+fun <T> MutableList<T>.plusAssign(t : T) {
     add(t)
 }
 

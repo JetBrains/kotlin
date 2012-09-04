@@ -4,8 +4,8 @@
 package foobar.a
     import java.*
 
-    val a : util.List<Int>? = null
-    val a1 : <!UNRESOLVED_REFERENCE!>List<!><Int>? = null
+    val a : <!CLASS_HAS_KOTLIN_ANALOG!>util.List<Int><!>? = null
+    val a1 : List<Int>? = null
 
 // FILE: b.kt
 package foobar
@@ -18,7 +18,7 @@ abstract class Foo<T>() {
 package foobar.a
     import java.util.*
 
-    val b : List<Int>? = a
+    val b : List<Int>? = <!TYPE_MISMATCH!>a<!>
     val b1 : <!UNRESOLVED_REFERENCE!>util<!>.List<Int>? = a
 
 // FILE: b.kt

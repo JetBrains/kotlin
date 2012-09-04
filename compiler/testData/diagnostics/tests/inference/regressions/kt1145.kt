@@ -8,6 +8,6 @@ fun test(numbers: Iterable<Int>) {
 }
 
 //from library
-fun <T, R> Iterable<T>.map(<!UNUSED_PARAMETER!>transform<!> : (T) -> R) : java.util.List<R> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun <T, R> Iterable<T>.map(<!UNUSED_PARAMETER!>transform<!> : (T) -> R) : List<R> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 fun <T> Iterable<T>.fold(<!UNUSED_PARAMETER!>initial<!>: T, <!UNUSED_PARAMETER!>operation<!>: (T, T) -> T): T {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

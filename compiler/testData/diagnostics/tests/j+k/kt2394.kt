@@ -1,8 +1,6 @@
 //KT-2394 java.lang.Iterable<T> should be visible as jet.Iterable<out T>
 package d
 
-import java.util.Collection
-
 fun foo(iterable: Iterable<Int>, iterator: Iterator<Int>, comparable: Comparable<Any>) {
     iterable : Iterable<Any>
     iterator : Iterator<Any>

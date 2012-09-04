@@ -1,8 +1,6 @@
 // KT-2667 Support multi-declarations in for-loops in control flow analysis
 package d
 
-import java.util.List
-
 class A {
     fun component1() = 1
     fun component2() = 2

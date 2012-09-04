@@ -2,10 +2,7 @@
 //+JDK
 package d
 
-import java.util.Collection
-import java.util.List
-
-public fun <T> Collection<out T>.filterToMy(result : List<in T>, filter : (T) -> Boolean) : Collection<out T> {
+public fun <T> Collection<out T>.filterToMy(result : MutableList<in T>, filter : (T) -> Boolean) : Collection<out T> {
     for (t in this){
         if (filter(t)){
             result.add(t)
@@ -14,11 +11,11 @@ public fun <T> Collection<out T>.filterToMy(result : List<in T>, filter : (T) ->
     return this
 }
 
-fun foo(result: List<in String>, val collection: Collection<String>, prefix : String){
+fun foo(result: MutableList<in String>, val collection: Collection<String>, prefix : String){
     collection.filterToMy(result, {it.startsWith(prefix)})
 }
 
-fun test(result: List<in Any>, val collection: Collection<String>, prefix : String){
+fun test(result: MutableList<in Any>, val collection: Collection<String>, prefix : String){
     val c = collection.filterToMy(result, {it.startsWith(prefix)})
     c: Collection<out String>
 }

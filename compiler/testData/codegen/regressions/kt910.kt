@@ -1,4 +1,3 @@
-import java.util.Set
 import java.util.HashSet
 
 fun foo() : Int =
@@ -9,7 +8,7 @@ fun foo() : Int =
         "s"
     }
 
-fun bar(set : Set<Int>) : Set<Int> =
+fun bar(set : MutableSet<Int>) : Set<Int> =
     try {
         set
     }

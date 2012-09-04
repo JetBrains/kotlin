@@ -1,4 +1,3 @@
-import java.util.Collection
 
 class JsonObject() {
 }

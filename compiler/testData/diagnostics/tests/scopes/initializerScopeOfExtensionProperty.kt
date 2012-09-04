@@ -1,7 +1,5 @@
 package i
 
-import java.util.List
-
 val <T> List<T>.length = <!UNRESOLVED_REFERENCE!>size<!>()
 
 val <T> List<T>.length1 : Int get() = size()

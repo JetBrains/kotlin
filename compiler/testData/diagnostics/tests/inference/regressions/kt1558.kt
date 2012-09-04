@@ -1,10 +1,6 @@
 //KT-1558 Exception while analyzing
 package j
 
-//+JDK
-import java.util.List
-
-
 fun testArrays(val ci: List<Int?>, val cii: List<Int?>) {
     val c1: Array<Int?> = cii.sure().toArray(<!FUNCTION_CALL_EXPECTED!><!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>Array<!><Int?><!>)
 

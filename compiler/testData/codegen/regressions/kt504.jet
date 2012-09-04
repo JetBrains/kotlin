@@ -1,12 +1,11 @@
 import java.util.HashMap
-import java.util.Map
 import java.io.*
 
-fun <K, V> Map<K, V>.set(key : K, value : V) = put(key, value)
+fun <K, V> MutableMap<K, V>.set(key : K, value : V) = put(key, value)
 
 fun box() : String {
 
-    val commands : Map<String, String> = HashMap()
+    val commands : MutableMap<String, String> = HashMap()
 
     commands["c1"]  = "239"
     if(commands["c1"] != "239") return "fail"

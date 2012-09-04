@@ -1,7 +1,4 @@
 
-import java.util.Collection;
-import java.util.List;
-
 open class A
 
 class B : A()

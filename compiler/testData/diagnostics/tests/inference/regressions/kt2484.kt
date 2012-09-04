@@ -2,7 +2,6 @@
 
 package a
 //+JDK
-import java.util.List
 
 fun <T> Array<T>.forEach(operation: (T) -> Unit) : Unit = for (element in this) operation(element)
 

@@ -9,11 +9,11 @@ import <!CLASS_HAS_KOTLIN_ANALOG!>java.lang.Comparable<!> as Com
 
 val l : List<in Int> = ArrayList<Int>()
 
-fun test(<!UNUSED_PARAMETER!>l<!> : java.util.List<Int>) {
+fun test(<!UNUSED_PARAMETER!>l<!> : <!CLASS_HAS_KOTLIN_ANALOG!>java.util.List<Int><!>) {
   val <!UNUSED_VARIABLE!>x<!> : java.<!UNRESOLVED_REFERENCE!>List<!>
-  val <!UNUSED_VARIABLE!>y<!> : java.util.List<Int>
+  val <!UNUSED_VARIABLE!>y<!> : <!CLASS_HAS_KOTLIN_ANALOG!>java.util.List<Int><!>
   val <!UNUSED_VARIABLE!>b<!> : <!CLASS_HAS_KOTLIN_ANALOG!>java.lang.Object<!>
-  val <!UNUSED_VARIABLE!>a<!> : util.List<Int>
+  val <!UNUSED_VARIABLE!>a<!> : <!CLASS_HAS_KOTLIN_ANALOG!>util.List<Int><!>
   val <!UNUSED_VARIABLE!>z<!> : java.<!UNRESOLVED_REFERENCE!>utils<!>.List<Int>
 
   val <!UNUSED_VARIABLE!>f<!> : java.io.File? = null

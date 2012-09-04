@@ -1,7 +1,6 @@
 //KT-1718 compiler error when not using temporary variable
 package n
 
-import java.util.List
 import java.util.ArrayList
 
 fun test() {

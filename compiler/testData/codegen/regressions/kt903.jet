@@ -1,11 +1,10 @@
 import java.util.ArrayList
-import java.util.List
 
 fun Int.plus(a: Int?) = this + a.sure()
 
 public open class PerfectNumberFinder() {
         open public fun isPerfect(number : Int) : Boolean {
-            var factors : List<Int?> = ArrayList<Int?>()
+            var factors : MutableList<Int?> = ArrayList<Int?>()
             factors?.add(1)
             factors?.add(number)
             for (i in 2..(Math.sqrt((number).toDouble()) - 1).toInt())

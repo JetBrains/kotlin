@@ -1,7 +1,7 @@
 //FILE:a.kt
 //+JDK
 package a
-import java.util.Map.*
+import jet.Map.*
 
 fun foo(b : Entry<String, String>) = b
 
@@ -9,12 +9,11 @@ fun foo(b : Entry<String, String>) = b
 //+JDK
 package b
 
-import java.util.Map.Entry
+import jet.Map.Entry
 fun bar(b : Entry<String, String>) = b
 
 //FILE:c.kt
 //+JDK
 package c
 
-import java.util.Map
 fun fff(b: Map.Entry<String, String>) = b

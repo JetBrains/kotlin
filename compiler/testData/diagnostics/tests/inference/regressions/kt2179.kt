@@ -25,17 +25,17 @@ fun test() {
 
 fun arrayList<T>(vararg values: T) : ArrayList<T> = values.toCollection(ArrayList<T>(values.size))
 
-fun <T, R> java.util.Collection<T>.map(transform : (T) -> R) : java.util.List<R> {
+fun <T, R> Collection<T>.map(transform : (T) -> R) : List<R> {
     return mapTo(java.util.ArrayList<R>(this.size), transform)
 }
 
-fun <T, R, C: Collection<in R>> java.util.Collection<T>.mapTo(result: C, transform : (T) -> R) : C {
+fun <T, R, C: MutableCollection<in R>> Collection<T>.mapTo(result: C, transform : (T) -> R) : C {
   for (item in this)
     result.add(transform(item))
   return result
 }
 
-fun <in T, C: Collection<in T>> Array<T>.toCollection(result: C) : C {
+fun <in T, C: MutableCollection<in T>> Array<T>.toCollection(result: C) : C {
     for (element in this) result.add(element)
     return result
 }

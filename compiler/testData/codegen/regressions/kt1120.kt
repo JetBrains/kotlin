@@ -1,5 +1,4 @@
 import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.List
 
 public object RefreshQueue {
     private val queue = ConcurrentLinkedQueue<List<String>>

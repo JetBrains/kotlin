@@ -4,7 +4,7 @@ package n
 
 abstract class Buggy {
 
-    abstract val coll : java.util.Collection<Int>
+    abstract val coll : Collection<Int>
 
     fun getThree(): Int? {
         return coll.find{ it > 3 }  // works fine

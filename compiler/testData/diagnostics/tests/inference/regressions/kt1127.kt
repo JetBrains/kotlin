@@ -2,8 +2,6 @@
 
 package d
 
-import java.util.List
-
 fun <T> asList(<!UNUSED_PARAMETER!>t<!>: T) : List<T>? {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 fun main(args : Array<String>) {

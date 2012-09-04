@@ -2,8 +2,6 @@
 
 package kt1027
 
-import java.util.List
-
 fun foo(<!UNUSED_PARAMETER!>c<!>: List<Int>) {
     var <!UNUSED_VARIABLE!>i<!> = 2
 

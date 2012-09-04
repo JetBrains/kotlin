@@ -22,7 +22,7 @@ fun test() {
 
 fun arrayList<T>(vararg values: T) : ArrayList<T> = values.toCollection(ArrayList<T>(values.size))
 
-fun <in T, C: Collection<in T>> Array<T>.toCollection(result: C) : C {
+fun <in T, C: MutableCollection<in T>> Array<T>.toCollection(result: C) : C {
     for (element in this) result.add(element)
     return result
 }

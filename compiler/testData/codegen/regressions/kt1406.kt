@@ -1,6 +1,5 @@
 package pack
 
-import java.util.Collection
 import java.util.ArrayList
 import java.util.regex.Pattern
 

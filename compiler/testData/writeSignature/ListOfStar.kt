@@ -1,6 +1,5 @@
-import java.util.List
-
 fun listOfStar(): List<*> = throw Exception()
+
 
 // method: namespace::listOfStar
 // jvm signature:     ()Ljava/util/List;

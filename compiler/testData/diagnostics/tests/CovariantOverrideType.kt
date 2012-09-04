@@ -1,4 +1,3 @@
-
 trait A {
     fun foo() : Int = 1
     fun foo2() : Int = 1
@@ -21,8 +20,7 @@ abstract class B() : A {
     override val <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>a1<!> = 1.toDouble()
 
     abstract override fun <X> g() : <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Int<!>
-    abstract override fun <X> g1() : <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>java.util.List<X><!>
+    abstract override fun <X> g1() : <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>List<X><!>
 
     abstract override val <X> g : <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Iterator<Int><!>
 }
-

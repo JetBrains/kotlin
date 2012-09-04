@@ -5,7 +5,7 @@ fun test(<!UNUSED_PARAMETER!>a<!> : annotation.RetentionPolicy) {
 
 fun test() {
   java.util.Collections.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
-  val <!UNUSED_VARIABLE!>a<!> : java.util.Collection<String>? = java.util.Collections.emptyList()
+  val <!UNUSED_VARIABLE!>a<!> : Collection<String>? = java.util.Collections.emptyList()
 }
 
 fun test(<!UNUSED_PARAMETER!>a<!> : <!CLASS_HAS_KOTLIN_ANALOG!>java.lang.Comparable<Int><!>) {

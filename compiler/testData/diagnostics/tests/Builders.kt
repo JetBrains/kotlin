@@ -148,7 +148,7 @@ fun html(init : HTML.() -> Unit) : HTML {
 }
 
 // An excerpt from the Standard Library
-fun <K, V> Map<K, V>.set(key : K, value : V) = this.put(key, value)
+fun <K, V> MutableMap<K, V>.set(key : K, value : V) = this.put(key, value)
 
 fun println(message : Any?) {
   System.out.println(message)

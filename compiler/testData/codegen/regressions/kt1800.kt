@@ -1,7 +1,6 @@
 //KT-1800 error/NonExistentClass generated on runtime
 package i
 
-import java.util.Collection
 import java.util.ArrayList
 
 public class User(val firstName: String,

@@ -3,8 +3,8 @@ package conflictingSubstitutions
 
 import java.util.*
 
-fun <R> elemAndList(r: R, <!UNUSED_PARAMETER!>t<!>: List<R>): R = r
-fun <R> R.elemAndListWithReceiver(r: R, <!UNUSED_PARAMETER!>t<!>: List<R>): R = r
+fun <R> elemAndList(r: R, <!UNUSED_PARAMETER!>t<!>: MutableList<R>): R = r
+fun <R> R.elemAndListWithReceiver(r: R, <!UNUSED_PARAMETER!>t<!>: MutableList<R>): R = r
 
 fun test() {
     val <!UNUSED_VARIABLE!>s<!> = <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>elemAndList<!>(11, list("72"))
