@@ -1,7 +1,7 @@
 import java.util.*
 
 fun box(): String {
-    val map: Map<String, Int> = HashMap<String, Int>()
+    val map: MutableMap<String, Int> = HashMap<String, Int>()
     map.put("a", 1)
     map.put("bb", 2)
     map.put("ccc", 3)

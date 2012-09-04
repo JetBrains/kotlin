@@ -78,7 +78,7 @@ import java.util.*
       }
   }
 
-  fun Map<String, String>.set(key : String, value : String) = this.put(key, value)
+  fun MutableMap<String, String>.set(key : String, value : String) = this.put(key, value)
 
   fun html(init :  HTML.() -> Unit) : HTML {
     val html = HTML()

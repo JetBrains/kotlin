@@ -8,7 +8,7 @@ import java.util.List;
 import jet.runtime.typeinfo.KotlinSignature;
 
 public class WrongTypeVariance {
-    @KotlinSignature("fun copy(a : List<out Number>, b : List<Number>) : List<Number>")
+    @KotlinSignature("fun copy(a : List<out Number>, b : List<Number>) : MutableList<Number>")
     public List<Number> copy(List<? extends Number> from, List<? super Number> to) {
         throw new UnsupportedOperationException();
     }

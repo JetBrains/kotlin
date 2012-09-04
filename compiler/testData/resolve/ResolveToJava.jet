@@ -1,23 +1,23 @@
 import `java::java`java.*
 import java.`java::java.util`util.*
 
-fun foo(~a~a : `kotlin::Array`Array<`kotlin::Int`Int>) : `java::java.util.List`List {
+fun foo(~a~a : `kotlin::Array`Array<`kotlin::Int`Int>) : `java::java.util.ArrayList`ArrayList {
   `a`a.`kotlin::Array.get(Int)`get(1)
   `a`a.`kotlin::Array.set(Int, Int)`set(1, 1)
 }
 
-fun foo(o : `java::java.lang.Object`Object, l : `java::java.util`util.`java::java.util.List`List) : `java::java.util.List`List {}
+fun foo(o : `java::java.lang.Object`Object, l : `java::java.util`util.`java::java.util.ArrayList`ArrayList) : `java::java.util.ArrayList`ArrayList {}
 
 ~A~class A()  {
-  fun f(a : `java::java.util`util.`java::java.util.List`List) {}
-  fun f(a : `java::java.util.List`List) {}
+  fun f(a : `java::java.util`util.`java::java.util.ArrayList`ArrayList) {}
+  fun f(a : `java::java.util.ArrayList`ArrayList) {}
 
 }
 
 class B : `java::java.lang.Object`Object {
 
-  fun f(a : `java::java.util`util.`java::java.util.List`List) {}
-  fun f(a : `java::java.util.List`List) {}
+  fun f(a : `java::java.util`util.`java::java.util.ArrayList`ArrayList) {}
+  fun f(a : `java::java.util.ArrayList`ArrayList) {}
 
 
   ~foo~fun foo(abc : `A`A) : `A`A {

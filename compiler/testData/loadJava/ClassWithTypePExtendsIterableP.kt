@@ -1,4 +1,4 @@
 package test
 
-public abstract class ClassWithTypePExtendsIterableP<P>() : jet.Iterable<P> {
+public abstract class ClassWithTypePExtendsIterableP<P>() : jet.MutableIterable<P> {
 }
