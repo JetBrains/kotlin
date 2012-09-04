@@ -33,6 +33,10 @@ public class OptimizeImportsMultiFileTest extends CodeInsightTestCase {
         doTest(getTestName(false) + "/main.kt", getTestName(false) + "/kotlinClass.kt");
     }
 
+    public void testJavaStaticField() throws Exception {
+        doTest(getTestName(false) + "/main.kt", getTestName(false) + "/MyJavaClass.java");
+    }
+
     public void doTest(String... fileNames) throws Exception {
         configureByFiles(null, fileNames);
         invokeFormatFile();
