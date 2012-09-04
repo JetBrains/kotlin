@@ -23,6 +23,7 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -42,6 +43,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.quickfix.JetIntentionActionFactory;
 import org.jetbrains.jet.plugin.quickfix.QuickFixes;
+import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -53,6 +55,8 @@ import java.util.Set;
 public class JetPsiChecker implements Annotator {
     private static volatile boolean errorReportingEnabled = true;
     private static boolean namesHighlightingTest;
+
+    private static final Logger LOG = Logger.getInstance(JetPsiChecker.class);
 
     public static void setErrorReportingEnabled(boolean value) {
         errorReportingEnabled = value;
@@ -126,15 +130,13 @@ public class JetPsiChecker implements Annotator {
             catch (ProcessCanceledException e) {
                 throw e;
             }
-            catch (AssertionError e) {
+            catch (Throwable e) {
                 // For failing tests and to notify about idea internal error in -ea mode
                 holder.createErrorAnnotation(element, e.getClass().getCanonicalName() + ": " + e.getMessage());
-                throw e;
-            }
-            catch (Throwable e) {
-                // TODO
-                holder.createErrorAnnotation(element, e.getClass().getCanonicalName() + ": " + e.getMessage());
-                e.printStackTrace();
+                LOG.error(e);
+                if (ApplicationManager.getApplication().isUnitTestMode()) {
+                    throw ExceptionUtils.rethrow(e);
+                }
             }
         }
     }
