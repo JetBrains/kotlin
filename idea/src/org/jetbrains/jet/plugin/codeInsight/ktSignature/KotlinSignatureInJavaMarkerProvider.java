@@ -25,6 +25,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
@@ -53,7 +54,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             assert annotation != null;
             String signature = getKotlinSignature(annotation);
             return "Alternative Kotlin signature is available for this method:\n"
-                   + signature;
+                   + StringUtil.escapeXml(signature);
         }
     };
 
