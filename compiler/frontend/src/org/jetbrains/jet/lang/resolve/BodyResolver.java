@@ -425,7 +425,7 @@ public class BodyResolver {
         return accessorScope;
     }
 
-    private void resolvePropertyAccessors(JetProperty property, PropertyDescriptor propertyDescriptor) {
+    public void resolvePropertyAccessors(JetProperty property, PropertyDescriptor propertyDescriptor) {
         ObservableBindingTrace fieldAccessTrackingTrace = createFieldTrackingTrace(propertyDescriptor);
 
         JetPropertyAccessor getter = property.getGetter();
@@ -460,7 +460,7 @@ public class BodyResolver {
         });
     }
 
-    private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
+    public void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
         //JetFlowInformationProvider flowInformationProvider = context.getDescriptorResolver().computeFlowData(property, initializer); // TODO : flow JET-15
         JetType expectedTypeForInitializer = property.getTypeRef() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         JetScope propertyDeclarationInnerScope = descriptorResolver.getPropertyDeclarationInnerScope(scope, propertyDescriptor.getTypeParameters(), ReceiverDescriptor.NO_RECEIVER, trace);

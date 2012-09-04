@@ -90,6 +90,9 @@ public class ScopeProvider {
         if (parentDeclaration instanceof JetClassOrObject) {
             JetClassOrObject classOrObject = (JetClassOrObject) parentDeclaration;
             LazyClassDescriptor classDescriptor = (LazyClassDescriptor) resolveSession.getClassDescriptor(classOrObject);
+            if (jetDeclaration instanceof JetClassInitializer || jetDeclaration instanceof JetProperty) {
+                return classDescriptor.getScopeForPropertyInitializerResolution();
+            }
             if (jetDeclaration instanceof JetEnumEntry) {
                 return ((LazyClassDescriptor) classDescriptor.getClassObjectDescriptor()).getScopeForMemberDeclarationResolution();
             }

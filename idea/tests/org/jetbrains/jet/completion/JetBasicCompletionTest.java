@@ -92,6 +92,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testInClassPropertyAccessor() {
+        doTest();
+    }
+
     public void testInEmptyImport() {
         doTest();
     }
@@ -100,7 +104,15 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testInGlobalPropertyInitializer() {
+        doTest();
+    }
+
     public void testInImport() {
+        doTest();
+    }
+
+    public void testInInitializerInPropertyAccessor() {
         doTest();
     }
 

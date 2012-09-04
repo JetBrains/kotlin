@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -42,6 +43,9 @@ public class ResolveSessionUtils {
     }
 
     private static class EmptyBodyResolveContext implements BodiesResolveContext {
+
+        private Map<JetDeclaration, JetScope> declarationScopesMap = Collections.emptyMap();
+
         @Override
         public Map<JetClass, MutableClassDescriptor> getClasses() {
             return Collections.emptyMap();
@@ -64,7 +68,11 @@ public class ResolveSessionUtils {
 
         @Override
         public Map<JetDeclaration, JetScope> getDeclaringScopes() {
-            return Collections.emptyMap();
+            return declarationScopesMap;
+        }
+
+        public void setDeclaringScopes(Map<JetDeclaration, JetScope> declarationScopes) {
+            declarationScopesMap = declarationScopes;
         }
 
         @Override
@@ -87,17 +95,16 @@ public class ResolveSessionUtils {
         }
     }
 
-    public static
-    @NotNull
-    BindingContext resolveToExpression(
+    public static @NotNull BindingContext resolveToExpression(
             @NotNull final ResolveSession resolveSession,
             @NotNull JetExpression expression
     ) {
         final DelegatingBindingTrace trace = new DelegatingBindingTrace(resolveSession.getBindingContext());
         JetFile file = (JetFile) expression.getContainingFile();
 
-        @SuppressWarnings("unchecked") PsiElement topmostCandidateForAdditionalResolve = JetPsiUtil.getTopmostParentOfTypes(expression,
-                JetNamedFunction.class, JetClassInitializer.class);
+        @SuppressWarnings("unchecked")
+        PsiElement topmostCandidateForAdditionalResolve = JetPsiUtil.getTopmostParentOfTypes(expression,
+                JetNamedFunction.class, JetClassInitializer.class, JetProperty.class);
 
         if (topmostCandidateForAdditionalResolve != null) {
             if (topmostCandidateForAdditionalResolve instanceof JetNamedFunction) {
@@ -105,6 +112,9 @@ public class ResolveSessionUtils {
             }
             else if (topmostCandidateForAdditionalResolve instanceof JetClassInitializer) {
                 initializerAdditionalResolve(resolveSession, (JetClassInitializer) topmostCandidateForAdditionalResolve, trace, file);
+            }
+            else if (topmostCandidateForAdditionalResolve instanceof JetProperty) {
+                propertyAdditionalResolve(resolveSession, (JetProperty) topmostCandidateForAdditionalResolve, trace, file);
             }
             else {
                 assert false : "Invalid type of the topmost parent";
@@ -122,6 +132,27 @@ public class ResolveSessionUtils {
         }
 
         return trace.getBindingContext();
+    }
+
+    private static void propertyAdditionalResolve(final ResolveSession resolveSession, final JetProperty jetProperty, DelegatingBindingTrace trace, JetFile file) {
+        EmptyBodyResolveContext bodyResolveContext = new EmptyBodyResolveContext();
+        BodyResolver bodyResolver = createBodyResolver(trace, file, bodyResolveContext);
+        PropertyDescriptor descriptor = (PropertyDescriptor) resolveSession.resolveToDescriptor(jetProperty);
+
+        JetExpression propertyInitializer = jetProperty.getInitializer();
+
+        final JetScope propertyResolutionScope = resolveSession.getInjector().getScopeProvider().getResolutionScopeForDeclaration(
+                jetProperty);
+
+        if (propertyInitializer != null) {
+            bodyResolver.resolvePropertyInitializer(jetProperty, descriptor, propertyInitializer, propertyResolutionScope);
+        }
+
+        for (final JetPropertyAccessor propertyAccessor : jetProperty.getAccessors()) {
+            bodyResolveContext.setDeclaringScopes(
+                    ImmutableMap.<JetDeclaration, JetScope>builder().put(propertyAccessor, propertyResolutionScope).build());
+            bodyResolver.resolvePropertyAccessors(jetProperty, descriptor);
+        }
     }
 
     private static void functionAdditionalResolve(
