@@ -21,6 +21,7 @@ import junit.framework.TestSuite;
 
 import java.io.File;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
 
 import org.jetbrains.jet.codegen.AbstractIntrinsicsTestCase;
@@ -29,7 +30,7 @@ import org.jetbrains.jet.codegen.AbstractIntrinsicsTestCase;
 @TestMetadata("compiler/testData/codegen/intrinsics")
 public class IntrinsicsTestGenerated extends AbstractIntrinsicsTestCase {
     public void testAllFilesPresentInIntrinsics() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractIntrinsicsTestCase", new File("compiler/testData/codegen/intrinsics"), "kt", false);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractIntrinsicsTestCase", new File("compiler/testData/codegen/intrinsics"), "kt", true);
     }
     
     @TestMetadata("longRangeWithExplicitDot.kt")

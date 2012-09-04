@@ -134,7 +134,7 @@ public class SimpleTestClassModel implements TestClassModel {
                             "\"", generatorClassFqName, "\", " +
                             "new File(\"", JetTestUtils.getFilePath(rootFile) + "\"), \"",
                             extension,
-                            "\", ", false,
+                            "\", ", recursive,
                       ");");
         }
 
