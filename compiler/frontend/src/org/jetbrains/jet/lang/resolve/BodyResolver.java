@@ -461,19 +461,9 @@ public class BodyResolver {
     }
 
     public void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
-        //JetFlowInformationProvider flowInformationProvider = context.getDescriptorResolver().computeFlowData(property, initializer); // TODO : flow JET-15
         JetType expectedTypeForInitializer = property.getTypeRef() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         JetScope propertyDeclarationInnerScope = descriptorResolver.getPropertyDeclarationInnerScope(scope, propertyDescriptor.getTypeParameters(), ReceiverDescriptor.NO_RECEIVER, trace);
-        JetType type = expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer, DataFlowInfo.EMPTY, trace);
-//
-//        JetType expectedType = propertyDescriptor.getInType();
-//        if (expectedType == null) {
-//            expectedType = propertyDescriptor.getType();
-//        }
-//        if (type != null && expectedType != null
-//            && !context.getSemanticServices().getTypeChecker().isSubtypeOf(type, expectedType)) {
-////            trace.report(TYPE_MISMATCH.on(initializer, expectedType, type));
-//        }
+        expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer, DataFlowInfo.EMPTY, trace);
     }
 
     private void resolveFunctionBodies() {
