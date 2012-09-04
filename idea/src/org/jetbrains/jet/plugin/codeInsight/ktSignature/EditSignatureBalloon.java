@@ -135,8 +135,7 @@ class EditSignatureBalloon {
                     deleteAndHide();
                 }
             });
-            panel.registerKeyboardAction(saveAndHideListener, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
-                                                                                     SystemInfo.isMac ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK),
+            panel.registerKeyboardAction(saveAndHideListener, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK),
                                          JComponent.WHEN_IN_FOCUSED_WINDOW);
             panel.registerKeyboardAction(cancelActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                                          JComponent.WHEN_IN_FOCUSED_WINDOW);
