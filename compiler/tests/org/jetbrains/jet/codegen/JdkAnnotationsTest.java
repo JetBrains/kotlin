@@ -39,4 +39,8 @@ public class JdkAnnotationsTest extends CodegenTestCase {
         blackBoxFile("jdk-annotations/hashMap.kt");
     }
 
+    //moved from PrimitiveTypesTest
+    public void testKt1397() {
+        blackBoxFile("regressions/kt1397.kt");
+    }
 }
