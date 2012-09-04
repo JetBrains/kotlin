@@ -88,7 +88,15 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testInClassInitializer() {
+        doTest();
+    }
+
     public void testInEmptyImport() {
+        doTest();
+    }
+
+    public void testInFunInClassInitializer() {
         doTest();
     }
 
@@ -99,7 +107,6 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
     public void testInLocalObjectDeclaration() {
         doTest();
     }
-
 
     public void testInMiddleOfNamespace() {
         doTest();

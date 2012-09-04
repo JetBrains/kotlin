@@ -112,8 +112,6 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite implement
         return primaryConstructor;
     }
 
-
-
     @NotNull
     public Set<SimpleFunctionDescriptor> getFunctions() {
         return functions;

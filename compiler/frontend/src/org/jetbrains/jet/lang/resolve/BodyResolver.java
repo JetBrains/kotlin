@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Queue;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
@@ -322,12 +323,18 @@ public class BodyResolver {
     }
 
     private void resolveAnonymousInitializers(JetClassOrObject jetClassOrObject, MutableClassDescriptor classDescriptor) {
-        if (!context.completeAnalysisNeeded(jetClassOrObject)) return;
+        resolveAnonymousInitializers(jetClassOrObject, classDescriptor.getUnsubstitutedPrimaryConstructor(),
+                                     classDescriptor.getScopeForInitializers());
+    }
+
+    public void resolveAnonymousInitializers(JetClassOrObject jetClassOrObject,
+            @Nullable ConstructorDescriptor primaryConstructor,
+            @NotNull JetScope scopeForInitializers) {
+        if (!context.completeAnalysisNeeded(jetClassOrObject)) {
+            return;
+        }
         List<JetClassInitializer> anonymousInitializers = jetClassOrObject.getAnonymousInitializers();
-        if (classDescriptor.getUnsubstitutedPrimaryConstructor() != null) {
-            ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
-            assert primaryConstructor != null;
-            final JetScope scopeForInitializers = classDescriptor.getScopeForInitializers();
+        if (primaryConstructor != null) {
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
                 expressionTypingServices.getType(scopeForInitializers, anonymousInitializer.getBody(), NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, trace);
             }

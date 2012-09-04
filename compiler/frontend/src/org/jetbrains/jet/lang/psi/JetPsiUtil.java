@@ -352,4 +352,22 @@ public class JetPsiUtil {
         JetMultiDeclarationEntry multiDeclarationEntry = (JetMultiDeclarationEntry) declaration;
         return !(multiDeclarationEntry.getParent().getParent() instanceof JetForExpression);
     }
+
+    public static PsiElement getTopmostParentOfTypes(@Nullable PsiElement element, @NotNull Class<? extends PsiElement>... parentTypes) {
+        if (element == null) {
+            return null;
+        }
+
+        PsiElement result = null;
+        PsiElement parent = element.getParent();
+        while (parent != null) {
+            if (PsiTreeUtil.instanceOf(parent, parentTypes)) {
+                result = parent;
+            }
+
+            parent = parent.getParent();
+        }
+
+        return result;
+    }
 }
