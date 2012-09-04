@@ -68,7 +68,6 @@ public final class AnalyzerFacadeWithCache {
 
     private final static Key<CachedValue<AnalyzeExhaust>> ANALYZE_EXHAUST_HEADERS = Key.create("ANALYZE_EXHAUST_HEADERS");
     private final static Key<CachedValue<AnalyzeExhaust>> ANALYZE_EXHAUST_FULL = Key.create("ANALYZE_EXHAUST_FULL");
-    private final static Key<CachedValue<ResolveSession>> ANALYZE_EXHAUST_LAZY_FULL = Key.create("ANALYZE_EXHAUST_FULL");
 
     private static final Object lock = new Object();
     public static final Function<JetFile, Collection<JetFile>> SINGLE_DECLARATION_PROVIDER = new Function<JetFile, Collection<JetFile>>() {
@@ -91,7 +90,7 @@ public final class AnalyzerFacadeWithCache {
     // TODO: Also need to pass several files when user have multi-file environment
     @NotNull
     public static AnalyzeExhaust analyzeFileWithCache(@NotNull final JetFile file,
-                                                      @NotNull final Function<JetFile, Collection<JetFile>> declarationProvider) {
+            @NotNull final Function<JetFile, Collection<JetFile>> declarationProvider) {
         // Need lock for getValue(), because parallel threads can start evaluation of compute() simultaneously
         synchronized (lock) {
             CachedValue<AnalyzeExhaust> bindingContextCachedValue = file.getUserData(ANALYZE_EXHAUST_FULL);
@@ -164,9 +163,9 @@ public final class AnalyzerFacadeWithCache {
                         public Result<AnalyzeExhaust> compute() {
                             AnalyzeExhaust exhaust = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(fileToCache)
                                     .analyzeFiles(fileToCache.getProject(),
-                                                  declarationProvider.fun(fileToCache),
-                                                  Collections.<AnalyzerScriptParameter>emptyList(),
-                                                  Predicates.<PsiFile>alwaysFalse());
+                                            declarationProvider.fun(fileToCache),
+                                            Collections.<AnalyzerScriptParameter>emptyList(),
+                                            Predicates.<PsiFile>alwaysFalse());
 
                             return new Result<AnalyzeExhaust>(exhaust, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
                         }
@@ -182,82 +181,65 @@ public final class AnalyzerFacadeWithCache {
         LOG.error(e);
     }
 
-    private static final Object lazyLock = new Object();
-
     @NotNull
     public static ResolveSession getLazyResolveSession(@NotNull final JetFile file) {
-        synchronized (lazyLock) {
-            final Project fileProject = file.getProject();
-            CachedValue<ResolveSession> bindingContextCachedValue = file.getUserData(ANALYZE_EXHAUST_LAZY_FULL);
-            if (bindingContextCachedValue == null) {
-                bindingContextCachedValue =
-                        CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<ResolveSession>() {
-                            @Override
-                            public Result<ResolveSession> compute() {
-                                ApplicationUtils.warnTimeConsuming(LOG);
+        final Project fileProject = file.getProject();
+        ModuleDescriptor javaModule = new ModuleDescriptor(Name.special("<java module>"));
 
-                                ModuleDescriptor javaModule = new ModuleDescriptor(Name.special("<java module>"));
+        BindingTraceContext javaResolverTrace = new BindingTraceContext();
+        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(
+                fileProject, javaResolverTrace, javaModule, BuiltinsScopeExtensionMode.ALL);
 
-                                InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(
-                                        fileProject, new BindingTraceContext(), javaModule, BuiltinsScopeExtensionMode.ALL);
+        Collection<JetFile> files = JetFilesProvider.getInstance(fileProject).allInScope(GlobalSearchScope.allScope(fileProject));
 
-                                Collection<JetFile> files = JetFilesProvider.getInstance(fileProject).allInScope(GlobalSearchScope.allScope(fileProject));
+        // Given file can differ from the original because it can be a virtual copy with some modifications
+        JetFile originalFile = (JetFile) file.getOriginalFile();
+        files.remove(originalFile);
+        files.add(file);
 
-                                // Given file can differ from the original because it can be a virtual copy with some modifications
-                                JetFile originalFile = (JetFile) file.getOriginalFile();
-                                files.remove(originalFile);
-                                files.add(file);
+        final PsiClassFinder psiClassFinder = injector.getPsiClassFinder();
 
-                                final PsiClassFinder psiClassFinder = injector.getPsiClassFinder();
-
-                                // TODO: Replace with stub declaration provider
-                                final FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(files, new Predicate<FqName>() {
-                                    @Override
-                                    public boolean apply(FqName fqName) {
-                                        return psiClassFinder.findPsiPackage(fqName) != null || new FqName("jet").equals(fqName);
-                                    }
-                                });
-
-                                final JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-
-                                ModuleConfiguration moduleConfiguration = new ModuleConfiguration() {
-                                    @Override
-                                    public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
-                                        final Collection<ImportPath> defaultImports = Lists.newArrayList(JavaBridgeConfiguration.DEFAULT_JAVA_IMPORTS);
-                                        defaultImports.addAll(Arrays.asList(DefaultModuleConfiguration.DEFAULT_JET_IMPORTS));
-
-                                        for (ImportPath defaultJetImport : defaultImports) {
-                                            directives.add(JetPsiFactory.createImportDirective(fileProject, defaultJetImport));
-                                        }
-                                    }
-
-                                    @Override
-                                    public void extendNamespaceScope(
-                                            @NotNull BindingTrace trace,
-                                            @NotNull NamespaceDescriptor namespaceDescriptor,
-                                            @NotNull WritableScope namespaceMemberScope
-                                    ) {
-                                        FqName fqName = DescriptorUtils.getFQName(namespaceDescriptor).toSafe();
-                                        if (new FqName("jet").equals(fqName)) {
-                                            namespaceMemberScope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
-                                        }
-                                        if (psiClassFinder.findPsiPackage(fqName) != null) {
-                                            JavaPackageScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(fqName, namespaceDescriptor);
-                                            assert javaPackageScope != null;
-                                            namespaceMemberScope.importScope(javaPackageScope);
-                                        }
-                                    }
-                                };
-
-                                ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
-                                ResolveSession resolveSession = new ResolveSession(fileProject, lazyModule, moduleConfiguration, declarationProviderFactory);
-
-                                return new Result<ResolveSession>(resolveSession, PsiModificationTracker.MODIFICATION_COUNT);
-                            }
-                        }, false);
-                file.putUserData(ANALYZE_EXHAUST_LAZY_FULL, bindingContextCachedValue);
+        // TODO: Replace with stub declaration provider
+        final FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(files, new Predicate<FqName>() {
+            @Override
+            public boolean apply(FqName fqName) {
+                return psiClassFinder.findPsiPackage(fqName) != null || new FqName("jet").equals(fqName);
             }
-            return bindingContextCachedValue.getValue();
-        }
+        });
+
+        final JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
+
+        ModuleConfiguration moduleConfiguration = new ModuleConfiguration() {
+            @Override
+            public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
+                final Collection<ImportPath> defaultImports = Lists.newArrayList(JavaBridgeConfiguration.DEFAULT_JAVA_IMPORTS);
+                defaultImports.addAll(Arrays.asList(DefaultModuleConfiguration.DEFAULT_JET_IMPORTS));
+
+                for (ImportPath defaultJetImport : defaultImports) {
+                    directives.add(JetPsiFactory.createImportDirective(fileProject, defaultJetImport));
+                }
+            }
+
+            @Override
+            public void extendNamespaceScope(
+                    @NotNull BindingTrace trace,
+                    @NotNull NamespaceDescriptor namespaceDescriptor,
+                    @NotNull WritableScope namespaceMemberScope
+            ) {
+                FqName fqName = DescriptorUtils.getFQName(namespaceDescriptor).toSafe();
+                if (new FqName("jet").equals(fqName)) {
+                    namespaceMemberScope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
+                }
+                if (psiClassFinder.findPsiPackage(fqName) != null) {
+                    JavaPackageScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(fqName, namespaceDescriptor);
+                    assert javaPackageScope != null;
+                    namespaceMemberScope.importScope(javaPackageScope);
+                }
+            }
+        };
+
+        ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
+
+        return new ResolveSession(fileProject, lazyModule, moduleConfiguration, declarationProviderFactory);
     }
 }
