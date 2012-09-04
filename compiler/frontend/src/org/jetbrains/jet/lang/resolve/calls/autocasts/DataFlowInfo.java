@@ -201,4 +201,11 @@ public class DataFlowInfo {
         return !typeInfo.isEmpty();
     }
 
+    @Override
+    public String toString() {
+        if (typeInfo.isEmpty() && nullabilityInfo.isEmpty()) {
+            return "EMPTY";
+        }
+        return "Non-trivial DataFlowInfo";
+    }
 }
