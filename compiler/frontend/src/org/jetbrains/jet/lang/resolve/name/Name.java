@@ -26,7 +26,7 @@ public class Name implements Comparable<Name> {
     private final String name;
     private final boolean special;
 
-    private Name(String name, boolean special) {
+    private Name(@NotNull String name, boolean special) {
         this.name = name;
         this.special = special;
     }

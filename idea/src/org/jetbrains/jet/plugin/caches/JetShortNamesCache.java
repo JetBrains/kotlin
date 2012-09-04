@@ -156,16 +156,23 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             @NotNull ResolveSession resolveSession,
             @NotNull GlobalSearchScope scope
     ) {
+        // name parameter can differ from expression.getReferenceName() when expression contains completion suffix
+        Name referenceName = expression.getIdentifier() == null ? JetPsiUtil.getConventionName(expression) : Name.identifier(name);
+        if (referenceName == null || referenceName.toString().isEmpty()) {
+            return Collections.emptyList();
+        }
+
         BindingContext context = ResolveSessionUtils.resolveToExpression(resolveSession, expression);
         JetScope jetScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
 
-        if (jetScope == null || name.isEmpty()) {
+        if (jetScope == null) {
             return Collections.emptyList();
         }
 
         Set<FunctionDescriptor> result = Sets.newHashSet();
 
-        Collection<PsiMethod> topLevelFunctionPrototypes = JetFromJavaDescriptorHelper.getTopLevelFunctionPrototypesByName(name, project, scope);
+        Collection<PsiMethod> topLevelFunctionPrototypes = JetFromJavaDescriptorHelper.getTopLevelFunctionPrototypesByName(
+                referenceName.getName(), project, scope);
         for (PsiMethod method : topLevelFunctionPrototypes) {
             FqName functionFQN = JetFromJavaDescriptorHelper.getJetTopLevelDeclarationFQN(method);
             if (functionFQN != null) {
@@ -181,7 +188,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         }
 
         Set<FqName> affectedPackages = Sets.newHashSet();
-        Collection<JetNamedFunction> jetNamedFunctions = JetShortFunctionNameIndex.getInstance().get(name, project, scope);
+        Collection<JetNamedFunction> jetNamedFunctions = JetShortFunctionNameIndex.getInstance().get(referenceName.getName(), project, scope);
         for (JetNamedFunction jetNamedFunction : jetNamedFunctions) {
             PsiFile containingFile = jetNamedFunction.getContainingFile();
             if (containingFile instanceof JetFile) {
@@ -192,8 +199,6 @@ public class JetShortNamesCache extends PsiShortNamesCache {
                 }
             }
         }
-
-        Name referenceName = Name.identifier(name);
 
         for (FqName affectedPackage : affectedPackages) {
             NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(affectedPackage);

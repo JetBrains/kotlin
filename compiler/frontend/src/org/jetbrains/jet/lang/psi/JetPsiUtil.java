@@ -21,13 +21,16 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.CheckUtil;
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
@@ -351,6 +354,24 @@ public class JetPsiUtil {
         assert declaration instanceof JetMultiDeclarationEntry;
         JetMultiDeclarationEntry multiDeclarationEntry = (JetMultiDeclarationEntry) declaration;
         return !(multiDeclarationEntry.getParent().getParent() instanceof JetForExpression);
+    }
+
+    @Nullable
+    public static Name getConventionName(@NotNull JetSimpleNameExpression simpleNameExpression) {
+        if (simpleNameExpression.getIdentifier() != null) {
+            return simpleNameExpression.getReferencedNameAsName();
+        }
+
+        PsiElement firstChild = simpleNameExpression.getFirstChild();
+        if (firstChild != null) {
+            IElementType elementType = firstChild.getNode().getElementType();
+            if (elementType instanceof JetToken) {
+                JetToken jetToken = (JetToken) elementType;
+                return OperatorConventions.getNameForOperationSymbol(jetToken);
+            }
+        }
+
+        return null;
     }
 
     public static PsiElement getTopmostParentOfTypes(@Nullable PsiElement element, @NotNull Class<? extends PsiElement>... parentTypes) {
