@@ -1,6 +1,5 @@
 package kotlin
 
-import java.util.List
 import java.util.ArrayList
 
 /** Returns the string with leading and trailing text matching the given string removed */

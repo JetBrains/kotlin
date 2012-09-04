@@ -75,8 +75,8 @@ public inline fun <K,V> linkedMap(vararg values: #(K,V)): LinkedHashMap<K,V> {
 
 
 /** Returns the Set if its not null otherwise returns the empty set */
-public inline fun <T> java.util.Set<T>?.orEmpty() : java.util.Set<T>
-    = if (this != null) this else Collections.EMPTY_SET as java.util.Set<T>
+public inline fun <T> Set<T>?.orEmpty() : Set<T>
+    = if (this != null) this else Collections.EMPTY_SET as Set<T>
 
 /** Returns a new ArrayList with a variable number of initial elements */
 public inline fun arrayList<T>(vararg values: T) : ArrayList<T> = values.toCollection(ArrayList<T>(values.size))

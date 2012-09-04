@@ -9,7 +9,6 @@ import java.util.ArrayList
 import java.util.TreeMap
 import org.w3c.dom.*
 import org.w3c.dom.events.*
-import java.util.List
 
 /**
 * This tool generates JavaScript stubs for classes available in the JDK which are already available in the browser environment

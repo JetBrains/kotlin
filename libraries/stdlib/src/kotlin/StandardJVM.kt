@@ -1,6 +1,5 @@
 package kotlin
 
-import java.util.Collection
 import java.util.ArrayList
 import java.util.LinkedList
 import java.util.HashSet

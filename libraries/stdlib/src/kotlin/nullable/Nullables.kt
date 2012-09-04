@@ -26,7 +26,7 @@ public inline fun <T> T?.find(predicate: (T)-> Boolean): T? {
 public inline fun <T> T?.filter(predicate: (T)-> Boolean): T? = find(predicate)
 
 /** Filters all elements in this collection which match the given predicate into the given result collection */
-public inline fun <T, C: Collection<in T>> T?.filterTo(result: C, predicate: (T)-> Boolean): C {
+public inline fun <T, C: MutableCollection<in T>> T?.filterTo(result: C, predicate: (T)-> Boolean): C {
     if (this != null && predicate(this))
         result.add(this)
     return result
@@ -36,7 +36,7 @@ public inline fun <T, C: Collection<in T>> T?.filterTo(result: C, predicate: (T)
 public inline fun <T> T?.filterNotNull(): Collection<T> = filterNotNullTo(java.util.ArrayList<T>())
 
 /** Filters all the null elements in this collection winto the given result collection */
-public inline fun <T, C: Collection<in T>> T?.filterNotNullTo(result: C): C {
+public inline fun <T, C: MutableCollection<in T>> T?.filterNotNullTo(result: C): C {
     if (this != null) {
         result.add(this)
     }
@@ -47,7 +47,7 @@ public inline fun <T, C: Collection<in T>> T?.filterNotNullTo(result: C): C {
 public inline fun <T> T?.filterNot(predicate: (T)-> Boolean): Collection<T> = filterNotTo(ArrayList<T>(), predicate)
 
 /** Returns a new collection containing all elements in this collection which do not match the given predicate */
-public inline fun <T, C: Collection<in T>> T?.filterNotTo(result: C, predicate: (T)-> Boolean): C {
+public inline fun <T, C: MutableCollection<in T>> T?.filterNotTo(result: C, predicate: (T)-> Boolean): C {
     if (this != null && !predicate(this)) {
         result.add(this)
     }
@@ -58,7 +58,7 @@ public inline fun <T, C: Collection<in T>> T?.filterNotTo(result: C, predicate: 
   * Returns the result of transforming each item in the collection to a one or more values which
   * are concatenated together into a single collection
   */
-public inline fun <T, R> T?.flatMap(transform: (T)-> Collection<R>): Collection<R> {
+public inline fun <T, R> T?.flatMap(transform: (T)-> MutableCollection<R>): Collection<R> {
     return flatMapTo(ArrayList<R>(), transform)
 }
 
@@ -66,7 +66,7 @@ public inline fun <T, R> T?.flatMap(transform: (T)-> Collection<R>): Collection<
   * Returns the result of transforming each item in the collection to a one or more values which
   * are concatenated together into a single collection
   */
-public inline fun <T, R> T?.flatMapTo(result: Collection<R>, transform: (T)-> Collection<R>): Collection<R> {
+public inline fun <T, R> T?.flatMapTo(result: MutableCollection<R>, transform: (T)-> MutableCollection<R>): Collection<R> {
     if (this != null) {
         val coll = transform(this)
         if (coll != null) {
@@ -111,7 +111,7 @@ public inline fun <T> T?.foldRight(initial: T, operation: (it: T, it2: T) -> T):
  * Iterates through the collection performing the transformation on each element and using the result
  * as the key in a map to group elements by the result
  */
-public inline fun <T, K> T?.groupBy(result: Map<K, List<T>> = HashMap<K, List<T>>(), toKey: (T)-> K): Map<K, List<T>> {
+public inline fun <T, K> T?.groupBy(result: MutableMap<K, MutableList<T>> = HashMap<K, MutableList<T>>(), toKey: (T)-> K): Map<K, MutableList<T>> {
     if (this != null) {
         val key = toKey(this)
         val list = result.getOrPut(key){ ArrayList<T>() }
@@ -143,7 +143,7 @@ public inline fun <T, R> T?.map(transform : (T) -> R) : R? {
 }
 
 /** Transforms each element of this collection with the given function then adds the results to the given collection */
-public inline fun <T, R, C: Collection<in R>> T?.mapTo(result: C, transform : (T) -> R) : C {
+public inline fun <T, R, C: MutableCollection<in R>> T?.mapTo(result: C, transform : (T) -> R) : C {
     if (this != null) {
         result.add(transform(this))
     }
@@ -156,7 +156,7 @@ public inline fun <T> T?.reverse(): T? {
 }
 
 /** Copies the collection into the given collection */
-public inline fun <T, C: Collection<T>> T?.toCollection(result: C): C {
+public inline fun <T, C: MutableCollection<T>> T?.toCollection(result: C): C {
     if (this != null)
         result.add(this)
     return result

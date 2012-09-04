@@ -3,7 +3,6 @@ package kotlin.io
 import java.io.*
 import java.nio.charset.*
 import java.util.NoSuchElementException
-import java.util.List
 import java.util.ArrayList
 import java.net.URL
 

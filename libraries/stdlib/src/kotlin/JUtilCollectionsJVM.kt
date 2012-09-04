@@ -14,6 +14,6 @@ import java.util.*
  *
  * @includeFunctionBody ../../test/CollectionTest.kt map
  */
-public inline fun <T, R> java.util.Collection<T>.map(transform : (T) -> R) : java.util.List<R> {
+public inline fun <T, R> Collection<T>.map(transform : (T) -> R) : List<R> {
     return mapTo(java.util.ArrayList<R>(this.size), transform)
 }

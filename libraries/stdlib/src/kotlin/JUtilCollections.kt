@@ -13,7 +13,7 @@ import java.util.*
  * Transforms each element of this collection with the given *transform* function and
  * adds each return value to the given *results* collection
  */
-public inline fun <T, R, C: Collection<in R>> java.util.Collection<T>.mapTo(result: C, transform : (T) -> R) : C {
+public inline fun <T, R, C: MutableCollection<in R>> Collection<T>.mapTo(result: C, transform : (T) -> R) : C {
   for (item in this)
     result.add(transform(item))
   return result

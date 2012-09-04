@@ -1,8 +1,6 @@
 package kotlin
 
 import java.util.ArrayList
-import java.util.Collection
-import java.util.List
 
 //
 // This file contains methods which could have a lazy implementation for things like

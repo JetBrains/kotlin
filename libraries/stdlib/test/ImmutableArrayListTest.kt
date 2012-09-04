@@ -3,7 +3,6 @@ package test.collection
 import kotlin.test.*
 
 import junit.framework.TestCase
-import java.util.List
 import java.util.Random
 
 class ImmutableArrayListTest() : TestCase() {

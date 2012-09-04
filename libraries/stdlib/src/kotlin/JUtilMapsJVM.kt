@@ -2,9 +2,6 @@ package kotlin
 
 import java.util.Comparator
 import java.util.LinkedHashMap
-import java.util.Map as JMap
-import java.util.Map
-import java.util.Map.Entry as JEntry
 import java.util.SortedMap
 import java.util.TreeMap
 import java.util.Properties
@@ -14,14 +11,14 @@ import java.util.Properties
 /**
  * Converts this [[Map]] to a [[LinkedHashMap]] so future insertion orders are maintained
  */
-public inline fun <K,V> java.util.Map<K,V>.toLinkedMap(): LinkedHashMap<K,V> = toMap<K,V>(LinkedHashMap(size)) as LinkedHashMap<K,V>
+public inline fun <K,V> Map<K,V>.toLinkedMap(): LinkedHashMap<K,V> = toMap<K,V>(LinkedHashMap(size)) as LinkedHashMap<K,V>
 
 /**
  * Converts this [[Map]] to a [[SortedMap]] so iteration order will be in key order
  *
  * @includeFunctionBody ../../test/MapTest.kt toSortedMap
  */
-public inline fun <K,V> java.util.Map<K,V>.toSortedMap(): SortedMap<K,V> = toMap<K,V>(TreeMap()) as SortedMap<K,V>
+public inline fun <K,V> Map<K,V>.toSortedMap(): SortedMap<K,V> = toMap<K,V>(TreeMap()) as SortedMap<K,V>
 
 /**
  * Converts this [[Map]] to a [[SortedMap]] using the given *comparator* so that iteration order will be in the order
@@ -29,7 +26,7 @@ public inline fun <K,V> java.util.Map<K,V>.toSortedMap(): SortedMap<K,V> = toMap
  *
  * @includeFunctionBody ../../test/MapTest.kt toSortedMapWithComparator
  */
-public inline fun <K,V> java.util.Map<K,V>.toSortedMap(comparator: Comparator<K>): SortedMap<K,V> = toMap<K,V>(TreeMap(comparator)) as SortedMap<K,V>
+public inline fun <K,V> Map<K,V>.toSortedMap(comparator: Comparator<K>): SortedMap<K,V> = toMap<K,V>(TreeMap(comparator)) as SortedMap<K,V>
 
 
 /**
@@ -50,7 +47,7 @@ public inline fun Map<String, String>.toProperties(): Properties {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt map
  */
-public inline fun <K,V,R> java.util.Map<K,V>.map(transform: (java.util.Map.Entry<K,V>) -> R) : java.util.List<R> {
+public inline fun <K,V,R> Map<K,V>.map(transform: (Map.Entry<K,V>) -> R) : List<R> {
     return mapTo(java.util.ArrayList<R>(this.size), transform)
 }
 
@@ -60,7 +57,7 @@ public inline fun <K,V,R> java.util.Map<K,V>.map(transform: (java.util.Map.Entry
  *
  * @includeFunctionBody ../../test/MapTest.kt mapValues
  */
-public inline fun <K,V,R> java.util.Map<K,V>.mapValues(transform : (java.util.Map.Entry<K,V>) -> R): java.util.Map<K,R> {
+public inline fun <K,V,R> MutableMap<K,V>.mapValues(transform : (Map.Entry<K,V>) -> R): Map<K,R> {
     return mapValuesTo(java.util.HashMap<K,R>(this.size), transform)
 }
 

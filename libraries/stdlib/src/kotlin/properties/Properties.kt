@@ -2,8 +2,6 @@ package kotlin.properties
 
 import kotlin.*
 import kotlin.util.*
-import java.util.List
-import java.util.Map
 import java.util.HashMap
 import java.util.ArrayList
 
@@ -23,8 +21,8 @@ public trait ChangeListener {
  * change tracking mechanisms for persistence or distributed change notifications.
  */
 public abstract class ChangeSupport {
-    private var allListeners: List<ChangeListener>? = null
-    private var nameListeners: Map<String, List<ChangeListener>>? = null
+    private var allListeners: MutableList<ChangeListener>? = null
+    private var nameListeners: MutableMap<String, MutableList<ChangeListener>>? = null
 
 
     public fun addChangeListener(listener: ChangeListener) {
@@ -36,7 +34,7 @@ public abstract class ChangeSupport {
 
     public fun addChangeListener(name: String, listener: ChangeListener) {
         if (nameListeners == null) {
-            nameListeners = HashMap<String, List<ChangeListener>>()
+            nameListeners = HashMap<String, MutableList<ChangeListener>>()
         }
         var listeners = nameListeners?.get(name)
         if (listeners == null) {

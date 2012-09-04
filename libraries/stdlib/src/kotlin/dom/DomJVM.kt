@@ -118,7 +118,7 @@ fun Node.nextElements(): Iterator<Element> = nextSiblings().filterIsInstance<Nod
 fun Node.previousElements(): Iterator<Element> = previousSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
 
 
-var Element.classSet : Set<String>
+var Element.classSet : MutableSet<String>
 get() {
     val answer = LinkedHashSet<String>()
     val array = this.classes.split("""\s""")

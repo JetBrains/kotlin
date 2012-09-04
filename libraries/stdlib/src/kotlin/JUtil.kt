@@ -19,7 +19,7 @@ val Int.indices: IntRange
 /**
  * Converts the collection to an array
  */
-public inline fun <T> java.util.Collection<T>.toArray() : Array<T> {
+public inline fun <T> Collection<T>.toArray() : Array<T> {
   val answer = arrayOfNulls<T>(this.size)
   var idx = 0
   for (elem in this)
@@ -28,10 +28,10 @@ public inline fun <T> java.util.Collection<T>.toArray() : Array<T> {
 }
 
 /** Returns true if the collection is not empty */
-public inline fun <T> java.util.Collection<T>.notEmpty() : Boolean = !this.isEmpty()
+public inline fun <T> Collection<T>.notEmpty() : Boolean = !this.isEmpty()
 
 /** Returns the Collection if its not null otherwise it returns the empty list */
-public inline fun <T> java.util.Collection<T>?.orEmpty() : Collection<T>
+public inline fun <T> Collection<T>?.orEmpty() : Collection<T>
     = if (this != null) this else Collections.emptyList<T>() as Collection<T>
 
 
@@ -44,8 +44,8 @@ public inline fun <in T: Comparable<T>> Iterable<T>.toSortedList(comparator: jav
 // List APIs
 
 /** Returns the List if its not null otherwise returns the empty list */
-public inline fun <T> java.util.List<T>?.orEmpty() : java.util.List<T>
-    = if (this != null) this else Collections.emptyList<T>() as java.util.List<T>
+public inline fun <T> List<T>?.orEmpty() : List<T>
+    = if (this != null) this else Collections.emptyList<T>() as List<T>
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

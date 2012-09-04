@@ -1,7 +1,6 @@
 package regressions
 
 import junit.framework.TestCase
-import java.util.List
 
 class Kt1619Test: TestCase() {
 

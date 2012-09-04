@@ -70,7 +70,7 @@ public inline fun <T> Iterable<T>.find(predicate: (T) -> Boolean) : T? {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt filterIntoLinkedList
  */
-public inline fun <T, C: Collection<in T>> Iterable<T>.filterTo(result: C, predicate: (T) -> Boolean) : C {
+public inline fun <T, C: MutableCollection<in T>> Iterable<T>.filterTo(result: C, predicate: (T) -> Boolean) : C {
     for (element in this) if (predicate(element)) result.add(element)
     return result
 }
@@ -80,7 +80,7 @@ public inline fun <T, C: Collection<in T>> Iterable<T>.filterTo(result: C, predi
  *
  * @includeFunctionBody ../../test/CollectionTest.kt filterNotIntoLinkedList
  */
-public inline fun <T, C: Collection<in T>> Iterable<T>.filterNotTo(result: C, predicate: (T) -> Boolean) : C {
+public inline fun <T, C: MutableCollection<in T>> Iterable<T>.filterNotTo(result: C, predicate: (T) -> Boolean) : C {
     for (element in this) if (!predicate(element)) result.add(element)
     return result
 }
@@ -90,7 +90,7 @@ public inline fun <T, C: Collection<in T>> Iterable<T>.filterNotTo(result: C, pr
  *
  * @includeFunctionBody ../../test/CollectionTest.kt filterNotNullIntoLinkedList
  */
-public inline fun <T, C: Collection<in T>> Iterable<T?>?.filterNotNullTo(result: C) : C {
+public inline fun <T, C: MutableCollection<in T>> Iterable<T?>?.filterNotNullTo(result: C) : C {
     if (this != null) {
         for (element in this) if (element != null) result.add(element)
     }
@@ -102,7 +102,7 @@ public inline fun <T, C: Collection<in T>> Iterable<T?>?.filterNotNullTo(result:
  *
  * @includeFunctionBody ../../test/CollectionTest.kt flatMap
  */
-public inline fun <T, R> Iterable<T>.flatMapTo(result: Collection<R>, transform: (T) -> Collection<R>) : Collection<R> {
+public inline fun <T, R> Iterable<T>.flatMapTo(result: MutableCollection<R>, transform: (T) -> Collection<R>) : Collection<R> {
     for (element in this) {
         val list = transform(element)
         if (list != null) {
@@ -172,14 +172,14 @@ public inline fun <T> Iterable<T>.reduceRight(operation: (T, T) -> T): T = rever
  *
  * @includeFunctionBody ../../test/CollectionTest.kt groupBy
  */
-public inline fun <T, K> Iterable<T>.groupBy(toKey: (T) -> K) : Map<K, List<T>> = groupByTo<T,K>(HashMap<K, List<T>>(), toKey)
+public inline fun <T, K> Iterable<T>.groupBy(toKey: (T) -> K) : Map<K, MutableList<T>> = groupByTo<T,K>(HashMap<K, MutableList<T>>(), toKey)
 
 /**
  * Groups the elements in the collection into the given [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
  *
  * @includeFunctionBody ../../test/CollectionTest.kt groupBy
  */
-public inline fun <T, K> Iterable<T>.groupByTo(result: Map<K, List<T>>, toKey: (T) -> K) : Map<K, List<T>> {
+public inline fun <T, K> Iterable<T>.groupByTo(result: MutableMap<K, MutableList<T>>, toKey: (T) -> K) : Map<K, MutableList<T>> {
     for (element in this) {
         val key = toKey(element)
         val list = result.getOrPut(key) { ArrayList<T>() }
@@ -203,7 +203,7 @@ public inline fun <T> Iterable<T>.makeString(separator: String = ", ", prefix: S
 }
 
 /** Returns a list containing the everything but the first elements that satisfy the given *predicate* */
-public inline fun <T, L: List<in T>> Iterable<T>.dropWhileTo(result: L, predicate: (T) -> Boolean) : L {
+public inline fun <T, L: MutableList<in T>> Iterable<T>.dropWhileTo(result: L, predicate: (T) -> Boolean) : L {
     var start = true
     for (element in this) {
         if (start && predicate(element)) {
@@ -217,13 +217,13 @@ public inline fun <T, L: List<in T>> Iterable<T>.dropWhileTo(result: L, predicat
 }
 
 /** Returns a list containing the first elements that satisfy the given *predicate* */
-public inline fun <T, C: Collection<in T>> Iterable<T>.takeWhileTo(result: C, predicate: (T) -> Boolean) : C {
+public inline fun <T, C: MutableCollection<in T>> Iterable<T>.takeWhileTo(result: C, predicate: (T) -> Boolean) : C {
     for (element in this) if (predicate(element)) result.add(element) else break
     return result
 }
 
 /** Copies all elements into the given collection */
-public inline fun <in T, C: Collection<in T>> Iterable<T>.toCollection(result: C) : C {
+public inline fun <in T, C: MutableCollection<in T>> Iterable<T>.toCollection(result: C) : C {
     for (element in this) result.add(element)
     return result
 }

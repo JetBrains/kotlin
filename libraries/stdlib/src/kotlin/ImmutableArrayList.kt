@@ -1,6 +1,5 @@
 package kotlin
 
-import java.util.List
 import java.util.AbstractList
 
 private class ImmutableArrayList<T>(
@@ -37,7 +36,7 @@ private class ImmutableArrayList<T>(
 
     public override fun size() : Int = length
 
-    public override fun subList(fromIndex: Int, toIndex: Int) : List<T> {
+    public override fun subList(fromIndex: Int, toIndex: Int) : MutableList<T> {
         if (fromIndex < 0) {
             throw IndexOutOfBoundsException("Negative from index ($fromIndex)")
         }
@@ -48,7 +47,7 @@ private class ImmutableArrayList<T>(
             throw IndexOutOfBoundsException("fromIndex ($fromIndex) + toIndex ($toIndex) > length ($length)")
         }
         if (fromIndex == toIndex) {
-            return emptyImmutableArrayList as List<T>
+            return emptyImmutableArrayList as MutableList<T>
         }
         if (fromIndex == 0 && toIndex == length) {
             return this

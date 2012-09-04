@@ -1,6 +1,5 @@
 package test.stdlib.issues
 
-import java.util.List
 import kotlin.util.*
 import kotlin.test.*
 import junit.framework.TestCase

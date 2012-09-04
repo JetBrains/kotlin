@@ -1,28 +1,24 @@
 package kotlin
 
-import java.util.Collection
 import java.util.Collections
 import java.util.HashMap
-import java.util.List
-import java.util.Map as JMap
-import java.util.Map
 
 // Map APIs
 
 /** Returns the size of the map */
-val JMap<*,*>.size : Int
+val Map<*,*>.size : Int
 get() = size()
 
 /** Returns true if this map is empty */
-val JMap<*,*>.empty : Boolean
+val Map<*,*>.empty : Boolean
 get() = isEmpty()
 
 /** Provides [] access to maps */
-public fun <K, V> JMap<K, V>.set(key : K, value : V) : V? = this.put(key, value)
+public fun <K, V> MutableMap<K, V>.set(key : K, value : V) : V? = this.put(key, value)
 
 /** Returns the [[Map]] if its not null otherwise it returns the empty [[Map]] */
-public inline fun <K,V> java.util.Map<K,V>?.orEmpty() : java.util.Map<K,V>
-= if (this != null) this else Collections.emptyMap<K,V>() as java.util.Map<K,V>
+public inline fun <K,V> Map<K,V>?.orEmpty() : Map<K,V>
+= if (this != null) this else Collections.emptyMap<K,V>() as Map<K,V>
 
 
 /** Returns the key of the entry */
@@ -38,7 +34,7 @@ val <K,V> Map.Entry<K,V>.value : V
  *
  * @includeFunctionBody ../../test/MapTest.kt getOrElse
  */
-public inline fun <K,V> java.util.Map<K,V>.getOrElse(key: K, defaultValue: ()-> V) : V {
+public inline fun <K,V> Map<K,V>.getOrElse(key: K, defaultValue: ()-> V) : V {
     val current = this.get(key)
     if (current != null) {
         return current
@@ -52,7 +48,7 @@ public inline fun <K,V> java.util.Map<K,V>.getOrElse(key: K, defaultValue: ()-> 
  *
  * @includeFunctionBody ../../test/MapTest.kt getOrElse
  */
-public inline fun <K,V> java.util.Map<K,V>.getOrPut(key: K, defaultValue: ()-> V) : V {
+public inline fun <K,V> MutableMap<K,V>.getOrPut(key: K, defaultValue: ()-> V) : V {
     val current = this.get(key)
     if (current != null) {
         return current
@@ -69,7 +65,7 @@ public inline fun <K,V> java.util.Map<K,V>.getOrPut(key: K, defaultValue: ()-> V
  *
  * @includeFunctionBody ../../test/MapTest.kt iterateWithProperties
  */
-public inline fun <K,V> java.util.Map<K,V>.iterator(): Iterator<java.util.Map.Entry<K,V>> {
+public inline fun <K,V> Map<K,V>.iterator(): Iterator<Map.Entry<K,V>> {
     val entrySet = this.entrySet()!!
     return entrySet.iterator()!!
 }
@@ -78,7 +74,7 @@ public inline fun <K,V> java.util.Map<K,V>.iterator(): Iterator<java.util.Map.En
  * Transforms each [[Map.Entry]] in this [[Map]] with the given *transform* function and
  * adds each return value to the given *results* collection
  */
-public inline fun <K,V,R, C: Collection<in R>> java.util.Map<K,V>.mapTo(result: C, transform: (java.util.Map.Entry<K,V>) -> R) : C {
+public inline fun <K,V,R, C: MutableCollection<in R>> Map<K,V>.mapTo(result: C, transform: (Map.Entry<K,V>) -> R) : C {
   for (item in this)
     result.add(transform(item))
   return result
@@ -87,7 +83,7 @@ public inline fun <K,V,R, C: Collection<in R>> java.util.Map<K,V>.mapTo(result: 
 /**
  * Populates the given *result* [[Map]] with the value returned by applying the *transform* function on each [[Map.Entry]] in this [[Map]]
  */
-public inline fun <K,V,R,C: java.util.Map<K,R>> java.util.Map<K,V>.mapValuesTo(result: C, transform : (java.util.Map.Entry<K,V>) -> R) : C {
+public inline fun <K,V,R,C: MutableMap<K,R>> MutableMap<K,V>.mapValuesTo(result: C, transform : (Map.Entry<K,V>) -> R) : C {
   for (e in this) {
       val newValue = transform(e)
       result.put(e.key, newValue)
@@ -98,7 +94,7 @@ public inline fun <K,V,R,C: java.util.Map<K,R>> java.util.Map<K,V>.mapValuesTo(r
 /**
  * Puts all the entries into the map with the first value in the tuple being the key and the second the value
  */
-public inline fun <K,V> java.util.Map<K,V>.putAll(vararg values: #(K,V)): Unit {
+public inline fun <K,V> MutableMap<K,V>.putAll(vararg values: #(K,V)): Unit {
     for (v in values) {
         put(v._1, v._2)
     }
@@ -107,7 +103,7 @@ public inline fun <K,V> java.util.Map<K,V>.putAll(vararg values: #(K,V)): Unit {
 /**
  * Copies the entries in this [[Map]] to the given *map*
  */
-public inline fun <K,V> java.util.Map<K,V>.toMap(map: Map<K,V>): Map<K,V> {
+public inline fun <K,V> Map<K,V>.toMap(map: MutableMap<K,V>): Map<K,V> {
     map.putAll(this)
     return map
 }

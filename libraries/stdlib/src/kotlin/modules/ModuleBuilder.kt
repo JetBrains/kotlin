@@ -54,9 +54,9 @@ open class ModuleBuilder(val name: String): Module {
         annotationsRoots0.add(name)
     }
 
-    public override fun getSourceFiles(): List<String?>? = sourceFiles0
-    public override fun getClasspathRoots(): List<String?>? = classpathRoots0
-    public override fun getAnnotationsRoots(): List<String?>? = annotationsRoots0
+    public override fun getSourceFiles(): MutableList<String?>? = sourceFiles0
+    public override fun getClasspathRoots(): MutableList<String?>? = classpathRoots0
+    public override fun getAnnotationsRoots(): MutableList<String?>? = annotationsRoots0
     public override fun getModuleName(): String? = name
 }
 

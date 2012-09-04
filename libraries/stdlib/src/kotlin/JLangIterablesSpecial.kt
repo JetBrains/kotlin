@@ -1,8 +1,6 @@
 package kotlin
 // Number of extension function for java.lang.Iterable that shouldn't participate in auto generation
 
-import java.util.Collection
-import java.util.List
 import java.util.AbstractList
 import java.util.Comparator
 import java.util.ArrayList
@@ -59,7 +57,7 @@ public inline fun <T> Iterable<T>.first() : T {
 // TODO: Specify type of the exception
 public fun <T> Iterable<T>.last() : T {
   if (this is List<T>) {
-    return this.get(this.size() - 1);
+    return this.get(this.size() - 1)
   }
 
   val iterator = this.iterator().sure()
@@ -98,7 +96,7 @@ public fun <T> Iterable<T>.contains(item : T) : Boolean {
  *
  * @includeFunctionBody ../../test/ListTest.kt withIndices
  */
-public fun <T> Iterable<T>.withIndices(): java.util.List<#(Int, T)> {
+public fun <T> Iterable<T>.withIndices(): List<#(Int, T)> {
     val answer = ArrayList<#(Int, T)>()
     var nextIndex = 0
     for (e in this) {

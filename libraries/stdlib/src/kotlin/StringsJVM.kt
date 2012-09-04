@@ -1,7 +1,6 @@
 package kotlin
 
 import java.io.StringReader
-import java.util.List
 
 public inline fun String.lastIndexOf(str: String) : Int = (this as java.lang.String).lastIndexOf(str)
 
