@@ -121,13 +121,6 @@ class EditSignatureBalloon {
                 }
             };
 
-            ActionListener cancelActionListener = new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    balloon.hide();
-                }
-            };
-
             saveButton.addActionListener(saveAndHideListener);
             deleteButton.addActionListener(new ActionListener() {
                 @Override
@@ -137,9 +130,14 @@ class EditSignatureBalloon {
             });
             panel.registerKeyboardAction(saveAndHideListener, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK),
                                          JComponent.WHEN_IN_FOCUSED_WINDOW);
-            panel.registerKeyboardAction(cancelActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-                                         JComponent.WHEN_IN_FOCUSED_WINDOW);
         }
+
+        panel.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                balloon.hide();
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
 
         return panel;
     }
