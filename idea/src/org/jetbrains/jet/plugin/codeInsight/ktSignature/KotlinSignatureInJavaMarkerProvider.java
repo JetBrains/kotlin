@@ -22,8 +22,9 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiAnnotation;
@@ -62,12 +63,9 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     private static final GutterIconNavigationHandler<PsiMethod> NAVIGATION_HANDLER = new GutterIconNavigationHandler<PsiMethod>() {
         @Override
         public void navigate(MouseEvent e, PsiMethod element) {
-            if (!UIUtil.isActionClick(e, MouseEvent.MOUSE_RELEASED)) return;
-
-            Editor editor = PlatformDataKeys.EDITOR.getData(DataManager.getInstance().getDataContext(e.getComponent()));
-            assert editor != null;
-
-            EditSignatureBalloon.invokeEditSignature(element, editor, e.getPoint());
+            if (UIUtil.isActionClick(e, MouseEvent.MOUSE_RELEASED)) {
+                new EditSignatureAction(element).actionPerformed(DataManager.getInstance().getDataContext(e.getComponent()), e.getPoint());
+            }
         }
     };
 
@@ -76,8 +74,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     @Nullable
     public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
         if (isMarkersEnabled(element.getProject()) && findKotlinSignatureAnnotation(element) != null) {
-            return new LineMarkerInfo<PsiMethod>((PsiMethod) element, element.getTextOffset(), JetIcons.SMALL_LOGO, Pass.UPDATE_ALL,
-                                                 TOOLTIP_PROVIDER, NAVIGATION_HANDLER);
+            return new MyLineMarkerInfo(element);
         }
         return null;
     }
@@ -93,5 +90,25 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     public static void setMarkersEnabled(@NotNull Project project, boolean value) {
         PropertiesComponent.getInstance(project).setValue(SHOW_MARKERS_PROPERTY, Boolean.toString(value));
         refreshMarkers(project);
+    }
+
+    private static class MyLineMarkerInfo extends LineMarkerInfo<PsiMethod> {
+        public MyLineMarkerInfo(PsiElement element) {
+            super((PsiMethod) element, element.getTextOffset(), JetIcons.SMALL_LOGO, Pass.UPDATE_ALL, TOOLTIP_PROVIDER, NAVIGATION_HANDLER);
+        }
+
+        @Nullable
+        @Override
+        public GutterIconRenderer createGutterRenderer() {
+            return new LineMarkerGutterIconRenderer<PsiMethod>(this) {
+                @Nullable
+                @Override
+                public ActionGroup getPopupMenuActions() {
+                    DefaultActionGroup actionGroup = new DefaultActionGroup();
+                    actionGroup.add(new EditSignatureAction(getElement()));
+                    return actionGroup;
+                }
+            };
+        }
     }
 }
