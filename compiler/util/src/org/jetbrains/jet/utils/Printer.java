@@ -32,10 +32,10 @@ public class Printer {
 
     public void println(Object... objects) {
         print(objects);
-        println();
+        printLineSeparator();
     }
 
-    private void println() {
+    private void printLineSeparator() {
         out.append(System.getProperty("line.separator"));
     }
 
@@ -52,7 +52,7 @@ public class Printer {
 
     public void printlnWithNoIndent(Object... objects) {
         printWithNoIndent(objects);
-        println();
+        printLineSeparator();
     }
 
     public void pushIndent() {
