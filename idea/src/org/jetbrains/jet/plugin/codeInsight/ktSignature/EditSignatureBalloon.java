@@ -27,16 +27,17 @@ import com.intellij.openapi.editor.EditorSettings;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.*;
+import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -145,10 +146,12 @@ class EditSignatureBalloon {
     private Editor createEditor() {
         EditorFactory editorFactory = EditorFactory.getInstance();
         assert editorFactory != null;
-        Document document = editorFactory.createDocument(this.previousSignature);
-        document.setReadOnly(!editable);
+        LightVirtualFile virtualFile = new LightVirtualFile("signature.kt", JetFileType.INSTANCE, previousSignature);
+        virtualFile.setWritable(editable);
+        Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+        assert document != null;
 
-        Editor editor = editorFactory.createEditor(document, project, JetFileType.INSTANCE, false);
+        Editor editor = editorFactory.createEditor(document, project, JetFileType.INSTANCE, !editable);
         EditorSettings settings = editor.getSettings();
         settings.setVirtualSpace(false);
         settings.setLineMarkerAreaShown(false);
