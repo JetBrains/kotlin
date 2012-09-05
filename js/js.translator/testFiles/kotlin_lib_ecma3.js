@@ -48,15 +48,6 @@ var Kotlin = {};
         return result;
     };
 
-    Kotlin.argumentsToArrayLike = function (args) {
-        var n = args.length;
-        var result = new Array(n);
-        while (n--) {
-            result[n] = args[n];
-        }
-        return result;
-    };
-
     function copyProperties(to, from) {
         for (var p in from) {
             if (from.hasOwnProperty(p)) {

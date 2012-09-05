@@ -69,7 +69,7 @@ abstract class InnerDeclarationTranslator {
             return;
         }
 
-        List<JsExpression> expressions = getCapturedValueParametersList(bind);
+        List<JsExpression> expressions = bind.getArguments();
         for (CallableDescriptor descriptor : closureContext.getDescriptors()) {
             JsName name;
             if (descriptor instanceof VariableDescriptor) {
@@ -82,9 +82,5 @@ abstract class InnerDeclarationTranslator {
             fun.getParameters().add(new JsParameter(name));
             expressions.add(name.makeRef());
         }
-    }
-
-    protected List<JsExpression> getCapturedValueParametersList(JsInvocation invocation) {
-        return invocation.getArguments();
     }
 }
