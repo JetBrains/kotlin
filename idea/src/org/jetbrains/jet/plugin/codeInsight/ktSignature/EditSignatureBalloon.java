@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.codeInsight.ktSignature;
 
 import com.intellij.codeInsight.ExternalAnnotationsManager;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.*;
@@ -144,9 +145,9 @@ class EditSignatureBalloon implements Disposable {
         return editor.logicalPositionToXY(logicalPosition).y;
     }
 
-    public void show(@Nullable Point point, @NotNull Editor editor, @NotNull PsiElement psiElementInEditor) {
-        int lineY = getLineY(editor, psiElementInEditor);
-        EditorGutterComponentEx gutter = (EditorGutterComponentEx) editor.getGutter();
+    public void show(@Nullable Point point, @NotNull final Editor mainEditor, @NotNull PsiElement psiElementInEditor) {
+        int lineY = getLineY(mainEditor, psiElementInEditor);
+        EditorGutterComponentEx gutter = (EditorGutterComponentEx) mainEditor.getGutter();
         Point adjustedPoint;
         if (point == null) {
             adjustedPoint = new Point(gutter.getIconsAreaWidth() + gutter.getLineMarkerAreaOffset(), lineY);
@@ -155,7 +156,12 @@ class EditSignatureBalloon implements Disposable {
             adjustedPoint = new Point(point.x, Math.min(lineY, point.y));
         }
         balloon.show(new RelativePoint(gutter, adjustedPoint), Balloon.Position.above);
-        IdeFocusManager.getInstance(editor.getProject()).requestFocus(editor.getContentComponent(), false);
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                IdeFocusManager.getInstance(mainEditor.getProject()).requestFocus(editor.getContentComponent(), false);
+            }
+        });
     }
 
     @Override
