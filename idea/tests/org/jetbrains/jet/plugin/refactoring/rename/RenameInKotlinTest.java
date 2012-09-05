@@ -33,10 +33,10 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
@@ -69,6 +69,10 @@ public class RenameInKotlinTest extends MultiFileTestCase {
 
     public void testRenameKotlinMethod() throws Exception {
         doTestWithRenameMethod(new FqName("testing.rename.C"), "first", "second");
+    }
+
+    public void testRenameKotlinClassConstructor() throws Exception {
+        doTestWithRenameClass(new FqName("X"), "TestX");
     }
 
     private void doTestWithRenameMethod(final FqName qClassName, final String oldMethodName, String newMethodName) throws Exception {
