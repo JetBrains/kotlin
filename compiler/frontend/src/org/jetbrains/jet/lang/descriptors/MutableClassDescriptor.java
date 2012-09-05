@@ -41,10 +41,10 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite implement
     private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
     private ConstructorDescriptor primaryConstructor;
 
-    private final Set<CallableMemberDescriptor> declaredCallableMembers = Sets.newHashSet();
-    private final Set<CallableMemberDescriptor> allCallableMembers = Sets.newHashSet(); // includes fake overrides
-    private final Set<PropertyDescriptor> properties = Sets.newHashSet();
-    private final Set<SimpleFunctionDescriptor> functions = Sets.newHashSet();
+    private final Set<CallableMemberDescriptor> declaredCallableMembers = Sets.newLinkedHashSet();
+    private final Set<CallableMemberDescriptor> allCallableMembers = Sets.newLinkedHashSet(); // includes fake overrides
+    private final Set<PropertyDescriptor> properties = Sets.newLinkedHashSet();
+    private final Set<SimpleFunctionDescriptor> functions = Sets.newLinkedHashSet();
 
     private final WritableScope scopeForMemberResolution;
     // This scope contains type parameters but does not contain inner classes
