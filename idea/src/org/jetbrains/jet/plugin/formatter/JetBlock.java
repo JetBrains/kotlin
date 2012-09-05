@@ -131,13 +131,16 @@ public class JetBlock extends AbstractBlock {
     }
 
     @Override
-    public Spacing getSpacing(Block child1, Block child2) {
+    public Spacing getSpacing(@Nullable Block child1, @NotNull Block child2) {
         Spacing spacing = mySpacingBuilder.getSpacing(this, child1, child2);
         if (spacing != null) {
             return spacing;
         }
 
         // TODO: extend SpacingBuilder API - afterInside(RBRACE, FUNCTION_LITERAL).spacing(...), beforeInside(RBRACE, FUNCTION_LITERAL).spacing(...)
+        if (!(child1 instanceof ASTBlock && child2 instanceof ASTBlock)) {
+            return null;
+        }
 
         IElementType parentType = this.getNode().getElementType();
         IElementType child1Type = ((ASTBlock) child1).getNode().getElementType();
