@@ -21,10 +21,7 @@ import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.EditorSettings;
+import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
@@ -141,14 +138,13 @@ class EditSignatureBalloon implements Disposable {
         return editor;
     }
 
-    private static int getLineY(@Nullable Editor editor) {
-        return editor == null
-               ? Integer.MAX_VALUE
-               : editor.logicalPositionToXY(editor.getCaretModel().getLogicalPosition()).y;
+    private static int getLineY(@NotNull Editor editor, @NotNull PsiElement psiElementInEditor) {
+        LogicalPosition logicalPosition = editor.offsetToLogicalPosition(psiElementInEditor.getTextOffset());
+        return editor.logicalPositionToXY(logicalPosition).y;
     }
 
-    public void show(@Nullable Point point, @NotNull Editor editor) {
-        int lineY = getLineY(editor);
+    public void show(@Nullable Point point, @NotNull Editor editor, @NotNull PsiElement psiElementInEditor) {
+        int lineY = getLineY(editor, psiElementInEditor);
         EditorGutterComponentEx gutter = (EditorGutterComponentEx) editor.getGutter();
         Point adjustedPoint;
         if (point == null) {
@@ -224,7 +220,7 @@ class EditSignatureBalloon implements Disposable {
             PsiMethod annotationOwner = getAnnotationOwner(element);
             boolean editable = ExternalAnnotationsManager.getInstance(element.getProject())
                     .isExternalAnnotationWritable(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
-            new EditSignatureBalloon(annotationOwner, getKotlinSignature(annotation), editable).show(point, editor);
+            new EditSignatureBalloon(annotationOwner, getKotlinSignature(annotation), editable).show(point, editor, element);
         }
     }
     
