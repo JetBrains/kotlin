@@ -103,19 +103,19 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
     protected PsiElement doResolve() {
         JetFile file = (JetFile) getElement().getContainingFile();
         BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
-        List<PsiElement> psiElement = BindingContextUtils.resolveToDeclarationPsiElements(bindingContext, myExpression);
-        if (psiElement.size() == 1) {
-            return psiElement.iterator().next();
+        List<PsiElement> psiElements = BindingContextUtils.resolveToDeclarationPsiElements(bindingContext, myExpression);
+        if (psiElements.size() == 1) {
+            return psiElements.iterator().next();
         }
-        if (psiElement.size() > 1) {
+        if (psiElements.size() > 1) {
             return null;
         }
-        if (psiElement.isEmpty()) {
-            PsiElement stdlibSymbol = myExpression.getProject().getComponent(StandardLibraryReferenceResolver.class)
-                    .resolveStandardLibrarySymbol(bindingContext, myExpression);
-            if (stdlibSymbol != null) {
-                return stdlibSymbol;
-            }
+        List<PsiElement> stdlibSymbols = resolveStandardLibrarySymbol(bindingContext);
+        if (stdlibSymbols.size() == 1) {
+            return stdlibSymbols.iterator().next();
+        }
+        if (stdlibSymbols.size() > 1) {
+            return null;
         }
         Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
         if (declarationDescriptors != null) return null;
@@ -129,10 +129,16 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file)
                 .getBindingContext();
         Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
-        if (declarationDescriptors == null) return ResolveResult.EMPTY_ARRAY;
+        if (declarationDescriptors == null) {
+            List<PsiElement> standardLibraryElements = resolveStandardLibrarySymbol(bindingContext);
+            if (!standardLibraryElements.isEmpty()) {
+                return PsiElementResolveResult.createResults(standardLibraryElements);
+            }
+            return ResolveResult.EMPTY_ARRAY;
+        }
 
-        ArrayList<ResolveResult> results = new ArrayList<ResolveResult>(declarationDescriptors.size());
-        
+        List<ResolveResult> results = new ArrayList<ResolveResult>(declarationDescriptors.size());
+
         for (DeclarationDescriptor descriptor : declarationDescriptors) {
             List<PsiElement> elements = BindingContextUtils.descriptorToDeclarations(bindingContext, descriptor);
             if (elements.isEmpty()) {
@@ -148,5 +154,10 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         }
 
         return results.toArray(new ResolveResult[results.size()]);
+    }
+
+    private List<PsiElement> resolveStandardLibrarySymbol(@NotNull BindingContext bindingContext) {
+        return myExpression.getProject().getComponent(StandardLibraryReferenceResolver.class)
+                .resolveStandardLibrarySymbol(bindingContext, myExpression);
     }
 }

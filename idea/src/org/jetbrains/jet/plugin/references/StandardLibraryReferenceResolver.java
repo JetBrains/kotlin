@@ -157,26 +157,26 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
         }
     }
 
-    @Nullable
-    public PsiElement resolveStandardLibrarySymbol(@NotNull BindingContext originalContext,
+    @NotNull
+    public List<PsiElement> resolveStandardLibrarySymbol(@NotNull BindingContext originalContext,
             @Nullable JetReferenceExpression referenceExpression) {
         ensureInitialized();
         DeclarationDescriptor declarationDescriptor = originalContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
 
-        return declarationDescriptor != null ? resolveStandardLibrarySymbol(declarationDescriptor) : null;
+        return declarationDescriptor != null ? resolveStandardLibrarySymbol(declarationDescriptor) : Collections.<PsiElement>emptyList();
     }
 
-    @Nullable
-    public PsiElement resolveStandardLibrarySymbol(@NotNull DeclarationDescriptor declarationDescriptor) {
+    @NotNull
+    public List<PsiElement> resolveStandardLibrarySymbol(@NotNull DeclarationDescriptor declarationDescriptor) {
         ensureInitialized();
         DeclarationDescriptor descriptor = declarationDescriptor;
 
         descriptor = descriptor.getOriginal();
         descriptor = findCurrentDescriptor(descriptor);
         if (descriptor != null) {
-            return BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
+            return BindingContextUtils.descriptorToDeclarations(bindingContext, descriptor);
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Nullable
