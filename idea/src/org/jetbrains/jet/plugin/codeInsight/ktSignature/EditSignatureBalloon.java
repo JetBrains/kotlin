@@ -164,18 +164,6 @@ class EditSignatureBalloon implements Disposable {
         editorFactory.releaseEditor(editor);
     }
 
-    private void deleteAndHide() {
-        new WriteCommandAction(project) {
-            @Override
-            protected void run(Result result) throws Throwable {
-                ExternalAnnotationsManager.getInstance(project).deannotate(method, KOTLIN_SIGNATURE_ANNOTATION);
-            }
-        }.execute();
-        refreshMarkers(project);
-
-        balloon.hide();
-    }
-
     private void saveAndHide() {
         balloon.hide();
 
@@ -243,10 +231,8 @@ class EditSignatureBalloon implements Disposable {
                         return true;
                     }
                 };
-                JButton deleteButton = new JButton("Delete");
 
                 toolbar.add(saveButton);
-                toolbar.add(deleteButton);
                 add(toolbar, BorderLayout.SOUTH);
 
                 ActionListener saveAndHideListener = new ActionListener() {
@@ -257,12 +243,6 @@ class EditSignatureBalloon implements Disposable {
                 };
 
                 saveButton.addActionListener(saveAndHideListener);
-                deleteButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        deleteAndHide();
-                    }
-                });
                 registerKeyboardAction(saveAndHideListener, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK),
                                        JComponent.WHEN_IN_FOCUSED_WINDOW);
             }
