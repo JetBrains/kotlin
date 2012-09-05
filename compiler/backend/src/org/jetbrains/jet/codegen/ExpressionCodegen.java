@@ -2567,7 +2567,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     public void generateStringBuilderConstructor() {
-        Type type = JAVA_STRING_BUILDER_TYPE;
+        Type type = getType(StringBuilder.class);
         v.anew(type);
         v.dup();
         Method method = new Method("<init>", Type.VOID_TYPE, new Type[0]);
@@ -2596,7 +2596,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     public void invokeAppendMethod(Type exprType) {
-        Method appendDescriptor = new Method("append", JAVA_STRING_BUILDER_TYPE,
+        Method appendDescriptor = new Method("append", getType(StringBuilder.class),
                                              new Type[] {exprType.getSort() == Type.OBJECT ? OBJECT_TYPE : exprType});
         v.invokevirtual("java/lang/StringBuilder", "append", appendDescriptor.getDescriptor());
     }

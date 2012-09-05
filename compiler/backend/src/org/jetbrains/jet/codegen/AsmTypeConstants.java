@@ -16,29 +16,20 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.google.common.collect.Maps;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 
-import java.lang.annotation.Annotation;
-import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author alex.tkachman
  */
 public class AsmTypeConstants {
     public static final Type OBJECT_TYPE = Type.getType(Object.class);
-    public static final Type JAVA_NUMBER_TYPE = Type.getType(Number.class);
-    public static final Type JAVA_STRING_BUILDER_TYPE = Type.getType(StringBuilder.class);
     public static final Type JAVA_STRING_TYPE = Type.getType(String.class);
     public static final Type JAVA_THROWABLE_TYPE = Type.getType(Throwable.class);
-    public static final Type JAVA_CLASS_TYPE = Type.getType(Class.class);
-    public static final Type JAVA_BOOLEAN_TYPE = Type.getType(Boolean.class);
     public static final Type JAVA_ARRAY_GENERIC_TYPE = Type.getType(Object[].class);
-    public static final Type JAVA_CHAR_SEQUENCE_TYPE = Type.getType(CharSequence.class);
-    public static final Type JAVA_COMPARABLE_TYPE = Type.getType(Comparable.class);
-    public static final Type JAVA_ENUM_TYPE = Type.getType(Enum.class);
-    public static final Type JAVA_ANNOTATION_TYPE = Type.getType(Annotation.class);
-    public static final Type JAVA_ITERATOR_TYPE = Type.getType(Iterator.class);
-    public static final Type JAVA_ITERABLE_TYPE = Type.getType(Iterable.class);
 
     public static final Type JET_NOTHING_TYPE = Type.getObjectType("jet/Nothing");
     public static final Type JET_TUPLE0_TYPE = Type.getObjectType("jet/Tuple0");
@@ -55,6 +46,17 @@ public class AsmTypeConstants {
     public static final Type JET_SHARED_CHAR_TYPE = Type.getObjectType("jet/runtime/SharedVar$Char");
     public static final Type JET_SHARED_LONG_TYPE = Type.getObjectType("jet/runtime/SharedVar$Long");
     public static final Type JET_SHARED_BOOLEAN_TYPE = Type.getObjectType("jet/runtime/SharedVar$Boolean");
+
+    private static final Map<Class<?>, Type> TYPES_MAP = Maps.newHashMap();
+
+    public static Type getType(@NotNull Class<?> javaClass) {
+        Type type = TYPES_MAP.get(javaClass);
+        if (type == null) {
+            type = Type.getType(javaClass);
+            TYPES_MAP.put(javaClass, type);
+        }
+        return type;
+    }
 
     private AsmTypeConstants() {
     }

@@ -121,6 +121,10 @@ public class KotlinToJavaTypesMap {
         return asmTypes.get(className);
     }
 
+    private void register(@NotNull ClassDescriptor kotlinDescriptor, @NotNull Class<?> javaClass) {
+        register(kotlinDescriptor, AsmTypeConstants.getType(javaClass));
+    }
+
     private void register(@NotNull ClassDescriptor kotlinDescriptor, @NotNull Type javaType) {
         FqNameUnsafe fqName = DescriptorUtils.getFQName(kotlinDescriptor);
         ClassName className = new ClassName(fqName.toSafe(), kotlinDescriptor.getDefaultType().getArguments().size());

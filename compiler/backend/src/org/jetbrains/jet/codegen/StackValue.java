@@ -293,7 +293,7 @@ public abstract class StackValue {
                     v.checkcast(JvmPrimitiveType.CHAR.getWrapper().getAsmType());
                 }
                 else {
-                    v.checkcast(JAVA_NUMBER_TYPE);
+                    v.checkcast(getType(Number.class));
                 }
             }
             unbox(toType, v);
@@ -482,7 +482,7 @@ public abstract class StackValue {
                 putTuple0Instance(v);
                 return;
             }
-            if (type != Type.BOOLEAN_TYPE && !type.equals(OBJECT_TYPE) && !type.equals(JAVA_BOOLEAN_TYPE)) {
+            if (type != Type.BOOLEAN_TYPE && !type.equals(OBJECT_TYPE) && !type.equals(getType(Boolean.class))) {
                 throw new UnsupportedOperationException("don't know how to put a compare as a non-boolean type " + type);
             }
             putAsBoolean(v);
@@ -571,7 +571,7 @@ public abstract class StackValue {
                 myOperand.put(type, v);    // the operand will remove itself from the stack if needed
                 return;
             }
-            if (type != Type.BOOLEAN_TYPE && !type.equals(OBJECT_TYPE) && !type.equals(JAVA_BOOLEAN_TYPE)) {
+            if (type != Type.BOOLEAN_TYPE && !type.equals(OBJECT_TYPE) && !type.equals(getType(Boolean.class))) {
                 throw new UnsupportedOperationException("don't know how to put a compare as a non-boolean type");
             }
             putAsBoolean(v);

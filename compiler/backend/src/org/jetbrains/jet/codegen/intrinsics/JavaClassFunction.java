@@ -61,6 +61,6 @@ public class JavaClassFunction implements IntrinsicMethod {
         else {
             v.aconst(type);
         }
-        return StackValue.onStack(AsmTypeConstants.JAVA_CLASS_TYPE);
+        return StackValue.onStack(AsmTypeConstants.getType(Class.class));
     }
 }
