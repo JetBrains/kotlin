@@ -68,6 +68,10 @@ public class OptimizeImportsTest extends LightCodeInsightTestCase {
         doTest();
     }
 
+    public void testKt2709() throws Exception {
+        doTest();
+    }
+
     public void doTest() throws Exception {
         configureByFile(fileName());
         invokeFormatFile();

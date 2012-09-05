@@ -163,8 +163,19 @@ public class JetPsiUtil {
         if (parent instanceof JetFile) {
             firstPart = getFQName((JetFile) parent);
         }
-        else if (parent instanceof JetNamedFunction || parent instanceof JetClass || parent instanceof JetObjectDeclaration) {
+        else if (parent instanceof JetNamedFunction || parent instanceof JetClass) {
             firstPart = getFQName((JetNamedDeclaration) parent);
+        } 
+        else if (parent instanceof JetObjectDeclaration) {
+            if (parent.getParent() instanceof JetClassObject) {
+                JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(parent, JetClassOrObject.class);
+                if (classOrObject != null) {
+                    firstPart = getFQName((JetNamedDeclaration) classOrObject);
+                }
+            }
+            else {
+                firstPart = getFQName((JetNamedDeclaration) parent);
+            }
         }
 
         if (firstPart == null) {
