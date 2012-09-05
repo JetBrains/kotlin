@@ -62,6 +62,7 @@ class EditSignatureBalloon {
     private final PsiMethod method;
     private final Project project;
     private final String previousSignature;
+    private final MyPanel panel;
     private final Balloon balloon;
     private final boolean editable;
 
@@ -72,11 +73,11 @@ class EditSignatureBalloon {
         this.previousSignature = previousSignature;
 
         editor = createEditor();
-        JPanel panel = createBalloonPanel();
-        balloon = createBalloon(panel);
+        panel = new MyPanel();
+        balloon = createBalloon();
     }
 
-    private Balloon createBalloon(JPanel panel) {
+    private Balloon createBalloon() {
         Balloon balloon = JBPopupFactory.getInstance().createDialogBalloonBuilder(panel, "Kotlin signature")
                 .setHideOnClickOutside(true)
                 .setHideOnKeyOutside(true)
@@ -89,58 +90,6 @@ class EditSignatureBalloon {
             }
         });
         return balloon;
-    }
-
-    private JPanel createBalloonPanel() {
-        JPanel panel = new JPanel(new BorderLayout()) {
-            @Override
-            public Dimension getPreferredSize() {
-                Dimension preferredSize = super.getPreferredSize();
-                return new Dimension((int) (preferredSize.width * 1.4), preferredSize.height);
-            }
-        };
-        panel.add(editor.getComponent(), BorderLayout.CENTER);
-
-        if (editable) {
-            JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-            JButton saveButton = new JButton("Save") {
-                @Override
-                public boolean isDefaultButton() {
-                    return true;
-                }
-            };
-            JButton deleteButton = new JButton("Delete");
-
-            toolbar.add(saveButton);
-            toolbar.add(deleteButton);
-            panel.add(toolbar, BorderLayout.SOUTH);
-
-            ActionListener saveAndHideListener = new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    saveAndHide();
-                }
-            };
-
-            saveButton.addActionListener(saveAndHideListener);
-            deleteButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    deleteAndHide();
-                }
-            });
-            panel.registerKeyboardAction(saveAndHideListener, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK),
-                                         JComponent.WHEN_IN_FOCUSED_WINDOW);
-        }
-
-        panel.registerKeyboardAction(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                balloon.hide();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-        return panel;
     }
 
     private Editor createEditor() {
@@ -251,6 +200,58 @@ class EditSignatureBalloon {
             boolean editable = ExternalAnnotationsManager.getInstance(element.getProject())
                     .isExternalAnnotationWritable(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
             new EditSignatureBalloon(annotationOwner, getKotlinSignature(annotation), editable).show(point, editor);
+        }
+    }
+
+    private class MyPanel extends JPanel {
+        @Override
+        public Dimension getPreferredSize() {
+            Dimension preferredSize = super.getPreferredSize();
+            return new Dimension((int) (preferredSize.width * 1.4), preferredSize.height);
+        }
+
+        MyPanel() {
+            super(new BorderLayout());
+            add(editor.getComponent(), BorderLayout.CENTER);
+
+            if (editable) {
+                JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+                JButton saveButton = new JButton("Save") {
+                    @Override
+                    public boolean isDefaultButton() {
+                        return true;
+                    }
+                };
+                JButton deleteButton = new JButton("Delete");
+
+                toolbar.add(saveButton);
+                toolbar.add(deleteButton);
+                add(toolbar, BorderLayout.SOUTH);
+
+                ActionListener saveAndHideListener = new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        saveAndHide();
+                    }
+                };
+
+                saveButton.addActionListener(saveAndHideListener);
+                deleteButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        deleteAndHide();
+                    }
+                });
+                registerKeyboardAction(saveAndHideListener, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK),
+                                       JComponent.WHEN_IN_FOCUSED_WINDOW);
+            }
+
+            registerKeyboardAction(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    balloon.hide();
+                }
+            }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
         }
     }
 }
