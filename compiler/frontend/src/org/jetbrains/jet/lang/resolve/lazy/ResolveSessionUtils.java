@@ -24,6 +24,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.di.InjectorForBodyResolve;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
@@ -136,7 +137,7 @@ public class ResolveSessionUtils {
 
     private static void propertyAdditionalResolve(final ResolveSession resolveSession, final JetProperty jetProperty, DelegatingBindingTrace trace, JetFile file) {
         EmptyBodyResolveContext bodyResolveContext = new EmptyBodyResolveContext();
-        BodyResolver bodyResolver = createBodyResolver(trace, file, bodyResolveContext);
+        BodyResolver bodyResolver = createBodyResolver(trace, file, bodyResolveContext, resolveSession.getModuleConfiguration());
         PropertyDescriptor descriptor = (PropertyDescriptor) resolveSession.resolveToDescriptor(jetProperty);
 
         JetExpression propertyInitializer = jetProperty.getInitializer();
@@ -161,7 +162,7 @@ public class ResolveSessionUtils {
             DelegatingBindingTrace trace,
             JetFile file
     ) {
-        BodyResolver bodyResolver = createBodyResolver(trace, file);
+        BodyResolver bodyResolver = createBodyResolver(trace, file, resolveSession.getModuleConfiguration());
         JetScope scope = resolveSession.getResolutionScope(namedFunction);
         FunctionDescriptor functionDescriptor = (FunctionDescriptor) resolveSession.resolveToDescriptor(namedFunction);
         bodyResolver.resolveFunctionBody(trace, namedFunction, functionDescriptor, scope);
@@ -173,7 +174,7 @@ public class ResolveSessionUtils {
             DelegatingBindingTrace trace,
             JetFile file
     ) {
-        BodyResolver bodyResolver = createBodyResolver(trace, file);
+        BodyResolver bodyResolver = createBodyResolver(trace, file, resolveSession.getModuleConfiguration());
         JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(classInitializer, JetClassOrObject.class);
         LazyClassDescriptor classOrObjectDescriptor = (LazyClassDescriptor) resolveSession.resolveToDescriptor(classOrObject);
         bodyResolver.resolveAnonymousInitializers(classOrObject, classOrObjectDescriptor.getUnsubstitutedPrimaryConstructor(),
@@ -182,15 +183,16 @@ public class ResolveSessionUtils {
         return true;
     }
 
-    private static BodyResolver createBodyResolver(DelegatingBindingTrace trace, JetFile file, EmptyBodyResolveContext bodyResolveContext) {
+    private static BodyResolver createBodyResolver(DelegatingBindingTrace trace, JetFile file, EmptyBodyResolveContext bodyResolveContext,
+            ModuleConfiguration moduleConfiguration) {
         TopDownAnalysisParameters parameters = new TopDownAnalysisParameters(
                 Predicates.<PsiFile>alwaysTrue(), false, true, Collections.<AnalyzerScriptParameter>emptyList());
-        InjectorForBodyResolve bodyResolve = new InjectorForBodyResolve(file.getProject(), parameters, trace, bodyResolveContext);
+        InjectorForBodyResolve bodyResolve = new InjectorForBodyResolve(file.getProject(), parameters, trace, bodyResolveContext, moduleConfiguration);
         return bodyResolve.getBodyResolver();
     }
 
-    private static BodyResolver createBodyResolver(DelegatingBindingTrace trace, JetFile file) {
-        return createBodyResolver(trace, file, new EmptyBodyResolveContext());
+    private static BodyResolver createBodyResolver(DelegatingBindingTrace trace, JetFile file, ModuleConfiguration moduleConfiguration) {
+        return createBodyResolver(trace, file, new EmptyBodyResolveContext(), moduleConfiguration);
     }
 
     private static JetScope getExpressionResolutionScope(@NotNull ResolveSession resolveSession, @NotNull JetExpression expression) {

@@ -61,7 +61,7 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
     public void testCustomAnnotationWithKotlinEnum() throws IOException {
         File testFile = new File(PATH + "kotlinEnum.kt");
 
-        LoadDescriptorUtil.compileKotlinToDirAndGetAnalyzeExhaust(testFile, tmpdir, myTestRootDisposable);
+        LoadDescriptorUtil.compileKotlinToDirAndGetAnalyzeExhaust(testFile, tmpdir, myTestRootDisposable, ConfigurationKind.JDK_ONLY);
 
         StringBuilder builder = new StringBuilder(tmpdir.getAbsolutePath());
         builder.append(File.pathSeparator);

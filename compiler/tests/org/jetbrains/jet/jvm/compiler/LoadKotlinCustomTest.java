@@ -17,6 +17,7 @@
 package org.jetbrains.jet.jvm.compiler;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -45,14 +46,14 @@ public final class LoadKotlinCustomTest extends TestCaseWithTmpdir {
     private void loadDescriptorsFromCompiledAndCompareWithTxt(@NotNull File expectedFile, @NotNull File kotlinFile)
             throws Exception {
         NamespaceDescriptor namespaceFromClass =
-                compileKotlinAndLoadTestNamespaceDescriptorFromBinary(kotlinFile, tmpdir, myTestRootDisposable);
+                compileKotlinAndLoadTestNamespaceDescriptorFromBinary(kotlinFile, tmpdir, myTestRootDisposable, ConfigurationKind.JDK_ONLY);
 
         compareNamespaces(namespaceFromClass, namespaceFromClass, DONT_INCLUDE_METHODS_OF_OBJECT, expectedFile);
     }
 
     private void loadDescriptorsFromSourceAndCompareWithTxt(@NotNull File expectedFile, @NotNull File kotlinFile)
             throws Exception {
-        AnalyzeExhaust exhaust = compileKotlinToDirAndGetAnalyzeExhaust(kotlinFile, tmpdir, getTestRootDisposable());
+        AnalyzeExhaust exhaust = compileKotlinToDirAndGetAnalyzeExhaust(kotlinFile, tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
         NamespaceDescriptor namespaceFromSource = exhaust.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
                                                                                   TEST_PACKAGE_FQNAME);
         assert namespaceFromSource != null;
