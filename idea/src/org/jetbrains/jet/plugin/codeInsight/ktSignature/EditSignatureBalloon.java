@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.codeInsight.ktSignature;
 
 import com.intellij.codeInsight.ExternalAnnotationsManager;
-import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -28,16 +27,17 @@ import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiMethod;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +53,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
-import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUtil.*;
+import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUtil.KOTLIN_SIGNATURE_ANNOTATION;
+import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUtil.signatureToNameValuePairs;
 
 /**
 * @author Evgeny Gerashchenko
@@ -181,37 +182,6 @@ class EditSignatureBalloon implements Disposable {
         }.execute();
     }
 
-    static void invokeEditSignature(@NotNull PsiMethod element, @NotNull Editor editor, @Nullable Point point) {
-        PsiAnnotation annotation = findKotlinSignatureAnnotation(element);
-        assert annotation != null;
-        if (annotation.getContainingFile() == element.getContainingFile()) {
-            // not external, go to
-            for (PsiNameValuePair pair : annotation.getParameterList().getAttributes()) {
-                if (pair.getName() == null || "value".equals(pair.getName())) {
-                    PsiAnnotationMemberValue value = pair.getValue();
-                    if (value != null) {
-                        VirtualFile virtualFile = value.getContainingFile().getVirtualFile();
-                        assert virtualFile != null;
-
-                        PsiElement firstChild = value.getFirstChild();
-                        if (firstChild != null && firstChild.getNode().getElementType() == JavaTokenType.STRING_LITERAL) {
-                            new OpenFileDescriptor(value.getProject(), virtualFile, value.getTextOffset() + 1).navigate(true);
-                        }
-                        else {
-                            NavigationUtil.activateFileWithPsiElement(value);
-                        }
-                    }
-                }
-            }
-        }
-        else {
-            PsiMethod annotationOwner = getAnnotationOwner(element);
-            boolean editable = ExternalAnnotationsManager.getInstance(element.getProject())
-                    .isExternalAnnotationWritable(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
-            new EditSignatureBalloon(annotationOwner, getKotlinSignature(annotation), editable).show(point, editor, element);
-        }
-    }
-    
     private static boolean hasErrors(@NotNull JetFile file) {
         return AnalyzingUtils.getSyntaxErrorRanges(file).isEmpty();
     }

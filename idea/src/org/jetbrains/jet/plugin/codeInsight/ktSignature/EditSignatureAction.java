@@ -16,16 +16,22 @@
 
 package org.jetbrains.jet.plugin.codeInsight.ktSignature;
 
+import com.intellij.codeInsight.ExternalAnnotationsManager;
+import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiMethod;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+
+import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUtil.*;
 
 /**
  * @author Evgeny Gerashchenko
@@ -47,6 +53,37 @@ public class EditSignatureAction extends AnAction {
     public void actionPerformed(@NotNull DataContext dataContext, @Nullable Point point) {
         Editor editor = PlatformDataKeys.EDITOR.getData(dataContext);
         assert editor != null;
-        EditSignatureBalloon.invokeEditSignature(annotationOwner, editor, point);
+        invokeEditSignature(annotationOwner, editor, point);
+    }
+
+    static void invokeEditSignature(@NotNull PsiMethod element, @NotNull Editor editor, @Nullable Point point) {
+        PsiAnnotation annotation = findKotlinSignatureAnnotation(element);
+        assert annotation != null;
+        if (annotation.getContainingFile() == element.getContainingFile()) {
+            // not external, go to
+            for (PsiNameValuePair pair : annotation.getParameterList().getAttributes()) {
+                if (pair.getName() == null || "value".equals(pair.getName())) {
+                    PsiAnnotationMemberValue value = pair.getValue();
+                    if (value != null) {
+                        VirtualFile virtualFile = value.getContainingFile().getVirtualFile();
+                        assert virtualFile != null;
+
+                        PsiElement firstChild = value.getFirstChild();
+                        if (firstChild != null && firstChild.getNode().getElementType() == JavaTokenType.STRING_LITERAL) {
+                            new OpenFileDescriptor(value.getProject(), virtualFile, value.getTextOffset() + 1).navigate(true);
+                        }
+                        else {
+                            NavigationUtil.activateFileWithPsiElement(value);
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            PsiMethod annotationOwner = getAnnotationOwner(element);
+            boolean editable = ExternalAnnotationsManager.getInstance(element.getProject())
+                    .isExternalAnnotationWritable(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
+            new EditSignatureBalloon(annotationOwner, getKotlinSignature(annotation), editable).show(point, editor, element);
+        }
     }
 }

@@ -112,7 +112,7 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements
                         @Override
                         public void run() {
                             refreshMarkers(project);
-                            EditSignatureBalloon.invokeEditSignature(method, editor, null);
+                            EditSignatureAction.invokeEditSignature(method, editor, null);
                         }
                     }, ModalityState.NON_MODAL);
                 }
