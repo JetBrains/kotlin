@@ -48,10 +48,6 @@ public final class PatternMatchingTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-    public void testWhenNotValue() throws Exception {
-        fooBoxTest();
-    }
-
     public void testWhenValueOrType() throws Exception {
         fooBoxTest();
     }
