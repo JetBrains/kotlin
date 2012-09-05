@@ -108,6 +108,7 @@ class EditSignatureBalloon {
         settings.setRightMarginShown(false);
         settings.setAdditionalPageAtBottom(false);
         settings.setAdditionalLinesCount(2);
+        settings.setAdditionalColumnsCount(12);
 
         assert editor instanceof EditorEx;
         ((EditorEx)editor).setEmbeddedIntoDialogWrapper(true);
@@ -204,12 +205,6 @@ class EditSignatureBalloon {
     }
 
     private class MyPanel extends JPanel {
-        @Override
-        public Dimension getPreferredSize() {
-            Dimension preferredSize = super.getPreferredSize();
-            return new Dimension((int) (preferredSize.width * 1.4), preferredSize.height);
-        }
-
         MyPanel() {
             super(new BorderLayout());
             add(editor.getComponent(), BorderLayout.CENTER);
