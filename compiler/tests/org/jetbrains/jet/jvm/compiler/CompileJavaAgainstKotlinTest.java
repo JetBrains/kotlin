@@ -18,6 +18,7 @@ package org.jetbrains.jet.jvm.compiler;
 
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
@@ -56,7 +57,7 @@ public class CompileJavaAgainstKotlinTest extends TestCaseWithTmpdir {
 
     @Override
     protected void runTest() throws Throwable {
-        compileKotlinToDirAndGetAnalyzeExhaust(ktFile, tmpdir, getTestRootDisposable());
+        compileKotlinToDirAndGetAnalyzeExhaust(ktFile, tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
         List<String> options = Arrays.asList(
                 "-classpath", tmpdir.getPath() + System.getProperty("path.separator") + "out/production/stdlib",

@@ -19,6 +19,7 @@ package org.jetbrains.jet.jvm.compiler;
 import junit.framework.Assert;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -54,13 +55,13 @@ public final class LoadCompiledKotlinTest extends TestCaseWithTmpdir {
 
     @Override
     public void runTest() throws Exception {
-        AnalyzeExhaust exhaust = compileKotlinToDirAndGetAnalyzeExhaust(testFile, tmpdir, getTestRootDisposable());
+        AnalyzeExhaust exhaust = compileKotlinToDirAndGetAnalyzeExhaust(testFile, tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
         NamespaceDescriptor namespaceFromSource = exhaust.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
                                                                                   TEST_PACKAGE_FQNAME);
         assert namespaceFromSource != null;
         Assert.assertEquals("test", namespaceFromSource.getName().getName());
-        NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.loadTestNamespaceFromBinaries(tmpdir, getTestRootDisposable());
+        NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.loadTestNamespaceFromBinaries(tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
         compareNamespaces(namespaceFromSource, namespaceFromClass, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
     }
 

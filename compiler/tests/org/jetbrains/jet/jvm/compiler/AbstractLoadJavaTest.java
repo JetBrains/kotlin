@@ -17,6 +17,7 @@
 package org.jetbrains.jet.jvm.compiler;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.generator.SimpleTestClassModel;
@@ -46,9 +47,9 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File javaFile = new File(javaFileName);
         File ktFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".kt"));
         File txtFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".txt"));
-        NamespaceDescriptor nsa = analyzeKotlinAndLoadTestNamespace(ktFile, myTestRootDisposable);
+        NamespaceDescriptor nsa = analyzeKotlinAndLoadTestNamespace(ktFile, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
         NamespaceDescriptor nsb = compileJavaAndLoadTestNamespaceFromBinary(Collections.singletonList(javaFile),
-                                                                            tmpdir, myTestRootDisposable);
+                                                                            tmpdir, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
         compareNamespaces(nsa, nsb, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
     }
 

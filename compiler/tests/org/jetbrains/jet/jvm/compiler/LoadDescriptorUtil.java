@@ -69,20 +69,22 @@ public final class LoadDescriptorUtil {
     public static NamespaceDescriptor compileKotlinAndLoadTestNamespaceDescriptorFromBinary(
             @NotNull File kotlinFile,
             @NotNull File outDir,
-            @NotNull Disposable disposable
+            @NotNull Disposable disposable,
+            @NotNull ConfigurationKind configurationKind
     )
             throws IOException {
-        compileKotlinToDirAndGetAnalyzeExhaust(kotlinFile, outDir, disposable);
-        return loadTestNamespaceFromBinaries(outDir, disposable);
+        compileKotlinToDirAndGetAnalyzeExhaust(kotlinFile, outDir, disposable, configurationKind);
+        return loadTestNamespaceFromBinaries(outDir, disposable, ConfigurationKind.JDK_ONLY);
     }
 
     @NotNull
     public static AnalyzeExhaust compileKotlinToDirAndGetAnalyzeExhaust(
             @NotNull File kotlinFile,
             @NotNull File outDir,
-            @NotNull Disposable disposable
+            @NotNull Disposable disposable,
+            @NotNull ConfigurationKind configurationKind
     ) throws IOException {
-        JetFileAndExhaust fileAndExhaust = JetFileAndExhaust.createJetFileAndAnalyze(kotlinFile, disposable);
+        JetFileAndExhaust fileAndExhaust = JetFileAndExhaust.createJetFileAndAnalyze(kotlinFile, disposable, configurationKind);
         GenerationState state = GenerationUtils.compileFilesGetGenerationState(fileAndExhaust.getJetFile().getProject(), fileAndExhaust.getExhaust(), Collections.singletonList(
                 fileAndExhaust.getJetFile()));
         ClassFileFactory classFileFactory = state.getFactory();
@@ -91,11 +93,11 @@ public final class LoadDescriptorUtil {
     }
 
     @NotNull
-    public static NamespaceDescriptor loadTestNamespaceFromBinaries(@NotNull File outDir, @NotNull Disposable disposable) {
+    public static NamespaceDescriptor loadTestNamespaceFromBinaries(@NotNull File outDir, @NotNull Disposable disposable, @NotNull ConfigurationKind configurationKind) {
         Disposer.dispose(disposable);
 
         CompilerConfiguration configuration = CompileCompilerDependenciesTest.compilerConfigurationForTests(
-                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), outDir,
+                configurationKind, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), outDir,
                 ForTestCompileRuntime.runtimeJarForTests());
         JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(disposable, configuration);
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(BuiltinsScopeExtensionMode.ALL,
@@ -111,11 +113,12 @@ public final class LoadDescriptorUtil {
     public static NamespaceDescriptor compileJavaAndLoadTestNamespaceFromBinary(
             @NotNull Collection<File> javaFiles,
             @NotNull File outDir,
-            @NotNull Disposable disposable
+            @NotNull Disposable disposable,
+            @NotNull ConfigurationKind configurationKind
     )
             throws IOException {
         compileJavaWithAnnotationsJar(javaFiles, outDir);
-        return loadTestNamespaceFromBinaries(outDir, disposable);
+        return loadTestNamespaceFromBinaries(outDir, disposable, configurationKind);
     }
 
     private static void compileJavaWithAnnotationsJar(@NotNull Collection<File> javaFiles, @NotNull File outDir) throws IOException {
@@ -127,8 +130,8 @@ public final class LoadDescriptorUtil {
     }
 
     @NotNull
-    public static NamespaceDescriptor analyzeKotlinAndLoadTestNamespace(@NotNull File ktFile, @NotNull Disposable disposable) throws Exception {
-        JetFileAndExhaust fileAndExhaust = JetFileAndExhaust.createJetFileAndAnalyze(ktFile, disposable);
+    public static NamespaceDescriptor analyzeKotlinAndLoadTestNamespace(@NotNull File ktFile, @NotNull Disposable disposable, @NotNull ConfigurationKind configurationKind) throws Exception {
+        JetFileAndExhaust fileAndExhaust = JetFileAndExhaust.createJetFileAndAnalyze(ktFile, disposable, configurationKind);
         //noinspection ConstantConditions
         return fileAndExhaust.getExhaust().getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, TEST_PACKAGE_FQNAME);
     }
@@ -136,9 +139,9 @@ public final class LoadDescriptorUtil {
     private static class JetFileAndExhaust {
 
         @NotNull
-        public static JetFileAndExhaust createJetFileAndAnalyze(@NotNull File kotlinFile, @NotNull Disposable disposable)
+        public static JetFileAndExhaust createJetFileAndAnalyze(@NotNull File kotlinFile, @NotNull Disposable disposable, @NotNull ConfigurationKind configurationKind)
                 throws IOException {
-            JetCoreEnvironment jetCoreEnvironment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, ConfigurationKind.JDK_ONLY);
+            JetCoreEnvironment jetCoreEnvironment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, configurationKind);
             JetFile jetFile = createFile(jetCoreEnvironment.getProject(), FileUtil.loadFile(kotlinFile, true));
             AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
                     jetFile, Collections.<AnalyzerScriptParameter>emptyList(), BuiltinsScopeExtensionMode.ALL);

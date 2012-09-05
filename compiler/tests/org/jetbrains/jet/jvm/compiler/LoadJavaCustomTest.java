@@ -56,7 +56,7 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
         });
         File expected = new File(expectedFileName);
         File tmpDir = JetTestUtils.tmpDir(expected.getName());
-        NamespaceDescriptor javaNamespaceDescriptor = compileJavaAndLoadTestNamespaceFromBinary(files, tmpDir, getTestRootDisposable());
+        NamespaceDescriptor javaNamespaceDescriptor = compileJavaAndLoadTestNamespaceFromBinary(files, tmpDir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
         //NOTE: comparing namespace to file (hack)
         NamespaceComparator.compareNamespaces(javaNamespaceDescriptor, javaNamespaceDescriptor, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, expected);
     }
