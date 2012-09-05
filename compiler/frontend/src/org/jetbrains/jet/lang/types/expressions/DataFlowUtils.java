@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
@@ -45,7 +44,7 @@ public class DataFlowUtils {
     }
 
     @NotNull
-    public static DataFlowInfo extractDataFlowInfoFromCondition(@Nullable JetExpression condition, final boolean conditionValue, @Nullable final WritableScope scopeToExtend, final ExpressionTypingContext context) {
+    public static DataFlowInfo extractDataFlowInfoFromCondition(@Nullable JetExpression condition, final boolean conditionValue, final ExpressionTypingContext context) {
         if (condition == null) return context.dataFlowInfo;
         final Ref<DataFlowInfo> result = new Ref<DataFlowInfo>(null);
         condition.accept(new JetVisitorVoid() {
@@ -60,18 +59,11 @@ public class DataFlowUtils {
             public void visitBinaryExpression(JetBinaryExpression expression) {
                 IElementType operationToken = expression.getOperationToken();
                 if (OperatorConventions.BOOLEAN_OPERATIONS.containsKey(operationToken)) {
-                    WritableScope actualScopeToExtend;
-                    if (operationToken == JetTokens.ANDAND) {
-                        actualScopeToExtend = conditionValue ? scopeToExtend : null;
-                    }
-                    else {
-                        actualScopeToExtend = conditionValue ? null : scopeToExtend;
-                    }
 
-                    DataFlowInfo dataFlowInfo = extractDataFlowInfoFromCondition(expression.getLeft(), conditionValue, actualScopeToExtend, context);
+                    DataFlowInfo dataFlowInfo = extractDataFlowInfoFromCondition(expression.getLeft(), conditionValue, context);
                     JetExpression expressionRight = expression.getRight();
                     if (expressionRight != null) {
-                        DataFlowInfo rightInfo = extractDataFlowInfoFromCondition(expressionRight, conditionValue, actualScopeToExtend, context);
+                        DataFlowInfo rightInfo = extractDataFlowInfoFromCondition(expressionRight, conditionValue, context);
                         DataFlowInfo.CompositionOperator operator;
                         if (operationToken == JetTokens.ANDAND) {
                             operator = conditionValue ? DataFlowInfo.AND : DataFlowInfo.OR;
@@ -122,7 +114,7 @@ public class DataFlowUtils {
                 if (operationTokenType == JetTokens.EXCL) {
                     JetExpression baseExpression = expression.getBaseExpression();
                     if (baseExpression != null) {
-                        result.set(extractDataFlowInfoFromCondition(baseExpression, !conditionValue, scopeToExtend, context));
+                        result.set(extractDataFlowInfoFromCondition(baseExpression, !conditionValue, context));
                     }
                 }
             }

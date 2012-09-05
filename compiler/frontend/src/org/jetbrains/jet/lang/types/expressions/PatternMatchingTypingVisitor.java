@@ -235,8 +235,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.report(TYPE_MISMATCH_IN_CONDITION.on(expression, type));
             }
             else {
-                DataFlowInfo ifInfo = DataFlowUtils.extractDataFlowInfoFromCondition(expression, true, null, context);
-                DataFlowInfo elseInfo = DataFlowUtils.extractDataFlowInfoFromCondition(expression, false, null, context);
+                DataFlowInfo ifInfo = DataFlowUtils.extractDataFlowInfoFromCondition(expression, true, context);
+                DataFlowInfo elseInfo = DataFlowUtils.extractDataFlowInfoFromCondition(expression, false, context);
                 return new DataFlowInfos(ifInfo, elseInfo);
             }
             return noChange(context);

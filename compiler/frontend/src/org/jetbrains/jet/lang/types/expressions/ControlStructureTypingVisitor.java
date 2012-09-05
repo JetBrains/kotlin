@@ -92,8 +92,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         WritableScopeImpl thenScope = newWritableScopeImpl(context, "Then scope");
         WritableScopeImpl elseScope = newWritableScopeImpl(context, "Else scope");
-        DataFlowInfo thenInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, thenScope, context);
-        DataFlowInfo elseInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, null, context);
+        DataFlowInfo thenInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, context);
+        DataFlowInfo elseInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, context);
 
         if (elseBranch == null) {
             if (thenBranch != null) {
@@ -162,12 +162,12 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetExpression body = expression.getBody();
         if (body != null) {
             WritableScopeImpl scopeToExtend = newWritableScopeImpl(context, "Scope extended in while's condition");
-            DataFlowInfo conditionInfo = condition == null ? context.dataFlowInfo : DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, scopeToExtend, context);
+            DataFlowInfo conditionInfo = condition == null ? context.dataFlowInfo : DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, context);
             context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(scopeToExtend, Collections.singletonList(body), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(conditionInfo), context.trace);
         }
         DataFlowInfo dataFlowInfo;
         if (!containsBreak(expression, context)) {
-            dataFlowInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, null, context);
+            dataFlowInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, context);
         }
         else {
             dataFlowInfo = context.dataFlowInfo;
@@ -237,7 +237,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         checkCondition(conditionScope, condition, context);
         DataFlowInfo dataFlowInfo;
         if (!containsBreak(expression, context)) {
-            dataFlowInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, null, context);
+            dataFlowInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, context);
         }
         else {
             dataFlowInfo = context.dataFlowInfo;
