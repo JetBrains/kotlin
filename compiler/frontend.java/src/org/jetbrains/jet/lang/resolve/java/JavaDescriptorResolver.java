@@ -1394,7 +1394,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
     
     private Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(ResolverScopeData scopeData, Name methodName) {
-        Set<SimpleFunctionDescriptor> r = new HashSet<SimpleFunctionDescriptor>();
+        Set<SimpleFunctionDescriptor> r = Sets.newLinkedHashSet();
         for (JetType supertype : getSupertypes(scopeData)) {
             for (FunctionDescriptor function : supertype.getMemberScope().getFunctions(methodName)) {
                 r.add((SimpleFunctionDescriptor) function);

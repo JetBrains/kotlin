@@ -407,7 +407,7 @@ public class OverrideResolver {
         Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> overriddenDeclarationsByDirectParent = collectOverriddenDeclarations(directOverridden);
 
         List<CallableMemberDescriptor> allOverriddenDeclarations = ContainerUtil.flatten(overriddenDeclarationsByDirectParent.values());
-        Set<CallableMemberDescriptor> allFilteredOverriddenDeclarations = OverridingUtil.filterOverrides(Sets.newHashSet(allOverriddenDeclarations));
+        Set<CallableMemberDescriptor> allFilteredOverriddenDeclarations = OverridingUtil.filterOverrides(Sets.newLinkedHashSet(allOverriddenDeclarations));
 
         Set<CallableMemberDescriptor> relevantDirectlyOverridden =
                 getRelevantDirectlyOverridden(overriddenDeclarationsByDirectParent, allFilteredOverriddenDeclarations);
@@ -479,7 +479,7 @@ public class OverrideResolver {
         are overridden by some other function and corresponding directly overridden descriptor is not relevant.
         */
 
-        Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> relevantOverriddenByParent = Maps.newHashMap(overriddenByParent);
+        Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> relevantOverriddenByParent = Maps.newLinkedHashMap(overriddenByParent);
 
         for (Map.Entry<CallableMemberDescriptor, Set<CallableMemberDescriptor>> entry : overriddenByParent.entrySet()) {
             CallableMemberDescriptor directlyOverridden = entry.getKey();
@@ -508,11 +508,11 @@ public class OverrideResolver {
     private static Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> collectOverriddenDeclarations(
             @NotNull Collection<? extends CallableMemberDescriptor> directOverriddenDescriptors
     ) {
-        Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> overriddenDeclarationsByDirectParent = Maps.newHashMap();
+        Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> overriddenDeclarationsByDirectParent = Maps.newLinkedHashMap();
         for (CallableMemberDescriptor descriptor : directOverriddenDescriptors) {
             Collection<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(descriptor);
-            Set<CallableMemberDescriptor> filteredOverrides = OverridingUtil.filterOverrides(Sets.newHashSet(overriddenDeclarations));
-            Set<CallableMemberDescriptor> overridden = Sets.newHashSet();
+            Set<CallableMemberDescriptor> filteredOverrides = OverridingUtil.filterOverrides(Sets.newLinkedHashSet(overriddenDeclarations));
+            Set<CallableMemberDescriptor> overridden = Sets.newLinkedHashSet();
             for (CallableMemberDescriptor memberDescriptor : filteredOverrides) {
                 overridden.add(memberDescriptor);
             }
