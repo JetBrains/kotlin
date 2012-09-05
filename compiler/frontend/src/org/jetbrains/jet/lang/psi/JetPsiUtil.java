@@ -200,25 +200,6 @@ public class JetPsiUtil {
         return new ImportPath(text.replaceAll(" ", "") + (importDirective.isAllUnder() ? ".*" : ""));
     }
 
-    public static boolean isIrrefutable(JetWhenEntry entry) {
-        if (entry.isElse()) return true;
-        for (JetWhenCondition condition : entry.getConditions()) {
-            if (condition instanceof JetWhenConditionIsPattern) {
-                JetPattern pattern = ((JetWhenConditionIsPattern) condition).getPattern();
-                if (pattern instanceof JetWildcardPattern) {
-                    return true;
-                }
-                if (pattern instanceof JetBindingPattern) {
-                    JetBindingPattern bindingPattern = (JetBindingPattern) pattern;
-                    if (bindingPattern.getVariableDeclaration().getTypeRef() == null && bindingPattern.getCondition() == null) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     @Nullable
     public static <T extends PsiElement> T getDirectParentOfTypeForBlock(@NotNull JetBlockExpression block, @NotNull Class<T> aClass) {
         T parent = PsiTreeUtil.getParentOfType(block, aClass);

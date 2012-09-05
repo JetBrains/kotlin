@@ -30,8 +30,8 @@ public class JetWhenConditionWithExpression extends JetWhenCondition {
 
     @Nullable
     @IfNotParsed
-    public JetExpressionPattern getPattern() {
-        return findChildByClass(JetExpressionPattern.class);
+    public JetExpression getExpression() {
+        return findChildByClass(JetExpression.class);
     }
 
     @Override

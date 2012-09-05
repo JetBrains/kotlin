@@ -388,40 +388,12 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitJetElement(condition, data);
     }
 
-    public R visitTypePattern(JetTypePattern pattern, D data) {
-        return visitPattern(pattern, data);
-    }
-
-    public R visitWildcardPattern(JetWildcardPattern pattern, D data) {
-        return visitPattern(pattern, data);
-    }
-
-    public R visitExpressionPattern(JetExpressionPattern pattern, D data) {
-        return visitPattern(pattern, data);
-    }
-
-    public R visitTuplePattern(JetTuplePattern pattern, D data) {
-        return visitPattern(pattern, data);
-    }
-
-    private R visitPattern(JetPattern pattern, D data) {
-        return visitJetElement(pattern, data);
-    }
-
-    public R visitDecomposerPattern(JetDecomposerPattern pattern, D data) {
-        return visitPattern(pattern, data);
-    }
-
     public R visitObjectDeclaration(JetObjectDeclaration declaration, D data) {
         return visitNamedDeclaration(declaration, data);
     }
     
     public R visitObjectDeclarationName(JetObjectDeclarationName declarationName, D data) {
         return visitNamedDeclaration(declarationName, data);
-    }
-
-    public R visitBindingPattern(JetBindingPattern pattern, D data) {
-        return visitPattern(pattern, data);
     }
 
     public R visitStringTemplateEntry(JetStringTemplateEntry entry, D data) {

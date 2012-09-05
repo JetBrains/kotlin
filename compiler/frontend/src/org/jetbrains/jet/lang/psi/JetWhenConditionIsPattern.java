@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
@@ -34,8 +35,8 @@ public class JetWhenConditionIsPattern extends JetWhenCondition {
     }
 
     @Nullable @IfNotParsed
-    public JetPattern getPattern() {
-        return findChildByClass(JetPattern.class);
+    public JetTypeReference getTypeRef() {
+        return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }
 
     @Override

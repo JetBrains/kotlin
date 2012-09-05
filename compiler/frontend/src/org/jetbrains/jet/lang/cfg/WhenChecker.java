@@ -70,9 +70,7 @@ public class WhenChecker {
         for (JetWhenEntry whenEntry : whenExpression.getEntries()) {
             for (JetWhenCondition condition : whenEntry.getConditions()) {
                 if (condition instanceof JetWhenConditionWithExpression) {
-                    JetExpressionPattern pattern = ((JetWhenConditionWithExpression) condition).getPattern();
-                    if (pattern == null) continue;
-                    JetExpression patternExpression = pattern.getExpression();
+                    JetExpression patternExpression = ((JetWhenConditionWithExpression) condition).getExpression();
                     JetType type = trace.get(BindingContext.EXPRESSION_TYPE, patternExpression);
                     if (type == null) continue;
                     if (type.getConstructor().getDeclarationDescriptor() == enumEntry) {

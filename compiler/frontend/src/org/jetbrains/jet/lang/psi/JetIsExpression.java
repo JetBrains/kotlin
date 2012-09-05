@@ -46,8 +46,8 @@ public class JetIsExpression extends JetExpressionImpl {
     }
 
     @Nullable @IfNotParsed
-    public JetPattern getPattern() {
-        return findChildByClass(JetPattern.class);
+    public JetTypeReference getTypeRef() {
+        return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }
 
     @NotNull

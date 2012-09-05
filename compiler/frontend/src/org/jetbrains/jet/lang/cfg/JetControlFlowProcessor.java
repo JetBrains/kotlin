@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator
 import org.jetbrains.jet.lang.cfg.pseudocode.LocalDeclarationInstruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
-import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -109,18 +108,12 @@ public class JetControlFlowProcessor {
 
             @Override
             public void visitWhenConditionIsPattern(JetWhenConditionIsPattern condition) {
-                JetPattern pattern = condition.getPattern();
-                if (pattern != null) {
-                    pattern.accept(patternVisitor);
-                }
+                // TODO: types in CF?
             }
 
             @Override
             public void visitWhenConditionWithExpression(JetWhenConditionWithExpression condition) {
-                JetExpressionPattern pattern = condition.getPattern();
-                if (pattern != null) {
-                    pattern.accept(patternVisitor);
-                }
+                value(condition.getExpression(), inCondition);
             }
 
             @Override
@@ -129,50 +122,6 @@ public class JetControlFlowProcessor {
             }
         };
         private final JetVisitorVoid patternVisitor = new JetVisitorVoid() {
-            @Override
-            public void visitTypePattern(JetTypePattern typePattern) {
-                // TODO
-            }
-
-            @Override
-            public void visitWildcardPattern(JetWildcardPattern pattern) {
-                // TODO
-            }
-
-            @Override
-            public void visitExpressionPattern(JetExpressionPattern pattern) {
-                value(pattern.getExpression(), inCondition);
-            }
-
-            @Override
-            public void visitTuplePattern(JetTuplePattern pattern) {
-                List<JetTuplePatternEntry> entries = pattern.getEntries();
-                for (JetTuplePatternEntry entry : entries) {
-                    JetPattern entryPattern = entry.getPattern();
-                    if (entryPattern != null) {
-                        entryPattern.accept(this);
-                    }
-                }
-            }
-
-            @Override
-            public void visitDecomposerPattern(JetDecomposerPattern pattern) {
-                value(pattern.getDecomposerExpression(), inCondition);
-                JetTuplePattern argumentList = pattern.getArgumentList();
-                if (argumentList != null) {
-                    argumentList.accept(this);
-                }
-            }
-
-            @Override
-            public void visitBindingPattern(JetBindingPattern pattern) {
-                JetProperty variableDeclaration = pattern.getVariableDeclaration();
-                builder.write(pattern, variableDeclaration);
-                JetWhenCondition condition = pattern.getCondition();
-                if (condition != null) {
-                    condition.accept(conditionVisitor);
-                }
-            }
 
             @Override
             public void visitJetElement(JetElement element) {
@@ -807,10 +756,7 @@ public class JetControlFlowProcessor {
         @Override
         public void visitIsExpression(final JetIsExpression expression) {
             value(expression.getLeftHandSide(), inCondition);
-            JetPattern pattern = expression.getPattern();
-            if (pattern != null) {
-                pattern.accept(patternVisitor);
-            }
+            // no CF for types
             // TODO : builder.read(expression.getPattern());
             builder.read(expression);
         }
@@ -837,7 +783,7 @@ public class JetControlFlowProcessor {
                         trace.report(ELSE_MISPLACED_IN_WHEN.on(whenEntry));
                     }
                 }
-                boolean isIrrefutable = JetPsiUtil.isIrrefutable(whenEntry);
+                boolean isIrrefutable = whenEntry.isElse();
                 if (isIrrefutable) {
                     hasElseOrIrrefutableBranch = true;
                 }

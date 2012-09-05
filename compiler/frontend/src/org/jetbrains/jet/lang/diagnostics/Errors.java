@@ -276,8 +276,6 @@ public interface Errors {
 
     DiagnosticFactory2<JetTypeReference, JetType, JetType> TYPE_MISMATCH_IN_FOR_LOOP = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory1<JetElement, JetType> TYPE_MISMATCH_IN_CONDITION = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory2<JetTuplePattern, JetType, Integer> TYPE_MISMATCH_IN_TUPLE_PATTERN = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory2<JetTypeReference, JetType, JetType> TYPE_MISMATCH_IN_BINDING_PATTERN = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<JetElement, JetType, JetType> INCOMPATIBLE_TYPES = DiagnosticFactory2.create(ERROR);
     SimpleDiagnosticFactory<JetWhenCondition> EXPECTED_CONDITION = SimpleDiagnosticFactory.create(ERROR);
 
