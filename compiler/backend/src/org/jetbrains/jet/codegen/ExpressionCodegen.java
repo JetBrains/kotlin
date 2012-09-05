@@ -3267,120 +3267,48 @@ The "returned" value of try expression with no finally is either the last expres
     @Override
     public StackValue visitIsExpression(final JetIsExpression expression, StackValue receiver) {
         final StackValue match = StackValue.expression(OBJECT_TYPE, expression.getLeftHandSide(), this);
-        return generatePatternMatch(expression.getPattern(), expression.isNegated(), match, false, null);
+        return generateIsCheck(match, expression.getTypeRef(), expression.isNegated());
     }
 
-    // on entering the function, expressionToMatch is already placed on stack, and we should consume it
-    private StackValue generatePatternMatch(
-            JetPattern pattern, boolean negated, StackValue expressionToMatch,
-            boolean expressionToMatchIsNullable, @Nullable Label nextEntry
+    private StackValue generateExpressionMatch(
+            StackValue expressionToMatch,
+            JetExpression patternExpression,
+            boolean expressionToMatchIsNullable
     ) {
-        if (pattern instanceof JetTypePattern) {
-            JetTypeReference typeReference = ((JetTypePattern) pattern).getTypeReference();
-            JetType jetType = bindingContext.get(BindingContext.TYPE, typeReference);
+        if (expressionToMatch != null) {
+            Type subjectType = expressionToMatch.type;
             expressionToMatch.dupReceiver(v);
-            generateInstanceOf(expressionToMatch, jetType, false);
-            StackValue value = StackValue.onStack(Type.BOOLEAN_TYPE);
-            return negated ? StackValue.not(value) : value;
-        }
-        else if (pattern instanceof JetTuplePattern) {
-            return generateTuplePatternMatch((JetTuplePattern) pattern, negated, expressionToMatch, nextEntry);
-        }
-        else if (pattern instanceof JetExpressionPattern) {
-            if (expressionToMatch != null) {
-                Type subjectType = expressionToMatch.type;
-                expressionToMatch.dupReceiver(v);
-                expressionToMatch.put(subjectType, v);
-                JetExpression condExpression = ((JetExpressionPattern) pattern).getExpression();
-                boolean patternIsNullable = false;
-                JetType condJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, condExpression);
-                Type condType;
-                if (CodegenUtil.isNumberPrimitive(subjectType) || subjectType.getSort() == Type.BOOLEAN) {
-                    assert condJetType != null;
-                    condType = asmType(condJetType);
-                    if (!(CodegenUtil.isNumberPrimitive(condType) || condType.getSort() == Type.BOOLEAN)) {
-                        subjectType = boxType(subjectType);
-                        expressionToMatch.coerce(subjectType, v);
-                    }
+            expressionToMatch.put(subjectType, v);
+            boolean patternIsNullable = false;
+            JetType condJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, patternExpression);
+            Type condType;
+            if (CodegenUtil.isNumberPrimitive(subjectType) || subjectType.getSort() == Type.BOOLEAN) {
+                assert condJetType != null;
+                condType = asmType(condJetType);
+                if (!(CodegenUtil.isNumberPrimitive(condType) || condType.getSort() == Type.BOOLEAN)) {
+                    subjectType = boxType(subjectType);
+                    expressionToMatch.coerce(subjectType, v);
                 }
-                else {
-                    condType = OBJECT_TYPE;
-                    patternIsNullable = condJetType != null && condJetType.isNullable();
-                }
-                gen(condExpression, condType);
-                return generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, condType, expressionToMatchIsNullable,
-                                                           patternIsNullable);
             }
             else {
-                JetExpression condExpression = ((JetExpressionPattern) pattern).getExpression();
-                return gen(condExpression);
+                condType = OBJECT_TYPE;
+                patternIsNullable = condJetType != null && condJetType.isNullable();
             }
-        }
-        else if (pattern instanceof JetWildcardPattern) {
-            return StackValue.constant(!negated, Type.BOOLEAN_TYPE);
-        }
-        else if (pattern instanceof JetBindingPattern) {
-            final JetProperty var = ((JetBindingPattern) pattern).getVariableDeclaration();
-            final VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, var);
-            assert variableDescriptor != null;
-            final Type varType = asmType(variableDescriptor.getType());
-            myFrameMap.enter(variableDescriptor, varType);
-            expressionToMatch.dupReceiver(v);
-            expressionToMatch.put(varType, v);
-            final int varIndex = lookupLocalIndex(variableDescriptor);
-            v.store(varIndex, varType);
-            return generateWhenCondition(varType, varIndex, false, ((JetBindingPattern) pattern).getCondition(), null);
+            gen(patternExpression, condType);
+            return generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, condType, expressionToMatchIsNullable,
+                                                       patternIsNullable);
         }
         else {
-            throw new UnsupportedOperationException("Unsupported pattern type: " + pattern);
+            return gen(patternExpression);
         }
     }
 
-    private StackValue generateTuplePatternMatch(
-            JetTuplePattern pattern, boolean negated, StackValue expressionToMatch,
-            @Nullable Label nextEntry
-    ) {
-        final List<JetTuplePatternEntry> entries = pattern.getEntries();
-
-        Label lblFail = new Label();
-        Label lblDone = new Label();
+    private StackValue generateIsCheck(StackValue expressionToMatch, JetTypeReference typeReference, boolean negated) {
+        JetType jetType = bindingContext.get(BindingContext.TYPE, typeReference);
         expressionToMatch.dupReceiver(v);
-        expressionToMatch.put(OBJECT_TYPE, v);
-        v.dup();
-        final JvmClassName tupleClassName = JvmClassName.byInternalName("jet/Tuple" + entries.size());
-        Type tupleType = tupleClassName.getAsmType();
-        v.instanceOf(tupleType);
-        Label lblCheck = new Label();
-        v.ifne(lblCheck);
-        Label lblPopAndFail = new Label();
-        v.mark(lblPopAndFail);
-        v.pop();
-        v.goTo(lblFail);
-
-        v.mark(lblCheck);
-        for (int i = 0; i < entries.size(); i++) {
-            final StackValue tupleField = StackValue.field(OBJECT_TYPE, tupleClassName, "_" + (i + 1), false);
-            final StackValue stackValue = generatePatternMatch(entries.get(i).getPattern(), false, tupleField, false, nextEntry);
-            stackValue.condJump(lblPopAndFail, true, v);
-        }
-
-        v.pop();  // delete extra copy of expressionToMatch
-        if (negated && nextEntry != null) {
-            v.goTo(nextEntry);
-        }
-        else {
-            v.iconst(!negated ? 1 : 0);
-        }
-        v.goTo(lblDone);
-        v.mark(lblFail);
-        if (!negated && nextEntry != null) {
-            v.goTo(nextEntry);
-        }
-        else {
-            v.iconst(negated ? 1 : 0);
-        }
-        v.mark(lblDone);
-        return StackValue.onStack(Type.BOOLEAN_TYPE);
+        generateInstanceOf(expressionToMatch, jetType, false);
+        StackValue value = StackValue.onStack(Type.BOOLEAN_TYPE);
+        return negated ? StackValue.not(value) : value;
     }
 
     private void generateInstanceOf(StackValue expressionToGen, JetType jetType, boolean leaveExpressionOnStack) {
@@ -3498,23 +3426,18 @@ The "returned" value of try expression with no finally is either the last expres
             }
             return StackValue.onStack(Type.BOOLEAN_TYPE);
         }
-        JetPattern pattern;
-        boolean isNegated;
+        StackValue.Local match = subjectLocal == -1 ? null : StackValue.local(subjectLocal, subjectType);
         if (condition instanceof JetWhenConditionIsPattern) {
             JetWhenConditionIsPattern patternCondition = (JetWhenConditionIsPattern) condition;
-            pattern = patternCondition.getPattern();
-            isNegated = patternCondition.isNegated();
+            return generateIsCheck(match, patternCondition.getTypeRef(), patternCondition.isNegated());
         }
         else if (condition instanceof JetWhenConditionWithExpression) {
-            pattern = ((JetWhenConditionWithExpression) condition).getPattern();
-            isNegated = false;
+            JetExpression patternExpression = ((JetWhenConditionWithExpression) condition).getExpression();
+            return generateExpressionMatch(match, patternExpression, subjectIsNullable);
         }
         else {
             throw new UnsupportedOperationException("unsupported kind of when condition");
         }
-        return generatePatternMatch(pattern, isNegated,
-                                    subjectLocal == -1 ? null : StackValue.local(subjectLocal, subjectType),
-                                    subjectIsNullable, nextEntry);
     }
 
     private void invokeFunctionByReference(JetSimpleNameExpression operationReference) {
