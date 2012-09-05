@@ -5,11 +5,6 @@ var Kotlin = Object.create(null);
 (function () {
     "use strict";
 
-    // ecma5 is still sucks — concat doesn't accept arguments, but apply does, so, we just return arguments
-    Kotlin.argumentsToArrayLike = function (args) {
-      return args;
-    };
-
     Kotlin.keys = Object.keys;
 
     Kotlin.isType = function (object, type) {

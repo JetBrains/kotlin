@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -55,10 +56,7 @@ class InnerFunctionTranslator extends InnerDeclarationTranslator {
 
     @Override
     protected JsInvocation createInvocation(@NotNull JsNameRef nameRef, @Nullable JsExpression self) {
-        JsInvocation bind = new JsInvocation(context.namer().kotlin(getBindMethodName()));
-        bind.getArguments().add(nameRef);
-        bind.getArguments().add(self);
-        return bind;
+        return new JsInvocation(new JsNameRef("bind", nameRef), new SmartList<JsExpression>(self));
     }
 
     @NotNull
@@ -69,30 +67,5 @@ class InnerFunctionTranslator extends InnerDeclarationTranslator {
         }
 
         return JsLiteral.NULL;
-    }
-
-    @NotNull
-    private String getBindMethodName() {
-        if (closureContext.getDescriptors().isEmpty()) {
-            return !hasArguments() ? "b3" : "b4";
-        }
-        else {
-            return !hasArguments() ? (closureContext.getDescriptors().size() == 1 ? "b0" : "b1") : "b2";
-        }
-    }
-
-    private boolean hasArguments() {
-        return !getValueParameters().isEmpty() || descriptor.getReceiverParameter() != null;
-    }
-
-    @Override
-    protected List<JsExpression> getCapturedValueParametersList(JsInvocation invocation) {
-        if (closureContext.getDescriptors().size() > 1 || hasArguments()) {
-            JsArrayLiteral values = new JsArrayLiteral();
-            invocation.getArguments().add(values);
-            return values.getExpressions();
-        }
-
-        return super.getCapturedValueParametersList(invocation);
     }
 }

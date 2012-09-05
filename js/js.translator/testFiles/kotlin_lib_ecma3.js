@@ -12,6 +12,31 @@ var Kotlin = {};
     var emptyFunction = function () {
     };
 
+    if (!Function.prototype.bind) {
+        Function.prototype.bind = function (oThis) {
+            if (typeof this !== "function") {
+                // closest thing possible to the ECMAScript 5 internal IsCallable function
+                throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
+            }
+
+            var aArgs = Array.prototype.slice.call(arguments, 1),
+                fToBind = this,
+                fNOP = function () {
+                },
+                fBound = function () {
+                    return fToBind.apply(this instanceof fNOP && oThis
+                                             ? this
+                                             : oThis,
+                                         aArgs.concat(Array.prototype.slice.call(arguments)));
+                };
+
+            fNOP.prototype = this.prototype;
+            fBound.prototype = new fNOP();
+
+            return fBound;
+        };
+    }
+
     Kotlin.keys = Object.keys || function (o) {
         var result = [];
         var i = 0;
@@ -19,15 +44,6 @@ var Kotlin = {};
             if (o.hasOwnProperty(p)) {
                 result[i++] = p;
             }
-        }
-        return result;
-    };
-
-    Kotlin.argumentsToArrayLike = function (args) {
-        var n = args.length;
-        var result = new Array(n);
-        while (n--) {
-            result[n] = args[n];
         }
         return result;
     };
