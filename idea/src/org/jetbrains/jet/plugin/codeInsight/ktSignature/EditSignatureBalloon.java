@@ -25,6 +25,8 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.EditorSettings;
 import com.intellij.openapi.editor.colors.EditorColors;
+import com.intellij.openapi.editor.event.DocumentAdapter;
+import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -41,6 +43,8 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import javax.swing.*;
@@ -97,8 +101,27 @@ class EditSignatureBalloon {
         assert editorFactory != null;
         LightVirtualFile virtualFile = new LightVirtualFile("signature.kt", JetFileType.INSTANCE, previousSignature);
         virtualFile.setWritable(editable);
-        Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+        final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
         assert document != null;
+
+        // TODO unregister listener
+        document.addDocumentListener(new DocumentAdapter() {
+            @Override
+            public void documentChanged(DocumentEvent event) {
+                PsiDocumentManager psiDocManager = PsiDocumentManager.getInstance(project);
+
+                final PsiFile psiFile = psiDocManager.getPsiFile(document);
+                assert psiFile instanceof JetFile;
+
+                psiDocManager.performForCommittedDocument(document, new Runnable() {
+                    @Override
+                    public void run() {
+                        panel.setSaveButtonEnabled(hasErrors((JetFile) psiFile));
+                    }
+                });
+                psiDocManager.commitDocument(document);
+            }
+        });
 
         Editor editor = editorFactory.createEditor(document, project, JetFileType.INSTANCE, !editable);
         EditorSettings settings = editor.getSettings();
@@ -203,15 +226,21 @@ class EditSignatureBalloon {
             new EditSignatureBalloon(annotationOwner, getKotlinSignature(annotation), editable).show(point, editor);
         }
     }
+    
+    private static boolean hasErrors(@NotNull JetFile file) {
+        return AnalyzingUtils.getSyntaxErrorRanges(file).isEmpty();
+    }
 
     private class MyPanel extends JPanel {
+        private final JButton saveButton;
+
         MyPanel() {
             super(new BorderLayout());
             add(editor.getComponent(), BorderLayout.CENTER);
 
             if (editable) {
                 JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-                JButton saveButton = new JButton("Save") {
+                saveButton = new JButton("Save") {
                     @Override
                     public boolean isDefaultButton() {
                         return true;
@@ -240,6 +269,9 @@ class EditSignatureBalloon {
                 registerKeyboardAction(saveAndHideListener, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK),
                                        JComponent.WHEN_IN_FOCUSED_WINDOW);
             }
+            else {
+                saveButton = null;
+            }
 
             registerKeyboardAction(new ActionListener() {
                 @Override
@@ -247,6 +279,13 @@ class EditSignatureBalloon {
                     balloon.hide();
                 }
             }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+        }
+
+        void setSaveButtonEnabled(boolean enabled) {
+            if (saveButton != null) {
+                saveButton.setEnabled(enabled);
+                saveButton.setToolTipText(enabled ? null : "Please fix errors in signature to save it.");
+            }
         }
     }
 }
