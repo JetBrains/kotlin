@@ -21,7 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.Call;
+import org.jetbrains.jet.lang.psi.JetReferenceExpression;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.BasicResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
@@ -34,9 +36,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
 * @author abreslav
@@ -51,22 +51,19 @@ public class ExpressionTypingContext {
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
             boolean namespacesAllowed) {
-        return newContext(expressionTypingServices, new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(),
-            new LabelResolver(), trace, scope, dataFlowInfo, expectedType, namespacesAllowed);
+        return newContext(expressionTypingServices, new LabelResolver(), trace, scope, dataFlowInfo, expectedType, namespacesAllowed);
     }
 
     @NotNull
     public static ExpressionTypingContext newContext(
             @NotNull ExpressionTypingServices expressionTypingServices,
-            @NotNull Map<JetPattern, DataFlowInfo> patternsToDataFlowInfo,
-            @NotNull Map<JetPattern, List<VariableDescriptor>> patternsToBoundVariableLists,
             @NotNull LabelResolver labelResolver,
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
             boolean namespacesAllowed) {
-        return new ExpressionTypingContext(expressionTypingServices, patternsToDataFlowInfo, patternsToBoundVariableLists,
+        return new ExpressionTypingContext(expressionTypingServices, 
                                            labelResolver, trace, scope, dataFlowInfo, expectedType, namespacesAllowed);
     }
 
@@ -77,8 +74,6 @@ public class ExpressionTypingContext {
     public final DataFlowInfo dataFlowInfo;
     public final JetType expectedType;
 
-    public final Map<JetPattern, DataFlowInfo> patternsToDataFlowInfo;
-    public final Map<JetPattern, List<VariableDescriptor>> patternsToBoundVariableLists;
     public final LabelResolver labelResolver;
 
     // true for positions on the lhs of a '.', i.e. allows namespace results and 'super'
@@ -88,8 +83,6 @@ public class ExpressionTypingContext {
 
     private ExpressionTypingContext(
             @NotNull ExpressionTypingServices expressionTypingServices,
-            @NotNull Map<JetPattern, DataFlowInfo> patternsToDataFlowInfo,
-            @NotNull Map<JetPattern, List<VariableDescriptor>> patternsToBoundVariableLists,
             @NotNull LabelResolver labelResolver,
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
@@ -98,8 +91,6 @@ public class ExpressionTypingContext {
             boolean namespacesAllowed) {
         this.expressionTypingServices = expressionTypingServices;
         this.trace = trace;
-        this.patternsToBoundVariableLists = patternsToBoundVariableLists;
-        this.patternsToDataFlowInfo = patternsToDataFlowInfo;
         this.labelResolver = labelResolver;
         this.scope = scope;
         this.dataFlowInfo = dataFlowInfo;
@@ -110,14 +101,14 @@ public class ExpressionTypingContext {
     @NotNull
     public ExpressionTypingContext replaceNamespacesAllowed(boolean namespacesAllowed) {
         if (namespacesAllowed == this.namespacesAllowed) return this;
-        return newContext(expressionTypingServices, patternsToDataFlowInfo, patternsToBoundVariableLists, labelResolver,
+        return newContext(expressionTypingServices, labelResolver,
                           trace, scope, dataFlowInfo, expectedType, namespacesAllowed);
     }
 
     @NotNull
     public ExpressionTypingContext replaceDataFlowInfo(DataFlowInfo newDataFlowInfo) {
         if (newDataFlowInfo == dataFlowInfo) return this;
-        return newContext(expressionTypingServices, patternsToDataFlowInfo, patternsToBoundVariableLists, labelResolver,
+        return newContext(expressionTypingServices, labelResolver,
                           trace, scope, newDataFlowInfo, expectedType, namespacesAllowed);
     }
 
@@ -125,21 +116,21 @@ public class ExpressionTypingContext {
     public ExpressionTypingContext replaceExpectedType(@Nullable JetType newExpectedType) {
         if (newExpectedType == null) return replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         if (expectedType == newExpectedType) return this;
-        return newContext(expressionTypingServices, patternsToDataFlowInfo, patternsToBoundVariableLists, labelResolver,
+        return newContext(expressionTypingServices, labelResolver,
                           trace, scope, dataFlowInfo, newExpectedType, namespacesAllowed);
     }
 
     @NotNull
     public ExpressionTypingContext replaceBindingTrace(@NotNull BindingTrace newTrace) {
         if (newTrace == trace) return this;
-        return newContext(expressionTypingServices, patternsToDataFlowInfo, patternsToBoundVariableLists, labelResolver,
+        return newContext(expressionTypingServices, labelResolver,
                           newTrace, scope, dataFlowInfo, expectedType, namespacesAllowed);
     }
 
     @NotNull
     public ExpressionTypingContext replaceScope(@NotNull JetScope newScope) {
         if (newScope == scope) return this;
-        return newContext(expressionTypingServices, patternsToDataFlowInfo, patternsToBoundVariableLists, labelResolver,
+        return newContext(expressionTypingServices, labelResolver,
                           trace, newScope, dataFlowInfo, expectedType, namespacesAllowed);
     }
 

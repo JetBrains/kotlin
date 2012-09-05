@@ -20,7 +20,6 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -34,8 +33,6 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
-
-import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AUTOCAST;
@@ -55,16 +52,7 @@ public class DataFlowUtils {
             @Override
             public void visitIsExpression(JetIsExpression expression) {
                 if (conditionValue && !expression.isNegated() || !conditionValue && expression.isNegated()) {
-                    JetPattern pattern = expression.getPattern();
-                    result.set(context.patternsToDataFlowInfo.get(pattern));
-                    if (scopeToExtend != null) {
-                        List<VariableDescriptor> descriptors = context.patternsToBoundVariableLists.get(pattern);
-                        if (descriptors != null) {
-                            for (VariableDescriptor variableDescriptor : descriptors) {
-                                scopeToExtend.addVariableDescriptor(variableDescriptor);
-                            }
-                        }
-                    }
+                    result.set(context.trace.get(BindingContext.DATAFLOW_INFO_AFTER_CONDITION, expression));
                 }
             }
 
