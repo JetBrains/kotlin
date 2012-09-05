@@ -107,27 +107,16 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         if (psiElements.size() == 1) {
             return psiElements.iterator().next();
         }
-        if (psiElements.size() > 1) {
-            return null;
-        }
         List<PsiElement> stdlibSymbols = resolveStandardLibrarySymbol(bindingContext);
         if (stdlibSymbols.size() == 1) {
             return stdlibSymbols.iterator().next();
         }
-        if (stdlibSymbols.size() > 1) {
-            return null;
-        }
-        Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
-        if (declarationDescriptors != null) return null;
-
-        // TODO: Need a better resolution for Intrinsic function (KT-975)
-        return file;
+        return null;
     }
 
     protected ResolveResult[] doMultiResolve() {
         JetFile file = (JetFile) getElement().getContainingFile();
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file)
-                .getBindingContext();
+        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
         Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
         if (declarationDescriptors == null) {
             List<PsiElement> psiElements = BindingContextUtils.resolveToDeclarationPsiElements(bindingContext, myExpression);
@@ -142,21 +131,12 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         }
 
         List<ResolveResult> results = new ArrayList<ResolveResult>(declarationDescriptors.size());
-
         for (DeclarationDescriptor descriptor : declarationDescriptors) {
             List<PsiElement> elements = BindingContextUtils.descriptorToDeclarations(bindingContext, descriptor);
-            if (elements.isEmpty()) {
-                // TODO: Need a better resolution for Intrinsic function (KT-975)
-                results.add(new PsiElementResolveResult(file, true));
+            for (PsiElement element : elements) {
+                results.add(new PsiElementResolveResult(element, true));
             }
-            else {
-                for (PsiElement element : elements) {
-                    results.add(new PsiElementResolveResult(element, true));
-                }
-            }
-
         }
-
         return results.toArray(new ResolveResult[results.size()]);
     }
 
