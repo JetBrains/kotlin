@@ -105,7 +105,10 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
                 @Override
                 public ActionGroup getPopupMenuActions() {
                     DefaultActionGroup actionGroup = new DefaultActionGroup();
+
                     actionGroup.add(new EditSignatureAction(getElement()));
+                    actionGroup.add(new DeleteSignatureAction(getElement()));
+
                     return actionGroup;
                 }
             };
