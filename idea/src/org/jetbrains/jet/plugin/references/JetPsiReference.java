@@ -107,6 +107,9 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         if (psiElements.size() == 1) {
             return psiElements.iterator().next();
         }
+        if (psiElements.size() > 1) {
+            return null;
+        }
         List<PsiElement> stdlibSymbols = resolveStandardLibrarySymbol(bindingContext);
         if (stdlibSymbols.size() == 1) {
             return stdlibSymbols.iterator().next();
@@ -120,11 +123,11 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
         if (declarationDescriptors == null) {
             List<PsiElement> psiElements = BindingContextUtils.resolveToDeclarationPsiElements(bindingContext, myExpression);
-            if (!psiElements.isEmpty()) {
+            if (psiElements.size() > 1) {
                 return PsiElementResolveResult.createResults(psiElements);
             }
             List<PsiElement> standardLibraryElements = resolveStandardLibrarySymbol(bindingContext);
-            if (!standardLibraryElements.isEmpty()) {
+            if (standardLibraryElements.size() > 1) {
                 return PsiElementResolveResult.createResults(standardLibraryElements);
             }
             return ResolveResult.EMPTY_ARRAY;
