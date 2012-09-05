@@ -30,6 +30,7 @@ import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.util.Function;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetIcons;
@@ -61,7 +62,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     private static final GutterIconNavigationHandler<PsiMethod> NAVIGATION_HANDLER = new GutterIconNavigationHandler<PsiMethod>() {
         @Override
         public void navigate(MouseEvent e, PsiMethod element) {
-            if (e.getClickCount() != 1 || e.getButton() != MouseEvent.BUTTON1) return;
+            if (!UIUtil.isActionClick(e, MouseEvent.MOUSE_RELEASED)) return;
 
             Editor editor = PlatformDataKeys.EDITOR.getData(DataManager.getInstance().getDataContext(e.getComponent()));
             assert editor != null;
