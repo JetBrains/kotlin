@@ -1,7 +1,5 @@
 package js
 
-import java.util.List
-
 native public fun String.toUpperCase() : String = js.noImpl
 
 native public fun String.toLowerCase() : String = js.noImpl

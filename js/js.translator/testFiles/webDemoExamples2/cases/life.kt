@@ -126,7 +126,7 @@ fun <T> Array<T>.toList() : List<T> = this.to(ArrayList<T>())
 val String?.size : Int
 get() = if (this != null) this.length else 0;
 
-fun <T, C: Collection<T>> Array<T>.to(result: C) : C {
+fun <T, C: MutableCollection<T>> Array<T>.to(result: C) : C {
     for (elem in this)
         result.add(elem)
     return result
@@ -162,6 +162,6 @@ fun makeField(s : String) : Field {
 // An excerpt from the Standard Library
 val String?.indices : IntRange get() = IntRange(0, this.sure().size)
 
-fun <K, V> Map<K, V>.set(k : K, v : V) { put(k, v) }
+fun <K, V> MutableMap<K, V>.set(k : K, v : V) { put(k, v) }
 
 val <T> Array<T>.isEmpty : Boolean get() = size == 0

@@ -3,7 +3,7 @@ package foo
 import java.util.*
 import java.lang.*
 
-public inline fun <T, C: Collection<in T>> Iterator<T>.takeWhileTo(result: C, predicate: (T) -> Boolean) : C {
+public inline fun <T, C: MutableCollection<in T>> Iterator<T>.takeWhileTo(result: C, predicate: (T) -> Boolean) : C {
     for (element in this) if (predicate(element)) result.add(element) else break
     return result
 }

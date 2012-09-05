@@ -1,10 +1,9 @@
 package kotlin
 
-import java.util.Map
 import java.util.HashMap
 
 /** Provides [] access to maps */
-public fun <K, V> Map<K, V>.set(key : K, value : V): Unit {
+public fun <K, V> MutableMap<K, V>.set(key : K, value : V): Unit {
     this.put(key, value)
 }
 

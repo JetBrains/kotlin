@@ -36,7 +36,7 @@ public object Collections {
     }
 
     library
-    public fun <T> reverse(list: List<T>): Unit {
+    public fun <T> reverse(list: MutableList<T>): Unit {
         val size = list.size()
         for (i in 0.rangeTo(size / 2)) {
             val i2 = size - i
