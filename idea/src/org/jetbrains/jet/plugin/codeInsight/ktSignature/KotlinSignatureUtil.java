@@ -38,7 +38,8 @@ class KotlinSignatureUtil {
     private KotlinSignatureUtil() {
     }
 
-    static PsiMethod getAnnotationOwner(PsiElement element) {
+    @NotNull
+    static PsiMethod getAnnotationOwner(@NotNull PsiElement element) {
         PsiMethod annotationOwner = element.getOriginalElement() instanceof PsiMethod
                                     ? (PsiMethod) element.getOriginalElement()
                                     : (PsiMethod) element;

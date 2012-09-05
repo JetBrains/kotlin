@@ -160,9 +160,8 @@ class EditSignatureBalloon {
         settings.setAdditionalPageAtBottom(false);
         settings.setAdditionalLinesCount(2);
 
-        if (editor instanceof EditorEx) {
-            ((EditorEx)editor).setEmbeddedIntoDialogWrapper(true);
-        }
+        assert editor instanceof EditorEx;
+        ((EditorEx)editor).setEmbeddedIntoDialogWrapper(true);
 
         editor.getColorsScheme().setColor(EditorColors.CARET_ROW_COLOR, editor.getColorsScheme().getDefaultBackground());
 
@@ -208,18 +207,20 @@ class EditSignatureBalloon {
     }
 
     private void saveAndHide() {
+        balloon.hide();
+
         final String newSignature = editor.getDocument().getText();
-        if (!previousSignature.equals(newSignature)) {
-            new WriteCommandAction(project) {
-                @Override
-                protected void run(Result result) throws Throwable {
-                    ExternalAnnotationsManager.getInstance(project).editExternalAnnotation(
-                            method, KOTLIN_SIGNATURE_ANNOTATION, signatureToNameValuePairs(project, newSignature));
-                }
-            }.execute();
+        if (previousSignature.equals(newSignature)) {
+            return;
         }
 
-        balloon.hide();
+        new WriteCommandAction(project) {
+            @Override
+            protected void run(Result result) throws Throwable {
+                ExternalAnnotationsManager.getInstance(project).editExternalAnnotation(
+                        method, KOTLIN_SIGNATURE_ANNOTATION, signatureToNameValuePairs(project, newSignature));
+            }
+        }.execute();
     }
 
     static void invokeEditSignature(@NotNull PsiMethod element, @NotNull Editor editor, @Nullable Point point) {
@@ -231,10 +232,11 @@ class EditSignatureBalloon {
                 if (pair.getName() == null || "value".equals(pair.getName())) {
                     PsiAnnotationMemberValue value = pair.getValue();
                     if (value != null) {
-                        PsiElement firstChild = value.getFirstChild();
                         VirtualFile virtualFile = value.getContainingFile().getVirtualFile();
-                        if (firstChild != null && firstChild.getNode().getElementType() == JavaTokenType.STRING_LITERAL
-                            && virtualFile != null) {
+                        assert virtualFile != null;
+
+                        PsiElement firstChild = value.getFirstChild();
+                        if (firstChild != null && firstChild.getNode().getElementType() == JavaTokenType.STRING_LITERAL) {
                             new OpenFileDescriptor(value.getProject(), virtualFile, value.getTextOffset() + 1).navigate(true);
                         }
                         else {

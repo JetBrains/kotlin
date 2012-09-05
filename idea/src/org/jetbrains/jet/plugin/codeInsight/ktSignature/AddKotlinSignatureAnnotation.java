@@ -31,6 +31,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -99,9 +100,6 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements
     public void invoke(@NotNull final Project project, final Editor editor, PsiFile file) throws IncorrectOperationException {
         final PsiMethod method = findMethod(file, editor.getCaretModel().getOffset());
         String signature = getDefaultSignature(project, (PsiMethod) method.getOriginalElement());
-        if (signature == null) {
-            return;
-        }
         final MessageBusConnection busConnection = project.getMessageBus().connect();
         busConnection.subscribe(ExternalAnnotationsManager.TOPIC, new ExternalAnnotationsListener.Adapter() {
             @Override
@@ -128,26 +126,35 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements
         return new AddAnnotationFix(KOTLIN_SIGNATURE_ANNOTATION, method, signatureToNameValuePairs(method.getProject(), signature));
     }
 
+    @NotNull
     private static String getDefaultSignature(@NotNull Project project, @NotNull PsiMethod method) {
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(BuiltinsScopeExtensionMode.ALL, project);
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        FqName classFqName = new FqName(method.getContainingClass().getQualifiedName());
+
+        PsiClass containingClass = method.getContainingClass();
+        assert containingClass != null;
+        String qualifiedName = containingClass.getQualifiedName();
+        assert qualifiedName != null;
+        FqName classFqName = new FqName(qualifiedName);
+
         if (method.getModifierList().hasModifierProperty(PsiModifier.STATIC)) {
             NamespaceDescriptor namespaceDescriptor = javaDescriptorResolver.resolveNamespace(classFqName);
-            if (namespaceDescriptor == null) return null;
+            assert namespaceDescriptor != null: "Couldn't resolve namespace descriptor for " + classFqName;
             namespaceDescriptor.getMemberScope().getFunctions(Name.identifier(method.getName()));
         }
         else {
             ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(classFqName);
-            if (classDescriptor == null) return null;
+            assert classDescriptor != null: "Couldn't resolve class descriptor for " + classFqName;
             classDescriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier(method.getName()));
         }
+
         SimpleFunctionDescriptor functionDescriptor = injector.getBindingTrace().getBindingContext().get(BindingContext.FUNCTION, method);
         assert functionDescriptor != null: "Couldn't find function descriptor for " + method.getName() + " in " + classFqName;
         return RENDERER.render(functionDescriptor);
     }
 
-    private static PsiMethod findMethod(PsiFile file, int offset) {
+    @Nullable
+    private static PsiMethod findMethod(@NotNull PsiFile file, int offset) {
         PsiElement element = file.findElementAt(offset);
         PsiMethod res = PsiTreeUtil.getParentOfType(element, PsiMethod.class);
         if (res == null) return null;
