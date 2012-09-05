@@ -31,6 +31,7 @@ import com.intellij.psi.filters.*;
 import com.intellij.psi.filters.position.FilterPattern;
 import com.intellij.psi.filters.position.LeftNeighbour;
 import com.intellij.psi.filters.position.PositionElementFilter;
+import com.intellij.psi.filters.position.SuperParentFilter;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
@@ -293,6 +294,10 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                                         OPEN_KEYWORD, PACKAGE_KEYWORD, PRIVATE_KEYWORD,
                                         PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD,
                                         TYPE_KEYWORD);
+
+        registerScopeKeywordsCompletion(new SuperParentFilter(new ClassFilter(JetModifierList.class)),
+                                        ABSTRACT_KEYWORD, FINAL_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
+                                        OPEN_KEYWORD, PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD);
 
         registerScopeKeywordsCompletion(new InClassBodyFilter(),
                                         ABSTRACT_KEYWORD,

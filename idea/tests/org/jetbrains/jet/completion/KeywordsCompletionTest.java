@@ -87,6 +87,10 @@ public class KeywordsCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testInModifierListInsideClass() {
+        doTest();
+    }
+
     public void testInString() {
         doTest();
     }
