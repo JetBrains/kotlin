@@ -12,17 +12,9 @@ fun foo() : Int {
       1 + <error>a</error> -> 1
       in 1..<error>a</error> -> 1
       !in 1..<error>a</error> -> 1
-      // Commented for KT-621 .<!error>a</!error> -> 1
-      // Commented for KT-621 .equals(1).<!error>a</!error> -> 1
-      // Commented for KT-621 <!warning>?.</!warning>equals(1) -> 1
-      is * -> 1
+      else -> 1
     }
 
-    // Commented for KT-621
-    // return when (<!warning>x</!warning>?:null) {
-    //   <!error>.</!error>foo() -> 1
-    //   ?.equals(1).equals(2) -> 1
-    // }
     return 0
 }
 
@@ -34,29 +26,17 @@ fun test() {
 
   when (x) {
     <error>s</error> -> 1
-    is <error>""</error> -> 1
+    <error>""</error> -> 1
     x -> 1
-    is 1 -> 1
-    is <error>#(1, 1)</error> -> 1
+    1 -> 1
     else -> 1
   }
 
-  val z = #(1, 1)
-
-  when (z) {
-    is #(*, *) -> 1
-    is #(*, 1) -> 1
-    is #(1, 1) -> 1
-    is #(1, <error>"1"</error>) -> 1
-    is <error>#(1, "1", *)</error> -> 1
-    is boo #(1, <error>"a"</error>, *) -> 1
-    is boo <error>#(1, *)</error> -> 1
-    else -> 1
-  }
+  val z = 1
 
   when (z) {
     <error>else</error> -> 1
-    <error>#(1, 1) -> 2</error>
+    <error>1 -> 2</error>
   }
 
   when (z) {

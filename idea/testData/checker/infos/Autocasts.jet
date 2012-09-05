@@ -66,27 +66,22 @@ fun f12(a : A?) {
     is A -> <info descr="Automatically cast to A">a</info>.foo()
     is Any -> <info descr="Automatically cast to A">a</info>.foo();
     is Any? -> a.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
-    is val c : <error descr="[TYPE_MISMATCH_IN_BINDING_PATTERN] B is not a supertype of A?. Use 'is' to match against B">B</error> -> c.foo()
-    is val c is C -> <info descr="Automatically cast to C">c</info>.bar()
-    is val c is C -> <info descr="Automatically cast to C">a</info>.bar()
+    is C -> <info descr="Automatically cast to C">a</info>.bar()
     else -> a<info>?.</info>foo()
   }
 
-  if (a is val b) {
+  if (a is Any?) {
     a<info>?.</info><error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
-    b<info>?.</info>foo()
   }
-  if (a is val b is B) {
-    <info descr="Automatically cast to B">b</info>.foo()
+  if (a is B) {
     <info descr="Automatically cast to B">a</info>.bar()
-    <info descr="Automatically cast to B">b</info>.bar()
   }
 }
 
 fun f13(a : A?) {
-  if (a is val c is B) {
-    <info descr="Automatically cast to B">c</info>.foo()
-    <info descr="Automatically cast to B">c</info>.bar()
+  if (a is B) {
+    <info descr="Automatically cast to B">a</info>.foo()
+    <info descr="Automatically cast to B">a</info>.bar()
   }
   else {
     a<info>?.</info>foo()
@@ -94,54 +89,43 @@ fun f13(a : A?) {
   }
 
   a<info>?.</info>foo()
-  if (!(a is val c is B)) {
+  if (!(a is B)) {
     a<info>?.</info>foo()
-    <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: c">c</error>.bar()
   }
   else {
     <info descr="Automatically cast to B">a</info>.foo()
-    <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: c">c</error>.bar()
   }
 
   a<info>?.</info>foo()
-  if (a is val c is B && <info descr="Automatically cast to B">a</info>.foo() == #() && <info descr="Automatically cast to B">c</info>.bar() == #()) {
-    <info descr="Automatically cast to B">c</info>.foo()
-    <info descr="Automatically cast to B">c</info>.bar()
+  if (a is B && <info descr="Automatically cast to B">a</info>.foo() == #()) {
+    <info descr="Automatically cast to B">a</info>.foo()
+    <info descr="Automatically cast to B">a</info>.bar()
   }
   else {
     a<info>?.</info>foo()
-    <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: c">c</error>.bar()
   }
 
-  if (!(a is val c is B) || !(a is val x is C)) {
-    <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: x">x</error>
-    <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: c">c</error>
+  if (!(a is B) || !(a is C)) {
   }
   else {
-    <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: x">x</error>
-    <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: c">c</error>
   }
 
-  if (!(a is val c is B) || !(a is val c is C)) {
+  if (!(a is B) || !(a is C)) {
   }
 
-  if (!(a is val c is B)) return
+  if (!(a is B)) return
   <info descr="Automatically cast to B">a</info>.bar()
-  <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: c">c</error>.foo()
-  <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: c">c</error>.bar()
 }
 
 fun f14(a : A?) {
-  while (!(a is val c is B)) {
+  while (!(a is B)) {
   }
   <info descr="Automatically cast to B">a</info>.bar()
-  <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: c">c</error>.bar()
 }
 fun f15(a : A?) {
   do {
-  } while (!(a is val c is B))
+  } while (!(a is B))
   <info descr="Automatically cast to B">a</info>.bar()
-  <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: c">c</error>.bar()
 }
 
 fun getStringLength(obj : Any) : Char? {
@@ -212,8 +196,6 @@ fun returnFunctionLiteral(<info>a</info>: Any?): Function0<Int> =
     else { () -> 1 }
 
 fun illegalTupleReturnType(a: Any): #(Any, String) = #(a, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is jet.Any but jet.String was expected">a</error>)
-
-fun declarationInsidePattern(x: #(Any, Any)): String = when(x) { is #(val a is String, *) -> <info descr="Automatically cast to jet.String">a</info>; else -> "something" }
 
 fun mergeAutocasts(a: Any?) {
   if (a is String || a is Int) {

@@ -68,27 +68,23 @@ fun f12(a : A?) {
     is A -> a.foo()
     is Any -> a.foo();
     is Any? -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
-    is val c : <!TYPE_MISMATCH_IN_BINDING_PATTERN!>B<!> -> c.foo()
-    is val c is C -> c.bar()
-    is val c is C -> a.bar()
+    is C -> a.bar()
     else -> a?.foo()
   }
 
-  if (a is val b) {
+  if (a is Any?) {
     a?.<!UNRESOLVED_REFERENCE!>bar<!>()
-    b?.foo()
   }
-  if (a is val b is B) {
-    b.foo()
+  if (a is B) {
+    a.foo()
     a.bar()
-    b.bar()
   }
 }
 
 fun f13(a : A?) {
-  if (a is val c is B) {
-    c.foo()
-    c.bar()
+  if (a is B) {
+    a.foo()
+    a.bar()
   }
   else {
     a?.foo()
@@ -96,7 +92,7 @@ fun f13(a : A?) {
   }
 
   a?.foo()
-  if (!(a is val c is B)) {
+  if (!(a is B)) {
     a?.foo()
     <!UNRESOLVED_REFERENCE!>c<!>.bar()
   }
@@ -106,44 +102,36 @@ fun f13(a : A?) {
   }
 
   a?.foo()
-  if (a is val c is B && a.foo() == #() && c.bar() == #()) {
-    c.foo()
-    c.bar()
+  if (a is B && a.foo() == #()) {
+    a.foo()
+    a.bar()
   }
   else {
     a?.foo()
     <!UNRESOLVED_REFERENCE!>c<!>.bar()
   }
 
-  if (!(a is val c is B) || !(a is val x is C)) {
-    <!UNRESOLVED_REFERENCE, UNUSED_EXPRESSION!>x<!>
-    <!UNRESOLVED_REFERENCE, UNUSED_EXPRESSION!>c<!>
+  if (!(a is B) || !(a is C)) {
   }
   else {
-    <!UNRESOLVED_REFERENCE, UNUSED_EXPRESSION!>x<!>
-    <!UNRESOLVED_REFERENCE, UNUSED_EXPRESSION!>c<!>
   }
 
-  if (!(a is val c is B) || !(a is val c is C)) {
+  if (!(a is B) || !(a is C)) {
   }
 
-  if (!(a is val c is B)) return
+  if (!(a is B)) return
   a.bar()
-  <!UNRESOLVED_REFERENCE!>c<!>.foo()
-  <!UNRESOLVED_REFERENCE!>c<!>.bar()
 }
 
 fun f14(a : A?) {
-  while (!(a is val c is B)) {
+  while (!(a is B)) {
   }
   a.bar()
-  <!UNRESOLVED_REFERENCE!>c<!>.bar()
 }
 fun f15(a : A?) {
   do {
-  } while (!(a is val c is B))
+  } while (!(a is B))
   a.bar()
-  <!UNRESOLVED_REFERENCE!>c<!>.bar()
 }
 
 fun getStringLength(obj : Any) : Char? {
@@ -212,8 +200,6 @@ fun returnFunctionLiteral(a: Any?): Function0<Int> =
     else { () -> 1 }
 
 fun illegalTupleReturnType(a: Any): #(Any, String) = #(a, <!TYPE_MISMATCH!>a<!>)
-
-fun declarationInsidePattern(x: #(Any, Any)): String = when(x) { is #(val a is String, *) -> a; else -> "something" }
 
 fun mergeAutocasts(a: Any?) {
   if (a is String || a is Int) {

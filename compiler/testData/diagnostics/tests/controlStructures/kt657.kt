@@ -9,11 +9,8 @@ fun foo() =
         <!TYPE_MISMATCH_IN_CONDITION!>#(1, 2)<!> -> 3
         <!EXPECTED_CONDITION!>in 1..10<!> -> 34
         <!TYPE_MISMATCH_IN_CONDITION!>4<!> -> 38
-        <!EXPECTED_CONDITION!>is val a in 1..10<!> -> 23
         <!EXPECTED_CONDITION!>is Int<!> -> 33
-        <!EXPECTED_CONDITION!>is <!TYPE_MISMATCH_IN_TUPLE_PATTERN!>#(val a, 3)<!><!> -> 2
-        <!EXPECTED_CONDITION!>!is <!TYPE_MISMATCH_IN_TUPLE_PATTERN!>#(*, 1100)<!><!> -> 3
-        <!EXPECTED_CONDITION!>is *<!> -> 34
+        else -> 34
     }
 
 fun cond1() = false

@@ -34,7 +34,7 @@ fun box() : Int {
     val d = 2
     var z = 0
         when(d) {
-        is 5, is 3 -> z++
+        5, 3 -> z++
         else -> z = -1000
     }
     return z
@@ -59,13 +59,13 @@ fun testCoercionToUnit() {
     val i = 34
     val <!UNUSED_VARIABLE!>withWhen<!> : () -> Unit = {
         when(i) {
-            is 1 -> {
+            1 -> {
                 val d = 34
                 <!UNUSED_EXPRESSION!>"1"<!>
                 doSmth(d)
 
             }
-            is 2 -> '4'
+            2 -> '4'
             else -> true
         }
     }
@@ -87,13 +87,13 @@ fun testImplicitCoercion() {
     val d = 21
     var z = 0
     var <!UNUSED_VARIABLE!>i<!> = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>when(d) {
-        is 3 -> null
-        is 4 -> { val <!NAME_SHADOWING, UNUSED_VARIABLE!>z<!> = 23 }
+        3 -> null
+        4 -> { val <!NAME_SHADOWING, UNUSED_VARIABLE!>z<!> = 23 }
         else -> z = 20
     }<!>
 
     var <!UNUSED_VARIABLE!>u<!> = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>when(d) {
-        is 3 -> {
+        3 -> {
             z = <!UNUSED_VALUE!>34<!>
         }
         else -> <!UNUSED_CHANGED_VALUE!>z--<!>

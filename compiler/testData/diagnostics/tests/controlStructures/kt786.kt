@@ -5,7 +5,7 @@ fun foo() : Int {
     val d = 2
     var z = 0
     when(d) {
-        is 5, is 3 -> <!UNUSED_CHANGED_VALUE!>z++<!>
+        5, 3 -> <!UNUSED_CHANGED_VALUE!>z++<!>
         <!ELSE_MISPLACED_IN_WHEN!>else<!> -> { z = <!UNUSED_VALUE!>-1000<!> }
         <!UNREACHABLE_CODE!>return z -> 34<!>
     }
@@ -15,7 +15,7 @@ fun foo() : Int {
 fun fff(): Int {
     var d = 3
     <!NO_ELSE_IN_WHEN!>when<!>(d) {
-        is 4 -> 21
+        4 -> 21
         return 2 -> <!UNREACHABLE_CODE!>return 47<!>
         <!UNREACHABLE_CODE!>bar() -> 45<!>
         <!UNREACHABLE_CODE!>444 -> true<!>
