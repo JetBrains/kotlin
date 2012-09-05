@@ -42,7 +42,7 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
-        return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
+        return createEnvironmentWithMockJdk(ConfigurationKind.JDK_AND_ANNOTATIONS);
     }
 
     private void doTest(

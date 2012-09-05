@@ -46,7 +46,7 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testArrayListInheritance() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_AND_ANNOTATIONS);
         loadFile("classes/inheritingFromArrayList.jet");
         //        System.out.println(generateToText());
         final Class aClass = loadClass("Foo", generateClassesInFile());
@@ -473,7 +473,7 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testKt2395() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_AND_ANNOTATIONS);
         blackBoxMultiFile("regressions/kt2395.kt");
     }
 
