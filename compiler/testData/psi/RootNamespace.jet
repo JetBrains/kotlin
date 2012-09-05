@@ -7,7 +7,7 @@ package foo.bar {
     package.foo.bar.X
     package.foo.bar.X()
     when (e) {
-      is package.foo.bar.X  #(x) -> {}
+      is package.foo.bar.X<package.Y> -> {}
     }
   }
 }

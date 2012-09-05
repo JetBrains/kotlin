@@ -240,15 +240,20 @@ JetFile: NewlinesInParentheses.jet
           WHEN_CONDITION_IS_PATTERN
             PsiElement(is)('is')
             PsiWhiteSpace(' ')
-            DECOMPOSER_PATTERN
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('T')
-              PsiWhiteSpace(' \n    ')
-              DECOMPOSER_ARGUMENT_LIST
-                PsiElement(HASH)('#')
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+                PsiWhiteSpace('\n    ')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('X')
+                  PsiElement(GT)('>')
+          PsiWhiteSpace('\n    ')
           PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
@@ -276,14 +281,19 @@ JetFile: NewlinesInParentheses.jet
           WHEN_CONDITION_IS_PATTERN
             PsiElement(NOT_IS)('!is')
             PsiWhiteSpace(' ')
-            DECOMPOSER_PATTERN
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('T')
-              PsiWhiteSpace('\n     ')
-              DECOMPOSER_ARGUMENT_LIST
-                PsiElement(HASH)('#')
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+                PsiWhiteSpace('\n    ')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('X')
+                  PsiElement(GT)('>')
           PsiWhiteSpace(' ')
           PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
@@ -310,14 +320,13 @@ JetFile: NewlinesInParentheses.jet
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
           WHEN_CONDITION_WITH_EXPRESSION
-            EXPRESSION_PATTERN
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('f')
-                PsiWhiteSpace('\n    ')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('f')
+              PsiWhiteSpace('\n    ')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
@@ -333,20 +342,25 @@ JetFile: NewlinesInParentheses.jet
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
-        BINARY_WITH_PATTERN
+        IS_EXPRESSION
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
           OPERATION_REFERENCE
             PsiElement(is)('is')
           PsiWhiteSpace(' ')
-          DECOMPOSER_PATTERN
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('T')
-            PsiWhiteSpace('\n  ')
-            DECOMPOSER_ARGUMENT_LIST
-              PsiElement(HASH)('#')
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('T')
+              PsiWhiteSpace('\n  ')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('X')
+                PsiElement(GT)('>')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

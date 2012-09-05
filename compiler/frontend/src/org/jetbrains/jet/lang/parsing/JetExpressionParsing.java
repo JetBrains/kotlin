@@ -162,9 +162,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
             @Override
             public JetNodeType parseRightHandSide(IElementType operation, JetExpressionParsing parser) {
                 if (operation == IS_KEYWORD || operation == NOT_IS) {
-                    parser.parsePattern();
-
-                    return BINARY_WITH_PATTERN;
+                    parser.myJetParsing.parseTypeRef();
+                    return IS_EXPRESSION;
                 }
 
                 return super.parseRightHandSide(operation, parser);
@@ -850,184 +849,23 @@ public class JetExpressionParsing extends AbstractJetParsing {
             advance(); // IS_KEYWORD or NOT_IS
 
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
-                error("Expecting a type or a decomposer pattern");
+                error("Expecting a type");
             }
             else {
-                parsePattern();
+                myJetParsing.parseTypeRef();
             }
             condition.done(WHEN_CONDITION_IS_PATTERN);
         }
         else {
-            PsiBuilder.Marker expressionPattern = mark();
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
                 error("Expecting an expression, is-condition or in-condition");
             }
             else {
                 parseExpression();
             }
-            expressionPattern.done(EXPRESSION_PATTERN);
             condition.done(WHEN_CONDITION_EXPRESSION);
         }
         myBuilder.restoreNewlinesState();
-    }
-
-    /*
-     * pattern
-     *   : attributes pattern
-     *   : type // '[a] T' is a type-pattern 'T' with an attribute '[a]', not a type-pattern '[a] T'
-     *          // this makes sense because is-check may be different for a type with attributes
-     *   : tuplePattern
-     *   : decomposerPattern
-     *   : constantPattern
-     *   : bindingPattern
-     *   : "*" // wildcard pattern
-     *   ;
-     */
-    private void parsePattern() {
-        PsiBuilder.Marker pattern = mark();
-
-        myJetParsing.parseAnnotations(false);
-
-        if (at(PACKAGE_KEYWORD) || at(IDENTIFIER) || at(FUN_KEYWORD) || at(THIS_KEYWORD)) {
-            PsiBuilder.Marker rollbackMarker = mark();
-            parseBinaryExpression(Precedence.ELVIS);
-            if (at(HASH)) {
-                rollbackMarker.drop();
-                PsiBuilder.Marker list = mark();
-                parseTuplePattern(DECOMPOSER_ARGUMENT);
-                list.done(DECOMPOSER_ARGUMENT_LIST);
-                pattern.done(DECOMPOSER_PATTERN);
-            }
-            else {
-                int expressionEndOffset = myBuilder.getCurrentOffset();
-                rollbackMarker.rollbackTo();
-                rollbackMarker = mark();
-
-                myJetParsing.parseTypeRef();
-//                if (at(AT)) {
-//                    errorAndAdvance("'@' is allowed only after a decomposer element, not after a type");
-//                }
-                if (myBuilder.getCurrentOffset() < expressionEndOffset) {
-                    rollbackMarker.rollbackTo();
-                    parseBinaryExpression(Precedence.ELVIS);
-                    pattern.done(DECOMPOSER_PATTERN);
-                }
-                else {
-                    rollbackMarker.drop();
-                    pattern.done(TYPE_PATTERN);
-                }
-            }
-        }
-        else if (at(HASH)) {
-            parseTuplePattern(TUPLE_PATTERN_ENTRY);
-            pattern.done(TUPLE_PATTERN);
-        }
-        else if (at(MUL)) {
-            advance(); // MUL
-            pattern.done(WILDCARD_PATTERN);
-        }
-        else if (at(VAL_KEYWORD)) {
-            parseBindingPattern();
-            pattern.done(BINDING_PATTERN);
-        }
-        else if (at(OPEN_QUOTE)) {
-            parseStringTemplate();
-            pattern.done(EXPRESSION_PATTERN);
-        }
-        else if (parseLiteralConstant()) {
-            pattern.done(EXPRESSION_PATTERN);
-        }
-        else {
-            errorUntil("Pattern expected", TokenSet.create(RBRACE, ARROW));
-            pattern.drop();
-        }
-    }
-
-    /*
-     * tuplePattern
-     *  : "#" "(" ((SimpleName "=")? pattern){","}? ")"
-     *  ;
-     */
-    private void parseTuplePattern(JetNodeType entryType) {
-
-        myBuilder.disableNewlines();
-        expect(HASH, "Expecting a tuple pattern of the form '#(...)'", getDecomposerExpressionFollow());
-        expect(LPAR, "Expecting a tuple pattern of the form '#(...)'", getDecomposerExpressionFollow());
-
-        if (!at(RPAR)) {
-            while (true) {
-                while (at(COMMA)) errorAndAdvance("Expecting a pattern");
-                if (at(RPAR)) {
-                    error("Expecting a pattern");
-                    break;
-                }
-                PsiBuilder.Marker entry = mark();
-                if (at(IDENTIFIER) && lookahead(1) == EQ) {
-                    advance(); // IDENTIFIER
-                    advance(); // EQ
-                }
-                parsePattern();
-                entry.done(entryType);
-                if (!at(COMMA)) break;
-
-                advance(); // COMMA
-            }
-        }
-
-        expect(RPAR, "Expecting ')'");
-        myBuilder.restoreNewlinesState();
-    }
-
-    /*
-     * bindingPattern
-     *   : "val" SimpleName binding?
-     *   ;
-     *
-     * binding
-     *   : "is" pattern
-     *   : "!is" pattern
-     *   : "in" element
-     *   : "!in" element
-     *   : ":" type
-     *   ;
-     */
-    private void parseBindingPattern() {
-        assert _at(VAL_KEYWORD);
-
-        PsiBuilder.Marker declaration = mark();
-
-        advance(); // VAL_KEYWORD
-
-        expect(IDENTIFIER, "Expecting an identifier");
-
-        if (at(COLON)) {
-            advance(); // EQ
-
-            myJetParsing.parseTypeRef();
-            declaration.done(PROPERTY);
-        }
-        else {
-            declaration.done(PROPERTY);
-            PsiBuilder.Marker subCondition = mark();
-            if (at(IS_KEYWORD) || at(NOT_IS)) {
-
-                advance(); // IS_KEYWORD or NOT_IS
-
-                parsePattern();
-                subCondition.done(WHEN_CONDITION_IS_PATTERN);
-            }
-            else if (at(IN_KEYWORD) || at(NOT_IN)) {
-                PsiBuilder.Marker mark = mark();
-                advance(); // IN_KEYWORD ot NOT_IN
-                mark.done(OPERATION_REFERENCE);
-
-                parseExpression();
-                subCondition.done(WHEN_CONDITION_IN_RANGE);
-            }
-            else {
-                subCondition.drop();
-            }
-        }
     }
 
     /*

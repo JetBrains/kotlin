@@ -93,12 +93,11 @@ JetFile: RootNamespace.jet
           WHEN_CONDITION_IS_PATTERN
             PsiElement(is)('is')
             PsiWhiteSpace(' ')
-            DECOMPOSER_PATTERN
-              DOT_QUALIFIED_EXPRESSION
-                DOT_QUALIFIED_EXPRESSION
-                  DOT_QUALIFIED_EXPRESSION
-                    ROOT_NAMESPACE
-                      PsiElement(package)('package')
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    PsiElement(package)('package')
                     PsiElement(DOT)('.')
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('foo')
@@ -108,17 +107,16 @@ JetFile: RootNamespace.jet
                 PsiElement(DOT)('.')
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('X')
-              PsiWhiteSpace('  ')
-              DECOMPOSER_ARGUMENT_LIST
-                PsiElement(HASH)('#')
-                PsiElement(LPAR)('(')
-                TUPLE_PATTERN_ENTRY
-                  TYPE_PATTERN
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
                     TYPE_REFERENCE
                       USER_TYPE
+                        PsiElement(package)('package')
+                        PsiElement(DOT)('.')
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('x')
-                PsiElement(RPAR)(')')
+                          PsiElement(IDENTIFIER)('Y')
+                  PsiElement(GT)('>')
           PsiWhiteSpace(' ')
           PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')

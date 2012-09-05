@@ -129,7 +129,7 @@ public interface JetNodeTypes {
     JetNodeType SUPER_EXPRESSION          = new JetNodeType("SUPER_EXPRESSION", JetSuperExpression.class);
     JetNodeType BINARY_EXPRESSION         = new JetNodeType("BINARY_EXPRESSION", JetBinaryExpression.class);
     JetNodeType BINARY_WITH_TYPE          = new JetNodeType("BINARY_WITH_TYPE", JetBinaryExpressionWithTypeRHS.class);
-    JetNodeType BINARY_WITH_PATTERN       = new JetNodeType("BINARY_WITH_PATTERN", JetIsExpression.class); // TODO:
+    JetNodeType IS_EXPRESSION = new JetNodeType("IS_EXPRESSION", JetIsExpression.class); // TODO:
     JetNodeType PREFIX_EXPRESSION         = new JetNodeType("PREFIX_EXPRESSION", JetPrefixExpression.class);
     JetNodeType POSTFIX_EXPRESSION        = new JetNodeType("POSTFIX_EXPRESSION", JetPostfixExpression.class);
     JetNodeType CALL_EXPRESSION           = new JetNodeType("CALL_EXPRESSION", JetCallExpression.class);
@@ -142,16 +142,6 @@ public interface JetNodeTypes {
 
     JetNodeType OBJECT_LITERAL            = new JetNodeType("OBJECT_LITERAL", JetObjectLiteralExpression.class);
     JetNodeType ROOT_NAMESPACE            = new JetNodeType("ROOT_NAMESPACE", JetRootNamespaceExpression.class);
-
-    JetNodeType EXPRESSION_PATTERN        = new JetNodeType("EXPRESSION_PATTERN", JetExpressionPattern.class);
-    JetNodeType TYPE_PATTERN              = new JetNodeType("TYPE_PATTERN", JetTypePattern.class);
-    JetNodeType WILDCARD_PATTERN          = new JetNodeType("WILDCARD_PATTERN", JetWildcardPattern.class);
-    JetNodeType BINDING_PATTERN           = new JetNodeType("BINDING_PATTERN", JetBindingPattern.class);
-    JetNodeType TUPLE_PATTERN             = new JetNodeType("TUPLE_PATTERN", JetTuplePattern.class);
-    JetNodeType TUPLE_PATTERN_ENTRY       = new JetNodeType("TUPLE_PATTERN_ENTRY", JetTuplePatternEntry.class);
-    JetNodeType DECOMPOSER_PATTERN        = new JetNodeType("DECOMPOSER_PATTERN", JetDecomposerPattern.class);
-    JetNodeType DECOMPOSER_ARGUMENT_LIST  = new JetNodeType("DECOMPOSER_ARGUMENT_LIST", JetTuplePattern.class);
-    JetNodeType DECOMPOSER_ARGUMENT       = TUPLE_PATTERN_ENTRY;
 
     JetNodeType WHEN                      = new JetNodeType("WHEN", JetWhenExpression.class);
     JetNodeType WHEN_ENTRY                = new JetNodeType("WHEN_ENTRY", JetWhenEntry.class);

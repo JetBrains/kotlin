@@ -37,7 +37,7 @@ JetFile: When_ERR.jet
         WHEN_ENTRY
           WHEN_CONDITION_IS_PATTERN
             PsiElement(is)('is')
-            PsiErrorElement:Expecting a type or a decomposer pattern
+            PsiErrorElement:Expecting a type
               <empty list>
           PsiWhiteSpace('  ')
           PsiElement(ARROW)('->')
@@ -48,7 +48,7 @@ JetFile: When_ERR.jet
         WHEN_ENTRY
           WHEN_CONDITION_IS_PATTERN
             PsiElement(NOT_IS)('!is')
-            PsiErrorElement:Expecting a type or a decomposer pattern
+            PsiErrorElement:Expecting a type
               <empty list>
           PsiWhiteSpace('  ')
           PsiElement(ARROW)('->')
@@ -82,9 +82,8 @@ JetFile: When_ERR.jet
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
           WHEN_CONDITION_WITH_EXPRESSION
-            EXPRESSION_PATTERN
-              PsiErrorElement:Expecting an expression, is-condition or in-condition
-                <empty list>
+            PsiErrorElement:Expecting an expression, is-condition or in-condition
+              <empty list>
           PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
@@ -110,7 +109,7 @@ JetFile: When_ERR.jet
         WHEN_ENTRY
           WHEN_CONDITION_IS_PATTERN
             PsiElement(is)('is')
-            PsiErrorElement:Expecting a type or a decomposer pattern
+            PsiErrorElement:Expecting a type
               <empty list>
           PsiWhiteSpace('  ')
           PsiElement(ARROW)('->')
@@ -120,7 +119,7 @@ JetFile: When_ERR.jet
         WHEN_ENTRY
           WHEN_CONDITION_IS_PATTERN
             PsiElement(NOT_IS)('!is')
-            PsiErrorElement:Expecting a type or a decomposer pattern
+            PsiErrorElement:Expecting a type
               <empty list>
           PsiWhiteSpace('  ')
           PsiElement(ARROW)('->')
@@ -164,9 +163,8 @@ JetFile: When_ERR.jet
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
           WHEN_CONDITION_WITH_EXPRESSION
-            EXPRESSION_PATTERN
-              PsiErrorElement:Expecting an expression, is-condition or in-condition
-                <empty list>
+            PsiErrorElement:Expecting an expression, is-condition or in-condition
+              <empty list>
           PsiElement(ARROW)('->')
           PsiErrorElement:Expecting an element
             <empty list>
@@ -196,11 +194,12 @@ JetFile: When_ERR.jet
         PsiElement(LBRACE)('{')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
-            PsiElement(is)('is')
-            PsiWhiteSpace(' ')
-            PsiErrorElement:Pattern expected
-              PsiElement(MINUS)('-')
+          WHEN_CONDITION_WITH_EXPRESSION
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(MINUS)('-')
+              PsiErrorElement:Expecting an element
+                <empty list>
           PsiWhiteSpace(' ')
           PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
@@ -208,27 +207,23 @@ JetFile: When_ERR.jet
             PsiElement(IDENTIFIER)('foo')
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
-            PsiElement(is)('is')
-            PsiWhiteSpace(' ')
-            TUPLE_PATTERN
+          WHEN_CONDITION_WITH_EXPRESSION
+            TUPLE
               PsiElement(HASH)('#')
               PsiElement(LPAR)('(')
-              PsiErrorElement:Expecting a pattern
+              PsiErrorElement:Expecting a tuple entry (element)
                 PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
-              PsiErrorElement:Expecting a pattern
+              PsiErrorElement:Expecting a tuple entry (element)
                 PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
-              TUPLE_PATTERN_ENTRY
-                EXPRESSION_PATTERN
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('1')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
-              PsiErrorElement:Expecting a pattern
+              PsiErrorElement:Expecting a tuple entry (element)
                 PsiElement(COMMA)(',')
-              PsiErrorElement:Expecting a pattern
+              PsiErrorElement:Expecting an expression
                 <empty list>
               PsiWhiteSpace(' ')
               PsiElement(RPAR)(')')

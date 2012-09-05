@@ -992,9 +992,8 @@ JetFile: ShortAnnotations.jet
         PsiWhiteSpace('\n    ')
         WHEN_ENTRY
           WHEN_CONDITION_WITH_EXPRESSION
-            EXPRESSION_PATTERN
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('1')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
           PsiWhiteSpace(' ')
           PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')

@@ -16,17 +16,14 @@ fun foo() {
     is a -> foo
   }
   when (e) {
-    is Tree  #(a, b) -> foo
-    is null -> foo
-    is 1 -> foo
-    is A.b -> foo
-    is 1.0 -> foo
-    is 'c' -> foo
-    is "sadfsa" -> foo
-    is """ddd""" -> foo
-    is * -> foo
-    is val a is Foo -> foo
-    is #(val a is Foo, b) -> foo
+    is Tree<a, b> -> foo
+    null -> foo
+    1 -> foo
+    A.b -> foo
+    1.0 -> foo
+    'c' -> foo
+    "sadfsa" -> foo
+    """ddd""" -> foo
   }
   when (when(when (e) {
 
@@ -40,22 +37,13 @@ fun foo() {
 fun foo() {
   when (val a = e) {
     is Tree -> c
-    is Tree  #(null, val r) -> c
-    is a  #(a, b) -> c
-    is a  #(a, b) -> c
-    is a.a  #(a, b) -> c
-    is a.a  #(foo = a, bar = b) -> c
-    is package.a.a  #(a, b) -> c
-    is a  #(val a is T, b) -> c
-    is a  #(b, 1) -> c
+    is a.a<a, b> -> c
+    is package.a.a<a, b> -> c
     in 1..2 -> dsf
     !in 2 -> sd
     !is t -> d
-    is  (foo) -> Bar -> fgpp
-    is #(1, val a is Foo, *, Foo, bar) -> d
-    is #(Foo, val a in 1..2, *, val _ !is Foo, val bar is foo.bar<a>  #(a)) -> d
+    (foo) -> Bar -> fgpp
     is #(Int, Int) -> 2
-    is val a : Foo -> 2
     else -> foo
   }
 }
@@ -63,11 +51,9 @@ fun foo() {
 fun foo() {
   when (val a = e) {
     is Tree,
-    is Tree  #(null, val r),
-    is a  #(a, b) -> c
+    is a<a, b> -> c
     1, foo(), bar, 2 + 3,
-    is a  #(a, b) -> c
-    is a.a  #(val b, b) -> c
+    is a<a, b> -> c
   }
 }
 

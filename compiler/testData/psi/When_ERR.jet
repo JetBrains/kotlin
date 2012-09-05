@@ -20,7 +20,7 @@ fun foo() {
     else ->
   }
   when (e) {
-    is - -> foo
-    is #(, , 1, , ) -> foo
+    - -> foo
+    #(, , 1, , ) -> foo
   }
 }

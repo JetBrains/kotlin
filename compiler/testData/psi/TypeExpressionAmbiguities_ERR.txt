@@ -320,28 +320,27 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
               PsiErrorElement:Expecting a '>'
                 <empty list>
       PsiWhiteSpace('\n    ')
-      BINARY_WITH_PATTERN
+      IS_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('x')
         PsiWhiteSpace(' ')
         OPERATION_REFERENCE
           PsiElement(is)('is')
         PsiWhiteSpace(' ')
-        TYPE_PATTERN
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Foo')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Foo')
+            PsiWhiteSpace(' ')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
               PsiWhiteSpace(' ')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                PsiWhiteSpace(' ')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('bar')
-                PsiErrorElement:Expecting a '>'
-                  <empty list>
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('bar')
+              PsiErrorElement:Expecting a '>'
+                <empty list>
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

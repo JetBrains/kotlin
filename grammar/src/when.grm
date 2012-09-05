@@ -10,51 +10,14 @@ when
     "}"
   ;
 
+// TODO : consider empty after ->
 whenEntry
-  // TODO : consider empty after =>
-  : whenCondition{","} "=>" expression SEMI
-  : "else" "=>" expression SEMI
+  : whenCondition{","} "->" expression SEMI
+  : "else" "->" expression SEMI
   ;
 
 whenCondition
   : expression
   : ("in" | "!in") expression
   : ("is" | "!is") isRHS
-  ;
-
-pattern
-  : annotations pattern
-  : type // '[a] T' is a type-pattern 'T' with an attribute '[a]', not a type-pattern '[a] T'
-         // this makes sense because is-check may be different for a type with attributes
-  : tuplePattern
-  : decomposerPattern
-  : constantPattern
-  : bindingPattern
-  : "*" // wildcard pattern
-  ;
-
-decomposerPattern
-  : type
-// TODO : typeArguments will be consumed by the expression
-  : elvisExpression typeArguments? tuplePattern
-  ;
-
-constantPattern
-  : literalConstant
-  ;
-
-tuplePattern
-  : "(" (((SimpleName "=")? pattern){","})? ")"
-  ;
-
-bindingPattern
-  : "val" SimpleName binding?
-  ;
-
-binding
-  : "is" pattern
-  : "!is" pattern
-  : "in" expression
-  : "!in" expression
-  : ":" type
   ;

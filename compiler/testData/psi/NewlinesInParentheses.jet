@@ -21,17 +21,18 @@ fun foo() {
     + d]
 
   when (e) {
-    is T 
-    #() -> a
+    is T
+    <X>
+    -> a
     in f
     () -> a
     !is T
-     #() -> a
+    <X> -> a
     !in f
     () -> a
     f
     () -> a
   }
   val f = a is T
-  #()
+  <X>
 }
