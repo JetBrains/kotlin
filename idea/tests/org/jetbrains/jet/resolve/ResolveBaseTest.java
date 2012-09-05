@@ -17,6 +17,7 @@
 package org.jetbrains.jet.resolve;
 
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
@@ -78,10 +79,12 @@ public class ResolveBaseTest extends LightCodeInsightTestCase {
 
         final PsiPolyVariantReference variantReference = (PsiPolyVariantReference) psiReference;
 
+        PsiElement element = variantReference.resolve();
         final ResolveResult[] results = variantReference.multiResolve(true);
         for (ResolveResult result : results) {
             assertNotNull(result);
         }
+        assertTrue("Nothing resolved by reference '" + psiReference.getElement().getText() + "'.", element != null || results.length > 0);
     }
 
     @NotNull
