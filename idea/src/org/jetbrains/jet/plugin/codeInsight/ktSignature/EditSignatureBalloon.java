@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.codeInsight.ktSignature;
 
 import com.intellij.codeInsight.ExternalAnnotationsManager;
 import com.intellij.codeInsight.navigation.NavigationUtil;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
@@ -36,6 +37,7 @@ import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.*;
@@ -60,8 +62,7 @@ import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUt
 * @author Evgeny Gerashchenko
 * @since 10.08.12
 */
-@SuppressWarnings("SSBasedInspection")
-class EditSignatureBalloon {
+class EditSignatureBalloon implements Disposable {
     private final Editor editor;
     private final PsiMethod method;
     private final Project project;
@@ -90,7 +91,7 @@ class EditSignatureBalloon {
         balloon.addListener(new JBPopupAdapter() {
             @Override
             public void onClosed(LightweightWindowEvent event) {
-                dispose();
+                Disposer.dispose(EditSignatureBalloon.this);
             }
         });
         return balloon;
@@ -104,7 +105,6 @@ class EditSignatureBalloon {
         final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
         assert document != null;
 
-        // TODO unregister listener
         document.addDocumentListener(new DocumentAdapter() {
             @Override
             public void documentChanged(DocumentEvent event) {
@@ -121,7 +121,7 @@ class EditSignatureBalloon {
                 });
                 psiDocManager.commitDocument(document);
             }
-        });
+        }, this);
 
         Editor editor = editorFactory.createEditor(document, project, JetFileType.INSTANCE, !editable);
         EditorSettings settings = editor.getSettings();
@@ -161,7 +161,8 @@ class EditSignatureBalloon {
         IdeFocusManager.getInstance(editor.getProject()).requestFocus(editor.getContentComponent(), false);
     }
 
-    private void dispose() {
+    @Override
+    public void dispose() {
         EditorFactory editorFactory = EditorFactory.getInstance();
         assert editorFactory != null;
         editorFactory.releaseEditor(editor);
