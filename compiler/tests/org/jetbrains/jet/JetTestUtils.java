@@ -282,7 +282,7 @@ public class JetTestUtils {
     }
 
     public static String getFilePath(File file) {
-        return file.getPath().replaceAll("\\\\", "/");
+        return FileUtil.toSystemIndependentName(file.getPath());
     }
 
     public interface TestFileFactory<F> {
@@ -434,7 +434,7 @@ public class JetTestUtils {
         Class<? extends TestCase>[] innerClasses = innerClassesAnnotation == null ? NO_INNER_CLASSES : innerClassesAnnotation.value();
         for (Class<?> innerClass : innerClasses) {
             TestMetadata testMetadata = innerClass.getAnnotation(TestMetadata.class);
-            if (testMetadata != null && testMetadata.value().equals(testDataDir.getPath())) {
+            if (testMetadata != null && testMetadata.value().equals(getFilePath(testDataDir))) {
                 return;
             }
         }
