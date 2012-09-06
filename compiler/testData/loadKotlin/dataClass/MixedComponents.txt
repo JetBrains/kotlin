@@ -2,8 +2,8 @@ namespace test
 
 jet.data() internal final class test.DataClass : jet.Any {
     public final /*constructor*/ fun <init>(/*0*/ x: jet.String, /*1*/ y: jet.Int, /*2*/ z: jet.Double): test.DataClass
-    internal final fun component1(): jet.String
-    internal final fun component2(): jet.Double
+    internal final /*synthesized*/ fun component1(): jet.String
+    internal final /*synthesized*/ fun component2(): jet.Double
     internal final var x: jet.String
     internal final val z: jet.Double
 }

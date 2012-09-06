@@ -6,5 +6,5 @@ internal open class test.Base</*0*/ T : jet.Any?> : jet.Any {
 }
 internal final class test.Inh : test.Base<jet.String> {
     public final /*constructor*/ fun <init>(): test.Inh
-    internal final override /*1*/ fun foo(): jet.String
+    internal final override /*1*/ /*fake_override*/ fun foo(): jet.String
 }

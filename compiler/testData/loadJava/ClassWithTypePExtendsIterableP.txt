@@ -2,5 +2,5 @@ namespace test
 
 public abstract class test.ClassWithTypePExtendsIterableP</*0*/ P : jet.Any?> : jet.MutableIterable<P> {
     public final /*constructor*/ fun </*0*/ P : jet.Any?><init>(): test.ClassWithTypePExtendsIterableP<P>
-    public abstract override /*1*/ fun iterator(): jet.MutableIterator<P>
+    public abstract override /*1*/ /*fake_override*/ fun iterator(): jet.MutableIterator<P>
 }

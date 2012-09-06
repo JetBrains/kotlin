@@ -2,26 +2,26 @@ namespace test
 
 public abstract class test.ClassDoesNotOverrideMethod : java.util.Date {
     public final /*constructor*/ fun <init>(): test.ClassDoesNotOverrideMethod
-    public open override /*1*/ fun after(/*0*/ p0: java.util.Date?): jet.Boolean
-    public open override /*1*/ fun before(/*0*/ p0: java.util.Date?): jet.Boolean
-    public open override /*1*/ fun compareTo(/*0*/ p0: java.util.Date?): jet.Int
-    public open override /*1*/ fun compareTo(/*0*/ p0: jet.Any?): jet.Int
-    public open override /*1*/ fun getDate(): jet.Int
-    public open override /*1*/ fun getDay(): jet.Int
-    public open override /*1*/ fun getHours(): jet.Int
-    public open override /*1*/ fun getMinutes(): jet.Int
-    public open override /*1*/ fun getMonth(): jet.Int
-    public open override /*1*/ fun getSeconds(): jet.Int
-    public open override /*1*/ fun getTime(): jet.Long
-    public open override /*1*/ fun getTimezoneOffset(): jet.Int
-    public open override /*1*/ fun getYear(): jet.Int
-    public open override /*1*/ fun setDate(/*0*/ p0: jet.Int): jet.Tuple0
-    public open override /*1*/ fun setHours(/*0*/ p0: jet.Int): jet.Tuple0
-    public open override /*1*/ fun setMinutes(/*0*/ p0: jet.Int): jet.Tuple0
-    public open override /*1*/ fun setMonth(/*0*/ p0: jet.Int): jet.Tuple0
-    public open override /*1*/ fun setSeconds(/*0*/ p0: jet.Int): jet.Tuple0
-    public open override /*1*/ fun setTime(/*0*/ p0: jet.Long): jet.Tuple0
-    public open override /*1*/ fun setYear(/*0*/ p0: jet.Int): jet.Tuple0
-    public open override /*1*/ fun toGMTString(): jet.String?
-    public open override /*1*/ fun toLocaleString(): jet.String?
+    public open override /*1*/ /*fake_override*/ fun after(/*0*/ p0: java.util.Date?): jet.Boolean
+    public open override /*1*/ /*fake_override*/ fun before(/*0*/ p0: java.util.Date?): jet.Boolean
+    public open override /*1*/ /*fake_override*/ fun compareTo(/*0*/ p0: java.util.Date?): jet.Int
+    public open override /*1*/ /*fake_override*/ fun compareTo(/*0*/ p0: jet.Any?): jet.Int
+    public open override /*1*/ /*fake_override*/ fun getDate(): jet.Int
+    public open override /*1*/ /*fake_override*/ fun getDay(): jet.Int
+    public open override /*1*/ /*fake_override*/ fun getHours(): jet.Int
+    public open override /*1*/ /*fake_override*/ fun getMinutes(): jet.Int
+    public open override /*1*/ /*fake_override*/ fun getMonth(): jet.Int
+    public open override /*1*/ /*fake_override*/ fun getSeconds(): jet.Int
+    public open override /*1*/ /*fake_override*/ fun getTime(): jet.Long
+    public open override /*1*/ /*fake_override*/ fun getTimezoneOffset(): jet.Int
+    public open override /*1*/ /*fake_override*/ fun getYear(): jet.Int
+    public open override /*1*/ /*fake_override*/ fun setDate(/*0*/ p0: jet.Int): jet.Tuple0
+    public open override /*1*/ /*fake_override*/ fun setHours(/*0*/ p0: jet.Int): jet.Tuple0
+    public open override /*1*/ /*fake_override*/ fun setMinutes(/*0*/ p0: jet.Int): jet.Tuple0
+    public open override /*1*/ /*fake_override*/ fun setMonth(/*0*/ p0: jet.Int): jet.Tuple0
+    public open override /*1*/ /*fake_override*/ fun setSeconds(/*0*/ p0: jet.Int): jet.Tuple0
+    public open override /*1*/ /*fake_override*/ fun setTime(/*0*/ p0: jet.Long): jet.Tuple0
+    public open override /*1*/ /*fake_override*/ fun setYear(/*0*/ p0: jet.Int): jet.Tuple0
+    public open override /*1*/ /*fake_override*/ fun toGMTString(): jet.String?
+    public open override /*1*/ /*fake_override*/ fun toLocaleString(): jet.String?
 }

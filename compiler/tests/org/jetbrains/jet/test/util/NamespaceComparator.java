@@ -394,6 +394,12 @@ public class NamespaceComparator {
                 sb.append("override /*").append(fun.getOverriddenDescriptors().size()).append("*/ ");
             }
 
+            if (fun.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
+                sb.append("/*");
+                new Serializer(sb).serialize(fun.getKind());
+                sb.append("*/ ");
+            }
+
             if (fun instanceof ConstructorDescriptor) {
                 sb.append("/*constructor*/ ");
             }
@@ -464,6 +470,12 @@ public class NamespaceComparator {
                 sb.append("override /*").append(prop.getOverriddenDescriptors().size()).append("*/ ");
             }
 
+            if (prop.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
+                sb.append("/*");
+                new Serializer(sb).serialize(prop.getKind());
+                sb.append("*/ ");
+            }
+
             if (prop.isVar()) {
                 sb.append("var ");
             }
@@ -529,6 +541,10 @@ public class NamespaceComparator {
 
         public void serialize(Visibility visibility) {
             sb.append(visibility);
+        }
+
+        public void serialize(CallableMemberDescriptor.Kind kind) {
+            sb.append(kind.name().toLowerCase());
         }
 
         public void serialize(AnnotationDescriptor annotation) {

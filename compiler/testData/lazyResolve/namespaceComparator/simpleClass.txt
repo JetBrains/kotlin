@@ -14,7 +14,7 @@ internal open class test.p.G</*0*/ T : jet.Any?> : jet.Any {
 }
 internal final class test.p.G2</*0*/ E : jet.Any?> : test.p.G<E> {
     public final /*constructor*/ fun </*0*/ E : jet.Any?><init>(): test.p.G2<E>
-    internal final override /*1*/ fun a(): jet.Tuple0
+    internal final override /*1*/ /*fake_override*/ fun a(): jet.Tuple0
     internal open override /*1*/ fun f(): E
     internal final fun g(): E
 }

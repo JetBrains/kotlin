@@ -5,5 +5,5 @@ internal abstract trait test.A : jet.Any {
 }
 internal final class test.B : test.A {
     public final /*constructor*/ fun <init>(): test.B
-    internal open override /*1*/ fun f(): jet.String
+    internal open override /*1*/ /*fake_override*/ fun f(): jet.String
 }

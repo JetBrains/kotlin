@@ -35,7 +35,7 @@ public abstract trait jet.BooleanIterable : jet.Iterable<jet.Boolean> {
 }
 public abstract class jet.BooleanIterator : jet.Iterator<jet.Boolean> {
     public final /*constructor*/ fun <init>(): jet.BooleanIterator
-    public abstract override /*1*/ fun hasNext(): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
     public open override /*1*/ fun next(): jet.Boolean
     public abstract fun nextBoolean(): jet.Boolean
 }
@@ -117,7 +117,7 @@ public abstract trait jet.ByteIterable : jet.Iterable<jet.Byte> {
 }
 public abstract class jet.ByteIterator : jet.Iterator<jet.Byte> {
     public final /*constructor*/ fun <init>(): jet.ByteIterator
-    public abstract override /*1*/ fun hasNext(): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
     public open override /*1*/ fun next(): jet.Byte
     public abstract fun nextByte(): jet.Byte
 }
@@ -204,7 +204,7 @@ public abstract trait jet.CharIterable : jet.Iterable<jet.Char> {
 }
 public abstract class jet.CharIterator : jet.Iterator<jet.Char> {
     public final /*constructor*/ fun <init>(): jet.CharIterator
-    public abstract override /*1*/ fun hasNext(): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
     public open override /*1*/ fun next(): jet.Char
     public abstract fun nextChar(): jet.Char
 }
@@ -231,8 +231,8 @@ public abstract trait jet.CharSequence : jet.Any {
 public abstract trait jet.Collection</*0*/ out E : jet.Any?> : jet.Iterable<E>, jet.Hashable {
     public abstract fun contains(/*0*/ o: jet.Any?): jet.Boolean
     public abstract fun containsAll(/*0*/ c: jet.Collection<out jet.Any?>): jet.Boolean
-    public abstract override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public abstract override /*1*/ fun hashCode(): jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
     public abstract fun isEmpty(): jet.Boolean
     public abstract override /*1*/ fun iterator(): jet.Iterator<E>
     public abstract fun size(): jet.Int
@@ -319,7 +319,7 @@ public abstract trait jet.DoubleIterable : jet.Iterable<jet.Double> {
 }
 public abstract class jet.DoubleIterator : jet.Iterator<jet.Double> {
     public final /*constructor*/ fun <init>(): jet.DoubleIterator
-    public abstract override /*1*/ fun hasNext(): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
     public open override /*1*/ fun next(): jet.Double
     public abstract fun nextDouble(): jet.Double
 }
@@ -511,7 +511,7 @@ public abstract trait jet.FloatIterable : jet.Iterable<jet.Float> {
 }
 public abstract class jet.FloatIterator : jet.Iterator<jet.Float> {
     public final /*constructor*/ fun <init>(): jet.FloatIterator
-    public abstract override /*1*/ fun hasNext(): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
     public open override /*1*/ fun next(): jet.Float
     public abstract fun nextFloat(): jet.Float
 }
@@ -709,7 +709,7 @@ public abstract trait jet.IntIterable : jet.Iterable<jet.Int> {
 }
 public abstract class jet.IntIterator : jet.Iterator<jet.Int> {
     public final /*constructor*/ fun <init>(): jet.IntIterator
-    public abstract override /*1*/ fun hasNext(): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
     public open override /*1*/ fun next(): jet.Int
     public abstract fun nextInt(): jet.Int
 }
@@ -738,9 +738,9 @@ public abstract trait jet.Iterator</*0*/ out T : jet.Any?> : jet.Any {
 public abstract trait jet.List</*0*/ out E : jet.Any?> : jet.Collection<E> {
     public abstract override /*1*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
     public abstract override /*1*/ fun containsAll(/*0*/ c: jet.Collection<out jet.Any?>): jet.Boolean
-    public abstract override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public abstract fun get(/*0*/ index: jet.Int): E
-    public abstract override /*1*/ fun hashCode(): jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
     public abstract fun indexOf(/*0*/ o: jet.Any?): jet.Int
     public abstract override /*1*/ fun isEmpty(): jet.Boolean
     public abstract override /*1*/ fun iterator(): jet.Iterator<E>
@@ -845,7 +845,7 @@ public abstract trait jet.LongIterable : jet.Iterable<jet.Long> {
 }
 public abstract class jet.LongIterator : jet.Iterator<jet.Long> {
     public final /*constructor*/ fun <init>(): jet.LongIterator
-    public abstract override /*1*/ fun hasNext(): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
     public open override /*1*/ fun next(): jet.Long
     public abstract fun nextLong(): jet.Long
 }
@@ -871,10 +871,10 @@ public abstract trait jet.Map</*0*/ K : jet.Any?, /*1*/ V : jet.Any?> : jet.Any 
     public abstract fun get(/*0*/ key: jet.Any?): V?
     public abstract fun isEmpty(): jet.Boolean
     public abstract trait jet.Map.Entry</*0*/ out K : jet.Any?, /*1*/ out V : jet.Any?> : jet.Hashable {
-        public abstract override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+        public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
         public abstract fun getKey(): K
         public abstract fun getValue(): V
-        public abstract override /*1*/ fun hashCode(): jet.Int
+        public abstract override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
     }
     public abstract fun keySet(): jet.Set<K>
     public abstract fun size(): jet.Int
@@ -884,25 +884,25 @@ public abstract trait jet.MutableCollection</*0*/ E : jet.Any?> : jet.Collection
     public abstract fun add(/*0*/ e: E): jet.Boolean
     public abstract fun addAll(/*0*/ c: jet.Collection<out E>): jet.Boolean
     public abstract fun clear(): jet.Tuple0
-    public abstract override /*1*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
-    public abstract override /*1*/ fun containsAll(/*0*/ c: jet.Collection<out jet.Any?>): jet.Boolean
-    public abstract override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public abstract override /*1*/ fun hashCode(): jet.Int
-    public abstract override /*1*/ fun isEmpty(): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: jet.Collection<out jet.Any?>): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): jet.Boolean
     public abstract override /*2*/ fun iterator(): jet.MutableIterator<E>
     public abstract fun remove(/*0*/ o: jet.Any?): jet.Boolean
     public abstract fun removeAll(/*0*/ c: jet.Collection<out jet.Any?>): jet.Boolean
     public abstract fun retainAll(/*0*/ c: jet.Collection<out jet.Any?>): jet.Boolean
-    public abstract override /*1*/ fun size(): jet.Int
-    public abstract override /*1*/ fun toArray(): jet.Array<jet.Any?>
-    public abstract override /*1*/ fun </*0*/ T : jet.Any?>toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
+    public abstract override /*1*/ /*fake_override*/ fun size(): jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun toArray(): jet.Array<jet.Any?>
+    public abstract override /*1*/ /*fake_override*/ fun </*0*/ T : jet.Any?>toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
 }
 public abstract trait jet.MutableIterable</*0*/ out T : jet.Any?> : jet.Iterable<T> {
     public abstract override /*1*/ fun iterator(): jet.MutableIterator<T>
 }
 public abstract trait jet.MutableIterator</*0*/ out T : jet.Any?> : jet.Iterator<T> {
-    public abstract override /*1*/ fun hasNext(): jet.Boolean
-    public abstract override /*1*/ fun next(): T
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun next(): T
     public abstract fun remove(): jet.Tuple0
 }
 public abstract trait jet.MutableList</*0*/ E : jet.Any?> : jet.List<E>, jet.MutableCollection<E> {
@@ -911,83 +911,83 @@ public abstract trait jet.MutableList</*0*/ E : jet.Any?> : jet.List<E>, jet.Mut
     public abstract override /*1*/ fun addAll(/*0*/ c: jet.Collection<out E>): jet.Boolean
     public abstract fun addAll(/*0*/ index: jet.Int, /*1*/ c: jet.Collection<out E>): jet.Boolean
     public abstract override /*1*/ fun clear(): jet.Tuple0
-    public abstract override /*2*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
-    public abstract override /*2*/ fun containsAll(/*0*/ c: jet.Collection<out jet.Any?>): jet.Boolean
-    public abstract override /*2*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public abstract override /*1*/ fun get(/*0*/ index: jet.Int): E
-    public abstract override /*2*/ fun hashCode(): jet.Int
-    public abstract override /*1*/ fun indexOf(/*0*/ o: jet.Any?): jet.Int
-    public abstract override /*2*/ fun isEmpty(): jet.Boolean
-    public abstract override /*2*/ fun iterator(): jet.Iterator<E>
-    public abstract override /*1*/ fun lastIndexOf(/*0*/ o: jet.Any?): jet.Int
-    public abstract override /*1*/ fun listIterator(): jet.ListIterator<E>
-    public abstract override /*1*/ fun listIterator(/*0*/ index: jet.Int): jet.ListIterator<E>
+    public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c: jet.Collection<out jet.Any?>): jet.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: jet.Int): E
+    public abstract override /*2*/ /*fake_override*/ fun hashCode(): jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ o: jet.Any?): jet.Int
+    public abstract override /*2*/ /*fake_override*/ fun isEmpty(): jet.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun iterator(): jet.Iterator<E>
+    public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ o: jet.Any?): jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun listIterator(): jet.ListIterator<E>
+    public abstract override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: jet.Int): jet.ListIterator<E>
     public abstract fun remove(/*0*/ index: jet.Int): E
     public abstract override /*1*/ fun remove(/*0*/ o: jet.Any?): jet.Boolean
     public abstract override /*1*/ fun removeAll(/*0*/ c: jet.Collection<out jet.Any?>): jet.Boolean
     public abstract override /*1*/ fun retainAll(/*0*/ c: jet.Collection<out jet.Any?>): jet.Boolean
     public abstract fun set(/*0*/ index: jet.Int, /*1*/ element: E): E
-    public abstract override /*2*/ fun size(): jet.Int
-    public abstract override /*1*/ fun subList(/*0*/ fromIndex: jet.Int, /*1*/ toIndex: jet.Int): jet.List<E>
-    public abstract override /*2*/ fun toArray(): jet.Array<jet.Any?>
-    public abstract override /*2*/ fun </*0*/ T : jet.Any?>toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
+    public abstract override /*2*/ /*fake_override*/ fun size(): jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: jet.Int, /*1*/ toIndex: jet.Int): jet.List<E>
+    public abstract override /*2*/ /*fake_override*/ fun toArray(): jet.Array<jet.Any?>
+    public abstract override /*2*/ /*fake_override*/ fun </*0*/ T : jet.Any?>toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
 }
 public abstract trait jet.MutableListIterator</*0*/ T : jet.Any?> : jet.ListIterator<T>, jet.MutableIterator<T> {
     public abstract fun add(/*0*/ e: T): jet.Tuple0
     public abstract override /*2*/ fun hasNext(): jet.Boolean
-    public abstract override /*1*/ fun hasPrevious(): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hasPrevious(): jet.Boolean
     public abstract override /*2*/ fun next(): T
-    public abstract override /*1*/ fun nextIndex(): jet.Int
-    public abstract override /*1*/ fun previous(): T
-    public abstract override /*1*/ fun previousIndex(): jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun nextIndex(): jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun previous(): T
+    public abstract override /*1*/ /*fake_override*/ fun previousIndex(): jet.Int
     public abstract override /*1*/ fun remove(): jet.Tuple0
     public abstract fun set(/*0*/ e: T): jet.Tuple0
 }
 public abstract trait jet.MutableMap</*0*/ K : jet.Any?, /*1*/ V : jet.Any?> : jet.Map<K, V> {
     public abstract fun clear(): jet.Tuple0
-    public abstract override /*1*/ fun containsKey(/*0*/ key: jet.Any?): jet.Boolean
-    public abstract override /*1*/ fun containsValue(/*0*/ value: jet.Any?): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: jet.Any?): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: jet.Any?): jet.Boolean
     public abstract override /*1*/ fun entrySet(): jet.Set<jet.MutableMap.MutableEntry<K, V>>
-    public abstract override /*1*/ fun get(/*0*/ key: jet.Any?): V?
-    public abstract override /*1*/ fun isEmpty(): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: jet.Any?): V?
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): jet.Boolean
     public abstract trait jet.MutableMap.MutableEntry</*0*/ K : jet.Any?, /*1*/ V : jet.Any?> : jet.Map.Entry<K, V>, jet.Hashable {
-        public abstract override /*2*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-        public abstract override /*1*/ fun getKey(): K
-        public abstract override /*1*/ fun getValue(): V
-        public abstract override /*2*/ fun hashCode(): jet.Int
+        public abstract override /*2*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+        public abstract override /*1*/ /*fake_override*/ fun getKey(): K
+        public abstract override /*1*/ /*fake_override*/ fun getValue(): V
+        public abstract override /*2*/ /*fake_override*/ fun hashCode(): jet.Int
         public abstract fun setValue(/*0*/ value: V): V
     }
-    public abstract override /*1*/ fun keySet(): jet.Set<K>
+    public abstract override /*1*/ /*fake_override*/ fun keySet(): jet.Set<K>
     public abstract fun put(/*0*/ key: K, /*1*/ value: V): V?
     public abstract fun putAll(/*0*/ m: jet.Map<out K, out V>): jet.Tuple0
     public abstract fun remove(/*0*/ key: jet.Any?): V?
-    public abstract override /*1*/ fun size(): jet.Int
-    public abstract override /*1*/ fun values(): jet.Collection<V>
+    public abstract override /*1*/ /*fake_override*/ fun size(): jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun values(): jet.Collection<V>
 }
 public abstract trait jet.MutableSet</*0*/ E : jet.Any?> : jet.Set<E>, jet.MutableCollection<E> {
     public abstract override /*1*/ fun add(/*0*/ e: E): jet.Boolean
     public abstract override /*1*/ fun addAll(/*0*/ c: jet.Collection<out E>): jet.Boolean
     public abstract override /*1*/ fun clear(): jet.Tuple0
-    public abstract override /*2*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
-    public abstract override /*2*/ fun containsAll(/*0*/ c: jet.Collection<out jet.Any?>): jet.Boolean
-    public abstract override /*2*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public abstract override /*2*/ fun hashCode(): jet.Int
-    public abstract override /*2*/ fun isEmpty(): jet.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c: jet.Collection<out jet.Any?>): jet.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun hashCode(): jet.Int
+    public abstract override /*2*/ /*fake_override*/ fun isEmpty(): jet.Boolean
     public abstract override /*2*/ fun iterator(): jet.MutableIterator<E>
     public abstract override /*1*/ fun remove(/*0*/ o: jet.Any?): jet.Boolean
     public abstract override /*1*/ fun removeAll(/*0*/ c: jet.Collection<out jet.Any?>): jet.Boolean
     public abstract override /*1*/ fun retainAll(/*0*/ c: jet.Collection<out jet.Any?>): jet.Boolean
-    public abstract override /*2*/ fun size(): jet.Int
-    public abstract override /*2*/ fun toArray(): jet.Array<jet.Any?>
-    public abstract override /*2*/ fun </*0*/ T : jet.Any?>toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
+    public abstract override /*2*/ /*fake_override*/ fun size(): jet.Int
+    public abstract override /*2*/ /*fake_override*/ fun toArray(): jet.Array<jet.Any?>
+    public abstract override /*2*/ /*fake_override*/ fun </*0*/ T : jet.Any?>toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
 }
 public final class jet.Nothing {
     private final /*constructor*/ fun <init>(): jet.Nothing
 }
 public abstract class jet.Number : jet.Hashable {
     public final /*constructor*/ fun <init>(): jet.Number
-    public abstract override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public abstract override /*1*/ fun hashCode(): jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
     public abstract fun toByte(): jet.Byte
     public abstract fun toChar(): jet.Char
     public abstract fun toDouble(): jet.Double
@@ -1002,8 +1002,8 @@ public abstract trait jet.Range</*0*/ in T : jet.Comparable<T>> : jet.Any {
 public abstract trait jet.Set</*0*/ out E : jet.Any?> : jet.Collection<E> {
     public abstract override /*1*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
     public abstract override /*1*/ fun containsAll(/*0*/ c: jet.Collection<out jet.Any?>): jet.Boolean
-    public abstract override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public abstract override /*1*/ fun hashCode(): jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
     public abstract override /*1*/ fun isEmpty(): jet.Boolean
     public abstract override /*1*/ fun iterator(): jet.Iterator<E>
     public abstract override /*1*/ fun size(): jet.Int
@@ -1088,7 +1088,7 @@ public abstract trait jet.ShortIterable : jet.Iterable<jet.Short> {
 }
 public abstract class jet.ShortIterator : jet.Iterator<jet.Short> {
     public final /*constructor*/ fun <init>(): jet.ShortIterator
-    public abstract override /*1*/ fun hasNext(): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
     public open override /*1*/ fun next(): jet.Short
     public abstract fun nextShort(): jet.Short
 }
