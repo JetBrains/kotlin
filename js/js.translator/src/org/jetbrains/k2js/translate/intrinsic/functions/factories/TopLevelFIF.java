@@ -34,7 +34,7 @@ public final class TopLevelFIF extends CompositeFIF {
     @NotNull
     public static final CallStandardMethodIntrinsic EQUALS = new CallStandardMethodIntrinsic(new JsNameRef("equals", "Kotlin"), true, 1);
     @NotNull
-    public static final FunctionIntrinsic RETURN_RECEIVER_INTRINSIC = new FunctionIntrinsic() {
+    private static final FunctionIntrinsic RETURN_RECEIVER_INTRINSIC = new FunctionIntrinsic() {
         @NotNull
         @Override
         public JsExpression apply(

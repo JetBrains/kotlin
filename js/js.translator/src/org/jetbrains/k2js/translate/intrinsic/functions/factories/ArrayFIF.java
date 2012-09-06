@@ -22,13 +22,19 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInPropertyIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.CallStandardMethodIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.List;
@@ -51,6 +57,7 @@ public final class ArrayFIF extends CompositeFIF {
 
     @NotNull
     private static final NamePredicate ARRAYS;
+
     static {
         List<Name> arrayTypeNames = Lists.newArrayList();
         for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
@@ -73,6 +80,19 @@ public final class ArrayFIF extends CompositeFIF {
         arrayTypeNames.add(arrayName);
         ARRAYS = new NamePredicate(arrayTypeNames);
     }
+
+    private static final FunctionIntrinsic ARRAY_INTRINSIC = new FunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context
+        ) {
+            assert arguments.size() == 1;
+            return arguments.get(0);
+        }
+    };
 
     @NotNull
     private static final FunctionIntrinsic GET_INTRINSIC = new FunctionIntrinsic() {
@@ -120,5 +140,22 @@ public final class ArrayFIF extends CompositeFIF {
         add(pattern(NUMBER_ARRAY, "<init>"), new CallStandardMethodIntrinsic(new JsNameRef("numberArrayOfSize", "Kotlin"), false, 1));
         add(pattern(CHAR_ARRAY, "<init>"), new CallStandardMethodIntrinsic(new JsNameRef("charArrayOfSize", "Kotlin"), false, 1));
         add(pattern(BOOLEAN_ARRAY, "<init>"), new CallStandardMethodIntrinsic(new JsNameRef("booleanArrayOfSize", "Kotlin"), false, 1));
+        add(PatternBuilder.create("kotlin", "array"), ARRAY_INTRINSIC);
+        add(new DescriptorPredicate() {
+            @Override
+            public boolean apply(@Nullable FunctionDescriptor descriptor) {
+                if (descriptor == null) {
+                    return false;
+                }
+
+                for (PrimitiveType type : PrimitiveType.values()) {
+                    if (type.getArrayTypeName().equals(descriptor.getName())) {
+                        DeclarationDescriptor nsDeclaration = descriptor.getContainingDeclaration();
+                        return nsDeclaration instanceof NamespaceDescriptor && DescriptorUtils.isRootNamespace((NamespaceDescriptor) nsDeclaration) && nsDeclaration.getName().asString().equals("kotlin");
+                    }
+                }
+                return false;
+            }
+        }, ARRAY_INTRINSIC);
     }
 }

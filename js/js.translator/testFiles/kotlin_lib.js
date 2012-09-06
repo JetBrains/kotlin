@@ -59,10 +59,6 @@ var kotlin = {set:function (receiver, key, value) {
         return obj1 === obj2;
     };
 
-    Kotlin.array = function (args) {
-        return args === null || args === undefined ? [] : args.slice();
-    };
-
     Kotlin.intUpto = function (from, to) {
         return Kotlin.$new(Kotlin.NumberRange)(from, to);
     };
