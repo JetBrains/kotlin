@@ -8,7 +8,7 @@ trait T {}
 
 class Br(t : T) : T by t {}
 
-open enum class EN() {
+<!OPEN_MODIFIER_IN_ENUM!>open<!> enum class EN() {
   A
 }
 

@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -94,12 +93,18 @@ public class DeclarationsChecker {
 
     private void checkClass(JetClass aClass, MutableClassDescriptor classDescriptor) {
         checkOpenMembers(classDescriptor);
-        checkTraitModifiers(aClass);
-        checkEnum(aClass, classDescriptor);
+        if (aClass.isTrait()) {
+            checkTraitModifiers(aClass);
+        }
+        else if (aClass.hasModifier(JetTokens.ENUM_KEYWORD)) {
+            checkEnumModifiers(aClass);
+        }
+        else if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
+            checkEnumEntry(aClass, classDescriptor);
+        }
     }
 
     private void checkTraitModifiers(JetClass aClass) {
-        if (!aClass.isTrait()) return;
         JetModifierList modifierList = aClass.getModifierList();
         if (modifierList == null) return;
         if (modifierList.hasModifier(JetTokens.FINAL_KEYWORD)) {
@@ -295,11 +300,13 @@ public class DeclarationsChecker {
         }
     }
 
+    private void checkEnumModifiers(JetClass aClass) {
+        if (aClass.hasModifier(JetTokens.OPEN_KEYWORD)) {
+            trace.report(OPEN_MODIFIER_IN_ENUM.on(aClass));
+        }
+    }
 
-
-    private void checkEnum(JetClass aClass, ClassDescriptor classDescriptor) {
-        if (classDescriptor.getKind() != ClassKind.ENUM_ENTRY) return;
-
+    private void checkEnumEntry(JetClass aClass, ClassDescriptor classDescriptor) {
         DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration().getContainingDeclaration();
         assert declaration instanceof ClassDescriptor;
         ClassDescriptorFromSource enumClass = (ClassDescriptorFromSource) declaration;

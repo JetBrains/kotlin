@@ -2,7 +2,7 @@
 
 package kt1193
 
-open enum class MyEnum(val i: Int) {
+enum class MyEnum(val i: Int) {
     A : MyEnum(12)
     <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>B<!>  //no error
 }

@@ -1244,6 +1244,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/enum/importEnumFromJava.kt");
             }
             
+            @TestMetadata("inheritanceFromEnum.kt")
+            public void testInheritanceFromEnum() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/inheritanceFromEnum.kt");
+            }
+            
             @TestMetadata("javaEnumValueOfMethod.kt")
             public void testJavaEnumValueOfMethod() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/enum/javaEnumValueOfMethod.kt");
