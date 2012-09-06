@@ -40,7 +40,7 @@ import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUt
 public class EditSignatureAction extends AnAction {
     private final PsiMethod annotationOwner;
 
-    public EditSignatureAction(PsiMethod annotationOwner) {
+    public EditSignatureAction(@NotNull PsiMethod annotationOwner) {
         super("Edit");
         this.annotationOwner = annotationOwner;
     }

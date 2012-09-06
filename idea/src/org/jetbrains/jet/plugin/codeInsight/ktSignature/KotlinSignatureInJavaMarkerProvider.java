@@ -108,8 +108,12 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
                 public ActionGroup getPopupMenuActions() {
                     DefaultActionGroup actionGroup = new DefaultActionGroup();
 
-                    actionGroup.add(new EditSignatureAction(getElement()));
-                    actionGroup.add(new DeleteSignatureAction(getElement()));
+                    PsiMethod element = getElement();
+                    assert element != null;
+                    PsiMethod annotationOwner = getAnnotationOwner(element);
+
+                    actionGroup.add(new EditSignatureAction(annotationOwner));
+                    actionGroup.add(new DeleteSignatureAction(annotationOwner));
 
                     return actionGroup;
                 }

@@ -24,6 +24,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiMethod;
+import org.jetbrains.annotations.NotNull;
 
 import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUtil.KOTLIN_SIGNATURE_ANNOTATION;
 import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUtil.findKotlinSignatureAnnotation;
@@ -36,7 +37,7 @@ import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUt
 public class DeleteSignatureAction extends AnAction {
     private final PsiMethod annotationOwner;
 
-    public DeleteSignatureAction(PsiMethod annotationOwner) {
+    public DeleteSignatureAction(@NotNull PsiMethod annotationOwner) {
         super("Delete");
         this.annotationOwner = annotationOwner;
     }
