@@ -133,40 +133,20 @@ public final class UsageTracker {
     }
 
     public void forEachCaptured(Consumer<CallableDescriptor> consumer) {
-        forEachCaptured(consumer, this, children == null ? null : new THashSet<CallableDescriptor>());
+        forEachCaptured(consumer, memberDescriptor, children == null ? null : new THashSet<CallableDescriptor>());
     }
 
-    private boolean isOneOfTheMyParentsIsAncestor(VariableDescriptor parameterDescriptor, UsageTracker requestor) {
-        if (requestor == this) {
-            return false;
-        }
-
-        FunctionDescriptor paramOwner = (FunctionDescriptor) parameterDescriptor.getContainingDeclaration();
-        UsageTracker p = parent;
-        do {
-            if (p.memberDescriptor == paramOwner) {
-                return true;
-            }
-        }
-        while ((p = p.parent) != null && p != requestor);
-        return false;
-    }
-
-    private void forEachCaptured(Consumer<CallableDescriptor> consumer, UsageTracker requestor, @Nullable THashSet<CallableDescriptor> visited) {
+    private void forEachCaptured(Consumer<CallableDescriptor> consumer, MemberDescriptor requestorDescriptor, @Nullable THashSet<CallableDescriptor> visited) {
         if (capturedVariables != null) {
-            for (CallableDescriptor variable : capturedVariables) {
-                if (variable instanceof VariableDescriptor && isOneOfTheMyParentsIsAncestor((VariableDescriptor) variable, requestor)) {
-                    continue;
-                }
-
-                if (visited == null || visited.add(variable)) {
-                    consumer.consume(variable);
+            for (CallableDescriptor callableDescriptor : capturedVariables) {
+                if (!isAncestor(requestorDescriptor, callableDescriptor) && (visited == null || visited.add(callableDescriptor))) {
+                    consumer.consume(callableDescriptor);
                 }
             }
         }
         if (children != null) {
             for (UsageTracker child : children) {
-                child.forEachCaptured(consumer, requestor, visited);
+                child.forEachCaptured(consumer, requestorDescriptor, visited);
             }
         }
     }
