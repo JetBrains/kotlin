@@ -81,6 +81,10 @@ public class DeclarationHintSupport extends AbstractProjectComponent {
 
         @Override
         public void mouseMoved(final EditorMouseEvent e) {
+            if (DumbService.getInstance(myProject).isDumb() || !myProject.isInitialized()) {
+                return;
+            }
+
             if (e.isConsumed() || e.getArea() != EditorMouseEventArea.EDITING_AREA) {
                 return;
             }
@@ -88,10 +92,6 @@ public class DeclarationHintSupport extends AbstractProjectComponent {
             final Editor editor = e.getEditor();
             PsiFile psiFile = PsiDocumentManager.getInstance(myProject).getPsiFile(editor.getDocument());
             if (psiFile == null || psiFile.getLanguage() != JetLanguage.INSTANCE) {
-                return;
-            }
-
-            if (DumbService.getInstance(psiFile.getProject()).isDumb()) {
                 return;
             }
 
