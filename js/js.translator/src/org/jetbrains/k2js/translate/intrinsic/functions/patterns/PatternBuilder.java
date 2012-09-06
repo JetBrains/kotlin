@@ -19,7 +19,9 @@ package org.jetbrains.k2js.translate.intrinsic.functions.patterns;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -107,5 +109,35 @@ public final class PatternBuilder {
     @NotNull
     public static DescriptorPredicate pattern(@NotNull final NamePredicate... checkers) {
         return pattern(Arrays.asList(checkers));
+    }
+
+    @NotNull
+    public static DescriptorPredicate create(@NotNull final String... names) {
+        return new DescriptorPredicate() {
+            @Override
+            public boolean apply(@Nullable FunctionDescriptor functionDescriptor) {
+                if (functionDescriptor == null) {
+                    return false;
+                }
+
+                DeclarationDescriptor descriptor = functionDescriptor;
+                int nameIndex = names.length - 1;
+                do {
+                    if (!descriptor.getName().getName().equals(names[nameIndex--])) {
+                        return false;
+                    }
+                    descriptor = descriptor.getContainingDeclaration();
+                    if (nameIndex == -1) {
+                        return isRootNamespace(descriptor);
+                    }
+                }
+                while (descriptor != null && !isRootNamespace(descriptor));
+                return false;
+            }
+        };
+    }
+
+    private static boolean isRootNamespace(DeclarationDescriptor declarationDescriptor) {
+        return declarationDescriptor instanceof NamespaceDescriptor && DescriptorUtils.isRootNamespace((NamespaceDescriptor) declarationDescriptor);
     }
 }
