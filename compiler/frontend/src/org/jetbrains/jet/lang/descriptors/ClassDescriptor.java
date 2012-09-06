@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author abreslav
@@ -50,6 +49,7 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
      * @return type A&lt;T&gt; for the class A&lt;T&gt;
      */
     @NotNull
+    @Override
     JetType getDefaultType();
 
     @NotNull
@@ -57,6 +57,7 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
     ClassDescriptor substitute(TypeSubstitutor substitutor);
 
     @Nullable
+    @Override
     JetType getClassObjectType();
 
     @Nullable
