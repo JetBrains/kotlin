@@ -253,6 +253,7 @@ public interface Errors {
     SimpleDiagnosticFactory<JetTypeReference> MANY_CLASSES_IN_SUPERTYPE_LIST = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetTypeReference> SUPERTYPE_NOT_A_CLASS_OR_TRAIT = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<PsiElement> SUPERTYPE_INITIALIZED_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR);
+    SimpleDiagnosticFactory<PsiElement> CLASS_IN_SUPERTYPE_FOR_ENUM = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<PsiElement> CONSTRUCTOR_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetTypeReference> SUPERTYPE_APPEARS_TWICE = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetTypeReference> FINAL_SUPERTYPE = SimpleDiagnosticFactory.create(ERROR);
