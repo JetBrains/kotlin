@@ -90,7 +90,7 @@ public class ClosureCodegen extends GenerationStateAware {
 
         cv.defineClass(fun,
                        V1_6,
-                       ACC_PUBLIC/*|ACC_SUPER*/,
+                       ACC_PUBLIC|ACC_FINAL/*|ACC_SUPER*/,
                        name.getInternalName(),
                        null,
                        funClass.getInternalName(),
