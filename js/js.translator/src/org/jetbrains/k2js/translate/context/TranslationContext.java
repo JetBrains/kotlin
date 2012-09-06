@@ -21,7 +21,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.Named;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -213,7 +212,7 @@ public class TranslationContext {
     }
 
     public JsExpression getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        if (usageTracker != null && descriptor instanceof ClassDescriptor) {
+        if (usageTracker != null) {
             usageTracker.triggerUsed(descriptor);
         }
         return aliasingContext.getAliasForDescriptor(descriptor);

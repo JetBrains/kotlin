@@ -22,26 +22,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-
-import java.util.List;
 
 class InnerFunctionTranslator extends InnerDeclarationTranslator {
     private final FunctionDescriptor descriptor;
 
-    public InnerFunctionTranslator(@NotNull JetElement element,
+    public InnerFunctionTranslator(
             @NotNull FunctionDescriptor descriptor,
             @NotNull TranslationContext context,
-            @NotNull JsFunction fun) {
-        super(element, descriptor, context, fun);
+            @NotNull JsFunction fun
+    ) {
+        super(context, fun);
         this.descriptor = descriptor;
-    }
-
-    @Override
-    protected List<ValueParameterDescriptor> getValueParameters() {
-        return descriptor.getValueParameters();
     }
 
     @SuppressWarnings("MethodOverloadsMethodOfSuperclass")
@@ -61,7 +53,8 @@ class InnerFunctionTranslator extends InnerDeclarationTranslator {
 
     @NotNull
     private JsExpression getThis(TranslationContext outerContext) {
-        ClassDescriptor outerClassDescriptor = closureContext.outerClassDescriptor;
+        //noinspection ConstantConditions
+        ClassDescriptor outerClassDescriptor = context.usageTracker().getOuterClassDescriptor();
         if (outerClassDescriptor != null && descriptor.getReceiverParameter() == null) {
             return outerContext.getThisObject(outerClassDescriptor);
         }

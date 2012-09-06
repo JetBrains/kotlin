@@ -93,20 +93,22 @@ public class LiteralFunctionTranslator {
                 aliasingContext = aliasingContext.inner(outerClass, new JsNameRef("o", fun.getName().makeRef()));
             }
 
-            funContext = rootContext.contextWithScope(fun, aliasingContext, new UsageTracker(outerClass));
+            funContext = rootContext.contextWithScope(fun, aliasingContext, new UsageTracker(descriptor, outerContext.usageTracker(),
+                                                                                             outerClass
+            ));
         }
         else {
             outerClass = null;
             asInner = descriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
 
-            funContext = rootContext.contextWithScope(fun, aliasingContext, outerContext.usageTracker());
+            funContext = rootContext.contextWithScope(fun, aliasingContext, new UsageTracker(descriptor, outerContext.usageTracker(), null));
         }
 
         fun.getBody().getStatements().addAll(translateFunctionBody(descriptor, declaration, funContext).getStatements());
 
         InnerFunctionTranslator translator = null;
         if (!asInner) {
-            translator = new InnerFunctionTranslator(declaration.asElement(), descriptor, funContext, fun);
+            translator = new InnerFunctionTranslator(descriptor, funContext, fun);
         }
 
         if (asInner) {
@@ -156,12 +158,13 @@ public class LiteralFunctionTranslator {
         JsFunction fun = createFunction();
         JsNameRef outerClassRef = fun.getScope().declareName("$this").makeRef();
         TranslationContext funContext = rootContext
-                .contextWithScope(fun, rootContext.aliasingContext().inner(outerClass, outerClassRef), new UsageTracker(outerClass));
+                .contextWithScope(fun, rootContext.aliasingContext().inner(outerClass, outerClassRef), new UsageTracker(descriptor, null,
+                                                                                                                        outerClass));
 
         fun.getBody().getStatements().add(new JsReturn(classTranslator.translate(funContext)));
         JetClassBody body = declaration.getBody();
         assert body != null;
-        InnerObjectTranslator translator = new InnerObjectTranslator(body, descriptor, funContext, fun);
+        InnerObjectTranslator translator = new InnerObjectTranslator(funContext, fun);
         return translator.translate(createReference(fun), funContext.usageTracker().isUsed() ? outerClassRef : null);
     }
 }
