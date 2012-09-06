@@ -83,10 +83,10 @@ public abstract class AnnotationCodegen {
         for (JetAnnotationEntry annotationEntry : annotationEntries) {
             ResolvedCall<? extends CallableDescriptor> resolvedCall =
                     bindingContext.get(BindingContext.RESOLVED_CALL, annotationEntry.getCalleeExpression());
-            assert resolvedCall != null;
+            if (resolvedCall == null) continue; // Skipping annotations if they are not resolved. Needed for JetLightClass generation
 
             AnnotationDescriptor annotationDescriptor = bindingContext.get(BindingContext.ANNOTATION, annotationEntry);
-            assert annotationDescriptor != null;
+            if (annotationDescriptor == null) continue; // Skipping annotations if they are not resolved. Needed for JetLightClass generation
 
             JetType type = annotationDescriptor.getType();
             genAnnotation(resolvedCall, type);

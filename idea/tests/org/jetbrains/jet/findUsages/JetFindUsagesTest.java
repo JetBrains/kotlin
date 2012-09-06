@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.findUsages;
 
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiStatement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -54,6 +55,16 @@ public class JetFindUsagesTest extends LightCodeInsightFixtureTestCase {
         UsageInfo first = usages.iterator().next();
         final PsiField field = PsiTreeUtil.getParentOfType(first.getElement(), PsiField.class);
         assertEquals("private Server myServer;", field.getText());
+    }
+
+    public void testFindUsagesUnresolvedAnnotation() {
+        myFixture.configureByFiles("unresolvedAnnotation/Server.kt", "unresolvedAnnotation/Client.java");
+        JetClass cls = PsiTreeUtil.getParentOfType(myFixture.getElementAtCaret(), JetClass.class, false);
+        final Collection<UsageInfo> usages = myFixture.findUsages(cls);
+        assertEquals(1, usages.size());
+        UsageInfo first = usages.iterator().next();
+        final PsiClass psiCLass = PsiTreeUtil.getParentOfType(first.getElement(), PsiClass.class);
+        assertEquals("public class Client extends Foo {}", psiCLass.getText());
     }
 
     public void testFindMethodUsages() {
