@@ -31,20 +31,13 @@ public class SpecialFiles {
     private static final Set<String> excludedFiles = Sets.newHashSet();
     private static final Set<String> filesCompiledWithoutStdLib = Sets.newHashSet();
     private static final Set<String> filesCompiledWithJUnit = Sets.newHashSet();
-    private static final Set<String> filesCompiledWithExternalAnnotations = Sets.newHashSet();
 
     static {
         fillExcludedFiles();
         fillFilesCompiledWithoutStdLib();
         fillFilesCompiledWithJUnit();
-        fillFilesCompiledWithExternalAnnotations();
     }
-
         
-    public static Set<String> getFilesCompiledWithExternalAnnotations() {
-        return filesCompiledWithExternalAnnotations;
-    }
-
     public static Set<String> getFilesCompiledWithJUnit() {
         return filesCompiledWithJUnit;
     }
@@ -61,11 +54,8 @@ public class SpecialFiles {
         filesCompiledWithJUnit.add("kt2334.kt");
     }
 
-    private static void fillFilesCompiledWithExternalAnnotations() {
-        filesCompiledWithExternalAnnotations.add("kt1980.kt");
-    }
-
     private static void fillFilesCompiledWithoutStdLib() {
+        filesCompiledWithoutStdLib.add("kt1980.kt");
         filesCompiledWithoutStdLib.add("kt1953_class.kt"); // Exception in code
         filesCompiledWithoutStdLib.add("basicmethodSuperClass.jet"); // Exception in code
         filesCompiledWithoutStdLib.add("kt503.jet"); // OVERLOAD_RESOLUTION_AMBIGUITY
