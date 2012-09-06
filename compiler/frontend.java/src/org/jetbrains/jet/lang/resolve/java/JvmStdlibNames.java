@@ -40,7 +40,6 @@ public class JvmStdlibNames {
 
     public static final JvmClassName JET_METHOD = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetMethod");
 
-    @Deprecated
     public static final String JET_METHOD_KIND_FIELD = "kind";
     public static final String JET_METHOD_FLAGS_FIELD = "flags";
     public static final String JET_METHOD_NULLABLE_RETURN_TYPE_FIELD = "nullableReturnType";
@@ -49,7 +48,7 @@ public class JvmStdlibNames {
     public static final String JET_METHOD_PROPERTY_TYPE_FIELD = "propertyType";
 
     public static final int FLAGS_DEFAULT_VALUE = 0;
-    public static final int FLAGS_BITS = 5;
+
     public static final int FLAG_PROPERTY_BIT = 0;
     public static final int FLAG_FORCE_OPEN_BIT = 1;
     public static final int FLAG_FORCE_FINAL_BIT = 2;

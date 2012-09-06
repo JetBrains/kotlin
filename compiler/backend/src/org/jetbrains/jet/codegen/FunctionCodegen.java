@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
@@ -164,6 +165,7 @@ public class FunctionCodegen extends GenerationStateAware {
                                             : JvmStdlibNames.FLAG_FORCE_OPEN_BIT);
                         }
                         aw.writeFlags(kotlinFlags);
+                        aw.writeKind(DescriptorKindUtils.kindToInt(functionDescriptor.getKind()));
                         aw.writeNullableReturnType(functionDescriptor.getReturnType().isNullable());
                         aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
                         aw.writeReturnType(jvmSignature.getKotlinReturnType());

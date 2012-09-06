@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
@@ -258,6 +259,7 @@ public class PropertyCodegen extends GenerationStateAware {
                       : JvmStdlibNames.FLAG_FORCE_OPEN_BIT);
         }
         aw.writeFlags(flags);
+        aw.writeKind(DescriptorKindUtils.kindToInt(propertyDescriptor.getKind()));
         aw.writeTypeParameters(typeParameters);
         aw.writePropertyType(kotlinType);
         aw.visitEnd();

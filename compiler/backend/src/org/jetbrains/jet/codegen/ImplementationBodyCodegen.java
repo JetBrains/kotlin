@@ -46,6 +46,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -381,6 +382,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
         BitSet kotlinFlags = getFlagsForVisibility(function.getVisibility());
         aw.writeFlags(kotlinFlags);
+        aw.writeKind(DescriptorKindUtils.kindToInt(function.getKind()));
         aw.writeNullableReturnType(returnType.isNullable());
         JvmMethodSignature jvmMethodSignature = typeMapper.mapToCallableMethod(function, false, kind).getSignature();
         aw.writeReturnType(jvmMethodSignature.getKotlinReturnType());
@@ -999,6 +1001,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     aw.writeReturnType(jvmSignature.getKotlinReturnType());
                 }
                 aw.writeFlags(kotlinFlags);
+                aw.writeKind(DescriptorKindUtils.kindToInt(inheritedFun.getKind()));
                 aw.visitEnd();
 
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {

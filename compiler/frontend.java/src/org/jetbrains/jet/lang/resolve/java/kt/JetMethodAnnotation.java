@@ -40,14 +40,19 @@ public class JetMethodAnnotation extends PsiAnnotationWithFlags {
     public BitSet flags() {
         if (flags == null) {
             int flagsValue = getIntAttribute(JvmStdlibNames.JET_METHOD_FLAGS_FIELD, JvmStdlibNames.FLAGS_DEFAULT_VALUE);
-            if (flagsValue == JvmStdlibNames.FLAGS_DEFAULT_VALUE) {
-                // for compatibility
-                flagsValue = getIntAttribute(JvmStdlibNames.JET_METHOD_KIND_FIELD, JvmStdlibNames.FLAGS_DEFAULT_VALUE);
-            }
-
             flags = BitSetUtils.toBitSet(flagsValue);
         }
         return flags;
+    }
+
+    private int kind;
+    private boolean kindInitialized;
+    public int kind() {
+        if (!kindInitialized) {
+            kind = getIntAttribute(JvmStdlibNames.JET_METHOD_KIND_FIELD, DescriptorKindUtils.getDefaultKindValue());
+            kindInitialized = true;
+        }
+        return kind;
     }
 
     private String typeParameters;

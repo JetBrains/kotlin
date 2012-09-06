@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.utils.BitSetUtils;
 
 import java.util.BitSet;
@@ -38,6 +39,12 @@ public class JetMethodAnnotationWriter {
         int flagsValue = BitSetUtils.toInt(flags);
         if (flagsValue != JvmStdlibNames.FLAGS_DEFAULT_VALUE) {
             av.visit(JvmStdlibNames.JET_METHOD_FLAGS_FIELD, flagsValue);
+        }
+    }
+
+    public void writeKind(int kind) {
+        if (kind != DescriptorKindUtils.getDefaultKindValue()) {
+            av.visit(JvmStdlibNames.JET_METHOD_KIND_FIELD, kind);
         }
     }
 

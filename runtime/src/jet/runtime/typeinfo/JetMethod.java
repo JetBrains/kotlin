@@ -34,9 +34,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JetMethod {
     /**
-     * @deprecated use flags instead
+     * See CallableMemberDescriptor.Kind
+     * @return kind of this method
      */
-    @Deprecated
     int kind() default 0;
 
     /**

@@ -33,7 +33,9 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
+import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
+import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
 import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameBase;
@@ -1170,9 +1172,12 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             }
 
             Visibility visibility = resolveVisibility(anyMember.getMember().psiMember, null);
+            CallableMemberDescriptor.Kind kind = CallableMemberDescriptor.Kind.DECLARATION;
+
             if (members.getter != null && members.getter.getMember() instanceof PsiMethodWrapper) {
-                visibility = resolveVisibility(anyMember.getMember().psiMember,
-                                               ((PsiMethodWrapper) members.getter.getMember()).getJetMethod());
+                JetMethodAnnotation jetMethod = ((PsiMethodWrapper) members.getter.getMember()).getJetMethod();
+                visibility = resolveVisibility(anyMember.getMember().psiMember, jetMethod);
+                kind = DescriptorKindUtils.intToKind(jetMethod.kind());
             }
 
             DeclarationDescriptor realOwner = getRealOwner(owner, scopeData, anyMember.getMember().isStatic());
@@ -1185,7 +1190,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                     visibility,
                     isVar,
                     propertyName,
-                    CallableMemberDescriptor.Kind.DECLARATION);
+                    kind);
 
             //TODO: this is a hack to indicate that this enum entry is an object
             // class descriptor for enum entries is not used by backends so for now this should be safe to use
@@ -1211,7 +1216,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                         visibility,
                         true,
                         false,
-                        CallableMemberDescriptor.Kind.DECLARATION);
+                        kind);
             }
             if (members.setter != null) {
                 Visibility setterVisibility = resolveVisibility(members.setter.getMember().psiMember, null);
@@ -1226,7 +1231,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                         setterVisibility,
                         true,
                         false,
-                        CallableMemberDescriptor.Kind.DECLARATION);
+                        kind);
             }
 
             propertyDescriptor.initialize(getterDescriptor, setterDescriptor);
@@ -1289,7 +1294,9 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                 setterDescriptor.initialize(new ValueParameterDescriptorImpl(setterDescriptor, 0, Collections.<AnnotationDescriptor>emptyList(), Name.identifier("p0") /*TODO*/, false, propertyDescriptor.getType(), false, null));
             }
 
-            trace.record(BindingContext.VARIABLE, anyMember.getMember().psiMember, propertyDescriptor);
+            if (kind == CallableMemberDescriptor.Kind.DECLARATION) {
+                trace.record(BindingContext.VARIABLE, anyMember.getMember().psiMember, propertyDescriptor);
+            }
             
             propertiesFromCurrent.add(propertyDescriptor);
         }
@@ -1505,7 +1512,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                 scopeData.classOrNamespaceDescriptor,
                 resolveAnnotations(method.getPsiMethod()),
                 Name.identifier(method.getName()),
-                CallableMemberDescriptor.Kind.DECLARATION
+                DescriptorKindUtils.intToKind(method.getJetMethod().kind())
         );
 
         String context = "method " + method.getName() + " in class " + psiClass.getQualifiedName();
@@ -1538,7 +1545,9 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                 /*isInline = */ false
         );
 
-        BindingContextUtils.recordFunctionDeclarationToDescriptor(tempTrace, method.getPsiMethod(), functionDescriptorImpl);
+        if (functionDescriptorImpl.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
+            BindingContextUtils.recordFunctionDeclarationToDescriptor(tempTrace, method.getPsiMethod(), functionDescriptorImpl);
+        }
 
         if (method.getPsiMethod().getContainingClass() != psiClass && !method.isStatic()) {
             throw new IllegalStateException("non-static method in subclass");
