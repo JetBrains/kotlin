@@ -51,15 +51,15 @@ public final class ReferenceTranslator {
     }
 
     @NotNull
-    public static JsExpression translateAsLocalNameReference(@NotNull DeclarationDescriptor referencedDescriptor,
+    public static JsExpression translateAsLocalNameReference(@NotNull DeclarationDescriptor descriptor,
             @NotNull TranslationContext context) {
-        if (referencedDescriptor instanceof FunctionDescriptor || referencedDescriptor instanceof VariableDescriptor) {
-            JsExpression alias = context.aliasingContext().getAliasForDescriptor(referencedDescriptor);
+        if (descriptor instanceof FunctionDescriptor || descriptor instanceof VariableDescriptor) {
+            JsExpression alias = context.getAliasForDescriptor(descriptor);
             if (alias != null) {
                 return alias;
             }
         }
-        return context.getNameForDescriptor(referencedDescriptor).makeRef();
+        return context.getNameForDescriptor(descriptor).makeRef();
     }
 
     @NotNull
