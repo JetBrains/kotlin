@@ -32,7 +32,6 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -41,25 +40,24 @@ import java.util.Map;
  */
 @SuppressWarnings("FieldAccessedSynchronizedAndUnsynchronized")
 public class JetDecompiledData {
-    private JetFile myJetFile;
-
-    private Map<ClsElementImpl, JetDeclaration> myClsElementsToJetElements = new HashMap<ClsElementImpl, JetDeclaration>();
+    private final JetFile jetFile;
+    private final Map<ClsElementImpl, JetDeclaration> clsElementsToJetElements;
 
     private static final Object LOCK = new String("decompiled data lock");
     private static final Key<JetDecompiledData> USER_DATA_KEY = new Key<JetDecompiledData>("USER_DATA_KEY");
 
     JetDecompiledData(JetFile jetFile, Map<ClsElementImpl, JetDeclaration> clsElementJetDeclarationMap) {
-        myJetFile = jetFile;
-        myClsElementsToJetElements = clsElementJetDeclarationMap;
+        this.jetFile = jetFile;
+        clsElementsToJetElements = clsElementJetDeclarationMap;
     }
 
     @NotNull
     public JetFile getJetFile() {
-        return myJetFile;
+        return jetFile;
     }
 
     public JetDeclaration getJetDeclarationByClsElement(ClsElementImpl clsElement) {
-        return myClsElementsToJetElements.get(clsElement);
+        return clsElementsToJetElements.get(clsElement);
     }
 
     @Nullable
@@ -102,6 +100,6 @@ public class JetDecompiledData {
 
     @TestOnly
     Map<ClsElementImpl, JetDeclaration> getClsElementsToJetElements() {
-        return myClsElementsToJetElements;
+        return clsElementsToJetElements;
     }
 }
