@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.libraries;
 
+import com.intellij.openapi.project.DumbService;
 import com.intellij.psi.ClsFileDecompiledPsiFileProvider;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
@@ -32,7 +33,7 @@ public class JetClsFileDecompiledPsiFileProvider implements ClsFileDecompiledPsi
     @Override
     public PsiFile getDecompiledPsiFile(@NotNull PsiJavaFile psiFile) {
         ClsFileImpl clsFile = (ClsFileImpl)psiFile;
-        if (JetDecompiledData.isKotlinFile(clsFile)) {
+        if (JetDecompiledData.isKotlinFile(clsFile) && !DumbService.isDumb(psiFile.getProject())) {
             return JetDecompiledData.getDecompiledData(clsFile).getJetFile();
         }
         return null;
