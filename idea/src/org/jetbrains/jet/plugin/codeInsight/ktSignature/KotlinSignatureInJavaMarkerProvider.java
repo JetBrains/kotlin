@@ -53,7 +53,9 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         @Override
         public String fun(PsiElement element) {
             PsiAnnotation annotation = findKotlinSignatureAnnotation(element);
-            assert annotation != null;
+
+            if (annotation == null) return null;
+
             String signature = getKotlinSignature(annotation);
             return "Alternative Kotlin signature is available for this method:\n"
                    + StringUtil.escapeXml(signature);
