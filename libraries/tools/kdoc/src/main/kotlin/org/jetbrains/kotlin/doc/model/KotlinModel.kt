@@ -734,13 +734,13 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
     // TODO dirty hack - remove when this issue is fixed
     // http://youtrack.jetbrains.com/issue/KT-1524
     val hackedLinks = hashMap(
-            #("IllegalArgumentException", #("java.lang", "java/lang/IllegalArgumentException.html")),
-            #("IllegalStateException", #("java.lang", "java/lang/IllegalStateException.html")),
-            #("Map.Entry", #("java.util", "java/util/Map.Entry.html")),
-            #("System.in", #("java.lang", "java/lang/System.html#in")),
-            #("System.out", #("java.lang", "java/lang/System.html#in")),
-            #("#equals()", #("java.lang", "java/lang/Object.html#equals(java.lang.Object)")),
-            #("#hashCode()", #("java.lang", "java/lang/Object.html#hashCode()"))
+            Pair("IllegalArgumentException", Pair("java.lang", "java/lang/IllegalArgumentException.html")),
+            Pair("IllegalStateException", Pair("java.lang", "java/lang/IllegalStateException.html")),
+            Pair("Map.Entry", Pair("java.util", "java/util/Map.Entry.html")),
+            Pair("System.in", Pair("java.lang", "java/lang/System.html#in")),
+            Pair("System.out", Pair("java.lang", "java/lang/System.html#in")),
+            Pair("#equals()", Pair("java.lang", "java/lang/Object.html#equals(java.lang.Object)")),
+            Pair("#hashCode()", Pair("java.lang", "java/lang/Object.html#hashCode()"))
     )
 
 

@@ -96,11 +96,11 @@ public fun <T> Iterable<T>.contains(item : T) : Boolean {
  *
  * @includeFunctionBody ../../test/ListTest.kt withIndices
  */
-public fun <T> Iterable<T>.withIndices(): List<#(Int, T)> {
-    val answer = ArrayList<#(Int, T)>()
+public fun <T> Iterable<T>.withIndices(): List<Pair<Int, T>> {
+    val answer = ArrayList<Pair<Int, T>>()
     var nextIndex = 0
     for (e in this) {
-        answer.add(#(nextIndex, e))
+        answer.add(Pair(nextIndex, e))
         nextIndex++
     }
     return answer

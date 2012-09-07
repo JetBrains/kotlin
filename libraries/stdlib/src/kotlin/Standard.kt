@@ -40,12 +40,12 @@ public inline fun <T> Iterator<T>.toHashSet() : HashSet<T> = toCollection(HashSe
 
 
 /**
- * Creates a tuple of type [[#(A,B)]] from this and *that* which can be useful for creating [[Map]] literals
+ * Creates a tuple of type [[Pair<A,B>]] from this and *that* which can be useful for creating [[Map]] literals
  * with less noise, for example
 
  * @includeFunctionBody ../../test/MapTest.kt createUsingTo
  */
-public inline fun <A,B> A.to(that: B): #(A, B) = #(this, that)
+public inline fun <A,B> A.to(that: B): Pair<A, B> = Pair(this, that)
 
 /**
 Run function f
@@ -62,4 +62,3 @@ public inline fun runnable(action: ()-> Unit): Runnable {
         }
     }
 }
-

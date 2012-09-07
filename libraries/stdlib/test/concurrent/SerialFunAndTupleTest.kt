@@ -15,7 +15,7 @@ class Serial(val a : String) : java.lang.Object(), Serializable {
 
 class SerialTest() : TestCase() {
     fun testMe() {
-        val tuple = #("lala", "bbb", Serial("serial"))
+        val tuple = Triple("lala", "bbb", Serial("serial"))
         val op = { -> tuple.toString() }
 
         val baos = ByteArrayOutputStream()

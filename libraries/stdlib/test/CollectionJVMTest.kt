@@ -93,13 +93,13 @@ class CollectionJVMTest {
 
     test fun sortBy() {
         expect(arrayList("two" to 2, "three" to 3)) {
-            arrayList("three" to 3, "two" to 2).sortBy { it._2 }
+            arrayList("three" to 3, "two" to 2).sortBy { it.second }
         }
         expect(arrayList("three" to 3, "two" to 2)) {
-            arrayList("three" to 3, "two" to 2).sortBy { it._1 }
+            arrayList("three" to 3, "two" to 2).sortBy { it.first }
         }
         expect(arrayList("two" to 2, "three" to 3)) {
-            arrayList("three" to 3, "two" to 2).sortBy { it._1.length }
+            arrayList("three" to 3, "two" to 2).sortBy { it.first.length }
         }
     }
 

@@ -38,8 +38,8 @@ class ListTest {
         val wis = data.withIndices()
         var index = 0
         for (withIndex in wis) {
-            assertEquals(withIndex._1, index)
-            assertEquals(withIndex._2, data[index])
+            assertEquals(withIndex.first, index)
+            assertEquals(withIndex.second, data[index])
             index++
         }
         assertEquals(data.size(), index)

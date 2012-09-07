@@ -24,14 +24,14 @@ public inline fun sortedSet<T>(comparator: Comparator<T>, vararg values: T) : Tr
  *
  * @includeFunctionBody ../../test/MapTest.kt createUsingTuples
  */
-public inline fun <K,V> hashMap(vararg values: #(K,V)): HashMap<K,V> {
+public inline fun <K,V> hashMap(vararg values: Pair<K,V>): HashMap<K,V> {
     val answer = HashMap<K,V>(values.size)
     /**
         TODO replace by this simpler call when we can pass vararg values into other methods
         answer.putAll(values)
     */
     for (v in values) {
-        answer.put(v._1, v._2)
+        answer.put(v.first, v.second)
     }
     return answer
 }
@@ -42,14 +42,14 @@ public inline fun <K,V> hashMap(vararg values: #(K,V)): HashMap<K,V> {
  *
  * @includeFunctionBody ../../test/MapTest.kt createSortedMap
  */
-public inline fun <K,V> sortedMap(vararg values: #(K,V)): SortedMap<K,V> {
+public inline fun <K,V> sortedMap(vararg values: Pair<K, V>): SortedMap<K,V> {
     val answer = TreeMap<K,V>()
     /**
         TODO replace by this simpler call when we can pass vararg values into other methods
         answer.putAll(values)
     */
     for (v in values) {
-        answer.put(v._1, v._2)
+        answer.put(v.first, v.second)
     }
     return answer
 }
@@ -61,14 +61,14 @@ public inline fun <K,V> sortedMap(vararg values: #(K,V)): SortedMap<K,V> {
  *
  * @includeFunctionBody ../../test/MapTest.kt createLinkedMap
  */
-public inline fun <K,V> linkedMap(vararg values: #(K,V)): LinkedHashMap<K,V> {
+public inline fun <K,V> linkedMap(vararg values: Pair<K, V>): LinkedHashMap<K,V> {
     val answer = LinkedHashMap<K,V>(values.size)
     /**
         TODO replace by this simpler call when we can pass vararg values into other methods
         answer.putAll(values)
     */
     for (v in values) {
-        answer.put(v._1, v._2)
+        answer.put(v.first, v.second)
     }
     return answer
 }

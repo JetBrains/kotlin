@@ -8,13 +8,13 @@ abstract class HtmlTemplate() : TextTemplate() {
             tagName: String,
             style: String? = null,
             className: String? = null,
-            attributes: List<#(String, String)> = arrayList(),
+            attributes: List<Pair<String, String>> = arrayList(),
             content: () -> Unit) {
-        val allAttributesBuilder = listBuilder<#(String, String)>()
+        val allAttributesBuilder = listBuilder<Pair<String, String>>()
         if (style != null)
-            allAttributesBuilder.add(#("style", style))
+            allAttributesBuilder.add(Pair("style", style))
         if (className != null)
-            allAttributesBuilder.add(#("class", className))
+            allAttributesBuilder.add(Pair("class", className))
 
         // TODO: add addAll to ListBuilder
         for (attribute in attributes)
@@ -55,7 +55,7 @@ abstract class HtmlTemplate() : TextTemplate() {
     fun linkCssStylesheet(href: String) =
         tag(
             tagName = "link",
-            attributes = arrayList(#("rel", "stylesheet"), #("type", "text/css"), #("href", href))) {}
+            attributes = arrayList(Pair("rel", "stylesheet"), Pair("type", "text/css"), Pair("href", href))) {}
 
     fun body(style: String? = null, className: String? = null, content: () -> Unit) =
         tag(tagName = "body", style = style, className = className, content = content)
@@ -79,11 +79,11 @@ abstract class HtmlTemplate() : TextTemplate() {
         tag(tagName = "span", style = style, className = className, content = content)
 
     fun a(href: String? = null, name: String? = null, content: () -> Unit) {
-        val attributes = listBuilder<#(String, String)>()
+        val attributes = listBuilder<Pair<String, String>>()
         if (href != null)
-            attributes.add(#("href", href))
+            attributes.add(Pair("href", href))
         if (name != null)
-            attributes.add(#("name", name))
+            attributes.add(Pair("name", name))
         tag(tagName = "a", attributes = attributes.build(), content = content)
     }
 }

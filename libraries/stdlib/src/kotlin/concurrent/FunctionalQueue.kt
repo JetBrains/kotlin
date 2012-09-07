@@ -16,7 +16,7 @@ class FunctionalQueue<T> (
 
     public fun addFirst(element: T) : FunctionalQueue<T> = FunctionalQueue<T>(input, output add element)
 
-    public fun removeFirst() : #(T,FunctionalQueue<T>) =
+    public fun removeFirst() : Pair<T, FunctionalQueue<T>> =
         if(output.empty) {
             if(input.empty)
                 throw java.util.NoSuchElementException()
@@ -24,6 +24,6 @@ class FunctionalQueue<T> (
                 FunctionalQueue<T>(FunctionalList.emptyList<T>(), input.reversed()).removeFirst()
         }
         else {
-            #(output.head, FunctionalQueue<T>(input, output.tail))
+            Pair(output.head, FunctionalQueue<T>(input, output.tail))
         }
 }

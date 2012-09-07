@@ -13,14 +13,14 @@ public fun <K, V> MutableMap<K, V>.set(key : K, value : V): Unit {
  *
  * @includeFunctionBody ../../test/MapTest.kt createUsingTuples
  */
-public inline fun <K,V> hashMap(vararg values: #(K,V)): HashMap<K,V> {
+public inline fun <K,V> hashMap(vararg values: Pair<K,V>): HashMap<K,V> {
     val answer = HashMap<K,V>()
     /**
         TODO replace by this simpler call when we can pass vararg values into other methods
         answer.putAll(values)
     */
     for (v in values) {
-        answer.put(v._1, v._2)
+        answer.put(v.first, v.second)
     }
     return answer
 }

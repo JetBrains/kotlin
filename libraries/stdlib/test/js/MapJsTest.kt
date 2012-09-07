@@ -52,7 +52,7 @@ class MapJsTest {
     */
 
     test fun createUsingTuples() {
-        val map = hashMap(#("a", 1), #("b", 2))
+        val map = hashMap(Pair("a", 1), Pair("b", 2))
         assertEquals(2, map.size)
         assertEquals(1, map.get("a"))
         assertEquals(2, map.get("b"))

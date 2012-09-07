@@ -94,9 +94,9 @@ public inline fun <K,V,R,C: MutableMap<K,R>> MutableMap<K,V>.mapValuesTo(result:
 /**
  * Puts all the entries into the map with the first value in the tuple being the key and the second the value
  */
-public inline fun <K,V> MutableMap<K,V>.putAll(vararg values: #(K,V)): Unit {
+public inline fun <K,V> MutableMap<K,V>.putAll(vararg values: Pair<K, V>): Unit {
     for (v in values) {
-        put(v._1, v._2)
+        put(v.first, v.second)
     }
 }
 
