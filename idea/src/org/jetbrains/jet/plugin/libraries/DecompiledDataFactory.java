@@ -50,20 +50,20 @@ class DecompiledDataFactory {
     private static final String JET_METHOD = JetMethod.class.getName();
     private static final String DECOMPILED_COMMENT = "/* compiled code */";
 
-    private StringBuilder myBuilder = new StringBuilder();
-    private ClsFileImpl myClsFile;
-    private BindingContext myBindingContext;
-    private final Map<PsiElement, TextRange> myClsMembersToRanges = new HashMap<PsiElement, TextRange>();
+    private final StringBuilder builder = new StringBuilder();
+    private final ClsFileImpl clsFile;
+    private final BindingContext bindingContext;
+    private final Map<PsiElement, TextRange> clsMembersToRanges = new HashMap<PsiElement, TextRange>();
 
-    private Map<ClsElementImpl, JetDeclaration> myClsElementsToJetElements = new HashMap<ClsElementImpl, JetDeclaration>();
-    private JavaDescriptorResolver myJavaDescriptorResolver;
+    private final Map<ClsElementImpl, JetDeclaration> clsElementsToJetElements = new HashMap<ClsElementImpl, JetDeclaration>();
+    private final JavaDescriptorResolver javaDescriptorResolver;
 
     private DecompiledDataFactory(ClsFileImpl clsFile) {
-        myClsFile = clsFile;
-        Project project = myClsFile.getProject();
+        this.clsFile = clsFile;
+        Project project = this.clsFile.getProject();
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(BuiltinsScopeExtensionMode.ALL, project);
-        myBindingContext = injector.getBindingTrace().getBindingContext();
-        myJavaDescriptorResolver = injector.getJavaDescriptorResolver();
+        bindingContext = injector.getBindingTrace().getBindingContext();
+        javaDescriptorResolver = injector.getJavaDescriptorResolver();
     }
 
     @NotNull
@@ -72,19 +72,19 @@ class DecompiledDataFactory {
     }
 
     private JetDecompiledData build() {
-        myBuilder.append("// IntelliJ API Decompiler stub source generated from a class file\n" +
+        builder.append("// IntelliJ API Decompiler stub source generated from a class file\n" +
                          "// Implementation of methods is not available");
-        myBuilder.append("\n\n");
+        builder.append("\n\n");
 
-        String packageName = myClsFile.getPackageName();
+        String packageName = clsFile.getPackageName();
         if (packageName.length() > 0) {
-            myBuilder.append("package ").append(packageName).append("\n\n");
+            builder.append("package ").append(packageName).append("\n\n");
         }
 
-        PsiClass psiClass = myClsFile.getClasses()[0];
+        PsiClass psiClass = clsFile.getClasses()[0];
 
         if (isKotlinNamespaceClass(psiClass)) {
-            NamespaceDescriptor nd = myJavaDescriptorResolver.resolveNamespace(new FqName(packageName), DescriptorSearchRule.INCLUDE_KOTLIN);
+            NamespaceDescriptor nd = javaDescriptorResolver.resolveNamespace(new FqName(packageName), DescriptorSearchRule.INCLUDE_KOTLIN);
 
             if (nd != null) {
                 for (DeclarationDescriptor member : sortDeclarations(nd.getMemberScope().getAllDescriptors())) {
@@ -92,29 +92,29 @@ class DecompiledDataFactory {
                         continue;
                     }
                     appendDescriptor(member, "");
-                    myBuilder.append("\n");
+                    builder.append("\n");
                 }
             }
         }
         else {
-            ClassDescriptor cd = myJavaDescriptorResolver.resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
+            ClassDescriptor cd = javaDescriptorResolver.resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
             if (cd != null) {
                 appendDescriptor(cd, "");
             }
         }
 
-        JetFile jetFile = JetDummyClassFileViewProvider.createJetFile(myClsFile.getManager(), myClsFile.getVirtualFile(), myBuilder.toString());
-        for (Map.Entry<PsiElement, TextRange> clsMemberToRange : myClsMembersToRanges.entrySet()) {
+        JetFile jetFile = JetDummyClassFileViewProvider.createJetFile(clsFile.getManager(), clsFile.getVirtualFile(), builder.toString());
+        for (Map.Entry<PsiElement, TextRange> clsMemberToRange : clsMembersToRanges.entrySet()) {
             PsiElement clsMember = clsMemberToRange.getKey();
             assert clsMember instanceof ClsElementImpl;
 
             TextRange range = clsMemberToRange.getValue();
             JetDeclaration jetDeclaration = PsiTreeUtil.findElementOfClassAtRange(jetFile, range.getStartOffset(), range.getEndOffset(), JetDeclaration.class);
             assert jetDeclaration != null;
-            myClsElementsToJetElements.put((ClsElementImpl) clsMember, jetDeclaration);
+            clsElementsToJetElements.put((ClsElementImpl) clsMember, jetDeclaration);
         }
 
-        return new JetDecompiledData(jetFile, myClsElementsToJetElements);
+        return new JetDecompiledData(jetFile, clsElementsToJetElements);
     }
 
     private static List<DeclarationDescriptor> sortDeclarations(Collection<DeclarationDescriptor> input) {
@@ -124,33 +124,33 @@ class DecompiledDataFactory {
     }
 
     private void appendDescriptor(@NotNull DeclarationDescriptor descriptor, String indent) {
-        int startOffset = myBuilder.length();
+        int startOffset = builder.length();
         String renderedDescriptor = DescriptorRenderer.COMPACT_WITH_MODIFIERS.render(descriptor);
         renderedDescriptor = renderedDescriptor.replace("= ...", "= " + DECOMPILED_COMMENT);
-        myBuilder.append(renderedDescriptor);
-        int endOffset = myBuilder.length();
+        builder.append(renderedDescriptor);
+        int endOffset = builder.length();
 
         if (descriptor instanceof FunctionDescriptor || descriptor instanceof PropertyDescriptor) {
             if (((CallableMemberDescriptor) descriptor).getModality() != Modality.ABSTRACT) {
                 if (descriptor instanceof FunctionDescriptor) {
-                    myBuilder.append(" { ").append(DECOMPILED_COMMENT).append(" }");
-                    endOffset = myBuilder.length();
+                    builder.append(" { ").append(DECOMPILED_COMMENT).append(" }");
+                    endOffset = builder.length();
                 }
                 else { // descriptor instanceof PropertyDescriptor
                     if (((PropertyDescriptor) descriptor).getModality() != Modality.ABSTRACT) {
-                        myBuilder.append(" ").append(DECOMPILED_COMMENT);
+                        builder.append(" ").append(DECOMPILED_COMMENT);
                     }
                 }
             }
         }
         else if (descriptor instanceof ClassDescriptor) {
-            myBuilder.append(" {\n");
+            builder.append(" {\n");
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
             boolean firstPassed = false;
             String subindent = indent + "    ";
             if (classDescriptor.getClassObjectDescriptor() != null) {
                 firstPassed = true;
-                myBuilder.append(subindent);
+                builder.append(subindent);
                 appendDescriptor(classDescriptor.getClassObjectDescriptor(), subindent);
             }
             for (DeclarationDescriptor member : sortDeclarations(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors())) {
@@ -162,22 +162,22 @@ class DecompiledDataFactory {
                 }
 
                 if (firstPassed) {
-                    myBuilder.append("\n");
+                    builder.append("\n");
                 }
                 else {
                     firstPassed = true;
                 }
-                myBuilder.append(subindent);
+                builder.append(subindent);
                 appendDescriptor(member, subindent);
             }
-            myBuilder.append(indent).append("}");
-            endOffset = myBuilder.length();
+            builder.append(indent).append("}");
+            endOffset = builder.length();
         }
 
-        myBuilder.append("\n");
-        PsiElement clsMember = BindingContextUtils.descriptorToDeclaration(myBindingContext, descriptor);
+        builder.append("\n");
+        PsiElement clsMember = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
         if (clsMember != null) {
-            myClsMembersToRanges.put(clsMember, new TextRange(startOffset, endOffset));
+            clsMembersToRanges.put(clsMember, new TextRange(startOffset, endOffset));
         }
     }
 
