@@ -19,8 +19,12 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -32,13 +36,13 @@ import java.util.*;
 /**
  * @author svtk
  */
-public class JavaToKotlinTypesMap {
-    private static JavaToKotlinTypesMap instance = null;
+public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
+    private static JavaToKotlinClassMap instance = null;
 
     @NotNull
-    public static JavaToKotlinTypesMap getInstance() {
+    public static JavaToKotlinClassMap getInstance() {
         if (instance == null) {
-            instance = new JavaToKotlinTypesMap();
+            instance = new JavaToKotlinClassMap();
         }
         return instance;
     }
@@ -48,7 +52,7 @@ public class JavaToKotlinTypesMap {
     private final Map<String, JetType> primitiveTypesMap = Maps.newHashMap();
     private final Multimap<FqName, ClassDescriptor> packagesWithMappedClasses = HashMultimap.create();
 
-    private JavaToKotlinTypesMap() {
+    private JavaToKotlinClassMap() {
         init();
         initPrimitives();
     }
@@ -107,12 +111,12 @@ public class JavaToKotlinTypesMap {
     }
 
     @Nullable
-    public JetType getPrimitiveKotlinAnalog(@NotNull String name) {
+    public JetType mapPrimitiveKotlinClass(@NotNull String name) {
         return primitiveTypesMap.get(name);
     }
 
     @Nullable
-    public ClassDescriptor getKotlinAnalog(@NotNull FqName fqName, @NotNull JavaTypeTransformer.TypeUsage typeUsage) {
+    public ClassDescriptor mapKotlinClass(@NotNull FqName fqName, @NotNull JavaTypeTransformer.TypeUsage typeUsage) {
         if (typeUsage == JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_COVARIANT
                 || typeUsage == JavaTypeTransformer.TypeUsage.SUPERTYPE) {
             ClassDescriptor descriptor = classDescriptorMapForCovariantPositions.get(fqName);
@@ -145,14 +149,17 @@ public class JavaToKotlinTypesMap {
         packagesWithMappedClasses.put(javaClassName.parent(), kotlinDescriptor);
     }
 
+    @Override
     @NotNull
-    public Collection<ClassDescriptor> getAllKotlinAnalogs(@NotNull FqName fqName) {
+    public Collection<ClassDescriptor> mapPlatformClass(@NotNull ClassDescriptor classDescriptor) {
+        FqNameUnsafe className = DescriptorUtils.getFQName(classDescriptor);
+        if (!className.isSafe()) {
+            return Collections.emptyList();
+        }
+        FqName fqName = className.toSafe();
         ClassDescriptor kotlinAnalog = classDescriptorMap.get(fqName);
         ClassDescriptor kotlinCovariantAnalog = classDescriptorMapForCovariantPositions.get(fqName);
-        if (kotlinAnalog == null && kotlinCovariantAnalog == null) {
-            return packagesWithMappedClasses.get(fqName);
-        }
-        ArrayList<ClassDescriptor> descriptors = Lists.newArrayList();
+        List<ClassDescriptor> descriptors = Lists.newArrayList();
         if (kotlinAnalog != null) {
             descriptors.add(kotlinAnalog);
         }
@@ -160,5 +167,15 @@ public class JavaToKotlinTypesMap {
             descriptors.add(kotlinCovariantAnalog);
         }
         return descriptors;
+    }
+
+    @Override
+    @NotNull
+    public Collection<ClassDescriptor> mapPlatformClassesInside(@NotNull DeclarationDescriptor containingDeclaration) {
+        FqNameUnsafe fqName = DescriptorUtils.getFQName(containingDeclaration);
+        if (!fqName.isSafe()) {
+            return Collections.emptyList();
+        }
+        return packagesWithMappedClasses.get(fqName.toSafe());
     }
 }

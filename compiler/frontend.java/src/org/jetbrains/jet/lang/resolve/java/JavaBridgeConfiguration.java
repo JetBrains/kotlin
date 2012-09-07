@@ -20,22 +20,20 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * @author abreslav
@@ -91,15 +89,7 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     @NotNull
     @Override
-    public Collection<ClassDescriptor> getKotlinAnalogs(@NotNull FqNameUnsafe classOrPackageName) {
-        return getKotlinAnalogsForJavaStandardClasses(classOrPackageName);
-    }
-
-    @NotNull
-    public static Collection<ClassDescriptor> getKotlinAnalogsForJavaStandardClasses(@NotNull FqNameUnsafe classOrPackageName) {
-        if (classOrPackageName.isSafe()) {
-            return JavaToKotlinTypesMap.getInstance().getAllKotlinAnalogs(classOrPackageName.toSafe());
-        }
-        return Collections.emptyList();
+    public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
+        return JavaToKotlinClassMap.getInstance();
     }
 }

@@ -37,8 +37,8 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
@@ -51,7 +51,6 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.lazy.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -243,8 +242,8 @@ public final class AnalyzerFacadeWithCache {
             
             @NotNull
             @Override
-            public Collection<ClassDescriptor> getKotlinAnalogs(@NotNull FqNameUnsafe className) {
-                return Collections.emptyList();
+            public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
+                return PlatformToKotlinClassMap.EMPTY;
             }
         };
 

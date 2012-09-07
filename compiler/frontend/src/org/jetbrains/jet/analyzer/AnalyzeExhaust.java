@@ -18,18 +18,16 @@ package org.jetbrains.jet.analyzer;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * @author Stepan Koltsov
@@ -46,8 +44,8 @@ public class AnalyzeExhaust {
 
         @NotNull
         @Override
-        public Collection<ClassDescriptor> getKotlinAnalogs(@NotNull FqNameUnsafe classOrPackageName) {
-            return Collections.emptyList();
+        public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
+            return PlatformToKotlinClassMap.EMPTY;
         }
 
         @Override

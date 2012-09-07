@@ -19,10 +19,10 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -124,7 +124,9 @@ public class ImportsResolver {
                 resolvedDirectives.put(importDirective, descriptors.iterator().next());
             }
             for (DeclarationDescriptor descriptor : descriptors) {
-                reportHasKotlinAnalog(onlyClasses, configuration, trace, importDirective, descriptor);
+                JetExpression importedReference = importDirective.getImportedReference();
+                if (onlyClasses || importedReference == null) continue;
+                reportPlatformClassMappedToKotlin(configuration, trace, importedReference, descriptor);
             }
         }
         delayedImporter.processImports();
@@ -136,19 +138,18 @@ public class ImportsResolver {
         }
     }
 
-    private static void reportHasKotlinAnalog(
-            boolean onlyClasses,
+    public static void reportPlatformClassMappedToKotlin(
             @NotNull ModuleConfiguration configuration,
             @NotNull BindingTrace trace,
-            @NotNull JetImportDirective importDirective,
+            @NotNull JetElement element,
             @NotNull DeclarationDescriptor descriptor
     ) {
-        if (!(descriptor instanceof ClassDescriptor) || onlyClasses) return;
-        FqNameUnsafe fqName = DescriptorUtils.getFQName(descriptor);
-        Collection<ClassDescriptor> kotlinAnalogs = configuration.getKotlinAnalogs(fqName);
-        JetExpression importedReference = importDirective.getImportedReference();
-        if (importedReference != null && !kotlinAnalogs.isEmpty()) {
-            trace.report(CLASS_HAS_KOTLIN_ANALOG.on(importedReference, kotlinAnalogs));
+        if (!(descriptor instanceof ClassDescriptor)) return;
+
+        PlatformToKotlinClassMap platformToKotlinMap = configuration.getPlatformToKotlinClassMap();
+        Collection<ClassDescriptor> kotlinAnalogsForClass = platformToKotlinMap.mapPlatformClass((ClassDescriptor) descriptor);
+        if (!kotlinAnalogsForClass.isEmpty()) {
+            trace.report(CLASS_HAS_KOTLIN_ANALOG.on(element, kotlinAnalogsForClass));
         }
     }
 

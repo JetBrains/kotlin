@@ -85,7 +85,7 @@ public class QualifiedExpressionResolver {
             }
 
             for (DeclarationDescriptor descriptor : descriptors) {
-                importer.addAllUnderImport(descriptor, DescriptorUtils.createIsNotHiddenByKotlinAnalogPredicate(descriptor, moduleConfiguration));
+                importer.addAllUnderImport(descriptor, moduleConfiguration.getPlatformToKotlinClassMap());
             }
             return Collections.emptyList();
         }

@@ -28,15 +28,14 @@ import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -118,8 +117,8 @@ public class LazyResolveTestUtil {
 
             @NotNull
             @Override
-            public Collection<ClassDescriptor> getKotlinAnalogs(@NotNull FqNameUnsafe classOrPackageName) {
-                return JavaBridgeConfiguration.getKotlinAnalogsForJavaStandardClasses(classOrPackageName);
+            public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
+                return JavaToKotlinClassMap.getInstance();
             }
         };
 

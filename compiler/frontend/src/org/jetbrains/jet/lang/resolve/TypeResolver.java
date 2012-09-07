@@ -37,7 +37,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.CLASS_HAS_KOTLIN_ANALOG;
 import static org.jetbrains.jet.lang.diagnostics.Errors.UNSUPPORTED;
 import static org.jetbrains.jet.lang.diagnostics.Errors.WRONG_NUMBER_OF_TYPE_ARGUMENTS;
 
@@ -289,10 +288,7 @@ public class TypeResolver {
         Collection<? extends DeclarationDescriptor> descriptors = qualifiedExpressionResolver.lookupDescriptorsForUserType(userType, scope, trace);
         for (DeclarationDescriptor descriptor : descriptors) {
             if (descriptor instanceof ClassifierDescriptor) {
-                Collection<ClassDescriptor> kotlinAnalogs = moduleConfiguration.getKotlinAnalogs(DescriptorUtils.getFQName(descriptor));
-                if (!kotlinAnalogs.isEmpty()) {
-                    trace.report(CLASS_HAS_KOTLIN_ANALOG.on(userType, kotlinAnalogs));
-                }
+                ImportsResolver.reportPlatformClassMappedToKotlin(moduleConfiguration, trace, userType, descriptor);
                 return (ClassifierDescriptor) descriptor;
             }
         }

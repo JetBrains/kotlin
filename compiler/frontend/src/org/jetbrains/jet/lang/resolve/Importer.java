@@ -21,12 +21,14 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.FilteringScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -34,13 +36,13 @@ import java.util.List;
  */
 /*package*/ interface Importer {
 
-    void addAllUnderImport(@NotNull DeclarationDescriptor descriptor, @Nullable Predicate<DeclarationDescriptor> isNotHiddenByKotlinAnalog);
+    void addAllUnderImport(@NotNull DeclarationDescriptor descriptor, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap);
 
     void addAliasImport(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName);
 
     Importer DO_NOTHING = new Importer() {
         @Override
-        public void addAllUnderImport(@NotNull DeclarationDescriptor descriptor, Predicate<DeclarationDescriptor> isNotHiddenByKotlinAnalog) {
+        public void addAllUnderImport(@NotNull DeclarationDescriptor descriptor, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
         }
 
         @Override
@@ -56,8 +58,8 @@ import java.util.List;
         }
 
         @Override
-        public void addAllUnderImport(@NotNull DeclarationDescriptor descriptor, @Nullable Predicate<DeclarationDescriptor> isNotHiddenByKotlinAnalog) {
-            importAllUnderDeclaration(descriptor, isNotHiddenByKotlinAnalog);
+        public void addAllUnderImport(@NotNull DeclarationDescriptor descriptor, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
+            importAllUnderDeclaration(descriptor, platformToKotlinClassMap);
         }
 
         @Override
@@ -65,7 +67,29 @@ import java.util.List;
             importDeclarationAlias(descriptor, aliasName);
         }
 
-        protected void importAllUnderDeclaration(@NotNull DeclarationDescriptor descriptor, @Nullable Predicate<DeclarationDescriptor> isNotHiddenByKotlinAnalog) {
+        @NotNull
+        private static JetScope createFilteringScope(
+                @NotNull JetScope scope,
+                @NotNull DeclarationDescriptor descriptor,
+                @NotNull PlatformToKotlinClassMap platformToKotlinClassMap
+        ) {
+            final Collection<ClassDescriptor> kotlinAnalogsForClassesInside = platformToKotlinClassMap.mapPlatformClassesInside(
+                    descriptor);
+            if (kotlinAnalogsForClassesInside.isEmpty()) return scope;
+            return new FilteringScope(scope, new Predicate<DeclarationDescriptor>() {
+                @Override
+                public boolean apply(DeclarationDescriptor descriptor) {
+                    for (ClassDescriptor kotlinAnalog : kotlinAnalogsForClassesInside) {
+                        if (kotlinAnalog.getName().equals(descriptor.getName())) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            });
+        }
+
+        protected void importAllUnderDeclaration(@NotNull DeclarationDescriptor descriptor, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
             JetScope scopeToImport = null;
             if (descriptor instanceof NamespaceDescriptor) {
                 scopeToImport = ((NamespaceDescriptor) descriptor).getMemberScope();
@@ -79,10 +103,7 @@ import java.util.List;
                 }
             }
             if (scopeToImport != null) {
-                if (isNotHiddenByKotlinAnalog != null) {
-                    scopeToImport = new FilteringScope(scopeToImport, isNotHiddenByKotlinAnalog);
-                }
-                namespaceScope.importScope(scopeToImport);
+                namespaceScope.importScope(createFilteringScope(scopeToImport, descriptor, platformToKotlinClassMap));
             }
         }
 
@@ -105,8 +126,8 @@ import java.util.List;
 
     class DelayedImporter extends StandardImporter {
         private interface DelayedImportEntry {}
-        private static class AllUnderImportEntry extends Pair<DeclarationDescriptor, Predicate<DeclarationDescriptor>> implements DelayedImportEntry {
-            public AllUnderImportEntry(@NotNull DeclarationDescriptor first, @Nullable Predicate<DeclarationDescriptor> second) {
+        private static class AllUnderImportEntry extends Pair<DeclarationDescriptor, PlatformToKotlinClassMap> implements DelayedImportEntry {
+            public AllUnderImportEntry(@NotNull DeclarationDescriptor first, @Nullable PlatformToKotlinClassMap second) {
                 super(first, second);
             }
         }
@@ -123,8 +144,8 @@ import java.util.List;
         }
 
         @Override
-        public void addAllUnderImport(@NotNull DeclarationDescriptor descriptor, @Nullable Predicate<DeclarationDescriptor> isNotHiddenByKotlinAnalog) {
-            imports.add(new AllUnderImportEntry(descriptor, isNotHiddenByKotlinAnalog));
+        public void addAllUnderImport(@NotNull DeclarationDescriptor descriptor, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
+            imports.add(new AllUnderImportEntry(descriptor, platformToKotlinClassMap));
         }
 
         @Override

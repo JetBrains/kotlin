@@ -26,9 +26,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
-import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
 
 import javax.inject.Inject;
@@ -149,8 +147,8 @@ public class JavaTypeTransformer {
                     // 'L extends List<T>' in Java is a List<T> in Kotlin, not a List<T?>
                     boolean nullable = !EnumSet.of(SUPERTYPE_ARGUMENT, SUPERTYPE).contains(howThisTypeIsUsed);
 
-                    ClassDescriptor classData = JavaToKotlinTypesMap.getInstance().getKotlinAnalog(new FqName(psiClass.getQualifiedName()),
-                                                                                        howThisTypeIsUsed);
+                    ClassDescriptor classData = JavaToKotlinClassMap.getInstance().mapKotlinClass(new FqName(psiClass.getQualifiedName()),
+                                                                                                    howThisTypeIsUsed);
 
                     if (classData == null) {
                         classData = resolver.resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
@@ -197,7 +195,7 @@ public class JavaTypeTransformer {
             @Override
             public JetType visitPrimitiveType(PsiPrimitiveType primitiveType) {
                 String canonicalText = primitiveType.getCanonicalText();
-                JetType type = JavaToKotlinTypesMap.getInstance().getPrimitiveKotlinAnalog(canonicalText);
+                JetType type = JavaToKotlinClassMap.getInstance().mapPrimitiveKotlinClass(canonicalText);
                 assert type != null : canonicalText;
                 return type;
             }
@@ -206,7 +204,7 @@ public class JavaTypeTransformer {
             public JetType visitArrayType(PsiArrayType arrayType) {
                 PsiType componentType = arrayType.getComponentType();
                 if (componentType instanceof PsiPrimitiveType) {
-                    JetType jetType = JavaToKotlinTypesMap.getInstance().getPrimitiveKotlinAnalog("[" + componentType.getCanonicalText());
+                    JetType jetType = JavaToKotlinClassMap.getInstance().mapPrimitiveKotlinClass("[" + componentType.getCanonicalText());
                     if (jetType != null)
                         return TypeUtils.makeNullable(jetType);
                 }
