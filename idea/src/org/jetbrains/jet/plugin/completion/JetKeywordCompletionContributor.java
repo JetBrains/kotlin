@@ -133,7 +133,8 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
             //noinspection unchecked
-            return PsiTreeUtil.getParentOfType(context, JetFile.class, false, JetClassBody.class, JetBlockExpression.class, JetFunction.class) != null &&
+            return PsiTreeUtil.getParentOfType(context, JetFile.class, false, JetClass.class, JetClassBody.class, JetBlockExpression.class,
+                                               JetFunction.class) != null &&
                    PsiTreeUtil.getParentOfType(context, JetParameterList.class, JetTypeParameterList.class, JetClass.class) == null;
         }
     }
@@ -146,10 +147,11 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         }
     }
 
-    private static class InParametersFilter extends PositionElementFilter {
+    private static class InParameterListsFilter extends PositionElementFilter {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
-            return PsiTreeUtil.getParentOfType(context, JetParameterList.class, false) != null;
+            //noinspection unchecked
+            return PsiTreeUtil.getNonStrictParentOfType(context, JetParameterList.class, JetTypeParameterList.class) != null;
         }
     }
 
@@ -265,9 +267,13 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                                         PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD,
                                         TYPE_KEYWORD);
 
-        registerScopeKeywordsCompletion(new SuperParentFilter(new ClassFilter(JetModifierList.class)),
-                                        ABSTRACT_KEYWORD, FINAL_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
-                                        OPEN_KEYWORD, PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD);
+        // In modifier list but not in parameters
+        registerScopeKeywordsCompletion(
+                new AndFilter(
+                        new SuperParentFilter(new ClassFilter(JetModifierList.class)),
+                        new NotFilter(new InParameterListsFilter())),
+                ABSTRACT_KEYWORD, FINAL_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
+                OPEN_KEYWORD, PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD);
 
         registerScopeKeywordsCompletion(new InClassBodyFilter(),
                                         ABSTRACT_KEYWORD,
@@ -296,7 +302,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                                         ELSE_KEYWORD, FALSE_KEYWORD,
                                         NULL_KEYWORD, THIS_KEYWORD, TRUE_KEYWORD);
 
-        registerScopeKeywordsCompletion(new InParametersFilter(), OUT_KEYWORD);
+        registerScopeKeywordsCompletion(new InParameterListsFilter(), OUT_KEYWORD);
 
         // templates
         registerScopeKeywordsCompletion(new InWhenFilter(),

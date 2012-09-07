@@ -71,6 +71,10 @@ public class KeywordsCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testInNotFinishedGenericWithFunAfter() {
+        doTest();
+    }
+
     public void testInFunctionTypeReference() {
         doTest();
     }
