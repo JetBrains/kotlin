@@ -122,6 +122,11 @@ public class ClassGenTest extends CodegenTestCase {
         blackBoxFile("classes/inheritedInnerClass.jet");
     }
 
+    public void testKt2532() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("classes/kt2532.kt");
+    }
+
     public void testInitializerBlock() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("classes/initializerBlock.jet");
