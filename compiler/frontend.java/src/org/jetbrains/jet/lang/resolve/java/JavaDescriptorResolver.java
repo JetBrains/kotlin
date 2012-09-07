@@ -1891,7 +1891,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             if (innerPsiClass.getName().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME)) {
                 continue;
             }
-            r.add(resolveClass(new FqName(innerPsiClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN));
+            ClassDescriptor classDescriptor = resolveClass(new FqName(innerPsiClass.getQualifiedName()),
+                                                           DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+            assert classDescriptor != null: "couldn't resolve class " + innerPsiClass.getQualifiedName();
+            r.add(classDescriptor);
         }
         return r;
     }
