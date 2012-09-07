@@ -147,11 +147,15 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         }
     }
 
-    private static class InParameterListsFilter extends PositionElementFilter {
+    private static class InTypeParameterFirstChildFilter extends PositionElementFilter {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
-            //noinspection unchecked
-            return PsiTreeUtil.getNonStrictParentOfType(context, JetParameterList.class, JetTypeParameterList.class) != null;
+            JetTypeParameter typeParameterElement = PsiTreeUtil.getParentOfType(context, JetTypeParameter.class, true);
+            if (typeParameterElement != null && PsiTreeUtil.isAncestor(typeParameterElement.getFirstChild(), context, false)) {
+                return true;
+            }
+
+            return false;
         }
     }
 
@@ -271,7 +275,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         registerScopeKeywordsCompletion(
                 new AndFilter(
                         new SuperParentFilter(new ClassFilter(JetModifierList.class)),
-                        new NotFilter(new InParameterListsFilter())),
+                        new NotFilter(new InTypeParameterFirstChildFilter())),
                 ABSTRACT_KEYWORD, FINAL_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
                 OPEN_KEYWORD, PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD);
 
@@ -302,7 +306,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                                         ELSE_KEYWORD, FALSE_KEYWORD,
                                         NULL_KEYWORD, THIS_KEYWORD, TRUE_KEYWORD);
 
-        registerScopeKeywordsCompletion(new InParameterListsFilter(), OUT_KEYWORD);
+        registerScopeKeywordsCompletion(new InTypeParameterFirstChildFilter(), false, IN_KEYWORD, OUT_KEYWORD);
 
         // templates
         registerScopeKeywordsCompletion(new InWhenFilter(),
@@ -332,6 +336,10 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                new KeywordsCompletionProvider(keywords));
     }
 
+    private void registerScopeKeywordsCompletion(final ElementFilter placeFilter, boolean notIdentifier, JetToken... keywords) {
+        registerScopeKeywordsCompletion(placeFilter, notIdentifier, convertTokensToStrings(keywords));
+    }
+
     private void registerScopeKeywordsCompletion(final ElementFilter placeFilter, String... keywords) {
         registerScopeKeywordsCompletion(placeFilter, true, keywords);
     }
@@ -351,12 +359,10 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
     private static ElementPattern<PsiElement> getPlacePattern(final ElementFilter placeFilter, boolean notIdentifier) {
         if (notIdentifier) {
-            return PlatformPatterns.psiElement().and(
-                    new FilterPattern(new AndFilter(GENERAL_FILTER, NOT_IDENTIFIER_FILTER, placeFilter)));
+            return PlatformPatterns.psiElement().and(new FilterPattern(new AndFilter(GENERAL_FILTER, NOT_IDENTIFIER_FILTER, placeFilter)));
         }
         else {
-            return PlatformPatterns.psiElement().and(
-                    new FilterPattern(new AndFilter(GENERAL_FILTER, placeFilter)));
+            return PlatformPatterns.psiElement().and(new FilterPattern(new AndFilter(GENERAL_FILTER, placeFilter)));
         }
     }
 }

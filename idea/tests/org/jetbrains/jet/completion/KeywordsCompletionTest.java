@@ -63,6 +63,10 @@ public class KeywordsCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testInClassTypeParameters() {
+        doTest();
+    }
+
     public void testInFunctionName() {
         doTest();
     }
