@@ -46,9 +46,9 @@ public class FilteringScope extends JetScopeAdapter {
         return Collections2.filter(super.getFunctions(name), predicate);
     }
 
+    @Nullable
     private <D extends DeclarationDescriptor> D filterDescriptor(@Nullable D descriptor) {
-        if (predicate.apply(descriptor)) return descriptor;
-        return null;
+        return descriptor != null && predicate.apply(descriptor) ? descriptor : null;
     }
 
     @Override
