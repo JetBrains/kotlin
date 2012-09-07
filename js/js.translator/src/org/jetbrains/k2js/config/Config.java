@@ -84,6 +84,7 @@ public abstract class Config {
 
     @NotNull
     public static final List<String> LIB_FILES_WITH_CODE = Arrays.asList(
+            "/stdlib/TuplesCode.kt",
             "/core/javautilCode.kt"
     );
 
