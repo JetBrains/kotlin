@@ -23,6 +23,7 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
@@ -181,11 +182,13 @@ public class ExpressionTypingUtils {
             @NotNull Project project,
             @NotNull JetExpression receiverExpression,
             @NotNull JetType receiverType,
-            @NotNull JetScope scope) {
-
+            @NotNull JetScope scope,
+            @NotNull ModuleConfiguration moduleConfiguration
+    ) {
         JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, callableFQN.getFqName());
 
-        Collection<? extends DeclarationDescriptor> declarationDescriptors = new QualifiedExpressionResolver().analyseImportReference(importDirective, scope, new BindingTraceContext());
+        Collection<? extends DeclarationDescriptor> declarationDescriptors = new QualifiedExpressionResolver()
+                .analyseImportReference(importDirective, scope, new BindingTraceContext(), moduleConfiguration);
 
         List<CallableDescriptor> callableExtensionDescriptors = new ArrayList<CallableDescriptor>();
         ReceiverDescriptor receiverDescriptor = new ExpressionReceiver(receiverExpression, receiverType);

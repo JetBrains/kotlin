@@ -44,9 +44,10 @@ public class QualifiedExpressionResolver {
     public Collection<? extends DeclarationDescriptor> analyseImportReference(
             @NotNull JetImportDirective importDirective,
             @NotNull JetScope scope,
-            @NotNull BindingTrace trace
+            @NotNull BindingTrace trace,
+            @NotNull ModuleConfiguration moduleConfiguration
     ) {
-        return processImportReference(importDirective, scope, scope, Importer.DO_NOTHING, trace, null, false);
+        return processImportReference(importDirective, scope, scope, Importer.DO_NOTHING, trace, moduleConfiguration, false);
     }
 
     @NotNull
@@ -56,7 +57,7 @@ public class QualifiedExpressionResolver {
             @NotNull JetScope scopeToCheckVisibility,
             @NotNull Importer importer,
             @NotNull BindingTrace trace,
-            @Nullable ModuleConfiguration moduleConfiguration,
+            @NotNull ModuleConfiguration moduleConfiguration,
             boolean onlyClasses
     ) {
         if (importDirective.isAbsoluteInRootNamespace()) {
