@@ -37,12 +37,15 @@ class KDocTest {
         val config = args.docConfig
         config.docOutputDir = outDir.toString()!!
         config.title = "Kotlin API"
-        config.ignorePackages.add("org.jetbrains.kotlin")
-        config.ignorePackages.add("java")
-        config.ignorePackages.add("jet")
-        config.ignorePackages.add("junit")
-        config.ignorePackages.add("sun")
-        config.ignorePackages.add("org")
+
+        //todo@svtk KT-2745
+        val ignorePackages = config.ignorePackages as MutableSet<String>
+        ignorePackages.add("org.jetbrains.kotlin")
+        ignorePackages.add("java")
+        ignorePackages.add("jet")
+        ignorePackages.add("junit")
+        ignorePackages.add("sun")
+        ignorePackages.add("org")
 
         val compiler = KDocCompiler()
         val r = compiler.exec(System.out, args)

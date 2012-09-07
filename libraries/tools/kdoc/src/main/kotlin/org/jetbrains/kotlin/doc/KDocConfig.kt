@@ -27,12 +27,13 @@ class KDocConfig() {
      * Returns a map of the package prefix to the HTML URL for the root of the apidoc using javadoc/kdoc style
      * directory layouts so that this API doc report can link to external packages
      */
-    public val packagePrefixToUrls: Map<String, String> = TreeMap<String, String>(LongestFirstStringComparator())
+    private val mutablePackagePrefixToUrls: MutableMap<String, String> = TreeMap<String, String>(LongestFirstStringComparator())
+    public val packagePrefixToUrls: Map<String, String> = mutablePackagePrefixToUrls
 
     /**
      * Returns a Set of the package name prefixes to ignore from the KDoc report
      */
-    public val ignorePackages: Set<String> = HashSet<String>()
+    public val ignorePackages: MutableSet<String> = HashSet<String>()
 
     /**
     * Returns true if a warning should be generated if there are no comments
@@ -75,14 +76,15 @@ class KDocConfig() {
     /**
      * Returns a set of all the package which have been warned that were missing an external URL
      */
-    public val missingPackageUrls: Set<String> = TreeSet<String>()
+    private val mutableMissingPackageUrls: MutableSet<String> = TreeSet<String>()
+    public val missingPackageUrls: Set<String> = mutableMissingPackageUrls
 
     /**
      * Adds one or more package prefixes to the given javadoc URL
      */
     fun addPackageLink(url: String, vararg packagePrefixes: String): Unit {
         for (p in packagePrefixes) {
-            packagePrefixToUrls.put(p, url)
+            mutablePackagePrefixToUrls.put(p, url)
         }
     }
 
@@ -97,7 +99,7 @@ class KDocConfig() {
                 return url
             }
        }
-        if (warn && missingPackageUrls.add(packageName)) {
+        if (warn && mutableMissingPackageUrls.add(packageName)) {
             println("Warning: could not find external link to package: $packageName")
         }
         return ""
