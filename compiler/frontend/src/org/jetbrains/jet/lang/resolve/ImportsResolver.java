@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.CLASS_HAS_KOTLIN_ANALOG;
+import static org.jetbrains.jet.lang.diagnostics.Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN;
 import static org.jetbrains.jet.lang.diagnostics.Errors.USELESS_HIDDEN_IMPORT;
 import static org.jetbrains.jet.lang.diagnostics.Errors.USELESS_SIMPLE_IMPORT;
 
@@ -149,7 +149,7 @@ public class ImportsResolver {
         PlatformToKotlinClassMap platformToKotlinMap = configuration.getPlatformToKotlinClassMap();
         Collection<ClassDescriptor> kotlinAnalogsForClass = platformToKotlinMap.mapPlatformClass((ClassDescriptor) descriptor);
         if (!kotlinAnalogsForClass.isEmpty()) {
-            trace.report(CLASS_HAS_KOTLIN_ANALOG.on(element, kotlinAnalogsForClass));
+            trace.report(PLATFORM_CLASS_MAPPED_TO_KOTLIN.on(element, kotlinAnalogsForClass));
         }
     }
 

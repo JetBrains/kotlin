@@ -5,15 +5,15 @@ import java.util.*
 import <!UNRESOLVED_REFERENCE!>utils<!>.*
 
 import java.io.PrintStream
-import <!CLASS_HAS_KOTLIN_ANALOG!>java.lang.Comparable<!> as Com
+import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Comparable<!> as Com
 
 val l : List<in Int> = ArrayList<Int>()
 
-fun test(<!UNUSED_PARAMETER!>l<!> : <!CLASS_HAS_KOTLIN_ANALOG!>java.util.List<Int><!>) {
+fun test(<!UNUSED_PARAMETER!>l<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<Int><!>) {
   val <!UNUSED_VARIABLE!>x<!> : java.<!UNRESOLVED_REFERENCE!>List<!>
-  val <!UNUSED_VARIABLE!>y<!> : <!CLASS_HAS_KOTLIN_ANALOG!>java.util.List<Int><!>
-  val <!UNUSED_VARIABLE!>b<!> : <!CLASS_HAS_KOTLIN_ANALOG!>java.lang.Object<!>
-  val <!UNUSED_VARIABLE!>a<!> : <!CLASS_HAS_KOTLIN_ANALOG!>util.List<Int><!>
+  val <!UNUSED_VARIABLE!>y<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<Int><!>
+  val <!UNUSED_VARIABLE!>b<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Object<!>
+  val <!UNUSED_VARIABLE!>a<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>util.List<Int><!>
   val <!UNUSED_VARIABLE!>z<!> : java.<!UNRESOLVED_REFERENCE!>utils<!>.List<Int>
 
   val <!UNUSED_VARIABLE!>f<!> : java.io.File? = null
@@ -29,7 +29,7 @@ fun test(<!UNUSED_PARAMETER!>l<!> : <!CLASS_HAS_KOTLIN_ANALOG!>java.util.List<In
   <!UNRESOLVED_REFERENCE!>List<!><Int>
 
 
-  val <!UNUSED_VARIABLE!>o<!> = "sdf" <!CAST_NEVER_SUCCEEDS!>as<!> <!CLASS_HAS_KOTLIN_ANALOG!>Object<!>
+  val <!UNUSED_VARIABLE!>o<!> = "sdf" <!CAST_NEVER_SUCCEEDS!>as<!> <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Object<!>
 
   try {
     // ...
@@ -40,9 +40,9 @@ fun test(<!UNUSED_PARAMETER!>l<!> : <!CLASS_HAS_KOTLIN_ANALOG!>java.util.List<In
 
   PrintStream("sdf")
 
-  val c : <!CLASS_HAS_KOTLIN_ANALOG!>Com<Int><!>? = null
+  val c : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Com<Int><!>? = null
 
-  c : <!CLASS_HAS_KOTLIN_ANALOG!>java.lang.Comparable<Int><!>?
+  c : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Comparable<Int><!>?
 
 //  Collections.sort<Integer>(ArrayList<Integer>())
   xxx.<!UNRESOLVED_REFERENCE!>Class<!>()

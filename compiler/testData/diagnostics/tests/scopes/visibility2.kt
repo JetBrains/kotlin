@@ -42,6 +42,6 @@ class Q {
 }
 
 //check that 'toString' can be invoked without specifying return type
-class NewClass : java.util.ArrayList<<!CLASS_HAS_KOTLIN_ANALOG!>Integer<!>>() {
+class NewClass : java.util.ArrayList<<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!>>() {
     public override fun toString() = "a"
 }

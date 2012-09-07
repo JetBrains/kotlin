@@ -84,7 +84,7 @@ public interface Errors {
     DiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> CANNOT_BE_IMPORTED = DiagnosticFactory1.create(ERROR);
     SimpleDiagnosticFactory<JetExpression> USELESS_HIDDEN_IMPORT = SimpleDiagnosticFactory.create(WARNING);
     SimpleDiagnosticFactory<JetExpression> USELESS_SIMPLE_IMPORT = SimpleDiagnosticFactory.create(WARNING);
-    DiagnosticFactory1<JetElement, Collection<ClassDescriptor>> CLASS_HAS_KOTLIN_ANALOG = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<JetElement, Collection<ClassDescriptor>> PLATFORM_CLASS_MAPPED_TO_KOTLIN = DiagnosticFactory1.create(WARNING);
 
     SimpleDiagnosticFactory<JetParameter> CANNOT_INFER_PARAMETER_TYPE = SimpleDiagnosticFactory.create(ERROR);
 
