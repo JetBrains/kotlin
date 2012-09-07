@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public abstract class KotlinCompileMojoBase extends AbstractMojo {
@@ -111,9 +110,12 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         // Check sources
         if (sources != null && sources.size() > 0) {
             boolean sourcesExists = false;
-            Iterator sourceIterator = sources.iterator();
-            while (!sourcesExists && sourceIterator.hasNext()) {
-                sourcesExists |= new File(sourceIterator.next().toString()).exists();
+
+            for (String source : sources) {
+                if (new File(source).exists()) {
+                    sourcesExists = true;
+                    break;
+                }
             }
 
             if (!sourcesExists) {
