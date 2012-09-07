@@ -22,7 +22,10 @@ import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
 import com.intellij.testFramework.LightCodeInsightTestCase;
+import junit.framework.Assert;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.testing.ReferenceUtils;
 
 import java.io.File;
 
@@ -34,8 +37,42 @@ public class ResolveBaseTest extends LightCodeInsightTestCase {
         doMultiResolveTest();
     }
 
+    public void testResolveClass() throws Exception {
+        doSingleResolveTest("(<root>).Test");
+    }
+
+    public void testResolvePackageInProperty() throws Exception {
+        doSingleResolveTest("test1");
+    }
+
     public void testSeveralOverrides() throws Exception {
         doMultiResolveTest();
+    }
+
+    protected void doSingleResolveTest(@Nullable String referenceToString) throws Exception {
+        final String testName = getTestName(false);
+        configureByFile(testName + ".kt");
+
+        int offset = getEditor().getCaretModel().getOffset();
+        final PsiReference psiReference = getFile().findReferenceAt(offset);
+        if (psiReference != null) {
+            PsiElement resolvedTo = psiReference.resolve();
+            if (resolvedTo != null) {
+                String resolvedToElementStr = ReferenceUtils.renderAsGotoImplementation(resolvedTo);
+                String notEqualMessage = String.format("Found reference to '%s', but '%s' was expected", resolvedToElementStr,
+                                              referenceToString != null ? referenceToString : "<null>");
+                assertEquals(notEqualMessage, referenceToString, resolvedToElementStr);
+            }
+            else {
+                Assert.assertNull(
+                        String.format("Element %s wasn't resolved to anything, but %s was expected", psiReference, referenceToString),
+                        referenceToString);
+            }
+        }
+        else {
+            Assert.assertNull(String.format("No reference found at offset: %s, but one resolved to %s was expected", offset, referenceToString),
+                              referenceToString);
+        }
     }
 
     protected void doMultiResolveTest() throws Exception {

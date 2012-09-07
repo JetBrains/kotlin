@@ -21,17 +21,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.intellij.codeInsight.navigation.GotoImplementationHandler;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Assert;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.JetLightClass;
-import org.jetbrains.jet.plugin.presentation.JetLightClassListCellRenderer;
 import org.jetbrains.jet.testing.InTextDirectivesUtils;
+import org.jetbrains.jet.testing.ReferenceUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,7 +37,7 @@ import java.util.List;
 /**
  * @author Nikolay Krasko
  */
-final class ImplementationTestUtils {
+public final class ImplementationTestUtils {
     private ImplementationTestUtils() {
     }
 
@@ -59,22 +56,7 @@ final class ImplementationTestUtils {
                 @Override
                 public String apply(@Nullable PsiElement element) {
                     Assert.assertNotNull(element);
-                    if (element instanceof JetLightClass) {
-                        JetLightClass jetLightClass = (JetLightClass) element;
-                        JetLightClassListCellRenderer renderer = new JetLightClassListCellRenderer();
-                        String elementText = renderer.getElementText(jetLightClass);
-                        String containerText = JetLightClassListCellRenderer.getContainerTextStatic(jetLightClass);
-                        return (containerText != null) ? containerText + "." + elementText : elementText;
-                    }
-
-                    Assert.assertTrue(element instanceof NavigationItem);
-                    ItemPresentation presentation = ((NavigationItem) element).getPresentation();
-
-                    Assert.assertNotNull(presentation);
-
-                    String presentableText = presentation.getPresentableText();
-                    String locationString = presentation.getLocationString();
-                    return locationString != null ? (locationString + "." + presentableText) : presentableText;
+                    return ReferenceUtils.renderAsGotoImplementation(element);
                 }
             });
 
