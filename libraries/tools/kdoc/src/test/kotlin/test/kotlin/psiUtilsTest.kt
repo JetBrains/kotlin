@@ -1,6 +1,5 @@
 package test.kotlin
 
-import java.util.List
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.config.CompilerConfiguration

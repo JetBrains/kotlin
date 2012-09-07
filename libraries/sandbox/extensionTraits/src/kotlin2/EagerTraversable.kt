@@ -1,8 +1,6 @@
 package kotlin2
 
 import java.util.ArrayList
-import java.util.Collection
-import java.util.List
 
 public trait EagerTraversable<T>: Traversable<T> {
     /**

@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.doc.model
 
 import java.io.File
-import java.util.List
 import org.jetbrains.jet.cli.common.CompilerPlugin
 import org.jetbrains.jet.cli.common.CompilerPluginContext
 import org.jetbrains.kotlin.doc.KDocArguments

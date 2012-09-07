@@ -11,7 +11,7 @@ annotation class extension() {
 /**
  * Defines the extension functions on a List<T>
  */
-extension open class ListExtensions<T>(private val that: java.util.List<T>): CollectionExtensions<T>(that), ListLike<T> {
+extension open class ListExtensions<T>(private val that: List<T>): CollectionExtensions<T>(that), ListLike<T> {
     public override fun get(index: Int): T {
         return that.get(index)!!
     }
@@ -20,7 +20,7 @@ extension open class ListExtensions<T>(private val that: java.util.List<T>): Col
 /**
  * Defines the extension functions on a Collection<T>
  */
-extension open class CollectionExtensions<T>(private val that: java.util.Collection<T>): CollectionLike<T> {
+extension open class CollectionExtensions<T>(private val that: Collection<T>): CollectionLike<T> {
     public override fun iterator(): Iterator<T> {
         // TODO adapt java.util.Iterator<T> to Iterator<T>
         throw UnsupportedOperationException()
@@ -36,7 +36,7 @@ extension open class CollectionExtensions<T>(private val that: java.util.Collect
 /**
  * Defines the extension functions on a Collection<T>
  */
-extension open class IteratorExtensions<T>(private val that: java.util.Iterator<T>): LazyTraversable<T> {
+extension open class IteratorExtensions<T>(private val that: Iterator<T>): LazyTraversable<T> {
     public override fun iterator(): Iterator<T> {
         // TODO adapt java.util.Iterator<T> to Iterator<T>
         throw UnsupportedOperationException()

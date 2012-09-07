@@ -2,9 +2,6 @@ package kotlin.jdbc
 
 import java.sql.*
 import java.util.ArrayList
-import java.util.Collection
-import java.util.List
-import java.util.Map
 
 /**
  * Executes the specfied block with result set and then closes it
@@ -68,7 +65,7 @@ fun ResultSet.getValues(columnNames : jet.Array<String> = getColumnNames()) : je
  * Return map filled with values from current row in the cursor. Uses column names as keys for result map.
  * @param columnNames you can specify column names to extract otherwise all columns will be extracted
  */
-fun ResultSet.getValuesAsMap(columnNames : jet.Array<String> = getColumnNames()) : java.util.Map<String, Any?> {
+fun ResultSet.getValuesAsMap(columnNames : jet.Array<String> = getColumnNames()) : Map<String, Any?> {
     val result = java.util.HashMap<String, Any?>(columnNames.size)
 
     columnNames.forEach {

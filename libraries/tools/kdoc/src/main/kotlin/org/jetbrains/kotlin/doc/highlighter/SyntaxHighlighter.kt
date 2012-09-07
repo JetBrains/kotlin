@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.doc.highlighter
 
 import java.util.HashMap
-import java.util.Map
 import kotlin.template.HtmlFormatter
 import org.jetbrains.jet.internal.com.intellij.psi.*
 import org.jetbrains.jet.internal.com.intellij.psi.tree.IElementType

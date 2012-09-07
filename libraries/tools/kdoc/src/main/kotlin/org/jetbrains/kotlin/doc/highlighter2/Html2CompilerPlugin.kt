@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.doc.highlighter2
 
 import java.io.File
-import java.util.List
 import org.jetbrains.jet.internal.com.intellij.openapi.vfs.local.CoreLocalVirtualFile
 import org.jetbrains.jet.internal.com.intellij.psi.PsiElement
 import org.jetbrains.jet.internal.com.intellij.psi.PsiFile

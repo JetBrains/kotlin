@@ -350,7 +350,7 @@ public trait Traversable<T>: Iterable<T> {
     /*
         public fun withIndices(): java.lang.Iterable<#(Int, T)> {
             return object : java.lang.Iterable<#(Int, T)> {
-                public override fun iterator(): java.util.Iterator<#(Int, T)> {
+                public override fun iterator(): Iterator<#(Int, T)> {
                     return NumberedIterator<T>(iterator())
                 }
             }

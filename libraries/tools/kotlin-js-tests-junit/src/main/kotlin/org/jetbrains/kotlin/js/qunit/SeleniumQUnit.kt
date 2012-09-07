@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.js.qunit
 
-import java.util.List
 import kotlin.test.*
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver

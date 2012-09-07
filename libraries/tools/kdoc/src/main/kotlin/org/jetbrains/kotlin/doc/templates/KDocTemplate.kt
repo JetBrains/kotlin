@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.doc.templates
 
-import java.util.List
 import org.jetbrains.kotlin.doc.*
 import org.jetbrains.kotlin.doc.model.KAnnotation
 import org.jetbrains.kotlin.doc.model.KClass
