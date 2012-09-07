@@ -307,6 +307,8 @@ public class ResolveToolwindow extends JPanel implements Disposable {
             ValueParameterDescriptor key = entry.getKey();
             ResolvedValueArgument value = entry.getValue();
 
+            assert key.getIndex() < args.length: "parameter index " + key.getIndex() + " >= resolved arguments " + args.length + "\n"
+                    + valueArguments.toString();
             args[key.getIndex()] = value;
         }
         builder.append("(");
