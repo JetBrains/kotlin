@@ -109,8 +109,10 @@ class DecompiledDataFactory {
             assert clsMember instanceof ClsElementImpl;
 
             TextRange range = clsMemberToRange.getValue();
-            JetDeclaration jetDeclaration = PsiTreeUtil.findElementOfClassAtRange(jetFile, range.getStartOffset(), range.getEndOffset(), JetDeclaration.class);
-            assert jetDeclaration != null;
+            JetDeclaration jetDeclaration = PsiTreeUtil.findElementOfClassAtRange(jetFile, range.getStartOffset(), range.getEndOffset(),
+                                                                                  JetDeclaration.class);
+            assert jetDeclaration != null : "Can't find declaration at " + range + ": "
+                                            + jetFile.getText().substring(range.getStartOffset(), range.getEndOffset());
             clsElementsToJetElements.put((ClsElementImpl) clsMember, jetDeclaration);
         }
 
