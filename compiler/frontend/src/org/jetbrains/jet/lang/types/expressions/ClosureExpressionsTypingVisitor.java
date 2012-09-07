@@ -125,9 +125,9 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             returnType = context.expressionTypingServices.getBlockReturnedType(functionInnerScope, bodyExpression, CoercionStrategy.COERCION_TO_UNIT,
                     context.replaceExpectedType(returnType).replaceBindingTrace(temporaryTrace), temporaryTrace).getType();
         }
-        temporaryTrace.commit(new Predicate<WritableSlice>() {
+        temporaryTrace.commit(new TraceEntryFilter() {
             @Override
-            public boolean apply(@Nullable WritableSlice slice) {
+            public boolean accept(@NotNull WritableSlice<?, ?> slice, Object key) {
                 return (slice != BindingContext.RESOLUTION_RESULTS_FOR_FUNCTION && slice != BindingContext.RESOLUTION_RESULTS_FOR_PROPERTY &&
                         slice != BindingContext.TRACE_DELTAS_CACHE);
             }

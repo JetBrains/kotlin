@@ -108,15 +108,17 @@ public class DelegatingBindingTrace implements BindingTrace {
         addAllMyDataTo(trace, null, true);
     }
 
-    public void addAllMyDataTo(@NotNull BindingTrace trace, @Nullable Predicate<WritableSlice> filter, boolean commitDiagnostics) {
+    public void addAllMyDataTo(@NotNull BindingTrace trace, @Nullable TraceEntryFilter filter, boolean commitDiagnostics) {
         for (Map.Entry<SlicedMapKey<?, ?>, ?> entry : map) {
             SlicedMapKey slicedMapKey = entry.getKey();
-            Object value = entry.getValue();
 
             WritableSlice slice = slicedMapKey.getSlice();
-            if (filter == null || filter.apply(slice)) {
+            Object key = slicedMapKey.getKey();
+            Object value = entry.getValue();
+
+            if (filter == null || filter.accept(slice, key)) {
                 //noinspection unchecked
-                trace.record(slice, slicedMapKey.getKey(), value);
+                trace.record(slice, key, value);
             }
         }
 

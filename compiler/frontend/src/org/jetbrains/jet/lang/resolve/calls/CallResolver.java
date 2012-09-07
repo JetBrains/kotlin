@@ -569,9 +569,9 @@ public class CallResolver {
                     task.getResolvedCalls().add(call);
                 }
 
-                context.candidateCall.getTrace().addAllMyDataTo(traceForResolutionCache, new Predicate<WritableSlice>() {
+                context.candidateCall.getTrace().addAllMyDataTo(traceForResolutionCache, new TraceEntryFilter() {
                     @Override
-                    public boolean apply(@Nullable WritableSlice slice) {
+                    public boolean accept(@NotNull WritableSlice<?, ?> slice, Object key) {
                         return slice == BindingContext.RESOLUTION_RESULTS_FOR_FUNCTION || slice == BindingContext.RESOLUTION_RESULTS_FOR_PROPERTY ||
                                slice == BindingContext.TRACE_DELTAS_CACHE;
                     }
