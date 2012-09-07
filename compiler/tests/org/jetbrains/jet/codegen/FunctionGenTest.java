@@ -171,6 +171,9 @@ public class FunctionGenTest extends CodegenTestCase {
         blackBoxFile("regressions/kt1038.kt");
     }
 
+    public void testKt2739() {
+        blackBoxFile("regressions/kt2739.kt");
+    }
 
     public void testReferencesStaticInnerClassMethod() throws Exception {
         blackBoxFileWithJava("functions/referencesStaticInnerClassMethod.kt");

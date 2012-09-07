@@ -798,9 +798,12 @@ public class CallResolver {
         JetType effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument);
         TemporaryBindingTrace traceForUnknown = TemporaryBindingTrace.create(context.trace);
         JetExpression argumentExpression = valueArgument.getArgumentExpression();
-        JetType type = argumentExpression != null ? expressionTypingServices.getType(
-                context.scope, argumentExpression, substitutor.substitute(valueParameterDescriptor.getType(), Variance.INVARIANT),
-                context.dataFlowInfo, traceForUnknown) : null;
+        JetType type = argumentExpression != null
+                       ? expressionTypingServices.getType(
+                            context.scope, argumentExpression,
+                            substitutor.substitute(effectiveExpectedType, Variance.INVARIANT),
+                            context.dataFlowInfo, traceForUnknown)
+                       : null;
         constraintSystem.addSupertypeConstraint(effectiveExpectedType, type, ConstraintPosition.getValueParameterPosition(
                 valueParameterDescriptor.getIndex()));
         //todo no return
