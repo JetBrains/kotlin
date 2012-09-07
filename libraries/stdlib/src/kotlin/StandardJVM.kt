@@ -47,3 +47,9 @@ public inline fun <T> callable(action: ()-> T): Callable<T> {
         public override fun call() = action()
     }
 }
+
+/**
+ * A helper method for calling hashCode() on Kotlin objects
+ * TODO remove when Any supports equals() and hashCode()
+ */
+ public inline fun Any.hashCode(): Int = (this as java.lang.Object).hashCode()

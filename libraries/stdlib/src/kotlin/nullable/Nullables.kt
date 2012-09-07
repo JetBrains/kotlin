@@ -181,3 +181,7 @@ public inline fun <in T> T?.toSortedList(transform: fun(T) : java.lang.Comparabl
   return answer
 }
 */
+
+
+/** Returns a hash code on an existing object, or default value otherwise */
+ public inline fun Any?.hashCodeOrDefault(default: Int): Int = if (this == null) default else this.hashCode()
