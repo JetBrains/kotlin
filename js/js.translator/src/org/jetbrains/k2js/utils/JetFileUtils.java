@@ -57,7 +57,8 @@ public final class JetFileUtils {
     public static JetFile createPsiFile(@NotNull String name,
                                         @NotNull String text,
                                         @NotNull Project project) {
-        return (JetFile) createFile(name + ".jet", text, project);
+        String fileName = name.endsWith(".kt") ? name : name + ".jet";
+        return (JetFile) createFile(fileName, text, project);
     }
 
     @NotNull
