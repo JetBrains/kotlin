@@ -10,9 +10,9 @@ abstract class HtmlTemplate() : TextTemplate() {
             content: () -> Unit) {
         val allAttributesBuilder = listBuilder<Pair<String, String>>()
         if (style != null)
-            allAttributesBuilder.add(Pair("style", style))
+            allAttributesBuilder.add(Pair<String, String>("style", style))
         if (className != null)
-            allAttributesBuilder.add(Pair("class", className))
+            allAttributesBuilder.add(Pair<String, String>("class", className))
 
         // TODO: add addAll to ListBuilder
         for (attribute in attributes)
@@ -26,7 +26,7 @@ abstract class HtmlTemplate() : TextTemplate() {
                 }
                 else {
                     // TODO: escape values
-                    "<$tagName ${allAttributes.map { t -> "${t._1}='${t._2.escapeHtml()}'" }.makeString(" ")}>"
+                    "<$tagName ${allAttributes.map { t -> "${t.first}='${t.second.escapeHtml()}'" }.makeString(" ")}>"
                 }
         )
         content()
@@ -79,9 +79,9 @@ abstract class HtmlTemplate() : TextTemplate() {
     fun a(href: String? = null, name: String? = null, content: () -> Unit) {
         val attributes = listBuilder<Pair<String, String>>()
         if (href != null)
-            attributes.add(Pair("href", href))
+            attributes.add(Pair<String, String>("href", href))
         if (name != null)
-            attributes.add(Pair("name", name))
+            attributes.add(Pair<String, String>("name", name))
         tag(tagName = "a", attributes = attributes.build(), content = content)
     }
 }

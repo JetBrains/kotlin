@@ -31,8 +31,8 @@ private fun splitPsiImpl(psi: PsiElement, listBuilder: ImmutableArrayListBuilder
     }
 }
 
-fun splitPsi(psi: PsiElement): List<Pair(String, PsiElement)> {
-    val listBuilder = listBuilder<Pair(String, PsiElement)>()
+fun splitPsi(psi: PsiElement): List<Pair<String, PsiElement>> {
+    val listBuilder = listBuilder<Pair<String, PsiElement>>()
     splitPsiImpl(psi, listBuilder)
     return listBuilder.build()
 }

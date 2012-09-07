@@ -774,7 +774,7 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
                     // TODO even hacker than the above hack!
                     val link = hackedLinks.get(text)
                     if (link != null) {
-                        href = annotated.model.config.resolveLink(link._1) + link._2
+                        href = annotated.model.config.resolveLink(link.first) + link.second
                     }
                 }
                 if (href != null) {

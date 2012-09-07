@@ -115,8 +115,8 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet
                                     }
 
                                     for (t in splitPsi(psiFile)) {
-                                        val text = t._1
-                                        val psi = t._2
+                                        val text = t.first
+                                        val psi = t.second
                                         span(className = classForPsi(psi)) {
                                             print(text.escapeHtml())
                                         }

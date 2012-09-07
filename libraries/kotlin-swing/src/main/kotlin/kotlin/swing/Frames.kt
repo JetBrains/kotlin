@@ -33,7 +33,7 @@ var JFrame.title: String
 var JFrame.size: Pair<Int, Int>
     get() = Pair(getSize().sure().getWidth().toInt(), getSize().sure().getHeight().toInt())
     set(dim) {
-        setSize(Dimension(dim._1, dim._2))
+        setSize(Dimension(dim.first, dim.second))
     }
 
 var JFrame.height: Int

@@ -51,7 +51,7 @@ class PsiUtilsTest {
     [Test]
     fun splitPsi() {
         val file = createFile("class Foo")
-        val items: List<String> = splitPsi(file).map { t -> t._1 }
+        val items: List<String> = splitPsi(file).map { t -> t.first }
         Assert.assertEquals(arrayList("class", " ", "Foo"), items)
     }
 
