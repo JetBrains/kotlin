@@ -78,7 +78,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
     private static final String IF_TEMPLATE = "if (<#<condition>#>) {\n<#<block>#>\n}";
     private static final String IF_ELSE_TEMPLATE = "if (<#<condition>#>) {\n<#<block>#>\n} else {\n<#<block>#>\n}";
-    private static final String IF_ELSE_ONELINE_TEMPLATE = "if (<#<condition>#>) <#<value>#> else <#<value>#>";
+    private static final String IF_ELSE_ONE_LINE_TEMPLATE = "if (<#<condition>#>) <#<value>#> else <#<value>#>";
     private static final String FUN_TEMPLATE = "fun <#<name>#>(<#<params>#>) : <#<returnType>#> {\n<#<body>#>\n}";
     private static final String VAL_SIMPLE_TEMPLATE = "val <#<name>#> = <#<value>#>";
     private static final String VAL_WITH_TYPE_TEMPLATE = "val <#<name>#> : <#<valType>#> = <#<value>#>";
@@ -129,56 +129,36 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         }
     }
 
-    private static class InTopFilter implements ElementFilter {
+    private static class InTopFilter extends PositionElementFilter {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
             //noinspection unchecked
             return PsiTreeUtil.getParentOfType(context, JetFile.class, false, JetClassBody.class, JetBlockExpression.class, JetFunction.class) != null &&
-                   PsiTreeUtil.getParentOfType(context, JetParameterList.class, JetTypeParameterList.class) == null;
-        }
-
-        @Override
-        public boolean isClassAcceptable(Class hintClass) {
-            return true;
+                   PsiTreeUtil.getParentOfType(context, JetParameterList.class, JetTypeParameterList.class, JetClass.class) == null;
         }
     }
 
-    private static class InNonClassBlockFilter implements ElementFilter {
+    private static class InNonClassBlockFilter extends PositionElementFilter {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
             //noinspection unchecked
             return PsiTreeUtil.getParentOfType(context, JetBlockExpression.class, true, JetClassBody.class) != null;
         }
-
-        @Override
-        public boolean isClassAcceptable(Class hintClass) {
-            return true;
-        }
     }
 
-    private static class InParametersFilter implements ElementFilter {
+    private static class InParametersFilter extends PositionElementFilter {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
             return PsiTreeUtil.getParentOfType(context, JetParameterList.class, false) != null;
         }
-
-        @Override
-        public boolean isClassAcceptable(Class hintClass) {
-            return true;
-        }
     }
 
-    private static class InClassBodyFilter implements ElementFilter {
+    private static class InClassBodyFilter extends PositionElementFilter {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
             //noinspection unchecked
             return PsiTreeUtil.getParentOfType(context, JetClassBody.class, true,
                                                JetBlockExpression.class, JetProperty.class, JetParameterList.class) != null;
-        }
-
-        @Override
-        public boolean isClassAcceptable(Class hintClass) {
-            return true;
         }
     }
 
@@ -198,17 +178,12 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         }
     }
 
-    private static class InPropertyBodyFilter implements ElementFilter {
+    private static class InPropertyBodyFilter extends PositionElementFilter {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
             if (!(element instanceof PsiElement)) return false;
             JetProperty property = PsiTreeUtil.getParentOfType(context, JetProperty.class, false);
             return property != null && isAfterName(property, (PsiElement) element);
-        }
-
-        @Override
-        public boolean isClassAcceptable(Class hintClass) {
-            return true;
         }
 
         private static boolean isAfterName(@NotNull JetProperty property, @NotNull PsiElement element) {
@@ -226,15 +201,10 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         }
     }
 
-    private static class InWhenFilter implements ElementFilter {
+    private static class InWhenFilter extends PositionElementFilter {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
             return PsiTreeUtil.getParentOfType(context, JetWhenExpression.class, false) != null;
-        }
-
-        @Override
-        public boolean isClassAcceptable(Class hintClass) {
-            return true;
         }
     }
 
@@ -341,12 +311,12 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                                         TRAIT_TEMPLATE, CLASS_TEMPLATE, CLASS_OBJECT_TEMPLATE,
                                         ENUM_CLASS_TEMPLATE);
         registerScopeKeywordsCompletion(new InNonClassBlockFilter(),
-                                        IF_TEMPLATE, IF_ELSE_TEMPLATE, IF_ELSE_ONELINE_TEMPLATE,
+                                        IF_TEMPLATE, IF_ELSE_TEMPLATE, IF_ELSE_ONE_LINE_TEMPLATE,
                                         FUN_TEMPLATE, VAL_SIMPLE_TEMPLATE, VAR_SIMPLE_TEMPLATE,
                                         TRAIT_TEMPLATE, CLASS_TEMPLATE, FOR_TEMPLATE,
                                         WHEN_TEMPLATE, WHILE_TEMPLATE, DO_WHILE_TEMPLATE, ENUM_CLASS_TEMPLATE);
         registerScopeKeywordsCompletion(new InPropertyBodyFilter(),
-                                        IF_ELSE_ONELINE_TEMPLATE, WHEN_TEMPLATE);
+                                        IF_ELSE_ONE_LINE_TEMPLATE, WHEN_TEMPLATE);
         registerScopeKeywordsCompletion(new AfterClassInClassBodyFilter(), false,
                                         CLASS_OBJECT_WITHOUT_CLASS_TEMPLATE);
     }
