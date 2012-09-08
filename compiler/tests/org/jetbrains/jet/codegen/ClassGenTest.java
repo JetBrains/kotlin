@@ -58,6 +58,38 @@ public class ClassGenTest extends CodegenTestCase {
         blackBoxFile("classes/delegationJava.kt");
     }
 
+    public void testDelegationToVal() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        loadFile("classes/delegationToVal.kt");
+        //        System.out.println(generateToText());
+        final ClassFileFactory state = generateClassesInFile();
+        final GeneratedClassLoader loader = createClassLoader(state);
+        final Class aClass = loader.loadClass("namespace");
+        assertEquals("OK", aClass.getMethod("box").invoke(null));
+
+        final Class test = loader.loadClass("Test");
+        try {
+            test.getDeclaredField("$delegate_0");
+            fail("$delegate_0 field generated for class Test but should not");
+        }
+        catch (NoSuchFieldException e) {}
+
+        final Class test2 = loader.loadClass("Test2");
+        try {
+            test2.getDeclaredField("$delegate_0");
+            fail("$delegate_0 field generated for class Test2 but should not");
+        }
+        catch (NoSuchFieldException e) {}
+
+        final Class test3 = loader.loadClass("Test3");
+        final Class iActing = loader.loadClass("IActing");
+        final Object obj = test3.newInstance();
+        assertTrue(iActing.isInstance(obj));
+        final Method iActingMethod = iActing.getMethod("act");
+        assertEquals("OK", iActingMethod.invoke(obj));
+        assertEquals("OKOK", iActingMethod.invoke(test3.getMethod("getActing").invoke(obj)));
+    }
+
     public void testInheritanceAndDelegation_DelegatingDefaultConstructorProperties() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("classes/inheritance.jet");

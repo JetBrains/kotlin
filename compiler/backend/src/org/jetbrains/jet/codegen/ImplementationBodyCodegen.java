@@ -816,27 +816,56 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             int n,
             JetDelegationSpecifier specifier
     ) {
-        iv.load(0, classType);
-        codegen.genToJVMStack(((JetDelegatorByExpressionSpecifier) specifier).getDelegateExpression());
+        final JetExpression expression = ((JetDelegatorByExpressionSpecifier) specifier).getDelegateExpression();
+        PropertyDescriptor propertyDescriptor = null;
+        if(expression instanceof JetSimpleNameExpression) {
+            final ResolvedCall<? extends CallableDescriptor> call = bindingContext.get(BindingContext.RESOLVED_CALL, expression);
+            if(call != null) {
+                final CallableDescriptor callResultingDescriptor = call.getResultingDescriptor();
+                if(callResultingDescriptor instanceof ValueParameterDescriptor) {
+                    final ValueParameterDescriptor valueParameterDescriptor = (ValueParameterDescriptor) callResultingDescriptor;
+                    // constructor parameter
+                    if(valueParameterDescriptor.getContainingDeclaration() instanceof ConstructorDescriptor) {
+                        // constructor of my class
+                        if(valueParameterDescriptor.getContainingDeclaration().getContainingDeclaration() == descriptor) {
+                            propertyDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameterDescriptor);
+                        }
+                    }
+                }
+
+                // todo: when and if frontend will allow properties defined not as constructor parameters to be used in delegation specifier
+            }
+        }
 
         JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
         assert superType != null;
+
         ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
         assert superClassDescriptor != null;
-        String delegateField = "$delegate_" + n;
-        Type fieldType = typeMapper.mapType(superClassDescriptor.getDefaultType(), JetTypeMapperMode.VALUE);
-        String fieldDesc = fieldType.getDescriptor();
-        v.newField(specifier, ACC_PRIVATE, delegateField, fieldDesc, /*TODO*/null, null);
-        StackValue field = StackValue.field(fieldType, classname, delegateField, false);
-        field.store(fieldType, iv);
+
+        final Type superTypeAsmType = typeMapper.mapType(superType, JetTypeMapperMode.IMPL);
+
+        StackValue field;
+        if(propertyDescriptor != null && !propertyDescriptor.isVar() && Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor))) {
+            // final property with backing field
+            field = StackValue.field(typeMapper.mapType(propertyDescriptor.getType(), JetTypeMapperMode.VALUE), classname, propertyDescriptor.getName().getName(), false);
+        }
+        else {
+            iv.load(0, classType);
+            codegen.genToJVMStack(expression);
+
+            String delegateField = "$delegate_" + n;
+            Type fieldType = typeMapper.mapType(superClassDescriptor.getDefaultType(), JetTypeMapperMode.VALUE);
+            String fieldDesc = fieldType.getDescriptor();
+
+            v.newField(specifier, ACC_PRIVATE|ACC_FINAL|ACC_SYNTHETIC, delegateField, fieldDesc, /*TODO*/null, null);
+
+            field = StackValue.field(fieldType, classname, delegateField, false);
+            field.store(fieldType, iv);
+        }
 
         final CodegenContext delegateContext = context.intoClass(superClassDescriptor,
-                                                                 new OwnerKind.DelegateKind(StackValue.field(fieldType, classname,
-                                                                                                             delegateField, false),
-                                                                                            typeMapper.mapType(superClassDescriptor
-                                                                                                                       .getDefaultType(),
-                                                                                                               JetTypeMapperMode.IMPL)
-                                                                                                    .getInternalName()),
+                                                                 new OwnerKind.DelegateKind(field, superTypeAsmType.getInternalName()),
                                                                  state);
         generateDelegates(superClassDescriptor, delegateContext, field);
     }
