@@ -90,7 +90,7 @@ public class CodegenBinding {
         return classNameForScriptDescriptor(bindingContext, scriptDescriptor);
     }
 
-    public static ClassDescriptor eclosingClassDescriptor(BindingContext bindingContext, ClassDescriptor descriptor) {
+    public static ClassDescriptor enclosingClassDescriptor(BindingContext bindingContext, ClassDescriptor descriptor) {
         final CalculatedClosure closure = bindingContext.get(CLOSURE, descriptor);
         return closure == null ? null : closure.getEnclosingClass();
     }
@@ -143,7 +143,7 @@ public class CodegenBinding {
             return false;
         }
 
-        return eclosingClassDescriptor(bindingContext, classDescriptor) != null;
+        return enclosingClassDescriptor(bindingContext, classDescriptor) != null;
     }
 
     static void recordClosure(
