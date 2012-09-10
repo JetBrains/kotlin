@@ -52,7 +52,7 @@ public abstract class AbstractList<E>(): AbstractCollection<E>(), MutableList<E>
     override fun listIterator() : MutableListIterator<E> = js.noImpl
     override fun listIterator(index : Int) : MutableListIterator<E> = js.noImpl
 
-    override fun subList(fromIndex : Int, toIndex : Int) : List<E> = js.noImpl
+    override fun subList(fromIndex : Int, toIndex : Int) : MutableList<E> = js.noImpl
 }
 
 library
@@ -74,9 +74,9 @@ public open class HashMap<K, V>() : MutableMap<K, V> {
     public override fun remove(key : Any?) : V? = js.noImpl
     public override fun clear() : Unit = js.noImpl
     public override fun containsValue(value : Any?) : Boolean = js.noImpl
-    public override fun keySet() : Set<K> = js.noImpl
-    public override fun values() : Collection<V> = js.noImpl
-    public override fun entrySet() : Set<MutableMap.MutableEntry<K, V>> = js.noImpl
+    public override fun keySet() : MutableSet<K> = js.noImpl
+    public override fun values() : MutableCollection<V> = js.noImpl
+    public override fun entrySet() : MutableSet<MutableMap.MutableEntry<K, V>> = js.noImpl
 }
 
 library

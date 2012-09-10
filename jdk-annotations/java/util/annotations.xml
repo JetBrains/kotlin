@@ -26,12 +26,12 @@
   </item>
   <item name='java.util.AbstractList java.util.ListIterator<E> listIterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun listIterator() : ListIterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun listIterator() : MutableListIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractList java.util.ListIterator<E> listIterator(int)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun listIterator(index : Int) : ListIterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun listIterator(index : Int) : MutableListIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractList E set(int, E)'>
@@ -41,7 +41,7 @@
   </item>
   <item name='java.util.AbstractList java.util.List<E> subList(int, int)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun subList(fromIndex : Int, toIndex : Int) : List&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun subList(fromIndex : Int, toIndex : Int) : MutableList&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.ArrayList boolean add(E)'>
@@ -131,12 +131,12 @@
   </item>
   <item name='java.util.List java.util.ListIterator<E> listIterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun listIterator() : ListIterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun listIterator() : MutableListIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List java.util.ListIterator<E> listIterator(int)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun listIterator(index : Int) : ListIterator&lt;E&gt;&quot;"/>
+      <val name="value" val="&quot;fun listIterator(index : Int) : MutableListIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List E remove(int)'>
@@ -356,12 +356,12 @@
   </item>
   <item name='java.util.HashMap java.util.Set<java.util.Map.Entry<K,V>> entrySet()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun entrySet() : Set&lt;Map.Entry&lt;K, V&gt;&gt;&quot;"/>
+      <val name="value" val="&quot;fun entrySet() : MutableSet&lt;MutableMap.MutableEntry&lt;K, V&gt;&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.HashMap java.util.Set<K> keySet()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun keySet() : Set&lt;K&gt;&quot;"/>
+      <val name="value" val="&quot;fun keySet() : MutableSet&lt;K&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.HashMap V put(K, V)'>
@@ -376,7 +376,7 @@
   </item>
   <item name='java.util.HashMap java.util.Collection<V> values()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun values() : Collection&lt;V&gt;&quot;"/>
+      <val name="value" val="&quot;fun values() : MutableCollection&lt;V&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractSet boolean removeAll(java.util.Collection<?>)'>

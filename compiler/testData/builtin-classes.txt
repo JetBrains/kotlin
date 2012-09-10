@@ -920,15 +920,15 @@ public abstract trait jet.MutableList</*0*/ E : jet.Any?> : jet.List<E>, jet.Mut
     public abstract override /*2*/ /*fake_override*/ fun isEmpty(): jet.Boolean
     public abstract override /*2*/ /*fake_override*/ fun iterator(): jet.Iterator<E>
     public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ o: jet.Any?): jet.Int
-    public abstract override /*1*/ /*fake_override*/ fun listIterator(): jet.ListIterator<E>
-    public abstract override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: jet.Int): jet.ListIterator<E>
+    public abstract override /*1*/ fun listIterator(): jet.MutableListIterator<E>
+    public abstract override /*1*/ fun listIterator(/*0*/ index: jet.Int): jet.MutableListIterator<E>
     public abstract fun remove(/*0*/ index: jet.Int): E
     public abstract override /*1*/ fun remove(/*0*/ o: jet.Any?): jet.Boolean
     public abstract override /*1*/ fun removeAll(/*0*/ c: jet.Collection<out jet.Any?>): jet.Boolean
     public abstract override /*1*/ fun retainAll(/*0*/ c: jet.Collection<out jet.Any?>): jet.Boolean
     public abstract fun set(/*0*/ index: jet.Int, /*1*/ element: E): E
     public abstract override /*2*/ /*fake_override*/ fun size(): jet.Int
-    public abstract override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: jet.Int, /*1*/ toIndex: jet.Int): jet.List<E>
+    public abstract override /*1*/ fun subList(/*0*/ fromIndex: jet.Int, /*1*/ toIndex: jet.Int): jet.MutableList<E>
     public abstract override /*2*/ /*fake_override*/ fun toArray(): jet.Array<jet.Any?>
     public abstract override /*2*/ /*fake_override*/ fun </*0*/ T : jet.Any?>toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
 }
@@ -947,7 +947,7 @@ public abstract trait jet.MutableMap</*0*/ K : jet.Any?, /*1*/ V : jet.Any?> : j
     public abstract fun clear(): jet.Tuple0
     public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: jet.Any?): jet.Boolean
     public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: jet.Any?): jet.Boolean
-    public abstract override /*1*/ fun entrySet(): jet.Set<jet.MutableMap.MutableEntry<K, V>>
+    public abstract override /*1*/ fun entrySet(): jet.MutableSet<jet.MutableMap.MutableEntry<K, V>>
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: jet.Any?): V?
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): jet.Boolean
     public abstract trait jet.MutableMap.MutableEntry</*0*/ K : jet.Any?, /*1*/ V : jet.Any?> : jet.Map.Entry<K, V>, jet.Hashable {
@@ -957,12 +957,12 @@ public abstract trait jet.MutableMap</*0*/ K : jet.Any?, /*1*/ V : jet.Any?> : j
         public abstract override /*2*/ /*fake_override*/ fun hashCode(): jet.Int
         public abstract fun setValue(/*0*/ value: V): V
     }
-    public abstract override /*1*/ /*fake_override*/ fun keySet(): jet.Set<K>
+    public abstract override /*1*/ fun keySet(): jet.MutableSet<K>
     public abstract fun put(/*0*/ key: K, /*1*/ value: V): V?
     public abstract fun putAll(/*0*/ m: jet.Map<out K, out V>): jet.Tuple0
     public abstract fun remove(/*0*/ key: jet.Any?): V?
     public abstract override /*1*/ /*fake_override*/ fun size(): jet.Int
-    public abstract override /*1*/ /*fake_override*/ fun values(): jet.Collection<V>
+    public abstract override /*1*/ fun values(): jet.MutableCollection<V>
 }
 public abstract trait jet.MutableSet</*0*/ E : jet.Any?> : jet.Set<E>, jet.MutableCollection<E> {
     public abstract override /*1*/ fun add(/*0*/ e: E): jet.Boolean
