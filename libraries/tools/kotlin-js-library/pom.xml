@@ -58,11 +58,11 @@
                                         <include name="Preconditions.kt"/>
                                         <include name="Iterators.kt"/>
                                         <include name="JUtil.kt"/>
-                                        <include name="JUtilCollections.kt"/>
-                                        <include name="JUtilMaps.kt"/>
-                                        <include name="JLangIterables.kt"/>
-                                        <include name="JLangIterablesLazy.kt"/>
-                                        <include name="JLangIterablesSpecial.kt"/>
+                                        <include name="Collections.kt"/>
+                                        <include name="Maps.kt"/>
+                                        <include name="Iterables.kt"/>
+                                        <include name="IterablesLazy.kt"/>
+                                        <include name="IterablesSpecial.kt"/>
 <!--
                                         <include name="Ordering.kt"/>
 -->
@@ -74,8 +74,8 @@
                                         <exclude name="**/*JVM.kt"/>
                                         <exclude name="DownTo.kt"/>
 <!--
-                                        <include name="JUtilIteratorsFromJLangIterables.kt"/>
-                                        <include name="JUtilIterablesFromJUtilCollections.kt"/>
+                                        <include name="IteratorsFromJLangIterables.kt"/>
+                                        <include name="IterablesFromCollections.kt"/>
 -->
                                     </fileset>
                                 </copy>
