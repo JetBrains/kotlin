@@ -36,11 +36,8 @@ public final class ClosureTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
+    // also test ObjectAsConstructorParameter
     public void testLocalParameterInLocalNamedFunction() throws Exception {
-        fooBoxTest();
-    }
-
-    public void testObjectAsConstructorParameter() throws Exception {
         fooBoxTest();
     }
 }
