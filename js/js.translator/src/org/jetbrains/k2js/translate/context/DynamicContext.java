@@ -73,6 +73,11 @@ public final class DynamicContext {
     }
 
     @NotNull
+    public JsVar createTemporaryVar(@NotNull JsExpression initExpression) {
+        return new JsVar(currentScope.declareTemporary(), initExpression);
+    }
+
+    @NotNull
     public JsScope getScope() {
         return currentScope;
     }

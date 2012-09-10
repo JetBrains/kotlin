@@ -16,7 +16,6 @@
 
 package org.jetbrains.k2js.translate.context;
 
-import com.google.common.collect.Maps;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +23,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AliasingContext {
     private static final AliasingContext ROOT = new AliasingContext(null) {
@@ -46,36 +47,39 @@ public class AliasingContext {
     @Nullable
     private Map<DeclarationDescriptor, JsExpression> aliasesForDescriptors;
 
-    @NotNull
-    private final Map<JetExpression, JsName> aliasesForExpressions = Maps.newHashMap();
+    @Nullable
+    private final Map<JetExpression, JsName> aliasesForExpressions;
 
     @Nullable
     private final AliasingContext parent;
 
     private AliasingContext(@Nullable AliasingContext parent) {
-        this(parent, null);
+        this(parent, null, null);
     }
 
-    private AliasingContext(@Nullable AliasingContext parent, @Nullable Map<DeclarationDescriptor, JsExpression> aliasesForDescriptors) {
+    private AliasingContext(
+            @Nullable AliasingContext parent,
+            @Nullable Map<DeclarationDescriptor, JsExpression> aliasesForDescriptors,
+            @Nullable Map<JetExpression, JsName> aliasesForExpressions
+    ) {
         this.parent = parent;
         this.aliasesForDescriptors = aliasesForDescriptors;
+        this.aliasesForExpressions = aliasesForExpressions;
     }
 
     @NotNull
     public AliasingContext inner(@NotNull DeclarationDescriptor descriptor, @NotNull JsExpression alias) {
-        return new AliasingContext(this, Collections.singletonMap(descriptor, alias));
+        return new AliasingContext(this, Collections.singletonMap(descriptor, alias), null);
     }
 
     @NotNull
-    public AliasingContext withAliasesForExpressions(@NotNull Map<JetExpression, JsName> aliasesForExpressions) {
-        AliasingContext newContext = new AliasingContext(this);
-        newContext.aliasesForExpressions.putAll(aliasesForExpressions);
-        return newContext;
+    public AliasingContext withExpressionsAliased(@NotNull Map<JetExpression, JsName> aliasesForExpressions) {
+        return new AliasingContext(this, null, aliasesForExpressions);
     }
 
     @NotNull
     public AliasingContext withDescriptorsAliased(@NotNull Map<DeclarationDescriptor, JsExpression> aliases) {
-        return new AliasingContext(this, aliases);
+        return new AliasingContext(this, aliases, null);
     }
 
     @Nullable
@@ -94,8 +98,8 @@ public class AliasingContext {
 
     @Nullable
     public JsName getAliasForExpression(@NotNull JetExpression element) {
-        JsName alias = aliasesForExpressions.get(element);
-        return alias != null ? alias : parent.getAliasForExpression(element);
+        JsName alias = aliasesForExpressions == null ? null : aliasesForExpressions.get(element);
+        return alias != null || parent == null ? alias : parent.getAliasForExpression(element);
     }
 
     public void registerAlias(@NotNull DeclarationDescriptor descriptor, @NotNull JsExpression alias) {
