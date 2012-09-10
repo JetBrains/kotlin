@@ -110,7 +110,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         if (psiElements.size() > 1) {
             return null;
         }
-        List<PsiElement> stdlibSymbols = resolveStandardLibrarySymbol(bindingContext);
+        Collection<PsiElement> stdlibSymbols = resolveStandardLibrarySymbol(bindingContext);
         if (stdlibSymbols.size() == 1) {
             return stdlibSymbols.iterator().next();
         }
@@ -126,7 +126,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
             if (psiElements.size() > 1) {
                 return PsiElementResolveResult.createResults(psiElements);
             }
-            List<PsiElement> standardLibraryElements = resolveStandardLibrarySymbol(bindingContext);
+            Collection<PsiElement> standardLibraryElements = resolveStandardLibrarySymbol(bindingContext);
             if (standardLibraryElements.size() > 1) {
                 return PsiElementResolveResult.createResults(standardLibraryElements);
             }
@@ -143,7 +143,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         return results.toArray(new ResolveResult[results.size()]);
     }
 
-    private List<PsiElement> resolveStandardLibrarySymbol(@NotNull BindingContext bindingContext) {
+    private Collection<PsiElement> resolveStandardLibrarySymbol(@NotNull BindingContext bindingContext) {
         return myExpression.getProject().getComponent(StandardLibraryReferenceResolver.class)
                 .resolveStandardLibrarySymbol(bindingContext, myExpression);
     }
