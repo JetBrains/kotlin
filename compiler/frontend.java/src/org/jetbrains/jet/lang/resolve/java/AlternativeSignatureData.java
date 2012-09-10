@@ -128,7 +128,7 @@ class AlternativeSignatureData {
         return altTypeParameters;
     }
 
-    JetType computeType(JetTypeElement alternativeTypeElement, final JetType autoType) {
+    private JetType computeType(JetTypeElement alternativeTypeElement, final JetType autoType) {
         //noinspection NullableProblems
         return alternativeTypeElement.accept(new JetVisitor<JetType, Void>() {
             @Override
@@ -173,7 +173,7 @@ class AlternativeSignatureData {
                 ClassifierDescriptor declarationDescriptor = originalTypeConstructor.getDeclarationDescriptor();
                 assert declarationDescriptor != null;
                 String fqName = DescriptorUtils.getFQName(declarationDescriptor).toSafe().getFqName();
-                if (!fqName.endsWith(expectedFqNamePostfix)) {
+                if (!fqName.equals(expectedFqNamePostfix) && !fqName.endsWith("." + expectedFqNamePostfix)) {
                     fail("Alternative signature type mismatch, expected: %s, actual: %s", expectedFqNamePostfix, fqName);
                 }
 
