@@ -387,4 +387,13 @@ public class DescriptorUtils {
         Collections.sort(resultList);
         return resultList;
     }
+
+    @Nullable
+    public static ClassDescriptor getInnerClassByName(@NotNull ClassDescriptor classDescriptor, @NotNull String innerClassName) {
+        ClassifierDescriptor classifier = classDescriptor.getDefaultType().getMemberScope().getClassifier(Name.identifier(innerClassName));
+        assert classifier instanceof ClassDescriptor :
+                "Inner class " + innerClassName + " in " + classDescriptor + " should be instance of ClassDescriptor, but was: "
+                + (classifier == null ? "null" : classifier.getClass());
+        return (ClassDescriptor) classifier;
+    }
 }

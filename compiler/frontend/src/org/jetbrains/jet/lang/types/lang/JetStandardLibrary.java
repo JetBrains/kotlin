@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -428,14 +429,14 @@ public class JetStandardLibrary {
 
     @NotNull
     public ClassDescriptor getMapEntry() {
-        ClassifierDescriptor entry = getMap().getDefaultType().getMemberScope().getClassifier(Name.identifier("Entry"));
+        ClassifierDescriptor entry = DescriptorUtils.getInnerClassByName(getMap(), "Entry");
         assert entry instanceof ClassDescriptor;
         return (ClassDescriptor) entry;
     }
 
     @NotNull
     public ClassDescriptor getMutableMapEntry() {
-        ClassifierDescriptor entry = getMutableMap().getDefaultType().getMemberScope().getClassifier(Name.identifier("MutableEntry"));
+        ClassifierDescriptor entry = DescriptorUtils.getInnerClassByName(getMutableMap(), "MutableEntry");
         assert entry instanceof ClassDescriptor;
         return (ClassDescriptor) entry;
     }
