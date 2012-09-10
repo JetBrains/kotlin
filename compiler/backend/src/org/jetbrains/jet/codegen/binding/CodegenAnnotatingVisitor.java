@@ -256,10 +256,10 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         else if (containingDeclaration instanceof NamespaceDescriptor) {
             String peek = peekFromStack(nameStack);
             if (peek.isEmpty()) {
-                peek = "namespace";
+                peek = JvmAbi.PACKAGE_CLASS;
             }
             else {
-                peek += "/namespace";
+                peek += "/" + JvmAbi.PACKAGE_CLASS;
             }
             nameStack.push(peek + '$' + function.getName());
             super.visitNamedFunction(function);
