@@ -152,6 +152,7 @@
         <include name="jquery/**"/>
         <include name="dom/**"/>
         <include name="html5/**"/>
+        <include name="stdlib/TuplesCode.kt"/>
       </fileset>
       <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
     </jar>
