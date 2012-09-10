@@ -47,7 +47,12 @@ class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileVi
         virtualFile = file;
         this.text = text;
 
-        jetFile = new JetFile(this);
+        jetFile = new JetFile(this) {
+            @Override
+            public VirtualFile getVirtualFile() {
+                return virtualFile; // overridden to return not-null; original method returns null when isEventSystemEnabled() = false
+            }
+        };
     }
 
     @Override
@@ -110,7 +115,7 @@ class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileVi
 
     @Override
     public boolean isEventSystemEnabled() {
-        return true;
+        return false;
     }
 
     @Override
