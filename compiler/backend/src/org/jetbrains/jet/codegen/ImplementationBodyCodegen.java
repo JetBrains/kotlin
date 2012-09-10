@@ -108,7 +108,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 isEnum = true;
             }
 
-            if(descriptor.getKind() == ClassKind.OBJECT || descriptor.getKind() == ClassKind.CLASS_OBJECT) {
+            if (descriptor.getKind() == ClassKind.OBJECT || descriptor.getKind() == ClassKind.CLASS_OBJECT) {
                 isFinal = true;
             }
 
@@ -404,12 +404,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (myEnumConstants.size() > 0) {
             {
                 Type type =
-                        typeMapper.mapType(JetStandardLibrary.getInstance().getArrayType(descriptor.getDefaultType()), JetTypeMapperMode.IMPL);
+                        typeMapper.mapType(JetStandardLibrary.getInstance().getArrayType(descriptor.getDefaultType()),
+                                           JetTypeMapperMode.IMPL);
 
                 MethodVisitor mv =
                         v.newMethod(myClass, ACC_PUBLIC | ACC_STATIC, "values", "()" + type.getDescriptor(), null, null);
                 mv.visitCode();
-                mv.visitFieldInsn(GETSTATIC, typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.VALUE).getInternalName(), VALUES,
+                mv.visitFieldInsn(GETSTATIC, typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.VALUE).getInternalName(),
+                                  VALUES,
                                   type.getDescriptor());
                 mv.visitMethodInsn(INVOKEVIRTUAL, type.getInternalName(), "clone", "()Ljava/lang/Object;");
                 mv.visitTypeInsn(CHECKCAST, type.getInternalName());
@@ -569,7 +571,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     v.anew(Type.getObjectType(name));
                     v.dup();
                     v.invokespecial(name, "<init>", "()V");
-                    v.putstatic(name, "$instance", typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.VALUE).getDescriptor());
+                    v.putstatic(name, "$instance",
+                                typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.VALUE).getDescriptor());
                 }
             });
         }
@@ -818,16 +821,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     ) {
         final JetExpression expression = ((JetDelegatorByExpressionSpecifier) specifier).getDelegateExpression();
         PropertyDescriptor propertyDescriptor = null;
-        if(expression instanceof JetSimpleNameExpression) {
+        if (expression instanceof JetSimpleNameExpression) {
             final ResolvedCall<? extends CallableDescriptor> call = bindingContext.get(BindingContext.RESOLVED_CALL, expression);
-            if(call != null) {
+            if (call != null) {
                 final CallableDescriptor callResultingDescriptor = call.getResultingDescriptor();
-                if(callResultingDescriptor instanceof ValueParameterDescriptor) {
+                if (callResultingDescriptor instanceof ValueParameterDescriptor) {
                     final ValueParameterDescriptor valueParameterDescriptor = (ValueParameterDescriptor) callResultingDescriptor;
                     // constructor parameter
-                    if(valueParameterDescriptor.getContainingDeclaration() instanceof ConstructorDescriptor) {
+                    if (valueParameterDescriptor.getContainingDeclaration() instanceof ConstructorDescriptor) {
                         // constructor of my class
-                        if(valueParameterDescriptor.getContainingDeclaration().getContainingDeclaration() == descriptor) {
+                        if (valueParameterDescriptor.getContainingDeclaration().getContainingDeclaration() == descriptor) {
                             propertyDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameterDescriptor);
                         }
                     }
@@ -846,9 +849,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         final Type superTypeAsmType = typeMapper.mapType(superType, JetTypeMapperMode.IMPL);
 
         StackValue field;
-        if(propertyDescriptor != null && !propertyDescriptor.isVar() && Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor))) {
+        if (propertyDescriptor != null &&
+            !propertyDescriptor.isVar() &&
+            Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor))) {
             // final property with backing field
-            field = StackValue.field(typeMapper.mapType(propertyDescriptor.getType(), JetTypeMapperMode.VALUE), classname, propertyDescriptor.getName().getName(), false);
+            field = StackValue.field(typeMapper.mapType(propertyDescriptor.getType(), JetTypeMapperMode.VALUE), classname,
+                                     propertyDescriptor.getName().getName(), false);
         }
         else {
             iv.load(0, classType);
