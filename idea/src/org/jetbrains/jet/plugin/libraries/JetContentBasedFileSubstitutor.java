@@ -44,7 +44,9 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
             DumbService.getInstance(project).runWhenSmart(new Runnable() {
                 @Override
                 public void run() {
-                    FileDocumentManager.getInstance().reloadFiles(file);
+                    FileDocumentManager docManager = FileDocumentManager.getInstance();
+                    docManager.getDocument(file); // force getting document because it can be collected
+                    docManager.reloadFiles(file);
                 }
             });
             return false;
