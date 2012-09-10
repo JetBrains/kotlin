@@ -106,8 +106,9 @@ public abstract class CodegenContext {
     /**
      * This method returns not null only if context descriptor corresponds to method or function which has receiver
      */
-    @Nullable public final CallableDescriptor getCallableDescriptorWithReceiver() {
-        if(contextDescriptor instanceof CallableDescriptor) {
+    @Nullable
+    public final CallableDescriptor getCallableDescriptorWithReceiver() {
+        if (contextDescriptor instanceof CallableDescriptor) {
             final CallableDescriptor callableDescriptor = (CallableDescriptor) getContextDescriptor();
             return callableDescriptor.getReceiverParameter().exists() ? callableDescriptor : null;
         }
