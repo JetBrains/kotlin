@@ -23,7 +23,6 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

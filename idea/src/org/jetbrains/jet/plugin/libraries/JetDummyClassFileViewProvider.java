@@ -37,23 +37,23 @@ import java.util.Set;
  * @since 3/2/12
  */
 class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileViewProvider {
-    private String myText;
-    private final PsiManager myManager;
-    private JetFile myJetFile = null;
-    private final VirtualFile myVirtualFile;
+    private final String text;
+    private final PsiManager manager;
+    private JetFile jetFile = null;
+    private final VirtualFile virtualFile;
 
     public JetDummyClassFileViewProvider(@NotNull PsiManager manager, @NotNull VirtualFile file, String text) {
-        myManager = manager;
-        myVirtualFile = file;
-        myText = text;
+        this.manager = manager;
+        virtualFile = file;
+        this.text = text;
 
-        myJetFile = new JetFile(this);
+        jetFile = new JetFile(this);
     }
 
     @Override
     @NotNull
     public PsiManager getManager() {
-        return myManager;
+        return manager;
     }
 
     @Override
@@ -65,13 +65,13 @@ class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileVi
     @Override
     @NotNull
     public String getContents() {
-        return myText;
+        return text;
     }
 
     @Override
     @NotNull
     public VirtualFile getVirtualFile() {
-        return myVirtualFile;
+        return virtualFile;
     }
 
     @Override
@@ -91,13 +91,13 @@ class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileVi
         if (JetLanguage.INSTANCE != target) {
             return null;
         }
-        return myJetFile;
+        return jetFile;
     }
 
     @Override
     @NotNull
     public List<PsiFile> getAllFiles() {
-        return Collections.<PsiFile>singletonList(myJetFile);
+        return Collections.<PsiFile>singletonList(jetFile);
     }
 
     @Override
@@ -159,7 +159,7 @@ class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileVi
 
     @Override
     public PsiElement findElementAt(final int offset) {
-        LeafElement element = myJetFile.calcTreeElement().findLeafElementAt(offset);
+        LeafElement element = jetFile.calcTreeElement().findLeafElementAt(offset);
         return element != null ? element.getPsi() : null;
     }
 
