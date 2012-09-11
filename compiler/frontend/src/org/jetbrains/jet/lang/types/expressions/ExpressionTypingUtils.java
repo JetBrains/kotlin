@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -265,10 +266,22 @@ public class ExpressionTypingUtils {
             @NotNull ExpressionTypingContext context,
             @NotNull Name name
     ) {
-        JetReferenceExpression fake = JetPsiFactory.createSimpleName(context.expressionTypingServices.getProject(), "fake");
-        BindingTrace fakeTrace = TemporaryBindingTrace.create(context.trace);
+        final JetReferenceExpression fake = JetPsiFactory.createSimpleName(context.expressionTypingServices.getProject(), "fake");
+        TemporaryBindingTrace fakeTrace = TemporaryBindingTrace.create(context.trace);
         Call call = CallMaker.makeCall(fake, receiver, null, fake, Collections.<ValueArgument>emptyList());
-        return Pair.create(call, context.replaceBindingTrace(fakeTrace).resolveCallWithGivenName(call, fake, name));
+        OverloadResolutionResults<FunctionDescriptor> results =
+                context.replaceBindingTrace(fakeTrace).resolveCallWithGivenName(call, fake, name);
+        if (results.isSuccess()) {
+            fakeTrace.commit(new TraceEntryFilter() {
+                @Override
+                public boolean accept(@NotNull WritableSlice<?, ?> slice, Object key) {
+                    // excluding all entries related to fake expression
+                    // keys in RESOLUTION_RESULTS_FOR_FUNCTION slice have fake expression inside
+                    return key != fake && slice != RESOLUTION_RESULTS_FOR_FUNCTION;
+                }
+            }, false);
+        }
+        return Pair.create(call, results);
     }
 
     public static void defineLocalVariablesFromMultiDeclaration(

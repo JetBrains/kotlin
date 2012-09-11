@@ -233,3 +233,10 @@ fun foo(var a: Any): Int {
     }
     return 1
 }
+
+fun inForLoop(x: Any?) {
+    if (x is Array<String>) {
+        for (i in <info descr="Automatically cast to jet.Array<jet.String>">x</info>) {}
+    }
+    for (i in <error descr="[ITERATOR_MISSING] For-loop range must have an iterator() method">x</error>) {}
+}
