@@ -1304,7 +1304,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
         Set<PropertyDescriptor> propertiesFromSupertypes = getPropertiesFromSupertypes(scopeData, propertyName);
 
-        final Set<VariableDescriptor> properties = Sets.newHashSet();
+        final Set<PropertyDescriptor> properties = Sets.newHashSet();
 
         if (owner instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) owner;
@@ -1323,9 +1323,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             });
         }
 
+        OverrideResolver.resolveUnknownVisibilities(properties, trace);
         properties.addAll(propertiesFromCurrent);
 
-        namedMembers.propertyDescriptors = properties;
+        namedMembers.propertyDescriptors = Sets.<VariableDescriptor>newHashSet(properties);
     }
 
     @NotNull
@@ -1378,9 +1379,9 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                     // nop
                 }
             });
-
         }
 
+        OverrideResolver.resolveUnknownVisibilities(functions, trace);
         functions.addAll(functionsFromCurrent);
 
         if (DescriptorUtils.isEnumClassObject(owner)) {
