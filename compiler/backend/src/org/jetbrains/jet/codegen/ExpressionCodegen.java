@@ -54,7 +54,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
-import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -3040,7 +3039,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         assert operationDescriptor != null;
         if (arrayType.getSort() == Type.ARRAY &&
             indices.size() == 1 &&
-            PrimitiveType.INT.getClassName().is(operationDescriptor.getValueParameters().get(0).getType())) {
+            operationDescriptor.getValueParameters().get(0).getType().equals(JetStandardLibrary.getInstance().getIntType())) {
             gen(array, arrayType);
             for (JetExpression index : indices) {
                 gen(index, Type.INT_TYPE);

@@ -18,8 +18,8 @@ package org.jetbrains.jet.lang.types.lang;
 
 import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.ref.ClassName;
 
 /**
  * @author Stepan Koltsov
@@ -41,17 +41,17 @@ public enum PrimitiveType {
     private final Name typeName;
     private final Name arrayTypeName;
     private final Name rangeTypeName;
-    private final ClassName className;
-    private final ClassName arrayClassName;
-    private final ClassName rangeClassName;
+    private final FqName className;
+    private final FqName arrayClassName;
+    private final FqName rangeClassName;
 
     private PrimitiveType(String typeName) {
         this.typeName = Name.identifier(typeName);
         this.arrayTypeName = Name.identifier(typeName + "Array");
         this.rangeTypeName = Name.identifier(typeName + "Range");
-        this.className = new ClassName(JetStandardClasses.STANDARD_CLASSES_FQNAME.child(this.typeName), 0);
-        this.arrayClassName = new ClassName(JetStandardClasses.STANDARD_CLASSES_FQNAME.child(this.arrayTypeName), 0);
-        this.rangeClassName = new ClassName(JetStandardClasses.STANDARD_CLASSES_FQNAME.child(this.rangeTypeName), 0);
+        this.className = JetStandardClasses.STANDARD_CLASSES_FQNAME.child(this.typeName);
+        this.arrayClassName = JetStandardClasses.STANDARD_CLASSES_FQNAME.child(this.arrayTypeName);
+        this.rangeClassName = JetStandardClasses.STANDARD_CLASSES_FQNAME.child(this.rangeTypeName);
     }
 
     @NotNull
@@ -70,17 +70,17 @@ public enum PrimitiveType {
     }
 
     @NotNull
-    public ClassName getClassName() {
+    public FqName getClassName() {
         return className;
     }
 
     @NotNull
-    public ClassName getArrayClassName() {
+    public FqName getArrayClassName() {
         return arrayClassName;
     }
 
     @NotNull
-    public ClassName getRangeClassName() {
+    public FqName getRangeClassName() {
         return rangeClassName;
     }
 }
