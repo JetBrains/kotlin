@@ -234,7 +234,17 @@ public class OverrideResolver {
             @NotNull List<CallableMemberDescriptor> notOverridden,
             @NotNull DescriptorSink sink
     ) {
-        Queue<CallableMemberDescriptor> fromSuperQueue = new LinkedList<CallableMemberDescriptor>(notOverridden);
+        Collections.sort(notOverridden, new Comparator<CallableMemberDescriptor>() {
+            @Override
+            public int compare(CallableMemberDescriptor o1, CallableMemberDescriptor o2) {
+                Integer compare = Visibilities.compare(o1.getVisibility(), o2.getVisibility());
+                if (compare == null) {
+                    return 0;
+                }
+                return -compare;
+            }
+        });
+        Queue<CallableMemberDescriptor> fromSuperQueue = Lists.newLinkedList(notOverridden);
         while (!fromSuperQueue.isEmpty()) {
             CallableMemberDescriptor notOverriddenFromSuper = fromSuperQueue.remove();
             Collection<CallableMemberDescriptor> overridables = extractMembersOverridableBy(notOverriddenFromSuper, fromSuperQueue, sink);
