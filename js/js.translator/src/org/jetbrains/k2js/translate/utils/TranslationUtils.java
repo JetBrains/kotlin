@@ -222,4 +222,18 @@ public final class TranslationUtils {
     public static JsConditional sure(@NotNull JsExpression expression, @NotNull TranslationContext context) {
         return notNullConditional(expression, new JsInvocation(context.namer().throwNPEFunctionRef()), context);
     }
+
+    @NotNull
+    public static Pair<JsExpression, JsExpression> wrapAsTemporaryIfNeed(
+            @NotNull JsExpression expression,
+            @NotNull TranslationContext context
+    ) {
+        if (isCacheNeeded(expression)) {
+            TemporaryVariable cachedValue = context.declareTemporary(expression);
+            return new Pair<JsExpression, JsExpression>(cachedValue.assignmentExpression(), cachedValue.reference());
+        }
+        else {
+            return Pair.create(expression, expression);
+        }
+    }
 }

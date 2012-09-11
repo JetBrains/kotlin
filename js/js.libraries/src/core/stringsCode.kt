@@ -25,20 +25,6 @@ public inline fun String.endsWith(ch: Char): Boolean {
     return if (s > 0) charAt(s - 1) == ch else false
 }
 
-//public inline fun String.startsWith(text: String): Boolean {
-//    val size = text.length
-//    return if (size <= this.length) {
-//        substring(0, size) == text
-//    } else false
-//}
-//
-//public inline fun String.endsWith(text: String): Boolean {
-//    val matchSize = text.length
-//    val thisSize = this.length
-//    return if (matchSize <= thisSize) {
-//        substring(thisSize - matchSize, thisSize) == text
-//    } else false
-//}
 native
 fun String.startsWith(s:String):Boolean = noImpl
 native
