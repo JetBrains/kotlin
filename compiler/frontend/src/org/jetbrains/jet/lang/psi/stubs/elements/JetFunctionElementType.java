@@ -25,8 +25,8 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetFileStub;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetFunctionStubImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -67,7 +67,7 @@ public class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStu
 
     @Override
     public PsiJetFunctionStub createStub(@NotNull JetNamedFunction psi, @NotNull StubElement parentStub) {
-        final boolean isTopLevel = parentStub instanceof PsiJetFileStub;
+        final boolean isTopLevel = psi.getParent() instanceof JetFile;
         final boolean isExtension = psi.getReceiverTypeRef() != null;
 
         FqName qualifiedName = psi.getQualifiedName();
