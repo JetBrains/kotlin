@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -29,7 +28,9 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -44,58 +45,16 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
 public class DescriptorUtils {
 
     @NotNull
-    public static <D extends CallableDescriptor> D substituteBounds(@NotNull D functionDescriptor) {
+    public static <D extends CallableDescriptor> D substituteBounds(@NotNull final D functionDescriptor) {
         final List<TypeParameterDescriptor> typeParameters = functionDescriptor.getTypeParameters();
         if (typeParameters.isEmpty()) return functionDescriptor;
-        final Map<TypeConstructor, TypeParameterDescriptor> typeConstructors = Maps.newHashMap();
-        for (TypeParameterDescriptor typeParameter : typeParameters) {
-            typeConstructors.put(typeParameter.getTypeConstructor(), typeParameter);
-        }
-        //noinspection unchecked
-        return (D) functionDescriptor.substitute(new TypeSubstitutor(TypeSubstitution.EMPTY) {
-            @Override
-            public boolean inRange(@NotNull TypeConstructor typeConstructor) {
-                return typeConstructors.containsKey(typeConstructor);
-            }
 
-            @Override
-            public boolean isEmpty() {
-                return typeParameters.isEmpty();
-            }
+        // TODO: this does not handle any recursion in the bounds
+        @SuppressWarnings("unchecked")
+        D substitutedFunction = (D) functionDescriptor.substitute(DescriptorSubstitutor.createUpperBoundsSubstitutor(typeParameters));
+        assert substitutedFunction != null : "Substituting upper bounds should always be legal";
 
-            @NotNull
-            @Override
-            public TypeSubstitution getSubstitution() {
-                throw new UnsupportedOperationException();
-            }
-
-            @NotNull
-            @Override
-            public JetType safeSubstitute(@NotNull JetType type, @NotNull Variance howThisTypeIsUsed) {
-                JetType substituted = substitute(type, howThisTypeIsUsed);
-                if (substituted == null) {
-                    return ErrorUtils.createErrorType("Substitution failed");
-                }
-                return substituted;
-            }
-
-            @Nullable
-            @Override
-            public JetType substitute(@NotNull JetType type, @NotNull Variance howThisTypeIsUsed) {
-                TypeParameterDescriptor typeParameterDescriptor = typeConstructors.get(type.getConstructor());
-                if (typeParameterDescriptor != null) {
-                    switch (howThisTypeIsUsed) {
-                        case INVARIANT:
-                            return type;
-                        case IN_VARIANCE:
-                            throw new UnsupportedOperationException(); // TODO : lower bounds
-                        case OUT_VARIANCE:
-                            return typeParameterDescriptor.getDefaultType();
-                    }
-                }
-                return super.substitute(type, howThisTypeIsUsed);
-            }
-        });
+        return substitutedFunction;
     }
     
     public static Modality convertModality(Modality modality, boolean makeNonAbstract) {

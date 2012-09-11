@@ -3210,6 +3210,16 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/substitutions/kt1558-short.kt");
             }
             
+            @TestMetadata("upperBoundsSubstitutionForOverloadResolutionWithAmbiguity.kt")
+            public void testUpperBoundsSubstitutionForOverloadResolutionWithAmbiguity() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/substitutions/upperBoundsSubstitutionForOverloadResolutionWithAmbiguity.kt");
+            }
+            
+            @TestMetadata("upperBoundsSubstitutionForOverloadResolutionWithErrorTypes.kt")
+            public void testUpperBoundsSubstitutionForOverloadResolutionWithErrorTypes() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/substitutions/upperBoundsSubstitutionForOverloadResolutionWithErrorTypes.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/subtyping")
