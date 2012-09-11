@@ -290,7 +290,7 @@ public abstract class CodegenContext {
             }
 
             StackValue outer = getOuterExpression(null, ignoreNoOuter);
-            result = result == null ? outer : StackValue.composed(result, outer);
+            result = result == null || outer == null ? outer : StackValue.composed(result, outer);
         }
 
         return parentContext != null ? parentContext.lookupInContext(d, result, state, ignoreNoOuter) : null;
