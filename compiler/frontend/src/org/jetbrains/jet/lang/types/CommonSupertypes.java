@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.types;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -24,11 +26,11 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.utils.DFS;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.types.Variance.IN_VARIANCE;
-import static org.jetbrains.jet.lang.types.Variance.OUT_VARIANCE;
+import static org.jetbrains.jet.lang.types.Variance.*;
 
 /**
 * @author abreslav
@@ -91,33 +93,8 @@ public class CommonSupertypes {
 
         List<TypeConstructor> order = null;
         for (JetType type : types) {
-            Set<TypeConstructor> visited = new HashSet<TypeConstructor>();
-
-            order = dfs(type, visited, new DfsNodeHandler<List<TypeConstructor>>() {
-                public LinkedList<TypeConstructor> list = new LinkedList<TypeConstructor>();
-
-                @Override
-                public void beforeChildren(JetType current) {
-                    TypeConstructor constructor = current.getConstructor();
-
-                    Set<JetType> instances = constructorToAllInstances.get(constructor);
-                    if (instances == null) {
-                        instances = new HashSet<JetType>();
-                        constructorToAllInstances.put(constructor, instances);
-                    }
-                    instances.add(current);
-                }
-
-                @Override
-                public void afterChildren(JetType current) {
-                    list.addFirst(current.getConstructor());
-                }
-
-                @Override
-                public List<TypeConstructor> result() {
-                    return list;
-                }
-            });
+            Set<TypeConstructor> visited = Sets.newHashSet();
+            order = topologicallySortSuperclassesAndRecordAllInstances(type, constructorToAllInstances, visited);
 
             if (commonSuperclasses == null) {
                 commonSuperclasses = visited;
@@ -142,6 +119,55 @@ public class CommonSupertypes {
         }
 
         return result;
+    }
+
+    private static List<TypeConstructor> topologicallySortSuperclassesAndRecordAllInstances(
+            @NotNull JetType type,
+            @NotNull final Map<TypeConstructor, Set<JetType>> constructorToAllInstances,
+            @NotNull final Set<TypeConstructor> visited
+    ) {
+        return DFS.dfs(
+                Collections.singletonList(type),
+                new DFS.Neighbors<JetType>() {
+                    @NotNull
+                    @Override
+                    public Iterable<JetType> getNeighbors(JetType current) {
+                        TypeSubstitutor substitutor = TypeSubstitutor.create(current);
+                        List<JetType> result = Lists.newArrayList();
+                        for (JetType supertype : current.getConstructor().getSupertypes()) {
+                            if (visited.contains(supertype.getConstructor())) {
+                                continue;
+                            }
+                            result.add(substitutor.safeSubstitute(supertype, INVARIANT));
+                        }
+                        return result;
+                    }
+                },
+                new DFS.Visited<JetType>() {
+                    @Override
+                    public boolean checkAndMarkVisited(JetType current) {
+                        return visited.add(current.getConstructor());
+                    }
+                },
+                new DFS.NodeHandlerWithListResult<JetType, TypeConstructor>() {
+                    @Override
+                    public void beforeChildren(JetType current) {
+                        TypeConstructor constructor = current.getConstructor();
+
+                        Set<JetType> instances = constructorToAllInstances.get(constructor);
+                        if (instances == null) {
+                            instances = new HashSet<JetType>();
+                            constructorToAllInstances.put(constructor, instances);
+                        }
+                        instances.add(current);
+                    }
+
+                    @Override
+                    public void afterChildren(JetType current) {
+                        result.addFirst(current.getConstructor());
+                    }
+                }
+        );
     }
 
     // constructor - type constructor of a supertype to be instantiated
@@ -249,44 +275,6 @@ public class CommonSupertypes {
         markerSet.add(typeConstructor);
         for (JetType type : typeConstructor.getSupertypes()) {
             markAll(type.getConstructor(), markerSet);
-        }
-    }
-
-    private static <R> R dfs(@NotNull JetType current, @NotNull Set<TypeConstructor> visited, @NotNull DfsNodeHandler<R> handler) {
-        doDfs(current, visited, handler);
-        return handler.result();
-    }
-
-    private static void doDfs(@NotNull JetType current, @NotNull Set<TypeConstructor> visited, @NotNull DfsNodeHandler<?> handler) {
-        if (!visited.add(current.getConstructor())) {
-            return;
-        }
-        handler.beforeChildren(current);
-//        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(current);
-        TypeSubstitutor substitutor = TypeSubstitutor.create(current);
-        for (JetType supertype : current.getConstructor().getSupertypes()) {
-            TypeConstructor supertypeConstructor = supertype.getConstructor();
-            if (visited.contains(supertypeConstructor)) {
-                continue;
-            }
-            JetType substitutedSupertype = substitutor.safeSubstitute(supertype, Variance.INVARIANT);
-            dfs(substitutedSupertype, visited, handler);
-        }
-        handler.afterChildren(current);
-    }
-
-    private static class DfsNodeHandler<R> {
-
-        public void beforeChildren(JetType current) {
-
-        }
-
-        public void afterChildren(JetType current) {
-
-        }
-
-        public R result() {
-            return null;
         }
     }
 }
