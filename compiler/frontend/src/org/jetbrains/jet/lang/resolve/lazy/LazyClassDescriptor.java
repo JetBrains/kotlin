@@ -54,7 +54,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private static final Predicate<JetType> VALID_SUPERTYPE = new Predicate<JetType>() {
         @Override
         public boolean apply(JetType type) {
-            return !ErrorUtils.isErrorType(type) && (TypeUtils.getClassDescriptor(type) != null);
+            assert !ErrorUtils.isErrorType(type) : "Error types must be filtered out in DescriptorResolver";
+            return TypeUtils.getClassDescriptor(type) != null;
         }
     };
     private final ResolveSession resolveSession;

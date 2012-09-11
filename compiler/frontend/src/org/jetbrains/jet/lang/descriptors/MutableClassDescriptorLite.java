@@ -212,11 +212,10 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase
 
 
     public void addSupertype(@NotNull JetType supertype) {
-        if (!ErrorUtils.isErrorType(supertype)) {
-            if (TypeUtils.getClassDescriptor(supertype) != null) {
-                // See the Errors.SUPERTYPE_NOT_A_CLASS_OR_TRAIT
-                supertypes.add(supertype);
-            }
+        assert !ErrorUtils.isErrorType(supertype) : "Error types must be filtered out in DescriptorResolver";
+        if (TypeUtils.getClassDescriptor(supertype) != null) {
+            // See the Errors.SUPERTYPE_NOT_A_CLASS_OR_TRAIT
+            supertypes.add(supertype);
         }
     }
 

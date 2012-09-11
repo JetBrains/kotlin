@@ -130,23 +130,31 @@ public class DescriptorResolver {
     ) {
         List<JetType> supertypes = Lists.newArrayList();
         List<JetDelegationSpecifier> delegationSpecifiers = jetClass.getDelegationSpecifiers();
-        boolean isEnum = classDescriptor.getKind() == ClassKind.ENUM_CLASS;
-        if (delegationSpecifiers.isEmpty()) {
-            if (!isEnum) {
-                supertypes.add(getDefaultSupertype(jetClass, trace));
-            }
+        Collection<JetType> declaredSupertypes = resolveDelegationSpecifiers(
+                scope,
+                delegationSpecifiers,
+                typeResolver, trace, false);
+
+        for (JetType declaredSupertype : declaredSupertypes) {
+            addValidSupertype(supertypes, declaredSupertype);
         }
-        else {
-            Collection<JetType> declaredSupertypes = resolveDelegationSpecifiers(
-                    scope,
-                    delegationSpecifiers,
-                    typeResolver, trace, false);
-            supertypes.addAll(declaredSupertypes);
-        }
-        if (isEnum && !containsClass(supertypes)) {
+
+        if (classDescriptor.getKind() == ClassKind.ENUM_CLASS && !containsClass(supertypes)) {
             supertypes.add(0, JetStandardLibrary.getInstance().getEnumType(classDescriptor.getDefaultType()));
         }
+
+        if (supertypes.isEmpty()) {
+            JetType defaultSupertype = getDefaultSupertype(jetClass, trace);
+            addValidSupertype(supertypes, defaultSupertype);
+        }
+
         return supertypes;
+    }
+
+    private static void addValidSupertype(List<JetType> supertypes, JetType declaredSupertype) {
+        if (!ErrorUtils.isErrorType(declaredSupertype)) {
+            supertypes.add(declaredSupertype);
+        }
     }
 
     private boolean containsClass(Collection<JetType> result) {
