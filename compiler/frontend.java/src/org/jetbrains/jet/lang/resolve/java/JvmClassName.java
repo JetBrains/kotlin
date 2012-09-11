@@ -16,9 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.asm4.Type;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 /**
  * @author Stepan Koltsov
@@ -54,12 +55,24 @@ public class JvmClassName {
         return byFqNameWithoutInnerClasses(new FqName(fqName));
     }
 
+    private static String encodeSpecialNames(String str) {
+        String encodedObjectNames = StringUtil.replace(str, JvmAbi.CLASS_OBJECT_CLASS_NAME, CLASS_OBJECT_REPLACE_GUARD);
+        return StringUtil.replace(encodedObjectNames, JvmAbi.TRAIT_IMPL_CLASS_NAME, TRAIT_IMPL_REPLACE_GUARD);
+    }
+
+    private static String decodeSpecialNames(String str) {
+        String decodedObjectNames = StringUtil.replace(str, CLASS_OBJECT_REPLACE_GUARD, JvmAbi.CLASS_OBJECT_CLASS_NAME);
+        return StringUtil.replace(decodedObjectNames, TRAIT_IMPL_REPLACE_GUARD, JvmAbi.TRAIT_IMPL_CLASS_NAME);
+    }
+
+    private final static String CLASS_OBJECT_REPLACE_GUARD = "<class_object>";
+    private final static String TRAIT_IMPL_REPLACE_GUARD = "<trait_impl>";
 
     @NotNull
     private final String internalName;
-
     private FqName fqName;
     private String descriptor;
+
     private Type asmType;
 
     private JvmClassName(@NotNull String internalName) {
@@ -69,7 +82,7 @@ public class JvmClassName {
     @NotNull
     public FqName getFqName() {
         if (fqName == null) {
-            this.fqName = new FqName(internalName.replace('$', '.').replace('/', '.'));
+            this.fqName = new FqName(decodeSpecialNames(encodeSpecialNames(internalName).replace('$', '.').replace('/', '.')));
         }
         return fqName;
     }
@@ -78,7 +91,7 @@ public class JvmClassName {
     public String getInternalName() {
         return internalName;
     }
-    
+
     @NotNull
     public String getDescriptor() {
         if (descriptor == null) {
@@ -90,7 +103,7 @@ public class JvmClassName {
         }
         return descriptor;
     }
-    
+
     @NotNull
     public Type getAsmType() {
         if (asmType == null) {
