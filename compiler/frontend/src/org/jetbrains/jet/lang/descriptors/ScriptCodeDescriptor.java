@@ -49,7 +49,7 @@ public class ScriptCodeDescriptor extends FunctionDescriptorImpl {
 
     @NotNull
     @Override
-    public FunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, boolean makeInvisible, Kind kind, boolean copyOverrides) {
+    public FunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides) {
         throw new IllegalStateException("no need to copy script code descriptor");
     }
 }
