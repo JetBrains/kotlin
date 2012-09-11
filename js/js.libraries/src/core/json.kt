@@ -1,11 +1,9 @@
 package js
 
-import java.util.*;
 import js.library
 
 native
 public class Json() {
-
 }
 
 library("jsonSet")
@@ -25,8 +23,8 @@ public fun Json.add(other : Json) : Json = js.noImpl
 
 native
 public trait JsonClass {
-    public fun stringify(o: Any): String = noImpl
-    public fun parse<T>(text: String): T = noImpl
+    public fun stringify(o: Any): String
+    public fun parse<T>(text: String, reviver: ((key: String, value: Any?)->Unit)? = null): T
 }
 
 native
