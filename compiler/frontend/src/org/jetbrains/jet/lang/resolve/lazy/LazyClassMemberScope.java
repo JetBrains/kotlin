@@ -121,7 +121,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                     }
                 }
         );
-
+        OverrideResolver.resolveUnknownVisibilities(result, resolveSession.getTrace());
     }
 
     @NotNull

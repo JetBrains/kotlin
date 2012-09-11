@@ -234,15 +234,15 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
 
         PropertyGetterDescriptor newGetter = getter == null ? null : new PropertyGetterDescriptor(
                 substitutedDescriptor, Lists.newArrayList(getter.getAnnotations()),
-                DescriptorUtils.convertModality(getter.getModality(), false), getter.getVisibility(),
+                DescriptorUtils.convertModality(getter.getModality(), false), convertVisibility(getter.getVisibility(), newVisibility),
                 getter.hasBody(), getter.isDefault(), kind, getter.getOriginal());
         if (newGetter != null) {
             JetType returnType = getter.getReturnType();
             newGetter.initialize(returnType != null ? substitutor.substitute(returnType, Variance.OUT_VARIANCE) : null);
         }
         PropertySetterDescriptor newSetter = setter == null ? null : new PropertySetterDescriptor(
-                substitutedDescriptor, Lists.newArrayList(setter.getAnnotations()), DescriptorUtils.convertModality(setter.getModality(), false), setter.getVisibility(),
-                setter.hasBody(), setter.isDefault(), kind, setter.getOriginal());
+                substitutedDescriptor, Lists.newArrayList(setter.getAnnotations()), DescriptorUtils.convertModality(setter.getModality(), false),
+                convertVisibility(setter.getVisibility(), newVisibility), setter.hasBody(), setter.isDefault(), kind, setter.getOriginal());
         if (newSetter != null) {
             List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorUtil.getSubstitutedValueParameters(newSetter, setter, substitutor);
             if (substitutedValueParameters == null) {
@@ -263,6 +263,16 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         }
 
         return substitutedDescriptor;
+    }
+
+    @NotNull
+    private static Visibility convertVisibility(Visibility orig, Visibility candidate) {
+        if (candidate == Visibilities.INHERITED) {
+            return candidate;
+        }
+
+        Integer result = Visibilities.compare(orig, candidate);
+        return result != null && result < 0 ? candidate : orig;
     }
 
     @Override
@@ -294,7 +304,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
 
     @NotNull
     @Override
-    public PropertyDescriptor copy(DeclarationDescriptor newOwner, Modality modality, boolean makeInvisible, Kind kind, boolean copyOverrides) {
-        return doSubstitute(TypeSubstitutor.EMPTY, newOwner, modality, makeInvisible ? Visibilities.INVISIBLE_FAKE : visibility, false, copyOverrides, kind);
+    public PropertyDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides) {
+        return doSubstitute(TypeSubstitutor.EMPTY, newOwner, modality, visibility, false, copyOverrides, kind);
     }
 }

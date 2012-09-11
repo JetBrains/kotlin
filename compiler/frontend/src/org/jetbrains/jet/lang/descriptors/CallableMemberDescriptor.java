@@ -52,5 +52,5 @@ public interface CallableMemberDescriptor extends CallableDescriptor, MemberDesc
     Kind getKind();
 
     @NotNull
-    CallableMemberDescriptor copy(DeclarationDescriptor newOwner, Modality modality, boolean makeInvisible, Kind kind, boolean copyOverrides);
+    CallableMemberDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides);
 }

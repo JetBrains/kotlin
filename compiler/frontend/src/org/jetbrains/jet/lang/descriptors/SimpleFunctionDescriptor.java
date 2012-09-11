@@ -27,7 +27,7 @@ public interface SimpleFunctionDescriptor extends FunctionDescriptor {
 
     @NotNull
     @Override
-    SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, boolean makeInvisible, Kind kind, boolean copyOverrides);
+    SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides);
 
     @NotNull
     @Override
