@@ -301,6 +301,7 @@ public class NamespaceCodegen extends GenerationStateAware {
         }
 
         // dollar sign in the end is to prevent synthetic class from having "Test" or other parseable suffix
-        return namespaceInternalName + "$src$" + name.substring(substringFrom, substringTo) + "$";
+        // path hashCode to prevent same name / different path collision
+        return namespaceInternalName + "$src$" + name.substring(substringFrom, substringTo) + "$" + file.getVirtualFile().getCanonicalPath().hashCode();
     }
 }

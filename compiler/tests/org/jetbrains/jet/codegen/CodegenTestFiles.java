@@ -27,9 +27,10 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ref.JetTypeName;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -95,7 +96,7 @@ public class CodegenTestFiles {
             try {
                 String content = JetTestUtils.doLoadFile(JetParsingTest.getTestDataDir() + "/codegen/", name);
                 int i = name.lastIndexOf('/');
-                name = name.substring(i+1);
+                //name = name.substring(i+1);
                 JetFile file = JetTestUtils.createFile(name, content, project);
                 files.add(file);
             } catch (IOException e) {

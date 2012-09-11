@@ -37,4 +37,8 @@ public class MultiFileGenTest extends CodegenTestCase {
     public void testNestedPackagesVisibility() {
         blackBoxMultiFile("/multi/nestedPackages/box.kt", "/multi/nestedPackages/a.kt");
     }
+
+    public void testSameNames() {
+        blackBoxMultiFile("/multi/same/1/box.kt", "/multi/same/2/box.kt");
+    }
 }

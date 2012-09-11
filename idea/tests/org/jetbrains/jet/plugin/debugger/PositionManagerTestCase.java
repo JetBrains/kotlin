@@ -28,12 +28,12 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.PlatformTestCase;
-import com.sun.jdi.*;
+import com.sun.jdi.ReferenceType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.codegen.ClassFileFactory;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.GenerationUtils;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
@@ -192,7 +192,10 @@ public abstract class PositionManagerTestCase extends PlatformTestCase {
         assertNotNull(classes);
         assertEquals(1, classes.size());
         ReferenceType type = classes.get(0);
-        assertEquals(className, type.name());
+        if (!className.contains("$src$")) // don't want to deal with hashCodes in test
+            assertEquals(className, type.name());
+        else
+            assertTrue(type.name().startsWith(className));
     }
 
     private static class Breakpoint {
