@@ -109,7 +109,7 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
                 SimpleFunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, jetDeclaration);
                 assert descriptor != null;
                 SimpleFunctionDescriptor copy =
-                        descriptor.copy(classDescriptor, descriptor.getModality(), false, CallableMemberDescriptor.Kind.DECLARATION, false);
+                        descriptor.copy(classDescriptor, descriptor.getModality(), descriptor.getVisibility(), CallableMemberDescriptor.Kind.DECLARATION, false);
                 classScope.addFunctionDescriptor(copy);
             }
         }
