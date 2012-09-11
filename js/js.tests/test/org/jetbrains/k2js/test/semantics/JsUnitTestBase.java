@@ -71,6 +71,7 @@ public abstract class JsUnitTestBase extends MultipleFilesTranslationTest {
         boolean removed = additionalLibraryFiles.remove(Config.LIBRARIES_LOCATION + "/stdlib/testCode.kt");
         assert removed;
         result.addAll(additionalLibraryFiles);
+        result.add(Config.LIBRARIES_LOCATION + "/stdlib/TuplesCode.kt");
         return result;
     }
 
