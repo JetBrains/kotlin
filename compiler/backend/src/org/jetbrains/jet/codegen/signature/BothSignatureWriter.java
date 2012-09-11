@@ -23,7 +23,7 @@ import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.asm4.signature.SignatureVisitor;
 import org.jetbrains.asm4.signature.SignatureWriter;
 import org.jetbrains.asm4.util.CheckSignatureAdapter;
-import org.jetbrains.jet.codegen.AsmTypeConstants;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JetSignatureUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.Variance;

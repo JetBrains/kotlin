@@ -38,7 +38,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 
 /**
  * @author yole
