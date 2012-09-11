@@ -21,6 +21,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -36,6 +37,7 @@ import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.utils.DFS;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -63,7 +65,7 @@ public class TypeHierarchyResolver {
     private BindingTrace trace;
 
     // state
-    private LinkedList<MutableClassDescriptor> topologicalOrder;
+    private List<MutableClassDescriptor> topologicalOrder;
 
     @Inject
     public void setContext(@NotNull TopDownAnalysisContext context) {
@@ -395,18 +397,27 @@ public class TypeHierarchyResolver {
         }
     }
 
-    private LinkedList<MutableClassDescriptor> topologicallySortClassesAndObjects() {
+    private List<MutableClassDescriptor> topologicallySortClassesAndObjects() {
         // A topsort is needed only for better diagnostics:
         //    edges that get removed to disconnect loops are more reasonable in this case
-        LinkedList<MutableClassDescriptor> topologicalOrder = Lists.newLinkedList();
-        Set<ClassDescriptor> visited = Sets.newHashSet();
-        for (MutableClassDescriptor mutableClassDescriptor : context.getClasses().values()) {
-            topologicallySort(mutableClassDescriptor, visited, topologicalOrder);
-        }
-        for (MutableClassDescriptor mutableClassDescriptor : context.getObjects().values()) {
-            topologicallySort(mutableClassDescriptor, visited, topologicalOrder);
-        }
-        return topologicalOrder;
+        return DFS.topologicalOrder(
+                ContainerUtil.<MutableClassDescriptor>concat(context.getClasses().values(), context.getObjects().values()),
+                new DFS.Neighbors<MutableClassDescriptor>() {
+                    @NotNull
+                    @Override
+                    public Iterable<MutableClassDescriptor> getNeighbors(MutableClassDescriptor current) {
+                        List<MutableClassDescriptor> result = Lists.newArrayList();
+                        for (JetType supertype : current.getSupertypes()) {
+                            DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
+                            if (declarationDescriptor instanceof MutableClassDescriptor) {
+                                MutableClassDescriptor classDescriptor = (MutableClassDescriptor) declarationDescriptor;
+                                result.add(classDescriptor);
+                            }
+                        }
+                        return result;
+                    }
+                });
+
     }
 
     private void detectAndDisconnectLoops() {
@@ -417,24 +428,6 @@ public class TypeHierarchyResolver {
         for (MutableClassDescriptor mutableClassDescriptor : topologicalOrder) {
             traverseTypeHierarchy(mutableClassDescriptor, visited, beingProcessed, currentPath);
         }
-    }
-
-    private static void topologicallySort(
-            MutableClassDescriptor mutableClassDescriptor,
-            Set<ClassDescriptor> visited,
-            LinkedList<MutableClassDescriptor> topologicalOrder
-    ) {
-        if (!visited.add(mutableClassDescriptor)) {
-            return;
-        }
-        for (JetType supertype : mutableClassDescriptor.getSupertypes()) {
-            DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
-            if (declarationDescriptor instanceof MutableClassDescriptor) {
-                MutableClassDescriptor classDescriptor = (MutableClassDescriptor) declarationDescriptor;
-                topologicallySort(classDescriptor, visited, topologicalOrder);
-            }
-        }
-        topologicalOrder.addFirst(mutableClassDescriptor);
     }
 
     private void traverseTypeHierarchy(
