@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen.binding;
 
 import com.intellij.util.containers.Stack;
+import org.jetbrains.jet.codegen.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -69,6 +70,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
                                        : JetStandardClasses.getFunction(arity)).getDefaultType()), JetScope.EMPTY,
                 Collections.<ConstructorDescriptor>emptySet(), null);
 
+        assert PsiCodegenPredictor.checkPredictedClassNameForFun(bindingTrace, funDescriptor, classDescriptor);
         bindingTrace.record(CLASS_FOR_FUNCTION, funDescriptor, classDescriptor);
         return classDescriptor;
     }
@@ -134,7 +136,9 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             super.visitEnumEntry(enumEntry);
         }
         else {
-            bindingTrace.record(FQN, descriptor, bindingTrace.get(FQN, peekFromStack(classStack)));
+            JvmClassName jvmClassName = bindingTrace.get(FQN, peekFromStack(classStack));
+            assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingTrace, descriptor, jvmClassName);
+            bindingTrace.record(FQN, descriptor, jvmClassName);
         }
     }
 

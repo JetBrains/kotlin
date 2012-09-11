@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.CodegenUtil;
+import org.jetbrains.jet.codegen.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -132,6 +133,7 @@ public class CodegenBinding {
 
         recordClosure(bindingTrace, null, classDescriptor, null, className, false);
 
+        assert PsiCodegenPredictor.checkPredictedClassNameForFun(bindingTrace, scriptDescriptor, classDescriptor);
         bindingTrace.record(CLASS_FOR_FUNCTION, scriptDescriptor, classDescriptor);
     }
 
@@ -170,6 +172,7 @@ public class CodegenBinding {
 
         final MutableClosure closure = new MutableClosure(superCall, enclosing, enclosingReceiver);
 
+        assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingTrace, classDescriptor, name);
         bindingTrace.record(FQN, classDescriptor, name);
         bindingTrace.record(CLOSURE, classDescriptor, closure);
 
@@ -260,6 +263,8 @@ public class CodegenBinding {
         }
 
         name = JvmClassName.byInternalName(getJvmInternalFQNameImpl(bindingTrace, descriptor));
+
+        assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingTrace, descriptor, name);
         bindingTrace.record(FQN, descriptor, name);
         return name;
     }

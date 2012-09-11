@@ -27,8 +27,7 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JetLightClass;
 import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetClassBody;
-import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 
 /**
  * @author yole
@@ -46,10 +45,10 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
                 }
             }
         }
-        else if (element instanceof JetFunction) {
-            final JetFunction function = (JetFunction) element;
+        else if (element instanceof JetNamedFunction) {
+            final JetNamedFunction function = (JetNamedFunction) element;
             final String name = function.getName();
-            if (function.getParent() instanceof JetClassBody && name != null) {
+            if (name != null) {
                 final PsiMethod method = ApplicationManager.getApplication().runReadAction(new Computable<PsiMethod>() {
                     @Override
                     public PsiMethod compute() {
@@ -57,13 +56,9 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
                     }
                 });
                 if (method != null) {
-                    PsiMethod target = JetLightClass.wrapMethod((JetFunction) element);
-                    if (target != null) {
-                        queryParameters.getOptimizer().searchWord(name, queryParameters.getScope(), true, target);
-                    }
+                    queryParameters.getOptimizer().searchWord(name, queryParameters.getScope(), true, method);
                 }
             }
-
         }
     }
 }

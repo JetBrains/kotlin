@@ -37,20 +37,15 @@ import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.codegen.ClassBuilder;
-import org.jetbrains.jet.codegen.ClassBuilderFactory;
-import org.jetbrains.jet.codegen.ClassBuilderMode;
-import org.jetbrains.jet.codegen.CompilationErrorHandler;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStrategy;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetFunction;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.plugin.JetLanguage;
@@ -246,15 +241,33 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     }
 
     @Nullable
-    public static JetLightClass wrapDelegate(JetClass jetClass) {
-        if (jetClass == null) return null;
-        return create(jetClass.getManager(), (JetFile) jetClass.getContainingFile(), JetPsiUtil.getFQName(jetClass));
+    public static JetLightClass wrapDelegate(@Nullable JetClass jetClass) {
+        if (jetClass == null) {
+            return null;
+        }
+
+        return wrapDelegate(jetClass, PsiCodegenPredictor.getPredefinedJvmClassName(jetClass));
     }
 
     @Nullable
-    public static PsiMethod wrapMethod(JetFunction function) {
-        JetClass containingClass = PsiTreeUtil.getParentOfType(function, JetClass.class);
-        JetLightClass wrapper = wrapDelegate(containingClass);
+    private static JetLightClass wrapDelegate(@NotNull JetDeclaration declaration, @Nullable JvmClassName jvmClassName) {
+        if (jvmClassName == null) {
+            return null;
+        }
+
+        return create(declaration.getManager(), (JetFile) declaration.getContainingFile(), jvmClassName.getFqName());
+    }
+
+    @Nullable
+    public static PsiMethod wrapMethod(@NotNull JetNamedFunction function) {
+        //noinspection unchecked
+        if (PsiTreeUtil.getParentOfType(function, JetFunction.class, JetProperty.class) != null) {
+            // Don't generate method wrappers for internal declarations. Their classes are not generated during calcStub
+            // with ClassBuilderMode.SIGNATURES mode, and this produces "Class not found exception" in getDelegate()
+            return null;
+        }
+
+        JetLightClass wrapper = wrapDelegate(function, PsiCodegenPredictor.getPredefinedJvmClassNameForFun(function));
         if (wrapper == null) {
             return null;
         }
@@ -264,6 +277,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
                 return method;
             }
         }
+
         return null;
     }
 

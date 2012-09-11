@@ -18,15 +18,15 @@ package org.jetbrains.jet.plugin.javaFacade;
 
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JetLightClass;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
@@ -46,21 +46,49 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
         myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/javaFacade");
     }
 
+    public void testDoNotWrapFunFromLocalClass() {
+        doTestWrapMethod(false);
+    }
+
+    public void testDoNotWrapFunInAnonymousObject() {
+        doTestWrapMethod(false);
+    }
+
+    public void testWrapFunInClassObject() {
+        doTestWrapMethod(true);
+    }
+
+    public void testWrapTopLevelFun() {
+        doTestWrapMethod(true);
+    }
+
+    public void testWrapFunWithImplInTrait() {
+        doTestWrapMethod(true);
+    }
+
+    public void testWrapFunWithoutImplInTrait() {
+        doTestWrapMethod(true);
+    }
+
+    public void testWrapFunInObject() {
+        doTestWrapMethod(true);
+    }
+
     public void testInnerClass() throws Exception {
         myFixture.configureByFile(getTestName(true) + ".kt");
-        
+
         JavaPsiFacade facade = myFixture.getJavaFacade();
         PsiClass mirrorClass = facade.findClass("foo.Outer.Inner", GlobalSearchScope.allScope(getProject()));
-        
+
         assertNotNull(mirrorClass);
         PsiMethod[] fun = mirrorClass.findMethodsByName("innerFun", false);
-        
+
         assertEquals(fun[0].getReturnType(), PsiType.VOID);
     }
-    
+
     public void testClassObject() throws Exception {
         myFixture.configureByFile(getTestName(true) + ".kt");
-        
+
         JavaPsiFacade facade = myFixture.getJavaFacade();
         PsiClass theClass = facade.findClass("foo.TheClass", GlobalSearchScope.allScope(getProject()));
 
@@ -71,7 +99,7 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
 
         PsiType type = classobj.getType();
         assertTrue(type instanceof PsiClassType);
-        
+
         assertEquals("foo.TheClass.ClassObject$", type.getCanonicalText());
 
         PsiClass classObjectClass = ((PsiClassType) type).resolve();
@@ -97,5 +125,29 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
                                                    (JetFile) element.getContainingFile(),
                                                    JetPsiUtil.getFQName(aClass));
         assertNull(createdByFactory);
+    }
+
+    private void doTestWrapMethod(boolean shouldBeWrapped) {
+        myFixture.configureByFile(getTestName(true) + ".kt");
+
+        int offset = myFixture.getEditor().getCaretModel().getOffset();
+        PsiElement elementAt = myFixture.getFile().findElementAt(offset);
+
+        assertNotNull("Caret should be set for tested file", elementAt);
+
+        JetNamedFunction jetFunction = PsiTreeUtil.getParentOfType(elementAt, JetNamedFunction.class);
+        assertNotNull("Caret should be placed to function definition", jetFunction);
+
+        // Should not fail!
+        PsiMethod psiMethod = JetLightClass.wrapMethod(jetFunction);
+
+        if (shouldBeWrapped) {
+            assertNotNull(String.format("Failed to wrap jetFunction '%s' to method", jetFunction.getText()), psiMethod);
+            assertInstanceOf(psiMethod, PsiCompiledElement.class);
+            assertEquals("Invalid original element for generated method", ((PsiCompiledElement)psiMethod).getMirror(), jetFunction);
+        }
+        else {
+            assertNull("There should be no wrapper for given method", psiMethod);
+        }
     }
 }
