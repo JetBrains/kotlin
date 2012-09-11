@@ -26,10 +26,12 @@ import java.util.Map;
  * @author alex.tkachman
  */
 public class AsmTypeConstants {
-    public static final Type OBJECT_TYPE = Type.getType(Object.class);
-    public static final Type JAVA_STRING_TYPE = Type.getType(String.class);
-    public static final Type JAVA_THROWABLE_TYPE = Type.getType(Throwable.class);
-    public static final Type JAVA_ARRAY_GENERIC_TYPE = Type.getType(Object[].class);
+    private static final Map<Class<?>, Type> TYPES_MAP = Maps.newHashMap();
+
+    public static final Type OBJECT_TYPE = getType(Object.class);
+    public static final Type JAVA_STRING_TYPE = getType(String.class);
+    public static final Type JAVA_THROWABLE_TYPE = getType(Throwable.class);
+    public static final Type JAVA_ARRAY_GENERIC_TYPE = getType(Object[].class);
 
     public static final Type JET_NOTHING_TYPE = Type.getObjectType("jet/Nothing");
     public static final Type JET_TUPLE0_TYPE = Type.getObjectType("jet/Tuple0");
@@ -47,7 +49,6 @@ public class AsmTypeConstants {
     public static final Type JET_SHARED_LONG_TYPE = Type.getObjectType("jet/runtime/SharedVar$Long");
     public static final Type JET_SHARED_BOOLEAN_TYPE = Type.getObjectType("jet/runtime/SharedVar$Boolean");
 
-    private static final Map<Class<?>, Type> TYPES_MAP = Maps.newHashMap();
 
     public static Type getType(@NotNull Class<?> javaClass) {
         Type type = TYPES_MAP.get(javaClass);
