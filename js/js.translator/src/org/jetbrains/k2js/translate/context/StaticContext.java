@@ -458,10 +458,6 @@ public final class StaticContext {
                         else if (moduleName != null) {
                             qualifier.setQualifier(new JsArrayAccess(namer.kotlin("modules"), program.getStringLiteral(moduleName)));
                         }
-                        else if (result == qualifier && result.getIdent().equals("kotlin")) {
-                            // todo WebDemoExamples2Test#testBuilder, package "kotlin" from kotlin/js/js.libraries/src/stdlib/JUMaps.kt must be inlined
-                          //  return qualifier;
-                        }
                     }
 
                     if (qualifier.getQualifier() == null) {

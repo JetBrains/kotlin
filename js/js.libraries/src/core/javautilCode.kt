@@ -2,6 +2,10 @@ package java.util
 
 import java.lang.*
 
+/** Provides [] access to maps */
+native
+public fun <K, V> MutableMap<K, V>.set(key: K, value: V): Unit = noImpl
+
 public object Collections {
     library("collectionsMax")
     public fun max<T>(col : Collection<T>, comp : Comparator<T>) : T = js.noImpl

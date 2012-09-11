@@ -112,32 +112,47 @@ public final class PatternBuilder {
     }
 
     @NotNull
-    public static DescriptorPredicate create(@NotNull final String... names) {
-        return new DescriptorPredicate() {
-            @Override
-            public boolean apply(@Nullable FunctionDescriptor functionDescriptor) {
-                if (functionDescriptor == null) {
-                    return false;
-                }
-
-                DeclarationDescriptor descriptor = functionDescriptor;
-                int nameIndex = names.length - 1;
-                do {
-                    if (!descriptor.getName().getName().equals(names[nameIndex--])) {
-                        return false;
-                    }
-                    descriptor = descriptor.getContainingDeclaration();
-                    if (nameIndex == -1) {
-                        return isRootNamespace(descriptor);
-                    }
-                }
-                while (descriptor != null && !isRootNamespace(descriptor));
-                return false;
-            }
-        };
+    public static DescriptorPredicateImpl create(@NotNull final String... names) {
+        return new DescriptorPredicateImpl(names);
     }
 
     private static boolean isRootNamespace(DeclarationDescriptor declarationDescriptor) {
         return declarationDescriptor instanceof NamespaceDescriptor && DescriptorUtils.isRootNamespace((NamespaceDescriptor) declarationDescriptor);
+    }
+
+    public static class DescriptorPredicateImpl implements DescriptorPredicate {
+        private final String[] names;
+
+        private boolean receiverParameterExists;
+
+        public DescriptorPredicateImpl(String... names) {
+            this.names = names;
+        }
+
+        public DescriptorPredicateImpl receiverParameterExists(boolean receiverParameterExists) {
+            this.receiverParameterExists = receiverParameterExists;
+            return this;
+        }
+
+        @Override
+        public boolean apply(@Nullable FunctionDescriptor functionDescriptor) {
+            if (functionDescriptor == null || (functionDescriptor.getReceiverParameter() == null) == receiverParameterExists) {
+                return false;
+            }
+
+            DeclarationDescriptor descriptor = functionDescriptor;
+            int nameIndex = names.length - 1;
+            do {
+                if (!descriptor.getName().getName().equals(names[nameIndex--])) {
+                    return false;
+                }
+                descriptor = descriptor.getContainingDeclaration();
+                if (nameIndex == -1) {
+                    return isRootNamespace(descriptor);
+                }
+            }
+            while (descriptor != null && !isRootNamespace(descriptor));
+            return false;
+        }
     }
 }

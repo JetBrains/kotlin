@@ -4,13 +4,11 @@ import js.library
 
 native
 public class Json() {
+    library("jsonGet")
+    fun get(parameterName: String): Any?
+    library("jsonSet")
+    fun set(parameterName: String, value: Any?): Unit
 }
-
-library("jsonSet")
-public fun Json.set(paramName: String, value: Any?): Unit = js.noImpl
-
-library("jsonGet")
-public fun Json.get(paramName: String): Any? = js.noImpl
 
 library("jsonFromTuples")
 public fun json(vararg pairs: Pair<String, Any?>): Json = js.noImpl
