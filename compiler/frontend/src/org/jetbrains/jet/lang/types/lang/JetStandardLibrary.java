@@ -107,6 +107,7 @@ public class JetStandardLibrary {
     private JetType tuple0Type;
 
     private EnumMap<PrimitiveType, ClassDescriptor> primitiveTypeToClass;
+    private EnumMap<PrimitiveType, ClassDescriptor> primitiveTypeToArrayClass;
     private EnumMap<PrimitiveType, JetType> primitiveTypeToJetType;
     private EnumMap<PrimitiveType, JetType> primitiveTypeToNullableJetType;
     private EnumMap<PrimitiveType, JetType> primitiveTypeToArrayJetType;
@@ -191,6 +192,7 @@ public class JetStandardLibrary {
             primitiveTypeToClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
             primitiveTypeToJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
             primitiveTypeToNullableJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
+            primitiveTypeToArrayClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
             primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
             primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
             jetArrayTypeToPrimitiveJetType = new HashMap<JetType, JetType>();
@@ -217,6 +219,7 @@ public class JetStandardLibrary {
         primitiveTypeToClass.put(primitiveType, clazz);
         primitiveTypeToJetType.put(primitiveType, type);
         primitiveTypeToNullableJetType.put(primitiveType, TypeUtils.makeNullable(type));
+        primitiveTypeToArrayClass.put(primitiveType, arrayClazz);
         primitiveTypeToArrayJetType.put(primitiveType, arrayType);
         primitiveJetTypeToJetArrayType.put(type, arrayType);
         jetArrayTypeToPrimitiveJetType.put(arrayType, type);
@@ -263,6 +266,12 @@ public class JetStandardLibrary {
     public ClassDescriptor getPrimitiveClassDescriptor(PrimitiveType primitiveType) {
         initStdClasses();
         return primitiveTypeToClass.get(primitiveType);
+    }
+
+    @NotNull
+    public ClassDescriptor getPrimitiveArrayClassDescriptor(PrimitiveType primitiveType) {
+        initStdClasses();
+        return primitiveTypeToArrayClass.get(primitiveType);
     }
 
     @NotNull
