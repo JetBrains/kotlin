@@ -476,8 +476,8 @@ String.prototype.contains = function (s) {
         return result;
     };
 
-    Kotlin.arrayIndices = function (arr) {
-        return Kotlin.$new(Kotlin.NumberRange)(0, arr.length);
+    Kotlin.arrayIndices = function (array) {
+        return Kotlin.$new(Kotlin.NumberRange)(0, array.length);
     };
 
     Kotlin.arrayIterator = function (array) {
