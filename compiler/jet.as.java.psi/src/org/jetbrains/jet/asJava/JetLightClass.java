@@ -21,7 +21,6 @@ package org.jetbrains.jet.asJava;
 
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Key;
@@ -36,8 +35,12 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.*;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.ClassBuilder;
+import org.jetbrains.jet.codegen.ClassBuilderFactory;
+import org.jetbrains.jet.codegen.ClassBuilderMode;
+import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStrategy;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
@@ -49,6 +52,7 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import javax.swing.*;
@@ -61,10 +65,15 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     private final FqName qualifiedName;
     private PsiClass delegate;
 
-    public JetLightClass(PsiManager manager, JetFile file, FqName qualifiedName) {
+    private JetLightClass(PsiManager manager, JetFile file, FqName qualifiedName) {
         super(manager, JetLanguage.INSTANCE);
         this.file = file;
         this.qualifiedName = qualifiedName;
+    }
+
+    @Nullable
+    public static JetLightClass create(PsiManager manager, JetFile file, FqName qualifiedName) {
+        return JetStandardClasses.isStandardClass(qualifiedName) ? null : new JetLightClass(manager, file, qualifiedName);
     }
 
     @Override
@@ -72,9 +81,12 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         return qualifiedName.shortName().getName();
     }
 
+    @NotNull
     @Override
     public PsiElement copy() {
-        return new JetLightClass(getManager(), file, qualifiedName);
+        JetLightClass result = create(getManager(), file, qualifiedName);
+        assert result != null;
+        return result;
     }
 
     @NotNull
@@ -233,13 +245,20 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         return true;
     }
 
+    @Nullable
     public static JetLightClass wrapDelegate(JetClass jetClass) {
-        return new JetLightClass(jetClass.getManager(), (JetFile) jetClass.getContainingFile(), JetPsiUtil.getFQName(jetClass));
+        if (jetClass == null) return null;
+        return create(jetClass.getManager(), (JetFile) jetClass.getContainingFile(), JetPsiUtil.getFQName(jetClass));
     }
 
+    @Nullable
     public static PsiMethod wrapMethod(JetFunction function) {
         JetClass containingClass = PsiTreeUtil.getParentOfType(function, JetClass.class);
         JetLightClass wrapper = wrapDelegate(containingClass);
+        if (wrapper == null) {
+            return null;
+        }
+
         for (PsiMethod method : wrapper.getMethods()) {
             if (method instanceof PsiCompiledElement && ((PsiCompiledElement) method).getMirror() == function) {
                 return method;

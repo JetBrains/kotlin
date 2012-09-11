@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
@@ -112,8 +113,11 @@ public final class ClassFileFactory extends GenerationStateAware {
     }
 
     public ClassBuilder forClassImplementation(ClassDescriptor aClass) {
-        return newVisitor(
-                state.getTypeMapper().mapType(aClass.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName() + ".class");
+        Type type = state.getTypeMapper().mapType(aClass.getDefaultType(), JetTypeMapperMode.IMPL);
+        if (CodegenUtil.isPrimitive(type)) {
+            throw new IllegalStateException("Codegen for primitive type is not possible: " + aClass);
+        }
+        return newVisitor(type.getInternalName() + ".class");
     }
 
     public ClassBuilder forNamespacepart(String name) {

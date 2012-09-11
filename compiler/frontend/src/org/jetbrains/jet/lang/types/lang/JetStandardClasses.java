@@ -542,4 +542,13 @@ public class JetStandardClasses {
     public static Collection<DeclarationDescriptor> getAllStandardClasses() {
         return STANDARD_CLASSES.getAllDescriptors();
     }
+
+    public static boolean isStandardClass(@NotNull FqName fqName) {
+        for (DeclarationDescriptor descriptor : getAllStandardClasses()) {
+            if (DescriptorUtils.getFQName(descriptor).equals(fqName.toUnsafe())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

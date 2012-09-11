@@ -82,8 +82,11 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                 return null;
             }
         }
-        final PsiClass lightClass = JetLightClass.wrapDelegate((JetClass) element).getDelegate();
-        final PsiElement[] children = lightClass.getChildren();
+        JetLightClass lightClass = JetLightClass.wrapDelegate((JetClass) element);
+        if (lightClass == null) {
+            return null;
+        }
+        final PsiElement[] children = lightClass.getDelegate().getChildren();
         return children.length > 0 ? children[0] : null;
     }
 
@@ -251,7 +254,11 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         if (!element.hasModifier(JetTokens.OPEN_KEYWORD)) {
             return;
         }
-        PsiClass inheritor = ClassInheritorsSearch.search(JetLightClass.wrapDelegate(element), false).findFirst();
+        JetLightClass lightClass = JetLightClass.wrapDelegate(element);
+        if (lightClass == null) {
+            return;
+        }
+        PsiClass inheritor = ClassInheritorsSearch.search(lightClass, false).findFirst();
         if (inheritor != null) {
             final PsiElement nameIdentifier = element.getNameIdentifier();
             PsiElement anchor = nameIdentifier != null ? nameIdentifier : element;

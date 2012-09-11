@@ -82,7 +82,10 @@ public class KotlinDirectInheritorsSearcher extends QueryExecutorBase<PsiClass, 
                                 }
 
                                 if (qualifiedName.equals(resolvedFQName)) {
-                                    consumer.process(JetLightClass.wrapDelegate((JetClass) candidate));
+                                    JetLightClass lightClass = JetLightClass.wrapDelegate((JetClass) candidate);
+                                    if (lightClass != null) {
+                                        consumer.process(lightClass);
+                                    }
                                 }
                             }
                         }

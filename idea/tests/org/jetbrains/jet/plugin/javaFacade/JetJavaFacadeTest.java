@@ -21,6 +21,12 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.asJava.JetLightClass;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
@@ -73,5 +79,23 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
         PsiMethod[] methods = classObjectClass.findMethodsByName("getOut", false);
         
         assertEquals("java.io.PrintStream", methods[0].getReturnType().getCanonicalText());
+    }
+
+    public void testLightClassIsNotCreatedForBuiltins() throws Exception {
+        myFixture.configureByFile(getTestName(true) + ".kt");
+
+        PsiReference reference = myFixture.getFile().findReferenceAt(myFixture.getCaretOffset());
+        assert reference != null;
+        PsiElement element = reference.resolve();
+        assertInstanceOf(element, JetClass.class);
+        JetClass aClass = (JetClass) element;
+
+        JetLightClass createdByWrapDelegate = JetLightClass.wrapDelegate(aClass);
+        assertNull(createdByWrapDelegate);
+
+        JetLightClass createdByFactory = JetLightClass.create(element.getManager(),
+                                                   (JetFile) element.getContainingFile(),
+                                                   JetPsiUtil.getFQName(aClass));
+        assertNull(createdByFactory);
     }
 }

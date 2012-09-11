@@ -68,24 +68,25 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
 
             if (owner instanceof JetClass) {
                 JetLightClass delegate = JetLightClass.wrapDelegate((JetClass) owner);
-                for (PsiMethod method : delegate.getMethods()) {
-                    if (method.getNavigationElement() == function) {
-                        Location<PsiMethod> methodLocation = PsiLocation.fromPsiElement(method);
-                        if (JUnitUtil.isTestMethod(methodLocation, false)) {
-                            RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(context.getProject(), context);
-                            final JUnitConfiguration configuration = (JUnitConfiguration) settings.getConfiguration();
+                if (delegate != null) {
+                    for (PsiMethod method : delegate.getMethods()) {
+                        if (method.getNavigationElement() == function) {
+                            Location<PsiMethod> methodLocation = PsiLocation.fromPsiElement(method);
+                            if (JUnitUtil.isTestMethod(methodLocation, false)) {
+                                RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(context.getProject(), context);
+                                final JUnitConfiguration configuration = (JUnitConfiguration) settings.getConfiguration();
 
-                            final Module originalModule = configuration.getConfigurationModule().getModule();
-                            configuration.beMethodConfiguration(methodLocation);
-                            configuration.restoreOriginalModule(originalModule);
-                            JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location);
+                                final Module originalModule = configuration.getConfigurationModule().getModule();
+                                configuration.beMethodConfiguration(methodLocation);
+                                configuration.restoreOriginalModule(originalModule);
+                                JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location);
 
-                            return settings;
+                                return settings;
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
-
             }
         }
 
@@ -99,7 +100,7 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
             myElement = jetClass;
             PsiClass delegate = JetLightClass.wrapDelegate(jetClass);
 
-            if (JUnitUtil.isTestClass(delegate)) {
+            if (delegate != null && JUnitUtil.isTestClass(delegate)) {
                 RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(context.getProject(), context);
                 final JUnitConfiguration configuration = (JUnitConfiguration) settings.getConfiguration();
 

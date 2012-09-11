@@ -40,8 +40,10 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
         if (element instanceof JetClass) {
             String className = ((JetClass) element).getName();
             if (className != null) {
-                queryParameters.getOptimizer().searchWord(className, queryParameters.getScope(),
-                                                          true, JetLightClass.wrapDelegate((JetClass) element));
+                JetLightClass lightClass = JetLightClass.wrapDelegate((JetClass) element);
+                if (lightClass != null) {
+                    queryParameters.getOptimizer().searchWord(className, queryParameters.getScope(), true, lightClass);
+                }
             }
         }
         else if (element instanceof JetFunction) {
@@ -55,8 +57,10 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
                     }
                 });
                 if (method != null) {
-                    queryParameters.getOptimizer().searchWord(name, queryParameters.getScope(),
-                                                              true, JetLightClass.wrapMethod((JetFunction) element));
+                    PsiMethod target = JetLightClass.wrapMethod((JetFunction) element);
+                    if (target != null) {
+                        queryParameters.getOptimizer().searchWord(name, queryParameters.getScope(), true, target);
+                    }
                 }
             }
 
