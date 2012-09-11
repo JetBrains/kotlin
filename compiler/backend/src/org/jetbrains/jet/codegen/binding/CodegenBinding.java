@@ -204,7 +204,7 @@ public class CodegenBinding {
         for (FqName name : names) {
             final NamespaceDescriptor namespaceDescriptor = bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, name);
             final Collection<JetFile> jetFiles = bindingContext.get(NAMESPACE_TO_FILES, namespaceDescriptor);
-            if(jetFiles != null)
+            if (jetFiles != null)
                 answer.addAll(jetFiles);
         }
         return answer;
@@ -244,7 +244,7 @@ public class CodegenBinding {
     public static JvmClassName getJvmClassName(BindingTrace bindingTrace, ClassDescriptor classDescriptor) {
         classDescriptor = (ClassDescriptor) classDescriptor.getOriginal();
         final JvmClassName name = bindingTrace.getBindingContext().get(FQN, classDescriptor);
-        if(name != null) {
+        if (name != null) {
             return name;
         }
 
@@ -255,7 +255,7 @@ public class CodegenBinding {
     private static JvmClassName getJvmInternalName(BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor) {
         descriptor = descriptor.getOriginal();
         JvmClassName name = bindingTrace.getBindingContext().get(FQN, descriptor);
-        if(name != null) {
+        if (name != null) {
             return name;
         }
 
