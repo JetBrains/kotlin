@@ -56,7 +56,17 @@ public final class StringOperationFIF extends CompositeFIF {
                 assert receiver != null;
                 Pair<JsExpression, JsExpression> a = TranslationUtils.wrapAsTemporaryIfNeed(receiver, context);
                 Pair<JsExpression, JsExpression> b = TranslationUtils.wrapAsTemporaryIfNeed(arguments.get(0), context);
-                return JsAstUtils.equality(new JsInvocation(new JsNameRef("indexOf", a.first), Arrays.asList(b.first, JsAstUtils.subtract(new JsNameRef("length", a.second), new JsNameRef("length", b.second)))), context.program().getNumberLiteral(0));
+                return JsAstUtils.inequality(new JsInvocation(new JsNameRef("indexOf", a.first), Arrays.asList(b.first, JsAstUtils.subtract(new JsNameRef("length", a.second), new JsNameRef("length", b.second)))), context.program().getNumberLiteral(-1));
+            }
+        });
+        add(pattern("js", "isEmpty").receiverExists(true), new FunctionIntrinsic() {
+            @NotNull
+            @Override
+            public JsExpression apply(
+                    @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+            ) {
+                assert receiver != null;
+                return JsAstUtils.equality(new JsNameRef("length", receiver), context.program().getNumberLiteral(0));
             }
         });
     }

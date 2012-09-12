@@ -34,7 +34,8 @@ native public fun String.trim() : String = js.noImpl
 public val String.size: Int
     get() = noImpl
 
-public fun String.length(): Int = length
+public fun String.length(): Int
+public fun String.isEmpty(): Boolean
 
 /*
 
