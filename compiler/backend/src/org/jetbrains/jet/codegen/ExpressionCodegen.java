@@ -1609,28 +1609,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                           isInterface, isSuper, getter, setter, invokeOpcode);
     }
 
-    private PropertyDescriptor accessablePropertyDescriptor(PropertyDescriptor propertyDescriptor) {
-        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-        if ((propertyDescriptor.getVisibility() == Visibilities.PRIVATE ||
-             (setter != null && setter.getVisibility() == Visibilities.PRIVATE))
-            && !DescriptorUtils.isClassObject(propertyDescriptor.getContainingDeclaration())
-            && propertyDescriptor.getContainingDeclaration() instanceof ClassDescriptor) {
-            if (context.getClassOrNamespaceDescriptor() != propertyDescriptor.getContainingDeclaration()) {
-                DeclarationDescriptor enclosed = propertyDescriptor.getContainingDeclaration();
-                if (!context.hasThisDescriptor() || enclosed != context.getThisDescriptor()) {
-                    CodegenContext c = context;
-                    while (c != null && c.getContextDescriptor() != enclosed) {
-                        c = c.getParentContext();
-                    }
-                    if (c != null) {
-                        propertyDescriptor = (PropertyDescriptor) c.getAccessor(propertyDescriptor);
-                    }
-                }
-            }
-        }
-        return propertyDescriptor;
-    }
-
     private static boolean isOverrideForTrait(CallableMemberDescriptor propertyDescriptor) {
         if (propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
             final Set<? extends CallableMemberDescriptor> overriddenDescriptors = propertyDescriptor.getOverriddenDescriptors();
@@ -1659,7 +1637,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             receiver = StackValue.receiver(resolvedCall, receiver, this, null);
             return generateConstructorCall(expression, (JetSimpleNameExpression) callee, receiver);
         }
-        else if (funDescriptor instanceof FunctionDescriptor) {
+
+        if (funDescriptor instanceof FunctionDescriptor) {
             Call call = bindingContext.get(CALL, expression.getCalleeExpression());
             if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
                 VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
@@ -1673,6 +1652,48 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         else {
             throw new UnsupportedOperationException("unknown type of callee descriptor: " + funDescriptor);
         }
+    }
+
+    private PropertyDescriptor accessablePropertyDescriptor(PropertyDescriptor propertyDescriptor) {
+        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
+        if ((propertyDescriptor.getVisibility() == Visibilities.PRIVATE ||
+             (setter != null && setter.getVisibility() == Visibilities.PRIVATE))
+            && !DescriptorUtils.isClassObject(propertyDescriptor.getContainingDeclaration())
+            && propertyDescriptor.getContainingDeclaration() instanceof ClassDescriptor) {
+            if (context.getClassOrNamespaceDescriptor() != propertyDescriptor.getContainingDeclaration()) {
+                DeclarationDescriptor enclosed = propertyDescriptor.getContainingDeclaration();
+                if (!context.hasThisDescriptor() || enclosed != context.getThisDescriptor()) {
+                    CodegenContext c = context;
+                    while (c != null && c.getContextDescriptor() != enclosed) {
+                        c = c.getParentContext();
+                    }
+                    if (c != null) {
+                        propertyDescriptor = (PropertyDescriptor) c.getAccessor(propertyDescriptor);
+                    }
+                }
+            }
+        }
+        return propertyDescriptor;
+    }
+
+    private FunctionDescriptor accessableFunctionDescriptor(FunctionDescriptor fd) {
+        if (fd.getVisibility() != Visibilities.PRIVATE || fd.getContainingDeclaration() instanceof NamespaceDescriptor) {
+            return fd;
+        }
+
+        if (context.getClassOrNamespaceDescriptor() != fd.getContainingDeclaration()) {
+            DeclarationDescriptor enclosed = fd.getContainingDeclaration();
+            if (enclosed != context.getThisDescriptor()) {
+                CodegenContext c = context;
+                while (c.getContextDescriptor() != enclosed) {
+                    c = c.getParentContext();
+                    assert c != null;
+                }
+                fd = (FunctionDescriptor) c.getAccessor(fd);
+            }
+        }
+
+        return fd;
     }
 
     private StackValue invokeFunction(
@@ -1712,21 +1733,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        if (fd.getVisibility() == Visibilities.PRIVATE
-            && !DescriptorUtils.isClassObject(fd.getContainingDeclaration())
-            && fd.getContainingDeclaration() instanceof ClassDescriptor) {
-            if (context.getClassOrNamespaceDescriptor() != fd.getContainingDeclaration()) {
-                DeclarationDescriptor enclosed = fd.getContainingDeclaration();
-                if (enclosed != context.getThisDescriptor()) {
-                    CodegenContext c = context;
-                    while (c.getContextDescriptor() != enclosed) {
-                        c = c.getParentContext();
-                        assert c != null;
-                    }
-                    fd = (FunctionDescriptor) c.getAccessor(fd);
-                }
-            }
-        }
+        fd = accessableFunctionDescriptor(fd);
 
         Callable callable = resolveToCallable(fd, superCall);
         if (callable instanceof CallableMethod) {
