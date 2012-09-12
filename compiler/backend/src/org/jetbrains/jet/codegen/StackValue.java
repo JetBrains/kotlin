@@ -23,6 +23,7 @@ import org.jetbrains.asm4.Label;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
+import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
@@ -355,8 +356,21 @@ public abstract class StackValue {
         return receiver;
     }
 
-    public static StackValue singleton(ClassDescriptor aClass, JetTypeMapper typeMapper) {
-        return new Singleton(aClass, typeMapper.mapType(aClass.getDefaultType(), JetTypeMapperMode.VALUE));
+    public static StackValue singleton(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
+        final Type type = typeMapper.mapType(classDescriptor.getDefaultType(), JetTypeMapperMode.VALUE);
+
+        final ClassKind kind = classDescriptor.getKind();
+        if (kind == ClassKind.CLASS_OBJECT || kind == ClassKind.OBJECT) {
+            return field(type, JvmClassName.byInternalName(type.getInternalName()), "$instance", true);
+        }
+        else if (kind == ClassKind.ENUM_ENTRY) {
+            final JvmClassName owner = typeMapper.getBindingContext()
+                    .get(CodegenBinding.FQN, classDescriptor.getContainingDeclaration().getContainingDeclaration());
+            return field(type, owner, classDescriptor.getName().getName(), true);
+        }
+        else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     private static class None extends StackValue {
@@ -1319,24 +1333,6 @@ public abstract class StackValue {
             }
             else {
                 receiver.moveToTopOfStack(type, v, depth);
-            }
-        }
-    }
-
-    public static class Singleton extends StackValue {
-        private final ClassDescriptor classDescriptor;
-
-        protected Singleton(ClassDescriptor classDescriptor, @NotNull Type type) {
-            super(type);
-            this.classDescriptor = classDescriptor;
-        }
-
-        @Override
-        public void put(Type type, InstructionAdapter v) {
-            final ClassKind kind = classDescriptor.getKind();
-            if (kind == ClassKind.CLASS_OBJECT || kind == ClassKind.OBJECT) {
-                v.getstatic(this.type.getInternalName(), "$instance", this.type.getDescriptor());
-                coerce(type, v);
             }
         }
     }
