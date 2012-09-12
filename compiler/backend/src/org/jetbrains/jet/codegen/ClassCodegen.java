@@ -60,8 +60,11 @@ public class ClassCodegen extends GenerationStateAware {
 
                 generate(contextForInners, (JetClass) declaration);
             }
-            if (declaration instanceof JetClassObject) {
+            else if (declaration instanceof JetClassObject) {
                 generate(contextForInners, ((JetClassObject) declaration).getObjectDeclaration());
+            }
+            else if (declaration instanceof JetObjectDeclaration) {
+                generate(contextForInners, (JetObjectDeclaration) declaration);
             }
         }
 

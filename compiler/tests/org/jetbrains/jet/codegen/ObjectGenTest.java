@@ -99,4 +99,9 @@ public class ObjectGenTest extends CodegenTestCase {
     public void testFlist() {
         blackBoxFile("objects/flist.kt");
     }
+
+    public void testKt2398() {
+        blackBoxFile("regressions/kt2398.kt", "OKKO");
+        System.out.println(generateToText());
+    }
 }

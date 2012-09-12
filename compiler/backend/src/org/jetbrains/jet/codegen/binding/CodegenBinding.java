@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -137,15 +136,35 @@ public class CodegenBinding {
         bindingTrace.record(CLASS_FOR_FUNCTION, scriptDescriptor, classDescriptor);
     }
 
-    private static boolean canHaveOuter(BindingContext bindingContext, ClassDescriptor classDescriptor) {
-        if (DescriptorUtils.isClassObject(classDescriptor)) {
-            return false;
-        }
-        if (classDescriptor.getKind() == ClassKind.ENUM_CLASS || classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
+    private static boolean canHaveOuter(BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
+        final ClassKind kind = classDescriptor.getKind();
+        if (isSingleton(bindingContext, classDescriptor)) {
             return false;
         }
 
-        return enclosingClassDescriptor(bindingContext, classDescriptor) != null;
+        if (kind == ClassKind.ENUM_CLASS) {
+            return false;
+        }
+
+        final ClassDescriptor enclosing = enclosingClassDescriptor(bindingContext, classDescriptor);
+        return enclosing != null && !isSingleton(bindingContext, enclosing);
+    }
+
+    public static boolean isSingleton(BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
+        final ClassKind kind = classDescriptor.getKind();
+        if (kind == ClassKind.CLASS_OBJECT) {
+            return true;
+        }
+
+        if (kind == ClassKind.OBJECT && isObjectDeclaration(bindingContext, classDescriptor)) {
+            return true;
+        }
+
+        if (kind == ClassKind.ENUM_ENTRY) {
+            return true;
+        }
+
+        return false;
     }
 
     static void recordClosure(
@@ -222,6 +241,14 @@ public class CodegenBinding {
     public static boolean isObjectLiteral(BindingContext bindingContext, ClassDescriptor declaration) {
         PsiElement psiElement = descriptorToDeclaration(bindingContext, declaration);
         if (psiElement instanceof JetObjectDeclaration && ((JetObjectDeclaration) psiElement).isObjectLiteral()) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isObjectDeclaration(BindingContext bindingContext, ClassDescriptor declaration) {
+        PsiElement psiElement = descriptorToDeclaration(bindingContext, declaration);
+        if (psiElement instanceof JetObjectDeclaration && !((JetObjectDeclaration) psiElement).isObjectLiteral()) {
             return true;
         }
         return false;

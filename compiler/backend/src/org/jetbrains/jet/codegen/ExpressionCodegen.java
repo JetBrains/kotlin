@@ -2925,7 +2925,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                 receiver.put(receiver.type, v);
 
-                pushClosureOnStack(bindingContext.get(CLOSURE, classDescriptor), true);
+                final MutableClosure closure = bindingContext.get(CLOSURE, classDescriptor);
+
+                if(receiver.type.getSort() != Type.VOID && (closure == null || closure.getCaptureThis() == null)) {
+                    v.pop();
+                }
+
+                pushClosureOnStack(closure, true);
                 invokeMethodWithArguments(method, expression, StackValue.none());
             }
         }

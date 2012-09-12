@@ -1156,7 +1156,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration, FunctionCodegen functionCodegen) {
-        if (declaration instanceof JetClassObject) {
+        if (declaration instanceof JetClassObject || declaration instanceof JetObjectDeclaration) {
             // done earlier in order to have accessors
         }
         else if (declaration instanceof JetEnumEntry) {
