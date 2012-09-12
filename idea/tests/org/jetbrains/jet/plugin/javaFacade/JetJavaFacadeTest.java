@@ -74,6 +74,10 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
         doTestWrapMethod(true);
     }
 
+    public void testKt2764() {
+        doTestWrapClass();
+    }
+
     public void testInnerClass() throws Exception {
         myFixture.configureByFile(getTestName(true) + ".kt");
 
@@ -144,10 +148,31 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
         if (shouldBeWrapped) {
             assertNotNull(String.format("Failed to wrap jetFunction '%s' to method", jetFunction.getText()), psiMethod);
             assertInstanceOf(psiMethod, PsiCompiledElement.class);
-            assertEquals("Invalid original element for generated method", ((PsiCompiledElement)psiMethod).getMirror(), jetFunction);
+            assertEquals("Invalid original element for generated method", ((PsiCompiledElement) psiMethod).getMirror(), jetFunction);
         }
         else {
             assertNull("There should be no wrapper for given method", psiMethod);
         }
+    }
+
+    private void doTestWrapClass() {
+        myFixture.configureByFile(getTestName(true) + ".kt");
+
+        int offset = myFixture.getEditor().getCaretModel().getOffset();
+        PsiElement elementAt = myFixture.getFile().findElementAt(offset);
+
+        assertNotNull("Caret should be set for tested file", elementAt);
+
+        JetClass jetClass = PsiTreeUtil.getParentOfType(elementAt, JetClass.class);
+        assertNotNull("Caret should be placed to class definition", jetClass);
+
+        // Should not fail!
+        JetLightClass lightClass = JetLightClass.wrapDelegate(jetClass);
+
+        assertNotNull(String.format("Failed to wrap jetClass '%s' to class", jetClass.getText()), lightClass);
+
+        // This invokes codegen with ClassBuilderMode = SIGNATURES
+        // No exception/error should happen here
+        lightClass.getDelegate();
     }
 }

@@ -625,7 +625,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         final ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
 
-        lookupConstructorExpressionsInClosureIfPresent(constructorContext);
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+            lookupConstructorExpressionsInClosureIfPresent(constructorContext);
+        }
 
         MutableClosure closure = context.closure;
         boolean hasThis0 = closure != null && closure.getCaptureThis() != null;
