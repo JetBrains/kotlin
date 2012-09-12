@@ -35,11 +35,16 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
 public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
     @Override
     public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull Processor<PsiReference> consumer) {
-        PsiElement element = queryParameters.getElementToSearch();
+        final PsiElement element = queryParameters.getElementToSearch();
         if (element instanceof JetClass) {
             String className = ((JetClass) element).getName();
             if (className != null) {
-                JetLightClass lightClass = JetLightClass.wrapDelegate((JetClass) element);
+                JetLightClass lightClass = ApplicationManager.getApplication().runReadAction(new Computable<JetLightClass>() {
+                    @Override
+                    public JetLightClass compute() {
+                        return JetLightClass.wrapDelegate((JetClass) element);
+                    }
+                });
                 if (lightClass != null) {
                     queryParameters.getOptimizer().searchWord(className, queryParameters.getScope(), true, lightClass);
                 }
