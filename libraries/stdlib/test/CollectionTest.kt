@@ -156,6 +156,14 @@ class CollectionTest {
         }
     }
 
+    test fun partition() {
+        val data = arrayList("foo", "bar", "something", "xyz")
+        val pair = data.partition{it.size == 3}
+
+        assertEquals(arrayList("foo", "bar", "xyz"), pair.first, "pair.first")
+        assertEquals(arrayList("something"), pair.second, "pair.second")
+    }
+
     test fun reduce() {
         expect("1234") {
             val list = arrayList("1", "2", "3", "4")

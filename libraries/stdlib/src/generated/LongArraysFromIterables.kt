@@ -85,6 +85,24 @@ public inline fun <C: MutableCollection<Long>> LongArray.filterTo(result: C, pre
 }
 
 /**
+ * Partitions this collection into a pair of collection
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt partition
+ */
+public inline fun LongArray.partition(predicate: (Long) -> Boolean) : Pair<List<Long>, List<Long>> {
+    val first = ArrayList<Long>()
+    val second = ArrayList<Long>()
+    for (element in this) {
+        if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
  * Returns a list containing all elements which do not match the given *predicate*
  *
  * @includeFunctionBody ../../test/CollectionTest.kt filterNotIntoLinkedList

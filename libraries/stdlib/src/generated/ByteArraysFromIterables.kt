@@ -85,6 +85,24 @@ public inline fun <C: MutableCollection<Byte>> ByteArray.filterTo(result: C, pre
 }
 
 /**
+ * Partitions this collection into a pair of collection
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt partition
+ */
+public inline fun ByteArray.partition(predicate: (Byte) -> Boolean) : Pair<List<Byte>, List<Byte>> {
+    val first = ArrayList<Byte>()
+    val second = ArrayList<Byte>()
+    for (element in this) {
+        if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
  * Returns a list containing all elements which do not match the given *predicate*
  *
  * @includeFunctionBody ../../test/CollectionTest.kt filterNotIntoLinkedList
