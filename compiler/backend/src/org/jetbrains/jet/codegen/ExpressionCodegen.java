@@ -32,6 +32,7 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
+import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.context.*;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
@@ -63,7 +64,8 @@ import static org.jetbrains.jet.codegen.AsmTypeConstants.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.*;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
 
 /**
  * @author max
@@ -1461,12 +1463,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             ClassDescriptor containing = (ClassDescriptor) variableDescriptor.getContainingDeclaration().getContainingDeclaration();
             assert containing != null;
             Type type = typeMapper.mapType(containing.getDefaultType(), JetTypeMapperMode.VALUE);
-            StackValue.field(type, JvmClassName.byType(type), variableDescriptor.getName().getName(), true).put(type, v);
-            return StackValue.onStack(type);
+            return StackValue.field(type, JvmClassName.byType(type), variableDescriptor.getName().getName(), true);
         }
         else {
-            Type type = typeMapper.mapType(objectClassDescriptor.getDefaultType(), JetTypeMapperMode.VALUE);
-            return StackValue.field(type, JvmClassName.byType(type), "$instance", true);
+            return StackValue.singleton(objectClassDescriptor, typeMapper);
         }
     }
 
@@ -1970,8 +1970,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     public StackValue generateThisOrOuter(@NotNull final ClassDescriptor calleeContainingClass, boolean isSuper) {
-        PsiElement psiElement = classDescriptorToDeclaration(bindingContext, calleeContainingClass);
-        boolean isObject = psiElement instanceof JetClassOrObject && isNonLiteralObject((JetClassOrObject) psiElement);
+        boolean isSingleton = CodegenBinding.isSingleton(bindingContext, calleeContainingClass);
+        if (isSingleton) {
+            assert !isSuper;
+
+            if (context.hasThisDescriptor() && context.getThisDescriptor().equals(calleeContainingClass)) {
+                return StackValue.local(0, typeMapper.mapType(calleeContainingClass.getDefaultType(), JetTypeMapperMode.VALUE));
+            }
+            else {
+                return StackValue.singleton(calleeContainingClass, typeMapper);
+            }
+        }
 
         CodegenContext cur = context;
         Type type = asmType(calleeContainingClass.getDefaultType());
@@ -1985,12 +1994,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             final ClassDescriptor thisDescriptor = cur.getThisDescriptor();
             if (!isSuper && thisDescriptor.equals(calleeContainingClass)
             || isSuper && DescriptorUtils.isSubclass(thisDescriptor, calleeContainingClass)) {
-                if (!isObject || (thisDescriptor.equals(calleeContainingClass))) {
-                    return castToRequiredTypeOfInterfaceIfNeeded(result, thisDescriptor, calleeContainingClass);
-                }
-                else {
-                    v.getstatic(type.getInternalName(), "$instance", type.getDescriptor());
-                }
+                return castToRequiredTypeOfInterfaceIfNeeded(result, thisDescriptor, calleeContainingClass);
             }
 
             result = cur.getOuterExpression(result, false);

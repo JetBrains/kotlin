@@ -25,6 +25,7 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -352,6 +353,10 @@ public abstract class StackValue {
             return new CallReceiver(resolvedCall, receiver, codegen, callableMethod);
         }
         return receiver;
+    }
+
+    public static StackValue singleton(ClassDescriptor aClass, JetTypeMapper typeMapper) {
+        return new Singleton(aClass, typeMapper.mapType(aClass.getDefaultType(), JetTypeMapperMode.VALUE));
     }
 
     private static class None extends StackValue {
@@ -1314,6 +1319,24 @@ public abstract class StackValue {
             }
             else {
                 receiver.moveToTopOfStack(type, v, depth);
+            }
+        }
+    }
+
+    public static class Singleton extends StackValue {
+        private final ClassDescriptor classDescriptor;
+
+        protected Singleton(ClassDescriptor classDescriptor, @NotNull Type type) {
+            super(type);
+            this.classDescriptor = classDescriptor;
+        }
+
+        @Override
+        public void put(Type type, InstructionAdapter v) {
+            final ClassKind kind = classDescriptor.getKind();
+            if (kind == ClassKind.CLASS_OBJECT || kind == ClassKind.OBJECT) {
+                v.getstatic(this.type.getInternalName(), "$instance", this.type.getDescriptor());
+                coerce(type, v);
             }
         }
     }
