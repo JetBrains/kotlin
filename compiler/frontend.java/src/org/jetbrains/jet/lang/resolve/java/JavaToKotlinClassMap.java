@@ -149,14 +149,8 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
         packagesWithMappedClasses.put(javaClassName.parent(), kotlinDescriptor);
     }
 
-    @Override
     @NotNull
-    public Collection<ClassDescriptor> mapPlatformClass(@NotNull ClassDescriptor classDescriptor) {
-        FqNameUnsafe className = DescriptorUtils.getFQName(classDescriptor);
-        if (!className.isSafe()) {
-            return Collections.emptyList();
-        }
-        FqName fqName = className.toSafe();
+    public Collection<ClassDescriptor> mapPlatformClass(@NotNull FqName fqName) {
         ClassDescriptor kotlinAnalog = classDescriptorMap.get(fqName);
         ClassDescriptor kotlinCovariantAnalog = classDescriptorMapForCovariantPositions.get(fqName);
         List<ClassDescriptor> descriptors = Lists.newArrayList();
@@ -167,6 +161,16 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
             descriptors.add(kotlinCovariantAnalog);
         }
         return descriptors;
+    }
+
+    @Override
+    @NotNull
+    public Collection<ClassDescriptor> mapPlatformClass(@NotNull ClassDescriptor classDescriptor) {
+        FqNameUnsafe className = DescriptorUtils.getFQName(classDescriptor);
+        if (!className.isSafe()) {
+            return Collections.emptyList();
+        }
+        return mapPlatformClass(className.toSafe());
     }
 
     @Override
