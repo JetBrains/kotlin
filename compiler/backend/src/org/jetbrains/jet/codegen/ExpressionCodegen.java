@@ -1656,44 +1656,43 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private PropertyDescriptor accessablePropertyDescriptor(PropertyDescriptor propertyDescriptor) {
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-        if ((propertyDescriptor.getVisibility() == Visibilities.PRIVATE ||
-             (setter != null && setter.getVisibility() == Visibilities.PRIVATE))
-            && !DescriptorUtils.isClassObject(propertyDescriptor.getContainingDeclaration())
-            && propertyDescriptor.getContainingDeclaration() instanceof ClassDescriptor) {
-            if (context.getClassOrNamespaceDescriptor() != propertyDescriptor.getContainingDeclaration()) {
-                DeclarationDescriptor enclosed = propertyDescriptor.getContainingDeclaration();
-                if (!context.hasThisDescriptor() || enclosed != context.getThisDescriptor()) {
-                    CodegenContext c = context;
-                    while (c != null && c.getContextDescriptor() != enclosed) {
-                        c = c.getParentContext();
-                    }
-                    if (c != null) {
-                        propertyDescriptor = (PropertyDescriptor) c.getAccessor(propertyDescriptor);
-                    }
-                }
-            }
+        PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
+
+        final int flag = CodegenUtil.getVisibilityAccessFlag(propertyDescriptor) |
+                         (getter == null ? 0 : CodegenUtil.getVisibilityAccessFlag(getter)) |
+                         (setter == null ? 0 : CodegenUtil.getVisibilityAccessFlag(setter));
+
+        if ((flag & ACC_PRIVATE) == 0) {
+            return propertyDescriptor;
         }
-        return propertyDescriptor;
+
+        return (PropertyDescriptor) accessibleDescriptor(context, propertyDescriptor);
     }
 
     private FunctionDescriptor accessableFunctionDescriptor(FunctionDescriptor fd) {
-        if (fd.getVisibility() != Visibilities.PRIVATE || fd.getContainingDeclaration() instanceof NamespaceDescriptor) {
+        final int flag = CodegenUtil.getVisibilityAccessFlag(fd);
+        if ((flag & ACC_PRIVATE) == 0) {
             return fd;
         }
 
-        if (context.getClassOrNamespaceDescriptor() != fd.getContainingDeclaration()) {
-            DeclarationDescriptor enclosed = fd.getContainingDeclaration();
-            if (enclosed != context.getThisDescriptor()) {
+        return (FunctionDescriptor) accessibleDescriptor(context, fd);
+    }
+
+    private static MemberDescriptor accessibleDescriptor(CodegenContext context, DeclarationDescriptor descriptor) {
+        if (context.getClassOrNamespaceDescriptor() != descriptor.getContainingDeclaration()) {
+            DeclarationDescriptor enclosed = descriptor.getContainingDeclaration();
+            if (context.hasThisDescriptor() && enclosed != context.getThisDescriptor()) {
                 CodegenContext c = context;
                 while (c.getContextDescriptor() != enclosed) {
                     c = c.getParentContext();
-                    assert c != null;
+                    if (c == null) {
+                        return (MemberDescriptor) descriptor;
+                    }
                 }
-                fd = (FunctionDescriptor) c.getAccessor(fd);
+                return (MemberDescriptor) c.getAccessor(descriptor);
             }
         }
-
-        return fd;
+        return (MemberDescriptor) descriptor;
     }
 
     private StackValue invokeFunction(

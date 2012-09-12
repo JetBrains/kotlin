@@ -381,6 +381,7 @@ public class ClassGenTest extends CodegenTestCase {
     public void testKt1018() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt1018.kt");
+        System.out.println(generateToText());
     }
 
     public void testKt1120() throws Exception {
