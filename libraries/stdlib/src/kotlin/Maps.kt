@@ -34,7 +34,7 @@ val <K,V> Map.Entry<K,V>.value : V
  *
  * @includeFunctionBody ../../test/MapTest.kt getOrElse
  */
-public inline fun <K,V> Map<K,V>.getOrElse(key: K, defaultValue: ()-> V) : V {
+public inline fun <K,V> Map<K,V>.getOrElse(key: K, defaultValue: ()-> V?) : V? {
     val current = this.get(key)
     if (current != null) {
         return current

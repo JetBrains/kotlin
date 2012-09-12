@@ -184,7 +184,7 @@ class CollectionTest {
         assertEquals(4, byLength.size())
 
         val l3 = byLength.getOrElse(3, {ArrayList<String>()})
-        assertEquals(2, l3.size)
+        assertEquals(2, l3?.size)
     }
 
     test fun makeString() {
