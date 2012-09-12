@@ -152,12 +152,21 @@ public class BodyResolver {
         }
     }
 
-    private void resolveDelegationSpecifierList(final JetClassOrObject jetClass, final MutableClassDescriptor descriptor) {
+    private void resolveDelegationSpecifierList(JetClassOrObject jetClass, final MutableClassDescriptor descriptor) {
+        resolveDelegationSpecifierList(jetClass, descriptor,
+                                       descriptor.getUnsubstitutedPrimaryConstructor(),
+                                       descriptor.getScopeForSupertypeResolution(),
+                                       descriptor.getScopeForMemberResolution());
+    }
+
+    public void resolveDelegationSpecifierList(@NotNull final JetClassOrObject jetClass, @NotNull final ClassDescriptor descriptor,
+            @Nullable final ConstructorDescriptor primaryConstructor,
+            @NotNull JetScope scopeForSupertypeResolution,
+            @NotNull final JetScope scopeForMemberResolution) {
         if (!context.completeAnalysisNeeded(jetClass)) return;
-        final ConstructorDescriptor primaryConstructor = descriptor.getUnsubstitutedPrimaryConstructor();
         final JetScope scopeForConstructor = primaryConstructor == null
                 ? null
-                : FunctionDescriptorUtil.getFunctionInnerScope(descriptor.getScopeForSupertypeResolution(), primaryConstructor, trace);
+                : FunctionDescriptorUtil.getFunctionInnerScope(scopeForSupertypeResolution, primaryConstructor, trace);
         final ExpressionTypingServices typeInferrer = expressionTypingServices; // TODO : flow
 
         final Map<JetTypeReference, JetType> supertypes = Maps.newLinkedHashMap();
@@ -186,7 +195,7 @@ public class BodyResolver {
                 JetExpression delegateExpression = specifier.getDelegateExpression();
                 if (delegateExpression != null) {
                     JetScope scope = scopeForConstructor == null
-                                     ? descriptor.getScopeForMemberResolution()
+                                     ? scopeForMemberResolution
                                      : scopeForConstructor;
                     JetType type = typeInferrer.getType(scope, delegateExpression, NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, trace);
                     if (type != null && supertype != null && !JetTypeChecker.INSTANCE.isSubtypeOf(type, supertype)) {
@@ -204,7 +213,7 @@ public class BodyResolver {
                 }
                 JetTypeReference typeReference = call.getTypeReference();
                 if (typeReference == null) return;
-                if (descriptor.getUnsubstitutedPrimaryConstructor() == null) {
+                if (primaryConstructor == null) {
                     assert descriptor.getKind() == ClassKind.TRAIT;
                     recordSupertype(typeReference, trace.getBindingContext().get(BindingContext.TYPE, typeReference));
                     return;
@@ -277,7 +286,11 @@ public class BodyResolver {
     }
 
     // allowedFinalSupertypes typically contains a enum type of which supertypeOwner is an entry
-    private void checkSupertypeList(@NotNull MutableClassDescriptor supertypeOwner, @NotNull Map<JetTypeReference, JetType> supertypes, Set<TypeConstructor> allowedFinalSupertypes) {
+    private void checkSupertypeList(
+            @NotNull ClassDescriptor supertypeOwner,
+            @NotNull Map<JetTypeReference, JetType> supertypes,
+            @NotNull Set<TypeConstructor> allowedFinalSupertypes
+    ) {
         Set<TypeConstructor> typeConstructors = Sets.newHashSet();
         boolean classAppeared = false;
         for (Map.Entry<JetTypeReference, JetType> entry : supertypes.entrySet()) {

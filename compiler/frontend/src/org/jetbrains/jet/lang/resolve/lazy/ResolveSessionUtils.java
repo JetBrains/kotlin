@@ -105,7 +105,7 @@ public class ResolveSessionUtils {
 
         @SuppressWarnings("unchecked")
         PsiElement topmostCandidateForAdditionalResolve = JetPsiUtil.getTopmostParentOfTypes(expression,
-                JetNamedFunction.class, JetClassInitializer.class, JetProperty.class);
+                JetNamedFunction.class, JetClassInitializer.class, JetProperty.class, JetDelegationSpecifierList.class);
 
         if (topmostCandidateForAdditionalResolve != null) {
             if (topmostCandidateForAdditionalResolve instanceof JetNamedFunction) {
@@ -116,6 +116,10 @@ public class ResolveSessionUtils {
             }
             else if (topmostCandidateForAdditionalResolve instanceof JetProperty) {
                 propertyAdditionalResolve(resolveSession, (JetProperty) topmostCandidateForAdditionalResolve, trace, file);
+            }
+            else if (topmostCandidateForAdditionalResolve instanceof JetDelegationSpecifierList) {
+                delegationSpecifierAdditionalResolve(resolveSession, (JetDelegationSpecifierList) topmostCandidateForAdditionalResolve,
+                                                     trace, file);
             }
             else {
                 assert false : "Invalid type of the topmost parent";
@@ -133,6 +137,22 @@ public class ResolveSessionUtils {
         }
 
         return trace.getBindingContext();
+    }
+
+    private static void delegationSpecifierAdditionalResolve(final ResolveSession resolveSession,
+            final JetDelegationSpecifierList specifier, DelegatingBindingTrace trace, JetFile file) {
+        BodyResolver bodyResolver = createBodyResolver(trace, file, resolveSession.getModuleConfiguration());
+
+        JetClassOrObject classOrObject = (JetClassOrObject) specifier.getParent();
+        LazyClassDescriptor descriptor = (LazyClassDescriptor) resolveSession.resolveToDescriptor(classOrObject);
+
+        // Activate resolving of supertypes
+        descriptor.getTypeConstructor().getSupertypes();
+
+        bodyResolver.resolveDelegationSpecifierList(classOrObject, descriptor,
+                                                    descriptor.getUnsubstitutedPrimaryConstructor(),
+                                                    descriptor.getScopeForClassHeaderResolution(),
+                                                    descriptor.getScopeForMemberDeclarationResolution());
     }
 
     private static void propertyAdditionalResolve(final ResolveSession resolveSession, final JetProperty jetProperty, DelegatingBindingTrace trace, JetFile file) {

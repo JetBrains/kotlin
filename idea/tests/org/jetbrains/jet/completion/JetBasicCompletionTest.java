@@ -128,6 +128,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testInObjectInDelegationSpecifier() {
+        doTest();
+    }
+
     public void testInPackage() {
         doTest();
     }
