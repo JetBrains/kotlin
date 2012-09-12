@@ -82,12 +82,22 @@ public final class UsageTracker {
             }
         }
         else if (descriptor instanceof SimpleFunctionDescriptor) {
-            checkOuterClass(descriptor);
-            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-            // local named function
             CallableDescriptor callableDescriptor = (CallableDescriptor) descriptor;
-            if (!JsDescriptorUtils.isExtension(callableDescriptor) &&
-                !(containingDeclaration instanceof ClassOrNamespaceDescriptor) &&
+            if (JsDescriptorUtils.isExtension(callableDescriptor)) {
+                return;
+            }
+
+            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+            if (containingDeclaration instanceof ClassDescriptor) {
+                // skip methods like "plus" — defined in Int class
+                if (outerClassDescriptor == null && (callableDescriptor.getExpectedThisObject() == null || isAncestor(containingDeclaration, memberDescriptor))) {
+                    outerClassDescriptor = (ClassDescriptor) containingDeclaration;
+                }
+                return;
+            }
+
+            // local named function
+            if (!(containingDeclaration instanceof ClassOrNamespaceDescriptor) &&
                 !isAncestor(memberDescriptor, descriptor)) {
                 addCapturedMember(callableDescriptor);
             }
