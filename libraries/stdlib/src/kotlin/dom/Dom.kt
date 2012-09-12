@@ -17,8 +17,13 @@ private fun emptyNodeList(): List<Node> = Collections.emptyList<Node>()!!
 var Node.text : String
 get() {
     return textContent
-/*
-    if (this.nodeType == Node.ELEMENT_NODE) {
+}
+set(value) {
+    textContent = value
+}
+
+var Element.childrenText: String
+    get() {
         val buffer = StringBuilder()
         val nodeList = this.childNodes
         if (nodeList != null) {
@@ -35,15 +40,8 @@ get() {
             }
         }
         return buffer.toString().sure()
-    } else {
-        return this.nodeValue
     }
-*/
-}
-set(value) {
-    textContent = value
-    /*
-    if (nodeType == Node.ELEMENT_NODE) {
+    set(value) {
         val element = this as Element
         // lets remove all the previous text nodes first
         for (node in element.children()) {
@@ -52,11 +50,7 @@ set(value) {
             }
         }
         element.addText(value)
-    } else {
-        nodeValue = value
     }
-    */
-}
 
 var Element.id : String
 get() = this.getAttribute("id")?: ""
@@ -91,21 +85,26 @@ inline fun Element?.children(): List<Node> {
     return this?.childNodes.toList()
 }
 
-/** The child elements of this document */
+/** Returns the child elements of this element */
+inline fun Element?.childElements(): List<Element> {
+    return children().filter<Node>{ it.nodeType == Node.ELEMENT_NODE }.map { it as Element }
+}
+
+/** The descendent elements of this document */
 val Document?.elements : List<Element>
 get() = this?.getElementsByTagName("*").toElementList()
 
-/** The child elements of this elements */
+/** The descendant elements of this elements */
 val Element?.elements : List<Element>
 get() = this?.getElementsByTagName("*").toElementList()
 
 
-/** Returns all the child elements given the local element name */
+/** Returns all the descendant elements given the local element name */
 inline fun Element?.elements(localName: String): List<Element> {
     return this?.getElementsByTagName(localName).toElementList()
 }
 
-/** Returns all the elements given the local element name */
+/** Returns all the descendant elements given the local element name */
 inline fun Document?.elements(localName: String): List<Element> {
     return this?.getElementsByTagName(localName).toElementList()
 }
