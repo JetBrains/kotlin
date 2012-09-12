@@ -16,10 +16,7 @@
 
 package org.jetbrains.k2js.translate.reference;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.backend.js.ast.JsNew;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -35,8 +32,8 @@ import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.ErrorReportingUtils;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.reference.CallParametersResolver.resolveCallParameters;
@@ -74,8 +71,9 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
         /*package*/ JsExpression translate() {
-        if (isIntrinsic()) {
-            return intrinsicInvocation();
+        JsExpression result = intrinsicInvocation();
+        if (result != null) {
+            return result;
         }
         if (isConstructor()) {
             return constructorCall();
@@ -84,32 +82,12 @@ public final class CallTranslator extends AbstractTranslator {
             if (AnnotationsUtils.isNativeObject(descriptor)) {
                 return methodCall(callParameters.getReceiver());
             }
-            return extensionFunctionCall(!(descriptor instanceof ExpressionAsFunctionDescriptor) && !descriptor.getName().getName().equals("invoke"));
+            return extensionFunctionCall(!(descriptor instanceof ExpressionAsFunctionDescriptor));
         }
         if (isExpressionAsFunction()) {
             return expressionAsFunctionCall();
         }
-        if (isInvoke()) {
-            return invokeCall();
-        }
         return methodCall(getThisObjectOrQualifier());
-    }
-
-    //TODO:
-    private boolean isInvoke() {
-        return descriptor.getName().getName().equals("invoke");
-    }
-
-    @NotNull
-    private JsExpression invokeCall() {
-        JsExpression thisExpression = callParameters.getThisObject();
-        if (thisExpression == null) {
-            return new JsInvocation(callParameters.getFunctionReference(), arguments);
-        }
-        JsInvocation call = new JsInvocation(new JsNameRef("call", callParameters.getFunctionReference()));
-        call.getArguments().add(thisExpression);
-        call.getArguments().addAll(arguments);
-        return call;
     }
 
     private boolean isExpressionAsFunction() {
@@ -122,25 +100,20 @@ public final class CallTranslator extends AbstractTranslator {
         return methodCall(null);
     }
 
-    private boolean isIntrinsic() {
-        if (descriptor instanceof FunctionDescriptor) {
-            FunctionIntrinsic intrinsic = context().intrinsics().getFunctionIntrinsics().getIntrinsic((FunctionDescriptor) descriptor);
-            return intrinsic.exists();
-        }
-        return false;
-    }
-
-    @NotNull
+    @Nullable
     private JsExpression intrinsicInvocation() {
-        assert descriptor instanceof FunctionDescriptor;
-        try {
-            FunctionIntrinsic intrinsic = context().intrinsics().getFunctionIntrinsics().getIntrinsic((FunctionDescriptor) descriptor);
-            assert intrinsic.exists();
-            return intrinsic.apply(callParameters.getThisOrReceiverOrNull(), arguments, context());
+        if (descriptor instanceof FunctionDescriptor) {
+            try {
+                FunctionIntrinsic intrinsic = context().intrinsics().getFunctionIntrinsics().getIntrinsic((FunctionDescriptor) descriptor);
+                if (intrinsic.exists()) {
+                    return intrinsic.apply(callParameters, arguments, context());
+                }
+            }
+            catch (RuntimeException e) {
+                throw ErrorReportingUtils.reportErrorWithLocation(e, descriptor, bindingContext());
+            }
         }
-        catch (RuntimeException e) {
-            throw ErrorReportingUtils.reportErrorWithLocation(e, descriptor, bindingContext());
-        }
+        return null;
     }
 
     private boolean isConstructor() {
@@ -206,10 +179,7 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     private List<JsExpression> generateExtensionCallArgumentList(@NotNull JsExpression receiver) {
-        List<JsExpression> argumentList = new ArrayList<JsExpression>();
-        argumentList.add(receiver);
-        argumentList.addAll(arguments);
-        return argumentList;
+        return TranslationUtils.generateCallArgumentList(receiver, arguments);
     }
 
     @NotNull

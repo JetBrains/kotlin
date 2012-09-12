@@ -57,7 +57,7 @@ public final class TranslationUtils {
     @NotNull
     private static JsPropertyInitializer translateExtensionFunctionAsEcma5DataDescriptor(@NotNull JsFunction function,
             @NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context) {
-        JsObjectLiteral meta = JsAstUtils.createDataDescriptor(function, descriptor.getModality().isOverridable());
+        JsObjectLiteral meta = createDataDescriptor(function, descriptor.getModality().isOverridable());
         return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), meta);
     }
 
@@ -197,6 +197,18 @@ public final class TranslationUtils {
         if (context.intrinsics().getFunctionIntrinsics().getIntrinsic(operationDescriptor).exists()) return true;
 
         return false;
+    }
+
+    @NotNull
+    public static List<JsExpression> generateCallArgumentList(@NotNull JsExpression receiver, @NotNull List<JsExpression> arguments) {
+        if (arguments.isEmpty()) {
+            return Collections.singletonList(receiver);
+        }
+
+        List<JsExpression> argumentList = new ArrayList<JsExpression>(1 + arguments.size());
+        argumentList.add(receiver);
+        argumentList.addAll(arguments);
+        return argumentList;
     }
 
     public static boolean isCacheNeeded(@NotNull JsExpression expression) {

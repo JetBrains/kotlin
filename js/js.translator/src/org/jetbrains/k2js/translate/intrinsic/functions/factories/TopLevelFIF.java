@@ -21,15 +21,21 @@ import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInFunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.CallStandardMethodIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder;
+import org.jetbrains.k2js.translate.reference.CallParameters;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic.CallParametersAwareFunctionIntrinsic;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
 
 public final class TopLevelFIF extends CompositeFIF {
@@ -52,14 +58,44 @@ public final class TopLevelFIF extends CompositeFIF {
     public static final FunctionIntrinsicFactory INSTANCE = new TopLevelFIF();
 
     private TopLevelFIF() {
-        add(pattern("toString"), new BuiltInFunctionIntrinsic("toString"));
-        add(pattern("equals"), EQUALS);
+        add(pattern("jet", "toString").receiverExists(true), new BuiltInFunctionIntrinsic("toString"));
+        add(pattern("jet", "equals").receiverExists(true), EQUALS);
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), EQUALS);
-        add(pattern("arrayOfNulls"), new CallStandardMethodIntrinsic(new JsNameRef("nullArray", "Kotlin"), false, 1));
-        add(pattern("iterator"), RETURN_RECEIVER_INTRINSIC);
+        add(pattern("jet", "arrayOfNulls"), new CallStandardMethodIntrinsic(new JsNameRef("nullArray", "Kotlin"), false, 1));
+        add(pattern("jet", "iterator").receiverExists(true), RETURN_RECEIVER_INTRINSIC);
+        add(new DescriptorPredicate() {
+                @Override
+                public boolean apply(@NotNull FunctionDescriptor descriptor) {
+                    if (!descriptor.getName().getName().equals("invoke")) {
+                        return false;
+                    }
+                    int parameterCount = descriptor.getValueParameters().size();
+                    DeclarationDescriptor fun = descriptor.getContainingDeclaration();
+                    return fun == (descriptor.getReceiverParameter() == null
+                                   ? KotlinBuiltIns.getInstance().getFunction(parameterCount)
+                                   : KotlinBuiltIns.getInstance().getExtensionFunction(parameterCount));
+                }
+            }, new CallParametersAwareFunctionIntrinsic() {
+                @NotNull
+                @Override
+                public JsExpression apply(
+                        @NotNull CallParameters callParameters, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+                ) {
+                    JsExpression thisExpression = callParameters.getThisObject();
+                    if (thisExpression == null) {
+                        return new JsInvocation(callParameters.getFunctionReference(), arguments);
+                    }
+                    else {
+                        return new JsInvocation(new JsNameRef("call", callParameters.getFunctionReference()),
+                                                TranslationUtils.generateCallArgumentList(
+                                                        thisExpression, arguments));
+                    }
+                }
+            }
+        );
 
-        add(PatternBuilder.create("java", "util", "set").receiverParameterExists(true), new FunctionIntrinsic() {
+        add(pattern("java", "util", "set").receiverExists(true), new FunctionIntrinsic() {
             @NotNull
             @Override
             public JsExpression apply(

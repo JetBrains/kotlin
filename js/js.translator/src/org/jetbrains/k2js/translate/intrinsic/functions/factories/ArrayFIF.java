@@ -34,7 +34,6 @@ import org.jetbrains.k2js.translate.intrinsic.functions.basic.CallStandardMethod
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.List;
@@ -111,14 +110,10 @@ public final class ArrayFIF extends CompositeFIF {
         add(pattern(ARRAYS, "<get-indices>"), new CallStandardMethodIntrinsic(new JsNameRef("arrayIndices", "Kotlin"), true, 0));
         add(pattern(ARRAYS, "iterator"), new CallStandardMethodIntrinsic(new JsNameRef("arrayIterator", "Kotlin"), true, 0));
         add(pattern(ARRAYS, "<init>"), new CallStandardMethodIntrinsic(new JsNameRef("arrayFromFun", "Kotlin"), false, 2));
-        add(PatternBuilder.create("kotlin", "array"), ARRAY_INTRINSIC);
+        add(pattern("kotlin", "array"), ARRAY_INTRINSIC);
         add(new DescriptorPredicate() {
             @Override
-            public boolean apply(@Nullable FunctionDescriptor descriptor) {
-                if (descriptor == null) {
-                    return false;
-                }
-
+            public boolean apply(@NotNull FunctionDescriptor descriptor) {
                 for (PrimitiveType type : PrimitiveType.values()) {
                     if (type.getArrayTypeName().equals(descriptor.getName())) {
                         final DeclarationDescriptor nsDeclaration = descriptor.getContainingDeclaration();

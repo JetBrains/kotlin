@@ -25,7 +25,6 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInPropertyIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
@@ -61,10 +60,10 @@ public final class StringOperationFIF extends CompositeFIF {
 
     private StringOperationFIF() {
         add(GET_PATTERN, GET_INTRINSIC);
-        add(PatternBuilder.create("jet", "String", "<get-length>"), new BuiltInPropertyIntrinsic("length"));
-        add(PatternBuilder.create("js", "startsWith").receiverParameterExists(true), new ContainsFunctionIntrinsic(false));
-        add(PatternBuilder.create("js", "contains").receiverParameterExists(true), new ContainsFunctionIntrinsic(true));
-        add(PatternBuilder.create("js", "endsWith").receiverParameterExists(true), new FunctionIntrinsic() {
+        add(pattern("jet", "String", "<get-length>"), new BuiltInPropertyIntrinsic("length"));
+        add(pattern("js", "startsWith").receiverExists(true), new ContainsFunctionIntrinsic(false));
+        add(pattern("js", "contains").receiverExists(true), new ContainsFunctionIntrinsic(true));
+        add(pattern("js", "endsWith").receiverExists(true), new FunctionIntrinsic() {
             @NotNull
             @Override
             public JsExpression apply(
