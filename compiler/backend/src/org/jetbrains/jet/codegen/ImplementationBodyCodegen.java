@@ -446,7 +446,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             FunctionDescriptor original = (FunctionDescriptor) entry.getKey();
 
             Method method = typeMapper.mapSignature(bridge.getName(), bridge).getAsmMethod();
-            Method originalMethod = typeMapper.mapSignature(original.getName(), original).getAsmMethod();
+            final boolean isConstructor = original instanceof ConstructorDescriptor;
+            Method originalMethod = isConstructor ?
+                                    typeMapper.mapToCallableMethod((ConstructorDescriptor) original).getSignature().getAsmMethod() :
+                                    typeMapper.mapSignature(original.getName(), original).getAsmMethod();
             Type[] argTypes = method.getArgumentTypes();
 
             String owner = typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION).getInternalName();
@@ -460,8 +463,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                 InstructionAdapter iv = new InstructionAdapter(mv);
 
-                iv.load(0, OBJECT_TYPE);
-                for (int i = 1, reg = 1; i < argTypes.length; i++) {
+                if (isConstructor) {
+                    iv.anew(method.getReturnType());
+                    iv.dup();
+                }
+                else {
+                    // todo: note that for now we never have access bridges for namespace methods, if at some point we do...
+                    iv.load(0, OBJECT_TYPE);
+                }
+
+                for (int i = isConstructor ? 0 : 1, reg = isConstructor ? 0 : 1; i < argTypes.length; i++) {
                     Type argType = argTypes[i];
                     iv.load(reg, argType);
                     //noinspection AssignmentToForLoopParameter
@@ -1108,8 +1119,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         //noinspection SuspiciousMethodCalls
         final CalculatedClosure closureForSuper = bindingContext.get(CLOSURE, superConstructor.getContainingDeclaration());
-        CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor,
-                                                                      closureForSuper);
+        CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor, closureForSuper);
 
         if (closureForSuper != null && closureForSuper.getCaptureThis() != null) {
             iv.load(frameMap.getOuterThisIndex(), OBJECT_TYPE);
@@ -1214,8 +1224,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                             .get(BindingContext.REFERENCE_TARGET, superCall.getCalleeExpression().getConstructorReferenceExpression());
                     assert constructorDescriptor != null;
                     //noinspection SuspiciousMethodCalls
-                    CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, bindingContext
-                            .get(CLOSURE, constructorDescriptor.getContainingDeclaration()));
+                    CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor);
                     codegen.invokeMethodWithArguments(method, superCall, StackValue.none());
                 }
                 else {

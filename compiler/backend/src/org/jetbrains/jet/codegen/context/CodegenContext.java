@@ -227,14 +227,14 @@ public abstract class CodegenContext {
             return accessor;
         }
 
-        if (descriptor instanceof SimpleFunctionDescriptor) {
+        if (descriptor instanceof SimpleFunctionDescriptor || descriptor instanceof ConstructorDescriptor) {
             accessor = new AccessorForFunctionDescriptor(descriptor, contextDescriptor, accessors.size());
         }
         else if (descriptor instanceof PropertyDescriptor) {
             accessor = new AccessorForPropertyDescriptor((PropertyDescriptor) descriptor, contextDescriptor, accessors.size());
         }
         else {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("Do not know how to create accessor for descriptor " + descriptor);
         }
         accessors.put(descriptor, accessor);
         return accessor;

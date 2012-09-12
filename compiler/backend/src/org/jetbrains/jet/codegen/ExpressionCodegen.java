@@ -1086,9 +1086,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                                                                                                         .getConstructorReferenceExpression());
             assert superConstructor != null;
             //noinspection SuspiciousMethodCalls
-            CallableMethod superCallable = typeMapper
-                    .mapToCallableMethod(superConstructor,
-                                         bindingContext.get(CLOSURE, superConstructor.getContainingDeclaration()));
+            CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor);
             Type[] argumentTypes = superCallable.getSignature().getAsmMethod().getArgumentTypes();
             ResolvedCall resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, superCall.getCalleeExpression());
             assert resolvedCall != null;
@@ -1631,14 +1629,20 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             throw new CompilationException("Cannot resolve: " + callee.getText(), null, expression);
         }
 
+
         DeclarationDescriptor funDescriptor = resolvedCall.getResultingDescriptor();
+
+        if (!(funDescriptor instanceof FunctionDescriptor)) {
+            throw new UnsupportedOperationException("unknown type of callee descriptor: " + funDescriptor);
+        }
+
+        funDescriptor = accessableFunctionDescriptor((FunctionDescriptor) funDescriptor);
 
         if (funDescriptor instanceof ConstructorDescriptor) {
             receiver = StackValue.receiver(resolvedCall, receiver, this, null);
             return generateConstructorCall(expression, (JetSimpleNameExpression) callee, receiver);
         }
-
-        if (funDescriptor instanceof FunctionDescriptor) {
+        else {
             Call call = bindingContext.get(CALL, expression.getCalleeExpression());
             if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
                 VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
@@ -1648,9 +1652,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             else {
                 return invokeFunction(call, receiver, resolvedCall);
             }
-        }
-        else {
-            throw new UnsupportedOperationException("unknown type of callee descriptor: " + funDescriptor);
         }
     }
 
@@ -2920,9 +2921,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                 final ClassDescriptor classDescriptor = ((ConstructorDescriptor) constructorDescriptor).getContainingDeclaration();
 
-                CallableMethod method = typeMapper
-                        .mapToCallableMethod((ConstructorDescriptor) constructorDescriptor,
-                                             bindingContext.get(CLOSURE, classDescriptor));
+                CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) constructorDescriptor);
 
                 receiver.put(receiver.type, v);
 

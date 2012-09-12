@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collections;
 
@@ -28,13 +29,13 @@ import java.util.Collections;
 public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl {
     public AccessorForFunctionDescriptor(DeclarationDescriptor descriptor, DeclarationDescriptor containingDeclaration, int index) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(),
-              Name.identifier(descriptor.getName() + "$b$" + index),
+              Name.identifier((descriptor instanceof ConstructorDescriptor ? "$init" : descriptor.getName())+ "$b$" + index),
               Kind.DECLARATION);
 
-        FunctionDescriptor fd = (SimpleFunctionDescriptor) descriptor;
+        FunctionDescriptor fd = (FunctionDescriptor) descriptor;
 
         initialize(fd.getReceiverParameter().exists() ? fd.getReceiverParameter().getType() : null,
-                   fd.getExpectedThisObject(),
+                   descriptor instanceof ConstructorDescriptor ? ReceiverDescriptor.NO_RECEIVER : fd.getExpectedThisObject(),
                    Collections.<TypeParameterDescriptor>emptyList(),
                    fd.getValueParameters(),
                    fd.getReturnType(),

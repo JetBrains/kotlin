@@ -32,6 +32,11 @@ public class FunctionGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
+    public void testKt2716() throws Exception {
+        blackBoxFile("regressions/kt2716.kt");
+        //        System.out.println(generateToText());
+    }
+
     public void testDefaultArgs() throws Exception {
         blackBoxFile("functions/defaultargs.jet");
         //        System.out.println(generateToText());
