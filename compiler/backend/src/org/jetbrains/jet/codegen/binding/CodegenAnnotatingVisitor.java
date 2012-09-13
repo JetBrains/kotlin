@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen.binding;
 
 import com.intellij.util.containers.Stack;
-import org.jetbrains.jet.codegen.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -70,7 +69,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
                                        : JetStandardClasses.getFunction(arity)).getDefaultType()), JetScope.EMPTY,
                 Collections.<ConstructorDescriptor>emptySet(), null);
 
-        assert PsiCodegenPredictor.checkPredictedClassNameForFun(bindingTrace, funDescriptor, classDescriptor);
+        assert PsiCodegenPredictor.checkPredictedClassNameForFun(bindingContext, funDescriptor, classDescriptor);
         bindingTrace.record(CLASS_FOR_FUNCTION, funDescriptor, classDescriptor);
         return classDescriptor;
     }

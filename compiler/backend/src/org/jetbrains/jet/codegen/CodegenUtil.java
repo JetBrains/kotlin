@@ -34,8 +34,9 @@ import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.psi.JetClassObject;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
@@ -209,29 +210,6 @@ public class CodegenUtil {
 
     public static boolean isConst(CalculatedClosure closure) {
         return closure.getCaptureThis() == null && closure.getCaptureReceiver() == null && closure.getCaptureVariables().isEmpty();
-    }
-
-    public static JetDelegatorToSuperCall findSuperCall(JetElement classOrObject, BindingContext bindingContext) {
-        if (!(classOrObject instanceof JetClassOrObject)) {
-            return null;
-        }
-
-        if (classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait()) {
-            return null;
-        }
-        for (JetDelegationSpecifier specifier : ((JetClassOrObject) classOrObject).getDelegationSpecifiers()) {
-            if (specifier instanceof JetDelegatorToSuperCall) {
-                JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
-                assert superType != null;
-                ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-                assert superClassDescriptor != null;
-                if (!isInterface(superClassDescriptor)) {
-                    return (JetDelegatorToSuperCall) specifier;
-                }
-            }
-        }
-
-        return null;
     }
 
     public static void generateClosureFields(CalculatedClosure closure, ClassBuilder v, JetTypeMapper typeMapper) {

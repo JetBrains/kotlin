@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.CodegenUtil;
-import org.jetbrains.jet.codegen.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -31,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.util.slicedmap.Slices;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -132,7 +132,7 @@ public class CodegenBinding {
 
         recordClosure(bindingTrace, null, classDescriptor, null, className, false);
 
-        assert PsiCodegenPredictor.checkPredictedClassNameForFun(bindingTrace, scriptDescriptor, classDescriptor);
+        assert PsiCodegenPredictor.checkPredictedClassNameForFun(bindingTrace.getBindingContext(), scriptDescriptor, classDescriptor);
         bindingTrace.record(CLASS_FOR_FUNCTION, scriptDescriptor, classDescriptor);
     }
 
@@ -175,7 +175,7 @@ public class CodegenBinding {
             JvmClassName name,
             boolean functionLiteral
     ) {
-        final JetDelegatorToSuperCall superCall = CodegenUtil.findSuperCall(element, bindingTrace.getBindingContext());
+        final JetDelegatorToSuperCall superCall = findSuperCall(bindingTrace.getBindingContext(), element);
 
         CallableDescriptor enclosingReceiver = null;
         if (classDescriptor.getContainingDeclaration() instanceof CallableDescriptor) {
@@ -356,5 +356,31 @@ public class CodegenBinding {
         //noinspection SuspiciousMethodCalls
         final CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
         return closure != null && closure.getCaptureThis() != null;
+    }
+
+    private static JetDelegatorToSuperCall findSuperCall(
+            BindingContext bindingContext,
+            JetElement classOrObject
+    ) {
+        if (!(classOrObject instanceof JetClassOrObject)) {
+            return null;
+        }
+
+        if (classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait()) {
+            return null;
+        }
+        for (JetDelegationSpecifier specifier : ((JetClassOrObject) classOrObject).getDelegationSpecifiers()) {
+            if (specifier instanceof JetDelegatorToSuperCall) {
+                JetType superType = bindingContext.get(TYPE, specifier.getTypeReference());
+                assert superType != null;
+                ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
+                assert superClassDescriptor != null;
+                if (!CodegenUtil.isInterface(superClassDescriptor)) {
+                    return (JetDelegatorToSuperCall) specifier;
+                }
+            }
+        }
+
+        return null;
     }
 }

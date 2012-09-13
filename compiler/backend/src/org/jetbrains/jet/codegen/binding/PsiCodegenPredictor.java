@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen;
+package org.jetbrains.jet.codegen.binding;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
@@ -135,10 +136,11 @@ public final class PsiCodegenPredictor {
     }
 
     public static boolean checkPredictedClassNameForFun(
-            @NotNull BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor, ClassDescriptor classDescriptor
+            BindingContext bindingContext, @NotNull DeclarationDescriptor descriptor,
+            ClassDescriptor classDescriptor
     ) {
-        PsiElement element = descriptorToDeclaration(bindingTrace.getBindingContext(), descriptor);
-        PsiElement classDeclaration = descriptorToDeclaration(bindingTrace.getBindingContext(), classDescriptor);
+        PsiElement element = descriptorToDeclaration(bindingContext, descriptor);
+        PsiElement classDeclaration = descriptorToDeclaration(bindingContext, classDescriptor);
         if (element instanceof JetNamedFunction && classDeclaration instanceof JetDeclaration) {
             JvmClassName classNameFromPsi = getPredefinedJvmClassName((JetDeclaration) classDeclaration);
             JvmClassName classNameForFun = getPredefinedJvmClassNameForFun((JetNamedFunction) element);
