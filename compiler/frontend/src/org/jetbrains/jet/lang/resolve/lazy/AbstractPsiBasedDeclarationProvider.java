@@ -64,7 +64,7 @@ public abstract class AbstractPsiBasedDeclarationProvider implements Declaration
             JetClassOrObject classOrObject = (JetClassOrObject) declaration;
             classesAndObjects.put(classOrObject.getNameAsName(), classOrObject);
         }
-        else if (declaration instanceof JetParameter || declaration instanceof JetTypedef) {
+        else if (declaration instanceof JetParameter || declaration instanceof JetTypedef || declaration instanceof JetMultiDeclaration) {
             // Do nothing, just put it into allDeclarations is enough
         }
         else {
