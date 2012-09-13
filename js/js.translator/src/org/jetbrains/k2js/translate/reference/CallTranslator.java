@@ -16,22 +16,21 @@
 
 package org.jetbrains.k2js.translate.reference;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.HasArguments;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.JsNew;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.ErrorReportingUtils;
-import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.List;
@@ -86,7 +85,7 @@ public final class CallTranslator extends AbstractTranslator {
             return result;
         }
         if (isConstructor()) {
-            return constructorCall();
+            return createConstructorCallExpression(translateAsFunctionWithNoThisObject(descriptor));
         }
         if (resolvedCall.getReceiverArgument().exists()) {
             if (AnnotationsUtils.isNativeObject(descriptor)) {
@@ -131,33 +130,7 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsExpression constructorCall() {
-        JsExpression constructorReference;
-        ClassDescriptor classDescriptor = (ClassDescriptor) descriptor.getContainingDeclaration();
-        boolean isSet = false;
-        if (AnnotationsUtils.isLibraryObject(classDescriptor) &&
-            (classDescriptor.getName().getName().equals("HashMap") || (isSet = classDescriptor.getName().getName().equals("HashSet")))) {
-            JetType keyType = resolvedCall.getTypeArguments().values().iterator().next();
-            Name keyTypeName = JsDescriptorUtils.getNameIfStandardType(keyType);
-            String collectionClassName;
-            if (keyTypeName != null && (NamePredicate.PRIMITIVE_NUMBERS.apply(keyTypeName) || keyTypeName.getName().equals("String"))) {
-                collectionClassName = isSet ? "PrimitiveHashSet" : "PrimitiveHashMap";
-            }
-            else {
-                collectionClassName = isSet ? "ComplexHashSet" : "ComplexHashMap";
-            }
-
-            constructorReference = context().namer().kotlin(collectionClassName);
-        }
-        else {
-            constructorReference = translateAsFunctionWithNoThisObject(descriptor);
-        }
-
-        return createConstructorCallExpression(constructorReference);
-    }
-
-    @NotNull
-    private JsExpression createConstructorCallExpression(@NotNull JsExpression constructorReference) {
+    public HasArguments createConstructorCallExpression(@NotNull JsExpression constructorReference) {
         if (context().isEcma5() && !AnnotationsUtils.isNativeObject(resolvedCall.getCandidateDescriptor())) {
             return new JsInvocation(constructorReference, arguments);
         }

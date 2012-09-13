@@ -28,8 +28,10 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInFunctionIntrinsic;
@@ -40,6 +42,7 @@ import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.reference.CallTranslator;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
 import java.util.List;
 
@@ -112,6 +115,59 @@ public final class TopLevelFIF extends CompositeFIF {
         }
     };
 
+    @NotNull
+    public static final FunctionIntrinsicFactory INSTANCE = new TopLevelFIF();
+
+    private TopLevelFIF() {
+        add(pattern("jet", "toString").receiverExists(true), new BuiltInFunctionIntrinsic("toString"));
+        add(pattern("jet", "equals").receiverExists(true), EQUALS);
+        add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), EQUALS);
+        add(pattern("String|Boolean|Char|Number.equals"), EQUALS);
+        add(pattern("jet", "arrayOfNulls"), new CallStandardMethodIntrinsic(new JsNameRef("nullArray", "Kotlin"), false, 1));
+        add(pattern("jet", "iterator").receiverExists(true), RETURN_RECEIVER_INTRINSIC);
+        add(new DescriptorPredicate() {
+                @Override
+                public boolean apply(@NotNull FunctionDescriptor descriptor) {
+                    if (!descriptor.getName().getName().equals("invoke")) {
+                        return false;
+                    }
+                    int parameterCount = descriptor.getValueParameters().size();
+                    DeclarationDescriptor fun = descriptor.getContainingDeclaration();
+                    return fun == (descriptor.getReceiverParameter() == null
+                                   ? KotlinBuiltIns.getInstance().getFunction(parameterCount)
+                                   : KotlinBuiltIns.getInstance().getExtensionFunction(parameterCount));
+                }
+            }, new CallParametersAwareFunctionIntrinsic() {
+                @NotNull
+                @Override
+                public JsExpression apply(
+                        @NotNull CallTranslator callTranslator,
+                        @NotNull List<JsExpression> arguments,
+                        @NotNull TranslationContext context
+                ) {
+                    JsExpression thisExpression = callTranslator.getCallParameters().getThisObject();
+                    if (thisExpression == null) {
+                        return new JsInvocation(callTranslator.getCallParameters().getFunctionReference(), arguments);
+                    }
+                    else if (callTranslator.getResolvedCall().getReceiverArgument().exists()) {
+                        return callTranslator.extensionFunctionCall(false);
+                    }
+                    else {
+                        return new JsInvocation(new JsNameRef("call", callTranslator.getCallParameters().getFunctionReference()),
+                                                generateCallArgumentList(thisExpression, arguments));
+                    }
+                }
+            }
+        );
+
+        add(pattern("java", "util", "set").receiverExists(true), NATIVE_MAP_SET);
+        add(pattern("jet", "Map", "get"), NATIVE_MAP_GET);
+        add(pattern("java", "util", "HashMap", "get"), NATIVE_MAP_GET);
+
+        add(pattern("java", "util", "HashMap", "<init>"), new MapSelectImplementationIntrinsic(false));
+        add(pattern("java", "util", "HashSet", "<init>"), new MapSelectImplementationIntrinsic(true));
+    }
+
     private abstract static class NativeMapGetSet extends CallParametersAwareFunctionIntrinsic {
         @NotNull
         protected abstract String operation();
@@ -157,50 +213,31 @@ public final class TopLevelFIF extends CompositeFIF {
         }
     }
 
-    @NotNull
-    public static final FunctionIntrinsicFactory INSTANCE = new TopLevelFIF();
+    private static class MapSelectImplementationIntrinsic extends CallParametersAwareFunctionIntrinsic {
+        private final boolean isSet;
 
-    private TopLevelFIF() {
-        add(pattern("jet", "toString").receiverExists(true), new BuiltInFunctionIntrinsic("toString"));
-        add(pattern("jet", "equals").receiverExists(true), EQUALS);
-        add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), EQUALS);
-        add(pattern("String|Boolean|Char|Number.equals"), EQUALS);
-        add(pattern("jet", "arrayOfNulls"), new CallStandardMethodIntrinsic(new JsNameRef("nullArray", "Kotlin"), false, 1));
-        add(pattern("jet", "iterator").receiverExists(true), RETURN_RECEIVER_INTRINSIC);
-        add(new DescriptorPredicate() {
-                @Override
-                public boolean apply(@NotNull FunctionDescriptor descriptor) {
-                    if (!descriptor.getName().getName().equals("invoke")) {
-                        return false;
-                    }
-                    int parameterCount = descriptor.getValueParameters().size();
-                    DeclarationDescriptor fun = descriptor.getContainingDeclaration();
-                    return fun == (descriptor.getReceiverParameter() == null
-                                   ? KotlinBuiltIns.getInstance().getFunction(parameterCount)
-                                   : KotlinBuiltIns.getInstance().getExtensionFunction(parameterCount));
-                }
-            }, new CallParametersAwareFunctionIntrinsic() {
-                @NotNull
-                @Override
-                public JsExpression apply(@NotNull CallTranslator callTranslator, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context) {
-                    JsExpression thisExpression = callTranslator.getCallParameters().getThisObject();
-                    if (thisExpression == null) {
-                        return new JsInvocation(callTranslator.getCallParameters().getFunctionReference(), arguments);
-                    }
-                    else if (callTranslator.getResolvedCall().getReceiverArgument().exists()) {
-                        return callTranslator.extensionFunctionCall(false);
-                    }
-                    else {
-                        return new JsInvocation(new JsNameRef("call", callTranslator.getCallParameters().getFunctionReference()),
-                                                generateCallArgumentList(thisExpression, arguments));
-                    }
-                }
+        private MapSelectImplementationIntrinsic(boolean isSet) {
+            this.isSet = isSet;
+        }
+
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @NotNull CallTranslator callTranslator,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context
+        ) {
+            JetType keyType = callTranslator.getResolvedCall().getTypeArguments().values().iterator().next();
+            Name keyTypeName = JsDescriptorUtils.getNameIfStandardType(keyType);
+            String collectionClassName;
+            if (keyTypeName != null && (NamePredicate.PRIMITIVE_NUMBERS.apply(keyTypeName) || keyTypeName.getName().equals("String"))) {
+                collectionClassName = isSet ? "PrimitiveHashSet" : "PrimitiveHashMap";
             }
-        );
+            else {
+                collectionClassName = isSet ? "ComplexHashSet" : "ComplexHashMap";
+            }
 
-        add(pattern("java", "util", "set").receiverExists(true), NATIVE_MAP_SET);
-        add(pattern("jet", "Map", "get"), NATIVE_MAP_GET);
-        add(pattern("java", "util", "HashMap", "get"), NATIVE_MAP_GET);
-
+            return callTranslator.createConstructorCallExpression(context.namer().kotlin(collectionClassName));
+        }
     }
 }
