@@ -61,10 +61,6 @@ public class JetPositionManagerTest extends PositionManagerTestCase {
         doMultiTest("multiFileNamespace/a.kt", "multiFileNamespace/b.kt");
     }
 
-    public void testAnnotation() {
-        doTest();
-    }
-
     public void testAnonymousFunction() {
         doTest();
     }

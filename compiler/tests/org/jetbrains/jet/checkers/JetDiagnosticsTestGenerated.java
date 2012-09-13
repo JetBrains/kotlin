@@ -567,6 +567,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/annotations/kt1860-positive.kt");
             }
             
+            @TestMetadata("kt1886annotationBody.kt")
+            public void testKt1886annotationBody() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/kt1886annotationBody.kt");
+            }
+            
             @TestMetadata("NonAnnotationClass.kt")
             public void testNonAnnotationClass() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/annotations/NonAnnotationClass.kt");

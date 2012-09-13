@@ -360,7 +360,7 @@ public interface Errors {
     SimpleDiagnosticFactory<JetExpression> DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED = SimpleDiagnosticFactory.create(WARNING);
 
     DiagnosticFactory1<JetAnnotationEntry, String> NOT_AN_ANNOTATION_CLASS = DiagnosticFactory1.create(ERROR);
-
+    SimpleDiagnosticFactory<PsiElement> ANNOTATION_CLASS_WITH_BODY = SimpleDiagnosticFactory.create(ERROR);
 
     // This field is needed to make the Initializer class load (interfaces cannot have static initializers)
     @SuppressWarnings("UnusedDeclaration")

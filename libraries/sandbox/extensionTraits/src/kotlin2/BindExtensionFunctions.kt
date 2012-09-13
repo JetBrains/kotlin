@@ -5,8 +5,7 @@ import jet.runtime.ArrayIterator
 /**
  * Annotates a class used to implement extension functions
  */
-annotation class extension() {
-}
+annotation class extension() 
 
 /**
  * Defines the extension functions on a List<T>

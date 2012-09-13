@@ -1,7 +1,6 @@
 package rendererTest
 
-annotation class TheAnnotation {
-}
+annotation class TheAnnotation
 
 [TheAnnotation]
 public open class TheClass<out T : Int, X> {

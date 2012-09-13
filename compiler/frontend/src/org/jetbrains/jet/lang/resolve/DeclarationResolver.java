@@ -139,6 +139,11 @@ public class DeclarationResolver {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor classDescriptor = entry.getValue();
 
+            JetClassBody jetClassBody = jetClass.getBody();
+            if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS && jetClassBody != null) {
+                trace.report(ANNOTATION_CLASS_WITH_BODY.on(jetClassBody));
+            }
+
             resolveFunctionAndPropertyHeaders(
                     jetClass.getDeclarations(), classDescriptor.getScopeForMemberResolution(),
                     classDescriptor.getScopeForInitializers(), classDescriptor.getScopeForMemberResolution(),

@@ -1,4 +1,4 @@
-annotation class test {}
+annotation class test
 
 fun foo(test <!UNUSED_PARAMETER!>f<!> : Int) {}
 
