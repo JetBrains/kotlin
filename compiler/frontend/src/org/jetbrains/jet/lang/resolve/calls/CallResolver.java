@@ -819,6 +819,7 @@ public class CallResolver {
                 ExpressionReceiver expressionReceiver = (ExpressionReceiver) original;
                 if (autoCastReceiver.canCast()) {
                     trace.record(AUTOCAST, expressionReceiver.getExpression(), autoCastReceiver.getType());
+                    trace.record(EXPRESSION_TYPE, expressionReceiver.getExpression(), autoCastReceiver.getType());
                 }
                 else {
                     trace.report(AUTOCAST_IMPOSSIBLE.on(expressionReceiver.getExpression(), autoCastReceiver.getType(), expressionReceiver.getExpression().getText()));

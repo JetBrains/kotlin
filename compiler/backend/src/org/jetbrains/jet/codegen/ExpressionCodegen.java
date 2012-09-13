@@ -680,8 +680,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             JetExpression loopRange = forExpression.getLoopRange();
             StackValue value = gen(loopRange);
-            if (value instanceof StackValue.Local) {
-                arrayVar = ((StackValue.Local) value).index;
+            Type asmLoopRangeType = asmType(loopRangeType);
+            if (value instanceof StackValue.Local && value.type.equals(asmLoopRangeType)) {
+                arrayVar = ((StackValue.Local) value).index; // no need to copy local variable into another variable
             }
             else {
                 arrayVar = myFrameMap.enterTemp(OBJECT_TYPE);
@@ -691,7 +692,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                         myFrameMap.leaveTemp(OBJECT_TYPE);
                     }
                 };
-                Type asmLoopRangeType = asmType(loopRangeType);
                 value.put(asmLoopRangeType, v);
                 v.store(arrayVar, OBJECT_TYPE);
             }
