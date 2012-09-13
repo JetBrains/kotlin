@@ -1125,6 +1125,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/MethodWithGenerics.kt");
             }
             
+            @TestMetadata("MethodWithMappedClasses.kt")
+            public void testMethodWithMappedClasses() throws Exception {
+                doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/MethodWithMappedClasses.kt");
+            }
+            
             @TestMetadata("MethodWithTupleType.kt")
             public void testMethodWithTupleType() throws Exception {
                 doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/MethodWithTupleType.kt");

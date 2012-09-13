@@ -43,4 +43,8 @@ public class JdkAnnotationsTest extends CodegenTestCase {
     public void testKt1397() {
         blackBoxFile("regressions/kt1397.kt");
     }
+
+    public void testIteratingOverHashMap() {
+        blackBoxFile("jdk-annotations/iteratingOverHashMap.kt");
+    }
 }

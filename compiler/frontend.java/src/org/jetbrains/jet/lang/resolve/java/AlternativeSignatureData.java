@@ -25,6 +25,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -36,10 +37,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Evgeny Gerashchenko
@@ -173,7 +171,8 @@ class AlternativeSignatureData {
                 ClassifierDescriptor declarationDescriptor = originalTypeConstructor.getDeclarationDescriptor();
                 assert declarationDescriptor != null;
                 String fqName = DescriptorUtils.getFQName(declarationDescriptor).toSafe().getFqName();
-                if (!fqName.equals(expectedFqNamePostfix) && !fqName.endsWith("." + expectedFqNamePostfix)) {
+                ClassDescriptor classFromLibrary = getExpectedFromLibrary(expectedFqNamePostfix);
+                if (!fqName.equals(expectedFqNamePostfix) && !fqName.endsWith("." + expectedFqNamePostfix) && classFromLibrary == null) {
                     fail("Alternative signature type mismatch, expected: %s, actual: %s", expectedFqNamePostfix, fqName);
                 }
 
@@ -213,7 +212,13 @@ class AlternativeSignatureData {
                     altArguments.add(new TypeProjection(variance, alternativeType));
                 }
 
-                TypeConstructor typeConstructor = originalTypeConstructor;
+                TypeConstructor typeConstructor;
+                if (classFromLibrary != null) {
+                    typeConstructor = classFromLibrary.getTypeConstructor();
+                }
+                else {
+                    typeConstructor = originalTypeConstructor;
+                }
                 ClassifierDescriptor typeConstructorClassifier = typeConstructor.getDeclarationDescriptor();
                 if (typeConstructorClassifier instanceof TypeParameterDescriptor
                         && originalToAltTypeParameters.containsKey(typeConstructorClassifier)) {
@@ -232,6 +237,21 @@ class AlternativeSignatureData {
                 }
                 return new JetTypeImpl(autoType.getAnnotations(), typeConstructor, false,
                                        altArguments, memberScope);
+            }
+
+            @Nullable
+            private ClassDescriptor getExpectedFromLibrary(String expectedFqNamePostfix) {
+                Type javaAnalog = KotlinToJavaTypesMap.getInstance().getJavaAnalog(autoType);
+                if (javaAnalog == null || javaAnalog.getSort() != Type.OBJECT)  return null;
+                Collection<ClassDescriptor> descriptors =
+                        JavaToKotlinClassMap.getInstance().mapPlatformClass(JvmClassName.byType(javaAnalog).getFqName());
+                for (ClassDescriptor descriptor : descriptors) {
+                    String fqName = DescriptorUtils.getFQName(descriptor).getFqName();
+                    if (fqName.endsWith("." + expectedFqNamePostfix)) {
+                        return descriptor;
+                    }
+                }
+                return null;
             }
 
             @Override
