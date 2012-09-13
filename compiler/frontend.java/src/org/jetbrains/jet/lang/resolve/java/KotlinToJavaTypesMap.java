@@ -27,17 +27,15 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
-import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 
 /**
 * @author svtk
 */
-public class KotlinToJavaTypesMap {
+public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
     private static KotlinToJavaTypesMap instance = null;
 
     @NotNull
@@ -55,41 +53,6 @@ public class KotlinToJavaTypesMap {
     private KotlinToJavaTypesMap() {
         init();
         initPrimitives();
-    }
-
-    private void init() {
-        JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
-
-        register(JetStandardClasses.getAny(), Object.class);
-        register(standardLibrary.getNumber(), Number.class);
-        register(standardLibrary.getString(), String.class);
-        register(standardLibrary.getThrowable(), Throwable.class);
-        register(standardLibrary.getCharSequence(), CharSequence.class);
-        register(standardLibrary.getComparable(), Comparable.class);
-        register(standardLibrary.getEnum(), Enum.class);
-        register(standardLibrary.getAnnotation(), Annotation.class);
-        register(standardLibrary.getIterable(), Iterable.class);
-        register(standardLibrary.getIterator(), Iterator.class);
-        register(standardLibrary.getMutableIterable(), Iterable.class);
-        register(standardLibrary.getMutableIterator(), Iterator.class);
-        
-        register(standardLibrary.getCollection(), Collection.class);
-        register(standardLibrary.getMutableCollection(), Collection.class);
-        
-        register(standardLibrary.getList(), List.class);
-        register(standardLibrary.getMutableList(), List.class);
-        
-        register(standardLibrary.getSet(), Set.class);
-        register(standardLibrary.getMutableSet(), Set.class);
-        
-        register(standardLibrary.getMap(), Map.class);
-        register(standardLibrary.getMutableMap(), Map.class);
-
-        register(standardLibrary.getMapEntry(), Map.Entry.class);
-        register(standardLibrary.getMutableMapEntry(), Map.Entry.class);
-
-        register(standardLibrary.getListIterator(), ListIterator.class);
-        register(standardLibrary.getMutableListIterator(), ListIterator.class);
     }
 
     private void initPrimitives() {
@@ -121,8 +84,22 @@ public class KotlinToJavaTypesMap {
         return asmTypes.get(fqName);
     }
 
-    private void register(@NotNull ClassDescriptor kotlinDescriptor, @NotNull Class<?> javaClass) {
+    @Override
+    /*package*/ void register(
+            @NotNull Class<?> javaClass,
+            @NotNull ClassDescriptor kotlinDescriptor
+    ) {
         register(kotlinDescriptor, AsmTypeConstants.getType(javaClass));
+    }
+
+    @Override
+    /*package*/ void register(
+            @NotNull Class<?> javaClass,
+            @NotNull ClassDescriptor kotlinDescriptor,
+            @NotNull ClassDescriptor kotlinMutableDescriptor
+    ) {
+        register(javaClass, kotlinDescriptor);
+        register(javaClass, kotlinMutableDescriptor);
     }
 
     private void register(@NotNull ClassDescriptor kotlinDescriptor, @NotNull Type javaType) {
