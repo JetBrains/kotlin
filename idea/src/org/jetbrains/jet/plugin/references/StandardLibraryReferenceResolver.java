@@ -136,10 +136,12 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
         if (memberScope == null) return null;
 
         String renderedOriginal = DescriptorRenderer.TEXT.render(originalDescriptor);
-        Collection<DeclarationDescriptor> descriptors = Lists.newArrayList();
-        descriptors.addAll(memberScope.getAllDescriptors());
-        if (containingDeclaration instanceof ClassDescriptor) {
-            descriptors.addAll(((ClassDescriptor) containingDeclaration).getConstructors());
+        Collection<? extends DeclarationDescriptor> descriptors;
+        if (originalDescriptor instanceof ConstructorDescriptor && containingDeclaration instanceof ClassDescriptor) {
+            descriptors = ((ClassDescriptor) containingDeclaration).getConstructors();
+        }
+        else {
+            descriptors = memberScope.getAllDescriptors();
         }
         for (DeclarationDescriptor member : descriptors) {
             if (renderedOriginal.equals(DescriptorRenderer.TEXT.render(member).replace(TUPLE0_FQ_NAME.getFqName(),
