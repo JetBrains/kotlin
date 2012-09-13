@@ -421,6 +421,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             doTest("compiler/testData/diagnostics/tests/SafeCallNonNullReceiverReturnNull.kt");
         }
         
+        @TestMetadata("SafeCallOnFakeNamespace.kt")
+        public void testSafeCallOnFakeNamespace() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/SafeCallOnFakeNamespace.kt");
+        }
+        
         @TestMetadata("ShiftFunctionTypes.kt")
         public void testShiftFunctionTypes() throws Exception {
             doTest("compiler/testData/diagnostics/tests/ShiftFunctionTypes.kt");

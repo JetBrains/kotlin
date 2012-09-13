@@ -64,7 +64,6 @@ public class NamespaceType implements JetType {
 
     @Override
     public boolean isNullable() {
-        throwException();
         return false;
     }
 
