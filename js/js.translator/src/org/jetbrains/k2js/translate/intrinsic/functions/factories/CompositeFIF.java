@@ -16,17 +16,35 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInPropertyIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class CompositeFIF implements FunctionIntrinsicFactory {
+    @NotNull
+    public static final FunctionIntrinsic LENGTH_PROPERTY_INTRINSIC = new BuiltInPropertyIntrinsic("length");
+    public static final FunctionIntrinsic IS_EMPTY_INTRINSIC = new FunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+        ) {
+            assert receiver != null;
+            return JsAstUtils.equality(new JsNameRef("length", receiver), context.program().getNumberLiteral(0));
+        }
+    };
+
     @NotNull
     private final List<Pair<DescriptorPredicate, FunctionIntrinsic>> patternsAndIntrinsics = new ArrayList<Pair<DescriptorPredicate, FunctionIntrinsic>>();
 

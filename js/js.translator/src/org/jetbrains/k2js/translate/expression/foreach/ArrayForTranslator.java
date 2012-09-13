@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.psi.JetForExpression;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.intrinsic.functions.factories.ArrayFIF;
+import org.jetbrains.k2js.translate.intrinsic.functions.factories.CompositeFIF;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
@@ -49,7 +49,7 @@ public final class ArrayForTranslator extends ForTranslator {
 
         loopRange = TranslationUtils.createTemporaryIfNeed(Translation.translateAsExpression(getLoopRange(expression), context), context);
 
-        JsExpression length = ArrayFIF.ARRAY_LENGTH_INTRINSIC.apply(loopRange.second, Collections.<JsExpression>emptyList(), context());
+        JsExpression length = CompositeFIF.LENGTH_PROPERTY_INTRINSIC.apply(loopRange.second, Collections.<JsExpression>emptyList(), context());
         end = context.dynamicContext().createTemporary(length);
         index = context.dynamicContext().createTemporary(program().getNumberLiteral(0));
     }

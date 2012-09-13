@@ -200,7 +200,7 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static List<JsExpression> generateCallArgumentList(@NotNull JsExpression receiver, @NotNull List<JsExpression> arguments) {
+    public static List<JsExpression> generateInvocationArguments(@NotNull JsExpression receiver, @NotNull List<JsExpression> arguments) {
         if (arguments.isEmpty()) {
             return Collections.singletonList(receiver);
         }

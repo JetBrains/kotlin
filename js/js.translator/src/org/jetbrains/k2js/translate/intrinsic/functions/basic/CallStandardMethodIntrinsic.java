@@ -19,10 +19,10 @@ package org.jetbrains.k2js.translate.intrinsic.functions.basic;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.List;
 
@@ -60,9 +60,7 @@ public final class CallStandardMethodIntrinsic extends FunctionIntrinsic {
     @NotNull
     private static List<JsExpression> composeArguments(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments) {
         if (receiver != null) {
-            List<JsExpression> args = new SmartList<JsExpression>(receiver);
-            args.addAll(arguments);
-            return args;
+            return TranslationUtils.generateInvocationArguments(receiver, arguments);
         }
         else {
             return arguments;

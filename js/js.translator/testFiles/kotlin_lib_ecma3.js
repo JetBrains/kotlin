@@ -12,6 +12,11 @@ var Kotlin = {};
     var emptyFunction = function () {
     };
 
+    if (!Array.isArray) {
+        Array.isArray = function (vArg) {
+            return Object.prototype.toString.call(vArg) === "[object Array]";
+        };
+    }
     if (!Function.prototype.bind) {
         Function.prototype.bind = function (oThis) {
             if (typeof this !== "function") {

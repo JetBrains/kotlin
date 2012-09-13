@@ -32,10 +32,6 @@ public final class ArrayListTest extends JavaClassesTest {
         fooBoxTest();
     }
 
-    public void testIsEmpty() throws Exception {
-        fooBoxTest();
-    }
-
     public void testArrayAccess() throws Exception {
         fooBoxTest();
     }
@@ -48,7 +44,7 @@ public final class ArrayListTest extends JavaClassesTest {
         fooBoxTest();
     }
 
-    public void testToArray() throws Exception {
+    public void testMisc() throws Exception {
         fooBoxTest();
     }
 

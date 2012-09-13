@@ -3,8 +3,8 @@ package java.lang
 import java.io.IOException
 import js.library
 
-library
-open public class Exception(message: String? = null) : Throwable() {}
+library("Error")
+native open public class Exception(message: String? = null): Throwable() {}
 
 library
 public class IllegalArgumentException(message: String? = null) : Exception() {}
@@ -12,8 +12,8 @@ public class IllegalArgumentException(message: String? = null) : Exception() {}
 library
 public class IllegalStateException(message: String? = null) : Exception() {}
 
-library
-public class IndexOutOfBoundsException(message: String? = null) : Exception() {}
+library("RangeError")
+native public class IndexOutOfBoundsException(message: String? = null) : Exception(message) {}
 
 library
 public class UnsupportedOperationException(message: String? = null) : Exception() {}

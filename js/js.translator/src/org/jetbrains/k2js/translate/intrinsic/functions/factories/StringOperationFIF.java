@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInFunctionIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInPropertyIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
@@ -39,11 +38,10 @@ public final class StringOperationFIF extends CompositeFIF {
     private StringOperationFIF() {
         add(pattern("jet", "String", "get"), new BuiltInFunctionIntrinsic("charAt"));
 
-        BuiltInPropertyIntrinsic lengthIntrinsic = new BuiltInPropertyIntrinsic("length");
-        add(pattern("jet", "String", "<get-length>"), lengthIntrinsic);
-        add(pattern("js", "<get-size>").receiverExists(true), lengthIntrinsic);
-        add(pattern("js", "length").receiverExists(true), lengthIntrinsic);
-        add(pattern("jet", "CharSequence", "<get-length>"), lengthIntrinsic);
+        add(pattern("jet", "String", "<get-length>"), LENGTH_PROPERTY_INTRINSIC);
+        add(pattern("js", "<get-size>").receiverExists(true), LENGTH_PROPERTY_INTRINSIC);
+        add(pattern("js", "length").receiverExists(true), LENGTH_PROPERTY_INTRINSIC);
+        add(pattern("jet", "CharSequence", "<get-length>"), LENGTH_PROPERTY_INTRINSIC);
 
         add(pattern("js", "startsWith").receiverExists(true), new ContainsFunctionIntrinsic(false));
         add(pattern("js", "contains").receiverExists(true), new ContainsFunctionIntrinsic(true));
@@ -59,16 +57,7 @@ public final class StringOperationFIF extends CompositeFIF {
                 return JsAstUtils.inequality(new JsInvocation(new JsNameRef("indexOf", a.first), Arrays.asList(b.first, JsAstUtils.subtract(new JsNameRef("length", a.second), new JsNameRef("length", b.second)))), context.program().getNumberLiteral(-1));
             }
         });
-        add(pattern("js", "isEmpty").receiverExists(true), new FunctionIntrinsic() {
-            @NotNull
-            @Override
-            public JsExpression apply(
-                    @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
-            ) {
-                assert receiver != null;
-                return JsAstUtils.equality(new JsNameRef("length", receiver), context.program().getNumberLiteral(0));
-            }
-        });
+        add(pattern("js", "isEmpty").receiverExists(true), IS_EMPTY_INTRINSIC);
     }
 
     private static class ContainsFunctionIntrinsic extends FunctionIntrinsic {

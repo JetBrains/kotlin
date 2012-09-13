@@ -34,16 +34,14 @@ public abstract class AbstractCollection<E>() : MutableCollection<E> {
     override fun equals(other : Any?) : Boolean = js.noImpl
 }
 
-library
-public abstract class AbstractList<E>(): AbstractCollection<E>(), MutableList<E> {
+public native abstract class AbstractList<E>(): AbstractCollection<E>(), MutableList<E> {
     override fun get(index: Int): E = js.noImpl
     override fun set(index: Int, element: E): E = js.noImpl
 
-    library("addAt")
+    override fun add(e: E): Boolean = js.noImpl
     override fun add(index: Int, element: E): Unit = js.noImpl
     override fun addAll(index : Int, c : Collection<E>) : Boolean = js.noImpl
 
-    library("removeAt")
     override fun remove(index: Int): E = js.noImpl
 
     override fun indexOf(o: Any?): Int = js.noImpl
@@ -53,14 +51,24 @@ public abstract class AbstractList<E>(): AbstractCollection<E>(), MutableList<E>
     override fun listIterator(index : Int) : MutableListIterator<E> = js.noImpl
 
     override fun subList(fromIndex : Int, toIndex : Int) : MutableList<E> = js.noImpl
+
+    override fun equals(other: Any?): Boolean = js.noImpl
+
+    fun toString(): String = js.noImpl
+    override fun size(): Int = js.noImpl
 }
 
-library
-public open class ArrayList<E>() : AbstractList<E>() {
+public native class ArrayList<E>(): AbstractList<E>() {
 }
 
-library
-public open class HashSet<E>(): AbstractCollection<E>(), MutableSet<E> {
+// JS array is sparse, so, there is no any difference between ArrayList and LinkedList
+public native class LinkedList<E>(): AbstractList<E>() {
+    public fun poll(): E? = js.noImpl
+    public fun peek(): E? = js.noImpl
+    public fun offer(e: E): Boolean = js.noImpl
+}
+
+public library class HashSet<E>(): AbstractCollection<E>(), MutableSet<E> {
 }
 
 library
@@ -77,16 +85,6 @@ public open class HashMap<K, V>() : MutableMap<K, V> {
     public override fun keySet() : MutableSet<K> = js.noImpl
     public override fun values() : MutableCollection<V> = js.noImpl
     public override fun entrySet() : MutableSet<MutableMap.MutableEntry<K, V>> = js.noImpl
-}
-
-library
-public open class LinkedList<E>(): AbstractList<E>() {
-    public override fun get(index: Int): E = js.noImpl
-    public override fun set(index: Int, element: E): E = js.noImpl
-    public override fun add(index: Int, element: E): Unit = js.noImpl
-    public fun poll(): E? = js.noImpl
-    public fun peek(): E? = js.noImpl
-    public fun offer(e: E): Boolean = js.noImpl
 }
 
 library
