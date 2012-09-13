@@ -100,6 +100,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testInFileWithTypedef() {
+        doTest();
+    }
+
     public void testInFunInClassInitializer() {
         doTest();
     }

@@ -245,6 +245,9 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                         getProperties(name);
                     }
                 }
+                else if (declaration instanceof JetTypedef) {
+                    // Do nothing as typedefs are not supported
+                }
                 else {
                     throw new IllegalArgumentException("Unsupported declaration kind: " + declaration);
                 }
