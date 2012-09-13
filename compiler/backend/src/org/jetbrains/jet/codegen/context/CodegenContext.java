@@ -261,8 +261,7 @@ public abstract class CodegenContext {
         final ClassDescriptor enclosingClass = getEnclosingClass();
         outerExpression = enclosingClass != null
                           ? StackValue
-                .field(typeMapper.mapType(enclosingClass), CodegenBinding.getJvmClassName(
-                        typeMapper.getBindingTrace(), classDescriptor), CodegenUtil.THIS$0,
+                .field(typeMapper.mapType(enclosingClass), CodegenBinding.getJvmInternalName(typeMapper.getBindingTrace(), classDescriptor), CodegenUtil.THIS$0,
                        false)
                           : null;
     }

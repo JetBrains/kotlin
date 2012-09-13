@@ -297,7 +297,7 @@ public class JetTypeMapper extends BindingTraceAware {
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            JvmClassName name = getJvmClassName(bindingTrace, (ClassDescriptor) descriptor);
+            JvmClassName name = getJvmInternalName(bindingTrace, (ClassDescriptor) descriptor);
             Type asmType;
             if (kind == JetTypeMapperMode.TRAIT_IMPL) {
                 asmType = Type.getObjectType(name.getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);

@@ -271,18 +271,8 @@ public class CodegenBinding {
         return false;
     }
 
-    public static JvmClassName getJvmClassName(BindingTrace bindingTrace, ClassDescriptor classDescriptor) {
-        classDescriptor = (ClassDescriptor) classDescriptor.getOriginal();
-        final JvmClassName name = bindingTrace.getBindingContext().get(FQN, classDescriptor);
-        if (name != null) {
-            return name;
-        }
-
-        return getJvmInternalName(bindingTrace, classDescriptor);
-    }
-
     @NotNull
-    private static JvmClassName getJvmInternalName(BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor) {
+    public static JvmClassName getJvmInternalName(BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor) {
         descriptor = descriptor.getOriginal();
         JvmClassName name = bindingTrace.getBindingContext().get(FQN, descriptor);
         if (name != null) {
