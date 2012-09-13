@@ -126,139 +126,9 @@ class AlternativeSignatureData {
         return altTypeParameters;
     }
 
-    private JetType computeType(JetTypeElement alternativeTypeElement, final JetType autoType) {
+    private JetType computeType(JetTypeElement alternativeTypeElement, JetType autoType) {
         //noinspection NullableProblems
-        return alternativeTypeElement.accept(new JetVisitor<JetType, Void>() {
-            @Override
-            public JetType visitNullableType(JetNullableType nullableType, Void data) {
-                if (!autoType.isNullable()) {
-                    fail("Auto type '%s' is not-null, while type in alternative signature is nullable: '%s'",
-                         DescriptorRenderer.TEXT.renderType(autoType), nullableType.getText());
-                }
-                return TypeUtils.makeNullable(computeType(nullableType.getInnerType(), autoType));
-            }
-
-            @Override
-            public JetType visitFunctionType(JetFunctionType type, Void data) {
-                return visitCommonType(type.getReceiverTypeRef() == null
-                        ? JetStandardClasses.getFunction(type.getParameters().size())
-                        : JetStandardClasses.getReceiverFunction(type.getParameters().size()), type);
-            }
-
-            @Override
-            public JetType visitTupleType(JetTupleType type, Void data) {
-                return visitCommonType(JetStandardClasses.getTuple(type.getComponentTypeRefs().size()), type);
-            }
-
-            @Override
-            public JetType visitUserType(JetUserType type, Void data) {
-                JetUserType qualifier = type.getQualifier();
-                //noinspection ConstantConditions
-                String shortName = type.getReferenceExpression().getReferencedName();
-                String longName = (qualifier == null ? "" : qualifier.getText() + ".") + shortName;
-                if (JetStandardClasses.UNIT_ALIAS.getName().equals(longName)) {
-                    return visitCommonType(JetStandardClasses.getTuple(0), type);
-                }
-                return visitCommonType(longName, type);
-            }
-
-            private JetType visitCommonType(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeElement type) {
-                return visitCommonType(DescriptorUtils.getFQName(classDescriptor).toSafe().getFqName(), type);
-            }
-
-            private JetType visitCommonType(@NotNull String expectedFqNamePostfix, @NotNull JetTypeElement type) {
-                TypeConstructor originalTypeConstructor = autoType.getConstructor();
-                ClassifierDescriptor declarationDescriptor = originalTypeConstructor.getDeclarationDescriptor();
-                assert declarationDescriptor != null;
-                String fqName = DescriptorUtils.getFQName(declarationDescriptor).toSafe().getFqName();
-                ClassDescriptor classFromLibrary = getExpectedFromLibrary(expectedFqNamePostfix);
-                if (!fqName.equals(expectedFqNamePostfix) && !fqName.endsWith("." + expectedFqNamePostfix) && classFromLibrary == null) {
-                    fail("Alternative signature type mismatch, expected: %s, actual: %s", expectedFqNamePostfix, fqName);
-                }
-
-                List<TypeProjection> arguments = autoType.getArguments();
-
-                if (arguments.size() != type.getTypeArgumentsAsTypes().size()) {
-                    fail("'%s' type in method signature has %d type arguments, while '%s' in alternative signature has %d of them",
-                         DescriptorRenderer.TEXT.renderType(autoType), arguments.size(), type.getText(),
-                         type.getTypeArgumentsAsTypes().size());
-                }
-
-                List<TypeProjection> altArguments = new ArrayList<TypeProjection>();
-                for (int i = 0, size = arguments.size(); i < size; i++) {
-                    JetTypeElement argumentAlternativeTypeElement = type.getTypeArgumentsAsTypes().get(i).getTypeElement();
-                    TypeProjection argument = arguments.get(i);
-                    JetType alternativeType =
-                            computeType(argumentAlternativeTypeElement, argument.getType());
-                    Variance variance = argument.getProjectionKind();
-                    if (type instanceof JetUserType) {
-                        JetTypeProjection typeProjection = ((JetUserType) type).getTypeArguments().get(i);
-                        Variance altVariance = Variance.INVARIANT;
-                        switch (typeProjection.getProjectionKind()) {
-                            case IN:
-                                altVariance = Variance.IN_VARIANCE;
-                                break;
-                            case OUT:
-                                altVariance = Variance.OUT_VARIANCE;
-                                break;
-                            case STAR:
-                                fail("Star projection is not available in alternative signatures");
-                            default:
-                        }
-                        if (altVariance != variance) {
-                            fail("Variance mismatch, actual: %s, in alternative signature: %s", variance, altVariance);
-                        }
-                    }
-                    altArguments.add(new TypeProjection(variance, alternativeType));
-                }
-
-                TypeConstructor typeConstructor;
-                if (classFromLibrary != null) {
-                    typeConstructor = classFromLibrary.getTypeConstructor();
-                }
-                else {
-                    typeConstructor = originalTypeConstructor;
-                }
-                ClassifierDescriptor typeConstructorClassifier = typeConstructor.getDeclarationDescriptor();
-                if (typeConstructorClassifier instanceof TypeParameterDescriptor
-                        && originalToAltTypeParameters.containsKey(typeConstructorClassifier)) {
-                    typeConstructor = originalToAltTypeParameters.get(typeConstructorClassifier).getTypeConstructor();
-                }
-                JetScope memberScope;
-                if (typeConstructorClassifier instanceof TypeParameterDescriptor) {
-                    memberScope = ((TypeParameterDescriptor) typeConstructorClassifier).getUpperBoundsAsType().getMemberScope();
-                }
-                else if (typeConstructorClassifier instanceof ClassDescriptor) {
-                    memberScope = ((ClassDescriptor) typeConstructorClassifier).getMemberScope(altArguments);
-                }
-                else {
-                    throw new AssertionError("Unexpected class of type constructor classifier "
-                                             + (typeConstructorClassifier == null ? "null" : typeConstructorClassifier.getClass().getName()));
-                }
-                return new JetTypeImpl(autoType.getAnnotations(), typeConstructor, false,
-                                       altArguments, memberScope);
-            }
-
-            @Nullable
-            private ClassDescriptor getExpectedFromLibrary(String expectedFqNamePostfix) {
-                Type javaAnalog = KotlinToJavaTypesMap.getInstance().getJavaAnalog(autoType);
-                if (javaAnalog == null || javaAnalog.getSort() != Type.OBJECT)  return null;
-                Collection<ClassDescriptor> descriptors =
-                        JavaToKotlinClassMap.getInstance().mapPlatformClass(JvmClassName.byType(javaAnalog).getFqName());
-                for (ClassDescriptor descriptor : descriptors) {
-                    String fqName = DescriptorUtils.getFQName(descriptor).getFqName();
-                    if (fqName.endsWith("." + expectedFqNamePostfix)) {
-                        return descriptor;
-                    }
-                }
-                return null;
-            }
-
-            @Override
-            public JetType visitSelfType(JetSelfType type, Void data) {
-                throw new UnsupportedOperationException("Self-types are not supported yet");
-            }
-        }, null);
+        return alternativeTypeElement.accept(new TypeTransformingVisitor(autoType), null);
     }
 
     private void computeReturnType(@NotNull JetType autoType) {
@@ -273,8 +143,7 @@ class AlternativeSignatureData {
             }
         }
         else {
-            altReturnType = computeType(altReturnTypeRef.getTypeElement(),
-                                        autoType);
+            altReturnType = computeType(altReturnTypeRef.getTypeElement(), autoType);
         }
     }
 
@@ -420,6 +289,144 @@ class AlternativeSignatureData {
     private static class AlternativeSignatureMismatchException extends RuntimeException {
         private AlternativeSignatureMismatchException(String message) {
             super(message);
+        }
+    }
+
+    private class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
+        private final JetType autoType;
+
+        public TypeTransformingVisitor(JetType autoType) {
+            this.autoType = autoType;
+        }
+
+        @Override
+        public JetType visitNullableType(JetNullableType nullableType, Void data) {
+            if (!autoType.isNullable()) {
+                fail("Auto type '%s' is not-null, while type in alternative signature is nullable: '%s'",
+                     DescriptorRenderer.TEXT.renderType(autoType), nullableType.getText());
+            }
+            return TypeUtils.makeNullable(computeType(nullableType.getInnerType(), autoType));
+        }
+
+        @Override
+        public JetType visitFunctionType(JetFunctionType type, Void data) {
+            return visitCommonType(type.getReceiverTypeRef() == null
+                    ? JetStandardClasses.getFunction(type.getParameters().size())
+                    : JetStandardClasses.getReceiverFunction(type.getParameters().size()), type);
+        }
+
+        @Override
+        public JetType visitTupleType(JetTupleType type, Void data) {
+            return visitCommonType(JetStandardClasses.getTuple(type.getComponentTypeRefs().size()), type);
+        }
+
+        @Override
+        public JetType visitUserType(JetUserType type, Void data) {
+            JetUserType qualifier = type.getQualifier();
+            //noinspection ConstantConditions
+            String shortName = type.getReferenceExpression().getReferencedName();
+            String longName = (qualifier == null ? "" : qualifier.getText() + ".") + shortName;
+            if (JetStandardClasses.UNIT_ALIAS.getName().equals(longName)) {
+                return visitCommonType(JetStandardClasses.getTuple(0), type);
+            }
+            return visitCommonType(longName, type);
+        }
+
+        private JetType visitCommonType(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeElement type) {
+            return visitCommonType(DescriptorUtils.getFQName(classDescriptor).toSafe().getFqName(), type);
+        }
+
+        private JetType visitCommonType(@NotNull String expectedFqNamePostfix, @NotNull JetTypeElement type) {
+            TypeConstructor originalTypeConstructor = autoType.getConstructor();
+            ClassifierDescriptor declarationDescriptor = originalTypeConstructor.getDeclarationDescriptor();
+            assert declarationDescriptor != null;
+            String fqName = DescriptorUtils.getFQName(declarationDescriptor).toSafe().getFqName();
+            ClassDescriptor classFromLibrary = getExpectedFromLibrary(expectedFqNamePostfix);
+            if (!fqName.equals(expectedFqNamePostfix) && !fqName.endsWith("." + expectedFqNamePostfix) && classFromLibrary == null) {
+                fail("Alternative signature type mismatch, expected: %s, actual: %s", expectedFqNamePostfix, fqName);
+            }
+
+            List<TypeProjection> arguments = autoType.getArguments();
+
+            if (arguments.size() != type.getTypeArgumentsAsTypes().size()) {
+                fail("'%s' type in method signature has %d type arguments, while '%s' in alternative signature has %d of them",
+                     DescriptorRenderer.TEXT.renderType(autoType), arguments.size(), type.getText(),
+                     type.getTypeArgumentsAsTypes().size());
+            }
+
+            List<TypeProjection> altArguments = new ArrayList<TypeProjection>();
+            for (int i = 0, size = arguments.size(); i < size; i++) {
+                JetTypeElement argumentAlternativeTypeElement = type.getTypeArgumentsAsTypes().get(i).getTypeElement();
+                TypeProjection argument = arguments.get(i);
+                JetType alternativeType =
+                        computeType(argumentAlternativeTypeElement, argument.getType());
+                Variance variance = argument.getProjectionKind();
+                if (type instanceof JetUserType) {
+                    JetTypeProjection typeProjection = ((JetUserType) type).getTypeArguments().get(i);
+                    Variance altVariance = Variance.INVARIANT;
+                    switch (typeProjection.getProjectionKind()) {
+                        case IN:
+                            altVariance = Variance.IN_VARIANCE;
+                            break;
+                        case OUT:
+                            altVariance = Variance.OUT_VARIANCE;
+                            break;
+                        case STAR:
+                            fail("Star projection is not available in alternative signatures");
+                        default:
+                    }
+                    if (altVariance != variance) {
+                        fail("Variance mismatch, actual: %s, in alternative signature: %s", variance, altVariance);
+                    }
+                }
+                altArguments.add(new TypeProjection(variance, alternativeType));
+            }
+
+            TypeConstructor typeConstructor;
+            if (classFromLibrary != null) {
+                typeConstructor = classFromLibrary.getTypeConstructor();
+            }
+            else {
+                typeConstructor = originalTypeConstructor;
+            }
+            ClassifierDescriptor typeConstructorClassifier = typeConstructor.getDeclarationDescriptor();
+            if (typeConstructorClassifier instanceof TypeParameterDescriptor
+                    && originalToAltTypeParameters.containsKey(typeConstructorClassifier)) {
+                typeConstructor = originalToAltTypeParameters.get(typeConstructorClassifier).getTypeConstructor();
+            }
+            JetScope memberScope;
+            if (typeConstructorClassifier instanceof TypeParameterDescriptor) {
+                memberScope = ((TypeParameterDescriptor) typeConstructorClassifier).getUpperBoundsAsType().getMemberScope();
+            }
+            else if (typeConstructorClassifier instanceof ClassDescriptor) {
+                memberScope = ((ClassDescriptor) typeConstructorClassifier).getMemberScope(altArguments);
+            }
+            else {
+                throw new AssertionError("Unexpected class of type constructor classifier "
+                                         + (typeConstructorClassifier == null ? "null" : typeConstructorClassifier.getClass().getName()));
+            }
+            return new JetTypeImpl(autoType.getAnnotations(), typeConstructor, false,
+                                   altArguments, memberScope);
+        }
+
+        @Nullable
+        private ClassDescriptor getExpectedFromLibrary(String expectedFqNamePostfix) {
+            Type javaAnalog = KotlinToJavaTypesMap.getInstance().getJavaAnalog(autoType);
+            if (javaAnalog == null || javaAnalog.getSort() != Type.OBJECT)  return null;
+            Collection<ClassDescriptor> descriptors =
+                    JavaToKotlinClassMap.getInstance().mapPlatformClass(JvmClassName.byType(javaAnalog).getFqName());
+            for (ClassDescriptor descriptor : descriptors) {
+                String fqName = DescriptorUtils.getFQName(descriptor).getFqName();
+                if (fqName.endsWith("." + expectedFqNamePostfix)) {
+                    return descriptor;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public JetType visitSelfType(JetSelfType type, Void data) {
+            throw new UnsupportedOperationException("Self-types are not supported yet");
         }
     }
 }
