@@ -31,7 +31,6 @@ import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassObject;
@@ -216,13 +215,13 @@ public class CodegenUtil {
         final ClassifierDescriptor captureThis = closure.getCaptureThis();
         final int access = ACC_PUBLIC | ACC_SYNTHETIC | ACC_FINAL;
         if (captureThis != null) {
-            v.newField(null, access, THIS$0, typeMapper.mapType(captureThis.getDefaultType(), JetTypeMapperMode.VALUE).getDescriptor(), null,
+            v.newField(null, access, THIS$0, typeMapper.mapType(captureThis).getDescriptor(), null,
                        null);
         }
 
         final ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
         if (captureReceiver != null) {
-            v.newField(null, access, RECEIVER$0, typeMapper.mapType(captureReceiver.getDefaultType(), JetTypeMapperMode.VALUE).getDescriptor(),
+            v.newField(null, access, RECEIVER$0, typeMapper.mapType(captureReceiver).getDescriptor(),
                        null, null);
         }
 

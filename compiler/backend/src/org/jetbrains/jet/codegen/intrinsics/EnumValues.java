@@ -24,7 +24,6 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -50,8 +49,7 @@ public class EnumValues implements IntrinsicMethod {
         CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
         JetType returnType = resultingDescriptor.getReturnType();
         assert returnType != null;
-        Type type = state.getTypeMapper().mapType(
-                returnType, JetTypeMapperMode.VALUE);
+        Type type = state.getTypeMapper().mapType(returnType);
         v.invokestatic(type.getElementType().getInternalName(), "values", "()" + type);
         StackValue.onStack(type).put(expectedType, v);
         return StackValue.onStack(expectedType);

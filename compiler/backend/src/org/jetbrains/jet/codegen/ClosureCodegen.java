@@ -190,15 +190,14 @@ public class ClosureCodegen extends GenerationStateAware {
             if (receiver.exists()) {
                 StackValue.local(count, OBJECT_TYPE).put(OBJECT_TYPE, iv);
                 StackValue.onStack(OBJECT_TYPE)
-                        .upcast(typeMapper.mapType(receiver.getType(), JetTypeMapperMode.VALUE), iv);
+                        .upcast(typeMapper.mapType(receiver.getType()), iv);
                 count++;
             }
 
             final List<ValueParameterDescriptor> params = funDescriptor.getValueParameters();
             for (ValueParameterDescriptor param : params) {
                 StackValue.local(count, OBJECT_TYPE).put(OBJECT_TYPE, iv);
-                StackValue.onStack(OBJECT_TYPE)
-                        .upcast(typeMapper.mapType(param.getType(), JetTypeMapperMode.VALUE), iv);
+                StackValue.onStack(OBJECT_TYPE).upcast(typeMapper.mapType(param.getType()), iv);
                 count++;
             }
 
@@ -258,13 +257,12 @@ public class ClosureCodegen extends GenerationStateAware {
     ) {
         final ClassDescriptor captureThis = closure.getCaptureThis();
         if (captureThis != null) {
-            final Type type = typeMapper.mapType(captureThis.getDefaultType(), JetTypeMapperMode.VALUE);
+            final Type type = typeMapper.mapType(captureThis);
             args.add(new Pair<String, Type>(THIS$0, type));
         }
         final ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
         if (captureReceiver != null) {
-            args.add(new Pair<String, Type>(RECEIVER$0,
-                                            typeMapper.mapType(captureReceiver.getDefaultType(), JetTypeMapperMode.VALUE)));
+            args.add(new Pair<String, Type>(RECEIVER$0, typeMapper.mapType(captureReceiver)));
         }
 
         for (DeclarationDescriptor descriptor : closure.getCaptureVariables().keySet()) {
@@ -273,7 +271,7 @@ public class ClosureCodegen extends GenerationStateAware {
 
                 final Type type = sharedVarType != null
                                   ? sharedVarType
-                                  : typeMapper.mapType(((VariableDescriptor) descriptor).getType(), JetTypeMapperMode.VALUE);
+                                  : typeMapper.mapType((VariableDescriptor) descriptor);
                 args.add(new Pair<String, Type>("$" + descriptor.getName().getName(), type));
             }
             else if (isLocalNamedFun(state.getBindingContext(), descriptor)) {

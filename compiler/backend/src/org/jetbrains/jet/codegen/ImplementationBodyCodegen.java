@@ -317,11 +317,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (superClassType == null) {
             if (descriptor.getKind() == ClassKind.ENUM_CLASS) {
                 superClassType = JetStandardLibrary.getInstance().getEnumType(descriptor.getDefaultType());
-                superClass = typeMapper.mapType(superClassType, JetTypeMapperMode.VALUE).getInternalName();
+                superClass = typeMapper.mapType(superClassType).getInternalName();
             }
             if (descriptor.getKind() == ClassKind.ENUM_ENTRY) {
                 superClassType = descriptor.getTypeConstructor().getSupertypes().iterator().next();
-                superClass = typeMapper.mapType(superClassType, JetTypeMapperMode.VALUE).getInternalName();
+                superClass = typeMapper.mapType(superClassType).getInternalName();
             }
         }
     }
@@ -410,7 +410,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 MethodVisitor mv =
                         v.newMethod(myClass, ACC_PUBLIC | ACC_STATIC, "values", "()" + type.getDescriptor(), null, null);
                 mv.visitCode();
-                mv.visitFieldInsn(GETSTATIC, typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.VALUE).getInternalName(),
+                mv.visitFieldInsn(GETSTATIC, typeMapper.mapType(descriptor).getInternalName(),
                                   VALUES,
                                   type.getDescriptor());
                 mv.visitMethodInsn(INVOKEVIRTUAL, type.getInternalName(), "clone", "()Ljava/lang/Object;");
@@ -572,7 +572,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateFieldForObjectInstance() {
         if (isNonLiteralObject(myClass)) {
-            Type type = typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.VALUE);
+            Type type = typeMapper.mapType(descriptor);
             v.newField(myClass, ACC_PUBLIC | ACC_STATIC | ACC_FINAL, "$instance", type.getDescriptor(), null, null);
 
             staticInitializerChunks.add(new CodeChunk() {
@@ -583,7 +583,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     v.dup();
                     v.invokespecial(name, "<init>", "()V");
                     v.putstatic(name, "$instance",
-                                typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.VALUE).getDescriptor());
+                                typeMapper.mapType(descriptor).getDescriptor());
                 }
             });
         }
@@ -594,7 +594,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (classObject != null) {
             final ClassDescriptor descriptor1 = bindingContext.get(BindingContext.CLASS, classObject.getObjectDeclaration());
             assert descriptor1 != null;
-            Type type = Type.getObjectType(typeMapper.mapType(descriptor1.getDefaultType(), JetTypeMapperMode.VALUE).getInternalName());
+            Type type = Type.getObjectType(typeMapper.mapType(descriptor1).getInternalName());
             v.newField(classObject, ACC_PUBLIC | ACC_STATIC, "$classobj", type.getDescriptor(), null, null);
 
             staticInitializerChunks.add(new CodeChunk() {
@@ -607,7 +607,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     v.anew(classObjectType);
                     v.dup();
                     v.invokespecial(name, "<init>", "()V");
-                    v.putstatic(typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.VALUE).getInternalName(), "$classobj",
+                    v.putstatic(typeMapper.mapType(descriptor).getInternalName(), "$classobj",
                                 classObjectType.getDescriptor());
                 }
             });
@@ -697,7 +697,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (hasThis0) {
             final Type type = typeMapper
-                    .mapType(enclosingClassDescriptor(bindingContext, descriptor).getDefaultType(), JetTypeMapperMode.VALUE);
+                    .mapType(enclosingClassDescriptor(bindingContext, descriptor));
             String interfaceDesc = type.getDescriptor();
             iv.load(0, classType);
             iv.load(frameMap.getOuterThisIndex(), type);
@@ -706,7 +706,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (closure != null) {
             int k = hasThis0 ? 2 : 1;
-            final String internalName = typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.VALUE).getInternalName();
+            final String internalName = typeMapper.mapType(descriptor).getInternalName();
             final ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
             if (captureReceiver != null) {
                 iv.load(0, OBJECT_TYPE);
@@ -720,7 +720,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 if (varDescr instanceof VariableDescriptor && !(varDescr instanceof PropertyDescriptor)) {
                     Type sharedVarType = typeMapper.getSharedVarType(varDescr);
                     if (sharedVarType == null) {
-                        sharedVarType = typeMapper.mapType(((VariableDescriptor) varDescr).getType(), JetTypeMapperMode.VALUE);
+                        sharedVarType = typeMapper.mapType((VariableDescriptor) varDescr);
                     }
                     iv.load(0, OBJECT_TYPE);
                     iv.load(k, StackValue.refType(sharedVarType));
@@ -747,7 +747,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         for (JetParameter parameter : constructorParameters) {
             if (parameter.getValOrVarNode() != null) {
                 VariableDescriptor descriptor = paramDescrs.get(curParam);
-                Type type = typeMapper.mapType(descriptor.getType(), JetTypeMapperMode.VALUE);
+                Type type = typeMapper.mapType(descriptor);
                 iv.load(0, classType);
                 iv.load(frameMap.getIndex(descriptor), type);
                 iv.putfield(classname.getInternalName(), descriptor.getName().getName(), type.getDescriptor());
@@ -774,11 +774,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (CodegenBinding.hasThis0(bindingContext, superClassDescriptor)) {
             iv.load(1, OBJECT_TYPE);
             parameterTypes.add(typeMapper.mapType(
-                    enclosingClassDescriptor(bindingContext, descriptor).getDefaultType(), JetTypeMapperMode.VALUE));
+                    enclosingClassDescriptor(bindingContext, descriptor)));
         }
         Method superCallMethod = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
         //noinspection ConstantConditions
-        iv.invokespecial(typeMapper.mapType(superClassDescriptor.getDefaultType(), JetTypeMapperMode.VALUE).getInternalName(), "<init>",
+        iv.invokespecial(typeMapper.mapType(superClassDescriptor).getInternalName(), "<init>",
                          superCallMethod.getDescriptor());
     }
 
@@ -866,7 +866,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             !propertyDescriptor.isVar() &&
             Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor))) {
             // final property with backing field
-            field = StackValue.field(typeMapper.mapType(propertyDescriptor.getType(), JetTypeMapperMode.VALUE), classname,
+            field = StackValue.field(typeMapper.mapType(propertyDescriptor.getType()), classname,
                                      propertyDescriptor.getName().getName(), false);
         }
         else {
@@ -874,7 +874,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             codegen.genToJVMStack(expression);
 
             String delegateField = "$delegate_" + n;
-            Type fieldType = typeMapper.mapType(superClassDescriptor.getDefaultType(), JetTypeMapperMode.VALUE);
+            Type fieldType = typeMapper.mapType(superClassDescriptor.getDefaultType());
             String fieldDesc = fieldType.getDescriptor();
 
             v.newField(specifier, ACC_PRIVATE|ACC_FINAL|ACC_SYNTHETIC, delegateField, fieldDesc, /*TODO*/null, null);
@@ -1258,7 +1258,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         final JetType jetType = propertyDescriptor.getType();
                         if (compileTimeValue != null) {
                             Object value = compileTimeValue.getValue();
-                            Type type = typeMapper.mapType(jetType, JetTypeMapperMode.VALUE);
+                            Type type = typeMapper.mapType(jetType);
                             if (skipDefaultValue(propertyDescriptor, value, type)) continue;
                         }
                         iv.load(0, OBJECT_TYPE);
@@ -1269,7 +1269,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         codegen.gen(initializer, type);
                         // @todo write directly to the field. Fix test excloset.jet::test6
                         JvmClassName owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.IMPLEMENTATION);
-                        Type propType = typeMapper.mapType(jetType, JetTypeMapperMode.VALUE);
+                        Type propType = typeMapper.mapType(jetType);
                         StackValue.property(propertyDescriptor.getName().getName(), owner, owner,
                                             propType, false, false, false, null, null, 0).store(propType, iv);
                     }

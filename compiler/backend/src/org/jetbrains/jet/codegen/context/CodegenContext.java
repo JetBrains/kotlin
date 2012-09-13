@@ -24,7 +24,6 @@ import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 
@@ -196,7 +195,7 @@ public abstract class CodegenContext {
 
         CallableDescriptor receiverDescriptor = getCallableDescriptorWithReceiver();
         if (receiverDescriptor != null) {
-            Type type = mapper.mapType(receiverDescriptor.getReceiverParameter().getType(), JetTypeMapperMode.VALUE);
+            Type type = mapper.mapType(receiverDescriptor.getReceiverParameter().getType());
             frameMap.enterTemp(type);  // Next slot for receiver
         }
 
@@ -243,7 +242,7 @@ public abstract class CodegenContext {
     public StackValue getReceiverExpression(JetTypeMapper typeMapper) {
         assert getCallableDescriptorWithReceiver() != null;
         @SuppressWarnings("ConstantConditions")
-        Type asmType = typeMapper.mapType(getCallableDescriptorWithReceiver().getReceiverParameter().getType(), JetTypeMapperMode.VALUE);
+        Type asmType = typeMapper.mapType(getCallableDescriptorWithReceiver().getReceiverParameter().getType());
         return hasThisDescriptor() ? StackValue.local(1, asmType) : StackValue.local(0, asmType);
     }
 
@@ -262,7 +261,7 @@ public abstract class CodegenContext {
         final ClassDescriptor enclosingClass = getEnclosingClass();
         outerExpression = enclosingClass != null
                           ? StackValue
-                .field(typeMapper.mapType(enclosingClass.getDefaultType(), JetTypeMapperMode.VALUE), CodegenBinding.getJvmClassName(
+                .field(typeMapper.mapType(enclosingClass), CodegenBinding.getJvmClassName(
                         typeMapper.getBindingTrace(), classDescriptor), CodegenUtil.THIS$0,
                        false)
                           : null;

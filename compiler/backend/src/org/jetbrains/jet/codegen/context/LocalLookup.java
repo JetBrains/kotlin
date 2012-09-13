@@ -22,7 +22,6 @@ import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
@@ -58,7 +57,7 @@ public interface LocalLookup {
                 if (!idx) return null;
 
                 final Type sharedVarType = state.getTypeMapper().getSharedVarType(vd);
-                Type localType = state.getTypeMapper().mapType(vd.getType(), JetTypeMapperMode.VALUE);
+                Type localType = state.getTypeMapper().mapType(vd);
                 final Type type = sharedVarType != null ? sharedVarType : localType;
 
                 final String fieldName = "$" + vd.getName();
@@ -122,7 +121,7 @@ public interface LocalLookup {
                 if (closure.getEnclosingReceiverDescriptor() != d) return null;
 
                 final JetType receiverType = ((CallableDescriptor) d).getReceiverParameter().getType();
-                Type type = state.getTypeMapper().mapType(receiverType, JetTypeMapperMode.VALUE);
+                Type type = state.getTypeMapper().mapType(receiverType);
                 StackValue innerValue = StackValue.field(type, className, CodegenUtil.RECEIVER$0, false);
                 closure.setCaptureReceiver();
 

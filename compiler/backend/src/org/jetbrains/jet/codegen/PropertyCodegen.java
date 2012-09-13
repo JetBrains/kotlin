@@ -27,7 +27,6 @@ import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.signature.JvmPropertyAccessorSignature;
 import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
-import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -112,7 +111,7 @@ public class PropertyCodegen extends GenerationStateAware {
             if (JetStandardLibrary.getInstance().isVolatile(propertyDescriptor)) {
                 modifiers |= ACC_VOLATILE;
             }
-            Type type = state.getTypeMapper().mapType(propertyDescriptor.getType(), JetTypeMapperMode.VALUE);
+            Type type = state.getTypeMapper().mapType(propertyDescriptor);
             FieldVisitor fieldVisitor = v.newField(p, modifiers, propertyDescriptor.getName().getName(), type.getDescriptor(), null, value);
             AnnotationCodegen.forField(fieldVisitor, state.getTypeMapper()).genAnnotations(propertyDescriptor);
         }
@@ -220,7 +219,7 @@ public class PropertyCodegen extends GenerationStateAware {
                     if (kind != OwnerKind.NAMESPACE) {
                         iv.load(0, OBJECT_TYPE);
                     }
-                    final Type type = state.getTypeMapper().mapType(propertyDescriptor.getType(), JetTypeMapperMode.VALUE);
+                    final Type type = state.getTypeMapper().mapType(propertyDescriptor);
 
                     if ((kind instanceof OwnerKind.DelegateKind) != (propertyDescriptor.getKind() == FunctionDescriptor.Kind.DELEGATION)) {
                         throw new IllegalStateException("mismatching kind in " + propertyDescriptor);
@@ -318,7 +317,7 @@ public class PropertyCodegen extends GenerationStateAware {
                 }
                 else {
                     InstructionAdapter iv = new InstructionAdapter(mv);
-                    final Type type = state.getTypeMapper().mapType(propertyDescriptor.getType(), JetTypeMapperMode.VALUE);
+                    final Type type = state.getTypeMapper().mapType(propertyDescriptor);
                     int paramCode = 0;
                     if (kind != OwnerKind.NAMESPACE) {
                         iv.load(0, OBJECT_TYPE);
