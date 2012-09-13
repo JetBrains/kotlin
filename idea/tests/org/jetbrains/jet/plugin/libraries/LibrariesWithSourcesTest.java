@@ -126,6 +126,10 @@ public class LibrariesWithSourcesTest extends AbstractLibrariesTest {
             filesToNumbersAndOffsets.putValue(navigationElement.getContainingFile(), numberAndOffset);
         }
 
+        if (filesToNumbersAndOffsets.isEmpty()) {
+            return "<no references>";
+        }
+
         List<PsiFile> files = new ArrayList<PsiFile>(filesToNumbersAndOffsets.keySet());
         Collections.sort(files, new Comparator<PsiFile>() {
             @Override
