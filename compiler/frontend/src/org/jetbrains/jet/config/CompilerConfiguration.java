@@ -70,6 +70,7 @@ public class CompilerConfiguration {
 
     public <T> void addAll(@NotNull CompilerConfigurationKey<List<T>> key, @NotNull Collection<T> values) {
         checkReadOnly();
+        checkForNullElements(values);
         Key<List<T>> ideaKey = key.ideaKey;
         if (map.get(ideaKey) == null) {
             map.put(ideaKey, new ArrayList<T>());
@@ -110,6 +111,17 @@ public class CompilerConfiguration {
         }
         else {
             return object;
+        }
+    }
+
+    private static <T> void checkForNullElements(Collection<T> values) {
+        int index = 0;
+        for (T value : values) {
+            if (value == null) {
+                throw new IllegalArgumentException("Element " + index
+                                                   + " is null, while null values in compiler configuration are not allowed");
+            }
+            index++;
         }
     }
 }
