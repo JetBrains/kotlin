@@ -18,6 +18,7 @@ package org.jetbrains.jet.compiler.android;
 
 import junit.framework.TestCase;
 
+import java.lang.String;
 import java.lang.reflect.Method;
 
 /**
@@ -26,13 +27,13 @@ import java.lang.reflect.Method;
 
 public class AbstractCodegenTestCaseOnAndroid extends TestCase {
 
-    protected void invokeBoxMethod(String filePath) throws Exception {
+    protected void invokeBoxMethod(String filePath, String expectedResult) throws Exception {
         try {
             Class clazz;
             clazz = Class.forName(filePath.replaceAll("\\\\|-|\\.|/", "_") + ".namespace");
             Method method;
             method = clazz.getMethod("box");
-            assertEquals("OK", method.invoke(null));
+            assertEquals(expectedResult, method.invoke(null));
         }
         catch (Throwable e) {
             throw new RuntimeException("File: " + filePath, e);
