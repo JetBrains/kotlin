@@ -336,14 +336,14 @@ class AlternativeSignatureData {
             return visitCommonType(DescriptorUtils.getFQName(classDescriptor).toSafe().getFqName(), type);
         }
 
-        private JetType visitCommonType(@NotNull String expectedFqNamePostfix, @NotNull JetTypeElement type) {
+        private JetType visitCommonType(@NotNull String qualifiedName, @NotNull JetTypeElement type) {
             TypeConstructor originalTypeConstructor = autoType.getConstructor();
             ClassifierDescriptor declarationDescriptor = originalTypeConstructor.getDeclarationDescriptor();
             assert declarationDescriptor != null;
             String fqName = DescriptorUtils.getFQName(declarationDescriptor).toSafe().getFqName();
-            ClassDescriptor classFromLibrary = getExpectedFromLibrary(expectedFqNamePostfix);
-            if (!fqName.equals(expectedFqNamePostfix) && !fqName.endsWith("." + expectedFqNamePostfix) && classFromLibrary == null) {
-                fail("Alternative signature type mismatch, expected: %s, actual: %s", expectedFqNamePostfix, fqName);
+            ClassDescriptor classFromLibrary = getAutoTypeAnalogWithinBuiltins(qualifiedName);
+            if (!isSameName(qualifiedName, fqName) && classFromLibrary == null) {
+                fail("Alternative signature type mismatch, expected: %s, actual: %s", qualifiedName, fqName);
             }
 
             List<TypeProjection> arguments = autoType.getArguments();
@@ -410,14 +410,14 @@ class AlternativeSignatureData {
         }
 
         @Nullable
-        private ClassDescriptor getExpectedFromLibrary(String expectedFqNamePostfix) {
+        private ClassDescriptor getAutoTypeAnalogWithinBuiltins(String qualifiedName) {
             Type javaAnalog = KotlinToJavaTypesMap.getInstance().getJavaAnalog(autoType);
             if (javaAnalog == null || javaAnalog.getSort() != Type.OBJECT)  return null;
             Collection<ClassDescriptor> descriptors =
                     JavaToKotlinClassMap.getInstance().mapPlatformClass(JvmClassName.byType(javaAnalog).getFqName());
             for (ClassDescriptor descriptor : descriptors) {
                 String fqName = DescriptorUtils.getFQName(descriptor).getFqName();
-                if (fqName.endsWith("." + expectedFqNamePostfix)) {
+                if (isSameName(qualifiedName, fqName)) {
                     return descriptor;
                 }
             }
@@ -428,5 +428,9 @@ class AlternativeSignatureData {
         public JetType visitSelfType(JetSelfType type, Void data) {
             throw new UnsupportedOperationException("Self-types are not supported yet");
         }
+    }
+
+    private static boolean isSameName(String qualifiedName, String fullyQualifiedName) {
+        return fullyQualifiedName.equals(qualifiedName) || fullyQualifiedName.endsWith("." + qualifiedName);
     }
 }
