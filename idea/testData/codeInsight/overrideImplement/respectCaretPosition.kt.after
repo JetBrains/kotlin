@@ -11,8 +11,8 @@ class SomeTest : Test {
     protected override val testProp: Int = 0
 
     /**
-    * test
-    */
+     * test
+     */
     fun some() {
 
     }
