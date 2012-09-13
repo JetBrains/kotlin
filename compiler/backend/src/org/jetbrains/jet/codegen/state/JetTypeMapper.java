@@ -218,10 +218,10 @@ public class JetTypeMapper extends BindingTraceAware {
     @NotNull
     public Type mapType(JetType jetType, @Nullable BothSignatureWriter signatureVisitor, @NotNull JetTypeMapperMode kind) {
         Type known = null;
-        ClassifierDescriptor classifier = jetType.getConstructor().getDeclarationDescriptor();
+        DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
 
         if (mapBuiltinsToJava) {
-            if (classifier instanceof ClassDescriptor) {
+            if (descriptor instanceof ClassDescriptor) {
                 known = KotlinToJavaTypesMap.getInstance().getJavaAnalog(jetType);
             }
         }
@@ -253,7 +253,6 @@ public class JetTypeMapper extends BindingTraceAware {
         if (constructor instanceof IntersectionTypeConstructor) {
             jetType = CommonSupertypes.commonSupertype(new ArrayList<JetType>(constructor.getSupertypes()));
         }
-        DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
 
         if (descriptor == null) {
             throw new UnsupportedOperationException("no descriptor for type constructor of " + jetType);
@@ -271,9 +270,7 @@ public class JetTypeMapper extends BindingTraceAware {
             return asmType;
         }
 
-        if (descriptor instanceof ClassDescriptor
-            && JetStandardLibrary.getInstance().isArray(jetType)
-            && mapBuiltinsToJava) {
+        if (mapBuiltinsToJava && descriptor instanceof ClassDescriptor && JetStandardLibrary.getInstance().isArray(jetType)) {
             if (jetType.getArguments().size() != 1) {
                 throw new UnsupportedOperationException("arrays must have one type argument");
             }
@@ -297,7 +294,7 @@ public class JetTypeMapper extends BindingTraceAware {
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            JvmClassName name = getJvmInternalName(bindingTrace, (ClassDescriptor) descriptor);
+            JvmClassName name = getJvmInternalName(bindingTrace, descriptor);
             Type asmType;
             if (kind == JetTypeMapperMode.TRAIT_IMPL) {
                 asmType = Type.getObjectType(name.getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
@@ -314,12 +311,9 @@ public class JetTypeMapper extends BindingTraceAware {
         }
 
         if (descriptor instanceof TypeParameterDescriptor) {
-
-            Type type = mapType(((TypeParameterDescriptor) descriptor).getUpperBoundsAsType(), kind);
+            TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
+            Type type = mapType(typeParameterDescriptor.getUpperBoundsAsType(), kind);
             if (signatureVisitor != null) {
-                TypeParameterDescriptor typeParameterDescriptor =
-                        (TypeParameterDescriptor) jetType.getConstructor().getDeclarationDescriptor();
-                assert typeParameterDescriptor != null;
                 signatureVisitor.writeTypeVariable(typeParameterDescriptor.getName(), jetType.isNullable(), type);
             }
             checkValidType(type);
