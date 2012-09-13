@@ -16,12 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.calls;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -74,6 +71,11 @@ public class CallableDescriptorCollectors {
                 functions.addAll(classDescriptor.getConstructors());
             }
         }
+
+        @Override
+        public String toString() {
+            return "FUNCTIONS";
+        }
     };
 
     /*package*/ static CallableDescriptorCollector<VariableDescriptor> VARIABLES = new CallableDescriptorCollector<VariableDescriptor>() {
@@ -107,6 +109,11 @@ public class CallableDescriptorCollectors {
             result.addAll(scope.getProperties(name));
             return result;
         }
+
+        @Override
+        public String toString() {
+            return "VARIABLES";
+        }
     };
     
     /*package*/ static CallableDescriptorCollector<VariableDescriptor> PROPERTIES = new CallableDescriptorCollector<VariableDescriptor>() {
@@ -138,6 +145,10 @@ public class CallableDescriptorCollectors {
             return filterProperties(VARIABLES.getNonMembersByName(scope, name));
         }
 
+        @Override
+        public String toString() {
+            return "PROPERTIES";
+        }
     };
 
     /*package*/ static List<CallableDescriptorCollector<? extends CallableDescriptor>> FUNCTIONS_AND_VARIABLES = Lists.newArrayList(
