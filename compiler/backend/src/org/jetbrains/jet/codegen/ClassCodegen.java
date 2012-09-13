@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 
 import java.util.Map;
 
@@ -40,6 +41,15 @@ public class ClassCodegen extends GenerationStateAware {
 
     public void generate(CodegenContext context, JetClassOrObject aClass) {
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
+
+        if (descriptor == null || ErrorUtils.isError(descriptor) || descriptor.getName().equals(JetPsiUtil.NO_NAME_PROVIDED)) {
+            if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES) {
+                throw new IllegalStateException(
+                        "Generating bad descriptor in ClassBuilderMode = " + state.getClassBuilderMode() + ": " + descriptor);
+            }
+            return;
+        }
+
         ClassBuilder classBuilder = state.getFactory().forClassImplementation(descriptor);
 
         final CodegenContext contextForInners = context.intoClass(descriptor, OwnerKind.IMPLEMENTATION, state);

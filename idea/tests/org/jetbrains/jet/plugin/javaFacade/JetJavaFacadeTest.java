@@ -78,6 +78,10 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
         doTestWrapClass();
     }
 
+    public void testEa37034() {
+        doTestWrapClass();
+    }
+
     public void testInnerClass() throws Exception {
         myFixture.configureByFile(getTestName(true) + ".kt");
 
