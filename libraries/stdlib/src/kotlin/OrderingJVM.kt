@@ -6,14 +6,14 @@ import java.util.Comparator
 * Helper method for implementing [[Comparable]] methods using a list of functions
 * to calculate the values to compare
 */
-inline fun <T> compareBy(a: T?, b: T?, vararg functions: Function1<T, Any?>): Int {
+inline fun <T> compareBy(a: T?, b: T?, vararg functions: T.() -> Any?): Int {
     require(functions.size > 0)
     if (a === b) return 0
     if (a == null) return - 1
     if (b == null) return 1
     for (fn in functions) {
-        val v1 = fn(a)
-        val v2 = fn(b)
+        val v1 = a.fn()
+        val v2 = b.fn()
         val diff = compareValues(v1, v2)
         if (diff != 0) return diff
     }
@@ -47,12 +47,12 @@ public inline fun <T> compareValues(a: T?, b: T?): Int {
 /**
  * Creates a comparator using the sequence of functions used to calculate a value to compare on
  */
-public inline fun <T> comparator(vararg functions: Function1<T,Any?>): Comparator<T> {
-    return FunctionComparator<T>(functions)
+public inline fun <T> comparator(vararg val functions: T.() -> Any?): Comparator<T> {
+    return FunctionComparator<T>(*functions)
 }
 
 
-private class FunctionComparator<T>(val functions: Array<Function1<T,Any?>>):  Comparator<T> {
+private class FunctionComparator<T>(vararg val functions: T.() -> Any?):  Comparator<T> {
 
     public override fun toString(): String {
         return "FunctionComparator${functions.toList()}"

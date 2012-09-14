@@ -8,7 +8,7 @@ class Item(val name: String, val rating: Int): Comparable<Item> {
     fun toString() = "Item($name, $rating)"
 
     public override fun compareTo(other: Item): Int {
-        return compareBy(this, other, {it.rating}, {it.name})
+        return compareBy(this, other, { rating }, { name })
     }
 }
 
@@ -22,43 +22,35 @@ class CompareTest {
     }
 
     Test fun compareByNameFirst() {
-        val diff = compareBy(v1, v2, {(i: Item) -> i.name}, {(i: Item) -> i.rating})
+        val diff = compareBy(v1, v2, { name }, { rating })
         assertTrue(diff > 0)
     }
 
     Test fun compareByRatingFirst() {
-        val diff = compareBy(v1, v2, {(i: Item) -> i.rating}, {(i: Item) -> i.name})
-        assertTrue(diff < 0)
-    }
-
-    Test fun compareByRatingFirstUsingItNotation() {
-        val diff = compareBy(v1, v2, {it.rating}, {it.name})
+        val diff = compareBy(v1, v2, { rating }, { name })
         assertTrue(diff < 0)
     }
 
     Test fun compareSameObjectsByRatingFirst() {
-        val diff = compareBy(v1, v1, {(i: Item) -> i.rating}, {(i: Item) -> i.name})
+        val diff = compareBy(v1, v1, { rating }, { name })
         assertTrue(diff == 0)
     }
 
     Test fun sortUsingComparatorHelperMethod() {
-        val c = comparator<Item>({it.rating}, {it.name})
+        val c = comparator<Item>({ rating }, { name })
         println("Created comparator $c")
 
-        todo {
-        // TODO needs KT-729 before this code works
-            val diff = c.compare(v1, v2)
-            assertTrue(diff < 0)
-            val items = arrayList(v1, v2)
-            items.sort(c)
-            println("Sorted list in rating order $items")
-        }
+        val diff = c.compare(v1, v2)
+        assertTrue(diff < 0)
+        val items = arrayList(v1, v2)
+        items.sort(c)
+        println("Sorted list in rating order $items")
     }
 
     Test fun sortUsingCustomComparator() {
         val c = object : Comparator<Item>{
             override fun compare(o1: Item?, o2: Item?): Int {
-                return compareBy(o1, o2, {(it: Item) -> it.name}, {(it: Item) -> it.rating})
+                return compareBy(o1, o2, { name }, { rating })
             }
             override fun equals(obj: Any?): Boolean {
                 return this == obj
