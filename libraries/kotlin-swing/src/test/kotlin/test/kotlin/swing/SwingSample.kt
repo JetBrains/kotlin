@@ -13,7 +13,23 @@ Enter some text here!
 
     val f = frame("Kool Kotlin Swing Demo") {
         exitOnClose()
-        val test = 12
+
+        val aboutAction = action("About") {
+            println("Show about window")
+        }
+        val propertiesAction = action("Properties") {
+            println("Show Properties window")
+        }
+
+        jmenuBar = menuBar{
+            menu("File") {
+                add(aboutAction)
+            }
+            menu("Help") {
+                add(propertiesAction)
+            }
+        }
+
         size = Pair(500, 300)
 
         val textArea = JTextArea(greeting)
@@ -29,6 +45,7 @@ Enter some text here!
                 println("Restored text!")
             }
         }
+
     }
 
     f.setLocationRelativeTo(null)
